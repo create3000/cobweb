@@ -136,14 +136,12 @@
     <None Include="cobweb\Components\Followers\PositionChaser.js" />
     <None Include="cobweb\Components\Followers\PositionChaser2D.js" />
     <None Include="cobweb\Components\Followers\PositionDamper.js" />
-    <None Include="cobweb\Components\Followers\PositionDamper.js~" />
     <None Include="cobweb\Components\Followers\PositionDamper2D.js" />
     <None Include="cobweb\Components\Followers\ScalarChaser.js" />
     <None Include="cobweb\Components\Followers\ScalarDamper.js" />
     <None Include="cobweb\Components\Followers\TexCoordChaser2D.js" />
     <None Include="cobweb\Components\Followers\TexCoordDamper2D.js" />
     <None Include="cobweb\Components\Followers\X3DChaserNode.js" />
-    <None Include="cobweb\Components\Followers\X3DChaserNode.js~" />
     <None Include="cobweb\Components\Followers\X3DDamperNode.js" />
     <None Include="cobweb\Components\Followers\X3DFollowerNode.js" />
     <None Include="cobweb\Components\Geometry2D\Arc2D.js" />
