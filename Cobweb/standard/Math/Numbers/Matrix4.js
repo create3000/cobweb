@@ -332,7 +332,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 
 			var e = eigendecomposition (b, evalues, evectors);
 
-			// find min / max eigenvalues and do ratio test to determine singularity
+			// Find min / max eigenvalues and do ratio test to determine singularity.
 
 			scaleOrientation .set (e .vectors [0] [0], e .vectors [0] [1], e .vectors [0] [2],
 			                       e .vectors [1] [0], e .vectors [1] [1], e .vectors [1] [2],
