@@ -232,7 +232,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 		disconnect: function ()
 		{
 			clearInterval (this .spinId);
-
+	
 			this .spinId = undefined;
 		},
 	});
