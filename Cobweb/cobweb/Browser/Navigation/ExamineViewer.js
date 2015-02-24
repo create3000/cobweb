@@ -137,6 +137,17 @@ function ($, X3DViewer, Vector3, Rotation4)
 				}
 				case 1:
 				{
+		         // Stop event propagation.
+
+					event .stopPropagation ();
+
+					if (event .originalEvent .preventDefault)
+						event .originalEvent .preventDefault ();
+
+		         event .originalEvent .returnValue = false;
+
+		         // Move.
+
 					var viewpoint   = this .getActiveViewpoint ();
 					var toPoint     = this .getPointOnCenterPlane (x, y);
 					var translation = viewpoint .getUserOrientation () .multVecRot (this .fromPoint .subtract (toPoint));
