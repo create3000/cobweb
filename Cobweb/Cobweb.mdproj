@@ -391,6 +391,16 @@
     <None Include="cobweb\Fields\SFMatrix3.js" />
     <None Include="cobweb\Fields\SFImage.js" />
     <None Include="logo.bw.png" />
+    <None Include="jam\text\LICENSE" />
+    <None Include="jam\text\README.md" />
+    <None Include="jam\text\package.json" />
+    <None Include="jam\text\text.js" />
+    <None Include="jam\jquery-mousewheel\ChangeLog.markdown" />
+    <None Include="jam\jquery-mousewheel\LICENSE.txt" />
+    <None Include="jam\jquery-mousewheel\README.markdown" />
+    <None Include="jam\jquery-mousewheel\jquery.mousewheel.js" />
+    <None Include="jam\jquery-mousewheel\package.json" />
+    <None Include="jam\jquery-mousewheel\test\index.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="jam\" />
@@ -424,6 +434,8 @@
     <Folder Include="standard\Math\Algorithms\" />
     <Folder Include="standard\Math\Utility\" />
     <Folder Include="cobweb\Browser\Time\" />
+    <Folder Include="jam\text\" />
+    <Folder Include="jam\jquery-mousewheel\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
