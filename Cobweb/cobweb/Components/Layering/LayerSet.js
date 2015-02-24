@@ -110,7 +110,7 @@ function ($,
 				for (var i = 0; i < this .order_ .length; ++ i)
 				{
 					var index = this .order_ [i];
-	
+
 					if (index === 0)
 						this .layerNodes .push (this .layerNode0);
 						
