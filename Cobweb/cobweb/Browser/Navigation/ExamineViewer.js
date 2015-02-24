@@ -137,14 +137,14 @@ function ($, X3DViewer, Vector3, Rotation4)
 				}
 				case 1:
 				{
-		         // Stop event propagation.
+					// Stop event propagation.
 
 					event .stopPropagation ();
 
 					if (event .originalEvent .preventDefault)
 						event .originalEvent .preventDefault ();
 
-		         event .originalEvent .returnValue = false;
+					event .originalEvent .returnValue = false;
 
 		         // Move.
 
@@ -162,14 +162,14 @@ function ($, X3DViewer, Vector3, Rotation4)
 		},
 		mousewheel: function (event)
 		{
-         // Stop event propagation.
+			// Stop event propagation.
 
 			event .stopPropagation ();
 
 			if (event .originalEvent .preventDefault)
 				event .originalEvent .preventDefault ();
 
-         event .originalEvent .returnValue = false;
+			event .originalEvent .returnValue = false;
 
          // Determine scroll direction.
 
