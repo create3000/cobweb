@@ -41,7 +41,7 @@ function (Algorithm)
 
 			return true;
 		},
-		matrix1: function ()
+		submatrix: function ()
 		{
 			return this .value [0];
 		},

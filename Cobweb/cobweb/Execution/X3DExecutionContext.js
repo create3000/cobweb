@@ -6,8 +6,9 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Networking/URI",
 ],
-function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DConstants)
+function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DConstants, URI)
 {
 	with (Fields)
 	{
@@ -15,7 +16,7 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 		{
 			X3DBaseNode .call (this, browser, executionContext);
 			
-			this .worldURL           = "";
+			this .url                = new URI (window .location);
 			this .uninitializedNodes = [ ];
 		}
 
@@ -36,7 +37,7 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			},
 			getWorldURL: function ()
 			{
-				return this .worldURL;
+				return this .url;
 			},
 			createNode: function (typeName, initialize)
 			{
@@ -56,6 +57,13 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			{
 				return this .rootNodes_;
 			},
+		});
+
+		Object .defineProperty (X3DExecutionContext .prototype, "worldURL",
+		{
+			get: function () { return this .url .location; },
+			enumerable: true,
+			configurable: false
 		});
 
 		Object .defineProperty (X3DExecutionContext .prototype, "rootNodes",

@@ -71,7 +71,7 @@ function (Vector2, Vector3, Matrix3, eigendecomposition)
 		{
 			return new Vector2 (this [6], this [7]);
 		},
-		matrix2: function ()
+		submatrix: function ()
 		{
 			return new Matrix2 (this [0], this [1],
 			                    this [3], this [4]);

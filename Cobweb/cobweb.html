@@ -22,8 +22,9 @@ html, body, x3d {
 require ([
 	"jquery",
 	"cobweb/X3D",
+	"standard/Networking/URI",
 ],
-function ($, X3D)
+function ($, X3D, URI)
 {
 	X3D (function (elements)
 	{
@@ -32,8 +33,6 @@ function ($, X3D)
 			var Browser = getBrowser (elements);
 			
 			console .log (Browser .currentScene .rootNodes .copy ());
-
-			Browser .currentScene .rootNodes [0] .translation = new SFVec3f (3,0,0);
 		}
 	});
 });
@@ -42,22 +41,7 @@ function ($, X3D)
 	<body>
 		<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd' statistics="false" log="false">
 			<Scene>
-				<Transform translation="-3 0 0" rotation="0 0 1 0.78">
-					<Shape>
-						<Box/>
-					</Shape>
-				</Transform>
-				<Transform translation="-3 0 0" rotation="0 0 1 0.78">
-					<Shape>
-						<Box/>
-					</Shape>
-				</Transform>
-				<Transform translation="0 0 0" rotation="0 0 1 0.78">
-					<Shape>
-						<Box/>
-					</Shape>
-				</Transform>
-				<Inline url='"Inline.wrl" "abc\"def\"ghi"'/>
+				<Inline url='"Inline.wrl" "Inline.x3d"'/>
 			</Scene>
 		</X3D>
 	</body>

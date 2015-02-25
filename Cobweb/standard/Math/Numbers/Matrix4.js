@@ -84,7 +84,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 		{
 			return new Vector3 (this [12], this [13], this [14]);
 		},
-		matrix3: function ()
+		submatrix: function ()
 		{
 			return new Matrix3 (this [ 0], this [ 1], this [ 2],
 			                    this [ 4], this [ 5], this [ 6],
@@ -318,7 +318,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 			translation .assign (this .origin ());
 
 			// (2) Create 3x3 matrix.
-			var a = this .matrix3 ();
+			var a = this .submatrix ();
 
 			// (3) Compute det A. If negative, set sign = -1, else sign = 1
 			var det      = a .determinant ();

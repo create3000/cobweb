@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -16,6 +17,7 @@ function ($,
           X3DChildNode,
           X3DUrlObject,
           X3DBoundedObject,
+          Group,
           X3DConstants)
 {
 	with (Fields)
@@ -27,6 +29,10 @@ function ($,
 			X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Inline);
+
+			this .scene    = this .getBrowser () .createScene ();
+			this .group    = new Group (executionContext);
+			this .traverse = this .group .traverse .bind (this .group);
 		}
 
 		Inline .prototype = $.extend (new X3DChildNode (),
@@ -58,6 +64,38 @@ function ($,
 				X3DChildNode     .prototype .initialize .call (this);
 				X3DUrlObject     .prototype .initialize .call (this);
 				X3DBoundedObject .prototype .initialize .call (this);
+
+				this .group .setup ();
+
+				this .requestImmediateLoad ();
+			},
+			requestImmediateLoad: function ()
+			{
+				try
+				{
+					this .setScene (this .getBrowser () .createX3DFromURL (this .url_));
+				}
+				catch (error)
+				{
+					console .log (error .message);
+					this .setScene (this .getBrowser () .createScene ());
+				}
+			},
+			setScene: function (scene)
+			{
+				this .scene .removeInterest (this .group .children_, "setValue");
+
+				// Set new scene.
+
+				this .scene = scene;
+				this .scene .setup ();
+				
+				this .scene .addInterest (this .group .children_, "setValue");
+				this .group .children_ = this .scene .rootNodes;
+			},
+			getScene: function ()
+			{
+				return this .scene;
 			},
 		});
 

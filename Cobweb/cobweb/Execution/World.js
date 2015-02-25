@@ -81,6 +81,8 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, x3d_cast, X3DConstants)
 
 				this .set_activeLayer ();
 			}
+
+			this .traverse = this .layerSet .traverse .bind (this .layerSet);
 		},
 		set_activeLayer: function ()
 		{
@@ -96,15 +98,11 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, x3d_cast, X3DConstants)
 
 			try
 			{
-				if (this .getExecutionContext () .getWorldURL () .fragment () .length)
-					this .getExecutionContext () .changeViewpoint (getExecutionContext () .getWorldURL () .fragment ());
+				if (this .getExecutionContext () .getWorldURL () .fragment .length)
+					this .getExecutionContext () .changeViewpoint (getExecutionContext () .getWorldURL () .fragment);
 			}
 			catch (error)
 			{ }
-		},
-		traverse: function (type)
-		{
-			this .layerSet .traverse (type);
 		},
 	});
 

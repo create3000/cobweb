@@ -401,6 +401,9 @@
     <None Include="jam\jquery-mousewheel\jquery.mousewheel.js" />
     <None Include="jam\jquery-mousewheel\package.json" />
     <None Include="jam\jquery-mousewheel\test\index.html" />
+    <None Include="standard\Networking\URI.js" />
+    <None Include="Inline.x3d" />
+    <None Include="Inline.wrl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="jam\" />
@@ -436,6 +439,7 @@
     <Folder Include="cobweb\Browser\Time\" />
     <Folder Include="jam\text\" />
     <Folder Include="jam\jquery-mousewheel\" />
+    <Folder Include="standard\Networking\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

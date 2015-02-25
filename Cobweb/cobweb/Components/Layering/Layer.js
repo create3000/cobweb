@@ -5,20 +5,24 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Layering/X3DLayerNode",
+	"cobweb/Components/Navigation/Viewpoint",
+	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DLayerNode, 
+          X3DLayerNode,
+          Viewpoint,
+          Group,
           X3DConstants)
 {
 	with (Fields)
 	{
 		function Layer (executionContext)
 		{
-			X3DLayerNode .call (this, executionContext .getBrowser (), executionContext);
+			X3DLayerNode .call (this, executionContext .getBrowser (), executionContext, new Viewpoint (executionContext), new Group (executionContext));
 
 			this .addType (X3DConstants .Layer);
 		}

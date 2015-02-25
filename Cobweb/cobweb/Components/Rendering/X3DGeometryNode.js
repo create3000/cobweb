@@ -84,7 +84,7 @@ function ($, X3DNode, X3DConstants)
 			var modelViewMatrix  = gl .getUniformLocation (shader .program, "modelViewMatrix");
 
 			if (normalMatrix)
-				gl .uniformMatrix3fv (normalMatrix, false, new Float32Array (this .getBrowser () .getModelViewMatrix () .get () .inverse () .transpose () .matrix3 ()));
+				gl .uniformMatrix3fv (normalMatrix, false, new Float32Array (this .getBrowser () .getModelViewMatrix () .get () .submatrix () .inverse () .transpose ()));
 
 			if (projectionMatrix)
 				gl .uniformMatrix4fv (projectionMatrix, false, new Float32Array (this .getBrowser () .getProjectionMatrix () .get ()));

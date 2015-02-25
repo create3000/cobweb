@@ -4,7 +4,6 @@ define ([
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Components/Navigation/NavigationInfo",
-	"cobweb/Components/Navigation/Viewpoint",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
@@ -14,7 +13,6 @@ function ($,
           X3DNode,
           X3DViewportNode,
           NavigationInfo,
-          Viewpoint,
           TraverseType,
           X3DConstants,
           Matrix4,
@@ -25,6 +23,9 @@ function ($,
 		X3DNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
+
+		this .defaultViewpoint = defaultViewpoint;
+		this .group            = group;
 	}
 
 	X3DLayerNode .prototype = $.extend (new X3DNode (),
@@ -35,9 +36,8 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 		
-			this .defaultNavigationInfo  = new NavigationInfo (this .getExecutionContext ());
-			this .defaultViewpoint       = new Viewpoint (this .getExecutionContext ());
-			
+			this .defaultNavigationInfo = new NavigationInfo (this .getExecutionContext ());
+
 			this .currentViewport     = null;
 			this .navigationInfoStack = [ this .defaultNavigationInfo ];
 			this .viewpointStack      = [ this .defaultViewpoint ];
@@ -45,7 +45,14 @@ function ($,
 			this .defaultNavigationInfo .setup ();
 			this .defaultViewpoint .setup ();
 
-			this .viewport_ .addInterest (this, "set_viewport__");
+			this .group .children_ = this .children_;
+			this .group .setup ();
+			this .collect = this .group .traverse .bind (this .group);
+
+			this .viewport_       .addInterest (this, "set_viewport__");
+			this .addChildren_    .addInterest (this .group .addChildren_,    "setValue");
+			this .removeChildren_ .addInterest (this .group .removeChildren_, "setValue");
+			this .children_       .addInterest (this .group .children_,       "setValue");
 
 			this .set_viewport__ ();
 		},
@@ -147,8 +154,6 @@ function ($,
 		},
 		collect: function (type)
 		{
-			for (var i = 0; i < this .children_ .length; ++ i)
-				this .children_ [i] .getValue () .traverse (TraverseType .DISPLAY);	
 		},
 	});
 

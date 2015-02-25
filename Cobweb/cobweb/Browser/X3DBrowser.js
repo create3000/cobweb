@@ -5,8 +5,9 @@ define ([
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
 	"cobweb/Parser/XMLParser",
+	"standard/Networking/URI",
 ],
-function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser)
+function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 {
 	function X3DBrowser (x3d)
 	{
@@ -53,7 +54,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser)
 		},
 		getWorldURL: function ()
 		{
-			return this .currentScene .getWorldURL ();
+			return this .currentScene .worldURL;
 		},
 		createScene: function ()
 		{
@@ -70,9 +71,54 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser)
 		},
 		createX3DFromString: function (x3dSyntax)
 		{
+			
 		},
 		createX3DFromURL: function (url, field, node)
 		{
+			var scene   = null;
+			var success = false;
+
+			for (var i = 0; i < url .length; ++ i)
+			{
+				var URL = this .currentScene .getWorldURL () .transform (new URI (url [i]));
+
+				console .log (URL .toString ());
+
+				$.ajax ({
+					url: URL .isLocal () ? new URI (window .location) .getRelativePath (URL) : URL,
+					dataType: "text",
+					async: false,
+					context: this,
+					complete: function (xhr, status)
+					{
+						if (status === "success" || status === "notmodified")
+						{
+							try
+							{
+								var dom = $.parseXML (xhr .responseText);
+								
+								scene = this .createScene ();
+								
+								new XMLParser (scene, dom) .parseIntoScene ();
+
+								scene .setup ();
+								
+								success = true;
+							}
+							catch (error)
+							{ }
+						}
+					},
+				});
+				
+				if (success)
+					break;
+			}
+
+			if (success)
+				return scene;
+
+			throw Error ("Couldn't load any url of '" + url .getValue () .join (", ") + "'.");
 		},
 		loadURL: function (url, parameter)
 		{

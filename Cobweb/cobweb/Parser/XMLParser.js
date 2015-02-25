@@ -24,6 +24,18 @@ function ($, Fields, Parser, X3DConstants)
 			{
 				switch (this .dom .nodeName)
 				{
+					case "#document":
+					{
+						var x3d = $(this .dom) .children ("X3D");
+						
+						for (var i = 0; i < x3d .length; ++ i)
+						{
+							this .dom = x3d [i];
+							this .x3d (this .dom);
+						}
+
+						break;
+					}
 					case "X3D":
 					{
 						this .x3d (this .dom);
