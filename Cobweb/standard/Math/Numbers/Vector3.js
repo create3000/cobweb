@@ -127,15 +127,39 @@ function (Algorithm)
 		},
 		min: function (vector)
 		{
-			return new Vector3 (Math .min (this .x, vector .x),
-			                    Math .min (this .y, vector .y),
-			                    Math .min (this .z, vector .z));
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z;
+
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .min (x, vector .x);
+				y = Math .min (y, vector .y);
+				z = Math .min (z, vector .z);
+			}
+
+			return new Vector3 (x, y, z);
 		},
 		max: function (vector)
 		{
-			return new Vector3 (Math .max (this .x, vector .x),
-			                    Math .max (this .y, vector .y),
-			                    Math .max (this .z, vector .z));
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z;
+
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .max (x, vector .x);
+				y = Math .max (y, vector .y);
+				z = Math .max (z, vector .z);
+			}
+
+			return new Vector3 (x, y, z);
 		},
 		toString: function ()
 		{

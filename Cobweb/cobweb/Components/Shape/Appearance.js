@@ -47,6 +47,31 @@ function ($,
 			{
 				return "appearance";
 			},
+			initialize: function ()
+			{
+				X3DAppearanceNode .prototype .initialize .call (this);
+				
+				this .material_ .addInterest (this, "set_material__");
+				
+				this .set_material__ ();
+			},
+			isTransparent: function ()
+			{
+				return this .materialNode .isTransparent ();
+			},
+			set_material__: function ()
+			{
+				this .materialNode = this .material_ .getValue ();
+				
+				if (! this .materialNode)
+					this .materialNode = this .getBrowser () .getDefaultMaterial ();
+			},
+			traverse: function ()
+			{
+				var browser = this .getBrowser ();
+
+				browser .setMaterial (this .materialNode);
+			},
 		});
 
 		return Appearance;

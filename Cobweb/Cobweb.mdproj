@@ -404,6 +404,11 @@
     <None Include="standard\Networking\URI.js" />
     <None Include="Inline.x3d" />
     <None Include="Inline.wrl" />
+    <None Include="cobweb\Browser\Networking\X3DNetworkingContext.js" />
+    <None Include="cobweb\Browser\Shape\X3DShapeContext.js" />
+    <None Include="cobweb\Rendering\X3DRenderer.js" />
+    <None Include="standard\Math\Geometry\Box3.js" />
+    <None Include="standard\Math\Algorithms\QuickSort.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="jam\" />
@@ -440,6 +445,8 @@
     <Folder Include="jam\text\" />
     <Folder Include="jam\jquery-mousewheel\" />
     <Folder Include="standard\Networking\" />
+    <Folder Include="cobweb\Browser\Networking\" />
+    <Folder Include="cobweb\Browser\Shape\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

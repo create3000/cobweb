@@ -106,13 +106,35 @@ function (Algorithm)
 		},
 		min: function (vector)
 		{
-			return new Vector2 (Math .min (this .x, vector .x),
-			                    Math .min (this .y, vector .y));
+			var
+				x = this .x,
+				y = this .y;
+
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .min (x, vector .x);
+				y = Math .min (y, vector .y);
+			}
+
+			return new Vector2 (x, y);
 		},
 		max: function (vector)
 		{
-			return new Vector2 (Math .max (this .x, vector .x),
-			                    Math .max (this .y, vector .y));
+			var
+				x = this .x,
+				y = this .y;
+
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .max (x, vector .x);
+				y = Math .max (y, vector .y);
+			}
+
+			return new Vector2 (x, y);
 		},
 		toString: function ()
 		{

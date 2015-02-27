@@ -54,6 +54,10 @@ function ($,
 			{
 				return "material";
 			},
+			isTransparent: function ()
+			{
+				return this .transparency_ || this .backTransparency_;
+			},
 		});
 
 		return TwoSidedMaterial;

@@ -59,7 +59,7 @@ function ($)
 		                    this .value .leadingSeparator,
 		                    this .value .trailingSeparator);
 		},
-		get root ()
+		get origin ()
 		{
 			return new Path ([ ], 
 		                    this .value .separator,
@@ -81,7 +81,7 @@ function ($)
 				case 1:
 				{
 					if (this .value .leadingSeparator)
-						return this .root;
+						return this .origin;
 
 					return new Path ([ ".." ], this .value .separator, false, false);
 				}
@@ -367,7 +367,7 @@ function ($)
 		{
 			return this .toString ();
 		},
-		get root ()
+		get origin ()
 		{
 			return new URI (this .value .local,
 			                this .value .absolute,

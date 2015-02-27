@@ -18,6 +18,7 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			
 			this .url                = new URI (window .location);
 			this .uninitializedNodes = [ ];
+			this .namedNodes         = { };
 		}
 
 		X3DExecutionContext .prototype = $.extend (new X3DBaseNode (),
@@ -39,18 +40,70 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			{
 				return this .url;
 			},
-			createNode: function (typeName, initialize)
+			createNode: function (typeName, setup)
 			{
 				var node = new (this .getBrowser () .supportedNodes [typeName .toUpperCase ()]) (this);
 				
-				if (initialize === false)
+				if (setup === false)
 					return node;
+
+				node .setup ();
 
 				return new SFNode (node);
 			},
 			addUninitializedNode: function (node)
 			{
 				this .uninitializedNodes .push (node);
+			},
+			addNamedNode: function (name, node)
+			{
+				if (this .namedNodes [name] !== undefined)
+					throw Error ("Couldn't add named node: node name '" + name + "' is already in use.");
+				
+				this .addNamedNode (name, node);
+			},
+			updateNamedNode: function (name, node)
+			{
+				name = String (name);
+				
+				if (node instanceof X3DBaseNode)
+					node = new SFNode (node);
+
+				if (! (node instanceof SFNode))
+					throw Error ("Couldn't update named node: node must be of type SFNode.");
+
+				if (! node .getValue ())
+					throw Error ("Couldn't update named node: node IS NULL.");
+
+				if (node .getValue () .getExecutionContext () !== this)
+					throw Error ("Couldn't update named node: the node does not belong to this execution context.");
+
+				if (name .length === 0)
+					throw Error ("Couldn't update named node: node name is empty.");
+
+				// Remove named node.
+
+				this .removeNamedNode (node .getValue () .getName ());
+				this .removeNamedNode (name);
+
+				// Update named node.
+
+				node .getValue () .setName (name);
+
+				this .namedNodes [name] = node;
+			},
+			removeNamedNode: function (name)
+			{
+				delete this .namedNodes [name];
+			},
+			getNamedNode: function (name)
+			{
+				var node = this .namedNodes [name];
+
+				if (node !== undefined)
+					return node;
+
+				throw Error ("Named node '" + name + "' not found.");
 			},
 			setRootNodes: function () { },
 			getRootNodes: function ()

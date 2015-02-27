@@ -47,6 +47,10 @@ function ($,
 			{
 				return "material";
 			},
+			isTransparent: function ()
+			{
+				return this .transparency_ .getValue ();
+			},
 		});
 
 		return Material;

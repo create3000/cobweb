@@ -30,7 +30,7 @@ function ($,
 
 			this .addType (X3DConstants .Inline);
 
-			this .scene    = this .getBrowser () .createScene ();
+			this .scene    = this .getBrowser () .getDefaultScene ();
 			this .group    = new Group (executionContext);
 			this .traverse = this .group .traverse .bind (this .group);
 		}
@@ -78,7 +78,7 @@ function ($,
 				catch (error)
 				{
 					console .log (error .message);
-					this .setScene (this .getBrowser () .createScene ());
+					this .setScene (this .getBrowser () .getDefaultScene ());
 				}
 			},
 			setScene: function (scene)

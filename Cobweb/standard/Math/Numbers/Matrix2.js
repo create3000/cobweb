@@ -41,10 +41,6 @@ function (Algorithm)
 
 			return true;
 		},
-		submatrix: function ()
-		{
-			return this .value [0];
-		},
 		set1: function (r, c, value)
 		{
 			this [r * this .order + c] = value;
@@ -74,6 +70,27 @@ function (Algorithm)
 			}
 		},
 	};
+
+	Object .defineProperty (Matrix2 .prototype, "x",
+	{
+		get: function () { return this [0]; },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix2 .prototype, "origin",
+	{
+		get: function () { return nthis [2]; },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix2 .prototype, "submatrix",
+	{
+		get: function () { return this .value [0]; },
+		enumerable: false,
+		configurable: false
+	});
 
 	return Matrix2;
 });

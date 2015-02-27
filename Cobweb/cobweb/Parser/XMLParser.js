@@ -85,7 +85,12 @@ function ($, Fields, Parser, X3DConstants)
 			{
 				try
 				{
+					if (this .USE (element))
+						return;
+				
 					var node = this .currentScene .createNode (element .nodeName, false);
+					
+					this .DEF (element, node);
 					this .addNode (element, node);
 					this .nodes .push (node);
 					this .attributes (element .attributes, node);
@@ -98,6 +103,40 @@ function ($, Fields, Parser, X3DConstants)
 					//console .log (error);
 					console .warn ("Unknown node type '" + element .nodeName + "'.");
 				}
+			},
+			DEF: function (element, node)
+			{
+				try
+				{
+					var name = element .getAttribute ("DEF");
+
+					if (name)
+						this .currentScene .updateNamedNode (name, node);
+				}
+				catch (error)
+				{ }
+			},
+			USE: function (element)
+			{
+				try
+				{
+					var name = element .getAttribute ("USE");
+
+					if (name)
+					{
+						var node = this .currentScene .getNamedNode (name);
+
+						this .addNode (element, node .getValue ());
+
+						return true;
+					}
+				}
+				catch (error)
+				{
+					//console .log (error .message);
+				}
+
+				return false;
 			},
 			addNode: function (element, node)
 			{
@@ -119,7 +158,9 @@ function ($, Fields, Parser, X3DConstants)
 						}
 					}
 					catch (error)
-					{ }
+					{
+						//console .log (error .message);
+					}
 
 					try
 					{
@@ -132,7 +173,9 @@ function ($, Fields, Parser, X3DConstants)
 							return field .push (node);
 					}
 					catch (error)
-					{ }
+					{
+						//console .log (error .message);
+					}
 				}
 				else
 					this .currentScene .rootNodes .push (node);
@@ -151,18 +194,12 @@ function ($, Fields, Parser, X3DConstants)
 					var field     = node .getField (name);
 					var fieldType = this .fieldTypes [field .getType ()];
 
-					if (fieldType === undefined)
-						return false;
-
 					this .parser .setInput (value);
 
 					fieldType .call (this .parser, field);
 				}
 				catch (error)
-				{
-					console .log (error);
-					return false;
-				}
+				{ }
 			},
 		};
 
@@ -171,7 +208,7 @@ function ($, Fields, Parser, X3DConstants)
 		XMLParser .prototype .fieldTypes [X3DConstants .SFColor]     = Parser .prototype .sfcolorValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFColorRGBA] = Parser .prototype .sfcolorrgbaValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFDouble]    = Parser .prototype .sfdoubleValue;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFFloat]     = Parser .prototype .sffloatValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFFloat]     = Parser .prototype .sfdoubleValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFImage]     = Parser .prototype .sfimageValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFInt32]     = Parser .prototype .sfint32Value;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3f]  = Parser .prototype .sfmatrix4Value;

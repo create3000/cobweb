@@ -80,16 +80,6 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 
 			return true;
 		},
-		origin: function ()
-		{
-			return new Vector3 (this [12], this [13], this [14]);
-		},
-		submatrix: function ()
-		{
-			return new Matrix3 (this [ 0], this [ 1], this [ 2],
-			                    this [ 4], this [ 5], this [ 6],
-			                    this [ 8], this [ 9], this [10]);
-		},
 		rotation: function ()
 		{
 			var quat = [ ];
@@ -270,7 +260,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 			{
 				case 1:
 				{
-					translation .assign (this .origin ());
+					translation .assign (this .origin);
 					break;
 				}
 				case 2:
@@ -278,7 +268,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 					var rot   = Matrix3 ();
 					var so    = Matrix3 ();
 					var scale = new Vector3 ();
-					factor (translation, rot, scaleFactor, so);
+					this .factor (translation, rot, scaleFactor, so);
 					rotation .assign (Matrix4 .Matrix3 (rot) .rotation ());
 					break;
 				}
@@ -286,7 +276,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 				{
 					var rot   = Matrix3 ();
 					var so    = Matrix3 ();
-					factor (translation, rot, scaleFactor, so);
+					this .factor (translation, rot, scaleFactor, so);
 					rotation .assign (Matrix4 .Matrix3 (rot) .rotation ());
 					break;
 				}
@@ -294,7 +284,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 				{
 					var rot   = Matrix3 ();
 					var so    = Matrix3 ();
-					factor (translation, rot, scaleFactor, so);
+					this .factor (translation, rot, scaleFactor, so);
 					rotation .assign (Matrix4 .Matrix3 (rot) .rotation ());
 					scaleOrientation .assign (Matrix4 .Matrix3 (so) .rotation ());
 					break;
@@ -315,10 +305,10 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 		factor: function (translation, rotation, scale, scaleOrientation)
 		{
 			// (1) Get translation.
-			translation .assign (this .origin ());
+			translation .assign (this .origin);
 
 			// (2) Create 3x3 matrix.
-			var a = this .submatrix ();
+			var a = this .submatrix;
 
 			// (3) Compute det A. If negative, set sign = -1, else sign = 1
 			var det      = a .determinant ();
@@ -355,7 +345,16 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 		},
 		determinant3: function ()
 		{
-			return this .determinant3_ (0, 1, 2, 0, 1, 2);
+			return this [0] * (this [5] * this [10] - this [6] * this [9]) -
+			       this [1] * (this [4] * this [10] - this [6] * this [8]) +
+			       this [2] * (this [4] * this [ 9] - this [5] * this [8]);
+		},
+		determinant: function ()
+		{
+			return this [ 3] * this .determinant3_ (1, 2, 3, 0, 1, 2) +
+			       this [ 7] * this .determinant3_ (0, 2, 3, 0, 1, 2) +
+			       this [11] * this .determinant3_ (0, 1, 3, 0, 1, 2) +
+			       this [15] * this .determinant3_ (0, 1, 2, 0, 1, 2);
 		},
 		determinant3_: function (r1, r2, r3, c1, c2, c3)
 		{
@@ -374,13 +373,6 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 			var M31 =   a12 * a23 - a22 * a13;
 
 			return a11 * M11 + a21 * M21 + a31 * M31;
-		},
-		determinant: function ()
-		{
-			return this [ 3] * this .determinant3_ (1, 2, 3, 0, 1, 2) +
-			       this [ 7] * this .determinant3_ (0, 2, 3, 0, 1, 2) +
-			       this [11] * this .determinant3_ (0, 1, 3, 0, 1, 2) +
-			       this [15] * this .determinant3_ (0, 1, 2, 0, 1, 2);
 		},
 		transpose: function ()
 		{
@@ -525,6 +517,46 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 			this [10] *= scale .z;
 		},
 	};
+
+	Object .defineProperty (Matrix4 .prototype, "x",
+	{
+		get: function () { return new Vector3 (this [ 0], this [ 1], this [ 2]); },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix4 .prototype, "y",
+	{
+		get: function () { return new Vector3 (this [ 4], this [ 5], this [ 6]); },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix4 .prototype, "z",
+	{
+		get: function () { return new Vector3 (this [ 8], this [ 9], this [10]); },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix4 .prototype, "origin",
+	{
+		get: function () { return new Vector3 (this [12], this [13], this [14]); },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix4 .prototype, "submatrix",
+	{
+		get: function ()
+		{
+			return new Matrix3 (this [ 0], this [ 1], this [ 2],
+			                    this [ 4], this [ 5], this [ 6],
+			                    this [ 8], this [ 9], this [10]);
+		},
+		enumerable: false,
+		configurable: false
+	});
 
 	return Matrix4;
 });

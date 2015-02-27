@@ -51,19 +51,21 @@ function ($,
 
 				for (var i = 0; i < options .normals .length; ++ i)
 					this .addNormal (options .normals [i]);
-				
+
 				if (this .size_ .getValue () .equals (new Vector3 (2, 2, 2)))
 				{
-					for (var i = 0; i < options .vertices .length; ++ i)
-						this .addVertex (options .vertices [i]);			
+					for (var i = 0; i < options .triangles .length; ++ i)
+						this .addVertex (options .triangles [i]);			
 				}
 				else
 				{
 					var size1_2 = this .size_ .getValue () .divide (2);
 
-					for (var i = 0; i < options .vertices .length; ++ i)
-						this .addVertex (options .vertices [i] .multVec (size1_2));			
+					for (var i = 0; i < options .triangles .length; ++ i)
+						this .addVertex (options .triangles [i] .multVec (size1_2));			
 				}
+	
+				this .setSolid (this .solid_ .getValue ());
 			},
 		});
 

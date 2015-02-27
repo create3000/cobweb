@@ -1,36 +1,31 @@
 precision mediump float;
 
-float ambientIntensity = 0.0;
-vec3  diffuseColor     = vec3 (0.8, 0.8, 0.8);
-vec3  specularColor    = vec3 (0.0, 0.0, 0.0);
-vec3  emissiveColor    = vec3 (0.0, 0.0, 0.0);
-float shininess        = 0.2;
-float transparency     = 0.0;
+uniform float ambientIntensity;
+uniform vec3  diffuseColor;
+uniform vec3  specularColor;
+uniform vec3  emissiveColor;
+uniform float shininess;
+uniform float transparency;
 
 varying vec3 v;
-varying vec3 N;
+varying vec3 N; // normalized normal vector at this point on geometry
 
 void
 main ()
 {
-	float alpha     = 1.0 - transparency;
-	vec4 finalColor = vec4 (0.0, 0.0, 0.0, 0.0);
+	float alpha      = 1.0 - transparency;
+	vec4  finalColor = vec4 (0.0, 0.0, 0.0, 0.0);
 
-	vec3 L = normalize (-v);
-	vec3 E = normalize (-v);
-	vec3 R = normalize (-reflect (L, N));
+	vec3 L = normalize (-v);    // normalized vector from point on geometry to light source i position
+	vec3 V = normalize (-v);    // normalized vector from point on geometry to viewer's position
+	vec3 H = normalize (L + V); // specular term
 
-	vec4 ambientTerm = vec4 (diffuseColor * ambientIntensity, alpha);
+	vec3 ambientTerm  = diffuseColor * ambientIntensity;
+	vec3 diffuseTerm  = diffuseColor * max (dot (N, L), 0.0);
+	vec3 specularTerm = specularColor * pow (max (dot (N, H), 0.0), 128.0 * shininess);
+	vec3 emissiveTerm = emissiveColor;
 
-	vec4 diffuseTerm = vec4 (diffuseColor, alpha) * max (dot (N, L), 0.0);
-	diffuseTerm = clamp (diffuseTerm, 0.0, 1.0);
-
-	vec4 specularTerm = vec4 (specularColor, alpha) * pow (max (dot (R, E), 0.0), 0.3 * shininess);
-	specularTerm = clamp (specularTerm, 0.0, 1.0);
-
-	vec4 emissiveTerm = vec4 (emissiveColor, alpha);
-
-	finalColor += ambientTerm + diffuseTerm + specularTerm + emissiveTerm;
+	finalColor += vec4 (ambientTerm + diffuseTerm + specularTerm + emissiveTerm, alpha);
 
 	gl_FragColor = finalColor;
 }

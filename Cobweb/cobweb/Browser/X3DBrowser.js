@@ -88,6 +88,8 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 					url: URL .isLocal () ? new URI (window .location) .getRelativePath (URL) : URL,
 					dataType: "text",
 					async: false,
+					//timeout: 15000,
+					global: false,
 					context: this,
 					complete: function (xhr, status)
 					{
@@ -97,16 +99,25 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 							{
 								var dom = $.parseXML (xhr .responseText);
 								
-								scene = this .createScene ();
-								
-								new XMLParser (scene, dom) .parseIntoScene ();
+								try
+								{
+									scene = this .createScene ();
+									
+									new XMLParser (scene, dom) .parseIntoScene ();
 
-								scene .setup ();
-								
-								success = true;
+									scene .setup ();
+									
+									success = true;
+								}
+								catch (error)
+								{
+									console .log (error);
+								}
 							}
 							catch (error)
-							{ }
+							{
+								//console .log (error);
+							}
 						}
 					},
 				});

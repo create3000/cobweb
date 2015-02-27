@@ -1,7 +1,7 @@
 
 define ([
 	"jquery",
-	"standard/Math/Algorithm"
+	"standard/Math/Algorithm",
 ],
 function ($, Algorithm)
 {
@@ -37,6 +37,12 @@ function ($, Algorithm)
 	{
 		constructor: Color3,
 		length: 3,
+		copy: function ()
+		{
+			return new Color3 (this .r,
+			                   this .g,
+			                   this .b);
+		},
 		assign: function (color)
 		{
 			this .r = color .r;
@@ -118,6 +124,12 @@ function ($, Algorithm)
 					default: this .r_ = v; this .g_ = p; this .b_ = q; break;
 				}
 			}
+		},
+		toString: function ()
+		{
+			return this .r + " " +
+			       this .g + " " +
+			       this .b;
 		},
 	};
 

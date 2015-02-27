@@ -3,13 +3,18 @@ define ([
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Numbers/Vector3",
 ],
-function ($, X3DNode, X3DConstants)
+function ($, X3DNode, X3DConstants, Box3, Vector3)
 {
 	function X3DGeometryNode (browser, executionContext)
 	{
 		X3DNode .call (this, browser, executionContext);
 
+		this .bbox     = new Box3 ();
+		this .solid    = true;
+		this .ccw      = true;
 		this .normals  = [ ];
 		this .vertices = [ ];
 
@@ -34,6 +39,18 @@ function ($, X3DNode, X3DConstants)
 			this .normalBuffer = gl .createBuffer ();
 			this .vertexBuffer = gl .createBuffer ();
 		},
+		getBBox: function ()
+		{
+			return this .bbox;
+		},
+		setSolid: function (value)
+		{
+			this .solid = value;
+		},
+		setCCW: function (value)
+		{
+			this .ccw = value;
+		},
 		addNormal: function (normal)
 		{
 			this .normals .push (normal .x);
@@ -42,6 +59,9 @@ function ($, X3DNode, X3DConstants)
 		},
 		addVertex: function (vertex)
 		{
+			this .min = this .min .min (vertex);
+			this .max = this .max .max (vertex);
+
 			this .vertices .push (vertex .x);
 			this .vertices .push (vertex .y);
 			this .vertices .push (vertex .z);
@@ -51,10 +71,16 @@ function ($, X3DNode, X3DConstants)
 		{
 			this .clear ();
 			this .build ();
+
+			this .bbox = this .vertices .length ? new Box3 (this .min, this .max, true) : new Box3 ();
+
 			this .transfer ();
 		},
 		clear: function ()
 		{
+			this .min = new Vector3 (Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+			this .max = new Vector3 (Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
+		
 			this .normals  .length = 0;
 			this .vertices .length = 0;
 		},
@@ -69,31 +95,25 @@ function ($, X3DNode, X3DConstants)
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
 			this .vertices .count = this .vertices .length / 4;
   		},
-		traverse: function ()
+		traverse: function (context)
 		{
 			var gl = this .getBrowser () .getContext ();
+		
+			if (this .solid)
+				gl .enable (gl .CULL_FACE);
+			else
+				gl .disable (gl .CULL_FACE);
+	
+			gl .frontFace (context .modelViewMatrix .determinant3 () > 0 ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
 
 			// Shader
 
 			var shader = this .getBrowser () .getDefaultShader ();
 
-			shader .use ();
+			shader .use (context);
 
-			var normalMatrix     = gl .getUniformLocation (shader .program, "normalMatrix");
-			var projectionMatrix = gl .getUniformLocation (shader .program, "projectionMatrix");
-			var modelViewMatrix  = gl .getUniformLocation (shader .program, "modelViewMatrix");
-
-			if (normalMatrix)
-				gl .uniformMatrix3fv (normalMatrix, false, new Float32Array (this .getBrowser () .getModelViewMatrix () .get () .submatrix () .inverse () .transpose ()));
-
-			if (projectionMatrix)
-				gl .uniformMatrix4fv (projectionMatrix, false, new Float32Array (this .getBrowser () .getProjectionMatrix () .get ()));
-
-			if (modelViewMatrix)
-				gl .uniformMatrix4fv (modelViewMatrix, false, new Float32Array (this .getBrowser () .getModelViewMatrix () .get ()));
-
-			var normal   = gl .getAttribLocation (shader .program, "normal");
-			var position = gl .getAttribLocation (shader .program, "position");
+			var normal   = shader .normal;
+			var position = shader .position;
 
 			//
 

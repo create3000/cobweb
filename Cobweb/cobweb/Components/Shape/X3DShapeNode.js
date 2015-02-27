@@ -26,11 +26,35 @@ function ($,
 		{
 			X3DChildNode     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
+
+			this .appearance_ .addInterest (this, "set_apparance__");
+			this .geometry_   .addInterest (this, "set_geometry__");
+
+			this .set_apparance__ ();
+			this .set_geometry__ ();
 		},
-		traverse: function (type)
+		isTransparent: function ()
 		{
-			if (this .geometry_ .getValue ())
-				this .geometry_ .getValue () .traverse (type);
+			return this .apparanceNode .isTransparent ();
+		},
+		getAppearance: function ()
+		{
+			return this .apparanceNode;
+		},
+		getGeometry: function ()
+		{
+			return this .geometryNode;
+		},
+		set_apparance__: function ()
+		{
+			this .apparanceNode = this .appearance_ .getValue ();
+			
+			if (! this .apparanceNode)
+				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
+		},
+		set_geometry__: function ()
+		{
+			this .geometryNode = this .geometry_ .getValue ();
 		},
 	});
 

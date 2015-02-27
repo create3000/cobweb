@@ -6,6 +6,8 @@ define ([
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
 	"cobweb/Browser/Layering/X3DLayeringContext",
 	"cobweb/Browser/Navigation/X3DNavigationContext",
+	"cobweb/Browser/Networking/X3DNetworkingContext",
+	"cobweb/Browser/Shape/X3DShapeContext",
 	"cobweb/Browser/Time/X3DTimeContext",
 	"cobweb/Routing/X3DRoutingContext",
 	"cobweb/Execution/World",
@@ -17,9 +19,11 @@ function ($,
           X3DGeometry3DContext,
           X3DLayeringContext,
           X3DNavigationContext,
+          X3DNetworkingContext,
+          X3DShapeContext,
           X3DTimeContext,
           X3DRoutingContext,
-         World,
+          World,
           TraverseType)
 {
 	function X3DBrowserContext (x3d)
@@ -29,6 +33,8 @@ function ($,
 		X3DGeometry3DContext .call (this);
 		X3DLayeringContext   .call (this);
 		X3DNavigationContext .call (this);
+		X3DNetworkingContext .call (this);
+		X3DShapeContext      .call (this);
 		X3DTimeContext       .call (this);
 		X3DRoutingContext    .call (this);
 
@@ -41,6 +47,8 @@ function ($,
 		X3DGeometry3DContext .prototype,
 		X3DLayeringContext .prototype,
 		X3DNavigationContext .prototype,
+		X3DNetworkingContext .prototype,
+		X3DShapeContext .prototype,
 		X3DTimeContext .prototype,
 		X3DRoutingContext .prototype,
 	{
@@ -52,6 +60,8 @@ function ($,
 			X3DGeometry3DContext .prototype .initialize .call (this);
 			X3DLayeringContext   .prototype .initialize .call (this);
 			X3DNavigationContext .prototype .initialize .call (this);
+			X3DNetworkingContext .prototype .initialize .call (this);
+			X3DShapeContext      .prototype .initialize .call (this);
 			X3DTimeContext       .prototype .initialize .call (this);
 			X3DRoutingContext    .prototype .initialize .call (this);
 		},

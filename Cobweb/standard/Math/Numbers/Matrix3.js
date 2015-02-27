@@ -67,15 +67,6 @@ function (Vector2, Vector3, Matrix3, eigendecomposition)
 
 			return true;
 		},
-		origin: function ()
-		{
-			return new Vector2 (this [6], this [7]);
-		},
-		submatrix: function ()
-		{
-			return new Matrix2 (this [0], this [1],
-			                    this [3], this [4]);
-		},
 		rotation: function ()
 		{
 			return math .atan2 (this [1], this [0]);
@@ -353,6 +344,38 @@ function (Vector2, Vector3, Matrix3, eigendecomposition)
 			value [4] *= scale .y;
 		},
 	};
+
+	Object .defineProperty (Matrix3 .prototype, "x",
+	{
+		get: function () { return new Vector2 (this [0], this [1]); },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix3 .prototype, "y",
+	{
+		get: function () { return new Vector2 (this [3], this [4]); },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix3 .prototype, "origin",
+	{
+		get: function () { return new Vector2 (this [6], this [7]); },
+		enumerable: false,
+		configurable: false
+	});
+
+	Object .defineProperty (Matrix3 .prototype, "submatrix",
+	{
+		get: function ()
+		{
+			return new Matrix2 (this [0], this [1],
+			                    this [3], this [4]);
+		},
+		enumerable: false,
+		configurable: false
+	});
 
 	return Matrix3;
 });

@@ -136,17 +136,43 @@ function (Algorithm)
 		},
 		min: function (vector)
 		{
-			return new Vector4 (Math .min (this .x, vector .x),
-			                    Math .min (this .y, vector .y),
-			                    Math .min (this .z, vector .z),
-			                    Math .min (this .w, vector .w));
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z,
+				w = this .w;
+
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .min (x, vector .x);
+				y = Math .min (y, vector .y);
+				z = Math .min (z, vector .z);
+				w = Math .min (w, vector .w);
+			}
+
+			return new Vector4 (x, y, z, w);
 		},
 		max: function (vector)
 		{
-			return new Vector4 (Math .max (this .x, vector .x),
-			                    Math .max (this .y, vector .y),
-			                    Math .max (this .z, vector .z),
-			                    Math .max (this .w, vector .w));
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z,
+				w = this .w;
+
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .max (x, vector .x);
+				y = Math .max (y, vector .y);
+				z = Math .max (z, vector .z);
+				w = Math .max (w, vector .w);
+			}
+
+			return new Vector4 (x, y, z, w);
 		},
 		toString: function ()
 		{
@@ -154,7 +180,7 @@ function (Algorithm)
 			       this .y + " " +
 			       this .z + " " +
 			       this .w;
-		}
+		},
 	};
 
 	Object .defineProperty (Vector4 .prototype, "0",

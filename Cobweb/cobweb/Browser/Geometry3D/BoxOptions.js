@@ -34,7 +34,7 @@ function ($, X3DBaseNode, Vector3)
 			new Vector3 ( 0, -1,  0), new Vector3 ( 0, -1,  0), new Vector3 ( 0, -1,  0),
 			new Vector3 ( 0, -1,  0), new Vector3 ( 0, -1,  0), new Vector3 ( 0, -1,  0),
 		],
-		vertices: [
+		triangles: [
 			// front
 			new Vector3 ( 1,  1,  1), new Vector3 (-1,  1,  1), new Vector3 (-1, -1,  1),
 			new Vector3 ( 1,  1,  1), new Vector3 (-1, -1,  1), new Vector3 ( 1, -1,  1), 
@@ -53,6 +53,18 @@ function ($, X3DBaseNode, Vector3)
 			// bottom
 			new Vector3 ( 1, -1, -1), new Vector3 (-1, -1,  1), new Vector3 (-1, -1, -1),
 			new Vector3 ( 1, -1, -1), new Vector3 ( 1, -1,  1), new Vector3 (-1, -1,  1),
+		],
+		lines: [
+			// front	
+			new Vector3 ( 1,  1,  1), new Vector3 (-1,  1,  1), new Vector3 (-1, -1,  1), new Vector3 ( 1, -1,  1), new Vector3 ( 1,  1,  1), 
+			// back	
+			new Vector3 ( 1,  1, -1), new Vector3 (-1,  1, -1), new Vector3 (-1, -1, -1), new Vector3 ( 1, -1, -1), new Vector3 ( 1,  1, -1), 
+			// top
+			new Vector3 ( 1,  1,  1), new Vector3 ( 1,  1, -1), 
+			new Vector3 (-1,  1,  1), new Vector3 (-1,  1, -1), 
+			// bottom
+			new Vector3 ( 1, -1,  1), new Vector3 ( 1, -1, -1), 
+			new Vector3 (-1, -1,  1), new Vector3 (-1, -1, -1), 
 		],
 	});
 

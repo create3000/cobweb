@@ -2,6 +2,7 @@
 define ([
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
+	"cobweb/Rendering/X3DRenderer",
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Components/Navigation/NavigationInfo",
 	"cobweb/Bits/TraverseType",
@@ -11,6 +12,7 @@ define ([
 ],
 function ($,
           X3DNode,
+          X3DRenderer,
           X3DViewportNode,
           NavigationInfo,
           TraverseType,
@@ -20,7 +22,8 @@ function ($,
 {
 	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode     .call (this, browser, executionContext);
+		X3DRenderer .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
@@ -29,13 +32,15 @@ function ($,
 	}
 
 	X3DLayerNode .prototype = $.extend (new X3DNode (),
+		X3DRenderer .prototype,
 	{
 		constructor: X3DLayerNode,
 		layer0: false,
 		initialize: function ()
 		{
-			X3DNode .prototype .initialize .call (this);
-		
+			X3DNode     .prototype .initialize .call (this);
+			X3DRenderer .prototype .initialize .call (this);
+
 			this .defaultNavigationInfo = new NavigationInfo (this .getExecutionContext ());
 
 			this .currentViewport     = null;
@@ -85,7 +90,7 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			this .getBrowser () .getLayers () .unshift (this);
+			this .getBrowser () .getLayers () .push (this);
 
 			switch (type)
 			{
@@ -106,7 +111,7 @@ function ($,
 					break;
 			}
 
-			this .getBrowser () .getLayers () .shift ();
+			this .getBrowser () .getLayers () .pop ();
 		},
 		pointer: function ()
 		{
@@ -147,7 +152,7 @@ function ($,
 			this .getViewpoint () .transform ();
 
 			this .currentViewport .push (TraverseType .DISPLAY);
-			this .collect (TraverseType .DISPLAY);
+			this .render (TraverseType .DISPLAY);
 			this .currentViewport .pop (TraverseType .DISPLAY);
 			
 			this .getNavigationInfo () .disable ();

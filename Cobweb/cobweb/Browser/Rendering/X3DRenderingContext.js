@@ -1,18 +1,18 @@
 
 define ([
-	"text!cobweb/Browser/Rendering/VertexShader.vs",
-	"text!cobweb/Browser/Rendering/FragmentShader.fs",
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
+	"text!cobweb/Browser/Rendering/VertexShader.vs",
+	"text!cobweb/Browser/Rendering/FragmentShader.fs",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
 	"jquery-plugin/jquery.ba-resize.min",
 ],
-function (vertexShaderText,
-          fragmentShaderText,
-          ComposedShader,
+function (ComposedShader,
           ShaderPart,
+          vertexShaderText,
+          fragmentShaderText,
           Vector4,
           Matrix4,
           MatrixStack)
@@ -45,7 +45,7 @@ function (vertexShaderText,
 			gl .clearDepth (1.0);
 
 			gl .blendFuncSeparate (gl .SRC_ALPHA, gl .ONE_MINUS_SRC_ALPHA, gl .ONE, gl .ONE_MINUS_SRC_ALPHA);
-			gl .disable (gl .BLEND);
+			gl .enable (gl .BLEND);
 
 			// Create default shader.
 
