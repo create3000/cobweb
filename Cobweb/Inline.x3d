@@ -6,7 +6,7 @@
     <meta name='created' content='Thu, 19 Feb 2015 06:21:38 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 27 Feb 2015 00:16:12 GMT'/>
+    <meta name='modified' content='Fri, 27 Feb 2015 00:42:02 GMT'/>
   </head>
   <Scene>
     <Transform
@@ -21,8 +21,7 @@
               specularColor='0.251984 0.251984 0.251984'
               shininess='0.6'/>
         </Appearance>
-        <Box DEF='_1'
-            size='1 1 1'/>
+        <Box DEF='_1'/>
       </Shape>
     </Transform>
     <Transform
@@ -37,7 +36,8 @@
               shininess='0.787879'
               transparency='0.3'/>
         </Appearance>
-        <Box USE='_1'/>
+        <Box
+            size='1 1 1'/>
       </Shape>
     </Transform>
     <Transform
@@ -52,7 +52,7 @@
               specularColor='0.490909 0.490909 0.490909'
               shininess='0.593939'/>
         </Appearance>
-        <Box/>
+        <Box USE='_1'/>
       </Shape>
     </Transform>
     <Transform
@@ -68,7 +68,7 @@
               shininess='0.806061'
               transparency='0.3'/>
         </Appearance>
-        <Box/>
+        <Box USE='_1'/>
       </Shape>
     </Transform>
     <Transform
@@ -84,7 +84,7 @@
               shininess='0.612121'
               transparency='0.3'/>
         </Appearance>
-        <Box/>
+        <Box USE='_1'/>
       </Shape>
     </Transform>
   </Scene>

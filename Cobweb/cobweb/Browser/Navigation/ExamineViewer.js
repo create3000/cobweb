@@ -58,6 +58,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 			{
 				case 0:
 				{
+					event .preventDefault ();
 					this .disconnect ();
 					//this .getActiveViewpoint () .transitionStop ();
 					//this .getBrowser () .setCursor (Gdk::FLEUR);
@@ -70,6 +71,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 				}
 				case 1:
 				{
+					event .preventDefault ();
 					this .disconnect ();
 					//this .getActiveViewpoint () .transitionStop ();
 					//this .getBrowser () .setCursor (Gdk::FLEUR);
@@ -88,6 +90,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 			{
 				case 0:
 				{
+					event .preventDefault ();
 					//this .getBrowser () .setCursor (Gdk::ARROW);
 
 					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && Date .now () - this .motionTime < SPIN_RELEASE_TIME)
@@ -100,6 +103,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 				}
 				case 1:
 				{
+					event .preventDefault ();
 					//this .getBrowser () .setCursor (Gdk::ARROW);
 					break;
 				}
@@ -139,12 +143,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 				{
 					// Stop event propagation.
 
-					event .stopPropagation ();
-
-					if (event .originalEvent .preventDefault)
-						event .originalEvent .preventDefault ();
-
-					event .originalEvent .returnValue = false;
+					event .preventDefault ();
 
 		         // Move.
 
@@ -164,12 +163,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 		{
 			// Stop event propagation.
 
-			event .stopPropagation ();
-
-			if (event .originalEvent .preventDefault)
-				event .originalEvent .preventDefault ();
-
-			event .originalEvent .returnValue = false;
+			event .preventDefault ();
 
          // Determine scroll direction.
 
