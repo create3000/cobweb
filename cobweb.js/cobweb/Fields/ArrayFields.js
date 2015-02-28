@@ -537,8 +537,8 @@ function ($,
 
 	return {
 		MFBool:      MFBool,
-		SFColor:     SFColor,
-		SFColorRGBA: SFColorRGBA,
+		MFColor:     MFColor,
+		MFColorRGBA: MFColorRGBA,
 		MFDouble:    MFDouble,
 		MFFloat:     MFFloat,
 		MFImage:     MFImage,

@@ -31,15 +31,15 @@ function ($,
 		{
 			X3DGeometryNode .prototype .initialize .call (this);
 
-			//this .attrib_   .addInterest (this, "set_attrib__");
-			//this .color_    .addInterest (this, "set_color__");
-			//this .texCoord_ .addInterest (this, "set_texCoord__");
+			this .attrib_   .addInterest (this, "set_attrib__");
+			this .color_    .addInterest (this, "set_color__");
+			this .texCoord_ .addInterest (this, "set_texCoord__");
 			this .normal_   .addInterest (this, "set_normal__");
 			this .coord_    .addInterest (this, "set_coord__");
 
-			//this .set_attrib__ ();
-			//this .set_color__ ();
-			//this .set_texCoord__ ();
+			this .set_attrib__ ();
+			this .set_color__ ();
+			this .set_texCoord__ ();
 			this .set_normal__ ();
 			this .set_coord__ ();
 		},
@@ -67,25 +67,57 @@ function ($,
 		{
 			return this .coordNode;
 		},
+		set_attrib__: function ()
+		{
+		
+		},
+		set_color__: function ()
+		{
+			if (this .colorNode)
+			{
+				this .colorNode .removeInterest (this, "addNodeEvent");
+				this .colorNode .removeInterest (this, "set_transparency__");
+			}
+
+			this .colorNode = x3d_cast (X3DConstants .X3DColorNode, this .color_);
+
+			if (this .colorNode)
+			{
+				this .colorNode .addInterest (this, "addNodeEvent");
+				this .colorNode .addInterest (this, "set_transparency__");
+
+				this .set_transparency__ ();
+			}
+			else
+				this .transparent = false;
+		},
+		set_transparency__: function ()
+		{
+			transparent = this .colorNode .isTransparent ();
+		},
+		set_texCoord__: function ()
+		{
+		
+		},
 		set_normal__: function ()
 		{
-			//if (this .normalNode)
-			//	this .normalNode .removeInterest (this);
+			if (this .normalNode)
+				this .normalNode .removeInterest (this, "addNodeEvent");
 
 			this .normalNode = x3d_cast (X3DConstants .X3DNormalNode, this .normal_);
 
-			//if (this .normalNode)
-			//	this .normalNode .addInterest (this);
+			if (this .normalNode)
+				this .normalNode .addInterest (this, "addNodeEvent");
 		},
 		set_coord__: function ()
 		{
-			//if (this .coordNode)
-			//	this .coordNode .removeInterest (this);
+			if (this .coordNode)
+				this .coordNode .removeInterest (this, "addNodeEvent");
 
 			this .coordNode = x3d_cast (X3DConstants .X3DCoordinateNode, this .coord_);
 
-			//if (this .coordNode)
-			//	this .coordNode .addInterest (this);
+			if (this .coordNode)
+				this .coordNode .addInterest (this, "addNodeEvent");
 		},
 	});
 

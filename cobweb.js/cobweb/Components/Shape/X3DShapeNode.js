@@ -35,7 +35,8 @@ function ($,
 		},
 		isTransparent: function ()
 		{
-			return this .apparanceNode .isTransparent ();
+			return this .apparanceNode .isTransparent () ||
+			       this .geometryNode .isTransparent ();
 		},
 		getAppearance: function ()
 		{

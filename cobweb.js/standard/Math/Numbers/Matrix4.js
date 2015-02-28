@@ -351,28 +351,27 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 		},
 		determinant: function ()
 		{
-			return this [ 3] * this .determinant3_ (1, 2, 3, 0, 1, 2) +
-			       this [ 7] * this .determinant3_ (0, 2, 3, 0, 1, 2) +
-			       this [11] * this .determinant3_ (0, 1, 3, 0, 1, 2) +
-			       this [15] * this .determinant3_ (0, 1, 2, 0, 1, 2);
-		},
-		determinant3_: function (r1, r2, r3, c1, c2, c3)
-		{
-			var a11 = this [r1 * 4 + c1];
-			var a12 = this [r1 * 4 + c2];
-			var a13 = this [r1 * 4 + c3];
-			var a21 = this [r2 * 4 + c1];
-			var a22 = this [r2 * 4 + c2];
-			var a23 = this [r2 * 4 + c3];
-			var a31 = this [r3 * 4 + c1];
-			var a32 = this [r3 * 4 + c2];
-			var a33 = this [r3 * 4 + c3];
+			var
+				a = this,
+				b = a[10] * a[15],
+				c = a[14] * a[11],
+				d = a[ 6] * a[15],
+				e = a[14] * a[ 7],
+				f = a[ 6] * a[11],
+				g = a[10] * a[ 7],
+				h = a[ 2] * a[15],
+				i = a[14] * a[ 3],
+				j = a[ 2] * a[11],
+				o = a[10] * a[ 3],
+				r = a[ 2] * a[ 7],
+				x = a[ 6] * a[ 3],
+				H = b * a[5] + e * a[9] + f * a[13] - (c * a[5]) - (d * a[9]) - (g * a[13]),
+				I = c * a[1] + h * a[9] + o * a[13] - (b * a[1]) - (i * a[9]) - (j * a[13]),
+				J = d * a[1] + i * a[5] + r * a[13] - (e * a[1]) - (h * a[5]) - (x * a[13]),
+				K = g * a[1] + j * a[5] + x * a[ 9] - (f * a[1]) - (o * a[5]) - (r * a[ 9]),
+				B = a[0] * H + a[4] * I + a[8] * J + a[12] * K;
 
-			var M11 =   a22 * a33 - a32 * a23;
-			var M21 = -(a12 * a33 - a32 * a13);
-			var M31 =   a12 * a23 - a22 * a13;
-
-			return a11 * M11 + a21 * M21 + a31 * M31;
+			return B;
 		},
 		transpose: function ()
 		{
@@ -383,27 +382,59 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 		},
 		inverse: function ()
 		{
-			var det = this .determinant ();
+			var
+				a = this,
+				b = a[10] * a[15],
+				c = a[14] * a[11],
+				d = a[ 6] * a[15],
+				e = a[14] * a[ 7],
+				f = a[ 6] * a[11],
+				g = a[10] * a[ 7],
+				h = a[ 2] * a[15],
+				i = a[14] * a[ 3],
+				j = a[ 2] * a[11],
+				o = a[10] * a[ 3],
+				r = a[ 2] * a[ 7],
+				x = a[ 6] * a[ 3],
+				t = a[ 8] * a[13],
+				p = a[12] * a[ 9],
+				v = a[ 4] * a[13],
+				s = a[12] * a[ 5],
+				y = a[ 4] * a[ 9],
+				z = a[ 8] * a[ 5],
+				A = a[ 0] * a[13],
+				C = a[12] * a[ 1],
+				D = a[ 0] * a[ 9],
+				E = a[ 8] * a[ 1],
+				F = a[ 0] * a[ 5],
+				G = a[ 4] * a[ 1],
+				H = b * a[5] + e * a[9] + f * a[13] - ((c * a[5]) + (d * a[9]) + (g * a[13])),
+				I = c * a[1] + h * a[9] + o * a[13] - ((b * a[1]) + (i * a[9]) + (j * a[13])),
+				J = d * a[1] + i * a[5] + r * a[13] - ((e * a[1]) + (h * a[5]) + (x * a[13])),
+				K = g * a[1] + j * a[5] + x * a[ 9] - ((f * a[1]) + (o * a[5]) + (r * a[ 9])),
+				B = a[0] * H + a[4] * I + a[8] * J + a[12] * K;
 
-			if (det === 0)
+			if (B == 0)
 				throw Error ("Matrix4 .inverse: determinant is 0.");
 
-			return new Matrix4 ( this .determinant3_ (1, 2, 3, 1, 2, 3) / det,
-			                    -this .determinant3_ (0, 2, 3, 1, 2, 3) / det,
-			                     this .determinant3_ (0, 1, 3, 1, 2, 3) / det,
-			                    -this .determinant3_ (0, 1, 2, 1, 2, 3) / det,
-			                    -this .determinant3_ (1, 2, 3, 0, 2, 3) / det,
-			                     this .determinant3_ (0, 2, 3, 0, 2, 3) / det,
-			                    -this .determinant3_ (0, 1, 3, 0, 2, 3) / det,
-			                     this .determinant3_ (0, 1, 2, 0, 2, 3) / det,
-			                     this .determinant3_ (1, 2, 3, 0, 1, 3) / det,
-			                    -this .determinant3_ (0, 2, 3, 0, 1, 3) / det,
-			                     this .determinant3_ (0, 1, 3, 0, 1, 3) / det,
-			                    -this .determinant3_ (0, 1, 2, 0, 1, 3) / det,
-			                    -this .determinant3_ (1, 2, 3, 0, 1, 2) / det,
-			                     this .determinant3_ (0, 2, 3, 0, 1, 2) / det,
-			                    -this .determinant3_ (0, 1, 3, 0, 1, 2) / det,
-			                     this .determinant3_ (0, 1, 2, 0, 1, 2) / det);
+			B = 1 / B;
+
+			return new Matrix4 (B * H,
+				                 B * I,
+				                 B * J,
+				                 B * K,
+				                 B * (c * a[ 4] + d * a[ 8] + g * a[12] - (b * a[ 4]) - (e * a[ 8]) - (f * a[12])),
+				                 B * (b * a[ 0] + i * a[ 8] + j * a[12] - (c * a[ 0]) - (h * a[ 8]) - (o * a[12])),
+				                 B * (e * a[ 0] + h * a[ 4] + x * a[12] - (d * a[ 0]) - (i * a[ 4]) - (r * a[12])),
+				                 B * (f * a[ 0] + o * a[ 4] + r * a[ 8] - (g * a[ 0]) - (j * a[ 4]) - (x * a[ 8])),
+				                 B * (t * a[ 7] + s * a[11] + y * a[15] - (p * a[ 7]) - (v * a[11]) - (z * a[15])),
+				                 B * (p * a[ 3] + A * a[11] + E * a[15] - (t * a[ 3]) - (C * a[11]) - (D * a[15])),
+				                 B * (v * a[ 3] + C * a[ 7] + F * a[15] - (s * a[ 3]) - (A * a[ 7]) - (G * a[15])),
+				                 B * (z * a[ 3] + D * a[ 7] + G * a[11] - (y * a[ 3]) - (E * a[ 7]) - (F * a[11])),
+				                 B * (v * a[10] + z * a[14] + p * a[ 6] - (y * a[14]) - (t * a[ 6]) - (s * a[10])),
+				                 B * (D * a[14] + t * a[ 2] + C * a[10] - (A * a[10]) - (E * a[14]) - (p * a[ 2])),
+				                 B * (A * a[ 6] + G * a[14] + s * a[ 2] - (F * a[14]) - (v * a [2]) - (C * a[ 6])),
+				                 B * (F * a[10] + y * a[ 2] + E * a[ 6] - (D * a[ 6]) - (G * a[10]) - (z * a[ 2])));
 		},
 		multLeft: function (matrix)
 		{

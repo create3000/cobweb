@@ -24,7 +24,7 @@ define (function ()
 		{
 			var i = lo, j = hi;
 
-			// VergleichsÂ­element x
+			// Vergleichs­element x
 			var x = this .array [(lo + hi) >>> 1];
 
 			for (;;)
@@ -33,10 +33,10 @@ define (function ()
 				while (this .compare (x, this .array [j])) -- j;
 
 				if (i < j)
-					this .exchange (++ i, -- j);
+					this .exchange (i ++, j --);
 				else
 				{
-					if (i == j) ++ i, -- j;
+					if (i === j) ++ i, -- j;
 					break;
 				}
 			}

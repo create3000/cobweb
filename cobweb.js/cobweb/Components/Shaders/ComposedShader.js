@@ -84,6 +84,8 @@ function ($,
 
 				gl .useProgram (this .program);
 
+				this .lighting         = gl .getUniformLocation (this .program, "lighting");
+				this .colorMaterial    = gl .getUniformLocation (this .program, "colorMaterial");
 				this .ambientIntensity = gl .getUniformLocation (this .program, "ambientIntensity");
 				this .diffuseColor     = gl .getUniformLocation (this .program, "diffuseColor");
 				this .specularColor    = gl .getUniformLocation (this .program, "specularColor");
@@ -95,6 +97,7 @@ function ($,
 				this .projectionMatrix = gl .getUniformLocation (this .program, "projectionMatrix");
 				this .modelViewMatrix  = gl .getUniformLocation (this .program, "modelViewMatrix");
 
+				this .color    = gl .getAttribLocation (this .program, "color");
 				this .normal   = gl .getAttribLocation (this .program, "normal");
 				this .position = gl .getAttribLocation (this .program, "position");
 			},
@@ -106,17 +109,27 @@ function ($,
 
 				gl .useProgram (this .program);
 
-				gl .uniform1f (this .ambientIntensity, clamp (material .ambientIntensity_ .getValue (), 0, 1));
-				gl .uniform3f (this .diffuseColor,     material .diffuseColor_  .r, material .diffuseColor_  .g, material .diffuseColor_  .b);
-				gl .uniform3f (this .specularColor,    material .specularColor_ .r, material .specularColor_ .g, material .specularColor_ .b);
-				gl .uniform3f (this .emissiveColor,    material .emissiveColor_ .r, material .emissiveColor_ .g, material .emissiveColor_ .b);
-				gl .uniform1f (this .shininess,        clamp (material .shininess_    .getValue (), 0, 1));
-				gl .uniform1f (this .transparency,     clamp (material .transparency_ .getValue (), 0, 1));
+				if (material)
+				{
+					gl .uniform1i (this .lighting,         true);
+					gl .uniform1i (this .colorMaterial,    context .colors);
+					gl .uniform1f (this .ambientIntensity, clamp (material .ambientIntensity_ .getValue (), 0, 1));
+					gl .uniform3f (this .diffuseColor,     material .diffuseColor_  .r, material .diffuseColor_  .g, material .diffuseColor_  .b);
+					gl .uniform3f (this .specularColor,    material .specularColor_ .r, material .specularColor_ .g, material .specularColor_ .b);
+					gl .uniform3f (this .emissiveColor,    material .emissiveColor_ .r, material .emissiveColor_ .g, material .emissiveColor_ .b);
+					gl .uniform1f (this .shininess,        clamp (material .shininess_    .getValue (), 0, 1));
+					gl .uniform1f (this .transparency,     clamp (material .transparency_ .getValue (), 0, 1));
+				}
+				else
+				{
+					gl .uniform1i (this .lighting,      false);				
+					gl .uniform1i (this .colorMaterial, false);
+				}
 
 				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));
 				gl .uniformMatrix4fv (this .projectionMatrix, false, new Float32Array (browser .getProjectionMatrix () .get ()));
 				gl .uniformMatrix4fv (this .modelViewMatrix,  false, new Float32Array (context .modelViewMatrix));
-			}
+			},
 		});
 
 		return ComposedShader;

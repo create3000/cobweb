@@ -30,15 +30,12 @@ function ($, X3DChildObject)
 		},
 		addEvent: function (field)
 		{
-			if (arguments .length)
-			{
-				if (field .getTainted ())
-					return;
+			if (field .getTainted ())
+				return;
 
-				field .setTainted (true);
+			field .setTainted (true);
 
-				this .addEventObject (field, Event (field));
-			}
+			this .addEventObject (field, Event (field));
 		},
 		addEventObject: function (field, event)
 		{
@@ -59,8 +56,17 @@ function ($, X3DChildObject)
 				}
 			}
 		},
+		addNodeEvent: function ()
+		{
+			if (! this .getTainted ())
+			{
+				this .setTainted (true);
+				this .getBrowser () .addTaintedNode (this);
+			}
+		},
 		eventsProcessed: function ()
 		{
+			this .setTainted (false);
 			this .processInterests ();
 		},
 	});

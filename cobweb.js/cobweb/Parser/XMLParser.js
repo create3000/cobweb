@@ -14,7 +14,7 @@ function ($, Fields, Parser, X3DConstants)
 			this .currentScene = scene;
 			this .dom          = dom;
 			this .nodes        = [ ];
-			this .parser       = new Parser (this .scene, "");
+			this .parser       = new Parser (this .scene, "", true);
 		}
 
 		XMLParser .prototype =

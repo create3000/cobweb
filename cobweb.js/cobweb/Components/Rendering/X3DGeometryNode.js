@@ -15,6 +15,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 		this .bbox      = new Box3 ();
 		this .solid     = true;
 		this .ccw       = true;
+		this .colors    = [ ];
 		this .normals   = [ ];
 		this .triangles = [ ];
 
@@ -27,6 +28,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 		setup: function ()
 		{
 			X3DNode .prototype .setup .call (this);
+	
+			this .addInterest (this, "update");
 
 			this .update ();
 		},
@@ -36,8 +39,13 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 
 			var gl = this .getBrowser () .getContext ();
 
+			this .colorBuffer  = gl .createBuffer ();
 			this .normalBuffer = gl .createBuffer ();
 			this .vertexBuffer = gl .createBuffer ();
+		},
+		isTransparent: function ()
+		{
+			return false;
 		},
 		getBBox: function ()
 		{
@@ -50,6 +58,13 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 		setCCW: function (value)
 		{
 			this .ccw = value;
+		},
+		addColor: function (color)
+		{
+			this .colors .push (color .r);
+			this .colors .push (color .g);
+			this .colors .push (color .b);
+			this .colors .push (color .a === undefined ? 1 : color .a);
 		},
 		addNormal: function (normal)
 		{
@@ -119,22 +134,31 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 			this .min = new Vector3 (Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
 			this .max = new Vector3 (Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
 		
+			this .colors    .length = 0;
 			this .normals   .length = 0;
 			this .triangles .length = 0;
 		},
 		transfer: function ()
 		{
-			var gl = this .getBrowser () .getContext ();
+			var gl        = this .getBrowser () .getContext ();
+			var triangles = this .triangles .length / 4;
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors .length ? this .colors : { length : triangles * 4 }), gl .STATIC_DRAW);
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .normals), gl .STATIC_DRAW);
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .triangles), gl .STATIC_DRAW);
-			this .triangles .count = this .triangles .length / 4;
+			this .triangles .count = triangles;
   		},
 		traverse: function (context)
 		{
+			context .colors = Boolean (this .colors .length);
+
+			// Solid & ccw
+
 			var gl = this .getBrowser () .getContext ();
 		
 			if (this .solid)
@@ -150,25 +174,29 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 
 			shader .use (context);
 
-			var normal   = shader .normal;
-			var position = shader .position;
-
 			//
 
 			var vertexAttribArray = 0;
 
-			if (normal >= 0)
+			if (shader .color >= 0)
+			{
+				gl .enableVertexAttribArray (vertexAttribArray ++);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			if (shader .normal >= 0)
 			{
 				gl .enableVertexAttribArray (vertexAttribArray ++);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			if (position >= 0)
+			if (shader .position >= 0)
 			{
 				gl .enableVertexAttribArray (vertexAttribArray ++);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-				gl .vertexAttribPointer (position, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
 			}
 
 			if (vertexAttribArray)

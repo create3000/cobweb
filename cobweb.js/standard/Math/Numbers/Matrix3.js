@@ -224,37 +224,25 @@ function (Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		inverse: function ()
 		{
-			var m00 = this [0];
-			var m01 = this [1];
-			var m02 = this [2];
-
-			var m10 = this [3];
-			var m11 = this [4];
-			var m12 = this [5];
-
-			var m20 = this [6];
-			var m21 = this [7];
-			var m22 = this [8];
-
-			var t4  = m00 * m11;
-			var t6  = m00 * m21;
-			var t8  = m10 * m01;
-			var t10 = m10 * m21;
-			var t12 = m20 * m01;
-			var t14 = m20 * m11;
-
-			var d = (t4 * m22 - t6 * m12 - t8 * m22 + t10 * m02 + t12 * m12 - t14 * m02);
+			var
+				t4  = this [0] * this [4],
+				t6  = this [0] * this [7],
+				t8  = this [3] * this [1],
+				t10 = this [3] * this [7],
+				t12 = this [6] * this [1],
+				t14 = this [6] * this [4],
+				d   = t4 * this [8] - t6 * this [5] - t8 * this [8] + t10 * this [2] + t12 * this [5] - t14 * this [2];
 
 			if (d === 0)
 				throw Error ("Matrix3 .inverse: determinant is 0.");
 
-			return new Matrix3 ( (m11 * m22 - m21 * m12) / d,
-			                     (m01 * m22 - m21 * m02) / d,
-			                     (m01 * m12 - m11 * m02) / d,
+			return new Matrix3 ( (this [4] * this [8] - this [7] * this [5]) / d,
+			                     (this [1] * this [8] - this [7] * this [2]) / d,
+			                     (this [1] * this [5] - this [4] * this [2]) / d,
 
-			                    -(m10 * m22 - m20 * m12) / d,
-			                     (m00 * m22 - m20 * m02) / d,
-			                    -(m00 * m12 - m10 * m02) / d,
+			                    -(this [3] * this [8] - this [6] * this [5]) / d,
+			                     (this [0] * this [8] - this [6] * this [2]) / d,
+			                    -(this [0] * this [5] - this [3] * this [2]) / d,
 
 			                     (t10 - t14) / d,
 			                    -(t6 - t12) / d,

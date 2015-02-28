@@ -22,6 +22,8 @@ function ($, Fields)
 			// Keywords
 			FALSE: /^FALSE/y,
 			TRUE:  /^TRUE/y,
+			false: /^false/y,
+			true:  /^true/y,
 
 			// Terminal symbols
 			OpenBrace:    /^\{/y,
@@ -67,10 +69,11 @@ function ($, Fields)
 		 *  Parser
 		 */
 
-		function Parser (scene, input)
+		function Parser (scene, input, xml)
 		{
 			this .scene = scene;
 			this .setInput (input);
+			this .xml = xml;
 
 			this .SFBool      = new SFBool ();
 			this .SFColor     = new SFColor ();
@@ -205,16 +208,33 @@ function ($, Fields)
 			},
 			sfboolValue: function (field)
 			{
-				if (Grammar .TRUE .parse (this))
+				if (this .xml)
 				{
-					field .set (true);
-					return true;
-				}
+					if (Grammar .true .parse (this))
+					{
+						field .set (true);
+						return true;
+					}
 
-				if (Grammar .FALSE .parse (this))
+					if (Grammar .false .parse (this))
+					{
+						field .set (false);
+						return true;
+					}
+				}
+				else
 				{
-					field .set (false);
-					return true;
+					if (Grammar .TRUE .parse (this))
+					{
+						field .set (true);
+						return true;
+					}
+
+					if (Grammar .FALSE .parse (this))
+					{
+						field .set (false);
+						return true;
+					}
 				}
 
 				return false;

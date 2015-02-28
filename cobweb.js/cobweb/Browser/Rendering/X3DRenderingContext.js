@@ -23,6 +23,7 @@ function (ComposedShader,
 		this .projectionMatrix = new MatrixStack (Matrix4);
 		this .modelViewMatrix  = new MatrixStack (Matrix4);
 		this .viewport         = new Vector4 ();
+		this .lighting         = false;
 	}
 
 	X3DRenderingContext .prototype =

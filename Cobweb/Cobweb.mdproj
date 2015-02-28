@@ -13,13 +13,23 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="cobweb.js" />
-    <None Include="cobweb.html" />
     <None Include="cobweb.css" />
     <None Include="Cobweb.mdproj" />
     <None Include="Cobweb.userprefs" />
     <None Include="Makefile" />
     <None Include="Inline.x3d" />
     <None Include="Inline.wrl" />
+    <None Include="index.html" />
+    <None Include="jam\require.config.js" />
+    <None Include="jam\require.js" />
+    <None Include="jam\jquery\package.json" />
+    <None Include="jam\jquery\dist\jquery.js" />
+    <None Include="jam\jquery\dist\jquery.min.js" />
+    <None Include="jam\jquery\dist\jquery.min.map" />
+    <None Include="jam\jquery\dist\jquery.pre-min.js" />
+    <None Include="jam\jquery\src\sizzle\package.json" />
+    <None Include="jam\jquery\src\sizzle\speed\benchmark.js\package.json" />
+    <None Include="jam\jquery\test\qunit\package.json" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -36,4 +46,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="jam\" />
+  </ItemGroup>
 </Project>

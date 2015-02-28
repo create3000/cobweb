@@ -31,8 +31,16 @@ function ($, X3D, URI)
 		with (X3D)
 		{
 			var Browser = getBrowser (elements);
-			
-			console .log (Browser .currentScene .rootNodes .copy ());
+			var scene   = Browser .currentScene .rootNodes [0] .getValue () .scene;
+
+			console .log (scene .rootNodes [3] .children [0] .geometry .coord .point);
+/*
+			setInterval (function ()
+			{
+				scene .rootNodes [3] .children [0] .geometry .coord .point [2] = new SFVec3f (Math .sin (Date .now () / 1000), 1, 1);
+			},
+			17);
+*/
 		}
 	});
 });

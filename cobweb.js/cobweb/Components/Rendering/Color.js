@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DColorNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DColorNode, 
-          X3DConstants)
+          X3DConstants,
+          Color3)
 {
 	with (Fields)
 	{
@@ -41,6 +43,17 @@ function ($,
 			getContainerField: function ()
 			{
 				return "color";
+			},
+			isTransparent: function ()
+			{
+				return false;
+			},
+			getColor: function (index)
+			{
+				if (index < this .color_ .length)
+					return this .color_ [index] .getValue ();
+
+				return new Color3 (1, 1, 1);
 			},
 		});
 

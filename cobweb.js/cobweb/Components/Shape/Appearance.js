@@ -5,13 +5,15 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Shape/X3DAppearanceNode",
+	"cobweb/Bits/x3d_cast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DAppearanceNode, 
+          X3DAppearanceNode,
+          x3d_cast,
           X3DConstants)
 {
 	with (Fields)
@@ -57,14 +59,11 @@ function ($,
 			},
 			isTransparent: function ()
 			{
-				return this .materialNode .isTransparent ();
+				return this .materialNode && this .materialNode .isTransparent ();
 			},
 			set_material__: function ()
 			{
-				this .materialNode = this .material_ .getValue ();
-				
-				if (! this .materialNode)
-					this .materialNode = this .getBrowser () .getDefaultMaterial ();
+				this .materialNode = x3d_cast (X3DConstants .X3DMaterialNode, this .material_);
 			},
 			traverse: function ()
 			{
