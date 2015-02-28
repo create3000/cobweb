@@ -29,11 +29,9 @@
     <None Include="jam\jquery\src\sizzle\speed\benchmark.js\package.json" />
     <None Include="jam\jquery\test\qunit\package.json" />
     <None Include="cobweb\Bits\X3DConstants.js" />
-    <None Include="cobweb.min.js" />
     <None Include="Cobweb.mdproj" />
     <None Include="Cobweb.userprefs" />
     <None Include="Makefile" />
-    <None Include="package.json" />
     <None Include="cobweb\X3D.js" />
     <None Include="cobweb\Basic\X3DBaseNode.js" />
     <None Include="cobweb\Components\Networking\Inline.js" />
@@ -366,7 +364,6 @@
     <None Include="cobweb\Base\X3DChildObject.js" />
     <None Include="cobweb\Base\X3DEventObject.js" />
     <None Include="cobweb\Routing\X3DRoutingContext.js" />
-    <None Include="logo.png" />
     <None Include="cobweb\Bits\x3d_cast.js" />
     <None Include="cobweb\Fields\SFRotation.js" />
     <None Include="cobweb\Browser\Layering\X3DLayeringContext.js" />
@@ -389,7 +386,6 @@
     <None Include="cobweb\Fields\SFMatrix4.js" />
     <None Include="cobweb\Fields\SFMatrix3.js" />
     <None Include="cobweb\Fields\SFImage.js" />
-    <None Include="logo.bw.png" />
     <None Include="jam\text\LICENSE" />
     <None Include="jam\text\README.md" />
     <None Include="jam\text\package.json" />
@@ -551,46 +547,6 @@
     <None Include="jam\poly2tri.js\tests\versions\1.3.3\poly2tri.min.js" />
     <None Include="jam\poly2tri.js\tests\versions\1.3.4\poly2tri.js" />
     <None Include="jam\poly2tri.js\tests\versions\1.3.4\poly2tri.min.js" />
-    <None Include="standard\Math\Geometry\Triangle.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="jam\" />
-    <Folder Include="cobweb\" />
-    <Folder Include="cobweb\Bits\" />
-    <Folder Include="cobweb\Browser\" />
-    <Folder Include="cobweb\Basic\" />
-    <Folder Include="cobweb\Execution\" />
-    <Folder Include="cobweb\Components\" />
-    <Folder Include="cobweb\Components\Networking\" />
-    <Folder Include="cobweb\Fields\" />
-    <Folder Include="cobweb\Parser\" />
-    <Folder Include="cobweb\Configuration\" />
-    <Folder Include="standard\" />
-    <Folder Include="standard\Math\" />
-    <Folder Include="standard\Math\Numbers\" />
-    <Folder Include="cobweb\Base\" />
-    <Folder Include="cobweb\Components\Core\" />
-    <Folder Include="cobweb\Components\Shape\" />
-    <Folder Include="cobweb\Components\Rendering\" />
-    <Folder Include="cobweb\Components\Geometry3D\" />
-    <Folder Include="cobweb\Browser\Geometry3D\" />
-    <Folder Include="cobweb\Components\Shaders\" />
-    <Folder Include="cobweb\Browser\Rendering\" />
-    <Folder Include="cobweb\Rendering\" />
-    <Folder Include="standard\Math\Geometry\" />
-    <Folder Include="cobweb\Routing\" />
-    <Folder Include="cobweb\Browser\Navigation\" />
-    <Folder Include="cobweb\Browser\Layering\" />
-    <Folder Include="standard\Math\Algorithms\" />
-    <Folder Include="standard\Math\Utility\" />
-    <Folder Include="cobweb\Browser\Time\" />
-    <Folder Include="jam\text\" />
-    <Folder Include="jam\jquery-mousewheel\" />
-    <Folder Include="standard\Networking\" />
-    <Folder Include="cobweb\Browser\Networking\" />
-    <Folder Include="cobweb\Browser\Shape\" />
-    <Folder Include="external\" />
-    <Folder Include="jam\poly2tri.js\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
