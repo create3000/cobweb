@@ -9,7 +9,7 @@ define (function ()
 		{
 			node = node .getInnerNode ();
 		
-			if (type in node .getType ())
+			if (node .getType () .indexOf (type) !== -1)
 				return node;
 		}
 

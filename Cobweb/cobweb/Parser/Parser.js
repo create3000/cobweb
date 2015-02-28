@@ -33,7 +33,7 @@ function ($, Fields)
 
 			// Values
 			hex:    /^(0[xX][\da-fA-F]+)/y,
-			int32:  /^([+-]?(?:\d+))/y,
+			int32:  /^([+-]?\d+)/y,
 			double: /^([+-]?(?:(?:(?:\d*\.\d+)|(?:\d+(?:\.)?))(?:[eE][+-]?\d+)?))/y,
 			string: /^"((?:[^\\"]|\\\\|\\\")*)"/y,
 			
@@ -384,7 +384,7 @@ function ($, Fields)
 			mfint32Values: function (field)
 			{
 				while (this .sfint32Value (this .SFInt32))
-					field .push (this .SFDouble);
+					field .push (this .SFInt32);
 			},			
 			sfmatrix3Value: function (field)
 			{

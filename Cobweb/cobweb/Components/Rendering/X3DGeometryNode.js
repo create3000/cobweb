@@ -12,11 +12,11 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 	{
 		X3DNode .call (this, browser, executionContext);
 
-		this .bbox     = new Box3 ();
-		this .solid    = true;
-		this .ccw      = true;
-		this .normals  = [ ];
-		this .vertices = [ ];
+		this .bbox      = new Box3 ();
+		this .solid     = true;
+		this .ccw       = true;
+		this .normals   = [ ];
+		this .triangles = [ ];
 
 		this .addType (X3DConstants .X3DGeometryNode);
 	}
@@ -57,22 +57,60 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 			this .normals .push (normal .y);
 			this .normals .push (normal .z);
 		},
-		addVertex: function (vertex)
+		addTriangle: function (vertex)
 		{
 			this .min = this .min .min (vertex);
 			this .max = this .max .max (vertex);
 
-			this .vertices .push (vertex .x);
-			this .vertices .push (vertex .y);
-			this .vertices .push (vertex .z);
-			this .vertices .push (1);
+			this .triangles .push (vertex .x);
+			this .triangles .push (vertex .y);
+			this .triangles .push (vertex .z);
+			this .triangles .push (1);
+		},
+		refineNormals: function (normalIndex, normals, creaseAngle, ccw)
+		{
+			if (! ccw)
+			{
+				for (var i = 0; i < normals .length; ++ i)
+					normals [i] = normals [i] .negate ()
+			}
+
+			if (creaseAngle === 0)
+				return normals;
+
+			var cosCreaseAngle = Math .cos (creaseAngle);
+			var normals_       = [ ];
+
+			for (var i in normalIndex) // Don't use forEach
+			{
+				var vertex = normalIndex [i];
+
+				for (var p = 0; p < vertex .length; ++ p)
+				{
+					var P = vertex [p];
+					var m = normals [P];
+					var n = new Vector3 ();
+
+					for (var q = 0; q < vertex .length; ++ q)
+					{
+						var Q = vertex [q];
+	
+						if (normals [Q] .dot (m) >= cosCreaseAngle)
+							n = n .add (normals [Q]);
+					}
+
+					normals_ [P] = n .normalize ();
+				}
+			}
+
+			return normals_;
 		},
 		update: function ()
 		{
 			this .clear ();
 			this .build ();
 
-			this .bbox = this .vertices .length ? new Box3 (this .min, this .max, true) : new Box3 ();
+			this .bbox = this .triangles .length ? new Box3 (this .min, this .max, true) : new Box3 ();
 
 			this .transfer ();
 		},
@@ -81,8 +119,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 			this .min = new Vector3 (Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
 			this .max = new Vector3 (Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
 		
-			this .normals  .length = 0;
-			this .vertices .length = 0;
+			this .normals   .length = 0;
+			this .triangles .length = 0;
 		},
 		transfer: function ()
 		{
@@ -92,8 +130,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .normals), gl .STATIC_DRAW);
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
-			this .vertices .count = this .vertices .length / 4;
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .triangles), gl .STATIC_DRAW);
+			this .triangles .count = this .triangles .length / 4;
   		},
 		traverse: function (context)
 		{
@@ -134,7 +172,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 			}
 
 			if (vertexAttribArray)
-				gl .drawArrays (gl .TRIANGLES, 0, this .vertices .count);
+				gl .drawArrays (gl .TRIANGLES, 0, this .triangles .count);
 		},
 	});
 

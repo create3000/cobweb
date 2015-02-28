@@ -71,7 +71,23 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 		},
 		createX3DFromString: function (x3dSyntax)
 		{
+			var dom = $.parseXML (x3dSyntax);
 			
+			try
+			{
+				var scene = this .createScene ();
+
+				new XMLParser (scene, dom) .parseIntoScene ();
+
+				scene .setup ();
+
+				return scene;
+			}
+			catch (error)
+			{
+				console .log (error);
+				throw error;
+			}
 		},
 		createX3DFromURL: function (url, field, node)
 		{
@@ -97,22 +113,8 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 						{
 							try
 							{
-								var dom = $.parseXML (xhr .responseText);
-								
-								try
-								{
-									scene = this .createScene ();
-									
-									new XMLParser (scene, dom) .parseIntoScene ();
-
-									scene .setup ();
-									
-									success = true;
-								}
-								catch (error)
-								{
-									console .log (error);
-								}
+								scene   = this .createX3DFromString (xhr .responseText);
+								success = true;
 							}
 							catch (error)
 							{

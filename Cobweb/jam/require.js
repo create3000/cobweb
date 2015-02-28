@@ -2020,6 +2020,11 @@ var jam = {
             "name": "text",
             "location": "jam/text",
             "main": "text.js"
+        },
+        {
+            "name": "poly2tri",
+            "location": "jam/poly2tri.js",
+            "main": "dist/poly2tri.js"
         }
     ],
     "version": "0.2.17",
@@ -2048,6 +2053,11 @@ if (typeof require !== "undefined" && require.config) {
             "name": "text",
             "location": "jam/text",
             "main": "text.js"
+        },
+        {
+            "name": "poly2tri",
+            "location": "jam/poly2tri.js",
+            "main": "dist/poly2tri.js"
         }
     ],
     "shim": {}
@@ -2075,6 +2085,11 @@ else {
             "name": "text",
             "location": "jam/text",
             "main": "text.js"
+        },
+        {
+            "name": "poly2tri",
+            "location": "jam/poly2tri.js",
+            "main": "dist/poly2tri.js"
         }
     ],
     "shim": {}

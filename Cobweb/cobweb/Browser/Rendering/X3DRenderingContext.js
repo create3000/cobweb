@@ -7,7 +7,7 @@ define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
-	"jquery-plugin/jquery.ba-resize.min",
+	"external/jquery.ba-resize.min",
 ],
 function (ComposedShader,
           ShaderPart,

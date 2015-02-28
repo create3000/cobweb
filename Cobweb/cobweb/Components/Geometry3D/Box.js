@@ -55,14 +55,14 @@ function ($,
 				if (this .size_ .getValue () .equals (new Vector3 (2, 2, 2)))
 				{
 					for (var i = 0; i < options .triangles .length; ++ i)
-						this .addVertex (options .triangles [i]);			
+						this .addTriangle (options .triangles [i]);			
 				}
 				else
 				{
 					var size1_2 = this .size_ .getValue () .divide (2);
 
 					for (var i = 0; i < options .triangles .length; ++ i)
-						this .addVertex (options .triangles [i] .multVec (size1_2));			
+						this .addTriangle (options .triangles [i] .multVec (size1_2));			
 				}
 	
 				this .setSolid (this .solid_ .getValue ());

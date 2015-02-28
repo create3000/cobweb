@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DNormalNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DNormalNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 	with (Fields)
 	{
@@ -41,6 +43,13 @@ function ($,
 			getContainerField: function ()
 			{
 				return "normal";
+			},
+			getVector: function (index)
+			{
+				if (index < this .vector_ .length)
+					return this .vector_ [index] .getValue ();
+
+				return new Vector3 ();
 			},
 		});
 

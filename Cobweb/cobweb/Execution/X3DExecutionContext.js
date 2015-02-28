@@ -67,7 +67,7 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 				name = String (name);
 				
 				if (node instanceof X3DBaseNode)
-					node = new SFNode (node);
+					node = new SFNode (node);				
 
 				if (! (node instanceof SFNode))
 					throw Error ("Couldn't update named node: node must be of type SFNode.");
@@ -90,7 +90,7 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 
 				node .getValue () .setName (name);
 
-				this .namedNodes [name] = node;
+				this .namedNodes [name] = new SFNode (node .getValue ());
 			},
 			removeNamedNode: function (name)
 			{

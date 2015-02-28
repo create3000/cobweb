@@ -6,7 +6,7 @@
     <meta name='created' content='Thu, 19 Feb 2015 06:21:38 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 27 Feb 2015 00:42:02 GMT'/>
+    <meta name='modified' content='Sat, 28 Feb 2015 01:49:43 GMT'/>
   </head>
   <Scene>
     <Transform
@@ -55,7 +55,7 @@
         <Box USE='_1'/>
       </Shape>
     </Transform>
-    <Transform
+    <Transform DEF='_2'
         translation='6.88387e-06 -2.85048e-06 3'
         rotation='-4.10947e-10 3.6236e-06 -1 0.785398'
         scaleOrientation='2.48707e-06 4.86995e-06 1 0.39282'>
@@ -68,7 +68,15 @@
               shininess='0.806061'
               transparency='0.3'/>
         </Appearance>
-        <Box USE='_1'/>
+        <IndexedFaceSet
+            creaseAngle='3.14159'
+            texCoordIndex='0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1'
+            coordIndex='0, 1, 2, 3, -1, 5, 4, 7, 6, -1, 3, 2, 6, 7, -1, 4, 5, 1, 0, -1, 4, 0, 3, 7, -1, 1, 5, 6, 2, -1'>
+          <TextureCoordinate
+              point='0 0, 1 0, 1 1, 0 1'/>
+          <Coordinate
+              point='-1 -1 1, 1 -1 1, 1 1 1, -1 1 1, -1 -1 -1, 1 -1 -1, 1 1 -1, -1 1 -1'/>
+        </IndexedFaceSet>
       </Shape>
     </Transform>
     <Transform
