@@ -1,0 +1,41 @@
+#VRML V2.0 utf8 Titania V0.7.6
+
+PROFILE Full
+
+META "comment" "World of Titania"
+META "created" "Thu, 19 Feb 2015 06:21:38 GMT"
+META "creator" "Holger Seelig"
+META "generator" "Titania V0.7.6, http://titania.create3000.de"
+META "modified" "Wed, 25 Feb 2015 15:02:31 GMT"
+
+Transform {
+  rotation -4.10984e-10 3.6236e-06 -1 0.785398
+  children Shape {
+    appearance Appearance {
+      material Material { }
+    }
+    geometry Box { }
+  }
+}
+
+Transform {
+  translation -3 0 0
+  rotation -8.38663e-10 3.62377e-06 -1 0.785398
+  children Shape {
+    appearance Appearance {
+      material Material { }
+    }
+    geometry Box { }
+  }
+}
+
+Transform {
+  translation 3 0 0
+  rotation -4.96429e-10 3.6236e-06 -1 0.785398
+  children Shape {
+    appearance Appearance {
+      material Material { }
+    }
+    geometry Box { }
+  }
+}

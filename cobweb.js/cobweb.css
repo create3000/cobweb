@@ -1,0 +1,26 @@
+/* CSS StyleSheet */
+@charset "utf-8";
+
+x3d {
+	position: relative;
+	display: block;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	overflow: hidden;
+	background: url(logo.png) center center no-repeat #414141;
+}
+
+x3d canvas {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+x3d .fallback {
+	width: 100%;
+	height: 100%;
+	background: url(logo.bw.png) center center no-repeat #101010;
+}

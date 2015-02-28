@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Thu, 19 Feb 2015 06:21:38 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
+    <meta name='modified' content='Sat, 28 Feb 2015 01:49:43 GMT'/>
+  </head>
+  <Scene>
+    <Transform
+        translation='-3 0 0'
+        rotation='-8.38615e-10 3.62377e-06 -1 0.785398'
+        scaleOrientation='5.39745e-06 3.34171e-06 1 0.392933'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Rococo13_1'
+              ambientIntensity='0.187004'
+              diffuseColor='0.748016 0.272334 0.406842'
+              specularColor='0.251984 0.251984 0.251984'
+              shininess='0.6'/>
+        </Appearance>
+        <Box DEF='_1'/>
+      </Shape>
+    </Transform>
+    <Transform
+        rotation='-4.10947e-10 3.6236e-06 -1 0.785398'
+        scaleOrientation='2.48707e-06 4.86995e-06 1 0.39282'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Rococo19_1'
+              ambientIntensity='0.187004'
+              diffuseColor='0.412056 0.422504 0.748016'
+              specularColor='0.290909 0.290909 0.290909'
+              shininess='0.787879'
+              transparency='0.3'/>
+        </Appearance>
+        <Box
+            size='1 1 1'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 0 0'
+        rotation='-4.96481e-10 3.6236e-06 -1 0.785398'
+        scaleOrientation='1.72906e-06 8.68212e-06 1 0.392831'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Rococo25_1'
+              ambientIntensity='0.187004'
+              diffuseColor='0.261641 0.748016 0.725916'
+              specularColor='0.490909 0.490909 0.490909'
+              shininess='0.593939'/>
+        </Appearance>
+        <Box USE='_1'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='_2'
+        translation='6.88387e-06 -2.85048e-06 3'
+        rotation='-4.10947e-10 3.6236e-06 -1 0.785398'
+        scaleOrientation='2.48707e-06 4.86995e-06 1 0.39282'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Rococo3_1'
+              ambientIntensity='0.187004'
+              diffuseColor='0.748016 0.722635 0.268909'
+              specularColor='0.412121 0.412121 0.412121'
+              shininess='0.806061'
+              transparency='0.3'/>
+        </Appearance>
+        <IndexedFaceSet
+            creaseAngle='3.14159'
+            texCoordIndex='0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1'
+            coordIndex='0, 1, 2, 3, -1, 5, 4, 7, 6, -1, 3, 2, 6, 7, -1, 4, 5, 1, 0, -1, 4, 0, 3, 7, -1, 1, 5, 6, 2, -1'>
+          <TextureCoordinate
+              point='0 0, 1 0, 1 1, 0 1'/>
+          <Coordinate
+              point='-1 -1 1, 1 -1 1, 1 1 1, -1 1 1, -1 -1 -1, 1 -1 -1, 1 1 -1, -1 1 -1'/>
+        </IndexedFaceSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='-8.49875e-06 3.51917e-06 -3'
+        rotation='-4.10947e-10 3.6236e-06 -1 0.785398'
+        scaleOrientation='2.48707e-06 4.86995e-06 1 0.39282'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Rococo29_1'
+              ambientIntensity='0.187004'
+              diffuseColor='0.360748 0.748016 0.394778'
+              specularColor='0.345455 0.345455 0.345455'
+              shininess='0.612121'
+              transparency='0.3'/>
+        </Appearance>
+        <Box USE='_1'/>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>
