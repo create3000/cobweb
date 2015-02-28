@@ -6,7 +6,7 @@
     <meta name='created' content='Thu, 19 Feb 2015 06:21:38 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 28 Feb 2015 17:41:56 GMT'/>
+    <meta name='modified' content='Sat, 28 Feb 2015 18:14:20 GMT'/>
   </head>
   <Scene>
     <Transform
@@ -45,13 +45,6 @@
         rotation='-4.96481e-10 3.6236e-06 -1 0.785398'
         scaleOrientation='1.72906e-06 8.68212e-06 1 0.392831'>
       <Shape>
-        <Appearance>
-          <Material DEF='Rococo25_1'
-              ambientIntensity='0.187004'
-              diffuseColor='0.261641 0.748016 0.725916'
-              specularColor='0.490909 0.490909 0.490909'
-              shininess='0.593939'/>
-        </Appearance>
         <Box USE='_1'/>
       </Shape>
     </Transform>

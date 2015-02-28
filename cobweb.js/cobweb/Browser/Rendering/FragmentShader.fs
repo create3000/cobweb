@@ -38,5 +38,5 @@ main ()
 		gl_FragColor = finalColor;
 	}
 	else
-		gl_FragColor = C;
+		gl_FragColor = colorMaterial ? C : vec4 (1.0, 1.0, 1.0, 1.0);
 }

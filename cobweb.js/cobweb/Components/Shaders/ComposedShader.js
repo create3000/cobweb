@@ -123,7 +123,7 @@ function ($,
 				else
 				{
 					gl .uniform1i (this .lighting,      false);				
-					gl .uniform1i (this .colorMaterial, false);
+					gl .uniform1i (this .colorMaterial, context .colors);
 				}
 
 				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));
