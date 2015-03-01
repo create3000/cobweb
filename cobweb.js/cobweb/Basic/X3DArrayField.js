@@ -6,6 +6,31 @@ define ([
 ],
 function ($, X3DField, X3DConstants)
 {
+	function getValue (field)
+	{
+	   switch (field .getType ())
+	   {
+	      case X3DConstants .SFBool:
+	      case X3DConstants .SFDouble:
+	      case X3DConstants .SFFloat:
+	      case X3DConstants .SFInt32:
+	      case X3DConstants .SFString:
+	      case X3DConstants .SFTime:
+	      {
+	         return field .getValue ();
+	      }
+	      case X3DConstants .SFNode:
+	      {
+	         if (field .getValue ())
+	            return field;
+
+	         return null;
+	      }
+	      default:
+	         return field;
+	   }
+	}
+
 	var handler =
 	{
 		get: function (target, key)
@@ -18,29 +43,7 @@ function ($, X3DField, X3DConstants)
 			if (key >= target .getValue () .length)
 				target .resize (key + 1);
 
-			var field = target .getValue () [key];
-
-		   switch (field .getType ())
-		   {
-		      case X3DConstants .SFBool:
-		      case X3DConstants .SFDouble:
-		      case X3DConstants .SFFloat:
-		      case X3DConstants .SFInt32:
-		      case X3DConstants .SFString:
-		      case X3DConstants .SFTime:
-		      {
-		         return field .getValue ();
-		      }
-		      case X3DConstants .SFNode:
-		      {
-		         if (field .getValue ())
-		            return field;
-
-		         return null;
-		      }
-		      default:
-		         return field;
-		   }
+			return getValue (target .getValue () [key]);
 		},
 		set: function (target, key, value)
 		{
@@ -108,6 +111,29 @@ function ($, X3DField, X3DConstants)
 		set: function (value)
 		{
 		},
+		unshift: function (value)
+		{
+			var array = this .getValue ();
+			var field = new this .valueType_ ();
+
+			field .addParent (this);
+			field .setValue (value);
+
+			return array .unshift (field);
+		},
+		shift: function ()
+		{
+			var array = this .getValue ();
+
+			if (array .length)
+			{
+				var field = array .shift ();
+				field .removeParent (this);
+				return getValue (field);
+			}
+			
+			return;
+		},
 		push: function (value)
 		{
 			var array = this .getValue ();
@@ -117,6 +143,19 @@ function ($, X3DField, X3DConstants)
 			field .setValue (value);
 
 			return array .push (field);
+		},
+		pop: function ()
+		{
+			var array = this .getValue ();
+
+			if (array .length)
+			{
+				var field = array .pop ();
+				field .removeParent (this);
+				return getValue (field);
+			}
+
+			return;
 		},
 		resize: function (size)
 		{

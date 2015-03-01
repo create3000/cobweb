@@ -39,7 +39,7 @@ function ($, X3DChildObject)
 		},
 		addEventObject: function (field, event)
 		{
-			this .getBrowser () .update ();
+			this .getBrowser () .addBrowserEvent ();
 
 			// Register for processEvent
 

@@ -54,22 +54,31 @@ function ($,
 				X3DAppearanceNode .prototype .initialize .call (this);
 				
 				this .material_ .addInterest (this, "set_material__");
+				this .texture_  .addInterest (this, "set_texture__");
 				
 				this .set_material__ ();
+				this .set_texture__ ();
 			},
 			isTransparent: function ()
 			{
-				return this .materialNode && this .materialNode .isTransparent ();
+				return (this .materialNode && this .materialNode .isTransparent ()) ||
+				       (this .textureNode && this .textureNode .isTransparent ());
 			},
 			set_material__: function ()
 			{
 				this .materialNode = x3d_cast (X3DConstants .X3DMaterialNode, this .material_);
 			},
+			set_texture__: function ()
+			{
+				this .textureNode = x3d_cast (X3DConstants .X3DTextureNode, this .texture_);
+			},
 			traverse: function ()
 			{
 				var browser = this .getBrowser ();
+				var gl      = browser .getContext ();
 
 				browser .setMaterial (this .materialNode);
+				browser .setTexture (this .textureNode);
 			},
 		});
 

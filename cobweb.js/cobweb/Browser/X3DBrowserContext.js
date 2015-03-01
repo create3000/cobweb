@@ -7,7 +7,9 @@ define ([
 	"cobweb/Browser/Layering/X3DLayeringContext",
 	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
+	"cobweb/Browser/Shaders/X3DShadersContext",
 	"cobweb/Browser/Shape/X3DShapeContext",
+	"cobweb/Browser/Texturing/X3DTexturingContext",
 	"cobweb/Browser/Time/X3DTimeContext",
 	"cobweb/Routing/X3DRoutingContext",
 	"cobweb/Execution/World",
@@ -20,7 +22,9 @@ function ($,
           X3DLayeringContext,
           X3DNavigationContext,
           X3DNetworkingContext,
+          X3DShadersContext,
           X3DShapeContext,
+          X3DTexturingContext,
           X3DTimeContext,
           X3DRoutingContext,
           World,
@@ -34,12 +38,14 @@ function ($,
 		X3DLayeringContext   .call (this);
 		X3DNavigationContext .call (this);
 		X3DNetworkingContext .call (this);
+		X3DShadersContext    .call (this);
 		X3DShapeContext      .call (this);
+		X3DTexturingContext  .call (this);
 		X3DTimeContext       .call (this);
 		X3DRoutingContext    .call (this);
 
 		this .changedTime    = 0;
-		this .renderCallback = function () { this .render () } .bind (this);
+		this .renderCallback = function () { this .traverse () } .bind (this);
 	};
 
 	X3DBrowserContext .prototype = $.extend (new X3DBaseNode (),
@@ -48,7 +54,9 @@ function ($,
 		X3DLayeringContext .prototype,
 		X3DNavigationContext .prototype,
 		X3DNetworkingContext .prototype,
+		X3DShadersContext .prototype,
 		X3DShapeContext .prototype,
+		X3DTexturingContext .prototype,
 		X3DTimeContext .prototype,
 		X3DRoutingContext .prototype,
 	{
@@ -61,7 +69,9 @@ function ($,
 			X3DLayeringContext   .prototype .initialize .call (this);
 			X3DNavigationContext .prototype .initialize .call (this);
 			X3DNetworkingContext .prototype .initialize .call (this);
+			X3DShadersContext    .prototype .initialize .call (this);
 			X3DShapeContext      .prototype .initialize .call (this);
+			X3DTexturingContext  .prototype .initialize .call (this);
 			X3DTimeContext       .prototype .initialize .call (this);
 			X3DRoutingContext    .prototype .initialize .call (this);
 		},
@@ -78,7 +88,7 @@ function ($,
 		{
 			return this .world .getExecutionContext ();
 		},
-		update: function ()
+		addBrowserEvent: function ()
 		{
 			if (this .changedTime === this .getCurrentTime ())
 				return;
@@ -87,7 +97,7 @@ function ($,
 
 			setTimeout (this .renderCallback, 0);
 		},
-		render: function ()
+		traverse: function ()
 		{
 			this .advance ();
 

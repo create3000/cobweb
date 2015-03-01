@@ -1,29 +1,21 @@
 
 define ([
-	"cobweb/Components/Shaders/ComposedShader",
-	"cobweb/Components/Shaders/ShaderPart",
-	"text!cobweb/Browser/Rendering/VertexShader.vs",
-	"text!cobweb/Browser/Rendering/FragmentShader.fs",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
 	"external/jquery.ba-resize.min",
 ],
-function (ComposedShader,
-          ShaderPart,
-          vertexShaderText,
-          fragmentShaderText,
-          Vector4,
+function (Vector4,
           Matrix4,
           MatrixStack)
 {
 	function X3DRenderingContext (x3d)
 	{
-		this .x3d              = x3d;
-		this .projectionMatrix = new MatrixStack (Matrix4);
-		this .modelViewMatrix  = new MatrixStack (Matrix4);
-		this .viewport         = new Vector4 ();
-		this .lighting         = false;
+		this .x3d                = x3d;
+		this .projectionMatrix   = new MatrixStack (Matrix4);
+		this .modelViewMatrix    = new MatrixStack (Matrix4);
+		this .viewport           = new Vector4 ();
+		this .defaultColorBuffer = null;
 	}
 
 	X3DRenderingContext .prototype =
@@ -48,23 +40,10 @@ function (ComposedShader,
 			gl .blendFuncSeparate (gl .SRC_ALPHA, gl .ONE_MINUS_SRC_ALPHA, gl .ONE, gl .ONE_MINUS_SRC_ALPHA);
 			gl .enable (gl .BLEND);
 
-			// Create default shader.
+			// Create default color buffer.
 
-			var vertexShader = new ShaderPart (this);
-			vertexShader .type_ = "VERTEX";
-			vertexShader .url_ .push (vertexShaderText);
-			vertexShader .setup ();
-			
-			var fragmentShader = new ShaderPart (this);
-			fragmentShader .type_ = "FRAGMENT";
-			fragmentShader .url_ .push (fragmentShaderText);
-			fragmentShader .setup ();
-
-			this .defaultShader = new ComposedShader (this);
-			this .defaultShader .language_ = "GLSL";
-			this .defaultShader .parts_ .push (vertexShader);
-			this .defaultShader .parts_ .push (fragmentShader);
-			this .defaultShader .setup ();
+			this .defaultColorBuffer         = gl .createBuffer ();
+			this .defaultColorBuffer .length = 0;
 
 			// Configure viewport.
 
@@ -85,6 +64,30 @@ function (ComposedShader,
 		{
 			return this .context;
 		},
+		getVendor: function ()
+		{
+			return this .getContext () .getParameter (this .getContext () .VENDOR);
+		},
+		getWebGLVersion: function ()
+		{
+			return this .getContext () .getParameter (this .getContext () .VERSION);
+		},
+		getAntialiased: function ()
+		{
+			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 1;
+		},
+		getColorDepth: function ()
+		{
+			var gl = this .context;
+
+			var colorDepth = 0;
+			colorDepth += gl .getParameter (gl .RED_BITS);
+			colorDepth += gl .getParameter (gl .BLUE_BITS);
+			colorDepth += gl .getParameter (gl .GREEN_BITS);
+			colorDepth += gl .getParameter (gl .ALPHA_BITS);
+
+			return colorDepth;
+		},
 		getProjectionMatrix: function ()
 		{
 			return this .projectionMatrix;
@@ -97,9 +100,19 @@ function (ComposedShader,
 		{
 			return this .viewport;
 		},
-		getDefaultShader: function ()
+		setDefaultColorBuffer: function (length)
 		{
-			return this .defaultShader;
+			if (length > this .defaultColorBuffer .length)
+			{
+				var gl = this .context;
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .defaultColorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array ({ length: length }), gl .STATIC_DRAW);
+				this .defaultColorBuffer .length = length;
+			}
+		},
+		getDefaultColorBuffer: function ()
+		{
+			return this .defaultColorBuffer;
 		},
 		reshape: function ()
 		{

@@ -9,7 +9,7 @@
     <ProjectGuid>{228A9B59-96B2-4F22-BE2F-DA87FCFC3444}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
-    <OutputPath>.\</OutputPath>
+    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="cobweb\Base\X3DChildObject.js" />
@@ -30,8 +30,6 @@
     <None Include="cobweb\Browser\Navigation\X3DNavigationContext.js" />
     <None Include="cobweb\Browser\Navigation\X3DViewer.js" />
     <None Include="cobweb\Browser\Networking\X3DNetworkingContext.js" />
-    <None Include="cobweb\Browser\Rendering\FragmentShader.fs" />
-    <None Include="cobweb\Browser\Rendering\VertexShader.vs" />
     <None Include="cobweb\Browser\Rendering\X3DRenderingContext.js" />
     <None Include="cobweb\Browser\Shape\X3DShapeContext.js" />
     <None Include="cobweb\Browser\Time\X3DTimeContext.js" />
@@ -552,5 +550,13 @@
     <None Include="logo.png" />
     <None Include="Makefile" />
     <None Include="package.json" />
+    <None Include="cobweb\Browser\Texturing\X3DTexturingContext.js" />
+    <None Include="cobweb\Browser\Shaders\X3DShadersContext.js" />
+    <None Include="cobweb\Browser\Shaders\FragmentShader.fs" />
+    <None Include="cobweb\Browser\Shaders\VertexShader.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="cobweb\Browser\Texturing\" />
+    <Folder Include="cobweb\Browser\Shaders\" />
   </ItemGroup>
 </Project>

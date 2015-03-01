@@ -30,7 +30,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 			X3DBrowserContext .prototype .initialize .call (this);
 
 			this .replaceWorld (this .createScene ());
-			this .update ();
+			this .traverse ();
 		},
 		getName: function ()
 		{

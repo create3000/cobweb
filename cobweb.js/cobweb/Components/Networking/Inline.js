@@ -73,7 +73,7 @@ function ($,
 			{
 				try
 				{
-					this .setScene (this .getBrowser () .createX3DFromURL (this .url_));
+					setTimeout (this .setScene .bind (this, this .getBrowser () .createX3DFromURL (this .url_)), 0);
 				}
 				catch (error)
 				{

@@ -167,6 +167,7 @@ function ($,
 
 				this .setSolid (this .solid_ .getValue ());
 				this .setCCW (this .ccw_ .getValue ());
+				this .setCurrentTexCoord (this .getTexCoord ());
 			},
 			triangulate: function ()
 			{
