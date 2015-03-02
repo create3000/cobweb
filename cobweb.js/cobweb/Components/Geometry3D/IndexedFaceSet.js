@@ -118,6 +118,9 @@ function ($,
 				var coord    = this .getCoord ();
 				var face     = 0;
 
+				if (texCoord)
+					texCoord .init (this .getTexCoords ());
+
 				for (var p = 0; p < polygons .length; ++ p)
 				{
 					var polygon = polygons [p];
@@ -135,15 +138,13 @@ function ($,
 							{
 								if (this .colorPerVertex_ .getValue ())
 									this .addColor (color .getColor (this .getColorPerVertexIndex (i)));
-
 								else
 									this .addColor (color .getColor (this .getColorIndex (face)));
 							}
 
-/*
 							if (texCoord)
-								getTexCoord () -> addTexCoord (getTexCoords (), getTexCoordIndex (i));
-*/
+								texCoord .addTexCoord (this .getTexCoords (), this .getTexCoordPerVertexIndex (i));
+
 							if (normal)
 							{
 								if (this .normalPerVertex_ .getValue ())

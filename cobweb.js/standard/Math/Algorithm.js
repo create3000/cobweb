@@ -54,5 +54,18 @@ define (function ()
 
 			return source .multiply (scale0) .add (destination .multiply (scale1)) .divide (sinom);
 		},
+		isPowerOfTwo (n)
+		{
+			return ((n - 1) & n) === 0;
+		},
+		nextPowerOfTwo: function (n)
+		{
+			-- n;
+
+			for (var k = 1; ! (k & (1 << (4 + 1))); k <<= 1)
+				n |= n >> k;
+
+			return ++ n;
+		},
 	};
 });

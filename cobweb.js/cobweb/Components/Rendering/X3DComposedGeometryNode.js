@@ -93,11 +93,17 @@ function ($,
 		},
 		set_transparency__: function ()
 		{
-			transparent = this .colorNode .isTransparent ();
+			this .transparent = this .colorNode .isTransparent ();
 		},
 		set_texCoord__: function ()
 		{
-		
+			if (this .texCoordNode)
+				this .texCoordNode .removeInterest (this, "addNodeEvent");
+
+			this .texCoordNode = x3d_cast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
+
+			if (this .texCoordNode)
+				this .texCoordNode .addInterest (this, "addNodeEvent");
 		},
 		set_normal__: function ()
 		{

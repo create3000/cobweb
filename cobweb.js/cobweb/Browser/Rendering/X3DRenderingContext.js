@@ -9,6 +9,24 @@ function (Vector4,
           Matrix4,
           MatrixStack)
 {
+	function getContext (canvas)
+	{
+		try
+		{
+			var gl = canvas .getContext ('experimental-webgl');
+
+			if (gl === null)
+				gl = canvas .getContext ('webgl');
+
+			return gl;
+		}
+		catch (error)
+		{
+			return null;
+		}
+	}
+
+
 	function X3DRenderingContext (x3d)
 	{
 		this .x3d                = x3d;
@@ -25,7 +43,7 @@ function (Vector4,
 			// Get canvas & context.
 
 			this .canvas  = $("<canvas/>") .prependTo (this .x3d);
-			this .context = this .canvas [0] .getContext ("experimental-webgl");
+			this .context = getContext (this .canvas [0]);
 
 			// Configure context.
 
@@ -50,7 +68,7 @@ function (Vector4,
 			this .canvas .resize (function ()
 			{
 				this .reshape ();
-				this .update ();
+				this .traverse ();
 			}
 			.bind (this));
 
@@ -74,7 +92,7 @@ function (Vector4,
 		},
 		getAntialiased: function ()
 		{
-			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 1;
+			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 0;
 		},
 		getColorDepth: function ()
 		{

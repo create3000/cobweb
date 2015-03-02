@@ -558,5 +558,10 @@
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
     <Folder Include="cobweb\Browser\Shaders\" />
+    <Folder Include="stable\" />
+    <Folder Include="stable\0.1\" />
+    <Folder Include="test\" />
+    <Folder Include="test\Components\" />
+    <Folder Include="test\Components\images\" />
   </ItemGroup>
 </Project>

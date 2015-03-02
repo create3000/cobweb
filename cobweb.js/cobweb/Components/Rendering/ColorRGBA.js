@@ -52,7 +52,7 @@ function ($,
 			{
 				if (index < this .color_ .length)
 					return this .color_ [index] .getValue ();
-
+		
 				return new Color4 (1, 1, 1, 1);
 			},
 		});

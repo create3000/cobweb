@@ -5,8 +5,9 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Color3",
 ],
-function ($, X3DNode, X3DConstants, Box3, Vector3)
+function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 {
 	function X3DGeometryNode (browser, executionContext)
 	{
@@ -70,7 +71,15 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 			this .colors .push (color .r);
 			this .colors .push (color .g);
 			this .colors .push (color .b);
-			this .colors .push (color .a === undefined ? 1 : color .a);
+
+			if (color instanceof Color3)
+				this .colors .push (1);
+			else
+				this .colors .push (color .a);
+		},
+		getTexCoords: function ()
+		{
+			return this .texCoords;
 		},
 		setCurrentTexCoord: function (value)
 		{
@@ -311,13 +320,12 @@ function ($, X3DNode, X3DConstants, Box3, Vector3)
 				if (context .transparent && !this .solid)
 				{
 					gl .enable (gl .CULL_FACE);
-
-					gl .uniformMatrix3fv (shader .normalMatrix, false, new Float32Array (normalMatrix));
-					gl .frontFace (positiveScale ? (this .ccw ? gl .CW : gl .CCW) : (this .ccw ? gl .CCW : gl .CW));
+					gl .frontFace (positiveScale ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
+					
+					gl .cullFace (gl .FRONT);
 					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .count);		
 
-					gl .uniformMatrix3fv (shader .normalMatrix, false, new Float32Array (normalMatrix .inverse ()));
-					gl .frontFace (positiveScale ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
+					gl .cullFace (gl .BACK);
 					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .count);		
 				}
 				else

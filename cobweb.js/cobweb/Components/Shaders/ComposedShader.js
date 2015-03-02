@@ -93,9 +93,9 @@ function ($,
 				this .shininess        = gl .getUniformLocation (this .program, "shininess");
 				this .transparency     = gl .getUniformLocation (this .program, "transparency");
 				
-				this .texturing        = gl .getUniformLocation (this .program, "texturing");
-				this .texture          = gl .getUniformLocation (this .program, "texture");
-				this .textureModulate  = gl .getUniformLocation (this .program, "textureModulate");
+				this .texturing         = gl .getUniformLocation (this .program, "texturing");
+				this .texture           = gl .getUniformLocation (this .program, "texture");
+				this .textureComponents = gl .getUniformLocation (this .program, "textureComponents");
 
 				this .textureMatrix    = gl .getUniformLocation (this .program, "textureMatrix");
 				this .normalMatrix     = gl .getUniformLocation (this .program, "normalMatrix");
@@ -136,14 +136,15 @@ function ($,
 				{
 					texture .traverse ();
 
-					gl .uniform1i (this .texturing,       true);
-					gl .uniform1i (this .texture,         0);
-					gl .uniform1i (this .textureModulate, texture .getComponents () < 3);
+					gl .uniform1i (this .texturing,         true);
+					gl .uniform1i (this .texture,           0);
+					gl .uniform1i (this .textureComponents, texture .getComponents ());
 				}
 				else
 					gl .uniform1i (this .texturing, false);
 
 				gl .uniformMatrix4fv (this .textureMatrix,    false, new Float32Array (browser .getTextureMatrix () .get ()));
+				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));	
 				gl .uniformMatrix4fv (this .projectionMatrix, false, new Float32Array (browser .getProjectionMatrix () .get ()));
 				gl .uniformMatrix4fv (this .modelViewMatrix,  false, new Float32Array (context .modelViewMatrix));
 			},

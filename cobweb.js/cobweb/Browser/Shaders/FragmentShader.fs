@@ -13,7 +13,7 @@ uniform float transparency;
 
 uniform bool      texturing;      // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D texture;
-uniform bool      textureModulate;
+uniform int       textureComponents;
 
 varying vec4 C; // color
 varying vec4 t; // texCoord
@@ -28,16 +28,44 @@ main ()
 
 	if (lighting)
 	{
-		float alpha = 1.0 - transparency;
 		vec3 L = normalize (-v);    // normalized vector from point on geometry to light source i position
 		vec3 V = normalize (-v);    // normalized vector from point on geometry to viewer's position
 		vec3 H = normalize (L + V); // specular term
+	
+		vec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);
+		float alpha         = 1.0 - transparency;
 
-		vec3 diffuseComponent = colorMaterial ? vec3 (C) : diffuseColor;
-		vec3 ambientTerm      = diffuseComponent * ambientIntensity;
-		vec3 diffuseTerm      = diffuseComponent * max (dot (N, L), 0.0);
-		vec3 specularTerm     = specularColor * pow (max (dot (N, H), 0.0), 128.0 * shininess);
-		vec3 emissiveTerm     = emissiveColor;
+		if (colorMaterial)
+		{
+			if (texturing)
+			{
+				vec4 T = texture2D (texture, vec2 (t .s, t .t));
+
+				diffuseFactor  = textureComponents < 3 ? T .rgb * C .rgb : T .rgb;
+				alpha         *= T .a;
+			}
+			else
+				diffuseFactor = C .rgb;
+
+			alpha *= C .a;
+		}
+		else
+		{
+			if (texturing)
+			{
+				vec4 T = texture2D (texture, vec2 (t .s, t .t));
+
+				diffuseFactor  = textureComponents < 3 ? T .rgb * diffuseColor : T .rgb;
+				alpha         *= T .a;
+			}
+			else
+				diffuseFactor = diffuseColor;
+		}
+
+		vec3 ambientTerm   = diffuseFactor * ambientIntensity;
+		vec3 diffuseTerm   = diffuseFactor * max (dot (N, L), 0.0);
+		vec3 specularTerm  = specularColor * pow (max (dot (N, H), 0.0), 128.0 * shininess);
+		vec3 emissiveTerm  = emissiveColor;
 
 		finalColor += vec4 (ambientTerm + diffuseTerm + specularTerm + emissiveTerm, alpha);
 	}
@@ -49,13 +77,15 @@ main ()
 			{
 				vec4 T = texture2D (texture, vec2 (t .s, t .t));
 
-				if (textureModulate)
+				if (textureComponents < 3)
 				{
 					finalColor .rgb = T .rgb * C .rgb;
 					finalColor .a   = T .a;
 				}
 				else
 					finalColor = T;
+
+				finalColor .a *= C .a;
 			}
 			else
 				finalColor = C;

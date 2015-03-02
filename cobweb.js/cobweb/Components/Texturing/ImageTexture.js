@@ -8,6 +8,7 @@ define ([
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -16,7 +17,8 @@ function ($,
           X3DTexture2DNode, 
           X3DUrlObject, 
           X3DConstants,
-          URI)
+          URI,
+          Algorithm)
 {
 	with (Fields)
 	{
@@ -80,6 +82,7 @@ function ($,
 				if (this .urlStack .length === 0)
 				{
 					this .urlStack = null;
+					this .setTexture (1, 1, 3, new Uint8Array ([ 255, 255, 255, 255 ]));
 					return;
 				}
 
@@ -89,35 +92,39 @@ function ($,
 
 				URL = this .getExecutionContext () .getWorldURL () .transform (URL);
 
-				if (URL .isLocal ())
-					URL = new URI (window .location) .getRelativePath (URL);
-
 				// Create Image
 
-				var image = new Image ();
-				image .onload  = this .processImage .bind (this, image);
-				image .onerror = this .setError .bind (this, URL);
-				image .src     = URL;
+				var image = $("<img>");
+				image .load (this .setImage .bind (this, image [0]));
+				image .error (this .setError .bind (this, URL));
+				image .attr ("src", URL);
 			},
 			setError: function (URL)
 			{
 				this .getBrowser () .println ("Error loading image URL '" + URL + "'.");
 				this .loadNext ();
 			},
-			processImage: function (image)
+			setImage: function (image)
 			{
+				this .urlStack = null;
+
+				var width  = image .width;
+				var height = image .height;
+
+				// Determine image components.
+
 				var canvas = $("<canvas>") [0];
-				
-				canvas .width  = image .width;
-				canvas .height = image .height;
-				
+	
+				canvas .width  = width;
+				canvas .height = height;
+
 				var cx = canvas .getContext ("2d");
 				cx .drawImage (image, 0, 0);
-				
+
 				var data   = cx .getImageData (0, 0, image .width, image .height) .data;
 				var gray   = true;
 				var opaque = true;
-				
+
 				for (var i = 0; i < data .length && gray; i += 4)
 					gray &= (data [i] === data [i + 1]) && (data [i] === data [i + 2]);
 
@@ -126,19 +133,35 @@ function ($,
 
 				var components = (gray ? 1 : 3) + (opaque ? 0 : 1);
 
-				setTimeout (this .setImage .bind (this, image, components), 0);
+				// Scale image.
+
+				if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
+				{
+					width  = Algorithm .nextPowerOfTwo (width);
+					height = Algorithm .nextPowerOfTwo (height);
+
+					cx .clearRect (0, 0, canvas .width, canvas .height);
+
+					canvas .width  = width;
+					canvas .height = height;
+
+					cx .drawImage (image, 0, 0, image .width, image .height);
+					
+					data = cx .getImageData (0, 0, width, height) .data;
+				}
+
+				setTimeout (this .setTexture .bind (this, width, height, components, new Uint8Array (data)), 0);
 			},
-			setImage: function (image, components)
+			setTexture: function (width, height, components, data)
 			{
-				this .urlStack    = null;
 				this .transparent = components && !(components % 2);
-				this .comonents   = components;
+				this .components  = components;
 
 				var gl = this .getBrowser () .getContext ();
 
 				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, true);
 				gl .bindTexture    (gl .TEXTURE_2D, this .texture);
-				gl .texImage2D     (gl .TEXTURE_2D, 0, gl .RGBA, gl .RGBA, gl .UNSIGNED_BYTE, image);
+				gl .texImage2D     (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
 				gl .texParameteri  (gl .TEXTURE_2D, gl .TEXTURE_MAG_FILTER, gl .LINEAR);
 				gl .texParameteri  (gl .TEXTURE_2D, gl .TEXTURE_MIN_FILTER, gl .LINEAR_MIPMAP_NEAREST);
 				gl .generateMipmap (gl .TEXTURE_2D);
