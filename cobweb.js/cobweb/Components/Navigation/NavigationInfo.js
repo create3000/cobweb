@@ -122,7 +122,7 @@ function ($,
 			{
 			
 			},
-			traverse (type)
+			traverse: function (type)
 			{
 				switch (type)
 				{
