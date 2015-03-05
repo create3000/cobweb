@@ -29,9 +29,7 @@ function ($,
 
 			this .addType (X3DConstants .ImageTexture);
 
-			this .urlStack    = null;
-			this .transparent = false;
-			this .components  = 0;
+			this .urlStack = null;
 		}
 
 		ImageTexture .prototype = $.extend (new X3DTexture2DNode (),
@@ -62,16 +60,11 @@ function ($,
 				X3DTexture2DNode .prototype .initialize .call (this);
 				X3DUrlObject     .prototype .initialize .call (this);
 
-				var gl = this .getBrowser () .getContext ();
-
-				this .texture = gl .createTexture ();
-				
 				this .requestAsyncLoad ();
 			},
-			
 			requestAsyncLoad: function ()
 			{
-				this .urlStack = undefined;
+				this .urlStack = null;
 				this .loadNext ();
 			},
 			loadNext: function ()
@@ -145,46 +138,13 @@ function ($,
 					canvas .width  = width;
 					canvas .height = height;
 
-					cx .drawImage (image, 0, 0, image .width, image .height);
+					cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
 					
 					data = cx .getImageData (0, 0, width, height) .data;
 				}
 
 				setTimeout (this .setTexture .bind (this, width, height, components, new Uint8Array (data)), 0);
 			},
-			setTexture: function (width, height, components, data)
-			{
-				this .transparent = components && !(components % 2);
-				this .components  = components;
-
-				var gl = this .getBrowser () .getContext ();
-
-				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, true);
-				gl .bindTexture    (gl .TEXTURE_2D, this .texture);
-				gl .texImage2D     (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .texParameteri  (gl .TEXTURE_2D, gl .TEXTURE_MAG_FILTER, gl .LINEAR);
-				gl .texParameteri  (gl .TEXTURE_2D, gl .TEXTURE_MIN_FILTER, gl .LINEAR_MIPMAP_NEAREST);
-				gl .generateMipmap (gl .TEXTURE_2D);
-				gl .bindTexture    (gl .TEXTURE_2D, null);
- 			},
- 			isTransparent: function ()
- 			{
-				return this .transparent;
- 			},
- 			getComponents: function ()
- 			{
-				return this .components;
- 			},
- 			traverse: function ()
- 			{
- 			   var browser = this .getBrowser ();
-				var gl      = browser .getContext ();
- 
-				gl .activeTexture (gl .TEXTURE0);
-				gl .bindTexture (gl .TEXTURE_2D, this .texture);
-
-				browser .setTexture (this);
- 			},
 		});
 
 		return ImageTexture;

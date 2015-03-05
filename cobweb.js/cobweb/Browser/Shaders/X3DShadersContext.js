@@ -10,10 +10,7 @@ function (ComposedShader,
           vertexShaderText,
           fragmentShaderText)
 {
-	function X3DShadersContext ()
-	{
-
-	}
+	function X3DShadersContext () { }
 
 	X3DShadersContext .prototype =
 	{

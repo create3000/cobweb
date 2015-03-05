@@ -325,11 +325,17 @@ function (Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		scale: function (scale)
 		{
-			value [0] *= scale .x;
-			value [3] *= scale .y;
+			this [0] *= scale .x;
+			this [3] *= scale .y;
 
-			value [1] *= scale .x;
-			value [4] *= scale .y;
+			this [1] *= scale .x;
+			this [4] *= scale .y;
+		},
+		toString: function ()
+		{
+			return this [0] + " " + this [1] + " " + this [2] + " " +
+			       this [3] + " " + this [4] + " " + this [5] + " " +
+			       this [6] + " " + this [7] + " " + this [8]
 		},
 	};
 

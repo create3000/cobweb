@@ -5,10 +5,10 @@ define ([
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Components/Layering/LayerSet",
 	"cobweb/Components/Layering/Layer",
-	"cobweb/Bits/x3d_cast",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
-function ($, SFNode, X3DBaseNode, LayerSet, Layer, x3d_cast, X3DConstants)
+function ($, SFNode, X3DBaseNode, LayerSet, Layer, X3DCast, X3DConstants)
 {
 	function World (executionContext)
 	{
@@ -40,8 +40,8 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, x3d_cast, X3DConstants)
 
 			this .set_rootNodes (); // This can happen twice when rootNodes is tainted
 
-			this .layer0 .isLayer0 (true);
 			this .layer0 .setup ();
+			this .layer0 .isLayer0 (true);
 
 			this .bind ();
 		},
@@ -65,7 +65,7 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, x3d_cast, X3DConstants)
 			for (var i = 0; i < rootNodes .length; ++ i)
 			{
 				var rootNode     = rootNodes [i];
-				var rootLayerSet = x3d_cast (X3DConstants .LayerSet, rootNode);
+				var rootLayerSet = X3DCast (X3DConstants .LayerSet, rootNode);
 
 				if (rootLayerSet)
 				{

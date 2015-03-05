@@ -4,6 +4,7 @@ define ([
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Browser/Rendering/X3DRenderingContext",
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
+	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Layering/X3DLayeringContext",
 	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
@@ -19,6 +20,7 @@ function ($,
           X3DBaseNode,
           X3DRenderingContext,
           X3DGeometry3DContext,
+          X3DEnvironmentalEffectsContext,
           X3DLayeringContext,
           X3DNavigationContext,
           X3DNetworkingContext,
@@ -32,17 +34,18 @@ function ($,
 {
 	function X3DBrowserContext (x3d)
 	{
-		X3DBaseNode          .call (this, this, this);
-		X3DRenderingContext  .call (this, x3d);
-		X3DGeometry3DContext .call (this);
-		X3DLayeringContext   .call (this);
-		X3DNavigationContext .call (this);
-		X3DNetworkingContext .call (this);
-		X3DShadersContext    .call (this);
-		X3DShapeContext      .call (this);
-		X3DTexturingContext  .call (this);
-		X3DTimeContext       .call (this);
-		X3DRoutingContext    .call (this);
+		X3DBaseNode                    .call (this, this, this);
+		X3DRenderingContext            .call (this, x3d);
+		X3DGeometry3DContext           .call (this);
+		X3DEnvironmentalEffectsContext .call (this);
+		X3DLayeringContext             .call (this);
+		X3DNavigationContext           .call (this);
+		X3DNetworkingContext           .call (this);
+		X3DShadersContext              .call (this);
+		X3DShapeContext                .call (this);
+		X3DTexturingContext            .call (this);
+		X3DTimeContext                 .call (this);
+		X3DRoutingContext              .call (this);
 
 		this .changedTime    = 0;
 		this .renderCallback = function () { this .traverse () } .bind (this);
@@ -51,6 +54,7 @@ function ($,
 	X3DBrowserContext .prototype = $.extend (new X3DBaseNode (),
 		X3DRenderingContext .prototype,
 		X3DGeometry3DContext .prototype,
+		X3DEnvironmentalEffectsContext .prototype,
 		X3DLayeringContext .prototype,
 		X3DNavigationContext .prototype,
 		X3DNetworkingContext .prototype,
@@ -63,17 +67,18 @@ function ($,
 		constructor: X3DBrowserContext,
 		initialize: function ()
 		{
-			X3DBaseNode          .prototype .initialize .call (this);
-			X3DRenderingContext  .prototype .initialize .call (this);
-			X3DGeometry3DContext .prototype .initialize .call (this);
-			X3DLayeringContext   .prototype .initialize .call (this);
-			X3DNavigationContext .prototype .initialize .call (this);
-			X3DNetworkingContext .prototype .initialize .call (this);
-			X3DShadersContext    .prototype .initialize .call (this);
-			X3DShapeContext      .prototype .initialize .call (this);
-			X3DTexturingContext  .prototype .initialize .call (this);
-			X3DTimeContext       .prototype .initialize .call (this);
-			X3DRoutingContext    .prototype .initialize .call (this);
+			X3DBaseNode                    .prototype .initialize .call (this);
+			X3DRenderingContext            .prototype .initialize .call (this);
+			X3DGeometry3DContext           .prototype .initialize .call (this);
+			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
+			X3DLayeringContext             .prototype .initialize .call (this);
+			X3DNavigationContext           .prototype .initialize .call (this);
+			X3DNetworkingContext           .prototype .initialize .call (this);
+			X3DShadersContext              .prototype .initialize .call (this);
+			X3DShapeContext                .prototype .initialize .call (this);
+			X3DTexturingContext            .prototype .initialize .call (this);
+			X3DTimeContext                 .prototype .initialize .call (this);
+			X3DRoutingContext              .prototype .initialize .call (this);
 		},
 		getWorld: function ()
 		{
@@ -106,7 +111,7 @@ function ($,
 
 			this .processEvents ();
 
-			this .context .clearColor (0, 0, 0, 1);
+			this .context .clearColor (0, 0, 0, 0);
 			this .context .clear (this .context .COLOR_BUFFER_BIT);
 
 			this .world .traverse (TraverseType .DISPLAY);

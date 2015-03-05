@@ -229,8 +229,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		},
 		transfer: function ()
 		{
-			var gl        = this .getBrowser () .getContext ();
-			var triangles = this .triangles .length / 4;
+			var gl       = this .getBrowser () .getContext ();
+			var vertices = this .triangles .length / 4;
 
 			// Transfer colors.
 
@@ -240,7 +240,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors), gl .STATIC_DRAW);
 			}
 			else
-				this .getBrowser () .setDefaultColorBuffer (triangles * 4);
+				this .getBrowser () .setDefaultColorBuffer (vertices * 4);
 
 			// Transfer texCoords.
 
@@ -264,7 +264,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .triangles), gl .STATIC_DRAW);
-			this .triangles .count = triangles;
+			this .triangles .vertices = vertices;
   		},
 		traverse: function (context)
 		{
@@ -277,7 +277,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 			var shader = browser .getDefaultShader ();
 
-			shader .use (context);
+			shader .setDefaultUniforms (context);
 
 			//
 
@@ -313,9 +313,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 			if (vertexAttribArray)
 			{
-				var submatrix     = context .modelViewMatrix .submatrix;
-				var positiveScale = submatrix .determinant () > 0;
-				var normalMatrix  = submatrix .transpose ();
+				var positiveScale = context .modelViewMatrix .determinant3 () > 0;
 
 				if (context .transparent && !this .solid)
 				{
@@ -337,9 +335,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 					else
 						gl .disable (gl .CULL_FACE);
 
-					gl .uniformMatrix3fv (shader .normalMatrix, false, new Float32Array (normalMatrix .inverse ()));
 					gl .frontFace (positiveScale ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
-					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .count);
+					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .vertices);
 				}
 
 				for (var i = 0; i < vertexAttribArray; ++ i)

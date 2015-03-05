@@ -41,38 +41,38 @@ function ($, Algorithm)
 		length: 4,
 		copy: function ()
 		{
-			return new Color4 (this .r,
-			                   this .g,
-			                   this .b,
-			                   this .a);
+			return new Color4 (this .r_,
+			                   this .g_,
+			                   this .b_,
+			                   this .a_);
 		},
 		assign: function (color)
 		{
-			this .r = color .r;
-			this .g = color .g;
-			this .b = color .b;
-			this .a = color .a;
+			this .r_ = color .r_;
+			this .g_ = color .g_;
+			this .b_ = color .b_;
+			this .a_ = color .a_;
 		},
 		set: function (r, g, b, a)
 		{
-			this .r = clamp (r, 0, 1);
-			this .g = clamp (g, 0, 1);
-			this .b = clamp (b, 0, 1);
-			this .a = clamp (a, 0, 1);
+			this .r_ = clamp (r, 0, 1);
+			this .g_ = clamp (g, 0, 1);
+			this .b_ = clamp (b, 0, 1);
+			this .a_ = clamp (a, 0, 1);
 		},
-		equals: function (vector)
+		equals: function (color)
 		{
-			return this .r === vector .r &&
-			       this .g === vector .g &&
-			       this .b === vector .b &&
-			       this .a === vector .a;
+			return this .r_ === color .r_ &&
+			       this .g_ === color .g_ &&
+			       this .b_ === color .b_ &&
+			       this .a_ === color .a_;
 		},
 		getHSV: function ()
 		{
 			var h, s, v;
 
-			var min = Math .min (this .r, this .g, this .b);
-			var max = Math .max (this .r, this .g, this .b);
+			var min = Math .min (this .r_, this .g_, this .b_);
+			var max = Math .max (this .r_, this .g_, this .b_);
 			v = max; // value
 
 			var delta = max - min;
@@ -82,11 +82,11 @@ function ($, Algorithm)
 				s = delta / max; // s
 
 				if (this .r === max)
-					h =     (this .g - this .b) / delta;  // between yellow & magenta
-				else if (this .g == max )
-					h = 2 + (this .b - this .r) / delta;  // between cyan & yellow
+					h =     (this .g_ - this .b_) / delta;  // between yellow & magenta
+				else if (this .g_ == max)
+					h = 2 + (this .b_ - this .r_) / delta;  // between cyan & yellow
 				else
-					h = 4 + (this .r - this .g) / delta;  // between magenta & cyan
+					h = 4 + (this .r_ - this .g_) / delta;  // between magenta & cyan
 
 				h *= Math .PI / 3;  // radiants
 				if (h < 0)
@@ -133,10 +133,10 @@ function ($, Algorithm)
 		},
 		toString: function ()
 		{
-			return this .r + " " +
-			       this .g + " " +
-			       this .b + " " +
-			       this .a;
+			return this .r_ + " " +
+			       this .g_ + " " +
+			       this .b_ + " " +
+			       this .a_;
 		},
 	};
 

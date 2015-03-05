@@ -36,7 +36,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "topUrl",       new MFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "bottomUrl",    new MFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "skyAngle",     new MFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "skyColor",     new MFColor (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "skyColor",     new MFColor (new SFColor (0, 0, 0))),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "groundAngle",  new MFFloat ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "groundColor",  new MFColor ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "transparency", new SFFloat ()),
@@ -55,6 +55,10 @@ function ($,
 			{
 				return "children";
 			},
+			initialize: function ()
+			{
+				X3DBackgroundNode .prototype .initialize .call (this);
+			}
 		});
 
 		return Background;

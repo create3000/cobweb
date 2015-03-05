@@ -5,7 +5,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Shape/X3DAppearanceNode",
-	"cobweb/Bits/x3d_cast",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -13,7 +13,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DAppearanceNode,
-          x3d_cast,
+          X3DCast,
           X3DConstants)
 {
 	with (Fields)
@@ -58,6 +58,7 @@ function ($,
 				
 				this .set_material__ ();
 				this .set_texture__ ();
+				this .set_textureTransform__ ();
 			},
 			isTransparent: function ()
 			{
@@ -66,19 +67,29 @@ function ($,
 			},
 			set_material__: function ()
 			{
-				this .materialNode = x3d_cast (X3DConstants .X3DMaterialNode, this .material_);
+				this .materialNode = X3DCast (X3DConstants .X3DMaterialNode, this .material_);
 			},
 			set_texture__: function ()
 			{
-				this .textureNode = x3d_cast (X3DConstants .X3DTextureNode, this .texture_);
+				this .textureNode = X3DCast (X3DConstants .X3DTextureNode, this .texture_);
+			},
+			set_textureTransform__: function ()
+			{
+				this .textureTransformNode = X3DCast (X3DConstants .X3DTextureTransformNode, this .textureTransform_);
+				
+				if (this .textureTransformNode)
+					return;
+				
+				this .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
 			},
 			traverse: function ()
 			{
 				var browser = this .getBrowser ();
-				var gl      = browser .getContext ();
 
 				browser .setMaterial (this .materialNode);
 				browser .setTexture (this .textureNode);
+
+				this .textureTransformNode .traverse ();
 			},
 		});
 

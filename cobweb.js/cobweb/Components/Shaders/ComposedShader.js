@@ -72,11 +72,11 @@ function ($,
 				this .isValid_ = gl .getProgramParameter (this .program, gl .LINK_STATUS);
 
 				if (this .isValid_ .getValue ())
-					this .getVariables ();
+					this .getDefaultUniforms ();
 				else
 					this .getBrowser () .print ("Could not initialise shaders!");
 			},
-			getVariables: function ()
+			getDefaultUniforms: function ()
 			{
 				// Get uniforms and attributes.
 
@@ -84,37 +84,42 @@ function ($,
 
 				gl .useProgram (this .program);
 
-				this .lighting         = gl .getUniformLocation (this .program, "lighting");
-				this .colorMaterial    = gl .getUniformLocation (this .program, "colorMaterial");
-				this .ambientIntensity = gl .getUniformLocation (this .program, "ambientIntensity");
-				this .diffuseColor     = gl .getUniformLocation (this .program, "diffuseColor");
-				this .specularColor    = gl .getUniformLocation (this .program, "specularColor");
-				this .emissiveColor    = gl .getUniformLocation (this .program, "emissiveColor");
-				this .shininess        = gl .getUniformLocation (this .program, "shininess");
-				this .transparency     = gl .getUniformLocation (this .program, "transparency");
+				this .lighting         = gl .getUniformLocation (this .program, "x3d_lighting");
+				this .colorMaterial    = gl .getUniformLocation (this .program, "x3d_colorMaterial");
+				this .ambientIntensity = gl .getUniformLocation (this .program, "x3d_ambientIntensity");
+				this .diffuseColor     = gl .getUniformLocation (this .program, "x3d_diffuseColor");
+				this .specularColor    = gl .getUniformLocation (this .program, "x3d_specularColor");
+				this .emissiveColor    = gl .getUniformLocation (this .program, "x3d_emissiveColor");
+				this .shininess        = gl .getUniformLocation (this .program, "x3d_shininess");
+				this .transparency     = gl .getUniformLocation (this .program, "x3d_transparency");
 				
-				this .texturing         = gl .getUniformLocation (this .program, "texturing");
-				this .texture           = gl .getUniformLocation (this .program, "texture");
-				this .textureComponents = gl .getUniformLocation (this .program, "textureComponents");
+				this .texturing         = gl .getUniformLocation (this .program, "x3d_texturing");
+				this .texture           = gl .getUniformLocation (this .program, "x3d_texture");
+				this .textureComponents = gl .getUniformLocation (this .program, "x3d_textureComponents");
 
-				this .textureMatrix    = gl .getUniformLocation (this .program, "textureMatrix");
-				this .normalMatrix     = gl .getUniformLocation (this .program, "normalMatrix");
-				this .projectionMatrix = gl .getUniformLocation (this .program, "projectionMatrix");
-				this .modelViewMatrix  = gl .getUniformLocation (this .program, "modelViewMatrix");
+				this .textureMatrix    = gl .getUniformLocation (this .program, "x3d_textureMatrix");
+				this .normalMatrix     = gl .getUniformLocation (this .program, "x3d_normalMatrix");
+				this .projectionMatrix = gl .getUniformLocation (this .program, "x3d_projectionMatrix");
+				this .modelViewMatrix  = gl .getUniformLocation (this .program, "x3d_modelViewMatrix");
 
-				this .color    = gl .getAttribLocation (this .program, "color");
-				this .texCoord = gl .getAttribLocation (this .program, "texCoord");
-				this .normal   = gl .getAttribLocation (this .program, "normal");
-				this .position = gl .getAttribLocation (this .program, "position");
+				this .color    = gl .getAttribLocation (this .program, "x3d_color");
+				this .texCoord = gl .getAttribLocation (this .program, "x3d_texCoord");
+				this .normal   = gl .getAttribLocation (this .program, "x3d_normal");
+				this .position = gl .getAttribLocation (this .program, "x3d_position");
 			},
-			use: function (context)
+			setDefaultUniforms: function (context)
 			{
 				var browser  = this .getBrowser ();
 				var gl       = browser .getContext ();
+
+				gl .useProgram (this .program);
+
+				if (! context)
+					return;
+
 				var material = browser .getMaterial ();
 				var texture  = browser .getTexture ();
 
-				gl .useProgram (this .program);
 				gl .uniform1i (this .colorMaterial, context .colorMaterial);
 
 				if (material)
@@ -143,10 +148,16 @@ function ($,
 				else
 					gl .uniform1i (this .texturing, false);
 
-				gl .uniformMatrix4fv (this .textureMatrix,    false, new Float32Array (browser .getTextureMatrix () .get ()));
+				gl .uniformMatrix4fv (this .textureMatrix,    false, new Float32Array (browser .getTextureTransform () [0] .getMatrix ()));
 				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));	
 				gl .uniformMatrix4fv (this .projectionMatrix, false, new Float32Array (browser .getProjectionMatrix () .get ()));
 				gl .uniformMatrix4fv (this .modelViewMatrix,  false, new Float32Array (context .modelViewMatrix));
+			},
+			use: function (context)
+			{
+				var gl = this .getBrowser () .getContext ();
+
+				gl .useProgram (this .program);
 			},
 		});
 

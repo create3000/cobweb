@@ -69,6 +69,11 @@ function (Algorithm)
 				}
 			}
 		},
+		toString: function ()
+		{
+			return this [0] + " " + this [1] + " " +
+			       this [2] + " " + this [3]
+		},
 	};
 
 	Object .defineProperty (Matrix2 .prototype, "x",

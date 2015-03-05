@@ -14,6 +14,24 @@ function ($, Fields, X3DBrowser)
 	if (! console .warn)  console .warn  = console .log;
 	if (! console .error) console .error = console .log;
 
+	function getBrowser (x3d)
+	{
+		return $(x3d) [0] .browser;
+	}
+
+	function createBrowser (x3d)
+	{
+		x3d = $(x3d);
+	
+		var browser = new X3DBrowser (x3d);
+
+		browser .setup ();
+		browser .importDocument (x3d [0]);
+
+		setTimeout (browser .getWorld () .bind .bind (browser .getWorld ()), 0);
+		return browser;
+	}
+
 	// X3D
 
 	var deferred = $.Deferred ();
@@ -36,11 +54,7 @@ function ($, Fields, X3DBrowser)
 			{
 				try
 				{
-					var x3d = $(this);
-
-					this .browser = new X3DBrowser (x3d);
-					this .browser .setup ();
-					this .browser .importDocument (this);
+					this .browser = createBrowser (this);
 				}
 				catch (error)
 				{
@@ -75,10 +89,8 @@ function ($, Fields, X3DBrowser)
 	return $.extend (X3D, Fields,
 	{
 		initialized: false,
-		getBrowser: function (x3d)
-		{
-			return $(x3d) [0] .browser;
-		},
+		getBrowser: getBrowser,
+		createBrowser: createBrowser,
 		error: error
 	});
 });

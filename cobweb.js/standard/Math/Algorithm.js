@@ -2,7 +2,8 @@
 
 define (function ()
 {
-	return {
+	var Algorithm =
+	{
 		radians: function (value)
 		{
 			return value * (Math .PI / 180);
@@ -54,7 +55,7 @@ define (function ()
 
 			return source .multiply (scale0) .add (destination .multiply (scale1)) .divide (sinom);
 		},
-		isPowerOfTwo (n)
+		isPowerOfTwo: function (n)
 		{
 			return ((n - 1) & n) === 0;
 		},
@@ -67,5 +68,37 @@ define (function ()
 
 			return ++ n;
 		},
+		less: function (lhs, rhs)
+		{
+			return lhs < rhs;
+		},
+		upperBound: function (array, first, last, value, comp)
+		{
+			if (! comp)
+				comp = Algorithm .less;
+
+			var
+				index = 0,
+				step  = 0,
+				count = last - first;
+
+			while (count > 0)
+			{
+				step  = count >>> 1;
+				index = first + step;
+
+				if (! comp (value, array [index]))
+				{
+					first  = ++ index;
+					count -= step + 1;
+				}
+				else
+					count = step;
+			}
+
+			return first;
+		},
 	};
+
+	return Algorithm;
 });

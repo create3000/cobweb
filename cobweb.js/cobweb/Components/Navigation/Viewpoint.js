@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Navigation/X3DViewpointNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -14,7 +15,8 @@ function ($,
           FieldDefinitionArray,
           X3DViewpointNode, 
           X3DConstants,
-          Camera)
+          Camera,
+          Vector3)
 {
 	with (Fields)
 	{
@@ -63,6 +65,20 @@ function ($,
 			{
 				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport);
 			},
+			getScreenScale (distance, viewport)
+			{
+				var width  = viewport [2];
+				var height = viewport [3];
+				var size   = distance * Math .tan (this .getFieldOfView () / 2) * 2;
+
+				if (width > height)
+					size /= height;
+
+				else
+					size /= width;
+
+				return new Vector3 (size, size, size);
+			}
 		});
 
 		return Viewpoint;

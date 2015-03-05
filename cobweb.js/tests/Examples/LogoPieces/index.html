@@ -2,6 +2,7 @@
 <html >
 	<head>
 		<meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+		<base href="../../../"/>
 		<script src="jam/require.js"></script>
 		<script type="text/javascript" src="cobweb.js"></script>
 		<link rel='stylesheet' type='text/css' href='cobweb.css'/>
@@ -18,34 +19,11 @@ html, body, x3d {
 	height: 100%;
 }
 		</style>
-	<script type="text/javascript">
-require ([
-	"jquery",
-	"cobweb/X3D",
-	"standard/Networking/URI",
-],
-function ($, X3D, URI)
-{
-	X3D (function (elements)
-	{
-		with (X3D)
-		{
-			var Browser = getBrowser (elements);
-			var scene   = Browser .currentScene .rootNodes;
-
-/*
-			console .log (scene .rootNodes [3] .children [0] .geometry .coord .point);
-
-*/
-		}
-	});
-});
-	</script>
 	</head>
 	<body>
 		<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd' statistics="false" log="false">
 			<Scene>
-				<Inline url='"tests/Examples/LogoPieces/index.x3d"'/>
+				<Inline url='"index.x3d"'/>
 			</Scene>
 		</X3D>
 	</body>

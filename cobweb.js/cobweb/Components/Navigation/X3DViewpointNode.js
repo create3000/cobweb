@@ -96,7 +96,7 @@ function ($,
 			{
 				if (type === TraverseType .CAMERA)
 				{
-					//this .getCurrentLayer () .getViewpoints () .push (this);
+					this .getCurrentLayer () .getViewpoints () .push (this);
 
 					this .parentMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
 

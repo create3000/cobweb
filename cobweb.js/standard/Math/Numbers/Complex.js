@@ -1,5 +1,8 @@
 
-define (function ()
+define ([
+	"jquery",
+],
+function ($)
 {
 	function Complex (real, imag)
 	{
@@ -106,6 +109,13 @@ define (function ()
 
 			return new Complex ((this .real * value .real + this .imag * value .imag) / d,
 					              (this .imag * value .real - this .real * value .imag) / d);
+		},
+		toString: function ()
+		{
+			if (this .imag)
+				return this .real * " " + this .imag + "i";
+
+			return String (this .real);
 		},
 	};
 

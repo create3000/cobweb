@@ -19,7 +19,6 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 		this .supportedNodes      = SupportedNodes;
 		this .supportedComponents = undefined;
 		this .supportedProfiles   = undefined;
-		this .currentScene        = undefined;
 	};
 
 	X3DBrowser .prototype = $.extend (new X3DBrowserContext (),

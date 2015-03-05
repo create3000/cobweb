@@ -367,7 +367,7 @@
     <None Include="cobweb\Base\X3DEventObject.js" />
     <None Include="cobweb\Routing\X3DRoutingContext.js" />
     <None Include="logo.png" />
-    <None Include="cobweb\Bits\x3d_cast.js" />
+    <None Include="cobweb\Bits\X3DCast.js" />
     <None Include="cobweb\Fields\SFRotation.js" />
     <None Include="cobweb\Browser\Layering\X3DLayeringContext.js" />
     <None Include="standard\Math\Algorithms\eigendecomposition.js" />

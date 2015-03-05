@@ -5,13 +5,15 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DBindableNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DBindableNode, 
+          X3DBindableNode,
+          TraverseType,
           X3DConstants)
 {
 	with (Fields)
@@ -120,6 +122,17 @@ function ($,
 			{
 			
 			},
+			traverse (type)
+			{
+				switch (type)
+				{
+					case TraverseType .CAMERA:
+					{
+						this .getCurrentLayer () .getNavigationInfos () .push (this);
+						break;
+					}
+				}
+			}
 		});
 
 		return NavigationInfo;

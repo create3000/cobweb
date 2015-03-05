@@ -42,8 +42,8 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			},
 			createNode: function (typeName, setup)
 			{
-				var node = new (this .getBrowser () .supportedNodes [typeName .toUpperCase ()]) (this);
-				
+				var node = new (this .getBrowser () .supportedNodes .dom [typeName .toUpperCase ()]) (this);
+
 				if (setup === false)
 					return node;
 

@@ -21,7 +21,6 @@
     <None Include="cobweb\Basic\X3DField.js" />
     <None Include="cobweb\Basic\X3DFieldDefinition.js" />
     <None Include="cobweb\Bits\TraverseType.js" />
-    <None Include="cobweb\Bits\x3d_cast.js" />
     <None Include="cobweb\Bits\X3DConstants.js" />
     <None Include="cobweb\Browser\Geometry3D\BoxOptions.js" />
     <None Include="cobweb\Browser\Geometry3D\X3DGeometry3DContext.js" />
@@ -352,7 +351,6 @@
     <None Include="cobweb\Rendering\X3DRenderer.js" />
     <None Include="cobweb\Routing\X3DRoutingContext.js" />
     <None Include="cobweb\X3D.js" />
-    <None Include="external\jquery.ba-resize.min.js" />
     <None Include="jam\jquery\dist\jquery.js" />
     <None Include="jam\jquery\dist\jquery.min.js" />
     <None Include="jam\jquery\dist\jquery.min.map" />
@@ -554,14 +552,34 @@
     <None Include="cobweb\Browser\Shaders\X3DShadersContext.js" />
     <None Include="cobweb\Browser\Shaders\FragmentShader.fs" />
     <None Include="cobweb\Browser\Shaders\VertexShader.vs" />
+    <None Include="tests\Components\images\logo.1.png" />
+    <None Include="tests\Components\images\logo.2.png" />
+    <None Include="tests\Components\images\logo.3.png" />
+    <None Include="tests\Components\images\logo.4.png" />
+    <None Include="tests\Components\images\logo.96.png" />
+    <None Include="tests\Examples\LogoPieces\index.x3d" />
+    <None Include="tests\Examples\LogoPieces\index.html" />
+    <None Include="tests\Components\Texturing\ColorMaterial.x3d" />
+    <None Include="cobweb\Browser\EnvironmentalEffects\X3DEnvironmentalEffectsContext.js" />
+    <None Include="cobweb\Browser\EnvironmentalEffects\SphereFragmentShader.fs" />
+    <None Include="cobweb\Browser\EnvironmentalEffects\SphereVertexShader.vs" />
+    <None Include="jam\jquery-resize\jquery.ba-resize.min.js" />
+    <None Include="cobweb\Execution\BindableStack.js" />
+    <None Include="cobweb\Execution\BindableList.js" />
+    <None Include="cobweb\Bits\X3DCast.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
     <Folder Include="cobweb\Browser\Shaders\" />
     <Folder Include="stable\" />
     <Folder Include="stable\0.1\" />
-    <Folder Include="test\" />
-    <Folder Include="test\Components\" />
-    <Folder Include="test\Components\images\" />
+    <Folder Include="tests\" />
+    <Folder Include="tests\Components\" />
+    <Folder Include="tests\Components\images\" />
+    <Folder Include="tests\Components\Texturing\" />
+    <Folder Include="tests\Examples\" />
+    <Folder Include="tests\Examples\LogoPieces\" />
+    <Folder Include="cobweb\Browser\EnvironmentalEffects\" />
+    <Folder Include="jam\jquery-resize\" />
   </ItemGroup>
 </Project>

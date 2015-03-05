@@ -22,6 +22,10 @@ function ($,
 		{
 			return this .getBrowser () .getLayers () [0];
 		},
+		getCurrentViewpoint: function ()
+		{
+			return this .getCurrentLayer () .getViewpoint ();
+		},
 	});
 
 	return X3DNode;

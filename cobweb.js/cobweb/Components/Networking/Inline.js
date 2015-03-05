@@ -77,7 +77,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error .message);
+					console .log (error);
 					this .setScene (this .getBrowser () .getDefaultScene ());
 				}
 			},
@@ -92,6 +92,8 @@ function ($,
 				
 				this .scene .addInterest (this .group .children_, "setValue");
 				this .group .children_ = this .scene .rootNodes;
+
+				this .getBrowser () .addBrowserEvent ();
 			},
 			getScene: function ()
 			{

@@ -24,6 +24,11 @@ var jam = {
             "name": "poly2tri",
             "location": "jam/poly2tri.js",
             "main": "dist/poly2tri.js"
+        },
+        {
+            "name": "jquery-resize",
+            "location": "jam/jquery-resize",
+            "main": "jquery.ba-resize.min.js"
         }
     ],
     "version": "0.2.17",
@@ -57,6 +62,11 @@ if (typeof require !== "undefined" && require.config) {
             "name": "poly2tri",
             "location": "jam/poly2tri.js",
             "main": "dist/poly2tri.js"
+        },
+        {
+            "name": "jquery-resize",
+            "location": "jam/jquery-resize",
+            "main": "jquery.ba-resize.min.js"
         }
     ],
     "shim": {}
@@ -89,6 +99,11 @@ else {
             "name": "poly2tri",
             "location": "jam/poly2tri.js",
             "main": "dist/poly2tri.js"
+        },
+        {
+            "name": "jquery-resize",
+            "location": "jam/jquery-resize",
+            "main": "jquery.ba-resize.min.js"
         }
     ],
     "shim": {}

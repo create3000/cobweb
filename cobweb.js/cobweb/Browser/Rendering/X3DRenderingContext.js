@@ -1,9 +1,11 @@
 
+//https://github.com/sdecima/javascript-detect-element-resize
+
 define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
-	"external/jquery.ba-resize.min",
+	"jquery-resize",
 ],
 function (Vector4,
           Matrix4,

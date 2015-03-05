@@ -187,25 +187,6 @@ function ($, Fields)
 
 				return false;
 			},
-			sfstringValue: function (field)
-			{
-				if (this .string ())
-				{
-					field .set (this .value);
-					return true;
-				}
-
-				return false;
-			},
-			mfstringValue: function (field)
-			{
-				return false;
-			},
-			mfstringValues: function (field)
-			{
-				while (this .sfstringValue (this .SFString))
-					field .push (this .SFString);
-			},
 			sfboolValue: function (field)
 			{
 				if (this .xml)
@@ -245,6 +226,8 @@ function ($, Fields)
 			},
 			mfboolValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfboolValue (this .SFBool))
 					field .push (this .SFBool);
 			},
@@ -276,6 +259,8 @@ function ($, Fields)
 			},
 			mfcolorValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfcolorValue (this .SFColor))
 					field .push (this .SFColor);
 			},
@@ -312,6 +297,8 @@ function ($, Fields)
 			},
 			mfcolorrgbaValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfcolorrgbaValue (this .SFColorRGBA))
 					field .push (this .SFColorRGBA);
 			},
@@ -331,6 +318,8 @@ function ($, Fields)
 			},
 			mfdoubleValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfdoubleValue (this .SFDouble))
 					field .push (this .SFDouble);
 			},
@@ -340,6 +329,8 @@ function ($, Fields)
 			},
 			mffloatValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfdoubleValue (this .SFFloat))
 					field .push (this .SFFloat);
 			},
@@ -384,6 +375,8 @@ function ($, Fields)
 			},
 			mfimageValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfimageValue (this .SFImage))
 					field .push (this .SFImage);
 			},
@@ -403,6 +396,8 @@ function ($, Fields)
 			},
 			mfint32Values: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfint32Value (this .SFInt32))
 					field .push (this .SFInt32);
 			},			
@@ -466,6 +461,8 @@ function ($, Fields)
 			},
 			mfmatrix3dValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfmatrix3Value (this .SFMatrix3d))
 					field .push (this .SFMatrix3d);
 			},
@@ -475,6 +472,8 @@ function ($, Fields)
 			},
 			mfmatrix3fValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfmatrix3Value (this .SFMatrix3f))
 					field .push (this .SFMatrix3f);
 			},
@@ -574,6 +573,8 @@ function ($, Fields)
 			},
 			mfmatrix4dValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfmatrix4Value (this .SFMatrix4d))
 					field .push (this .SFMatrix4d);
 			},
@@ -583,17 +584,10 @@ function ($, Fields)
 			},
 			mfmatrix4fValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfmatrix4Value (this .SFMatrix4f))
 					field .push (this .SFMatrix4f);
-			},
-			mftimeValue: function (field)
-			{
-				return false;
-			},
-			mftimeValues: function (field)
-			{
-				while (this .sfdoubleValue (this .SFTime))
-					field .push (this .SFTime);
 			},
 			sfrotationValue: function (field)
 			{
@@ -628,8 +622,42 @@ function ($, Fields)
 			},
 			mfrotationValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfrotationValue (this .SFRotation))
 					field .push (this .SFRotation);
+			},
+			sfstringValue: function (field)
+			{
+				if (this .string ())
+				{
+					field .set (this .value);
+					return true;
+				}
+
+				return false;
+			},
+			mfstringValue: function (field)
+			{
+				return false;
+			},
+			mfstringValues: function (field)
+			{
+				field .length = 0;
+
+				while (this .sfstringValue (this .SFString))
+					field .push (this .SFString);
+			},
+			mftimeValue: function (field)
+			{
+				return false;
+			},
+			mftimeValues: function (field)
+			{
+				field .length = 0;
+
+				while (this .sfdoubleValue (this .SFTime))
+					field .push (this .SFTime);
 			},
 			sfvec2Value: function (field)
 			{
@@ -654,6 +682,8 @@ function ($, Fields)
 			},
 			mfvec2dValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfvec2Value (this .SFVec2d))
 					field .push (this .SFVec2d);
 			},
@@ -663,7 +693,9 @@ function ($, Fields)
 			},
 			mfvec2fValues: function (field)
 			{
-			while (this .sfvec2Value (this .SFVec2f))
+				field .length = 0;
+
+				while (this .sfvec2Value (this .SFVec2f))
 					field .push (this .SFVec2f);
 			},
 			sfvec3Value: function (field)
@@ -694,6 +726,8 @@ function ($, Fields)
 			},
 			mfvec3dValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfvec3Value (this .SFVec3d))
 					field .push (this .SFVec3d);
 			},
@@ -703,6 +737,8 @@ function ($, Fields)
 			},
 			mfvec3fValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfvec3Value (this .SFVec3f))
 					field .push (this .SFVec3f);
 			},
@@ -739,6 +775,8 @@ function ($, Fields)
 			},
 			mfvec4dValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfvec4Value (this .SFVec4d))
 					field .push (this .SFVec4d);
 			},
@@ -768,6 +806,8 @@ function ($, Fields)
 			},
 			mfvec4fValues: function (field)
 			{
+				field .length = 0;
+
 				while (this .sfvec4Value (this .SFVec4f))
 					field .push (this .SFVec4f);
 			},

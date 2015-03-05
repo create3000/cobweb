@@ -6,8 +6,8 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Layering/Layer",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/x3d_cast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -16,8 +16,8 @@ function ($,
           FieldDefinitionArray,
           X3DNode,
           Layer,
+          X3DCast,
           TraverseType,
-          x3d_cast,
           X3DConstants)
 {
 	with (Fields)
@@ -120,7 +120,7 @@ function ($,
 
 						if (index >= 0 && index < this .layers_ .length)
 						{
-							var layerNode = x3d_cast (X3DConstants .X3DLayerNode, this .layers_ [index]);
+							var layerNode = X3DCast (X3DConstants .X3DLayerNode, this .layers_ [index]);
 
 							if (layerNode)
 								this .layerNodes .push (layerNode);
@@ -137,7 +137,7 @@ function ($,
 				for (var i = 0; i < this .layers_ .length; ++ i)
 				{
 					var layer     = this .layers_ [i];
-					var layerNode = x3d_cast (X3DConstants .X3DLayerNode, layer);
+					var layerNode = X3DCast (X3DConstants .X3DLayerNode, layer);
 
 					if (layerNode)
 						layerNode .bind ();

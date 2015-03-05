@@ -6,7 +6,7 @@ define ([
 	"standard/Math/Numbers/Matrix3",
 	"standard/Math/Algorithms/eigendecomposition",
 ],
-function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
+function (Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 {
 	function Matrix4 (m00, m01, m02, m03,
 	                  m10, m11, m12, m13,
@@ -79,53 +79,6 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 			}
 
 			return true;
-		},
-		rotation: function ()
-		{
-			var quat = [ ];
-
-			var i;
-
-			// First, find largest diagonal in matrix:
-			if (this [0] > this [4])
-			{
-				i = this [0] > this [8] ? 0 : 2;
-			}
-			else
-			{
-				i = this [4] > this [8] ? 1 : 2;
-			}
-
-			var scalerow = this [0] + this [4] + this [8];
-
-			if (scalerow > this [i * 3 + i])
-			{
-				// Compute w first:
-				quat [3] = Math .sqrt (scalerow + 1) / 2;
-
-				// And compute other values:
-				var d = 4 * quat [3];
-				quat [0] = (this [5] - this [7]) / d;
-				quat [1] = (this [6] - this [2]) / d;
-				quat [2] = (this [1] - this [3]) / d;
-			}
-			else
-			{
-				// Compute x, y, or z first:
-				var j = (i + 1) % 3;
-				var k = (i + 2) % 3;
-
-				// Compute first value:
-				quat [i] = Math .sqrt (this [i * 3 + i] - this [j * 3 + j] - this [k * 3 + k] + 1) / 2;
-
-				// And the others:
-				var d = 4 * quat [i];
-				quat [j] = (this [i * 3 + j] + this [j * 3 + i]) / d;
-				quat [k] = (this [i * 3 + k] + this [k * 3 + i]) / d;
-				quat [3] = (this [j * 3 + k] - this [k * 3 + j]) / d;
-			}
-
-			return new Rotation4 (new Quaternion (quat [0], quat [1], quat [2], quat [3]));
 		},
 		set1: function (r, c, value)
 		{
@@ -265,28 +218,28 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 				}
 				case 2:
 				{
-					var rot   = Matrix3 ();
-					var so    = Matrix3 ();
+					var rot   = new Matrix3 ();
+					var so    = new Matrix3 ();
 					var scale = new Vector3 ();
-					this .factor (translation, rot, scaleFactor, so);
-					rotation .assign (Matrix4 .Matrix3 (rot) .rotation ());
+					this .factor (translation, rot, scale, so);
+					rotation .assign (Rotation4 .Matrix3 (rot));
 					break;
 				}
 				case 3:
 				{
-					var rot   = Matrix3 ();
-					var so    = Matrix3 ();
-					this .factor (translation, rot, scaleFactor, so);
-					rotation .assign (Matrix4 .Matrix3 (rot) .rotation ());
+					var rot   = new Matrix3 ();
+					var so    = new Matrix3 ();
+					this .factor (translation, rot, scascaleleFactor, so);
+					rotation .assign (Rotation4 .Matrix3 (rot));
 					break;
 				}
 				case 4:
 				{
-					var rot   = Matrix3 ();
-					var so    = Matrix3 ();
-					this .factor (translation, rot, scaleFactor, so);
-					rotation .assign (Matrix4 .Matrix3 (rot) .rotation ());
-					scaleOrientation .assign (Matrix4 .Matrix3 (so) .rotation ());
+					var rot   = new Matrix3 ();
+					var so    = new Matrix3 ();
+					this .factor (translation, rot, scale, so);
+					rotation .assign (Rotation4 .Matrix3 (rot));
+					scaleOrientation .assign (Rotation4 .Matrix3 (so));
 					break;
 				}
 				case 5:
@@ -320,7 +273,7 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 			// (4) B = A * !A  (here !A means A transpose)
 			var b = a .multRight (a .transpose ());
 
-			var e = eigendecomposition (b, evalues, evectors);
+			var e = eigendecomposition (b);
 
 			// Find min / max eigenvalues and do ratio test to determine singularity.
 
@@ -546,6 +499,13 @@ function (Vector3, Vector4, Rotation4, Matrix3, eigendecomosition)
 			this [ 2] *= scale .x;
 			this [ 6] *= scale .y;
 			this [10] *= scale .z;
+		},
+		toString: function ()
+		{
+			return this [ 0] + " " + this [ 1] + " " + this [ 2] + " " + this [ 3] + " " +
+			       this [ 4] + " " + this [ 5] + " " + this [ 6] + " " + this [ 7] + " " +
+			       this [ 8] + " " + this [ 9] + " " + this [10] + " " + this [11] + " " +
+			       this [12] + " " + this [13] + " " + this [14] + " " + this [15]
 		},
 	};
 

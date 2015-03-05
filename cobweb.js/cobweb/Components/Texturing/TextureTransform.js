@@ -6,13 +6,19 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Texturing/X3DTextureTransformNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DTextureTransformNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector2,
+          Matrix3,
+          Matrix4)
 {
 	with (Fields)
 	{
@@ -44,6 +50,38 @@ function ($,
 			getContainerField: function ()
 			{
 				return "textureTransform";
+			},
+			initialize: function ()
+			{
+				X3DTextureTransformNode .prototype .initialize .call (this);
+				
+				this .addInterest (this, "update");
+
+				this .update ();
+			},
+			update: function ()
+			{
+				var matrix = new Matrix3 ();
+
+				if (! this .center_ .getValue () .equals (new Vector2 ()))
+					matrix .translate (this .center_ .getValue () .negate ());
+
+				if (! this .scale_ .getValue () .equals (new Vector2 (1, 1)))
+					matrix .scale (this .scale_ .getValue ());
+
+				if (this .rotation_ .getValue () !== 0)
+					matrix .rotate (this .rotation_ .getValue ());
+
+				if (! this .center_ .getValue () .equals (new Vector2 ()))
+					matrix .translate (this .center_ .getValue ());
+
+				if (! this .translation_ .getValue () .equals (new Vector2 ()))
+					matrix .translate (this .translation_ .getValue ());
+
+				this .setMatrix (new Matrix4 (matrix [0], matrix [1], 0, matrix [2],
+				                              matrix [3], matrix [4], 0, matrix [5],
+				                              0, 0, 1, 0,
+				                              matrix [6], matrix [7], 0, matrix [8]));
 			},
 		});
 

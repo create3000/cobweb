@@ -2,12 +2,12 @@
 define ([
 	"jquery",
 	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/x3d_cast",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DGeometryNode,
-          x3d_cast,
+          X3DCast,
           X3DConstants)
 {
 	function X3DComposedGeometryNode (browser, executionContext)
@@ -79,7 +79,7 @@ function ($,
 				this .colorNode .removeInterest (this, "set_transparency__");
 			}
 
-			this .colorNode = x3d_cast (X3DConstants .X3DColorNode, this .color_);
+			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
@@ -100,7 +100,7 @@ function ($,
 			if (this .texCoordNode)
 				this .texCoordNode .removeInterest (this, "addNodeEvent");
 
-			this .texCoordNode = x3d_cast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
+			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
 				this .texCoordNode .addInterest (this, "addNodeEvent");
@@ -110,7 +110,7 @@ function ($,
 			if (this .normalNode)
 				this .normalNode .removeInterest (this, "addNodeEvent");
 
-			this .normalNode = x3d_cast (X3DConstants .X3DNormalNode, this .normal_);
+			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
 				this .normalNode .addInterest (this, "addNodeEvent");
@@ -120,7 +120,7 @@ function ($,
 			if (this .coordNode)
 				this .coordNode .removeInterest (this, "addNodeEvent");
 
-			this .coordNode = x3d_cast (X3DConstants .X3DCoordinateNode, this .coord_);
+			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
 				this .coordNode .addInterest (this, "addNodeEvent");
