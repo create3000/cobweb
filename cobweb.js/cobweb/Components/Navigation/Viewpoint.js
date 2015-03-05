@@ -65,7 +65,7 @@ function ($,
 			{
 				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport);
 			},
-			getScreenScale (distance, viewport)
+			getScreenScale: function (distance, viewport)
 			{
 				var width  = viewport [2];
 				var height = viewport [3];
