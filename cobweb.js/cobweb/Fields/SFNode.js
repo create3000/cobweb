@@ -75,6 +75,10 @@ function ($, X3DField, X3DConstants)
 		{
 			X3DField .prototype .set .call (this, value ? value : null);
 		},
+		getNodeTypeName: function ()
+		{
+			return this .getValue () .getTypeName ();
+		},
 		getNodeName: function ()
 		{
 			return this .getValue () .getName ();

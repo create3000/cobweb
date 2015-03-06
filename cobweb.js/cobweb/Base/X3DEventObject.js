@@ -5,11 +5,15 @@ define ([
 ],
 function ($, X3DChildObject)
 {
-	function Event (field)
+	function Event (field, sources)
 	{
 		return {
 			field: field,
-			sources: { },
+			sources: sources,
+			copy: function ()
+			{
+				return Event (this .field, $.extend ({  }, this .sources));
+			},
 		};
 	}
 
@@ -35,7 +39,7 @@ function ($, X3DChildObject)
 
 			field .setTainted (true);
 
-			this .addEventObject (field, Event (field));
+			this .addEventObject (field, Event (field, { }));
 		},
 		addEventObject: function (field, event)
 		{

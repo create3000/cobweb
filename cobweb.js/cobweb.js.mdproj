@@ -567,6 +567,7 @@
     <None Include="cobweb\Execution\BindableStack.js" />
     <None Include="cobweb\Execution\BindableList.js" />
     <None Include="cobweb\Bits\X3DCast.js" />
+    <None Include="cobweb\Routing\X3DRoute.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

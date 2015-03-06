@@ -1,6 +1,7 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields/SFTime",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Browser/Rendering/X3DRenderingContext",
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
@@ -17,6 +18,7 @@ define ([
 	"cobweb/Bits/TraverseType",
 ],
 function ($,
+          SFTime,
           X3DBaseNode,
           X3DRenderingContext,
           X3DGeometry3DContext,
@@ -46,6 +48,8 @@ function ($,
 		X3DTexturingContext            .call (this);
 		X3DTimeContext                 .call (this);
 		X3DRoutingContext              .call (this);
+
+		this .addChildren ("prepareEvents", new SFTime ());
 
 		this .changedTime    = 0;
 		this .renderCallback = function () { this .traverse () } .bind (this);
@@ -105,6 +109,8 @@ function ($,
 		traverse: function ()
 		{
 			this .advance ();
+
+			this .prepareEvents_ .processInterests ();
 
 			this .processEvents ();
 			this .world .traverse (TraverseType .CAMERA);

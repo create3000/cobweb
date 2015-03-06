@@ -17,6 +17,7 @@ function ($, X3DChildObject, X3DConstants)
 	{
 		constructor: X3DField,
 		accessType_: X3DConstants .initializeOnly,
+		fieldInterests_: { },
 		fieldCallbacks_: { },
 		setValue: function (value)
 		{
@@ -55,6 +56,17 @@ function ($, X3DChildObject, X3DConstants)
 		{
 			return this .accessType_ & X3DConstants .outputOnly;
 		},
+		addFieldInterest: function (field)
+		{
+			if (! this .hasOwnProperty ("fieldInterests_"))
+				this .fieldInterests_ = { };
+
+			this .fieldInterests_ [field .getId ()] = field;
+		},
+		removeFieldInterest: function (field)
+		{
+			delete this .fieldInterests_ [field .getId ()];
+		},
 		addFieldCallback: function (string, object)
 		{
 			if (! this .hasOwnProperty ("fieldCallbacks_"))
@@ -70,6 +82,11 @@ function ($, X3DChildObject, X3DConstants)
 		{
 			for (var key in this .parents_)
 				this .parents_ [key] .addEvent (this);
+		},
+		addEventObject: function (field, event)
+		{
+			for (var key in this .parents_)
+				this .parents_ [key] .addEventObject (this, event);
 		},
 		processEvent: function (event)
 		{
@@ -89,7 +106,10 @@ function ($, X3DChildObject, X3DConstants)
 
 			this .processInterests ();
 
-			// ... Process routes
+			// Process routes
+
+			for (var key in this .fieldInterests_)
+				this .fieldInterests_ [key] .addEventObject (this, event .copy ());
 
 			// Process field callbacks
 

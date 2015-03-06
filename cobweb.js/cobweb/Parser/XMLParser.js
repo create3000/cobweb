@@ -11,15 +11,19 @@ function ($, Fields, Parser, X3DConstants)
 	{
 		function XMLParser (scene, dom)
 		{
-			this .currentScene = scene;
-			this .dom          = dom;
-			this .nodes        = [ ];
-			this .parser       = new Parser (this .scene, "", true);
+			this .executionContext = [ scene ];
+			this .dom              = dom;
+			this .nodes            = [ ];
+			this .parser           = new Parser (this .scene, "", true);
 		}
 
 		XMLParser .prototype =
 		{
 			constructor: XMLParser,
+			getExecutionContext: function ()
+			{
+				return this .executionContext [this .executionContext .length - 1];
+			},
 			parseIntoScene: function ()
 			{
 				switch (this .dom .nodeName)
@@ -48,7 +52,7 @@ function ($, Fields, Parser, X3DConstants)
 					}
 					default:
 					{
-						this .node (this .dom);
+						this .element (this .dom);
 						break;
 					}
 				}
@@ -75,9 +79,21 @@ function ($, Fields, Parser, X3DConstants)
 				{
 					case 1: // node
 					{
-						this .node (element);
+						this .element (element);
 					}
 					case 3: // text
+						return;
+				}
+			},
+			element: function (element)
+			{
+				switch (element .nodeName)
+				{
+					case "ROUTE":
+						this .route (element);
+						return;
+					default:
+						this .node (element);
 						return;
 				}
 			},
@@ -88,19 +104,20 @@ function ($, Fields, Parser, X3DConstants)
 					if (this .USE (element))
 						return;
 				
-					var node = this .currentScene .createNode (element .nodeName, false);
+					var node = this .getExecutionContext () .createNode (element .nodeName, false);
 					
 					this .DEF (element, node);
 					this .addNode (element, node);
 					this .nodes .push (node);
 					this .attributes (element .attributes, node);
 					this .children (element .childNodes);
-					this .currentScene .addUninitializedNode (node);
+					this .getExecutionContext () .addUninitializedNode (node);
 					this .nodes .pop ();
 				}
 				catch (error)
 				{
-					//console .log (error);
+					if (element .nodeName === "TimeSensor")
+						console .log (error);
 					console .warn ("Unknown node type '" + element .nodeName + "'.");
 				}
 			},
@@ -111,7 +128,7 @@ function ($, Fields, Parser, X3DConstants)
 					var name = element .getAttribute ("DEF");
 
 					if (name)
-						this .currentScene .updateNamedNode (name, node);
+						this .getExecutionContext () .updateNamedNode (name, node);
 				}
 				catch (error)
 				{ }
@@ -124,7 +141,7 @@ function ($, Fields, Parser, X3DConstants)
 
 					if (name)
 					{
-						var node = this .currentScene .getNamedNode (name);
+						var node = this .getExecutionContext () .getNamedNode (name);
 
 						this .addNode (element, node .getValue ());
 
@@ -178,7 +195,7 @@ function ($, Fields, Parser, X3DConstants)
 					}
 				}
 				else
-					this .currentScene .rootNodes .push (node);
+					this .getExecutionContext () .rootNodes .push (node);
 			},
 			attributes: function (attributes, node)
 			{
@@ -201,6 +218,25 @@ function ($, Fields, Parser, X3DConstants)
 				catch (error)
 				{ }
 			},
+			route: function (element)
+			{
+				var fromNode  = element .getAttribute ("fromNode");
+				var fromField = element .getAttribute ("fromField");
+				var toNode    = element .getAttribute ("toNode");
+				var toField   = element .getAttribute ("toField");
+
+				try
+				{
+					var sourceNode      = this .getExecutionContext () .getNamedNode (fromNode);
+					var destinationNode = this .getExecutionContext () .getNamedNode (toNode);
+
+					this .getExecutionContext () .addRoute (sourceNode, fromField, destinationNode, toField);
+				}
+				catch (error)
+				{
+					console .log (error .message);
+				}
+			},
 		};
 
 		XMLParser .prototype .fieldTypes = [ ];
@@ -217,7 +253,7 @@ function ($, Fields, Parser, X3DConstants)
 		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4d]  = Parser .prototype .sfmatrix4Value;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFRotation]  = Parser .prototype .sfrotationValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFString]    = Parser .prototype .sfstringValue;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFTime]      = Parser .prototype .sftimeValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFTime]      = Parser .prototype .sfdoubleValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2d]     = Parser .prototype .sfvec2Value;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2f]     = Parser .prototype .sfvec2Value;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFVec3d]     = Parser .prototype .sfvec3Value;

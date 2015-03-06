@@ -5,10 +5,18 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Routing/X3DRoute",
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
 ],
-function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DConstants, URI)
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DBaseNode,
+          X3DRoute,
+          X3DConstants,
+          URI)
 {
 	with (Fields)
 	{
@@ -19,6 +27,8 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			this .url                = new URI (window .location);
 			this .uninitializedNodes = [ ];
 			this .namedNodes         = { };
+			this .routes             = [ ]; // RouteArray
+			this .routeIndex         = { };
 		}
 
 		X3DExecutionContext .prototype = $.extend (new X3DBaseNode (),
@@ -27,10 +37,10 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNodes", new MFNode ()),
 			]),
-			initialize: function ()
+			setup: function ()
 			{
-				X3DBaseNode .prototype .initialize .call (this);
-				
+				X3DBaseNode .prototype .setup .call (this);
+
 				for (var i = 0; i < this .uninitializedNodes .length; ++ i)
 					this .uninitializedNodes [i] .setup ();
 
@@ -109,6 +119,35 @@ function ($, Fields, X3DFieldDefinition, FieldDefinitionArray, X3DBaseNode, X3DC
 			getRootNodes: function ()
 			{
 				return this .rootNodes_;
+			},
+			addRoute: function (sourceNode, fromField, destinationNode, toField)
+			{
+				if (! sourceNode .getValue ())
+					throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
+
+				if (! destinationNode .getValue ())
+					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
+
+				var sourceField      = sourceNode .getValue () .getField (fromField);
+				var destinationField = destinationNode .getValue () .getField (toField);
+
+				if (! sourceField .isOutput ())
+					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
+
+				if (! destinationField .isInput ())
+					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
+
+				var id    = sourceField .getId () + "." + destinationField .getId ();
+				var route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
+
+				this .routes .push (route);
+				this .routeIndex [id] = route;
+
+				return route;
+			},
+			deleteRoute: function (route)
+			{
+			
 			},
 		});
 
