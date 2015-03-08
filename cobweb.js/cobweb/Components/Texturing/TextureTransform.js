@@ -63,19 +63,19 @@ function ($,
 			{
 				var matrix = new Matrix3 ();
 
-				if (! this .center_ .getValue () .equals (new Vector2 ()))
-					matrix .translate (this .center_ .getValue () .negate ());
+				if (! this .center_ .getValue () .equals (Vector2 .Zero))
+					matrix .translate (this .center_ .getValue () .copy () .negate ());
 
-				if (! this .scale_ .getValue () .equals (new Vector2 (1, 1)))
+				if (! this .scale_ .getValue () .equals (Vector2 .One))
 					matrix .scale (this .scale_ .getValue ());
 
 				if (this .rotation_ .getValue () !== 0)
 					matrix .rotate (this .rotation_ .getValue ());
 
-				if (! this .center_ .getValue () .equals (new Vector2 ()))
+				if (! this .center_ .getValue () .equals (Vector2 .Zero))
 					matrix .translate (this .center_ .getValue ());
 
-				if (! this .translation_ .getValue () .equals (new Vector2 ()))
+				if (! this .translation_ .getValue () .equals (Vector2 .Zero))
 					matrix .translate (this .translation_ .getValue ());
 
 				this .setMatrix (new Matrix4 (matrix [0], matrix [1], 0, matrix [2],

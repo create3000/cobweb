@@ -550,8 +550,6 @@
     <None Include="package.json" />
     <None Include="cobweb\Browser\Texturing\X3DTexturingContext.js" />
     <None Include="cobweb\Browser\Shaders\X3DShadersContext.js" />
-    <None Include="cobweb\Browser\Shaders\FragmentShader.fs" />
-    <None Include="cobweb\Browser\Shaders\VertexShader.vs" />
     <None Include="tests\Components\images\logo.1.png" />
     <None Include="tests\Components\images\logo.2.png" />
     <None Include="tests\Components\images\logo.3.png" />
@@ -568,6 +566,13 @@
     <None Include="cobweb\Execution\BindableList.js" />
     <None Include="cobweb\Bits\X3DCast.js" />
     <None Include="cobweb\Routing\X3DRoute.js" />
+    <None Include="cobweb\Browser\Lighting\X3DLightingContext.js" />
+    <None Include="cobweb\Browser\Rendering\Gouraud.fs" />
+    <None Include="cobweb\Browser\Rendering\Gouraud.vs" />
+    <None Include="cobweb\Browser\Rendering\Phong.fs" />
+    <None Include="cobweb\Browser\Rendering\Phong.vs" />
+    <None Include="tests\Components\Geometry3D\Beethoven.x3d" />
+    <None Include="tests\Components\Lighting\PointLight.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -582,5 +587,8 @@
     <Folder Include="tests\Examples\LogoPieces\" />
     <Folder Include="cobweb\Browser\EnvironmentalEffects\" />
     <Folder Include="jam\jquery-resize\" />
+    <Folder Include="cobweb\Browser\Lighting\" />
+    <Folder Include="tests\Components\Geometry3D\" />
+    <Folder Include="tests\Components\Lighting\" />
   </ItemGroup>
 </Project>

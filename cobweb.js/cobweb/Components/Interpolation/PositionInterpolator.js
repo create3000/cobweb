@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 	with (Fields)
 	{
@@ -58,7 +60,7 @@ function ($,
 			},
 			interpolate: function (index0, index1, weight)
 			{
-				this .value_changed_ = this .keyValue_ [index0] .getValue () .lerp (this .keyValue_ [index1] .getValue (), weight);
+				this .value_changed_ = Vector3 .lerp (this .keyValue_ [index0] .getValue (), this .keyValue_ [index1] .getValue (), weight);
 			},
 		});
 

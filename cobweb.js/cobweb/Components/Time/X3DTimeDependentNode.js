@@ -38,6 +38,7 @@ function ($,
 			constructor: X3DTimeDependentNode,
 			initialize: function ()
 			{
+//return;
 				this .getExecutionContext () .isLive_ .addInterest (this, "set_live_");
 				this .isEvenLive_                     .addInterest (this, "set_live_");
 				this .isLive_                         .addInterest (this, "set_live_");

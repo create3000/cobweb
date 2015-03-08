@@ -50,7 +50,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 
 				var direction = far .normalize ();
 
-				return direction .multiply (this .getDistanceToCenter () .abs () / direction .dot (new Vector3 (0, 0, -1)));
+				return Vector3 .multiply (direction, this .getDistanceToCenter () .abs () / direction .dot (new Vector3 (0, 0, -1)));
 			}
 			catch (error)
 			{
@@ -62,7 +62,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		{
 			var viewpoint = this .getActiveViewpoint ();
 
-			return viewpoint .getUserPosition () .subtract (viewpoint .getUserCenterOfRotation ());
+			return Vector3 .subtract (viewpoint .getUserPosition (), viewpoint .getUserCenterOfRotation ());
 		},
 		trackballProjectToSphere: function (x, y)
 		{

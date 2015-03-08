@@ -31,7 +31,7 @@ function ($, Quaternion, Vector3)
 					var to   = arguments [1] .normalize ();
 
 					var cos_angle = from .dot (to);
-					var crossvec  = from .cross (to) .normalize ();
+					var crossvec  = Vector3 .cross (from, to) .normalize ();
 					var crosslen  = crossvec .abs ();
 
 					if (crosslen == 0)
@@ -46,13 +46,13 @@ function ($, Quaternion, Vector3)
 						else
 						{
 							// Try crossing with x axis.
-							var t = from .cross (Vector3 (1, 0, 0));
+							var t = Vector3 .cross (from, Vector3 (1, 0, 0));
 
 							// If not ok, cross with y axis.
 							if (t .norm () == 0)
-								t = from .cross (Vector3 (0, 1, 0));
+								t = Vector3 .cross (from , Vector3 (0, 1, 0));
 
-							t = t .normalize ();
+							t .normalize ();
 
 							this .value = Quaternion (t .x, t .y, t .z, 0);
 						}
@@ -62,7 +62,8 @@ function ($, Quaternion, Vector3)
 						// Vectors are not parallel
 						// The abs () wrapping is to avoid problems when `dot' "overflows" a tiny wee bit,
 						// which can lead to sqrt () returning NaN.
-						crossvec = crossvec .multiply (Math .sqrt (Math .abs (1 - cos_angle) / 2));
+						crossvec .multiply (Math .sqrt (Math .abs (1 - cos_angle) / 2));
+
 						this .value = new Quaternion (crossvec .x,
 						                              crossvec .y,
 						                              crossvec .z,
@@ -86,6 +87,11 @@ function ($, Quaternion, Vector3)
 			}
 		}
 	}
+
+	$.extend (Rotation4,
+	{
+		Identity: new Rotation4 (),
+	});
 
 	Rotation4 .prototype =
 	{

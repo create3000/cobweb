@@ -1,8 +1,9 @@
 
 define ([
+	"jquery",
 	"standard/Math/Algorithm",
 ],
-function (Algorithm)
+function ($, Algorithm)
 {
 	function Vector3 (x, y, z)
 	{		
@@ -20,6 +21,94 @@ function (Algorithm)
 		}
 	}
 
+	$.extend (Vector3,
+	{
+		Zero: new Vector3 (),
+		One: new Vector3 (1, 1, 1),
+		negate: function ()
+		{
+			return vector .copy () .negate ();
+		},
+		add: function (lhs, rhs)
+		{
+			return lhs .copy () .add (rhs);
+		},
+		subtract: function (lhs, rhs)
+		{
+			return lhs .copy () .subtract (rhs);
+		},
+		multiply: function (lhs, rhs)
+		{
+			return lhs .copy () .multiply (rhs);
+		},
+		multVec: function (lhs, rhs)
+		{
+			return lhs .copy () .multVec (rhs);
+		},
+		divide: function (lhs, rhs)
+		{
+			return lhs .copy () .divide (rhs);
+		},
+		divVec: function (lhs, rhs)
+		{
+			return lhs .copy () .divVec (rhs);
+		},
+		normalize: function ()
+		{
+			return vector .copy () .normalize ();
+		},
+		cross: function (lhs, rhs)
+		{
+			return lhs .copy () .cross (rhs);
+		},
+		lerp: function (source, dest, t)
+		{
+			return new Vector3 (Algorithm .lerp (source .x, dest .x, t),
+			                    Algorithm .lerp (source .y, dest .y, t),
+			                    Algorithm .lerp (source .z, dest .z, t));
+		},
+		slerp: function (source, dest, t)
+		{
+			return Algorithm .slerp (source, dest, t);
+		},
+		min: function (lhs, rhs)
+		{
+			var
+				x = arguments [0] .x,
+				y = arguments [0] .y,
+				z = arguments [0] .z;
+
+			for (var i = 1; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .min (x, vector .x);
+				y = Math .min (y, vector .y);
+				z = Math .min (z, vector .z);
+			}
+
+			return new Vector3 (x, y, z);
+		},
+		max: function (lhs, rhs)
+		{
+			var
+				x = arguments [0] .x,
+				y = arguments [0] .y,
+				z = arguments [0] .z;
+
+			for (var i = 1; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .max (x, vector .x);
+				y = Math .max (y, vector .y);
+				z = Math .max (z, vector .z);
+			}
+
+			return new Vector3 (x, y, z);
+		},
+	});
+
 	Vector3 .prototype =
 	{
 		constructor: Vector3,
@@ -35,12 +124,14 @@ function (Algorithm)
 			this .x = vector .x;
 			this .y = vector .y;
 			this .z = vector .z;
+			return this;
 		},
 		set: function (x, y, z)
 		{
 			this .x = x;
 			this .y = y;
 			this .z = z;
+			return this;
 		},
 		equals: function (vector)
 		{
@@ -50,45 +141,52 @@ function (Algorithm)
 		},
 		negate: function ()
 		{
-			return new Vector3 (-this .x,
-			                    -this .y,
-			                    -this .z);
+			this .x = -this .x;
+			this .y = -this .y;
+			this .z = -this .z;
+			return this;
 		},
 		add: function (vector)
 		{
-			return new Vector3 (this .x + vector .x,
-			                    this .y + vector .y,
-			                    this .z + vector .z);
+			this .x += vector .x;
+			this .y += vector .y;
+			this .z += vector .z;
+			return this;
 		},
 		subtract: function (vector)
 		{
-			return new Vector3 (this .x - vector .x,
-			                    this .y - vector .y,
-			                    this .z - vector .z);
+			this .x -= vector .x;
+			this .y -= vector .y;
+			this .z -= vector .z;
+			return this;
 		},
 		multiply: function (value)
 		{
-			return new Vector3 (this .x * value,
-			                    this .y * value,
-			                    this .z * value);
+			this .x *= value;
+			this .y *= value;
+			this .z *= value;
+			return this;
 		},
 		multVec: function (vector)
 		{
-			return new Vector3 (this .x * vector .x,
-			                    this .y * vector .y,
-			                    this .z * vector .z);
+			this .x *= vector .x;
+			this .y *= vector .y;
+			this .z *= vector .z;
+			return this;
 		},
 		divide: function (value)
 		{
-			return new Vector3 (this .x / value,
-			                    this .y / value,
-			                    this .z / value);
+			this .x /= value;
+			this .y /= value;
+			this .z /= value;
+			return this;
 		},
 		divVec: function (vector)
 		{
-			return new Vector3 (this .x / vector .x,
-			                    this .y / vector .y,
-			                    this .z / vector .z);
+			this .x /= vector .x;
+			this .y /= vector .y;
+			this .z /= vector .z;
+			return this;
 		},
 		normalize: function ()
 		{
@@ -97,13 +195,14 @@ function (Algorithm)
 			if (length)
 				return this .divide (length);
 
-			return new Vector3 (0, 0, 0);
+			return this .set (0, 0, 0);
 		},
 		cross: function (vector)
 		{
-			return new Vector3 (this .y * vector .z - this .z * vector .y,
-			                    this .z * vector .x - this .x * vector .z,
-			                    this .x * vector .y - this .y * vector .x);
+			this .set (this .y * vector .z - this .z * vector .y,
+			           this .z * vector .x - this .x * vector .z,
+			           this .x * vector .y - this .y * vector .x);
+			return this;
 		},
 		dot: function (vector)
 		{
@@ -118,48 +217,6 @@ function (Algorithm)
 		abs: function ()
 		{
 			return Math .sqrt (this .norm ());
-		},
-		lerp: function (vector, t)
-		{
-			return new Vector3 (Algorithm .lerp (this .x, vector .x, t),
-			                    Algorithm .lerp (this .y, vector .y, t),
-			                    Algorithm .lerp (this .z, vector .z, t));
-		},
-		min: function (vector)
-		{
-			var
-				x = this .x,
-				y = this .y,
-				z = this .z;
-
-			for (var i = 0; i < arguments .length; ++ i)
-			{
-				var vector = arguments [i];
-
-				x = Math .min (x, vector .x);
-				y = Math .min (y, vector .y);
-				z = Math .min (z, vector .z);
-			}
-
-			return new Vector3 (x, y, z);
-		},
-		max: function (vector)
-		{
-			var
-				x = this .x,
-				y = this .y,
-				z = this .z;
-
-			for (var i = 0; i < arguments .length; ++ i)
-			{
-				var vector = arguments [i];
-
-				x = Math .max (x, vector .x);
-				y = Math .max (y, vector .y);
-				z = Math .max (z, vector .z);
-			}
-
-			return new Vector3 (x, y, z);
 		},
 		toString: function ()
 		{

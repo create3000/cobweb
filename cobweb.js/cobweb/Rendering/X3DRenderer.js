@@ -11,8 +11,9 @@ function (TraverseType, QuickSort)
 		this .transparent     = false;
 		this .modelViewMatrix = null;
 		this .distance        = 0;
+		this .localLights     = [ ];
 	}
-	
+
 	ShapeContainer .prototype =
 	{
 		assign: function (shape, transparent, modelViewMatrix, distance)
@@ -30,6 +31,7 @@ function (TraverseType, QuickSort)
 
 	function X3DRenderer (browser, executionContext)
 	{
+		this .localObjects         = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -43,37 +45,6 @@ function (TraverseType, QuickSort)
 		constructor: X3DRenderer,
 		initialize: function ()
 		{
-		},
-		render: function (type)
-		{
-			this .numOpaqueShapes      = 0;
-			this .numTransparentShapes = 0;
-			this .numCollisionShapes   = 0;
-
-			switch (type)
-			{
-				case TraverseType .NAVIGATION:
-				{
-					this .collect (type);
-					this .navigate ();
-					break;
-				}
-				case TraverseType .COLLISION:
-				{
-					// Collect for collide and gravite
-					this .collect (type);
-					this .collide ();
-					break;
-				}
-				case TraverseType .DISPLAY:
-				{
-					this .collect (type);
-					this .draw ();
-					break;
-				}
-			}
-
-			//this .globalObjects .length = 0;
 		},
 		addShape: function (shape)
 		{
@@ -111,6 +82,37 @@ function (TraverseType, QuickSort)
 				//}
 			//}
 		},
+		render: function (type)
+		{
+			this .numOpaqueShapes      = 0;
+			this .numTransparentShapes = 0;
+			this .numCollisionShapes   = 0;
+
+			switch (type)
+			{
+				case TraverseType .NAVIGATION:
+				{
+					this .collect (type);
+					this .navigate ();
+					break;
+				}
+				case TraverseType .COLLISION:
+				{
+					// Collect for collide and gravite
+					this .collect (type);
+					this .collide ();
+					break;
+				}
+				case TraverseType .DISPLAY:
+				{
+					this .collect (type);
+					this .draw ();
+					break;
+				}
+			}
+
+			this .getBrowser () .getGlobalLights () .length = 0;
+		},
 		navigate: function ()
 		{
 		
@@ -122,7 +124,7 @@ function (TraverseType, QuickSort)
 		draw: function ()
 		{
 			var gl = this .getBrowser () .getContext ();
-		
+				
 			// Sorted blend
 
 			// Render opaque objects first

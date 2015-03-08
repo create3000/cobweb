@@ -1,43 +1,11 @@
 
-define ([
-	"cobweb/Components/Shaders/ComposedShader",
-	"cobweb/Components/Shaders/ShaderPart",
-	"text!cobweb/Browser/Shaders/VertexShader.vs",
-	"text!cobweb/Browser/Shaders/FragmentShader.fs",
-],
-function (ComposedShader,
-          ShaderPart,
-          vertexShaderText,
-          fragmentShaderText)
+define (function ()
 {
 	function X3DShadersContext () { }
 
 	X3DShadersContext .prototype =
 	{
-		initialize: function ()
-		{
-			// Create default shader.
-
-			var vertexShader = new ShaderPart (this);
-			vertexShader .type_ = "VERTEX";
-			vertexShader .url_ .push (vertexShaderText);
-			vertexShader .setup ();
-
-			var fragmentShader = new ShaderPart (this);
-			fragmentShader .type_ = "FRAGMENT";
-			fragmentShader .url_ .push (fragmentShaderText);
-			fragmentShader .setup ();
-
-			this .defaultShader = new ComposedShader (this);
-			this .defaultShader .language_ = "GLSL";
-			this .defaultShader .parts_ .push (vertexShader);
-			this .defaultShader .parts_ .push (fragmentShader);
-			this .defaultShader .setup ();
-		},
-		getDefaultShader: function ()
-		{
-			return this .defaultShader;
-		},
+		initialize: function () { },
 		getShadingLanguageVersion: function ()
 		{
 			return this .getContext () .getParameter (this .getContext () .SHADING_LANGUAGE_VERSION);

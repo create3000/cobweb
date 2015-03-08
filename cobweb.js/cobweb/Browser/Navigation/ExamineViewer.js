@@ -149,10 +149,10 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 					var viewpoint   = this .getActiveViewpoint ();
 					var toPoint     = this .getPointOnCenterPlane (x, y);
-					var translation = viewpoint .getUserOrientation () .multVecRot (this .fromPoint .subtract (toPoint));
+					var translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (this .fromPoint, toPoint));
 
-					viewpoint .positionOffset_         = viewpoint .positionOffset_         .getValue () .add (translation);
-					viewpoint .centerOfRotationOffset_ = viewpoint .centerOfRotationOffset_ .getValue () .add (translation);
+					viewpoint .positionOffset_         = Vector3 .add (viewpoint .positionOffset_         .getValue (), translation);
+					viewpoint .centerOfRotationOffset_ = Vector3 .add (viewpoint .centerOfRotationOffset_ .getValue (), translation);
 
 					this .fromPoint = toPoint;
 					break;
@@ -187,10 +187,10 @@ function ($, X3DViewer, Vector3, Rotation4)
 			var positionOffset = viewpoint .getUserOrientation () .multVecRot (new Vector3 (0, 0, step .abs ()));
 
 			if (direction > 0)
-				viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .add (positionOffset);
+				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .add (positionOffset));
 
 			else if (direction < 0)
-				viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .subtract (positionOffset);		
+				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .subtract (positionOffset));		
 		},
 		getPositionOffset: function ()
 		{

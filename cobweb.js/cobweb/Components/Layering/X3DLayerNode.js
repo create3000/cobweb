@@ -207,8 +207,6 @@ function ($,
 			this .currentViewport .push (TraverseType .DISPLAY);
 			this .render (TraverseType .DISPLAY);
 			this .currentViewport .pop (TraverseType .DISPLAY);
-			
-			this .getNavigationInfo () .disable ();
 		},
 		collect: function (type)
 		{

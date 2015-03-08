@@ -18,7 +18,7 @@ function ($, Vector3, Vector4)
 			                       2 * winz - 1,
 			                       1);
 
-			var matrix = modelview .multRight (projection) .inverse ();
+			var matrix = modelview .copy () .multRight (projection) .inverse ();
 
 			//Objects coordinates
 			vin = matrix .multVecMatrix (vin);
@@ -40,7 +40,7 @@ function ($, Vector3, Vector4)
 		projectPoint: function (point, modelview, projection, viewport)
 		{
 			var vin    = new Vector4 (point .x, point .y, point .z, 1);
-			var matrix = modelview .multRight (projection);
+			var matrix = modelview .copy () .multRight (projection);
 
 			vin = matrix .multVecMatrix (vin);
 
@@ -55,8 +55,8 @@ function ($, Vector3, Vector4)
 		},
 		projectLine: function (line, modelview, projection, viewport)
 		{
-			var point1 = ViewVolume .projectPoint (line .point (),                                           modelview, projection, viewport);
-			var point2 = ViewVolume .projectPoint (line .point () .add (line .direction () .multiply (1e9)), modelview, projection, viewport);
+			var point1 = ViewVolume .projectPoint (line .point (), modelview, projection, viewport);
+			var point2 = ViewVolume .projectPoint (Vector3 .add (line .point (), Vector3 .multiply (line .direction (), 1e9)), modelview, projection, viewport);
 
 			point1 .z = 0;
 			point2 .z = 0;

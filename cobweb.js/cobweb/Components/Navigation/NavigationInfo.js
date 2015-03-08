@@ -116,11 +116,8 @@ function ($,
 			},
 			enable: function ()
 			{
-			
-			},
-			disable: function ()
-			{
-			
+				if (this .headlight_ .getValue ())
+					this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
 			},
 			traverse: function (type)
 			{

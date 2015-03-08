@@ -11,9 +11,29 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DLightNode, 
+          X3DLightNode,
           X3DConstants)
 {
+	function DirectionalLightContainer (light)
+	{
+		this .light     = light;
+		this .direction = light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (light .direction_ .getValue ()) .normalize ();
+	}
+
+	DirectionalLightContainer .prototype =
+	{
+		use: function (gl, shader, i)
+		{
+			gl .uniform1i (shader .lightType [i],             0);
+			gl .uniform1i (shader .lightOn [i],               true);
+			gl .uniform3f (shader .lightColor [i],            this .light .color_ .r, this .light .color_ .g, this .light .color_ .b);
+			gl .uniform1f (shader .lightIntensity [i],        this .light .intensity_ .getValue ());
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .light .ambientIntensity_ .getValue ());
+			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform3f (shader .lightAttenuation [i],      1, 0, 0);
+		},
+	};
+
 	with (Fields)
 	{
 		function DirectionalLight (executionContext)
@@ -46,6 +66,10 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
+			},
+			getContainer: function ()
+			{
+				return new DirectionalLightContainer (this);
 			},
 		});
 

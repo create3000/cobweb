@@ -7,6 +7,7 @@ define ([
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -14,7 +15,8 @@ function ($,
           X3DViewpointObject,
           TraverseType,
           X3DConstants,
-          Matrix4)
+          Matrix4,
+          Vector3)
 {
 	with (Fields)
 	{
@@ -48,7 +50,7 @@ function ($,
 			},
 			getUserPosition: function ()
 			{
-				return this .position_ .getValue () .add (this .positionOffset_ .getValue ());
+				return Vector3 .add (this .position_ .getValue (), this .positionOffset_ .getValue ());
 			},
 			getUserOrientation: function ()
 			{
@@ -56,14 +58,14 @@ function ($,
 			},
 			getUserCenterOfRotation: function ()
 			{
-				return this .centerOfRotation_ .getValue () .add (this .centerOfRotationOffset_ .getValue ());
+				return Vector3 .add (this .centerOfRotation_ .getValue (), this .centerOfRotationOffset_ .getValue ());
 			},
 			setCameraSpaceMatrix: function (value)
 			{
 				try
 				{
+					this .inverseCameraSpaceMatrix = Matrix4 .inverse (value);
 					this .cameraSpaceMatrix        = value;
-					this .inverseCameraSpaceMatrix = value .inverse ();
 				}
 				catch (error)
 				{ }
@@ -100,15 +102,18 @@ function ($,
 
 					this .parentMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
 
-					if (+this .isBound_)
+					if (this .isBound_ .getValue ())
 					{
 						var matrix = new Matrix4 ();
+
 						matrix .set (this .getUserPosition (),
 						             this .getUserOrientation (),
 						             this .scaleOffset_ .getValue (),
 						             this .scaleOrientationOffset_ .getValue ());
 
-						this .setCameraSpaceMatrix (matrix .multRight (this .getBrowser () .getModelViewMatrix () .get ()));
+						matrix .multRight (this .getBrowser () .getModelViewMatrix () .get ());
+
+						this .setCameraSpaceMatrix (matrix);
 					}
 				}
 			},

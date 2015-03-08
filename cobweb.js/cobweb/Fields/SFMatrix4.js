@@ -45,11 +45,11 @@ function ($, Matrix4, Vector3, Rotation4, X3DField, X3DConstants)
 		},
 		setTransform: function (translation, rotation, scale, scaleOrientation, center)
 		{
-			translation      = translation      ? translation      .getValue () : new Vector3 ();
-			rotation         = rotation         ? rotation         .getValue () : new Rotation4 ();
-			scale            = scale            ? scale            .getValue () : new Vector3 (1, 1, 1);
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : new Rotation4 ();
-			center           = center           ? center           .getValue () : new Vector3 ();
+			translation      = translation      ? translation      .getValue () : Vector3 .Zero;
+			rotation         = rotation         ? rotation         .getValue () : Rotation4 .Identity;
+			scale            = scale            ? scale            .getValue () : Vector3 .One;
+			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : Rotation4 .Identity;
+			center           = center           ? center           .getValue () : Vector3 .Zero;
 
 			this .getValue () .setTransform (translation, rotation, scale, scaleOrientation, center);
 		},
@@ -65,19 +65,19 @@ function ($, Matrix4, Vector3, Rotation4, X3DField, X3DConstants)
 		},
 		transpose: function ()
 		{
-			return new (this .constructor) (this .getValue () .inverse ());
+			return new (this .constructor) (this .getValue () .copy () .transpose ());
 		},
 		inverse: function ()
 		{
-			return new (this .constructor) (this .getValue () .transpose ());
+			return new (this .constructor) (this .getValue () .copy () .inverse ());
 		},
 		multLeft: function (matrix)
 		{
-			return new (this .constructor) (this .getValue () .multLeft (matrix .getValue ()));
+			return new (this .constructor) (this .getValue () .copy () .multLeft (matrix .getValue ()));
 		},
 		multRight: function (matrix)
 		{
-			return new (this .constructor) (this .getValue () .multRight (matrix .getValue ()));
+			return new (this .constructor) (this .getValue () .copy () .multRight (matrix .getValue ()));
 		},
 		multVecMatrix: function (vector)
 		{

@@ -20,7 +20,8 @@ function ($,
 {
 	with (Fields)
 	{
-		var clamp = Algorithm .clamp;
+		var MAX_LIGHTS = 8;
+		var clamp      = Algorithm .clamp;
 
 		function ComposedShader (executionContext)
 		{
@@ -86,13 +87,35 @@ function ($,
 
 				this .lighting         = gl .getUniformLocation (this .program, "x3d_lighting");
 				this .colorMaterial    = gl .getUniformLocation (this .program, "x3d_colorMaterial");
+
+				this .lightType             = [ ];
+				this .lightOn               = [ ];
+				this .lightColor            = [ ];
+				this .lightIntensity        = [ ];
+				this .lightAmbientIntensity = [ ];
+				this .lightDirection        = [ ];
+				this .lightAttenuation      = [ ];
+				this .lightLocation         = [ ];
+
+				for (var i = 0; i < MAX_LIGHTS; ++ i)
+				{
+					this .lightType [i]             = gl .getUniformLocation (this .program, "x3d_lightType[" + i + "]");
+					this .lightOn [i]               = gl .getUniformLocation (this .program, "x3d_lightOn[" + i + "]");
+					this .lightColor [i]            = gl .getUniformLocation (this .program, "x3d_lightColor[" + i + "]");
+					this .lightAmbientIntensity [i] = gl .getUniformLocation (this .program, "x3d_lightAmbientIntensity[" + i + "]");
+					this .lightIntensity [i]        = gl .getUniformLocation (this .program, "x3d_lightIntensity[" + i + "]");
+					this .lightDirection [i]        = gl .getUniformLocation (this .program, "x3d_lightDirection[" + i + "]");
+					this .lightAttenuation [i]      = gl .getUniformLocation (this .program, "x3d_lightAttenuation[" + i + "]");
+					this .lightLocation [i]         = gl .getUniformLocation (this .program, "x3d_lightLocation[" + i + "]");
+				}
+
 				this .ambientIntensity = gl .getUniformLocation (this .program, "x3d_ambientIntensity");
 				this .diffuseColor     = gl .getUniformLocation (this .program, "x3d_diffuseColor");
 				this .specularColor    = gl .getUniformLocation (this .program, "x3d_specularColor");
 				this .emissiveColor    = gl .getUniformLocation (this .program, "x3d_emissiveColor");
 				this .shininess        = gl .getUniformLocation (this .program, "x3d_shininess");
 				this .transparency     = gl .getUniformLocation (this .program, "x3d_transparency");
-				
+
 				this .texturing         = gl .getUniformLocation (this .program, "x3d_texturing");
 				this .texture           = gl .getUniformLocation (this .program, "x3d_texture");
 				this .textureComponents = gl .getUniformLocation (this .program, "x3d_textureComponents");
@@ -109,13 +132,10 @@ function ($,
 			},
 			setDefaultUniforms: function (context)
 			{
-				var browser  = this .getBrowser ();
-				var gl       = browser .getContext ();
+				var browser = this .getBrowser ();
+				var gl      = browser .getContext ();
 
 				gl .useProgram (this .program);
-
-				if (! context)
-					return;
 
 				var material = browser .getMaterial ();
 				var texture  = browser .getTexture ();
@@ -124,6 +144,23 @@ function ($,
 
 				if (material)
 				{
+					// Lights
+
+					var globalLights = browser .getGlobalLights ();
+					var localLights  = context .localLights;
+					var lights       = Math .min (MAX_LIGHTS, globalLights .length + localLights .length);
+
+					for (var i = 0; i < globalLights .length; ++ i)
+						globalLights [i] .use (gl, this, i);
+
+					for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
+						context .localLights [l] .use (gl, this, i);
+
+					for (var i = lights; i < MAX_LIGHTS; ++ i)
+						gl .uniform1i (this .lightOn [i], false);
+
+					// Material
+
 					gl .uniform1i (this .lighting,         true);
 					gl .uniform1f (this .ambientIntensity, clamp (material .ambientIntensity_ .getValue (), 0, 1));
 					gl .uniform3f (this .diffuseColor,     material .diffuseColor_  .r, material .diffuseColor_  .g, material .diffuseColor_  .b);
@@ -164,4 +201,3 @@ function ($,
 		return ComposedShader;
 	}
 });
-

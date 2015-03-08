@@ -93,8 +93,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		},
 		addTriangle: function (vertex)
 		{
-			this .min = this .min .min (vertex);
-			this .max = this .max .max (vertex);
+			this .min = Vector3 .min (this .min, vertex);
+			this .max = Vector3 .max (this .max, vertex);
 
 			this .triangles .push (vertex .x);
 			this .triangles .push (vertex .y);
@@ -106,7 +106,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			if (! ccw)
 			{
 				for (var i = 0; i < normals .length; ++ i)
-					normals [i] = normals [i] .negate ()
+					normals [i] .negate ();
 			}
 
 			if (creaseAngle === 0)
@@ -130,7 +130,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 						var Q = vertex [q];
 	
 						if (normals [Q] .dot (m) >= cosCreaseAngle)
-							n = n .add (normals [Q]);
+							n .add (normals [Q]);
 					}
 
 					normals_ [P] = n .normalize ();
@@ -188,11 +188,11 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			var bbox = this .getBBox ();
 			var size = bbox .size;
 
-			p .min = bbox .center .subtract (size .divide (2));
-
 			var Xsize = size .x;
 			var Ysize = size .y;
 			var Zsize = size .z;
+
+			p .min = bbox .center .subtract (size .divide (2));
 
 			if ((Xsize >= Ysize) && (Xsize >= Zsize))
 			{
@@ -315,19 +315,20 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			{
 				var positiveScale = context .modelViewMatrix .determinant3 () > 0;
 
+				gl .frontFace (positiveScale ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
+
 				if (context .transparent && !this .solid)
 				{
 					gl .enable (gl .CULL_FACE);
-					gl .frontFace (positiveScale ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
-					
+
 					gl .cullFace (gl .FRONT);
-					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .count);		
+					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .vertices);		
 
 					gl .cullFace (gl .BACK);
-					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .count);		
+					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .vertices);		
 				}
 				else
-				{	
+				{
 					// Solid & ccw
 
 					if (this .solid)
@@ -335,7 +336,6 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 					else
 						gl .disable (gl .CULL_FACE);
 
-					gl .frontFace (positiveScale ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
 					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .vertices);
 				}
 

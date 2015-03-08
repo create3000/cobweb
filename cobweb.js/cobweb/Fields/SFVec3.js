@@ -37,27 +37,27 @@ function ($, Vector3, X3DField, X3DConstants)
 		},
 		negate: function ()
 		{
-			return new (this .constructor) (this .getValue () .negate ());
+			return new (this .constructor) (this .getValue () .copy () .negate ());
 		},
 		add: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .add (vector .getValue ()));
+			return new (this .constructor) (this .getValue () .copy () .add (vector .getValue ()));
 		},
 		subtract: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .subtract (vector .getValue ()));
+			return new (this .constructor) (this .getValue () .copy () .subtract (vector .getValue ()));
 		},
 		multiply: function (value)
 		{
-			return new (this .constructor) (this .getValue () .multiply (value));
+			return new (this .constructor) (this .getValue () .copy () .multiply (value));
 		},
 		divide: function (value)
 		{
-			return new (this .constructor) (this .getValue () .divide (value));
+			return new (this .constructor) (this .getValue () .copy () .divide (value));
 		},
 		cross: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .cross (vector .getValue ()));
+			return new (this .constructor) (this .getValue () .copy () .cross (vector .getValue ()));
 		},
 		dot: function (vector)
 		{
@@ -65,7 +65,7 @@ function ($, Vector3, X3DField, X3DConstants)
 		},
 		normalize: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .normalize ());
+			return new (this .constructor) (this .getValue () .copy () .normalize ());
 		},
 		length: function (vector)
 		{

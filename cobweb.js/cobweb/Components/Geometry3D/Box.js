@@ -59,10 +59,10 @@ function ($,
 				}
 				else
 				{
-					var size1_2 = this .size_ .getValue () .divide (2);
+					var size1_2 = Vector3 .divide (this .size_ .getValue (), 2);
 
 					for (var i = 0; i < options .triangles .length; ++ i)
-						this .addTriangle (options .triangles [i] .multVec (size1_2));			
+						this .addTriangle (Vector3 .multVec (options .triangles [i], size1_2));			
 				}
 	
 				this .setSolid (this .solid_ .getValue ());

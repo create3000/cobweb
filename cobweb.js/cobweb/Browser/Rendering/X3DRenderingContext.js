@@ -2,12 +2,24 @@
 //https://github.com/sdecima/javascript-detect-element-resize
 
 define ([
+	"cobweb/Components/Shaders/ComposedShader",
+	"cobweb/Components/Shaders/ShaderPart",
+	"text!cobweb/Browser/Rendering/Gouraud.vs",
+	"text!cobweb/Browser/Rendering/Gouraud.fs",
+	"text!cobweb/Browser/Rendering/Phong.vs",
+	"text!cobweb/Browser/Rendering/Phong.fs",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
 	"jquery-resize",
 ],
-function (Vector4,
+function (ComposedShader,
+          ShaderPart,
+          gouraudVS,
+          gouraudFS,
+          phongVS,
+          phongFS,
+          Vector4,
           Matrix4,
           MatrixStack)
 {
@@ -75,6 +87,9 @@ function (Vector4,
 			.bind (this));
 
 			this .reshape ();
+
+			this .setDefaultShader ("PHONG");
+			//this .setDefaultShader ("GOURAUD");
 		},
 		getCanvas: function ()
 		{
@@ -133,6 +148,56 @@ function (Vector4,
 		getDefaultColorBuffer: function ()
 		{
 			return this .defaultColorBuffer;
+		},
+		setDefaultShader: function (type)
+		{
+			switch (type)
+			{
+				case "PHONG":
+				{
+					var vertexShader = new ShaderPart (this);
+					vertexShader .type_ = "VERTEX";
+					vertexShader .url_ .push (phongVS);
+					vertexShader .setup ();
+
+					var fragmentShader = new ShaderPart (this);
+					fragmentShader .type_ = "FRAGMENT";
+					fragmentShader .url_ .push (phongFS);
+					fragmentShader .setup ();
+
+					this .defaultShader = new ComposedShader (this);
+					this .defaultShader .language_ = "GLSL";
+					this .defaultShader .parts_ .push (vertexShader);
+					this .defaultShader .parts_ .push (fragmentShader);
+					this .defaultShader .setup ();
+
+					break;
+				}
+				default:
+				{
+					var vertexShader = new ShaderPart (this);
+					vertexShader .type_ = "VERTEX";
+					vertexShader .url_ .push (gouraudVS);
+					vertexShader .setup ();
+
+					var fragmentShader = new ShaderPart (this);
+					fragmentShader .type_ = "FRAGMENT";
+					fragmentShader .url_ .push (gouraudFS);
+					fragmentShader .setup ();
+
+					this .defaultShader = new ComposedShader (this);
+					this .defaultShader .language_ = "GLSL";
+					this .defaultShader .parts_ .push (vertexShader);
+					this .defaultShader .parts_ .push (fragmentShader);
+					this .defaultShader .setup ();
+
+					break;
+				}
+			}
+		},
+		getDefaultShader: function ()
+		{
+			return this .defaultShader;
 		},
 		reshape: function ()
 		{

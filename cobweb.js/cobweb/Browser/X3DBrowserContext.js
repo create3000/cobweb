@@ -7,6 +7,7 @@ define ([
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
 	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Layering/X3DLayeringContext",
+	"cobweb/Browser/Lighting/X3DLightingContext",
 	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
@@ -24,6 +25,7 @@ function ($,
           X3DGeometry3DContext,
           X3DEnvironmentalEffectsContext,
           X3DLayeringContext,
+          X3DLightingContext,
           X3DNavigationContext,
           X3DNetworkingContext,
           X3DShadersContext,
@@ -41,6 +43,7 @@ function ($,
 		X3DGeometry3DContext           .call (this);
 		X3DEnvironmentalEffectsContext .call (this);
 		X3DLayeringContext             .call (this);
+		X3DLightingContext             .call (this);
 		X3DNavigationContext           .call (this);
 		X3DNetworkingContext           .call (this);
 		X3DShadersContext              .call (this);
@@ -60,6 +63,7 @@ function ($,
 		X3DGeometry3DContext .prototype,
 		X3DEnvironmentalEffectsContext .prototype,
 		X3DLayeringContext .prototype,
+		X3DLightingContext .prototype,
 		X3DNavigationContext .prototype,
 		X3DNetworkingContext .prototype,
 		X3DShadersContext .prototype,
@@ -76,6 +80,7 @@ function ($,
 			X3DGeometry3DContext           .prototype .initialize .call (this);
 			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
 			X3DLayeringContext             .prototype .initialize .call (this);
+			X3DLightingContext             .prototype .initialize .call (this);
 			X3DNavigationContext           .prototype .initialize .call (this);
 			X3DNetworkingContext           .prototype .initialize .call (this);
 			X3DShadersContext              .prototype .initialize .call (this);

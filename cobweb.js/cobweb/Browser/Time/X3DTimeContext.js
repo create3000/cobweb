@@ -31,7 +31,7 @@ function (Vector3)
 				var lastPosition = this .currentPosition;
 
 				this .currentPosition = this .getWorld () .getActiveLayer () .getValue () .getViewpoint () .getCameraSpaceMatrix () .origin;
-				this .currentSpeed    = this .currentPosition .subtract (lastPosition) .abs () * this .currentFrameRate;
+				this .currentSpeed    = Vector3 .subtract (this .currentPosition, lastPosition) .abs () * this .currentFrameRate;
 			}
 			else
 				this .currentSpeed = 0;

@@ -14,6 +14,26 @@ function ($,
           X3DLightNode, 
           X3DConstants)
 {
+	function PointLightContainer (light)
+	{
+		this .light    = light;
+		this .location = light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (light .location_ .getValue ());
+	}
+
+	PointLightContainer .prototype =
+	{
+		use: function (gl, shader, i)
+		{
+			gl .uniform1i (shader .lightType [i],             1);
+			gl .uniform1i (shader .lightOn [i],               true);
+			gl .uniform3f (shader .lightColor [i],            this .light .color_ .r, this .light .color_ .g, this .light .color_ .b);
+			gl .uniform1f (shader .lightIntensity [i],        this .light .intensity_ .getValue ());
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .light .ambientIntensity_ .getValue ());
+			gl .uniform3f (shader .lightAttenuation [i],      this .light .attenuation_ .x, this .light .attenuation_ .y, this .light .attenuation_ .z);
+			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
+		},
+	};
+
 	with (Fields)
 	{
 		function PointLight (executionContext)
@@ -48,6 +68,10 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
+			},
+			getContainer: function ()
+			{
+				return new PointLightContainer (this);
 			},
 		});
 

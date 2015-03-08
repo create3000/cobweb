@@ -251,7 +251,7 @@ function ($,
 				}
 				case TraverseType .DISPLAY:
 				{
-					this .matrix = this .getBrowser () .getModelViewMatrix () .get ();
+					this .matrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
 					break;
 				}
 			}
@@ -266,7 +266,7 @@ function ($,
 			var viewport = this .getBrowser () .getViewport ();
 			var scale    = this .getCurrentViewpoint () .getScreenScale (SIZE, viewport);
 
-			scale = scale .multiply (Math .max (viewport [2], viewport [3]));
+			scale .multiply (Math .max (viewport [2], viewport [3]));
 
 			this .getCurrentViewpoint () .reshapeWithLimits (1, Math .max (2, 3 * SIZE * scale .z));
 

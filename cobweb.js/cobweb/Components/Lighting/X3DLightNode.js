@@ -2,10 +2,12 @@
 define ([
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
-          X3DChildNode, 
+          X3DChildNode,
+          TraverseType,
           X3DConstants)
 {
 	function X3DLightNode (browser, executionContext)
@@ -18,6 +20,20 @@ function ($,
 	X3DLightNode .prototype = $.extend (new X3DChildNode (),
 	{
 		constructor: X3DLightNode,
+		traverse: function (type)
+		{
+			if (type !== TraverseType .DISPLAY)
+				return;
+
+			if (this .on_ .getValue ())
+			{
+				if (this .global_ .getValue ())
+					this .getBrowser () .getGlobalLights () .push (this .getContainer ());
+
+				//else
+				//	this .getCurrentLayer () .getLocalObjects () .push (new DirectionalLightContainer (this));
+			}
+		},
 	});
 
 	return X3DLightNode;

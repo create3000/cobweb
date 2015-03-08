@@ -45,6 +45,21 @@ function ($,
 			{
 				return "children";
 			},
+			initialize: function ()
+			{
+				X3DInterpolatorNode .prototype .initialize .call (this);
+
+				this .keyValue_ .addInterest (this, "set_keyValue__");
+			},
+			set_keyValue__: function ()
+			{
+				if (this .keyValue_ .length < this .key_ .length)
+					this .keyValue_ .resize (this .key_ .length, this .keyValue_ .length ? this .keyValue_ [this .keyValue_ .length - 1] : new SFRotation ());
+			},
+			interpolate: function (index0, index1, weight)
+			{
+				this .value_changed_ = this .keyValue_ [index0] .getValue () .slerp (this .keyValue_ [index1] .getValue (), weight);
+			},
 		});
 
 		return OrientationInterpolator;

@@ -265,21 +265,21 @@ function ($,
 					var p1 = coord .getPoint (this .coordIndex_ [vertices [1]]);
 					var p2 = coord .getPoint (this .coordIndex_ [vertices [2]]);
 
-					var xAxis = p1 .subtract (p0);
-					var hAxis = p2 .subtract (p0);
-					var zAxis = xAxis .cross (hAxis);
-					var yAxis = zAxis .cross (xAxis);
+					var xAxis = Vector3 .subtract (p1, p0);
+					var hAxis = Vector3 .subtract (p2, p0);
+					var zAxis = Vector3 .cross (xAxis, hAxis);
+					var yAxis = Vector3 .cross (zAxis, xAxis);
 
-					xAxis = xAxis .normalize ();
-					yAxis = yAxis .normalize ();
-					zAxis = zAxis .normalize ();
+					xAxis .normalize ();
+					yAxis .normalize ();
+					zAxis .normalize ();
 
 					var matrix = new Matrix4 (xAxis .x, xAxis .y, xAxis .z, 0,
 					                          yAxis .x, yAxis .y, yAxis .z, 0,
 					                          zAxis .x, zAxis .y, zAxis .z, 0,
 					                          p0 .x, p0 .y, p0 .z, 1);
 
-					matrix = matrix .inverse ();
+					matrix .inverse ();
 
 					var contour = [ ];
 
@@ -370,10 +370,10 @@ function ($,
 									                                   this .coordIndex_ [vertices [(i + 1) % length]],
 									                                   this .coordIndex_ [vertices [(i + 2) % length]]);
 
-								normal = normal .add (n);
+								normal .add (n);
 							}
 
-							normal = normal .normalize ();
+							normal .normalize ();
 						}
 					}
 
@@ -389,9 +389,9 @@ function ($,
 					}
 
 					// Add this normal for each vertex and for -1.
-					
+
 					for (var i = 0, length = vertices .length + 1; i < length; ++ i)
-						normals .push (normal);
+						normals .push (normal .copy ());
 				}
 
 				return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue (), this .ccw_ .getValue ());

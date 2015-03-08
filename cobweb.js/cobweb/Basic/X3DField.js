@@ -108,8 +108,10 @@ function ($, X3DChildObject, X3DConstants)
 
 			// Process routes
 
+			var next = 0;
+
 			for (var key in this .fieldInterests_)
-				this .fieldInterests_ [key] .addEventObject (this, event .copy ());
+				this .fieldInterests_ [key] .addEventObject (this, next ++ ? event .copy () : event);
 
 			// Process field callbacks
 

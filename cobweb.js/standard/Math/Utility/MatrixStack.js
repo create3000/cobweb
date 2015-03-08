@@ -28,7 +28,7 @@ function ($)
 			},
 			multLeft: function (matrix)
 			{
-				this [this .length - 1] = this [this .length - 1] .multLeft (matrix);
+				this [this .length - 1] .multLeft (matrix);
 			},
 		});
 	}
