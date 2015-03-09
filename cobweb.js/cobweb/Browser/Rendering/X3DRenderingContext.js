@@ -88,8 +88,8 @@ function (ComposedShader,
 
 			this .reshape ();
 
-			this .setDefaultShader ("PHONG");
-			//this .setDefaultShader ("GOURAUD");
+			//this .setDefaultShader ("PHONG");
+			this .setDefaultShader ("GOURAUD");
 		},
 		getCanvas: function ()
 		{

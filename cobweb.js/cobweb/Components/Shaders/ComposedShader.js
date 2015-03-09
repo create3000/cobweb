@@ -93,9 +93,12 @@ function ($,
 				this .lightColor            = [ ];
 				this .lightIntensity        = [ ];
 				this .lightAmbientIntensity = [ ];
-				this .lightDirection        = [ ];
 				this .lightAttenuation      = [ ];
 				this .lightLocation         = [ ];
+				this .lightDirection        = [ ];
+				this .lightBeamWidth        = [ ];
+				this .lightCutOffAngle      = [ ];
+				this .lightRadius           = [ ];
 
 				for (var i = 0; i < MAX_LIGHTS; ++ i)
 				{
@@ -104,9 +107,12 @@ function ($,
 					this .lightColor [i]            = gl .getUniformLocation (this .program, "x3d_lightColor[" + i + "]");
 					this .lightAmbientIntensity [i] = gl .getUniformLocation (this .program, "x3d_lightAmbientIntensity[" + i + "]");
 					this .lightIntensity [i]        = gl .getUniformLocation (this .program, "x3d_lightIntensity[" + i + "]");
-					this .lightDirection [i]        = gl .getUniformLocation (this .program, "x3d_lightDirection[" + i + "]");
 					this .lightAttenuation [i]      = gl .getUniformLocation (this .program, "x3d_lightAttenuation[" + i + "]");
 					this .lightLocation [i]         = gl .getUniformLocation (this .program, "x3d_lightLocation[" + i + "]");
+					this .lightDirection [i]        = gl .getUniformLocation (this .program, "x3d_lightDirection[" + i + "]");
+					this .lightBeamWidth [i]        = gl .getUniformLocation (this .program, "x3d_lightBeamWidth[" + i + "]");
+					this .lightCutOffAngle [i]      = gl .getUniformLocation (this .program, "x3d_lightCutOffAngle[" + i + "]");
+					this .lightRadius [i]           = gl .getUniformLocation (this .program, "x3d_lightRadius[" + i + "]");
 				}
 
 				this .ambientIntensity = gl .getUniformLocation (this .program, "x3d_ambientIntensity");
