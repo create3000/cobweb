@@ -45,17 +45,23 @@ function (Matrix4, Vector3)
 
 	Box3 .prototype =
 	{
+		copy: function ()
+		{
+			return new Box3 (this .matrix .copy ());
+		},
 		isEmpty: function ()
 		{
 			return this .matrix [15] === 0;
 		},
-		multBoxMatrix: function (matrix)
+		multLeft: function (matrix)
 		{
-			return new Box3 (this .matrix .copy () .multRight (matrix));
+			this .matrix .multLeft (matrix);
+			return this;
 		},
-		multMatrixBox: function (matrix)
+		multRight: function (matrix)
 		{
-			return new Box3 (this .matrix .copy () .multLeft (matrix));
+			this .matrix .multRight (matrix);
+			return this;
 		},
 		getAbsoluteExtents: function (min, max)
 		{

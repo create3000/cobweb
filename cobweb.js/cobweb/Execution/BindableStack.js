@@ -21,6 +21,9 @@ function ($, X3DBaseNode)
 		},
 		forcePush: function (node)
 		{
+			this .top () .set_bind_ .setValue (false);
+			this .top () .isBound_ .setValue (false);
+
 			this .array .push (node);
 			node .set_bind_ .setValue (true);
 			node .isBound_ .setValue (true);

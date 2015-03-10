@@ -27,9 +27,8 @@ uniform vec3  x3d_emissiveColor;
 uniform float x3d_shininess;
 uniform float x3d_transparency;
 
-uniform bool      x3d_texturing;      // true if a X3DTexture2DNode is attached, otherwise false
+uniform bool      x3d_texturing; // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D x3d_texture;
-uniform int       x3d_textureComponents;
 
 varying vec4 C;  // color
 varying vec4 t;  // texCoord
@@ -62,7 +61,7 @@ main ()
 			{
 				vec4 T = getTextureColor ();
 
-				diffuseFactor  = x3d_textureComponents < 3 ? T .rgb * C .rgb : T .rgb;
+				diffuseFactor  = T .rgb * C .rgb;
 				alpha         *= T .a;
 			}
 			else
@@ -76,7 +75,7 @@ main ()
 			{
 				vec4 T = getTextureColor ();
 
-				diffuseFactor  = x3d_textureComponents < 3 ? T .rgb * x3d_diffuseColor : T .rgb;
+				diffuseFactor  = T .rgb * x3d_diffuseColor;
 				alpha         *= T .a;
 			}
 			else
@@ -129,7 +128,7 @@ main ()
 	}
 	else
 	{
-		vec4 finalColor = vec4 (0.0, 0.0, 0.0, 0.0);
+		vec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);
 	
 		if (x3d_colorMaterial)
 		{
@@ -137,15 +136,7 @@ main ()
 			{
 				vec4 T = getTextureColor ();
 
-				if (x3d_textureComponents < 3)
-				{
-					finalColor .rgb = T .rgb * C .rgb;
-					finalColor .a   = T .a;
-				}
-				else
-					finalColor = T;
-
-				finalColor .a *= C .a;
+				finalColor = T * C;
 			}
 			else
 				finalColor = C;
@@ -154,8 +145,6 @@ main ()
 		{
 			if (x3d_texturing)
 				finalColor = getTextureColor ();
-			else
-				finalColor = vec4 (1.0, 1.0, 1.0, 1.0);
 		}
 
 		gl_FragColor = finalColor;

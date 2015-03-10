@@ -46,6 +46,10 @@ function ($,
 
 				this .uninitializedNodes .length = 0;
 			},
+			setWorldURL: function (url)
+			{
+				this .url = url;
+			},
 			getWorldURL: function ()
 			{
 				return this .url;

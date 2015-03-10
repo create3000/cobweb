@@ -28,9 +28,9 @@ function ($,
 		},
 		update: function ()
 		{
-			this .isHidden (this .scale_ .x === 0 ||
-			                this .scale_ .y === 0 ||
-			                this .scale_ .z === 0);
+			this .setHidden (this .scale_ .x === 0 ||
+			                 this .scale_ .y === 0 ||
+			                 this .scale_ .z === 0);
 
 			this .setTransform (this .translation_ .getValue (),
 			                    this .rotation_ .getValue (),

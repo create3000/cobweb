@@ -16,43 +16,8 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 			this .assign (arguments);
 
 		else
-			this .set ();
+			this .identity ();
 	}
-
-	$.extend (Matrix3,
-	{
-		Rotation: function (rotation)
-		{
-			var sinAngle = Math .sin (rotation);
-			var cosAngle = Math .cos (rotation);
-			var matrix   = new Matrix3 ();
-
-			matrix [0] =  cosAngle;
-			matrix [1] =  sinAngle;
-			matrix [3] = -sinAngle;
-			matrix [4] =  cosAngle;
-
-			return matrix;
-		},
-		Matrix2: function (matrix)
-		{
-			return new Matrix3 (matrix [0], matrix [1], 0,
-			                    matrix [2], matrix [3], 0,
-			                    0, 0, 1);
-		},
-		transpose: function (matrix)
-		{
-			return matrix .copy () .transpose ();
-		},
-		inverse: function (matrix)
-		{
-			return matrix .copy () .inverse ();
-		},
-		multiply: function (lhs, rhs)
-		{
-			return lhs .copy () .multRight (rhs);
-		},
-	});
 
 	Matrix3 .prototype =
 	{
@@ -80,13 +45,15 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		equals: function (matrix)
 		{
-			for (var i = 0; i < this .length; ++ i)
-			{
-				if (this [i] !== matrix [i])
-					return false;
-			}
-
-			return true;
+			return this [0] === matrix [0] &&
+			       this [1] === matrix [1] &&
+			       this [2] === matrix [2] &&
+			       this [3] === matrix [3] &&
+			       this [4] === matrix [4] &&
+			       this [5] === matrix [5] &&
+			       this [6] === matrix [6] &&
+			       this [7] === matrix [7] &&
+			       this [8] === matrix [8];
 		},
 		rotation: function ()
 		{
@@ -104,23 +71,23 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		{
 			if (arguments .length)
 			{
-				if (translation === null)      translation      = Vector2 .Zero;
-				if (rotation === null)         rotation         = Vector3 .Zero;
-				if (scale === null)            scale            = Vector2 .One;
+				if (translation      === null) translation      = Vector2 .Zero;
+				if (rotation         === null) rotation         = Vector3 .Zero;
+				if (scale            === null) scale            = Vector2 .One;
 				if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
-				if (center === null)           center           = Vector2 .Zero;
+				if (center           === null) center           = Vector2 .Zero;
 
 				switch (arguments .length)
 				{
 					case 1:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 						break;
 					}
 					case 2:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						if (rotation [2] !== 0)
@@ -130,7 +97,7 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 					}
 					case 3:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						if (rotation [2] !== 0)
@@ -143,7 +110,7 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 					}
 					case 4:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						if (rotation [2] !== 0)
@@ -168,7 +135,7 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 					case 5:
 					{
 						// P' = T * C * R * SR * S * -SR * -C * P
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						var hasCenter = ! center .equals (Vector2 .Zero);
@@ -192,7 +159,7 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 						}
 
 						if (hasCenter)
-							this .translate (center .negate ());
+							this .translate (center .copy () .negate ());
 
 						break;
 					}
@@ -212,11 +179,7 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 				}
 			}
 			else
-			{
-				this [0] = 1; this [1] = 0; this [2] = 0;
-				this [3] = 0; this [4] = 1; this [5] = 0;
-				this [6] = 0; this [7] = 0; this [8] = 1;
-			}
+				this .identity ();
 		},
 		get: function (translation, rotation, scale, scaleOrientation, center)
 		{
@@ -351,6 +314,12 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 			return new Vector2 (vector .x * this [0] + vector .y * this [1],
 			                    vector .x * this [3] + vector .y * this [4]);
 		},
+		identity: function ()
+		{
+			this [0] = 1; this [1] = 0; this [2] = 0;
+			this [3] = 0; this [4] = 1; this [5] = 0;
+			this [6] = 0; this [7] = 0; this [8] = 1;
+		},
 		translate: function (translation)
 		{
 			this [6] += this [0] * translation .x + this [3] * translation .y;
@@ -406,6 +375,42 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		enumerable: false,
 		configurable: false
+	});
+
+	$.extend (Matrix3,
+	{
+		Identity: new Matrix3 (),
+		Rotation: function (rotation)
+		{
+			var sinAngle = Math .sin (rotation);
+			var cosAngle = Math .cos (rotation);
+			var matrix   = new Matrix3 ();
+
+			matrix [0] =  cosAngle;
+			matrix [1] =  sinAngle;
+			matrix [3] = -sinAngle;
+			matrix [4] =  cosAngle;
+
+			return matrix;
+		},
+		Matrix2: function (matrix)
+		{
+			return new Matrix3 (matrix [0], matrix [1], 0,
+			                    matrix [2], matrix [3], 0,
+			                    0, 0, 1);
+		},
+		transpose: function (matrix)
+		{
+			return matrix .copy () .transpose ();
+		},
+		inverse: function (matrix)
+		{
+			return matrix .copy () .inverse ();
+		},
+		multiply: function (lhs, rhs)
+		{
+			return lhs .copy () .multRight (rhs);
+		},
 	});
 
 	return Matrix3;

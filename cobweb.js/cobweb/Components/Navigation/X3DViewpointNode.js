@@ -64,7 +64,7 @@ function ($,
 			{
 				try
 				{
-					this .inverseCameraSpaceMatrix = Matrix4 .inverse (value);
+					this .inverseCameraSpaceMatrix = value .copy () .inverse ();
 					this .cameraSpaceMatrix        = value;
 				}
 				catch (error)
@@ -73,6 +73,10 @@ function ($,
 			getCameraSpaceMatrix: function ()
 			{
 				return this .cameraSpaceMatrix;
+			},
+			getInverseCameraSpaceMatrix: function ()
+			{
+				return this .inverseCameraSpaceMatrix;
 			},
 			getUpVector: function ()
 			{
@@ -84,7 +88,11 @@ function ($,
 			},
 			reshape: function ()
 			{
+				var navigationInfo = this .getCurrentNavigationInfo ();
+				
 				this .reshapeWithLimits (0.25, 1000000);
+
+				//this .reshapeWithLimits (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (this));
 			},
 			reshapeWithLimits: function (zNear, zFar)
 			{
@@ -111,7 +119,7 @@ function ($,
 						             this .scaleOffset_ .getValue (),
 						             this .scaleOrientationOffset_ .getValue ());
 
-						matrix .multRight (this .getBrowser () .getModelViewMatrix () .get ());
+						matrix .multRight (this .parentMatrix);
 
 						this .setCameraSpaceMatrix (matrix);
 					}

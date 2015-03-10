@@ -18,53 +18,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this .assign (arguments);
 
 		else
-			this .set ();
+			this .identity ();
 	}
-
-	$.extend (Matrix4,
-	{
-		Quaternion: function (quaternion)
-		{
-			var
-				x = quaternion .x,
-				y = quaternion .y,
-				z = quaternion .z,
-				w = quaternion .w,
-				A = y * y,
-				B = z * z,
-				C = x * y,
-				D = z * w,
-				E = z * x,
-				F = y * w,
-				G = x * x,
-				H = y * z,
-				I = x * w;
-
-			return new Matrix4 (1 - 2 * (A + B),     2 * (C + D),     2 * (E - F), 0,
-					                  2 * (C - D), 1 - 2 * (B + G),     2 * (H + I), 0,
-					                  2 * (E + F),     2 * (H - I), 1 - 2 * (A + G), 0,
-				                               0,               0,               0, 1);
-		},
-		Matrix3: function (matrix)
-		{
-			return new Matrix4 (matrix [0], matrix [1], matrix [2], 0,
-			                    matrix [3], matrix [4], matrix [5], 0,
-			                    matrix [6], matrix [7], matrix [8], 0,
-			                    0, 0, 0, 1);
-		},
-		transpose: function (matrix)
-		{
-			return matrix .copy () .transpose ();
-		},
-		inverse: function (matrix)
-		{
-			return matrix .copy () .inverse ();
-		},
-		multiply: function (lhs, rhs)
-		{
-			return lhs .copy () .multRight (rhs);
-		},
-	});
 
 	Matrix4 .prototype =
 	{
@@ -100,13 +55,22 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		equals: function (matrix)
 		{
-			for (var i = 0; i < this .length; ++ i)
-			{
-				if (this [i] !== matrix [i])
-					return false;
-			}
-
-			return true;
+			return this [ 0] === matrix [ 0] &&
+			       this [ 1] === matrix [ 1] &&
+			       this [ 2] === matrix [ 2] &&
+			       this [ 3] === matrix [ 3] &&
+			       this [ 4] === matrix [ 4] &&
+			       this [ 5] === matrix [ 5] &&
+			       this [ 6] === matrix [ 6] &&
+			       this [ 7] === matrix [ 7] &&
+			       this [ 8] === matrix [ 8] &&
+			       this [ 9] === matrix [ 9] &&
+			       this [10] === matrix [10] &&
+			       this [11] === matrix [11] &&
+			       this [12] === matrix [12] &&
+			       this [13] === matrix [13] &&
+			       this [14] === matrix [14] &&
+			       this [15] === matrix [15];
 		},
 		set1: function (r, c, value)
 		{
@@ -120,23 +84,23 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		{
 			if (arguments .length)
 			{
-				if (translation === null)      translation      = Vector3 .Zero;
-				if (rotation === null)         rotation         = Rotation4 .Identity;
-				if (scale === null)            scale            = Vector3 .One;
+				if (translation      === null) translation      = Vector3 .Zero;
+				if (rotation         === null) rotation         = Rotation4 .Identity;
+				if (scale            === null) scale            = Vector3 .One;
 				if (scaleOrientation === null) scaleOrientation = Rotation4 .Identity;
-				if (center === null)           center           = Vector3 .Zero;
+				if (center           === null) center           = Vector3 .Zero;
 
 				switch (arguments .length)
 				{
 					case 1:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 						break;
 					}
 					case 2:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						if (! rotation .equals (Rotation4 .Identity))
@@ -146,7 +110,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 					}
 					case 3:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						if (! rotation .equals (Rotation4 .Identity))
@@ -159,7 +123,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 					}
 					case 4:
 					{
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						if (! rotation .equals (Rotation4 .Identity))
@@ -173,7 +137,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 							{
 								this .rotate (scaleOrientation);
 								this .scale (scale);
-								this .rotate (scaleOrientation .inverse());
+								this .rotate (scaleOrientation .copy () .inverse ());
 							}
 							else
 								this .scale (scale);
@@ -184,7 +148,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 					case 5:
 					{
 						// P' = T * C * R * SR * S * -SR * -C * P
-						this .set ();
+						this .identity ();
 						this .translate (translation);
 
 						var hasCenter = ! center .equals (Vector3 .Zero);
@@ -201,14 +165,14 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 							{
 								this .rotate (scaleOrientation);
 								this .scale (scale);
-								this .rotate (scaleOrientation .inverse());
+								this .rotate (scaleOrientation .copy () .inverse ());
 							}
 							else
 								this .scale (scale);
 						}
 
 						if (hasCenter)
-							this .translate (center .negate ());
+							this .translate (center .copy () .negate ());
 
 						break;
 					}
@@ -235,12 +199,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				}
 			}
 			else
-			{
-				this [ 0] = 1; this [ 1] = 0; this [ 2] = 0; this [ 3] = 0;
-				this [ 4] = 0; this [ 5] = 1; this [ 6] = 0; this [ 7] = 0;
-				this [ 8] = 0; this [ 9] = 0; this [10] = 1; this [11] = 0;
-				this [12] = 0; this [13] = 0; this [14] = 0; this [15] = 1;
-			}
+				this .identity ();
 		},
 		get: function (translation, rotation, scale, scaleOrientation, center)
 		{
@@ -528,6 +487,13 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			                    vector .x * this [4] + vector .y * this [5] + vector .z * this [ 6],
 			                    vector .x * this [8] + vector .y * this [9] + vector .z * this [10]);
 		},
+		identity: function ()
+		{
+			this [ 0] = 1; this [ 1] = 0; this [ 2] = 0; this [ 3] = 0;
+			this [ 4] = 0; this [ 5] = 1; this [ 6] = 0; this [ 7] = 0;
+			this [ 8] = 0; this [ 9] = 0; this [10] = 1; this [11] = 0;
+			this [12] = 0; this [13] = 0; this [14] = 0; this [15] = 1;
+		},
 		translate: function (t)
 		{
 			this [12] += this [ 0] * t.x + this [ 4] * t.y + this [ 8] * t.z;
@@ -600,6 +566,52 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		enumerable: false,
 		configurable: false
+	});
+
+	$.extend (Matrix4,
+	{
+		Identity: new Matrix4 (),
+		Quaternion: function (quaternion)
+		{
+			var
+				x = quaternion .x,
+				y = quaternion .y,
+				z = quaternion .z,
+				w = quaternion .w,
+				A = y * y,
+				B = z * z,
+				C = x * y,
+				D = z * w,
+				E = z * x,
+				F = y * w,
+				G = x * x,
+				H = y * z,
+				I = x * w;
+
+			return new Matrix4 (1 - 2 * (A + B),     2 * (C + D),     2 * (E - F), 0,
+					                  2 * (C - D), 1 - 2 * (B + G),     2 * (H + I), 0,
+					                  2 * (E + F),     2 * (H - I), 1 - 2 * (A + G), 0,
+				                               0,               0,               0, 1);
+		},
+		Matrix3: function (matrix)
+		{
+			return new Matrix4 (matrix [0], matrix [1], matrix [2], 0,
+			                    matrix [3], matrix [4], matrix [5], 0,
+			                    matrix [6], matrix [7], matrix [8], 0,
+			                    0, 0, 0, 1);
+		},
+		transpose: function (matrix)
+		{
+			return matrix .copy () .transpose ();
+		},
+		inverse: function (matrix)
+		{
+			return matrix .copy () .inverse ();
+		},
+		multiply: function (lhs, rhs)
+		{
+			return lhs .copy () .multRight (rhs);
+		},
 	});
 
 	return Matrix4;

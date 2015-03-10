@@ -4,10 +4,10 @@ define ([
 	"cobweb/Browser/X3DBrowserContext",
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
+	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
-	"standard/Networking/URI",
 ],
-function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
+function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 {
 	function X3DBrowser (x3d)
 	{
@@ -70,67 +70,19 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, XMLParser, URI)
 		},
 		createX3DFromString: function (x3dSyntax)
 		{
-			var dom = $.parseXML (x3dSyntax);
+			var scene = new Loader (this .currentScene) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
 			
-			try
-			{
-				var scene = this .createScene ();
+			scene .setup ();
 
-				new XMLParser (scene, dom) .parseIntoScene ();
-
-				scene .setup ();
-
-				return scene;
-			}
-			catch (error)
-			{
-				console .log (error);
-				throw error;
-			}
+			return scene;
 		},
 		createX3DFromURL: function (url, field, node)
 		{
-			var scene   = null;
-			var success = false;
+			var scene = new Loader (this .currentScene) .createX3DFromURL (url);
+			
+			scene .setup ();
 
-			for (var i = 0; i < url .length; ++ i)
-			{
-				var URL = this .currentScene .getWorldURL () .transform (new URI (url [i]));
-
-				console .log (URL .toString ());
-
-				$.ajax ({
-					url: URL .isLocal () ? new URI (window .location) .getRelativePath (URL) : URL,
-					dataType: "text",
-					async: false,
-					//timeout: 15000,
-					global: false,
-					context: this,
-					complete: function (xhr, status)
-					{
-						if (status === "success" || status === "notmodified")
-						{
-							try
-							{
-								scene   = this .createX3DFromString (xhr .responseText);
-								success = true;
-							}
-							catch (error)
-							{
-								//console .log (error);
-							}
-						}
-					},
-				});
-				
-				if (success)
-					break;
-			}
-
-			if (success)
-				return scene;
-
-			throw Error ("Couldn't load any url of '" + url .getValue () .join (", ") + "'.");
+			return scene;
 		},
 		loadURL: function (url, parameter)
 		{

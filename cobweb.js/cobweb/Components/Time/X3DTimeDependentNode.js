@@ -278,7 +278,7 @@ function ($,
 			{
 				if (this .enabled_ .getValue ())
 				{
-					this .getBrowser () .advance ();
+					this .getBrowser () .advance (Date .now ());
 
 					this [callback] ();
 				}

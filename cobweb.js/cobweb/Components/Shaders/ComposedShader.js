@@ -122,9 +122,8 @@ function ($,
 				this .shininess        = gl .getUniformLocation (this .program, "x3d_shininess");
 				this .transparency     = gl .getUniformLocation (this .program, "x3d_transparency");
 
-				this .texturing         = gl .getUniformLocation (this .program, "x3d_texturing");
-				this .texture           = gl .getUniformLocation (this .program, "x3d_texture");
-				this .textureComponents = gl .getUniformLocation (this .program, "x3d_textureComponents");
+				this .texturing = gl .getUniformLocation (this .program, "x3d_texturing");
+				this .texture   = gl .getUniformLocation (this .program, "x3d_texture");
 
 				this .textureMatrix    = gl .getUniformLocation (this .program, "x3d_textureMatrix");
 				this .normalMatrix     = gl .getUniformLocation (this .program, "x3d_normalMatrix");
@@ -184,9 +183,8 @@ function ($,
 				{
 					texture .traverse ();
 
-					gl .uniform1i (this .texturing,         true);
-					gl .uniform1i (this .texture,           0);
-					gl .uniform1i (this .textureComponents, texture .getComponents ());
+					gl .uniform1i (this .texturing, true);
+					gl .uniform1i (this .texture,   0);
 				}
 				else
 					gl .uniform1i (this .texturing, false);

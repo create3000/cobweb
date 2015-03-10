@@ -2,10 +2,12 @@
 define ([
 	"jquery",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DBaseNode,
+          TraverseType,
           X3DConstants)
 {
 	function X3DNode (browser, executionContext)
@@ -22,9 +24,20 @@ function ($,
 		{
 			return this .getBrowser () .getLayers () [0];
 		},
+		getCurrentNavigationInfo: function ()
+		{
+			return this .getBrowser () .getLayers () [0] .getNavigationInfo ();
+		},
 		getCurrentViewpoint: function ()
 		{
-			return this .getCurrentLayer () .getViewpoint ();
+			return this .getBrowser () .getLayers () [0] .getViewpoint ();
+		},
+		getModelViewMatrix: function (type)
+		{
+			if (type == TraverseType .CAMERA)
+				return this .getBrowser () .getModelViewMatrix () .get () .copy () .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
+
+			return this .getBrowser () .getModelViewMatrix () .get ();
 		},
 	});
 

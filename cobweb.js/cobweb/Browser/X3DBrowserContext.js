@@ -55,7 +55,10 @@ function ($,
 		this .addChildren ("prepareEvents", new SFTime ());
 
 		this .changedTime    = 0;
-		this .renderCallback = function () { this .traverse () } .bind (this);
+		this .renderCallback = this .traverse .bind (this);
+
+		this .frames = 0; // DEBUG frame rate
+		this .timer  = 0; // DEBUG frame rate
 	};
 
 	X3DBrowserContext .prototype = $.extend (new X3DBaseNode (),
@@ -109,11 +112,11 @@ function ($,
 
 			this .changedTime = this .getCurrentTime ();
 
-			setTimeout (this .renderCallback, 0);
+			requestAnimationFrame (this .renderCallback);
 		},
-		traverse: function ()
+		traverse: function (time)
 		{
-			this .advance ();
+			this .advance (performance .timing .navigationStart + time);
 
 			this .prepareEvents_ .processInterests ();
 
@@ -126,6 +129,17 @@ function ($,
 			this .context .clear (this .context .COLOR_BUFFER_BIT);
 
 			this .world .traverse (TraverseType .DISPLAY);
+
+			// DEBUG frame rate
+
+			if (this .currentTime - this .timer > 10)
+			{
+				console .log (this .frames / (this .currentTime - this .timer));
+				this .frames = 0;
+				this .timer  = this .currentTime;
+			}
+			else
+				++ this .frames;
 		},
 	});
 

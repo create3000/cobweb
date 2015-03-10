@@ -13,17 +13,17 @@ function (Vector3)
 	{
 		initialize: function ()
 		{
-			this .advance ();
+			this .advance (Date .now ());
 		},
 		getCurrentTime: function ()
 		{
 			return this .currentTime;
 		},
-		advance: function ()
+		advance: function (time)
 		{
 			var lastTime = this .currentTime;
 
-			this .currentTime      = Date .now () / 1000;
+			this .currentTime      = time / 1000;
 			this .currentFrameRate = 1 / (this .currentTime - lastTime);
 
 			if (this .getWorld () && this .getWorld () .getActiveLayer ())

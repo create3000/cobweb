@@ -24,7 +24,7 @@ function ($)
 			},
 			identity: function ()
 			{
-				this [this .length - 1] .set ();
+				this [this .length - 1] .identity ();
 			},
 			multLeft: function (matrix)
 			{

@@ -58,7 +58,12 @@ function ($,
 			},
 			interpolate: function (index0, index1, weight)
 			{
-				this .value_changed_ = this .keyValue_ [index0] .getValue () .slerp (this .keyValue_ [index1] .getValue (), weight);
+				try
+				{
+					this .value_changed_ = this .keyValue_ [index0] .getValue () .slerp (this .keyValue_ [index1] .getValue (), weight);
+				}
+				catch (error)
+				{ }
 			},
 		});
 

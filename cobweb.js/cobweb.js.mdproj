@@ -573,6 +573,53 @@
     <None Include="cobweb\Browser\Rendering\Phong.vs" />
     <None Include="tests\Components\Geometry3D\Beethoven.x3d" />
     <None Include="tests\Components\Lighting\PointLight.x3d" />
+    <None Include="tests\Examples\Approach\stage\gate.wrl" />
+    <None Include="tests\Examples\Approach\stage\gatetex.png" />
+    <None Include="tests\Examples\Approach\stage\glow_cyan_q.png" />
+    <None Include="tests\Examples\Approach\stage\index.html" />
+    <None Include="tests\Examples\Approach\stage\index.wrl" />
+    <None Include="tests\Examples\Approach\stage\jet.wrl" />
+    <None Include="tests\Examples\Approach\stage\jet1.aiff" />
+    <None Include="tests\Examples\Approach\stage\jet1.png" />
+    <None Include="tests\Examples\Approach\stage\light11.png" />
+    <None Include="tests\Examples\Approach\stage\light3.png" />
+    <None Include="tests\Examples\Approach\stage\light4.png" />
+    <None Include="tests\Examples\Approach\stage\light6.png" />
+    <None Include="tests\Examples\Approach\stage\light7.png" />
+    <None Include="tests\Examples\Approach\stage\noise1.png" />
+    <None Include="tests\Examples\Approach\stage\reflect2.png" />
+    <None Include="tests\Examples\Approach\stage\strasse-m.png" />
+    <None Include="tests\Examples\Approach\stage\strasse.png" />
+    <None Include="tests\Examples\Approach\stage\t-spec-c.png" />
+    <None Include="tests\Examples\Approach\stage\tunneltex1.png" />
+    <None Include="tests\Examples\Approach\stage\wall-glow.png" />
+    <None Include="tests\Examples\Approach\stage\wand1-m.png" />
+    <None Include="tests\Examples\Approach\stage\wand2-m.png" />
+    <None Include="tests\Examples\Approach\stage\wand4-m.png" />
+    <None Include="tests\Examples\Approach\stage\wegweiser.png" />
+    <None Include="tests\Examples\Arcadia\index.wrl" />
+    <None Include="tests\Examples\Arcadia\stage\Thumbs.db" />
+    <None Include="tests\Examples\Arcadia\stage\alert.wav" />
+    <None Include="tests\Examples\Arcadia\stage\bonus.wav" />
+    <None Include="tests\Examples\Arcadia\stage\index.html" />
+    <None Include="tests\Examples\Arcadia\stage\index.wrl" />
+    <None Include="tests\Examples\Arcadia\stage\key-a.png" />
+    <None Include="tests\Examples\Arcadia\stage\key-d.png" />
+    <None Include="tests\Examples\Arcadia\stage\key-i.png" />
+    <None Include="tests\Examples\Arcadia\stage\key.wav" />
+    <None Include="tests\Examples\Arcadia\stage\keybox.png" />
+    <None Include="tests\Examples\Arcadia\stage\keyfb.png" />
+    <None Include="tests\Examples\Arcadia\stage\mount.wrl" />
+    <None Include="tests\Examples\Arcadia\stage\saule.wrl" />
+    <None Include="tests\Examples\Arcadia\stage\sky.png" />
+    <None Include="tests\Examples\Arcadia\stage\stone.png" />
+    <None Include="tests\Examples\Arcadia\stage\t2.png" />
+    <None Include="tests\Examples\Arcadia\stage\temple.wrl" />
+    <None Include="tests\Examples\Approach\stage\gate.x3d" />
+    <None Include="tests\Examples\Approach\stage\index.x3d" />
+    <None Include="tests\Examples\Approach\stage\jet.x3d" />
+    <None Include="cobweb\InputOutput\Loader.js" />
+    <None Include="tests\Examples\Approach\x3dom.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -590,5 +637,8 @@
     <Folder Include="cobweb\Browser\Lighting\" />
     <Folder Include="tests\Components\Geometry3D\" />
     <Folder Include="tests\Components\Lighting\" />
+    <Folder Include="tests\Examples\Approach\" />
+    <Folder Include="tests\Examples\Arcadia\" />
+    <Folder Include="cobweb\InputOutput\" />
   </ItemGroup>
 </Project>

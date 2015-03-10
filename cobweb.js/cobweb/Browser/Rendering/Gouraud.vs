@@ -34,7 +34,6 @@ uniform float x3d_transparency;
 
 uniform bool      x3d_texturing;      // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D x3d_texture;
-uniform int       x3d_textureComponents;
 
 attribute vec4 x3d_color;
 attribute vec4 x3d_texCoord;
@@ -65,26 +64,12 @@ main ()
 
 		if (x3d_colorMaterial)
 		{
-			if (x3d_texturing)
-			{
-				if (x3d_textureComponents < 3)
-					diffuseFactor = C .rgb ;
-			}
-			else
-				diffuseFactor = C .rgb;
+			diffuseFactor = C .rgb;
 
 			alpha *= C .a;
 		}
 		else
-		{
-			if (x3d_texturing)
-			{
-				if (x3d_textureComponents < 3)
-					diffuseFactor= x3d_diffuseColor;
-			}
-			else
-				diffuseFactor = x3d_diffuseColor;
-		}
+			diffuseFactor = x3d_diffuseColor;
 
 		vec3 ambientTerm = diffuseFactor * x3d_ambientIntensity;
 
@@ -133,19 +118,9 @@ main ()
 	else
 	{
 		vec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);
-	
-		if (x3d_colorMaterial)
-		{
-			if (x3d_texturing)
-			{
-				if (x3d_textureComponents < 3)
-					finalColor .rgb = C .rgb;
 
-				finalColor .a *= C .a;
-			}
-			else
-				finalColor = C;
-		}
+		if (x3d_colorMaterial)
+			finalColor = C;
 
 		vColor = finalColor;
 	}

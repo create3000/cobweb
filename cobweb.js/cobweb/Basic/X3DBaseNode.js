@@ -54,7 +54,7 @@ function ($, X3DEventObject, Fields, X3DConstants)
 				Object .defineProperty (this, name + "_",
 				{
 					get: function () { return field; },
-					set: function (value) { field .setValue (value); },
+					set: field .setValue .bind (field),
 					enumerable: true,
 					configurable: true,
 				});
@@ -81,7 +81,7 @@ function ($, X3DEventObject, Fields, X3DConstants)
 				Object .defineProperty (this, name + "_",
 				{
 					get: function () { return field; },
-					set: function (value) { field .setValue (value); },
+					set: field .setValue .bind (field),
 					enumerable: true,
 					configurable: true,
 				});

@@ -26,11 +26,11 @@ require ([
 ],
 function ($, X3D, URI)
 {
-	X3D (function (elements)
+	X3D (function (dom)
 	{
 		with (X3D)
 		{
-			var Browser = getBrowser (elements);
+			var Browser = getBrowser (dom);
 			var scene   = Browser .currentScene .rootNodes;
 
 /*
@@ -45,7 +45,11 @@ function ($, X3D, URI)
 	<body>
 		<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd' statistics="false" log="false">
 			<Scene>
-				<Inline url='"-tests/Components/Lighting/SpotLight.x3d" "Inline.x3d" "tests/Examples/LogoPieces/index.x3d"'/>
+				<Inline url='
+					"tests/Examples/Approach/stage/index.x3d"
+					"-tests/Examples/LogoPieces/index.x3d"
+					"Inline.x3d"
+				'/>
 			</Scene>
 		</X3D>
 	</body>

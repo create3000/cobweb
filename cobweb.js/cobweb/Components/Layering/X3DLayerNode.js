@@ -112,7 +112,7 @@ function ($,
 				this .navigationInfoStack .forcePush (navigationInfo);
 				//navigationInfo .addLayer (this);
 			}
-
+console .log (this .backgrounds .length);
 			if (this .backgrounds .length)
 			{
 				var background = this .backgrounds .getBound ();
@@ -167,9 +167,9 @@ function ($,
 		},
 		camera: function ()
 		{
-			this .getBrowser () .getModelViewMatrix () .identity ();
 			this .getViewpoint () .reshape ();
-		
+			this .getBrowser () .getModelViewMatrix () .identity ();
+
 			this .defaultNavigationInfo .traverse (TraverseType .CAMERA);
 			this .defaultBackground     .traverse (TraverseType .CAMERA);
 			this .defaultViewpoint      .traverse (TraverseType .CAMERA);
@@ -198,7 +198,6 @@ function ($,
 			gl .clear (gl .DEPTH_BUFFER_BIT);
 
 			this .getBackground () .draw ();
-			this .getBrowser () .getModelViewMatrix () .identity ();
 
 			this .getNavigationInfo () .enable ();
 			this .getViewpoint ()      .reshape ();

@@ -19,7 +19,6 @@ function ($,
 		this .transparent = false;
 		this .width       = 0;
 		this .height      = 0;
-		this .components  = 0;
 	}
 
 	X3DTexture2DNode .prototype = $.extend (new X3DTextureNode (),
@@ -61,16 +60,11 @@ function ($,
 		{
 			return this .height;
 		},
-		getComponents: function ()
+		setTexture: function (width, height, transparent, data)
 		{
-			return this .components;
-		},
-		setTexture: function (width, height, components, data)
-		{
-			this .transparent = components && !(components % 2);
+			this .transparent = transparent;
 			this .width       = width;
 			this .height      = height;
-			this .components  = components;
 
 			var gl = this .getBrowser () .getContext ();
 

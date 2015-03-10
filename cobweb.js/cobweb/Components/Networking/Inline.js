@@ -9,6 +9,7 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Loader",
 ],
 function ($,
           Fields,
@@ -18,7 +19,8 @@ function ($,
           X3DUrlObject,
           X3DBoundedObject,
           Group,
-          X3DConstants)
+          X3DConstants,
+          Loader)
 {
 	with (Fields)
 	{
@@ -73,13 +75,20 @@ function ($,
 			{
 				try
 				{
-					setTimeout (this .setScene .bind (this, this .getBrowser () .createX3DFromURL (this .url_)), 0);
+					if (this .getExecutionContext () === this .getBrowser () .getExecutionContext ())
+						this .load ();
+					else
+						setTimeout (this .load .bind (this), 0);
 				}
 				catch (error)
 				{
 					console .log (error);
 					this .setScene (this .getBrowser () .getDefaultScene ());
 				}
+			},
+			load: function ()
+			{
+				this .setScene (new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_));
 			},
 			setScene: function (scene)
 			{

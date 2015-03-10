@@ -104,7 +104,7 @@ function ($,
 				var width  = image .width;
 				var height = image .height;
 
-				// Determine image components.
+				// Determine image alpha.
 
 				var canvas = $("<canvas>") [0];
 	
@@ -115,16 +115,10 @@ function ($,
 				cx .drawImage (image, 0, 0);
 
 				var data   = cx .getImageData (0, 0, image .width, image .height) .data;
-				var gray   = true;
 				var opaque = true;
-
-				for (var i = 0; i < data .length && gray; i += 4)
-					gray &= (data [i] === data [i + 1]) && (data [i] === data [i + 2]);
 
 				for (var i = 0; i < data .length && opaque; i += 4)
 					opaque &= (data [i + 3] === 255);
-
-				var components = (gray ? 1 : 3) + (opaque ? 0 : 1);
 
 				// Scale image.
 
@@ -143,7 +137,7 @@ function ($,
 					data = cx .getImageData (0, 0, width, height) .data;
 				}
 
-				setTimeout (this .setTexture .bind (this, width, height, components, new Uint8Array (data)), 0);
+				setTimeout (this .setTexture .bind (this, width, height, ! opaque, new Uint8Array (data)), 0);
 			},
 		});
 

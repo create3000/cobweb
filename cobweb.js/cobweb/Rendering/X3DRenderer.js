@@ -49,14 +49,14 @@ function (TraverseType, QuickSort)
 		addShape: function (shape)
 		{
 			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
-		
-			var bbox   = shape .getBBox () .multBoxMatrix (modelViewMatrix);
-			//var depth  = bbox .size .z / 2;
-			//var min    = bbox .center .z - depth;
-			var distance = bbox .center .z;
 
-			//if (min < 0)
-			//{
+			var bbox     = shape .getBBox () .copy () .multRight (modelViewMatrix);
+			var depth    = bbox .size .z / 2;
+			var distance = bbox .center .z;
+			var min      = distance - depth;
+
+			if (min < 0)
+			{
 				//var viewVolume = viewVolumeStack .back ();
 			
 				//if (viewVolume .intersects (bbox))
@@ -80,7 +80,7 @@ function (TraverseType, QuickSort)
 						++ this .numOpaqueShapes;
 					}
 				//}
-			//}
+			}
 		},
 		render: function (type)
 		{

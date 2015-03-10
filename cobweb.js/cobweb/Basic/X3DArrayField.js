@@ -39,11 +39,13 @@ function ($, X3DField, X3DConstants)
 				return target [key];
 
 			// value
+			
+			var array = target .getValue ();
 
-			if (key >= target .getValue () .length)
+			if (key >= array .length)
 				target .resize (key + 1);
 
-			return getValue (target .getValue () [key]);
+			return getValue (array [key]);
 		},
 		set: function (target, key, value)
 		{
@@ -53,10 +55,12 @@ function ($, X3DField, X3DConstants)
 				return;
 			}
 
-			if (key >= target .getValue () .length)
+			var array = target .getValue ();
+
+			if (key >= array .length)
 				target .resize (key + 1);
-		
-			target .getValue () [key] .setValue (value);
+
+			array [key] .setValue (value);
 			return true;
 		},
 	};
@@ -67,15 +71,13 @@ function ($, X3DField, X3DConstants)
 		
 		if (value !== undefined)
 		{
-			var array = new Proxy (this, handler);
-
 			if (value [0] instanceof Array)
 				value = value [0];
 
 			for (var i = 0; i < value .length; ++ i)
-				array .push (value [i]);
+				this .push (value [i]);
 
-			return array;
+			return new Proxy (this, handler);
 		}
 	}
 
@@ -88,11 +90,7 @@ function ($, X3DField, X3DConstants)
 			var array = this .getValue ();
 			
 			for (var i = 0; i < array .length; ++ i)
-			{
-				var value = array [i] .copy ();
-				value .addParent (this);
-				copy .push (value);
-			}
+				copy .push (array [i]);
 
 			return copy;
 		},
@@ -110,14 +108,22 @@ function ($, X3DField, X3DConstants)
 		},
 		set: function (value)
 		{
+			this .resize (value .length, undefined, true);
+
+			var array = this .getValue ();
+
+			for (var i = 0; i < value .length; ++ i)
+				array [i] .set (value [i]);
 		},
 		unshift: function (value)
 		{
 			var array = this .getValue ();
 			var field = new this .valueType_ ();
 
-			field .addParent (this);
 			field .setValue (value);
+			field .addParent (this);
+
+			this .addEvent ();
 
 			return array .unshift (field);
 		},
@@ -129,18 +135,19 @@ function ($, X3DField, X3DConstants)
 			{
 				var field = array .shift ();
 				field .removeParent (this);
+				this .addEvent ();
 				return getValue (field);
 			}
-			
-			return;
 		},
 		push: function (value)
 		{
 			var array = this .getValue ();
 			var field = new this .valueType_ ();
 
-			field .addParent (this);
 			field .setValue (value);
+			field .addParent (this);
+
+			this .addEvent ();
 
 			return array .push (field);
 		},
@@ -152,33 +159,66 @@ function ($, X3DField, X3DConstants)
 			{
 				var field = array .pop ();
 				field .removeParent (this);
+				this .addEvent ();
 				return getValue (field);
 			}
-
-			return;
 		},
-		resize: function (size)
+		insert: function (index, array, first, last)
+		{
+			var args = [index, 0];
+
+			for (var i = first; i < last; ++ i)
+			{
+				var field = new this .valueType_ ();
+
+				field .setValue (array [i]);
+				field .addParent (this);
+
+				args .push (field);
+			}
+
+			Array .prototype .splice .apply (this .getValue (), args);
+
+			this .addEvent ();
+		},
+		erase: function (first, last)
+		{
+			var values = this .getValue () .splice (first, last - first);
+				
+			for (var i = 0; i < values .length; ++ i)
+				values [i] .removeParent (this);
+			
+			this .addEvent ();
+		},
+		resize: function (size, value, silent)
 		{
 			var array = this .getValue ();
 		
 			if (size < array .length)
 			{
 				for (var i = size; i < array .length; ++ i)
-					field .removeParent (this);
+					array [i] .removeParent (this);
 
 				array .length = size;
-				this .addEvent ();
+
+				if (! silent)
+					this .addEvent ();
 			}
 			else if (size > array .length)
 			{
 				for (var i = array .length; i < size; ++ i)
 				{
 					var field = new this .valueType_ ();
+					
+					if (value !== undefined)
+						field .setValue (value);
+
 					field .addParent (this);
 					array [i] = field;
 				}
 
-				this .addEvent ();
+				if (! silent)
+					this .addEvent ();
 			}
 		},
 		toString: function ()
