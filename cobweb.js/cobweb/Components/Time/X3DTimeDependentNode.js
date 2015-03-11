@@ -16,9 +16,6 @@ function ($,
 		{
 			this .addType (X3DConstants .X3DTimeDependentNode);
 
-			this .addChildren ("initialized", new SFTime (),
-			                   "isEvenLive",  new SFBool ());
-
 			this .startTimeValue  = 0;
 			this .pauseTimeValue  = 0;
 			this .resumeTimeValue = 0;
@@ -39,6 +36,9 @@ function ($,
 			initialize: function ()
 			{
 //return;
+				this .addChildren ("initialized", new SFTime (),
+				                   "isEvenLive",  new SFBool ());
+
 				this .getExecutionContext () .isLive_ .addInterest (this, "set_live_");
 				this .isEvenLive_                     .addInterest (this, "set_live_");
 				this .isLive_                         .addInterest (this, "set_live_");

@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Browser/Rendering/X3DRenderingContext",
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
+	"cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext",
 	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Layering/X3DLayeringContext",
 	"cobweb/Browser/Lighting/X3DLightingContext",
@@ -23,6 +24,7 @@ function ($,
           X3DBaseNode,
           X3DRenderingContext,
           X3DGeometry3DContext,
+          X3DKeyDeviceSensorContext,
           X3DEnvironmentalEffectsContext,
           X3DLayeringContext,
           X3DLightingContext,
@@ -41,6 +43,7 @@ function ($,
 		X3DBaseNode                    .call (this, this, this);
 		X3DRenderingContext            .call (this, x3d);
 		X3DGeometry3DContext           .call (this);
+		X3DKeyDeviceSensorContext      .call (this);
 		X3DEnvironmentalEffectsContext .call (this);
 		X3DLayeringContext             .call (this);
 		X3DLightingContext             .call (this);
@@ -52,8 +55,6 @@ function ($,
 		X3DTimeContext                 .call (this);
 		X3DRoutingContext              .call (this);
 
-		this .addChildren ("prepareEvents", new SFTime ());
-
 		this .changedTime    = 0;
 		this .renderCallback = this .traverse .bind (this);
 
@@ -64,6 +65,7 @@ function ($,
 	X3DBrowserContext .prototype = $.extend (new X3DBaseNode (),
 		X3DRenderingContext .prototype,
 		X3DGeometry3DContext .prototype,
+		X3DKeyDeviceSensorContext .prototype,
 		X3DEnvironmentalEffectsContext .prototype,
 		X3DLayeringContext .prototype,
 		X3DLightingContext .prototype,
@@ -78,9 +80,12 @@ function ($,
 		constructor: X3DBrowserContext,
 		initialize: function ()
 		{
+			this .addChildren ("prepareEvents", new SFTime ());
+
 			X3DBaseNode                    .prototype .initialize .call (this);
 			X3DRenderingContext            .prototype .initialize .call (this);
 			X3DGeometry3DContext           .prototype .initialize .call (this);
+			X3DKeyDeviceSensorContext      .prototype .initialize .call (this);
 			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
 			X3DLayeringContext             .prototype .initialize .call (this);
 			X3DLightingContext             .prototype .initialize .call (this);

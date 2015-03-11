@@ -104,6 +104,119 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 
 			this .currentScene .setup ();
 		},
+		firstViewpoint: function ()
+		{
+			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+		
+			if (activeLayer)
+			{
+				var viewpoints = activeLayer .getUserViewpoints ();
+
+				if (viewpoints .length)
+					this .bindViewpoint (viewpoints [0]);
+			}
+		},
+		previousViewpoint: function ()
+		{
+			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+
+			if (activeLayer)
+			{
+				var viewpoints = activeLayer .getUserViewpoints ();
+
+				if (viewpoints .length === 0)
+					return;
+
+				var index = 0;
+
+				for (var i = 0; i < viewpoints .length; ++ i)
+				{
+					if (viewpoints [i] .isBound_ .getValue ())
+						break;
+
+					++ index;
+				}
+
+				if (index < viewpoints .length)
+				{
+					if (index === 0)
+						this .bindViewpoint (viewpoints [viewpoints .length - 1]);
+
+					else
+						this .bindViewpoint (viewpoints [index - 1]);
+				}
+				else
+					this .bindViewpoint (viewpoints [viewpoints .length - 1]);
+			}
+		},
+		nextViewpoint: function ()
+		{
+			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+
+			if (activeLayer)
+			{
+				var viewpoints = activeLayer .getUserViewpoints ();
+
+				if (viewpoints .length === 0)
+					return;
+
+				var index = 0;
+
+				for (var i = 0; i < viewpoints .length; ++ i)
+				{
+					if (viewpoints [i] .isBound_ .getValue ())
+						break;
+
+					++ index;
+				}
+
+				if (index < viewpoints .length)
+				{
+					if (index === viewpoints .length - 1)
+						this .bindViewpoint (viewpoints [0]);
+
+					else
+						this .bindViewpoint (viewpoints [index + 1]);
+				}
+				else
+					this .bindViewpoint (viewpoints [0]);
+			}
+		},
+		lastViewpoint: function ()
+		{
+			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+
+			if (activeLayer)
+			{
+				var viewpoints = activeLayer .getUserViewpoints ();
+
+				if (viewpoints .length)
+					this .bindViewpoint (viewpoints [viewpoints .length - 1]);
+			}
+		},
+		changeViewpoint: function (name)
+		{
+			try
+			{
+				this .currentScene .changeViewpoint (name);
+			}
+			catch (error)
+			{
+				console .log (error .message);
+			}
+		},
+		bindViewpoint: function (viewpoint)
+		{
+			console .log ("Trying to bind viewpoint:", viewpoint .description_ .toString ());
+
+			if (0 && viewpoint .isBound_ .getValue ())
+				viewpoint .transitionStart (viewpoint);
+
+			else
+				viewpoint .set_bind_ = true;
+
+			//this .getNotification () .string_ = viewpoint .description_ .getValue ();
+		},
 		print: function (string)
 		{
 			console .log .apply (console, arguments);

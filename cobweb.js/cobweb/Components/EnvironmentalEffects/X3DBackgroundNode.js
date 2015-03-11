@@ -52,6 +52,14 @@ function ($,
 
 			this .build ();
 		},
+		bindToLayer (layer)
+		{
+			layer .getBackgroundStack () .push (this);
+		},
+		unbindFromLayer (layer)
+		{
+			layer .getBackgroundStack () .pop (this);
+		},
 		setHidden: function (value)
 		{
 			this .hidden = value;

@@ -50,6 +50,14 @@ function ($,
 			{
 				return "children";
 			},
+			bindToLayer (layer)
+			{
+				layer .getFogStack () .push (this);
+			},
+			unbindFromLayer (layer)
+			{
+				layer .getFogStack () .pop (this);
+			},
 		});
 
 		return Fog;

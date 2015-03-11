@@ -18,18 +18,16 @@ function ()
 	X3DObject .prototype =
 	{
 		constructor: X3DObject,
-		id_: undefined,
+		id_: 0,
 		name_: "",
 		tainted_: false,
 		interests_: { },
 		getId: function ()
 		{
-			var id_ = ++ id;
-		
 			if (! this .hasOwnProperty ("getId"))
-				this .getId = function () { return id_; };
+				this .getId = function () { return this .id_; };
 
-			return id_;
+			return this .id_ = ++ id;
 		},
 		setName: function (value)
 		{
@@ -52,7 +50,11 @@ function ()
 			if (! this .hasOwnProperty ("interests_"))
 				this .interests_ = { };
 
-			this .interests_ [object .getId () + callback] = object [callback] .bind (object);
+			var args = Array .prototype .slice .call (arguments, 0);
+	
+			args [1] = this;
+
+			this .interests_ [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
 		},
 		removeInterest: function (object, callback)
 		{
@@ -61,7 +63,7 @@ function ()
 		processInterests: function ()
 		{
 			for (var key in this .interests_)
-				this .interests_ [key] (this);
+				this .interests_ [key] ();
 		},
 	};
 

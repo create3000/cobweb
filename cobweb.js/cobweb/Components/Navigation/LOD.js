@@ -72,7 +72,7 @@ function ($,
 						return 0;
 
 					if (size === 2)
-						return this .frameRate > FRAME_RATE_MAX;
+						return Number (this .frameRate > FRAME_RATE_MAX);
 
 					var n        = size - 1;
 					var fraction = Math .max ((this .frameRate - FRAME_RATE_MIN) / (FRAME_RATE_MAX - FRAME_RATE_MIN), 0);
@@ -86,7 +86,7 @@ function ($,
 			},
 			getDistance: function (type)
 			{
-				var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy (); // XXX this .getModelViewMatrix (type)
+				var modelViewMatrix = this .getModelViewMatrix (type);
 
 				modelViewMatrix .translate (this .center_ .getValue ());
 

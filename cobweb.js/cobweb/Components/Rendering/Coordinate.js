@@ -6,7 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DCoordinateNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Triangle",
+	"standard/Math/Geometry/Triangle3",
 	"standard/Math/Numbers/Vector3",
 ],
 function ($,
@@ -15,7 +15,7 @@ function ($,
           FieldDefinitionArray,
           X3DCoordinateNode, 
           X3DConstants,
-          Triangle,
+          Triangle3,
           Vector3)
 {
 	with (Fields)
@@ -58,9 +58,9 @@ function ($,
 				var length = this .point_ .length;
 
 				if (index1 < length && index2 < length && index3 < length)
-					return Triangle .normal (this .point_ [index1] .getValue (),
-					                         this .point_ [index2] .getValue (),
-					                         this .point_ [index3] .getValue ());
+					return Triangle3 .normal (this .point_ [index1] .getValue (),
+					                          this .point_ [index2] .getValue (),
+					                          this .point_ [index3] .getValue ());
 
 				return new Vector3 ();
 			},
@@ -69,10 +69,10 @@ function ($,
 				var length = this .point_ .length;
 
 				if (index1 < length && index2 < length && index3 < length && index4 < length)
-					return Triangle .quadNormal (this .point_ [index1] .getValue (),
-					                             this .point_ [index2] .getValue (),
-					                             this .point_ [index3] .getValue (),
-					                             this .point_ [index4] .getValue ());
+					return Triangle3 .quadNormal (this .point_ [index1] .getValue (),
+					                              this .point_ [index2] .getValue (),
+					                              this .point_ [index3] .getValue (),
+					                              this .point_ [index4] .getValue ());
 
 				return new Vector3 ();
 			},

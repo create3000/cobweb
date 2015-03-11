@@ -521,7 +521,6 @@
     <None Include="standard\Math\Algorithms\QuickSort.js" />
     <None Include="standard\Math\Geometry\Box3.js" />
     <None Include="standard\Math\Geometry\Camera.js" />
-    <None Include="standard\Math\Geometry\Triangle.js" />
     <None Include="standard\Math\Geometry\ViewVolume.js" />
     <None Include="standard\Math\Numbers\Color3.js" />
     <None Include="standard\Math\Numbers\Color4.js" />
@@ -620,6 +619,10 @@
     <None Include="tests\Examples\Approach\stage\jet.x3d" />
     <None Include="cobweb\InputOutput\Loader.js" />
     <None Include="tests\Examples\Approach\x3dom.html" />
+    <None Include="standard\Math\Geometry\Plane3.js" />
+    <None Include="tests\Components\Lighting\SpotLight.x3d" />
+    <None Include="standard\Math\Geometry\Triangle3.js" />
+    <None Include="cobweb\Browser\KeyDeviceSensor\X3DKeyDeviceSensorContext.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -640,5 +643,6 @@
     <Folder Include="tests\Examples\Approach\" />
     <Folder Include="tests\Examples\Arcadia\" />
     <Folder Include="cobweb\InputOutput\" />
+    <Folder Include="cobweb\Browser\KeyDeviceSensor\" />
   </ItemGroup>
 </Project>

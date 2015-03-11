@@ -27,13 +27,6 @@ function ($,
 
 			this .addType (X3DConstants .X3DViewpointNode);
 
-			this .addChildren ("positionOffset",         new SFVec3f (),
-		                      "orientationOffset",      new SFRotation (),
-		                      "scaleOffset",            new SFVec3f (1, 1, 1),
-		                      "scaleOrientationOffset", new SFRotation (),
-		                      "centerOfRotationOffset", new SFVec3f (),
-		                      "fieldOfViewScale",       new SFFloat (1));
-
 			this .parentMatrix             = new Matrix4 ();
 			this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1);
 			this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
@@ -47,6 +40,21 @@ function ($,
 			{
 				X3DBindableNode    .prototype .initialize .call (this);
 				X3DViewpointObject .prototype .initialize .call (this);
+
+				this .addChildren ("positionOffset",         new SFVec3f (),
+			                      "orientationOffset",      new SFRotation (),
+			                      "scaleOffset",            new SFVec3f (1, 1, 1),
+			                      "scaleOrientationOffset", new SFRotation (),
+			                      "centerOfRotationOffset", new SFVec3f (),
+			                      "fieldOfViewScale",       new SFFloat (1));
+			},
+			bindToLayer (layer)
+			{
+				layer .getViewpointStack () .push (this);
+			},
+			unbindFromLayer (layer)
+			{
+				layer .getViewpointStack () .pop (this);
 			},
 			getUserPosition: function ()
 			{
@@ -89,14 +97,12 @@ function ($,
 			reshape: function ()
 			{
 				var navigationInfo = this .getCurrentNavigationInfo ();
-				
-				this .reshapeWithLimits (0.25, 1000000);
-
-				//this .reshapeWithLimits (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (this));
+	
+				this .reshapeWithLimits (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (this));
 			},
 			reshapeWithLimits: function (zNear, zFar)
 			{
-				this .getBrowser () .getProjectionMatrix () .set (this .getProjectionMatrix (zNear, zFar, this .getBrowser () .getViewport ()));
+				this .getBrowser () .getProjectionMatrix () .set (this .getProjectionMatrix (zNear, zFar, this .getCurrentViewport () .getRectangle ()));
 			},
 			transform: function ()
 			{

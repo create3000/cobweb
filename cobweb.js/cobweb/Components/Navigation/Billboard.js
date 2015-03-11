@@ -63,8 +63,7 @@ function ($,
 			{
 				try
 				{
-					var modelViewMatrix        = this .getBrowser () .getModelViewMatrix () .get (); // XXX getModelViewMatrix (type)
-					var inverseModelViewMatrix = modelViewMatrix .copy () .inverse ();
+					var inverseModelViewMatrix = this .getModelViewMatrix (type) .inverse ();
 					var billboardToViewer      = inverseModelViewMatrix .origin .normalize ();       // Normalized to get work with Geo
 
 					if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))

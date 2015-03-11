@@ -118,7 +118,7 @@ function ($, X3DField, X3DConstants)
 		unshift: function (value)
 		{
 			var array = this .getValue ();
-			var field = new this .valueType_ ();
+			var field = new (this .valueType_) ();
 
 			field .setValue (value);
 			field .addParent (this);
@@ -142,7 +142,7 @@ function ($, X3DField, X3DConstants)
 		push: function (value)
 		{
 			var array = this .getValue ();
-			var field = new this .valueType_ ();
+			var field = new (this .valueType_) ();
 
 			field .setValue (value);
 			field .addParent (this);
@@ -169,7 +169,7 @@ function ($, X3DField, X3DConstants)
 
 			for (var i = first; i < last; ++ i)
 			{
-				var field = new this .valueType_ ();
+				var field = new (this .valueType_) ();
 
 				field .setValue (array [i]);
 				field .addParent (this);
@@ -208,13 +208,13 @@ function ($, X3DField, X3DConstants)
 			{
 				for (var i = array .length; i < size; ++ i)
 				{
-					var field = new this .valueType_ ();
-					
+					var field = new (this .valueType_) ();
+
 					if (value !== undefined)
 						field .setValue (value);
 
 					field .addParent (this);
-					array [i] = field;
+					array .push (field);
 				}
 
 				if (! silent)
@@ -230,7 +230,7 @@ function ($, X3DField, X3DConstants)
 	Object .defineProperty (X3DArrayField .prototype, "length",
 	{
 		get: function () { return this .getValue () .length; },
-		set: function (value) { this .getValue () .length = value; },
+		set: function (value) { this .resize (value); },
 		enumerable: false,
 		configurable: false
 	});

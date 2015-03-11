@@ -62,10 +62,10 @@ function ($,
 			//this .fogStack            = new BindableStack (this .getExecutionContext (), this .defaultFog);
 			this .viewpointStack      = new BindableStack (this .getExecutionContext (), this .defaultViewpoint);
 
-			this .navigationInfos = new BindableList (this .getExecutionContext ());
-			this .backgrounds     = new BindableList (this .getExecutionContext ());
-			this .fogs            = new BindableList (this .getExecutionContext ());
-			this .viewpoints      = new BindableList (this .getExecutionContext ());
+			this .navigationInfos = new BindableList (this .getExecutionContext (), this);
+			this .backgrounds     = new BindableList (this .getExecutionContext (), this);
+			this .fogs            = new BindableList (this .getExecutionContext (), this);
+			this .viewpoints      = new BindableList (this .getExecutionContext (), this);
 
 			this .group .children_ = this .children_;
 			this .group .setup ();
@@ -95,6 +95,24 @@ function ($,
 		getBackgrounds: function () { return this .backgrounds; },
 		getFogs: function () { return this .fogs; },
 		getViewpoints: function () { return this .viewpoints; },
+		getUserViewpoints: function ()
+		{
+			var userViewpoints = [ ];
+
+			for (var i = 0; i < this .viewpoints .get () .length; ++ i)
+			{
+				var viewpoint = this .viewpoints .get () [i];
+
+				if (viewpoint .description_ .length)
+					userViewpoints .push (viewpoint);
+			}
+
+			return userViewpoints;
+		},
+		getNavigationInfoStack: function () { return this .navigationInfoStack; },
+		getBackgroundStack: function () { return this .backgroundStack; },
+		getFogStack: function () { return this .fogStack; },
+		getViewpointStack: function () { return this .viewpointStack; },
 		set_viewport__: function ()
 		{
 			this .currentViewport = X3DCast (X3DViewportNode, this .viewport_);
@@ -106,21 +124,21 @@ function ($,
 		{
 			this .traverse (TraverseType .CAMERA);
 
-			if (this .navigationInfos .length)
+			if (this .navigationInfos .get () .length)
 			{
 				var navigationInfo = this .navigationInfos .getBound ();
 				this .navigationInfoStack .forcePush (navigationInfo);
 				//navigationInfo .addLayer (this);
 			}
-console .log (this .backgrounds .length);
-			if (this .backgrounds .length)
+
+			if (this .backgrounds .get () .length)
 			{
 				var background = this .backgrounds .getBound ();
 				this .backgroundStack .forcePush (background);
 				//background .addLayer (this);
 			}
 
-			if (this .fogs .length)
+			if (this .fogs .get () .length)
 			{
 				var fog = this .fogs .getBound ();
 				this .fogStack .forcePush (fog);
@@ -129,7 +147,7 @@ console .log (this .backgrounds .length);
 
 			// Bind first viewpoint in viewpoint stack.
 
-			if (this .viewpoints .length)
+			if (this .viewpoints .get () .length)
 			{
 				var viewpoint = this .viewpoints .getBound ();
 				this .viewpointStack .forcePush (viewpoint);
@@ -139,6 +157,7 @@ console .log (this .backgrounds .length);
 		traverse: function (type)
 		{
 			this .getBrowser () .getLayers () .push (this);
+			this .currentViewport .push ();
 
 			switch (type)
 			{
@@ -159,6 +178,7 @@ console .log (this .backgrounds .length);
 					break;
 			}
 
+			this .currentViewport .pop ();
 			this .getBrowser () .getLayers () .pop ();
 		},
 		pointer: function ()
@@ -174,9 +194,7 @@ console .log (this .backgrounds .length);
 			this .defaultBackground     .traverse (TraverseType .CAMERA);
 			this .defaultViewpoint      .traverse (TraverseType .CAMERA);
 			
-			this .currentViewport .push (TraverseType .CAMERA);
 			this .collect (TraverseType .CAMERA);
-			this .currentViewport .pop (TraverseType .CAMERA);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -193,7 +211,18 @@ console .log (this .backgrounds .length);
 		},
 		display: function (type)
 		{
-			var gl = this .getBrowser () .getContext ();
+			var gl       = this .getBrowser () .getContext ();
+			var viewport = this .currentViewport .getRectangle ();
+
+			gl .viewport (viewport [0],
+			              viewport [1],
+			              viewport [2],
+			              viewport [3]);
+
+			gl .scissor (viewport [0],
+			             viewport [1],
+			             viewport [2],
+			             viewport [3]);
 
 			gl .clear (gl .DEPTH_BUFFER_BIT);
 
@@ -203,13 +232,9 @@ console .log (this .backgrounds .length);
 			this .getViewpoint ()      .reshape ();
 			this .getViewpoint ()      .transform ();
 
-			this .currentViewport .push (TraverseType .DISPLAY);
 			this .render (TraverseType .DISPLAY);
-			this .currentViewport .pop (TraverseType .DISPLAY);
 		},
-		collect: function (type)
-		{
-		},
+		collect: function (type) { },
 	});
 
 	return X3DLayerNode;

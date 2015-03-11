@@ -2,6 +2,7 @@
 //https://github.com/sdecima/javascript-detect-element-resize
 
 define ([
+	"cobweb/Fields",
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
 	"text!cobweb/Browser/Rendering/Gouraud.vs",
@@ -13,7 +14,8 @@ define ([
 	"standard/Math/Utility/MatrixStack",
 	"jquery-resize",
 ],
-function (ComposedShader,
+function (Fields,
+          ComposedShader,
           ShaderPart,
           gouraudVS,
           gouraudFS,
@@ -23,6 +25,8 @@ function (ComposedShader,
           Matrix4,
           MatrixStack)
 {
+	var MFInt32 = Fields .MFInt32;
+
 	function getContext (canvas)
 	{
 		try
@@ -40,7 +44,6 @@ function (ComposedShader,
 		}
 	}
 
-
 	function X3DRenderingContext (x3d)
 	{
 		this .x3d                = x3d;
@@ -54,6 +57,8 @@ function (ComposedShader,
 	{
 		initialize: function ()
 		{
+			this .addChildren ("viewport", new MFInt32 (0, 0, 100, 100));
+
 			// Get canvas & context.
 
 			this .canvas  = $("<canvas/>") .prependTo (this .x3d);
@@ -133,7 +138,7 @@ function (ComposedShader,
 		},
 		getViewport: function ()
 		{
-			return this .viewport;
+			return this .viewport_;
 		},
 		setDefaultColorBuffer: function (length)
 		{
@@ -204,7 +209,7 @@ function (ComposedShader,
 			var width  = this .canvas .width ();
 			var height = this .canvas .height ();
 
-			this .viewport .set (0, 0, width, height);
+			this .viewport_ .setValue ([0, 0, width, height]);
 			this .context .viewport (0, 0, width, height);
 			this .context .scissor (0, 0, width, height);
 

@@ -172,6 +172,7 @@ function ($,
 			},
 			triangulate: function ()
 			{
+				var convex   = this .convex_ .getValue ();
 				var polygons = [ ];
 
 				if (! this .getCoord ())
@@ -228,8 +229,11 @@ function ($,
 									default:
 									{
 										// Triangulate polygons.
-
-										this .triangulatePolygon (polygons [polygons .length - 1]);
+										
+										if (convex)
+											this .triangulateConvexPolygon (polygons [polygons .length - 1]);
+										else
+											this .triangulatePolygon (polygons [polygons .length - 1]);
 
 										if (polygons [polygons .length - 1] .triangles .length)
 											polygons .push ({ vertices: [ ], triangles: [ ] });
@@ -253,12 +257,12 @@ function ($,
 			},
 			triangulatePolygon: function (polygon)
 			{
-				var vertices  = polygon .vertices;
-				var triangles = polygon .triangles;
-				var coord     = this .getCoord ();
-
 				try
 				{
+					var vertices  = polygon .vertices;
+					var triangles = polygon .triangles;
+					var coord     = this .getCoord ();
+
 					// Transform vertices to 2D space.
 
 					var p0 = coord .getPoint (this .coordIndex_ [vertices [0]]);
@@ -305,10 +309,17 @@ function ($,
 				}
 				catch (error)
 				{
-					// Very simple triagulation for convex polygons.
-					for (var i = 1, size = vertices .length - 1; i < size; ++ i)
-						triangles .push ([ vertices [0], vertices [i], vertices [i + 1] ]);
+					this .triangulateConvexPolygon (polygon);
 				}
+			},
+			triangulateConvexPolygon: function (polygon)
+			{
+				var vertices  = polygon .vertices;
+				var triangles = polygon .triangles;
+
+				// Fallback: Very simple triangulation for convex polygons.
+				for (var i = 1, size = vertices .length - 1; i < size; ++ i)
+					triangles .push ([ vertices [0], vertices [i], vertices [i + 1] ]);
 			},
 			buildNormals: function (polygons)
 			{

@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 	with (Fields)
 	{
@@ -44,6 +46,23 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
+			},
+			set_keyValue__: function () { },
+			interpolate: function (index0, index1, weight)
+			{
+				var size = this .key_ .length > 1 ? Math .floor (this .keyValue_ .length / this .key_ .length) : 0;
+
+				index0 *= size;
+				index1  = index0 + size;
+
+				this .value_changed_ .length = size;
+
+				for (var i = 0; i < size; ++ i)
+				{
+					this .value_changed_ [i] = Vector3 .lerp (this .keyValue_ [index0 + i] .getValue (),
+					                                          this .keyValue_ [index1 + i] .getValue (),
+					                                          weight);
+				}
 			},
 		});
 

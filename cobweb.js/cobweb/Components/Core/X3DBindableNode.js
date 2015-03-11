@@ -18,6 +18,7 @@ function ($,
 	X3DBindableNode .prototype = $.extend (new X3DChildNode (),
 	{
 		constructor: X3DBindableNode,
+		transitionStart: function () { },
 	});
 
 	return X3DBindableNode;

@@ -252,7 +252,7 @@ function ($, Fields, Parser, X3DConstants)
 		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4f]  = Parser .prototype .sfmatrix4Value;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4d]  = Parser .prototype .sfmatrix4Value;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFRotation]  = Parser .prototype .sfrotationValue;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFString]    = Parser .prototype .sfstringValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFString]    = function (field) { field .set (this .input); };
 		XMLParser .prototype .fieldTypes [X3DConstants .SFTime]      = Parser .prototype .sfdoubleValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2d]     = Parser .prototype .sfvec2Value;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2f]     = Parser .prototype .sfvec2Value;

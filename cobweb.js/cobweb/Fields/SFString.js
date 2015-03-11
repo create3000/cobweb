@@ -56,5 +56,15 @@ function ($, X3DField, X3DConstants)
 		},
 	});
 
+	Object .defineProperty (SFString .prototype, "length",
+	{
+		get: function ()
+		{
+			return this .getValue () .length;
+		},
+		enumerable: true,
+		configurable: false
+	});
+
 	return SFString;
 });

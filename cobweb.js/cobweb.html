@@ -31,11 +31,10 @@ function ($, X3D, URI)
 		with (X3D)
 		{
 			var Browser = getBrowser (dom);
-			var scene   = Browser .currentScene .rootNodes;
+			var scene   = Browser .currentScene .rootNodes;			
 
 /*
-			console .log (scene .rootNodes [3] .children [0] .geometry .coord .point);
-
+			console .log ();
 */
 		}
 	});
@@ -47,8 +46,10 @@ function ($, X3D, URI)
 			<Scene>
 				<Inline url='
 					"tests/Examples/Approach/stage/index.x3d"
+					"-tests/Components/Lighting/PointLight.x3d"
+					"-tests/Components/Lighting/SpotLight.x3d"
 					"-tests/Examples/LogoPieces/index.x3d"
-					"Inline.x3d"
+					"-Inline.x3d"
 				'/>
 			</Scene>
 		</X3D>

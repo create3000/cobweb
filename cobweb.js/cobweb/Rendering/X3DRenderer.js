@@ -10,27 +10,35 @@ function (TraverseType, QuickSort)
 		this .shape           = null;
 		this .transparent     = false;
 		this .modelViewMatrix = null;
+		this .scissor         = null;
 		this .distance        = 0;
 		this .localLights     = [ ];
 	}
 
 	ShapeContainer .prototype =
 	{
-		assign: function (shape, transparent, modelViewMatrix, distance)
+		assign: function (shape, transparent, modelViewMatrix, scissor, distance)
 		{
 			this .shape           = shape;
 			this .transparent     = transparent;
 			this .modelViewMatrix = modelViewMatrix;
+			this .scissor         = scissor;
 			this .distance        = distance;	
 		},
-		draw: function ()
+		draw: function (gl)
 		{
+			gl .scissor (this .scissor [0],
+			             this .scissor [1],
+			             this .scissor [2],
+			             this .scissor [3]);
+		
 			this .shape .draw (this);
 		},
 	};
 
 	function X3DRenderer (browser, executionContext)
 	{
+		this .viewVolumes          = [ ];
 		this .localObjects         = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
@@ -46,27 +54,33 @@ function (TraverseType, QuickSort)
 		initialize: function ()
 		{
 		},
+		getViewVolumes: function ()
+		{
+			return this .viewVolumes;
+		},
 		addShape: function (shape)
 		{
 			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
 
-			var bbox     = shape .getBBox () .copy () .multRight (modelViewMatrix);
-			var depth    = bbox .size .z / 2;
-			var distance = bbox .center .z;
-			var min      = distance - depth;
+			var bbox       = shape .getBBox () .copy () .multRight (modelViewMatrix);
+			var bboxSize   = bbox .size;
+			var bboxCenter = bbox .center;
+			var depth      = bboxSize .z / 2;
+			var distance   = bboxCenter .z;
+			var min        = distance - depth;
 
 			if (min < 0)
 			{
-				//var viewVolume = viewVolumeStack .back ();
-			
-				//if (viewVolume .intersects (bbox))
-				//{
+				var viewVolume = this .viewVolumes [this .viewVolumes .length - 1];
+
+				if (viewVolume .intersects (bboxSize, bboxCenter))
+				{
 					if (shape .isTransparent ())
 					{
 						if (this .numTransparentShapes >= this .transparentShapes .length)
 							this .transparentShapes .push (new ShapeContainer ());
 
-						this .transparentShapes [this .numTransparentShapes] .assign (shape, true, modelViewMatrix, distance);
+						this .transparentShapes [this .numTransparentShapes] .assign (shape, true, modelViewMatrix, viewVolume .getScissor (), distance);
 
 						++ this .numTransparentShapes;
 					}
@@ -75,11 +89,11 @@ function (TraverseType, QuickSort)
 						if (this .numOpaqueShapes >= this .opaqueShapes .length)
 							this .opaqueShapes .push (new ShapeContainer ());
 
-						this .opaqueShapes [this .numOpaqueShapes] .assign (shape, false, modelViewMatrix , distance);
+						this .opaqueShapes [this .numOpaqueShapes] .assign (shape, false, modelViewMatrix, viewVolume .getScissor (), distance);
 
 						++ this .numOpaqueShapes;
 					}
-				//}
+				}
 			}
 		},
 		render: function (type)
@@ -124,7 +138,7 @@ function (TraverseType, QuickSort)
 		draw: function ()
 		{
 			var gl = this .getBrowser () .getContext ();
-				
+
 			// Sorted blend
 
 			// Render opaque objects first
@@ -134,7 +148,7 @@ function (TraverseType, QuickSort)
 			gl .disable (gl .BLEND);
 
 			for (var i = 0; i < this .numOpaqueShapes; ++ i)
-				this .opaqueShapes [i] .draw ();
+				this .opaqueShapes [i] .draw (gl);
 
 			// Render transparent objects
 
@@ -144,7 +158,7 @@ function (TraverseType, QuickSort)
 			this .transparencySorter .sort (0, this .numTransparentShapes);
 
 			for (var i = 0; i < this .numTransparentShapes; ++ i)
-				this .transparentShapes [i] .draw ();
+				this .transparentShapes [i] .draw (gl);
 
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);

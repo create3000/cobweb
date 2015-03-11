@@ -15,26 +15,87 @@ function ($, X3DBaseNode)
 
 	BindableStack .prototype = $.extend (new X3DBaseNode (),
 	{
+		get: function ()
+		{
+			return this .array;
+		},
 		top: function ()
 		{
 			return this .array [this .array .length - 1];
 		},
 		forcePush: function (node)
 		{
-			this .top () .set_bind_ .setValue (false);
-			this .top () .isBound_ .setValue (false);
+			node .isBound_  = true;
+			node .bindTime_ = this .getBrowser () .getCurrentTime ();
+
+			this .push (node);
+		},
+		push: function (node)
+		{
+			if (this .array .length === 0)
+				return;
+			
+			var top = this .top ();
+			
+			if (node !== top)
+			{
+				if (top .isBound_ .getValue ())
+				{
+					top .set_bind_ = false;
+					top .isBound_  = false;
+				}
+
+				if (! node .isBound_ .getValue ())
+				{
+					node .isBound_  = true;
+					node .bindTime_ = this .getBrowser () .getCurrentTime ();
+					node .transitionStart (top);
+				}
+
+				this .pushOnTop (node);
+
+				this .addNodeEvent ();
+			}
+		},
+		pushOnTop: function (node)
+		{
+			var index = this .array .indexOf (node);
+
+			if (index !== -1)
+				this .array .splice (index, 1);
 
 			this .array .push (node);
-			node .set_bind_ .setValue (true);
-			node .isBound_ .setValue (true);
 		},
-	});
+		pop: function (node)
+		{
+			if (this .array .length === 0)
+				return;
+			
+			var top = this .top ();
+			
+			if (node === top)
+			{
+				if (node .isBound_ .getValue ())
+					node .isBound_ = false;
 
-	Object .defineProperty (BindableStack .prototype, "length",
-	{
-		get: function () { return this .array .length; },
-		enumerable: true,
-		configurable: false
+				this .array .pop ();
+
+				if (this .array .length === 0)
+					return;
+
+				top = this .top ();
+
+				if (! top .isBound_ .getValue ())
+				{
+					top .set_bind_ = true;
+					top .isBound_  = true;
+					top .bindTime_ = this .getBrowser () .getCurrentTime ();
+					top .transitionStart (node);
+				}
+
+				this .addNodeEvent ();
+			}
+		},
 	});
 
 	return BindableStack;

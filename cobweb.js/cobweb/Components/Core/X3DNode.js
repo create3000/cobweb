@@ -24,6 +24,10 @@ function ($,
 		{
 			return this .getBrowser () .getLayers () [0];
 		},
+		getCurrentViewport: function ()
+		{
+			return this .getBrowser () .getLayers () [0] .getViewport ();
+		},
 		getCurrentNavigationInfo: function ()
 		{
 			return this .getBrowser () .getLayers () [0] .getNavigationInfo ();
@@ -34,10 +38,12 @@ function ($,
 		},
 		getModelViewMatrix: function (type)
 		{
+			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
+		
 			if (type == TraverseType .CAMERA)
-				return this .getBrowser () .getModelViewMatrix () .get () .copy () .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
+				modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
 
-			return this .getBrowser () .getModelViewMatrix () .get ();
+			return modelViewMatrix;
 		},
 	});
 

@@ -61,6 +61,14 @@ function ($,
 			{
 				return "children";
 			},
+			bindToLayer (layer)
+			{
+				layer .getNavigationInfoStack () .push (this);
+			},
+			unbindFromLayer (layer)
+			{
+				layer .getNavigationInfoStack () .pop (this);
+			},
 			getCollisionRadius: function ()
 			{
 				if (this .avatarSize_ .length > 0)
