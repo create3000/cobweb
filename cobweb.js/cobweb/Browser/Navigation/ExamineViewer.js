@@ -95,8 +95,13 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && Date .now () - this .motionTime < SPIN_RELEASE_TIME)
 					{
-						this .rotation = new Rotation4 () .slerp (this .rotation, SPIN_FACTOR);
-						this .addSpinning ();
+						try
+						{
+							this .rotation = Rotation4 .slerp (new Rotation4 (), this .rotation, SPIN_FACTOR);
+							this .addSpinning ();
+						}
+						catch (error)
+						{ }
 					}
 
 					break;
@@ -197,9 +202,9 @@ function ($, X3DViewer, Vector3, Rotation4)
 			var viewpoint = this .getActiveViewpoint ();
 			var distance  = this .getDistanceToCenter ();
 
-			return (this .orientationOffset .inverse ()
+			return (this .orientationOffset .copy () .inverse ()
 			       .multRight (viewpoint .orientationOffset_ .getValue ())
-			       .multVecRot (distance)
+			       .multVecRot (distance .copy ())
 			       .subtract (distance)
 			       .add (viewpoint .positionOffset_ .getValue ()));
 		},
@@ -209,7 +214,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 			this .orientationOffset .assign (viewpoint .orientationOffset_ .getValue ());
 
-			return viewpoint .orientation_ .getValue () .inverse () .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
+			return viewpoint .orientation_ .getValue () .copy () .inverse () .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
 		},
 		spin: function ()
 		{

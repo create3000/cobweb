@@ -32,6 +32,9 @@ define (function ()
 		},
 		slerp: function (source, destination, t)
 		{
+			source      = source .copy ()
+			destination = destination .copy ()
+
 			var cosom = source .dot (destination);
 
 			if (cosom <= -1)
@@ -44,7 +47,7 @@ define (function ()
 			{
 				// Reverse signs so we travel the short way round
 				cosom       = -cosom;
-				destination = destination .copy () .negate ()
+				destination .negate ()
 			}				
 
 			var omega = Math .acos (cosom);

@@ -112,7 +112,7 @@ function ($,
 			},
 			set_startTime_: function ()
 			{
-				this .startTimeValue = this .startTime .getValue ();
+				this .startTimeValue = this .startTime_ .getValue ();
 
 				if (this .enabled_ .getValue ())
 				{

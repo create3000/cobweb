@@ -8,6 +8,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
@@ -16,7 +17,8 @@ function ($,
           TraverseType,
           X3DConstants,
           Matrix4,
-          Vector3)
+          Vector3,
+          Rotation4)
 {
 	with (Fields)
 	{
@@ -62,7 +64,7 @@ function ($,
 			},
 			getUserOrientation: function ()
 			{
-				return this .orientation_ .getValue () .multRight (this .orientationOffset_ .getValue ());
+				return Rotation4 .multRight (this .orientation_ .getValue (), this .orientationOffset_ .getValue ());
 			},
 			getUserCenterOfRotation: function ()
 			{

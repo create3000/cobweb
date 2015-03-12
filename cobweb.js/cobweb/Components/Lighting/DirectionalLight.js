@@ -17,7 +17,7 @@ function ($,
 	function DirectionalLightContainer (light)
 	{
 		this .light     = light;
-		this .direction = light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (light .direction_ .getValue ()) .normalize ();
+		this .direction = light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (light .direction_ .getValue () .copy ()) .normalize ();
 	}
 
 	DirectionalLightContainer .prototype =

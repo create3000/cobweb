@@ -81,19 +81,19 @@ function ($, Matrix4, Vector3, Rotation4, X3DField, X3DConstants)
 		},
 		multVecMatrix: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multVecMatrix (vector .getValue ()));
+			return new (this .constructor) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixVec: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multMatrixVec (vector .getValue ()));
+			return new (this .constructor) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
 		},
 		multDirMatrix: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multDirMatrix (vector .getValue ()));
+			return new (this .constructor) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixDir: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multMatrixDir (vector .getValue ()));
+			return new (this .constructor) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
 		},
 		toString: function ()
 		{

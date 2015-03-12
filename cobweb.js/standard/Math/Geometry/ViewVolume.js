@@ -92,7 +92,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 			                       1);
 
 			//Objects coordinates
-			vin = matrix .multVecMatrix (vin);
+			matrix .multVecMatrix (vin);
 
 			if (vin .w === 0)
 				throw Error ("Couldn't unproject point: divisor is 0.");
@@ -119,7 +119,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 		{
 			var vin = new Vector4 (point .x, point .y, point .z, 1);
 
-			vin = matrix .multVecMatrix (vin);
+			matrix .multVecMatrix (vin);
 
 			if (vin .w === 0)
 				throw Error ("Couldn't project point: divisor is 0.");

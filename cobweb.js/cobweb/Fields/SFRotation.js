@@ -57,19 +57,19 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		},
 		inverse: function ()
 		{
-			return new SFRotation (this .getValue () .inverse ());
+			return new SFRotation (this .getValue () .copy () .inverse ());
 		},
 		multiply: function (rotation)
 		{
-			return new SFRotation (this .getValue () .multLeft (rotation .getValue ()));
+			return new SFRotation (this .getValue () .copy () .multLeft (rotation .getValue ()));
 		},
 		multVec: function (vector)
 		{
-			return new SFVec3f (this .getValue () .multVecRot (vector .getValue ()));
+			return new SFVec3f (this .getValue () .multVecRot (vector .getValue () .copy ()));
 		},
 		slerp: function (rotation, t)
 		{
-			return new SFRotation (this .getValue () .slerp (rotation .getValue (), t));
+			return new SFRotation (Rotation4 .slerp (this .getValue (), rotation .getValue (), t));
 		},
 		toString: function ()
 		{

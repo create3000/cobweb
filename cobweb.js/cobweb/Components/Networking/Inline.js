@@ -69,16 +69,22 @@ function ($,
 
 				this .group .setup ();
 
-				this .requestImmediateLoad ();
+				this .load ();
+			},
+			load: function ()
+			{
+				if (this .getExecutionContext () === this .getBrowser () .getExecutionContext ())
+					this .requestImmediateLoad ();
+				else
+					setTimeout (this .requestAsyncLoad .bind (this), 0);
 			},
 			requestImmediateLoad: function ()
 			{
+				console .log (this .url_ [0]);
+
 				try
 				{
-					if (this .getExecutionContext () === this .getBrowser () .getExecutionContext ())
-						this .load ();
-					else
-						setTimeout (this .load .bind (this), 0);
+					this .setScene (new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_));
 				}
 				catch (error)
 				{
@@ -86,20 +92,20 @@ function ($,
 					this .setScene (this .getBrowser () .getDefaultScene ());
 				}
 			},
-			load: function ()
+			requestAsyncLoad: function ()
 			{
-				this .setScene (new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_));
+				new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_, this .setScene .bind (this));
 			},
 			setScene: function (scene)
 			{
-				this .scene .removeInterest (this .group .children_, "setValue");
+				this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 				// Set new scene.
 
 				this .scene = scene;
 				this .scene .setup ();
-				
-				this .scene .addInterest (this .group .children_, "setValue");
+
+				this .scene .rootNodes .addInterest (this .group .children_, "setValue");
 				this .group .children_ = this .scene .rootNodes;
 
 				this .getBrowser () .addBrowserEvent ();

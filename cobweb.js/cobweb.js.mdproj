@@ -623,6 +623,51 @@
     <None Include="tests\Components\Lighting\SpotLight.x3d" />
     <None Include="standard\Math\Geometry\Triangle3.js" />
     <None Include="cobweb\Browser\KeyDeviceSensor\X3DKeyDeviceSensorContext.js" />
+    <None Include="cobweb\Browser\PointingDeviceSensor\X3DPointingDeviceSensorContext.js" />
+    <None Include="tests\Examples\NIST-Logo\index.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\babyman.jpg" />
+    <None Include="tests\Examples\Cathedral\stage\bogen.png" />
+    <None Include="tests\Examples\Cathedral\stage\bogen.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\bogen.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\brickwall2.jpg" />
+    <None Include="tests\Examples\Cathedral\stage\choir1.wav" />
+    <None Include="tests\Examples\Cathedral\stage\choir2.wav" />
+    <None Include="tests\Examples\Cathedral\stage\choir3.wav" />
+    <None Include="tests\Examples\Cathedral\stage\choir4.wav" />
+    <None Include="tests\Examples\Cathedral\stage\choirs-deep.wav" />
+    <None Include="tests\Examples\Cathedral\stage\cube.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\cube.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\geist-tv1.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\geist-tv1.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\geist.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\geist.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\glow_yel_c.png" />
+    <None Include="tests\Examples\Cathedral\stage\index.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\index.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\kind.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\kind.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\marble.png" />
+    <None Include="tests\Examples\Cathedral\stage\note-64.png" />
+    <None Include="tests\Examples\Cathedral\stage\noteexit.png" />
+    <None Include="tests\Examples\Cathedral\stage\notenkey-64.png" />
+    <None Include="tests\Examples\Cathedral\stage\notenzeile-64.png" />
+    <None Include="tests\Examples\Cathedral\stage\oak2.jpg" />
+    <None Include="tests\Examples\Cathedral\stage\shadow70-128.png" />
+    <None Include="tests\Examples\Cathedral\stage\shiva-512.jpg" />
+    <None Include="tests\Examples\Cathedral\stage\swirl-gold.png" />
+    <None Include="tests\Examples\Cathedral\stage\tech.jpg" />
+    <None Include="tests\Examples\Cathedral\stage\torch.1.png" />
+    <None Include="tests\Examples\Cathedral\stage\torch.2.png" />
+    <None Include="tests\Examples\Cathedral\stage\torch.3.png" />
+    <None Include="tests\Examples\Cathedral\stage\torch.4.png" />
+    <None Include="tests\Examples\Cathedral\stage\torch.5.png" />
+    <None Include="tests\Examples\Cathedral\stage\torch.6.png" />
+    <None Include="tests\Examples\Cathedral\stage\torch.7.png" />
+    <None Include="tests\Examples\Cathedral\stage\torch.wav" />
+    <None Include="tests\Examples\Cathedral\stage\torch.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\torch.x3d" />
+    <None Include="tests\Examples\Cathedral\stage\tvset.wrl" />
+    <None Include="tests\Examples\Cathedral\stage\tvset.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -644,5 +689,8 @@
     <Folder Include="tests\Examples\Arcadia\" />
     <Folder Include="cobweb\InputOutput\" />
     <Folder Include="cobweb\Browser\KeyDeviceSensor\" />
+    <Folder Include="cobweb\Browser\PointingDeviceSensor\" />
+    <Folder Include="tests\Examples\NIST-Logo\" />
+    <Folder Include="tests\Examples\Cathedral\" />
   </ItemGroup>
 </Project>

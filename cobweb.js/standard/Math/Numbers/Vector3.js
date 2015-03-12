@@ -21,94 +21,6 @@ function ($, Algorithm)
 		}
 	}
 
-	$.extend (Vector3,
-	{
-		Zero: new Vector3 (),
-		One: new Vector3 (1, 1, 1),
-		negate: function ()
-		{
-			return vector .copy () .negate ();
-		},
-		add: function (lhs, rhs)
-		{
-			return lhs .copy () .add (rhs);
-		},
-		subtract: function (lhs, rhs)
-		{
-			return lhs .copy () .subtract (rhs);
-		},
-		multiply: function (lhs, rhs)
-		{
-			return lhs .copy () .multiply (rhs);
-		},
-		multVec: function (lhs, rhs)
-		{
-			return lhs .copy () .multVec (rhs);
-		},
-		divide: function (lhs, rhs)
-		{
-			return lhs .copy () .divide (rhs);
-		},
-		divVec: function (lhs, rhs)
-		{
-			return lhs .copy () .divVec (rhs);
-		},
-		normalize: function ()
-		{
-			return vector .copy () .normalize ();
-		},
-		cross: function (lhs, rhs)
-		{
-			return lhs .copy () .cross (rhs);
-		},
-		lerp: function (source, dest, t)
-		{
-			return new Vector3 (Algorithm .lerp (source .x, dest .x, t),
-			                    Algorithm .lerp (source .y, dest .y, t),
-			                    Algorithm .lerp (source .z, dest .z, t));
-		},
-		slerp: function (source, dest, t)
-		{
-			return Algorithm .slerp (source, dest, t);
-		},
-		min: function (lhs, rhs)
-		{
-			var
-				x = arguments [0] .x,
-				y = arguments [0] .y,
-				z = arguments [0] .z;
-
-			for (var i = 1; i < arguments .length; ++ i)
-			{
-				var vector = arguments [i];
-
-				x = Math .min (x, vector .x);
-				y = Math .min (y, vector .y);
-				z = Math .min (z, vector .z);
-			}
-
-			return new Vector3 (x, y, z);
-		},
-		max: function (lhs, rhs)
-		{
-			var
-				x = arguments [0] .x,
-				y = arguments [0] .y,
-				z = arguments [0] .z;
-
-			for (var i = 1; i < arguments .length; ++ i)
-			{
-				var vector = arguments [i];
-
-				x = Math .max (x, vector .x);
-				y = Math .max (y, vector .y);
-				z = Math .max (z, vector .z);
-			}
-
-			return new Vector3 (x, y, z);
-		},
-	});
-
 	Vector3 .prototype =
 	{
 		constructor: Vector3,
@@ -248,6 +160,91 @@ function ($, Algorithm)
 		set: function (value) { this .z = value; },
 		enumerable: false,
 		configurable: false
+	});
+
+	$.extend (Vector3,
+	{
+		Zero: new Vector3 (),
+		One: new Vector3 (1, 1, 1),
+		negate: function ()
+		{
+			return vector .copy () .negate ();
+		},
+		add: function (lhs, rhs)
+		{
+			return lhs .copy () .add (rhs);
+		},
+		subtract: function (lhs, rhs)
+		{
+			return lhs .copy () .subtract (rhs);
+		},
+		multiply: function (lhs, rhs)
+		{
+			return lhs .copy () .multiply (rhs);
+		},
+		multVec: function (lhs, rhs)
+		{
+			return lhs .copy () .multVec (rhs);
+		},
+		divide: function (lhs, rhs)
+		{
+			return lhs .copy () .divide (rhs);
+		},
+		divVec: function (lhs, rhs)
+		{
+			return lhs .copy () .divVec (rhs);
+		},
+		normalize: function ()
+		{
+			return vector .copy () .normalize ();
+		},
+		cross: function (lhs, rhs)
+		{
+			return lhs .copy () .cross (rhs);
+		},
+		lerp: function (source, dest, t)
+		{
+			return new Vector3 (Algorithm .lerp (source .x, dest .x, t),
+			                    Algorithm .lerp (source .y, dest .y, t),
+			                    Algorithm .lerp (source .z, dest .z, t));
+		},
+		slerp: Algorithm .slerp,
+		min: function (lhs, rhs)
+		{
+			var
+				x = arguments [0] .x,
+				y = arguments [0] .y,
+				z = arguments [0] .z;
+
+			for (var i = 1; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .min (x, vector .x);
+				y = Math .min (y, vector .y);
+				z = Math .min (z, vector .z);
+			}
+
+			return new Vector3 (x, y, z);
+		},
+		max: function (lhs, rhs)
+		{
+			var
+				x = arguments [0] .x,
+				y = arguments [0] .y,
+				z = arguments [0] .z;
+
+			for (var i = 1; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .max (x, vector .x);
+				y = Math .max (y, vector .y);
+				z = Math .max (z, vector .z);
+			}
+
+			return new Vector3 (x, y, z);
+		},
 	});
 
 	return Vector3;

@@ -23,91 +23,6 @@ function ($, Algorithm)
 		}
 	}
 
-	$.extend (Vector4,
-	{
-		Zero: new Vector4 (),
-		One: new Vector4 (1, 1, 1, 1),
-		negate: function ()
-		{
-			return vector .copy () .negate ();
-		},
-		add: function (lhs, rhs)
-		{
-			return lhs .copy () .add (rhs);
-		},
-		subtract: function (lhs, rhs)
-		{
-			return lhs .copy () .subtract (rhs);
-		},
-		multiply: function (lhs, rhs)
-		{
-			return lhs .copy () .multiply (rhs);
-		},
-		multVec: function (lhs, rhs)
-		{
-			return lhs .copy () .multVec (rhs);
-		},
-		divide: function (lhs, rhs)
-		{
-			return lhs .copy () .divide (rhs);
-		},
-		divVec: function (lhs, rhs)
-		{
-			return lhs .copy () .divVec (rhs);
-		},
-		normalize: function ()
-		{
-			return vector .copy () .normalize ();
-		},
-		lerp: function (source, dest, t)
-		{
-			return new Vector4 (Algorithm .lerp (source .x, dest .x, t),
-			                    Algorithm .lerp (source .y, dest .y, t),
-			                    Algorithm .lerp (source .z, dest .z, t),
-			                    Algorithm .lerp (source .w, dest .w, t));
-		},
-		min: function (lhs, rhs)
-		{
-			var
-				x = arguments [0] .x,
-				y = arguments [0] .y,
-				z = arguments [0] .z,
-				w = arguments [0] .w;
-
-			for (var i = 1; i < arguments .length; ++ i)
-			{
-				var vector = arguments [i];
-
-				x = Math .min (x, vector .x);
-				y = Math .min (y, vector .y);
-				z = Math .min (z, vector .z);
-				w = Math .min (w, vector .w);
-			}
-
-			return new Vector4 (x, y, z, w);
-		},
-		max: function (lhs, rhs)
-		{
-			var
-				x = arguments [0] .x,
-				y = arguments [0] .y,
-				z = arguments [0] .z,
-				w = arguments [0] .w;
-
-			for (var i = 1; i < arguments .length; ++ i)
-			{
-				var vector = arguments [i];
-
-				x = Math .max (x, vector .x);
-				y = Math .max (y, vector .y);
-				z = Math .max (z, vector .z);
-				w = Math .max (w, vector .w);
-			}
-
-			return new Vector4 (x, y, z, w);
-		},
-	});
-
 	Vector4 .prototype =
 	{
 		constructor: Vector4,
@@ -261,6 +176,91 @@ function ($, Algorithm)
 		set: function (value) { this .w = value; },
 		enumerable: false,
 		configurable: false
+	});
+
+	$.extend (Vector4,
+	{
+		Zero: new Vector4 (),
+		One: new Vector4 (1, 1, 1, 1),
+		negate: function ()
+		{
+			return vector .copy () .negate ();
+		},
+		add: function (lhs, rhs)
+		{
+			return lhs .copy () .add (rhs);
+		},
+		subtract: function (lhs, rhs)
+		{
+			return lhs .copy () .subtract (rhs);
+		},
+		multiply: function (lhs, rhs)
+		{
+			return lhs .copy () .multiply (rhs);
+		},
+		multVec: function (lhs, rhs)
+		{
+			return lhs .copy () .multVec (rhs);
+		},
+		divide: function (lhs, rhs)
+		{
+			return lhs .copy () .divide (rhs);
+		},
+		divVec: function (lhs, rhs)
+		{
+			return lhs .copy () .divVec (rhs);
+		},
+		normalize: function ()
+		{
+			return vector .copy () .normalize ();
+		},
+		lerp: function (source, dest, t)
+		{
+			return new Vector4 (Algorithm .lerp (source .x, dest .x, t),
+			                    Algorithm .lerp (source .y, dest .y, t),
+			                    Algorithm .lerp (source .z, dest .z, t),
+			                    Algorithm .lerp (source .w, dest .w, t));
+		},
+		min: function (lhs, rhs)
+		{
+			var
+				x = arguments [0] .x,
+				y = arguments [0] .y,
+				z = arguments [0] .z,
+				w = arguments [0] .w;
+
+			for (var i = 1; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .min (x, vector .x);
+				y = Math .min (y, vector .y);
+				z = Math .min (z, vector .z);
+				w = Math .min (w, vector .w);
+			}
+
+			return new Vector4 (x, y, z, w);
+		},
+		max: function (lhs, rhs)
+		{
+			var
+				x = arguments [0] .x,
+				y = arguments [0] .y,
+				z = arguments [0] .z,
+				w = arguments [0] .w;
+
+			for (var i = 1; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				x = Math .max (x, vector .x);
+				y = Math .max (y, vector .y);
+				z = Math .max (z, vector .z);
+				w = Math .max (w, vector .w);
+			}
+
+			return new Vector4 (x, y, z, w);
+		},
 	});
 
 	return Vector4;

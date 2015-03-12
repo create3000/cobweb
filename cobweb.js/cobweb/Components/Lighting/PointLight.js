@@ -17,7 +17,7 @@ function ($,
 	function PointLightContainer (light)
 	{
 		this .light    = light;
-		this .location = light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (light .location_ .getValue ());
+		this .location = light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (light .location_ .getValue () .copy ());
 	}
 
 	PointLightContainer .prototype =

@@ -449,12 +449,12 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			{
 				var w = vector .x * this [3] + vector .y * this [7] + vector .z * this [11] + this [15];
 
-				return new Vector3 ((vector .x * this [0] + vector .y * this [4] + vector .z * this [ 8] + this [12]) / w,
+				return vector .set ((vector .x * this [0] + vector .y * this [4] + vector .z * this [ 8] + this [12]) / w,
 				                    (vector .x * this [1] + vector .y * this [5] + vector .z * this [ 9] + this [13]) / w,
 				                    (vector .x * this [2] + vector .y * this [6] + vector .z * this [10] + this [14]) / w);
 			}
 
-			return new Vector4 (vector .x * this [0] + vector .y * this [4] + vector .z * this [ 8] + vector .w * this [12],
+			return vector .set (vector .x * this [0] + vector .y * this [4] + vector .z * this [ 8] + vector .w * this [12],
 			                    vector .x * this [1] + vector .y * this [5] + vector .z * this [ 9] + vector .w * this [13],
 			                    vector .x * this [2] + vector .y * this [6] + vector .z * this [10] + vector .w * this [14],
 			                    vector .x * this [3] + vector .y * this [7] + vector .z * this [11] + vector .w * this [15]);
@@ -465,25 +465,25 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			{
 				var w = vector .x * this [12] + vector .y * this [13] + vector .z * this [14] + this [15];
 
-				return new Vector3 ((vector .x * this [0] + vector .y * this [1] + vector .z * this [ 2] + this [ 3]) / w,
+				return vector .set ((vector .x * this [0] + vector .y * this [1] + vector .z * this [ 2] + this [ 3]) / w,
 				                    (vector .x * this [4] + vector .y * this [5] + vector .z * this [ 6] + this [ 7]) / w,
 				                    (vector .x * this [8] + vector .y * this [9] + vector .z * this [10] + this [11]) / w);
 			}
 
-			return new Vector4 (vector .x * this [ 0] + vector .y * this [ 1] + vector .z * this [ 2] + vector .w * this [ 3],
+			return vector .set (vector .x * this [ 0] + vector .y * this [ 1] + vector .z * this [ 2] + vector .w * this [ 3],
 			                    vector .x * this [ 4] + vector .y * this [ 5] + vector .z * this [ 6] + vector .w * this [ 7],
 			                    vector .x * this [ 8] + vector .y * this [ 9] + vector .z * this [10] + vector .w * this [11],
 			                    vector .x * this [12] + vector .y * this [13] + vector .z * this [14] + vector .w * this [15]);
 		},
 		multDirMatrix: function (vector)
 		{
-			return new Vector3 (vector .x * this [0] + vector .y * this [4] + vector .z * this [ 8],
+			return vector .set (vector .x * this [0] + vector .y * this [4] + vector .z * this [ 8],
 			                    vector .x * this [1] + vector .y * this [5] + vector .z * this [ 9],
 			                    vector .x * this [2] + vector .y * this [6] + vector .z * this [10]);
 		},
 		multMatrixDir: function (vector)
 		{
-			return new Vector3 (vector .x * this [0] + vector .y * this [1] + vector .z * this [ 2],
+			return vector .set (vector .x * this [0] + vector .y * this [1] + vector .z * this [ 2],
 			                    vector .x * this [4] + vector .y * this [5] + vector .z * this [ 6],
 			                    vector .x * this [8] + vector .y * this [9] + vector .z * this [10]);
 		},
@@ -571,6 +571,10 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 	$.extend (Matrix4,
 	{
 		Identity: new Matrix4 (),
+		Rotation: function (rotation)
+		{
+			return Matrix4 .Quaternion (rotation .value);
+		},
 		Quaternion: function (quaternion)
 		{
 			var

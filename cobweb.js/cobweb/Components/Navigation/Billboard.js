@@ -68,7 +68,7 @@ function ($,
 
 					if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 					{
-						var viewerYAxis = inverseModelViewMatrix .multDirMatrix (yAxis) .normalize (); // Normalized to get work with Geo
+						var viewerYAxis = inverseModelViewMatrix .multDirMatrix (yAxis .copy ()) .normalize (); // Normalized to get work with Geo
 
 						var x = Vector3 .cross (viewerYAxis, billboardToViewer);
 						var y = Vector3 .cross (billboardToViewer, x);

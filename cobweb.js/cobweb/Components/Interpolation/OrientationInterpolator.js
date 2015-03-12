@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4"
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DConstants)
+          X3DConstants,
+          Rotation4)
 {
 	with (Fields)
 	{
@@ -60,7 +62,7 @@ function ($,
 			{
 				try
 				{
-					this .value_changed_ = this .keyValue_ [index0] .getValue () .slerp (this .keyValue_ [index1] .getValue (), weight);
+					this .value_changed_ = Rotation4 .slerp (this .keyValue_ [index0] .getValue (), this .keyValue_ [index1] .getValue (), weight);
 				}
 				catch (error)
 				{ }

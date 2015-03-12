@@ -282,11 +282,11 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 			{
 				var w = vector .x * this [2] + vector .y * this [5] + this [8];
 
-				return new Vector2 ((vector .x * this [0] + vector .y * this [3] + this [6]) / w,
+				return vector .set ((vector .x * this [0] + vector .y * this [3] + this [6]) / w,
 				                    (vector .x * this [1] + vector .y * this [4] + this [7]) / w);
 			}
 
-			return new Vector3 (vector .x * this [0] + vector .y * this [3] + vector .z * this [6],
+			return vector .set (vector .x * this [0] + vector .y * this [3] + vector .z * this [6],
 			                    vector .x * this [1] + vector .y * this [4] + vector .z * this [7],
 			                    vector .x * this [2] + vector .y * this [5] + vector .z * this [8]);
 		},
@@ -296,22 +296,22 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 			{
 				var w = vector .x * this [6] + vector .y * this [7] + this [8];
 
-				return new Vector2 ((vector .x * this [0] + vector .y * this [1] + this [2]) / w,
+				return vector .set ((vector .x * this [0] + vector .y * this [1] + this [2]) / w,
 				                    (vector .x * this [3] + vector .y * this [4] + this [5]) / w);
 			}
 
-			return new Vector3 (vector .x * this [0] + vector .y * this [1] + vector .z * this [2],
+			return vector .set (vector .x * this [0] + vector .y * this [1] + vector .z * this [2],
 			                    vector .x * this [3] + vector .y * this [4] + vector .z * this [5],
 			                    vector .x * this [6] + vector .y * this [7] + vector .z * this [8]);
 		},
 		multDirMatrix: function (vector)
 		{
-			return new Vector2 (vector .x * this [0] + vector .y * this [3],
+			return vector .set (vector .x * this [0] + vector .y * this [3],
 			                    vector .x * this [1] + vector .y * this [4]);
 		},
 		multMatrixDir: function (vector)
 		{
-			return new Vector2 (vector .x * this [0] + vector .y * this [1],
+			return vector .set (vector .x * this [0] + vector .y * this [1],
 			                    vector .x * this [3] + vector .y * this [4]);
 		},
 		identity: function ()

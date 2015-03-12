@@ -9,10 +9,10 @@ function ($, Fields, Parser, X3DConstants)
 {
 	with (Fields)
 	{
-		function XMLParser (scene, dom)
+		function XMLParser (scene, xml)
 		{
+			this .xml              = xml;
 			this .executionContext = [ scene ];
-			this .dom              = dom;
 			this .nodes            = [ ];
 			this .parser           = new Parser (this .scene, "", true);
 		}
@@ -26,43 +26,51 @@ function ($, Fields, Parser, X3DConstants)
 			},
 			parseIntoScene: function ()
 			{
-				switch (this .dom .nodeName)
+				var t0 = Date .now ();
+
+				switch (this .xml .nodeName)
 				{
 					case "#document":
 					{
-						var x3d = $(this .dom) .children ("X3D");
-						
+						var x3d = $(this .xml) .children ("X3D");
+	
 						for (var i = 0; i < x3d .length; ++ i)
-						{
-							this .dom = x3d [i];
-							this .x3d (this .dom);
-						}
+							this .x3d (x3d [i]);
 
 						break;
 					}
 					case "X3D":
-					{
-						this .x3d (this .dom);
+						this .x3d (this .xml);
 						break;
-					}
+
+					case "Scene":
 					case "SCENE":
-					{
-						this .scene (this .dom);
+						this .scene (this .xml);
 						break;
-					}
+
 					default:
-					{
-						this .element (this .dom);
+						this .child (this .xml);
 						break;
+				}
+	
+				console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + ((Date .now () - t0) / 1000) + "s.");
+			},
+			x3d: function (x3d)
+			{
+				var childNodes = x3d .childNodes;
+		
+				for (var i = 0; i < childNodes .length; ++ i)
+				{
+					var element = childNodes [i];
+				
+					switch (element .nodeName)
+					{
+						case "Scene":
+						case "SCENE":
+							this .scene (element);
+							return;
 					}
 				}
-			},
-			x3d: function (element)
-			{
-				var scene = $(element) .children ("Scene");
-			
-				for (var i = 0; i < scene .length; ++ i)
-					this .scene (scene [i]);
 			},
 			scene: function (element)
 			{
@@ -75,23 +83,15 @@ function ($, Fields, Parser, X3DConstants)
 			},
 			child: function (element)
 			{
-				switch (element .nodeType)
-				{
-					case 1: // node
-					{
-						this .element (element);
-					}
-					case 3: // text
-						return;
-				}
-			},
-			element: function (element)
-			{
 				switch (element .nodeName)
 				{
+					case "#text":
+						return;
+
 					case "ROUTE":
 						this .route (element);
 						return;
+
 					default:
 						this .node (element);
 						return;
@@ -144,7 +144,6 @@ function ($, Fields, Parser, X3DConstants)
 						var node = this .getExecutionContext () .getNamedNode (name);
 
 						this .addNode (element, node .getValue ());
-
 						return true;
 					}
 				}
@@ -244,22 +243,22 @@ function ($, Fields, Parser, X3DConstants)
 		XMLParser .prototype .fieldTypes [X3DConstants .SFColor]     = Parser .prototype .sfcolorValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFColorRGBA] = Parser .prototype .sfcolorrgbaValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFDouble]    = Parser .prototype .sfdoubleValue;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFFloat]     = Parser .prototype .sfdoubleValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFFloat]     = Parser .prototype .sffloatValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFImage]     = Parser .prototype .sfimageValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFInt32]     = Parser .prototype .sfint32Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3f]  = Parser .prototype .sfmatrix4Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3d]  = Parser .prototype .sfmatrix4Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4f]  = Parser .prototype .sfmatrix4Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4d]  = Parser .prototype .sfmatrix4Value;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3f]  = Parser .prototype .sfmatrix4dValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3d]  = Parser .prototype .sfmatrix4fValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4f]  = Parser .prototype .sfmatrix4dValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4d]  = Parser .prototype .sfmatrix4fValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFRotation]  = Parser .prototype .sfrotationValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFString]    = function (field) { field .set (this .input); };
-		XMLParser .prototype .fieldTypes [X3DConstants .SFTime]      = Parser .prototype .sfdoubleValue;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2d]     = Parser .prototype .sfvec2Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2f]     = Parser .prototype .sfvec2Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFVec3d]     = Parser .prototype .sfvec3Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFVec3f]     = Parser .prototype .sfvec3Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFVec4d]     = Parser .prototype .sfvec4Value;
-		XMLParser .prototype .fieldTypes [X3DConstants .SFVec4f]     = Parser .prototype .sfvec4Value;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFTime]      = Parser .prototype .sftimeValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2d]     = Parser .prototype .sfvec2dValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFVec2f]     = Parser .prototype .sfvec2fValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFVec3d]     = Parser .prototype .sfvec3dValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFVec3f]     = Parser .prototype .sfvec3fValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFVec4d]     = Parser .prototype .sfvec4dValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFVec4f]     = Parser .prototype .sfvec4fValue;
 
 		XMLParser .prototype .fieldTypes [X3DConstants .MFBool]      = Parser .prototype .mfboolValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFColor]     = Parser .prototype .mfcolorValues;

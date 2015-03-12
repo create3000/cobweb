@@ -88,11 +88,6 @@ function ($, Quaternion, Vector3)
 		}
 	}
 
-	$.extend (Rotation4,
-	{
-		Identity: new Rotation4 (),
-	});
-
 	Rotation4 .prototype =
 	{
 		constructor: Rotation4,
@@ -104,15 +99,16 @@ function ($, Quaternion, Vector3)
 		assign: function (rotation)
 		{
 			this .value .assign (rotation .value);
+			return this;
 		},
 		set: function (x, y, z, angle)
 		{
 			var scale = Math .sqrt (x * x + y * y + z * z);
 
-			if (scale == 0)
+			if (scale === 0)
 			{
 				this .value = new Quaternion (0, 0, 0, 1);
-				return;
+				return this;
 			}
 
 			// Calculate quaternion
@@ -124,13 +120,14 @@ function ($, Quaternion, Vector3)
 			                              y * scale,
 			                              z * scale,
 			                              Math .cos (halfTheta));
+			return this;
 		},
 		get: function ()
 		{
 			if (Math .abs (this .value .w) == 1)
 				return [0, 0, 1, 0];
 
-			var vector = this .value .imag () .normalize ();
+			var vector = this .value .imag .normalize ();
 
 			return [ vector .x,
 				      vector .y,
@@ -142,7 +139,7 @@ function ($, Quaternion, Vector3)
 			if (Math .abs (this .value .w) == 1)
 				return new Vector3 (0, 0, 1);
 
-			return this .value .imag () .normalize ();
+			return this .value .imag .normalize ();
 		},
 		equals: function (rot)
 		{
@@ -150,15 +147,16 @@ function ($, Quaternion, Vector3)
 		},
 		inverse: function ()
 		{
-			return new Rotation4 (this .value .inverse ());
+			this .value .inverse ();
+			return this;
 		},
 		multLeft: function (rot)
 		{
-			return new Rotation4 (this .value .multLeft (rot .value) .normalize ());
+			return new Rotation4 (this .value .copy () .multLeft (rot .value) .normalize ());
 		},
 		multRight: function (rot)
 		{
-			return new Rotation4 (this .value .multRight (rot .value) .normalize ());
+			return new Rotation4 (this .value .copy () .multRight (rot .value) .normalize ());
 		},
 		multVecRot: function (vector)
 		{
@@ -167,10 +165,6 @@ function ($, Quaternion, Vector3)
 		multRotVec: function (vector)
 		{
 			return this .value .multQuatVec (vector);
-		},
-		slerp: function (destination, t)
-		{
-			return new Rotation4 (this .value .slerp (destination .value, t));
 		},
 		toString: function ()
 		{
@@ -310,52 +304,26 @@ function ($, Quaternion, Vector3)
 
 	$.extend (Rotation4,
 	{
+		Identity: new Rotation4 (),
+		inverse: function (rotation)
+		{
+			return rotation .copy () .inverse ();
+		},
 		Matrix3: function (matrix)
 		{
-			var quat = new Quaternion ();
-
-			var i;
-
-			// First, find largest diagonal in matrix:
-			if (matrix [0] > matrix [4])
-			{
-				i = matrix [0] > matrix [8] ? 0 : 2;
-			}
-			else
-			{
-				i = matrix [4] > matrix [8] ? 1 : 2;
-			}
-
-			var scalerow = matrix [0] + matrix [4] + matrix [8];
-
-			if (scalerow > matrix [i * 3 + i])
-			{
-				// Compute w first:
-				quat [3] = Math .sqrt (scalerow + 1) / 2;
-
-				// And compute other values:
-				var d = 4 * quat [3];
-				quat [0] = (matrix [5] - matrix [7]) / d;
-				quat [1] = (matrix [6] - matrix [2]) / d;
-				quat [2] = (matrix [1] - matrix [3]) / d;
-			}
-			else
-			{
-				// Compute x, y, or z first:
-				var j = (i + 1) % 3;
-				var k = (i + 2) % 3;
-
-				// Compute first value:
-				quat [i] = Math .sqrt (matrix [i * 3 + i] - matrix [j * 3 + j] - matrix [k * 3 + k] + 1) / 2;
-
-				// And the others:
-				var d = 4 * quat [i];
-				quat [j] = (matrix [i * 3 + j] + matrix [j * 3 + i]) / d;
-				quat [k] = (matrix [i * 3 + k] + matrix [k * 3 + i]) / d;
-				quat [3] = (matrix [j * 3 + k] - matrix [k * 3 + j]) / d;
-			}
-
-			return new Rotation4 (quat);
+			return new Rotation4 (Quaternion .Matrix3 (matrix));
+		},
+		multLeft: function (lhs, rhs)
+		{
+			return lhs .copy () .multLeft (rhs);
+		},
+		multRight: function (lhs, rhs)
+		{
+			return lhs .copy () .multRight (rhs);
+		},
+		slerp: function (source, destination, t)
+		{
+			return new Rotation4 (Quaternion .slerp (source .value, destination .value, t));
 		},
 		squad: function (source, a, b, destination, t)
 		{

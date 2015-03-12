@@ -290,7 +290,7 @@ function ($,
 					for (var i = 0; i < vertices .length; ++ i)
 					{
 						var index    = vertices [i];
-						var vertex2D = matrix .multVecMatrix (coord .getPoint (this .coordIndex_ [index]));
+						var vertex2D = matrix .multVecMatrix (coord .getPoint (this .coordIndex_ [index]) .copy ());
 
 						vertex2D .index = index;
 						contour .push (vertex2D);

@@ -22,21 +22,63 @@ function ($, XMLParser, URI)
 
 			//
 
-			try
-			{
-				var dom = $.parseXML (string);
+			var dom = $.parseXML (string);
 
-				new XMLParser (scene, dom) .parseIntoScene ();
+			new XMLParser (scene, dom) .parseIntoScene ();
 
-				return scene;
-			}
-			catch (error)
-			{
-				console .log (error);
-				throw error;
-			}
+			return scene;
 		},
-		createX3DFromURL: function (url)
+		createX3DFromURL: function (url, callback)
+		{
+			if (callback)
+			{
+				this .url      = url .copy ();
+				this .callback = callback;
+
+				return this .createX3DFromURLAsync (this .url .shift ());
+			}
+
+			return this .createX3DFromURLSync (url);
+		},
+		createX3DFromURLAsync: function (URL)
+		{
+			URL = this .executionContext .getWorldURL () .transform (new URI (URL));
+
+			$.ajax ({
+				url: URL .isLocal () ? new URI (window .location) .getRelativePath (URL) : URL,
+				dataType: "text",
+				async: true,
+				//timeout: 15000,
+				global: false,
+				context: this,
+				success: function (data)
+				{
+					try
+					{
+						return this .callback (this .createX3DFromString (URL, data));
+					}
+					catch (error)
+					{
+						console .log (error);
+
+						if (this .url .length)
+							this .createX3DFromURLAsync (this .url .shift ());
+						
+						else
+							this .callback (this .browser .createScene ());
+					}
+				},
+				error: function (jqXHR, textStatus, errorThrown)
+				{
+					if (this .url .length)
+						this .createX3DFromURLAsync (this .url .shift ());
+
+					else
+						this .callback (this .browser .createScene ());
+				},
+			});
+		},
+		createX3DFromURLSync: function (url)
 		{
 			var scene   = null;
 			var success = false;
@@ -45,7 +87,7 @@ function ($, XMLParser, URI)
 			{
 				var URL = this .executionContext .getWorldURL () .transform (new URI (url [i]));
 
-				console .log (URL .toString ());
+				console .log ("Trying to load URL '" + URL .toString () + "'.");
 
 				$.ajax ({
 					url: URL .isLocal () ? new URI (window .location) .getRelativePath (URL) : URL,
@@ -54,23 +96,23 @@ function ($, XMLParser, URI)
 					//timeout: 15000,
 					global: false,
 					context: this,
-					complete: function (xhr, status)
+					success: function (data)
 					{
-						if (status === "success" || status === "notmodified")
+						try
 						{
-							try
-							{
-								scene   = this .createX3DFromString (URL, xhr .responseText);
-								success = true;
-							}
-							catch (error)
-							{
-								//console .log (error);
-							}
+							scene   = this .createX3DFromString (URL, data);
+							success = true;
+						}
+						catch (error)
+						{
+							//console .log (error);
 						}
 					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+					},
 				});
-				
+
 				if (success)
 					break;
 			}

@@ -207,7 +207,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		},
 		bindViewpoint: function (viewpoint)
 		{
-			console .log ("Trying to bind viewpoint:", viewpoint .description_ .toString ());
+			console .log ("Trying to bind viewpoint: " + viewpoint .description_ .toString ());
 
 			if (0 && viewpoint .isBound_ .getValue ())
 				viewpoint .transitionStart (viewpoint);
@@ -215,7 +215,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 			else
 				viewpoint .set_bind_ = true;
 
-			//this .getNotification () .string_ = viewpoint .description_ .getValue ();
+			//this .getNotification () .string_ = viewpoint .description_;
 		},
 		print: function (string)
 		{

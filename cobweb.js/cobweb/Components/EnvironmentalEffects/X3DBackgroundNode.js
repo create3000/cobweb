@@ -156,7 +156,7 @@ function ($,
 					if (vAngle [vAngle .length - 1] > 0)
 						vAngle .push (0);
 
-					this .build (radius, vAngle, this .groundAngle_, this .groundColor_, alpha, true);
+					this .buildSphere (radius, vAngle, this .groundAngle_, this .groundColor_, alpha, true);
 				}
 
 				this .sphere .vertices = this .sphere .length / 4;

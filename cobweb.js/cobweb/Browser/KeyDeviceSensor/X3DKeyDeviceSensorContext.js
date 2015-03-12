@@ -12,8 +12,6 @@ function ($)
 	{
 		initialize: function ()
 		{
-			this .getCanvas () .attr ("tabindex", 8803068) .focus ();
-
 			this .getCanvas () .keydown (this .keydown .bind (this));
 		},
 		keydown: function (event)

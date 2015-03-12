@@ -17,8 +17,8 @@ function ($,
 	function SpotLightContainer (light)
 	{
 		this .light     = light;
-		this .location  = light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (light .location_ .getValue ());
-		this .direction = light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (light .direction_ .getValue ()) .normalize ();
+		this .location  = light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (light .location_ .getValue () .copy ());
+		this .direction = light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (light .direction_ .getValue () .copy ()) .normalize ();
 	}
 
 	SpotLightContainer .prototype =
