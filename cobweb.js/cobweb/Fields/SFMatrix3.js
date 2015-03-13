@@ -54,11 +54,11 @@ function ($, Matrix3, Vector2, Vector3, X3DField, X3DConstants)
 		},
 		getTransform: function (translation, rotation, scale, scaleOrientation, center)
 		{
-			translation      = translation      ? translation      .getValue () : new Vector2 ();
-			rotation         = rotation         ? rotation         .getValue () : new Vector3 ();
-			scale            = scale            ? scale            .getValue () : new Vector2 (1, 1);
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : new Vector3 ();
-			center           = center           ? center           .getValue () : new Vector2 ();
+			translation      = translation      ? translation      .getValue () : null;
+			rotation         = rotation         ? rotation         .getValue () : null;
+			scale            = scale            ? scale            .getValue () : null;
+			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
+			center           = center           ? center           .getValue () : null;
 
 			this .getValue () .getTransform (translation, rotation, scale, scaleOrientation, center);
 		},

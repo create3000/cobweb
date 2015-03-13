@@ -9,6 +9,15 @@ define ([
 ],
 function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 {
+	var
+		dummyTranslation      = new Vector3 (),
+		dummyRotation         = new Rotation4 (),
+		dummyScale            = new Vector3 (),
+		dummyScaleOrientation = new Rotation4 (),
+		dummyCenter           = new Vector3 (),
+		rot                   = new Matrix3 (),
+		so                    = new Matrix3 ();
+
 	function Matrix4 (m00, m01, m02, m03,
 	                  m10, m11, m12, m13,
 	                  m20, m21, m22, m23,
@@ -203,11 +212,11 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		get: function (translation, rotation, scale, scaleOrientation, center)
 		{
-			if (translation === null)      translation      = new Vector3 ();
-			if (rotation === null)         rotation         = new Rotation4 ();
-			if (scale === null)            scale            = new Vector3 (1, 1, 1);
-			if (scaleOrientation === null) scaleOrientation = new Rotation4 ();
-			if (center === null)           center           = new Vector3 ();
+			if (translation      === null) translation      = dummyTranslation;
+			if (rotation         === null) rotation         = dummyRotation;
+			if (scale            === null) scale            = dummyScale;
+			if (scaleOrientation === null) scaleOrientation = dummyScaleOrientation;
+			if (center           === null) center           = dummyCenter;
 
 			switch (arguments .length)
 			{
@@ -218,25 +227,18 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				}
 				case 2:
 				{
-					var rot   = new Matrix3 ();
-					var so    = new Matrix3 ();
-					var scale = new Vector3 ();
-					this .factor (translation, rot, scale, so);
+					this .factor (translation, rot, dummyScale, so);
 					rotation .assign (Rotation4 .Matrix3 (rot));
 					break;
 				}
 				case 3:
 				{
-					var rot   = new Matrix3 ();
-					var so    = new Matrix3 ();
-					this .factor (translation, rot, scascaleleFactor, so);
+					this .factor (translation, rot, scale, so);
 					rotation .assign (Rotation4 .Matrix3 (rot));
 					break;
 				}
 				case 4:
 				{
-					var rot   = new Matrix3 ();
-					var so    = new Matrix3 ();
 					this .factor (translation, rot, scale, so);
 					rotation .assign (Rotation4 .Matrix3 (rot));
 					scaleOrientation .assign (Rotation4 .Matrix3 (so));

@@ -84,7 +84,8 @@ function ($,
 		constructor: X3DBrowserContext,
 		initialize: function ()
 		{
-			this .addChildren ("prepareEvents", new SFTime ());
+			this .addChildren ("prepareEvents", new SFTime (),
+			                   "sensors",       new SFTime ());
 
 			X3DBaseNode                    .prototype .initialize .call (this);
 			X3DRenderingContext            .prototype .initialize .call (this);
@@ -101,6 +102,10 @@ function ($,
 			X3DTexturingContext            .prototype .initialize .call (this);
 			X3DTimeContext                 .prototype .initialize .call (this);
 			X3DRoutingContext              .prototype .initialize .call (this);
+		},
+		getSensors: function ()
+		{
+			return this .sensors_;
 		},
 		getWorld: function ()
 		{
@@ -133,6 +138,7 @@ function ($,
 			this .processEvents ();
 			this .world .traverse (TraverseType .CAMERA);
 
+			this .sensors_ .processInterests ();
 			this .processEvents ();
 
 			this .context .clearColor (0, 0, 0, 0);

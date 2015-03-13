@@ -8,6 +8,13 @@ define ([
 ],
 function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 {
+	var
+		dummyTranslation      = new Vector2 (),
+		dummyRotation         = new Vector3 (),
+		dummyScale            = new Vector2 (),
+		dummyScaleOrientation = new Vector3 (),
+		dummyCenter           = new Vector2 ();
+								
 	function Matrix3 (m00, m01, m02,
 	                  m10, m11, m12,
 	                  m20, m21, m22)
@@ -183,11 +190,11 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		get: function (translation, rotation, scale, scaleOrientation, center)
 		{
-			if (translation === null)      translation      = new Vector2 ();
-			if (rotation === null)         rotation         = new Vector3 ();
-			if (scale === null)            scale            = new Vector2 (1, 1);
-			if (scaleOrientation === null) scaleOrientation = new Vector3 ();
-			if (center === null)           center           = new Vector2 ();
+			if (translation      === null) translation      = dummyTranslation;
+			if (rotation         === null) rotation         = dummyRotation;
+			if (scale            === null) scale            = dummyScale;
+			if (scaleOrientation === null) scaleOrientation = dummyScaleOrientation;
+			if (center           === null) center           = dummyCenter;
 		},
 		determinant2: function ()
 		{

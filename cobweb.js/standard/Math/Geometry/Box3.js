@@ -63,6 +63,13 @@ function (Matrix4, Vector3)
 			this .matrix .multRight (matrix);
 			return this;
 		},
+		getExtents: function (min, max)
+		{
+			this .getAbsoluteExtents (min, max);
+
+			min .add (this .center);
+			max .add (this .center);
+		},
 		getAbsoluteExtents: function (min, max)
 		{
 			var x = this .matrix .x;
@@ -84,6 +91,21 @@ function (Matrix4, Vector3)
 
 			min .assign (Vector3 .min (p1, p2, p3, p4, p5, p6, p7, p8));
 			max .assign (Vector3 .max (p1, p2, p3, p4, p5, p6, p7, p8));
+		},
+		intersectsPoint: function (point)
+		{
+			var
+				min = new Vector3 (),
+				max = new Vector3 ();
+
+			this .getExtents (min, max);
+
+			return min .x <= point .x &&
+			       max .x >= point .x &&
+			       min .y <= point .y &&
+			       max .y >= point .y &&
+			       min .z <= point .z &&
+			       max .z >= point .z;
 		},
 		toString: function ()
 		{

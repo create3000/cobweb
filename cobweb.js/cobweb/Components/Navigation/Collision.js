@@ -21,12 +21,13 @@ function ($,
 		function Collision (executionContext)
 		{
 			X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DSensorNode .call (this, executionContext .getBrowser (), executionContext);
+			X3DSensorNode   .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Collision);
 		}
 
-		Collision .prototype = $.extend (new X3DGroupingNode (),new X3DSensorNode (),
+		Collision .prototype = $.extend (new X3DGroupingNode (),
+			X3DSensorNode .prototype,
 		{
 			constructor: Collision,
 			fieldDefinitions: new FieldDefinitionArray ([
@@ -52,6 +53,15 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
+			},
+			initialize: function ()
+			{
+				X3DGroupingNode .prototype .initialize .call (this);
+				X3DSensorNode   .prototype .initialize .call (this);
+			},
+			traverse: function (type)
+			{
+				X3DGroupingNode .prototype .traverse .call (this, type);
 			},
 		});
 

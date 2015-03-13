@@ -5,22 +5,38 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DEnvironmentalSensorNode, 
-          X3DConstants)
+          TraverseType,
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4,
+          Box3)
 {
 	with (Fields)
 	{
+		var minusOne = new Vector3 (-1, -1, -1);
+	
 		function ProximitySensor (executionContext)
 		{
 			X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .ProximitySensor);
+			
+			this .viewpoint       = null;
+			this .modelViewMatrix = new Matrix4 ();
+			this .inside          = false;
 		}
 
 		ProximitySensor .prototype = $.extend (new X3DEnvironmentalSensorNode (),
@@ -50,6 +66,109 @@ function ($,
 			{
 				return "children";
 			},
+			initialize: function ()
+			{
+				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+
+				this .getExecutionContext () .isLive_ .addInterest (this, "set_enabled__");
+				this .isLive_ .addInterest (this, "set_enabled__");
+
+				this .enabled_ .addInterest (this, "set_enabled__");
+				this .size_    .addInterest (this, "set_enabled__");
+
+				this .set_enabled__ ();
+			},
+			set_enabled__: function ()
+			{
+				if (this .enabled_ .getValue () && this .isLive_ .getValue () && this .getExecutionContext () .isLive_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+					this .getBrowser () .getSensors () .addInterest (this, "update");
+
+				else
+					this .getBrowser () .getSensors () .removeInterest (this, "update");
+			},
+			update: function ()
+			{
+				try
+				{
+					if (this .inside)
+					{
+						this .modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
+
+						var rotation = new Rotation4 ();
+						this .modelViewMatrix .get (null, rotation);
+
+						var position               = this .modelViewMatrix .inverse () .origin;
+						var orientation            = rotation .inverse ();
+						var centerOfRotationOffset = this .viewpoint .getUserCenterOfRotation () .subtract (this .viewpoint .getUserPosition ());
+						var centerOfRotation       = position .copy () .add (centerOfRotationOffset);
+
+						if (! this .isActive_ .getValue ())
+						{
+							this .isActive_  = true;
+							this .enterTime_ = this .getBrowser () .getCurrentTime ();
+
+							this .position_changed_         = position;
+							this .orientation_changed_      = orientation;
+							this .centerOfRotation_changed_ = centerOfRotation;
+						}
+						else
+						{
+							if (! this .position_changed_ .getValue () .equals (position))
+								this .position_changed_ = position;
+
+							if (! this .orientation_changed_ .getValue () .equals (orientation))
+								this .orientation_changed_ = orientation;
+
+							if (! this .centerOfRotation_changed_ .getValue () .equals (centerOfRotation))
+								this .centerOfRotation_changed_ = centerOfRotation;
+						}
+
+						this .inside = false;
+					}
+					else
+					{
+						if (this .isActive_ .getValue ())
+						{
+							this .isActive_ = false;
+							this .exitTime_ = this .getBrowser () .getCurrentTime ();
+						}
+					}
+				}
+				catch (error)
+				{
+					console .log (error .message);
+				}
+			},
+			traverse: function (type)
+			{
+				switch (type)
+				{
+					case TraverseType .CAMERA:
+					{
+						this .viewpoint       = this .getCurrentViewpoint ();
+						this .modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
+						return;
+					}
+					case TraverseType .DISPLAY:
+					{
+						if (this .inside)
+							return;
+
+						if (this .size_ .getValue () .equals (minusOne))
+							this .inside = true;
+
+						else
+						{
+							var box    = new Box3 (this .size_ .getValue (), this .center_ .getValue ());
+							var viewer = Matrix4 .inverse (this .getBrowser () .getModelViewMatrix () .get ()) .origin;
+
+							this .inside = box .intersectsPoint (viewer);
+						}
+
+						return;
+					}
+				}
+			}
 		});
 
 		return ProximitySensor;

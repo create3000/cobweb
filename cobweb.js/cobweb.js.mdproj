@@ -668,6 +668,7 @@
     <None Include="tests\Examples\Cathedral\stage\torch.x3d" />
     <None Include="tests\Examples\Cathedral\stage\tvset.wrl" />
     <None Include="tests\Examples\Cathedral\stage\tvset.x3d" />
+    <None Include="tests\Examples\Cathedral\x3dom.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

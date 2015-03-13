@@ -21,12 +21,13 @@ function ($,
 		function Anchor (executionContext)
 		{
 			X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+			X3DUrlObject    .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Anchor);
 		}
 
-		Anchor .prototype = $.extend (new X3DGroupingNode (),new X3DUrlObject (),
+		Anchor .prototype = $.extend (new X3DGroupingNode (),
+			X3DUrlObject .prototype,
 		{
 			constructor: Anchor,
 			fieldDefinitions: new FieldDefinitionArray ([
@@ -51,6 +52,15 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
+			},
+			initialize: function ()
+			{
+				X3DGroupingNode .prototype .initialize .call (this);
+				X3DUrlObject    .prototype .initialize .call (this);
+			},
+			traverse: function (type)
+			{
+				X3DGroupingNode .prototype .traverse .call (this, type);
 			},
 		});
 

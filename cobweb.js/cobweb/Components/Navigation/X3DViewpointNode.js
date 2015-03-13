@@ -70,6 +70,10 @@ function ($,
 			{
 				return Vector3 .add (this .centerOfRotation_ .getValue (), this .centerOfRotationOffset_ .getValue ());
 			},
+			getParentMatrix: function ()
+			{
+				return this .parentMatrix;
+			},
 			setCameraSpaceMatrix: function (value)
 			{
 				try
