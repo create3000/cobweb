@@ -13,29 +13,7 @@ function ($, X3DField, X3DConstants)
 			if (key in target)
 				return target [key];
 
-		   var field = target .getValue () .getField (key);
-		   
-		   switch (field .getType ())
-		   {
-		      case X3DConstants .SFBool:
-		      case X3DConstants .SFDouble:
-		      case X3DConstants .SFFloat:
-		      case X3DConstants .SFInt32:
-		      case X3DConstants .SFString:
-		      case X3DConstants .SFTime:
-		      {
-		         return field .getValue ();
-		      }
-		      case X3DConstants .SFNode:
-		      {
-		         if (field .getValue ())
-		            return field;
-
-		         return null;
-		      }
-		      default:
-		         return field;
-		   }
+			return target .getValue () .getField (key) .valueOf ();
  		},
 		set: function (target, key, value)
 		{
@@ -98,6 +76,13 @@ function ($, X3DField, X3DConstants)
 		toXMLString: function ()
 		{
 			return this .getValue () ? this .getValue () .toXMLString () : "<!-- NULL -->";
+		},
+		valueOf: function ()
+		{
+			if (this .getValue ())
+				return this;
+
+			return null;	
 		},
 	});
 

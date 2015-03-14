@@ -118,6 +118,10 @@ function ($, X3DChildObject, X3DConstants)
 			for (var key in this .fieldCallbacks_)
 				this .fieldCallbacks_ [key] (this);
 		},
+		valueOf: function ()
+		{
+			return this;
+		},
 	});
 
 	return X3DField;

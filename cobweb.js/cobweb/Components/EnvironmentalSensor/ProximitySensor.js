@@ -92,15 +92,18 @@ function ($,
 				{
 					if (this .inside)
 					{
+						var centerOfRotationMatrix = this .viewpoint .getParentMatrix ();
+						centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
+						centerOfRotationMatrix .multRight (Matrix4 .inverse (this .modelViewMatrix));
+
 						this .modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
 
 						var rotation = new Rotation4 ();
 						this .modelViewMatrix .get (null, rotation);
 
-						var position               = this .modelViewMatrix .inverse () .origin;
-						var orientation            = rotation .inverse ();
-						var centerOfRotationOffset = this .viewpoint .getUserCenterOfRotation () .subtract (this .viewpoint .getUserPosition ());
-						var centerOfRotation       = position .copy () .add (centerOfRotationOffset);
+						var position         = this .modelViewMatrix .inverse () .origin;
+						var orientation      = rotation .inverse ();
+						var centerOfRotation = centerOfRotationMatrix .origin;
 
 						if (! this .isActive_ .getValue ())
 						{

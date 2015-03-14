@@ -100,6 +100,10 @@ function ($,
 			{
 				return 1e5;
 			},
+			transitionStart: function (viewpoint)
+			{
+				this .set_bind_ = true;
+			},
 			reshape: function ()
 			{
 				var navigationInfo = this .getCurrentNavigationInfo ();

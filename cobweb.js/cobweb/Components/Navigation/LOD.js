@@ -64,12 +64,12 @@ function ($,
 			{
 				if (this .range_ .length === 0)
 				{
-					this .frameRate = ((FRAMES - 1) * this .frameRate + this .getBrowser () .currentFrameRate) / FRAMES;
-
 					var size = this .children_ .length;
 
 					if (size < 2)
 						return 0;
+
+					this .frameRate = ((FRAMES - 1) * this .frameRate + this .getBrowser () .currentFrameRate) / FRAMES;
 
 					if (size === 2)
 						return Number (this .frameRate > FRAME_RATE_MAX);

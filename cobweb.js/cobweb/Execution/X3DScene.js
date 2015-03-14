@@ -13,6 +13,10 @@ function ($, X3DExecutionContext)
 	X3DScene .prototype = $.extend (new X3DExecutionContext (),
 	{
 		constructor: X3DScene,
+		isRootContext: function ()
+		{
+			return true;
+		},
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);

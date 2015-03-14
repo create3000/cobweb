@@ -327,7 +327,7 @@ function ($,
 			return X3DConstants .MFNode;
 		},
 	});
-	
+
 	/*
 	 *  MFRotation
 	 */
@@ -350,7 +350,7 @@ function ($,
 			return X3DConstants .MFRotation;
 		},
 	});
-	
+
 	/*
 	 *  MFString
 	 */
@@ -373,7 +373,7 @@ function ($,
 			return X3DConstants .MFString;
 		},
 	});
-	
+
 	/*
 	 *  MFTime
 	 */
@@ -396,7 +396,7 @@ function ($,
 			return X3DConstants .MFTime;
 		},
 	});
-	
+
 	/*
 	 *  MFVec2d
 	 */
@@ -419,7 +419,7 @@ function ($,
 			return X3DConstants .MFVec2d;
 		},
 	});
-	
+
 	/*
 	 *  MFVec2f
 	 */
@@ -442,7 +442,7 @@ function ($,
 			return X3DConstants .MFVec2f;
 		},
 	});
-	
+
 	/*
 	 *  MFVec3d
 	 */
@@ -465,7 +465,7 @@ function ($,
 			return X3DConstants .MFVec3d;
 		},
 	});
-	
+
 	/*
 	 *  MFVec3f
 	 */
@@ -488,7 +488,7 @@ function ($,
 			return X3DConstants .MFVec3f;
 		},
 	});
-	
+
 	/*
 	 *  MFVec4d
 	 */
@@ -511,7 +511,7 @@ function ($,
 			return X3DConstants .MFVec4d;
 		},
 	});
-	
+
 	/*
 	 *  MFVec4f
 	 */

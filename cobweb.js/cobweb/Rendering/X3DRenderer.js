@@ -2,14 +2,15 @@
 define ([
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Numbers/Matrix4",
 ],
-function (TraverseType, QuickSort)
+function (TraverseType, QuickSort, Matrix4)
 {
 	function ShapeContainer ()
 	{
 		this .shape           = null;
 		this .transparent     = false;
-		this .modelViewMatrix = null;
+		this .modelViewMatrix = new Matrix4 ();
 		this .scissor         = null;
 		this .distance        = 0;
 		this .localLights     = [ ];
@@ -21,7 +22,7 @@ function (TraverseType, QuickSort)
 		{
 			this .shape           = shape;
 			this .transparent     = transparent;
-			this .modelViewMatrix = modelViewMatrix;
+			this .modelViewMatrix .assign (modelViewMatrix);
 			this .scissor         = scissor;
 			this .distance        = distance;	
 		},
@@ -77,7 +78,7 @@ function (TraverseType, QuickSort)
 				{
 					if (shape .isTransparent ())
 					{
-						if (this .numTransparentShapes >= this .transparentShapes .length)
+						if (this .numTransparentShapes === this .transparentShapes .length)
 							this .transparentShapes .push (new ShapeContainer ());
 
 						this .transparentShapes [this .numTransparentShapes] .assign (shape, true, modelViewMatrix, viewVolume .getScissor (), distance);
@@ -86,7 +87,7 @@ function (TraverseType, QuickSort)
 					}
 					else
 					{
-						if (this .numOpaqueShapes >= this .opaqueShapes .length)
+						if (this .numOpaqueShapes === this .opaqueShapes .length)
 							this .opaqueShapes .push (new ShapeContainer ());
 
 						this .opaqueShapes [this .numOpaqueShapes] .assign (shape, false, modelViewMatrix, viewVolume .getScissor (), distance);

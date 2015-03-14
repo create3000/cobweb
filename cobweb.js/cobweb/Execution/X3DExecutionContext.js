@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Routing/X3DRoute",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
 ],
@@ -15,6 +16,7 @@ function ($,
           FieldDefinitionArray,
           X3DBaseNode,
           X3DRoute,
+          X3DCast,
           X3DConstants,
           URI)
 {
@@ -45,6 +47,10 @@ function ($,
 					this .uninitializedNodes [i] .setup ();
 
 				this .uninitializedNodes .length = 0;
+			},
+			isRootContext: function ()
+			{
+				return false;
 			},
 			setWorldURL: function (url)
 			{
@@ -148,6 +154,30 @@ function ($,
 				this .routeIndex [id] = route;
 
 				return route;
+			},
+			changeViewpoint: function (name)
+			{
+				try
+				{
+					var namedNode = this .getNamedNode (name);
+					var viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
+
+					if (! viewpoint)
+						throw Error ("Node named '" + name + "' is not a viewpoint node.");
+
+					if (viewpoint .isBound_ .getValue ())
+						viewpoint .transitionStart (viewpoint);
+
+					else
+						viewpoint .set_bind_ = true;
+				}
+				catch (error)
+				{
+					if (! this .isRootContext ())
+						this .getExecutionContext () .changeViewpoint (name);
+					else
+						throw error;
+				}
 			},
 			deleteRoute: function (route)
 			{

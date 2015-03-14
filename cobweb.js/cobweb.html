@@ -22,9 +22,11 @@ html, body, x3d {
 require ([
 	"jquery",
 	"cobweb/X3D",
-	"standard/Networking/URI",
+	"standard/Math/Utility/MatrixStack",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Vector3",
 ],
-function ($, X3D, URI)
+function ($, X3D, MatrixStack, Matrix4, Vector3)
 {
 	X3D (function (dom)
 	{
@@ -48,6 +50,7 @@ function ($, X3D, URI)
 					"-tests/Components/Lighting/PointLight.x3d"
 					"-tests/Components/Lighting/SpotLight.x3d"
 					"-tests/Examples/Approach/stage/index.x3d"
+					"-tests/Examples/Approach/stage/gate.x3d"
 					"tests/Examples/Cathedral/stage/index.x3d"
 					"-tests/Examples/LogoPieces/index.x3d"
 					"-tests/Examples/NIST-Logo/index.x3d"

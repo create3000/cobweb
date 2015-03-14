@@ -1,7 +1,8 @@
 
 define ([
+	"standard/Networking/URI",
 ],
-function ()
+function (URI)
 {
 	function X3DNetworkingContext () { }
 
@@ -9,8 +10,13 @@ function ()
 	{
 		initialize: function ()
 		{
+			this .location     = new URI (window .location);
 			this .defaultScene = this .createScene ();
-			this .defaultScene .setup ()
+			this .defaultScene .setup ();
+		},
+		getLocation: function ()
+		{
+			return this .location;
 		},
 		getDefaultScene: function ()
 		{

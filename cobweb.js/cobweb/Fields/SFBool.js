@@ -26,6 +26,10 @@ function ($, X3DField, X3DConstants)
 		{
 			X3DField .prototype .set .call (this, Boolean (value));
 		},
+		valueOf: function ()
+		{
+			return this .getValue ();
+		},
 		getTypeName: function ()
 		{
 			return "SFBool";

@@ -6,31 +6,6 @@ define ([
 ],
 function ($, X3DField, X3DConstants)
 {
-	function getValue (field)
-	{
-	   switch (field .getType ())
-	   {
-	      case X3DConstants .SFBool:
-	      case X3DConstants .SFDouble:
-	      case X3DConstants .SFFloat:
-	      case X3DConstants .SFInt32:
-	      case X3DConstants .SFString:
-	      case X3DConstants .SFTime:
-	      {
-	         return field .getValue ();
-	      }
-	      case X3DConstants .SFNode:
-	      {
-	         if (field .getValue ())
-	            return field;
-
-	         return null;
-	      }
-	      default:
-	         return field;
-	   }
-	}
-
 	var handler =
 	{
 		get: function (target, key)
@@ -45,7 +20,7 @@ function ($, X3DField, X3DConstants)
 			if (key >= array .length)
 				target .resize (key + 1);
 
-			return getValue (array [key]);
+			return array [key] .valueOf ();
 		},
 		set: function (target, key, value)
 		{
@@ -136,7 +111,7 @@ function ($, X3DField, X3DConstants)
 				var field = array .shift ();
 				field .removeParent (this);
 				this .addEvent ();
-				return getValue (field);
+				return field .valueOf ();
 			}
 		},
 		push: function (value)
@@ -160,7 +135,7 @@ function ($, X3DField, X3DConstants)
 				var field = array .pop ();
 				field .removeParent (this);
 				this .addEvent ();
-				return getValue (field);
+				return field .valueOf ();
 			}
 		},
 		insert: function (index, array, first, last)

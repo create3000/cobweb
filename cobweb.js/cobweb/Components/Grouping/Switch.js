@@ -55,6 +55,32 @@ function ($,
 			{
 				return "children";
 			},
+			initialize: function ()
+			{
+				X3DGroupingNode .prototype .initialize .call (this);
+				
+				this .whichChoice_ .addInterest (this, "set_whichChoice__");
+				
+				this .set_whichChoice__ ();
+			},
+			set_whichChoice__: function ()
+			{
+				var whichChoice = this .whichChoice_ .getValue ();
+
+				if (whichChoice >= 0 && whichChoice < this .children_ .length)
+				{
+					var child = this .children_ [whichChoice];
+
+					if (child)
+					{
+						child = child .getValue ();
+						this .traverse = child .traverse .bind (child);
+						return;
+					}
+				}
+	
+				this .taverse = function () { };
+			},
 			getBBox: function () 
 			{
 				if (this .bboxSize_ .getValue () .equals (defaultBBoxSize))
@@ -73,18 +99,6 @@ function ($,
 				}
 
 				return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
-			},
-			traverse: function (type)
-			{
-				var whichChoice = this .whichChoice_ .getValue ();
-
-				if (whichChoice >= 0 && whichChoice < this .children_ .length)
-				{
-					var child = this .children_ [whichChoice];
-
-					if (child)
-						child .getValue () .traverse (type);
-				}
 			},
 		});
 

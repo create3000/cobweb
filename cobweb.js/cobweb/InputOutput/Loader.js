@@ -10,15 +10,20 @@ function ($, XMLParser, URI)
 	{
 		this .browser          = executionContext .getBrowser ();
 		this .executionContext = executionContext;
+		this .URL              = new URI ();
 	}
 
 	Loader .prototype =
 	{
+		getWorldURL: function ()
+		{
+			return this .URL;
+		},
 		createX3DFromString: function (worldURL, string)
 		{
 			var scene = this .browser .createScene ();
 
-			scene .setWorldURL (worldURL);
+			scene .setWorldURL (this .browser .getLocation () .transform (worldURL));
 
 			//
 
@@ -42,10 +47,10 @@ function ($, XMLParser, URI)
 		},
 		createX3DFromURLAsync: function (URL)
 		{
-			URL = this .executionContext .getWorldURL () .transform (new URI (URL));
+			this .URL = this .transform (URL);
 
 			$.ajax ({
-				url: URL .isLocal () ? new URI (window .location) .getRelativePath (URL) : URL,
+				url: this .URL,
 				dataType: "text",
 				async: true,
 				//timeout: 15000,
@@ -55,7 +60,7 @@ function ($, XMLParser, URI)
 				{
 					try
 					{
-						return this .callback (this .createX3DFromString (URL, data));
+						return this .callback (this .createX3DFromString (this .URL, data));
 					}
 					catch (error)
 					{
@@ -63,18 +68,20 @@ function ($, XMLParser, URI)
 
 						if (this .url .length)
 							this .createX3DFromURLAsync (this .url .shift ());
-						
+
 						else
-							this .callback (this .browser .createScene ());
+							this .callback (null);
 					}
 				},
 				error: function (jqXHR, textStatus, errorThrown)
 				{
+					console .log ("Couldn't load URL '" + this .URL .toString () + "': " + errorThrown + ".");
+
 					if (this .url .length)
 						this .createX3DFromURLAsync (this .url .shift ());
 
 					else
-						this .callback (this .browser .createScene ());
+						this .callback (null);
 				},
 			});
 		},
@@ -85,12 +92,10 @@ function ($, XMLParser, URI)
 
 			for (var i = 0; i < url .length; ++ i)
 			{
-				var URL = this .executionContext .getWorldURL () .transform (new URI (url [i]));
-
-				console .log ("Trying to load URL '" + URL .toString () + "'.");
+				this .URL = this .transform (url [i]);
 
 				$.ajax ({
-					url: URL .isLocal () ? new URI (window .location) .getRelativePath (URL) : URL,
+					url: this .URL,
 					dataType: "text",
 					async: false,
 					//timeout: 15000,
@@ -100,7 +105,7 @@ function ($, XMLParser, URI)
 					{
 						try
 						{
-							scene   = this .createX3DFromString (URL, data);
+							scene   = this .createX3DFromString (this .URL, data);
 							success = true;
 						}
 						catch (error)
@@ -110,6 +115,7 @@ function ($, XMLParser, URI)
 					},
 					error: function (jqXHR, textStatus, errorThrown)
 					{
+						console .log ("Couldn't load URL '" + this .URL .toString () + "': " + errorThrown + ".");
 					},
 				});
 
@@ -121,6 +127,14 @@ function ($, XMLParser, URI)
 				return scene;
 
 			throw Error ("Couldn't load any url of '" + url .getValue () .join (", ") + "'.");
+		},
+		transform: function (URL)
+		{
+			URL = this .executionContext .getWorldURL () .transform (new URI (URL));
+
+			console .log ("Trying to load URL '" + URL .toString () + "'.");
+
+			return URL .isLocal () ? this .browser .getLocation () .getRelativePath (URL) : URL;
 		},
 	};
 

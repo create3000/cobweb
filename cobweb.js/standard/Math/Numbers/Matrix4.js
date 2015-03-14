@@ -16,7 +16,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		dummyScaleOrientation = new Rotation4 (),
 		dummyCenter           = new Vector3 (),
 		rot                   = new Matrix3 (),
-		so                    = new Matrix3 ();
+		so                    = new Matrix3 (),
+		si                    = new Matrix3 ();
 
 	function Matrix4 (m00, m01, m02, m03,
 	                  m10, m11, m12, m13,
@@ -222,7 +223,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			{
 				case 1:
 				{
-					translation .assign (this .origin);
+					translation .set (this [12], this [13], this [14]);
 					break;
 				}
 				case 2:
@@ -260,7 +261,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		factor: function (translation, rotation, scale, scaleOrientation)
 		{
 			// (1) Get translation.
-			translation .assign (this .origin);
+			translation .set (this [12], this [13], this [14]);
 
 			// (2) Create 3x3 matrix.
 			var a = this .submatrix;
@@ -274,7 +275,6 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 
 			// (4) B = A * !A  (here !A means A transpose)
 			var b = a .copy () .multRight (Matrix4 .transpose (a));
-
 			var e = eigendecomposition (b);
 
 			// Find min / max eigenvalues and do ratio test to determine singularity.
@@ -284,13 +284,14 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			                       e .vectors [2] [0], e .vectors [2] [1], e .vectors [2] [2]);
 
 			// Compute s = sqrt(evalues), with sign. Set si = s-inverse
-			var si = new Matrix3 ();
 
-			for (var i = 0; i < 3; ++ i)
-			{
-				scale [i]  = det_sign * Math .sqrt (e .values [i]);
-				si [i * 3 + i] = 1 / scale [i];
-			}
+			scale .x = det_sign * Math .sqrt (e .values [0]);
+			scale .y = det_sign * Math .sqrt (e .values [1]);
+			scale .z = det_sign * Math .sqrt (e .values [2]);
+
+			si [0] = 1 / scale .x;
+			si [4] = 1 / scale .y;
+			si [8] = 1 / scale .z;
 
 			// (5) Compute U = !R ~S R A.
 			rotation .assign (scaleOrientation .copy () .multRight (si) .multRight (Matrix3 .transpose (scaleOrientation)) .multRight (a));
@@ -501,7 +502,6 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [12] += this [ 0] * t.x + this [ 4] * t.y + this [ 8] * t.z;
 			this [13] += this [ 1] * t.x + this [ 5] * t.y + this [ 9] * t.z;
 			this [14] += this [ 2] * t.x + this [ 6] * t.y + this [10] * t.z;
-			this [15] += this [ 3] * t.x + this [ 7] * t.y + this [11] * t.z;
 		},
 		rotate: function (rotation)
 		{

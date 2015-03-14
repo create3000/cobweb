@@ -98,8 +98,10 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, X3DCast, X3DConstants)
 
 			try
 			{
-				if (this .getExecutionContext () .getWorldURL () .fragment .length)
-					this .getExecutionContext () .changeViewpoint (getExecutionContext () .getWorldURL () .fragment);
+				var fragment = this .getExecutionContext () .getWorldURL () .fragment;
+
+				if (fragment .length)
+					this .getExecutionContext () .changeViewpoint (fragment);
 			}
 			catch (error)
 			{ }

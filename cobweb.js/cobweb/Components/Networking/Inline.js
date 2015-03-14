@@ -94,10 +94,20 @@ function ($,
 			},
 			requestAsyncLoad: function ()
 			{
-				new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_, this .setScene .bind (this));
+				new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+			},
+			setSceneAsync: function (scene)
+			{
+				if (scene)
+					setTimeout (this .setScene .bind (this, scene), 0);
+
+				else
+					this .setScene (this .getBrowser () .getDefaultScene ());
 			},
 			setScene: function (scene)
 			{
+				var t0 = Date .now ();
+			
 				this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 				// Set new scene.
@@ -109,6 +119,8 @@ function ($,
 				this .group .children_ = this .scene .rootNodes;
 
 				this .getBrowser () .addBrowserEvent ();
+	
+				console .log ("Scene '" + this .scene .worldURL + "' initialized in " + ((Date .now () - t0) / 1000) + "s.");
 			},
 			getScene: function ()
 			{

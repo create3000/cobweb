@@ -4,31 +4,39 @@ define ([
 ],
 function ($)
 {
-	var push = Array .prototype .push;
-
 	function MatrixStack (Type)
 	{
 		return $.extend ([ new Type () ],
 		{
+			last: 0,
 			set: function (matrix)
 			{
-				this [this .length - 1] .assign (matrix);
+				this [this .last] .assign (matrix);
 			},
 			get: function (matrix)
 			{
-				return this [this .length - 1];
+				return this [this .last];
 			},
 			push: function ()
 			{
-				push .call (this, this [this .length - 1] .copy ());
+				++ this .last;
+
+				if (this .last < this .length)
+					this [this .last] .assign (this [this .last - 1]);
+				else
+					this [this .last] = this [this .last - 1] .copy ();
+			},
+			pop: function ()
+			{
+				-- this .last;
 			},
 			identity: function ()
 			{
-				this [this .length - 1] .identity ();
+				this [this .last] .identity ();
 			},
 			multLeft: function (matrix)
 			{
-				this [this .length - 1] .multLeft (matrix);
+				this [this .last] .multLeft (matrix);
 			},
 		});
 	}

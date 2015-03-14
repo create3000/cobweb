@@ -112,11 +112,15 @@ function ($,
 
 				// Fill GeometryNode
 
-				var color    = this .getColor ();
-				var texCoord = this .getTexCoord ();
-				var normal   = this .getNormal ();
-				var coord    = this .getCoord ();
-				var face     = 0;
+				var
+					colorPerVertex  = this .colorPerVertex_ .getValue (),
+					normalPerVertex = this .normalPerVertex_ .getValue (),
+					coordIndex      = this .coordIndex_ .getValue (),
+					color           = this .getColor (),
+					texCoord        = this .getTexCoord (),
+					normal          = this .getNormal (),
+					coord           = this .getCoord (),
+					face            = 0;
 
 				if (texCoord)
 					texCoord .init (this .getTexCoords ());
@@ -132,11 +136,11 @@ function ($,
 						for (var v = 0; v < triangle .length; ++ v)
 						{
 							var i     = triangle [v];
-							var index = this .coordIndex_ [i];
+							var index = coordIndex [i] .getValue ();
 
 							if (color)
 							{
-								if (this .colorPerVertex_ .getValue ())
+								if (colorPerVertex)
 									this .addColor (color .getColor (this .getColorPerVertexIndex (i)));
 								else
 									this .addColor (color .getColor (this .getColorIndex (face)));
@@ -147,7 +151,7 @@ function ($,
 
 							if (normal)
 							{
-								if (this .normalPerVertex_ .getValue ())
+								if (normalPerVertex)
 									this .addNormal (normal .getVector (this .getNormalPerVertexIndex (i)));
 
 								else
@@ -172,8 +176,10 @@ function ($,
 			},
 			triangulate: function ()
 			{
-				var convex   = this .convex_ .getValue ();
-				var polygons = [ ];
+				var
+					convex     = this .convex_ .getValue (),
+					coordIndex = this .coordIndex_ .getValue (),
+					polygons   = [ ];
 
 				if (! this .getCoord ())
 					return polygons;
@@ -191,7 +197,7 @@ function ($,
 
 					for (var c = 0; c < this .coordIndex_ .length; ++ c)
 					{
-						var index    = this .coordIndex_ [c];
+						var index    = coordIndex [c] .getValue ();
 						var vertices = polygons [polygons .length - 1] .vertices;
 	
 						if (index > -1)
@@ -259,9 +265,11 @@ function ($,
 			{
 				try
 				{
-					var vertices  = polygon .vertices;
-					var triangles = polygon .triangles;
-					var coord     = this .getCoord ();
+					var
+						vertices   = polygon .vertices,
+						triangles  = polygon .triangles,
+						coordIndex = this .coordIndex_,
+						coord      = this .getCoord ();
 
 					// Transform vertices to 2D space.
 
@@ -290,7 +298,7 @@ function ($,
 					for (var i = 0; i < vertices .length; ++ i)
 					{
 						var index    = vertices [i];
-						var vertex2D = matrix .multVecMatrix (coord .getPoint (this .coordIndex_ [index]) .copy ());
+						var vertex2D = matrix .multVecMatrix (coord .getPoint (coordIndex [index] .getValue ()) .copy ());
 
 						vertex2D .index = index;
 						contour .push (vertex2D);
@@ -342,9 +350,12 @@ function ($,
 			},
 			createNormals: function (polygons)
 			{
-				var normals     = [ ];
-				var normalIndex = [ ];
-				var normal      = null;
+				var
+					normals     = [ ],
+					normalIndex = [ ],
+					normal      = null,
+					coordIndex  = this .coordIndex_ .getValue (),
+					coord       = this .getCoord ();
 
 				for (var p = 0; p < polygons .length; ++ p)
 				{
@@ -355,17 +366,17 @@ function ($,
 					{
 						case 3:
 						{
-							normal = this .getCoord () .getNormal (this .coordIndex_ [vertices [0]],
-							                                       this .coordIndex_ [vertices [1]],
-							                                       this .coordIndex_ [vertices [2]]);
+							normal = coord .getNormal (coordIndex [vertices [0]] .getValue (),
+							                           coordIndex [vertices [1]] .getValue (),
+							                           coordIndex [vertices [2]] .getValue ());
 							break;
 						}
 						case 4:
 						{
-							normal = this .getCoord () .getQuadNormal (this .coordIndex_ [vertices [0]],
-							                                           this .coordIndex_ [vertices [1]],
-							                                           this .coordIndex_ [vertices [2]],
-							                                           this .coordIndex_ [vertices [3]]);
+							normal = coord .getQuadNormal (coordIndex [vertices [0]] .getValue (),
+							                               coordIndex [vertices [1]] .getValue (),
+							                               coordIndex [vertices [2]] .getValue (),
+							                               coordIndex [vertices [3]] .getValue ());
 							break;
 						}
 						default:
@@ -377,9 +388,9 @@ function ($,
 
 							for (var i = 0, length = vertices .length; i < length; ++ i)
 							{
-								var n = this .getCoord () .getNormal (this .coordIndex_ [vertices [i]],
-									                                   this .coordIndex_ [vertices [(i + 1) % length]],
-									                                   this .coordIndex_ [vertices [(i + 2) % length]]);
+								var n = coord .getNormal (coordIndex [vertices [i]] .getValue (),
+									                       coordIndex [vertices [(i + 1) % length]] .getValue (),
+									                       coordIndex [vertices [(i + 2) % length]] .getValue ());
 
 								normal .add (n);
 							}
@@ -391,8 +402,8 @@ function ($,
 					// Add a normal index for each point.
 					for (var i = 0, length = vertices .length; i < length; ++ i)
 					{
-						var index = this .coordIndex_ [vertices [i]];
-						
+						var index = coordIndex [vertices [i]] .getValue ();
+
 						if (! normalIndex [index])
 							normalIndex [index] = [ ];
 

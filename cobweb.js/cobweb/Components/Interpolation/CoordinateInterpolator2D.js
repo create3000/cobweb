@@ -50,7 +50,10 @@ function ($,
 			set_keyValue__: function () { },
 			interpolate: function (index0, index1, weight)
 			{
-				var size = this .key_ .length > 1 ? Math .floor (this .keyValue_ .length / this .key_ .length) : 0;
+				var
+					keyValue      = this .keyValue_ .getValue (),
+					value_changed = this .value_changed_ .getValue (),
+					size          = this .key_ .length > 1 ? Math .floor (this .keyValue_ .length / this .key_ .length) : 0;
 
 				index0 *= size;
 				index1  = index0 + size;
@@ -59,10 +62,12 @@ function ($,
 
 				for (var i = 0; i < size; ++ i)
 				{
-					this .value_changed_ [i] = Vector2 .lerp (this .keyValue_ [index0 + i] .getValue (),
-					                                          this .keyValue_ [index1 + i] .getValue (),
-					                                          weight);
+					value_changed [i] .set (Vector2 .lerp (keyValue [index0 + i] .getValue (),
+					                                       keyValue [index1 + i] .getValue (),
+					                                       weight));
 				}
+
+				this .value_changed_ .addEvent ();
 			},
 		});
 
