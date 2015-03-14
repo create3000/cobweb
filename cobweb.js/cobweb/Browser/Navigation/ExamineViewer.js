@@ -37,10 +37,10 @@ function ($, X3DViewer, Vector3, Rotation4)
 		{
 			X3DViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getCanvas () .mousedown (this .mousedown .bind (this));
-			this .getBrowser () .getCanvas () .mouseup (this .mouseup .bind (this));
-			this .getBrowser () .getCanvas () .mousemove (this .mousemove .bind (this));
-			this .getBrowser () .getCanvas () .mousewheel (this .mousewheel .bind (this));
+			this .getBrowser () .getCanvas () .bind ("mousedown.ExamineViewer",  this .mousedown .bind (this));
+			this .getBrowser () .getCanvas () .bind ("mouseup.ExamineViewer",    this .mouseup .bind (this));
+			this .getBrowser () .getCanvas () .bind ("mousemove.ExamineViewer",  this .mousemove .bind (this));
+			this .getBrowser () .getCanvas () .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 		},
 		mousedown: function (event)
 		{
@@ -60,8 +60,8 @@ function ($, X3DViewer, Vector3, Rotation4)
 				{
 					event .preventDefault ();
 					this .disconnect ();
-					//this .getActiveViewpoint () .transitionStop ();
-					//this .getBrowser () .setCursor (Gdk::FLEUR);
+					this .getActiveViewpoint () .transitionStop ();
+					this .getBrowser () .setCursor ("MOVE");
 
 					this .fromVector = this .trackballProjectToSphere (x, y);
 					this .rotation   = new Rotation4 ();
@@ -73,8 +73,8 @@ function ($, X3DViewer, Vector3, Rotation4)
 				{
 					event .preventDefault ();
 					this .disconnect ();
-					//this .getActiveViewpoint () .transitionStop ();
-					//this .getBrowser () .setCursor (Gdk::FLEUR);
+					this .getActiveViewpoint () .transitionStop ();
+					this .getBrowser () .setCursor ("MOVE");
 
 					this .fromPoint = this .getPointOnCenterPlane (x, y);
 					break;
@@ -91,7 +91,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 				case 0:
 				{
 					event .preventDefault ();
-					//this .getBrowser () .setCursor (Gdk::ARROW);
+					this .getBrowser () .setCursor ("DEFAULT");
 
 					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && Date .now () - this .motionTime < SPIN_RELEASE_TIME)
 					{
@@ -109,7 +109,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 				case 1:
 				{
 					event .preventDefault ();
-					//this .getBrowser () .setCursor (Gdk::ARROW);
+					this .getBrowser () .setCursor ("DEFAULT");
 					break;
 				}
 			}
@@ -233,6 +233,11 @@ function ($, X3DViewer, Vector3, Rotation4)
 			clearInterval (this .spinId);
 
 			this .spinId = undefined;
+		},
+		dispose: function ()
+		{
+			this .disconnect ();
+			this .getBrowser () .getCanvas () .unbind (".ExamineViewer");
 		},
 	});
 

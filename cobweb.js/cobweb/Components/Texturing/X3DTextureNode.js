@@ -35,7 +35,7 @@ function ($,
 			var gl = this .getBrowser () .getContext ();
 
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			
+
 			if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && ! haveTextureProperties)
 			{
 				// Dont generate mipmaps.
@@ -50,7 +50,7 @@ function ($,
 				gl .texParameteri (target, gl .TEXTURE_MIN_FILTER, gl [textureProperties .getMinificationFilter ()]);
 				gl .texParameteri (target, gl .TEXTURE_MAG_FILTER, gl [textureProperties .getMagnificationFilter ()]);
 			}
-	
+
 			if (haveTextureProperties)
 			{
 				gl .texParameteri (target, gl .TEXTURE_WRAP_S, gl [textureProperties .getBoundaryModeS ()]);

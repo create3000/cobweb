@@ -71,15 +71,8 @@ function ($, X3DField, X3DConstants)
 		},
 		setValue: function (value)
 		{
-			if (value instanceof X3DArrayField)
-				value = value .getValue ();
-
-			this .resize (value .length);
-
-			var array = this .getValue ();
-
-			for (var i = 0; i < value .length; ++ i)
-				array [i] .setValue (value [i]);
+			this .set (value instanceof X3DArrayField ? value .getValue () : value);
+			this .addEvent ();
 		},
 		set: function (value)
 		{
@@ -88,7 +81,7 @@ function ($, X3DField, X3DConstants)
 			var array = this .getValue ();
 
 			for (var i = 0; i < value .length; ++ i)
-				array [i] .set (value [i]);
+				array [i] .set (value [i] instanceof X3DField ? value [i] .getValue () : value [i]);
 		},
 		unshift: function (value)
 		{

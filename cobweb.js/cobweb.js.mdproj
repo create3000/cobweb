@@ -669,6 +669,41 @@
     <None Include="tests\Examples\Cathedral\stage\tvset.wrl" />
     <None Include="tests\Examples\Cathedral\stage\tvset.x3d" />
     <None Include="tests\Examples\Cathedral\x3dom.html" />
+    <None Include="tests\Examples\MovieTruck\stage\aussenkachel1.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\baum_02-n.png" />
+    <None Include="tests\Examples\MovieTruck\stage\baum_03-n.png" />
+    <None Include="tests\Examples\MovieTruck\stage\forest-lo.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\glanz.wrl" />
+    <None Include="tests\Examples\MovieTruck\stage\glanz.x3d" />
+    <None Include="tests\Examples\MovieTruck\stage\gras01.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\gras01.png" />
+    <None Include="tests\Examples\MovieTruck\stage\h1.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\h2.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\h3.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\h4.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\haus_01-n.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\haus_02-n.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\haus_03-n.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\haus_04-n.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\haus_05-n.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\himmelszelt.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\hshad.png" />
+    <None Include="tests\Examples\MovieTruck\stage\index.wrl" />
+    <None Include="tests\Examples\MovieTruck\stage\index.x3d" />
+    <None Include="tests\Examples\MovieTruck\stage\rad.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\s-tr.png" />
+    <None Include="tests\Examples\MovieTruck\stage\s-wg.png" />
+    <None Include="tests\Examples\MovieTruck\stage\schaufenster.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\schilder.png" />
+    <None Include="tests\Examples\MovieTruck\stage\skyline.png" />
+    <None Include="tests\Examples\MovieTruck\stage\strasse.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\t-back.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\t-seit.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\t-seit2.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\t-spec.png" />
+    <None Include="tests\Examples\MovieTruck\stage\tf-m.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\tf.jpg" />
+    <None Include="tests\Examples\MovieTruck\stage\tf.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -693,5 +728,6 @@
     <Folder Include="cobweb\Browser\PointingDeviceSensor\" />
     <Folder Include="tests\Examples\NIST-Logo\" />
     <Folder Include="tests\Examples\Cathedral\" />
+    <Folder Include="tests\Examples\MovieTruck\" />
   </ItemGroup>
 </Project>

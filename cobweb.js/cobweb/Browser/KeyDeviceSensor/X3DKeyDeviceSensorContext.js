@@ -12,7 +12,7 @@ function ($)
 	{
 		initialize: function ()
 		{
-			this .getCanvas () .keydown (this .keydown .bind (this));
+			this .getCanvas () .bind ("keydown.X3DKeyDeviceSensorContext", this .keydown .bind (this));
 		},
 		keydown: function (event)
 		{

@@ -4,21 +4,29 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DBindableNode",
 	"cobweb/Components/Navigation/X3DViewpointObject",
+	"cobweb/Components/Time/TimeSensor",
+	"cobweb/Components/Interpolation/EaseInEaseOut",
+	"cobweb/Components/Interpolation/PositionInterpolator",
+	"cobweb/Components/Interpolation/OrientationInterpolator",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
           X3DBindableNode, 
           X3DViewpointObject,
+          TimeSensor,
+          EaseInEaseOut,
+          PositionInterpolator,
+          OrientationInterpolator,
           TraverseType,
           X3DConstants,
-          Matrix4,
           Vector3,
-          Rotation4)
+          Rotation4,
+          Matrix4)
 {
 	with (Fields)
 	{
@@ -29,6 +37,7 @@ function ($,
 
 			this .addType (X3DConstants .X3DViewpointNode);
 
+			this .layers                   = { };
 			this .parentMatrix             = new Matrix4 ();
 			this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1);
 			this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
@@ -49,14 +58,56 @@ function ($,
 			                      "scaleOrientationOffset", new SFRotation (),
 			                      "centerOfRotationOffset", new SFVec3f (),
 			                      "fieldOfViewScale",       new SFFloat (1));
+
+				this .timeSensor                   = new TimeSensor              (this .getBrowser () .getPrivateScene ());
+				this .easeInEaseOut                = new EaseInEaseOut           (this .getBrowser () .getPrivateScene ());
+				this .positionInterpolator         = new PositionInterpolator    (this .getBrowser () .getPrivateScene ());
+				this .orientationInterpolator      = new OrientationInterpolator (this .getBrowser () .getPrivateScene ());
+				this .scaleInterpolator            = new PositionInterpolator    (this .getBrowser () .getPrivateScene ());
+				this .scaleOrientationInterpolator = new OrientationInterpolator (this .getBrowser () .getPrivateScene ());
+			
+				this .timeSensor .stopTime_ = 1;
+				this .timeSensor .setup ();
+
+				this .easeInEaseOut .key_           = [ 0, 1 ];
+				this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 0), new SFVec2f (0, 0) ];
+				this .easeInEaseOut .setup ();
+
+				this .positionInterpolator         .key_ = [ 0, 1 ];
+				this .orientationInterpolator      .key_ = [ 0, 1 ];
+				this .scaleInterpolator            .key_ = [ 0, 1 ];
+				this .scaleOrientationInterpolator .key_ = [ 0, 1 ];
+
+				this .positionInterpolator         .setup ();
+				this .orientationInterpolator      .setup ();
+				this .scaleInterpolator            .setup ();
+				this .scaleOrientationInterpolator .setup ();
+
+				this .timeSensor .fraction_changed_ .addFieldInterest (this .easeInEaseOut .set_fraction_);
+
+				this .easeInEaseOut .modifiedFraction_changed_ .addFieldInterest (this .positionInterpolator         .set_fraction_);
+				this .easeInEaseOut .modifiedFraction_changed_ .addFieldInterest (this .orientationInterpolator      .set_fraction_);
+				this .easeInEaseOut .modifiedFraction_changed_ .addFieldInterest (this .scaleInterpolator            .set_fraction_);
+				this .easeInEaseOut .modifiedFraction_changed_ .addFieldInterest (this .scaleOrientationInterpolator .set_fraction_);
+
+				this .positionInterpolator         .value_changed_ .addFieldInterest (this .positionOffset_);
+				this .orientationInterpolator      .value_changed_ .addFieldInterest (this .orientationOffset_);
+				this .scaleInterpolator            .value_changed_ .addFieldInterest (this .scaleOffset_);
+				this .scaleOrientationInterpolator .value_changed_ .addFieldInterest (this .scaleOrientationOffset_);
+
+				this .isBound_ .addInterest (this, "set_bind__");
 			},
 			bindToLayer (layer)
 			{
 				layer .getViewpointStack () .push (this);
+
+				this .layers [layer .getId ()] = layer;
 			},
 			unbindFromLayer (layer)
 			{
 				layer .getViewpointStack () .pop (this);
+
+				delete this .layers [layer .getId ()];
 			},
 			getUserPosition: function ()
 			{
@@ -100,9 +151,152 @@ function ($,
 			{
 				return 1e5;
 			},
-			transitionStart: function (viewpoint)
+			transitionStart: function (fromViewpoint)
 			{
-				this .set_bind_ = true;
+				try
+				{
+					if (this .jump_ .getValue ())
+					{
+						if (! this .retainUserOffsets_ .getValue ())
+							this .resetUserOffsets ();
+
+						var transitionType = "LINEAR";
+						var transitionTime = 1;
+
+						for (var id in this .layers)
+						{
+							var navigationInfo = this .layers [id] .getNavigationInfo ();
+
+							navigationInfo .transitionStart_ = true;
+
+							transitionType = navigationInfo .transitionType_ .getValue ();
+							transitionTime = navigationInfo .transitionTime_ .getValue ();
+						}
+						
+						switch (transitionType)
+						{
+							case "TELEPORT":
+							{
+								for (var id in this .layers)
+								{
+									var navigationInfo = this .layers [id] .getNavigationInfo ();
+								
+									navigationInfo .transitionComplete_ = true;
+								}
+
+								return;
+							}
+							case "ANIMATE":
+							{
+								this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 1), new SFVec2f (1, 0) ];
+								break;
+							}
+							// LINEAR
+							default:
+							{
+								this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 0), new SFVec2f (0, 0) ];
+								break;
+							}
+						}
+						
+						this .timeSensor .cycleInterval_ = transitionTime;
+						this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
+						this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
+						this .timeSensor .isActive_ .addInterest (this, "set_active__");
+
+						var
+							relativePosition         = new Vector3 (),
+							relativeOrientation      = new Rotation4 (),
+							relativeScale            = new Vector3 (),
+							relativeScaleOrientation = new Rotation4 ();
+
+						this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
+				
+						var
+							startPosition         = relativePosition,
+							startOrientation      = relativeOrientation,
+							startScale            = relativeScale,
+							startScaleOrientation = relativeScaleOrientation;
+
+						var
+							endPosition         = this .positionOffset_         .getValue () .copy ();
+							endOrientation      = this .orientationOffset_      .getValue () .copy ();
+							endScale            = this .scaleOffset_            .getValue () .copy ();
+							endScaleOrientation = this .scaleOrientationOffset_ .getValue () .copy ();
+
+						this .positionOffset_         = startPosition;
+						this .orientationOffset_      = startOrientation;
+						this .scaleOffset_            = startScale;
+						this .scaleOrientationOffset_ = startScaleOrientation;
+
+						this .positionInterpolator         .keyValue_ = [ startPosition, endPosition ];
+						this .orientationInterpolator      .keyValue_ = [ startOrientation, endOrientation ];
+						this .scaleInterpolator            .keyValue_ = [ startScale, endScale ];
+						this .scaleOrientationInterpolator .keyValue_ = [ startScaleOrientation, endScaleOrientation ];
+					}
+               else
+               {
+ 						var
+							relativePosition         = new Vector3 (),
+							relativeOrientation      = new Rotation4 (),
+							relativeScale            = new Vector3 (),
+							relativeScaleOrientation = new Rotation4 ();
+
+						this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
+                 
+						this .positionOffset_         = relativePosition;
+						this .orientationOffset_      = relativeOrientation;
+						this .scaleOffset_            = relativeScale;
+						this .scaleOrientationOffset_ = relativeScaleOrientation;
+               }
+				}
+				catch (error)
+				{
+					console .log (error);
+				}
+			},
+			transitionStop: function ()
+			{
+				this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
+				this .timeSensor .isActive_ .removeInterest (this, "set_active__");
+			},
+			resetUserOffsets: function ()
+			{
+				this .positionOffset_         = new Vector3 ();
+				this .orientationOffset_      = new Rotation4 ();
+				this .scaleOffset_            = new Vector3 (1, 1, 1);
+				this .scaleOrientationOffset_ = new Rotation4 ();
+				this .centerOfRotationOffset_ = new Vector3 ();
+				this .fieldOfViewScale_       = 1;
+			},
+			getRelativeTransformation: function (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation)
+			// throw
+			{
+				var differenceMatrix = this .parentMatrix .copy () .multRight (fromViewpoint .getInverseCameraSpaceMatrix ()) .inverse ();
+
+				differenceMatrix .get (relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
+
+				relativePosition .subtract (this .position_ .getValue ());
+				relativeOrientation .assign (this .orientation_ .getValue () .copy () .inverse () .multRight (relativeOrientation)); // mit gepuffereter location matrix
+			},
+			set_active__: function (value)
+			{
+				if (! value .getValue ())
+				{
+					for (var id in this .layers)
+					{
+						var navigationInfo = this .layers [id] .getNavigationInfo ();
+
+						navigationInfo .transitionComplete_ = true;
+					}
+
+					this .easeInEaseOut .set_fraction_ = 1;
+				}
+			},
+			set_bind__: function ()
+			{
+				if (! this .isBound_ .getValue ())
+					this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
 			},
 			reshape: function ()
 			{

@@ -9,9 +9,9 @@ define ([
 	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Layering/X3DLayeringContext",
 	"cobweb/Browser/Lighting/X3DLightingContext",
-	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
 	"cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext",
+	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
 	"cobweb/Browser/Shape/X3DShapeContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
@@ -29,9 +29,9 @@ function ($,
           X3DEnvironmentalEffectsContext,
           X3DLayeringContext,
           X3DLightingContext,
-          X3DNavigationContext,
           X3DNetworkingContext,
           X3DPointingDeviceSensorContext,
+          X3DNavigationContext,
           X3DShadersContext,
           X3DShapeContext,
           X3DTexturingContext,
@@ -49,9 +49,9 @@ function ($,
 		X3DEnvironmentalEffectsContext .call (this);
 		X3DLayeringContext             .call (this);
 		X3DLightingContext             .call (this);
-		X3DNavigationContext           .call (this);
 		X3DNetworkingContext           .call (this);
 		X3DPointingDeviceSensorContext .call (this);
+		X3DNavigationContext           .call (this);
 		X3DShadersContext              .call (this);
 		X3DShapeContext                .call (this);
 		X3DTexturingContext            .call (this);
@@ -72,9 +72,9 @@ function ($,
 		X3DEnvironmentalEffectsContext .prototype,
 		X3DLayeringContext .prototype,
 		X3DLightingContext .prototype,
-		X3DNavigationContext .prototype,
 		X3DNetworkingContext .prototype,
 		X3DPointingDeviceSensorContext .prototype,
+		X3DNavigationContext .prototype,
 		X3DShadersContext .prototype,
 		X3DShapeContext .prototype,
 		X3DTexturingContext .prototype,
@@ -94,9 +94,9 @@ function ($,
 			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
 			X3DLayeringContext             .prototype .initialize .call (this);
 			X3DLightingContext             .prototype .initialize .call (this);
-			X3DNavigationContext           .prototype .initialize .call (this);
 			X3DNetworkingContext           .prototype .initialize .call (this);
 			X3DPointingDeviceSensorContext .prototype .initialize .call (this);
+			X3DNavigationContext           .prototype .initialize .call (this);
 			X3DShadersContext              .prototype .initialize .call (this);
 			X3DShapeContext                .prototype .initialize .call (this);
 			X3DTexturingContext            .prototype .initialize .call (this);

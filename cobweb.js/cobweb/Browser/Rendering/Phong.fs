@@ -98,8 +98,9 @@ main ()
 				vec3 L = x3d_lightType [i] == DIRECTIONAL_LIGHT ? -x3d_lightDirection [i] : normalize (x3d_lightLocation [i] - v);
 				vec3 H = normalize (L + V); // specular term
 
-				vec3 diffuseTerm  = diffuseFactor * max (dot (N, L), 0.0);
-				vec3 specularTerm = x3d_specularColor * pow (max (dot (N, H), 0.0), 128.0 * x3d_shininess);
+				vec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);
+				float specularFactor = bool (x3d_shininess) ? pow (max (dot (N, H), 0.0), 128.0 * x3d_shininess) : 1.0;
+				vec3  specularTerm   = x3d_specularColor * specularFactor;
 
 				float attenuation = 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
 				float spot        = 1.0;
@@ -116,7 +117,7 @@ main ()
 						spot = (spotAngle - x3d_lightCutOffAngle [i]) / (x3d_lightBeamWidth [i] - x3d_lightCutOffAngle [i]);
 				}
 
-				finalColor += attenuation * x3d_lightColor [i] * spot *
+				finalColor += (attenuation * spot) * x3d_lightColor [i] *
 				              (x3d_lightAmbientIntensity [i] * ambientTerm +
 				               x3d_lightIntensity [i] * (diffuseTerm + specularTerm));
 			}

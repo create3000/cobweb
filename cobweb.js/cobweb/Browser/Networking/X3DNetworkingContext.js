@@ -13,6 +13,9 @@ function (URI)
 			this .location     = new URI (window .location);
 			this .defaultScene = this .createScene ();
 			this .defaultScene .setup ();
+
+			this .privateScene = this .createScene ();
+			this .privateScene .setup ();
 		},
 		getLocation: function ()
 		{
@@ -21,6 +24,10 @@ function (URI)
 		getDefaultScene: function ()
 		{
 			return this .defaultScene;
+		},
+		getPrivateScene: function ()
+		{
+			return this .privateScene;
 		},
 	};
 

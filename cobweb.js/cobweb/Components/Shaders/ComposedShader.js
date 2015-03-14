@@ -167,7 +167,7 @@ function ($,
 					// Material
 
 					gl .uniform1i (this .lighting,         true);
-					gl .uniform1f (this .ambientIntensity, clamp (material .ambientIntensity_ .getValue (), 0, 1));
+					gl .uniform1f (this .ambientIntensity, Math .max (material .ambientIntensity_ .getValue (), 0));
 					gl .uniform3f (this .diffuseColor,     material .diffuseColor_  .r, material .diffuseColor_  .g, material .diffuseColor_  .b);
 					gl .uniform3f (this .specularColor,    material .specularColor_ .r, material .specularColor_ .g, material .specularColor_ .b);
 					gl .uniform3f (this .emissiveColor,    material .emissiveColor_ .r, material .emissiveColor_ .g, material .emissiveColor_ .b);
