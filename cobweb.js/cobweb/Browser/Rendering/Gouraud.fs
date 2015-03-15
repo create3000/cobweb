@@ -7,8 +7,9 @@ uniform bool x3d_colorMaterial;   // true if a X3DColorNode is attached, otherwi
 uniform bool      x3d_texturing;  // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D x3d_texture;
 
-varying vec4 vColor; // color
-varying vec4 t;      // texCoord
+varying vec4 frontColor; // color
+varying vec4 backColor;  // color
+varying vec4 t;          // texCoord
 
 vec4
 getTextureColor ()
@@ -19,7 +20,7 @@ getTextureColor ()
 void
 main ()
 {
-	vec4 finalColor = vColor;
+	vec4 finalColor = gl_FrontFacing ? frontColor : backColor;
 
 	if (x3d_lighting)
 	{

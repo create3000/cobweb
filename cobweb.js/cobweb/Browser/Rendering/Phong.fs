@@ -46,7 +46,7 @@ main ()
 {
 	if (x3d_lighting)
 	{
-		vec3  N  = normalize (vN);
+		vec3  N  = normalize (gl_FrontFacing ? vN : -vN);
 		vec3  V  = normalize (-v); // normalized vector from point on geometry to viewer's position
 		float dV = length (v);
 

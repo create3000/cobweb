@@ -705,6 +705,53 @@
     <None Include="tests\Examples\MovieTruck\stage\tf.jpg" />
     <None Include="tests\Examples\MovieTruck\stage\tf.png" />
     <None Include="tests\Examples\MovieTruck\x3dom.html" />
+    <None Include="tests\Examples\Rathaus\stage\bogengang.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\bogengang.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\dachaufbau.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\dachaufbau.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\dachaufbau.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\dachaufbau_s.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\dachfenster.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\dachfenster.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\dachfenster_big.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\dachfenster_big.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\dachfenster_small.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\dachfenster_small.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\dachrand.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\dachziegel.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\index.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\index.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\pflaster.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\r-seite.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\r_wall.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\r_win.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\r_win_lower3.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\r_win_upper.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\right.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\rightback.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\side.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\side.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\sky1.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t-balk_floor.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t-balk_roof.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t_balkony.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t_clock.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t_copper.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t_door.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t_entry.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\t_stones.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\tower.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\tower.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\w_bogen.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\w_bogendetail.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\w_edge.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\w_win_grid.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\windows.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\windows.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\zierkegel.wrl" />
+    <None Include="tests\Examples\Rathaus\stage\zierkegel.x3d" />
+    <None Include="tests\Examples\Rathaus\stage\paper.3.png" />
+    <None Include="tests\Examples\Rathaus\x3dom.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -730,5 +777,6 @@
     <Folder Include="tests\Examples\NIST-Logo\" />
     <Folder Include="tests\Examples\Cathedral\" />
     <Folder Include="tests\Examples\MovieTruck\" />
+    <Folder Include="tests\Examples\Rathaus\" />
   </ItemGroup>
 </Project>

@@ -114,7 +114,6 @@ function ($,
 				// Set new scene.
 
 				this .scene = scene;
-				this .scene .setup ();
 
 				this .scene .rootNodes .addInterest (this .group .children_, "setValue");
 				this .group .children_ = this .scene .rootNodes;

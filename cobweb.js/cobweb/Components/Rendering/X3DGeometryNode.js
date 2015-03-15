@@ -101,14 +101,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .triangles .push (vertex .z);
 			this .triangles .push (1);
 		},
-		refineNormals: function (normalIndex, normals, creaseAngle, ccw)
+		refineNormals: function (normalIndex, normals, creaseAngle)
 		{
-			if (! ccw)
-			{
-				for (var i = 0; i < normals .length; ++ i)
-					normals [i] .negate ();
-			}
-
 			if (creaseAngle === 0)
 				return normals;
 

@@ -31,6 +31,8 @@ function ($, XMLParser, URI)
 
 			new XMLParser (scene, dom) .parseIntoScene ();
 
+			scene .setup ();
+
 			return scene;
 		},
 		createX3DFromURL: function (url, callback)
@@ -105,7 +107,9 @@ function ($, XMLParser, URI)
 					{
 						try
 						{
-							scene   = this .createX3DFromString (this .URL, data);
+							scene = this .createX3DFromString (this .URL, data);
+							scene .setup ();
+
 							success = true;
 						}
 						catch (error)

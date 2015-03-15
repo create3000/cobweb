@@ -184,7 +184,7 @@ function ($, Vector3, Algorithm)
 			if (length)
 				return this .divide (length);
 
-			return this .set (0, 0, 0, 0);
+			return this;
 		},
 		dot: function (quat)
 		{

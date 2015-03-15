@@ -150,7 +150,7 @@ function ($,
 
 			if (this .currentTime - this .timer > 10)
 			{
-				console .log ((this .frames / (this .currentTime - this .timer)) + " fps");
+				console .log ((this .frames / (this .currentTime - this .timer)) + " fps", this .getWorld () .getActiveLayer () .getValue () .numOpaqueShapes);
 				this .frames = 0;
 				this .timer  = this .currentTime;
 			}

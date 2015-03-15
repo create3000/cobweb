@@ -70,19 +70,11 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		},
 		createX3DFromString: function (x3dSyntax)
 		{
-			var scene = new Loader (this .currentScene) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
-			
-			scene .setup ();
-
-			return scene;
+			return new Loader (this .currentScene) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
 		},
 		createX3DFromURL: function (url, field, node)
 		{
-			var scene = new Loader (this .currentScene) .createX3DFromURL (url);
-			
-			scene .setup ();
-
-			return scene;
+			return new Loader (this .currentScene) .createX3DFromURL (url);
 		},
 		loadURL: function (url, parameter)
 		{

@@ -92,6 +92,10 @@ function ($,
 			                                                          this .repeatT_ .getValue (),
 			                                                          false);
 		},
+		clear: function ()
+		{
+			this .setTexture (1, 1, 3, new Uint8Array ([ 255, 255, 255, 255 ]));
+		},
 		traverse: function ()
 		{
 			this .bind (this .getBrowser () .getContext () .TEXTURE_2D);

@@ -75,7 +75,7 @@ function ($,
 				if (this .urlStack .length === 0)
 				{
 					this .urlStack = null;
-					this .setTexture (1, 1, 3, new Uint8Array ([ 255, 255, 255, 255 ]));
+					this .clear ();
 					return;
 				}
 

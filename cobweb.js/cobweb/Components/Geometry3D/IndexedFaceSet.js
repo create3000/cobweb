@@ -268,17 +268,17 @@ function ($,
 					var
 						vertices   = polygon .vertices,
 						triangles  = polygon .triangles,
-						coordIndex = this .coordIndex_,
+						coordIndex = this .coordIndex_ .getValue (),
 						coord      = this .getCoord ();
 
 					// Transform vertices to 2D space.
 
-					var p0 = coord .getPoint (this .coordIndex_ [vertices [0]]);
-					var p1 = coord .getPoint (this .coordIndex_ [vertices [1]]);
-					var p2 = coord .getPoint (this .coordIndex_ [vertices [2]]);
+					var p0 = coord .getPoint (coordIndex [vertices [0]] .getValue ());
+					var p1 = coord .getPoint (coordIndex [vertices [1]] .getValue ());
+					var p2 = coord .getPoint (coordIndex [vertices [2]] .getValue ());
 
-					var xAxis = Vector3 .subtract (p1, p0);
-					var hAxis = Vector3 .subtract (p2, p0);
+					var hAxis = Vector3 .subtract (p0, p1);
+					var xAxis = Vector3 .subtract (p2, p1);
 					var zAxis = Vector3 .cross (xAxis, hAxis);
 					var yAxis = Vector3 .cross (zAxis, xAxis);
 
@@ -317,6 +317,7 @@ function ($,
 				}
 				catch (error)
 				{
+					console .log (error);
 					this .triangulateConvexPolygon (polygon);
 				}
 			},
@@ -351,6 +352,7 @@ function ($,
 			createNormals: function (polygons)
 			{
 				var
+					cw          = ! this .ccw_ .getValue ();
 					normals     = [ ],
 					normalIndex = [ ],
 					normal      = null,
@@ -410,13 +412,16 @@ function ($,
 						normalIndex [index] .push (normals .length + i);
 					}
 
+					if (cw)
+						normal .negate ();
+
 					// Add this normal for each vertex and for -1.
 
 					for (var i = 0, length = vertices .length + 1; i < length; ++ i)
-						normals .push (normal .copy ());
+						normals .push (normal);
 				}
 
-				return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue (), this .ccw_ .getValue ());
+				return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue ());
 			},
 		});
 
