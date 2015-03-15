@@ -704,6 +704,7 @@
     <None Include="tests\Examples\MovieTruck\stage\tf-m.jpg" />
     <None Include="tests\Examples\MovieTruck\stage\tf.jpg" />
     <None Include="tests\Examples\MovieTruck\stage\tf.png" />
+    <None Include="tests\Examples\MovieTruck\x3dom.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

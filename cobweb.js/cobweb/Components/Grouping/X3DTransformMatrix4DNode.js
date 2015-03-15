@@ -6,7 +6,7 @@ define ([
 	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
-          X3DGroupingNode, 
+          X3DGroupingNode,
           X3DConstants,
           Matrix4)
 {
@@ -22,6 +22,12 @@ function ($,
 	X3DTransformMatrix4DNode .prototype = $.extend (new X3DGroupingNode (),
 	{
 		constructor: X3DTransformMatrix4DNode,
+		getBBox: function ()
+		{
+			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
+
+			return bbox .copy () .multRight (this .matrix);
+		},
 		setTransform: function (t, r, s, so, c)
 		{
 			this .matrix .set (t, r, s, so, c);

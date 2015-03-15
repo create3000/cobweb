@@ -49,9 +49,33 @@ function (Matrix4, Vector3)
 		{
 			return new Box3 (this .matrix .copy ());
 		},
+		assign: function (box)
+		{
+			this .matrix .assign (box .matrix);
+			return this;
+		},
 		isEmpty: function ()
 		{
 			return this .matrix [15] === 0;
+		},
+		add: function (box)
+		{
+			if (this .isEmpty ())
+				return this .assign (box);
+
+			if (box .isEmpty ())
+				return this;
+
+			var
+				lhs_min = new Vector3 (),
+				lhs_max = new Vector3 (),
+				rhs_min = new Vector3 (),
+				rhs_max = new Vector3 ();
+
+			this .getExtents (lhs_min, lhs_max);
+			box  .getExtents (rhs_min, rhs_max);
+
+			return this .assign (new Box3 (Vector3 .min (lhs_min, rhs_min), Vector3 .max (lhs_max, rhs_max), true));
 		},
 		multLeft: function (matrix)
 		{
