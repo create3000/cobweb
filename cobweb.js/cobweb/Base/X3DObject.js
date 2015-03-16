@@ -60,6 +60,10 @@ function ()
 		{
 			delete this .interests_ [object .getId () + callback];
 		},
+		getInterests: function ()
+		{
+			return this .interests_;
+		},
 		processInterests: function ()
 		{
 			for (var key in this .interests_)

@@ -80,6 +80,10 @@ function ($,
 			{
 				return this .layerNode0;
 			},
+			getLayers: function ()
+			{
+				return this .layerNodes;
+			},
 			set_activeLayer: function ()
 			{
 				if (+this .activeLayer_ === 0)

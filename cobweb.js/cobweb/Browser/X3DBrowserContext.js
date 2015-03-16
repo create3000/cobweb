@@ -3,15 +3,16 @@ define ([
 	"jquery",
 	"cobweb/Fields/SFTime",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Browser/Core/X3DCoreContext",
 	"cobweb/Browser/Rendering/X3DRenderingContext",
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
+	"cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext",
 	"cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext",
-	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
+	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Layering/X3DLayeringContext",
+	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Lighting/X3DLightingContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
-	"cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext",
-	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
 	"cobweb/Browser/Shape/X3DShapeContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
@@ -23,15 +24,16 @@ define ([
 function ($,
           SFTime,
           X3DBaseNode,
+          X3DCoreContext,
           X3DRenderingContext,
           X3DGeometry3DContext,
+          X3DPointingDeviceSensorContext,
           X3DKeyDeviceSensorContext,
-          X3DEnvironmentalEffectsContext,
+          X3DNavigationContext,
           X3DLayeringContext,
+          X3DEnvironmentalEffectsContext,
           X3DLightingContext,
           X3DNetworkingContext,
-          X3DPointingDeviceSensorContext,
-          X3DNavigationContext,
           X3DShadersContext,
           X3DShapeContext,
           X3DTexturingContext,
@@ -43,15 +45,16 @@ function ($,
 	function X3DBrowserContext (x3d)
 	{
 		X3DBaseNode                    .call (this, this, this);
-		X3DRenderingContext            .call (this, x3d);
+		X3DCoreContext                 .call (this, x3d);
+		X3DRenderingContext            .call (this);
 		X3DGeometry3DContext           .call (this);
+		X3DPointingDeviceSensorContext .call (this);
 		X3DKeyDeviceSensorContext      .call (this);
-		X3DEnvironmentalEffectsContext .call (this);
+		X3DNavigationContext           .call (this);
 		X3DLayeringContext             .call (this);
+		X3DEnvironmentalEffectsContext .call (this);
 		X3DLightingContext             .call (this);
 		X3DNetworkingContext           .call (this);
-		X3DPointingDeviceSensorContext .call (this);
-		X3DNavigationContext           .call (this);
 		X3DShadersContext              .call (this);
 		X3DShapeContext                .call (this);
 		X3DTexturingContext            .call (this);
@@ -60,21 +63,19 @@ function ($,
 
 		this .changedTime    = 0;
 		this .renderCallback = this .traverse .bind (this);
-
-		this .frames = 0; // DEBUG frame rate
-		this .timer  = 0; // DEBUG frame rate
 	};
 
 	X3DBrowserContext .prototype = $.extend (new X3DBaseNode (),
+		X3DCoreContext .prototype,
 		X3DRenderingContext .prototype,
 		X3DGeometry3DContext .prototype,
+		X3DPointingDeviceSensorContext .prototype,
 		X3DKeyDeviceSensorContext .prototype,
-		X3DEnvironmentalEffectsContext .prototype,
+		X3DNavigationContext .prototype,
 		X3DLayeringContext .prototype,
+		X3DEnvironmentalEffectsContext .prototype,
 		X3DLightingContext .prototype,
 		X3DNetworkingContext .prototype,
-		X3DPointingDeviceSensorContext .prototype,
-		X3DNavigationContext .prototype,
 		X3DShadersContext .prototype,
 		X3DShapeContext .prototype,
 		X3DTexturingContext .prototype,
@@ -88,15 +89,16 @@ function ($,
 			                   "sensors",       new SFTime ());
 
 			X3DBaseNode                    .prototype .initialize .call (this);
+			X3DCoreContext                 .prototype .initialize .call (this);
 			X3DRenderingContext            .prototype .initialize .call (this);
 			X3DGeometry3DContext           .prototype .initialize .call (this);
+			X3DPointingDeviceSensorContext .prototype .initialize .call (this);
 			X3DKeyDeviceSensorContext      .prototype .initialize .call (this);
-			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
+			X3DNavigationContext           .prototype .initialize .call (this);
 			X3DLayeringContext             .prototype .initialize .call (this);
+			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
 			X3DLightingContext             .prototype .initialize .call (this);
 			X3DNetworkingContext           .prototype .initialize .call (this);
-			X3DPointingDeviceSensorContext .prototype .initialize .call (this);
-			X3DNavigationContext           .prototype .initialize .call (this);
 			X3DShadersContext              .prototype .initialize .call (this);
 			X3DShapeContext                .prototype .initialize .call (this);
 			X3DTexturingContext            .prototype .initialize .call (this);
@@ -145,17 +147,6 @@ function ($,
 			this .context .clear (this .context .COLOR_BUFFER_BIT);
 
 			this .world .traverse (TraverseType .DISPLAY);
-
-			// DEBUG frame rate
-
-			if (this .getCurrentTime () - this .timer > 10)
-			{
-				console .log ((this .frames / (this .getCurrentTime () - this .timer)) + " fps", this .getWorld () .getActiveLayer () .getValue () .numOpaqueShapes);
-				this .frames = 0;
-				this .timer  = this .getCurrentTime ();
-			}
-			else
-				++ this .frames;
 		},
 	});
 

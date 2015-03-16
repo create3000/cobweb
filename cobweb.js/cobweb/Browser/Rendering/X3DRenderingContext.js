@@ -12,7 +12,6 @@ define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
-	"jquery-resize",
 ],
 function (Fields,
           ComposedShader,
@@ -27,26 +26,8 @@ function (Fields,
 {
 	var MFInt32 = Fields .MFInt32;
 
-	function getContext (canvas)
-	{
-		try
-		{
-			var gl = canvas .getContext ('experimental-webgl');
-
-			if (gl === null)
-				gl = canvas .getContext ('webgl');
-
-			return gl;
-		}
-		catch (error)
-		{
-			return null;
-		}
-	}
-
 	function X3DRenderingContext (x3d)
 	{
-		this .x3d                = x3d;
 		this .setProjectionMatrix (new Matrix4 ());
 		this .modelViewMatrix    = new MatrixStack (Matrix4);
 		this .viewport           = new Vector4 ();
@@ -59,14 +40,9 @@ function (Fields,
 		{
 			this .addChildren ("viewport", new MFInt32 (0, 0, 100, 100));
 
-			// Get canvas & context.
-
-			this .canvas  = $("<canvas/>") .prependTo (this .x3d);
-			this .context = getContext (this .canvas [0]);
-
 			// Configure context.
 
-			var gl = this .context;
+			var gl = this .getContext ();
 
 			gl .enable (gl .SCISSOR_TEST);
 			gl .cullFace (gl .BACK);
@@ -84,25 +60,12 @@ function (Fields,
 
 			// Configure viewport.
 
-			this .canvas .resize (function ()
-			{
-				this .reshape ();
-				this .traverse ();
-			}
-			.bind (this));
+			setInterval (this .reshape .bind (this), 401);
 
 			this .reshape ();
 
 			//this .setDefaultShader ("PHONG");
 			this .setDefaultShader ("GOURAUD");
-		},
-		getCanvas: function ()
-		{
-			return this .canvas;
-		},
-		getContext: function ()
-		{
-			return this .context;
 		},
 		getVendor: function ()
 		{
@@ -211,15 +174,22 @@ function (Fields,
 		},
 		reshape: function ()
 		{
-			var width  = this .canvas .width ();
-			var height = this .canvas .height ();
+			var
+				width  = this .canvas .width (),
+				height = this .canvas .height (),
+				canvas = this .canvas [0];
 
-			this .viewport_ .setValue ([0, 0, width, height]);
-			this .context .viewport (0, 0, width, height);
-			this .context .scissor (0, 0, width, height);
+			if (width !== canvas .width || height !== canvas .height)
+			{
+				this .viewport_ .setValue ([0, 0, width, height]);
+				this .context .viewport (0, 0, width, height);
+				this .context .scissor (0, 0, width, height);
 
-			this .canvas [0] .width  = width;
-			this .canvas [0] .height = height;
+				canvas .width  = width;
+				canvas .height = height;
+
+				this .addBrowserEvent ();
+			}
 		},
 	};
 

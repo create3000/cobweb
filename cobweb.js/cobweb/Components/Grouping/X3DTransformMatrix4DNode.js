@@ -15,7 +15,7 @@ function ($,
 		X3DGroupingNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DTransformMatrix4DNode);
-		
+
 		this .matrix = new Matrix4 ();
 	}
 
@@ -31,10 +31,10 @@ function ($,
 		setTransform: function (t, r, s, so, c)
 		{
 			this .matrix .set (t, r, s, so, c);
-			
+
 			if (this .matrix .equals (Matrix4 .Identity))
 				this .traverse = X3DGroupingNode .prototype .traverse;
-			
+
 			else
 				this .traverse = traverse;
 		},

@@ -752,6 +752,8 @@
     <None Include="tests\Examples\Rathaus\stage\zierkegel.x3d" />
     <None Include="tests\Examples\Rathaus\stage\paper.3.png" />
     <None Include="tests\Examples\Rathaus\x3dom.html" />
+    <None Include="cobweb\Browser\Core\X3DCoreContext.js" />
+    <None Include="cobweb\Browser\Core\RenderingProperties.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -778,5 +780,6 @@
     <Folder Include="tests\Examples\Cathedral\" />
     <Folder Include="tests\Examples\MovieTruck\" />
     <Folder Include="tests\Examples\Rathaus\" />
+    <Folder Include="cobweb\Browser\Core\" />
   </ItemGroup>
 </Project>

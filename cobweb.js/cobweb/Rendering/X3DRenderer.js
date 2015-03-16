@@ -47,6 +47,8 @@ function (TraverseType, QuickSort, Matrix4)
 		this .opaqueShapes         = [ ];
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, function (lhs, rhs) { return lhs .distance < rhs .distance; });
+		this .traverseTime         = 0;
+		this .drawTime             = 0;
 	}
 
 	X3DRenderer .prototype =
@@ -54,7 +56,6 @@ function (TraverseType, QuickSort, Matrix4)
 		constructor: X3DRenderer,
 		initialize: function ()
 		{
-			this .timer = this .getBrowser () .getCurrentTime ();
 		},
 		getViewVolumes: function ()
 		{
@@ -121,19 +122,13 @@ function (TraverseType, QuickSort, Matrix4)
 				}
 				case TraverseType .DISPLAY:
 				{
-					var t0 = Date .now ();
+					var t0 = performance .now ();
 					this .collect (type);
-					var t1 = Date .now () - t0;
+					this .traverseTime = performance .now () - t0;
 
-					var t0 = Date .now ();
+					var t0 = performance .now ();
 					this .draw ();
-					var t2 = Date .now () - t0;
-
-					if (this .getBrowser () .getCurrentTime () - this .timer > 10)
-					{
-						console .log (t1, t2);
-						this .timer  = this .getBrowser () .getCurrentTime ();
-					}
+					this .drawTime = performance .now () - t0;
 
 					break;
 				}
