@@ -107,7 +107,7 @@ function ($,
 				var viewVolumes = this .getCurrentLayer () .getViewVolumes ();
 				var viewport    = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
 
-				this .getCurrentLayer () .getViewVolumes () .push (new ViewVolume (this .getBrowser () .getProjectionMatrix () .get (),
+				this .getCurrentLayer () .getViewVolumes () .push (new ViewVolume (this .getBrowser () .getProjectionMatrix (),
 				                                                                   viewport,
 				                                                                   this .rectangle));
 			},

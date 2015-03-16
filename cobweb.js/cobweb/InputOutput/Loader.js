@@ -114,7 +114,7 @@ function ($, XMLParser, URI)
 						}
 						catch (error)
 						{
-							//console .log (error);
+							console .log (error);
 						}
 					},
 					error: function (jqXHR, textStatus, errorThrown)

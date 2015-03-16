@@ -5,10 +5,11 @@ define ([
 ],
 function ($, X3DBaseNode)
 {
-	function BindableStack (executionContext, bottom)
+	function BindableStack (executionContext, layer, bottom)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
+		this .layer = layer;
 		this .array = [ bottom ];
 		this .setup ();
 	}
@@ -49,7 +50,7 @@ function ($, X3DBaseNode)
 				{
 					node .isBound_  = true;
 					node .bindTime_ = this .getBrowser () .getCurrentTime ();
-					node .transitionStart (top);
+					node .transitionStart (this .layer, top);
 				}
 
 				this .pushOnTop (node);

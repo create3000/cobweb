@@ -166,7 +166,7 @@ function ($,
 						throw Error ("Node named '" + name + "' is not a viewpoint node.");
 
 					if (viewpoint .isBound_ .getValue ())
-						viewpoint .transitionStart (viewpoint);
+						viewpoint .transitionStart (null, viewpoint);
 
 					else
 						viewpoint .set_bind_ = true;

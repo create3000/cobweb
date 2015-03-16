@@ -317,7 +317,6 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error);
 					this .triangulateConvexPolygon (polygon);
 				}
 			},

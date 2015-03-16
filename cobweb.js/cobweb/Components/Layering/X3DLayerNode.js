@@ -57,10 +57,10 @@ function ($,
 			this .defaultViewpoint      .setup ();
 
 			this .currentViewport     = null;
-			this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this .defaultNavigationInfo);
-			this .backgroundStack     = new BindableStack (this .getExecutionContext (), this .defaultBackground);
-			//this .fogStack            = new BindableStack (this .getExecutionContext (), this .defaultFog);
-			this .viewpointStack      = new BindableStack (this .getExecutionContext (), this .defaultViewpoint);
+			this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
+			this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
+			//this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
+			this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
 
 			this .navigationInfos = new BindableList (this .getExecutionContext (), this);
 			this .backgrounds     = new BindableList (this .getExecutionContext (), this);
@@ -128,21 +128,21 @@ function ($,
 			{
 				var navigationInfo = this .navigationInfos .getBound ();
 				this .navigationInfoStack .forcePush (navigationInfo);
-				//navigationInfo .addLayer (this);
+				navigationInfo .bindToLayer (this);
 			}
 
 			if (this .backgrounds .get () .length)
 			{
 				var background = this .backgrounds .getBound ();
 				this .backgroundStack .forcePush (background);
-				//background .addLayer (this);
+				background .bindToLayer (this);
 			}
 
 			if (this .fogs .get () .length)
 			{
 				var fog = this .fogs .getBound ();
 				this .fogStack .forcePush (fog);
-				//fog .addLayer (this);
+				fog .bindToLayer (this);
 			}
 
 			// Bind first viewpoint in viewpoint stack.
@@ -151,7 +151,7 @@ function ($,
 			{
 				var viewpoint = this .viewpoints .getBound ();
 				this .viewpointStack .forcePush (viewpoint);
-				//viewpoint .addLayer (this);
+				viewpoint .bindToLayer (this);
 			}
 		},
 		traverse: function (type)

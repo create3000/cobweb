@@ -7,7 +7,6 @@ define ([
 	"cobweb/Components/Shaders/X3DShaderNode",
 	"cobweb/Components/Shaders/X3DProgrammableShaderObject",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -15,13 +14,11 @@ function ($,
           FieldDefinitionArray,
           X3DShaderNode, 
           X3DProgrammableShaderObject, 
-          X3DConstants,
-          Algorithm)
+          X3DConstants)
 {
 	with (Fields)
 	{
 		var MAX_LIGHTS = 8;
-		var clamp      = Algorithm .clamp;
 
 		function ComposedShader (executionContext)
 		{
@@ -133,7 +130,7 @@ function ($,
 				this .color    = gl .getAttribLocation (this .program, "x3d_color");
 				this .texCoord = gl .getAttribLocation (this .program, "x3d_texCoord");
 				this .normal   = gl .getAttribLocation (this .program, "x3d_normal");
-				this .position = gl .getAttribLocation (this .program, "x3d_position");
+				this .position = gl .getAttribLocation (this .program, "x3d_position");			
 			},
 			setDefaultUniforms: function (context)
 			{
@@ -155,9 +152,6 @@ function ($,
 					var localLights  = context .localLights;
 					var lights       = Math .min (MAX_LIGHTS, globalLights .length + localLights .length);
 
-					for (var i = 0; i < globalLights .length; ++ i)
-						globalLights [i] .use (gl, this, i);
-
 					for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
 						context .localLights [l] .use (gl, this, i);
 
@@ -167,12 +161,12 @@ function ($,
 					// Material
 
 					gl .uniform1i (this .lighting,         true);
-					gl .uniform1f (this .ambientIntensity, Math .max (material .ambientIntensity_ .getValue (), 0));
-					gl .uniform3f (this .diffuseColor,     material .diffuseColor_  .r, material .diffuseColor_  .g, material .diffuseColor_  .b);
-					gl .uniform3f (this .specularColor,    material .specularColor_ .r, material .specularColor_ .g, material .specularColor_ .b);
-					gl .uniform3f (this .emissiveColor,    material .emissiveColor_ .r, material .emissiveColor_ .g, material .emissiveColor_ .b);
-					gl .uniform1f (this .shininess,        clamp (material .shininess_    .getValue (), 0, 1));
-					gl .uniform1f (this .transparency,     clamp (material .transparency_ .getValue (), 0, 1));
+					gl .uniform1f (this .ambientIntensity, material .ambientIntensity);
+					gl .uniform3f (this .diffuseColor,     material .diffuseColor  .r, material .diffuseColor  .g, material .diffuseColor  .b);
+					gl .uniform3f (this .specularColor,    material .specularColor .r, material .specularColor .g, material .specularColor .b);
+					gl .uniform3f (this .emissiveColor,    material .emissiveColor .r, material .emissiveColor .g, material .emissiveColor .b);
+					gl .uniform1f (this .shininess,        material .shininess);
+					gl .uniform1f (this .transparency,     material .transparency);
 				}
 				else
 				{
@@ -185,14 +179,15 @@ function ($,
 
 					gl .uniform1i (this .texturing, true);
 					gl .uniform1i (this .texture,   0);
+
+					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrix () .array);
 				}
 				else
 					gl .uniform1i (this .texturing, false);
 
-				gl .uniformMatrix4fv (this .textureMatrix,    false, new Float32Array (browser .getTextureTransform () [0] .getMatrix ()));
-				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));	
-				gl .uniformMatrix4fv (this .projectionMatrix, false, new Float32Array (browser .getProjectionMatrix () .get ()));
+				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrix () .array);
 				gl .uniformMatrix4fv (this .modelViewMatrix,  false, new Float32Array (context .modelViewMatrix));
+				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));	
 			},
 			use: function (context)
 			{

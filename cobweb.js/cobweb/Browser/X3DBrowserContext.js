@@ -148,11 +148,11 @@ function ($,
 
 			// DEBUG frame rate
 
-			if (this .currentTime - this .timer > 10)
+			if (this .getCurrentTime () - this .timer > 10)
 			{
-				console .log ((this .frames / (this .currentTime - this .timer)) + " fps", this .getWorld () .getActiveLayer () .getValue () .numOpaqueShapes);
+				console .log ((this .frames / (this .getCurrentTime () - this .timer)) + " fps", this .getWorld () .getActiveLayer () .getValue () .numOpaqueShapes);
 				this .frames = 0;
-				this .timer  = this .currentTime;
+				this .timer  = this .getCurrentTime ();
 			}
 			else
 				++ this .frames;

@@ -47,7 +47,7 @@ function (Fields,
 	function X3DRenderingContext (x3d)
 	{
 		this .x3d                = x3d;
-		this .projectionMatrix   = new MatrixStack (Matrix4);
+		this .setProjectionMatrix (new Matrix4 ());
 		this .modelViewMatrix    = new MatrixStack (Matrix4);
 		this .viewport           = new Vector4 ();
 		this .defaultColorBuffer = null;
@@ -127,6 +127,11 @@ function (Fields,
 			colorDepth += gl .getParameter (gl .ALPHA_BITS);
 
 			return colorDepth;
+		},
+		setProjectionMatrix: function (value)
+		{
+			this .projectionMatrix        = value;
+			this .projectionMatrix .array = new Float32Array (value);
 		},
 		getProjectionMatrix: function ()
 		{

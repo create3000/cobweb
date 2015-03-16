@@ -266,10 +266,9 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 			var browser = this .getBrowser ();
 			var gl      = browser .getContext ();
+			var shader  = browser .getDefaultShader ();
 
 			// Shader
-
-			var shader = browser .getDefaultShader ();
 
 			shader .setDefaultUniforms (context);
 

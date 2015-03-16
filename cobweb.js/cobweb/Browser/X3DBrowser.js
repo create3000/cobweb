@@ -202,7 +202,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 			console .log ("Trying to bind viewpoint: " + viewpoint .description_ .toString ());
 
 			if (viewpoint .isBound_ .getValue ())
-				viewpoint .transitionStart (viewpoint);
+				viewpoint .transitionStart (null, viewpoint);
 
 			else
 				viewpoint .set_bind_ = true;

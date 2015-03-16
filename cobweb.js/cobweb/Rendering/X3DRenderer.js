@@ -54,6 +54,7 @@ function (TraverseType, QuickSort, Matrix4)
 		constructor: X3DRenderer,
 		initialize: function ()
 		{
+			this .timer = this .getBrowser () .getCurrentTime ();
 		},
 		getViewVolumes: function ()
 		{
@@ -120,8 +121,20 @@ function (TraverseType, QuickSort, Matrix4)
 				}
 				case TraverseType .DISPLAY:
 				{
+					var t0 = Date .now ();
 					this .collect (type);
+					var t1 = Date .now () - t0;
+
+					var t0 = Date .now ();
 					this .draw ();
+					var t2 = Date .now () - t0;
+
+					if (this .getBrowser () .getCurrentTime () - this .timer > 10)
+					{
+						console .log (t1, t2);
+						this .timer  = this .getBrowser () .getCurrentTime ();
+					}
+
 					break;
 				}
 			}
@@ -138,7 +151,15 @@ function (TraverseType, QuickSort, Matrix4)
 		},
 		draw: function ()
 		{
-			var gl = this .getBrowser () .getContext ();
+			var browser      = this .getBrowser ();
+			var gl           = browser .getContext ();
+			var shader       = browser .getDefaultShader ();
+			var globalLights = browser .getGlobalLights ();
+
+			shader .use ();
+
+			for (var i = 0; i < globalLights .length; ++ i)
+				globalLights [i] .use (gl, shader, i);
 
 			// Sorted blend
 

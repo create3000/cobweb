@@ -312,7 +312,7 @@ function ($,
 
 			shader .use ();
 				
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, new Float32Array (browser .getProjectionMatrix () .get ()));
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrix () .array);
 			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, new Float32Array (modelViewMatrix));
 
 			// Enable attribute arrays.

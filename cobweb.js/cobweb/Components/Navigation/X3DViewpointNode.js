@@ -151,38 +151,45 @@ function ($,
 			{
 				return 1e5;
 			},
-			transitionStart: function (fromViewpoint)
+			transitionStart: function (layer, fromViewpoint)
 			{
 				try
 				{
+					if (! layer)
+					{
+						for (var id in this .layers)
+						{
+							layer = this .layers [id];
+							break;
+						}
+					}
+
 					if (this .jump_ .getValue ())
 					{
 						if (! this .retainUserOffsets_ .getValue ())
 							this .resetUserOffsets ();
 
-						var transitionType = "LINEAR";
-						var transitionTime = 1;
-
-						for (var id in this .layers)
+						if (layer)
 						{
-							var navigationInfo = this .layers [id] .getNavigationInfo ();
+							var navigationInfo = layer .getNavigationInfo ();
 
 							navigationInfo .transitionStart_ = true;
 
-							transitionType = navigationInfo .transitionType_ .getValue ();
-							transitionTime = navigationInfo .transitionTime_ .getValue ();
+							var transitionType = navigationInfo .transitionType_ .getValue ();
+							var transitionTime = navigationInfo .transitionTime_ .getValue ();
 						}
-						
+						else
+						{
+							var transitionType = "LINEAR";
+							var transitionTime = 1;
+						}
+
 						switch (transitionType)
 						{
 							case "TELEPORT":
 							{
-								for (var id in this .layers)
-								{
-									var navigationInfo = this .layers [id] .getNavigationInfo ();
-								
-									navigationInfo .transitionComplete_ = true;
-								}
+								if (layer)
+									layer .getNavigationInfo () .transitionComplete_ = true;
 
 								return;
 							}
@@ -191,9 +198,9 @@ function ($,
 								this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 1), new SFVec2f (1, 0) ];
 								break;
 							}
-							// LINEAR
 							default:
 							{
+								// LINEAR
 								this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 0), new SFVec2f (0, 0) ];
 								break;
 							}
@@ -306,7 +313,7 @@ function ($,
 			},
 			reshapeWithLimits: function (zNear, zFar)
 			{
-				this .getBrowser () .getProjectionMatrix () .set (this .getProjectionMatrix (zNear, zFar, this .getCurrentViewport () .getRectangle ()));
+				this .getBrowser () .setProjectionMatrix (this .getProjectionMatrix (zNear, zFar, this .getCurrentViewport () .getRectangle ()));
 			},
 			transform: function ()
 			{
