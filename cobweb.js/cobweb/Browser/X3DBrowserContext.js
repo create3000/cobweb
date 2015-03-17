@@ -105,6 +105,10 @@ function ($,
 			X3DTimeContext                 .prototype .initialize .call (this);
 			X3DRoutingContext              .prototype .initialize .call (this);
 		},
+		prepareEvents: function ()
+		{
+			return this .prepareEvents_;
+		},
 		getSensors: function ()
 		{
 			return this .sensors_;
@@ -133,7 +137,7 @@ function ($,
 		},
 		traverse: function (time)
 		{
-			this .advance (performance .timing .navigationStart + time);
+			this .advanceTime (time);
 
 			this .prepareEvents_ .processInterests ();
 

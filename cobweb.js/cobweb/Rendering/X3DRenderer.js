@@ -146,15 +146,11 @@ function (TraverseType, QuickSort, Matrix4)
 		},
 		draw: function ()
 		{
-			var browser      = this .getBrowser ();
-			var gl           = browser .getContext ();
-			var shader       = browser .getDefaultShader ();
-			var globalLights = browser .getGlobalLights ();
+			var browser = this .getBrowser ();
+			var gl      = browser .getContext ();
+			var shader  = browser .getDefaultShader (); // Set lights in shader, same as local lights
 
-			shader .use ();
-
-			for (var i = 0; i < globalLights .length; ++ i)
-				globalLights [i] .use (gl, shader, i);
+			shader .setGlobalLights ();
 
 			// Sorted blend
 

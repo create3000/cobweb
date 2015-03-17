@@ -194,7 +194,7 @@ function ($,
 
 					if (this .getLive ())
 					{
-						this .getBrowser () .prepareEvents_ .addInterest (this, "prepareEvents");
+						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
 					}
 					else if (! this .disabled)
 					{
@@ -225,7 +225,7 @@ function ($,
 
 				this .set_pause ();
 
-				this .getBrowser () .prepareEvents_ .removeInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
 			},
 			do_resume: function ()
 			{
@@ -248,7 +248,7 @@ function ($,
 
 				this .set_resume (interval);
 
-				this .getBrowser () .prepareEvents_ .addInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
 				this .getBrowser () .addBrowserEvent ();
 			},
 			do_stop: function ()
@@ -271,14 +271,14 @@ function ($,
 					this .isActive_ = false;
 
 					if (this .getLive ())
-						this .getBrowser () .prepareEvents_ .removeInterest (this, "prepareEvents");
+						this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
 				}
 			},
 			timeout: function (callback)
 			{
 				if (this .enabled_ .getValue ())
 				{
-					this .getBrowser () .advance (Date .now ());
+					this .getBrowser () .advanceTime (performance .now ());
 
 					this [callback] ();
 				}

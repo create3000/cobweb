@@ -26,7 +26,7 @@ function ($, Fields, Parser, X3DConstants)
 			},
 			parseIntoScene: function ()
 			{
-				var t0 = Date .now ();
+				var t0 = performance .now ();
 
 				switch (this .xml .nodeName)
 				{
@@ -53,7 +53,7 @@ function ($, Fields, Parser, X3DConstants)
 						break;
 				}
 	
-				console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + ((Date .now () - t0) / 1000) + "s.");
+				console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
 			},
 			x3d: function (x3d)
 			{

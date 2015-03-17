@@ -46,6 +46,10 @@ function ($,
 			{
 				return "coord";
 			},
+			isEmpty: function ()
+			{
+				return this .point_ .length == 0;
+			},
 			getPoint: function (index)
 			{
 				if (index < this .point_ .length)

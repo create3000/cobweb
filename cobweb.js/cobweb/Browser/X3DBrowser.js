@@ -96,6 +96,24 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 
 			this .currentScene .setup ();
 		},
+		setBrowserOption: function (name, value)
+		{
+			try
+			{
+				this .getBrowserOptions () .getField (name) .setValue (value);
+			}
+			catch (error)
+			{ }
+		},
+		getBrowserOption: function (name)
+		{
+			try
+			{
+				return this .getBrowserOptions () .getField (name) .getValue ();
+			}
+			catch (error)
+			{ }
+		},
 		firstViewpoint: function ()
 		{
 			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();

@@ -69,7 +69,21 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-		
+			for (var i = 0; i < this .attribNodes .length; ++ i)
+				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			this .attribNodes .length;
+
+			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
+			{
+				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
+
+				if (attribNode)
+					this .attribNodes .push (attribNode);
+			}
+
+			for (var i = 0; i < this .attribNodes .length; ++ i)
+				this .attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{

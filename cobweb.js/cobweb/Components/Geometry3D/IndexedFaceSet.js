@@ -158,7 +158,7 @@ function ($,
 									this .addNormal (normal .getVector (this .getNormalIndex (face)));
 							}
 
-							this .addTriangle (coord .getPoint (index));
+							this .addVertex (coord .getPoint (index));
 						}
 					}
 

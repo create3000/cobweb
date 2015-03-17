@@ -107,8 +107,6 @@ function ($,
 			},
 			setScene: function (scene)
 			{
-				var t0 = Date .now ();
-			
 				this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 				// Set new scene.
@@ -119,8 +117,6 @@ function ($,
 				this .group .children_ = this .scene .rootNodes;
 
 				this .getBrowser () .addBrowserEvent ();
-	
-				console .log ("Scene '" + this .scene .worldURL + "' initialized in " + ((Date .now () - t0) / 1000) + "s.");
 			},
 			getScene: function ()
 			{

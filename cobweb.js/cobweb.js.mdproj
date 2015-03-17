@@ -541,8 +541,6 @@
     <None Include="Cobweb.mdproj" />
     <None Include="cobweb.min.js" />
     <None Include="Cobweb.userprefs" />
-    <None Include="Inline.wrl" />
-    <None Include="Inline.x3d" />
     <None Include="logo.bw.png" />
     <None Include="logo.png" />
     <None Include="Makefile" />
@@ -754,6 +752,11 @@
     <None Include="tests\Examples\Rathaus\x3dom.html" />
     <None Include="cobweb\Browser\Core\X3DCoreContext.js" />
     <None Include="cobweb\Browser\Core\RenderingProperties.js" />
+    <None Include="manifest.appcache" />
+    <None Include="cobweb\Browser\Core\BrowserOptions.js" />
+    <None Include="tests\Components\Rendering\IndexedLineSet.x3d" />
+    <None Include="cobweb\Browser\Rendering\Wireframe.vs" />
+    <None Include="cobweb\Browser\Rendering\Wireframe.fs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -781,5 +784,6 @@
     <Folder Include="tests\Examples\MovieTruck\" />
     <Folder Include="tests\Examples\Rathaus\" />
     <Folder Include="cobweb\Browser\Core\" />
+    <Folder Include="tests\Components\Rendering\" />
   </ItemGroup>
 </Project>

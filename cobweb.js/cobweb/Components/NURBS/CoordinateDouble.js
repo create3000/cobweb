@@ -42,6 +42,10 @@ function ($,
 			{
 				return "coord";
 			},
+			isEmpty: function ()
+			{
+				return this .point_ .length == 0;
+			},
 		});
 
 		return CoordinateDouble;

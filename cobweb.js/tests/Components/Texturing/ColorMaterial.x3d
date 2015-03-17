@@ -6,14 +6,13 @@
     <meta name='created' content='Thu, 19 Feb 2015 06:21:38 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 03 Mar 2015 06:19:26 GMT'/>
+    <meta name='modified' content='Mon, 16 Mar 2015 13:02:32 GMT'/>
   </head>
   <Scene>
     <Transform
         translation='-3 0 0'
-        rotation='-8.38615e-10 3.62377e-06 -1 0.785398'
-        scaleOrientation='5.39745e-06 3.34171e-06 1 0.392933'>
-      <Shape>
+        rotation='0 0 -1 0.785398'>
+      <Shape DEF='Rosa'>
         <Appearance>
           <Material DEF='Rococo13_1'
               ambientIntensity='0.187004'
@@ -93,8 +92,7 @@
     <Transform DEF='Sphere_1'>
       <Shape>
         <Appearance>
-          <Material
-              transparency='0.297468'/>
+          <Material/>
         </Appearance>
         <IndexedFaceSet
             solid='false'
@@ -154,8 +152,8 @@
         <Appearance/>
         <IndexedFaceSet DEF='Cube'
             colorPerVertex='false'
-            texCoordIndex='0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1'
             colorIndex='0, 1, 2, 3, 4, 5'
+            texCoordIndex='0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1, 0, 1, 3, 2, -1'
             coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'/>
       </Shape>
     </Transform>
@@ -166,7 +164,7 @@
       <Shape>
         <Appearance>
           <ImageTexture
-              url='"file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.96.png"'
+              url='"../images/logo.96.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.96.png"'
               repeatS='false'
               repeatT='false'/>
           <TextureTransform
@@ -182,14 +180,14 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
+                url='"../images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_1'
               solid='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 0, 0, 0, -1, 5, 5, 5, 5, -1, 2, 2, 2, 2, -1, 3, 3, 3, 3, -1, 7, 7, 1, 1, -1, 4, 4, 4, 4, -1'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <ColorRGBA
                 color='1 0 0 1, 0 1 0 1, 0 0 1 1, 1 1 0 1, 0 1 1 1, 1 0 1 1, 0 1 0 1, 0 1 0 0'/>
@@ -205,15 +203,15 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
+                url='"../images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_2'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <Color DEF='_3'
                 color='1 0 0, 0 1 0, 0 0 1, 1 1 0, 0 1 1, 1 0 1'/>
@@ -229,15 +227,15 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
+                url='"../images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_3'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <Color USE='_3'/>
             <TextureCoordinate
@@ -252,15 +250,15 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
+                url='"../images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_4'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <Color USE='_3'/>
             <TextureCoordinate
@@ -281,15 +279,15 @@
                 diffuseColor='1 1 1'
                 transparency='0.677215'/>
             <ImageTexture
-                url='"test/Components/images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
+                url='"../images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_5'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <Color DEF='_5'
                 color='1 0 0, 0 1 0, 0 0 1, 1 1 0, 0 1 1, 1 0 1'/>
@@ -306,15 +304,15 @@
           <Appearance>
             <Material USE='_4'/>
             <ImageTexture
-                url='"test/Components/images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
+                url='"../images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_6'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <Color USE='_5'/>
             <TextureCoordinate
@@ -330,15 +328,15 @@
           <Appearance>
             <Material USE='_4'/>
             <ImageTexture
-                url='"test/Components/images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
+                url='"../images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_7'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <Color USE='_5'/>
             <TextureCoordinate
@@ -354,15 +352,15 @@
           <Appearance>
             <Material USE='_4'/>
             <ImageTexture
-                url='"test/Components/images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
+                url='"../images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_8'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <Color USE='_5'/>
             <TextureCoordinate
@@ -380,15 +378,15 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
+                url='"../images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_9'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -402,15 +400,15 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
+                url='"../images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_10'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -424,15 +422,15 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
+                url='"../images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_11'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -446,15 +444,15 @@
         <Shape>
           <Appearance>
             <ImageTexture
-                url='"test/Components/images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
+                url='"../images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_12'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -474,15 +472,15 @@
                 diffuseColor='1 1 1'
                 transparency='0.601266'/>
             <ImageTexture
-                url='"test/Components/images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
+                url='"../images/logo.1.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.1.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_13'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -497,15 +495,15 @@
           <Appearance>
             <Material USE='_6'/>
             <ImageTexture
-                url='"test/Components/images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
+                url='"../images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_14'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -520,15 +518,15 @@
           <Appearance>
             <Material USE='_6'/>
             <ImageTexture
-                url='"test/Components/images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
+                url='"../images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_15'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -543,15 +541,15 @@
           <Appearance>
             <Material USE='_6'/>
             <ImageTexture
-                url='"test/Components/images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
+                url='"../images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
           <IndexedFaceSet DEF='Cube_16'
               solid='false'
               colorPerVertex='false'
-              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               colorIndex='0, 1, 2, 3, 4, 5'
+              texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -561,5 +559,9 @@
         </Shape>
       </Transform>
     </Transform>
+    <DirectionalLight/>
+    <Background DEF='Gray_1'
+        skyColor='0.2 0.2 0.2'/>
+    <NavigationInfo/>
   </Scene>
 </X3D>

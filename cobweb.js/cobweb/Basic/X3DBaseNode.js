@@ -70,9 +70,13 @@ function ($, X3DEventObject, Fields, X3DConstants)
 				field .setName (name);
 				field .setAccessType (accessType);
 
+				this .addAlias (name, field);
+			},
+			addAlias: function (name, field)
+			{
 				this .fields [name] = field;
 				
-				if (accessType === X3DConstants .inputOutput)
+				if (field .getAccessType () === X3DConstants .inputOutput)
 				{
 					this .fields ["set_" + name]     = field;
 					this .fields [name + "_changed"] = field;

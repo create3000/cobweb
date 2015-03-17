@@ -93,6 +93,8 @@ function ($,
 					return;
 	
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+				
+				this .valid = false;
 
 				var gl = this .getBrowser () .getContext ();
 

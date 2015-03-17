@@ -13,14 +13,16 @@ function (Vector3)
 	{
 		initialize: function ()
 		{
-			this .advance (Date .now ());
+			this .advanceTime (performance .now ());
 		},
 		getCurrentTime: function ()
 		{
 			return this .currentTime;
 		},
-		advance: function (time)
+		advanceTime: function (time)
 		{
+			time += performance .timing .navigationStart;
+
 			var lastTime = this .currentTime;
 
 			this .currentTime      = time / 1000;

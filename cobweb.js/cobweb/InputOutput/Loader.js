@@ -31,7 +31,9 @@ function ($, XMLParser, URI)
 
 			new XMLParser (scene, dom) .parseIntoScene ();
 
+			var t0 = performance .now ();
 			scene .setup ();
+			console .log ("Scene '" + scene .worldURL + "' initialized in " + (performance .now () - t0) .toFixed (2) + " ms.");
 
 			return scene;
 		},

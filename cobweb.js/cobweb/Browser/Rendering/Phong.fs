@@ -99,7 +99,7 @@ main ()
 				vec3 H = normalize (L + V); // specular term
 
 				vec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);
-				float specularFactor = bool (x3d_shininess) ? pow (max (dot (N, H), 0.0), 128.0 * x3d_shininess) : 1.0;
+				float specularFactor = bool (x3d_shininess) ? pow (max (dot (N, H), 0.0), x3d_shininess) : 1.0;
 				vec3  specularTerm   = x3d_specularColor * specularFactor;
 
 				float attenuation = 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);

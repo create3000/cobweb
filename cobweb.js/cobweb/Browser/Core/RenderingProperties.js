@@ -30,13 +30,13 @@ function ($,
 			if (value)
 			{
 				this .element .fadeIn ();
-				this .getBrowser () .prepareEvents_ .addInterest (this, "update");
+				this .getBrowser () .prepareEvents () .addInterest (this, "update");
 				this .update ();
 			}
 			else
 			{
 				this .element .fadeOut ();
-				this .getBrowser () .prepareEvents_ .removeInterest (this, "update");
+				this .getBrowser () .prepareEvents () .removeInterest (this, "update");
 			}
 		},
 		getEnabled: function ()
@@ -66,8 +66,8 @@ function ($,
 					transparentShapes += layer .numTransparentShapes;
 				}
 				
-				sensors += Object .keys (this .getBrowser () .prepareEvents_ .getInterests ()) .length;
-				sensors += Object .keys (this .getBrowser () .sensors_ .getInterests ()) .length;
+				sensors += Object .keys (this .getBrowser () .prepareEvents () .getInterests ()) .length;
+				sensors += Object .keys (this .getBrowser () .getSensors () .getInterests ()) .length;
 
 				var text = "";
 				text += "Rendering Properties\n\n";

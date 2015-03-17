@@ -5,6 +5,8 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
+	"text!cobweb/Browser/Rendering/Wireframe.vs",
+	"text!cobweb/Browser/Rendering/Wireframe.fs",
 	"text!cobweb/Browser/Rendering/Gouraud.vs",
 	"text!cobweb/Browser/Rendering/Gouraud.fs",
 	"text!cobweb/Browser/Rendering/Phong.vs",
@@ -16,6 +18,8 @@ define ([
 function (Fields,
           ComposedShader,
           ShaderPart,
+          wireframeVS,
+          wireframeFS,
           gouraudVS,
           gouraudFS,
           phongVS,
@@ -25,6 +29,27 @@ function (Fields,
           MatrixStack)
 {
 	var MFInt32 = Fields .MFInt32;
+	
+	function getShader (executionContext, vs, fs)
+	{
+		var vertexShader = new ShaderPart (executionContext);
+		vertexShader .type_ = "VERTEX";
+		vertexShader .url_ .push (vs);
+		vertexShader .setup ();
+
+		var fragmentShader = new ShaderPart (executionContext);
+		fragmentShader .type_ = "FRAGMENT";
+		fragmentShader .url_ .push (fs);
+		fragmentShader .setup ();
+
+		shader = new ComposedShader (executionContext);
+		shader .language_ = "GLSL";
+		shader .parts_ .push (vertexShader);
+		shader .parts_ .push (fragmentShader);
+		shader .setup ();
+		
+		return shader;
+	}
 
 	function X3DRenderingContext (x3d)
 	{
@@ -64,8 +89,9 @@ function (Fields,
 
 			this .reshape ();
 
-			//this .setDefaultShader ("PHONG");
 			this .setDefaultShader ("GOURAUD");
+			this .setLineShader ("GOURAUD");
+			this .setShader (this .getDefaultShader ());
 		},
 		getVendor: function ()
 		{
@@ -128,42 +154,18 @@ function (Fields,
 			{
 				case "PHONG":
 				{
-					var vertexShader = new ShaderPart (this);
-					vertexShader .type_ = "VERTEX";
-					vertexShader .url_ .push (phongVS);
-					vertexShader .setup ();
+					if (! this .phongShader)
+						this .phongShader = getShader (this, phongVS, phongFS);
 
-					var fragmentShader = new ShaderPart (this);
-					fragmentShader .type_ = "FRAGMENT";
-					fragmentShader .url_ .push (phongFS);
-					fragmentShader .setup ();
-
-					this .defaultShader = new ComposedShader (this);
-					this .defaultShader .language_ = "GLSL";
-					this .defaultShader .parts_ .push (vertexShader);
-					this .defaultShader .parts_ .push (fragmentShader);
-					this .defaultShader .setup ();
-
+					this .defaultShader = this .phongShader;
 					break;
 				}
 				default:
 				{
-					var vertexShader = new ShaderPart (this);
-					vertexShader .type_ = "VERTEX";
-					vertexShader .url_ .push (gouraudVS);
-					vertexShader .setup ();
+					if (! this .gouraudShader)
+						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
 
-					var fragmentShader = new ShaderPart (this);
-					fragmentShader .type_ = "FRAGMENT";
-					fragmentShader .url_ .push (gouraudFS);
-					fragmentShader .setup ();
-
-					this .defaultShader = new ComposedShader (this);
-					this .defaultShader .language_ = "GLSL";
-					this .defaultShader .parts_ .push (vertexShader);
-					this .defaultShader .parts_ .push (fragmentShader);
-					this .defaultShader .setup ();
-
+					this .defaultShader = this .gouraudShader;
 					break;
 				}
 			}
@@ -171,6 +173,33 @@ function (Fields,
 		getDefaultShader: function ()
 		{
 			return this .defaultShader;
+		},
+		setLineShader: function (type)
+		{
+			switch (type)
+			{
+				case "POINTSET":
+				default:
+				{
+					if (! this .wireframeShader)
+						this .wireframeShader = getShader (this, wireframeVS, wireframeFS);
+
+					this .lineShader = this .wireframeShader;
+					break;
+				}
+			}
+		},
+		getLineShader: function ()
+		{
+			return this .lineShader;
+		},
+		setShader: function (value)
+		{
+			this .shader = value;
+		},
+		getShader: function ()
+		{
+			return this .shader;
 		},
 		reshape: function ()
 		{

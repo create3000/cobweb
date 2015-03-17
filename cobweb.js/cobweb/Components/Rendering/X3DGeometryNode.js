@@ -19,7 +19,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		this .colors    = [ ];
 		this .texCoords = [ ];
 		this .normals   = [ ];
-		this .triangles = [ ];
+		this .vertices  = [ ];
 
 		this .addType (X3DConstants .X3DGeometryNode);
 	}
@@ -45,6 +45,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .texCoordBuffers = [ ];
 			this .normalBuffer    = gl .createBuffer ();
 			this .vertexBuffer    = gl .createBuffer ();
+			this .primitiveMode   = gl .TRIANGLES;
 		},
 		isTransparent: function ()
 		{
@@ -57,6 +58,10 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		getBBox: function ()
 		{
 			return this .bbox;
+		},
+		setPrimitiveMode: function (value)
+		{
+			this .primitiveMode = this .getBrowser () .getContext () [value];
 		},
 		setSolid: function (value)
 		{
@@ -91,15 +96,15 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .normals .push (normal .y);
 			this .normals .push (normal .z);
 		},
-		addTriangle: function (vertex)
+		addVertex: function (vertex)
 		{
 			this .min = Vector3 .min (this .min, vertex);
 			this .max = Vector3 .max (this .max, vertex);
 
-			this .triangles .push (vertex .x);
-			this .triangles .push (vertex .y);
-			this .triangles .push (vertex .z);
-			this .triangles .push (1);
+			this .vertices .push (vertex .x);
+			this .vertices .push (vertex .y);
+			this .vertices .push (vertex .z);
+			this .vertices .push (1);
 		},
 		refineNormals: function (normalIndex, normals, creaseAngle)
 		{
@@ -138,7 +143,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .clear ();
 			this .build ();
 
-			this .bbox = this .triangles .length ? new Box3 (this .min, this .max, true) : new Box3 ();
+			this .bbox = this .vertices .length ? new Box3 (this .min, this .max, true) : new Box3 ();
 
 			if (! this .isLineGeometry ())
 			{
@@ -156,7 +161,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .colors    .length = 0;
 			this .texCoords .length = 0;
 			this .normals   .length = 0;
-			this .triangles .length = 0;
+			this .vertices  .length = 0;
 		},
 		buildTexCoords: function ()
 		{
@@ -165,10 +170,10 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 			this .texCoords .push (texCoords);
 
-			for (var i = 0; i < this .triangles .length; i += 4)
+			for (var i = 0; i < this .vertices .length; i += 4)
 			{
-				texCoords .push ((this .triangles [i + p .Sindex] - p .min [p .Sindex]) / p .Ssize,
-				                 (this .triangles [i + p .Tindex] - p .min [p .Tindex]) / p .Ssize,
+				texCoords .push ((this .vertices [i + p .Sindex] - p .min [p .Sindex]) / p .Ssize,
+				                 (this .vertices [i + p .Tindex] - p .min [p .Tindex]) / p .Ssize,
 				                 0,
 				                 1);
 			}
@@ -224,7 +229,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		transfer: function ()
 		{
 			var gl       = this .getBrowser () .getContext ();
-			var vertices = this .triangles .length / 4;
+			var vertices = this .vertices .length / 4;
 
 			// Transfer colors.
 
@@ -257,8 +262,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			// Transfer vertices.
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .triangles), gl .STATIC_DRAW);
-			this .triangles .vertices = vertices;
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
+			this .vertices .count = vertices;
   		},
 		traverse: function (context)
 		{
@@ -266,7 +271,7 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 			var browser = this .getBrowser ();
 			var gl      = browser .getContext ();
-			var shader  = browser .getDefaultShader ();
+			var shader  = browser .getShader ();
 
 			// Shader
 
@@ -274,37 +279,37 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 			//
 
-			var vertexAttribArray = 0;
+			var vertexAttribIndex = 0;
 
 			if (shader .color >= 0)
 			{
-				gl .enableVertexAttribArray (vertexAttribArray ++);
+				gl .enableVertexAttribArray (vertexAttribIndex ++);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colors .length ? this .colorBuffer : browser .getDefaultColorBuffer ());
 				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
 			}
 
 			if (shader .texCoord >= 0)
 			{
-				gl .enableVertexAttribArray (vertexAttribArray ++);
+				gl .enableVertexAttribArray (vertexAttribIndex ++);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
 			if (shader .normal >= 0)
 			{
-				gl .enableVertexAttribArray (vertexAttribArray ++);
+				gl .enableVertexAttribArray (vertexAttribIndex ++);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
 				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
 			if (shader .position >= 0)
 			{
-				gl .enableVertexAttribArray (vertexAttribArray ++);
+				gl .enableVertexAttribArray (vertexAttribIndex ++);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 				gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (vertexAttribArray)
+			if (vertexAttribIndex)
 			{
 				var positiveScale = context .modelViewMatrix .determinant3 () > 0;
 
@@ -315,24 +320,22 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 					gl .enable (gl .CULL_FACE);
 
 					gl .cullFace (gl .FRONT);
-					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .vertices);		
+					gl .drawArrays (this .primitiveMode, 0, this .vertices .count);		
 
 					gl .cullFace (gl .BACK);
-					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .vertices);		
+					gl .drawArrays (this .primitiveMode, 0, this .vertices .count);		
 				}
 				else
 				{
-					// Solid & ccw
-
 					if (this .solid)
 						gl .enable (gl .CULL_FACE);
 					else
 						gl .disable (gl .CULL_FACE);
 
-					gl .drawArrays (gl .TRIANGLES, 0, this .triangles .vertices);
+					gl .drawArrays (this .primitiveMode, 0, this .vertices .count);
 				}
 
-				for (var i = 0; i < vertexAttribArray; ++ i)
+				for (var i = 0; i < vertexAttribIndex; ++ i)
 					gl .disableVertexAttribArray (i);
 			}
 		},

@@ -53,12 +53,15 @@ function ($,
 			{
 				X3DAppearanceNode .prototype .initialize .call (this);
 				
-				this .material_ .addInterest (this, "set_material__");
-				this .texture_  .addInterest (this, "set_texture__");
-				
+				this .material_         .addInterest (this, "set_material__");
+				this .texture_          .addInterest (this, "set_texture__");
+				this .textureTransform_ .addInterest (this, "set_textureTransform__");
+				this .shaders_          .addInterest (this, "set_shaders__");
+
 				this .set_material__ ();
 				this .set_texture__ ();
 				this .set_textureTransform__ ();
+				this .set_shaders__ ();
 			},
 			isTransparent: function ()
 			{
@@ -82,12 +85,16 @@ function ($,
 				
 				this .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
 			},
+			set_shaders__: function ()
+			{
+			},
 			traverse: function ()
 			{
 				var browser = this .getBrowser ();
 
 				browser .setMaterial (this .materialNode);
 				browser .setTexture (this .textureNode);
+				browser .setShader (browser .getDefaultShader ());
 
 				this .textureTransformNode .traverse ();
 			},

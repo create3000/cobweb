@@ -48,7 +48,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 				return;
 
 			this .button    = event .button;
-			this .pressTime = Date .now ();
+			this .pressTime = performance .now ();
 		
 			var offset = this .getBrowser () .getCanvas () .offset (); 
 			var x      = event .pageX - offset .left;
@@ -93,7 +93,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 					event .preventDefault ();
 					this .getBrowser () .setCursor ("DEFAULT");
 
-					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && Date .now () - this .motionTime < SPIN_RELEASE_TIME)
+					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && performance .now () - this .motionTime < SPIN_RELEASE_TIME)
 					{
 						try
 						{
@@ -134,14 +134,14 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 					this .rotation = new Rotation4 (toVector, this .fromVector);
 
-					if (Math .abs (this .rotation .angle) < SPIN_ANGLE && Date .now () - this .pressTime < MOTION_TIME)
+					if (Math .abs (this .rotation .angle) < SPIN_ANGLE && performance .now () - this .pressTime < MOTION_TIME)
 						return false;
 
 					viewpoint .orientationOffset_ = this .getOrientationOffset ();
 					viewpoint .positionOffset_    = this .getPositionOffset ();
 
 					this .fromVector = toVector;
-					this .motionTime = Date .now ();
+					this .motionTime = performance .now ();
 					break;
 				}
 				case 1:

@@ -64,10 +64,10 @@ function ($,
 			update: function ()
 			{
 				this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
-				this .diffuseColor     = this .diffuseColor_  .getValue ();
-				this .specularColor    = this .specularColor_ .getValue ();
-				this .emissiveColor    = this .emissiveColor_ .getValue ();
-				this .shininess        = Algorithm .clamp (this .shininess_    .getValue (), 0, 1);
+				this .diffuseColor     = new Float32Array (this .diffuseColor_  .getValue ());
+				this .specularColor    = new Float32Array (this .specularColor_ .getValue ());
+				this .emissiveColor    = new Float32Array (this .emissiveColor_ .getValue ());
+				this .shininess        = Algorithm .clamp (this .shininess_    .getValue (), 0, 1) * 128;
 				this .transparency     = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
 			},
 		});

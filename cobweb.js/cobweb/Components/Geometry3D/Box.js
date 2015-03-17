@@ -55,16 +55,16 @@ function ($,
 				if (this .size_ .getValue () .equals (new Vector3 (2, 2, 2)))
 				{
 					for (var i = 0; i < options .triangles .length; ++ i)
-						this .addTriangle (options .triangles [i]);			
+						this .addVertex (options .triangles [i]);			
 				}
 				else
 				{
 					var size1_2 = Vector3 .divide (this .size_ .getValue (), 2);
 
 					for (var i = 0; i < options .triangles .length; ++ i)
-						this .addTriangle (Vector3 .multVec (options .triangles [i], size1_2));			
+						this .addVertex (Vector3 .multVec (options .triangles [i], size1_2));			
 				}
-	
+
 				this .setSolid (this .solid_ .getValue ());
 				this .setCurrentTexCoord (null);
 			},

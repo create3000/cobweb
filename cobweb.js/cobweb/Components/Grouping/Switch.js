@@ -29,6 +29,8 @@ function ($,
 			X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Switch);
+
+			this .addAlias ("choice", this .children_);
 		}
 
 		Switch .prototype = $.extend (new X3DGroupingNode (),

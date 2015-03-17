@@ -132,6 +132,17 @@ function ($,
 				this .normal   = gl .getAttribLocation (this .program, "x3d_normal");
 				this .position = gl .getAttribLocation (this .program, "x3d_position");			
 			},
+			setGlobalLights: function ()
+			{
+				var browser      = this .getBrowser ();
+				var gl           = browser .getContext ();
+				var globalLights = browser .getGlobalLights ();
+
+				this .use ();
+
+				for (var i = 0; i < globalLights .length; ++ i)
+					globalLights [i] .use (gl, this, i);
+			},
 			setDefaultUniforms: function (context)
 			{
 				var browser = this .getBrowser ();
@@ -160,13 +171,13 @@ function ($,
 
 					// Material
 
-					gl .uniform1i (this .lighting,         true);
-					gl .uniform1f (this .ambientIntensity, material .ambientIntensity);
-					gl .uniform3f (this .diffuseColor,     material .diffuseColor  .r, material .diffuseColor  .g, material .diffuseColor  .b);
-					gl .uniform3f (this .specularColor,    material .specularColor .r, material .specularColor .g, material .specularColor .b);
-					gl .uniform3f (this .emissiveColor,    material .emissiveColor .r, material .emissiveColor .g, material .emissiveColor .b);
-					gl .uniform1f (this .shininess,        material .shininess);
-					gl .uniform1f (this .transparency,     material .transparency);
+					gl .uniform1i  (this .lighting,         true);
+					gl .uniform1f  (this .ambientIntensity, material .ambientIntensity);
+					gl .uniform3fv (this .diffuseColor,     material .diffuseColor);
+					gl .uniform3fv (this .specularColor,    material .specularColor);
+					gl .uniform3fv (this .emissiveColor,    material .emissiveColor);
+					gl .uniform1f  (this .shininess,        material .shininess);
+					gl .uniform1f  (this .transparency,     material .transparency);
 				}
 				else
 				{

@@ -24,6 +24,8 @@ function ($,
 			X3DSensorNode   .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Collision);
+
+			this .addAlias ("collide", this .enabled_);
 		}
 
 		Collision .prototype = $.extend (new X3DGroupingNode (),

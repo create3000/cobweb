@@ -50,7 +50,7 @@ main ()
 	vec4 C  = x3d_color;
 	     t  = x3d_textureMatrix * x3d_texCoord;
 	vec3 N  = normalize (x3d_normalMatrix * x3d_normal);
-	vec3 N_ = -N;
+	vec3 bN = -N;
 	vec3 v  = vec3 (x3d_modelViewMatrix * x3d_position);
 
 	gl_Position = x3d_projectionMatrix * x3d_modelViewMatrix * x3d_position;
@@ -91,14 +91,14 @@ main ()
 				vec3 H = normalize (L + V); // specular term
 
 				vec3  frontDiffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);
-				float frontSpecularFactor = bool (x3d_shininess) ? pow (max (dot (N, H), 0.0), 128.0 * x3d_shininess) : 1.0;
+				float frontSpecularFactor = bool (x3d_shininess) ? pow (max (dot (N, H), 0.0), x3d_shininess) : 1.0;
 				vec3  frontSpecularTerm   = x3d_specularColor * frontSpecularFactor;
 
-				vec3  backDiffuseTerm    = diffuseFactor * max (dot (N_, L), 0.0);
-				float backSpecularFactor = bool (x3d_shininess) ? pow (max (dot (N_, H), 0.0), 128.0 * x3d_shininess) : 1.0;
+				vec3  backDiffuseTerm    = diffuseFactor * max (dot (bN, L), 0.0);
+				float backSpecularFactor = bool (x3d_shininess) ? pow (max (dot (bN, H), 0.0), x3d_shininess) : 1.0;
 				vec3  backSpecularTerm   = x3d_specularColor * backSpecularFactor;
 
-				float attenuation = 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
+				float attenuation = x3d_lightType [i] == DIRECTIONAL_LIGHT ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
 				float spot        = 1.0;
 
 				if (x3d_lightType [i] == SPOT_LIGHT)
@@ -114,15 +114,12 @@ main ()
 				}
 
 				vec3 lightFactor  = (attenuation * spot) * x3d_lightColor [i];
-				vec3 ambientLight = x3d_lightAmbientIntensity [i] * ambientTerm;
+				vec3 ambientLight = (lightFactor * x3d_lightAmbientIntensity [i]) * ambientTerm;
 
-				frontFinalColor += lightFactor *
-				                   (ambientLight +
-				                   x3d_lightIntensity [i] * (frontDiffuseTerm + frontSpecularTerm));
+				lightFactor *= x3d_lightIntensity [i];
 
-				backFinalColor += lightFactor *
-				                  (ambientLight +
-				                  x3d_lightIntensity [i] * (backDiffuseTerm + backSpecularTerm));
+				frontFinalColor += ambientLight + lightFactor * (frontDiffuseTerm + frontSpecularTerm);
+				backFinalColor  += ambientLight + lightFactor * (backDiffuseTerm  + backSpecularTerm);
 			}
 		}
 

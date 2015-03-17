@@ -1,8 +1,10 @@
 
 define ([
-	"cobweb/Browser/Core/RenderingProperties"
+	"cobweb/Browser/Core/BrowserOptions",
+	"cobweb/Browser/Core/RenderingProperties",
 ],
-function (RenderingProperties)
+function (BrowserOptions,
+          RenderingProperties)
 {
 	function getContext (canvas)
 	{
@@ -38,7 +40,10 @@ function (RenderingProperties)
 			this .canvas  = $("<canvas/>") .prependTo (canvas);
 			this .context = getContext (this .canvas [0]);
 
+			this .browserOptions      = new BrowserOptions (this);
 			this .renderingProperties = new RenderingProperties (this);
+
+			this .browserOptions      .setup ()
 			this .renderingProperties .setup ();
 		},
 		getX3D: function ()
@@ -52,6 +57,10 @@ function (RenderingProperties)
 		getContext: function ()
 		{
 			return this .context;
+		},
+		getBrowserOptions: function ()
+		{
+			return this .browserOptions;
 		},
 		getRenderingProperties: function ()
 		{

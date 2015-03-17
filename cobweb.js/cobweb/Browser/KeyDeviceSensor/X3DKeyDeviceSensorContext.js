@@ -42,6 +42,36 @@ function ($)
 					this .altKey = true;
 					break;
 				}
+				case 49: // 1
+				{
+					if (this .ctrlKey)
+						this .setBrowserOption ("Shading", "POINTSET");
+					break;
+				}
+				case 50: // 2
+				{
+					if (this .ctrlKey)
+						this .setBrowserOption ("Shading", "WIREFRAME");
+				break;
+				}
+				case 51: // 3
+				{
+					if (this .ctrlKey)
+						this .setBrowserOption ("Shading", "FLAT");
+					break;
+				}
+				case 52: // 4
+				{
+					if (this .ctrlKey)
+						this .setBrowserOption ("Shading", "GOURAUD");
+					break;
+				}
+				case 53: // 5
+				{
+					if (this .ctrlKey)
+						this .setBrowserOption ("Shading", "PHONG");
+					break;
+				}
 				case 225: // Alt Gr
 				{
 					this .altGrKey = true;
