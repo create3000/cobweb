@@ -126,8 +126,8 @@ main ()
 		frontFinalColor += x3d_emissiveColor;
 		backFinalColor  += x3d_emissiveColor;
 
-		frontColor = vec4 (frontFinalColor, alpha);
-		backColor  = vec4 (backFinalColor, alpha);
+		frontColor = vec4 (clamp (frontFinalColor, 0.0, 1.0), alpha);
+		backColor  = vec4 (clamp (backFinalColor,  0.0, 1.0), alpha);
 	}
 	else
 	{
