@@ -34,8 +34,7 @@ function ($, Fields)
 			Colon:        /^\:/y,
 
 			// Values
-			hex:    /^(0[xX][\da-fA-F]+)/y,
-			int32:  /^([+-]?\d+)/y,
+			int32:  /^((?:0[xX][\da-fA-F]+)|(?:[+-]?\d+))/y,
 			double: /^([+-]?(?:(?:(?:\d*\.\d+)|(?:\d+(?:\.)?))(?:[eE][+-]?\d+)?))/y,
 			string: /^"((?:[^\\"]|\\\\|\\\")*)"/y,
 			
@@ -159,12 +158,6 @@ function ($, Fields)
 			int32: function ()
 			{
 				this .comments ();
-				
-				if (Grammar .hex .parse (this))
-				{
-					this .value = parseInt (this .result [1], 16);
-					return true;
-				}
 
 				if (Grammar .int32 .parse (this))
 				{
@@ -378,7 +371,7 @@ function ($, Fields)
 				if (this .int32 ())
 				{
 					var width = this .value;
-					
+
 					if (this .int32 ())
 					{
 						var height = this .value;
@@ -388,7 +381,7 @@ function ($, Fields)
 							var comp  = this .value;
 							var array = [ ];
 							var size  = width * height;
-							
+
 							for (var i = 0; i < size; ++ i)
 							{
 								if (this .int32 ())

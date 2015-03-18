@@ -59,6 +59,15 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		{
 			return this .bbox;
 		},
+		setExtents: function (extents)
+		{
+			this .min = extents [0];
+			this .max = extents [1];
+		},
+		getExtents: function ()
+		{
+			return [this .min, this .max];
+		},
 		setPrimitiveMode: function (value)
 		{
 			this .primitiveMode = this .getBrowser () .getContext () [value];
@@ -82,6 +91,18 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			else
 				this .colors .push (color .a);
 		},
+		setColors: function (value)
+		{
+			this .colors = value;
+		},
+		getColors: function ()
+		{
+			return this .colors;
+		},
+		setTexCoords: function (value)
+		{
+			this .texCoords = value;
+		},
 		getTexCoords: function ()
 		{
 			return this .texCoords;
@@ -96,6 +117,14 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .normals .push (normal .y);
 			this .normals .push (normal .z);
 		},
+		setNormals: function (value)
+		{
+			this .normals = value;
+		},
+		getNormals: function ()
+		{
+			return this .normals;
+		},
 		addVertex: function (vertex)
 		{
 			this .min = Vector3 .min (this .min, vertex);
@@ -105,6 +134,14 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .vertices .push (vertex .y);
 			this .vertices .push (vertex .z);
 			this .vertices .push (1);
+		},
+		setVertices: function (value)
+		{
+			this .vertices = value;
+		},
+		getVertices: function ()
+		{
+			return this .vertices;
 		},
 		refineNormals: function (normalIndex, normals, creaseAngle)
 		{

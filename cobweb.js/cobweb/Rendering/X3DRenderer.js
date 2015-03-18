@@ -32,7 +32,7 @@ function (TraverseType, QuickSort, Matrix4)
 			             this .scissor [1],
 			             this .scissor [2],
 			             this .scissor [3]);
-		
+
 			this .shape .draw (this);
 		},
 	};

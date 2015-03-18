@@ -15,10 +15,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 
 	function Image (width, height, comp, array)
 	{
-		this .width_  = width;
-		this .height_ = height;
-		this .comp    = comp;
-		this .array   = new MFInt32 (array);
+		this .width  = width;
+		this .height = height;
+		this .comp   = comp;
+		this .array  = new MFInt32 ();
+		this .array .setValue (array);
 		this .array .length = width * height;
 	}
 	
@@ -48,39 +49,44 @@ function ($, X3DField, ArrayFields, X3DConstants)
 			this .width  = width;
 			this .height = height;
 			this .comp   = comp;
-			this .array .assign (array);
+			this .array .set (array);
+		},
+		setWidth: function (value)
+		{
+			this .width = value;
+			this .array .length = this .width  * this .height;	
+		},
+		getWidth: function ()
+		{
+			return this .width;
+		},
+		setHeight: function (value)
+		{
+			this .height = value;
+			this .array .length = this .width  * this .height;	
+		},
+		getHeight: function ()
+		{
+			return this .height;
+		},
+		setComp: function (value)
+		{
+			this .comp = value;
+		},
+		getComp: function ()
+		{
+			return this .comp;
+		},
+		setArray: function (value)
+		{
+			this .array .setValue (value);
+			this .array .length = this .width  * this .height;	
+		},
+		getArray: function ()
+		{
+			return this .array;
 		},
 	};
-
-	Object .defineProperty (SFImage .prototype, "width",
-	{
-		get: function ()
-		{
-			return this .width_;
-		},
-		set: function (value)
-		{
-			this .width_ = value;
-			this .array .length = this .width  * this .height;
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFImage .prototype, "height",
-	{
-		get: function ()
-		{
-			return this .height_;
-		},
-		set: function (value)
-		{
-			this .height_ = value;
-			this .array .length = this .width  * this .height;
-		},
-		enumerable: true,
-		configurable: false
-	});
 
 	/*
 	 *  SFImage
@@ -88,18 +94,22 @@ function ($, X3DField, ArrayFields, X3DConstants)
 
 	function SFImage (width, height, comp, array)
 	{
-		if (arguments .length)
+		if (arguments .length === 4)
 			X3DField .call (this, new Image (+width, +height, +comp, array));
 		else
 			X3DField .call (this, new Image (0, 0, 0, new MFInt32 ()));
 
-		this .getValue () .array .addParent (this);
-		//this .getValue () .array .addInterest (this, "set_size__");
+		this .getValue () .getArray () .addParent (this);
+		this .addInterest (this, "set_size__");
 	}
 
 	SFImage .prototype = $.extend (new X3DField (),
 	{
 		constructor: SFImage,
+		set_size__: function ()
+		{
+			this .getValue () .getArray () .length = this .width * this .height;
+		},
 		copy: function ()
 		{
 			return new SFImage (this .getValue ());
@@ -130,11 +140,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 	{
 		get: function ()
 		{
-			return this .getValue () .width;
+			return this .getValue () .getWidth ();
 		},
 		set: function (value)
 		{
-			this .getValue () .width = value;
+			this .getValue () .setWidth (value);
 			this .addEvent ();
 		},
 		enumerable: true,
@@ -145,11 +155,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 	{
 		get: function ()
 		{
-			return this .getValue () .width;
+			return this .getValue () .getWidth ();
 		},
 		set: function (value)
 		{
-			this .getValue () .width = value;
+			this .getValue () .setWidth (value);
 			this .addEvent ();
 		},
 		enumerable: false,
@@ -160,11 +170,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 	{
 		get: function ()
 		{
-			return this .getValue () .height;
+			return this .getValue () .getHeight ();
 		},
 		set: function (value)
 		{
-			this .getValue () .height = value;
+			this .getValue () .setHeight (value);
 			this .addEvent ();
 		},
 		enumerable: true,
@@ -175,11 +185,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 	{
 		get: function ()
 		{
-			return this .getValue () .height;
+			return this .getValue () .getHeight ();
 		},
 		set: function (value)
 		{
-			this .getValue () .height = value;
+			this .getValue () .setHeight (value);
 			this .addEvent ();
 		},
 		enumerable: false,
@@ -190,11 +200,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 	{
 		get: function ()
 		{
-			return this .getValue () .comp;
+			return this .getValue () .getComp ();
 		},
 		set: function (value)
 		{
-			this .getValue () .comp = value;
+			this .getValue () .setComp (value);
 			this .addEvent ();
 		},
 		enumerable: true,
@@ -205,11 +215,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 	{
 		get: function ()
 		{
-			return this .getValue () .array;
+			return this .getValue () .getArray ();
 		},
 		set: function (value)
 		{
-			this .getValue () .array = value;
+			this .getValue () .setArray (value);
 			this .addEvent ();
 		},
 		enumerable: true,

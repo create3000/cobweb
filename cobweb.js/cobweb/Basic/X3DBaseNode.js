@@ -53,7 +53,7 @@ function ($, X3DEventObject, Fields, X3DConstants)
 
 				Object .defineProperty (this, name + "_",
 				{
-					get: function () { return field; },
+					get: function () { return this; } .bind (field),
 					set: field .setValue .bind (field),
 					enumerable: true,
 					configurable: true,

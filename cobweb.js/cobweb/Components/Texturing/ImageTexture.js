@@ -137,7 +137,7 @@ function ($,
 					data = cx .getImageData (0, 0, width, height) .data;
 				}
 
-				setTimeout (this .setTexture .bind (this, width, height, ! opaque, new Uint8Array (data)), 0);
+				setTimeout (this .setTexture .bind (this, width, height, ! opaque, new Uint8Array (data), true), 0);
 			},
 		});
 

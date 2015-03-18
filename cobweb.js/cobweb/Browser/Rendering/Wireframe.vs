@@ -17,17 +17,19 @@ varying vec4 C; // color
 void
 main ()
 {
+	float alpha = 1.0 - x3d_transparency;
+
 	if (x3d_lighting)
 	{
 		if (x3d_colorMaterial)
 		{
 			C .rgb = x3d_color .rgb;
-			C .a   = x3d_color .a * x3d_transparency;
+			C .a   = x3d_color .a * alpha;
 		}
 		else
 		{
 			C .rgb = x3d_emissiveColor;
-			C .a   = x3d_transparency;
+			C .a   = alpha;
 		}
 	}
 	else

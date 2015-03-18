@@ -48,25 +48,22 @@ function ($,
 			build: function ()
 			{
 				var options = this .getBrowser () .getBoxOptions ();
+				
+				this .scale = this .size_ .getValue () .copy () .divide (2);
 
-				for (var i = 0; i < options .normals .length; ++ i)
-					this .addNormal (options .normals [i]);
-
-				if (this .size_ .getValue () .equals (new Vector3 (2, 2, 2)))
-				{
-					for (var i = 0; i < options .triangles .length; ++ i)
-						this .addVertex (options .triangles [i]);			
-				}
-				else
-				{
-					var size1_2 = Vector3 .divide (this .size_ .getValue (), 2);
-
-					for (var i = 0; i < options .triangles .length; ++ i)
-						this .addVertex (Vector3 .multVec (options .triangles [i], size1_2));			
-				}
+				this .setExtents   (options .getGeometry () .getExtents ());
+				this .setNormals   (options .getGeometry () .getNormals ());
+				this .setTexCoords (options .getGeometry () .getTexCoords ());
+				this .setVertices  (options .getGeometry () .getVertices ());
 
 				this .setSolid (this .solid_ .getValue ());
 				this .setCurrentTexCoord (null);
+			},
+			traverse: function (context)
+			{
+				context .modelViewMatrix .scale (this .scale);
+
+				X3DGeometryNode .prototype .traverse .call (this, context);
 			},
 		});
 

@@ -60,7 +60,7 @@ function ($,
 		{
 			return this .height;
 		},
-		setTexture: function (width, height, transparent, data)
+		setTexture: function (width, height, transparent, data, flip)
 		{
 			this .transparent = transparent;
 			this .width       = width;
@@ -68,7 +68,7 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, true);
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flip);
 			gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
@@ -94,7 +94,7 @@ function ($,
 		},
 		clear: function ()
 		{
-			this .setTexture (1, 1, 3, new Uint8Array ([ 255, 255, 255, 255 ]));
+			this .setTexture (1, 1, false, new Uint8Array ([ 255, 255, 255, 255 ]), false);
 		},
 		traverse: function ()
 		{
