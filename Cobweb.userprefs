@@ -1,17 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/EnvironmentalSensor/VisibilitySensor.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="41" Column="4" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="274" Column="30" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/IndexedLineSet.js" Line="76" Column="30" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DComposedGeometryNode.js" Line="76" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geometry3D/IndexedFaceSet.js" Line="172" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="180" Column="5" />
-      <File FileName="cobweb.js/cobweb/Components/Networking/Inline.js" Line="110" Column="1" />
-      <File FileName="cobweb.js/cobweb/InputOutput/Loader.js" Line="33" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="142" Column="1" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="154" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/VisibilitySensor.js" Line="89" Column="31" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/ProximitySensor.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Time/X3DTimeDependentNode.js" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -23,6 +18,7 @@
               <Node name="Bits" expanded="True" />
               <Node name="Browser" expanded="True">
                 <Node name="Core" expanded="True" />
+                <Node name="Geometry3D" expanded="True" />
                 <Node name="KeyDeviceSensor" expanded="True" />
                 <Node name="Layering" expanded="True" />
                 <Node name="Navigation" expanded="True" />
@@ -35,7 +31,9 @@
               <Node name="Components" expanded="True">
                 <Node name="Core" expanded="True" />
                 <Node name="EnvironmentalEffects" expanded="True" />
-                <Node name="EnvironmentalSensor" expanded="True" />
+                <Node name="EnvironmentalSensor" expanded="True">
+                  <Node name="VisibilitySensor.js" selected="True" />
+                </Node>
                 <Node name="Geometry3D" expanded="True" />
                 <Node name="Grouping" expanded="True" />
                 <Node name="Layering" expanded="True" />
@@ -59,6 +57,7 @@
             <Node name="stable" expanded="True" />
             <Node name="standard" expanded="True">
               <Node name="Math" expanded="True">
+                <Node name="Algorithms" expanded="True" />
                 <Node name="Geometry" expanded="True" />
                 <Node name="Numbers" expanded="True" />
                 <Node name="Utility" expanded="True" />
@@ -70,14 +69,17 @@
                 <Node name="Rendering" expanded="True" />
               </Node>
               <Node name="Examples" expanded="True">
-                <Node name="Approach" expanded="True" />
+                <Node name="Approach" expanded="True">
+                  <Node name="stage" expanded="True" />
+                </Node>
+                <Node name="BIC" expanded="True" />
                 <Node name="LogoPieces" expanded="True" />
                 <Node name="MovieTruck" expanded="True" />
                 <Node name="Rathaus" expanded="True" />
               </Node>
             </Node>
           </Node>
-          <Node name="meta" expanded="True" selected="True" />
+          <Node name="meta" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">

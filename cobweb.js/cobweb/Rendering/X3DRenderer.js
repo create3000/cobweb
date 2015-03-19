@@ -6,10 +6,10 @@ define ([
 ],
 function (TraverseType, QuickSort, Matrix4)
 {
-	function ShapeContainer ()
+	function ShapeContainer (transparent)
 	{
 		this .shape           = null;
-		this .transparent     = false;
+		this .transparent     = transparent;
 		this .modelViewMatrix = new Matrix4 ();
 		this .scissor         = null;
 		this .distance        = 0;
@@ -18,10 +18,9 @@ function (TraverseType, QuickSort, Matrix4)
 
 	ShapeContainer .prototype =
 	{
-		assign: function (shape, transparent, modelViewMatrix, scissor, distance)
+		assign: function (shape, modelViewMatrix, scissor, distance)
 		{
 			this .shape           = shape;
-			this .transparent     = transparent;
 			this .modelViewMatrix .assign (modelViewMatrix);
 			this .scissor         = scissor;
 			this .distance        = distance;	
@@ -57,7 +56,7 @@ function (TraverseType, QuickSort, Matrix4)
 		initialize: function ()
 		{
 		},
-		getViewVolumes: function ()
+		getViewVolumeStack: function ()
 		{
 			return this .viewVolumes;
 		},
@@ -81,18 +80,18 @@ function (TraverseType, QuickSort, Matrix4)
 					if (shape .isTransparent ())
 					{
 						if (this .numTransparentShapes === this .transparentShapes .length)
-							this .transparentShapes .push (new ShapeContainer ());
+							this .transparentShapes .push (new ShapeContainer (true));
 
-						this .transparentShapes [this .numTransparentShapes] .assign (shape, true, modelViewMatrix, viewVolume .getScissor (), distance);
+						this .transparentShapes [this .numTransparentShapes] .assign (shape, modelViewMatrix, viewVolume .getScissor (), distance);
 
 						++ this .numTransparentShapes;
 					}
 					else
 					{
 						if (this .numOpaqueShapes === this .opaqueShapes .length)
-							this .opaqueShapes .push (new ShapeContainer ());
+							this .opaqueShapes .push (new ShapeContainer (false));
 
-						this .opaqueShapes [this .numOpaqueShapes] .assign (shape, false, modelViewMatrix, viewVolume .getScissor (), distance);
+						this .opaqueShapes [this .numOpaqueShapes] .assign (shape, modelViewMatrix, viewVolume .getScissor (), distance);
 
 						++ this .numOpaqueShapes;
 					}
@@ -148,7 +147,7 @@ function (TraverseType, QuickSort, Matrix4)
 		{
 			var browser = this .getBrowser ();
 			var gl      = browser .getContext ();
-			var shader  = browser .getDefaultShader (); // Set lights in shader, same as local lights
+			var shader  = browser .getDefaultShader ();
 
 			shader .setGlobalLights ();
 

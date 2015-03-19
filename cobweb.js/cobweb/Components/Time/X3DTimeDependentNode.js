@@ -39,17 +39,17 @@ function ($,
 				this .addChildren ("initialized", new SFTime (),
 				                   "isEvenLive",  new SFBool ());
 
-				this .getExecutionContext () .isLive_ .addInterest (this, "set_live_");
-				this .isEvenLive_                     .addInterest (this, "set_live_");
-				this .isLive_                         .addInterest (this, "set_live_");
+				this .getExecutionContext () .isLive_ .addInterest (this, "set_live__");
+				this .isEvenLive_                     .addInterest (this, "set_live__");
+				this .isLive_                         .addInterest (this, "set_live__");
 
-				this .initialized_ .addInterest (this, "set_loop_");
-				this .enabled_     .addInterest (this, "set_enabled_");
-				this .loop_        .addInterest (this, "set_loop_");
-				this .startTime_   .addInterest (this, "set_startTime_");
-				this .pauseTime_   .addInterest (this, "set_pauseTime_");
-				this .resumeTime_  .addInterest (this, "set_resumeTime_");
-				this .stopTime_    .addInterest (this, "set_stopTime_");
+				this .initialized_ .addInterest (this, "set_loop__");
+				this .enabled_     .addInterest (this, "set_enabled__");
+				this .loop_        .addInterest (this, "set_loop__");
+				this .startTime_   .addInterest (this, "set_startTime__");
+				this .pauseTime_   .addInterest (this, "set_pauseTime__");
+				this .resumeTime_  .addInterest (this, "set_resumeTime__");
+				this .stopTime_    .addInterest (this, "set_stopTime__");
 
 				this .startTimeValue  = this .startTime_  .getValue ();
 				this .pauseTimeValue  = this .pauseTime_  .getValue ();
@@ -66,7 +66,7 @@ function ($,
 			{
 				return (this .getExecutionContext () .isLive_ .getValue () || this .isEvenLive_ .getValue ()) && this .isLive_ .getValue ();
 			},
-			set_live_: function ()
+			set_live__: function ()
 			{
 				if (this .getLive ())
 				{
@@ -88,15 +88,15 @@ function ($,
 					}
 				}
 			},
-			set_enabled_: function ()
+			set_enabled__: function ()
 			{
 				if (this .enabled_ .getValue ())
-					this .set_loop ();
+					this .set_loop__ ();
 
 				else
 					this .stop ();
 			},
-			set_loop_: function ()
+			set_loop__: function ()
 			{
 				if (this .enabled_ .getValue ())
 				{
@@ -110,7 +110,7 @@ function ($,
 					}
 				}
 			},
-			set_startTime_: function ()
+			set_startTime__: function ()
 			{
 				this .startTimeValue = this .startTime_ .getValue ();
 
@@ -125,7 +125,7 @@ function ($,
 						this .addTimeout ("startTimeout", "do_start", startTimeValue);
 				}
 			},
-			set_pauseTime_: function ()
+			set_pauseTime__: function ()
 			{
 				this .pauseTimeValue = this .pauseTime_ .getValue ();
 
@@ -143,7 +143,7 @@ function ($,
 						this .addTimeout ("pauseTimeout", "do_pause", this .pauseTimeValue);
 				}
 			},
-			set_resumeTime_: function ()
+			set_resumeTime__: function ()
 			{
 				this .resumeTimeValue = this .resumeTime_ .getValue ();
 
@@ -161,7 +161,7 @@ function ($,
 						this .addTimeout ("resumeTimeout", "do_resume", this .resumeTimeValue);
 				}
 			},
-			set_stopTime_: function ()
+			set_stopTime__: function ()
 			{
 				this .stopTimeValue = this .stopTime_ .getValue ();
 

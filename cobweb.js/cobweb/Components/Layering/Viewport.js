@@ -104,16 +104,16 @@ function ($,
 			},
 			push: function ()
 			{
-				var viewVolumes = this .getCurrentLayer () .getViewVolumes ();
+				var viewVolumes = this .getCurrentLayer () .getViewVolumeStack ();
 				var viewport    = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
 
-				this .getCurrentLayer () .getViewVolumes () .push (new ViewVolume (this .getBrowser () .getProjectionMatrix (),
+				this .getCurrentLayer () .getViewVolumeStack () .push (new ViewVolume (this .getBrowser () .getProjectionMatrix (),
 				                                                                   viewport,
 				                                                                   this .rectangle));
 			},
 			pop: function ()
 			{
-				this .getCurrentLayer () .getViewVolumes () .pop ();
+				this .getCurrentLayer () .getViewVolumeStack () .pop ();
 			},
 		});
 

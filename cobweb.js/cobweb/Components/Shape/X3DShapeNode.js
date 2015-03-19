@@ -32,6 +32,8 @@ function ($,
 
 			this .set_apparance__ ();
 			this .set_geometry__ ();
+
+			this .static_ = true;
 		},
 		isTransparent: function ()
 		{

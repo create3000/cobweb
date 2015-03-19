@@ -26,7 +26,7 @@ function ($,
 {
 	with (Fields)
 	{
-		var minusOne = new Vector3 (-1, -1, -1);
+		var unlimited = new Vector3 (-1, -1, -1);
 	
 		function ProximitySensor (executionContext)
 		{
@@ -65,26 +65,6 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
-			},
-			initialize: function ()
-			{
-				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
-
-				this .getExecutionContext () .isLive_ .addInterest (this, "set_enabled__");
-				this .isLive_ .addInterest (this, "set_enabled__");
-
-				this .enabled_ .addInterest (this, "set_enabled__");
-				this .size_    .addInterest (this, "set_enabled__");
-
-				this .set_enabled__ ();
-			},
-			set_enabled__: function ()
-			{
-				if (this .enabled_ .getValue () && this .isLive_ .getValue () && this .getExecutionContext () .isLive_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
-					this .getBrowser () .getSensors () .addInterest (this, "update");
-
-				else
-					this .getBrowser () .getSensors () .removeInterest (this, "update");
 			},
 			update: function ()
 			{
@@ -157,7 +137,7 @@ function ($,
 						if (this .inside)
 							return;
 
-						if (this .size_ .getValue () .equals (minusOne))
+						if (this .size_ .getValue () .equals (unlimited))
 							this .inside = true;
 
 						else

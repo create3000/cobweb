@@ -6,7 +6,7 @@
     <meta name='created' content='Tue, 17 Mar 2015 14:44:12 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 18 Mar 2015 02:45:25 GMT'/>
+    <meta name='modified' content='Wed, 18 Mar 2015 12:33:32 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Earth'>
@@ -67,7 +67,7 @@
           <Billboard
               axisOfRotation='0 0 0'>
             <Transform
-                translation='0 -2.23003e-09 0'
+                translation='0 0 0.1'
                 scale='2.69379 2.69379 2.69379'>
               <Shape>
                 <Appearance>
@@ -93,6 +93,10 @@
         </Transform>
       </Transform>
     </Transform>
+    <Viewpoint DEF='_2'
+        description='Home'
+        position='-0.0113659 4.52616e-05 4.18152'
+        orientation='-0.00395522 -0.999806 -0.0193124 0.00267443'/>
     <ROUTE fromNode='_1' fromField='isActive' toNode='Time' toField='set_enabled'/>
     <ROUTE fromNode='_1' fromField='enterTime' toNode='Time' toField='set_startTime'/>
     <ROUTE fromNode='Time' fromField='fraction_changed' toNode='bodyRotationInterp' toField='set_fraction'/>
