@@ -92,124 +92,138 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		set: function (translation, rotation, scale, scaleOrientation, center)
 		{
-			if (arguments .length)
+			switch (arguments .length)
 			{
-				if (translation      === null) translation      = Vector3 .Zero;
-				if (rotation         === null) rotation         = Rotation4 .Identity;
-				if (scale            === null) scale            = Vector3 .One;
-				if (scaleOrientation === null) scaleOrientation = Rotation4 .Identity;
-				if (center           === null) center           = Vector3 .Zero;
-
-				switch (arguments .length)
+				case 0:
 				{
-					case 1:
+					this .identity ();
+					break;
+				}
+				case 1:
+				{
+					if (translation === null) translation = Vector3 .Zero;
+
+					this .identity ();
+					this .translate (translation);
+					break;
+				}
+				case 2:
+				{
+					if (translation === null) translation = Vector3 .Zero;
+					if (rotation    === null) rotation    = Rotation4 .Identity;
+
+					this .identity ();
+					this .translate (translation);
+
+					if (! rotation .equals (Rotation4 .Identity))
+						this .rotate (rotation);
+
+					break;
+				}
+				case 3:
+				{
+					if (translation === null) translation = Vector3 .Zero;
+					if (rotation    === null) rotation    = Rotation4 .Identity;
+					if (scale       === null) scale       = Vector3 .One;
+
+					this .identity ();
+					this .translate (translation);
+
+					if (! rotation .equals (Rotation4 .Identity))
+						this .rotate (rotation);
+
+					if (! scale .equals (Vector3 .One))
+						this .scale  (scale);
+
+					break;
+				}
+				case 4:
+				{
+					if (translation      === null) translation      = Vector3 .Zero;
+					if (rotation         === null) rotation         = Rotation4 .Identity;
+					if (scale            === null) scale            = Vector3 .One;
+					if (scaleOrientation === null) scaleOrientation = Rotation4 .Identity;
+
+					this .identity ();
+					this .translate (translation);
+
+					if (! rotation .equals (Rotation4 .Identity))
+						this .rotate (rotation);
+
+					if (! scale .equals (Vector3 .One))
 					{
-						this .identity ();
-						this .translate (translation);
-						break;
-					}
-					case 2:
-					{
-						this .identity ();
-						this .translate (translation);
+						var hasScaleOrientation = ! scaleOrientation .equals (Rotation4 .Identity);
 
-						if (! rotation .equals (Rotation4 .Identity))
-							this .rotate (rotation);
-
-						break;
-					}
-					case 3:
-					{
-						this .identity ();
-						this .translate (translation);
-
-						if (! rotation .equals (Rotation4 .Identity))
-							this .rotate (rotation);
-
-						if (! scale .equals (Vector3 .One))
-							this .scale  (scale);
-
-						break;
-					}
-					case 4:
-					{
-						this .identity ();
-						this .translate (translation);
-
-						if (! rotation .equals (Rotation4 .Identity))
-							this .rotate (rotation);
-
-						if (! scale .equals (Vector3 .One))
+						if (hasScaleOrientation)
 						{
-							var hasScaleOrientation = ! scaleOrientation .equals (Rotation4 .Identity);
-
-							if (hasScaleOrientation)
-							{
-								this .rotate (scaleOrientation);
-								this .scale (scale);
-								this .rotate (scaleOrientation .copy () .inverse ());
-							}
-							else
-								this .scale (scale);
+							this .rotate (scaleOrientation);
+							this .scale (scale);
+							this .rotate (scaleOrientation .copy () .inverse ());
 						}
-
-						break;
+						else
+							this .scale (scale);
 					}
-					case 5:
+
+					break;
+				}
+				case 5:
+				{
+					if (translation      === null) translation      = Vector3 .Zero;
+					if (rotation         === null) rotation         = Rotation4 .Identity;
+					if (scale            === null) scale            = Vector3 .One;
+					if (scaleOrientation === null) scaleOrientation = Rotation4 .Identity;
+					if (center           === null) center           = Vector3 .Zero;
+
+					// P' = T * C * R * SR * S * -SR * -C * P
+					this .identity ();
+					this .translate (translation);
+
+					var hasCenter = ! center .equals (Vector3 .Zero);
+
+					if (hasCenter)
+						this .translate (center);
+
+					if (! rotation .equals (Rotation4 .Identity))
+						this .rotate (rotation);
+
+					if (! scale .equals (Vector3 .One))
 					{
-						// P' = T * C * R * SR * S * -SR * -C * P
-						this .identity ();
-						this .translate (translation);
-
-						var hasCenter = ! center .equals (Vector3 .Zero);
-
-						if (hasCenter)
-							this .translate (center);
-
-						if (! rotation .equals (Rotation4 .Identity))
-							this .rotate (rotation);
-
-						if (! scale .equals (Vector3 .One))
+						if (! scaleOrientation .equals (Rotation4 .Identity))
 						{
-							if (! scaleOrientation .equals (Rotation4 .Identity))
-							{
-								this .rotate (scaleOrientation);
-								this .scale (scale);
-								this .rotate (scaleOrientation .copy () .inverse ());
-							}
-							else
-								this .scale (scale);
+							this .rotate (scaleOrientation);
+							this .scale (scale);
+							this .rotate (scaleOrientation .copy () .inverse ());
 						}
-
-						if (hasCenter)
-							this .translate (center .copy () .negate ());
-
-						break;
+						else
+							this .scale (scale);
 					}
-					case 16:
-					{
-						this [ 0] = arguments [ 0];
-						this [ 1] = arguments [ 1];
-						this [ 2] = arguments [ 2];
-						this [ 3] = arguments [ 3];
-						this [ 4] = arguments [ 4];
-						this [ 5] = arguments [ 5];
-						this [ 6] = arguments [ 6];
-						this [ 7] = arguments [ 7];
-						this [ 8] = arguments [ 8];
-						this [ 9] = arguments [ 9];
-						this [10] = arguments [10];
-						this [11] = arguments [11];
-						this [12] = arguments [12];
-						this [13] = arguments [13];
-						this [14] = arguments [14];
-						this [15] = arguments [15];
-						break;
-					}
+
+					if (hasCenter)
+						this .translate (center .copy () .negate ());
+
+					break;
+				}
+				case 16:
+				{
+					this [ 0] = arguments [ 0];
+					this [ 1] = arguments [ 1];
+					this [ 2] = arguments [ 2];
+					this [ 3] = arguments [ 3];
+					this [ 4] = arguments [ 4];
+					this [ 5] = arguments [ 5];
+					this [ 6] = arguments [ 6];
+					this [ 7] = arguments [ 7];
+					this [ 8] = arguments [ 8];
+					this [ 9] = arguments [ 9];
+					this [10] = arguments [10];
+					this [11] = arguments [11];
+					this [12] = arguments [12];
+					this [13] = arguments [13];
+					this [14] = arguments [14];
+					this [15] = arguments [15];
+					break;
 				}
 			}
-			else
-				this .identity ();
 		},
 		get: function (translation, rotation, scale, scaleOrientation, center)
 		{

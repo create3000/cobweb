@@ -76,117 +76,131 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		set: function (translation, rotation, scale, scaleOrientation, center)
 		{
-			if (arguments .length)
+			switch (arguments .length)
 			{
-				if (translation      === null) translation      = Vector2 .Zero;
-				if (rotation         === null) rotation         = Vector3 .Zero;
-				if (scale            === null) scale            = Vector2 .One;
-				if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
-				if (center           === null) center           = Vector2 .Zero;
-
-				switch (arguments .length)
+				case 0:
 				{
-					case 1:
+					this .identity ();
+					break;
+				}
+				case 1:
+				{
+					if (translation === null) translation = Vector2 .Zero;
+
+					this .identity ();
+					this .translate (translation);
+					break;
+				}
+				case 2:
+				{
+					if (translation === null) translation = Vector2 .Zero;
+					if (rotation    === null) rotation    = Vector3 .Zero;
+
+					this .identity ();
+					this .translate (translation);
+
+					if (rotation [2] !== 0)
+						this .rotate (rotation [2]);
+
+					break;
+				}
+				case 3:
+				{
+					if (translation === null) translation = Vector2 .Zero;
+					if (rotation    === null) rotation    = Vector3 .Zero;
+					if (scale       === null) scale       = Vector2 .One;
+
+					this .identity ();
+					this .translate (translation);
+
+					if (rotation [2] !== 0)
+						this .rotate (rotation [2]);
+
+					if (! scale .equals (Vector2 .One))
+						this .scale  (scale);
+
+					break;
+				}
+				case 4:
+				{
+					if (translation      === null) translation      = Vector2 .Zero;
+					if (rotation         === null) rotation         = Vector3 .Zero;
+					if (scale            === null) scale            = Vector2 .One;
+					if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
+
+					this .identity ();
+					this .translate (translation);
+
+					if (rotation [2] !== 0)
+						this .rotate (rotation [2]);
+
+					if (! scale .equals (Vector2 .One))
 					{
-						this .identity ();
-						this .translate (translation);
-						break;
-					}
-					case 2:
-					{
-						this .identity ();
-						this .translate (translation);
+						var hasScaleOrientation = scaleOrientation [2] !== 0;
 
-						if (rotation [2] !== 0)
-							this .rotate (rotation [2]);
-
-						break;
-					}
-					case 3:
-					{
-						this .identity ();
-						this .translate (translation);
-
-						if (rotation [2] !== 0)
-							this .rotate (rotation [2]);
-
-						if (! scale .equals (Vector2 .One))
-							this .scale  (scale);
-
-						break;
-					}
-					case 4:
-					{
-						this .identity ();
-						this .translate (translation);
-
-						if (rotation [2] !== 0)
-							this .rotate (rotation [2]);
-
-						if (! scale .equals (Vector2 .One))
+						if (hasScaleOrientation)
 						{
-							var hasScaleOrientation = scaleOrientation [2] !== 0;
-
-							if (hasScaleOrientation)
-							{
-								this .rotate (scaleOrientation [2]);
-								this .scale (scale);
-								this .rotate (-scaleOrientation [2]);
-							}
-							else
-								this .scale (scale);
+							this .rotate (scaleOrientation [2]);
+							this .scale (scale);
+							this .rotate (-scaleOrientation [2]);
 						}
-
-						break;
+						else
+							this .scale (scale);
 					}
-					case 5:
+
+					break;
+				}
+				case 5:
+				{
+					if (translation      === null) translation      = Vector2 .Zero;
+					if (rotation         === null) rotation         = Vector3 .Zero;
+					if (scale            === null) scale            = Vector2 .One;
+					if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
+					if (center           === null) center           = Vector2 .Zero;
+
+					// P' = T * C * R * SR * S * -SR * -C * P
+					this .identity ();
+					this .translate (translation);
+
+					var hasCenter = ! center .equals (Vector2 .Zero);
+
+					if (hasCenter)
+						this .translate (center);
+
+					if (rotation [2] !== 0)
+						this .rotate (rotation [2]);
+
+					if (! scale .equals (Vector2 .One))
 					{
-						// P' = T * C * R * SR * S * -SR * -C * P
-						this .identity ();
-						this .translate (translation);
-
-						var hasCenter = ! center .equals (Vector2 .Zero);
-
-						if (hasCenter)
-							this .translate (center);
-
-						if (rotation [2] !== 0)
-							this .rotate (rotation [2]);
-
-						if (! scale .equals (Vector2 .One))
+						if (scaleOrientation [2] !== 0)
 						{
-							if (scaleOrientation [2] !== 0)
-							{
-								this .rotate (scaleOrientation [2]);
-								this .scale (scale);
-								this .rotate (-scaleOrientation [2]);
-							}
-							else
-								this .scale (scale);
+							this .rotate (scaleOrientation [2]);
+							this .scale (scale);
+							this .rotate (-scaleOrientation [2]);
 						}
-
-						if (hasCenter)
-							this .translate (center .copy () .negate ());
-
-						break;
+						else
+							this .scale (scale);
 					}
-					case 9:
-					{
-						this [0] = arguments [0];
-						this [1] = arguments [1];
-						this [2] = arguments [2];
-						this [3] = arguments [3];
-						this [4] = arguments [4];
-						this [5] = arguments [5];
-						this [6] = arguments [6];
-						this [7] = arguments [7];
-						this [8] = arguments [8];
-						break;
-					}
+
+					if (hasCenter)
+						this .translate (center .copy () .negate ());
+
+					break;
+				}
+				case 9:
+				{
+					this [0] = arguments [0];
+					this [1] = arguments [1];
+					this [2] = arguments [2];
+					this [3] = arguments [3];
+					this [4] = arguments [4];
+					this [5] = arguments [5];
+					this [6] = arguments [6];
+					this [7] = arguments [7];
+					this [8] = arguments [8];
+					break;
 				}
 			}
-			else
-				this .identity ();
 		},
 		get: function (translation, rotation, scale, scaleOrientation, center)
 		{
@@ -389,16 +403,13 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		Identity: new Matrix3 (),
 		Rotation: function (rotation)
 		{
-			var sinAngle = Math .sin (rotation);
-			var cosAngle = Math .cos (rotation);
-			var matrix   = new Matrix3 ();
+			var
+				sinAngle = Math .sin (rotation),
+				cosAngle = Math .cos (rotation);
 
-			matrix [0] =  cosAngle;
-			matrix [1] =  sinAngle;
-			matrix [3] = -sinAngle;
-			matrix [4] =  cosAngle;
-
-			return matrix;
+			return new Matrix3 ( cosAngle, sinAngle, 0,
+			                    -sinAngle, cosAngle, 0,
+			                     0, 0, 1);
 		},
 		Matrix2: function (matrix)
 		{
