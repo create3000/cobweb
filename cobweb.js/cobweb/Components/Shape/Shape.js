@@ -22,6 +22,8 @@ function ($,
 {
 	with (Fields)
 	{
+		var defaultBBoxSize = new Vector3 (-1, -1, -1);
+	
 		function Shape (executionContext)
 		{
 			X3DShapeNode .call (this, executionContext .getBrowser (), executionContext);
@@ -51,17 +53,42 @@ function ($,
 			{
 				return "children";
 			},
-			getBBox: function ()
+			initialize: function ()
 			{
-				if (this .bboxSize_ .getValue () .equals (new Vector3 (-1, -1, -1)))
+				X3DShapeNode .prototype .initialize .call (this);
+
+				this .bboxSize_   .addInterest (this, "set_bbox__");
+				this .bboxCenter_ .addInterest (this, "set_bbox__");
+
+				this .set_bbox__ ();
+			},
+			set_bbox__: function ()
+			{
+				if (this .bboxSize_ .getValue () .equals (defaultBBoxSize))
 				{
 					if (this .getGeometry ())
-						return this .getGeometry () .getBBox ();
+						this .bbox = this .getGeometry () .getBBox ();
 
-					return new Box3 ();
+					else
+						this .bbox = new Box3 ();
 				}
+				else
+					this .bbox = new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 				
-				return new Box3 (this .bboxSize_, this .bboxCenter_);
+				this .bboxSize   = this .bbox .size;
+				this .bboxCenter = this .bbox .center;
+			},
+			getBBox: function ()
+			{
+				return this .bbox;
+			},
+			getBBoxSize: function ()
+			{
+				return this .bboxSize;
+			},
+			getBBoxCenter: function ()
+			{
+				return this .bboxCenter;
 			},
 			traverse: function (type)
 			{
@@ -92,8 +119,7 @@ function ($,
 			draw: function (context)
 			{
 				this .getAppearance () .traverse ();
-
-				this .getGeometry () .traverse (context);
+				this .getGeometry ()   .traverse (context);
 			},
 		});
 

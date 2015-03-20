@@ -38,7 +38,15 @@ function ($)
 		constructor: Complex,
 		copy: function ()
 		{
-			return new Complex (this .real, this .imag);
+			var copy = Object .create (Complex .prototype);
+			copy .assign (this);
+			return copy;
+		},
+		assign: function (complex)
+		{
+			this .real = complex .real;
+			this .imag = complex .imag;
+			return this;
 		},
 		equals: function (complex)
 		{

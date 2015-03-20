@@ -29,10 +29,9 @@ function ($, Algorithm)
 		length: 4,
 		copy: function ()
 		{
-			return new Vector4 (this .x,
-			                    this .y,
-			                    this .z,
-			                    this .w);
+			var copy = Object .create (Vector4 .prototype);
+			copy .assign (this);
+			return copy;
 		},
 		assign: function (vector)
 		{
@@ -136,6 +135,34 @@ function ($, Algorithm)
 		abs: function ()
 		{
 			return Math .sqrt (this .norm ());
+		},
+		min: function (vector)
+		{
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				this .x = Math .min (this .x, vector .x);
+				this .y = Math .min (this .y, vector .y);
+				this .z = Math .min (this .z, vector .z);
+				this .w = Math .min (this .w, vector .w);
+			}
+
+			return this;
+		},
+		max: function (vector)
+		{
+			for (var i = 0; i < arguments .length; ++ i)
+			{
+				var vector = arguments [i];
+
+				this .x = Math .max (this .x, vector .x);
+				this .y = Math .max (this .y, vector .y);
+				this .z = Math .max (this .z, vector .z);
+				this .w = Math .max (this .w, vector .w);
+			}
+
+			return this;
 		},
 		toString: function ()
 		{

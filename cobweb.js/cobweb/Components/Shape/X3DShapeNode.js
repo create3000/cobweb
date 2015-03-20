@@ -57,7 +57,13 @@ function ($,
 		},
 		set_geometry__: function ()
 		{
+			if (this .geometryNode)
+				this .geometryNode .removeInterest (this, "set_bbox__");
+
 			this .geometryNode = this .geometry_ .getValue ();
+
+			if (this .geometryNode)
+				this .geometryNode .addInterest (this, "set_bbox__");
 		},
 	});
 

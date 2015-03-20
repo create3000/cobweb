@@ -19,16 +19,17 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		so                    = new Matrix3 (),
 		si                    = new Matrix3 ();
 
-	function Matrix4 (m00, m01, m02, m03,
-	                  m10, m11, m12, m13,
-	                  m20, m21, m22, m23,
-	                  m30, m31, m32, m33)
+	function Matrix4 ()
 	{
-		if (arguments .length)
-			this .assign (arguments);
-
-		else
-			this .identity ();
+		switch (arguments .length)
+		{
+			case 0:
+				this .identity ();
+				break;
+			case 16:
+				this .assign (arguments);
+				break;
+		}
 	}
 
 	Matrix4 .prototype =
@@ -38,10 +39,9 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		length: 16,
 		copy: function ()
 		{
-			return new Matrix4 (this [ 0], this [ 1], this [ 2], this [ 3],
-			                    this [ 4], this [ 5], this [ 6], this [ 7],
-			                    this [ 8], this [ 9], this [10], this [11],
-			                    this [12], this [13], this [14], this [15]);
+			var copy = Object .create (Matrix4 .prototype);
+			copy .assign (this);
+			return copy;
 		},
 		assign: function (matrix)
 		{

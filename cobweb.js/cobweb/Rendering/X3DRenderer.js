@@ -18,7 +18,7 @@ function (TraverseType, QuickSort, Matrix4)
 
 	ShapeContainer .prototype =
 	{
-		assign: function (shape, modelViewMatrix, scissor, distance)
+		set: function (shape, modelViewMatrix, scissor, distance)
 		{
 			this .shape           = shape;
 			this .modelViewMatrix .assign (modelViewMatrix);
@@ -63,26 +63,24 @@ function (TraverseType, QuickSort, Matrix4)
 		addShape: function (shape)
 		{
 			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
-
-			var bbox       = shape .getBBox () .copy () .multRight (modelViewMatrix);
-			var bboxSize   = bbox .size;
-			var bboxCenter = bbox .center;
-			var depth      = bboxSize .z / 2;
-			var distance   = bboxCenter .z;
-			var min        = distance - depth;
+			var bboxSize        = modelViewMatrix .multDirMatrix (shape .getBBoxSize () .copy ());
+			var bboxCenter      = modelViewMatrix .multVecMatrix (shape .getBBoxCenter () .copy ());
+			var radius          = bboxSize .abs () / 2;
+			var distance        = bboxCenter .z;
+			var min             = distance - radius;
 
 			if (min < 0)
 			{
 				var viewVolume = this .viewVolumes [this .viewVolumes .length - 1];
 
-				if (viewVolume .intersects (bboxSize, bboxCenter))
+				if (viewVolume .intersects (bboxSize /* XXX: no real size */ , bboxCenter))
 				{
 					if (shape .isTransparent ())
 					{
 						if (this .numTransparentShapes === this .transparentShapes .length)
 							this .transparentShapes .push (new ShapeContainer (true));
 
-						this .transparentShapes [this .numTransparentShapes] .assign (shape, modelViewMatrix, viewVolume .getScissor (), distance);
+						this .transparentShapes [this .numTransparentShapes] .set (shape, modelViewMatrix, viewVolume .getScissor (), distance);
 
 						++ this .numTransparentShapes;
 					}
@@ -91,7 +89,7 @@ function (TraverseType, QuickSort, Matrix4)
 						if (this .numOpaqueShapes === this .opaqueShapes .length)
 							this .opaqueShapes .push (new ShapeContainer (false));
 
-						this .opaqueShapes [this .numOpaqueShapes] .assign (shape, modelViewMatrix, viewVolume .getScissor (), distance);
+						this .opaqueShapes [this .numOpaqueShapes] .set (shape, modelViewMatrix, viewVolume .getScissor (), distance);
 
 						++ this .numOpaqueShapes;
 					}

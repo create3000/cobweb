@@ -69,6 +69,7 @@ function ($,
 				X3DBoundedObject .prototype .initialize .call (this);
 
 				this .group .setup ();
+				this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
 				this .load ();
 			},

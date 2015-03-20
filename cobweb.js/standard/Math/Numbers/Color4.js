@@ -41,10 +41,9 @@ function ($, Algorithm)
 		length: 4,
 		copy: function ()
 		{
-			return new Color4 (this .r_,
-			                   this .g_,
-			                   this .b_,
-			                   this .a_);
+			var copy = Object .create (Color4 .prototype);
+			copy .assign (this);
+			return copy;
 		},
 		assign: function (color)
 		{

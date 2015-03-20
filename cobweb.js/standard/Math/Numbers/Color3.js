@@ -39,9 +39,9 @@ function ($, Algorithm)
 		length: 3,
 		copy: function ()
 		{
-			return new Color3 (this .r_,
-			                   this .g_,
-			                   this .b_);
+			var copy = Object .create (Color3 .prototype);
+			copy .assign (this);
+			return copy;
 		},
 		assign: function (color)
 		{

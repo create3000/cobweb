@@ -15,15 +15,17 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		dummyScaleOrientation = new Vector3 (),
 		dummyCenter           = new Vector2 ();
 								
-	function Matrix3 (m00, m01, m02,
-	                  m10, m11, m12,
-	                  m20, m21, m22)
+	function Matrix3 ()
 	{
-		if (arguments .length)
-			this .assign (arguments);
-
-		else
-			this .identity ();
+		switch (arguments .length)
+		{
+			case 0:
+				this .identity ();
+				break;
+			case 9:
+				this .assign (arguments);
+				break;
+		}
 	}
 
 	Matrix3 .prototype =
@@ -33,9 +35,9 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		length: 9,
 		copy: function ()
 		{
-			return new Matrix3 (this [0], this [1], this [2],
-			                    this [3], this [4], this [5],
-			                    this [6], this [7], this [8]);
+			var copy = Object .create (Matrix3 .prototype);
+			copy .assign (this);
+			return copy;
 		},
 		assign: function (matrix)
 		{

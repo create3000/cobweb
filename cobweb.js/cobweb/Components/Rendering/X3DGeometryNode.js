@@ -13,6 +13,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 	{
 		X3DNode .call (this, browser, executionContext);
 
+		this .min       = new Vector3 ();
+		this .max       = new Vector3 ();
 		this .bbox      = new Box3 ();
 		this .solid     = true;
 		this .ccw       = true;
@@ -61,8 +63,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		},
 		setExtents: function (extents)
 		{
-			this .min = extents [0];
-			this .max = extents [1];
+			this .min .assign (extents [0]);
+			this .max .assign (extents [1]);
 		},
 		getExtents: function ()
 		{
@@ -127,8 +129,8 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		},
 		addVertex: function (vertex)
 		{
-			this .min = Vector3 .min (this .min, vertex);
-			this .max = Vector3 .max (this .max, vertex);
+			this .min .min (vertex);
+			this .max .max (vertex);
 
 			this .vertices .push (vertex .x);
 			this .vertices .push (vertex .y);
@@ -142,63 +144,6 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 		getVertices: function ()
 		{
 			return this .vertices;
-		},
-		refineNormals: function (normalIndex, normals, creaseAngle)
-		{
-			if (creaseAngle === 0)
-				return normals;
-
-			var cosCreaseAngle = Math .cos (creaseAngle);
-			var normals_       = [ ];
-
-			for (var i in normalIndex) // Don't use forEach
-			{
-				var vertex = normalIndex [i];
-
-				for (var p = 0; p < vertex .length; ++ p)
-				{
-					var P = vertex [p];
-					var m = normals [P];
-					var n = new Vector3 ();
-
-					for (var q = 0; q < vertex .length; ++ q)
-					{
-						var Q = vertex [q];
-	
-						if (normals [Q] .dot (m) >= cosCreaseAngle)
-							n .add (normals [Q]);
-					}
-
-					normals_ [P] = n .normalize ();
-				}
-			}
-
-			return normals_;
-		},
-		update: function ()
-		{
-			this .clear ();
-			this .build ();
-
-			this .bbox = this .vertices .length ? new Box3 (this .min, this .max, true) : new Box3 ();
-
-			if (! this .isLineGeometry ())
-			{
-				if (this .texCoords .length === 0)
-					this .buildTexCoords ();
-			}
-
-			this .transfer ();
-		},
-		clear: function ()
-		{
-			this .min = new Vector3 (Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
-			this .max = new Vector3 (Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
-		
-			this .colors    .length = 0;
-			this .texCoords .length = 0;
-			this .normals   .length = 0;
-			this .vertices  .length = 0;
 		},
 		buildTexCoords: function ()
 		{
@@ -262,6 +207,63 @@ function ($, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			}
 
 			return p;
+		},
+		refineNormals: function (normalIndex, normals, creaseAngle)
+		{
+			if (creaseAngle === 0)
+				return normals;
+
+			var cosCreaseAngle = Math .cos (creaseAngle);
+			var normals_       = [ ];
+
+			for (var i in normalIndex) // Don't use forEach
+			{
+				var vertex = normalIndex [i];
+
+				for (var p = 0; p < vertex .length; ++ p)
+				{
+					var P = vertex [p];
+					var m = normals [P];
+					var n = new Vector3 ();
+
+					for (var q = 0; q < vertex .length; ++ q)
+					{
+						var Q = vertex [q];
+	
+						if (normals [Q] .dot (m) >= cosCreaseAngle)
+							n .add (normals [Q]);
+					}
+
+					normals_ [P] = n .normalize ();
+				}
+			}
+
+			return normals_;
+		},
+		update: function ()
+		{
+			this .clear ();
+			this .build ();
+
+			this .bbox = this .vertices .length ? new Box3 (this .min, this .max, true) : new Box3 ();
+
+			if (! this .isLineGeometry ())
+			{
+				if (this .texCoords .length === 0)
+					this .buildTexCoords ();
+			}
+
+			this .transfer ();
+		},
+		clear: function ()
+		{
+			this .min .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
+			this .max .set (Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY);
+
+			this .colors    .length = 0;
+			this .texCoords .length = 0;
+			this .normals   .length = 0;
+			this .vertices  .length = 0;
 		},
 		transfer: function ()
 		{

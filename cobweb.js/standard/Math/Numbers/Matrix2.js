@@ -4,14 +4,17 @@ define ([
 ],
 function (Algorithm)
 {
-	function Matrix2 (m00, m01,
-	                  m10, m11)
+	function Matrix2 ()
 	{
-		if (arguments .length)
-			this .assign (arguments);
-
-		else
-			this .identity ();
+		switch (arguments .length)
+		{
+			case 0:
+				this .identity ();
+				break;
+			case 4:
+				this .assign (arguments);
+				break;
+		}
 	}
 
 	Matrix2 .prototype =
@@ -21,8 +24,9 @@ function (Algorithm)
 		length: 4,
 		copy: function ()
 		{
-			return new Matrix2 (this [0], this [1],
-			                    this [2], this [3]);
+			var copy = Object .create (Matrix2 .prototype);
+			copy .assign (this);
+			return copy;
 		},
 		assign: function (matrix)
 		{

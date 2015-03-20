@@ -18,6 +18,12 @@ function ($,
 	X3DBindableNode .prototype = $.extend (new X3DChildNode (),
 	{
 		constructor: X3DBindableNode,
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+			
+			this .setCameraObject (true);
+		},
 		transitionStart: function () { },
 	});
 

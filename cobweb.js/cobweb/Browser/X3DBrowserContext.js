@@ -63,6 +63,7 @@ function ($,
 
 		this .changedTime    = 0;
 		this .renderCallback = this .traverse .bind (this);
+		this .cameraTime     = 0;
 	};
 
 	X3DBrowserContext .prototype = $.extend (new X3DBaseNode (),
@@ -142,7 +143,9 @@ function ($,
 			this .prepareEvents_ .processInterests ();
 
 			this .processEvents ();
+			var t0 = performance .now ();
 			this .world .traverse (TraverseType .CAMERA);
+			this .cameraTime = performance .now () - t0;
 
 			this .sensors_ .processInterests ();
 			this .processEvents ();

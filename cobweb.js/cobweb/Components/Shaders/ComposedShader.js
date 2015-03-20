@@ -138,7 +138,7 @@ function ($,
 				var gl           = browser .getContext ();
 				var globalLights = browser .getGlobalLights ();
 
-				this .use ();
+				gl .useProgram (this .program);
 
 				for (var i = 0; i < globalLights .length; ++ i)
 					globalLights [i] .use (gl, this, i);
@@ -162,6 +162,9 @@ function ($,
 					var globalLights = browser .getGlobalLights ();
 					var localLights  = context .localLights;
 					var lights       = Math .min (MAX_LIGHTS, globalLights .length + localLights .length);
+			
+					if (this !== browser .getDefaultShader ())
+						this .setGlobalLights ();
 
 					for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
 						context .localLights [l] .use (gl, this, i);

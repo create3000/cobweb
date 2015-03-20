@@ -3,6 +3,7 @@ define ([
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Geometry/Box3",
@@ -10,6 +11,7 @@ define ([
 function ($,
           X3DChildNode, 
           X3DBoundedObject, 
+          TraverseType,
           X3DConstants,
           Vector3,
           Box3)
@@ -89,6 +91,7 @@ function ($,
 		this .hidden                = false;
 		this .visible               = [ ];
 		this .pointingDeviceSensors = [ ];
+		this .cameraObjects         = [ ];
 		this .localFogs             = [ ];
 		this .collectables          = [ ];
 		this .childNodes            = [ ];
@@ -172,6 +175,8 @@ function ($,
 					innerNodes .push (node .getValue () .getInnerNode ());
 			}
 
+			innerNode .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
+
 			if (this .localFogs .length)
 			{
 				this .localFogs .splice (remove (localFogs,  0, localFogs  .length,
@@ -243,14 +248,14 @@ function ($,
 						{
 							switch (type [t])
 							{
-								case X3DConstants .LocalFog:
-								{
-									this .localFogs .push (innerNode);
-									break;
-								}
 								case X3DConstants .X3DPointingDeviceSensorNode:
 								{
 									this .pointingDeviceSensors .push (innerNode);
+									break;
+								}
+								case X3DConstants .LocalFog:
+								{
+									this .localFogs .push (innerNode);
 									break;
 								}
 								case X3DConstants .ClipPlane:
@@ -261,6 +266,8 @@ function ($,
 								case X3DConstants .X3DChildNode:
 								{
 									this .childNodes .push (innerNode);
+
+									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
 									break;
 								}
 								case X3DConstants .BooleanFilter:
@@ -288,18 +295,50 @@ function ($,
 					{ }
 				}
 			}
+
+			this .set_cameraObjects__ ();
 		},
 		clear: function ()
 		{
 			this .pointingDeviceSensors .length = 0;
+			this .cameraObjects         .length = 0;
 			this .localFogs             .length = 0;
 			this .collectables          .length = 0;
 			this .childNodes            .length = 0;
 		},
+		set_cameraObjects__: function ()
+		{
+			this .cameraObjects .length = 0;
+			
+			for (var i = 0; i < this .childNodes .length; ++ i)
+			{
+				var childNode = this .childNodes [i];
+
+				if (childNode .getCameraObject ())
+					this .cameraObjects .push (childNode);
+			}
+
+			this .setCameraObject (Boolean (this .cameraObjects .length));
+		},
 		traverse: function (type)
 		{
-			for (var i = 0; i < this .childNodes .length; ++ i)
-				this .childNodes [i] .traverse (type);
+			switch (type)
+			{
+				case TraverseType .CAMERA:
+				{
+					for (var i = 0; i < this .cameraObjects .length; ++ i)
+						this .cameraObjects [i] .traverse (type);
+
+					break;
+				}
+				case TraverseType .DISPLAY:
+				{
+					for (var i = 0; i < this .childNodes .length; ++ i)
+						this .childNodes [i] .traverse (type);
+
+					break;
+				}
+			}
 		},
 	});
 

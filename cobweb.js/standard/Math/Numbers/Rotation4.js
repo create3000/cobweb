@@ -94,7 +94,9 @@ function ($, Quaternion, Vector3)
 		length: 4,
 		copy: function ()
 		{
-			return new Rotation4 (this .value .copy ());
+			var copy = Object .create (Rotation4 .prototype);
+			copy .value = this .value .copy ();
+			return copy;
 		},
 		assign: function (rotation)
 		{

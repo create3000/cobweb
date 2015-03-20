@@ -59,6 +59,9 @@ function ($,
 			{
 				return "children";
 			},
+			set_bbox__: function ()
+			{
+			},
 		});
 
 		return ParticleSystem;

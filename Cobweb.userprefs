@@ -1,16 +1,29 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/EnvironmentalSensor/VisibilitySensor.js">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/VisibilitySensor.js" Line="89" Column="31" />
-      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/ProximitySensor.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Time/X3DTimeDependentNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="63" Column="7" />
+      <File FileName="cobweb.js/cobweb/Components/Core/X3DChildNode.js" Line="20" Column="29" />
+      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DGroupingNode.js" Line="289" Column="6" />
+      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DTransformMatrix4DNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Core/X3DCoreContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Texturing/X3DTexturingContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/Appearance.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/standard/Math/Numbers/Matrix4.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/standard/Math/Numbers/Matrix3.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/standard/Math/Numbers/Matrix2.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalEffects/X3DBackgroundNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="302" Column="42" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/Material.js" Line="67" Column="34" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/X3DTextureTransformNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/TextureTransform.js" Line="83" Column="46" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
+        <State expanded="True" selected="True">
           <Node name="cobweb.js" expanded="True">
             <Node name="cobweb" expanded="True">
               <Node name="Base" expanded="True" />
@@ -31,9 +44,7 @@
               <Node name="Components" expanded="True">
                 <Node name="Core" expanded="True" />
                 <Node name="EnvironmentalEffects" expanded="True" />
-                <Node name="EnvironmentalSensor" expanded="True">
-                  <Node name="VisibilitySensor.js" selected="True" />
-                </Node>
+                <Node name="EnvironmentalSensor" expanded="True" />
                 <Node name="Geometry3D" expanded="True" />
                 <Node name="Grouping" expanded="True" />
                 <Node name="Layering" expanded="True" />

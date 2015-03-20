@@ -72,6 +72,7 @@ function ($,
 				var text = "";
 				text += "Rendering Properties\n\n";
 				text += "Frame rate: " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
+				text += "Camera:     " + this .getBrowser () .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Traverse:   " + traverseTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Draw:       " + drawTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " / " + transparentShapes + "\n";

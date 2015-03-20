@@ -30,10 +30,9 @@ function ($, Vector3, Algorithm)
 		length: 4,
 		copy: function ()
 		{
-			return new Quaternion (this .x,
-			                       this .y,
-			                       this .z,
-			                       this .w);
+			var copy = Object .create (Quaternion .prototype);
+			copy .assign (this);
+			return copy;
 		},
 		assign: function (quat)
 		{

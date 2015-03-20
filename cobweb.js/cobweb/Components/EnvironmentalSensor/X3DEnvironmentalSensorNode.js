@@ -24,6 +24,8 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
+			this .setCameraObject (true);
+
 			this .getExecutionContext () .isLive_ .addInterest (this, "set_enabled__");
 			this .isLive_ .addInterest (this, "set_enabled__");
 
