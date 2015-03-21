@@ -82,8 +82,8 @@ function ($,
 
 				gl .useProgram (this .program);
 
-				this .lighting         = gl .getUniformLocation (this .program, "x3d_lighting");
-				this .colorMaterial    = gl .getUniformLocation (this .program, "x3d_colorMaterial");
+				this .lighting         = gl .getUniformLocation (this .program, "x3d_Lighting");
+				this .colorMaterial    = gl .getUniformLocation (this .program, "x3d_ColorMaterial");
 
 				this .lightType             = [ ];
 				this .lightOn               = [ ];
@@ -99,38 +99,38 @@ function ($,
 
 				for (var i = 0; i < MAX_LIGHTS; ++ i)
 				{
-					this .lightType [i]             = gl .getUniformLocation (this .program, "x3d_lightType[" + i + "]");
-					this .lightOn [i]               = gl .getUniformLocation (this .program, "x3d_lightOn[" + i + "]");
-					this .lightColor [i]            = gl .getUniformLocation (this .program, "x3d_lightColor[" + i + "]");
-					this .lightAmbientIntensity [i] = gl .getUniformLocation (this .program, "x3d_lightAmbientIntensity[" + i + "]");
-					this .lightIntensity [i]        = gl .getUniformLocation (this .program, "x3d_lightIntensity[" + i + "]");
-					this .lightAttenuation [i]      = gl .getUniformLocation (this .program, "x3d_lightAttenuation[" + i + "]");
-					this .lightLocation [i]         = gl .getUniformLocation (this .program, "x3d_lightLocation[" + i + "]");
-					this .lightDirection [i]        = gl .getUniformLocation (this .program, "x3d_lightDirection[" + i + "]");
-					this .lightBeamWidth [i]        = gl .getUniformLocation (this .program, "x3d_lightBeamWidth[" + i + "]");
-					this .lightCutOffAngle [i]      = gl .getUniformLocation (this .program, "x3d_lightCutOffAngle[" + i + "]");
-					this .lightRadius [i]           = gl .getUniformLocation (this .program, "x3d_lightRadius[" + i + "]");
+					this .lightType [i]             = gl .getUniformLocation (this .program, "x3d_LightType[" + i + "]");
+					this .lightOn [i]               = gl .getUniformLocation (this .program, "x3d_LightOn[" + i + "]");
+					this .lightColor [i]            = gl .getUniformLocation (this .program, "x3d_LightColor[" + i + "]");
+					this .lightAmbientIntensity [i] = gl .getUniformLocation (this .program, "x3d_LightAmbientIntensity[" + i + "]");
+					this .lightIntensity [i]        = gl .getUniformLocation (this .program, "x3d_LightIntensity[" + i + "]");
+					this .lightAttenuation [i]      = gl .getUniformLocation (this .program, "x3d_LightAttenuation[" + i + "]");
+					this .lightLocation [i]         = gl .getUniformLocation (this .program, "x3d_LightLocation[" + i + "]");
+					this .lightDirection [i]        = gl .getUniformLocation (this .program, "x3d_LightDirection[" + i + "]");
+					this .lightBeamWidth [i]        = gl .getUniformLocation (this .program, "x3d_LightBeamWidth[" + i + "]");
+					this .lightCutOffAngle [i]      = gl .getUniformLocation (this .program, "x3d_LightCutOffAngle[" + i + "]");
+					this .lightRadius [i]           = gl .getUniformLocation (this .program, "x3d_LightRadius[" + i + "]");
 				}
 
-				this .ambientIntensity = gl .getUniformLocation (this .program, "x3d_ambientIntensity");
-				this .diffuseColor     = gl .getUniformLocation (this .program, "x3d_diffuseColor");
-				this .specularColor    = gl .getUniformLocation (this .program, "x3d_specularColor");
-				this .emissiveColor    = gl .getUniformLocation (this .program, "x3d_emissiveColor");
-				this .shininess        = gl .getUniformLocation (this .program, "x3d_shininess");
-				this .transparency     = gl .getUniformLocation (this .program, "x3d_transparency");
+				this .ambientIntensity = gl .getUniformLocation (this .program, "x3d_AmbientIntensity");
+				this .diffuseColor     = gl .getUniformLocation (this .program, "x3d_DiffuseColor");
+				this .specularColor    = gl .getUniformLocation (this .program, "x3d_SpecularColor");
+				this .emissiveColor    = gl .getUniformLocation (this .program, "x3d_EmissiveColor");
+				this .shininess        = gl .getUniformLocation (this .program, "x3d_Shininess");
+				this .transparency     = gl .getUniformLocation (this .program, "x3d_Transparency");
 
-				this .texturing = gl .getUniformLocation (this .program, "x3d_texturing");
-				this .texture   = gl .getUniformLocation (this .program, "x3d_texture");
+				this .texturing = gl .getUniformLocation (this .program, "x3d_Texturing");
+				this .texture   = gl .getUniformLocation (this .program, "x3d_Texture");
 
-				this .textureMatrix    = gl .getUniformLocation (this .program, "x3d_textureMatrix");
-				this .normalMatrix     = gl .getUniformLocation (this .program, "x3d_normalMatrix");
-				this .projectionMatrix = gl .getUniformLocation (this .program, "x3d_projectionMatrix");
-				this .modelViewMatrix  = gl .getUniformLocation (this .program, "x3d_modelViewMatrix");
+				this .textureMatrix    = gl .getUniformLocation (this .program, "x3d_TextureMatrix");
+				this .normalMatrix     = gl .getUniformLocation (this .program, "x3d_NormalMatrix");
+				this .projectionMatrix = gl .getUniformLocation (this .program, "x3d_ProjectionMatrix");
+				this .modelViewMatrix  = gl .getUniformLocation (this .program, "x3d_ModelViewMatrix");
 
-				this .color    = gl .getAttribLocation (this .program, "x3d_color");
-				this .texCoord = gl .getAttribLocation (this .program, "x3d_texCoord");
-				this .normal   = gl .getAttribLocation (this .program, "x3d_normal");
-				this .position = gl .getAttribLocation (this .program, "x3d_position");			
+				this .color    = gl .getAttribLocation (this .program, "x3d_Color");
+				this .texCoord = gl .getAttribLocation (this .program, "x3d_TexCoord");
+				this .normal   = gl .getAttribLocation (this .program, "x3d_Normal");
+				this .position = gl .getAttribLocation (this .program, "x3d_Vertex");			
 			},
 			setGlobalLights: function ()
 			{
@@ -199,9 +199,9 @@ function ($,
 				else
 					gl .uniform1i (this .texturing, false);
 
+				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));	
 				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrix () .array);
 				gl .uniformMatrix4fv (this .modelViewMatrix,  false, new Float32Array (context .modelViewMatrix));
-				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));	
 			},
 			use: function (context)
 			{

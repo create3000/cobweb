@@ -41,9 +41,10 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 		}
 		catch (error)
 		{
-			this .valid    = false;
-			this .viewport = new Vector3 ();
-			this .scissor  = new Vector3 ();
+			this .valid            = false;
+			this .viewport         = new Vector3 ();
+			this .scissor          = new Vector3 ();
+			this .intersectsSphere = intersectsSphere;
 			console .log (error .message);
 		}
 	}
@@ -58,18 +59,25 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 		{
 			return this .scissor;
 		},
-		intersects: function (size, center)
+		intersectsSphere: function (radius, center)
 		{
-			if (this .valid)
-			{
-				var nradius = size .abs () / 2;
+			if (this .planes [0] .distance (center) + radius < 0)
+				return false;
 
-				for (var i = 0; i < this .planes .length; ++ i)
-				{
-					if (this .planes [i] .distance (center) + nradius < 0)
-						return false;
-				}
-			}
+			if (this .planes [1] .distance (center) + radius < 0)
+				return false;
+
+			if (this .planes [2] .distance (center) + radius < 0)
+				return false;
+
+			if (this .planes [3] .distance (center) + radius < 0)
+				return false;
+
+			if (this .planes [4] .distance (center) + radius < 0)
+				return false;
+
+			if (this .planes [5] .distance (center) + radius < 0)
+				return false;
 
 			return true;
 		},
@@ -142,6 +150,11 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 			return new Line3 (point1, point2, { points: true });
 		},
 	});
+
+	function intersectsSphere ()
+	{
+		return true;
+	}
 
 	return ViewVolume;
 });

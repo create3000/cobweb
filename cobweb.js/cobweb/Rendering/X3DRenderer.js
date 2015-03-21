@@ -73,7 +73,7 @@ function (TraverseType, QuickSort, Matrix4)
 			{
 				var viewVolume = this .viewVolumes [this .viewVolumes .length - 1];
 
-				if (viewVolume .intersects (bboxSize /* XXX: no real size */ , bboxCenter))
+				if (viewVolume .intersectsSphere (radius, bboxCenter))
 				{
 					if (shape .isTransparent ())
 					{

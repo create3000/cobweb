@@ -823,6 +823,7 @@
     <None Include="tests\Examples\BIC\stage\worlds\tuer_brett.wrl" />
     <None Include="tests\Examples\BIC\stage\worlds\wand1.png" />
     <None Include="tests\Examples\BIC\stage\worlds\tuer_brett.x3d" />
+    <None Include="cobweb\Browser\Core\Notification.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

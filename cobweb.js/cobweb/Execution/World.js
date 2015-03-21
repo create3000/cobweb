@@ -16,7 +16,7 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, X3DCast, X3DConstants)
 
 		this .layerSet        = new LayerSet (executionContext);
 		this .defaultLayerSet = this .layerSet;
-		this .layer0          = new Layer (executionContext);
+		this .layer0          = this .layerSet .getLayer0 ();
 		
 		this .addChildren ("activeLayer", new SFNode (this .layer0));
 	}
@@ -33,16 +33,11 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, X3DCast, X3DConstants)
 			X3DBaseNode .prototype .initialize .call (this);
 
 			this .layerSet .setup ();
-			this .layerSet .setLayer0 (this .layer0);
 			this .layerSet .activeLayer_ .addInterest (this, "set_activeLayer");
 
 			this .getExecutionContext () .getRootNodes () .addInterest (this, "set_rootNodes");
 
 			this .set_rootNodes (); // This can happen twice when rootNodes is tainted
-
-			this .layer0 .setup ();
-			this .layer0 .isLayer0 (true);
-
 			this .bind ();
 		},
 		getLayerSet: function ()
@@ -64,12 +59,11 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, X3DCast, X3DConstants)
 
 			for (var i = 0; i < rootNodes .length; ++ i)
 			{
-				var rootNode     = rootNodes [i];
-				var rootLayerSet = X3DCast (X3DConstants .LayerSet, rootNode);
+				var rootLayerSet = X3DCast (X3DConstants .LayerSet, rootNodes [i]);
 
 				if (rootLayerSet)
 				{
-					rootLayerSet .setLayer0 (layer0);
+					rootLayerSet .setLayer0 (this .layer0);
 					this .layerSet = rootLayerSet;
 				}
 			}

@@ -61,14 +61,8 @@ function ($,
 			{
 				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 
-				this .size_   .addInterest (this, "set_bbox__");
-				this .center_ .addInterest (this, "set_bbox__");
-
-				this .set_bbox__ ();
-			},
-			set_bbox__: function ()
-			{
-				this .bbox = new Box3 (this .size_ .getValue (), this .center_ .getValue ());
+				this .size   = this .size_   .getValue ();
+				this .center = this .center_ .getValue ();
 			},
 			update: function ()
 			{
@@ -98,16 +92,18 @@ function ($,
 					if (! this .enabled_ .getValue () || this .visible)
 						return;
 
-					if (this .size_ .getValue () .equals (unlimited))
+					if (this .size .equals (unlimited))
 						this .visible = true;
 
 					else
 					{
 						var
-							viewVolumes = this .getCurrentLayer () .getViewVolumeStack (),
-							bbox        = this .bbox .copy () .multRight (this .getModelViewMatrix (type));
+							viewVolumes     = this .getCurrentLayer () .getViewVolumeStack (),
+							modelViewMatrix = this .getModelViewMatrix (type),
+							size            = modelViewMatrix .multDirMatrix (this .size .copy ()),
+							center          = modelViewMatrix .multVecMatrix (this .center .copy ());
 
-						this .visible = viewVolumes [viewVolumes .length - 1] .intersects (bbox .size, bbox .center);
+						this .visible = viewVolumes [viewVolumes .length - 1] .intersectsSphere (size .abs () / 2, center);
 					}
 				}
 			},

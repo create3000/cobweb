@@ -2,9 +2,11 @@
 define ([
 	"cobweb/Browser/Core/BrowserOptions",
 	"cobweb/Browser/Core/RenderingProperties",
+	"cobweb/Browser/Core/Notification",
 ],
 function (BrowserOptions,
-          RenderingProperties)
+          RenderingProperties,
+          Notification)
 {
 	function getContext (canvas)
 	{
@@ -42,9 +44,11 @@ function (BrowserOptions,
 
 			this .browserOptions      = new BrowserOptions (this);
 			this .renderingProperties = new RenderingProperties (this);
+			this .notification        = new Notification (this);
 
 			this .browserOptions      .setup ()
 			this .renderingProperties .setup ();
+			this .notification        .setup ();
 		},
 		getX3D: function ()
 		{
@@ -65,6 +69,10 @@ function (BrowserOptions,
 		getRenderingProperties: function ()
 		{
 			return this .renderingProperties;
+		},
+		getNotification: function ()
+		{
+			return this .notification;
 		},
 	};
 

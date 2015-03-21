@@ -59,6 +59,7 @@ function ($,
 				X3DNode .prototype .initialize .call (this);
 
 				this .layerNode0 .setup ();
+				this .layerNode0 .isLayer0 (true);
 
 				this .activeLayer_ .addInterest (this, "set_activeLayer");
 				this .order_       .addInterest (this, "set_layers");

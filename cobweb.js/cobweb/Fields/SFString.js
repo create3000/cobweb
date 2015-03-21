@@ -46,10 +46,7 @@ function ($, X3DField, X3DConstants)
 		{
 			X3DField .prototype .set .call (this, String (value));
 		},
-		valueOf: function ()
-		{
-			return this .getValue ();
-		},
+		valueOf: X3DField .prototype .getValue,
 		toString: function ()
 		{
 			return '"'+ SFString .escape (this .getValue ()) + '"';

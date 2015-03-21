@@ -48,7 +48,11 @@ function ($,
 			this .texCoordBuffer = gl .createBuffer ();
 			this .cubeBuffer     = gl .createBuffer ();
 			
-			this .addInterest (this, "build");
+			this .groundAngle_  .addInterest (this, "build");
+			this .groundColor_  .addInterest (this, "build");
+			this .skyAngle_     .addInterest (this, "build");
+			this .skyColor_     .addInterest (this, "build");
+			this .transparency_ .addInterest (this, "build");
 
 			this .build ();
 		},
@@ -158,8 +162,6 @@ function ($,
 
 					this .buildSphere (radius, vAngle, this .groundAngle_, this .groundColor_, alpha, true);
 				}
-
-				this .sphere .vertices = this .sphere .length / 4;
 			}
 
 			this .transfer ();
@@ -247,6 +249,7 @@ function ($,
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .sphere), gl .STATIC_DRAW);
+			this .sphere .primitives = this .sphere .length / 4;
 		},
 		traverse: function (type)
 		{
@@ -271,8 +274,10 @@ function ($,
 
 			// Get background scale
 
-			var viewport = this .getBrowser () .getViewport ();
-			var scale    = this .getCurrentViewpoint () .getScreenScale (SIZE, viewport);
+			var
+				viewport = this .getBrowser () .getViewport (),
+				scale    = this .getCurrentViewpoint () .getScreenScale (SIZE, viewport)
+				rotation = new Rotation4 ();
 
 			scale .multiply (Math .max (viewport [2], viewport [3]));
 
@@ -280,23 +285,31 @@ function ($,
 
 			// Rotate and scale background
 
-			var rotation = new Rotation4 ();
-
 			this .matrix .get (null, rotation);
 
 			var modelViewMatrix = new Matrix4 ();
 			modelViewMatrix .scale (scale);
 			modelViewMatrix .rotate (rotation);
 
-			this .drawSphere (modelViewMatrix);
+			// Draw
+
+			var modelViewMatrixArray = new Float32Array (modelViewMatrix);
+
+			this .drawSphere (this .getBrowser () .getProjectionMatrix () .array, modelViewMatrixArray);
 		},
-		drawSphere: function (modelViewMatrix)
+		drawSphere: function (projectionMatrix, modelViewMatrix)
 		{
 			if (this .transparency_ .getValue () >= 1)
 				return;
-
+	
 			var browser = this .getBrowser ();
 			var gl      = browser .getContext ();
+			var shader  = browser .getBackgroundSphereShader ();
+
+			shader .use ();
+
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, projectionMatrix);
+			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, modelViewMatrix);
 
 			// Setup context.
 	
@@ -308,27 +321,20 @@ function ($,
 
 			// Shader
 
-			var shader = browser .getBackgroundSphereShader ();
-
-			shader .use ();
-				
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrix () .array);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, new Float32Array (modelViewMatrix));
-
 			// Enable attribute arrays.
 
-			var vertexAttribArray = 0;
+			var vertexAttribIndex = 0;
 
 			if (shader .color >= 0)
 			{
-				gl .enableVertexAttribArray (vertexAttribArray ++);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colors .length ? this .colorBuffer : browser .getDefaultColorBuffer ());
+				gl .enableVertexAttribArray (vertexAttribIndex ++);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
 				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
 			}
 
 			if (shader .position >= 0)
 			{
-				gl .enableVertexAttribArray (vertexAttribArray ++);
+				gl .enableVertexAttribArray (vertexAttribIndex ++);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
 				gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
 			}
@@ -337,11 +343,11 @@ function ($,
 
 			gl .enable (gl .CULL_FACE);
 			gl .frontFace (gl .CCW);
-			gl .drawArrays (gl .TRIANGLES, 0, this .sphere .vertices);
+			gl .drawArrays (gl .TRIANGLES, 0, this .sphere .primitives);
 
 			// Disable attribute arrays.
 
-			for (var i = 0; i < vertexAttribArray; ++ i)
+			for (var i = 0; i < vertexAttribIndex; ++ i)
 				gl .disableVertexAttribArray (i);
 		},
 	});

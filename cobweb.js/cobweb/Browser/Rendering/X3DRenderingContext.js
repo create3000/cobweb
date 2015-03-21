@@ -42,7 +42,7 @@ function (Fields,
 		fragmentShader .url_ .push (fs);
 		fragmentShader .setup ();
 
-		shader = new ComposedShader (executionContext);
+		var shader = new ComposedShader (executionContext);
 		shader .language_ = "GLSL";
 		shader .parts_ .push (vertexShader);
 		shader .parts_ .push (fragmentShader);

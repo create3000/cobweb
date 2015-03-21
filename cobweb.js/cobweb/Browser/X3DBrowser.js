@@ -217,15 +217,13 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		},
 		bindViewpoint: function (viewpoint)
 		{
-			console .log ("Trying to bind viewpoint: " + viewpoint .description_ .toString ());
-
 			if (viewpoint .isBound_ .getValue ())
 				viewpoint .transitionStart (null, viewpoint);
 
 			else
 				viewpoint .set_bind_ = true;
 
-			//this .getNotification () .string_ = viewpoint .description_;
+			this .getNotification () .string_ = viewpoint .description_;
 		},
 		print: function (string)
 		{
@@ -256,7 +254,8 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		get: function () { return this .description_; },
 		set: function (value)
 		{
-			this .description_ = value;
+			this .description_                = value;
+			this .getNotification () .string_ = value;
 		},
 		enumerable: true,
 		configurable: false

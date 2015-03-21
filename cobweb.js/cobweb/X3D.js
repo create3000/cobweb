@@ -22,7 +22,7 @@ function ($, Fields, X3DBrowser)
 	function createBrowser (x3d)
 	{
 		x3d = $(x3d);
-	
+
 		var browser = new X3DBrowser (x3d);
 
 		browser .setup ();

@@ -56,3 +56,18 @@ x3d .renderingProperties {
 	font-size: 9px;
 	white-space: pre;
 }
+
+x3d .notification {
+	display: none;
+	position: absolute;
+	top: 20px;
+	right: -4px;
+	padding: 5px 9px 5px 5px;
+	background: rgba(0,0,0,1);
+	border: 1px solid white;
+	border-radius: 5px;
+	color: white;
+	font-family: sans;
+	font-size: 10px;
+	white-space: pre;
+}

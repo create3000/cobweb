@@ -30,10 +30,7 @@ function ($, X3DField, X3DConstants)
 		{
 			X3DField .prototype .set .call (this, ~~value);
 		},
-		valueOf: function ()
-		{
-			return this .getValue ();
-		},
+		valueOf: X3DField .prototype .getValue,
 		toString: function ()
 		{
 			return String (this .getValue ());

@@ -116,8 +116,9 @@ function ($, Fields, Parser, X3DConstants)
 				}
 				catch (error)
 				{
-					if (element .nodeName === "TimeSensor")
+					if (element .nodeName === "VisibilitySensor")
 						console .log (error);
+
 					console .warn ("Unknown node type '" + element .nodeName + "'.");
 				}
 			},

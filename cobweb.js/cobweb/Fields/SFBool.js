@@ -38,10 +38,7 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFBool;
 		},
-		valueOf: function ()
-		{
-			return this .getValue ();
-		},
+		valueOf: X3DField .prototype .getValue,
 		toString: function ()
 		{
 			return this .getValue () ? "TRUE" : "FALSE";
