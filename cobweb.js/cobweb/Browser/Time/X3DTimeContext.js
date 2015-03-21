@@ -6,7 +6,7 @@ function (Vector3)
 {
 	function X3DTimeContext ()
 	{
-		this .currentPosition = new Vector3 ();
+		this .currentPosition = new Vector3 (0, 0, 0);
 	}
 
 	X3DTimeContext .prototype =

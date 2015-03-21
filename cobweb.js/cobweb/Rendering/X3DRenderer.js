@@ -6,36 +6,6 @@ define ([
 ],
 function (TraverseType, QuickSort, Matrix4)
 {
-	function ShapeContainer (transparent)
-	{
-		this .shape           = null;
-		this .transparent     = transparent;
-		this .modelViewMatrix = new Matrix4 ();
-		this .scissor         = null;
-		this .distance        = 0;
-		this .localLights     = [ ];
-	}
-
-	ShapeContainer .prototype =
-	{
-		set: function (shape, modelViewMatrix, scissor, distance)
-		{
-			this .shape           = shape;
-			this .modelViewMatrix .assign (modelViewMatrix);
-			this .scissor         = scissor;
-			this .distance        = distance;	
-		},
-		draw: function (gl)
-		{
-			gl .scissor (this .scissor [0],
-			             this .scissor [1],
-			             this .scissor [2],
-			             this .scissor [3]);
-
-			this .shape .draw (this);
-		},
-	};
-
 	function X3DRenderer (browser, executionContext)
 	{
 		this .viewVolumes          = [ ];
@@ -62,38 +32,39 @@ function (TraverseType, QuickSort, Matrix4)
 		},
 		addShape: function (shape)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
-			var bboxSize        = modelViewMatrix .multDirMatrix (shape .getBBoxSize () .copy ());
-			var bboxCenter      = modelViewMatrix .multVecMatrix (shape .getBBoxCenter () .copy ());
-			var radius          = bboxSize .abs () / 2;
-			var distance        = bboxCenter .z;
-			var min             = distance - radius;
+			var
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				bboxSize        = modelViewMatrix .multDirMatrix (shape .getBBoxSize () .copy ()),
+				bboxCenter      = modelViewMatrix .multVecMatrix (shape .getBBoxCenter () .copy ()),
+				radius          = bboxSize .abs () / 2,
+				distance        = bboxCenter .z,
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-			if (min < 0)
+			if (viewVolume .intersectsSphere (radius, bboxCenter))
 			{
-				var viewVolume = this .viewVolumes [this .viewVolumes .length - 1];
-
-				if (viewVolume .intersectsSphere (radius, bboxCenter))
+				if (shape .isTransparent ())
 				{
-					if (shape .isTransparent ())
-					{
-						if (this .numTransparentShapes === this .transparentShapes .length)
-							this .transparentShapes .push (new ShapeContainer (true));
+					if (this .numTransparentShapes === this .transparentShapes .length)
+						this .transparentShapes .push ({ modelViewMatrix: new Matrix4 (), transparent: true, localLights: [ ] });
 
-						this .transparentShapes [this .numTransparentShapes] .set (shape, modelViewMatrix, viewVolume .getScissor (), distance);
+					var context = this .transparentShapes [this .numTransparentShapes];
 
-						++ this .numTransparentShapes;
-					}
-					else
-					{
-						if (this .numOpaqueShapes === this .opaqueShapes .length)
-							this .opaqueShapes .push (new ShapeContainer (false));
-
-						this .opaqueShapes [this .numOpaqueShapes] .set (shape, modelViewMatrix, viewVolume .getScissor (), distance);
-
-						++ this .numOpaqueShapes;
-					}
+					++ this .numTransparentShapes;
 				}
+				else
+				{
+					if (this .numOpaqueShapes === this .opaqueShapes .length)
+						this .opaqueShapes .push ({ modelViewMatrix: new Matrix4 (), transparent: false, localLights: [ ] });
+
+					var context = this .opaqueShapes [this .numOpaqueShapes];
+
+					++ this .numOpaqueShapes;
+				}
+
+				context .modelViewMatrix .assign (modelViewMatrix);
+				context .shape    = shape;
+				context .scissor  = viewVolume .getScissor ();
+				context .distance = distance;				
 			}
 		},
 		render: function (type)
@@ -158,7 +129,18 @@ function (TraverseType, QuickSort, Matrix4)
 			gl .disable (gl .BLEND);
 
 			for (var i = 0; i < this .numOpaqueShapes; ++ i)
-				this .opaqueShapes [i] .draw (gl);
+			{
+				var
+					context = this .opaqueShapes [i],
+					scissor = context .scissor;
+
+				gl .scissor (scissor .x,
+	                      scissor .y,
+	                      scissor .z,
+	                      scissor .w);
+
+				context .shape .draw (context);
+			}
 
 			// Render transparent objects
 
@@ -168,7 +150,18 @@ function (TraverseType, QuickSort, Matrix4)
 			this .transparencySorter .sort (0, this .numTransparentShapes);
 
 			for (var i = 0; i < this .numTransparentShapes; ++ i)
-				this .transparentShapes [i] .draw (gl);
+			{
+				var
+					context = this .transparentShapes [i],
+					scissor = context .scissor;
+
+				gl .scissor (scissor .x,
+	                      scissor .y,
+	                      scissor .z,
+	                      scissor .w);
+
+				context .shape .draw (context);
+			}
 
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);

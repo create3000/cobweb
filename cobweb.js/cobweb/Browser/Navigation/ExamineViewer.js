@@ -23,8 +23,8 @@ function ($, X3DViewer, Vector3, Rotation4)
 		this .button            = -1;
 		this .orientationOffset = new Rotation4 ();
 		this .rotation          = new Rotation4 ();
-		this .fromVector        = new Vector3 ();
-		this .fromPoint         = new Vector3 ()
+		this .fromVector        = new Vector3 (0, 0, 0);
+		this .fromPoint         = new Vector3 (0, 0, 0);
 		this .pressTime         = 0;
 		this .motionTime        = 0;
 		this .spinId            = undefined;

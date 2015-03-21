@@ -55,7 +55,7 @@ function ($,
 				if (index < this .point_ .length)
 					return this .point_ [index] .getValue ();
 
-				return new Vector3 ();
+				return new Vector3 (0, 0, 0);
 			},
 			getNormal: function (index1, index2, index3)
 			{
@@ -66,7 +66,7 @@ function ($,
 					                          this .point_ [index2] .getValue (),
 					                          this .point_ [index3] .getValue ());
 
-				return new Vector3 ();
+				return new Vector3 (0, 0, 0);
 			},
 			getQuadNormal: function (index1, index2, index3, index4)
 			{
@@ -78,7 +78,7 @@ function ($,
 					                              this .point_ [index3] .getValue (),
 					                              this .point_ [index4] .getValue ());
 
-				return new Vector3 ();
+				return new Vector3 (0, 0, 0);
 			},
 		});
 

@@ -7,20 +7,10 @@ function ($, Algorithm)
 {
 	function Vector4 (x, y, z, w)
 	{		
-		if (arguments .length)
-		{
-			this .x = x;
-			this .y = y;
-			this .z = z;
-			this .w = w;
-		}
-		else
-		{
-			this .x = 0;
-			this .y = 0;
-			this .z = 0;
-			this .w = 0;
-		}
+		this .x = x;
+		this .y = y;
+		this .z = z;
+		this .w = w;
 	}
 
 	Vector4 .prototype =
@@ -114,10 +104,20 @@ function ($, Algorithm)
 		},
 		normalize: function ()
 		{
-			var length = this .abs ();
+			var length = Math .sqrt (this .x * this .x +
+			                         this .y * this .y +
+			                         this .z * this .z +
+			                         this .w * this .w);
 			
 			if (length)
-				return this .divide (length);
+			{
+				length = 1 / length;
+
+				this .x *= length;
+				this .y *= length;
+				this .z *= length;
+				this .w *= length;
+			}
 
 			return this;
 		},
@@ -130,11 +130,17 @@ function ($, Algorithm)
 		},
 		norm: function ()
 		{
-			return this .dot (this);
+			return this .x * this .x +
+			       this .y * this .y +
+			       this .z * this .z +
+			       this .w * this .w;
 		},
 		abs: function ()
 		{
-			return Math .sqrt (this .norm ());
+			return Math .sqrt (this .x * this .x +
+			                   this .y * this .y +
+			                   this .z * this .z +
+			                   this .w * this .w);
 		},
 		min: function (vector)
 		{
@@ -207,9 +213,9 @@ function ($, Algorithm)
 
 	$.extend (Vector4,
 	{
-		Zero: new Vector4 (),
+		Zero: new Vector4 (0, 0, 0, 0),
 		One: new Vector4 (1, 1, 1, 1),
-		negate: function ()
+		negate: function (vector)
 		{
 			return vector .copy () .negate ();
 		},

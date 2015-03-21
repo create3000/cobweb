@@ -53,20 +53,28 @@ function ($,
 			{
 				X3DMaterialNode .prototype .initialize .call (this);
 
+				this .addChildren ("transparent", new SFBool (false));
+
+				this .transparency_ .addInterest (this, "set_transparent__");
 				this .addInterest (this, "update");
-	
+		
+				this .diffuseColor  = new Float32Array (3);
+				this .specularColor = new Float32Array (3);
+				this .emissiveColor = new Float32Array (3);
+
+				this .set_transparent__ ();
 				this .update ();
 			},
-			isTransparent: function ()
+			set_transparent__: function ()
 			{
-				return this .transparency_ .getValue ();
+				this .transparent_ = this .transparency_ .getValue ();
 			},
 			update: function ()
 			{
+				this .diffuseColor  .set (this .diffuseColor_  .getValue ());
+				this .specularColor .set (this .specularColor_ .getValue ());
+				this .emissiveColor .set (this .emissiveColor_ .getValue ());
 				this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
-				this .diffuseColor     = new Float32Array (this .diffuseColor_  .getValue ());
-				this .specularColor    = new Float32Array (this .specularColor_ .getValue ());
-				this .emissiveColor    = new Float32Array (this .emissiveColor_ .getValue ());
 				this .shininess        = Algorithm .clamp (this .shininess_    .getValue (), 0, 1) * 128;
 				this .transparency     = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
 			},

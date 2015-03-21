@@ -16,7 +16,6 @@ function ($,
 
 		this .addType (X3DConstants .X3DComposedGeometryNode);
 
-		this .transparent  = false;
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .texCoordNode = null;
@@ -42,10 +41,6 @@ function ($,
 			this .set_texCoord__ ();
 			this .set_normal__ ();
 			this .set_coord__ ();
-		},
-		isTransparent: function ()
-		{
-			return this .transparent;
 		},
 		getAttrib: function ()
 		{
@@ -90,7 +85,7 @@ function ($,
 			if (this .colorNode)
 			{
 				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparency__");
+				this .colorNode .removeInterest (this, "set_transparent__");
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
@@ -98,16 +93,16 @@ function ($,
 			if (this .colorNode)
 			{
 				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparency__");
+				this .colorNode .addInterest (this, "set_transparent__");
 
-				this .set_transparency__ ();
+				this .set_transparent__ ();
 			}
 			else
-				this .transparent = false;
+				this .transparent_ = false;
 		},
-		set_transparency__: function ()
+		set_transparent__: function ()
 		{
-			this .transparent = this .colorNode .isTransparent ();
+			this .transparent_ = this .colorNode .isTransparent ();
 		},
 		set_texCoord__: function ()
 		{

@@ -73,15 +73,17 @@ function ($, Quaternion, Vector3)
 					return;
 				}
 				
+				this .value = new Quaternion (0, 0, 0, 1);
 				this .set (arguments [0] .x,
 				           arguments [0] .y,
 				           arguments [0] .z,
 				           angle);
-				
+
 				return;
 			}
 			case 4:
 			{
+				this .value = new Quaternion (0, 0, 0, 1);
 				this .set (x, y, z, angle);
 				return;
 			}
@@ -109,7 +111,7 @@ function ($, Quaternion, Vector3)
 
 			if (scale === 0)
 			{
-				this .value = new Quaternion (0, 0, 0, 1);
+				this .value .set (0, 0, 0, 1);
 				return this;
 			}
 
@@ -118,10 +120,10 @@ function ($, Quaternion, Vector3)
 			var halfTheta = angle / 2;
 			scale = Math .sin (halfTheta) / scale;
 
-			this .value = new Quaternion (x * scale,
-			                              y * scale,
-			                              z * scale,
-			                              Math .cos (halfTheta));
+			this .value .set (x * scale,
+			                  y * scale,
+			                  z * scale,
+			                  Math .cos (halfTheta));
 			return this;
 		},
 		get: function ()
@@ -154,11 +156,13 @@ function ($, Quaternion, Vector3)
 		},
 		multLeft: function (rot)
 		{
-			return new Rotation4 (this .value .copy () .multLeft (rot .value) .normalize ());
+			this .value .multLeft (rot .value) .normalize ();
+			return this;
 		},
 		multRight: function (rot)
 		{
-			return new Rotation4 (this .value .copy () .multRight (rot .value) .normalize ());
+			this .value .multRight (rot .value) .normalize ();
+			return this;
 		},
 		multVecRot: function (vector)
 		{

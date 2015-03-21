@@ -6,15 +6,10 @@ function (Algorithm)
 {
 	function Matrix2 ()
 	{
-		switch (arguments .length)
-		{
-			case 0:
-				this .identity ();
-				break;
-			case 4:
-				this .assign (arguments);
-				break;
-		}
+		if (arguments .length)
+			this .assign (arguments);
+		else
+			this .identity ();
 	}
 
 	Matrix2 .prototype =

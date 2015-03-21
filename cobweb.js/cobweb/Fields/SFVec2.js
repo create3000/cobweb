@@ -17,7 +17,7 @@ function ($, Vector2, X3DField, X3DConstants)
 				X3DField .call (this, new Vector2 (+x, +y));
 		}
 		else
-			X3DField .call (this, new Vector2 ());
+			X3DField .call (this, new Vector2 (0, 0));
 	}
 
 	SFVec2 .prototype = $.extend (new X3DField (),

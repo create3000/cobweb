@@ -75,7 +75,7 @@ function ($,
 				text += "Camera:     " + this .getBrowser () .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Traverse:   " + traverseTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Draw:       " + drawTime .toFixed (2) .toLocaleString () + " ms" + "\n";
-				text += "Shapes:     " + opaqueShapes + " / " + transparentShapes + "\n";
+				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";
 				text += "Sensors:    " + sensors + "\n";
 
 				this .element .text (text);

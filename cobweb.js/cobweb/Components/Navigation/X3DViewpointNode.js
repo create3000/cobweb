@@ -10,6 +10,7 @@ define ([
 	"cobweb/Components/Interpolation/OrientationInterpolator",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
@@ -24,6 +25,7 @@ function ($,
           OrientationInterpolator,
           TraverseType,
           X3DConstants,
+          Vector2,
           Vector3,
           Rotation4,
           Matrix4)
@@ -70,7 +72,7 @@ function ($,
 				this .timeSensor .setup ();
 
 				this .easeInEaseOut .key_           = [ 0, 1 ];
-				this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 0), new SFVec2f (0, 0) ];
+				this .easeInEaseOut .easeInEaseOut_ = [ new Vector2 (0, 0), new Vector2 (0, 0) ];
 				this .easeInEaseOut .setup ();
 
 				this .positionInterpolator         .key_ = [ 0, 1 ];
@@ -125,19 +127,18 @@ function ($,
 			{
 				return this .parentMatrix;
 			},
-			setCameraSpaceMatrix: function (value)
+			getCameraSpaceMatrix: function ()
+			{
+				return this .cameraSpaceMatrix;
+			},
+			setInverseCameraSpaceMatrix: function (value)
 			{
 				try
 				{
 					this .inverseCameraSpaceMatrix = value .copy () .inverse ();
-					this .cameraSpaceMatrix        = value;
 				}
 				catch (error)
 				{ }
-			},
-			getCameraSpaceMatrix: function ()
-			{
-				return this .cameraSpaceMatrix;
 			},
 			getInverseCameraSpaceMatrix: function ()
 			{
@@ -195,13 +196,13 @@ function ($,
 							}
 							case "ANIMATE":
 							{
-								this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 1), new SFVec2f (1, 0) ];
+								this .easeInEaseOut .easeInEaseOut_ = [ new Vector2 (0, 1), new Vector2 (1, 0) ];
 								break;
 							}
 							default:
 							{
 								// LINEAR
-								this .easeInEaseOut .easeInEaseOut_ = [ new SFVec2f (0, 0), new SFVec2f (0, 0) ];
+								this .easeInEaseOut .easeInEaseOut_ = [ new Vector2 (0, 0), new Vector2 (0, 0) ];
 								break;
 							}
 						}
@@ -212,13 +213,13 @@ function ($,
 						this .timeSensor .isActive_ .addInterest (this, "set_active__");
 
 						var
-							relativePosition         = new Vector3 (),
+							relativePosition         = new Vector3 (0, 0, 0),
 							relativeOrientation      = new Rotation4 (),
-							relativeScale            = new Vector3 (),
+							relativeScale            = new Vector3 (0, 0, 0),
 							relativeScaleOrientation = new Rotation4 ();
 
 						this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
-				
+
 						var
 							startPosition         = relativePosition,
 							startOrientation      = relativeOrientation,
@@ -244,9 +245,9 @@ function ($,
                else
                {
  						var
-							relativePosition         = new Vector3 (),
+							relativePosition         = new Vector3 (0, 0, 0),
 							relativeOrientation      = new Rotation4 (),
-							relativeScale            = new Vector3 (),
+							relativeScale            = new Vector3 (0, 0, 0),
 							relativeScaleOrientation = new Rotation4 ();
 
 						this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
@@ -269,11 +270,11 @@ function ($,
 			},
 			resetUserOffsets: function ()
 			{
-				this .positionOffset_         = new Vector3 ();
+				this .positionOffset_         = new Vector3 (0, 0, 0);
 				this .orientationOffset_      = new Rotation4 ();
 				this .scaleOffset_            = new Vector3 (1, 1, 1);
 				this .scaleOrientationOffset_ = new Rotation4 ();
-				this .centerOfRotationOffset_ = new Vector3 ();
+				this .centerOfRotationOffset_ = new Vector3 (0, 0, 0);
 				this .fieldOfViewScale_       = 1;
 			},
 			getRelativeTransformation: function (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation)
@@ -325,20 +326,18 @@ function ($,
 				{
 					this .getCurrentLayer () .getViewpoints () .push (this);
 
-					this .parentMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
+					this .parentMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 
 					if (this .isBound_ .getValue ())
 					{
-						var matrix = new Matrix4 ();
+						this .cameraSpaceMatrix .set (this .getUserPosition (),
+						                              this .getUserOrientation (),
+						                              this .scaleOffset_ .getValue (),
+						                              this .scaleOrientationOffset_ .getValue ());
 
-						matrix .set (this .getUserPosition (),
-						             this .getUserOrientation (),
-						             this .scaleOffset_ .getValue (),
-						             this .scaleOrientationOffset_ .getValue ());
+						this .cameraSpaceMatrix .multRight (this .parentMatrix);
 
-						matrix .multRight (this .parentMatrix);
-
-						this .setCameraSpaceMatrix (matrix);
+						this .setInverseCameraSpaceMatrix (this .cameraSpaceMatrix);
 					}
 				}
 			},

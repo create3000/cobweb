@@ -16,7 +16,6 @@ function ($,
 
 		this .addType (X3DConstants .X3DTexture2DNode);
 			
-		this .transparent = false;
 		this .width       = 0;
 		this .height      = 0;
 	}
@@ -48,10 +47,6 @@ function ($,
 
 			this .updateTextureProperties ();
 		},
-		isTransparent: function ()
-		{
-			return this .transparent;
-		},
 		getWidth: function ()
 		{
 			return this .width;
@@ -62,9 +57,9 @@ function ($,
 		},
 		setTexture: function (width, height, transparent, data, flip)
 		{
-			this .transparent = transparent;
-			this .width       = width;
-			this .height      = height;
+			this .transparent_ = transparent;
+			this .width        = width;
+			this .height       = height;
 
 			var gl = this .getBrowser () .getContext ();
 

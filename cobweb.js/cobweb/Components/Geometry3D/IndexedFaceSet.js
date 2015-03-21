@@ -385,7 +385,7 @@ function ($,
 							// Determine polygon normal.
 							// Or use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal
 
-							normal = new Vector3 ();
+							normal = new Vector3 (0, 0, 0);
 
 							for (var i = 0, length = vertices .length; i < length; ++ i)
 							{

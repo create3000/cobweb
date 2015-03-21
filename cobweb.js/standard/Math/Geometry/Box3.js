@@ -17,11 +17,6 @@ function (Matrix4, Vector3)
 				                            0,   0,   0,   0);
 				break;
 			}
-			case 1:
-			{
-				this .matrix = arguments [0];
-				break;
-			}
 			case 3:
 			{
 				var min = arguments [0];
@@ -69,10 +64,10 @@ function (Matrix4, Vector3)
 				return this;
 
 			var
-				lhs_min = new Vector3 (),
-				lhs_max = new Vector3 (),
-				rhs_min = new Vector3 (),
-				rhs_max = new Vector3 ();
+				lhs_min = new Vector3 (0, 0, 0),
+				lhs_max = new Vector3 (0, 0, 0),
+				rhs_min = new Vector3 (0, 0, 0),
+				rhs_max = new Vector3 (0, 0, 0);
 
 			this .getExtents (lhs_min, lhs_max);
 			box  .getExtents (rhs_min, rhs_max);
@@ -127,8 +122,8 @@ function (Matrix4, Vector3)
 		intersectsPoint: function (point)
 		{
 			var
-				min = new Vector3 (),
-				max = new Vector3 ();
+				min = new Vector3 (0, 0, 0),
+				max = new Vector3 (0, 0, 0);
 
 			this .getExtents (min, max);
 
@@ -150,8 +145,8 @@ function (Matrix4, Vector3)
 		get: function ()
 		{
 			var
-				min = new Vector3 (),
-				max = new Vector3 ();
+				min = new Vector3 (0, 0, 0),
+				max = new Vector3 (0, 0, 0);
 			
 			this .getAbsoluteExtents (min, max);
 

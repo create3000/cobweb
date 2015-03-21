@@ -63,7 +63,7 @@ x3d .notification {
 	top: 20px;
 	right: -4px;
 	padding: 5px 9px 5px 5px;
-	background: rgba(0,0,0,1);
+	background: rgba(0,0,0,0.5);
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;

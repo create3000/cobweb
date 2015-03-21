@@ -7,18 +7,9 @@ function ($, Algorithm)
 {
 	function Vector3 (x, y, z)
 	{		
-		if (arguments .length)
-		{
-			this .x = x;
-			this .y = y;
-			this .z = z;
-		}
-		else
-		{
-			this .x = 0;
-			this .y = 0;
-			this .z = 0;
-		}
+		this .x = x;
+		this .y = y;
+		this .z = z;
 	}
 
 	Vector3 .prototype =
@@ -102,18 +93,29 @@ function ($, Algorithm)
 		},
 		normalize: function ()
 		{
-			var length = this .abs ();
+			var length = Math .sqrt (this .x * this .x +
+			                         this .y * this .y +
+			                         this .z * this .z);
 			
 			if (length)
-				return this .divide (length);
+			{
+				length = 1 / length;
+
+				this .x *= length;
+				this .y *= length;
+				this .z *= length;
+			}
 
 			return this;
 		},
 		cross: function (vector)
 		{
-			this .set (this .y * vector .z - this .z * vector .y,
-			           this .z * vector .x - this .x * vector .z,
-			           this .x * vector .y - this .y * vector .x);
+			var x = this .x, y = this .y, z = this .z;
+
+			this .x = y * vector .z - z * vector .y;
+			this .y = z * vector .x - x * vector .z;
+			this .z = x * vector .y - y * vector .x;
+
 			return this;
 		},
 		dot: function (vector)
@@ -124,11 +126,15 @@ function ($, Algorithm)
 		},
 		norm: function ()
 		{
-			return this .dot (this);
+			return this .x * this .x +
+			       this .y * this .y +
+			       this .z * this .z;
 		},
 		abs: function ()
 		{
-			return Math .sqrt (this .norm ());
+			return Math .sqrt (this .x * this .x +
+			                   this .y * this .y +
+			                   this .z * this .z);
 		},
 		min: function (vector)
 		{
@@ -190,9 +196,9 @@ function ($, Algorithm)
 
 	$.extend (Vector3,
 	{
-		Zero: new Vector3 (),
+		Zero: new Vector3 (0, 0, 0),
 		One: new Vector3 (1, 1, 1),
-		negate: function ()
+		negate: function (vector)
 		{
 			return vector .copy () .negate ();
 		},

@@ -7,16 +7,8 @@ function ($, Algorithm)
 {
 	function Vector2 (x, y)
 	{		
-		if (arguments .length)
-		{
-			this .x = x;
-			this .y = y;
-		}
-		else
-		{
-			this .x = 0;
-			this .y = 0;
-		}
+		this .x = x;
+		this .y = y;
 	}
 
 	Vector2 .prototype =
@@ -90,10 +82,16 @@ function ($, Algorithm)
 		},
 		normalize: function ()
 		{
-			var length = this .abs ();
+			var length = Math .sqrt (this .x * this .x +
+			                         this .y * this .y);
 			
 			if (length)
-				return this .divide (length);
+			{
+				length = 1 / length;
+
+				this .x *= length;
+				this .y *= length;
+			}
 
 			return this;
 		},
@@ -104,11 +102,13 @@ function ($, Algorithm)
 		},
 		norm: function ()
 		{
-			return this .dot (this);
+			return this .x * this .x +
+			       this .y * this .y;
 		},
 		abs: function ()
 		{
-			return Math .sqrt (this .norm ());
+			return Math .sqrt (this .x * this .x +
+			                   this .y * this .y);
 		},
 		min: function (vector)
 		{
@@ -159,9 +159,9 @@ function ($, Algorithm)
 
 	$.extend (Vector2,
 	{
-		Zero: new Vector2 (),
+		Zero: new Vector2 (0, 0),
 		One: new Vector2 (1, 1),
-		negate: function ()
+		negate: function (vector)
 		{
 			return vector .copy () .negate ();
 		},

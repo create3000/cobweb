@@ -31,19 +31,19 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 
 			this .planes = [ ];
 			this .planes .push (new Plane3 (p4, Triangle3 .normal (p5, p4, p3)));  // front
-			this .planes .push (new Plane3 (p1, Triangle3 .normal (p6, p1, p2)));  // back
 			this .planes .push (new Plane3 (p2, Triangle3 .normal (p3, p2, p1)));  // left
 			this .planes .push (new Plane3 (p5, Triangle3 .normal (p4, p5, p6)));  // right
 			this .planes .push (new Plane3 (p6, Triangle3 .normal (p1, p6, p5)));  // top
 			this .planes .push (new Plane3 (p3, Triangle3 .normal (p2, p3, p4)));  // bottom
+			this .planes .push (new Plane3 (p1, Triangle3 .normal (p6, p1, p2)));  // back
 
 			this .valid = true;
 		}
 		catch (error)
 		{
 			this .valid            = false;
-			this .viewport         = new Vector3 ();
-			this .scissor          = new Vector3 ();
+			this .viewport         = new Vector3 (0, 0, 0);
+			this .scissor          = new Vector3 (0, 0, 0);
 			this .intersectsSphere = intersectsSphere;
 			console .log (error .message);
 		}
@@ -61,22 +61,24 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 		},
 		intersectsSphere: function (radius, center)
 		{
-			if (this .planes [0] .distance (center) + radius < 0)
+			var planes = this .planes;
+		
+			if (planes [0] .distance (center) + radius < 0)
 				return false;
 
-			if (this .planes [1] .distance (center) + radius < 0)
+			if (planes [1] .distance (center) + radius < 0)
 				return false;
 
-			if (this .planes [2] .distance (center) + radius < 0)
+			if (planes [2] .distance (center) + radius < 0)
 				return false;
 
-			if (this .planes [3] .distance (center) + radius < 0)
+			if (planes [3] .distance (center) + radius < 0)
 				return false;
 
-			if (this .planes [4] .distance (center) + radius < 0)
+			if (planes [4] .distance (center) + radius < 0)
 				return false;
 
-			if (this .planes [5] .distance (center) + radius < 0)
+			if (planes [5] .distance (center) + radius < 0)
 				return false;
 
 			return true;

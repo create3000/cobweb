@@ -32,13 +32,13 @@ function ($,
 
 			this .set_apparance__ ();
 			this .set_geometry__ ();
+			this .set_transparent__ ();
 
 			this .static_ = true;
 		},
 		isTransparent: function ()
 		{
-			return this .apparanceNode .isTransparent () ||
-			       this .geometryNode .isTransparent ();
+			return this .transparent;
 		},
 		getAppearance: function ()
 		{
@@ -50,20 +50,37 @@ function ($,
 		},
 		set_apparance__: function ()
 		{
+			if (this .apparanceNode)
+				this .apparanceNode .removeInterest (this, "set_transparent__");
+
 			this .apparanceNode = this .appearance_ .getValue ();
 			
+			if (this .apparanceNode)
+				this .apparanceNode .addInterest (this, "set_transparent__");
+
 			if (! this .apparanceNode)
 				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
 		},
 		set_geometry__: function ()
 		{
 			if (this .geometryNode)
+			{
 				this .geometryNode .removeInterest (this, "set_bbox__");
+				this .geometryNode .removeInterest (this, "set_transparent__");
+			}
 
 			this .geometryNode = this .geometry_ .getValue ();
 
 			if (this .geometryNode)
+			{
 				this .geometryNode .addInterest (this, "set_bbox__");
+				this .geometryNode .addInterest (this, "set_transparent__");
+			}
+		},
+		set_transparent__: function ()
+		{
+			this .transparent = (this .apparanceNode && this .apparanceNode .transparent_ .getValue ()) ||
+			                    (this .geometryNode && this .geometryNode .transparent_ .getValue ());
 		},
 	});
 

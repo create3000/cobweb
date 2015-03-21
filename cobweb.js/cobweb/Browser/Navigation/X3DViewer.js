@@ -55,7 +55,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 			catch (error)
 			{
 				console .log (error);
-				return new Vector3 ();
+				return new Vector3 (0, 0, 0);
 			}
 		},
 		getDistanceToCenter: function ()

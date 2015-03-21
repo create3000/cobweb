@@ -9,23 +9,18 @@ define ([
 function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 {
 	var
-		dummyTranslation      = new Vector2 (),
-		dummyRotation         = new Vector3 (),
-		dummyScale            = new Vector2 (),
-		dummyScaleOrientation = new Vector3 (),
-		dummyCenter           = new Vector2 ();
+		dummyTranslation      = new Vector2 (0, 0),
+		dummyRotation         = new Vector3 (0, 0, 0),
+		dummyScale            = new Vector2 (0, 0),
+		dummyScaleOrientation = new Vector3 (0, 0, 0),
+		dummyCenter           = new Vector2 (0, 0);
 								
 	function Matrix3 ()
 	{
-		switch (arguments .length)
-		{
-			case 0:
-				this .identity ();
-				break;
-			case 9:
-				this .assign (arguments);
-				break;
-		}
+		if (arguments .length)
+			this .assign (arguments);
+		else
+			this .identity ();
 	}
 
 	Matrix3 .prototype =
@@ -235,107 +230,169 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		inverse: function ()
 		{
-			var t4  = this [0] * this [4];
-			var t6  = this [0] * this [7];
-			var t8  = this [3] * this [1];
-			var t10 = this [3] * this [7];
-			var t12 = this [6] * this [1];
-			var t14 = this [6] * this [4];
+			var
+				m0  = this [0],
+				m1  = this [1],
+				m2  = this [2],
+				m3  = this [3],
+				m4  = this [4],
+				m5  = this [5],
+				m6  = this [6],
+				m7  = this [7],
+				m8  = this [8],
+				t4  = m0 * m4,
+				t6  = m0 * m7,
+				t8  = m3 * m1,
+				t10 = m3 * m7,
+				t12 = m6 * m1,
+				t14 = m6 * m4;
 
-			var d = (t4 * this [8] - t6 * this [5] - t8 * this [8] + t10 * this [2] + t12 * this [5] - t14 * this [2]);
+			var d = (t4 * m8 - t6 * m5 - t8 * m8 + t10 * m2 + t12 * m5 - t14 * m2);
 
 			if (d === 0)
 				throw new Error ("Matrix3 .inverse: determinant is 0.");
 
+			d = 1 / d;
+
 			var
-				m0 =  (this [4] * this [8] - this [7] * this [5]) / d,
-				m1 = -(this [1] * this [8] - this [7] * this [2]) / d,
-				m2 =  (this [1] * this [5] - this [4] * this [2]) / d,
-				m3 = -(this [3] * this [8] - this [6] * this [5]) / d,
-				m4 =  (this [0] * this [8] - this [6] * this [2]) / d,
-				m5 = -(this [0] * this [5] - this [3] * this [2]) / d;
+				b0 =  (m4 * m8 - m7 * m5) * d,
+				b1 = -(m1 * m8 - m7 * m2) * d,
+				b2 =  (m1 * m5 - m4 * m2) * d,
+				b3 = -(m3 * m8 - m6 * m5) * d,
+				b4 =  (m0 * m8 - m6 * m2) * d,
+				b5 = -(m0 * m5 - m3 * m2) * d;
 	
-			this [0] = m0;
-			this [1] = m1;
-			this [2] = m2;
-			this [3] = m3;
-			this [4] = m4;
-			this [5] = m5;
-			this [6] =  (t10 - t14) / d;
-			this [7] = -(t6 - t12) / d;
-			this [8] =  (t4 - t8) / d;
+			this [0] = b0;
+			this [1] = b1;
+			this [2] = b2;
+			this [3] = b3;
+			this [4] = b4;
+			this [5] = b5;
+			this [6] =  (t10 - t14) * d;
+			this [7] = -(t6 - t12) * d;
+			this [8] =  (t4 - t8) * d;
 
 			return this;
 		},
 		multLeft: function (matrix)
 		{
-			var a = this, b = matrix;
+			var
+				a = this, b = matrix,
+				a0 = a[0], a1 = a[1], a2 = a[2],
+				a3 = a[3], a4 = a[4], a5 = a[5],
+				a6 = a[6], a7 = a[7], a8 = a[8],
+				b0 = b[0], b1 = b[1], b2 = b[2],
+				b3 = b[3], b4 = b[4], b5 = b[5],
+				b6 = b[6], b7 = b[7], b8 = b[8];
 
-			this .set (a[0] * b[0] + a[3] * b[1] + a[6] * b[2],
-				        a[1] * b[0] + a[4] * b[1] + a[7] * b[2],
-				        a[2] * b[0] + a[5] * b[1] + a[8] * b[2],
-				        a[0] * b[3] + a[3] * b[4] + a[6] * b[5],
-				        a[1] * b[3] + a[4] * b[4] + a[7] * b[5],
-				        a[2] * b[3] + a[5] * b[4] + a[8] * b[5],
-				        a[0] * b[6] + a[3] * b[7] + a[6] * b[8],
-				        a[1] * b[6] + a[4] * b[7] + a[7] * b[8],
-				        a[2] * b[6] + a[5] * b[7] + a[8] * b[8]);
+			a[0] = a0 * b0 + a3 * b1 + a6 * b2;
+			a[1] = a1 * b0 + a4 * b1 + a7 * b2;
+			a[2] = a2 * b0 + a5 * b1 + a8 * b2;
+			a[3] = a0 * b3 + a3 * b4 + a6 * b5;
+			a[4] = a1 * b3 + a4 * b4 + a7 * b5;
+			a[5] = a2 * b3 + a5 * b4 + a8 * b5;
+			a[6] = a0 * b6 + a3 * b7 + a6 * b8;
+			a[7] = a1 * b6 + a4 * b7 + a7 * b8;
+			a[8] = a2 * b6 + a5 * b7 + a8 * b8;
 
 			return this;
 		},
 		multRight: function (matrix)
 		{
-			var a = this, b = matrix;
+			var
+				a = this, b = matrix,
+				a0 = a[0], a1 = a[1], a2 = a[2],
+				a3 = a[3], a4 = a[4], a5 = a[5],
+				a6 = a[6], a7 = a[7], a8 = a[8],
+				b0 = b[0], b1 = b[1], b2 = b[2],
+				b3 = b[3], b4 = b[4], b5 = b[5],
+				b6 = b[6], b7 = b[7], b8 = b[8];
 
-			this .set (a[0] * b[0] + a[1] * b[3] + a[2] * b[6],
-				        a[0] * b[1] + a[1] * b[4] + a[2] * b[7],
-				        a[0] * b[2] + a[1] * b[5] + a[2] * b[8],
-				        a[3] * b[0] + a[4] * b[3] + a[5] * b[6],
-				        a[3] * b[1] + a[4] * b[4] + a[5] * b[7],
-				        a[3] * b[2] + a[4] * b[5] + a[5] * b[8],
-				        a[6] * b[0] + a[7] * b[3] + a[8] * b[6],
-				        a[6] * b[1] + a[7] * b[4] + a[8] * b[7],
-				        a[6] * b[2] + a[7] * b[5] + a[8] * b[8]);
+			a[0] = a0 * b0 + a1 * b3 + a2 * b6;
+			a[1] = a0 * b1 + a1 * b4 + a2 * b7;
+			a[2] = a0 * b2 + a1 * b5 + a2 * b8;
+			a[3] = a3 * b0 + a4 * b3 + a5 * b6;
+			a[4] = a3 * b1 + a4 * b4 + a5 * b7;
+			a[5] = a3 * b2 + a4 * b5 + a5 * b8;
+			a[6] = a6 * b0 + a7 * b3 + a8 * b6;
+			a[7] = a6 * b1 + a7 * b4 + a8 * b7;
+			a[8] = a6 * b2 + a7 * b5 + a8 * b8;
 
 			return this;
 		},
 		multVecMatrix: function (vector)
 		{
-			if (vector instanceof Vector2)
+			if (vector .length === 2)
 			{
-				var w = vector .x * this [2] + vector .y * this [5] + this [8];
+				var
+					x = vector .x,
+					y = vector .y,
+					w = x * this [2] + y * this [5] + this [8];
 
-				return vector .set ((vector .x * this [0] + vector .y * this [3] + this [6]) / w,
-				                    (vector .x * this [1] + vector .y * this [4] + this [7]) / w);
+				vector .x = (x * this [0] + y * this [3] + this [6]) / w;
+				vector .y = (x * this [1] + y * this [4] + this [7]) / w;
+				
+				return vector;
 			}
 
-			return vector .set (vector .x * this [0] + vector .y * this [3] + vector .z * this [6],
-			                    vector .x * this [1] + vector .y * this [4] + vector .z * this [7],
-			                    vector .x * this [2] + vector .y * this [5] + vector .z * this [8]);
+			var
+				x = vector .x,
+				y = vector .y,
+				z = vector .z;
+
+			vector .x = x * this [0] + y * this [3] + z * this [6];
+			vector .y = x * this [1] + y * this [4] + z * this [7];
+			vector .z = x * this [2] + y * this [5] + z * this [8];
+
+			return vector;
 		},
 		multMatrixVec: function (vector)
 		{
-			if (vector instanceof Vector2)
+			if (vector .length === 2)
 			{
-				var w = vector .x * this [6] + vector .y * this [7] + this [8];
+				var
+					x = vector .x,
+					y = vector .y,
+					w = x * this [6] + y * this [7] + this [8];
 
-				return vector .set ((vector .x * this [0] + vector .y * this [1] + this [2]) / w,
-				                    (vector .x * this [3] + vector .y * this [4] + this [5]) / w);
+				vector .x = (x * this [0] + y * this [1] + this [2]) / w;
+				vector .y = (x * this [3] + y * this [4] + this [5]) / w;
+				
+				return vector;
 			}
 
-			return vector .set (vector .x * this [0] + vector .y * this [1] + vector .z * this [2],
-			                    vector .x * this [3] + vector .y * this [4] + vector .z * this [5],
-			                    vector .x * this [6] + vector .y * this [7] + vector .z * this [8]);
+			var
+				x = vector .x,
+				y = vector .y,
+				z = vector .z;
+
+			vector .x = x * this [0] + y * this [1] + z * this [2];
+			vector .y = x * this [3] + y * this [4] + z * this [5];
+			vector .z = x * this [6] + y * this [7] + z * this [8];
+
+			return vector;
 		},
 		multDirMatrix: function (vector)
 		{
-			return vector .set (vector .x * this [0] + vector .y * this [3],
-			                    vector .x * this [1] + vector .y * this [4]);
+			var
+				x = vector .x,
+				y = vector .y;
+
+			vector .x = x * this [0] + y * this [3];
+			vector .y = x * this [1] + y * this [4];
+
+			return vector;
 		},
 		multMatrixDir: function (vector)
 		{
-			return vector .set (vector .x * this [0] + vector .y * this [1],
-			                    vector .x * this [3] + vector .y * this [4]);
+			var
+				x = vector .x,
+				y = vector .y;
+
+			vector .x = x * this [0] + y * this [1];
+			vector .y = x * this [3] + y * this [4];
+
+			return vector;
 		},
 		identity: function ()
 		{

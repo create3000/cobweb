@@ -54,6 +54,8 @@ function ($,
 			},
 			initialize: function ()
 			{
+				this .normalMatrixArray    = new Float32Array (9);
+				this .modelViewMatrixArray = new Float32Array (16);
 				this .relink ();
 			},
 			relink: function ()
@@ -145,32 +147,36 @@ function ($,
 			},
 			setDefaultUniforms: function (context)
 			{
-				var browser = this .getBrowser ();
-				var gl      = browser .getContext ();
+				var
+					browser  = this .getBrowser (),
+					gl       = browser .getContext (),
+					material = browser .getMaterial (),
+					texture  = browser .getTexture ();
 
 				gl .useProgram (this .program);
-
-				var material = browser .getMaterial ();
-				var texture  = browser .getTexture ();
-
 				gl .uniform1i (this .colorMaterial, context .colorMaterial);
 
 				if (material)
 				{
 					// Lights
 
-					var globalLights = browser .getGlobalLights ();
-					var localLights  = context .localLights;
-					var lights       = Math .min (MAX_LIGHTS, globalLights .length + localLights .length);
-			
+					var
+						globalLights = browser .getGlobalLights (),
+						localLights  = context .localLights,
+						lights       = Math .min (MAX_LIGHTS, globalLights .length + localLights .length),
+						lightOn      = this .lightOn;
+
 					if (this !== browser .getDefaultShader ())
-						this .setGlobalLights ();
+					{
+						for (var i = 0; i < globalLights .length; ++ i)
+							globalLights [i] .use (gl, this, i);
+					}
 
 					for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
-						context .localLights [l] .use (gl, this, i);
+						localLights [l] .use (gl, this, i);
 
 					for (var i = lights; i < MAX_LIGHTS; ++ i)
-						gl .uniform1i (this .lightOn [i], false);
+						gl .uniform1i (lightOn [i], false);
 
 					// Material
 
@@ -199,9 +205,12 @@ function ($,
 				else
 					gl .uniform1i (this .texturing, false);
 
-				gl .uniformMatrix3fv (this .normalMatrix,     false, new Float32Array (context .modelViewMatrix .submatrix .inverse () .transpose ()));	
+				this .normalMatrixArray    .set (context .modelViewMatrix .normalMatrix);
+				this .modelViewMatrixArray .set (context .modelViewMatrix);
+
+				gl .uniformMatrix3fv (this .normalMatrix,     false, this .normalMatrixArray);	
 				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrix () .array);
-				gl .uniformMatrix4fv (this .modelViewMatrix,  false, new Float32Array (context .modelViewMatrix));
+				gl .uniformMatrix4fv (this .modelViewMatrix,  false, this .modelViewMatrixArray);
 			},
 			use: function (context)
 			{
