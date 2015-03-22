@@ -131,7 +131,7 @@ function ($,
 			},
 			getColorIndex: function (index)
 			{
-				if (index < this .colorIndex .length)
+				if (index < this .colorIndex_ .length)
 					return this .colorIndex_ [index];
 
 				return index;
@@ -225,15 +225,17 @@ function ($,
 
 				this .setPrimitiveMode ("LINES");
 				this .setSolid (false);
-				//this .setAttribs (attribNodes, attribArrays);
+				//this .setAttribs (this .attribNodes, attribArrays);
 			},
 			traverse: function (context)
 			{
 				var browser = this .getBrowser ();
 
-				//browser .getContext () .lineWidth (3);
-				browser .setTexture (null);
-				browser .setShader (browser .getLineShader ());
+				if (browser .getShader () === browser .getDefaultShader ())
+				{
+					browser .setTexture (null);
+					browser .setShader (browser .getLineShader ());
+				}
 
 				X3DGeometryNode .prototype .traverse .call (this, context);
 			},

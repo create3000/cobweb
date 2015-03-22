@@ -1,13 +1,19 @@
 
 define ([
+	"jquery",
 	"standard/Math/Algorithm"
 ],
-function (Algorithm)
+function ($, Algorithm)
 {
 	function Matrix2 ()
 	{
 		if (arguments .length)
-			this .assign (arguments);
+		{
+			this [0] = arguments [0];
+			this [1] = arguments [1];
+			this [2] = arguments [2];
+			this [3] = arguments [3];
+		}
 		else
 			this .identity ();
 	}
@@ -20,7 +26,10 @@ function (Algorithm)
 		copy: function ()
 		{
 			var copy = Object .create (Matrix2 .prototype);
-			copy .assign (this);
+			copy [0] = this [0];
+			copy [1] = this [1];
+			copy [2] = this [2];
+			copy [3] = this [3];
 			return copy;
 		},
 		assign: function (matrix)
@@ -51,16 +60,15 @@ function (Algorithm)
 			{
 				case 0:
 				{
-					for (var r = 0; r < this .order; ++ r)
-						for (var c = 0; c < this .order; ++ c)
-							this [r * this .order + c] = r === c ? 1 : 0;
+					this .identity ();
 					break;
 				}
 				case 4:
 				{
-					for (var i = 0; i < this .length; ++ i)
-						this [i] = arguments [i];
-
+					this [0] = arguments [0];
+					this [1] = arguments [1];
+					this [2] = arguments [2];
+					this [3] = arguments [3];	
 					break;
 				}
 			}

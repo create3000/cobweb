@@ -22,18 +22,30 @@ define (function ()
 		},
 		quicksort: function (lo, hi)
 		{
-			var i = lo, j = hi;
+			var
+				i = lo,
+				j = hi,
+				array   = this .array,
+				compare = this .compare;
 
 			// Vergleichs­element x
-			var x = this .array [(lo + hi) >>> 1];
+			var x = array [(lo + hi) >>> 1];
 
 			for (;;)
 			{
-				while (this .compare (this .array [i], x)) ++ i;
-				while (this .compare (x, this .array [j])) -- j;
+				while (compare (array [i], x)) ++ i;
+				while (compare (x, array [j])) -- j;
 
 				if (i < j)
-					this .exchange (i ++, j --);
+				{
+					// Exchange
+					
+					var t = array [i];
+					array [i] = array [j];
+					array [j] = t;
+
+					i ++; j --;
+				}
 				else
 				{
 					if (i === j) ++ i, -- j;
@@ -44,12 +56,6 @@ define (function ()
 			// Rekursion
 			if (lo < j) this .quicksort (lo, j);
 			if (i < hi) this .quicksort (i, hi);
-		},
-		exchange: function (i, j)
-		{
-			var a = this .array [i];
-			this .array [i] = this .array [j];
-			this .array [j] = a;
 		},
 	};
 

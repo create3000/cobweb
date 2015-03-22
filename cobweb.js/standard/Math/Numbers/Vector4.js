@@ -20,7 +20,10 @@ function ($, Algorithm)
 		copy: function ()
 		{
 			var copy = Object .create (Vector4 .prototype);
-			copy .assign (this);
+			copy .x = this .x;
+			copy .y = this .y;
+			copy .z = this .z;
+			copy .w = this .w;
 			return copy;
 		},
 		assign: function (vector)

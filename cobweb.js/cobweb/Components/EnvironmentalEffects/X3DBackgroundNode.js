@@ -27,11 +27,12 @@ function ($,
 		X3DBindableNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DBackgroundNode);
-		
-		this .hidden = false;
-		this .matrix = new Matrix4 ();
-		this .colors = [ ];
-		this .sphere = [ ];
+
+		this .hidden               = false;
+		this .modelViewMatrix      = new Matrix4 ();
+		this .modelViewMatrixArray = new Float32Array (16);
+		this .colors               = [ ];
+		this .sphere               = [ ];
 	}
 
 	X3DBackgroundNode .prototype = $.extend (new X3DBindableNode (),
@@ -249,7 +250,7 @@ function ($,
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .sphere), gl .STATIC_DRAW);
-			this .sphere .primitives = this .sphere .length / 4;
+			this .sphereCount = this .sphere .length / 4;
 		},
 		traverse: function (type)
 		{
@@ -262,7 +263,7 @@ function ($,
 				}
 				case TraverseType .DISPLAY:
 				{
-					this .matrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
+					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 					break;
 				}
 			}
@@ -275,31 +276,33 @@ function ($,
 			// Get background scale
 
 			var
-				viewport = this .getBrowser () .getViewport (),
-				scale    = this .getCurrentViewpoint () .getScreenScale (SIZE, viewport)
-				rotation = new Rotation4 ();
+				viewport        = this .getBrowser () .getViewport (),
+				viewpoint       = this .getCurrentViewpoint (),
+				scale           = viewpoint .getScreenScale (SIZE, viewport)
+				rotation        = new Rotation4 (),
+				modelViewMatrix = this .modelViewMatrix;
 
 			scale .multiply (Math .max (viewport [2], viewport [3]));
 
-			this .getCurrentViewpoint () .reshapeWithLimits (1, Math .max (2, 3 * SIZE * scale .z));
+			viewpoint .reshapeWithLimits (1, Math .max (2, 3 * SIZE * scale .z));
 
 			// Rotate and scale background
 
-			this .matrix .get (null, rotation);
-
-			var modelViewMatrix = new Matrix4 ();
+			modelViewMatrix .get (null, rotation);
+			modelViewMatrix .identity ();
 			modelViewMatrix .scale (scale);
 			modelViewMatrix .rotate (rotation);
 
 			// Draw
 
-			var modelViewMatrixArray = new Float32Array (modelViewMatrix);
-
-			this .drawSphere (this .getBrowser () .getProjectionMatrix () .array, modelViewMatrixArray);
+			this .modelViewMatrixArray .set (modelViewMatrix);
+			this .drawSphere ();
 		},
-		drawSphere: function (projectionMatrix, modelViewMatrix)
+		drawSphere: function ()
 		{
-			if (this .transparency_ .getValue () >= 1)
+			var transparency = this .transparency_ .getValue ();
+		
+			if (transparency >= 1)
 				return;
 	
 			var browser = this .getBrowser ();
@@ -308,47 +311,37 @@ function ($,
 
 			shader .use ();
 
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, projectionMatrix);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, modelViewMatrix);
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Setup context.
 	
 			gl .disable (gl .DEPTH_TEST);
 			gl .depthMask (false);
 
-			if (this .transparency_ .getValue ())
+			if (transparency)
 				gl .enable (gl .BLEND);
 
-			// Shader
+			// Enable vertex attribute arrays.
 
-			// Enable attribute arrays.
+			gl .enableVertexAttribArray (0);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+			gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
 
-			var vertexAttribIndex = 0;
-
-			if (shader .color >= 0)
-			{
-				gl .enableVertexAttribArray (vertexAttribIndex ++);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
-			}
-
-			if (shader .position >= 0)
-			{
-				gl .enableVertexAttribArray (vertexAttribIndex ++);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-				gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
-			}
+			gl .enableVertexAttribArray (1);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
+			gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw.
 
 			gl .enable (gl .CULL_FACE);
 			gl .frontFace (gl .CCW);
-			gl .drawArrays (gl .TRIANGLES, 0, this .sphere .primitives);
+			gl .drawArrays (gl .TRIANGLES, 0, this .sphereCount);
 
-			// Disable attribute arrays.
+			// Disable vertex attribute arrays.
 
-			for (var i = 0; i < vertexAttribIndex; ++ i)
-				gl .disableVertexAttribArray (i);
+			gl .disableVertexAttribArray (0);
+			gl .disableVertexAttribArray (1);
 		},
 	});
 

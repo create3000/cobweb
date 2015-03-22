@@ -22,7 +22,24 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 	function Matrix4 ()
 	{
 		if (arguments .length)
-			this .assign (arguments);
+		{
+			this [ 0] = arguments [ 0];
+			this [ 1] = arguments [ 1];
+			this [ 2] = arguments [ 2];
+			this [ 3] = arguments [ 3];
+			this [ 4] = arguments [ 4];
+			this [ 5] = arguments [ 5];
+			this [ 6] = arguments [ 6];
+			this [ 7] = arguments [ 7];
+			this [ 8] = arguments [ 8];
+			this [ 9] = arguments [ 9];
+			this [10] = arguments [10];
+			this [11] = arguments [11];
+			this [12] = arguments [12];
+			this [13] = arguments [13];
+			this [14] = arguments [14];
+			this [15] = arguments [15];
+		}
 		else
 			this .identity ();
 	}
@@ -35,7 +52,22 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		copy: function ()
 		{
 			var copy = Object .create (Matrix4 .prototype);
-			copy .assign (this);
+			copy [ 0] = this [ 0];
+			copy [ 1] = this [ 1];
+			copy [ 2] = this [ 2];
+			copy [ 3] = this [ 3];
+			copy [ 4] = this [ 4];
+			copy [ 5] = this [ 5];
+			copy [ 6] = this [ 6];
+			copy [ 7] = this [ 7];
+			copy [ 8] = this [ 8];
+			copy [ 9] = this [ 9];
+			copy [10] = this [10];
+			copy [11] = this [11];
+			copy [12] = this [12];
+			copy [13] = this [13];
+			copy [14] = this [14];
+			copy [15] = this [15];
 			return copy;
 		},
 		assign: function (matrix)
@@ -310,33 +342,52 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		determinant3: function ()
 		{
-			return this [0] * (this [5] * this [10] - this [6] * this [9]) -
-			       this [1] * (this [4] * this [10] - this [6] * this [8]) +
-			       this [2] * (this [4] * this [ 9] - this [5] * this [8]);
+			var
+				m00 = this [0], m01 = this [1], m02 = this [ 2],
+				m04 = this [4], m05 = this [5], m06 = this [ 6],
+				m08 = this [8], m09 = this [9], m10 = this [10];
+
+			return m00 * (m05 * m10 - m06 * m09) -
+			       m01 * (m04 * m10 - m06 * m08) +
+			       m02 * (m04 * m09 - m05 * m08);
 		},
 		determinant: function ()
 		{
 			var
-				a = this,
-				b = a[10] * a[15],
-				c = a[14] * a[11],
-				d = a[ 6] * a[15],
-				e = a[14] * a[ 7],
-				f = a[ 6] * a[11],
-				g = a[10] * a[ 7],
-				h = a[ 2] * a[15],
-				i = a[14] * a[ 3],
-				j = a[ 2] * a[11],
-				o = a[10] * a[ 3],
-				r = a[ 2] * a[ 7],
-				x = a[ 6] * a[ 3],
-				H = b * a[5] + e * a[9] + f * a[13] - (c * a[5]) - (d * a[9]) - (g * a[13]),
-				I = c * a[1] + h * a[9] + o * a[13] - (b * a[1]) - (i * a[9]) - (j * a[13]),
-				J = d * a[1] + i * a[5] + r * a[13] - (e * a[1]) - (h * a[5]) - (x * a[13]),
-				K = g * a[1] + j * a[5] + x * a[ 9] - (f * a[1]) - (o * a[5]) - (r * a[ 9]),
-				B = a[0] * H + a[4] * I + a[8] * J + a[12] * K;
+				m00 = this [ 0],
+				m01 = this [ 1],
+				m02 = this [ 2],
+				m03 = this [ 3],
+				m04 = this [ 4],
+				m05 = this [ 5],
+				m06 = this [ 6],
+				m07 = this [ 7],
+				m08 = this [ 8],
+				m09 = this [ 9],
+				m10 = this [10],
+				m11 = this [11],
+				m12 = this [12],
+				m13 = this [13],
+				m14 = this [14],
+				m15 = this [15],
+				b = m10 * m15,
+				c = m14 * m11,
+				d = m06 * m15,
+				e = m14 * m07,
+				f = m06 * m11,
+				g = m10 * m07,
+				h = m02 * m15,
+				i = m14 * m03,
+				j = m02 * m11,
+				o = m10 * m03,
+				r = m02 * m07,
+				x = m06 * m03,
+				H = b * m05 + e * m09 + f * m13 - (c * m05) - (d * m09) - (g * m13),
+				I = c * m01 + h * m09 + o * m13 - (b * m01) - (i * m09) - (j * m13),
+				J = d * m01 + i * m05 + r * m13 - (e * m01) - (h * m05) - (x * m13),
+				K = g * m01 + j * m05 + x * m09 - (f * m01) - (o * m05) - (r * m09);
 
-			return B;
+			return m00 * H + m04 * I + m08 * J + m12 * K;
 		},
 		transpose: function ()
 		{
@@ -427,64 +478,62 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		multLeft: function (matrix)
 		{
 			var
-				a = this, b = matrix,
-				a00 = a [ 0], a01 = a [ 1], a02 = a [ 2], a03 = a [ 3],
-				a04 = a [ 4], a05 = a [ 5], a06 = a [ 6], a07 = a [ 7],
-				a08 = a [ 8], a09 = a [ 9], a10 = a [10], a11 = a [11],
-				a12 = a [12], a13 = a [13], a14 = a [14], a15 = a [15],
-				b00 = b [ 0], b01 = b [ 1], b02 = b [ 2], b03 = b [ 3],
-				b04 = b [ 4], b05 = b [ 5], b06 = b [ 6], b07 = b [ 7],
-				b08 = b [ 8], b09 = b [ 9], b10 = b [10], b11 = b [11],
-				b12 = b [12], b13 = b [13], b14 = b [14], b15 = b [15];
+				a00 = this [ 0], a01 = this [ 1], a02 = this [ 2], a03 = this [ 3],
+				a04 = this [ 4], a05 = this [ 5], a06 = this [ 6], a07 = this [ 7],
+				a08 = this [ 8], a09 = this [ 9], a10 = this [10], a11 = this [11],
+				a12 = this [12], a13 = this [13], a14 = this [14], a15 = this [15],
+				b00 = matrix [ 0], b01 = matrix [ 1], b02 = matrix [ 2], b03 = matrix [ 3],
+				b04 = matrix [ 4], b05 = matrix [ 5], b06 = matrix [ 6], b07 = matrix [ 7],
+				b08 = matrix [ 8], b09 = matrix [ 9], b10 = matrix [10], b11 = matrix [11],
+				b12 = matrix [12], b13 = matrix [13], b14 = matrix [14], b15 = matrix [15];
 
-			a [ 0] = a00 * b00 + a04 * b01 + a08 * b02 + a12 * b03;
-			a [ 1] = a01 * b00 + a05 * b01 + a09 * b02 + a13 * b03;
-			a [ 2] = a02 * b00 + a06 * b01 + a10 * b02 + a14 * b03;
-			a [ 3] = a03 * b00 + a07 * b01 + a11 * b02 + a15 * b03;
-			a [ 4] = a00 * b04 + a04 * b05 + a08 * b06 + a12 * b07;
-			a [ 5] = a01 * b04 + a05 * b05 + a09 * b06 + a13 * b07;
-			a [ 6] = a02 * b04 + a06 * b05 + a10 * b06 + a14 * b07;
-			a [ 7] = a03 * b04 + a07 * b05 + a11 * b06 + a15 * b07;
-			a [ 8] = a00 * b08 + a04 * b09 + a08 * b10 + a12 * b11;
-			a [ 9] = a01 * b08 + a05 * b09 + a09 * b10 + a13 * b11;
-			a [10] = a02 * b08 + a06 * b09 + a10 * b10 + a14 * b11;
-			a [11] = a03 * b08 + a07 * b09 + a11 * b10 + a15 * b11;
-			a [12] = a00 * b12 + a04 * b13 + a08 * b14 + a12 * b15;
-			a [13] = a01 * b12 + a05 * b13 + a09 * b14 + a13 * b15;
-			a [14] = a02 * b12 + a06 * b13 + a10 * b14 + a14 * b15;
-			a [15] = a03 * b12 + a07 * b13 + a11 * b14 + a15 * b15;
+			this [ 0] = a00 * b00 + a04 * b01 + a08 * b02 + a12 * b03;
+			this [ 1] = a01 * b00 + a05 * b01 + a09 * b02 + a13 * b03;
+			this [ 2] = a02 * b00 + a06 * b01 + a10 * b02 + a14 * b03;
+			this [ 3] = a03 * b00 + a07 * b01 + a11 * b02 + a15 * b03;
+			this [ 4] = a00 * b04 + a04 * b05 + a08 * b06 + a12 * b07;
+			this [ 5] = a01 * b04 + a05 * b05 + a09 * b06 + a13 * b07;
+			this [ 6] = a02 * b04 + a06 * b05 + a10 * b06 + a14 * b07;
+			this [ 7] = a03 * b04 + a07 * b05 + a11 * b06 + a15 * b07;
+			this [ 8] = a00 * b08 + a04 * b09 + a08 * b10 + a12 * b11;
+			this [ 9] = a01 * b08 + a05 * b09 + a09 * b10 + a13 * b11;
+			this [10] = a02 * b08 + a06 * b09 + a10 * b10 + a14 * b11;
+			this [11] = a03 * b08 + a07 * b09 + a11 * b10 + a15 * b11;
+			this [12] = a00 * b12 + a04 * b13 + a08 * b14 + a12 * b15;
+			this [13] = a01 * b12 + a05 * b13 + a09 * b14 + a13 * b15;
+			this [14] = a02 * b12 + a06 * b13 + a10 * b14 + a14 * b15;
+			this [15] = a03 * b12 + a07 * b13 + a11 * b14 + a15 * b15;
 
 			return this;
 		},
 		multRight: function (matrix)
 		{
 			var
-				a = this, b = matrix,
-				a00 = a [ 0], a01 = a [ 1], a02 = a [ 2], a03 = a [ 3],
-				a04 = a [ 4], a05 = a [ 5], a06 = a [ 6], a07 = a [ 7],
-				a08 = a [ 8], a09 = a [ 9], a10 = a [10], a11 = a [11],
-				a12 = a [12], a13 = a [13], a14 = a [14], a15 = a [15],
-				b00 = b [ 0], b01 = b [ 1], b02 = b [ 2], b03 = b [ 3],
-				b04 = b [ 4], b05 = b [ 5], b06 = b [ 6], b07 = b [ 7],
-				b08 = b [ 8], b09 = b [ 9], b10 = b [10], b11 = b [11],
-				b12 = b [12], b13 = b [13], b14 = b [14], b15 = b [15];
+				a00 = this [ 0], a01 = this [ 1], a02 = this [ 2], a03 = this [ 3],
+				a04 = this [ 4], a05 = this [ 5], a06 = this [ 6], a07 = this [ 7],
+				a08 = this [ 8], a09 = this [ 9], a10 = this [10], a11 = this [11],
+				a12 = this [12], a13 = this [13], a14 = this [14], a15 = this [15],
+				b00 = matrix [ 0], b01 = matrix [ 1], b02 = matrix [ 2], b03 = matrix [ 3],
+				b04 = matrix [ 4], b05 = matrix [ 5], b06 = matrix [ 6], b07 = matrix [ 7],
+				b08 = matrix [ 8], b09 = matrix [ 9], b10 = matrix [10], b11 = matrix [11],
+				b12 = matrix [12], b13 = matrix [13], b14 = matrix [14], b15 = matrix [15];
 
-			a [ 0] = a00 * b00 + a01 * b04 + a02 * b08 + a03 * b12;
-			a [ 1] = a00 * b01 + a01 * b05 + a02 * b09 + a03 * b13;
-			a [ 2] = a00 * b02 + a01 * b06 + a02 * b10 + a03 * b14;
-			a [ 3] = a00 * b03 + a01 * b07 + a02 * b11 + a03 * b15;
-			a [ 4] = a04 * b00 + a05 * b04 + a06 * b08 + a07 * b12;
-			a [ 5] = a04 * b01 + a05 * b05 + a06 * b09 + a07 * b13;
-			a [ 6] = a04 * b02 + a05 * b06 + a06 * b10 + a07 * b14;
-			a [ 7] = a04 * b03 + a05 * b07 + a06 * b11 + a07 * b15;
-			a [ 8] = a08 * b00 + a09 * b04 + a10 * b08 + a11 * b12;
-			a [ 9] = a08 * b01 + a09 * b05 + a10 * b09 + a11 * b13;
-			a [10] = a08 * b02 + a09 * b06 + a10 * b10 + a11 * b14;
-			a [11] = a08 * b03 + a09 * b07 + a10 * b11 + a11 * b15;
-			a [12] = a12 * b00 + a13 * b04 + a14 * b08 + a15 * b12;
-			a [13] = a12 * b01 + a13 * b05 + a14 * b09 + a15 * b13;
-			a [14] = a12 * b02 + a13 * b06 + a14 * b10 + a15 * b14;
-			a [15] = a12 * b03 + a13 * b07 + a14 * b11 + a15 * b15;
+			this [ 0] = a00 * b00 + a01 * b04 + a02 * b08 + a03 * b12;
+			this [ 1] = a00 * b01 + a01 * b05 + a02 * b09 + a03 * b13;
+			this [ 2] = a00 * b02 + a01 * b06 + a02 * b10 + a03 * b14;
+			this [ 3] = a00 * b03 + a01 * b07 + a02 * b11 + a03 * b15;
+			this [ 4] = a04 * b00 + a05 * b04 + a06 * b08 + a07 * b12;
+			this [ 5] = a04 * b01 + a05 * b05 + a06 * b09 + a07 * b13;
+			this [ 6] = a04 * b02 + a05 * b06 + a06 * b10 + a07 * b14;
+			this [ 7] = a04 * b03 + a05 * b07 + a06 * b11 + a07 * b15;
+			this [ 8] = a08 * b00 + a09 * b04 + a10 * b08 + a11 * b12;
+			this [ 9] = a08 * b01 + a09 * b05 + a10 * b09 + a11 * b13;
+			this [10] = a08 * b02 + a09 * b06 + a10 * b10 + a11 * b14;
+			this [11] = a08 * b03 + a09 * b07 + a10 * b11 + a11 * b15;
+			this [12] = a12 * b00 + a13 * b04 + a14 * b08 + a15 * b12;
+			this [13] = a12 * b01 + a13 * b05 + a14 * b09 + a15 * b13;
+			this [14] = a12 * b02 + a13 * b06 + a14 * b10 + a15 * b14;
+			this [15] = a12 * b03 + a13 * b07 + a14 * b11 + a15 * b15;
 
 			return this;
 		},
@@ -496,7 +545,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 					x = vector .x,
 					y = vector .y,
 					z = vector .z,
-					w = 1 / (vector .x * this [3] + vector .y * this [7] + vector .z * this [11] + this [15]);
+					w = 1 / (x * this [3] + y * this [7] + z * this [11] + this [15]);
 
 				vector .x = (x * this [0] + y * this [4] + z * this [ 8] + this [12]) * w;
 				vector .y = (x * this [1] + y * this [5] + z * this [ 9] + this [13]) * w;
@@ -526,7 +575,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 					x = vector .x,
 					y = vector .y,
 					z = vector .z,
-					w = 1 / (vector .x * this [12] + vector .y * this [13] + vector .z * this [14] + this [15]);
+					w = 1 / (x * this [12] + y * this [13] + z * this [14] + this [15]);
 
 				vector .x = (x * this [0] + y * this [1] + z * this [ 2] + this [ 3]) * w;
 				vector .y = (x * this [4] + y * this [5] + z * this [ 6] + this [ 7]) * w;
@@ -563,9 +612,14 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		multMatrixDir: function (vector)
 		{
-			vector .x = vector .x * this [0] + vector .y * this [1] + vector .z * this [ 2];
-			vector .y = vector .x * this [4] + vector .y * this [5] + vector .z * this [ 6];
-			vector .z = vector .x * this [8] + vector .y * this [9] + vector .z * this [10];
+			var
+				x = vector .x,
+				y = vector .y,
+				z = vector .z;
+
+			vector .x = x * this [0] + y * this [1] + z * this [ 2];
+			vector .y = x * this [4] + y * this [5] + z * this [ 6];
+			vector .z = x * this [8] + y * this [9] + z * this [10];
 
 			return vector;
 		},
@@ -576,11 +630,16 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [ 8] = 0; this [ 9] = 0; this [10] = 1; this [11] = 0;
 			this [12] = 0; this [13] = 0; this [14] = 0; this [15] = 1;
 		},
-		translate: function (t)
+		translate: function (translation)
 		{
-			this [12] += this [ 0] * t.x + this [ 4] * t.y + this [ 8] * t.z;
-			this [13] += this [ 1] * t.x + this [ 5] * t.y + this [ 9] * t.z;
-			this [14] += this [ 2] * t.x + this [ 6] * t.y + this [10] * t.z;
+			var
+				x = translation .x,
+				y = translation .y,
+				z = translation .z;
+
+			this [12] += this [ 0] * x + this [ 4] * y + this [ 8] * z;
+			this [13] += this [ 1] * x + this [ 5] * y + this [ 9] * z;
+			this [14] += this [ 2] * x + this [ 6] * y + this [10] * z;
 		},
 		rotate: function (rotation)
 		{
@@ -588,17 +647,22 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		scale: function (scale)
 		{
-			this [ 0] *= scale .x;
-			this [ 4] *= scale .y;
-			this [ 8] *= scale .z;
+			var
+				x = scale .x,
+				y = scale .y,
+				z = scale .z;
 
-			this [ 1] *= scale .x;
-			this [ 5] *= scale .y;
-			this [ 9] *= scale .z;
+			this [ 0] *= x;
+			this [ 4] *= y;
+			this [ 8] *= z;
 
-			this [ 2] *= scale .x;
-			this [ 6] *= scale .y;
-			this [10] *= scale .z;
+			this [ 1] *= x;
+			this [ 5] *= y;
+			this [ 9] *= z;
+
+			this [ 2] *= x;
+			this [ 6] *= y;
+			this [10] *= z;
 		},
 		toString: function ()
 		{
@@ -648,22 +712,6 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			              this [ 8], this [ 9], this [10]);
 
 			return matrix;
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Matrix4 .prototype, "normalMatrix",
-	{
-		get: function ()
-		{
-			var matrix = Object .create (Matrix3 .prototype);
-
-			matrix .set (this [ 0], this [ 4], this [ 8],
-			             this [ 1], this [ 5], this [ 9],
-			             this [ 2], this [ 6], this [10]);
-
-			return matrix .inverse ();
 		},
 		enumerable: false,
 		configurable: false

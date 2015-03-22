@@ -53,11 +53,11 @@ function (Fields,
 
 	function X3DRenderingContext (x3d)
 	{
-		this .projectionMatrix        = new Matrix4 ();
-		this .projectionMatrix .array = new Float32Array (16);
-		this .modelViewMatrix         = new MatrixStack (Matrix4);
-		this .viewport                = new Vector4 (0, 0, 0, 0);
-		this .defaultColorBuffer      = null;
+		this .projectionMatrix      = new Matrix4 ();
+		this .projectionMatrixArray = new Float32Array (16);
+		this .modelViewMatrix       = new MatrixStack (Matrix4);
+		this .viewport              = new Vector4 (0, 0, 0, 0);
+		this .defaultColorBuffer    = null;
 	}
 
 	X3DRenderingContext .prototype =
@@ -120,13 +120,16 @@ function (Fields,
 		},
 		setProjectionMatrix: function (value)
 		{
-			value .array = this .projectionMatrix .array;
 			this .projectionMatrix = value;
-			this .projectionMatrix .array .set (value);
+			this .projectionMatrixArray .set (value);
 		},
 		getProjectionMatrix: function ()
 		{
 			return this .projectionMatrix;
+		},
+		getProjectionMatrixArray: function ()
+		{
+			return this .projectionMatrixArray;
 		},
 		getModelViewMatrix: function ()
 		{

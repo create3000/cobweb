@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Shaders/X3DShaderNode",
 	"cobweb/Components/Shaders/X3DProgrammableShaderObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -14,7 +15,8 @@ function ($,
           FieldDefinitionArray,
           X3DShaderNode, 
           X3DProgrammableShaderObject, 
-          X3DConstants)
+          X3DConstants,
+          Matrix3)
 {
 	with (Fields)
 	{
@@ -54,8 +56,7 @@ function ($,
 			},
 			initialize: function ()
 			{
-				this .normalMatrixArray    = new Float32Array (9);
-				this .modelViewMatrixArray = new Float32Array (16);
+				this .normalMatrixArray = new Float32Array (9);
 				this .relink ();
 			},
 			relink: function ()
@@ -200,17 +201,24 @@ function ($,
 					gl .uniform1i (this .texturing, true);
 					gl .uniform1i (this .texture,   0);
 
-					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrix () .array);
+					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 				}
 				else
 					gl .uniform1i (this .texturing, false);
 
-				this .normalMatrixArray    .set (context .modelViewMatrix .normalMatrix);
-				this .modelViewMatrixArray .set (context .modelViewMatrix);
+				// Set matrices
+
+				var modelViewMatrix = context .modelViewMatrix;
+
+				this .normalMatrixArray .set ([modelViewMatrix [0], modelViewMatrix [4], modelViewMatrix [ 8],
+			                                  modelViewMatrix [1], modelViewMatrix [5], modelViewMatrix [ 9],
+			                                  modelViewMatrix [2], modelViewMatrix [6], modelViewMatrix [10]]);
+
+				Matrix3 .prototype .inverse .call (this .normalMatrixArray);
 
 				gl .uniformMatrix3fv (this .normalMatrix,     false, this .normalMatrixArray);	
-				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrix () .array);
-				gl .uniformMatrix4fv (this .modelViewMatrix,  false, this .modelViewMatrixArray);
+				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
+				gl .uniformMatrix4fv (this .modelViewMatrix,  false, modelViewMatrix);
 			},
 			use: function (context)
 			{

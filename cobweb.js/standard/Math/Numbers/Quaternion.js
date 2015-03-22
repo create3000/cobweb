@@ -8,20 +8,10 @@ function ($, Vector3, Algorithm)
 {
 	function Quaternion (x, y, z, w)
 	{
-		if (arguments .length)
-		{
-			this .x = x;
-			this .y = y;
-			this .z = z;
-			this .w = w;
-		}
-		else
-		{
-			this .x = 0;
-			this .y = 0;
-			this .z = 0;
-			this .w = 0;
-		}
+		this .x = x;
+		this .y = y;
+		this .z = z;
+		this .w = w;
 	}
 
 	Quaternion .prototype =
@@ -31,7 +21,10 @@ function ($, Vector3, Algorithm)
 		copy: function ()
 		{
 			var copy = Object .create (Quaternion .prototype);
-			copy .assign (this);
+			copy .x = this .x;
+			copy .y = this .y;
+			copy .z = this .z;
+			copy .w = this .w;
 			return copy;
 		},
 		assign: function (quat)
@@ -106,47 +99,29 @@ function ($, Vector3, Algorithm)
 		},
 		multLeft: function (quat)
 		{
-			return this .set (this .w * quat .x +
-			                  this .x * quat .w +
-			                  this .y * quat .z -
-			                  this .z * quat .y,
+			var
+				ax = this .x, ay = this .y, az = this .z, aw = this .w,
+				bx = quat .x, by = quat .y, bz = quat .z, bw = quat .w;
 
-			                  this .w * quat .y +
-			                  this .y * quat .w +
-			                  this .z * quat .x -
-			                  this .x * quat .z,
+			this .x = aw * bx + ax * bw + ay * bz - az * by;
+			this .y = aw * by + ay * bw + az * bx - ax * bz;
+			this .z = aw * bz + az * bw + ax * by - ay * bx;
+			this .w = aw * bw - ax * bx - ay * by - az * bz;
 
-			                  this .w * quat .z +
-			                  this .z * quat .w +
-			                  this .x * quat .y -
-			                  this .y * quat .x,
-
-			                  this .w * quat .w -
-			                  this .x * quat .x -
-			                  this .y * quat .y -
-			                  this .z * quat .z);
+			return this;
 		},
 		multRight: function (quat)
 		{
-			return this .set (quat .w * this .x +
-			                  quat .x * this .w +
-			                  quat .y * this .z -
-			                  quat .z * this .y,
+			var
+				ax = this .x, ay = this .y, az = this .z, aw = this .w,
+				bx = quat .x, by = quat .y, bz = quat .z, bw = quat .w;
 
-			                  quat .w * this .y +
-			                  quat .y * this .w +
-			                  quat .z * this .x -
-			                  quat .x * this .z,
+			this .x = bw * ax + bx * aw + by * az - bz * ay;
+			this .y = bw * ay + by * aw + bz * ax - bx * az;
+			this .z = bw * az + bz * aw + bx * ay - by * ax;
+			this .w = bw * aw - bx * ax - by * ay - bz * az;
 
-			                  quat .w * this .z +
-			                  quat .z * this .w +
-			                  quat .x * this .y -
-			                  quat .y * this .x,
-
-			                  quat .w * this .w -
-			                  quat .x * this .x -
-			                  quat .y * this .y -
-			                  quat .z * this .z);
+			return this;
 		},
 		divide: function (value)
 		{
@@ -158,30 +133,50 @@ function ($, Vector3, Algorithm)
 		},
 		multVecQuat: function (vector)
 		{
-			var a = this .w * this .w - this .x * this .x - this .y * this .y - this .z * this .z;                     
-			var b = 2 * (vector .x * this .x + vector .y * this .y + vector .z * this .z);  
-			var c = 2 * this .w;                                       
+			var
+				qx = this .x, qy = this .y, qz = this .z, qw = this .w,
+				vx = vector .x, vy = vector .y, vz = vector .z,
+				a  = qw * qw - qx * qx - qy * qy - qz * qz,                   
+				b  = 2 * (vx * qx + vy * qy + vz * qz), 
+				c  = 2 * qw;                                       
 
-			return vector .set (a * vector .x + b * this .x + c * (this .y * vector .z - this .z * vector .y),
-			                    a * vector .y + b * this .y + c * (this .z * vector .x - this .x * vector .z),
-			                    a * vector .z + b * this .z + c * (this .x * vector .y - this .y * vector .x));
+			vector .x = a * vx + b * qx + c * (qy * vz - qz * vy);
+			vector .y = a * vy + b * qy + c * (qz * vx - qx * vz);
+			vector .z = a * vz + b * qz + c * (qx * vy - qy * vx);
+			
+			return vector;
 		},
 		multQuatVec: function (vector)
 		{
-			var a = this .w * this .w - this .x * this .x - this .y * this .y - this .z * this .z;                     
-			var b = 2 * (vector .x * this .x + vector .y * this .y + vector .z * this .z);  
-			var c = 2 * this .w;                                       
+			var
+				qx = this .x, qy = this .y, qz = this .z, qw = this .w,
+				vx = vector .x, vy = vector .y, vz = vector .z,
+				a  = qw * qw - qx * qx - qy * qy - qz * qz,                    
+				b  = 2 * (vx * qx + vy * qy + vz * qz), 
+				c  = 2 * qw;                                       
 
-			return vector .set (a * vector .x + b * this .x - c * (this .y * vector .z - this .z * vector .y),
-			                    a * vector .y + b * this .y - c * (this .z * vector .x - this .x * vector .z),
-			                    a * vector .z + b * this .z - c * (this .x * vector .y - this .y * vector .x));
+			vector .x = a * vx + b * qx - c * (qy * vz - qz * vy);
+			vector .y = a * vy + b * qy - c * (qz * vx - qx * vz);
+			vector .z = a * vz + b * qz - c * (qx * vy - qy * vx);
+
+			return vector;
 		},
 		normalize: function ()
 		{
-			var length = this .abs ();
+			var length = Math .sqrt (this .x * this .x +
+			                         this .y * this .y +
+			                         this .z * this .z +
+			                         this .w * this .w);
 			
 			if (length)
-				return this .divide (length);
+			{
+				length = 1 / length;
+
+				this .x *= length;
+				this .y *= length;
+				this .z *= length;
+				this .w *= length;
+			}
 
 			return this;
 		},
@@ -194,11 +189,17 @@ function ($, Vector3, Algorithm)
 		},
 		norm: function ()
 		{
-			return this .dot (this);
+			return this .x * this .x +
+			       this .y * this .y +
+			       this .z * this .z +
+			       this .w * this .w;
 		},
 		abs: function ()
 		{
-			return Math .sqrt (this .norm ());
+			return Math .sqrt (this .x * this .x +
+			                   this .y * this .y +
+			                   this .z * this .z +
+			                   this .w * this .w);
 		},
 		pow: function (exponent)
 		{
@@ -315,7 +316,7 @@ function ($, Vector3, Algorithm)
 	{
 		Matrix3: function (matrix)
 		{
-			var quat = new Quaternion ();
+			var quat = new Quaternion (0, 0, 0, 1);
 
 			var i;
 

@@ -31,7 +31,7 @@ define (function ()
 			z [i] = 0;
 			for (j = 0; j < ORDER; ++j)
 			{
-				vectors [i] [j] = (i == j) ? 1 : 0;
+				vectors [i] [j] = (i === j) ? 1 : 0;
 				a [i] [j] = matrix .get1 (j, i);
 			}
 		}
@@ -45,7 +45,7 @@ define (function ()
 				for (q = p+1; q < ORDER; ++q)
 					sm += Math .abs (a [p] [q]);
 
-			if (sm == 0)
+			if (sm === 0)
 				break;
 
 			thresh = i < 3 ?
@@ -60,8 +60,8 @@ define (function ()
 
 					if (
 						i > 3
-						&& (Math .abs (values [p]) + g == Math .abs (values [p]))
-						&& (Math .abs (values [q]) + g == Math .abs (values [q]))
+						&& (Math .abs (values [p]) + g === Math .abs (values [p]))
+						&& (Math .abs (values [q]) + g === Math .abs (values [q]))
 					)
 					{
 						a [p] [q] = 0;
@@ -71,7 +71,7 @@ define (function ()
 					{
 						h = values [q] - values [p];
 
-						if (Math .abs (h) + g == Math .abs (h))
+						if (Math .abs (h) + g === Math .abs (h))
 							t = a [p] [q] / h;
 						else
 						{

@@ -21,7 +21,7 @@ function ($, X3DChildObject, X3DConstants)
 		fieldCallbacks_: { },
 		setValue: function (value)
 		{
-			this .set (value instanceof X3DField ? value .getValue () : value);
+			this .set (value instanceof this .constructor ? value .getValue () : value);
 			this .addEvent ();
 		},
 		set: function (value)
@@ -80,13 +80,17 @@ function ($, X3DChildObject, X3DConstants)
 		},
 		addEvent: function ()
 		{
-			for (var key in this .parents_)
-				this .parents_ [key] .addEvent (this);
+			var parents = this .parents_;
+
+			for (var key in parents)
+				parents [key] .addEvent (this);
 		},
 		addEventObject: function (field, event)
 		{
-			for (var key in this .parents_)
-				this .parents_ [key] .addEventObject (this, event);
+			var parents = this .parents_;
+		
+			for (var key in parents)
+				parents [key] .addEventObject (this, event);
 		},
 		processEvent: function (event)
 		{
@@ -108,15 +112,27 @@ function ($, X3DChildObject, X3DConstants)
 
 			// Process routes
 
-			var next = 0;
+			var
+				fieldInterests = this .fieldInterests_,
+				first          = true;
 
-			for (var key in this .fieldInterests_)
-				this .fieldInterests_ [key] .addEventObject (this, next ++ ? event .copy () : event);
+			for (var key in fieldInterests)
+			{
+				if (first)
+				{
+					first = false;
+					fieldInterests [key] .addEventObject (this, event);
+				}
+				else
+					fieldInterests [key] .addEventObject (this, event .copy ());
+			}
 
 			// Process field callbacks
 
-			for (var key in this .fieldCallbacks_)
-				this .fieldCallbacks_ [key] (this);
+			var fieldCallbacks = this .fieldCallbacks_;
+
+			for (var key in fieldCallbacks)
+				fieldCallbacks [key] (this);
 		},
 		valueOf: function ()
 		{

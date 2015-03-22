@@ -3,10 +3,10 @@ define ([
 	"jquery",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Numbers/Matrix2",
 	"standard/Math/Algorithms/eigendecomposition",
 ],
-function ($, Vector2, Vector3, Matrix3, eigendecomposition)
+function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 {
 	var
 		dummyTranslation      = new Vector2 (0, 0),
@@ -18,7 +18,17 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 	function Matrix3 ()
 	{
 		if (arguments .length)
-			this .assign (arguments);
+		{
+			this [0] = arguments [0];
+			this [1] = arguments [1];
+			this [2] = arguments [2];
+			this [3] = arguments [3];
+			this [4] = arguments [4];
+			this [5] = arguments [5];
+			this [6] = arguments [6];
+			this [7] = arguments [7];
+			this [8] = arguments [8];
+		}
 		else
 			this .identity ();
 	}
@@ -31,7 +41,15 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		copy: function ()
 		{
 			var copy = Object .create (Matrix3 .prototype);
-			copy .assign (this);
+			copy [0] = this [0];
+			copy [1] = this [1];
+			copy [2] = this [2];
+			copy [3] = this [3];
+			copy [4] = this [4];
+			copy [5] = this [5];
+			copy [6] = this [6];
+			copy [7] = this [7];
+			copy [8] = this [8];
 			return copy;
 		},
 		assign: function (matrix)
@@ -214,9 +232,14 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		determinant: function ()
 		{
-			return this [0] * (this [4] * this [8] - this [5] * this [7]) -
-			       this [1] * (this [3] * this [8] - this [5] * this [6]) +
-			       this [2] * (this [3] * this [7] - this [4] * this [6]);
+			var
+				m0 = this [0], m1 = this [1], m2 = this [2],
+				m3 = this [3], m4 = this [4], m5 = this [5],
+				m6 = this [6], m7 = this [7], m8 = this [8];
+
+			return m0 * (m4 * m8 - m5 * m7) -
+			       m1 * (m3 * m8 - m5 * m6) +
+			       m2 * (m3 * m7 - m4 * m6);
 		},
 		transpose: function ()
 		{
@@ -277,46 +300,44 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		multLeft: function (matrix)
 		{
 			var
-				a = this, b = matrix,
-				a0 = a[0], a1 = a[1], a2 = a[2],
-				a3 = a[3], a4 = a[4], a5 = a[5],
-				a6 = a[6], a7 = a[7], a8 = a[8],
-				b0 = b[0], b1 = b[1], b2 = b[2],
-				b3 = b[3], b4 = b[4], b5 = b[5],
-				b6 = b[6], b7 = b[7], b8 = b[8];
+				a0 = this [0], a1 = this [1], a2 = this [2],
+				a3 = this [3], a4 = this [4], a5 = this [5],
+				a6 = this [6], a7 = this [7], a8 = this [8],
+				b0 = matrix [0], b1 = matrix [1], b2 = matrix [2],
+				b3 = matrix [3], b4 = matrix [4], b5 = matrix [5],
+				b6 = matrix [6], b7 = matrix [7], b8 = matrix [8];
 
-			a[0] = a0 * b0 + a3 * b1 + a6 * b2;
-			a[1] = a1 * b0 + a4 * b1 + a7 * b2;
-			a[2] = a2 * b0 + a5 * b1 + a8 * b2;
-			a[3] = a0 * b3 + a3 * b4 + a6 * b5;
-			a[4] = a1 * b3 + a4 * b4 + a7 * b5;
-			a[5] = a2 * b3 + a5 * b4 + a8 * b5;
-			a[6] = a0 * b6 + a3 * b7 + a6 * b8;
-			a[7] = a1 * b6 + a4 * b7 + a7 * b8;
-			a[8] = a2 * b6 + a5 * b7 + a8 * b8;
+			this [0] = a0 * b0 + a3 * b1 + a6 * b2;
+			this [1] = a1 * b0 + a4 * b1 + a7 * b2;
+			this [2] = a2 * b0 + a5 * b1 + a8 * b2;
+			this [3] = a0 * b3 + a3 * b4 + a6 * b5;
+			this [4] = a1 * b3 + a4 * b4 + a7 * b5;
+			this [5] = a2 * b3 + a5 * b4 + a8 * b5;
+			this [6] = a0 * b6 + a3 * b7 + a6 * b8;
+			this [7] = a1 * b6 + a4 * b7 + a7 * b8;
+			this [8] = a2 * b6 + a5 * b7 + a8 * b8;
 
 			return this;
 		},
 		multRight: function (matrix)
 		{
 			var
-				a = this, b = matrix,
-				a0 = a[0], a1 = a[1], a2 = a[2],
-				a3 = a[3], a4 = a[4], a5 = a[5],
-				a6 = a[6], a7 = a[7], a8 = a[8],
-				b0 = b[0], b1 = b[1], b2 = b[2],
-				b3 = b[3], b4 = b[4], b5 = b[5],
-				b6 = b[6], b7 = b[7], b8 = b[8];
+				a0 = this [0], a1 = this [1], a2 = this [2],
+				a3 = this [3], a4 = this [4], a5 = this [5],
+				a6 = this [6], a7 = this [7], a8 = this [8],
+				b0 = matrix [0], b1 = matrix [1], b2 = matrix [2],
+				b3 = matrix [3], b4 = matrix [4], b5 = matrix [5],
+				b6 = matrix [6], b7 = matrix [7], b8 = matrix [8];
 
-			a[0] = a0 * b0 + a1 * b3 + a2 * b6;
-			a[1] = a0 * b1 + a1 * b4 + a2 * b7;
-			a[2] = a0 * b2 + a1 * b5 + a2 * b8;
-			a[3] = a3 * b0 + a4 * b3 + a5 * b6;
-			a[4] = a3 * b1 + a4 * b4 + a5 * b7;
-			a[5] = a3 * b2 + a4 * b5 + a5 * b8;
-			a[6] = a6 * b0 + a7 * b3 + a8 * b6;
-			a[7] = a6 * b1 + a7 * b4 + a8 * b7;
-			a[8] = a6 * b2 + a7 * b5 + a8 * b8;
+			this [0] = a0 * b0 + a1 * b3 + a2 * b6;
+			this [1] = a0 * b1 + a1 * b4 + a2 * b7;
+			this [2] = a0 * b2 + a1 * b5 + a2 * b8;
+			this [3] = a3 * b0 + a4 * b3 + a5 * b6;
+			this [4] = a3 * b1 + a4 * b4 + a5 * b7;
+			this [5] = a3 * b2 + a4 * b5 + a5 * b8;
+			this [6] = a6 * b0 + a7 * b3 + a8 * b6;
+			this [7] = a6 * b1 + a7 * b4 + a8 * b7;
+			this [8] = a6 * b2 + a7 * b5 + a8 * b8;
 
 			return this;
 		},
@@ -402,8 +423,12 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		translate: function (translation)
 		{
-			this [6] += this [0] * translation .x + this [3] * translation .y;
-			this [7] += this [1] * translation .x + this [4] * translation .y;
+			var
+				x = translation .x,
+				y = translation .y;
+
+			this [6] += this [0] * x + this [3] * y;
+			this [7] += this [1] * x + this [4] * y;
 		},
 		rotate: function (rotation)
 		{
@@ -411,11 +436,15 @@ function ($, Vector2, Vector3, Matrix3, eigendecomposition)
 		},
 		scale: function (scale)
 		{
-			this [0] *= scale .x;
-			this [3] *= scale .y;
+			var
+				x = scale .x,
+				y = scale .y;
 
-			this [1] *= scale .x;
-			this [4] *= scale .y;
+			this [0] *= x;
+			this [3] *= y;
+
+			this [1] *= x;
+			this [4] *= y;
 		},
 		toString: function ()
 		{

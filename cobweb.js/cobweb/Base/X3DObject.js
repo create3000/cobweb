@@ -8,6 +8,8 @@ function ()
 	 */
 
 	var id = 0;
+	
+	function getId () { return this .id_; }
 
 	/*
 	 *  X3DObject
@@ -25,7 +27,7 @@ function ()
 		getId: function ()
 		{
 			if (! this .hasOwnProperty ("getId"))
-				this .getId = function () { return this .id_; };
+				this .getId = getId;
 
 			return this .id_ = ++ id;
 		},
@@ -66,8 +68,10 @@ function ()
 		},
 		processInterests: function ()
 		{
-			for (var key in this .interests_)
-				this .interests_ [key] ();
+			var interests = this .interests_;
+
+			for (var key in interests)
+				interests [key] ();
 		},
 	};
 

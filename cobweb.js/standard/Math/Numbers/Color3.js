@@ -40,7 +40,9 @@ function ($, Algorithm)
 		copy: function ()
 		{
 			var copy = Object .create (Color3 .prototype);
-			copy .assign (this);
+			copy .r_ = this .r_;
+			copy .g_ = this .g_;
+			copy .b_ = this .b_;
 			return copy;
 		},
 		assign: function (color)

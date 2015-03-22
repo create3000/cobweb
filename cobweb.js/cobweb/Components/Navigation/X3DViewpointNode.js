@@ -32,6 +32,8 @@ function ($,
 {
 	with (Fields)
 	{
+		var upVector = new Vector3 (0, 1, 0);
+
 		function X3DViewpointNode (browser, executionContext)
 		{
 			X3DBindableNode    .call (this, browser, executionContext);
@@ -146,7 +148,7 @@ function ($,
 			},
 			getUpVector: function ()
 			{
-				return new Vector3 (0, 1, 0);
+				return upVector;
 			},
 			getMaxZFar: function ()
 			{

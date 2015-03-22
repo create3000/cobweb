@@ -15,7 +15,7 @@ function ()
 		initialize: function () { },
 		addTaintedField: function (field, event)
 		{
-			this .taintedFields .push ([ field, event ]);
+			this .taintedFields .push (field, event);
 		},
 		addTaintedNode: function (node)
 		{
@@ -30,10 +30,9 @@ function ()
 					var taintedFields = this .taintedFields;
 					this .taintedFields = [ ];
 
-					for (var i = 0; i < taintedFields .length; ++ i)
+					for (var i = 0; i < taintedFields .length; i += 2)
 					{
-						var event = taintedFields [i];
-						event [0] .processEvent (event [1]);
+						taintedFields [i] .processEvent (taintedFields [i + 1]);
 					}
 				}
 				while (this .taintedFields .length);

@@ -4,11 +4,12 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Box3",
-	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
 ],
-function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
+function ($, Fields, X3DNode, X3DConstants, Color3, Vector3, Matrix4, Box3)
 {
 	with (Fields)
 	{
@@ -20,11 +21,12 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			this .max       = new Vector3 (0, 0, 0);
 			this .bbox      = new Box3 ();
 			this .solid     = true;
-			this .ccw       = true;
+			this .frontFace = 0;
 			this .colors    = [ ];
 			this .texCoords = [ ];
 			this .normals   = [ ];
 			this .vertices  = [ ];
+			this .count     = 0;
 
 			this .addType (X3DConstants .X3DGeometryNode);
 		}
@@ -48,6 +50,7 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 				var gl = this .getBrowser () .getContext ();
 
+				this .frontFace       = gl .CCW;
 				this .colorBuffer     = gl .createBuffer ();
 				this .texCoordBuffers = [ ];
 				this .normalBuffer    = gl .createBuffer ();
@@ -85,18 +88,11 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			},
 			setCCW: function (value)
 			{
-				this .ccw = value;
+				this .frontFace = value ? this .getBrowser () .getContext () .CCW : this .getBrowser () .getContext () .CW;
 			},
 			addColor: function (color)
 			{
-				this .colors .push (color .r);
-				this .colors .push (color .g);
-				this .colors .push (color .b);
-
-				if (color instanceof Color3)
-					this .colors .push (1);
-				else
-					this .colors .push (color .a);
+				this .colors .push (color .r, color .g, color .b, color .length === 3 ? 1 : color .a);
 			},
 			setColors: function (value)
 			{
@@ -120,9 +116,7 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			},
 			addNormal: function (normal)
 			{
-				this .normals .push (normal .x);
-				this .normals .push (normal .y);
-				this .normals .push (normal .z);
+				this .normals .push (normal .x, normal .y, normal .z);
 			},
 			setNormals: function (value)
 			{
@@ -137,10 +131,7 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 				this .min .min (vertex);
 				this .max .max (vertex);
 
-				this .vertices .push (vertex .x);
-				this .vertices .push (vertex .y);
-				this .vertices .push (vertex .z);
-				this .vertices .push (1);
+				this .vertices .push (vertex .x, vertex .y, vertex .z, 1);
 			},
 			setVertices: function (value)
 			{
@@ -152,31 +143,36 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			},
 			buildTexCoords: function ()
 			{
-				var p         = this .getTexCoordParams ();
-				var texCoords = [ ];
+				var
+					p         = this .getTexCoordParams (),
+					min       = p .min,
+					Sindex    = p .Sindex,
+					Tindex    = p .Tindex,
+					Ssize     = p .Ssize,
+					S         = min [Sindex],
+					T         = min [Tindex],
+					texCoords = [ ],
+					vertices  = this .vertices;
 
 				this .texCoords .push (texCoords);
 
 				for (var i = 0; i < this .vertices .length; i += 4)
 				{
-					texCoords .push ((this .vertices [i + p .Sindex] - p .min [p .Sindex]) / p .Ssize,
-					                 (this .vertices [i + p .Tindex] - p .min [p .Tindex]) / p .Ssize,
+					texCoords .push ((vertices [i + Sindex] - S) / Ssize,
+					                 (vertices [i + Tindex] - T) / Ssize,
 					                 0,
 					                 1);
 				}
 			},
 			getTexCoordParams: function ()
 			{
-				var p = { };
-				
-				// Thanks to H3D.
-
-				var bbox = this .getBBox ();
-				var size = bbox .size;
-
-				var Xsize = size .x;
-				var Ysize = size .y;
-				var Zsize = size .z;
+				var
+					p     = { },
+					bbox  = this .getBBox (),
+					size  = bbox .size,
+					Xsize = size .x,
+					Ysize = size .y,
+					Zsize = size .z;
 
 				p .min = bbox .center .subtract (size .divide (2));
 
@@ -218,8 +214,9 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 				if (creaseAngle === 0)
 					return normals;
 
-				var cosCreaseAngle = Math .cos (creaseAngle);
-				var normals_       = [ ];
+				var
+					cosCreaseAngle = Math .cos (creaseAngle),
+					normals_       = [ ];
 
 				for (var i in normalIndex) // Don't use forEach
 				{
@@ -227,9 +224,10 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 					for (var p = 0; p < vertex .length; ++ p)
 					{
-						var P = vertex [p];
-						var m = normals [P];
-						var n = new Vector3 (0, 0, 0);
+						var
+							P = vertex [p],
+							m = normals [P],
+							n = new Vector3 (0, 0, 0);
 
 						for (var q = 0; q < vertex .length; ++ q)
 						{
@@ -272,8 +270,8 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 			},
 			transfer: function ()
 			{
-				var gl       = this .getBrowser () .getContext ();
-				var vertices = this .vertices .length / 4;
+				var gl    = this .getBrowser () .getContext ();
+				var count = this .vertices .length / 4;
 
 				// Transfer colors.
 
@@ -281,9 +279,13 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 				{
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
 					gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors), gl .STATIC_DRAW);
+					this .currentColorBuffer = this .colorBuffer;
 				}
 				else
-					this .getBrowser () .setDefaultColorBuffer (vertices * 4);
+				{
+					this .getBrowser () .setDefaultColorBuffer (count * 4);
+					this .currentColorBuffer = this .getBrowser () .getDefaultColorBuffer ();
+				}
 
 				// Transfer texCoords.
 
@@ -307,15 +309,16 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
-				this .vertices .count = vertices;
+				this .count = count;
 	  		},
 			traverse: function (context)
 			{
-				context .colorMaterial = Boolean (this .colors .length);
+				context .colorMaterial = this .colors .length;
 
-				var browser = this .getBrowser ();
-				var gl      = browser .getContext ();
-				var shader  = browser .getShader ();
+				var
+					browser = this .getBrowser (),
+					gl      = browser .getContext (),
+					shader  = browser .getShader ();
 
 				// Shader
 
@@ -328,7 +331,7 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 				if (shader .color >= 0)
 				{
 					gl .enableVertexAttribArray (vertexAttribIndex ++);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .colors .length ? this .colorBuffer : browser .getDefaultColorBuffer ());
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .currentColorBuffer);
 					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
 				}
 
@@ -355,19 +358,19 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 
 				if (vertexAttribIndex)
 				{
-					var positiveScale = context .modelViewMatrix .determinant3 () > 0;
+					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
 
-					gl .frontFace (positiveScale ? (this .ccw ? gl .CCW : gl .CW) : (this .ccw ? gl .CW : gl .CCW));
+					gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
 
-					if (context .transparent && !this .solid)
+					if (context .transparent && ! this .solid)
 					{
 						gl .enable (gl .CULL_FACE);
 
 						gl .cullFace (gl .FRONT);
-						gl .drawArrays (this .primitiveMode, 0, this .vertices .count);		
+						gl .drawArrays (this .primitiveMode, 0, this .count);		
 
 						gl .cullFace (gl .BACK);
-						gl .drawArrays (this .primitiveMode, 0, this .vertices .count);		
+						gl .drawArrays (this .primitiveMode, 0, this .count);		
 					}
 					else
 					{
@@ -376,7 +379,7 @@ function ($, Fields, X3DNode, X3DConstants, Box3, Vector3, Color3)
 						else
 							gl .disable (gl .CULL_FACE);
 
-						gl .drawArrays (this .primitiveMode, 0, this .vertices .count);
+						gl .drawArrays (this .primitiveMode, 0, this .count);
 					}
 
 					for (var i = 0; i < vertexAttribIndex; ++ i)

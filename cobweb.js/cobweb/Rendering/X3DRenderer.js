@@ -45,7 +45,7 @@ function (TraverseType, QuickSort, Matrix4)
 				if (shape .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push ({ modelViewMatrix: new Matrix4 (), transparent: true, localLights: [ ] });
+						this .transparentShapes .push ({ modelViewMatrix: new Float32Array (16), transparent: true, localLights: [ ] });
 
 					var context = this .transparentShapes [this .numTransparentShapes];
 
@@ -54,14 +54,14 @@ function (TraverseType, QuickSort, Matrix4)
 				else
 				{
 					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push ({ modelViewMatrix: new Matrix4 (), transparent: false, localLights: [ ] });
+						this .opaqueShapes .push ({ modelViewMatrix: new Float32Array (16), transparent: false, localLights: [ ] });
 
 					var context = this .opaqueShapes [this .numOpaqueShapes];
 
 					++ this .numOpaqueShapes;
 				}
 
-				context .modelViewMatrix .assign (modelViewMatrix);
+				context .modelViewMatrix .set (modelViewMatrix);
 				context .shape    = shape;
 				context .scissor  = viewVolume .getScissor ();
 				context .distance = distance;				
@@ -114,9 +114,12 @@ function (TraverseType, QuickSort, Matrix4)
 		},
 		draw: function ()
 		{
-			var browser = this .getBrowser ();
-			var gl      = browser .getContext ();
-			var shader  = browser .getDefaultShader ();
+			var
+				browser           = this .getBrowser (),
+				gl                = browser .getContext (),
+				shader            = browser .getDefaultShader (),
+				opaqueShapes      = this .opaqueShapes,
+				transparentShapes = this .transparentShapes;
 
 			shader .setGlobalLights ();
 
@@ -128,10 +131,10 @@ function (TraverseType, QuickSort, Matrix4)
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
 
-			for (var i = 0; i < this .numOpaqueShapes; ++ i)
+			for (var i = 0, length = this .numOpaqueShapes; i < length; ++ i)
 			{
 				var
-					context = this .opaqueShapes [i],
+					context = opaqueShapes [i],
 					scissor = context .scissor;
 
 				gl .scissor (scissor .x,
@@ -149,10 +152,10 @@ function (TraverseType, QuickSort, Matrix4)
 
 			this .transparencySorter .sort (0, this .numTransparentShapes);
 
-			for (var i = 0; i < this .numTransparentShapes; ++ i)
+			for (var i = 0, length = this .numTransparentShapes; i < length; ++ i)
 			{
 				var
-					context = this .transparentShapes [i],
+					context = transparentShapes [i],
 					scissor = context .scissor;
 
 				gl .scissor (scissor .x,

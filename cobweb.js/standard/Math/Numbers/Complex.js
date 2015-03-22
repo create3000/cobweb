@@ -27,8 +27,9 @@ function ($)
 	{
 		Polar: function (radius, angle)
 		{
-			var complex = new Complex ();
-			complex .setPolar (radius, angle);
+			var complex = Object .create (Complex .prototype);
+			complex .real = radius * Math .cos (angle);
+			complex .imag = radius * Math .sin (angle);
 			return complex;
 		},
 	});
@@ -39,7 +40,8 @@ function ($)
 		copy: function ()
 		{
 			var copy = Object .create (Complex .prototype);
-			copy .assign (this);
+			copy .real = this .real;
+			copy .imag = this .imag;
 			return copy;
 		},
 		assign: function (complex)

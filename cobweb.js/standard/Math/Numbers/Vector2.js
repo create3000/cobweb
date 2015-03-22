@@ -18,7 +18,8 @@ function ($, Algorithm)
 		copy: function ()
 		{
 			var copy = Object .create (Vector2 .prototype);
-			copy .assign (this);
+			copy .x = this .x;
+			copy .y = this .y;
 			return copy;
 		},
 		assign: function (vector)
