@@ -30,10 +30,12 @@ function (Vector3)
 
 			if (this .getWorld () && this .getWorld () .getActiveLayer ())
 			{
-				var lastPosition = this .currentPosition;
+				var
+					lastPosition      = this .currentPosition,
+					cameraSpaceMatrix = this .getWorld () .getActiveLayer () .getValue () .getViewpoint () .getCameraSpaceMatrix ();
 
-				this .currentPosition = this .getWorld () .getActiveLayer () .getValue () .getViewpoint () .getCameraSpaceMatrix () .origin;
-				this .currentSpeed    = Vector3 .subtract (this .currentPosition, lastPosition) .abs () * this .currentFrameRate;
+				this .currentPosition .set (cameraSpaceMatrix [12], cameraSpaceMatrix [13], cameraSpaceMatrix [14]);
+				this .currentSpeed = Vector3 .subtract (this .currentPosition, lastPosition) .abs () * this .currentFrameRate;
 			}
 			else
 				this .currentSpeed = 0;

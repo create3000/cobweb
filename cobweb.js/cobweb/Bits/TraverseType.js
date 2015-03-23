@@ -3,7 +3,8 @@ define (function ()
 {
 	var i = 0;
 
-	return {
+	var TraverseType =
+	{
 		POINTER:    i ++,
 		CAMERA:     i ++,
 		NAVIGATION: i ++,
@@ -11,4 +12,10 @@ define (function ()
 		POINTER:    i ++,
 		DISPLAY:    i ++,
 	};
+
+	Object .preventExtensions (TraverseType);
+	Object .freeze (TraverseType);
+	Object .seal (TraverseType);
+
+	return TraverseType;
 });

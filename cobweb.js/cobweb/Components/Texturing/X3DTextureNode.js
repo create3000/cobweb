@@ -40,7 +40,7 @@ function ($,
 			{
 				var gl = this .getBrowser () .getContext ();
 
-				gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+				gl .bindTexture (target, this .getTexture ());
 
 				if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && ! haveTextureProperties)
 				{
@@ -74,17 +74,7 @@ function ($,
 				//gl .texParameterf  (target, gl .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
 				//gl .texParameterf  (target, gl .TEXTURE_PRIORITY,           textureProperties .texturePriority_);
 
-				gl .bindTexture (gl .TEXTURE_2D, null);
-			},
-			bind: function (target)
-			{
-				var browser = this .getBrowser ();
-				var gl      = browser .getContext ();
-
-				gl .activeTexture (gl .TEXTURE0);
-				gl .bindTexture (target, this .texture);
-
-				browser .setTexture (this);
+				gl .bindTexture (target, null);
 			},
 		});
 

@@ -1,11 +1,17 @@
 
-define (function ($, X3DField, X3DConstants)
+define ([
+	"jquery",
+],
+function ($, X3DField, X3DConstants)
 {
 	var handler =
 	{
 		get: function (target, key)
 		{
-			return target .array [key];
+			if (key in target)
+				return target [key];
+
+			return target .value [key];
 		},
 		set: function (target, key, value)
 		{
@@ -13,14 +19,21 @@ define (function ($, X3DField, X3DConstants)
 		},
 	};
 
-	function FieldDefinitionArray (array)
+	function FieldDefinitionArray (value)
 	{
-		this .array = array
+		this .value = value
 		
 		return new Proxy (this, handler);
 	}
 
-	FieldDefinitionArray .prototype .constructor = FieldDefinitionArray;
+	$.extend (FieldDefinitionArray .prototype,
+	{
+		constructor: FieldDefinitionArray,
+		getValue: function ()
+		{
+			return this .value;
+		},
+	});
 
 	return FieldDefinitionArray;
 });

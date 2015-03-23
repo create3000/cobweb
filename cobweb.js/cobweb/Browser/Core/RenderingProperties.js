@@ -50,7 +50,8 @@ function ($,
 			if (currentTime - this .startTime > 1)
 			{
 				var
-					layers            = this .getBrowser () .getWorld () .getLayerSet () .getLayers ()
+					browser           = this .getBrowser ();
+					layers            = browser .getWorld () .getLayerSet () .getLayers ()
 					traverseTime      = 0,
 					drawTime          = 0,
 					opaqueShapes      = 0,
@@ -66,13 +67,18 @@ function ($,
 					transparentShapes += layer .numTransparentShapes;
 				}
 				
-				sensors += Object .keys (this .getBrowser () .prepareEvents () .getInterests ()) .length;
-				sensors += Object .keys (this .getBrowser () .getSensors () .getInterests ()) .length;
+				sensors += Object .keys (browser .prepareEvents () .getInterests ()) .length;
+				sensors += Object .keys (browser .getSensors () .getInterests ()) .length;
+
+				var routingTime = browser .browserTime - (browser .cameraTime + traverseTime + drawTime);
 
 				var text = "";
 				text += "Rendering Properties\n\n";
 				text += "Frame rate: " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
-				text += "Camera:     " + this .getBrowser () .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "System:     " + browser .systemTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Browser:    " + browser .browserTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Routing:    " + routingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Camera:     " + browser .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Traverse:   " + traverseTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Draw:       " + drawTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";

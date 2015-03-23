@@ -93,7 +93,10 @@ function ($,
 		},
 		traverse: function ()
 		{
-			this .bind (this .getBrowser () .getContext () .TEXTURE_2D);
+			var gl = this .getBrowser () .getContext ();
+
+			gl .activeTexture (gl .TEXTURE0);
+			gl .bindTexture (gl .TEXTURE_2D, this .texture);
 		},
 	});
 

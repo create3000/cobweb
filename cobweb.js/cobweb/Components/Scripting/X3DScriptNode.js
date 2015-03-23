@@ -18,7 +18,8 @@ function ($,
 		this .addType (X3DConstants .X3DScriptNode);
 	}
 
-	X3DScriptNode .prototype = $.extend (new X3DChildNode (),new X3DUrlObject (),
+	X3DScriptNode .prototype = $.extend (new X3DChildNode (),
+		X3DUrlObject .prototype,
 	{
 		constructor: X3DScriptNode,
 	});

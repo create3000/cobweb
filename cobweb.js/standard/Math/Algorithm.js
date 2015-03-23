@@ -46,15 +46,16 @@ define (function ()
 			if (cosom < 0)
 			{
 				// Reverse signs so we travel the short way round
-				cosom       = -cosom;
+				cosom = -cosom;
 				destination .negate ()
 			}				
 
-			var omega = Math .acos (cosom);
-			var sinom = Math .sin  (omega);
+			var
+				omega = Math .acos (cosom),
+				sinom = Math .sin  (omega),
 
-			var scale0 = Math .sin ((1 - t) * omega);
-			var scale1 = Math .sin (t * omega);
+				scale0 = Math .sin ((1 - t) * omega),
+				scale1 = Math .sin (t * omega);
 
 			return source .multiply (scale0) .add (destination .multiply (scale1)) .divide (sinom);
 		},
@@ -90,18 +91,23 @@ define (function ()
 				step  = count >>> 1;
 				index = first + step;
 
-				if (! comp (value, array [index]))
+				if (comp (value, array [index]))
+					count = step;
+
+				else
 				{
 					first  = ++ index;
 					count -= step + 1;
 				}
-				else
-					count = step;
 			}
 
 			return first;
 		},
 	};
+
+	Object .preventExtensions (Algorithm);
+	Object .freeze (Algorithm);
+	Object .seal (Algorithm);
 
 	return Algorithm;
 });

@@ -8,35 +8,35 @@ function ($)
 	{
 		return $.extend ([ new Type () ],
 		{
-			last: 0,
+			top: 0,
 			set: function (matrix)
 			{
-				this [this .last] .assign (matrix);
+				this [this .top] .assign (matrix);
 			},
 			get: function (matrix)
 			{
-				return this [this .last];
+				return this [this .top];
 			},
 			push: function ()
 			{
-				++ this .last;
-
-				if (this .last < this .length)
-					this [this .last] .assign (this [this .last - 1]);
+				var top = ++ this .top;
+			
+				if (top < this .length)
+					this [top] .assign (this [top - 1]);
 				else
-					this [this .last] = this [this .last - 1] .copy ();
+					this [top] = this [top - 1] .copy ();
 			},
 			pop: function ()
 			{
-				-- this .last;
+				-- this .top;
 			},
 			identity: function ()
 			{
-				this [this .last] .identity ();
+				this [this .top] .identity ();
 			},
 			multLeft: function (matrix)
 			{
-				this [this .last] .multLeft (matrix);
+				this [this .top] .multLeft (matrix);
 			},
 		});
 	}

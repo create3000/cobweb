@@ -9,6 +9,14 @@ function ($, Fields, Parser, X3DConstants)
 {
 	with (Fields)
 	{
+		var AccessType =
+		{
+			initializeOnly: X3DConstants .initializeOnly,
+			inputOnly:      X3DConstants .inputOnly,
+			outputOnly:     X3DConstants .outputOnly,
+			inputOutput:    X3DConstants .inputOutput,
+		};
+	
 		function XMLParser (scene, xml)
 		{
 			this .xml              = xml;
@@ -86,6 +94,14 @@ function ($, Fields, Parser, X3DConstants)
 				switch (element .nodeName)
 				{
 					case "#text":
+						return;
+
+					case "#cdata-section":
+						this .cdata (element);
+						return;
+
+					case "field":
+						this .field (element);
 						return;
 
 					case "ROUTE":
@@ -206,10 +222,11 @@ function ($, Fields, Parser, X3DConstants)
 			{
 				try
 				{
-					var name      = attribute .name;
-					var value     = attribute .value;
-					var field     = node .getField (name);
-					var fieldType = this .fieldTypes [field .getType ()];
+					var
+						name      = attribute .name,
+						value     = attribute .value,
+						field     = node .getField (name),
+						fieldType = this .fieldTypes [field .getType ()];
 
 					this .parser .setInput (value);
 
@@ -218,12 +235,64 @@ function ($, Fields, Parser, X3DConstants)
 				catch (error)
 				{ }
 			},
+			cdata: function (element)
+			{
+				var
+					node  = this .nodes [this .nodes .length - 1]
+					field = node .getCDATA ();
+
+				if (field)
+					field .push (element .data);
+			},
+			field: function (element)
+			{
+				var node = this .nodes [this .nodes .length - 1];
+
+				if (! node .hasUserDefinedFields ())
+					return;
+
+				var accessType = AccessType [element .getAttribute ("accessType")];
+
+				if (accessType === undefined)
+					return;
+
+				var type = Fields [element .getAttribute ("type")];
+
+				if (type === undefined)
+					return;
+
+				var name = element .getAttribute ("name");
+
+				if (! name)
+					return;
+
+				var field = new type ();
+
+				if (accessType & X3DConstants .initializeOnly)
+				{
+					var value = element .getAttribute ("value");
+
+					if (value !== null)
+					{
+						try
+						{
+							this .parser .setInput (value);
+							this .fieldTypes [field .getType ()] .call (this .parser, field);
+						}
+						catch (error)
+						{ }
+					}
+				}
+
+				node .addUserDefinedField (accessType, name, field);
+			},
 			route: function (element)
 			{
-				var fromNode  = element .getAttribute ("fromNode");
-				var fromField = element .getAttribute ("fromField");
-				var toNode    = element .getAttribute ("toNode");
-				var toField   = element .getAttribute ("toField");
+				var
+					fromNode  = element .getAttribute ("fromNode"),
+					fromField = element .getAttribute ("fromField"),
+					toNode    = element .getAttribute ("toNode"),
+					toField   = element .getAttribute ("toField");
 
 				try
 				{

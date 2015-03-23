@@ -176,7 +176,7 @@ function ($,
 					for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
 						localLights [l] .use (gl, this, i);
 
-					for (var i = lights; i < MAX_LIGHTS; ++ i)
+					for ( ; i < MAX_LIGHTS; ++ i)
 						gl .uniform1i (lightOn [i], false);
 
 					// Material

@@ -13,6 +13,7 @@ define ([
 	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Lighting/X3DLightingContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
+	"cobweb/Browser/Scripting/X3DScriptingContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
 	"cobweb/Browser/Shape/X3DShapeContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
@@ -34,6 +35,7 @@ function ($,
           X3DEnvironmentalEffectsContext,
           X3DLightingContext,
           X3DNetworkingContext,
+          X3DScriptingContext,
           X3DShadersContext,
           X3DShapeContext,
           X3DTexturingContext,
@@ -55,6 +57,7 @@ function ($,
 		X3DEnvironmentalEffectsContext .call (this);
 		X3DLightingContext             .call (this);
 		X3DNetworkingContext           .call (this);
+		X3DScriptingContext            .call (this);
 		X3DShadersContext              .call (this);
 		X3DShapeContext                .call (this);
 		X3DTexturingContext            .call (this);
@@ -63,6 +66,8 @@ function ($,
 
 		this .changedTime    = 0;
 		this .renderCallback = this .traverse .bind (this);
+		this .systemTime     = 0
+		this .browserTime    = 0;
 		this .cameraTime     = 0;
 	};
 
@@ -77,6 +82,7 @@ function ($,
 		X3DEnvironmentalEffectsContext .prototype,
 		X3DLightingContext .prototype,
 		X3DNetworkingContext .prototype,
+		X3DScriptingContext .prototype,
 		X3DShadersContext .prototype,
 		X3DShapeContext .prototype,
 		X3DTexturingContext .prototype,
@@ -100,6 +106,7 @@ function ($,
 			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
 			X3DLightingContext             .prototype .initialize .call (this);
 			X3DNetworkingContext           .prototype .initialize .call (this);
+			X3DScriptingContext            .prototype .initialize .call (this);
 			X3DShadersContext              .prototype .initialize .call (this);
 			X3DShapeContext                .prototype .initialize .call (this);
 			X3DTexturingContext            .prototype .initialize .call (this);
@@ -138,11 +145,13 @@ function ($,
 		},
 		traverse: function (time)
 		{
+			this .systemTime = performance .now () - this .systemTime;
+			var t0 = performance .now ();
 			this .advanceTime (time);
 
 			this .prepareEvents_ .processInterests ();
-
 			this .processEvents ();
+
 			var t0 = performance .now ();
 			this .world .traverse (TraverseType .CAMERA);
 			this .cameraTime = performance .now () - t0;
@@ -154,6 +163,8 @@ function ($,
 			this .context .clear (this .context .COLOR_BUFFER_BIT);
 
 			this .world .traverse (TraverseType .DISPLAY);
+			this .browserTime = performance .now () - t0;
+			this .systemTime  = performance .now ();
 		},
 	});
 

@@ -8,13 +8,13 @@ x3d {
 	padding: 0px;
 	border: 0px;
 	overflow: hidden;
-	background: url(logo.png) center center no-repeat #414141;
+	background: url(images/logo.png) center center no-repeat #414141;
 }
 
 x3d .fallback {
 	width: 100%;
 	height: 100%;
-	background: url(logo.bw.png) center center no-repeat #101010;
+	background: url(images/logo.bw.png) center center no-repeat #101010;
 }
 
 x3d .browser {
@@ -62,8 +62,8 @@ x3d .notification {
 	position: absolute;
 	top: 20px;
 	right: -4px;
-	padding: 5px 9px 5px 5px;
-	background: rgba(0,0,0,0.5);
+	padding: 5px 9px 5px 25px;
+	background: url(images/icon.bw.png) no-repeat 5px 3px rgba(0,0,0,0.5);
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;

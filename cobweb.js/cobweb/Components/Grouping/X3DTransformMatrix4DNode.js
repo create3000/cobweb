@@ -26,14 +26,17 @@ function ($,
 		{
 			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
 
-			return bbox .copy () .multRight (this .matrix);
+			if (this .traverse === traverse)
+				return bbox .multRight (this .matrix);
+
+			return bbox;
 		},
 		setTransform: function (t, r, s, so, c)
 		{
 			this .matrix .set (t, r, s, so, c);
 
 			if (this .matrix .equals (Matrix4 .Identity))
-				this .traverse = X3DGroupingNode .prototype .traverse;
+				delete this .traverse;
 
 			else
 				this .traverse = traverse;

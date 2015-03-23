@@ -25,8 +25,9 @@ function ($,
 			initialize: function ()
 			{
 				X3DNode .prototype .initialize .call (this);
-				
-				this .addChildren ("isCameraObject", new SFBool (false));
+
+				if (! this .hasOwnProperty ("isCameraObject_"))
+					this .addChildren ("isCameraObject", new SFBool (false));
 			},
 			setCameraObject: function (value)
 			{

@@ -286,7 +286,7 @@ function ($,
 			addTimeout: function (name, callback, time)
 			{
 				this .removeTimeout (name);
-				this [name] = setTimeout (this .timeout .bind (this, callback), (time - this .getBrowser () .getCurrentTime ()) * 1000); // GDK_PRIORITY_REDRAW is very important, see Capone
+				this [name] = setTimeout (this .timeout .bind (this, callback), (time - this .getBrowser () .getCurrentTime ()) * 1000);
 			},
 			removeTimeout: function (name)
 			{

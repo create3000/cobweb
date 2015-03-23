@@ -117,11 +117,10 @@ function (TraverseType, QuickSort, Matrix4)
 			var
 				browser           = this .getBrowser (),
 				gl                = browser .getContext (),
-				shader            = browser .getDefaultShader (),
 				opaqueShapes      = this .opaqueShapes,
 				transparentShapes = this .transparentShapes;
 
-			shader .setGlobalLights ();
+			browser .getDefaultShader () .setGlobalLights ();
 
 			// Sorted blend
 

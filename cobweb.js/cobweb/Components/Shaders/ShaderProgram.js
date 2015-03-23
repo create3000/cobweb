@@ -49,6 +49,10 @@ function ($,
 			{
 				return "programs";
 			},
+			getCDATA: function ()
+			{
+				return this .url_;
+			},
 		});
 
 		return ShaderProgram;

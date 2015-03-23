@@ -87,6 +87,10 @@ function ($,
 
 				return "VERTEX_SHADER";
 			},
+			getCDATA: function ()
+			{
+				return this .url_;
+			},
 			requestImmediateLoad: function ()
 			{
 				if (this .checkLoadState () == X3DConstants .COMPLETE_STATE || this .checkLoadState () == X3DConstants .IN_PROGRESS_STATE)

@@ -225,13 +225,25 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 
 			this .getNotification () .string_ = viewpoint .description_;
 		},
-		print: function (string)
+		print: function ()
 		{
-			console .log .apply (console, arguments);
+			var string = "";
+
+			for (var i = 0; i < arguments .length; ++ i)
+				string += arguments [i];
+
+			console .log (string);
 		},
 		println: function (string)
 		{
-			console .log .apply (console, arguments);
+			var string = "";
+
+			for (var i = 0; i < arguments .length; ++ i)
+				string += arguments [i];
+
+			//string += "\n";
+
+			console .log (string);
 		},
 	});
 
@@ -265,8 +277,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 	{
 		get: function ()
 		{
-			// this .getScripts () [this .getScripts () .length - 1] .getExecutionContext ();
-			return this .getExecutionContext ();
+			return this .getScriptStack () [this .getScriptStack () .length - 1] .getExecutionContext ();
 		},
 		enumerable: true,
 		configurable: false

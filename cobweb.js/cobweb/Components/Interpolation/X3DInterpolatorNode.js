@@ -43,7 +43,8 @@ function ($,
 		set_fraction__: function ()
 		{
 			var
-				length   = this .key_ .length,
+				key      = this .key_,
+				length   = key .length,
 				fraction = this .set_fraction_ .getValue ();
 		
 			switch (length)
@@ -54,18 +55,19 @@ function ($,
 					return this .interpolate (0, 0, 0);
 				default:
 				{
-					if (fraction <= this .key_ [0])
+					if (fraction <= key [0])
 						return this .interpolate (0, 1, 0);
 
-					if (fraction >= this .key_ [length - 1])
+					if (fraction >= key [length - 1])
 						return this .interpolate (length - 2, length - 1, 1);
 
-					var index1 = Algorithm .upperBound (this .key_, 0, length, fraction);
+					var index1 = Algorithm .upperBound (key, 0, length, fraction);
 
 					if (index1 !== length)
 					{
-						var index0 = index1 - 1;
-						var weight = (fraction - this .key_ [index0]) / (this .key_ [index1] - this .key_ [index0]);
+						var
+							index0 = index1 - 1,
+							weight = (fraction - key [index0]) / (key [index1] - key [index0]);
 
 						this .interpolate (index0, index1, Algorithm .clamp (weight, 0, 1));
 					}

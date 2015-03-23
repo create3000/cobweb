@@ -541,8 +541,6 @@
     <None Include="Cobweb.mdproj" />
     <None Include="cobweb.min.js" />
     <None Include="Cobweb.userprefs" />
-    <None Include="logo.bw.png" />
-    <None Include="logo.png" />
     <None Include="Makefile" />
     <None Include="package.json" />
     <None Include="cobweb\Browser\Texturing\X3DTexturingContext.js" />
@@ -1156,6 +1154,12 @@
     <None Include="tests\Examples\LustForLife\stage\tree.png" />
     <None Include="tests\Examples\LustForLife\stage\u-bahn.png" />
     <None Include="tests\Examples\LustForLife\stage\walk.png" />
+    <None Include="images\logo.bw.png" />
+    <None Include="images\logo.png" />
+    <None Include="images\icon.bw.png" />
+    <None Include="images\icon.png" />
+    <None Include="tests\Components\Scripting\test.x3d" />
+    <None Include="cobweb\Browser\Scripting\X3DScriptingContext.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1187,5 +1191,8 @@
     <Folder Include="tests\Examples\BIC\" />
     <Folder Include="tests\Examples\Astronomy\" />
     <Folder Include="tests\Examples\LustForLife\" />
+    <Folder Include="images\" />
+    <Folder Include="tests\Components\Scripting\" />
+    <Folder Include="cobweb\Browser\Scripting\" />
   </ItemGroup>
 </Project>

@@ -15,6 +15,10 @@ function ($,
 	{
 		constructor: X3DProgrammableShaderObject,
 		initialize: function () { },
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
 	};
 
 	return X3DProgrammableShaderObject;

@@ -6,16 +6,17 @@ define (function ()
 		fieldType = 0,
 		nodeType  = 0;
 
-	return {
+	var X3DConstants =
+	{
 		// Load state
-	
+
 		NOT_STARTED_STATE: loadState ++,
 		IN_PROGRESS_STATE: loadState ++,
 		COMPLETE_STATE:    loadState ++,
 		FAILED_STATE:      loadState ++,
 
 		// Access type
-	
+
 		initializeOnly: parseInt ('001', 2),
 		inputOnly:      parseInt ('010', 2),
 		outputOnly:     parseInt ('100', 2),
@@ -368,4 +369,10 @@ define (function ()
 		X3DViewpointObject:           nodeType ++,
 		X3DViewportNode:              nodeType ++,
 	};
+
+	Object .preventExtensions (X3DConstants);
+	Object .freeze (X3DConstants);
+	Object .seal (X3DConstants);
+
+	return X3DConstants;
 });
