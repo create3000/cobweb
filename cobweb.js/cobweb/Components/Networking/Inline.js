@@ -82,8 +82,6 @@ function ($,
 			},
 			requestImmediateLoad: function ()
 			{
-				console .log (this .url_ [0]);
-
 				try
 				{
 					this .setScene (new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_));

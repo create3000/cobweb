@@ -38,7 +38,7 @@ function ($,
           SFVec4,
           ArrayFields)
 {
-	return $.extend (
+	var Fields = $.extend (
 	{
 		SFBool:      SFBool,
 		SFColor:     SFColor,
@@ -64,4 +64,10 @@ function ($,
 		VrmlMatrix:  SFMatrix4 .VrmlMatrix,
 	},
 	ArrayFields);
+
+	Object .preventExtensions (Fields);
+	Object .freeze (Fields);
+	Object .seal (Fields);
+
+	return Fields;
 });

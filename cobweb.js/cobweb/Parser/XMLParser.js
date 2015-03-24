@@ -61,7 +61,7 @@ function ($, Fields, Parser, X3DConstants)
 						break;
 				}
 	
-				console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
+				//console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
 			},
 			x3d: function (x3d)
 			{

@@ -33,7 +33,7 @@ function ($, XMLParser, URI)
 
 			var t0 = performance .now ();
 			scene .setup ();
-			console .log ("Scene '" + scene .worldURL + "' initialized in " + (performance .now () - t0) .toFixed (2) + " ms.");
+			//console .log ("Scene '" + scene .worldURL + "' initialized in " + (performance .now () - t0) .toFixed (2) + " ms.");
 
 			return scene;
 		},
@@ -79,7 +79,7 @@ function ($, XMLParser, URI)
 				},
 				error: function (jqXHR, textStatus, errorThrown)
 				{
-					console .log ("Couldn't load URL '" + this .URL .toString () + "': " + errorThrown + ".");
+					//console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + errorThrown + ".");
 
 					if (this .url .length)
 						this .createX3DFromURLAsync (this .url .shift ());
@@ -121,7 +121,7 @@ function ($, XMLParser, URI)
 					},
 					error: function (jqXHR, textStatus, errorThrown)
 					{
-						console .log ("Couldn't load URL '" + this .URL .toString () + "': " + errorThrown + ".");
+						//console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + errorThrown + ".");
 					},
 				});
 
@@ -138,7 +138,7 @@ function ($, XMLParser, URI)
 		{
 			URL = this .executionContext .getWorldURL () .transform (new URI (URL));
 
-			console .log ("Trying to load URL '" + URL .toString () + "'.");
+			//console .info ("Trying to load URL '" + URL .toString () + "'.");
 
 			return URL .isLocal () ? this .browser .getLocation () .getRelativePath (URL) : URL;
 		},

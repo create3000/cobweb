@@ -1,16 +1,22 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
+	"cobweb/Browser/Scripting/evaluate",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DField",
+	"cobweb/Basic/X3DArrayField",
+	"cobweb/Fields",
 	"cobweb/Components/Scripting/X3DScriptNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
-          Fields,
+          evaluate,
           X3DFieldDefinition,
           FieldDefinitionArray,
+          X3DField,
+          X3DArrayField,
+          Fields,
           X3DScriptNode, 
           X3DConstants)
 {
@@ -75,7 +81,7 @@ function ($,
 					{
 						if (result)
 						{
-							this .setText (result [1]);
+							this .initialize__ (result [1]);
 							break;
 						}
 					}
@@ -85,26 +91,10 @@ function ($,
 					}
 				}
 			},
-			setText: function (text)
-			{
-				this .context = this .getContext (text);
-
-				this .set_live__ ();
-
-				try
-				{
-					if (this .context .initialize)
-						this .context .initialize ();
-				}
-				catch (error)
-				{
-					console .error (error .message);
-				}
-			},
 			getContext: function (text)
 			{
 				var
-					handler           = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"]
+					callbacks         = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"],
 					userDefinedFields = this .getUserDefinedFields ();
 
 				for (var name in userDefinedFields)
@@ -114,28 +104,28 @@ function ($,
 					switch (field .getAccessType ())
 					{
 						case X3DConstants .inputOnly:
-							handler .push (field .getName ());
+							callbacks .push (field .getName ());
 							break;
 						case X3DConstants .inputOutput:
-							handler .push ("set_" + field .getName ());
+							callbacks .push ("set_" + field .getName ());
 							break;
 					}
 				}
 
-				text += "\n;var " + handler .join (",") + ";";
-				text += "\n[" + handler .join (",") + "];"
+				text += "\n;var " + callbacks .join (",") + ";";
+				text += "\n[" + callbacks .join (",") + "];"
 
 				var
 					global  = Object .create ({ }, this .getGlobal ()),
 					result  = evaluate (global, text),
 					context = { };
 
-				for (var i = 0; i < handler .length; ++ i)
+				for (var i = 0; i < callbacks .length; ++ i)
 				{
 					if (typeof result [i] === "function")
-						context [handler [i]] = result [i];
+						context [callbacks [i]] = result [i];
 					else
-						context [handler [i]] = null;
+						context [callbacks [i]] = null;
 				}
 
 				return context;
@@ -144,12 +134,55 @@ function ($,
 			{
 				var global =
 				{
-					NULL: { value: null },
-					FALSE: { value: false },
-					TRUE: { value: true },
-					print: { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
-					X3DConstants: { value: X3DConstants },
-					Browser: { value: this .getBrowser () },
+					NULL:          { value: null },
+					FALSE:         { value: false },
+					TRUE:          { value: true },
+					print:         { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
+					trace:         { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
+					X3DConstants:  { value: X3DConstants },
+					Browser:       { value: this .getBrowser () },
+
+					X3DField:      { value: X3DField },
+					X3DArrayField: { value: X3DArrayField },
+
+					SFColor:       { value: SFColor },
+					SFColorRGBA:   { value: SFColorRGBA },
+					SFImage:       { value: SFImage },
+					SFMatrix3d:    { value: SFMatrix3d },
+					SFMatrix3f:    { value: SFMatrix3f },
+					SFMatrix4d:    { value: SFMatrix4d },
+					SFMatrix4f:    { value: SFMatrix4f },
+					SFNode:        { value: SFNode },
+					SFRotation:    { value: SFRotation },
+					SFVec3d:       { value: SFVec2d },
+					SFVec2f:       { value: SFVec2f },
+					SFVec2d:       { value: SFVec3d },
+					SFVec3f:       { value: SFVec3f },
+					SFVec4d:       { value: SFVec4d },
+					SFVec4f:       { value: SFVec4f },
+					VrmlMatrix:    { value: VrmlMatrix },
+
+					MFBool:        { value: MFBool },
+					MFColor:       { value: MFColor },
+					MFColorRGBA:   { value: MFColorRGBA },
+					MFDouble:      { value: MFDouble },
+					MFFloat:       { value: MFFloat },
+					MFImage:       { value: MFImage },
+					MFInt32:       { value: MFInt32 },
+					MFMatrix3d:    { value: MFMatrix3d },
+					MFMatrix3f:    { value: MFMatrix3f },
+					MFMatrix4d:    { value: MFMatrix4d },
+					MFMatrix4f:    { value: MFMatrix4f },
+					MFNode:        { value: MFNode },
+					MFRotation:    { value: MFRotation },
+					MFString:      { value: MFString },
+					MFTime:        { value: MFTime },
+					MFVec2d:       { value: MFVec2d },
+					MFVec2f:       { value: MFVec2f },
+					MFVec3d:       { value: MFVec3d },
+					MFVec3f:       { value: MFVec3f },
+					MFVec4d:       { value: MFVec4d },
+					MFVec4f:       { value: MFVec4f },
 				};
 
 				var userDefinedFields = this .getUserDefinedFields ();
@@ -188,6 +221,12 @@ function ($,
 
 				if (this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ())
 				{
+					if (this .context .prepareEvents)
+						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
+
+					if (this .context .eventsProcessed)
+						this .addInterest (this, "eventsProcessed__");
+
 					for (var name in userDefinedFields)
 					{
 						var field = userDefinedFields [name];
@@ -202,10 +241,10 @@ function ($,
 							}
 							case X3DConstants .inputOutput:
 							{
-								var handler = "set_" + field .getName ();
+								var callback = "set_" + field .getName ();
 	
-								if (this .context [handler])
-									field .addInterest (this, "set_field__", handler);
+								if (this .context [callback])
+									field .addInterest (this, "set_field__", callback);
 								break;
 							}
 						}
@@ -213,6 +252,12 @@ function ($,
 				}
 				else
 				{
+					if (this .context .prepareEvents)
+						this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents__");
+
+					if (this .context .eventsProcessed)
+						this .removeInterest (this, "eventsProcessed__");
+
 					for (var name in userDefinedFields)
 					{
 						var field = userDefinedFields [name];
@@ -233,32 +278,78 @@ function ($,
 					}
 				}
 			},
-			set_field__: function (field, handler)
+			initialize__: function (text)
+			{
+				this .context = this .getContext (text);
+
+				this .getExecutionContext () .isLive_ .addInterest (this, "set_live__");
+				this .isLive_ .addInterest (this, "set_live__");
+
+				this .set_live__ ();
+
+				try
+				{
+					if (this .context .initialize)
+						this .context .initialize ();
+				}
+				catch (error)
+				{
+					this .setError ("initialize", error);
+				}
+			},
+			prepareEvents__: function ()
+			{
+				try
+				{
+					this .context .prepareEvents ();
+				}
+				catch (error)
+				{
+					this .setError ("prepareEvents", error);
+				}
+			},
+			set_field__: function (field, callback)
 			{
 				field .setTainted (true);
 
 				try
 				{
-					this .context [handler] (field .valueOf (), this .getBrowser () .getCurrentTime ());
+					this .context [callback] (field .valueOf (), this .getBrowser () .getCurrentTime ());
 				}
 				catch (error)
 				{
-					console .log (error .message);
+					this .setError (callback, error);
 				}
 
 				field .setTainted (false);
 			},
-		});
-
-		function evaluate (__global__, __text__)
-		{
-			with (__global__)
+			eventsProcessed__: function ()
 			{
-				function print () { Browser .print .apply (Browser, arguments); }
-
-				return eval (__text__);
-			}		
-		}
+				try
+				{
+					this .context .eventsProcessed ();
+				}
+				catch (error)
+				{
+					this .setError ("eventsProcessed", error);
+				}
+			},
+			shutdown__: function ()
+			{
+				try
+				{
+					this .context .shutdown ();
+				}
+				catch (error)
+				{
+					this .setError ("shutdown", error);
+				}
+			},
+			setError: function (callback, error)
+			{
+				console .error (new Error ("JavaScript Error in '" + callback + "': " + error .message));
+			},
+		});
 
 		return Script;
 	}

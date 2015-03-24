@@ -11,7 +11,8 @@
   <Scene>
     <Script DEF='CustomStript'>
       <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
-<![CDATA[javascript:
+<![CDATA[
+javascript:
 
 function initialize ()
 {
@@ -20,10 +21,27 @@ function initialize ()
 	translation = new SFVec3f (3,4,5);
 }
 
+function prepareEvents ()
+{
+	print ("prepareEvents");
+}
+
 function set_translation (value, time)
 {
+	print ("set_translation");
 	print ("value: ", value);
 	print ("time:  ", time);
+	test ();
+}
+
+function test ()
+{
+	print ("test");
+}
+
+function eventsProcessed ()
+{
+	print ("eventProcessed");
 }
 ]]> 
     </Script>

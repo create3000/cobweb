@@ -1,31 +1,37 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/tests/Components/Scripting/test.x3d">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="55" Column="15" />
+      <File FileName="cobweb.js/cobweb.html" Line="61" Column="13" />
       <File FileName="cobweb.js/tests/Components/Scripting/test.x3d" Line="32" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="152" Column="1" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="146" Column="1" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="135" Column="8" />
-      <File FileName="cobweb.js/cobweb/Parser/Parser.js" Line="39" Column="36" />
-      <File FileName="cobweb.js/cobweb/Basic/FieldDefinitionArray.js" Line="21" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="56" Column="5" />
+      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="17" Column="1" />
+      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="137" Column="1" />
+      <File FileName="cobweb.js/cobweb/Parser/Parser.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/tests/Examples/Cathedral/stage/geist-tv1.x3d" Line="87" Column="36" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
+        <State expanded="True" selected="True">
           <Node name="cobweb.js" expanded="True">
             <Node name="cobweb" expanded="True">
               <Node name="Basic" expanded="True" />
               <Node name="Browser" expanded="True">
+                <Node name="Core" expanded="True" />
                 <Node name="Layering" expanded="True" />
                 <Node name="Scripting" expanded="True" />
               </Node>
               <Node name="Components" expanded="True">
+                <Node name="Core" expanded="True" />
+                <Node name="EnvironmentalSensor" expanded="True" />
+                <Node name="Navigation" expanded="True" />
                 <Node name="Networking" expanded="True" />
                 <Node name="Scripting" expanded="True" />
                 <Node name="Shaders" expanded="True" />
+                <Node name="Time" expanded="True" />
               </Node>
               <Node name="Configuration" expanded="True" />
+              <Node name="Execution" expanded="True" />
               <Node name="Parser" expanded="True" />
             </Node>
             <Node name="images" expanded="True" />
@@ -35,11 +41,13 @@
             </Node>
             <Node name="tests" expanded="True">
               <Node name="Components" expanded="True">
-                <Node name="Scripting" expanded="True">
-                  <Node name="test.x3d" selected="True" />
+                <Node name="Scripting" expanded="True" />
+              </Node>
+              <Node name="Examples" expanded="True">
+                <Node name="Cathedral" expanded="True">
+                  <Node name="stage" expanded="True" />
                 </Node>
               </Node>
-              <Node name="Examples" expanded="True" />
             </Node>
           </Node>
           <Node name="meta" expanded="True" />

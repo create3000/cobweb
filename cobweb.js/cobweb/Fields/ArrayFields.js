@@ -535,7 +535,8 @@ function ($,
 		},
 	});
 
-	return {
+	var ArrayFields =
+	{
 		MFBool:      MFBool,
 		MFColor:     MFColor,
 		MFColorRGBA: MFColorRGBA,
@@ -558,4 +559,10 @@ function ($,
 		MFVec4d:     MFVec4d,
 		MFVec4f:     MFVec4f,
 	};
+
+	Object .preventExtensions (ArrayFields);
+	Object .freeze (ArrayFields);
+	Object .seal (ArrayFields);
+
+	return ArrayFields;
 });

@@ -2,10 +2,11 @@
 require (["cobweb/X3D"],
 function (X3D)
 {
-	X3D (function ()
+	return;
+
+	X3D (function (dom)
 	{
-		var Browser = X3D .getBrowser ($("X3D"));
-return;
+		var Browser = X3D .getBrowser (dom);
 		Browser .print ("Welcome to " + Browser .name + " X3D Browser " + Browser .version + ":\n" +
 		                "        Current Graphics Renderer\n" +
 		                "                Name: " + Browser .getVendor () + " " + Browser .getWebGLVersion () + "\n" +

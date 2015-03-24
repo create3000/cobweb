@@ -1160,6 +1160,7 @@
     <None Include="images\icon.png" />
     <None Include="tests\Components\Scripting\test.x3d" />
     <None Include="cobweb\Browser\Scripting\X3DScriptingContext.js" />
+    <None Include="cobweb\Browser\Scripting\evaluate.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
