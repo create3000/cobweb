@@ -71,14 +71,7 @@ function ($,
 				this .group .setup ();
 				this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
-				this .load ();
-			},
-			load: function ()
-			{
-				if (this .getExecutionContext () === this .getBrowser () .getExecutionContext ())
-					this .requestImmediateLoad ();
-				else
-					setTimeout (this .requestAsyncLoad .bind (this), 0);
+				this .requestAsyncLoad ();
 			},
 			requestImmediateLoad: function ()
 			{
@@ -94,15 +87,25 @@ function ($,
 			},
 			requestAsyncLoad: function ()
 			{
+				if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+					return;
+
+				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
 				new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
 			},
 			setSceneAsync: function (scene)
 			{
 				if (scene)
-					setTimeout (this .setScene .bind (this, scene), 0);
-
+				{
+					this .setScene (scene);
+					this .setLoadState (X3DConstants .COMPLETE_STATE);
+				}
 				else
+				{
 					this .setScene (this .getBrowser () .getDefaultScene ());
+					this .setLoadState (X3DConstants .FAILED_STATE);
+				}
 			},
 			setScene: function (scene)
 			{

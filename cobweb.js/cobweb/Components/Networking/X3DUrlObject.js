@@ -24,6 +24,19 @@ function ($,
 			},
 			setLoadState: function (value)
 			{
+				switch (value)
+				{
+					case X3DConstants .NOT_STARTED_STATE:
+						break;
+					case X3DConstants .IN_PROGRESS_STATE:
+						this .getBrowser () .addLoadCount ();
+						break;
+					case X3DConstants .COMPLETE_STATE:
+					case X3DConstants .FAILED_STATE:
+						this .getBrowser () .removeLoadCount ();
+						break;
+				}
+
 				this .loadState_ = value;
 			},
 			checkLoadState: function ()

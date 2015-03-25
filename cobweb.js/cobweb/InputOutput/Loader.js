@@ -12,6 +12,8 @@ function ($, XMLParser, URI)
 		this .executionContext = executionContext;
 		this .URL              = new URI ();
 	}
+	
+	Loader .timeOut = 16;
 
 	Loader .prototype =
 	{
@@ -19,23 +21,62 @@ function ($, XMLParser, URI)
 		{
 			return this .URL;
 		},
-		createX3DFromString: function (worldURL, string)
+		createX3DFromString: function (worldURL, string, success, error)
 		{
 			var scene = this .browser .createScene ();
 
 			scene .setWorldURL (this .browser .getLocation () .transform (worldURL));
 
-			//
+			if (success)
+			{
+				try
+				{
+					setTimeout (this .importDocument .bind (this, scene, $.parseXML (string), success, error), Loader .timeOut);
+				}
+				catch (exception)
+				{
+					error (exception);
+				}
+			}
+			else
+			{
+				this .importDocument (scene, $.parseXML (string));
+				return scene;
+			}
+		},
+		importDocument: function (scene, dom, success, error)
+		{
+			try
+			{
+				new XMLParser (scene, dom) .parseIntoScene ();
 
-			var dom = $.parseXML (string);
+				if (success)
+				{
+					setTimeout (function ()
+					{
+						try
+						{
+							scene .setup ();
 
-			new XMLParser (scene, dom) .parseIntoScene ();
-
-			var t0 = performance .now ();
-			scene .setup ();
-			//console .log ("Scene '" + scene .worldURL + "' initialized in " + (performance .now () - t0) .toFixed (2) + " ms.");
-
-			return scene;
+							setTimeout (success .bind (this, scene), Loader .timeOut);
+						}
+						catch (exception)
+						{
+							error (exception);
+						}
+					}
+					.bind (this), Loader .timeOut)
+				}
+				else
+					scene .setup ();
+			}
+			catch (exception)
+			{
+				if (error)
+					error (exception);
+				else
+					throw exception;
+			}
 		},
 		createX3DFromURL: function (url, callback)
 		{
@@ -53,6 +94,18 @@ function ($, XMLParser, URI)
 		{
 			this .URL = this .transform (URL);
 
+			function error (exception)
+			{
+				//console .log (exception);
+				//console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + exception .message + ".");
+
+				if (this .url .length)
+					this .createX3DFromURLAsync (this .url .shift ());
+
+				else
+					this .callback (null);
+			}
+	
 			$.ajax ({
 				url: this .URL,
 				dataType: "text",
@@ -62,30 +115,11 @@ function ($, XMLParser, URI)
 				context: this,
 				success: function (data)
 				{
-					try
-					{
-						return this .callback (this .createX3DFromString (this .URL, data));
-					}
-					catch (error)
-					{
-						console .log (error);
-
-						if (this .url .length)
-							this .createX3DFromURLAsync (this .url .shift ());
-
-						else
-							this .callback (null);
-					}
+					this .createX3DFromString (this .URL, data, this .callback, error .bind (this));
 				},
 				error: function (jqXHR, textStatus, errorThrown)
 				{
-					//console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + errorThrown + ".");
-
-					if (this .url .length)
-						this .createX3DFromURLAsync (this .url .shift ());
-
-					else
-						this .callback (null);
+					error .call (this, new Error (errorThrown));
 				},
 			});
 		},

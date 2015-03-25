@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sun, 15 Mar 2015 09:33:04 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 15 Mar 2015 09:33:04 GMT'/>
+    <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
+    <meta name='modified' content='Wed, 25 Mar 2015 09:16:02 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -116,8 +116,5 @@
         </IndexedFaceSet>
       </Shape>
     </Transform>
-    <Viewpoint DEF='VP1'
-        position='-5.27792 5.12762 -3.19505'
-        orientation='0.113421 -0.989297 0.0917985 1.16438'/>
   </Scene>
 </X3D>

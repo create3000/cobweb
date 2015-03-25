@@ -64,6 +64,11 @@ function ($,
 			},
 			requestAsyncLoad: function ()
 			{
+				if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+					return;
+
+				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
 				this .urlStack = null;
 				this .loadNext ();
 			},
@@ -76,6 +81,7 @@ function ($,
 				{
 					this .urlStack = null;
 					this .clear ();
+					this .setLoadState (X3DConstants .FAILED_STATE);
 					return;
 				}
 
@@ -137,7 +143,12 @@ function ($,
 					data = cx .getImageData (0, 0, width, height) .data;
 				}
 
-				setTimeout (this .setTexture .bind (this, width, height, ! opaque, new Uint8Array (data), true), 0);
+				setTimeout (function ()
+				{
+					this .setTexture (width, height, ! opaque, new Uint8Array (data), true);
+					this .setLoadState (X3DConstants .COMPLETE_STATE);
+				}
+				.bind (this), 16);
 			},
 		});
 

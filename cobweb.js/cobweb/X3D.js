@@ -27,9 +27,27 @@ function ($, Fields, X3DBrowser)
 
 		browser .setup ();
 		browser .importDocument (x3d [0]);
+		browser .loadCount_ .addFieldCallback ("loading", bind .bind (browser));
 
-		setTimeout (browser .getWorld () .bind .bind (browser .getWorld ()), 0);
+		if (x3d .attr ("splashScreen") !== "false")
+			browser .getCanvas () .fadeOut (0);
+
 		return browser;
+	}
+
+	function bind (value)
+	{
+		if (value)
+			return;
+
+		this .loadCount_ .removeFieldCallback ("loading");
+
+		setTimeout (function ()
+		{
+			this .getWorld () .bind ();
+			this .getCanvas () .fadeIn (2000);
+		}
+		.bind (this), 0);
 	}
 
 	// X3D

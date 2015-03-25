@@ -132,7 +132,7 @@ function ($, X3DChildObject, X3DConstants)
 			var fieldCallbacks = this .fieldCallbacks_;
 
 			for (var key in fieldCallbacks)
-				fieldCallbacks [key] (this);
+				fieldCallbacks [key] (this .valueOf ());
 		},
 		valueOf: function ()
 		{
