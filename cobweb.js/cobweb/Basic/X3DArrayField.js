@@ -3,8 +3,9 @@ define ([
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
-function ($, X3DField, X3DConstants)
+function ($, X3DField, X3DConstants, Generator)
 {
 	var handler =
 	{
@@ -30,12 +31,14 @@ function ($, X3DField, X3DConstants)
 				return;
 			}
 
-			var array = target .getValue ();
+			var
+				array = target .getValue (),
+				index = parseInt (key);
 
-			if (key >= array .length)
-				target .resize (key + 1);
+			if (index >= array .length)
+				target .resize (index + 1);
 
-			array [key] .setValue (value);
+			array [index] .setValue (value);
 			return true;
 		},
 	};
@@ -191,7 +194,45 @@ function ($, X3DField, X3DConstants)
 		},
 		toString: function ()
 		{
-			return "[object " + this .getTypeName () + "]";
+			var
+				array  = this .getValue (),
+				string = "";
+
+			switch (array .length)
+			{
+				case 0:
+				{
+					string += "[ ]";
+					break;
+				}
+				case 1:
+				{
+					string += array [0] .toString ();
+					break;
+				}
+				default:
+				{
+					string += "[\n";
+					Generator .IncIndent ();
+				
+					for (var i = 0, length = array .length - 1; i < length; ++ i)
+					{
+						string += Generator .Indent ();
+						string += array [i] .toString ();
+						string += ",\n"
+					}
+
+					string += Generator .Indent ();
+					string += array [length] .toString ();
+					string += "\n";
+					Generator .DecIndent ();
+					string += Generator .Indent ();
+					string += "]";
+					break;
+				}
+			}
+
+			return string;
 		},
 	});
 

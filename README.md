@@ -1,4 +1,4 @@
-[Cobweb](http://cobweb.create3000.de/) — Cobweb X3D Browser
+[Cobweb](http://cobweb.create3000.de/) — Cobweb WebGL X3D Browser
 ==================================================
 
 Introduction

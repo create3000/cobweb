@@ -1,11 +1,13 @@
 
 define ([
 	"jquery",
+	"cobweb/Basic/X3DField",
+	"cobweb/Basic/X3DArrayField",
 	"cobweb/Fields",
 	"cobweb/Parser/Parser",
 	"cobweb/Bits/X3DConstants",
 ],
-function ($, Fields, Parser, X3DConstants)
+function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 {
 	with (Fields)
 	{
@@ -21,7 +23,7 @@ function ($, Fields, Parser, X3DConstants)
 		{
 			this .xml              = xml;
 			this .executionContext = [ scene ];
-			this .nodes            = [ ];
+			this .parents          = [ ];
 			this .parser           = new Parser (this .scene, "", true);
 		}
 
@@ -42,25 +44,28 @@ function ($, Fields, Parser, X3DConstants)
 					{
 						var x3d = $(this .xml) .children ("X3D");
 	
-						for (var i = 0; i < x3d .length; ++ i)
-							this .x3d (x3d [i]);
+						if (x3d .length)
+						{
+							for (var i = 0; i < x3d .length; ++ i)
+								this .x3d (x3d [i]);
+						}
+						else
+							this .scene (this .xml);
 
 						break;
 					}
 					case "X3D":
 						this .x3d (this .xml);
 						break;
-
 					case "Scene":
 					case "SCENE":
 						this .scene (this .xml);
 						break;
-
 					default:
 						this .child (this .xml);
 						break;
 				}
-	
+
 				//console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
 			},
 			x3d: function (x3d)
@@ -124,11 +129,11 @@ function ($, Fields, Parser, X3DConstants)
 					
 					this .DEF (element, node);
 					this .addNode (element, node);
-					this .nodes .push (node);
+					this .parents .push (node);
 					this .attributes (element .attributes, node);
 					this .children (element .childNodes);
 					this .getExecutionContext () .addUninitializedNode (node);
-					this .nodes .pop ();
+					this .parents .pop ();
 				}
 				catch (error)
 				{
@@ -173,15 +178,43 @@ function ($, Fields, Parser, X3DConstants)
 			},
 			addNode: function (element, node)
 			{
-				if (this .nodes .length)
+				if (this .parents .length)
 				{
-					try
+					var parent = this .parents [this .parents .length - 1];
+				
+					if (parent instanceof X3DField)
 					{
-						var containerField = element .getAttribute ("containerField");
+						if (parent instanceof X3DArrayField)
+							parent .push (node);
 
-						if (containerField)
+						else
+							parent .set (node);
+					}
+					else
+					{
+						try
 						{
-							var field = this .nodes [this .nodes .length - 1] .getField (containerField);
+							var containerField = element .getAttribute ("containerField");
+
+							if (containerField)
+							{
+								var field = parent .getField (containerField);
+
+								if (field .getType () === X3DConstants .SFNode)
+									return field .setValue (node);
+
+								if (field .getType () === X3DConstants .MFNode)
+									return field .push (node);
+							}
+						}
+						catch (error)
+						{
+							//console .log (error .message);
+						}
+
+						try
+						{
+							var field = parent .getField (node .getContainerField ());
 
 							if (field .getType () === X3DConstants .SFNode)
 								return field .setValue (node);
@@ -189,25 +222,10 @@ function ($, Fields, Parser, X3DConstants)
 							if (field .getType () === X3DConstants .MFNode)
 								return field .push (node);
 						}
-					}
-					catch (error)
-					{
-						//console .log (error .message);
-					}
-
-					try
-					{
-						var field = this .nodes [this .nodes .length - 1] .getField (node .getContainerField ());
-
-						if (field .getType () === X3DConstants .SFNode)
-							return field .setValue (node);
-
-						if (field .getType () === X3DConstants .MFNode)
-							return field .push (node);
-					}
-					catch (error)
-					{
-						//console .log (error .message);
+						catch (error)
+						{
+							//console .log (error .message);
+						}
 					}
 				}
 				else
@@ -238,7 +256,7 @@ function ($, Fields, Parser, X3DConstants)
 			cdata: function (element)
 			{
 				var
-					node  = this .nodes [this .nodes .length - 1]
+					node  = this .parents [this .parents .length - 1]
 					field = node .getCDATA ();
 
 				if (field)
@@ -246,7 +264,7 @@ function ($, Fields, Parser, X3DConstants)
 			},
 			field: function (element)
 			{
-				var node = this .nodes [this .nodes .length - 1];
+				var node = this .parents [this .parents .length - 1];
 
 				if (! node .hasUserDefinedFields ())
 					return;
@@ -254,7 +272,7 @@ function ($, Fields, Parser, X3DConstants)
 				var accessType = AccessType [element .getAttribute ("accessType")];
 
 				if (accessType === undefined)
-					return;
+					accessType = X3DConstants .initializeOnly;
 
 				var type = Fields [element .getAttribute ("type")];
 
@@ -283,6 +301,10 @@ function ($, Fields, Parser, X3DConstants)
 						{ }
 					}
 				}
+
+				this .parents .push (field);
+				this .children (element .childNodes);
+				this .parents .pop ();
 
 				node .addUserDefinedField (accessType, name, field);
 			},
@@ -320,6 +342,7 @@ function ($, Fields, Parser, X3DConstants)
 		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3d]  = Parser .prototype .sfmatrix4fValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4f]  = Parser .prototype .sfmatrix4dValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4d]  = Parser .prototype .sfmatrix4fValue;
+		XMLParser .prototype .fieldTypes [X3DConstants .SFNode]      = function (field) { field .set (null); };
 		XMLParser .prototype .fieldTypes [X3DConstants .SFRotation]  = Parser .prototype .sfrotationValue;
 		XMLParser .prototype .fieldTypes [X3DConstants .SFString]    = function (field) { field .set (this .input); };
 		XMLParser .prototype .fieldTypes [X3DConstants .SFTime]      = Parser .prototype .sftimeValue;
@@ -341,6 +364,7 @@ function ($, Fields, Parser, X3DConstants)
 		XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix3f]  = Parser .prototype .mfmatrix3fValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4d]  = Parser .prototype .mfmatrix4dValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4f]  = Parser .prototype .mfmatrix4fValues;
+		XMLParser .prototype .fieldTypes [X3DConstants .MFNode]      = function (field) { };
 		XMLParser .prototype .fieldTypes [X3DConstants .MFRotation]  = Parser .prototype .mfrotationValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFString]    = Parser .prototype .mfstringValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFTime]      = Parser .prototype .mftimeValues;

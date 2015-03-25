@@ -8,6 +8,7 @@ define ([
 	"cobweb/Basic/X3DArrayField",
 	"cobweb/Fields",
 	"cobweb/Components/Scripting/X3DScriptNode",
+	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -18,6 +19,7 @@ function ($,
           X3DArrayField,
           Fields,
           X3DScriptNode, 
+          Loader,
           X3DConstants)
 {
 	with (Fields)
@@ -132,6 +134,23 @@ function ($,
 			},
 			getGlobal: function ()
 			{
+				var browser = this .getBrowser ();
+
+				function SFNode (vrmlSyntax)
+				{
+					if (typeof vrmlSyntax === "string")
+					{
+						var scene = browser .createX3DFromString (vrmlSyntax);
+
+						if (scene .getRootNodes () .length && scene .getRootNodes () [0])
+							return Fields .SFNode .call (this, scene .getRootNodes () [0] .getValue ());
+					}
+
+					return Fields .SFNode .call (this);
+				}
+
+				SFNode .prototype = Fields .SFNode .prototype;
+
 				var global =
 				{
 					NULL:          { value: null },
@@ -139,8 +158,12 @@ function ($,
 					TRUE:          { value: true },
 					print:         { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
 					trace:         { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
+					
 					X3DConstants:  { value: X3DConstants },
 					Browser:       { value: this .getBrowser () },
+
+					X3DFieldDefinition:   { value: X3DFieldDefinition },
+					FieldDefinitionArray: { value: FieldDefinitionArray },
 
 					X3DField:      { value: X3DField },
 					X3DArrayField: { value: X3DArrayField },
@@ -290,7 +313,11 @@ function ($,
 				try
 				{
 					if (this .context .initialize)
+					{
+						this .getBrowser () .getScriptStack () .push (this);
 						this .context .initialize ();
+						this .getBrowser () .getScriptStack () .pop ();
+					}
 				}
 				catch (error)
 				{
@@ -301,7 +328,9 @@ function ($,
 			{
 				try
 				{
+					this .getBrowser () .getScriptStack () .push (this);
 					this .context .prepareEvents ();
+					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
@@ -314,7 +343,9 @@ function ($,
 
 				try
 				{
+					this .getBrowser () .getScriptStack () .push (this);
 					this .context [callback] (field .valueOf (), this .getBrowser () .getCurrentTime ());
+					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
@@ -327,7 +358,9 @@ function ($,
 			{
 				try
 				{
+					this .getBrowser () .getScriptStack () .push (this);
 					this .context .eventsProcessed ();
+					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
@@ -338,7 +371,9 @@ function ($,
 			{
 				try
 				{
+					this .getBrowser () .getScriptStack () .push (this);
 					this .context .shutdown ();
+					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{

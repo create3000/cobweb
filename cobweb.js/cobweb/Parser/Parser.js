@@ -51,7 +51,7 @@ function ($, Fields)
 			this .lastIndex = parser .lastIndex;
 
 			parser .result = this .exec (parser .input);
-			
+	
 			if (parser .result)
 			{
 				parser .lastIndex = this .lastIndex;
@@ -64,6 +64,10 @@ function ($, Fields)
 		for (var key in Grammar)
 			Grammar [key] .parse = parse;
 
+		Object .preventExtensions (Grammar);
+		Object .freeze (Grammar);
+		Object .seal (Grammar);
+
 		/*
 		 *  Parser
 		 */
@@ -71,29 +75,10 @@ function ($, Fields)
 		function Parser (scene, input, xml)
 		{
 			this .scene = scene;
+			this .xml   = xml;
 			this .setInput (input);
-			this .xml = xml;
-
-			this .SFBool      = new SFBool ();
-			this .SFColor     = new SFColor ();
-			this .SFColorRGBA = new SFColorRGBA ();
-			this .SFDouble    = new SFDouble ();
-			this .SFFloat     = new SFFloat ();
-			this .SFImage     = new SFImage ();
-			this .SFInt32     = new SFInt32 ();
-			this .SFMatrix3d  = new SFMatrix3d ();
-			this .SFMatrix3f  = new SFMatrix3f ();
-			this .SFMatrix4d  = new SFMatrix4d ();
-			this .SFMatrix4f  = new SFMatrix4f ();
-			this .SFNode      = new SFNode ();
-			this .SFRotation  = new SFRotation ();
-			this .SFString    = new SFString ();
-			this .SFTime      = new SFTime ();
-			this .SFVec2f     = new SFVec2f ();
-			this .SFVec3f     = new SFVec3f ();
-			this .SFVec4f     = new SFVec4f ();
 		}
-		
+
 		Parser .prototype =
 		{
 			setInput: function (value)
@@ -115,7 +100,8 @@ function ($, Fields)
 			{
 				if (Grammar .Whitespaces .parse (this))
 				{
-					this .lines (this .result [1]);
+					if (!this .xml)
+						this .lines (this .result [1]);
 					return true;
 				}
 
@@ -174,7 +160,10 @@ function ($, Fields)
 				if (Grammar .string .parse (this))
 				{
 					this .value = SFString .unescape (this .result [1]);
-					this .lines (this .value);
+
+					if (!this .xml)
+						this .lines (this .value);
+
 					return true;
 				}
 

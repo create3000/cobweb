@@ -6,42 +6,49 @@
     <meta name='created' content='Mon, 23 Mar 2015 10:08:53 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 23 Mar 2015 14:04:44 GMT'/>
+    <meta name='modified' content='Tue, 24 Mar 2015 06:31:07 GMT'/>
   </head>
   <Scene>
     <Script DEF='CustomStript'>
       <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
+      <field accessType='initializeOnly' type='SFNode' name='child'>
+        <Transform DEF='Box_1'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Box/>
+          </Shape>
+        </Transform>
+      </field>
+      <field accessType='initializeOnly' type='MFNode' name='children'>
+        <Transform DEF='Box_2'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Box/>
+          </Shape>
+        </Transform>
+        <Viewpoint/>
+      </field>
+      <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
 <![CDATA[
 javascript:
 
 function initialize ()
 {
-	print ("Hello World!");
-	print (translation);
-	translation = new SFVec3f (3,4,5);
-}
+	print ("initialize");
+	
+	var node = new SFNode ("<Transform/>");
+	print (child instanceof SFNode);
+	print (child .rotation);
+	print (node .scale);
+	print (node instanceof SFNode);
+	print (node .toString ());
 
-function prepareEvents ()
-{
-	print ("prepareEvents");
-}
-
-function set_translation (value, time)
-{
-	print ("set_translation");
-	print ("value: ", value);
-	print ("time:  ", time);
-	test ();
-}
-
-function test ()
-{
-	print ("test");
-}
-
-function eventsProcessed ()
-{
-	print ("eventProcessed");
+	print ("Browser: ", Browser .getWorldURL ());
+	print ("Scene:   ", Browser .currentScene .worldURL);
 }
 ]]> 
     </Script>

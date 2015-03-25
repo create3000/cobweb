@@ -13,15 +13,29 @@ function ($, X3DField, X3DConstants)
 			if (key in target)
 				return target [key];
 
-			return target .getValue () .getField (key) .valueOf ();
+			try
+			{
+				return target .getValue () .getField (key) .valueOf ();
+			}
+			catch (error)
+			{
+				return undefined;
+			}
  		},
 		set: function (target, key, value)
 		{
 			if (key in target)
 				return target [key] = value;
 
-			target .getValue () .getField (key) .setValue (value);
- 			return true;
+			try
+			{
+				target .getValue () .getField (key) .setValue (value);
+	 			return true;
+			}
+			catch (error)
+			{
+				return false;
+			}
 		},
 	};
 
@@ -29,9 +43,7 @@ function ($, X3DField, X3DConstants)
 	{
 		X3DField .call (this, value ? value : null);
 
-		var field = new Proxy (this, handler);
-
-		return field;
+		return new Proxy (this, handler);
 	}
 
 	SFNode .prototype = $.extend (new X3DField (),
@@ -65,24 +77,27 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () .getFieldDefinitions ();
 		},
-		toString: function ()
-		{
-			return this .getValue () ? this .getValue () .toString () : "NULL";
-		},
-		toVRMLString: function ()
-		{
-			return this .getValue () ? this .getValue () .toVRMLString () : "NULL";
-		},
-		toXMLString: function ()
-		{
-			return this .getValue () ? this .getValue () .toXMLString () : "<!-- NULL -->";
-		},
 		valueOf: function ()
 		{
 			if (this .getValue ())
 				return this;
 
 			return null;	
+		},
+		toString: function ()
+		{
+			var node = this .getValue ();
+			return node ? node .toString () : "NULL";
+		},
+		toVRMLString: function ()
+		{
+			var node = this .getValue ();
+			return node ? node .toVRMLString () : "NULL";
+		},
+		toXMLString: function ()
+		{
+			var node = this .getValue ();
+			return node ? node .toXMLString () : "<!-- NULL -->";
 		},
 	});
 
