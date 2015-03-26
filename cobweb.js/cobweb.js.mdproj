@@ -1162,6 +1162,10 @@
     <None Include="cobweb\Browser\Scripting\X3DScriptingContext.js" />
     <None Include="cobweb\Browser\Scripting\evaluate.js" />
     <None Include="cobweb\InputOutput\Generator.js" />
+    <None Include="cobweb\Browser\Geometry3D\QuadSphereOptions.js" />
+    <None Include="tests\Components\Geometry3D\Geometry3D.x3d" />
+    <None Include="tests\Components\images\image.png" />
+    <None Include="cobweb\Browser\Geometry3D\CylinderOptions.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

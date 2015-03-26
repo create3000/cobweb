@@ -43,6 +43,35 @@ function ($,
 			{
 				return "geometry";
 			},
+			build: function ()
+			{
+				var
+					options = this .getBrowser () .getSphereOptions (),
+					radius  = this .radius_ .getValue ();
+
+				this .setNormals   (options .getGeometry () .getNormals ());
+				this .setTexCoords (options .getGeometry () .getTexCoords ());
+
+				if (radius === 1)
+				{
+					this .setExtents  (options .getGeometry () .getExtents ());
+					this .setVertices (options .getGeometry () .getVertices ());
+				}
+				else
+				{
+					var vertices = options .getGeometry () .getVertices ();
+
+					for (var i = 0; i < vertices .length; i += 4)
+					{
+						this .addVertex (new Vector3 (radius * vertices [i],
+						                              radius * vertices [i + 1],
+						                              radius * vertices [i + 2]));
+					}
+				}
+
+				this .setSolid (this .solid_ .getValue ());
+				this .setCurrentTexCoord (null);
+			},
 		});
 
 		return Sphere;

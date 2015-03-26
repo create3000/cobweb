@@ -19,10 +19,6 @@ function ($,
 	function BoxOptions (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .geometry            = new IndexedFaceSet (executionContext);
-		this .geometry .texCoord_ = new TextureCoordinate (executionContext);
-		this .geometry .coord_    = new Coordinate (executionContext);
 	}
 
 	BoxOptions .prototype = $.extend (new X3DBaseNode (),
@@ -31,6 +27,15 @@ function ($,
 		initialize: function ()
 		{
 			X3DBaseNode .prototype .initialize .call (this);
+		},
+		getGeometry: function ()
+		{
+			if (this .geometry)
+				return this .geometry;
+
+			this .geometry            = new IndexedFaceSet (this .getExecutionContext ());
+			this .geometry .texCoord_ = new TextureCoordinate (this .getExecutionContext ());
+			this .geometry .coord_    = new Coordinate (this .getExecutionContext ());
 
 			var
 				geometry = this .geometry,
@@ -67,9 +72,7 @@ function ($,
 			texCoord .setup ();
 			coord    .setup ();
 			geometry .setup ();
-		},
-		getGeometry: function ()
-		{
+
 			return this .geometry;
 		},
 	});

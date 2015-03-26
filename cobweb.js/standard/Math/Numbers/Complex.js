@@ -86,44 +86,67 @@ function ($)
 		},
 		conjugate: function ()
 		{
-			return new Complex (this .real, -this .imag);
+			this .imag = -this .imag;
+			return this;
 		},
 		negate: function ()
 		{
-			return new Complex (-this .real, -this .imag);
+			this .real = -this .real;
+			this .imag = -this .imag;
+			return this;
 		},
 		inverse: function ()
 		{
 			var d = this .real * this .real + this .imag * this .imag;
 
-			return new Complex (this .real / d, -this .imag / d);
+			this .real /=  d;
+			this .imag /= -d;
+			return this;
 		},
 		add: function (value)
 		{
-			return new Complex (this .real + value .real,
-			                    this .imag + value .imag);
+			this .real += value .real;
+			this .imag += value .imag;
+			return this;
 		},
 		subtract: function (value)
 		{
-			return new Complex (this .real - value .real,
-			                    this .imag - value .imag);
+			this .real -= value .real;
+			this .imag -= value .imag;
+			return this;
 		},
 		multiply: function (value)
 		{
-			return new Complex (this .real * value .real - this .imag * value .imag,
-			                    this .real * value .imag + this .imag * value .real);
+			if (value instanceof Complex)
+			{
+				var
+					real = this .real, imag = this .imag;
+	
+				this .real = real * value .real - imag * value .imag;
+				this .imag = real * value .imag + imag * value .real;
+				return this;
+			}
+
+			this .real *= value;
+			this .imag *= value;
+			return this;
 		},
 		divide: function (value)
 		{
-			var d = value .real * value .real + value .imag * value .imag;
+			var
+				ar = this .real, ai = this .imag,
+				br = value .real, bi = value .imag;
+		
+			var d = br * br + bi * bi;
 
-			return new Complex ((this .real * value .real + this .imag * value .imag) / d,
-					              (this .imag * value .real - this .real * value .imag) / d);
+			this .real = (ar * br + ai * bi) / d;
+			this .imag = (ai * br - ar * bi) / d;
+			return this;
 		},
 		toString: function ()
 		{
 			if (this .imag)
-				return this .real * " " + this .imag + "i";
+				return this .real + " " + this .imag + "i";
 
 			return String (this .real);
 		},

@@ -96,7 +96,7 @@ function ($, XMLParser, URI)
 
 			function error (exception)
 			{
-				//console .log (exception);
+				console .log (exception);
 				//console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + exception .message + ".");
 
 				if (this .url .length)

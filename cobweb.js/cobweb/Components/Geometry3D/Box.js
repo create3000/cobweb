@@ -47,12 +47,14 @@ function ($,
 			},
 			build: function ()
 			{
-				var options = this .getBrowser () .getBoxOptions ();
+				var
+					options = this .getBrowser () .getBoxOptions (),
+					size    = this .size_ .getValue ();
 
 				this .setNormals   (options .getGeometry () .getNormals ());
 				this .setTexCoords (options .getGeometry () .getTexCoords ());
 
-				if (this .size_ .getValue () .equals (new Vector3 (2, 2, 2)))
+				if (size .equals (new Vector3 (2, 2, 2)))
 				{
 					this .setExtents  (options .getGeometry () .getExtents ());
 					this .setVertices (options .getGeometry () .getVertices ());
@@ -60,11 +62,18 @@ function ($,
 				else
 				{
 					var
-						scale    = this .size_ .getValue () .copy () .divide (2),
+						scale    = size .copy () .divide (2),
+						x        = scale .x,
+						y        = scale .y,
+						z        = scale .z,
 						vertices = options .getGeometry () .getVertices ();
 
 					for (var i = 0; i < vertices .length; i += 4)
-						this .addVertex (new Vector3 (vertices [i], vertices [i + 1], vertices [i + 2]) .multVec (scale));
+					{
+						this .addVertex (new Vector3 (x * vertices [i],
+						                              y * vertices [i + 1],
+						                              z * vertices [i + 2]));
+					}
 				}
 
 				this .setSolid (this .solid_ .getValue ());
