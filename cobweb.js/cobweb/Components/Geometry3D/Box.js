@@ -56,24 +56,29 @@ function ($,
 
 				if (size .equals (new Vector3 (2, 2, 2)))
 				{
-					this .setExtents  (options .getGeometry () .getExtents ());
 					this .setVertices (options .getGeometry () .getVertices ());
+					this .setExtents  (options .getGeometry () .getExtents ());
 				}
 				else
 				{
 					var
-						scale    = size .copy () .divide (2),
-						x        = scale .x,
-						y        = scale .y,
-						z        = scale .z,
-						vertices = options .getGeometry () .getVertices ();
+						scale           = Vector3 .divide (size, 2),
+						x               = scale .x,
+						y               = scale .y,
+						z               = scale .z,
+						defaultVertices = options .getGeometry () .getVertices (),
+						vertices        = [ ];
 
-					for (var i = 0; i < vertices .length; i += 4)
+					for (var i = 0; i < defaultVertices .length; i += 4)
 					{
-						this .addVertex (new Vector3 (x * vertices [i],
-						                              y * vertices [i + 1],
-						                              z * vertices [i + 2]));
+						vertices .push (x * defaultVertices [i],
+						                y * defaultVertices [i + 1],
+						                z * defaultVertices [i + 2],
+						                1);
 					}
+
+					this .setVertices (vertices);
+					this .setExtents  ([Vector3 .negate (scale), scale]);	
 				}
 
 				this .setSolid (this .solid_ .getValue ());

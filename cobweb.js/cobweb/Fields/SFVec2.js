@@ -37,23 +37,23 @@ function ($, Vector2, X3DField, X3DConstants)
 		},
 		negate: function ()
 		{
-			return new (this .constructor) (this .getValue () .copy () .negate ());
+			return new (this .constructor) (Vector2 .negate (this .getValue () .copy ()));
 		},
 		add: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .copy () .add (vector .getValue ()));
+			return new (this .constructor) (Vector2 .add (this .getValue (), vector .getValue ()));
 		},
 		subtract: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .copy () .subtract (vector .getValue ()));
+			return new (this .constructor) (Vector2 .subtract (this .getValue (), vector .getValue ()));
 		},
 		multiply: function (value)
 		{
-			return new (this .constructor) (this .getValue () .copy () .multiply (value));
+			return new (this .constructor) (Vector2 .multiply (this .getValue (), value));
 		},
 		divide: function (value)
 		{
-			return new (this .constructor) (this .getValue () .copy () .divide (value));
+			return new (this .constructor) (Vector2 .divide (this .getValue (), value));
 		},
 		dot: function (vector)
 		{
@@ -61,7 +61,7 @@ function ($, Vector2, X3DField, X3DConstants)
 		},
 		normalize: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .copy () .normalize ());
+			return new (this .constructor) (Vector2 .normalize (this .getValue ()));
 		},
 		length: function (vector)
 		{

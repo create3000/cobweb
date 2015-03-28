@@ -74,13 +74,13 @@ function ($,
 							u1     = i / vDimension,
 							theta1 = 2 * Math .PI * u1,
 							n1     = Complex .Polar (-1, theta1),
-							p1     = n1 .copy () .multiply (radius);
+							p1     = Complex .multiply (n1, radius);
 
 						var
 							u2     = (i + 1) / vDimension,
 							theta2 = 2 * Math .PI * u2,
 							n2     = Complex .Polar (-1, theta2),
-							p2     = n2 .copy () .multiply (radius);
+							p2     = Complex .multiply (n2, radius);
 
 						// p1 - p4
 						//  | \ |

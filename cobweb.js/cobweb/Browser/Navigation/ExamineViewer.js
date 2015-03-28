@@ -214,7 +214,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 			this .orientationOffset .assign (viewpoint .orientationOffset_ .getValue ());
 
-			return viewpoint .orientation_ .getValue () .copy () .inverse () .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
+			return Rotation4 .inverse (viewpoint .orientation_ .getValue ()) .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
 		},
 		spin: function ()
 		{

@@ -311,21 +311,21 @@ function ($, Quaternion, Vector3)
 	$.extend (Rotation4,
 	{
 		Identity: new Rotation4 (),
-		inverse: function (rotation)
-		{
-			return rotation .copy () .inverse ();
-		},
 		Matrix3: function (matrix)
 		{
 			return new Rotation4 (Quaternion .Matrix3 (matrix));
 		},
-		multLeft: function (lhs, rhs)
+		inverse: function (rotation)
 		{
-			return lhs .copy () .multLeft (rhs);
+			var copy = Object .create (this .prototype);
+			copy .value = Quaternion .inverse (rotation .value);
+			return copy;
 		},
 		multRight: function (lhs, rhs)
 		{
-			return lhs .copy () .multRight (rhs);
+			var copy = Object .create (this .prototype);
+			copy .value = Quaternion .multRight (lhs .value, rhs .value);
+			return copy;
 		},
 		slerp: function (source, destination, t)
 		{

@@ -305,9 +305,10 @@ function ($,
 			if (transparency >= 1)
 				return;
 	
-			var browser = this .getBrowser ();
-			var gl      = browser .getContext ();
-			var shader  = browser .getBackgroundSphereShader ();
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getBackgroundSphereShader ();
 
 			shader .use ();
 

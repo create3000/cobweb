@@ -1,14 +1,19 @@
 
 define ([
 	"jquery",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVec3",
+	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
-	"cobweb/Basic/X3DField",
-	"cobweb/Bits/X3DConstants",
 ],
-function ($, Matrix4, Vector3, Rotation4, X3DField, X3DConstants)
+function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 {
+	var
+		SFVec3d = SFVec3 .SFVec3d,
+		SFVec3f = SFVec3 .SFVec3f;
+
 	function SFMatrix4 (m00, m01, m02, m03,
 	                    m10, m11, m12, m13,
 	                    m20, m21, m22, m23,
@@ -65,35 +70,35 @@ function ($, Matrix4, Vector3, Rotation4, X3DField, X3DConstants)
 		},
 		transpose: function ()
 		{
-			return new (this .constructor) (this .getValue () .copy () .transpose ());
+			return new (this .constructor) (Matrix4 .transpose (this .getValue ()));
 		},
 		inverse: function ()
 		{
-			return new (this .constructor) (this .getValue () .copy () .inverse ());
+			return new (this .constructor) (Matrix4 .inverse (this .getValue ()));
 		},
 		multLeft: function (matrix)
 		{
-			return new (this .constructor) (this .getValue () .copy () .multLeft (matrix .getValue ()));
+			return new (this .constructor) (Matrix4 .multLeft (this .getValue (), matrix .getValue ()));
 		},
 		multRight: function (matrix)
 		{
-			return new (this .constructor) (this .getValue () .copy () .multRight (matrix .getValue ()));
+			return new (this .constructor) (Matrix4 .multRight (this .getValue (), matrix .getValue ()));
 		},
 		multVecMatrix: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
+			return new (this .constructo .Vector3r) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixVec: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
+			return new (this .constructor .Vector3) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
 		},
 		multDirMatrix: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
+			return new (this .constructor .Vector3) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixDir: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
+			return new (this .constructor .Vector3) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
 		},
 		toString: function ()
 		{
@@ -162,6 +167,7 @@ function ($, Matrix4, Vector3, Rotation4, X3DField, X3DConstants)
 	SFMatrix4f .prototype = $.extend (new SFMatrix4 (),
 	{
 		constructor: SFMatrix4f,
+		Vector3: SFVec3d,
 		getTypeName: function ()
 		{
 			return "SFMatrix4f";
@@ -187,6 +193,7 @@ function ($, Matrix4, Vector3, Rotation4, X3DField, X3DConstants)
 	VrmlMatrix .prototype = $.extend (new SFMatrix4 (),
 	{
 		constructor: VrmlMatrix,
+		Vector3: SFVec3f,
 		getTypeName: function ()
 		{
 			return "VrmlMatrix";

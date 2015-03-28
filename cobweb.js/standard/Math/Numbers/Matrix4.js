@@ -185,7 +185,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 						{
 							this .rotate (scaleOrientation);
 							this .scale (scale);
-							this .rotate (scaleOrientation .copy () .inverse ());
+							this .rotate (Rotation4 .inverse (scaleOrientation));
 						}
 						else
 							this .scale (scale);
@@ -219,14 +219,14 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 						{
 							this .rotate (scaleOrientation);
 							this .scale (scale);
-							this .rotate (scaleOrientation .copy () .inverse ());
+							this .rotate (Rotation4 .inverse (scaleOrientation));
 						}
 						else
 							this .scale (scale);
 					}
 
 					if (hasCenter)
-						this .translate (center .copy () .negate ());
+						this .translate (Vector3 .negate (center));
 
 					break;
 				}
@@ -290,7 +290,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				{
 					var m = new Matrix4 ();
 
-					m .set (center .copy () .negate ());
+					m .set (Vector3 .negate (center));
 					m .multLeft (this);
 					m .translate (center);
 
@@ -315,8 +315,9 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
-			var b = Matrix4 .transpose (a) .multLeft (a);
-			var e = eigendecomposition (b);
+			var
+				b = Matrix3 .transpose (a) .multLeft (a),
+				e = eigendecomposition (b);
 
 			// Find min / max eigenvalues and do ratio test to determine singularity.
 
@@ -335,7 +336,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			si [8] = 1 / scale .z;
 
 			// (5) Compute U = !R ~S R A.
-			rotation .assign (scaleOrientation .copy () .multRight (si) .transpose () .multLeft (scaleOrientation) .multRight (a));
+			rotation .assign (Matrix3 .multRight (scaleOrientation, si) .transpose () .multLeft (scaleOrientation) .multRight (a));
 
 			scaleOrientation .transpose ();
 			return true;
@@ -706,11 +707,9 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		get: function ()
 		{
 			var matrix = Object .create (Matrix3 .prototype);
-
-			matrix .set  (this [ 0], this [ 1], this [ 2],
-			              this [ 4], this [ 5], this [ 6],
-			              this [ 8], this [ 9], this [10]);
-
+			matrix [0] = this [ 0]; matrix [1] = this [ 1]; matrix [2] = this [ 2];
+			matrix [3] = this [ 4]; matrix [4] = this [ 5]; matrix [5] = this [ 6];
+			matrix [6] = this [ 8]; matrix [7] = this [ 9]; matrix [8] = this [10];
 			return matrix;
 		},
 		enumerable: false,
@@ -755,15 +754,80 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		transpose: function (matrix)
 		{
-			return matrix .copy () .transpose ();
+			var copy = Object .create (this .prototype);
+			copy [ 0] = matrix [ 0]; copy [ 1] = matrix [ 4]; copy [ 2] = matrix [ 8]; copy [ 3] = matrix [12];
+			copy [ 4] = matrix [ 1]; copy [ 5] = matrix [ 5]; copy [ 6] = matrix [ 9]; copy [ 7] = matrix [13];
+			copy [ 8] = matrix [ 2]; copy [ 9] = matrix [ 6]; copy [10] = matrix [10]; copy [11] = matrix [14];
+			copy [12] = matrix [ 3]; copy [13] = matrix [ 7]; copy [14] = matrix [11]; copy [15] = matrix [15];
+			return copy;
 		},
 		inverse: function (matrix)
 		{
 			return matrix .copy () .inverse ();
 		},
-		multiply: function (lhs, rhs)
+		multLeft: function (lhs, rhs)
 		{
-			return lhs .copy () .multRight (rhs);
+			var
+				copy = Object .create (this .prototype),
+				a00 = lhs [ 0], a01 = lhs [ 1], a02 = lhs [ 2], a03 = lhs [ 3],
+				a04 = lhs [ 4], a05 = lhs [ 5], a06 = lhs [ 6], a07 = lhs [ 7],
+				a08 = lhs [ 8], a09 = lhs [ 9], a10 = lhs [10], a11 = lhs [11],
+				a12 = lhs [12], a13 = lhs [13], a14 = lhs [14], a15 = lhs [15],
+				b00 = rhs [ 0], b01 = rhs [ 1], b02 = rhs [ 2], b03 = rhs [ 3],
+				b04 = rhs [ 4], b05 = rhs [ 5], b06 = rhs [ 6], b07 = rhs [ 7],
+				b08 = rhs [ 8], b09 = rhs [ 9], b10 = rhs [10], b11 = rhs [11],
+				b12 = rhs [12], b13 = rhs [13], b14 = rhs [14], b15 = rhs [15];
+
+			copy [ 0] = a00 * b00 + a04 * b01 + a08 * b02 + a12 * b03;
+			copy [ 1] = a01 * b00 + a05 * b01 + a09 * b02 + a13 * b03;
+			copy [ 2] = a02 * b00 + a06 * b01 + a10 * b02 + a14 * b03;
+			copy [ 3] = a03 * b00 + a07 * b01 + a11 * b02 + a15 * b03;
+			copy [ 4] = a00 * b04 + a04 * b05 + a08 * b06 + a12 * b07;
+			copy [ 5] = a01 * b04 + a05 * b05 + a09 * b06 + a13 * b07;
+			copy [ 6] = a02 * b04 + a06 * b05 + a10 * b06 + a14 * b07;
+			copy [ 7] = a03 * b04 + a07 * b05 + a11 * b06 + a15 * b07;
+			copy [ 8] = a00 * b08 + a04 * b09 + a08 * b10 + a12 * b11;
+			copy [ 9] = a01 * b08 + a05 * b09 + a09 * b10 + a13 * b11;
+			copy [10] = a02 * b08 + a06 * b09 + a10 * b10 + a14 * b11;
+			copy [11] = a03 * b08 + a07 * b09 + a11 * b10 + a15 * b11;
+			copy [12] = a00 * b12 + a04 * b13 + a08 * b14 + a12 * b15;
+			copy [13] = a01 * b12 + a05 * b13 + a09 * b14 + a13 * b15;
+			copy [14] = a02 * b12 + a06 * b13 + a10 * b14 + a14 * b15;
+			copy [15] = a03 * b12 + a07 * b13 + a11 * b14 + a15 * b15;
+
+			return copy;
+		},
+		multRight: function (lhs, rhs)
+		{
+			var
+				copy = Object .create (this .prototype),
+				a00 = lhs [ 0], a01 = lhs [ 1], a02 = lhs [ 2], a03 = lhs [ 3],
+				a04 = lhs [ 4], a05 = lhs [ 5], a06 = lhs [ 6], a07 = lhs [ 7],
+				a08 = lhs [ 8], a09 = lhs [ 9], a10 = lhs [10], a11 = lhs [11],
+				a12 = lhs [12], a13 = lhs [13], a14 = lhs [14], a15 = lhs [15],
+				b00 = rhs [ 0], b01 = rhs [ 1], b02 = rhs [ 2], b03 = rhs [ 3],
+				b04 = rhs [ 4], b05 = rhs [ 5], b06 = rhs [ 6], b07 = rhs [ 7],
+				b08 = rhs [ 8], b09 = rhs [ 9], b10 = rhs [10], b11 = rhs [11],
+				b12 = rhs [12], b13 = rhs [13], b14 = rhs [14], b15 = rhs [15];
+
+			copy [ 0] = a00 * b00 + a01 * b04 + a02 * b08 + a03 * b12;
+			copy [ 1] = a00 * b01 + a01 * b05 + a02 * b09 + a03 * b13;
+			copy [ 2] = a00 * b02 + a01 * b06 + a02 * b10 + a03 * b14;
+			copy [ 3] = a00 * b03 + a01 * b07 + a02 * b11 + a03 * b15;
+			copy [ 4] = a04 * b00 + a05 * b04 + a06 * b08 + a07 * b12;
+			copy [ 5] = a04 * b01 + a05 * b05 + a06 * b09 + a07 * b13;
+			copy [ 6] = a04 * b02 + a05 * b06 + a06 * b10 + a07 * b14;
+			copy [ 7] = a04 * b03 + a05 * b07 + a06 * b11 + a07 * b15;
+			copy [ 8] = a08 * b00 + a09 * b04 + a10 * b08 + a11 * b12;
+			copy [ 9] = a08 * b01 + a09 * b05 + a10 * b09 + a11 * b13;
+			copy [10] = a08 * b02 + a09 * b06 + a10 * b10 + a11 * b14;
+			copy [11] = a08 * b03 + a09 * b07 + a10 * b11 + a11 * b15;
+			copy [12] = a12 * b00 + a13 * b04 + a14 * b08 + a15 * b12;
+			copy [13] = a12 * b01 + a13 * b05 + a14 * b09 + a15 * b13;
+			copy [14] = a12 * b02 + a13 * b06 + a14 * b10 + a15 * b14;
+			copy [15] = a12 * b03 + a13 * b07 + a14 * b11 + a15 * b15;
+
+			return copy;
 		},
 	});
 

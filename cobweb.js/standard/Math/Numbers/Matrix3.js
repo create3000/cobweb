@@ -198,7 +198,7 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 					}
 
 					if (hasCenter)
-						this .translate (center .copy () .negate ());
+						this .translate (Vector2 .negate (center));
 
 					break;
 				}
@@ -479,8 +479,10 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 	{
 		get: function ()
 		{
-			return new Matrix2 (this [0], this [1],
-			                    this [3], this [4]);
+			var matrix = Object .create (Matrix2 .prototype);
+			matrix [0] = this [0]; matrix [1] = this [1];
+			matrix [2] = this [3]; matrix [3] = this [4];
+			return matrix;
 		},
 		enumerable: false,
 		configurable: false
@@ -507,13 +509,21 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 		},
 		transpose: function (matrix)
 		{
-			return matrix .copy () .transpose ();
+			var copy = Object .create (this .prototype);
+			copy [0] = matrix [0]; copy [1] = matrix [3]; copy [2] = matrix [6];
+			copy [3] = matrix [1]; copy [4] = matrix [4]; copy [5] = matrix [7];
+			copy [6] = matrix [2]; copy [7] = matrix [5]; copy [8] = matrix [8];
+			return copy;
 		},
 		inverse: function (matrix)
 		{
 			return matrix .copy () .inverse ();
 		},
-		multiply: function (lhs, rhs)
+		multLeft: function (lhs, rhs)
+		{
+			return lhs .copy () .multLeft (rhs);
+		},
+		multRight: function (lhs, rhs)
 		{
 			return lhs .copy () .multRight (rhs);
 		},

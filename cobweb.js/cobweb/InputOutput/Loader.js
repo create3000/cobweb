@@ -117,9 +117,9 @@ function ($, XMLParser, URI)
 				{
 					this .createX3DFromString (this .URL, data, this .callback, error .bind (this));
 				},
-				error: function (jqXHR, textStatus, errorThrown)
+				error: function (jqXHR, textStatus, exception)
 				{
-					error .call (this, new Error (errorThrown));
+					error .call (this, exception);
 				},
 			});
 		},

@@ -1,14 +1,19 @@
 
 define ([
 	"jquery",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVec2",
+	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix3",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
-	"cobweb/Basic/X3DField",
-	"cobweb/Bits/X3DConstants",
 ],
-function ($, Matrix3, Vector2, Vector3, X3DField, X3DConstants)
+function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 {
+	var
+		SFVec2d = SFVec2 .SFVec2d,
+		SFVec2f = SFVec2 .SFVec2f;
+
 	function SFMatrix3 (m00, m01, m02, m03,
 	                    m10, m11, m12, m13,
 	                    m20, m21, m22, m23,
@@ -64,35 +69,35 @@ function ($, Matrix3, Vector2, Vector3, X3DField, X3DConstants)
 		},
 		transpose: function ()
 		{
-			return new (this .constructor) (this .getValue () .copy () .transpose ());
+			return new (this .constructor) (Matrix3 .transpose (this .getValue ()));
 		},
 		inverse: function ()
 		{
-			return new (this .constructor) (this .getValue () .copy () .inverse ());
+			return new (this .constructor) (Matrix3 .inverse (this .getValue ()));
 		},
 		multLeft: function (matrix)
 		{
-			return new (this .constructor) (this .getValue () .copy () .multLeft (matrix .getValue ()));
+			return new (this .constructor) (Matrix3 .multLeft (this .getValue (), matrix .getValue ()));
 		},
 		multRight: function (matrix)
 		{
-			return new (this .constructor) (this .getValue () .copy () .multRight (matrix .getValue ()));
+			return new (this .constructor) (Matrix3 .multRight (this .getValue (), matrix .getValue ()));
 		},
 		multVecMatrix: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
+			return new (this .constructor .Vector2) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixVec: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
+			return new (this .constructor .Vector2) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
 		},
 		multDirMatrix: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
+			return new (this .constructor .Vector2) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixDir: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
+			return new (this .constructor .Vector2) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
 		},
 		toString: function ()
 		{
@@ -135,6 +140,7 @@ function ($, Matrix3, Vector2, Vector3, X3DField, X3DConstants)
 	SFMatrix3d .prototype = $.extend (new SFMatrix3 (),
 	{
 		constructor: SFMatrix3d,
+		Vector2: SFVec2d,
 		getTypeName: function ()
 		{
 			return "SFMatrix3d";
@@ -159,6 +165,7 @@ function ($, Matrix3, Vector2, Vector3, X3DField, X3DConstants)
 	SFMatrix3f .prototype = $.extend (new SFMatrix3 (),
 	{
 		constructor: SFMatrix3f,
+		Vector2: SFVec2f,
 		getTypeName: function ()
 		{
 			return "SFMatrix3f";

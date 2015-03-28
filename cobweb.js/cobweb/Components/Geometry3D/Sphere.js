@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGeometryNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 	with (Fields)
 	{
@@ -54,19 +56,25 @@ function ($,
 
 				if (radius === 1)
 				{
-					this .setExtents  (options .getGeometry () .getExtents ());
 					this .setVertices (options .getGeometry () .getVertices ());
+					this .setExtents  (options .getGeometry () .getExtents ());
 				}
 				else
 				{
-					var vertices = options .getGeometry () .getVertices ();
+					var
+						defaultVertices = options .getGeometry () .getVertices (),
+						vertices        = [ ];
 
-					for (var i = 0; i < vertices .length; i += 4)
+					for (var i = 0; i < defaultVertices .length; i += 4)
 					{
-						this .addVertex (new Vector3 (radius * vertices [i],
-						                              radius * vertices [i + 1],
-						                              radius * vertices [i + 2]));
+						vertices .push (radius * defaultVertices [i],
+						                radius * defaultVertices [i + 1],
+						                radius * defaultVertices [i + 2],
+						                1);
 					}
+
+					this .setVertices (vertices);
+					this .setExtents  ([new Vector3 (-radius, -radius, -radius), new Vector3 (radius, radius, radius)]);
 				}
 
 				this .setSolid (this .solid_ .getValue ());

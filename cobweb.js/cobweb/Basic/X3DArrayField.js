@@ -64,9 +64,9 @@ function ($, X3DField, X3DConstants, Generator)
 		constructor: X3DArrayField,
 		copy: function (executionContext)
 		{
-			var copy  = new this .constructor ();
+			var copy  = new (this .constructor) ();
 			var array = this .getValue ();
-			
+
 			for (var i = 0; i < array .length; ++ i)
 				copy .push (array [i]);
 

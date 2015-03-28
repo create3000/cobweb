@@ -209,12 +209,13 @@ function ($, Vector3, Algorithm)
 			if (this .isReal ())
 				return this .set (0, 0, 0, Math .pow (this .w, exponent));
 
-			var l     = this .abs ();
-			var theta = Math .acos (this .w / l);
-			var li    = this .imag .abs ();
-			var ltoe  = Math .pow (l, exponent);
-			var et    = exponent * theta;
-			var scale = ltoe / li * Math .sin (et);
+			var
+				l     = this .abs (),
+				theta = Math .acos (this .w / l),
+				li    = this .imag .abs (),
+				ltoe  = Math .pow (l, exponent),
+				et    = exponent * theta,
+				scale = ltoe / li * Math .sin (et);
 
 			this .x *= scale;
 			this .y *= scale;
@@ -233,24 +234,34 @@ function ($, Vector3, Algorithm)
 					return this .set (Math .PI, 0, 0, Math .log (-this .w));
 			}
 
-			var l = this .abs ();
-			var v = this .imag .normalize () .multiply (Math .acos (this .w / l));
-			var w = Math .log (l);
+			var
+				l = this .abs (),
+				v = this .imag .normalize () .multiply (Math .acos (this .w / l)),
+				w = Math .log (l);
 
-			return this .set (v .x, v .y, v .z, w);
+			this .x = v .x;
+			this .y = v .y;
+			this .z = v .z;
+			this .w = w;
+			return this;
 		},
 		exp: function ()
 		{	
 			if (this .isReal ())
 				return this .set (0, 0, 0, Math .exp (this .w));
 
-			var i  = this .imag;
-			var li = i .abs ();
-			var ew = Math .exp (this .w);
-			var w  = ew * Math .cos (li);
-			var v  = i .multiply (ew * Math .sin (li) / li);
+			var
+				i  = this .imag,
+				li = i .abs (),
+				ew = Math .exp (this .w),
+				w  = ew * Math .cos (li),
+				v  = i .multiply (ew * Math .sin (li) / li);
 
-			return this .set (v .x, v .y, v .z, w);
+			this .x = v .x;
+			this .y = v .y;
+			this .z = v .z;
+			this .w = w;
+			return this;
 		},
 		toString: function ()
 		{
@@ -361,6 +372,114 @@ function ($, Vector3, Algorithm)
 
 			return quat;
 		},
+		negate: function (vector)
+		{
+			var copy = Object .create (this .prototype);
+			copy .x = -this .x;
+			copy .y = -this .y;
+			copy .z = -this .z;
+			copy .w = -this .w;
+			return copy;
+		},
+		inverse: function (vector)
+		{
+			var copy = Object .create (this .prototype);
+			copy .x = -vector .x;
+			copy .y = -vector .y;
+			copy .z = -vector .z;
+			copy .w =  vector .w;
+			return copy;
+		},
+		add: function (lhs, rhs)
+		{
+			var copy = Object .create (this .prototype);
+			copy .x = rhs .x + rhs .x;
+			copy .y = rhs .y + rhs .y;
+			copy .z = rhs .z + rhs .z;
+			copy .w = rhs .w + rhs .w;
+			return copy;
+		},
+		subtract: function (lhs, rhs)
+		{
+			var copy = Object .create (this .prototype);
+			copy .x = rhs .x - rhs .x;
+			copy .y = rhs .y - rhs .y;
+			copy .z = rhs .z - rhs .z;
+			copy .w = rhs .w - rhs .w;
+			return copy;
+		},
+		multiply: function (lhs, rhs)
+		{
+			var copy = Object .create (this .prototype);
+			copy .x = rhs .x * rhs;
+			copy .y = rhs .y * rhs;
+			copy .z = rhs .z * rhs;
+			copy .w = rhs .w * rhs;
+			return copy;
+		},
+		multLeft: function (lhs, rhs)
+		{
+			var
+				copy = Object .create (this .prototype),
+				ax = lhs .x, ay = lhs .y, az = lhs .z, aw = lhs .w,
+				bx = rhs .x, by = rhs .y, bz = rhs .z, bw = rhs .w;
+
+			copy .x = aw * bx + ax * bw + ay * bz - az * by;
+			copy .y = aw * by + ay * bw + az * bx - ax * bz;
+			copy .z = aw * bz + az * bw + ax * by - ay * bx;
+			copy .w = aw * bw - ax * bx - ay * by - az * bz;
+
+			return copy;
+		},
+		multRight: function (lhs, rhs)
+		{
+			var
+				copy = Object .create (this .prototype),
+				ax = lhs .x, ay = lhs .y, az = lhs .z, aw = lhs .w,
+				bx = rhs .x, by = rhs .y, bz = rhs .z, bw = rhs .w;
+
+			copy .x = bw * ax + bx * aw + by * az - bz * ay;
+			copy .y = bw * ay + by * aw + bz * ax - bx * az;
+			copy .z = bw * az + bz * aw + bx * ay - by * ax;
+			copy .w = bw * aw - bx * ax - by * ay - bz * az;
+
+			return copy;
+		},
+		divide: function (lhs, rhs)
+		{
+			var copy = Object .create (this .prototype);
+			copy .x = rhs .x / rhs;
+			copy .y = rhs .y / rhs;
+			copy .z = rhs .z / rhs;
+			copy .w = rhs .w / rhs;
+			return copy;
+		},
+		normalize: function (quat)
+		{
+			var
+				copy = Object .create (this .prototype),
+				x = quat .x, y = quat .y, z = quat .z, w = quat .w,
+				length = Math .sqrt (x * x + y * y + z * z + w * w);
+
+			if (length)
+			{
+				length = 1 / length;
+
+				copy .x = x * length;
+				copy .y = y * length;
+				copy .z = z * length;
+				copy .w = w * length;
+			}
+			else
+			{
+				copy .x = 0;
+				copy .y = 0;
+				copy .z = 0;
+				copy .w = 0;
+			}
+
+			return copy;
+		},
 		slerp: Algorithm .slerp,
 		squad: function (source, a, b, destination, t)
 		{
@@ -382,17 +501,17 @@ function ($, Vector3, Algorithm)
 			// the terms we get a different quaternion but it represents the same rotation.
 
 			if (q0 .dot (q1) < 0)
-				q0 = q0 .copy () .negate ();
+				q0 = Quaternion .negate (q0);
 
 			if (q2 .dot (q1) < 0)
-				q2 = q2 .copy () .negate ();
+				q2 = Quaternion .negate (q2);
 
-			var q1_i = q1 .copy () .inverse ();
+			var q1_i = Quaternion .inverse (q1);
 
 			// The result must be normalized as it will be used in slerp and we can only slerp normalized vectors.
 
-			return q1 .copy () .multRight (
-				q1_i .copy () .multRight (q0) .log () .add (q1_i .copy () .multRight (q2) .log ()) .divide (-4) .exp ()
+			return Quaternion .multiply (q1,
+				Quaternion .multiply (q1_i, q0) .log () .add (Quaternion .multiply (q1_i, q2) .log ()) .divide (-4) .exp ()
 			)
 			.normalize ();
 		}

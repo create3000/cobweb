@@ -6,7 +6,7 @@
     <meta name='created' content='Thu, 26 Mar 2015 02:16:06 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 26 Mar 2015 02:16:06 GMT'/>
+    <meta name='modified' content='Sat, 28 Mar 2015 04:27:44 GMT'/>
   </head>
   <Scene>
     <Background
@@ -20,10 +20,11 @@
         <Appearance DEF='Grey'>
           <Material/>
         </Appearance>
-        <Box DEF='Box'/>
+        <Box DEF='Box'
+            size='1 1 1'/>
       </Shape>
     </Transform>
-    <Transform
+    <Transform DEF='_1'
         translation='3 0 0'>
       <Shape>
         <Appearance USE='Grey'/>

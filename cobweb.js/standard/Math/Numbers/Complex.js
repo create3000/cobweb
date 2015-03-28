@@ -23,17 +23,6 @@ function ($)
 		}
 	}
 
-	$.extend (Complex,
-	{
-		Polar: function (radius, angle)
-		{
-			var complex = Object .create (Complex .prototype);
-			complex .real = radius * Math .cos (angle);
-			complex .imag = radius * Math .sin (angle);
-			return complex;
-		},
-	});
-
 	Complex .prototype =
 	{
 		constructor: Complex,
@@ -117,26 +106,29 @@ function ($)
 		},
 		multiply: function (value)
 		{
-			if (value instanceof Complex)
-			{
-				var
-					real = this .real, imag = this .imag;
-	
-				this .real = real * value .real - imag * value .imag;
-				this .imag = real * value .imag + imag * value .real;
-				return this;
-			}
-
 			this .real *= value;
 			this .imag *= value;
 			return this;
 		},
-		divide: function (value)
+		multComp: function ()
+		{
+			var
+				real = this .real, imag = this .imag;
+
+			this .real = real * value .real - imag * value .imag;
+			this .imag = real * value .imag + imag * value .real;
+			return this;
+		},
+		//divide: function (value)
+		//{
+		//	return this;
+		//},
+		divComp: function (value)
 		{
 			var
 				ar = this .real, ai = this .imag,
 				br = value .real, bi = value .imag;
-		
+
 			var d = br * br + bi * bi;
 
 			this .real = (ar * br + ai * bi) / d;
@@ -151,6 +143,31 @@ function ($)
 			return String (this .real);
 		},
 	};
+
+	$.extend (Complex,
+	{
+		Polar: function (radius, angle)
+		{
+			var complex = Object .create (Complex .prototype);
+			complex .real = radius * Math .cos (angle);
+			complex .imag = radius * Math .sin (angle);
+			return complex;
+		},
+		multiply: function (lhs, rhs)
+		{
+			var copy = Object .create (this .prototype);
+			copy .real = lhs .real * rhs;
+			copy .imag = lhs .imag * rhs;
+			return copy;
+		},
+		multComp: function (lhs, rhs)
+		{
+			var copy = Object .create (this .prototype);
+			copy .real = lhs .real * rhs .real - lsh .imag * rhs .imag;
+			copy .imag = lhs .real * rhs .imag + lsh .imag * rhs .real;
+			return copy;
+		},
+	});
 
 	return Complex;
 });

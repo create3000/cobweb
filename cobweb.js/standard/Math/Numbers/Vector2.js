@@ -164,35 +164,78 @@ function ($, Algorithm)
 		One: new Vector2 (1, 1),
 		negate: function (vector)
 		{
-			return vector .copy () .negate ();
+			var copy = Object .create (this .prototype);
+			copy .x = -vector .x;
+			copy .y = -vector .y;
+			return copy;
 		},
 		add: function (lhs, rhs)
 		{
-			return lhs .copy () .add (rhs);
+			var copy = Object .create (this .prototype);
+			copy .x = lhs .x + rhs .x;
+			copy .y = lhs .y + rhs .y;
+			return copy;
 		},
 		subtract: function (lhs, rhs)
 		{
-			return lhs .copy () .subtract (rhs);
+			var copy = Object .create (this .prototype);
+			copy .x = lhs .x - rhs .x;
+			copy .y = lhs .y - rhs .y;
+			return copy;
 		},
 		multiply: function (lhs, rhs)
 		{
-			return lhs .copy () .multiply (rhs);
+			var copy = Object .create (this .prototype);
+			copy .x = lhs .x * rhs;
+			copy .y = lhs .y * rhs;
+			return copy;
 		},
 		multVec: function (lhs, rhs)
 		{
-			return lhs .copy () .multVec (rhs);
+			var copy = Object .create (this .prototype);
+			copy .x = lhs .x * rhs .x;
+			copy .y = lhs .y * rhs .y;
+			return copy;
 		},
 		divide: function (lhs, rhs)
 		{
-			return lhs .copy () .divide (rhs);
+			var copy = Object .create (this .prototype);
+			copy .x = lhs .x / rhs;
+			copy .y = lhs .y / rhs;
+			return copy;
 		},
 		divVec: function (lhs, rhs)
 		{
-			return lhs .copy () .divVec (rhs);
+			var copy = Object .create (this .prototype);
+			copy .x = lhs .x / rhs .x;
+			copy .y = lhs .y / rhs .y;
+			return copy;
 		},
-		normalize: function ()
+		normalize: function (vector)
 		{
-			return vector .copy () .normalize ();
+			var
+				copy = Object .create (this .prototype),
+				x = vector .x, y = vector .y,
+				length = Math .sqrt (x * x + y * y);
+
+			if (length)
+			{
+				length = 1 / length;
+
+				copy .x = x * length;
+				copy .y = y * length;
+				copy .z = z * length;
+				copy .w = w * length;
+			}
+			else
+			{
+				copy .x = 0;
+				copy .y = 0;
+				copy .z = 0;
+				copy .w = 0;
+			}
+
+			return copy;
 		},
 		lerp: function (source, dest, t)
 		{

@@ -5,8 +5,9 @@ define ([
 	"standard/Math/Geometry/Triangle3",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
 ],
-function ($, Plane3, Triangle3, Vector3, Vector4)
+function ($, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 {
 	function ViewVolume (projectionMatrix, viewport, scissor)
 	{
@@ -17,7 +18,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 			var y1 = scissor [1];
 			var y2 = scissor [1] + scissor [3];
 
-			var matrix = projectionMatrix .copy () .inverse ();
+			var matrix = Matrix4 .inverse (projectionMatrix);
 
 			this .viewport = viewport;
 			this .scissor  = scissor;
@@ -89,7 +90,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 	{
 		unProjectPoint: function (winx, winy, winz, modelview, projection, viewport)
 		{
-			var matrix = modelview .copy () .multRight (projection) .inverse ();
+			var matrix = Matrix4 .multRight (modelview, projection) .inverse ();
 
 			return this .unProjectPointMatrix (winx, winy, winz, matrix, viewport);
 		},
@@ -113,7 +114,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 		},
 		unProjectLine: function (winx, winy, modelview, projection, viewport)
 		{
-			var matrix = modelview .copy () .multRight (projection);
+			var matrix = Matrix4 .multRight (modelview, projection);
 			var near   = ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport);
 			var far    = ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport);
 
@@ -121,7 +122,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 		},
 		projectPoint: function (point, modelview, projection, viewport)
 		{
-			var matrix = modelview .copy () .multRight (projection);
+			var matrix = Matrix4 .multRight (modelview, projection);
 
 			return this .projectPointMatrix (point, matrix, viewport);
 		},
@@ -142,7 +143,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4)
 		},
 		projectLine: function (line, modelview, projection, viewport)
 		{
-			var matrix = modelview .copy () .multRight (projection);
+			var matrix = Matrix4 .multRight (modelview, projection);
 			var point1 = ViewVolume .projectPointMatrix (line .point (), matrix, viewport);
 			var point2 = ViewVolume .projectPointMatrix (Vector3 .add (line .point (), Vector3 .multiply (line .direction (), 1e9)), matrix, viewport);
 

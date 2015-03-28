@@ -64,7 +64,7 @@ function ($,
 				var matrix = new Matrix3 ();
 
 				if (! this .center_ .getValue () .equals (Vector2 .Zero))
-					matrix .translate (this .center_ .getValue () .copy () .negate ());
+					matrix .translate (Vector2 .negate (this .center_ .getValue ()));
 
 				if (! this .scale_ .getValue () .equals (Vector2 .One))
 					matrix .scale (this .scale_ .getValue ());
