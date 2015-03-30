@@ -29,6 +29,7 @@ function ($,
 		this .addType (X3DConstants .X3DBackgroundNode);
 
 		this .hidden               = false;
+		this .rotation             = new Rotation4 ();
 		this .modelViewMatrix      = new Matrix4 ();
 		this .modelViewMatrixArray = new Float32Array (16);
 		this .colors               = [ ];
@@ -57,13 +58,21 @@ function ($,
 
 			this .build ();
 		},
-		bindToLayer (layer)
+		bindToLayer: function (layer)
 		{
+			X3DBindableNode .prototype .bindToLayer .call (this, layer);
+
 			layer .getBackgroundStack () .push (this);
 		},
-		unbindFromLayer (layer)
+		unbindFromLayer: function (layer)
 		{
+			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
+
 			layer .getBackgroundStack () .pop (this);
+		},
+		removeFromLayer: function (layer)
+		{
+			layer .getBackgroundStack () .remove (this);
 		},
 		setHidden: function (value)
 		{
@@ -279,7 +288,7 @@ function ($,
 				viewport        = this .getBrowser () .getViewport (),
 				viewpoint       = this .getCurrentViewpoint (),
 				scale           = viewpoint .getScreenScale (SIZE, viewport)
-				rotation        = new Rotation4 (),
+				rotation        = this .rotation,
 				modelViewMatrix = this .modelViewMatrix;
 
 			scale .multiply (Math .max (viewport [2], viewport [3]));

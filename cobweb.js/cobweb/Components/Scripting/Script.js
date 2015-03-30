@@ -69,7 +69,7 @@ function ($,
 			{
 				X3DScriptNode .prototype .initialize .call (this);
 
-				this .requestImmediateLoad ();
+				setTimeout (this .requestImmediateLoad .bind (this), 0);
 			},
 			hasUserDefinedFields: function ()
 			{

@@ -50,13 +50,21 @@ function ($,
 			{
 				return "children";
 			},
-			bindToLayer (layer)
+			bindToLayer: function (layer)
 			{
+				X3DBindableNode .prototype .bindToLayer .call (this, layer);
+
 				layer .getFogStack () .push (this);
 			},
-			unbindFromLayer (layer)
+			unbindFromLayer: function (layer)
 			{
+				X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
+
 				layer .getFogStack () .pop (this);
+			},
+			removeFromLayer: function (layer)
+			{
+				layer .getFogStack () .remove (this);
 			},
 		});
 

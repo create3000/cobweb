@@ -44,10 +44,10 @@ function ($,
           World,
           TraverseType)
 {
-	function X3DBrowserContext (x3d)
+	function X3DBrowserContext (xml)
 	{
 		X3DBaseNode                    .call (this, this, this);
-		X3DCoreContext                 .call (this, x3d);
+		X3DCoreContext                 .call (this, xml);
 		X3DNetworkingContext           .call (this);
 		X3DRenderingContext            .call (this);
 		X3DGeometry3DContext           .call (this);

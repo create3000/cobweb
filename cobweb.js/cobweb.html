@@ -10,64 +10,91 @@ body {
 	background: beige;
 }
 
-html, body, x3d {
+html, body {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
 	width: 100%;
 	height: 100%;
 }
+
+x3d {
+	height: 100%;
+}
+
+#bookmarks {
+	padding: 5px;
+	width: 100px;
+	float: right;
+	font-size: 9px;
+}
 		</style>
 	<script type="text/javascript">
 require ([
 	"jquery",
 	"cobweb/X3D",
-	"standard/Math/Utility/MatrixStack",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Numbers/Rotation4",
+	"standard/Networking/URI",
 ],
-function ($, X3D, MatrixStack, Matrix4, Rotation4)
+function ($, X3D, URI)
 {
 	X3D (function (dom)
 	{
 		with (X3D)
 		{
 			var Browser = getBrowser (dom);
-			var scene   = Browser .currentScene .rootNodes;			
+			var scene   = Browser .currentScene;			
 
-/*
-			console .log ();
-*/
+			var urls =
+			{
+				'Geometry3D':      "tests/Components/Geometry3D/Geometry3D.x3d",
+				'PointLight':      "tests/Components/Lighting/PointLight.x3d",
+				'SpotLight':       "tests/Components/Lighting/SpotLight.x3d",
+				'IndexedLineSet':  "tests/Components/Rendering/IndexedLineSet.x3d",
+				'Glowing World':   "tests/Components/Rendering/world.x3d",
+				'Scripting':       "tests/Components/Scripting/test.x3d",
+				'ColorMaterial':   "tests/Components/Texturing/ColorMaterial.x3d",
+				'Gate':            "tests/Examples/Approach/stage/gate.x3d",
+				'Approach':        "tests/Examples/Approach/stage/index.x3d",
+				'Astronomy':       "tests/Examples/Astronomy/stage/astrnmy.x3d",
+				'BIC Man':         "tests/Examples/BIC/index.x3d",
+				'BIC Building':    "tests/Examples/BIC/building.x3d",
+				'BIC Buero':       "tests/Examples/BIC/buero.x3d",
+				'BIC Info':        "tests/Examples/BIC/info.x3d",
+				'Cathedral':       "tests/Examples/Cathedral/stage/index.x3d",
+				'LogoPieces':      "tests/Examples/LogoPieces/index.x3d",
+				'LustForLife':     "tests/Examples/LustForLife/stage/index.x3d",
+				'MovieTruck':      "tests/Examples/MovieTruck/stage/index.x3d",
+				'NIST-Logo':       "tests/Examples/NIST-Logo/index.x3d",
+				'Rathaus':         "tests/Examples/Rathaus/stage/index.x3d",
+			};
+			
+			var bookmarks = $("#bookmarks");
+
+			$.each (urls, function (name, URL)
+			{
+				$("<a/>")
+					.attr ("href", "#")
+					.click (function ()
+					{
+						Browser .loadURL (new MFString (URL), new MFString ());
+					})
+					.text (name)
+					.appendTo (bookmarks);
+
+				bookmarks .append ("<br/>")
+			});
 		}
 	});
 });
 	</script>
 	</head>
 	<body>
+		<div id="bookmarks">
+		</div>
 		<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd' statistics="false" log="false">
 			<Scene>
-				<Inline url='
-					"-tests/Components/Geometry3D/Geometry3D.x3d"
-					"-tests/Components/Lighting/PointLight.x3d"
-					"-tests/Components/Lighting/SpotLight.x3d"
-					"-tests/Components/Rendering/IndexedLineSet.x3d"
-					"-tests/Components/Rendering/world.x3d"
-					"-tests/Components/Scripting/test.x3d"
-					"-tests/Components/Texturing/ColorMaterial.x3d"
-					"-tests/Examples/Approach/stage/gate.x3d"
-					"tests/Examples/Approach/stage/index.x3d"
-					"-tests/Examples/Astronomy/stage/astrnmy.x3d"
-					"-tests/Examples/BIC/stage/worlds/bic-musterbuero.x3d"
-					"-tests/Examples/BIC/stage/worlds/bic_aussen.x3d"
-					"-tests/Examples/BIC/stage/bicman.x3d"
-					"-tests/Examples/BIC/stage/worlds/bic-wegweiser.x3d"
-					"-tests/Examples/Cathedral/stage/index.x3d"
-					"-tests/Examples/LogoPieces/index.x3d"
-					"-tests/Examples/LustForLife/stage/index.x3d"
-					"-tests/Examples/MovieTruck/stage/index.x3d"
-					"-tests/Examples/NIST-Logo/index.x3d"
-					"-tests/Examples/Rathaus/stage/index.x3d"
-				'/>
+				<Background skyColor='0.2 0.2 0.2'></Background>
+				<Inline DEF='Inline'></Inline>
 			</Scene>
 		</X3D>
 	</body>

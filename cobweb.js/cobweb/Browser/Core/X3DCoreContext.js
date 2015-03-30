@@ -25,9 +25,9 @@ function (BrowserOptions,
 		}
 	}
 
-	function X3DCoreContext (x3d)
+	function X3DCoreContext (xml)
 	{
-		this .x3d = x3d;
+		this .xml = xml;
 	}
 
 	X3DCoreContext .prototype =
@@ -36,7 +36,7 @@ function (BrowserOptions,
 		{
 			// Get canvas & context.
 
-			var browser = $("<div/>") .addClass ("browser") .prependTo (this .x3d);
+			var browser = $("<div/>") .addClass ("browser") .prependTo (this .xml);
 			var canvas  = $("<div/>") .addClass ("canvas")  .prependTo (browser);
 
 			this .canvas  = $("<canvas/>") .prependTo (canvas);
@@ -50,9 +50,9 @@ function (BrowserOptions,
 			this .renderingProperties .setup ();
 			this .notification        .setup ();
 		},
-		getX3D: function ()
+		getXML: function ()
 		{
-			return this .x3d;
+			return this .xml;
 		},
 		getCanvas: function ()
 		{

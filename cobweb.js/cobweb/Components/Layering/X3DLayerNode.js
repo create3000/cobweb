@@ -193,7 +193,7 @@ function ($,
 			this .defaultNavigationInfo .traverse (TraverseType .CAMERA);
 			this .defaultBackground     .traverse (TraverseType .CAMERA);
 			this .defaultViewpoint      .traverse (TraverseType .CAMERA);
-			
+
 			this .collect (TraverseType .CAMERA);
 
 			this .navigationInfos .update ();

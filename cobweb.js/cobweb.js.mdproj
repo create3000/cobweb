@@ -1166,6 +1166,10 @@
     <None Include="tests\Components\Geometry3D\Geometry3D.x3d" />
     <None Include="tests\Components\images\image.png" />
     <None Include="cobweb\Browser\Geometry3D\CylinderOptions.js" />
+    <None Include="tests\Examples\BIC\buero.x3d" />
+    <None Include="tests\Examples\BIC\index.x3d" />
+    <None Include="tests\Examples\BIC\info.x3d" />
+    <None Include="tests\Examples\BIC\building.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

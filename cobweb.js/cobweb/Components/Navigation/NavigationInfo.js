@@ -61,13 +61,36 @@ function ($,
 			{
 				return "children";
 			},
-			bindToLayer (layer)
+			initialize: function ()
 			{
+				X3DBindableNode .prototype .initialize .call (this);
+
+				this .headlight_ .addInterest (this, "set_headlight__");
+				
+				this .set_headlight__ ();
+			},
+			set_headlight__: function ()
+			{
+				if (this .headlight_ .getValue ())
+					this .enable = enable;
+				else
+					delete this .enable;
+			},
+			bindToLayer: function (layer)
+			{
+				X3DBindableNode .prototype .bindToLayer .call (this, layer);
+			
 				layer .getNavigationInfoStack () .push (this);
 			},
-			unbindFromLayer (layer)
+			unbindFromLayer: function (layer)
 			{
+				X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
+
 				layer .getNavigationInfoStack () .pop (this);
+			},
+			removeFromLayer: function (layer)
+			{
+				layer .getNavigationInfoStack () .remove (this);
 			},
 			getCollisionRadius: function ()
 			{
@@ -111,7 +134,7 @@ function ($,
 			},
 			getTransitionType: function ()
 			{
-				for (var i = 0; i < this .transitionType_ .length; ++ i)
+				for (var i = 0, length = this .transitionType_ .length; i < length; ++ i)
 				{
 					var value          = this .transitionType_ [i];
 					var transitionType = TransitionType [value];
@@ -124,21 +147,18 @@ function ($,
 			},
 			enable: function ()
 			{
-				if (this .headlight_ .getValue ())
-					this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
 			},
 			traverse: function (type)
 			{
-				switch (type)
-				{
-					case TraverseType .CAMERA:
-					{
-						this .getCurrentLayer () .getNavigationInfos () .push (this);
-						break;
-					}
-				}
+				if (type === TraverseType .CAMERA)
+					this .getCurrentLayer () .getNavigationInfos () .push (this);
 			}
 		});
+
+		function enable ()
+		{
+			this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+		}
 
 		return NavigationInfo;
 	}

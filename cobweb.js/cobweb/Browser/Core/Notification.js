@@ -22,12 +22,15 @@ function ($,
 
 			this .addChildren ("string", new SFString ());
 
-			this .element = $("<div/>") .addClass ("notification") .appendTo (this .getBrowser () .getX3D () .find (".canvas"));
+			this .element = $("<div/>") .addClass ("notification") .appendTo (this .getBrowser () .getXML () .find (".canvas"));
 
 			this .string_ .addInterest (this, "set_string__");
 		},
 		set_string__: function ()
 		{
+			if (this .string_ .length === 0)
+				return;
+
 			this .element
 				.text (this .string_ .getValue ())
 				.stop (true, true)

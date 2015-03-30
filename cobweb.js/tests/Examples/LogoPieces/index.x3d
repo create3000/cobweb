@@ -6,10 +6,10 @@
     <meta name='created' content='TODO'/>
     <meta name='creator' content='Joe D. Williams'/>
     <meta name='description' content='Combined Web3D and X3D logo animation.'/>
-    <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
     <meta name='identifier' content='http://www.web3d.org/x3d/content/examples/Basic/Web3dOutreach/Web3dX3dLogoAnimated.x3d'/>
     <meta name='license' content='../license.html'/>
-    <meta name='modified' content='Sat, 07 Mar 2015 19:20:52 GMT'/>
+    <meta name='modified' content='Sun, 29 Mar 2015 12:32:50 GMT'/>
     <meta name='reference' content='http://www.hypermultimedia.com/x3d/JoeX3D/JoeX3D.htm'/>
     <meta name='reference' content='http://www.hypermultimedia.com/x3d/JoeX3D/Web3dLogo-X3d-animated-logo2.x3d'/>
     <meta name='title' content='Web3dX3dLogoAnimated.x3d'/>
@@ -39,7 +39,7 @@
           scale='0.35 0.35 0.45'>
         <Transform DEF='Slash1'
             translation='0.7286 0 7.506'
-            rotation='-0.806093 -0.319397 0.498196 0.9197'>
+            rotation='-0.959624 -0.236806 -0.151804 3.873'>
           <Shape>
             <Appearance>
               <Material
@@ -58,7 +58,7 @@
         </Transform>
         <Transform DEF='Slash2'
             translation='0.7286 0 7.506'
-            rotation='-0.0580609 -0.393906 0.917315 2.623'>
+            rotation='-0.257002 -0.888008 -0.381303 3.254'>
           <Shape>
             <Appearance>
               <Material
@@ -80,7 +80,7 @@
           <Transform DEF='Text3DScale'
               translation='2.2 0.7 0'
               rotation='0 0 1 0.0125061'
-              scale='1.55 1.9 1.56431'>
+              scale='1.55 1.9 1'>
             <Transform DEF='Letters3D'
                 translation='-4 -5 0'>
               <Transform DEF='dad_Shape3'
@@ -132,8 +132,7 @@
           </Transform>
         </Transform>
         <Transform DEF='Cube'
-            translation='-2 -0.324 11.02'
-            rotation='0 0 -1 2.47647'>
+            translation='-4.666 -0.074 11.02'>
           <Shape>
             <Appearance>
               <Material
@@ -149,8 +148,7 @@
           </Shape>
         </Transform>
         <Transform DEF='Sphere'
-            translation='-1.305 0.5 10.23'
-            scale='1.03527 1.03527 1.03527'>
+            translation='-1.305 1.782 10.23'>
           <Shape>
             <Appearance>
               <Material
@@ -168,11 +166,11 @@
           </Shape>
         </Transform>
         <Transform DEF='Cone_dummy'
-            translation='-0.616 -0.75 11.0039'
-            rotation='-0 -0.707107 0.707107 3.142'>
+            translation='-1.337 -0.7605 24.14'
+            rotation='1 0 -0 1.571'>
           <Transform DEF='Cone'
-              translation='0.001896 -0.0001205 -0.4815'
-              rotation='-1 -0 -0 1.571'>
+              translation='0.4502 -0.0001221 -0.7391'
+              rotation='-0.88913 -0.323611 -0.323611 1.688'>
             <Shape>
               <Appearance>
                 <Material
@@ -192,6 +190,7 @@
         </Transform>
         <Transform DEF='Bracket_R'
             translation='5.1 0 10.88'
+            rotation='-1 -0 -0 3.142'
             scale='1.3 1.25 1'>
           <Shape>
             <Appearance>
@@ -210,6 +209,7 @@
         </Transform>
         <Transform DEF='Bracket_L'
             translation='-3.115 0 10.88'
+            rotation='-1 -0 -0 3.142'
             scale='1.3 1.25 1'>
           <Shape>
             <Appearance>
@@ -231,12 +231,11 @@
           translation='0.35 -1.225 5'
           rotation='0 1 0 1.57'
           scale='0.008 0.007 0.007'>
-        <Transform DEF='web3d_logo__Konvertiert_'
-            translation='0.305441 -0.305441 0.333209'>
+        <Transform DEF='web3d_logo__Konvertiert_'>
           <Transform DEF='web3d_logo__Konvertiert_1'>
             <Transform DEF='Path_1'
                 translation='0 -6.95093 -146.959'
-                scale='1.04139 1.03254 1.03254'>
+                scale='1.05 1.035 1.035'>
               <Shape>
                 <Appearance DEF='MAT_Mat'>
                   <Material
@@ -285,7 +284,7 @@
             </Transform>
             <Transform DEF='Path_2'
                 translation='0 -6.95044 -79.747'
-                scale='1.04139 1.03254 1.03254'>
+                scale='1.05 1.035 1.035'>
               <Shape>
                 <Appearance USE='MAT_Mat'/>
                 <IndexedFaceSet DEF='FACESET_Path_2'
@@ -329,7 +328,7 @@
             </Transform>
             <Transform DEF='Path_3'
                 translation='0 3.83197 -26.0534'
-                scale='1.04139 1.03254 1.03254'>
+                scale='1.05 1.035 1.035'>
               <Shape>
                 <Appearance USE='MAT_Mat'/>
                 <IndexedFaceSet DEF='FACESET_Path_3'
@@ -373,7 +372,7 @@
             </Transform>
             <Transform DEF='Path_4'
                 translation='0 6.95096 69.0841'
-                scale='1.01885 1.0377 1'>
+                scale='1.025 1.05 1'>
               <Shape>
                 <Appearance USE='MAT_Mat'/>
                 <IndexedFaceSet DEF='FACESET_Path_4'
@@ -417,7 +416,7 @@
             </Transform>
             <Transform DEF='Path_5'
                 translation='0 6.24533 146.959'
-                scale='1.01885 1.0377 1'>
+                scale='1.025 1.05 1'>
               <Shape>
                 <Appearance USE='MAT_Mat'/>
                 <IndexedFaceSet DEF='FACESET_Path_5'

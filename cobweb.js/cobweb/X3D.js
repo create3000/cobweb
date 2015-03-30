@@ -14,40 +14,26 @@ function ($, Fields, X3DBrowser)
 	if (! console .warn)  console .warn  = console .log;
 	if (! console .error) console .error = console .log;
 
-	function getBrowser (x3d)
+	function getBrowser (xml)
 	{
-		return $(x3d) [0] .browser;
+		return $(xml) [0] .browser;
 	}
 
-	function createBrowser (x3d)
+	function createBrowser (xml)
 	{
-		x3d = $(x3d);
+		xml = $(xml);
 
-		var browser = new X3DBrowser (x3d);
+		var browser = new X3DBrowser (xml);
 
 		browser .setup ();
-		browser .importDocument (x3d [0]);
-		browser .loadCount_ .addFieldCallback ("loading", bind .bind (browser));
+		browser .importDocument (xml [0]);
+		browser .loadCount_ .addFieldCallback ("loading", browser .bindWorld .bind (browser));
+		browser .loadCount_ .addEvent ();
 
-		if (x3d .attr ("splashScreen") !== "false")
+		if (xml .attr ("splashScreen") !== "false")
 			browser .getCanvas () .fadeOut (0);
 
 		return browser;
-	}
-
-	function bind (value)
-	{
-		if (value)
-			return;
-
-		this .loadCount_ .removeFieldCallback ("loading");
-
-		setTimeout (function ()
-		{
-			this .getWorld () .bind ();
-			this .getCanvas () .fadeIn (2000);
-		}
-		.bind (this), 0);
 	}
 
 	// X3D

@@ -15,8 +15,8 @@ function (Fields,
 			initialize: function ()
 			{
 				this .addChildren ("loadCount", new SFInt32 ());
-			
-				this .location     = new URI (window .location);
+
+				this .location     = new URI (this .getXML () [0] .baseURI);
 				this .defaultScene = this .createScene ();
 				this .defaultScene .setup ();
 

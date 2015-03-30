@@ -60,16 +60,19 @@ function ($,
 			{
 				return this .url;
 			},
-			createNode: function (typeName, setup)
+			createNode: function (typeName, xml)
 			{
-				var node = new (this .getBrowser () .supportedNodes .dom [typeName .toUpperCase ()]) (this);
-
-				if (setup === false)
-					return node;
-
-				node .setup ();
-
-				return new SFNode (node);
+				switch (xml)
+				{
+					case undefined:
+						var node = new (this .getBrowser () .supportedNodes .xml [typeName]) (this);
+						node .setup ();
+						return new SFNode (node);
+					case true:
+						return new (this .getBrowser () .supportedNodes .xml [typeName]) (this);
+					case false:
+						return new (this .getBrowser () .supportedNodes .dom [typeName .toUpperCase ()]) (this);
+				}
 			},
 			addUninitializedNode: function (node)
 			{

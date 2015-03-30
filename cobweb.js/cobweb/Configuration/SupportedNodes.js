@@ -444,7 +444,7 @@ function (Anchor,
           //WindPhysicsModel,
           WorldInfo)
 {
-	var x3d =
+	var xml =
 	{
 		Anchor:                       Anchor,
 		Appearance:                   Appearance,
@@ -671,11 +671,11 @@ function (Anchor,
 
 	var dom = { };
 	
-	for (var typeName in x3d)
-		dom [typeName .toUpperCase ()] = x3d [typeName];
+	for (var typeName in xml)
+		dom [typeName .toUpperCase ()] = xml [typeName];
 
 	return {
-		x3d: x3d,
+		xml: xml,
 		dom: dom,
 	};
 });

@@ -67,7 +67,7 @@ function ($,
 						y               = scale .y,
 						z               = scale .z,
 						defaultVertices = options .getGeometry () .getVertices (),
-						vertices        = [ ];
+						vertices        = this .getVertices ();
 
 					for (var i = 0; i < defaultVertices .length; i += 4)
 					{

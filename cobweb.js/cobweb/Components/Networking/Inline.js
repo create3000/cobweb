@@ -31,6 +31,8 @@ function ($,
 			X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Inline);
+			
+			this .addChildren ("buffer", new SFTime ());
 
 			this .scene    = this .getBrowser () .getDefaultScene ();
 			this .group    = new Group (executionContext);
@@ -68,8 +70,46 @@ function ($,
 				X3DUrlObject     .prototype .initialize .call (this);
 				X3DBoundedObject .prototype .initialize .call (this);
 
+				this .getExecutionContext () .isLive_ .addInterest (this, "set_live__");
+				this .isLive_ .addInterest (this, "set_live__");
+
 				this .group .setup ();
 				this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+
+				this .load_   .addInterest (this, "set_load__");
+				this .url_    .addInterest (this, "set_url__");
+				this .buffer_ .addInterest (this, "set_buffer__");
+
+				this .requestAsyncLoad ();
+			},
+			set_live__: function ()
+			{
+				if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
+				{
+					var value = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+
+					if (value !== this .scene .isLive_ .getValue ())
+						this .scene .isLive_ = value;
+				}
+			},
+			set_load__: function ()
+			{
+				if (this .load_ .getValue ())
+					this .buffer_ .addEvent ();
+
+				else
+					this .requestUnload ();
+			},
+			set_url__: function ()
+			{
+				this .buffer_ .addEvent ();
+			},
+			set_buffer__: function ()
+			{
+				if (! this .load_ .getValue ())
+					return;
+
+				this .setLoadState (X3DConstants .NOT_STARTED_STATE);
 
 				this .requestAsyncLoad ();
 			},
@@ -77,7 +117,7 @@ function ($,
 			{
 				try
 				{
-					this .setScene (new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_));
+					this .setScene (new Loader (this) .createX3DFromURL (this .url_));
 				}
 				catch (error)
 				{
@@ -92,7 +132,15 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				new Loader (this .getExecutionContext ()) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+				new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+			},
+			requestUnload: function ()
+			{
+				if (this .checkLoadState () === X3DConstants .NOT_STARTED_STATE || this .checkLoadState () === X3DConstants .FAILED_STATE)
+					return;
+
+				this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+				this .setScene (this .getBrowser () .getDefaultScene ());
 			},
 			setSceneAsync: function (scene)
 			{
@@ -109,14 +157,19 @@ function ($,
 			},
 			setScene: function (scene)
 			{
+				this .scene .isLive_ = false;
 				this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 				// Set new scene.
 
 				this .scene = scene;
+				this .scene .setup ();
 
+				//this .scene .setExecutionContext (this .getExecutionContext ());
 				this .scene .rootNodes .addInterest (this .group .children_, "setValue");
 				this .group .children_ = this .scene .rootNodes;
+
+				this .set_live__ ();
 
 				this .getBrowser () .addBrowserEvent ();
 			},

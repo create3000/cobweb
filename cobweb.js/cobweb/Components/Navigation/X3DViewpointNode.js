@@ -41,7 +41,6 @@ function ($,
 
 			this .addType (X3DConstants .X3DViewpointNode);
 
-			this .layers                   = { };
 			this .parentMatrix             = new Matrix4 ();
 			this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1);
 			this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
@@ -101,17 +100,21 @@ function ($,
 
 				this .isBound_ .addInterest (this, "set_bind__");
 			},
-			bindToLayer (layer)
+			bindToLayer: function (layer)
 			{
+				X3DBindableNode .prototype .bindToLayer .call (this, layer);
+			
 				layer .getViewpointStack () .push (this);
-
-				this .layers [layer .getId ()] = layer;
 			},
-			unbindFromLayer (layer)
+			unbindFromLayer: function (layer)
 			{
-				layer .getViewpointStack () .pop (this);
+				X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
 
-				delete this .layers [layer .getId ()];
+				layer .getViewpointStack () .pop (this);
+			},
+			removeFromLayer: function (layer)
+			{
+				layer .getViewpointStack () .remove (this);
 			},
 			getUserPosition: function ()
 			{
@@ -160,9 +163,9 @@ function ($,
 				{
 					if (! layer)
 					{
-						for (var id in this .layers)
+						for (var id in this .getLayers ())
 						{
-							layer = this .layers [id];
+							layer = this .getLayers () [id];
 							break;
 						}
 					}
@@ -293,9 +296,9 @@ function ($,
 			{
 				if (! value .getValue ())
 				{
-					for (var id in this .layers)
+					for (var id in this .getLayers ())
 					{
-						var navigationInfo = this .layers [id] .getNavigationInfo ();
+						var navigationInfo = this .getLayers () [id] .getNavigationInfo ();
 
 						navigationInfo .transitionComplete_ = true;
 					}

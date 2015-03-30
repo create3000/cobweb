@@ -6,10 +6,11 @@ define ([
 ],
 function ($, XMLParser, URI)
 {
-	function Loader (executionContext)
+	function Loader (node)
 	{
-		this .browser          = executionContext .getBrowser ();
-		this .executionContext = executionContext;
+		this .node             = node;
+		this .browser          = node .getBrowser ();
+		this .executionContext = node .getExecutionContext ();
 		this .URL              = new URI ();
 	}
 	
@@ -51,24 +52,7 @@ function ($, XMLParser, URI)
 				new XMLParser (scene, dom) .parseIntoScene ();
 
 				if (success)
-				{
-					setTimeout (function ()
-					{
-						try
-						{
-							scene .setup ();
-
-							setTimeout (success .bind (this, scene), Loader .timeOut);
-						}
-						catch (exception)
-						{
-							error (exception);
-						}
-					}
-					.bind (this), Loader .timeOut)
-				}
-				else
-					scene .setup ();
+					setTimeout (success .bind (this, scene), Loader .timeOut);
 			}
 			catch (exception)
 			{
@@ -143,9 +127,7 @@ function ($, XMLParser, URI)
 					{
 						try
 						{
-							scene = this .createX3DFromString (this .URL, data);
-							scene .setup ();
-
+							scene   = this .createX3DFromString (this .URL, data);
 							success = true;
 						}
 						catch (error)
@@ -170,11 +152,21 @@ function ($, XMLParser, URI)
 		},
 		transform: function (URL)
 		{
-			URL = this .executionContext .getWorldURL () .transform (new URI (URL));
+			URL = this .getReferer () .transform (new URI (URL));
 
 			//console .info ("Trying to load URL '" + URL .toString () + "'.");
 
 			return URL .isLocal () ? this .browser .getLocation () .getRelativePath (URL) : URL;
+		},
+		getReferer: function ()
+		{
+			if (this .node === this .browser .getWorld ())
+			{
+				if (this .browser .getScriptStack () .length === 1)
+					return this .browser .getLocation ();
+			}
+
+			return this .executionContext .getWorldURL ();
 		},
 	};
 

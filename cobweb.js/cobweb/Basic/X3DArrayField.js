@@ -11,17 +11,24 @@ function ($, X3DField, X3DConstants, Generator)
 	{
 		get: function (target, key)
 		{
-			if (key in target)
-				return target [key];
+			try
+			{
+				if (key in target)
+					return target [key];
 
-			// value
-			
-			var array = target .getValue ();
+				// value
+				
+				var array = target .getValue ();
 
-			if (key >= array .length)
-				target .resize (key + 1);
+				if (key >= array .length)
+					target .resize (key + 1);
 
-			return array [key] .valueOf ();
+				return array [key] .valueOf ();
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 		set: function (target, key, value)
 		{

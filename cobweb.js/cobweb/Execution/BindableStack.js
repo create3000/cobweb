@@ -33,7 +33,7 @@ function ($, X3DBaseNode)
 		},
 		push: function (node)
 		{
-			if (this .array .length === 0)
+			if (node === this .array [0])
 				return;
 			
 			var top = this .top ();
@@ -46,14 +46,14 @@ function ($, X3DBaseNode)
 					top .isBound_  = false;
 				}
 
+				this .pushOnTop (node);
+
 				if (! node .isBound_ .getValue ())
 				{
 					node .isBound_  = true;
 					node .bindTime_ = this .getBrowser () .getCurrentTime ();
 					node .transitionStart (this .layer, top);
 				}
-
-				this .pushOnTop (node);
 
 				this .addNodeEvent ();
 			}
@@ -62,16 +62,35 @@ function ($, X3DBaseNode)
 		{
 			var index = this .array .indexOf (node);
 
-			if (index !== -1)
+			if (index > -1)
 				this .array .splice (index, 1);
 
 			this .array .push (node);
 		},
+		remove: function (node)
+		{
+			if (node === this .array [0])
+				return;
+
+			// If on top, pop node.
+
+			var top = this .top ();
+
+			if (node === top)
+				return this .pop (node);
+
+			// Simply remove.
+
+			var index = this .array .indexOf (node);
+
+			if (index > -1)
+				this .array .splice (index, 1);
+		},
 		pop: function (node)
 		{
-			if (this .array .length === 0)
+			if (node === this .array [0])
 				return;
-			
+
 			var top = this .top ();
 			
 			if (node === top)
@@ -81,9 +100,6 @@ function ($, X3DBaseNode)
 
 				this .array .pop ();
 
-				if (this .array .length === 0)
-					return;
-
 				top = this .top ();
 
 				if (! top .isBound_ .getValue ())
@@ -91,7 +107,7 @@ function ($, X3DBaseNode)
 					top .set_bind_ = true;
 					top .isBound_  = true;
 					top .bindTime_ = this .getBrowser () .getCurrentTime ();
-					top .transitionStart (node);
+					top .transitionStart (this .layer, node);
 				}
 
 				this .addNodeEvent ();

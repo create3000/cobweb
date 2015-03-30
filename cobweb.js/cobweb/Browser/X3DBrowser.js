@@ -9,9 +9,9 @@ define ([
 ],
 function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 {
-	function X3DBrowser (x3d)
+	function X3DBrowser (xml)
 	{
-		X3DBrowserContext .call (this, x3d);
+		X3DBrowserContext .call (this, xml);
 
 		this .currentSpeed        = 0;
 		this .currentFrameRate    = 0;
@@ -61,23 +61,64 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		},
 		replaceWorld: function (scene)
 		{
+			// Remove world.
+			
+			if (this .getWorld ())
+			{
+				this .isLive_ .removeFieldInterest (this .getExecutionContext () .isLive_);
+				this .getExecutionContext () .isLive_ = false;
+			}
+
+			// Replace world.
+
+			this .getCanvas () .stop (true, true) .fadeOut (0);
+			this .description = "";
+
 			if (! scene)
 				scene = this .createScene ();
 	
 			scene .setup ();
-
 			this .setExecutionContext (scene);
+
+			this .isLive_ .addFieldInterest (scene .isLive_);
+			scene .isLive_ = this .isLive_;
+
+			this .loadCount_ .addFieldCallback ("loading", this .bindWorld .bind (this));
+			this .loadCount_ .addEvent ();
+		},
+		bindWorld: function (value)
+		{
+			if (value)
+				return;
+
+			this .loadCount_ .removeFieldCallback ("loading");
+
+			setTimeout (function ()
+			{
+				this .getWorld () .bind ();
+				this .getCanvas () .fadeIn (2000);
+			}
+			.bind (this), 0);
 		},
 		createX3DFromString: function (x3dSyntax)
 		{
-			return new Loader (this .currentScene) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
+			var scene = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
+
+			scene .setup ();
+
+			return scene;
 		},
 		createX3DFromURL: function (url, field, node)
 		{
-			return new Loader (this .currentScene) .createX3DFromURL (url);
+			var scene = new Loader (this .getWorld ()) .createX3DFromURL (url);
+
+			scene .setup ();
+
+			return scene;
 		},
 		loadURL: function (url, parameter)
 		{
+			new Loader (this .getWorld ()) .createX3DFromURL (url, this .replaceWorld .bind (this));
 		},
 		getRenderingProperty: function (name)
 		{

@@ -21,6 +21,7 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 	
 		function XMLParser (scene, xml)
 		{
+			this .isXML            = xml instanceof XMLDocument; // XMLDocument || HTMLElement
 			this .xml              = xml;
 			this .executionContext = [ scene ];
 			this .parents          = [ ];
@@ -98,6 +99,7 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 			{
 				switch (element .nodeName)
 				{
+					case "#comment":
 					case "#text":
 						return;
 
@@ -125,8 +127,8 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 					if (this .USE (element))
 						return;
 				
-					var node = this .getExecutionContext () .createNode (element .nodeName, false);
-					
+					var node = this .getExecutionContext () .createNode (element .nodeName, this .isXML);
+
 					this .DEF (element, node);
 					this .addNode (element, node);
 					this .parents .push (node);
@@ -243,7 +245,7 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 					var
 						name      = attribute .name,
 						value     = attribute .value,
-						field     = node .getField (name),
+						field     = this .isXML ? node .getField (name) : this .getField (node, name),
 						fieldType = this .fieldTypes [field .getType ()];
 
 					this .parser .setInput (value);
@@ -251,7 +253,9 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 					fieldType .call (this .parser, field);
 				}
 				catch (error)
-				{ }
+				{
+					//console .log (error);
+				}
 			},
 			cdata: function (element)
 			{
@@ -327,6 +331,16 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 				{
 					console .log (error .message);
 				}
+			},
+			getField: function (node, name)
+			{
+				for (var key in node .fields)
+				{
+					if (key .toLowerCase () === name)
+						return node .fields [key];
+				}
+				
+				throw Error ("Unknown field '" + name + "' in node " + node .getTypeName ());
 			},
 		};
 

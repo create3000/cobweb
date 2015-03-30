@@ -18,7 +18,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .element   = $("<div/>") .addClass ("renderingProperties") .appendTo (this .getBrowser () .getX3D () .find (".canvas"));
+			this .element   = $("<div/>") .addClass ("renderingProperties") .appendTo (this .getBrowser () .getXML () .find (".canvas"));
 			this .enabled   = false;
 			this .startTime = 0;
 			this .frames    = 0;
@@ -55,8 +55,11 @@ function ($,
 					traverseTime      = 0,
 					drawTime          = 0,
 					opaqueShapes      = 0,
-					transparentShapes = 0,
-					sensors           = 0;
+					transparentShapes = 0;
+
+				var
+					prepareEvents = Object .keys (browser .prepareEvents () .getInterests ()) .length,
+					sensors       = Object .keys (browser .getSensors () .getInterests ()) .length;
 
 				for (var i = 0; i < layers .length; ++ i)
 				{
@@ -66,9 +69,6 @@ function ($,
 					opaqueShapes      += layer .numOpaqueShapes;
 					transparentShapes += layer .numTransparentShapes;
 				}
-				
-				sensors += Object .keys (browser .prepareEvents () .getInterests ()) .length;
-				sensors += Object .keys (browser .getSensors () .getInterests ()) .length;
 
 				var routingTime = browser .browserTime - (browser .cameraTime + traverseTime + drawTime);
 
@@ -82,7 +82,7 @@ function ($,
 				text += "Traverse:   " + traverseTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Draw:       " + drawTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";
-				text += "Sensors:    " + sensors + "\n";
+				text += "Sensors:    " + (prepareEvents + sensors) + "\n";
 
 				this .element .text (text);
 
