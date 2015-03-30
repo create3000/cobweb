@@ -13,7 +13,7 @@ function ($, XMLParser, URI)
 		this .executionContext = node .getExecutionContext ();
 		this .URL              = new URI ();
 	}
-	
+
 	Loader .timeOut = 16;
 
 	Loader .prototype =
@@ -89,11 +89,12 @@ function ($, XMLParser, URI)
 				else
 					this .callback (null);
 			}
-	
+
 			$.ajax ({
 				url: this .URL,
 				dataType: "text",
 				async: true,
+				cache: false,
 				//timeout: 15000,
 				global: false,
 				context: this,
@@ -120,6 +121,7 @@ function ($, XMLParser, URI)
 					url: this .URL,
 					dataType: "text",
 					async: false,
+					cache: false,
 					//timeout: 15000,
 					global: false,
 					context: this,
