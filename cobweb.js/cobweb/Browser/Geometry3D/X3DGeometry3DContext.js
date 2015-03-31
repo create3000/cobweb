@@ -1,13 +1,26 @@
 
 define ([
 	"cobweb/Browser/Geometry3D/BoxOptions",
-	"cobweb/Browser/Geometry3D/QuadSphereOptions",
+	"cobweb/Browser/Geometry3D/ConeOptions",
 	"cobweb/Browser/Geometry3D/CylinderOptions",
+	"cobweb/Browser/Geometry3D/QuadSphereOptions",
 ],
 function (BoxOptions,
-          QuadSphereOptions,
-          CylinderOptions)
+          ConeOptions,
+          CylinderOptions,
+          QuadSphereOptions)
 {
+	function getOptionNode (name, Type)
+	{
+		if (this [name])
+			return this [name];
+
+		this [name] = new Type (this);
+		this [name] .setup ();
+
+		return this [name];
+	}
+
 	function X3DGeometry3DContext () { }
 
 	X3DGeometry3DContext .prototype =
@@ -17,33 +30,19 @@ function (BoxOptions,
 		},
 		getBoxOptions: function ()
 		{
-			if (this .boxOptions)
-				return this .boxOptions;
-
-			this .boxOptions = new BoxOptions (this);
-			this .boxOptions .setup ();
-
-			return this .boxOptions;
+			return getOptionNode .call (this, "boxOptions", BoxOptions);
 		},
-		getSphereOptions: function ()
+		getConeOptions: function ()
 		{
-			if (this .sphereOptions)
-				return this .sphereOptions;
-
-			this .sphereOptions = new QuadSphereOptions (this);
-			this .sphereOptions .setup ();
-
-			return this .sphereOptions;
+			return getOptionNode .call (this, "coneOptions", ConeOptions);
 		},
 		getCylinderOptions: function ()
 		{
-			if (this .cylinderOptions)
-				return this .cylinderOptions;
-
-			this .cylinderOptions = new CylinderOptions (this);
-			this .cylinderOptions .setup ();
-
-			return this .cylinderOptions;
+			return getOptionNode .call (this, "cylinderOptions", CylinderOptions);
+		},
+		getSphereOptions: function ()
+		{
+			return getOptionNode .call (this, "sphereOptions", QuadSphereOptions);
 		},
 	};
 

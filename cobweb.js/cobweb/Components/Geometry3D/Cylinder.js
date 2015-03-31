@@ -57,9 +57,12 @@ function ($,
 			{
 				var
 					options    = this .getBrowser () .getCylinderOptions (),
-					vDimension = options .vDimension_ .getValue ();
+					vDimension = options .vDimension_ .getValue (),
+					texCoords  = [ ],
+					normals    = [ ],
+					vertices   = [ ];
 
-				this .getTexCoords () .push ([ ]);
+				this .getTexCoords () .push (texCoords);
 
 				var
 					radius = this .radius_ .getValue (),
@@ -87,36 +90,36 @@ function ($,
 						// p2 - p3
 
 						// p1
-						this .getTexCoords () [0] .push (u1, 1, 0, 1);
-						this .addNormal (new Vector3 (n1 .imag,  0, n1 .real));
-						this .addVertex (new Vector3 (p1 .imag, y1, p1 .real));
+						texCoords .push (u1, 1, 0, 1);
+						normals .push (n1 .imag,  0, n1 .real);
+						vertices .push (p1 .imag, y1, p1 .real, 1);
 
 						// p2
-						this .getTexCoords () [0] .push (u1, 0, 0, 1);
-						this .addNormal (new Vector3 (n1 .imag,  0, n1 .real));
-						this .addVertex (new Vector3 (p1 .imag, y2, p1 .real));
+						texCoords .push (u1, 0, 0, 1);
+						normals .push (n1 .imag,  0, n1 .real);
+						vertices .push (p1 .imag, y2, p1 .real, 1);
 
 						// p3
-						this .getTexCoords () [0] .push (u2, 0, 0, 1);
-						this .addNormal (new Vector3 (n2 .imag,  0, n2 .real));
-						this .addVertex (new Vector3 (p2 .imag, y2, p2 .real));
+						texCoords .push (u2, 0, 0, 1);
+						normals .push (n2 .imag,  0, n2 .real);
+						vertices .push (p2 .imag, y2, p2 .real, 1);
 
 						//
 
 						// p1
-						this .getTexCoords () [0] .push (u1, 1, 0, 1);
-						this .addNormal (new Vector3 (n1 .imag,  0, n1 .real));
-						this .addVertex (new Vector3 (p1 .imag, y1, p1 .real));
+						texCoords .push (u1, 1, 0, 1);
+						normals .push (n1 .imag,  0, n1 .real);
+						vertices .push (p1 .imag, y1, p1 .real, 1);
 
 						// p3
-						this .getTexCoords () [0] .push (u2, 0, 0, 1);
-						this .addNormal (new Vector3 (n2 .imag,  0, n2 .real));
-						this .addVertex (new Vector3 (p2 .imag, y2, p2 .real));
+						texCoords .push (u2, 0, 0, 1);
+						normals .push (n2 .imag,  0, n2 .real);
+						vertices .push (p2 .imag, y2, p2 .real, 1);
 
 						// p4
-						this .getTexCoords () [0] .push (u2, 1, 0, 1);
-						this .addNormal (new Vector3 (n2 .imag,  0, n2 .real));
-						this .addVertex (new Vector3 (p2 .imag, y1, p2 .real));
+						texCoords .push (u2, 1, 0, 1);
+						normals .push (n2 .imag,  0, n2 .real);
+						vertices .push (p2 .imag, y1, p2 .real, 1);
 					}
 				}
 
@@ -138,7 +141,6 @@ function ($,
 					}
 
 					var
-						n  = new Vector3 (0, 1, 0),
 						t0 = texCoord [0],
 						p0 = points [0];
 
@@ -146,19 +148,21 @@ function ($,
 					{
 						var
 							t1 = texCoord [i],
-							t2 = texCoord [i + 1];
+							t2 = texCoord [i + 1],
+							p1 = points [i],
+							p2 = points [i + 1];
 
-						this .getTexCoords () [0] .push (t0 .x, t0 .y, 0, 1);
-						this .addNormal (n);
-						this .addVertex (p0);
+						texCoords .push (t0 .x, t0 .y, 0, 1);
+						normals .push (0, 1, 0);
+						vertices .push (p0 .x, p0 .y, p0 .z, 1);
 
-						this .getTexCoords () [0] .push (t1 .x, t1 .y, 0, 1);
-						this .addNormal (n);
-						this .addVertex (points [i]);
+						texCoords .push (t1 .x, t1 .y, 0, 1);
+						normals .push (0, 1, 0);
+						vertices .push (p1 .x, p1 .y, p1 .z, 1);
 
-						this .getTexCoords () [0] .push (t2 .x, t2 .y, 0, 1);
-						this .addNormal (n);
-						this .addVertex (points [i + 1]);
+						texCoords .push (t2 .x, t2 .y, 0, 1);
+						normals .push (0, 1, 0);
+						vertices .push (p2 .x, p2 .y, p2 .z, 1);
 					}
 				}
 
@@ -180,7 +184,6 @@ function ($,
 					}
 				
 					var
-						n  = new Vector3 (0, -1, 0),
 						t0 = texCoord [0],
 						p0 = points [0];
 					
@@ -188,24 +191,48 @@ function ($,
 					{
 						var
 							t1 = texCoord [i],
-							t2 = texCoord [i + 1];
+							t2 = texCoord [i + 1],
+							p1 = points [i],
+							p2 = points [i + 1];
 
-						this .getTexCoords () [0] .push (t0 .x, t0 .y, 0, 1);
-						this .addNormal (n);
-						this .addVertex (p0);
+						texCoords .push (t0 .x, t0 .y, 0, 1);
+						normals .push (0, -1, 0);
+						vertices .push (p0 .x, p0 .y, p0 .z, 1);
 
-						this .getTexCoords () [0] .push (t1 .x, t1 .y, 0, 1);
-						this .addNormal (n);
-						this .addVertex (points [i]);
+						texCoords .push (t1 .x, t1 .y, 0, 1);
+						normals .push (0, -1, 0);
+						vertices .push (p1 .x, p1 .y, p1 .z, 1);
 
-						this .getTexCoords () [0] .push (t2 .x, t2 .y, 0, 1);
-						this .addNormal (n);
-						this .addVertex (points [i + 1]);
+						texCoords .push (t2 .x, t2 .y, 0, 1);
+						normals .push (0, -1, 0);
+						vertices .push (p2 .x, p2 .y, p2 .z, 1);
 					}
 				}
 
 				this .setSolid (this .solid_ .getValue ());
 				this .setCurrentTexCoord (null);
+				this .setNormals (normals);
+				this .setVertices (vertices);
+				this .setExtents (this .createExtents ());
+			},
+			createExtents: function ()
+			{
+				var
+					radius = this .radius_ .getValue (),
+					y1     = this .height_ .getValue () / 2,
+					y2     = -y1;
+
+				if (! this .top_ .getValue () && ! this .side_ .getValue () && ! this .bottom_ .getValue ())
+					return [new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)];
+
+				if (! this .top_ .getValue () && ! this .side_ .getValue ())
+					return [new Vector3 (-radius, y2, -radius), new Vector3 (radius, y2, radius)];
+
+				if (! this .bottom_ .getValue () && ! this .side_ .getValue ())
+					return [new Vector3 (-radius, y1, -radius), new Vector3 (radius, y1, radius)];
+
+				else
+					return [new Vector3 (-radius, y2, -radius), new Vector3 (radius, y1, radius)];
 			},
 		});
 

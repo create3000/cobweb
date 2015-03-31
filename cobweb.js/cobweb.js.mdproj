@@ -1171,6 +1171,7 @@
     <None Include="tests\Examples\BIC\info.x3d" />
     <None Include="tests\Examples\BIC\building.x3d" />
     <None Include="cobweb\Debug.js" />
+    <None Include="cobweb\Browser\Geometry3D\ConeOptions.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

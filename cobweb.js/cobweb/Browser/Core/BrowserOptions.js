@@ -42,7 +42,12 @@ function ($,
 			{
 				X3DBaseNode .prototype .initialize .call (this);
 				
-				this .Shading_ .addInterest (this, "set_shading__");
+				this .PrimitiveQuality_ .addInterest (this, "set_primitiveQuality__");
+				this .Shading_          .addInterest (this, "set_shading__");
+			},
+			set_primitiveQuality__: function ()
+			{
+				
 			},
 			set_shading__: function ()
 			{
