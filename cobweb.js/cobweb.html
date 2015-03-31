@@ -38,9 +38,8 @@ x3d {
 require ([
 	"jquery",
 	"cobweb/X3D",
-	"standard/Networking/URI",
 ],
-function ($, X3D, URI)
+function ($, X3D)
 {
 	X3D (function (dom)
 	{
@@ -99,7 +98,10 @@ function ($, X3D, URI)
 		<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd' statistics="false" log="false">
 			<Scene>
 				<Background skyColor='0.2 0.2 0.2'></Background>
-				<Inline DEF='Inline'></Inline>
+				<!---<Inline DEF='Inline' url='
+					"-tests/Components/Geometry3D/Geometry3D.x3d"
+					"tests/Examples/LogoPieces/index.x3d"
+				'></Inline>-->
 			</Scene>
 		</X3D>
 	</body>

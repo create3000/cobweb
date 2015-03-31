@@ -3,9 +3,12 @@ define ([
 	"jquery",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
+	"cobweb/Debug",
 ],
-function ($, XMLParser, URI)
+function ($, XMLParser, URI, DEBUG)
 {
+	var TIMEOUT = 16;
+
 	function Loader (node)
 	{
 		this .node             = node;
@@ -13,8 +16,6 @@ function ($, XMLParser, URI)
 		this .executionContext = node .getExecutionContext ();
 		this .URL              = new URI ();
 	}
-
-	Loader .timeOut = 16;
 
 	Loader .prototype =
 	{
@@ -32,7 +33,7 @@ function ($, XMLParser, URI)
 			{
 				try
 				{
-					setTimeout (this .importDocument .bind (this, scene, $.parseXML (string), success, error), Loader .timeOut);
+					setTimeout (this .importDocument .bind (this, scene, $.parseXML (string), success, error), TIMEOUT);
 				}
 				catch (exception)
 				{
@@ -52,7 +53,7 @@ function ($, XMLParser, URI)
 				new XMLParser (scene, dom) .parseIntoScene ();
 
 				if (success)
-					setTimeout (success .bind (this, scene), Loader .timeOut);
+					setTimeout (success .bind (this, scene), TIMEOUT);
 			}
 			catch (exception)
 			{
@@ -65,51 +66,19 @@ function ($, XMLParser, URI)
 		createX3DFromURL: function (url, callback)
 		{
 			if (callback)
-			{
-				this .url      = url .copy ();
-				this .callback = callback;
-
-				return this .createX3DFromURLAsync (this .url .shift ());
-			}
+				return this .loadDocument (url, this .createX3DFromURLAsync .bind (this, callback))
 
 			return this .createX3DFromURLSync (url);
 		},
-		createX3DFromURLAsync: function (URL)
+		createX3DFromURLAsync: function (callback, data)
 		{
-			this .URL = this .transform (URL);
-
-			function error (exception)
-			{
-				console .log (exception);
-				//console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + exception .message + ".");
-
-				if (this .url .length)
-					this .createX3DFromURLAsync (this .url .shift ());
-
-				else
-					this .callback (null);
-			}
-
-			$.ajax ({
-				url: this .URL,
-				dataType: "text",
-				async: true,
-				cache: false,
-				//timeout: 15000,
-				global: false,
-				context: this,
-				success: function (data)
-				{
-					this .createX3DFromString (this .URL, data, this .callback, error .bind (this));
-				},
-				error: function (jqXHR, textStatus, exception)
-				{
-					error .call (this, exception);
-				},
-			});
+			this .createX3DFromString (this .URL, data, callback, this .loadDocumentError .bind (this));
 		},
 		createX3DFromURLSync: function (url)
 		{
+			if (url .length === 0)
+				throw new Error ("No URL given.");
+
 			var scene   = null;
 			var success = false;
 
@@ -152,11 +121,61 @@ function ($, XMLParser, URI)
 
 			throw Error ("Couldn't load any url of '" + url .getValue () .join (", ") + "'.");
 		},
+		loadDocument: function (url, callback)
+		{
+			this .url      = url .copy ();
+			this .callback = callback;
+
+			if (url .length === 0)
+				return this .loadDocumentError (new Error ("No URL given."));
+
+			this .loadDocumentAsync (this .url .shift ());
+		},
+		loadDocumentAsync: function (URL)
+		{
+			this .URL = this .transform (URL);
+
+			$.ajax ({
+				url: this .URL,
+				dataType: "text",
+				async: true,
+				cache: false,
+				//timeout: 15000,
+				global: false,
+				context: this,
+				success: function (data)
+				{
+					try
+					{
+						this .callback (data);
+					}
+					catch (exception)
+					{
+						this .loadDocumentError (exception);
+					}
+				},
+				error: function (jqXHR, textStatus, exception)
+				{
+					this .loadDocumentError (exception);
+				},
+			});
+		},
+		loadDocumentError: function (exception)
+		{
+			if (DEBUG)
+				console .log (exception);
+			else
+				console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + exception .message + ".");
+
+			if (this .url .length)
+				this .loadDocumentAsync (this .url .shift ());
+
+			else
+				this .callback (null);
+		},
 		transform: function (URL)
 		{
 			URL = this .getReferer () .transform (new URI (URL));
-
-			//console .info ("Trying to load URL '" + URL .toString () + "'.");
 
 			return URL .isLocal () ? this .browser .getLocation () .getRelativePath (URL) : URL;
 		},

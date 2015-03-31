@@ -76,7 +76,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 
 			if (! scene)
 				scene = this .createScene ();
-	
+
 			scene .setup ();
 			this .setExecutionContext (scene);
 

@@ -1170,6 +1170,7 @@
     <None Include="tests\Examples\BIC\index.x3d" />
     <None Include="tests\Examples\BIC\info.x3d" />
     <None Include="tests\Examples\BIC\building.x3d" />
+    <None Include="cobweb\Debug.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
