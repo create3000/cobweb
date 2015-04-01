@@ -189,6 +189,7 @@ function ($,
 			createNormals: function (points, coordIndex, creaseAngle)
 			{
 				var
+					cw          = ! this .ccw_ .getValue (),
 					normalIndex = [ ],
 					normals     = [ ];
 
@@ -214,14 +215,15 @@ function ($,
 
 					var normal = Triangle3 .normal (points [c0], points [c1], points [c2]);
 
+					if (cw)
+						normal .negate ();
+
 					normals .push (normal);
 					normals .push (normal .copy ());
 					normals .push (normal .copy ());
 				}
 
-				this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue (), this .ccw_ .getValue ());
-
-				return normals;
+				return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue ());
 			},
 			createCoordIndex: function ()
 			{
