@@ -59,8 +59,8 @@ function ($,
 					options    = this .getBrowser () .getCylinderOptions (),
 					vDimension = options .vDimension_ .getValue (),
 					texCoords  = [ ],
-					normals    = [ ],
-					vertices   = [ ];
+					normals    = this .getNormals (),
+					vertices   = this .getVertices ();
 
 				this .getTexCoords () .push (texCoords);
 
@@ -89,6 +89,8 @@ function ($,
 						//  | \ |
 						// p2 - p3
 
+						// Triangle one
+
 						// p1
 						texCoords .push (u1, 1, 0, 1);
 						normals .push (n1 .imag,  0, n1 .real);
@@ -104,7 +106,7 @@ function ($,
 						normals .push (n2 .imag,  0, n2 .real);
 						vertices .push (p2 .imag, y2, p2 .real, 1);
 
-						//
+						// Triangle two
 
 						// p1
 						texCoords .push (u1, 1, 0, 1);

@@ -67,7 +67,7 @@ function ($,
 			for (var i = 0; i < this .attribNodes .length; ++ i)
 				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
 
-			this .attribNodes .length;
+			this .attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{

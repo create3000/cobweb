@@ -116,14 +116,14 @@ function ($,
 					colorPerVertex  = this .colorPerVertex_ .getValue (),
 					normalPerVertex = this .normalPerVertex_ .getValue (),
 					coordIndex      = this .coordIndex_ .getValue (),
-					color           = this .getColor (),
-					texCoord        = this .getTexCoord (),
-					normal          = this .getNormal (),
-					coord           = this .getCoord (),
+					colorNode       = this .getColor (),
+					texCoordNode    = this .getTexCoord (),
+					normalNode      = this .getNormal (),
+					coordNode       = this .getCoord (),
 					face            = 0;
 
-				if (texCoord)
-					texCoord .init (this .getTexCoords ());
+				if (texCoordNode)
+					texCoordNode .init (this .getTexCoords ());
 
 				for (var p = 0; p < polygons .length; ++ p)
 				{
@@ -138,27 +138,27 @@ function ($,
 							var i     = triangle [v];
 							var index = coordIndex [i] .getValue ();
 
-							if (color)
+							if (colorNode)
 							{
 								if (colorPerVertex)
-									this .addColor (color .getColor (this .getColorPerVertexIndex (i)));
+									this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
 								else
-									this .addColor (color .getColor (this .getColorIndex (face)));
+									this .addColor (colorNode .getColor (this .getColorIndex (face)));
 							}
 
-							if (texCoord)
-								texCoord .addTexCoord (this .getTexCoords (), this .getTexCoordPerVertexIndex (i));
+							if (texCoordNode)
+								texCoordNode .addTexCoord (this .getTexCoords (), this .getTexCoordPerVertexIndex (i));
 
-							if (normal)
+							if (normalNode)
 							{
 								if (normalPerVertex)
-									this .addNormal (normal .getVector (this .getNormalPerVertexIndex (i)));
+									this .addNormal (normalNode .getVector (this .getNormalPerVertexIndex (i)));
 
 								else
-									this .addNormal (normal .getVector (this .getNormalIndex (face)));
+									this .addNormal (normalNode .getVector (this .getNormalIndex (face)));
 							}
 
-							this .addVertex (coord .getPoint (index));
+							this .addVertex (coordNode .getPoint (index));
 						}
 					}
 

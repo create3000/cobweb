@@ -60,8 +60,8 @@ function ($,
 					height       = this .height_ .getValue (),
 					bottomRadius = this .bottomRadius_ .getValue (),
 					texCoords    = [ ],
-					normals      = [ ],
-					vertices     = [ ];
+					normals      = this .getNormals (),
+					vertices     = this .getVertices ();
 
 				this .getTexCoords () .push (texCoords);
 
