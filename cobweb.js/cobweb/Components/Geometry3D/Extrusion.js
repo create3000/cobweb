@@ -63,7 +63,7 @@ function ($,
 			{
 				return "geometry";
 			},
-			createPoints: function (hasCaps)
+			createPoints: function ()
 			{
 				var
 					crossSection = this .crossSection_. getValue (),
@@ -100,29 +100,6 @@ function ($,
 					{
 						var vector = crossSection [cs] .getValue ();
 						points .push (matrix .multVecMatrix (new Vector3 (vector .x, 0, vector .y)));
-					}
-				}
-
-				// Copy points for caps
-
-				if (hasCaps)
-				{
-					var last = points .length;
-				
-					if (this .beginCap_ .getValue ())
-					{
-						for (var i = 0, length = crossSection .length; i < length; ++ i)
-							points .push (points [i]);
-					}
-
-					if (this .endCap_ .getValue ())
-					{
-						var
-							i      = last - crossSection .length,
-							length = last;
-
-						for (; i < length; ++ i)
-							points .push (points [i]);
 					}
 				}
 
@@ -296,7 +273,10 @@ function ($,
 				var
 					normalIndex = [ ],
 				   normals     = [ ],
-					points      = this .createPoints (capMax);
+					points      = this .createPoints ();
+
+				for (var p = 0; p < points .length; ++ p)
+					normalIndex [p] = [ ];
 
 				// Build body.
 
@@ -321,28 +301,20 @@ function ($,
 						// p1 ----- p2   n
 
 						var
-							p1 = INDEX (n,  k),
-							p2 = INDEX (n,  k1),
-							p3 = INDEX (n1, k1),
-							p4 = INDEX (n1, k);
-						
-						if (! normalIndex [p1])
-							normalIndex [p1] = [ ];
-
-						if (! normalIndex [p2])
-							normalIndex [p2] = [ ];
-
-						if (! normalIndex [p3])
-							normalIndex [p3] = [ ];
-
-						if (! normalIndex [p4])
-							normalIndex [p4] = [ ];
+							i1 = INDEX (n,  k),
+							i2 = INDEX (n,  k1),
+							i3 = INDEX (n1, k1),
+							i4 = INDEX (n1, k),
+							p1 = points [i1],
+							p2 = points [i2],
+							p3 = points [i3],
+							p4 = points [i4];
 
 						// Use quad normal calculation as it makes nicer normals.
 
 						var
-							normal1 = Triangle3 .normal (points [p1], points [p2], points [p3]),
-							normal2 = Triangle3 .normal (points [p1], points [p3], points [p4]);
+							normal1 = Triangle3 .normal (p1, p2, p3),
+							normal2 = Triangle3 .normal (p1, p3, p4);
 
 						if (cw)
 						{
@@ -354,41 +326,41 @@ function ($,
 
 						// p1
 						texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
-						normalIndex [p1] .push (normals .length);
+						normalIndex [i1] .push (normals .length);
 						normals .push (normal1);
-						this .addVertex (points [p1]);
+						this .addVertex (p1);
 
 						// p2
 						texCoords .push ((k + 1) / numCrossSection_1, n / numSpine_1, 0, 1);
-						normalIndex [p2] .push (normals .length);
+						normalIndex [i2] .push (normals .length);
 						normals .push (normal1);
-						this .addVertex (points [p2]);
+						this .addVertex (p2);
 
 						// p3
 						texCoords .push ((k + 1) / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
-						normalIndex [p3] .push (normals .length);
+						normalIndex [i3] .push (normals .length);
 						normals .push (normal1);
-						this .addVertex (points [p3]);
+						this .addVertex (p3);
 
 						// Triangle two
 
 						// p1
 						texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
-						normalIndex [p1] .push (normals .length);
+						normalIndex [i1] .push (normals .length);
 						normals .push (normal2);
-						this .addVertex (points [p1]);
+						this .addVertex (p1);
 
 						// p3
 						texCoords .push ((k + 1) / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
-						normalIndex [p3] .push (normals .length);
+						normalIndex [i3] .push (normals .length);
 						normals .push (normal2);
-						this .addVertex (points [p3]);
+						this .addVertex (p3);
 
 						// p4
 						texCoords .push (k / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
-						normalIndex [p4] .push (normals .length);
+						normalIndex [i4] .push (normals .length);
 						normals .push (normal2);
-						this .addVertex (points [p4]);
+						this .addVertex (p4);
 					}
 				}
 
@@ -406,7 +378,7 @@ function ($,
 					if (this .beginCap_ .getValue ())
 					{
 						var
-							j         = spine .length,
+							j         = 0, // spine
 							vertices  = [ ],
 							triangles = [ ];
 
@@ -436,7 +408,7 @@ function ($,
 					if (this .endCap_ .getValue ())
 					{
 						var
-							j         = spine .length + this .beginCap_ .getValue (),
+							j         = spine .length - 1, // spine
 							vertices  = [ ],
 							triangles = [ ];
 

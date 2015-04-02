@@ -92,6 +92,7 @@ function ($,
 				var image = $("<img>");
 				image .load (this .setImage .bind (this, image [0]));
 				image .error (this .setError .bind (this, URL));
+				image .attr ("crossOrigin", "anonymous");
 				image .attr ("src", URL);
 			},
 			setError: function (URL)
@@ -108,19 +109,9 @@ function ($,
 
 					// Determine image alpha.
 
-					var canvas = $("<canvas>") [0];
-		
-					canvas .width  = width;
-					canvas .height = height;
-
-					var cx = canvas .getContext ("2d");
-					cx .drawImage (image, 0, 0);
-
-					var data   = cx .getImageData (0, 0, image .width, image .height) .data;
-					var opaque = true;
-
-					for (var i = 0; i < data .length && opaque; i += 4)
-						opaque &= (data [i + 3] === 255);
+					var
+						canvas = $("<canvas>") [0],
+						cx     = canvas .getContext ("2d");
 
 					// Scale image.
 
@@ -129,14 +120,29 @@ function ($,
 						width  = Algorithm .nextPowerOfTwo (width);
 						height = Algorithm .nextPowerOfTwo (height);
 
-						cx .clearRect (0, 0, canvas .width, canvas .height);
-
 						canvas .width  = width;
 						canvas .height = height;
 
 						cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
-						
-						data = cx .getImageData (0, 0, width, height) .data;
+					}
+					else
+					{
+						canvas .width  = width;
+						canvas .height = height;
+
+						cx .drawImage (image, 0, 0);
+					}
+
+					var data   = cx .getImageData (0, 0, width, height) .data;
+					var opaque = true;
+
+					for (var i = 3; i < data .length; i += 4)
+					{
+						if (data [i] !== 255)
+						{
+							opaque = false;
+							break;
+						}
 					}
 
 					setTimeout (function ()
@@ -148,6 +154,7 @@ function ($,
 				}
 				catch (error)
 				{
+					// Catch security error from cross origin requests.
 					this .setError (image .src);
 				}
 			},

@@ -193,21 +193,15 @@ function ($,
 					normalIndex = [ ],
 					normals     = [ ];
 
+				for (var p = 0; p < points .length; ++ p)
+					normalIndex [p] = [ ];
+
 				for (var c = 0; c < coordIndex .length; c += 3)
 				{
 					var
 						c0 = coordIndex [c],
 						c1 = coordIndex [c + 1],
 						c2 = coordIndex [c + 2];
-
-					if (! normalIndex [c0])
-						normalIndex [c0] = [ ];
-
-					if (! normalIndex [c1])
-						normalIndex [c1] = [ ];
-
-					if (! normalIndex [c2])
-						normalIndex [c2] = [ ];
 					
 					normalIndex [c0] .push (normals .length);
 					normalIndex [c1] .push (normals .length + 1);
