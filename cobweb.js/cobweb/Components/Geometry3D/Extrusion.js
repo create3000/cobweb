@@ -11,6 +11,7 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"poly2tri",
 ],
 function ($,
           Fields,
@@ -22,7 +23,8 @@ function ($,
           Vector2,
           Vector3,
           Rotation4,
-          Matrix4)
+          Matrix4,
+          poly2tri)
 {
 	with (Fields)
 	{
@@ -105,6 +107,8 @@ function ($,
 
 				if (hasCaps)
 				{
+					var last = points .length;
+				
 					if (this .beginCap_ .getValue ())
 					{
 						for (var i = 0, length = crossSection .length; i < length; ++ i)
@@ -114,8 +118,8 @@ function ($,
 					if (this .endCap_ .getValue ())
 					{
 						var
-							i      = points .length - crossSection .length,
-							length = points .length;
+							i      = last - crossSection .length,
+							length = last;
 
 						for (; i < length; ++ i)
 							points .push (points [i]);
@@ -139,7 +143,7 @@ function ($,
 				var
 					SCPxAxis,
 					SCPyAxis,
-					SCPzAxis;
+					SCPzAxis = new Vector3 (0, 0, 0);
 
 				// SCP for the first point:
 				if (closedSpine)
@@ -218,9 +222,11 @@ function ($,
 					SCPyAxis = Vector3 .subtract (spine [spine .length - 1] .getValue (), spine [spine .length - 2] .getValue ()) .normalize ();
 					
 					if (spine .length > 2)
+					{
 						SCPzAxis = Vector3 .subtract (spine [spine .length - 1] .getValue (), spine [spine .length - 2] .getValue ())
 						           .cross (Vector3 .subtract (spine [spine .length - 3] .getValue (), spine [spine .length - 2] .getValue ()))
 						           .normalize ();
+					}
 
 					// g.
 					if (SCPzAxisPrevious .dot (SCPzAxis) < 0)
@@ -244,6 +250,7 @@ function ($,
 			build: function ()
 			{
 				var
+					cw           = ! this .ccw_ .getValue (),
 					crossSection = this .crossSection_. getValue (),
 					spine        = this .spine_. getValue (),
 					texCoords    = [ ];
@@ -270,7 +277,7 @@ function ($,
 				// For caps calculation
 
 				var
-					min = crossSection [0] .getValue () .copy ();
+					min = crossSection [0] .getValue () .copy (),
 					max = crossSection [0] .getValue () .copy ();
 
 				for (var k = 1, length = crossSection .length; k < length; ++ k)
@@ -294,7 +301,6 @@ function ($,
 				// Build body.
 
 				var
-					cw                = ! this .ccw_ .getValue (),
 					numCrossSection_1 = crossSection .length - 1,
 					numSpine_1        = spine .length - 1;
 
@@ -303,8 +309,8 @@ function ($,
 					for (var k = 0; k < numCrossSection_1; ++ k)
 					{
 						var
-							n1 = closedSpine && n == spine .length - 2 ? 0 : n + 1;
-							k1 = closedCrossSection && k == crossSection .length - 2 ? 0 : k + 1;
+							n1 = closedSpine && n === spine .length - 2 ? 0 : n + 1,
+							k1 = closedCrossSection && k === crossSection .length - 2 ? 0 : k + 1;
 
 						// k      k+1
 						//
@@ -344,6 +350,8 @@ function ($,
 							normal2 .negate ();
 						}
 
+						// Triangle one
+
 						// p1
 						texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
 						normalIndex [p1] .push (normals .length);
@@ -361,6 +369,8 @@ function ($,
 						normalIndex [p3] .push (normals .length);
 						normals .push (normal1);
 						this .addVertex (points [p3]);
+
+						// Triangle two
 
 						// p1
 						texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
@@ -382,107 +392,175 @@ function ($,
 					}
 				}
 
-				// Refine normals and add them.
+				// Refine body normals and add them.
 
 				normals = this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue ());
 
 				for (var i = 0; i < normals .length; ++ i)
 					this .addNormal (normals [i]);
 
-/*
 				// Build caps
 
-				if (capMax)
+				if (capMax && crossSection .length > 2)
 				{
-					if (beginCap ())
+					if (this .beginCap_ .getValue ())
 					{
-						const size_t j = spine () .size ();
+						var
+							j         = spine .length,
+							vertices  = [ ],
+							triangles = [ ];
 
-						if (convex ())
+						for (var k = 0; k < numCapPoints; ++ k)
 						{
-							Vector3f normal = math::normal (points [INDEX (j, 2)],
-							                                points [INDEX (j, 1)],
-							                                points [INDEX (j, 0)]);
-
-							if (not ccw ())
-								normal .negate ();
-
-							for (size_t k = 0; k < numCapPoints; ++ k)
-							{
-								const Vector2f t = (crossSection () [numCapPoints - 1 - k] - min) / capMax;
-								getTexCoords () [0] .emplace_back (t .x (), t .y (), 0, 1);
-								getNormals () .emplace_back (normal);
-								getVertices () .emplace_back (points [INDEX (j, numCapPoints - 1 - k)]);
-							}
-
-							addElements (getVertexMode (numCapPoints), numCapPoints);
+							var point = points [INDEX (j, numCapPoints - 1 - k)];
+							point .texCoord = Vector2 .subtract (crossSection [numCapPoints - 1 - k] .getValue (), min) .divide (capMax);
+							vertices .push (point);
 						}
+
+						if (this .convex_ .getValue ())
+							this .triangulateConvexPolygon (vertices, triangles);
+
 						else
-						{
-							Tessellator tessellator;
-							tessellator .begin_polygon ();
-							tessellator .begin_contour ();
+							this .triangulatePolygon (vertices, triangles);
 
-							for (size_t k = 0; k < numCapPoints; ++ k)
-								tessellator .add_vertex (points [INDEX (j, numCapPoints - 1 - k)], INDEX (j, numCapPoints - 1 - k), numCapPoints - 1 - k);
+						var normal = Triangle3 .normal (vertices [triangles [0]],
+						                                vertices [triangles [1]],
+						                                vertices [triangles [2]]);
 
-							tessellator .end_contour ();
-							tessellator .end_polygon ();
+						if (cw)
+							normal .negate ();
 
-							tessellateCap (tessellator, points, min, capMax);
-						}
+						this .addCap (texCoords, normal, vertices, triangles);
 					}
 
-					if (endCap ())
+					if (this .endCap_ .getValue ())
 					{
-						const size_t j = spine () .size () + beginCap ();
+						var
+							j         = spine .length + this .beginCap_ .getValue (),
+							vertices  = [ ],
+							triangles = [ ];
 
-						if (convex ())
+						for (var k = 0; k < numCapPoints; ++ k)
 						{
-							Vector3f normal = math::normal (points [INDEX (j, 0)],
-							                                points [INDEX (j, 1)],
-							                                points [INDEX (j, 2)]);
-
-							if (not ccw ())
-								normal .negate ();
-
-							for (size_t k = 0; k < numCapPoints; ++ k)
-							{
-								Vector2f t = (crossSection () [k] - min) / capMax;
-								getTexCoords () [0] .emplace_back (t .x (), t .y (), 0, 1);
-								getNormals () .emplace_back (normal);
-								getVertices () .emplace_back (points [INDEX (j, k)]);
-							}
-
-							addElements (getVertexMode (numCapPoints), numCapPoints);
+							var point = points [INDEX (j, k)];
+							point .texCoord = Vector2 .subtract (crossSection [k] .getValue (), min) .divide (capMax);
+							vertices .push (point);
 						}
+
+						if (this .convex_ .getValue ())
+							this .triangulateConvexPolygon (vertices, triangles);
+
 						else
-						{
-							Tessellator tessellator;
-							tessellator .begin_polygon ();
-							tessellator .begin_contour ();
+							this .triangulatePolygon (vertices, triangles);
 
-							for (size_t k = 0; k < numCapPoints; ++ k)
-								tessellator .add_vertex (points [INDEX (j, k)], INDEX (j, k), k);
+						var normal = Triangle3 .normal (vertices [triangles [0]],
+						                                vertices [triangles [1]],
+						                                vertices [triangles [2]]);
 
-							tessellator .end_contour ();
-							tessellator .end_polygon ();
+						if (cw)
+							normal .negate ();
 
-							tessellateCap (tessellator, points, min, capMax);
-						}
+						this .addCap (texCoords, normal, vertices, triangles);
 					}
 				}
-
-				setSolid (solid ());
-				setCCW (ccw ());
-				setTextureCoordinate (nullptr);
-
-				#undef INDEX
-			*/
 
 				this .setSolid (this .solid_ .getValue ());
 				this .setCCW (this .ccw_ .getValue ());
 				this .setCurrentTexCoord (null);
+			},
+			addCap: function (texCoords, normal, vertices, triangles)
+			{
+				for (var i = 0; i < triangles .length; i += 3)
+				{
+					var
+						p0 = vertices [triangles [i]],
+						p1 = vertices [triangles [i + 1]],
+						p2 = vertices [triangles [i + 2]],
+						t0 = p0 .texCoord,
+						t1 = p1 .texCoord,
+						t2 = p2 .texCoord;
+
+					texCoords .push (t0 .x, t0 .y, 0, 1);
+					texCoords .push (t1 .x, t1 .y, 0, 1);
+					texCoords .push (t2 .x, t2 .y, 0, 1);
+
+					this .addNormal (normal);
+					this .addNormal (normal);
+					this .addNormal (normal);
+					
+					this .addVertex (p0);
+					this .addVertex (p1);
+					this .addVertex (p2);
+				}
+			},
+			triangulatePolygon: function (vertices, triangles)
+			{
+				try
+				{
+					// Find first two convex edges.
+
+					for (var i = 0, length = vertices .length - 2; i < length; ++ i)
+					{
+						var
+							p0 = vertices [i],
+							p1 = vertices [i + 1],
+							p2 = vertices [i + 2];
+
+						var
+							hAxis = Vector3 .subtract (p0, p1),
+							xAxis = Vector3 .subtract (p2, p1);
+
+						if (hAxis .dot (xAxis) > 0)
+							break;
+					}
+
+					// Transform vertices to 2D space.
+
+					var
+						zAxis = Vector3 .cross (xAxis, hAxis),
+						yAxis = Vector3 .cross (zAxis, xAxis);
+
+					xAxis .normalize ();
+					yAxis .normalize ();
+					zAxis .normalize ();
+
+					var matrix = new Matrix4 (xAxis .x, xAxis .y, xAxis .z, 0,
+					                          yAxis .x, yAxis .y, yAxis .z, 0,
+					                          zAxis .x, zAxis .y, zAxis .z, 0,
+					                          p0 .x, p0 .y, p0 .z, 1);
+
+					matrix .inverse ();
+
+					var contour = [ ];
+
+					for (var i = 0; i < vertices .length; ++ i)
+					{
+						var point = matrix .multVecMatrix (vertices [i] .copy ());
+						point .index = i;
+						contour .push (point);
+					}
+
+					// Triangulate polygon.
+		
+					var context = new poly2tri .SweepContext (contour);
+		
+					context .triangulate ();
+
+					var ts = context .getTriangles ();
+
+					for (var i = 0; i < ts .length; ++ i)
+						triangles .push (ts [i] .getPoint (0) .index, ts [i] .getPoint (1) .index, ts [i] .getPoint (2) .index);
+				}
+				catch (error)
+				{
+					this .triangulateConvexPolygon (vertices, triangles);
+				}
+			},
+			triangulateConvexPolygon: function (vertices, triangles)
+			{
+				// Fallback: Very simple triangulation for convex polygons.
+				for (var i = 1, length = vertices .length - 1; i < length; ++ i)
+					triangles .push (0, i, i + 1);
 			},
 		});
 

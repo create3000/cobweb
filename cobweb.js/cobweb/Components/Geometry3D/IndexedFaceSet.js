@@ -271,16 +271,28 @@ function ($,
 						coordIndex = this .coordIndex_ .getValue (),
 						coord      = this .getCoord ();
 
+					// Find first two convex edges.
+
+					for (var i = 0, length = vertices .length - 2; i < length; ++ i)
+					{
+						var
+							p0 = coord .getPoint (coordIndex [vertices [i + 0]] .getValue ()),
+							p1 = coord .getPoint (coordIndex [vertices [i + 1]] .getValue ()),
+							p2 = coord .getPoint (coordIndex [vertices [i + 2]] .getValue ());
+
+						var
+							hAxis = Vector3 .subtract (p0, p1),
+							xAxis = Vector3 .subtract (p2, p1);
+
+						if (hAxis .dot (xAxis) > 0)
+							break;
+					}
+
 					// Transform vertices to 2D space.
 
-					var p0 = coord .getPoint (coordIndex [vertices [0]] .getValue ());
-					var p1 = coord .getPoint (coordIndex [vertices [1]] .getValue ());
-					var p2 = coord .getPoint (coordIndex [vertices [2]] .getValue ());
-
-					var hAxis = Vector3 .subtract (p0, p1);
-					var xAxis = Vector3 .subtract (p2, p1);
-					var zAxis = Vector3 .cross (xAxis, hAxis);
-					var yAxis = Vector3 .cross (zAxis, xAxis);
+					var
+						zAxis = Vector3 .cross (xAxis, hAxis),
+						yAxis = Vector3 .cross (zAxis, xAxis);
 
 					xAxis .normalize ();
 					yAxis .normalize ();
@@ -351,7 +363,7 @@ function ($,
 			createNormals: function (polygons)
 			{
 				var
-					cw          = ! this .ccw_ .getValue ();
+					cw          = ! this .ccw_ .getValue (),
 					normals     = [ ],
 					normalIndex = [ ],
 					normal      = null,
@@ -383,21 +395,26 @@ function ($,
 						default:
 						{
 							// Determine polygon normal.
-							// Or use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal
+							// We use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal here:
 
 							normal = new Vector3 (0, 0, 0);
+							
+							var next = coord .getPoint (coordIndex [vertices [0]] .getValue ());
 
 							for (var i = 0, length = vertices .length; i < length; ++ i)
 							{
-								var n = coord .getNormal (coordIndex [vertices [i]] .getValue (),
-									                       coordIndex [vertices [(i + 1) % length]] .getValue (),
-									                       coordIndex [vertices [(i + 2) % length]] .getValue ());
+								var
+									current = next,
+									next    = coord .getPoint (coordIndex [vertices [(i + 1) % length]] .getValue ());
 
-								normal .add (n);
+								normal .x += (current .y - next .y) * (current .z + next .z);
+								normal .y += (current .z - next .z) * (current .x + next .x);
+								normal .z += (current .x - next .x) * (current .y + next .y);
 							}
-
-							normal .normalize ();
 						}
+
+						normal .normalize ();
+						break;
 					}
 
 					// Add a normal index for each point.

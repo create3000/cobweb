@@ -29,7 +29,7 @@ function ($,
 
 			this .addType (X3DConstants .ImageTexture);
 
-			this .urlStack = null;
+			this .urlStack = new MFString ();
 		}
 
 		ImageTexture .prototype = $.extend (new X3DTexture2DNode (),
@@ -69,17 +69,13 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .urlStack = null;
+				this .urlStack .setValue (this .url_);
 				this .loadNext ();
 			},
 			loadNext: function ()
 			{
-				if (! this .urlStack)
-					this .urlStack = this .url_ .copy ();
-
 				if (this .urlStack .length === 0)
 				{
-					this .urlStack = null;
 					this .clear ();
 					this .setLoadState (X3DConstants .FAILED_STATE);
 					return;
@@ -100,55 +96,60 @@ function ($,
 			},
 			setError: function (URL)
 			{
-				this .getBrowser () .println ("Error loading image URL '" + URL + "'.");
+				//this .getBrowser () .println ("Error loading image URL '" + URL + "'.");
 				this .loadNext ();
 			},
 			setImage: function (image)
 			{
-				this .urlStack = null;
-
-				var width  = image .width;
-				var height = image .height;
-
-				// Determine image alpha.
-
-				var canvas = $("<canvas>") [0];
-	
-				canvas .width  = width;
-				canvas .height = height;
-
-				var cx = canvas .getContext ("2d");
-				cx .drawImage (image, 0, 0);
-
-				var data   = cx .getImageData (0, 0, image .width, image .height) .data;
-				var opaque = true;
-
-				for (var i = 0; i < data .length && opaque; i += 4)
-					opaque &= (data [i + 3] === 255);
-
-				// Scale image.
-
-				if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
+				try
 				{
-					width  = Algorithm .nextPowerOfTwo (width);
-					height = Algorithm .nextPowerOfTwo (height);
+					var width  = image .width;
+					var height = image .height;
 
-					cx .clearRect (0, 0, canvas .width, canvas .height);
+					// Determine image alpha.
 
+					var canvas = $("<canvas>") [0];
+		
 					canvas .width  = width;
 					canvas .height = height;
 
-					cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
-					
-					data = cx .getImageData (0, 0, width, height) .data;
-				}
+					var cx = canvas .getContext ("2d");
+					cx .drawImage (image, 0, 0);
 
-				setTimeout (function ()
-				{
-					this .setTexture (width, height, ! opaque, new Uint8Array (data), true);
-					this .setLoadState (X3DConstants .COMPLETE_STATE);
+					var data   = cx .getImageData (0, 0, image .width, image .height) .data;
+					var opaque = true;
+
+					for (var i = 0; i < data .length && opaque; i += 4)
+						opaque &= (data [i + 3] === 255);
+
+					// Scale image.
+
+					if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
+					{
+						width  = Algorithm .nextPowerOfTwo (width);
+						height = Algorithm .nextPowerOfTwo (height);
+
+						cx .clearRect (0, 0, canvas .width, canvas .height);
+
+						canvas .width  = width;
+						canvas .height = height;
+
+						cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
+						
+						data = cx .getImageData (0, 0, width, height) .data;
+					}
+
+					setTimeout (function ()
+					{
+						this .setTexture (width, height, ! opaque, new Uint8Array (data), true);
+						this .setLoadState (X3DConstants .COMPLETE_STATE);
+					}
+					.bind (this), 16);
 				}
-				.bind (this), 16);
+				catch (error)
+				{
+					this .setError (image .src);
+				}
 			},
 		});
 

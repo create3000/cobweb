@@ -457,8 +457,11 @@ function ($, Vector3, Algorithm)
 		normalize: function (quat)
 		{
 			var
-				copy = Object .create (this .prototype),
-				x = quat .x, y = quat .y, z = quat .z, w = quat .w,
+				copy   = Object .create (this .prototype),
+				x      = quat .x,
+				y      = quat .y,
+				z      = quat .z,
+				w      = quat .w,
 				length = Math .sqrt (x * x + y * y + z * z + w * w);
 
 			if (length)

@@ -284,8 +284,11 @@ function ($, Algorithm)
 		normalize: function (vector)
 		{
 			var
-				copy = Object .create (this .prototype),
-				x = vector .x, y = vector .y, z = vector .z, w = vector .w,
+				copy   = Object .create (this .prototype),
+				x      = vector .x,
+				y      = vector .y,
+				z      = vector .z,
+				w      = vector .w,
 				length = Math .sqrt (x * x + y * y + z * z + w * w);
 
 			if (length)

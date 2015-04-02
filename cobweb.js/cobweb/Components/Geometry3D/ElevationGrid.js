@@ -219,8 +219,8 @@ function ($,
 						normal .negate ();
 
 					normals .push (normal);
-					normals .push (normal .copy ());
-					normals .push (normal .copy ());
+					normals .push (normal);
+					normals .push (normal);
 				}
 
 				return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue ());
@@ -293,7 +293,7 @@ function ($,
 					colorNode       = this .getColor (),
 					texCoordNode    = this .getTexCoord (),
 					normalNode      = this .getNormal (),
-					points          = this .createPoints ()
+					points          = this .createPoints (),
 					face            = 0;
 
 				// Vertex attribute

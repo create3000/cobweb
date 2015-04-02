@@ -1172,6 +1172,7 @@
     <None Include="tests\Examples\BIC\building.x3d" />
     <None Include="cobweb\Debug.js" />
     <None Include="cobweb\Browser\Geometry3D\ConeOptions.js" />
+    <None Include="tests\Components\Geometry3D\Extrusion\extrude1.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1206,5 +1207,6 @@
     <Folder Include="images\" />
     <Folder Include="tests\Components\Scripting\" />
     <Folder Include="cobweb\Browser\Scripting\" />
+    <Folder Include="tests\Components\Geometry3D\Extrusion\" />
   </ItemGroup>
 </Project>

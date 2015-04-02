@@ -275,7 +275,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 
 			console .log (string);
 		},
-		println: function (string)
+		println: function ()
 		{
 			var string = "";
 
