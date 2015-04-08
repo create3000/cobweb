@@ -1173,6 +1173,10 @@
     <None Include="cobweb\Debug.js" />
     <None Include="cobweb\Browser\Geometry3D\ConeOptions.js" />
     <None Include="tests\Components\Geometry3D\Extrusion\extrude1.x3d" />
+    <None Include="cobweb\Browser\PointingDeviceSensor\PointingDevice.js" />
+    <None Include="standard\Math\Geometry\Line3.js" />
+    <None Include="tests\Components\PointingDeviceSensor\test.x3d" />
+    <None Include="standard\Math\Algorithms\MergeSort.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1208,5 +1212,6 @@
     <Folder Include="tests\Components\Scripting\" />
     <Folder Include="cobweb\Browser\Scripting\" />
     <Folder Include="tests\Components\Geometry3D\Extrusion\" />
+    <Folder Include="tests\Components\PointingDeviceSensor\" />
   </ItemGroup>
 </Project>

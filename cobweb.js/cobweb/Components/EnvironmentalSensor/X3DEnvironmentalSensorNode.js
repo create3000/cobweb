@@ -37,10 +37,10 @@ function ($,
 		set_enabled__: function ()
 		{
 			if (this .enabled_ .getValue () && this .isLive_ .getValue () && this .getExecutionContext () .isLive_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
-				this .getBrowser () .getSensors () .addInterest (this, "update");
+				this .getBrowser () .sensors () .addInterest (this, "update");
 
 			else
-				this .getBrowser () .getSensors () .removeInterest (this, "update");
+				this .getBrowser () .sensors () .removeInterest (this, "update");
 		},
 		update: function () { },
 	});

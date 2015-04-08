@@ -7,8 +7,11 @@ define ([
 	"cobweb/Components/Shape/X3DShapeNode",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function ($,
           Fields,
@@ -17,8 +20,11 @@ function ($,
           X3DShapeNode, 
           TraverseType,
           X3DConstants,
+          Algorithm,
           Box3,
-          Vector3)
+          Vector3,
+          Matrix4,
+          QuickSort)
 {
 	with (Fields)
 	{
@@ -60,6 +66,12 @@ function ($,
 				this .bboxSize_   .addInterest (this, "set_bbox__");
 				this .bboxCenter_ .addInterest (this, "set_bbox__");
 
+				this .intersections      = [ ];
+				this .intersectionSorter = new QuickSort (this .intersections, function (lhs, rhs)
+	         {
+	            return lhs .point .z > rhs .point .z;
+				});
+
 				this .set_bbox__ ();
 			},
 			set_bbox__: function ()
@@ -96,7 +108,7 @@ function ($,
 				{
 					case TraverseType .POINTER:
 					{
-						//this .pointer ();
+						this .pointer ();
 						break;
 					}
 					case TraverseType .NAVIGATION:
@@ -113,6 +125,56 @@ function ($,
 							this .getCurrentLayer () .addShape (this);
 
 						break;
+					}
+				}
+			},
+			pointer: function ()
+			{
+				if (this .getGeometry ())
+				{
+					if (this .getGeometry () .isLineGeometry ())
+						return;
+
+					var
+						browser            = this .getBrowser (),
+						modelViewMatrix    = browser .getModelViewMatrix () .get (),
+						invModelViewMatrix = Matrix4 .inverse (modelViewMatrix),
+						hitRay             = browser .getHitRay () .copy () .multLineMatrix (invModelViewMatrix);
+
+					this .intersections .length = 0;
+
+					if (this .getGeometry () .intersectsLine (hitRay, this .intersections))
+					{
+						// Finally we have intersections and must now find the closest hit in front of the camera.
+
+						// Transform hitPoints to absolute space.
+						for (var i = 0; i < this .intersections .length; ++ i)
+							modelViewMatrix .multVecMatrix (this .intersections [i] .point);
+
+						this .intersectionSorter .sort (0, this .intersections .length);
+
+						// Find first point that is not greater than near plane;
+						var index = Algorithm .lowerBound (this .intersections, 0, this .intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
+						                                   function (lhs, rhs)
+						                                   {
+						                                      return lhs .point .z > rhs;
+						                                   });
+
+						// There are only intersections behind the camera.
+						if (index === this .intersections .length)
+							return;
+
+						try
+						{
+							// Transform hitNormal to absolute space.
+							invModelViewMatrix .multMatrixDir (this .intersections [index] .normal) .normalize ();
+						}
+						catch (error)
+						{
+							return;
+						}
+
+						browser .addHit (modelViewMatrix .copy (), this .intersections [index], this, this .getCurrentLayer ());
 					}
 				}
 			},

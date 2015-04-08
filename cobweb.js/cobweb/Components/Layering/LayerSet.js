@@ -157,8 +157,8 @@ function ($,
 					for (var i = 0; i < this .layerNodes .length; ++ i)
 					{
 						var layerNode = this .layerNodes [i];
-					
-						//this .getBrowser () .setLayerNumber (layerNumber ++);
+
+						this .getBrowser () .setLayerNumber (layerNumber ++);
 						layerNode .traverse (type);
 					}
 				}

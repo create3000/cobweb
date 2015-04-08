@@ -13,6 +13,8 @@ function ($,
 		X3DNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DPrototypeInstance);
+
+		this .setExtendedEventHandling (false);
 	}
 
 	X3DPrototypeInstance .prototype = $.extend (new X3DNode (),

@@ -19,6 +19,22 @@ function ($)
 			this .getCanvas () .bind ("keydown.X3DKeyDeviceSensorContext", this .keydown .bind (this));
 			this .getCanvas () .bind ("keyup.X3DKeyDeviceSensorContext",   this .keyup   .bind (this));
 		},
+		hasShiftKey: function ()
+		{
+			return this .shiftKey;
+		},
+		hasCtrlKey: function ()
+		{
+			return this .ctrlKey;
+		},
+		hasAltKey: function ()
+		{
+			return this .altKey;
+		},
+		hasAltGrKey: function ()
+		{
+			return this .altGrKey;
+		},
 		keydown: function (event)
 		{
 			event .preventDefault ();

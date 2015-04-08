@@ -98,7 +98,24 @@ function ($,
 			{
 				this .push ();
 
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				switch (type)
+				{
+					case TraverseType .POINTER:
+					{
+						var
+							viewVolumes = this .getCurrentLayer () .getViewVolumeStack (),
+							viewVolume  = viewVolumes [viewVolumes .length - 1];
+
+						if (! this .getBrowser () .isPointerInRectangle (viewVolume .getScissor ()))
+							return;
+
+						X3DGroupingNode .prototype .traverse .call (this, type);
+						break;
+					}
+					default:
+						X3DGroupingNode .prototype .traverse .call (this, type);
+						break;
+				}
 
 				this .pop ();
 			},

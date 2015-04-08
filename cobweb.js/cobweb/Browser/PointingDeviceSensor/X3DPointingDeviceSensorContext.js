@@ -1,8 +1,36 @@
 
 define ([
+	"jquery",
+	"cobweb/Browser/PointingDeviceSensor/PointingDevice",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithms/MergeSort",
 ],
-function ()
+function (jquery,
+          PointingDevice,
+          TraverseType,
+          X3DConstants,
+          ViewVolume,
+          Vector2,
+          Matrix4,
+          MergeSort)
 {
+	function set_difference (lhs, rhs, result)
+	{
+		for (var key in lhs)
+		{
+			if (key in rhs)
+				continue;
+
+			result [key] = lhs [key];
+		}
+
+		return result;
+	}
+
 	function X3DPointingDeviceSensorContext ()
 	{
 	}
@@ -12,13 +40,28 @@ function ()
 		initialize: function ()
 		{
 			this .getCanvas () .attr ("tabindex", 8803068);
-			this .getCanvas () .bind ("mousedown.X3DPointingDeviceSensorContext", this .mousedown .bind (this));
-
 			this .setCursor ("DEFAULT");
+			
+			this .pointingDevice = new PointingDevice (this);
+			this .pointingDevice .setup ();
+
+			this .pointer        = new Vector2 (0, 0);
+			this .hits           = [ ];
+			this .enabledSensors = [{ }];
+			this .selectedLayer  = null;
+			this .overSensors    = { };
+			this .activeSensors  = { };
+
+			this .hitPointSorter = new MergeSort (this .hits, function (lhs, rhs) { return lhs .intersection .point .z < rhs .intersection .point .z; });
+			this .layerSorter    = new MergeSort (this .hits, function (lhs, rhs) { return lhs .layerNumber < rhs .layerNumber; });
+
+			this .pickingTime = 0;
 		},
-		setCursor: function (type)
+		setCursor: function (value)
 		{
-			switch (type)
+			this .cursorType = value;
+
+			switch (value)
 			{
 				case "HAND":
 					this .getCanvas () .css ("cursor", "pointer");
@@ -29,17 +72,172 @@ function ()
 				case "CROSSHAIR":
 					this .getCanvas () .css ("cursor", "crosshair");
 					break;
+				case "WAIT":
+					this .getCanvas () .css ("cursor", "wait");
+					break;
 				default:
 					this .getCanvas () .css ("cursor", "default");
 					break;
 			}
 		},
-		mousedown: function (event)
+		getCursor: function ()
 		{
-			event .preventDefault ();
-			//event .stopImmediatePropagation (); // Keeps the rest of the handlers from being executed
+			return this .cursorType;
+		},
+		buttonPressEvent: function (x, y)
+		{
+			this .touch (x, y);
 
-			this .getCanvas () .focus ();	
+			if (this .hits .length === 0)
+				return false;
+
+			var nearestHit = this .hits [this .hits .length - 1];
+
+			if (nearestHit .sensors .length === 0)
+				return false;
+
+			this .selectedLayer = nearestHit .layer;
+			this .activeSensors = nearestHit .sensors;
+
+			for (var key in this .activeSensors)
+				this .activeSensors [key] .set_active__ (nearestHit, true);
+
+			return true;
+		},
+		buttonReleaseEvent: function ()
+		{
+			this .selectedLayer = null;
+
+			for (var key in this .activeSensors)
+				this .activeSensors [key] .set_active__ (null, false);
+
+			this .activeSensors = { };
+
+			// Selection
+
+			return true;
+		},
+		motionNotifyEvent: function (x, y)
+		{
+			this .touch (x, y);
+
+			this .motion ();
+
+			return this .hits .length && ! $.isEmptyObject (this .hits [this .hits .length - 1] .sensors);
+		},
+		leaveNotifyEvent: function ()
+		{
+		},
+		isPointerInRectangle: function (rectangle)
+		{
+			return this .pointer .x > rectangle .x &&
+			       this .pointer .x < rectangle .x + rectangle .z &&
+			       this .pointer .y > rectangle .y &&
+			       this .pointer .y < rectangle .y + rectangle .w;
+		},
+		setLayerNumber: function (value)
+		{
+			this .layerNumber = value;
+		},
+		getSelectedLayer: function ()
+		{
+			return this .selectedLayer;
+		},
+		setHitRay: function (viewport)
+		{
+			try
+			{
+				this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix (), viewport);
+			}
+			catch (error)
+			{
+				this .hitRay = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+			}
+		},
+		getHitRay: function ()
+		{
+			return this .hitRay;
+		},
+		getSensors: function ()
+		{
+			return this .enabledSensors;
+		},
+		addHit: function (modelViewMatrix, intersection, shape, layer)
+		{
+			this .hits .push ({
+				pointer:         this .pointer,
+				modelViewMatrix: modelViewMatrix,
+				hitRay:          this .hitRay,
+				intersection:    intersection,
+				sensors:         this .enabledSensors [this .enabledSensors .length - 1],
+				shape:           shape,
+				layer:           layer,
+				layerNumber:     this .layerNumber,
+			});
+		},
+		touch: function (x, y)
+		{
+			var t0 = performance .now ();
+		
+			this .pointer .set (x, y);
+
+			// Clear hits.
+
+			this .hits .length = 0;
+
+			// Pick.
+			
+			this .getWorld () .traverse (TraverseType .POINTER);
+
+			// Picking end.
+
+			this .hitPointSorter .sort (0, this .hits .length);
+			this .layerSorter    .sort (0, this .hits .length);
+
+			this .addBrowserEvent ();
+			this .pickingTime = performance .now () - t0;
+		},
+		motion: function ()
+		{
+			var nearestHit = this .hits [this .hits .length - 1];
+		
+			// Set isOver to FALSE for appropriate nodes
+
+			if (this .hits .length)
+				var difference = set_difference (this .overSensors, nearestHit .sensors, { });
+
+			else
+				var difference = $.extend ({ }, this .overSensors);
+
+			for (var key in difference)
+				difference [key] .set_over__ (nearestHit, false);
+
+			// Set isOver to TRUE for appropriate nodes
+
+			if (this .hits .length)
+			{
+				this .overSensors = nearestHit .sensors;
+
+				for (var key in this .overSensors)
+					this .overSensors [key] .set_over__ (nearestHit, true);
+			}
+			else
+				this .overSensors = { };
+
+			// Forward motion event to active drag sensor nodes
+
+			if (this .hits .length)
+			{
+				for (var key in this .activeSensors)
+				{
+					var dragSensorNode = this .activeSensors [key];
+
+					if (dragSensorNode .getType () .indexOf (X3DConstants .X3DDragSensorNode) === -1)
+						continue;
+
+					dragSensorNode .set_motion__ (nearestHit);
+				}
+			}
 		},
 	};
 

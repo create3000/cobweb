@@ -23,7 +23,7 @@ function (Matrix4, Vector3)
 				var max = arguments [1];
 
 				size   = Vector3 .subtract (max, min);
-				center = max .add (min) .divide (2);
+				center = Vector3 .add (max, min) .divide (2);
 
 				// Proceed with next case:
 			}
@@ -40,6 +40,7 @@ function (Matrix4, Vector3)
 
 	Box3 .prototype =
 	{
+		constructor: Box3,
 		copy: function ()
 		{
 			var copy = Object .create (Box3 .prototype);

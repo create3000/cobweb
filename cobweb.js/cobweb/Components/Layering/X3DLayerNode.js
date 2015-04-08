@@ -11,7 +11,6 @@ define ([
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DNode,
@@ -23,8 +22,7 @@ function ($,
           Background,
           X3DCast,
           TraverseType,
-          X3DConstants,
-          Matrix4)
+          X3DConstants)
 {
 	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
 	{
@@ -183,7 +181,31 @@ function ($,
 		},
 		pointer: function ()
 		{
-		
+			if (this .isPickable_ .getValue ())
+			{
+				var
+					viewVolumes = this .getViewVolumeStack (),
+					viewVolume  = viewVolumes [viewVolumes .length - 1];
+
+				if (this .getBrowser () .getSelectedLayer ())
+				{
+					if (this .getBrowser () .getSelectedLayer () !== this)
+						return;
+				}
+				else
+				{
+					if (! this .getBrowser () .isPointerInRectangle (viewVolume .getScissor ()))
+						return;
+				}
+
+				this .getViewpoint () .reshape ();
+				this .getViewpoint () .transform ();
+
+				this .getBrowser () .setHitRay (viewVolume .getScissor ());
+				this .collect (TraverseType .POINTER);
+
+				this .getBrowser () .getGlobalLights () .length = 0;
+			}
 		},
 		camera: function ()
 		{

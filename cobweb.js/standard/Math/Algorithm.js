@@ -76,6 +76,32 @@ define (function ()
 		{
 			return lhs < rhs;
 		},
+		lowerBound: function (array, first, last, value, comp)
+		{
+			if (! comp)
+				comp = Algorithm .less;
+
+			var
+				index = 0,
+				step  = 0,
+				count = last - first;
+
+			while (count > 0)
+			{
+				step  = count >>> 1;
+				index = first + step;
+
+				if (comp (array [index], value))
+				{
+					first  = ++ index;
+					count -= step + 1;
+				}
+				else
+					count = step;
+			}
+
+			return first;
+		},
 		upperBound: function (array, first, last, value, comp)
 		{
 			if (! comp)

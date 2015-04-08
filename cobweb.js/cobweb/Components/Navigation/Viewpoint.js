@@ -61,10 +61,6 @@ function ($,
 
 				return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
 			},
-			getProjectionMatrix: function (zNear, zFar, viewport)
-			{
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport);
-			},
 			getScreenScale: function (distance, viewport)
 			{
 				var width  = viewport [2];
@@ -78,7 +74,11 @@ function ($,
 					size /= width;
 
 				return new Vector3 (size, size, size);
-			}
+			},
+			getProjectionMatrix: function (zNear, zFar, viewport)
+			{
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport);
+			},
 		});
 
 		return Viewpoint;

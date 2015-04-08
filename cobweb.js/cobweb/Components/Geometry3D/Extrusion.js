@@ -310,16 +310,17 @@ function ($,
 							p3 = points [i3],
 							p4 = points [i4];
 
-						// Use quad normal calculation as it makes nicer normals.
-
-						var
-							normal1 = Triangle3 .normal (p1, p2, p3),
-							normal2 = Triangle3 .normal (p1, p3, p4);
-
 						if (cw)
 						{
-							normal1 .negate ();
-							normal2 .negate ();
+							var
+								normal1 = Triangle3 .normal (p3, p2, p1),
+								normal2 = Triangle3 .normal (p4, p3, p1);
+						}
+						else
+						{
+							var
+								normal1 = Triangle3 .normal (p1, p2, p3),
+								normal2 = Triangle3 .normal (p1, p3, p4);
 						}
 
 						// Triangle one

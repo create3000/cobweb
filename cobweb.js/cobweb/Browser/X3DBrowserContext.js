@@ -92,8 +92,11 @@ function ($,
 		constructor: X3DBrowserContext,
 		initialize: function ()
 		{
-			this .addChildren ("prepareEvents", new SFTime (),
-			                   "sensors",       new SFTime ());
+			this .addChildren ("initialized",   new SFTime (),
+			                   "shutdown",      new SFTime (),
+			                   "prepareEvents", new SFTime (),
+			                   "sensors",       new SFTime (),
+			                   "finished",      new SFTime ());
 
 			X3DBaseNode                    .prototype .initialize .call (this);
 			X3DCoreContext                 .prototype .initialize .call (this);
@@ -113,13 +116,25 @@ function ($,
 			X3DTimeContext                 .prototype .initialize .call (this);
 			X3DRoutingContext              .prototype .initialize .call (this);
 		},
+		initialized: function ()
+		{
+			return this .initialized_;
+		},
+		shutdown: function ()
+		{
+			return this .shutdown_;
+		},
 		prepareEvents: function ()
 		{
 			return this .prepareEvents_;
 		},
-		getSensors: function ()
+		sensors: function ()
 		{
 			return this .sensors_;
+		},
+		finished: function ()
+		{
+			return this .finished_;
 		},
 		getWorld: function ()
 		{
@@ -165,6 +180,8 @@ function ($,
 			this .world .traverse (TraverseType .DISPLAY);
 			this .browserTime = performance .now () - t0;
 			this .systemTime  = performance .now ();
+
+			this .finished_ .processInterests ();
 		},
 	});
 

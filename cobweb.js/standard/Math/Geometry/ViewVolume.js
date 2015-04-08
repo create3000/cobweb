@@ -1,13 +1,14 @@
 
 define ([
 	"jquery",
+	"standard/Math/Geometry/Line3",
 	"standard/Math/Geometry/Plane3",
 	"standard/Math/Geometry/Triangle3",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 ],
-function ($, Plane3, Triangle3, Vector3, Vector4, Matrix4)
+function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 {
 	function ViewVolume (projectionMatrix, viewport, scissor)
 	{
@@ -52,6 +53,7 @@ function ($, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 	ViewVolume .prototype =
 	{
+		constructor: ViewVolume,
 		getViewport: function ()
 		{
 			return this .viewport;
@@ -114,11 +116,12 @@ function ($, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		},
 		unProjectLine: function (winx, winy, modelview, projection, viewport)
 		{
-			var matrix = Matrix4 .multRight (modelview, projection);
-			var near   = ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport);
-			var far    = ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport);
+			var
+				matrix = Matrix4 .multRight (modelview, projection) .inverse (),
+				near   = ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport),
+				far    = ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport);
 
-			return new Line3 (near, far, { points: true });
+			return new Line3 .Points (near, far);
 		},
 		projectPoint: function (point, modelview, projection, viewport)
 		{
@@ -143,14 +146,15 @@ function ($, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		},
 		projectLine: function (line, modelview, projection, viewport)
 		{
-			var matrix = Matrix4 .multRight (modelview, projection);
-			var point1 = ViewVolume .projectPointMatrix (line .point (), matrix, viewport);
-			var point2 = ViewVolume .projectPointMatrix (Vector3 .add (line .point (), Vector3 .multiply (line .direction (), 1e9)), matrix, viewport);
+			var
+				matrix = Matrix4 .multRight (modelview, projection),
+				point1 = ViewVolume .projectPointMatrix (line .point (), matrix, viewport),
+				point2 = ViewVolume .projectPointMatrix (Vector3 .add (line .point (), Vector3 .multiply (line .direction (), 1e9)), matrix, viewport);
 
 			point1 .z = 0;
 			point2 .z = 0;
 
-			return new Line3 (point1, point2, { points: true });
+			return new Line3 .Points (point1, point2);
 		},
 	});
 

@@ -59,7 +59,7 @@ function ($,
 
 				var
 					prepareEvents = Object .keys (browser .prepareEvents () .getInterests ()) .length,
-					sensors       = Object .keys (browser .getSensors () .getInterests ()) .length;
+					sensors       = Object .keys (browser .sensors () .getInterests ()) .length;
 
 				for (var i = 0; i < layers .length; ++ i)
 				{
@@ -81,6 +81,7 @@ function ($,
 				text += "Camera:     " + browser .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Traverse:   " + traverseTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Draw:       " + drawTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Picking:    " + browser .pickingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";
 				text += "Sensors:    " + (prepareEvents + sensors) + "\n";
 

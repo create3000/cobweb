@@ -32,6 +32,10 @@ function ($, X3DChildObject)
 		{
 			return this .browser;
 		},
+		setExtendedEventHandling: function (value)
+		{
+			this .extendedEventHandling = value;
+		},
 		addEvent: function (field)
 		{
 			if (field .getTainted ())

@@ -5,14 +5,35 @@ define ([
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Plane3",
 ],
-function ($, Fields, X3DNode, X3DConstants, Color3, Vector3, Matrix4, Box3)
+function ($,
+          Fields,
+          X3DNode,
+          X3DConstants,
+          Color3,
+          Vector2,
+          Vector3,
+          Matrix4,
+          Box3,
+          Plane3)
 {
 	with (Fields)
 	{
+		// Box normals for bbox / line intersection.
+		var boxNormals = [
+			new Vector3 (0,  0,  1), // front
+			new Vector3 (0,  0, -1), // back
+			new Vector3 (0,  1,  0), // top
+			new Vector3 (0, -1,  0), // bottom
+			new Vector3 (1,  0,  0)  // right
+			// left: We do not have to test for left.
+		];
+
 		function X3DGeometryNode (browser, executionContext)
 		{
 			X3DNode .call (this, browser, executionContext);
@@ -56,6 +77,12 @@ function ($, Fields, X3DNode, X3DConstants, Color3, Vector3, Matrix4, Box3)
 				this .normalBuffer    = gl .createBuffer ();
 				this .vertexBuffer    = gl .createBuffer ();
 				this .primitiveMode   = gl .TRIANGLES;
+				this .planes          = [ ];
+				this .intersection    = new Vector3 (0, 0, 0);
+				this .uvt             = new Vector3 (0, 0, 0);
+				this .v0              = new Vector3 (0, 0, 0);
+				this .v1              = new Vector3 (0, 0, 0);
+				this .v2              = new Vector3 (0, 0, 0);
 			},
 			isTransparent: function ()
 			{
@@ -77,6 +104,10 @@ function ($, Fields, X3DNode, X3DConstants, Color3, Vector3, Matrix4, Box3)
 			getExtents: function ()
 			{
 				return [this .min, this .max];
+			},
+			getMatrix: function ()
+			{
+				return Matrix4 .Identity;
 			},
 			setPrimitiveMode: function (value)
 			{
@@ -252,6 +283,9 @@ function ($, Fields, X3DNode, X3DConstants, Color3, Vector3, Matrix4, Box3)
 
 				if (! this .isLineGeometry ())
 				{
+					for (var i = 0; i < 5; ++ i)
+						this .planes [i] = new Plane3 (i % 2 ? this .min : this .max, boxNormals [i]);
+
 					if (this .texCoords .length === 0)
 						this .buildTexCoords ();
 				}
@@ -385,6 +419,125 @@ function ($, Fields, X3DNode, X3DConstants, Color3, Vector3, Matrix4, Box3)
 					for (var i = 0; i < vertexAttribIndex; ++ i)
 						gl .disableVertexAttribArray (i);
 				}
+			},
+			intersectsLine: function (line, intersections)
+			{
+				try
+				{
+					var intersected = false;
+
+					this .transformLine (line); // Transform line with matrix from screen nodes.
+
+					if (this .intersectsBBox (line))
+					{
+						//var modelViewMatrix = Matrix4 .multRight (this .getMatrix (), this .getBrowser () .getModelViewMatrix () .get ()) // This matrix is for clipping only.
+
+						var
+							texCoords = this .texCoords [0],
+							normals   = this .normals,
+							vertices  = this .vertices,
+							uvt       = this .uvt,
+							v0        = this .v0,
+							v1        = this .v1,
+							v2        = this .v2;
+
+						for (var i = 0, length = this .count; i < length; i += 3)
+						{
+							var i4 = i * 4;
+
+							v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+							v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+							v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+
+							if (line .intersectsTriangle (v0, v1, v2, uvt))
+							{
+								// Get barycentric coordinates.
+
+								var
+									u = uvt .x,
+									v = uvt .y,
+									t = 1 - u - v;
+
+								// Determine vectors for X3DPointingDeviceSensors.
+
+								var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
+							                            t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+							                            t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+
+								//if (this .isClipped (point, modelViewMatrix))
+								//	return continue;
+
+								var texCoord = new Vector2 (t * texCoords [i4 + 0] + u * texCoords [i4 + 4] + v * texCoords [i4 + 8],
+								                            t * texCoords [i4 + 1] + u * texCoords [i4 + 5] + v * texCoords [i4 + 9]);
+
+								var i3 = i * 3;
+
+								var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
+								                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
+								                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
+
+								intersections .push ({ texCoord: texCoord, normal: normal, point: point });
+								intersected = true;
+							}
+						}
+					}
+
+					return intersected;
+				}
+				catch (error)
+				{
+					//console .log (error);
+					return false;
+				}
+			},
+			intersectsBBox: function (line)
+			{
+				var
+					planes       = this .planes,
+					min          = this .min,
+					max          = this .max,
+					intersection = this .intersection;
+
+				if (planes [0] .intersectsLine (line, intersection))
+				{
+					if (intersection .x >= min .x && intersection .x <= max .x &&
+					    intersection .y >= min .y && intersection .y <= max .y)
+						return true;
+				}
+
+				if (planes [1] .intersectsLine (line, intersection))
+				{
+					if (intersection .x >= min .x && intersection .x <= max .x &&
+					    intersection .y >= min .y && intersection .y <= max .y)
+						return true;
+				}
+
+				if (planes [2] .intersectsLine (line, intersection))
+				{
+					if (intersection .x >= min .x && intersection .x <= max .x &&
+					    intersection .z >= min .z && intersection .z <= max .z)
+						return true;
+				}
+
+				if (planes [3] .intersectsLine (line, intersection))
+				{
+					if (intersection .x >= min .x && intersection .x <= max .x &&
+					    intersection .z >= min .z && intersection .z <= max .z)
+						return true;
+				}
+
+				if (planes [4] .intersectsLine (line, intersection))
+				{
+					if (intersection .y >= min .y && intersection .y <= max .y &&
+					    intersection .z >= min .z && intersection .z <= max .z)
+						return true;
+				}
+
+				return false;
+			},
+			transformLine: function (line)
+			{
+				//line .multLineMatrix (Matrix4 .inverse (this .getMatrix ()));
 			},
 		});
 

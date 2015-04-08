@@ -93,7 +93,7 @@ function ($,
 		this .pointingDeviceSensors = [ ];
 		this .cameraObjects         = [ ];
 		this .localFogs             = [ ];
-		this .collectables          = [ ];
+		this .clipPlanes            = [ ];
 		this .childNodes            = [ ];
 	}
 
@@ -191,11 +191,11 @@ function ($,
 				                                             getId));
 			}
 
-			if (this .collectables .length)
+			if (this .clipPlanes .length)
 			{
-				this .collectables .splice (remove (collectables, 0, collectables .length,
-				                                    innerNodes,   0, innerNodes   .length,
-				                                    getId));
+				this .clipPlanes .splice (remove (clipPlanes, 0, clipPlanes .length,
+				                                  innerNodes, 0, innerNodes .length,
+				                                  getId));
 			}
 
 			if (this .childNodes .length)
@@ -260,7 +260,7 @@ function ($,
 								}
 								case X3DConstants .ClipPlane:
 								{
-									this .collectables .push (innerNode);
+									this .clipPlanes .push (innerNode);
 									break;
 								}
 								case X3DConstants .X3DChildNode:
@@ -303,7 +303,7 @@ function ($,
 			this .pointingDeviceSensors .length = 0;
 			this .cameraObjects         .length = 0;
 			this .localFogs             .length = 0;
-			this .collectables          .length = 0;
+			this .clipPlanes            .length = 0;
 			this .childNodes            .length = 0;
 		},
 		set_cameraObjects__: function ()
@@ -324,6 +324,32 @@ function ($,
 		{
 			switch (type)
 			{
+				case TraverseType .POINTER:
+				{
+					if (this .pointingDeviceSensors .length)
+					{
+						var sensors = { };
+						
+						this .getBrowser () .getSensors () .push (sensors);
+					
+						for (var i = 0; i < this .pointingDeviceSensors .length; ++ i)
+							this .pointingDeviceSensors [i] .push ();
+					}
+
+					//for (var i = 0; i < this .clipPlanes .length; ++ i)
+					//	this .clipPlanes [i] .push ();
+
+					for (var i = 0; i < this .childNodes .length; ++ i)
+						this .childNodes [i] .traverse (type);
+
+					//for (var i = 0; i < this .clipPlanes .length; ++ i)
+					//	this .clipPlanes [i] .pop ();
+
+					if (this .pointingDeviceSensors .length)
+						this .getBrowser () .getSensors () .pop ();
+
+					break;
+				}
 				case TraverseType .CAMERA:
 				{
 					for (var i = 0; i < this .cameraObjects .length; ++ i)

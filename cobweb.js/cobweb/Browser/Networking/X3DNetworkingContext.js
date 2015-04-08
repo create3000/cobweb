@@ -45,7 +45,11 @@ function (Fields,
 			{
 				var value = this .loadCount_ .getValue () - 1;
 				this .loadCount_ = value;
-				this .getNotification () .string_ = "Loading " + (value ? value : "done");
+
+				if (value)
+					this .getNotification () .string_ = "Loading " + value;
+				else
+					this .getNotification () .string_ = "Loading done";
 			},
 		};
 

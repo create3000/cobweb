@@ -48,6 +48,8 @@ function ($,
 			X3DScriptNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Script);
+
+			this .setExtendedEventHandling (false);
 		}
 
 		Script .prototype = $.extend (new X3DScriptNode (),

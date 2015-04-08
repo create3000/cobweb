@@ -18,6 +18,13 @@ function ($,
 	X3DTouchSensorNode .prototype = $.extend (new X3DPointingDeviceSensorNode (),
 	{
 		constructor: X3DTouchSensorNode,
+		set_active__: function (hit, value)
+		{
+			X3DPointingDeviceSensorNode .prototype .set_active__ .call (this, hit, value);
+
+			if (this .enabled_ .getValue () && this .isOver_ .getValue () && ! value)
+				this .touchTime_ = this .getBrowser () .getCurrentTime ();
+		},
 	});
 
 	return X3DTouchSensorNode;
