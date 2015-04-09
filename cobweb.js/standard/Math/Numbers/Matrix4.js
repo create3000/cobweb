@@ -763,7 +763,77 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		inverse: function (matrix)
 		{
-			return matrix .copy () .inverse ();
+			var
+				copy = Object .create (this .prototype),
+				m00 = matrix [ 0],
+				m01 = matrix [ 1],
+				m02 = matrix [ 2],
+				m03 = matrix [ 3],
+				m04 = matrix [ 4],
+				m05 = matrix [ 5],
+				m06 = matrix [ 6],
+				m07 = matrix [ 7],
+				m08 = matrix [ 8],
+				m09 = matrix [ 9],
+				m10 = matrix [10],
+				m11 = matrix [11],
+				m12 = matrix [12],
+				m13 = matrix [13],
+				m14 = matrix [14],
+				m15 = matrix [15],
+				b = m10 * m15,
+				c = m14 * m11,
+				d = m06 * m15,
+				e = m14 * m07,
+				f = m06 * m11,
+				g = m10 * m07,
+				h = m02 * m15,
+				i = m14 * m03,
+				j = m02 * m11,
+				o = m10 * m03,
+				r = m02 * m07,
+				x = m06 * m03,
+				t = m08 * m13,
+				p = m12 * m09,
+				v = m04 * m13,
+				s = m12 * m05,
+				y = m04 * m09,
+				z = m08 * m05,
+				A = m00 * m13,
+				C = m12 * m01,
+				D = m00 * m09,
+				E = m08 * m01,
+				F = m00 * m05,
+				G = m04 * m01,
+				H = b * m05 + e * m09 + f * m13 - ((c * m05) + (d * m09) + (g * m13)),
+				I = c * m01 + h * m09 + o * m13 - ((b * m01) + (i * m09) + (j * m13)),
+				J = d * m01 + i * m05 + r * m13 - ((e * m01) + (h * m05) + (x * m13)),
+				K = g * m01 + j * m05 + x * m09 - ((f * m01) + (o * m05) + (r * m09)),
+				B = m00 * H + m04 * I + m08 * J + m12 * K;
+
+			if (B == 0)
+				throw Error ("Matrix4 .inverse: determinant is 0.");
+
+			B = 1 / B;
+
+			copy [ 0] = B * H;
+			copy [ 1] = B * I;
+			copy [ 2] = B * J;
+			copy [ 3] = B * K;
+			copy [ 4] = B * (c * m04 + d * m08 + g * m12 - (b * m04) - (e * m08) - (f * m12));
+			copy [ 5] = B * (b * m00 + i * m08 + j * m12 - (c * m00) - (h * m08) - (o * m12));
+			copy [ 6] = B * (e * m00 + h * m04 + x * m12 - (d * m00) - (i * m04) - (r * m12));
+			copy [ 7] = B * (f * m00 + o * m04 + r * m08 - (g * m00) - (j * m04) - (x * m08));
+			copy [ 8] = B * (t * m07 + s * m11 + y * m15 - (p * m07) - (v * m11) - (z * m15));
+			copy [ 9] = B * (p * m03 + A * m11 + E * m15 - (t * m03) - (C * m11) - (D * m15));
+			copy [10] = B * (v * m03 + C * m07 + F * m15 - (s * m03) - (A * m07) - (G * m15));
+			copy [11] = B * (z * m03 + D * m07 + G * m11 - (y * m03) - (E * m07) - (F * m11));
+			copy [12] = B * (v * m10 + z * m14 + p * m06 - (y * m14) - (t * m06) - (s * m10));
+			copy [13] = B * (D * m14 + t * m02 + C * m10 - (A * m10) - (E * m14) - (p * m02));
+			copy [14] = B * (A * m06 + G * m14 + s * m02 - (F * m14) - (v * m02) - (C * m06));
+			copy [15] = B * (F * m10 + y * m02 + E * m06 - (D * m06) - (G * m10) - (z * m02));
+
+			return copy;
 		},
 		multLeft: function (lhs, rhs)
 		{

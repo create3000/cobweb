@@ -86,7 +86,7 @@ function ($,
 		},
 		getColor: function (theta, color, angle)
 		{
-			var index = Algorithm .upperBound (angle, 0, angle .length, theta);
+			var index = Algorithm .upperBound (angle, 0, angle .length, theta, Algorithm .less);
 
 			return color [index];
 		},

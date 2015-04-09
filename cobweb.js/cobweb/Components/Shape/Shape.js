@@ -9,6 +9,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Algorithm",
 	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Line3",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithms/QuickSort",
@@ -22,6 +23,7 @@ function ($,
           X3DConstants,
           Algorithm,
           Box3,
+          Line3,
           Vector3,
           Matrix4,
           QuickSort)
@@ -66,6 +68,8 @@ function ($,
 				this .bboxSize_   .addInterest (this, "set_bbox__");
 				this .bboxCenter_ .addInterest (this, "set_bbox__");
 
+				this .invModelViewMatrix = new Matrix4 ();
+				this .hitRay             = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 				this .intersections      = [ ];
 				this .intersectionSorter = new QuickSort (this .intersections, function (lhs, rhs)
 	         {
@@ -132,49 +136,50 @@ function ($,
 			{
 				if (this .getGeometry ())
 				{
-					if (this .getGeometry () .isLineGeometry ())
-						return;
-
-					var
-						browser            = this .getBrowser (),
-						modelViewMatrix    = browser .getModelViewMatrix () .get (),
-						invModelViewMatrix = Matrix4 .inverse (modelViewMatrix),
-						hitRay             = browser .getHitRay () .copy () .multLineMatrix (invModelViewMatrix);
-
-					this .intersections .length = 0;
-
-					if (this .getGeometry () .intersectsLine (hitRay, this .intersections))
+					try
 					{
-						// Finally we have intersections and must now find the closest hit in front of the camera.
-
-						// Transform hitPoints to absolute space.
-						for (var i = 0; i < this .intersections .length; ++ i)
-							modelViewMatrix .multVecMatrix (this .intersections [i] .point);
-
-						this .intersectionSorter .sort (0, this .intersections .length);
-
-						// Find first point that is not greater than near plane;
-						var index = Algorithm .lowerBound (this .intersections, 0, this .intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
-						                                   function (lhs, rhs)
-						                                   {
-						                                      return lhs .point .z > rhs;
-						                                   });
-
-						// There are only intersections behind the camera.
-						if (index === this .intersections .length)
+						if (this .getGeometry () .isLineGeometry ())
 							return;
 
-						try
-						{
-							// Transform hitNormal to absolute space.
-							invModelViewMatrix .multMatrixDir (this .intersections [index] .normal) .normalize ();
-						}
-						catch (error)
-						{
-							return;
-						}
+						var
+							browser            = this .getBrowser (),
+							modelViewMatrix    = browser .getModelViewMatrix () .get (),
+							invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
-						browser .addHit (modelViewMatrix .copy (), this .intersections [index], this, this .getCurrentLayer ());
+						this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
+
+						if (this .getGeometry () .intersectsLine (this .hitRay, this .intersections))
+						{
+							// Finally we have intersections and must now find the closest hit in front of the camera.
+
+							// Transform hitPoints to absolute space.
+							for (var i = 0; i < this .intersections .length; ++ i)
+								modelViewMatrix .multVecMatrix (this .intersections [i] .point);
+
+							this .intersectionSorter .sort (0, this .intersections .length);
+
+							// Find first point that is not greater than near plane;
+							var index = Algorithm .lowerBound (this .intersections, 0, this .intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
+							                                   function (lhs, rhs)
+							                                   {
+							                                      return lhs .point .z > rhs;
+							                                   });
+
+							// Are there intersections before the camera.?
+							if (index !== this .intersections .length)
+							{
+								// Transform hitNormal to absolute space.
+								invModelViewMatrix .multMatrixDir (this .intersections [index] .normal) .normalize ();
+
+								browser .addHit (modelViewMatrix .copy (), this .intersections [index], this, this .getCurrentLayer ());
+							}
+
+							this .intersections .length = 0;
+						}
+					}
+					catch (error)
+					{
+						//console .log (error);
 					}
 				}
 			},

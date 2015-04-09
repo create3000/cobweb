@@ -76,11 +76,12 @@ define (function ()
 		{
 			return lhs < rhs;
 		},
+		greater: function (lhs, rhs)
+		{
+			return lhs > rhs;
+		},
 		lowerBound: function (array, first, last, value, comp)
 		{
-			if (! comp)
-				comp = Algorithm .less;
-
 			var
 				index = 0,
 				step  = 0,
@@ -104,9 +105,6 @@ define (function ()
 		},
 		upperBound: function (array, first, last, value, comp)
 		{
-			if (! comp)
-				comp = Algorithm .less;
-
 			var
 				index = 0,
 				step  = 0,

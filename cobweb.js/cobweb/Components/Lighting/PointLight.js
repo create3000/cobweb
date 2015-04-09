@@ -24,14 +24,20 @@ function ($,
 	{
 		use: function (gl, shader, i)
 		{
+			var light = this .light;
+		
 			gl .uniform1i (shader .lightType [i],             1);
 			gl .uniform1i (shader .lightOn [i],               true);
-			gl .uniform3f (shader .lightColor [i],            this .light .color_ .r, this .light .color_ .g, this .light .color_ .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .light .intensity_ .getValue ()); // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .light .ambientIntensity_ .getValue ()); // clamp
-			gl .uniform3f (shader .lightAttenuation [i],      this .light .attenuation_ .x, this .light .attenuation_ .y, this .light .attenuation_ .z); // max
+			gl .uniform3f (shader .lightColor [i],            light .color_ .r, light .color_ .g, light .color_ .b);
+			gl .uniform1f (shader .lightIntensity [i],        light .intensity_ .getValue ()); // clamp
+			gl .uniform1f (shader .lightAmbientIntensity [i], light .ambientIntensity_ .getValue ()); // clamp
+			gl .uniform3f (shader .lightAttenuation [i],      light .attenuation_ .x, light .attenuation_ .y, light .attenuation_ .z); // max
 			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform1f (shader .lightRadius [i],           this .light .radius_ .getValue ());
+			gl .uniform1f (shader .lightRadius [i],           light .radius_ .getValue ());
+
+			// For correct results the radius must be transform by the modelViewMatrix. This can only be done in the shader.
+			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|
+			// distanceOfLightToFragmentInLightSpace can then be compared with radius.
 		},
 	};
 

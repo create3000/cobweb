@@ -1,11 +1,12 @@
 
 define ([
 	"jquery",
+	"cobweb/Execution/World",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
 	"cobweb/Debug",
 ],
-function ($, XMLParser, URI, DEBUG)
+function ($, World, XMLParser, URI, DEBUG)
 {
 	var TIMEOUT = 16;
 
@@ -15,6 +16,7 @@ function ($, XMLParser, URI, DEBUG)
 		this .browser          = node .getBrowser ();
 		this .executionContext = node .getExecutionContext ();
 		this .URL              = new URI ();
+		this .scripts          = this .browser .getScriptStack () .length;
 	}
 
 	Loader .prototype =
@@ -66,7 +68,7 @@ function ($, XMLParser, URI, DEBUG)
 		createX3DFromURL: function (url, callback)
 		{
 			if (callback)
-				return this .loadDocument (url, this .createX3DFromURLAsync .bind (this, callback))
+				return setTimeout (this .loadDocument .bind (this, url, this .createX3DFromURLAsync .bind (this, callback)), TIMEOUT);
 
 			return this .createX3DFromURLSync (url);
 		},
@@ -181,9 +183,9 @@ function ($, XMLParser, URI, DEBUG)
 		},
 		getReferer: function ()
 		{
-			if (this .node === this .browser .getWorld ())
+			if (this .node instanceof World)
 			{
-				if (this .browser .getScriptStack () .length === 1)
+				if (this .scripts === 1)
 					return this .browser .getLocation ();
 			}
 

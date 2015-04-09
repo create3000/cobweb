@@ -118,7 +118,14 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		},
 		loadURL: function (url, parameter)
 		{
-			new Loader (this .getWorld ()) .createX3DFromURL (url, this .replaceWorld .bind (this));
+			this .addLoadCount ();
+
+			new Loader (this .getWorld ()) .createX3DFromURL (url, function (scene)
+			{
+				this .replaceWorld (scene);
+				this .removeLoadCount ();
+			}
+			.bind (this));
 		},
 		getRenderingProperty: function (name)
 		{

@@ -82,7 +82,7 @@ function ($,
 
 				var distance = this .getDistance (type);
 
-				return Algorithm .upperBound (this .range_, 0, this .range_ .length, distance);
+				return Algorithm .upperBound (this .range_, 0, this .range_ .length, distance, Algorithm .less);
 			},
 			getDistance: function (type)
 			{

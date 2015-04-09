@@ -61,23 +61,27 @@ function (jquery,
 		{
 			this .cursorType = value;
 
+			var div = this .getBrowser () .getXML () .find (".canvas");
+
 			switch (value)
 			{
 				case "HAND":
-					this .getCanvas () .css ("cursor", "pointer");
+					div .css ("cursor", "pointer");
 					break;
 				case "MOVE":
-					this .getCanvas () .css ("cursor", "move");
+					div .css ("cursor", "move");
 					break;
 				case "CROSSHAIR":
-					this .getCanvas () .css ("cursor", "crosshair");
-					break;
-				case "WAIT":
-					this .getCanvas () .css ("cursor", "wait");
+					div .css ("cursor", "crosshair");
 					break;
 				default:
-					this .getCanvas () .css ("cursor", "default");
+				{
+					if (this .loadCount_ .getValue ())
+						div .css ("cursor", "wait");
+					else
+						div .css ("cursor", "default");
 					break;
+				}
 			}
 		},
 		getCursor: function ()

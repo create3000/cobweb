@@ -2,9 +2,13 @@
 define ([
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 ],
-function (TraverseType, QuickSort, Matrix4)
+function (TraverseType,
+          QuickSort,
+          Vector3,
+          Matrix4)
 {
 	function X3DRenderer (browser, executionContext)
 	{
@@ -25,6 +29,8 @@ function (TraverseType, QuickSort, Matrix4)
 		constructor: X3DRenderer,
 		initialize: function ()
 		{
+			this .bboxSize   = new Vector3 (0, 0, 0);
+			this .bboxCenter = new Vector3 (0, 0, 0);
 		},
 		getViewVolumeStack: function ()
 		{
@@ -34,8 +40,8 @@ function (TraverseType, QuickSort, Matrix4)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (shape .getBBoxSize () .copy ()),
-				bboxCenter      = modelViewMatrix .multVecMatrix (shape .getBBoxCenter () .copy ()),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize .assign (shape .getBBoxSize ())),
+				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shape .getBBoxCenter ())),
 				radius          = bboxSize .abs () / 2,
 				distance        = bboxCenter .z,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
