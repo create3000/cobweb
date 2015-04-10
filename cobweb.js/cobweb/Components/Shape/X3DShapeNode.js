@@ -32,7 +32,6 @@ function ($,
 
 			this .set_apparance__ ();
 			this .set_geometry__ ();
-			this .set_transparent__ ();
 
 			this .static_ = true;
 		},
@@ -58,8 +57,10 @@ function ($,
 			if (this .apparanceNode)
 				this .apparanceNode .addInterest (this, "set_transparent__");
 
-			if (! this .apparanceNode)
+			else
 				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
+
+			this .set_transparent__ ();
 		},
 		set_geometry__: function ()
 		{
@@ -76,6 +77,8 @@ function ($,
 				this .geometryNode .addInterest (this, "set_bbox__");
 				this .geometryNode .addInterest (this, "set_transparent__");
 			}
+
+			this .set_transparent__ ();
 		},
 		set_transparent__: function ()
 		{

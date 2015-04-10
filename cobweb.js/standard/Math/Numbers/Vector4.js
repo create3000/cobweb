@@ -310,6 +310,10 @@ function ($, Algorithm)
 
 			return copy;
 		},
+		dot: function (lhs, rhs)
+		{
+			return lhs .dot (rhs);
+		},
 		lerp: function (source, dest, t)
 		{
 			return new Vector4 (Algorithm .lerp (source .x, dest .x, t),

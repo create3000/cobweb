@@ -55,6 +55,11 @@ function ($,
 		X3DGeometryNode .prototype = $.extend (new X3DNode (),
 		{
 			constructor: X3DGeometryNode,
+			intersection: new Vector3 (0, 0, 0),
+			uvt: new Vector3 (0, 0, 0),
+			v0: new Vector3 (0, 0, 0),
+			v1: new Vector3 (0, 0, 0),
+			v2: new Vector3 (0, 0, 0),
 			setup: function ()
 			{
 				X3DNode .prototype .setup .call (this);
@@ -78,11 +83,6 @@ function ($,
 				this .vertexBuffer    = gl .createBuffer ();
 				this .primitiveMode   = gl .TRIANGLES;
 				this .planes          = [ ];
-				this .intersection    = new Vector3 (0, 0, 0);
-				this .uvt             = new Vector3 (0, 0, 0);
-				this .v0              = new Vector3 (0, 0, 0);
-				this .v1              = new Vector3 (0, 0, 0);
-				this .v2              = new Vector3 (0, 0, 0);
 			},
 			isTransparent: function ()
 			{
@@ -356,7 +356,7 @@ function ($,
 
 				// Shader
 
-				shader .setDefaultUniforms (context);
+				shader .setLocalUniforms (context);
 
 				//
 

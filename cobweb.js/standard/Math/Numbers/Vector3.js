@@ -93,6 +93,16 @@ function ($, Algorithm)
 			this .z /= vector .z;
 			return this;
 		},
+		cross: function (vector)
+		{
+			var x = this .x, y = this .y, z = this .z;
+
+			this .x = y * vector .z - z * vector .y;
+			this .y = z * vector .x - x * vector .z;
+			this .z = x * vector .y - y * vector .x;
+
+			return this;
+		},
 		normalize: function ()
 		{
 			var length = Math .sqrt (this .x * this .x +
@@ -107,16 +117,6 @@ function ($, Algorithm)
 				this .y *= length;
 				this .z *= length;
 			}
-
-			return this;
-		},
-		cross: function (vector)
-		{
-			var x = this .x, y = this .y, z = this .z;
-
-			this .x = y * vector .z - z * vector .y;
-			this .y = z * vector .x - x * vector .z;
-			this .z = x * vector .y - y * vector .x;
 
 			return this;
 		},
@@ -256,6 +256,14 @@ function ($, Algorithm)
 			copy .z = lhs .z / rhs .z;
 			return copy;
 		},
+		cross: function (lhs, rhs)
+		{
+			var copy = Object .create (this .prototype);
+			copy .x = lhs .y * rhs .z - lhs .z * rhs .y;
+			copy .y = lhs .z * rhs .x - lhs .x * rhs .z;
+			copy .z = lhs .x * rhs .y - lhs .y * rhs .x;
+			return copy;
+		},
 		normalize: function (vector)
 		{
 			var
@@ -284,13 +292,9 @@ function ($, Algorithm)
 
 			return copy;
 		},
-		cross: function (lhs, rhs)
+		dot: function (lhs, rhs)
 		{
-			var copy = Object .create (this .prototype);
-			copy .x = lhs .y * rhs .z - lhs .z * rhs .y;
-			copy .y = lhs .z * rhs .x - lhs .x * rhs .z;
-			copy .z = lhs .x * rhs .y - lhs .y * rhs .x;
-			return copy;
+			return lhs .dot (rhs);
 		},
 		lerp: function (source, dest, t)
 		{

@@ -4,10 +4,6 @@ define ([
 ],
 function (Vector3)
 {
-	// Static vectors for line / triangle intersection.
-	var
-		pvec = new Vector3 (0, 0, 0),
-		tvec = new Vector3 (0, 0, 0);
 
 	function Line3 (point, direction)
 	{
@@ -18,6 +14,10 @@ function (Vector3)
 	Line3 .prototype =
 	{
 		constructor: Line3,
+		// Static vectors for line / triangle intersection.
+		u: new Vector3 (0, 0, 0),
+		pvec: new Vector3 (0, 0, 0),
+		tvec: new Vector3 (0, 0, 0),
 		copy: function ()
 		{
 			var copy = Object .create (Line3 .prototype);
@@ -43,6 +43,34 @@ function (Vector3)
 			matrix .multDirMatrix (this .direction) .normalize ();
 			return this;
 		},
+		getClosestPointToPoint: function (point)
+		{
+			var
+				r = point .copy () .subtract (this .point),
+				d = r .dot (this .direction);
+
+			return r .assign (this .direction) .multiply (d) .add (this .point);
+		},
+		getClosestPointToLine: function (line, point)
+		{
+			var
+				p1 = this .point,
+				p2 = line .point,
+				d1 = this .direction,
+				d2 = line .direction;
+
+			var t = Vector3 .dot (d1, d2);
+
+			if (Math .abs (t) >= 1)
+				return false;  // lines are parallel
+
+			var u = this .u .assign (p2) .subtract (p1);
+
+			t = (Vector3 .dot (u, d1) - t * Vector3 .dot (u, d2)) / (1 - t * t);
+
+			point .assign (d1) .multiply (t) .add (p1);
+			return true;
+		},
 		intersectsTriangle (A, B, C, uvt)
 		{
 			// Find vectors for two edges sharing vert0.
@@ -51,7 +79,7 @@ function (Vector3)
 				edge2 = C .subtract (A);
 
 			// Begin calculating determinant - also used to calculate U parameter.
-			pvec .assign (this .direction) .cross (edge2);
+			var pvec = this .pvec .assign (this .direction) .cross (edge2);
 
 			// If determinant is near zero, ray lies in plane of triangle.
 			var det = edge1 .dot (pvec);
@@ -64,7 +92,7 @@ function (Vector3)
 			var inv_det = 1 / det;
 
 			// Calculate distance from vert0 to ray point.
-			tvec .assign (this .point) .subtract (A);
+			var tvec = this .tvec .assign (this .point) .subtract (A);
 
 			// Calculate U parameter and test bounds.
 			var u = tvec .dot (pvec) * inv_det;

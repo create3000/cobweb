@@ -148,8 +148,8 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		{
 			var
 				matrix = Matrix4 .multRight (modelview, projection),
-				point1 = ViewVolume .projectPointMatrix (line .point (), matrix, viewport),
-				point2 = ViewVolume .projectPointMatrix (Vector3 .add (line .point (), Vector3 .multiply (line .direction (), 1e9)), matrix, viewport);
+				point1 = ViewVolume .projectPointMatrix (line .point, matrix, viewport),
+				point2 = ViewVolume .projectPointMatrix (Vector3 .multiply (line .direction, 1e9) .add (line .point), matrix, viewport);
 
 			point1 .z = 0;
 			point2 .z = 0;

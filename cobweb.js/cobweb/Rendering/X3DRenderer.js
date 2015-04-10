@@ -27,10 +27,10 @@ function (TraverseType,
 	X3DRenderer .prototype =
 	{
 		constructor: X3DRenderer,
+		bboxSize: new Vector3 (0, 0, 0),
+		bboxCenter: new Vector3 (0, 0, 0),
 		initialize: function ()
 		{
-			this .bboxSize   = new Vector3 (0, 0, 0);
-			this .bboxCenter = new Vector3 (0, 0, 0);
 		},
 		getViewVolumeStack: function ()
 		{
@@ -126,7 +126,8 @@ function (TraverseType,
 				opaqueShapes      = this .opaqueShapes,
 				transparentShapes = this .transparentShapes;
 
-			browser .getDefaultShader () .setGlobalLights ();
+			browser .getLineShader () .setGlobalUniforms ();
+			browser .getDefaultShader () .setGlobalUniforms ();
 
 			// Sorted blend
 

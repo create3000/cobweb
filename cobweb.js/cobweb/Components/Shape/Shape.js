@@ -30,8 +30,8 @@ function ($,
 {
 	with (Fields)
 	{
-		var defaultBBoxSize = new Vector3 (-1, -1, -1);
-	
+		var intersections = [ ];
+
 		function Shape (executionContext)
 		{
 			X3DShapeNode .call (this, executionContext .getBrowser (), executionContext);
@@ -49,6 +49,14 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance", new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",   new SFNode ()),
 			]),
+			defaultBBoxSize: new Vector3 (-1, -1, -1),
+			invModelViewMatrix: new Matrix4 (),
+			hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
+			intersections: intersections,
+			intersectionSorter: new QuickSort (intersections, function (lhs, rhs)
+         {
+            return lhs .point .z > rhs .point .z;
+			}),
 			getTypeName: function ()
 			{
 				return "Shape";
@@ -68,19 +76,11 @@ function ($,
 				this .bboxSize_   .addInterest (this, "set_bbox__");
 				this .bboxCenter_ .addInterest (this, "set_bbox__");
 
-				this .invModelViewMatrix = new Matrix4 ();
-				this .hitRay             = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
-				this .intersections      = [ ];
-				this .intersectionSorter = new QuickSort (this .intersections, function (lhs, rhs)
-	         {
-	            return lhs .point .z > rhs .point .z;
-				});
-
 				this .set_bbox__ ();
 			},
 			set_bbox__: function ()
 			{
-				if (this .bboxSize_ .getValue () .equals (defaultBBoxSize))
+				if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 				{
 					if (this .getGeometry ())
 						this .bbox = this .getGeometry () .getBBox ();
@@ -144,37 +144,38 @@ function ($,
 						var
 							browser            = this .getBrowser (),
 							modelViewMatrix    = browser .getModelViewMatrix () .get (),
-							invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+							invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
+							intersections      = this .intersections;
 
 						this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
 
-						if (this .getGeometry () .intersectsLine (this .hitRay, this .intersections))
+						if (this .getGeometry () .intersectsLine (this .hitRay, intersections))
 						{
 							// Finally we have intersections and must now find the closest hit in front of the camera.
 
 							// Transform hitPoints to absolute space.
-							for (var i = 0; i < this .intersections .length; ++ i)
-								modelViewMatrix .multVecMatrix (this .intersections [i] .point);
+							for (var i = 0; i < intersections .length; ++ i)
+								modelViewMatrix .multVecMatrix (intersections [i] .point);
 
-							this .intersectionSorter .sort (0, this .intersections .length);
+							this .intersectionSorter .sort (0, intersections .length);
 
 							// Find first point that is not greater than near plane;
-							var index = Algorithm .lowerBound (this .intersections, 0, this .intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
+							var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
 							                                   function (lhs, rhs)
 							                                   {
 							                                      return lhs .point .z > rhs;
 							                                   });
 
 							// Are there intersections before the camera.?
-							if (index !== this .intersections .length)
+							if (index !== intersections .length)
 							{
 								// Transform hitNormal to absolute space.
-								invModelViewMatrix .multMatrixDir (this .intersections [index] .normal) .normalize ();
+								invModelViewMatrix .multMatrixDir (intersections [index] .normal) .normalize ();
 
-								browser .addHit (modelViewMatrix .copy (), this .intersections [index], this, this .getCurrentLayer ());
+								browser .addHit (modelViewMatrix .copy (), intersections [index], this, this .getCurrentLayer ());
 							}
 
-							this .intersections .length = 0;
+							intersections .length = 0;
 						}
 					}
 					catch (error)

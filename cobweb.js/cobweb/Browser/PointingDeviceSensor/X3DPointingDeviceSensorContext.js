@@ -203,8 +203,22 @@ function (jquery,
 		},
 		motion: function ()
 		{
-			var nearestHit = this .hits [this .hits .length - 1];
-		
+			if (this .hits .length)
+				var nearestHit = this .hits [this .hits .length - 1];
+			else
+			{
+				var nearestHit = {
+					pointer:         this .pointer,
+					modelViewMatrix: new Matrix4 (),
+					hitRay:          this .hitRay, // XXX: must be ray from selected layer
+					intersection:    null,
+					sensors:         { },
+					shape:           null,
+					layer:           null,
+					layerNumber:     0,
+				};
+			}
+
 			// Set isOver to FALSE for appropriate nodes
 
 			if (this .hits .length)
@@ -230,17 +244,14 @@ function (jquery,
 
 			// Forward motion event to active drag sensor nodes
 
-			if (this .hits .length)
+			for (var key in this .activeSensors)
 			{
-				for (var key in this .activeSensors)
-				{
-					var dragSensorNode = this .activeSensors [key];
+				var dragSensorNode = this .activeSensors [key];
 
-					if (dragSensorNode .getType () .indexOf (X3DConstants .X3DDragSensorNode) === -1)
-						continue;
+				if (dragSensorNode .getType () .indexOf (X3DConstants .X3DDragSensorNode) === -1)
+					continue;
 
-					dragSensorNode .set_motion__ (nearestHit);
-				}
+				dragSensorNode .set_motion__ (nearestHit);
 			}
 		},
 	};

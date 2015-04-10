@@ -1177,6 +1177,8 @@
     <None Include="standard\Math\Geometry\Line3.js" />
     <None Include="tests\Components\PointingDeviceSensor\test.x3d" />
     <None Include="standard\Math\Algorithms\MergeSort.js" />
+    <None Include="tests\Components\PointingDeviceSensor\LineSensor.x3d" />
+    <None Include="tests\Components\PointingDeviceSensor\PlaneSensor.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

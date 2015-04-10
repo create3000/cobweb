@@ -287,7 +287,7 @@ function ($,
 			var
 				viewport        = this .getBrowser () .getViewport (),
 				viewpoint       = this .getCurrentViewpoint (),
-				scale           = viewpoint .getScreenScale (SIZE, viewport)
+				scale           = viewpoint .getScreenScale (SIZE, viewport),
 				rotation        = this .rotation,
 				modelViewMatrix = this .modelViewMatrix;
 

@@ -41,5 +41,5 @@ main ()
 	}
 
 	//gl_PointSize = 10.0;
-	gl_Position  = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
 }

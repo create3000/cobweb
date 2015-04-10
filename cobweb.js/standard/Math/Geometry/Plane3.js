@@ -17,7 +17,7 @@ function (Vector3)
 		{
 			return point .dot (this .normal) - this .distanceFromOrigin;
 		},
-		intersectsLine: function (line, point)
+		intersectsLine: function (line, intersection)
 		{
 			var
 				point     = line .point,
@@ -33,9 +33,9 @@ function (Vector3)
 			// Plane and line are not parallel. The intersection point can be calculated now.
 			var t = (this .distanceFromOrigin - this .normal .dot (point)) / theta;
 
-			point .x = point .x + direction .x * t;
-			point .y = point .y + direction .y * t;
-			point .z = point .z + direction .z * t;
+			intersection .x = point .x + direction .x * t;
+			intersection .y = point .y + direction .y * t;
+			intersection .z = point .z + direction .z * t;
 
 			return true;
 		},

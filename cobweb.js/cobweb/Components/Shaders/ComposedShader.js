@@ -34,6 +34,7 @@ function ($,
 			X3DProgrammableShaderObject .prototype,
 		{
 			constructor: ComposedShader,
+			maxLights: MAX_LIGHTS,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new SFBool ()),
@@ -100,7 +101,7 @@ function ($,
 				this .lightCutOffAngle      = [ ];
 				this .lightRadius           = [ ];
 
-				for (var i = 0; i < MAX_LIGHTS; ++ i)
+				for (var i = 0; i < this .maxLights; ++ i)
 				{
 					this .lightType [i]             = gl .getUniformLocation (this .program, "x3d_LightType[" + i + "]");
 					this .lightOn [i]               = gl .getUniformLocation (this .program, "x3d_LightOn[" + i + "]");
@@ -134,8 +135,10 @@ function ($,
 				this .texCoord = gl .getAttribLocation (this .program, "x3d_TexCoord");
 				this .normal   = gl .getAttribLocation (this .program, "x3d_Normal");
 				this .position = gl .getAttribLocation (this .program, "x3d_Vertex");			
+
+				gl .uniform1i (this .texture, 0);
 			},
-			setGlobalLights: function ()
+			setGlobalUniforms: function ()
 			{
 				var browser      = this .getBrowser ();
 				var gl           = browser .getContext ();
@@ -145,8 +148,10 @@ function ($,
 
 				for (var i = 0; i < globalLights .length; ++ i)
 					globalLights [i] .use (gl, this, i);
+
+				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 			},
-			setDefaultUniforms: function (context)
+			setLocalUniforms: function (context)
 			{
 				var
 					browser  = this .getBrowser (),
@@ -164,7 +169,7 @@ function ($,
 					var
 						globalLights = browser .getGlobalLights (),
 						localLights  = context .localLights,
-						lights       = Math .min (MAX_LIGHTS, globalLights .length + localLights .length),
+						lights       = Math .min (this .maxLights, globalLights .length + localLights .length),
 						lightOn      = this .lightOn;
 
 					if (this !== browser .getDefaultShader ())
@@ -176,7 +181,7 @@ function ($,
 					for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
 						localLights [l] .use (gl, this, i);
 
-					for ( ; i < MAX_LIGHTS; ++ i)
+					for ( ; i < this .maxLights; ++ i)
 						gl .uniform1i (lightOn [i], false);
 
 					// Material
@@ -199,9 +204,8 @@ function ($,
 					texture .traverse ();
 
 					gl .uniform1i (this .texturing, true);
-					gl .uniform1i (this .texture,   0);
-
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
+					// Active texture 0 is set on initialization.
 				}
 				else
 					gl .uniform1i (this .texturing, false);
@@ -209,8 +213,8 @@ function ($,
 				// Set matrices
 
 				var
-					modelViewMatrix = context .modelViewMatrix,
-					normalMatrix    = this .normalMatrixArray;
+					normalMatrix    = this .normalMatrixArray,
+					modelViewMatrix = context .modelViewMatrix;
 
 				normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
 				normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
@@ -218,9 +222,8 @@ function ($,
 
 				Matrix3 .prototype .inverse .call (normalMatrix);
 
-				gl .uniformMatrix3fv (this .normalMatrix,     false, normalMatrix);	
-				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
-				gl .uniformMatrix4fv (this .modelViewMatrix,  false, modelViewMatrix);
+				gl .uniformMatrix3fv (this .normalMatrix,    false, normalMatrix);	
+				gl .uniformMatrix4fv (this .modelViewMatrix, false, modelViewMatrix);
 			},
 			use: function (context)
 			{
