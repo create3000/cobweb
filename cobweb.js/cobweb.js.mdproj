@@ -1179,6 +1179,10 @@
     <None Include="standard\Math\Algorithms\MergeSort.js" />
     <None Include="tests\Components\PointingDeviceSensor\LineSensor.x3d" />
     <None Include="tests\Components\PointingDeviceSensor\PlaneSensor.x3d" />
+    <None Include="tests\Examples\Arcadia\stage\index.x3d" />
+    <None Include="tests\Examples\Arcadia\stage\mount.x3d" />
+    <None Include="tests\Examples\Arcadia\stage\saule.x3d" />
+    <None Include="tests\Examples\Arcadia\stage\temple.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

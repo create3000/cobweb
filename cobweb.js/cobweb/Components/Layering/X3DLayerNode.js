@@ -11,6 +11,8 @@ define ([
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DNode,
@@ -22,8 +24,12 @@ function ($,
           Background,
           X3DCast,
           TraverseType,
-          X3DConstants)
+          X3DConstants,
+          Line3,
+          Vector3)
 {
+	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+
 	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
 	{
 		X3DNode     .call (this, browser, executionContext);
@@ -69,6 +75,8 @@ function ($,
 			this .group .setup ();
 			this .collect = this .group .traverse .bind (this .group);
 
+			this .hitRay = line;
+
 			this .viewport_       .addInterest (this, "set_viewport__");
 			this .addChildren_    .addInterest (this .group .addChildren_,    "setValue");
 			this .removeChildren_ .addInterest (this .group .removeChildren_, "setValue");
@@ -111,6 +119,14 @@ function ($,
 		getBackgroundStack: function () { return this .backgroundStack; },
 		getFogStack: function () { return this .fogStack; },
 		getViewpointStack: function () { return this .viewpointStack; },
+		setHitRay: function (value)
+		{
+			this .hitRay = value;
+		},
+		getHitRay: function ()
+		{
+			return this .hitRay;
+		},
 		set_viewport__: function ()
 		{
 			this .currentViewport = X3DCast (X3DViewportNode, this .viewport_);

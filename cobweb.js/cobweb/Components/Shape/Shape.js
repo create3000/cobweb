@@ -172,7 +172,7 @@ function ($,
 								// Transform hitNormal to absolute space.
 								invModelViewMatrix .multMatrixDir (intersections [index] .normal) .normalize ();
 
-								browser .addHit (modelViewMatrix .copy (), intersections [index], this, this .getCurrentLayer ());
+								browser .addHit (intersections [index], this .getCurrentLayer ());
 							}
 
 							intersections .length = 0;

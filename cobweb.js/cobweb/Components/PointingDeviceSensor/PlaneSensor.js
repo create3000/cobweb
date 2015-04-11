@@ -151,7 +151,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error);
+					//console .log (error);
 				}
 			},
 			set_motion__: function (hit)
@@ -189,7 +189,7 @@ function ($,
 							}
 							catch (error)
 							{
-								console .log (error);
+								//console .log (error);
 
 								trackPoint = endPoint;
 							}
@@ -202,7 +202,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error);
+					//console .log (error);
 
 					this .trackPoint_changed_  .addEvent ();
 					this .translation_changed_ .addEvent ();
@@ -212,7 +212,7 @@ function ($,
 			{
 				var
 					axisRotation = this .axisRotation_ .getValue (),
-					translation  = Rotation4 .inverse (axisRotation) .multVecRot (Vector3 .add (this .startOffset, endPoint) .subtract (this .startPoint));
+					translation  = Rotation4 .inverse (axisRotation) .multVecRot (endPoint .add (this .startOffset) .subtract (this .startPoint));
 
 				// X component
 

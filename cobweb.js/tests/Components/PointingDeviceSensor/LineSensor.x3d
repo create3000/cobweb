@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 10 Apr 2015 06:06:29 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 10 Apr 2015 13:51:43 GMT'/>
+    <meta name='modified' content='Sat, 11 Apr 2015 10:18:50 GMT'/>
     <meta name='title' content='LineSensor'/>
   </head>
   <Scene>
@@ -82,6 +82,17 @@
             <Coordinate
                 point='0 0 0'/>
           </PointSet>
+        </Shape>
+        <Shape>
+          <Appearance>
+            <Material DEF='Rococo12_1'
+                ambientIntensity='0.226102'
+                diffuseColor='0.904409 0.146366 0.208768'
+                specularColor='0.0955906 0.0955906 0.0955906'
+                shininess='0.078125'/>
+          </Appearance>
+          <Sphere
+              radius='0.1'/>
         </Shape>
       </Transform>
     </Transform>

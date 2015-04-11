@@ -41,6 +41,13 @@ function ($, X3DChildObject)
 			if (field .getTainted ())
 				return;
 
+			//try
+			//{
+			//	console .log (this .getId (), this .getTypeName (), field .getName ());
+			//}
+			//catch (error)
+			//{ }
+
 			field .setTainted (true);
 
 			this .addEventObject (field, Event (field, { }));

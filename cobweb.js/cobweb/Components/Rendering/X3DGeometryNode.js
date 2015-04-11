@@ -63,10 +63,9 @@ function ($,
 			setup: function ()
 			{
 				X3DNode .prototype .setup .call (this);
-		
-				this .addInterest (this, "update");
 
-				this .update ();
+				this .addInterest (this, "update");
+				this .addNodeEvent ();
 			},
 			initialize: function ()
 			{

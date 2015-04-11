@@ -4,8 +4,10 @@ define ([
 	"cobweb/Browser/PointingDeviceSensor/PointingDevice",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Line3",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithms/MergeSort",
 ],
@@ -13,11 +15,15 @@ function (jquery,
           PointingDevice,
           TraverseType,
           X3DConstants,
+          Line3,
           ViewVolume,
           Vector2,
+          Vector3,
           Matrix4,
           MergeSort)
 {
+	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+
 	function set_difference (lhs, rhs, result)
 	{
 		for (var key in lhs)
@@ -155,8 +161,10 @@ function (jquery,
 			}
 			catch (error)
 			{
-				this .hitRay = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+				this .hitRay = line;
 			}
+
+			this .getLayers () [0] .setHitRay (this .hitRay);
 		},
 		getHitRay: function ()
 		{
@@ -166,15 +174,13 @@ function (jquery,
 		{
 			return this .enabledSensors;
 		},
-		addHit: function (modelViewMatrix, intersection, shape, layer)
+		addHit: function (intersection, layer)
 		{
 			this .hits .push ({
 				pointer:         this .pointer,
-				modelViewMatrix: modelViewMatrix,
 				hitRay:          this .hitRay,
 				intersection:    intersection,
 				sensors:         this .enabledSensors [this .enabledSensors .length - 1],
-				shape:           shape,
 				layer:           layer,
 				layerNumber:     this .layerNumber,
 			});
@@ -207,10 +213,12 @@ function (jquery,
 				var nearestHit = this .hits [this .hits .length - 1];
 			else
 			{
+				var hitRay = this .selectedLayer ? this .selectedLayer .getHitRay () : line;
+
 				var nearestHit = {
 					pointer:         this .pointer,
 					modelViewMatrix: new Matrix4 (),
-					hitRay:          this .hitRay, // XXX: must be ray from selected layer
+					hitRay:          hitRay,
 					intersection:    null,
 					sensors:         { },
 					shape:           null,
