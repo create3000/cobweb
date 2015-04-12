@@ -29,7 +29,13 @@ function ($, X3DField, X3DConstants)
 
 			try
 			{
-				target .getValue () .getField (key) .setValue (value);
+				var
+					field      = target .getValue () .getField (key),
+					accessType = field .getAccessType ();
+
+				if (accessType === X3DConstants .initializeOnly || accessType === X3DConstants .outputOnly)
+					field .setValue (value);
+
 	 			return true;
 			}
 			catch (error)

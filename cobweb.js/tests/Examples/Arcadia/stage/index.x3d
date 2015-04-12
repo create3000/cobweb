@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 11 Apr 2015 10:43:36 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 11 Apr 2015 15:19:49 GMT'/>
+    <meta name='modified' content='Sun, 12 Apr 2015 13:26:21 GMT'/>
     <meta name='title' content='Arcadia'/>
   </head>
   <Scene>
@@ -214,6 +214,7 @@ function translation_dragIN(value, time)
                                 stopTime='1'/>
                           </Group>
                           <ColorInterpolator DEF='planeEmissiveColorInterp_1'
+                              key='0'
                               keyValue='1 0 0.0409002'/>
                           <ScalarInterpolator DEF='planeTransparencyInterp_1'
                               key='0, 0.1, 0.2, 1'
@@ -225,6 +226,7 @@ function translation_dragIN(value, time)
                                 stopTime='1'/>
                           </Group>
                           <ColorInterpolator DEF='planeEmissiveColorInterp_2'
+                              key='0'
                               keyValue='0 1 0.732517'/>
                           <ScalarInterpolator DEF='planeTransparencyInterp_2'
                               key='0, 0.1, 0.2, 1'
@@ -236,6 +238,7 @@ function translation_dragIN(value, time)
                                 stopTime='1'/>
                           </Group>
                           <ColorInterpolator DEF='planeEmissiveColorInterp_3'
+                              key='0'
                               keyValue='1 0.864046 0'/>
                           <ScalarInterpolator DEF='planeTransparencyInterp_3'
                               key='0, 0.1, 0.2, 1'

@@ -94,18 +94,42 @@ function ($,
 			this .layer0 = value;
 			this .defaultBackground .setHidden (! value);
 		},
-		getViewport: function () { return this .currentViewport; },
-		getNavigationInfo: function () { return this .navigationInfoStack .top (); },
-		getBackground: function () { return this .backgroundStack .top (); },
+		getViewport: function ()
+		{
+			return this .currentViewport;
+		},
+		getNavigationInfo: function ()
+		{
+			return this .navigationInfoStack .top ();
+		},
+		getBackground: function ()
+		{
+			return this .backgroundStack .top ();
+		},
 		getFog: function ()
 		{
 			return this .fogStack .top ();
 		},
-		getViewpoint: function () { return this .viewpointStack .top (); },
-		getNavigationInfos: function () { return this .navigationInfos; },
-		getBackgrounds: function () { return this .backgrounds; },
-		getFogs: function () { return this .fogs; },
-		getViewpoints: function () { return this .viewpoints; },
+		getViewpoint: function ()
+		{
+			return this .viewpointStack .top ();
+		},
+		getNavigationInfos: function ()
+		{
+			return this .navigationInfos;
+		},
+		getBackgrounds: function ()
+		{
+			return this .backgrounds;
+		},
+		getFogs: function ()
+		{
+			return this .fogs;
+		},
+		getViewpoints: function ()
+		{
+			return this .viewpoints;
+		},
 		getUserViewpoints: function ()
 		{
 			var userViewpoints = [ ];
@@ -120,10 +144,22 @@ function ($,
 
 			return userViewpoints;
 		},
-		getNavigationInfoStack: function () { return this .navigationInfoStack; },
-		getBackgroundStack: function () { return this .backgroundStack; },
-		getFogStack: function () { return this .fogStack; },
-		getViewpointStack: function () { return this .viewpointStack; },
+		getNavigationInfoStack: function ()
+		{
+			return this .navigationInfoStack;
+		},
+		getBackgroundStack: function ()
+		{
+			return this .backgroundStack;
+		},
+		getFogStack: function ()
+		{
+			return this .fogStack;
+		},
+		getViewpointStack: function ()
+		{
+			return this .viewpointStack;
+		},
 		setHitRay: function (value)
 		{
 			this .hitRay = value;

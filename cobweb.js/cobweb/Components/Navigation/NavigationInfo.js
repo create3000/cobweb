@@ -20,11 +20,11 @@ function ($,
 	{
 		var TransitionType =
 		{
-			TELEPORT: 0,
-			LINEAR:   1,
-			ANIMATE:  2,
+			TELEPORT: true,
+			LINEAR:   true,
+			ANIMATE:  true,
 		};
-	
+
 		function NavigationInfo (executionContext)
 		{
 			X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
@@ -136,14 +136,15 @@ function ($,
 			{
 				for (var i = 0, length = this .transitionType_ .length; i < length; ++ i)
 				{
-					var value          = this .transitionType_ [i];
-					var transitionType = TransitionType [value];
+					var
+						value          = this .transitionType_ [i],
+						transitionType = TransitionType [value];
 
-					if (transitionType !== undefined)
-						return transitionType;
+					if (transitionType)
+						return value;
 				}
 
-				return TransitionType .LINEAR;
+				return "LINEAR";
 			},
 			enable: function ()
 			{

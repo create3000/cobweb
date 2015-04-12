@@ -50,6 +50,7 @@ function ($, Color4, X3DField, X3DConstants)
 		setHSV: function (h, s, v)
 		{
 			this .getValue () .setHSV (h, s, v);
+			this .addEvent ();
 		},
 		toString: function ()
 		{

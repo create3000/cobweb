@@ -183,12 +183,41 @@ function ($, Algorithm)
 		configurable: false
 	});
 
-	Color3 .HSV = function (h, s, v)
+	$.extend (Color3,
 	{
-		var color = new Color3 (0, 0, 0);
-		color .setHSV (h, s, v);
-		return color;
-	}
+		HSV: function (h, s, v)
+		{
+			var color = new Color3 (0, 0, 0);
+			color .setHSV (h, s, v);
+			return color;
+		},
+		lerp: function (a, b, t)
+		{
+			var range = Math .abs (b [0] - a [0]);
+
+			if (range <= Math .PI)
+			{
+				return [ Algorithm .lerp (a [0], b [0], t),
+				         Algorithm .lerp (a [1], b [1], t),
+				         Algorithm .lerp (a [2], b [2], t) ];
+			}
+
+			var
+				PI2  = Math .PI * 2,
+				step = (PI2 - range) * t;
+				h    = a [0] < b [0] ? a [0] - step : a [0] + step;
+
+			if (h < 0)
+				h += PI2;
+
+			else if (h > PI2)
+				h -= PI2;
+
+			return [ h,
+			         Algorithm .lerp (a [1], b [1], t),
+			         Algorithm .lerp (a [2], b [2], t) ];
+		},
+	});
 
 	return Color3;
 });

@@ -38,17 +38,6 @@ function ($,
 		{
 			X3DNode .call (this, browser, executionContext);
 
-			this .min       = new Vector3 (0, 0, 0);
-			this .max       = new Vector3 (0, 0, 0);
-			this .bbox      = new Box3 ();
-			this .solid     = true;
-			this .frontFace = 0;
-			this .colors    = [ ];
-			this .texCoords = [ ];
-			this .normals   = [ ];
-			this .vertices  = [ ];
-			this .count     = 0;
-
 			this .addType (X3DConstants .X3DGeometryNode);
 		}
 
@@ -62,10 +51,14 @@ function ($,
 			v2: new Vector3 (0, 0, 0),
 			setup: function ()
 			{
+				this .setTainted (true);
+			
 				X3DNode .prototype .setup .call (this);
 
 				this .addInterest (this, "update");
-				this .addNodeEvent ();
+				this .update ();
+
+				this .setTainted (false);
 			},
 			initialize: function ()
 			{
@@ -74,6 +67,17 @@ function ($,
 				this .addChildren ("transparent", new SFBool (false));
 
 				var gl = this .getBrowser () .getContext ();
+		
+				this .min       = new Vector3 (0, 0, 0);
+				this .max       = new Vector3 (0, 0, 0);
+				this .bbox      = new Box3 (this .min, this .max, true);
+				this .solid     = true;
+				this .frontFace = 0;
+				this .colors    = [ ];
+				this .texCoords = [ ];
+				this .normals   = [ ];
+				this .vertices  = [ ];
+				this .count     = 0;
 
 				this .frontFace       = gl .CCW;
 				this .colorBuffer     = gl .createBuffer ();
@@ -278,7 +282,10 @@ function ($,
 				this .clear ();
 				this .build ();
 
-				this .bbox = this .vertices .length ? new Box3 (this .min, this .max, true) : new Box3 ();
+				if (this .vertices .length)
+					this .bbox .setExtents (this .min, this .max);
+				else
+					this .bbox .setExtents (this .min .set (0, 0, 0), this .max .set (0, 0, 0));
 
 				if (! this .isLineGeometry ())
 				{

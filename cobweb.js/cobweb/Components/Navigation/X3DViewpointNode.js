@@ -181,13 +181,15 @@ function ($,
 
 							navigationInfo .transitionStart_ = true;
 
-							var transitionType = navigationInfo .transitionType_ .getValue ();
-							var transitionTime = navigationInfo .transitionTime_ .getValue ();
+							var
+								transitionType = navigationInfo .getTransitionType (),
+								transitionTime = navigationInfo .transitionTime_ .getValue ();
 						}
 						else
 						{
-							var transitionType = "LINEAR";
-							var transitionTime = 1;
+							var
+								transitionType = "LINEAR",
+								transitionTime = 1;
 						}
 
 						switch (transitionType)

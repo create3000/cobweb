@@ -46,10 +46,11 @@ function ($,
 				key      = this .key_,
 				length   = key .length,
 				fraction = this .set_fraction_ .getValue ();
-		
+
 			switch (length)
 			{
 				case 0:
+					// Interpolator nodes containing no keys in the key field shall not produce any events.
 					return;
 				case 1:
 					return this .interpolate (0, 0, 0);

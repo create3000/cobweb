@@ -15,17 +15,7 @@ function (Matrix4, Vector3)
 				                            0,   0.5, 0,   0,
 				                            0,   0,   0.5, 0,
 				                            0,   0,   0,   0);
-				break;
-			}
-			case 3:
-			{
-				var min = arguments [0];
-				var max = arguments [1];
-
-				size   = Vector3 .subtract (max, min);
-				center = Vector3 .add (max, min) .divide (2);
-
-				// Proceed with next case:
+				return;
 			}
 			case 2:
 			{
@@ -33,7 +23,25 @@ function (Matrix4, Vector3)
 				                            0, size .y / 2, 0, 0,
 				                            0, 0, size .z / 2, 0,
 				                            center .x, center .y, center .z, 1);
-				break;
+				return;
+			}
+			case 3:
+			{
+				var
+					min = arguments [0],
+					max = arguments [1],
+					sx  = max .x - min .x,
+					sy  = max .y - min .y,
+					sz  = max .z - min .z,
+					cx  = (max .x + min .x) / 2,
+					cy  = (max .y + min .y) / 2,
+					cz  = (max .z + min .z) / 2;
+
+				this .matrix = new Matrix4 (sx, 0,  0,  0,
+				                            0,  sy, 0,  0,
+				                            0,  0,  sz, 0,
+				                            cx, cy, cz, 1);
+				return;
 			}
 		}
 	}
@@ -50,6 +58,32 @@ function (Matrix4, Vector3)
 		assign: function (box)
 		{
 			this .matrix .assign (box .matrix);
+			return this;
+		},
+		set: function (size, center)
+		{
+			var m = this .matrix;
+			m [ 0] = size .x / 2; m [ 1] = 0;           m [ 2] = 0;           m [ 3] = 0;
+			m [ 4] = 0;           m [ 5] = size .y / 2; m [ 6] = 0;           m [ 7] = 0;
+			m [ 8] = 0;           m [ 9] = 0;           m [10] = size .z / 2; m [11] = 0;
+			m [12] = center .x;   m [13] = center .y;   m [14] = center .z;   m [15] = 1;
+			return this;
+		},
+		setExtents: function (min, max)
+		{
+			var
+				m  = this .matrix,
+				sx = max .x - min .x,
+				sy = max .y - min .y,
+				sz = max .z - min .z,
+				cx = (max .x + min .x) / 2,
+				cy = (max .y + min .y) / 2,
+				cz = (max .z + min .z) / 2;
+
+			m [ 0] = sx; m [ 1] = 0;  m [ 2] = 0;  m [ 3] = 0;
+			m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
+			m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
+			m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
 			return this;
 		},
 		isEmpty: function ()

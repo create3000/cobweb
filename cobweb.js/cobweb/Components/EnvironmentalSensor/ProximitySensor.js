@@ -68,6 +68,33 @@ function ($,
 			{
 				return "children";
 			},
+			initialize: function ()
+			{
+				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+				
+				this .size_   .addInterest (this, "set_extents__");
+				this .center_ .addInterest (this, "set_extents__");
+	
+				this .min = new Vector3 (0, 0, 0);
+				this .max = new Vector3 (0, 0, 0);
+				
+				this .set_extents__ ();
+			},
+			set_extents__: function ()
+			{
+				var
+					s  = this .size_ .getValue (),
+					c  = this .center_ .getValue (),
+					sx = s .x / 2,
+					sy = s .y / 2,
+					sz = s .z / 2,
+					cx = c .x,
+					cy = c .y,
+					cz = c .z;
+
+				this .min .set (cx - sx, cy - sy, cz - sz);
+				this .max .set (cx + sx, cy + sy, cz + sz);
+			},
 			update: function ()
 			{
 				try
@@ -144,10 +171,9 @@ function ($,
 
 							else
 							{
-								var box    = new Box3 (this .size_ .getValue (), this .center_ .getValue ());
 								var viewer = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse () .origin;
 
-								this .inside = box .intersectsPoint (viewer);
+								this .inside = this .intersectsPoint (viewer);
 							}
 
 							return;
@@ -158,6 +184,19 @@ function ($,
 				{
 					//console .log (error);
 				}
+			},
+			intersectsPoint: function (point)
+			{
+				var
+					min = this .min,
+					max = this .max;
+
+				return min .x <= point .x &&
+				       max .x >= point .x &&
+				       min .y <= point .y &&
+				       max .y >= point .y &&
+				       min .z <= point .z &&
+				       max .z >= point .z;
 			},
 		});
 

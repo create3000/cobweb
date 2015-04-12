@@ -97,17 +97,16 @@ function ($,
 			},
 			setError: function (URL)
 			{
-				//this .getBrowser () .println ("Error loading image URL '" + URL + "'.");
+				this .getBrowser () .println ("Error loading image URL '" + URL + "'.");
 				this .loadNext ();
 			},
 			setImage: function (image)
 			{
 				try
 				{
-					var width  = image .width;
-					var height = image .height;
-
-					// Determine image alpha.
+					var
+						width  = image .width,
+						height = image .height;
 
 					var
 						canvas = $("<canvas>") [0],
@@ -133,8 +132,11 @@ function ($,
 						cx .drawImage (image, 0, 0);
 					}
 
-					var data   = cx .getImageData (0, 0, width, height) .data;
-					var opaque = true;
+					// Determine image alpha.
+
+					var
+						data   = cx .getImageData (0, 0, width, height) .data,
+						opaque = true;
 
 					for (var i = 3; i < data .length; i += 4)
 					{
@@ -155,6 +157,7 @@ function ($,
 				catch (error)
 				{
 					// Catch security error from cross origin requests.
+					console .log (error .message);
 					this .setError (image .src);
 				}
 			},
