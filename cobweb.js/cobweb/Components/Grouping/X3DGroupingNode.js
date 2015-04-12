@@ -309,7 +309,7 @@ function ($,
 		set_cameraObjects__: function ()
 		{
 			this .cameraObjects .length = 0;
-			
+
 			for (var i = 0; i < this .childNodes .length; ++ i)
 			{
 				var childNode = this .childNodes [i];
@@ -318,7 +318,7 @@ function ($,
 					this .cameraObjects .push (childNode);
 			}
 
-			this .setCameraObject (Boolean (this .cameraObjects .length));
+			this .setCameraObject (this .cameraObjects .length);
 		},
 		traverse: function (type)
 		{
@@ -348,21 +348,21 @@ function ($,
 					if (this .pointingDeviceSensors .length)
 						this .getBrowser () .getSensors () .pop ();
 
-					break;
+					return;
 				}
 				case TraverseType .CAMERA:
 				{
 					for (var i = 0; i < this .cameraObjects .length; ++ i)
 						this .cameraObjects [i] .traverse (type);
 
-					break;
+					return;
 				}
 				case TraverseType .DISPLAY:
 				{
 					for (var i = 0; i < this .childNodes .length; ++ i)
 						this .childNodes [i] .traverse (type);
 
-					break;
+					return;
 				}
 			}
 		},

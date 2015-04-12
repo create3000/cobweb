@@ -33,10 +33,12 @@ function ($,
 			X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .ProximitySensor);
-			
-			this .viewpoint       = null;
-			this .modelViewMatrix = new Matrix4 ();
-			this .inside          = false;
+
+			this .viewpoint          = null;
+			this .modelViewMatrix    = new Matrix4 ();
+			this .invModelViewMatrix = new Matrix4 ();
+			this .rotation           = new Rotation4 ();
+			this .inside             = false;
 		}
 
 		ProximitySensor .prototype = $.extend (new X3DEnvironmentalSensorNode (),
@@ -74,27 +76,16 @@ function ($,
 					{
 						var centerOfRotationMatrix = this .viewpoint .getParentMatrix ();
 						centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
-						centerOfRotationMatrix .multRight (Matrix4 .inverse (this .modelViewMatrix));
+						centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ());
 
 						this .modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
-
-						var rotation = new Rotation4 ();
-						this .modelViewMatrix .get (null, rotation);
+						this .modelViewMatrix .get (null, this .rotation);
 
 						var position         = this .modelViewMatrix .inverse () .origin;
-						var orientation      = rotation .inverse ();
+						var orientation      = this .rotation .inverse ();
 						var centerOfRotation = centerOfRotationMatrix .origin;
 
-						if (! this .isActive_ .getValue ())
-						{
-							this .isActive_  = true;
-							this .enterTime_ = this .getBrowser () .getCurrentTime ();
-
-							this .position_changed_         = position;
-							this .orientation_changed_      = orientation;
-							this .centerOfRotation_changed_ = centerOfRotation;
-						}
-						else
+						if (this .isActive_ .getValue ())
 						{
 							if (! this .position_changed_ .getValue () .equals (position))
 								this .position_changed_ = position;
@@ -104,6 +95,15 @@ function ($,
 
 							if (! this .centerOfRotation_changed_ .getValue () .equals (centerOfRotation))
 								this .centerOfRotation_changed_ = centerOfRotation;
+						}
+						else
+						{
+							this .isActive_  = true;
+							this .enterTime_ = this .getBrowser () .getCurrentTime ();
+
+							this .position_changed_         = position;
+							this .orientation_changed_      = orientation;
+							this .centerOfRotation_changed_ = centerOfRotation;
 						}
 
 						this .inside = false;
@@ -119,39 +119,46 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error .message);
+					//console .log (error .message);
 				}
 			},
 			traverse: function (type)
 			{
-				switch (type)
+				try
 				{
-					case TraverseType .CAMERA:
+					switch (type)
 					{
-						this .viewpoint       = this .getCurrentViewpoint ();
-						this .modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
-						return;
-					}
-					case TraverseType .DISPLAY:
-					{
-						if (this .inside)
-							return;
-
-						if (this .size_ .getValue () .equals (unlimited))
-							this .inside = true;
-
-						else
+						case TraverseType .CAMERA:
 						{
-							var box    = new Box3 (this .size_ .getValue (), this .center_ .getValue ());
-							var viewer = Matrix4 .inverse (this .getBrowser () .getModelViewMatrix () .get ()) .origin;
-
-							this .inside = box .intersectsPoint (viewer);
+							this .viewpoint = this .getCurrentViewpoint ();
+							this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+							return;
 						}
+						case TraverseType .DISPLAY:
+						{
+							if (this .inside)
+								return;
 
-						return;
+							if (this .size_ .getValue () .equals (unlimited))
+								this .inside = true;
+
+							else
+							{
+								var box    = new Box3 (this .size_ .getValue (), this .center_ .getValue ());
+								var viewer = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse () .origin;
+
+								this .inside = box .intersectsPoint (viewer);
+							}
+
+							return;
+						}
 					}
 				}
-			}
+				catch (error)
+				{
+					//console .log (error);
+				}
+			},
 		});
 
 		return ProximitySensor;

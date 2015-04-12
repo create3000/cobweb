@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DBindableNode",
 	"cobweb/Components/EnvironmentalEffects/X3DFogObject",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -13,7 +14,8 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DBindableNode, 
-          X3DFogObject, 
+          X3DFogObject,
+          TraverseType,
           X3DConstants)
 {
 	with (Fields)
@@ -21,12 +23,13 @@ function ($,
 		function Fog (executionContext)
 		{
 			X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DFogObject .call (this, executionContext .getBrowser (), executionContext);
+			X3DFogObject    .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Fog);
 		}
 
-		Fog .prototype = $.extend (new X3DBindableNode (),new X3DFogObject (),
+		Fog .prototype = $.extend (new X3DBindableNode (),
+			X3DFogObject .prototype,
 		{
 			constructor: Fog,
 			fieldDefinitions: new FieldDefinitionArray ([
@@ -50,6 +53,11 @@ function ($,
 			{
 				return "children";
 			},
+			initialize: function ()
+			{
+				X3DBindableNode .prototype .initialize .call (this);
+				X3DFogObject    .prototype .initialize .call (this);
+			},
 			bindToLayer: function (layer)
 			{
 				X3DBindableNode .prototype .bindToLayer .call (this, layer);
@@ -65,6 +73,11 @@ function ($,
 			removeFromLayer: function (layer)
 			{
 				layer .getFogStack () .remove (this);
+			},
+			traverse: function (type)
+			{
+				if (TraverseType .CAMERA)
+					this .getCurrentLayer () .getFogs () .push (this);
 			},
 		});
 

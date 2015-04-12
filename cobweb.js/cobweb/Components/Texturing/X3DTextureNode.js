@@ -72,7 +72,18 @@ function ($,
 
 				//gl .texParameterfv (target, gl .TEXTURE_BORDER_COLOR,       textureProperties .borderColor_ .getValue ());
 				//gl .texParameterf  (target, gl .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
-				//gl .texParameterf  (target, gl .TEXTURE_PRIORITY,           textureProperties .texturePriority_);
+				//gl .texParameterf  (target, gl .TEXTURE_PRIORITY,           textureProperties .texturePriority_ .getValue ());
+
+				/*
+				// Anisotropic Filtering in WebGL is handled by an extension, use one of getExtension depending on browser:
+
+				var ext = gl .getExtension ("MOZ_EXT_texture_filter_anisotropic");
+				var ext = gl .getExtension ("WEBKIT_EXT_texture_filter_anisotropic");
+				var ext = gl .getExtension ("EXT_texture_filter_anisotropic");
+
+				if (ext)
+					gl .texParameterf (gl .TEXTURE_2D, ext .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
+				*/
 
 				gl .bindTexture (target, null);
 			},

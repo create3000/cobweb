@@ -19,10 +19,12 @@ varying vec3 v;  // point on geometry
 void
 main ()
 {
+	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
+
 	C  = x3d_Color;
 	t  = x3d_TextureMatrix * x3d_TexCoord;
 	vN = normalize (x3d_NormalMatrix * x3d_Normal);
-	v  = vec3 (x3d_ModelViewMatrix * x3d_Vertex);
+	v  = vec3 (p);
 
-	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
+	gl_Position = x3d_ProjectionMatrix * p;
 }

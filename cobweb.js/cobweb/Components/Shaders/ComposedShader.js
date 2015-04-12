@@ -86,8 +86,12 @@ function ($,
 
 				gl .useProgram (this .program);
 
-				this .lighting         = gl .getUniformLocation (this .program, "x3d_Lighting");
-				this .colorMaterial    = gl .getUniformLocation (this .program, "x3d_ColorMaterial");
+				this .fogType            = gl .getUniformLocation (this .program, "x3d_fogType");
+				this .fogColor           = gl .getUniformLocation (this .program, "x3d_fogColor");
+				this .fogVisibilityRange = gl .getUniformLocation (this .program, "x3d_fogVisibilityRange");
+
+				this .lighting      = gl .getUniformLocation (this .program, "x3d_Lighting");
+				this .colorMaterial = gl .getUniformLocation (this .program, "x3d_ColorMaterial");
 
 				this .lightType             = [ ];
 				this .lightOn               = [ ];
@@ -160,6 +164,8 @@ function ($,
 					texture  = browser .getTexture ();
 
 				gl .useProgram (this .program);
+
+				context .fog .use (gl, this);
 				gl .uniform1i (this .colorMaterial, context .colorMaterial);
 
 				if (material)

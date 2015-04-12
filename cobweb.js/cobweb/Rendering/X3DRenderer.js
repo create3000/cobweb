@@ -70,7 +70,8 @@ function (TraverseType,
 				context .modelViewMatrix .set (modelViewMatrix);
 				context .shape    = shape;
 				context .scissor  = viewVolume .getScissor ();
-				context .distance = distance;				
+				context .distance = distance;
+				context .fog      = this .getFog ();
 			}
 		},
 		render: function (type)

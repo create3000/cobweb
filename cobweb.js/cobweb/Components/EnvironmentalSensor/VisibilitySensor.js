@@ -45,6 +45,8 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",  new SFTime ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",  new SFBool ()),
 			]),
+			size: new Vector3 (0, 0, 0),
+			center: new Vector3 (0, 0, 0),
 			getTypeName: function ()
 			{
 				return "VisibilitySensor";
@@ -60,9 +62,6 @@ function ($,
 			initialize: function ()
 			{
 				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
-
-				this .size   = this .size_   .getValue ();
-				this .center = this .center_ .getValue ();
 			},
 			update: function ()
 			{
@@ -92,7 +91,7 @@ function ($,
 					if (! this .enabled_ .getValue () || this .visible)
 						return;
 
-					if (this .size .equals (unlimited))
+					if (this .size_ .getValue () .equals (unlimited))
 						this .visible = true;
 
 					else
@@ -100,8 +99,8 @@ function ($,
 						var
 							viewVolumes     = this .getCurrentLayer () .getViewVolumeStack (),
 							modelViewMatrix = this .getModelViewMatrix (type),
-							size            = modelViewMatrix .multDirMatrix (this .size .copy ()),
-							center          = modelViewMatrix .multVecMatrix (this .center .copy ());
+							size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
+							center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
 
 						this .visible = viewVolumes [viewVolumes .length - 1] .intersectsSphere (size .abs () / 2, center);
 					}

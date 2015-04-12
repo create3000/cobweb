@@ -12,11 +12,19 @@ uniform float x3d_Transparency;
 attribute vec4 x3d_Color;
 attribute vec4 x3d_Vertex;
 
-varying vec4 C; // color
+varying vec4  C;  // color
+varying float dv; // distance to vertex
 
 void
 main ()
 {
+	//gl_PointSize = 10.0;
+
+	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
+
+	dv          = length (vec3 (p));
+	gl_Position = x3d_ProjectionMatrix * p;
+
 	float alpha = 1.0 - x3d_Transparency;
 
 	if (x3d_Lighting)
@@ -39,7 +47,4 @@ main ()
 		else
 			C = vec4 (1.0, 1.0, 1.0, 1.0);
 	}
-
-	//gl_PointSize = 10.0;
-	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
 }

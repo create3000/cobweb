@@ -1,6 +1,15 @@
 // -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
 precision mediump float;
 
+#define NO_FOG           0
+#define LINEAR_FOG       1
+#define EXPONENTIAL_FOG  2
+#define EXPONENTIAL2_FOG 3
+
+uniform int   x3d_fogType;
+uniform vec3  x3d_fogColor;
+uniform float x3d_fogVisibilityRange;
+
 uniform bool x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
 
@@ -8,6 +17,7 @@ uniform bool x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise
 #define DIRECTIONAL_LIGHT 0
 #define POINT_LIGHT       1
 #define SPOT_LIGHT        2
+
 uniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
 uniform bool  x3d_LightOn [MAX_LIGHTS];
 uniform vec3  x3d_LightColor [MAX_LIGHTS];
@@ -35,6 +45,26 @@ varying vec4 t;  // texCoord
 varying vec3 vN; // normalized normal vector at this point on geometry
 varying vec3 v;  // point on geometry
 
+float
+getFogInterpolant ()
+{
+	float dv = length (v);
+
+	if (x3d_fogType == NO_FOG)
+		return 1.0;
+
+	if (dv >= x3d_fogVisibilityRange)
+		return 0.0;
+
+	if (x3d_fogType == LINEAR_FOG)
+		return (x3d_fogVisibilityRange - dv) / x3d_fogVisibilityRange;
+
+	if (x3d_fogType == EXPONENTIAL_FOG)
+		return exp (-dv / (x3d_fogVisibilityRange - dv));
+
+	return 1.0;
+}
+
 vec4
 getTextureColor ()
 {
@@ -44,6 +74,8 @@ getTextureColor ()
 void
 main ()
 {
+	float f0 = getFogInterpolant ();
+
 	if (x3d_Lighting)
 	{
 		vec3  N  = normalize (gl_FrontFacing ? vN : -vN);
@@ -150,4 +182,6 @@ main ()
 
 		gl_FragColor = finalColor;
 	}
+
+	gl_FragColor .rgb = mix (x3d_fogColor, gl_FragColor .rgb, f0);
 }

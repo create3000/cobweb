@@ -128,7 +128,7 @@ function ($,
 			},
 			getFarPlane: function (viewpoint)
 			{
-				return +this .visibilityLimit_
+				return this .visibilityLimit_ .getValue ()
 					    ? this .visibilityLimit_ .getValue ()
 					    : viewpoint .getMaxZFar ();
 			},

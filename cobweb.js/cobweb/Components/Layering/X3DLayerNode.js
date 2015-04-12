@@ -7,6 +7,7 @@ define ([
 	"cobweb/Execution/BindableStack",
 	"cobweb/Execution/BindableList",
 	"cobweb/Components/Navigation/NavigationInfo",
+	"cobweb/Components/EnvironmentalEffects/Fog",
 	"cobweb/Components/EnvironmentalEffects/Background",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
@@ -21,6 +22,7 @@ function ($,
           BindableStack,
           BindableList,
           NavigationInfo,
+          Fog,
           Background,
           X3DCast,
           TraverseType,
@@ -53,17 +55,20 @@ function ($,
 
 			this .defaultNavigationInfo = new NavigationInfo (this .getExecutionContext ());
 			this .defaultBackground     = new Background (this .getExecutionContext ());
-			//this .defaultFog            = new Fog (this .getExecutionContext ());
+			this .defaultFog            = new Fog (this .getExecutionContext ());
 
 			this .defaultNavigationInfo .setup ();
 			this .defaultBackground     .setup ();
-			//this .defaultFog            .setup ();
+			this .defaultFog            .setup ();
 			this .defaultViewpoint      .setup ();
+
+			this .defaultBackground .setHidden (true);
+			this .defaultFog        .setHidden (true);
 
 			this .currentViewport     = null;
 			this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
 			this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
-			//this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
+			this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
 			this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
 
 			this .navigationInfos = new BindableList (this .getExecutionContext (), this);

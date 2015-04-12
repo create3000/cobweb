@@ -13,6 +13,7 @@ uniform bool x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise
 #define DIRECTIONAL_LIGHT 0
 #define POINT_LIGHT       1
 #define SPOT_LIGHT        2
+
 uniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
 uniform bool  x3d_LightOn [MAX_LIGHTS];
 uniform vec3  x3d_LightColor [MAX_LIGHTS];
@@ -40,9 +41,10 @@ attribute vec4 x3d_TexCoord;
 attribute vec3 x3d_Normal;
 attribute vec4 x3d_Vertex;
 
-varying vec4 frontColor; // color
-varying vec4 backColor;  // color
-varying vec4 t;          // texCoord
+varying vec4  frontColor; // color
+varying vec4  backColor;  // color
+varying vec4  t;          // texCoord
+varying float dv;         // distance to vertex
 
 void
 main ()
@@ -51,9 +53,11 @@ main ()
 	     t  = x3d_TextureMatrix * x3d_TexCoord;
 	vec3 N  = normalize (x3d_NormalMatrix * x3d_Normal);
 	vec3 bN = -N;
-	vec3 v  = vec3 (x3d_ModelViewMatrix * x3d_Vertex);
+	vec4 p  = x3d_ModelViewMatrix * x3d_Vertex;
+	vec3 v  = vec3 (p);
+	     dv = length (v);
 
-	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
+	gl_Position = x3d_ProjectionMatrix * p;
 
 	if (x3d_Lighting)
 	{
