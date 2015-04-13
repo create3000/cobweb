@@ -84,6 +84,8 @@ function (jquery,
 				{
 					if (this .loadCount_ .getValue ())
 						div .css ("cursor", "wait");
+					else if (this .pointingDevice && this .pointingDevice .isOver)
+						div .css ("cursor", "pointer");
 					else
 						div .css ("cursor", "default");
 					break;

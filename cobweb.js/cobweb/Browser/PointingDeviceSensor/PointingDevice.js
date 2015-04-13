@@ -92,6 +92,12 @@ function (jquery,
 				x      = event .pageX - offset .left,
 				y      = browser .getCanvas () .height () - (event .pageY - offset .top);
 
+			this .onmotion (x, y);
+		},
+		onmotion: function (x, y)
+		{
+			var browser = this .getBrowser ();
+
 			if (browser .motionNotifyEvent (x, y))
 			{
 				if (! this .isOver)
@@ -122,15 +128,9 @@ function (jquery,
 			// and the new child has a sensor node inside. This sensor node must be update to
 			// reflect the correct isOver state.
 
-			var browser = this .getBrowser ();
+			this .getBrowser () .finished () .removeInterest (this, "onverifymotion");
 
-			browser .finished () .removeInterest (this, "onverifymotion");
-
-			if (browser .motionNotifyEvent (x, y))
-				browser .setCursor ("HAND");
-
-			else
-				browser .setCursor ("DEFAULT");
+			this .onmotion (x, y);
 		},
 	});
 

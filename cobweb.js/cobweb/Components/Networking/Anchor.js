@@ -6,15 +6,21 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Components/PointingDeviceSensor/TouchSensor",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Loader",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGroupingNode, 
-          X3DUrlObject, 
-          X3DConstants)
+          X3DGroupingNode,
+          X3DUrlObject,
+          TouchSensor,
+          TraverseType,
+          X3DConstants,
+          Loader)
 {
 	with (Fields)
 	{
@@ -57,10 +63,51 @@ function ($,
 			{
 				X3DGroupingNode .prototype .initialize .call (this);
 				X3DUrlObject    .prototype .initialize .call (this);
+
+				this .touchSensorNode = new TouchSensor (this .getExecutionContext ());
+
+				this .touchSensorNode .touchTime_ .addInterest (this, "requestAsyncLoad");
+				this .description_ .addFieldInterest (this .touchSensorNode .description_);
+
+				this .touchSensorNode .description_ = this .description_;
+				this .touchSensorNode .setup ();
+			},
+			requestAsyncLoad: function ()
+			{
+				this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
+
+				new Loader (this) .createX3DFromURL (this .url_, /*this .parameter_,*/
+				function (scene)
+				{
+					if (scene)
+					{
+						this .getBrowser () .replaceWorld (scene);
+						this .setLoadState (X3DConstants .COMPLETE_STATE, false);
+					}
+					else
+						this .setLoadState (X3DConstants .FAILED_STATE, false);		
+				}
+				.bind (this),
+				function (fragment)
+				{
+					this .getExecutionContext () .changeViewpoint (fragment);
+					this .setLoadState (X3DConstants .COMPLETE_STATE, false);
+				}
+				.bind (this));
 			},
 			traverse: function (type)
 			{
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				if (type === TraverseType .POINTER)
+				{
+					this .getBrowser () .getSensors () .push ({ });
+					this .touchSensorNode .push ();
+
+					X3DGroupingNode .prototype .traverse .call (this, type);
+
+					this .getBrowser () .getSensors () .pop ();
+				}
+				else
+					X3DGroupingNode .prototype .traverse .call (this, type);
 			},
 		});
 

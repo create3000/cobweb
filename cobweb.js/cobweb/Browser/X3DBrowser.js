@@ -120,9 +120,18 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		{
 			this .addLoadCount ();
 
-			new Loader (this .getWorld ()) .createX3DFromURL (url, function (scene)
+			new Loader (this .getWorld ()) .createX3DFromURL (url,
+			function (scene)
 			{
-				this .replaceWorld (scene);
+				if (scene)
+					this .replaceWorld (scene);
+
+				this .removeLoadCount ();
+			}
+			.bind (this),
+			function (fragment)
+			{
+				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount ();
 			}
 			.bind (this));

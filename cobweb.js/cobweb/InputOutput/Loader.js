@@ -1,12 +1,11 @@
 
 define ([
 	"jquery",
-	"cobweb/Execution/World",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
 	"cobweb/Debug",
 ],
-function ($, World, XMLParser, URI, DEBUG)
+function ($, XMLParser, URI, DEBUG)
 {
 	var TIMEOUT = 16;
 
@@ -14,8 +13,8 @@ function ($, World, XMLParser, URI, DEBUG)
 	{
 		this .node             = node;
 		this .browser          = node .getBrowser ();
-		this .scripts          = this .browser .getScriptStack () .length;
-		this .executionContext = this .scripts === 1 ? node .getExecutionContext () : this .browser .currentScene;
+		this .external         = this .browser .getScriptStack () .length === 1;
+		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
 		this .URL              = new URI ();
 	}
 
@@ -65,8 +64,10 @@ function ($, World, XMLParser, URI, DEBUG)
 					throw exception;
 			}
 		},
-		createX3DFromURL: function (url, callback)
+		createX3DFromURL: function (url, callback, bindViewpoint)
 		{
+			this .bindViewpoint = bindViewpoint;
+
 			if (callback)
 				return setTimeout (this .loadDocument .bind (this, url, this .createX3DFromURLAsync .bind (this, callback)), TIMEOUT);
 
@@ -74,15 +75,19 @@ function ($, World, XMLParser, URI, DEBUG)
 		},
 		createX3DFromURLAsync: function (callback, data)
 		{
-			this .createX3DFromString (this .URL, data, callback, this .loadDocumentError .bind (this));
+			if (data === null)
+				callback (null);
+			else
+				this .createX3DFromString (this .URL, data, callback, this .loadDocumentError .bind (this));
 		},
 		createX3DFromURLSync: function (url)
 		{
 			if (url .length === 0)
 				throw new Error ("No URL given.");
 
-			var scene   = null;
-			var success = false;
+			var
+				scene   = null,
+				success = false;
 
 			for (var i = 0; i < url .length; ++ i)
 			{
@@ -135,6 +140,23 @@ function ($, World, XMLParser, URI, DEBUG)
 		},
 		loadDocumentAsync: function (URL)
 		{
+			try
+			{
+				if (this .bindViewpoint)
+				{
+					var uri = new URI (URL);
+
+					if (uri .filename .toString () .length === 0 && uri .filename .query .length === 0)
+					{
+						return this .bindViewpoint (uri .fragment);
+					}
+				}
+			}
+			catch (exception)
+			{
+				return this .loadDocumentError (exception);
+			}
+
 			this .URL = this .transform (URL);
 
 			$.ajax ({
@@ -183,9 +205,9 @@ function ($, World, XMLParser, URI, DEBUG)
 		},
 		getReferer: function ()
 		{
-			if (this .node instanceof World)
+			if (this .node .getTypeName () === "World")
 			{
-				if (this .scripts === 1)
+				if (this .external)
 					return this .browser .getLocation ();
 			}
 

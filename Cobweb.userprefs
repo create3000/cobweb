@@ -1,36 +1,26 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/PointingDeviceSensor/PlaneSensor.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/tests/Examples/Cathedral/stage/index.x3d">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="98" Column="12" />
+      <File FileName="cobweb.js/cobweb.html" Line="109" Column="53" />
       <File FileName="cobweb.js/tests/Components/Scripting/test.x3d" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="49" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext.js" Line="220" Column="5" />
-      <File FileName="cobweb.js/cobweb/Browser/PointingDeviceSensor/PointingDevice.js" Line="76" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DGroupingNode.js" Line="338" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode.js" Line="24" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/PointingDeviceSensor/TouchSensor.js" Line="66" Column="74" />
-      <File FileName="cobweb.js/cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode.js" Line="76" Column="6" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="148" Column="32" />
-      <File FileName="cobweb.js/cobweb/Components/Shape/Shape.js" Line="146" Column="8" />
-      <File FileName="cobweb.js/standard/Math/Geometry/Line3.js" Line="39" Column="5" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="35" Column="34" />
-      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="217" Column="6" />
-      <File FileName="cobweb.js/cobweb/Components/PointingDeviceSensor/PlaneSensor.js" Line="204" Column="6" />
-      <File FileName="cobweb.js/standard/Math/Geometry/ViewVolume.js" Line="151" Column="57" />
-      <File FileName="cobweb.js/standard/Math/Geometry/Plane3.js" Line="39" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="354" Column="6" />
+      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DGroupingNode.js" Line="349" Column="50" />
+      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="387" Column="16" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="198" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Networking/Anchor.js" Line="23" Column="11" />
+      <File FileName="cobweb.js/cobweb/InputOutput/Loader.js" Line="144" Column="5" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="125" Column="10" />
+      <File FileName="cobweb.js/tests/Examples/Cathedral/stage/index.x3d" Line="29" Column="11" />
+      <File FileName="cobweb.js/tests/Examples/Cathedral/stage/index.wrl" Line="4187" Column="24" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="cobweb.js" expanded="True">
             <Node name="cobweb" expanded="True">
-              <Node name="Base" expanded="True" />
-              <Node name="Basic" expanded="True" />
-              <Node name="Bits" expanded="True" />
               <Node name="Browser" expanded="True">
                 <Node name="Core" expanded="True" />
-                <Node name="Geometry3D" expanded="True" />
                 <Node name="KeyDeviceSensor" expanded="True" />
                 <Node name="Layering" expanded="True" />
                 <Node name="Navigation" expanded="True" />
@@ -50,9 +40,7 @@
                 <Node name="Lighting" expanded="True" />
                 <Node name="Navigation" expanded="True" />
                 <Node name="Networking" expanded="True" />
-                <Node name="PointingDeviceSensor" expanded="True">
-                  <Node name="PlaneSensor.js" selected="True" />
-                </Node>
+                <Node name="PointingDeviceSensor" expanded="True" />
                 <Node name="Rendering" expanded="True" />
                 <Node name="Scripting" expanded="True" />
                 <Node name="Shaders" expanded="True" />
@@ -69,12 +57,6 @@
               <Node name="Routing" expanded="True" />
             </Node>
             <Node name="images" expanded="True" />
-            <Node name="jam" expanded="True">
-              <Node name="jquery" expanded="True">
-                <Node name="dist" expanded="True" />
-              </Node>
-            </Node>
-            <Node name="stable" expanded="True" />
             <Node name="standard" expanded="True">
               <Node name="Math" expanded="True">
                 <Node name="Algorithms" expanded="True" />
@@ -86,15 +68,17 @@
             </Node>
             <Node name="tests" expanded="True">
               <Node name="Components" expanded="True">
-                <Node name="Geometry3D" expanded="True">
-                  <Node name="Extrusion" expanded="True" />
-                </Node>
-                <Node name="images" expanded="True" />
                 <Node name="PointingDeviceSensor" expanded="True" />
                 <Node name="Scripting" expanded="True" />
               </Node>
               <Node name="Examples" expanded="True">
+                <Node name="Arcadia" expanded="True" />
                 <Node name="BIC" expanded="True" />
+                <Node name="Cathedral" expanded="True">
+                  <Node name="stage" expanded="True">
+                    <Node name="index.x3d" selected="True" />
+                  </Node>
+                </Node>
                 <Node name="LogoPieces" expanded="True" />
               </Node>
             </Node>
