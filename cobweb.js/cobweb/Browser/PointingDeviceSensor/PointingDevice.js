@@ -35,7 +35,7 @@ function (jquery,
 
 			browser .getCanvas () .focus ();
 
-			if (browser .hasShiftKey () && browser .hasControlKey ())
+			if (browser .hasShiftKey () && browser .hasCtrlKey ())
 				return;
 
 			if (event .button === 0)
@@ -51,7 +51,6 @@ function (jquery,
 
 					browser .setCursor ("HAND");
 					browser .finished () .addInterest (this, "onverifymotion", x, y);
-					return;
 				}
 			}
 		},

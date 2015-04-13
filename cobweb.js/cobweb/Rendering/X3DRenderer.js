@@ -127,7 +127,8 @@ function (TraverseType,
 				opaqueShapes      = this .opaqueShapes,
 				transparentShapes = this .transparentShapes;
 
-			browser .getLineShader () .setGlobalUniforms ();
+			browser .getPointShader ()   .setGlobalUniforms ();
+			browser .getLineShader ()    .setGlobalUniforms ();
 			browser .getDefaultShader () .setGlobalUniforms ();
 
 			// Sorted blend

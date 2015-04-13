@@ -103,16 +103,13 @@ function (jquery,
 
 			var nearestHit = this .hits [this .hits .length - 1];
 
-			if (nearestHit .sensors .length === 0)
-				return false;
-
 			this .selectedLayer = nearestHit .layer;
 			this .activeSensors = nearestHit .sensors;
 
 			for (var key in this .activeSensors)
 				this .activeSensors [key] .set_active__ (nearestHit, true);
 
-			return true;
+			return ! $.isEmptyObject (nearestHit .sensors);
 		},
 		buttonReleaseEvent: function ()
 		{

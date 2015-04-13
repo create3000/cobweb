@@ -53,7 +53,7 @@ function ($,
 				var
 					keyValue      = this .keyValue_ .getValue (),
 					value_changed = this .value_changed_ .getValue (),
-					size          = this .key_ .length > 1 ? Math .floor (this .keyValue_ .length / this .key_ .length) : 0;
+					size          = this .key_ .length > 1 ? Math .floor (keyValue .length / this .key_ .length) : 0;
 
 				index0 *= size;
 				index1  = index0 + size;

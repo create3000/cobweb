@@ -470,32 +470,19 @@ function ($,
 			{
 				try
 				{
-					// Find first two convex edges.
-
-					for (var i = 0, length = vertices .length - 2; i < length; ++ i)
-					{
-						var
-							p0 = vertices [i],
-							p1 = vertices [i + 1],
-							p2 = vertices [i + 2];
-
-						var
-							hAxis = Vector3 .subtract (p0, p1),
-							xAxis = Vector3 .subtract (p2, p1);
-
-						if (hAxis .dot (xAxis) > 0)
-							break;
-					}
-
 					// Transform vertices to 2D space.
 
 					var
-						zAxis = Vector3 .cross (xAxis, hAxis),
+						p0 = vertices [0],
+						p1 = vertices [1];
+
+					var
+						zAxis = this .getPolygonNormal (vertices),
+						xAxis = Vector3 .subtract (p1, p0),
 						yAxis = Vector3 .cross (zAxis, xAxis);
 
 					xAxis .normalize ();
 					yAxis .normalize ();
-					zAxis .normalize ();
 
 					var matrix = new Matrix4 (xAxis .x, xAxis .y, xAxis .z, 0,
 					                          yAxis .x, yAxis .y, yAxis .z, 0,
@@ -514,18 +501,17 @@ function ($,
 					}
 
 					// Triangulate polygon.
-		
-					var context = new poly2tri .SweepContext (contour);
-		
-					context .triangulate ();
 
-					var ts = context .getTriangles ();
+					var
+						context = new poly2tri .SweepContext (contour),
+						ts      = context .triangulate () .getTriangles ();
 
 					for (var i = 0; i < ts .length; ++ i)
 						triangles .push (ts [i] .getPoint (0) .index, ts [i] .getPoint (1) .index, ts [i] .getPoint (2) .index);
 				}
 				catch (error)
 				{
+					//console .log (error);
 					this .triangulateConvexPolygon (vertices, triangles);
 				}
 			},
@@ -534,6 +520,28 @@ function ($,
 				// Fallback: Very simple triangulation for convex polygons.
 				for (var i = 1, length = vertices .length - 1; i < length; ++ i)
 					triangles .push (0, i, i + 1);
+			},
+			getPolygonNormal: function (vertices)
+			{
+				// Determine polygon normal.
+				// We use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal here:
+
+				var
+					normal = new Vector3 (0, 0, 0),
+					next   = vertices [0];
+
+				for (var i = 0, length = vertices .length; i < length; ++ i)
+				{
+					var
+						current = next,
+						next    = vertices [(i + 1) % length];
+
+					normal .x += (current .y - next .y) * (current .z + next .z);
+					normal .y += (current .z - next .z) * (current .x + next .x);
+					normal .z += (current .x - next .x) * (current .y + next .y);
+				}
+
+				return normal .normalize ();
 			},
 		});
 

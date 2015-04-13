@@ -1183,6 +1183,7 @@
     <None Include="tests\Examples\Arcadia\stage\mount.x3d" />
     <None Include="tests\Examples\Arcadia\stage\saule.x3d" />
     <None Include="tests\Examples\Arcadia\stage\temple.x3d" />
+    <None Include="tests\Components\Interpolation\NormalInterpolator.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1219,5 +1220,6 @@
     <Folder Include="cobweb\Browser\Scripting\" />
     <Folder Include="tests\Components\Geometry3D\Extrusion\" />
     <Folder Include="tests\Components\PointingDeviceSensor\" />
+    <Folder Include="tests\Components\Interpolation\" />
   </ItemGroup>
 </Project>

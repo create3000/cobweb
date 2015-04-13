@@ -14,9 +14,9 @@ function ($, World, XMLParser, URI, DEBUG)
 	{
 		this .node             = node;
 		this .browser          = node .getBrowser ();
-		this .executionContext = node .getExecutionContext ();
-		this .URL              = new URI ();
 		this .scripts          = this .browser .getScriptStack () .length;
+		this .executionContext = this .scripts === 1 ? node .getExecutionContext () : this .browser .currentScene;
+		this .URL              = new URI ();
 	}
 
 	Loader .prototype =

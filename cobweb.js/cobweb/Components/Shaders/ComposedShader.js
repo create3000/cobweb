@@ -35,6 +35,9 @@ function ($,
 		{
 			constructor: ComposedShader,
 			maxLights: MAX_LIGHTS,
+			settings: {
+				lights: 0,
+			},
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new SFBool ()),
@@ -161,7 +164,8 @@ function ($,
 					browser  = this .getBrowser (),
 					gl       = browser .getContext (),
 					material = browser .getMaterial (),
-					texture  = browser .getTexture ();
+					texture  = browser .getTexture (),
+					settings = this .settings;
 
 				gl .useProgram (this .program);
 
@@ -187,8 +191,10 @@ function ($,
 					for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
 						localLights [l] .use (gl, this, i);
 
-					for ( ; i < this .maxLights; ++ i)
+					for (var length = settings .lights; i < length; ++ i)
 						gl .uniform1i (lightOn [i], false);
+
+					settings .lights = lights;
 
 					// Material
 

@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 19 Feb 2015 06:21:38 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 16 Mar 2015 13:02:32 GMT'/>
+    <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
+    <meta name='modified' content='Mon, 13 Apr 2015 04:59:05 GMT'/>
   </head>
   <Scene>
     <Transform
@@ -157,7 +157,7 @@
             coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'/>
       </Shape>
     </Transform>
-    <Transform DEF='_2'
+    <Transform
         translation='6.60512 0.306037 -8.91312e-06'
         rotation='-4.96481e-10 3.6236e-06 -1 0.785398'
         scaleOrientation='5.92211e-06 -1.24051e-05 1 0.392831'>
@@ -213,7 +213,7 @@
               colorIndex='0, 1, 2, 3, 4, 5'
               texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
-            <Color DEF='_3'
+            <Color DEF='_2'
                 color='1 0 0, 0 1 0, 0 0 1, 1 1 0, 0 1 1, 1 0 1'/>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -237,7 +237,7 @@
               colorIndex='0, 1, 2, 3, 4, 5'
               texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
-            <Color USE='_3'/>
+            <Color USE='_2'/>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
             <Coordinate
@@ -260,7 +260,7 @@
               colorIndex='0, 1, 2, 3, 4, 5'
               texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
-            <Color USE='_3'/>
+            <Color USE='_2'/>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
             <Coordinate
@@ -275,7 +275,7 @@
           translation='4 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material DEF='_4'
+            <Material DEF='_3'
                 diffuseColor='1 1 1'
                 transparency='0.677215'/>
             <ImageTexture
@@ -289,7 +289,7 @@
               colorIndex='0, 1, 2, 3, 4, 5'
               texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
-            <Color DEF='_5'
+            <Color DEF='_4'
                 color='1 0 0, 0 1 0, 0 0 1, 1 1 0, 0 1 1, 1 0 1'/>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
@@ -302,7 +302,7 @@
           translation='7 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material USE='_4'/>
+            <Material USE='_3'/>
             <ImageTexture
                 url='"../images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
                 repeatS='false'
@@ -314,7 +314,7 @@
               colorIndex='0, 1, 2, 3, 4, 5'
               texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
-            <Color USE='_5'/>
+            <Color USE='_4'/>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
             <Coordinate
@@ -326,7 +326,7 @@
           translation='10 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material USE='_4'/>
+            <Material USE='_3'/>
             <ImageTexture
                 url='"../images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
                 repeatS='false'
@@ -338,7 +338,7 @@
               colorIndex='0, 1, 2, 3, 4, 5'
               texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
-            <Color USE='_5'/>
+            <Color USE='_4'/>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
             <Coordinate
@@ -350,7 +350,7 @@
           translation='13 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material USE='_4'/>
+            <Material USE='_3'/>
             <ImageTexture
                 url='"../images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
                 repeatS='false'
@@ -362,7 +362,7 @@
               colorIndex='0, 1, 2, 3, 4, 5'
               texCoordIndex='0, 1, 2, 3, -1, 4, 5, 6, 7, -1, 10, 11, 9, 8, -1, 12, 13, 15, 14, -1, 19, 16, 17, 18, -1, 20, 23, 22, 21, -1'
               coordIndex='0, 1, 3, 2, -1, 4, 5, 7, 6, -1, 6, 7, 1, 0, -1, 2, 3, 5, 4, -1, 6, 0, 2, 4, -1, 1, 7, 5, 3, -1'>
-            <Color USE='_5'/>
+            <Color USE='_4'/>
             <TextureCoordinate
                 point='0 1, 0 0, 1 0, 1 1, 1 1, 1 0, 0 0, 0 1, 1 1, 1 0, 0 1, 0 0, 1 1, 1 0, 0 1, 0 0, 0 0, 1 0, 1 1, 0 1, 0 0, 1 0, 1 1, 0 1'/>
             <Coordinate
@@ -468,7 +468,7 @@
           translation='4 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material DEF='_6'
+            <Material DEF='_5'
                 diffuseColor='1 1 1'
                 transparency='0.601266'/>
             <ImageTexture
@@ -493,7 +493,7 @@
           translation='7 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material USE='_6'/>
+            <Material USE='_5'/>
             <ImageTexture
                 url='"../images/logo.2.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.2.png"'
                 repeatS='false'
@@ -516,7 +516,7 @@
           translation='10 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material USE='_6'/>
+            <Material USE='_5'/>
             <ImageTexture
                 url='"../images/logo.3.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.3.png"'
                 repeatS='false'
@@ -539,7 +539,7 @@
           translation='13 0 -3.52767'>
         <Shape>
           <Appearance>
-            <Material USE='_6'/>
+            <Material USE='_5'/>
             <ImageTexture
                 url='"../images/logo.4.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/logo.4.png"'
                 repeatS='false'
@@ -562,6 +562,7 @@
     <DirectionalLight/>
     <Background DEF='Gray_1'
         skyColor='0.2 0.2 0.2'/>
-    <NavigationInfo/>
+    <NavigationInfo
+        headlight='false'/>
   </Scene>
 </X3D>

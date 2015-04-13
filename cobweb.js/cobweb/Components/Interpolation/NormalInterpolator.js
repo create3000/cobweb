@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DConstants)
+          X3DConstants,
+          Algorithm)
 {
 	with (Fields)
 	{
@@ -44,6 +46,34 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
+			},
+			initialize: function ()
+			{
+				X3DInterpolatorNode .prototype .initialize .call (this);
+
+				this .keyValue_ .addInterest (this, "set_keyValue__");
+			},
+			set_keyValue__: function () { },
+			interpolate: function (index0, index1, weight)
+			{
+				var
+					keyValue      = this .keyValue_ .getValue (),
+					value_changed = this .value_changed_ .getValue (),
+					size          = this .key_ .length > 1 ? Math .floor (keyValue .length / this .key_ .length) : 0;
+
+				index0 *= size;
+				index1  = index0 + size;
+
+				this .value_changed_ .length = size;
+
+				for (var i = 0; i < size; ++ i)
+				{
+					value_changed [i] .set (Algorithm .slerp (keyValue [index0 + i] .getValue (),
+					                                          keyValue [index1 + i] .getValue (),
+					                                          weight));
+				}
+
+				this .value_changed_ .addEvent ();
 			},
 		});
 

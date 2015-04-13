@@ -223,7 +223,6 @@ function ($,
 					++ face;
 				}
 
-				this .setPrimitiveMode ("LINES");
 				this .setSolid (false);
 				//this .setAttribs (this .attribNodes, attribArrays);
 			},

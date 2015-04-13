@@ -55,8 +55,12 @@ function ($,
 			},
 			set_keyValue__: function ()
 			{
-				if (this .keyValue_ .length < this .key_ .length)
-					this .keyValue_ .resize (this .key_ .length, this .keyValue_ .length ? this .keyValue_ [this .keyValue_ .length - 1] : new SFRotation ());
+				var
+					key      = this .key_,
+					keyValue = this .keyValue_;
+
+				if (keyValue .length < key .length)
+					keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new SFRotation ());
 			},
 			interpolate: function (index0, index1, weight)
 			{

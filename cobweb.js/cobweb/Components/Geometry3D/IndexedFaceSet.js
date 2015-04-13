@@ -197,8 +197,9 @@ function ($,
 
 					for (var c = 0; c < this .coordIndex_ .length; ++ c)
 					{
-						var index    = coordIndex [c] .getValue ();
-						var vertices = polygons [polygons .length - 1] .vertices;
+						var
+							index    = coordIndex [c] .getValue (),
+							vertices = polygons [polygons .length - 1] .vertices;
 	
 						if (index > -1)
 						{
@@ -265,38 +266,25 @@ function ($,
 			{
 				try
 				{
+					// Transform vertices to 2D space.
+
 					var
 						vertices   = polygon .vertices,
 						triangles  = polygon .triangles,
 						coordIndex = this .coordIndex_ .getValue (),
 						coord      = this .getCoord ();
 
-					// Find first two convex edges.
-
-					for (var i = 0, length = vertices .length - 2; i < length; ++ i)
-					{
-						var
-							p0 = coord .getPoint (coordIndex [vertices [i + 0]] .getValue ()),
-							p1 = coord .getPoint (coordIndex [vertices [i + 1]] .getValue ()),
-							p2 = coord .getPoint (coordIndex [vertices [i + 2]] .getValue ());
-
-						var
-							hAxis = Vector3 .subtract (p0, p1),
-							xAxis = Vector3 .subtract (p2, p1);
-
-						if (hAxis .dot (xAxis) > 0)
-							break;
-					}
-
-					// Transform vertices to 2D space.
+					var
+						p0 = coord .getPoint (coordIndex [vertices [0]] .getValue ()),
+						p1 = coord .getPoint (coordIndex [vertices [1]] .getValue ());
 
 					var
-						zAxis = Vector3 .cross (xAxis, hAxis),
+						zAxis = this .getPolygonNormal (vertices, coordIndex, coord),
+						xAxis = Vector3 .subtract (p1, p0),
 						yAxis = Vector3 .cross (zAxis, xAxis);
 
 					xAxis .normalize ();
 					yAxis .normalize ();
-					zAxis .normalize ();
 
 					var matrix = new Matrix4 (xAxis .x, xAxis .y, xAxis .z, 0,
 					                          yAxis .x, yAxis .y, yAxis .z, 0,
@@ -309,26 +297,26 @@ function ($,
 
 					for (var i = 0; i < vertices .length; ++ i)
 					{
-						var index    = vertices [i];
-						var vertex2D = matrix .multVecMatrix (coord .getPoint (coordIndex [index] .getValue ()) .copy ());
+						var
+							index   = vertices [i],
+							vertex2 = matrix .multVecMatrix (coord .getPoint (coordIndex [index] .getValue ()) .copy ());
 
-						vertex2D .index = index;
-						contour .push (vertex2D);
+						vertex2 .index = index;
+						contour .push (vertex2);
 					}
 
 					// Triangulate polygon.
-		
-					var context = new poly2tri .SweepContext (contour);
-		
-					context .triangulate ();
 
-					var ts = context .getTriangles ();
+					var
+						context = new poly2tri .SweepContext (contour),
+						ts      = context .triangulate () .getTriangles ();
 
 					for (var i = 0; i < ts .length; ++ i)
 						triangles .push ([ ts [i] .getPoint (0) .index, ts [i] .getPoint (1) .index, ts [i] .getPoint (2) .index ]);
 				}
 				catch (error)
 				{
+					//console .log (error);
 					this .triangulateConvexPolygon (polygon);
 				}
 			},
@@ -366,14 +354,15 @@ function ($,
 					cw          = ! this .ccw_ .getValue (),
 					normals     = [ ],
 					normalIndex = [ ],
-					normal      = null,
 					coordIndex  = this .coordIndex_ .getValue (),
-					coord       = this .getCoord ();
+					coord       = this .getCoord (),
+					normal      = null;
 
 				for (var p = 0; p < polygons .length; ++ p)
 				{
-					var polygon  = polygons [p]
-					var vertices = polygon .vertices;
+					var
+						polygon  = polygons [p],
+						vertices = polygon .vertices;
 
 					switch (vertices .length)
 					{
@@ -394,27 +383,9 @@ function ($,
 						}
 						default:
 						{
-							// Determine polygon normal.
-							// We use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal here:
-
-							normal = new Vector3 (0, 0, 0);
-							
-							var next = coord .getPoint (coordIndex [vertices [0]] .getValue ());
-
-							for (var i = 0, length = vertices .length; i < length; ++ i)
-							{
-								var
-									current = next,
-									next    = coord .getPoint (coordIndex [vertices [(i + 1) % length]] .getValue ());
-
-								normal .x += (current .y - next .y) * (current .z + next .z);
-								normal .y += (current .z - next .z) * (current .x + next .x);
-								normal .z += (current .x - next .x) * (current .y + next .y);
-							}
+							normal = this .getPolygonNormal (vertices, coordIndex, coord);
+							break;
 						}
-
-						normal .normalize ();
-						break;
 					}
 
 					// Add a normal index for each point.
@@ -438,6 +409,28 @@ function ($,
 				}
 
 				return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue ());
+			},
+			getPolygonNormal: function (vertices, coordIndex, coord)
+			{
+				// Determine polygon normal.
+				// We use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal here:
+
+				var
+					normal = new Vector3 (0, 0, 0),
+					next   = coord .getPoint (coordIndex [vertices [0]] .getValue ());
+
+				for (var i = 0, length = vertices .length; i < length; ++ i)
+				{
+					var
+						current = next,
+						next    = coord .getPoint (coordIndex [vertices [(i + 1) % length]] .getValue ());
+
+					normal .x += (current .y - next .y) * (current .z + next .z);
+					normal .y += (current .z - next .z) * (current .x + next .x);
+					normal .z += (current .x - next .x) * (current .y + next .y);
+				}
+
+				return normal .normalize ();
 			},
 		});
 

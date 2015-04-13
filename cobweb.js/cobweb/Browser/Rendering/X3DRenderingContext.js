@@ -30,7 +30,7 @@ function (Fields,
 {
 	var MFInt32 = Fields .MFInt32;
 	
-	function getShader (executionContext, vs, fs)
+	function getShader (executionContext, vs, fs, primitiveMode)
 	{
 		var vertexShader = new ShaderPart (executionContext);
 		vertexShader .type_ = "VERTEX";
@@ -47,7 +47,21 @@ function (Fields,
 		shader .parts_ .push (vertexShader);
 		shader .parts_ .push (fragmentShader);
 		shader .setup ();
-		
+
+		shader .primitiveMode = primitiveMode;
+
+		return shader;
+	}
+
+	function getPointShader (executionContext, lineShader, primitiveMode)
+	{
+		var shader = new ComposedShader (executionContext);
+		shader .language_ = "GLSL";
+		shader .parts_ = lineShader .parts_;
+		shader .setup ();
+
+		shader .primitiveMode = primitiveMode;
+
 		return shader;
 	}
 
@@ -90,8 +104,10 @@ function (Fields,
 
 			this .reshape ();
 
+			this .lineShader  = getShader (this, wireframeVS, wireframeFS, gl .LINES);
+			this .pointShader = getPointShader (this, this .lineShader, gl .POINTS);
+
 			this .setDefaultShader ("GOURAUD");
-			this .setLineShader ("GOURAUD");
 			this .setShader (this .getDefaultShader ());
 		},
 		getVendor: function ()
@@ -155,22 +171,58 @@ function (Fields,
 		},
 		setDefaultShader: function (type)
 		{
+			var gl = this .context;
+
 			switch (type)
 			{
+				case "POINTSET":
+				{
+					if (! this .gouraudShader)
+						this .gouraudShader = getShader (this, gouraudVS, gouraudFS, gl .TRIANGLES);
+
+					this .defaultShader = this .gouraudShader;
+
+					this .pointShader   .primitiveMode = gl .POINTS;
+					this .lineShader    .primitiveMode = gl .POINTS;
+					this .defaultShader .primitiveMode = gl .POINTS;
+					break;
+				}
+				case "WIREFRAME":
+				{
+					if (! this .gouraudShader)
+						this .gouraudShader = getShader (this, gouraudVS, gouraudFS, gl .TRIANGLES);
+
+					this .defaultShader = this .gouraudShader;
+
+					this .pointShader   .primitiveMode = gl .POINTS;
+					this .lineShader    .primitiveMode = gl .LINES;
+					this .defaultShader .primitiveMode = gl .LINES;
+					break;
+				}
 				case "PHONG":
 				{
 					if (! this .phongShader)
-						this .phongShader = getShader (this, phongVS, phongFS);
+						this .phongShader = getShader (this, phongVS, phongFS, gl .TRIANGLES);
 
 					this .defaultShader = this .phongShader;
+
+					this .pointShader   .primitiveMode = gl .POINTS;
+					this .lineShader    .primitiveMode = gl .LINES;
+					this .defaultShader .primitiveMode = gl .TRIANGLES;
 					break;
 				}
 				default:
 				{
+					// case "GOURAUD":
+
 					if (! this .gouraudShader)
-						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = getShader (this, gouraudVS, gouraudFS, gl .TRIANGLES);
 
 					this .defaultShader = this .gouraudShader;
+
+					this .pointShader   .primitiveMode = gl .POINTS;
+					this .lineShader    .primitiveMode = gl .LINES;
+					this .defaultShader .primitiveMode = gl .TRIANGLES;
 					break;
 				}
 			}
@@ -179,20 +231,9 @@ function (Fields,
 		{
 			return this .defaultShader;
 		},
-		setLineShader: function (type)
+		getPointShader: function ()
 		{
-			switch (type)
-			{
-				case "POINTSET":
-				default:
-				{
-					if (! this .wireframeShader)
-						this .wireframeShader = getShader (this, wireframeVS, wireframeFS);
-
-					this .lineShader = this .wireframeShader;
-					break;
-				}
-			}
+			return this .pointShader;
 		},
 		getLineShader: function ()
 		{

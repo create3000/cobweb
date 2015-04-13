@@ -148,7 +148,6 @@ function ($,
 				for (var i = 0, length = this .coordNode .point_ .length; i < length; ++ i)
 					this .addVertex (this .coordNode .getPoint (i));
 
-				this .setPrimitiveMode ("POINTS");
 				this .setSolid (false);
 				//this .setAttribs (this .attribNodes, attribArrays);
 			},
@@ -159,7 +158,7 @@ function ($,
 				if (browser .getShader () === browser .getDefaultShader ())
 				{
 					browser .setTexture (null);
-					browser .setShader (browser .getLineShader ());
+					browser .setShader (browser .getPointShader ());
 				}
 
 				X3DGeometryNode .prototype .traverse .call (this, context);

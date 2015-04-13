@@ -84,7 +84,6 @@ function ($,
 				this .texCoordBuffers = [ ];
 				this .normalBuffer    = gl .createBuffer ();
 				this .vertexBuffer    = gl .createBuffer ();
-				this .primitiveMode   = gl .TRIANGLES;
 				this .planes          = [ ];
 			},
 			isTransparent: function ()
@@ -111,10 +110,6 @@ function ($,
 			getMatrix: function ()
 			{
 				return Matrix4 .Identity;
-			},
-			setPrimitiveMode: function (value)
-			{
-				this .primitiveMode = this .getBrowser () .getContext () [value];
 			},
 			setSolid: function (value)
 			{
@@ -407,10 +402,10 @@ function ($,
 						gl .enable (gl .CULL_FACE);
 
 						gl .cullFace (gl .FRONT);
-						gl .drawArrays (this .primitiveMode, 0, this .count);		
+						gl .drawArrays (shader .primitiveMode, 0, this .count);		
 
 						gl .cullFace (gl .BACK);
-						gl .drawArrays (this .primitiveMode, 0, this .count);		
+						gl .drawArrays (shader .primitiveMode, 0, this .count);		
 					}
 					else
 					{
@@ -419,7 +414,7 @@ function ($,
 						else
 							gl .disable (gl .CULL_FACE);
 
-						gl .drawArrays (this .primitiveMode, 0, this .count);
+						gl .drawArrays (shader .primitiveMode, 0, this .count);
 					}
 
 					for (var i = 0; i < vertexAttribIndex; ++ i)

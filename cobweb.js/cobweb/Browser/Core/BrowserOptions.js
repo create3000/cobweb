@@ -52,7 +52,6 @@ function ($,
 			set_shading__: function ()
 			{
 				this .getBrowser () .setDefaultShader (this .Shading_ .getValue ());
-				this .getBrowser () .setLineShader (this .Shading_ .getValue ());
 			},
 		});
 
