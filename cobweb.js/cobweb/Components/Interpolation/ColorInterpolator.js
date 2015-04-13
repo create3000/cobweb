@@ -37,6 +37,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new MFColor ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new SFColor ()),
 			]),
+			value: [ ],
 			getTypeName: function ()
 			{
 				return "ColorInterpolator";
@@ -69,9 +70,9 @@ function ($,
 			},
 			interpolate: function (index0, index1, weight)
 			{
-				var hsv = Color3 .lerp (this .hsv [index0], this .hsv [index1], weight);
+				var value = Color3 .lerp (this .hsv [index0], this .hsv [index1], weight, this .value);
 
-				this .value_changed_ .setHSV (hsv [0], hsv [1], hsv [2]);
+				this .value_changed_ .setHSV (value [0], value [1], value [2]);
 			},
 		});
 
