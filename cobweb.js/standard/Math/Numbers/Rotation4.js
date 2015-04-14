@@ -7,6 +7,10 @@ define ([
 ],
 function ($, Quaternion, Vector3)
 {
+	var
+		xAxis = new Vector3 (1, 0, 0),
+		yAxis = new Vector3 (0, 1, 0);
+
 	function Rotation4 (x, y, z, angle)
 	{
 		switch (arguments .length)
@@ -27,14 +31,16 @@ function ($, Quaternion, Vector3)
 				{
 					// https://bitbucket.org/Coin3D/coin/src/abc9f50968c9/src/base/SbRotation.cpp
 
-					var from = arguments [0] .normalize ();
-					var to   = arguments [1] .normalize ();
+					var
+						from = Vector3 .normalize (arguments [0]),
+						to   = Vector3 .normalize (arguments [1]);
 
-					var cos_angle = from .dot (to);
-					var crossvec  = Vector3 .cross (from, to) .normalize ();
-					var crosslen  = crossvec .abs ();
+					var
+						cos_angle = from .dot (to),
+						crossvec  = Vector3 .cross (from, to) .normalize (),
+						crosslen  = crossvec .abs ();
 
-					if (crosslen == 0)
+					if (crosslen === 0)
 					{
 						// Parallel vectors
 						// Check if they are pointing in the same direction.
@@ -46,15 +52,15 @@ function ($, Quaternion, Vector3)
 						else
 						{
 							// Try crossing with x axis.
-							var t = Vector3 .cross (from, Vector3 (1, 0, 0));
+							var t = Vector3 .cross (from, xAxis);
 
 							// If not ok, cross with y axis.
-							if (t .norm () == 0)
-								t = Vector3 .cross (from , Vector3 (0, 1, 0));
+							if (t .norm () === 0)
+								t = Vector3 .cross (from , yAxis);
 
 							t .normalize ();
 
-							this .value = Quaternion (t .x, t .y, t .z, 0);
+							this .value = new Quaternion (t .x, t .y, t .z, 0);
 						}
 					}
 					else
@@ -77,7 +83,7 @@ function ($, Quaternion, Vector3)
 				this .set (arguments [0] .x,
 				           arguments [0] .y,
 				           arguments [0] .z,
-				           angle);
+				           arguments [1]);
 
 				return;
 			}
@@ -128,7 +134,7 @@ function ($, Quaternion, Vector3)
 		},
 		get: function ()
 		{
-			if (Math .abs (this .value .w) == 1)
+			if (Math .abs (this .value .w) === 1)
 				return [0, 0, 1, 0];
 
 			var vector = this .value .imag .normalize ();
@@ -140,7 +146,7 @@ function ($, Quaternion, Vector3)
 		},
 		getAxis: function ()
 		{
-			if (Math .abs (this .value .w) == 1)
+			if (Math .abs (this .value .w) === 1)
 				return new Vector3 (0, 0, 1);
 
 			return this .value .imag .normalize ();
@@ -276,7 +282,7 @@ function ($, Quaternion, Vector3)
 	{
 		get: function ()
 		{
-			if (Math .abs (this .value .w == 1))
+			if (Math .abs (this .value .w === 1))
 				return 0;
 
 			return 2 * Math .acos (this .value .w);
@@ -294,7 +300,7 @@ function ($, Quaternion, Vector3)
 	{
 		get: function ()
 		{
-			if (Math .abs (this .value .w == 1))
+			if (Math .abs (this .value .w === 1))
 				return 0;
 
 			return 2 * Math .acos (this .value .w);

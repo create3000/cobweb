@@ -34,10 +34,6 @@ function ($,
 			X3DProgrammableShaderObject .prototype,
 		{
 			constructor: ComposedShader,
-			maxLights: MAX_LIGHTS,
-			settings: {
-				lights: 0,
-			},
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new SFBool ()),
@@ -46,6 +42,11 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new SFString ("")),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new MFNode ()),
 			]),
+			maxLights: MAX_LIGHTS,
+			settings: {
+				lights: 0,
+			},
+			wireframe: false,
 			getTypeName: function ()
 			{
 				return "ComposedShader";
@@ -60,6 +61,9 @@ function ($,
 			},
 			initialize: function ()
 			{
+				X3DShaderNode               .prototype .initialize .call (this);
+				X3DProgrammableShaderObject .prototype .initialize .call (this);
+
 				this .normalMatrixArray = new Float32Array (9);
 				this .relink ();
 			},

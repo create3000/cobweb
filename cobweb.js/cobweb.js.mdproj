@@ -1184,6 +1184,8 @@
     <None Include="tests\Examples\Arcadia\stage\saule.x3d" />
     <None Include="tests\Examples\Arcadia\stage\temple.x3d" />
     <None Include="tests\Components\Interpolation\NormalInterpolator.x3d" />
+    <None Include="tests\Components\PointingDeviceSensor\lamp.x3d" />
+    <None Include="standard\Math\Geometry\Cylinder3.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

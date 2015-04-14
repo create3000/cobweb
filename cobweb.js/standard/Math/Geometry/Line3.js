@@ -4,11 +4,10 @@ define ([
 ],
 function (Vector3)
 {
-
 	function Line3 (point, direction)
 	{
-		this .point     = point;
-		this .direction = direction;
+		this .point     = point .copy ();
+		this .direction = direction .copy ();
 	}
 
 	Line3 .prototype =
@@ -70,6 +69,12 @@ function (Vector3)
 
 			point .assign (d1) .multiply (t) .add (p1);
 			return true;
+		},
+		getPerpendicularVector: function (point)
+		{
+			var d = Vector3 .subtract (this .point, point);
+
+			return d .subtract (this .direction .copy () .multiply (Vector3 .dot (d, this .direction)));
 		},
 		intersectsTriangle (A, B, C, uvt)
 		{

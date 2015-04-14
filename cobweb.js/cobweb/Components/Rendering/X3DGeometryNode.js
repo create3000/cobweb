@@ -393,28 +393,42 @@ function ($,
 
 				if (vertexAttribIndex)
 				{
-					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
-
-					gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
-
-					if (context .transparent && ! this .solid)
+					if (shader .wireframe || this .isLineGeometry ())
 					{
-						gl .enable (gl .CULL_FACE);
+						if (this .isLineGeometry ())
+							gl .drawArrays (shader .primitiveMode, 0, this .count);
 
-						gl .cullFace (gl .FRONT);
-						gl .drawArrays (shader .primitiveMode, 0, this .count);		
-
-						gl .cullFace (gl .BACK);
-						gl .drawArrays (shader .primitiveMode, 0, this .count);		
+						else
+						{
+							for (var i = 0; i < this .count; i += 3)
+								gl .drawArrays (shader .primitiveMode, i, 3);
+						}
 					}
 					else
 					{
-						if (this .solid)
-							gl .enable (gl .CULL_FACE);
-						else
-							gl .disable (gl .CULL_FACE);
+						var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
 
-						gl .drawArrays (shader .primitiveMode, 0, this .count);
+						gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
+
+						if (context .transparent && ! this .solid)
+						{
+							gl .enable (gl .CULL_FACE);
+
+							gl .cullFace (gl .FRONT);
+							gl .drawArrays (shader .primitiveMode, 0, this .count);		
+
+							gl .cullFace (gl .BACK);
+							gl .drawArrays (shader .primitiveMode, 0, this .count);		
+						}
+						else
+						{
+							if (this .solid)
+								gl .enable (gl .CULL_FACE);
+							else
+								gl .disable (gl .CULL_FACE);
+
+							gl .drawArrays (shader .primitiveMode, 0, this .count);
+						}
 					}
 
 					for (var i = 0; i < vertexAttribIndex; ++ i)

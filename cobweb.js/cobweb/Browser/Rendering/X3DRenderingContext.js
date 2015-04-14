@@ -30,7 +30,7 @@ function (Fields,
 {
 	var MFInt32 = Fields .MFInt32;
 	
-	function getShader (executionContext, vs, fs, primitiveMode)
+	function getShader (executionContext, vs, fs)
 	{
 		var vertexShader = new ShaderPart (executionContext);
 		vertexShader .type_ = "VERTEX";
@@ -48,19 +48,15 @@ function (Fields,
 		shader .parts_ .push (fragmentShader);
 		shader .setup ();
 
-		shader .primitiveMode = primitiveMode;
-
 		return shader;
 	}
 
-	function getPointShader (executionContext, lineShader, primitiveMode)
+	function getPointShader (executionContext, lineShader)
 	{
 		var shader = new ComposedShader (executionContext);
 		shader .language_ = "GLSL";
 		shader .parts_ = lineShader .parts_;
 		shader .setup ();
-
-		shader .primitiveMode = primitiveMode;
 
 		return shader;
 	}
@@ -104,8 +100,8 @@ function (Fields,
 
 			this .reshape ();
 
-			this .lineShader  = getShader (this, wireframeVS, wireframeFS, gl .LINES);
-			this .pointShader = getPointShader (this, this .lineShader, gl .POINTS);
+			this .lineShader  = getShader (this, wireframeVS, wireframeFS);
+			this .pointShader = getPointShader (this, this .lineShader);
 
 			this .setDefaultShader ("GOURAUD");
 			this .setShader (this .getDefaultShader ());
@@ -185,6 +181,10 @@ function (Fields,
 					this .pointShader   .primitiveMode = gl .POINTS;
 					this .lineShader    .primitiveMode = gl .POINTS;
 					this .defaultShader .primitiveMode = gl .POINTS;
+					
+					this .pointShader   .wireframe = true;
+					this .lineShader    .wireframe = true;
+					this .defaultShader .wireframe = true;					
 					break;
 				}
 				case "WIREFRAME":
@@ -196,7 +196,11 @@ function (Fields,
 
 					this .pointShader   .primitiveMode = gl .POINTS;
 					this .lineShader    .primitiveMode = gl .LINES;
-					this .defaultShader .primitiveMode = gl .LINES;
+					this .defaultShader .primitiveMode = gl .LINE_LOOP;
+					
+					this .pointShader   .wireframe = true;
+					this .lineShader    .wireframe = true;
+					this .defaultShader .wireframe = true;					
 					break;
 				}
 				case "PHONG":
@@ -209,6 +213,10 @@ function (Fields,
 					this .pointShader   .primitiveMode = gl .POINTS;
 					this .lineShader    .primitiveMode = gl .LINES;
 					this .defaultShader .primitiveMode = gl .TRIANGLES;
+
+					this .pointShader   .wireframe = true;
+					this .lineShader    .wireframe = true;
+					this .defaultShader .wireframe = false;					
 					break;
 				}
 				default:
@@ -223,6 +231,10 @@ function (Fields,
 					this .pointShader   .primitiveMode = gl .POINTS;
 					this .lineShader    .primitiveMode = gl .LINES;
 					this .defaultShader .primitiveMode = gl .TRIANGLES;
+
+					this .pointShader   .wireframe = true;
+					this .lineShader    .wireframe = true;
+					this .defaultShader .wireframe = false;					
 					break;
 				}
 			}

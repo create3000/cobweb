@@ -225,15 +225,11 @@ function ($, Algorithm)
 
 				copy .x = x * length;
 				copy .y = y * length;
-				copy .z = z * length;
-				copy .w = w * length;
 			}
 			else
 			{
 				copy .x = 0;
 				copy .y = 0;
-				copy .z = 0;
-				copy .w = 0;
 			}
 
 			return copy;

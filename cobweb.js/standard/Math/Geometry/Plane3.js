@@ -6,7 +6,7 @@ function (Vector3)
 {
 	function Plane3 (point, normal)
 	{
-		this .normal             = normal;
+		this .normal             = normal .copy ();
 		this .distanceFromOrigin = normal .dot (point);
 	}
 
@@ -16,6 +16,10 @@ function (Vector3)
 		distance: function (point)
 		{
 			return point .dot (this .normal) - this .distanceFromOrigin;
+		},
+		getDistanceToPoint: function (point)
+		{
+			return Vector3 .dot (point, this .normal) - this .distanceFromOrigin;
 		},
 		intersectsLine: function (line, intersection)
 		{
