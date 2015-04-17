@@ -108,12 +108,12 @@ function ($,
 							hitPoint = this .invModelViewMatrix .multVecMatrix (hit .intersection .point .copy ()),
 							center   = new Vector3 (0, 0, 0);
 
-						this .zPlane = new Plane3 (center, this .invModelViewMatrix .multDirMatrix (new Vector3 (0, 0, 1))); // Screen aligned Z-plane
+						this .zPlane = new Plane3 (center, this .invModelViewMatrix .multDirMatrix (new Vector3 (0, 0, 1)) .normalize ()); // Screen aligned Z-plane
 						this .sphere = new Sphere3 (hitPoint .abs (), center);
 						this .behind = this .zPlane .getDistanceToPoint (hitPoint) < 0;
 
 						this .fromVector  .assign (hitPoint);
-						this .startPoint  .assign (this .invModelViewMatrix .multVecMatrix (hit .intersection .point .copy ()));
+						this .startPoint  .assign (hitPoint);
 						this .startOffset .assign (this .offset_ .getValue ());
 					}
 					else
@@ -137,8 +137,8 @@ function ($,
 
 					if (this .getTrackPoint (hitRay, trackPoint, this .behind))
 					{
-						var zAxis = this .invModelViewMatrix .multDirMatrix (new Vector3 (0, 0, 1)); // Camera direction
-						this .zPlane = new Plane3 (trackPoint, zAxis);                               // Screen aligned Z-plane
+						var zAxis = this .invModelViewMatrix .multDirMatrix (new Vector3 (0, 0, 1)) .normalize (); // Camera direction
+						this .zPlane = new Plane3 (trackPoint, zAxis);                                             // Screen aligned Z-plane
 					}
 					else
 					{
@@ -158,14 +158,13 @@ function ($,
 						var
 							triNormal     = Triangle3 .normal (this .sphere .center, trackPoint, this .startPoint),
 							dirFromCenter = Vector3 .subtract (trackPoint, this .sphere .center) .normalize (),
-							normal        = Vector3 .cross (triNormal, dirFromCenter);
+							normal        = Vector3 .cross (triNormal, dirFromCenter) .normalize ();
 
 						var point1 = Vector3 .subtract (trackPoint, normal .multiply (Vector3 .subtract (tangentPoint, trackPoint) .abs ()));
 
 						hitRay = new Line3 (point1, Vector3 .subtract (this .sphere .center, point1) .normalize ());
 
 						this .getTrackPoint (hitRay, trackPoint, false);
-						
 					}
 
 					this .trackPoint_changed_ = trackPoint;

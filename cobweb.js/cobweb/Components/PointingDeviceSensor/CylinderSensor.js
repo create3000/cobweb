@@ -159,7 +159,7 @@ function ($,
 
 						// Compute normal like in Billboard with yAxis as axis of rotation.
 						var
-							billboardToViewer = this .invModelViewMatrix .origin .normalize (),
+							billboardToViewer = this .invModelViewMatrix .origin,
 							sxNormal          = Vector3 .cross (yAxis, billboardToViewer) .normalize ();
 
 						this .sxPlane  = new Plane3 (new Vector3 (0, 0, 0), sxNormal);   // Billboarded special x-plane made parallel to sensors axis.

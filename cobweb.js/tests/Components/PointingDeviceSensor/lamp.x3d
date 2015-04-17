@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Tue, 14 Apr 2015 09:48:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 14 Apr 2015 09:48:45 GMT'/>
+    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
+    <meta name='modified' content='Fri, 17 Apr 2015 09:15:59 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -67,42 +67,46 @@
                       center='0 -0.15 0'>
                     <Shape USE='LampArm'/>
                     <Group>
-                      <SphereSensor DEF='MoveLampShade'
-                          offset='-1 -0 -0 1.25'/>
-                      <Transform DEF='LampShade'
-                          translation='0 0.075 0'
-                          rotation='-1 -0 -0 1.25'
-                          center='0 0.075 0'>
-                        <Shape>
-                          <Appearance USE='Red'/>
-                          <Cone
-                              bottom='false'
-                              height='0.15'
-                              bottomRadius='0.12'/>
-                        </Shape>
-                        <Transform
-                            translation='0 0.075 0'>
-                          <Shape>
-                            <Appearance>
-                              <Material
-                                  diffuseColor='1 1 1'/>
-                            </Appearance>
-                            <Cylinder
-                                height='0.03'
-                                radius='0.007'/>
-                          </Shape>
-                        </Transform>
-                        <Transform
-                            translation='0 -0.05 0'>
-                          <Shape>
-                            <Appearance>
-                              <Material
-                                  diffuseColor='0 0 0'
-                                  emissiveColor='1 1 1'/>
-                            </Appearance>
-                            <Sphere
-                                radius='0.05'/>
-                          </Shape>
+                      <Transform
+                          translation='0 0.16 0'>
+                        <SphereSensor DEF='MoveLampShade'
+                            offset='-1 -0 -0 1.25'/>
+                        <Transform DEF='LampShade'
+                            rotation='-1 0 0 1.25'>
+                          <Transform
+                              translation='0 -0.075 0'>
+                            <Shape>
+                              <Appearance USE='Red'/>
+                              <Cone
+                                  bottom='false'
+                                  height='0.15'
+                                  bottomRadius='0.12'/>
+                            </Shape>
+                            <Transform
+                                translation='0 0.075 7.2955e-10'>
+                              <Shape>
+                                <Appearance>
+                                  <Material
+                                      diffuseColor='1 1 1'/>
+                                </Appearance>
+                                <Cylinder
+                                    height='0.03'
+                                    radius='0.007'/>
+                              </Shape>
+                            </Transform>
+                            <Transform
+                                translation='0 -0.05 7.2955e-10'>
+                              <Shape>
+                                <Appearance>
+                                  <Material
+                                      diffuseColor='0 0 0'
+                                      emissiveColor='1 1 1'/>
+                                </Appearance>
+                                <Sphere
+                                    radius='0.05'/>
+                              </Shape>
+                            </Transform>
+                          </Transform>
                         </Transform>
                       </Transform>
                     </Group>

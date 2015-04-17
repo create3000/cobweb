@@ -1187,6 +1187,7 @@
     <None Include="tests\Components\PointingDeviceSensor\lamp.x3d" />
     <None Include="standard\Math\Geometry\Cylinder3.js" />
     <None Include="standard\Math\Geometry\Sphere3.js" />
+    <None Include="tests\Components\PointingDeviceSensor\SphereSensor.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
