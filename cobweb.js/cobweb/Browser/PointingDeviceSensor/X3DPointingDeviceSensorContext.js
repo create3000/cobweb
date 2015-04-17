@@ -71,10 +71,10 @@ function (jquery,
 
 			switch (value)
 			{
-				case "HAND":
+				case "HAND": // Hand with finger
 					div .css ("cursor", "pointer");
 					break;
-				case "MOVE":
+				case "MOVE": // Hand grabed something
 					div .css ("cursor", "move");
 					break;
 				case "CROSSHAIR":

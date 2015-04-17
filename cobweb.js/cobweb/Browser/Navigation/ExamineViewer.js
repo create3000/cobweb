@@ -49,10 +49,11 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 			this .button    = event .button;
 			this .pressTime = performance .now ();
-		
-			var offset = this .getBrowser () .getCanvas () .offset (); 
-			var x      = event .pageX - offset .left;
-			var y      = event .pageY - offset .top;
+
+			var
+				offset = this .getBrowser () .getCanvas () .offset (),
+				x      = event .pageX - offset .left,
+				y      = event .pageY - offset .top;
 
 			switch (this .button)
 			{
@@ -121,16 +122,18 @@ function ($, X3DViewer, Vector3, Rotation4)
 			if (this .button < 0)
 				return;
 
-			var offset = this .getBrowser () .getCanvas () .offset (); 
-			var x      = event .pageX - offset .left;
-			var y      = event .pageY - offset .top;
+			var
+				offset = this .getBrowser () .getCanvas () .offset (),
+				x      = event .pageX - offset .left,
+				y      = event .pageY - offset .top;
 
 			switch (this .button)
 			{
 				case 0:
 				{
-					var viewpoint = this .getActiveViewpoint ();
-					var toVector  = this .trackballProjectToSphere (x, y);
+					var
+						viewpoint = this .getActiveViewpoint (),
+						toVector  = this .trackballProjectToSphere (x, y);
 
 					this .rotation = new Rotation4 (toVector, this .fromVector);
 
@@ -152,9 +155,10 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 		         // Move.
 
-					var viewpoint   = this .getActiveViewpoint ();
-					var toPoint     = this .getPointOnCenterPlane (x, y);
-					var translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (this .fromPoint, toPoint));
+					var
+						viewpoint   = this .getActiveViewpoint (),
+						toPoint     = this .getPointOnCenterPlane (x, y),
+						translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (this .fromPoint, toPoint));
 
 					viewpoint .positionOffset_         = Vector3 .add (viewpoint .positionOffset_         .getValue (), translation);
 					viewpoint .centerOfRotationOffset_ = Vector3 .add (viewpoint .centerOfRotationOffset_ .getValue (), translation);
@@ -188,8 +192,9 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 			//viewpoint .transitionStop ();
 
-			var step           = this .getDistanceToCenter () .multiply (SCROLL_FACTOR);
-			var positionOffset = viewpoint .getUserOrientation () .multVecRot (new Vector3 (0, 0, step .abs ()));
+			var
+				step           = this .getDistanceToCenter () .multiply (SCROLL_FACTOR),
+				positionOffset = viewpoint .getUserOrientation () .multVecRot (new Vector3 (0, 0, step .abs ()));
 
 			if (direction > 0)
 				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .add (positionOffset));
@@ -199,14 +204,15 @@ function ($, X3DViewer, Vector3, Rotation4)
 		},
 		getPositionOffset: function ()
 		{
-			var viewpoint = this .getActiveViewpoint ();
-			var distance  = this .getDistanceToCenter ();
+			var
+				viewpoint = this .getActiveViewpoint (),
+				distance  = this .getDistanceToCenter ();
 
 			return (this .orientationOffset .copy () .inverse ()
-			       .multRight (viewpoint .orientationOffset_ .getValue ())
-			       .multVecRot (distance .copy ())
-			       .subtract (distance)
-			       .add (viewpoint .positionOffset_ .getValue ()));
+			        .multRight (viewpoint .orientationOffset_ .getValue ())
+			        .multVecRot (distance .copy ())
+			        .subtract (distance)
+			        .add (viewpoint .positionOffset_ .getValue ()));
 		},
 		getOrientationOffset: function ()
 		{

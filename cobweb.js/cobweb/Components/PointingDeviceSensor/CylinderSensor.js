@@ -107,7 +107,7 @@ function ($,
 
 				// Use asin on the cylinder and outside linear angle.
 				var
-					sinp  = Algorithm .interval (distance, -1.0, 1.0),
+					sinp  = Algorithm .interval (distance, -1, 1),
 					phi   = section === 0 ? Math .asin (sinp) : sinp * Math .PI / 2,
 					angle = phi + section * Math .PI;
 
@@ -115,8 +115,6 @@ function ($,
 
 				rotation .multVecRot (trackPoint .assign (this .szNormal) .multiply (this .cylinder .radius));
 				trackPoint .add (axisPoint);
-
-				return true;
 			},
 			getAngle: function (rotation)
 			{
@@ -185,7 +183,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error);
+					//console .log (error);
 				}
 			},
 			set_motion__: function (hit)
@@ -242,7 +240,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error);
+					//console .log (error);
 
 					this .trackPoint_changed_ .addEvent ();
 					this .rotation_changed_   .addEvent ();
