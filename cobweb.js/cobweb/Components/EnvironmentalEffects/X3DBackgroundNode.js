@@ -101,6 +101,7 @@ function ($,
 		this .modelViewMatrixArray  = new Float32Array (16);
 		this .colors                = [ ];
 		this .sphere                = [ ];
+		this .textures              = 0;
 	}
 
 	X3DBackgroundNode .prototype = $.extend (new X3DBindableNode (),
@@ -135,29 +136,42 @@ function ($,
 			this .build ();
 			this .transferRectangle ();
 		},
+		setTextureBit: function (value, bit)
+		{
+			if (value)
+				this .textures |= 1 << bit;
+			else
+				this .textures &= ~(1 << bit);	
+		},
 		set_frontTexture__: function (value)
 		{
 			this .frontTexture = value;
+			this .setTextureBit (value, 0);
 		},
 		set_backTexture__: function (value)
 		{
 			this .backTexture = value;
+			this .setTextureBit (value, 1);
 		},
 		set_leftTexture__: function (value)
 		{
 			this .leftTexture = value;
+			this .setTextureBit (value, 2);
 		},
 		set_rightTexture__: function (value)
 		{
 			this .rightTexture = value;
+			this .setTextureBit (value, 3);
 		},
 		set_topTexture__: function (value)
 		{
 			this .topTexture = value;
+			this .setTextureBit (value, 4);
 		},
 		set_bottomTexture__: function (value)
 		{
 			this .bottomTexture = value;
+			this .setTextureBit (value, 5);
 		},
 		bindToLayer: function (layer)
 		{
@@ -488,50 +502,53 @@ function ($,
 		},
 		drawCube: function ()
 		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getGouraudShader ();
+			if (this .textures)
+			{
+				var
+					browser = this .getBrowser (),
+					gl      = browser .getContext (),
+					shader  = browser .getGouraudShader ();
 
-			shader .use ();
+				shader .use ();
 
-			gl .uniform1i (shader .fogType,       0);
-			gl .uniform1i (shader .colorMaterial, false);
-			gl .uniform1i (shader .lighting,      false);
-			gl .uniform1i (shader .texturing,     true);
+				gl .uniform1i (shader .fogType,       0);
+				gl .uniform1i (shader .colorMaterial, false);
+				gl .uniform1i (shader .lighting,      false);
+				gl .uniform1i (shader .texturing,     true);
 
-			gl .uniformMatrix4fv (shader .textureMatrix,    false, this .textureMatrixArray);
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+				gl .uniformMatrix4fv (shader .textureMatrix,    false, this .textureMatrixArray);
+				gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+				gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
 
-			// Setup context.
-	
-			gl .disable (gl .DEPTH_TEST);
-			gl .depthMask (false);
-			gl .enable (gl .CULL_FACE);
-			gl .frontFace (gl .CCW);
+				// Setup context.
+		
+				gl .disable (gl .DEPTH_TEST);
+				gl .depthMask (false);
+				gl .enable (gl .CULL_FACE);
+				gl .frontFace (gl .CCW);
 
-			// Enable vertex attribute arrays.
+				// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .texCoord);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
-			gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .enableVertexAttribArray (shader .texCoord);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
+				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .position);
+				gl .enableVertexAttribArray (shader .position);
 
-			// Draw.
+				// Draw.
 
-			this .drawRectangle (gl, shader, this .frontTexture,  this .frontBuffer);
-			this .drawRectangle (gl, shader, this .backTexture,   this .backBuffer);
-			this .drawRectangle (gl, shader, this .leftTexture,   this .leftBuffer);
-			this .drawRectangle (gl, shader, this .rightTexture,  this .rightBuffer);
-			this .drawRectangle (gl, shader, this .topTexture,    this .topBuffer);
-			this .drawRectangle (gl, shader, this .bottomTexture, this .bottomBuffer);
+				this .drawRectangle (gl, shader, this .frontTexture,  this .frontBuffer);
+				this .drawRectangle (gl, shader, this .backTexture,   this .backBuffer);
+				this .drawRectangle (gl, shader, this .leftTexture,   this .leftBuffer);
+				this .drawRectangle (gl, shader, this .rightTexture,  this .rightBuffer);
+				this .drawRectangle (gl, shader, this .topTexture,    this .topBuffer);
+				this .drawRectangle (gl, shader, this .bottomTexture, this .bottomBuffer);
 
-			// Disable vertex attribute arrays.
+				// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .texCoord);
-			gl .disableVertexAttribArray (shader .position);
+				gl .disableVertexAttribArray (shader .texCoord);
+				gl .disableVertexAttribArray (shader .position);
+			}
 		},
 		drawRectangle: function (gl, shader, texture, buffer)
 		{
