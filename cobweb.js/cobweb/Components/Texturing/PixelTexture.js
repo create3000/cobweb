@@ -55,6 +55,10 @@ function ($,
 				
 				this .set_image__ ();
 			},
+			checkLoadState: function ()
+			{
+				return X3DConstants .COMPLETE_STATE;
+			},
 			getData (data, comp, array)
 			{
 				switch (comp)

@@ -5,13 +5,15 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/EnvironmentalEffects/X3DBackgroundNode",
+	"cobweb/Components/Texturing/ImageTexture",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DBackgroundNode, 
+          X3DBackgroundNode,
+          ImageTexture,
           X3DConstants)
 {
 	with (Fields)
@@ -58,6 +60,50 @@ function ($,
 			initialize: function ()
 			{
 				X3DBackgroundNode .prototype .initialize .call (this);
+
+				var
+					frontTexture      = new ImageTexture (this .getExecutionContext ()),
+					backTexture       = new ImageTexture (this .getExecutionContext ()),
+					leftTexture       = new ImageTexture (this .getExecutionContext ()),
+					rightTexture      = new ImageTexture (this .getExecutionContext ()),
+					topTexture        = new ImageTexture (this .getExecutionContext ()),
+					bottomTexture     = new ImageTexture (this .getExecutionContext ()),
+					textureProperties = this .getBrowser () .getBackgroundTextureProperties ();
+
+				this .frontUrl_  .addFieldInterest (frontTexture  .url_);
+				this .backUrl_   .addFieldInterest (backTexture   .url_);
+				this .leftUrl_   .addFieldInterest (leftTexture   .url_);
+				this .rightUrl_  .addFieldInterest (rightTexture  .url_);
+				this .topUrl_    .addFieldInterest (topTexture    .url_);
+				this .bottomUrl_ .addFieldInterest (bottomTexture .url_);
+
+				frontTexture  .url_ = this .frontUrl_;
+				backTexture   .url_ = this .backUrl_;
+				leftTexture   .url_ = this .leftUrl_;
+				rightTexture  .url_ = this .rightUrl_;
+				topTexture    .url_ = this .topUrl_;
+				bottomTexture .url_ = this .bottomUrl_;
+
+				frontTexture  .textureProperties_ = textureProperties;
+				backTexture   .textureProperties_ = textureProperties;
+				leftTexture   .textureProperties_ = textureProperties;
+				rightTexture  .textureProperties_ = textureProperties;
+				topTexture    .textureProperties_ = textureProperties;
+				bottomTexture .textureProperties_ = textureProperties;
+
+				frontTexture  .setup ();
+				backTexture   .setup ();
+				leftTexture   .setup ();
+				rightTexture  .setup ();
+				topTexture    .setup ();
+				bottomTexture .setup ();
+
+				this .set_frontTexture__  (frontTexture);
+				this .set_backTexture__   (backTexture);
+				this .set_leftTexture__   (leftTexture);
+				this .set_rightTexture__  (rightTexture);
+				this .set_topTexture__    (topTexture);
+				this .set_bottomTexture__ (bottomTexture);
 			}
 		});
 

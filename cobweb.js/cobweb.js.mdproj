@@ -1188,6 +1188,13 @@
     <None Include="standard\Math\Geometry\Cylinder3.js" />
     <None Include="standard\Math\Geometry\Sphere3.js" />
     <None Include="tests\Components\PointingDeviceSensor\SphereSensor.x3d" />
+    <None Include="tests\Components\EnvironmentalEffects\ImageBackground.x3d" />
+    <None Include="tests\Components\images\lost_valley\lostvalley_down.png" />
+    <None Include="tests\Components\images\lost_valley\lostvalley_east.png" />
+    <None Include="tests\Components\images\lost_valley\lostvalley_north.png" />
+    <None Include="tests\Components\images\lost_valley\lostvalley_south.png" />
+    <None Include="tests\Components\images\lost_valley\lostvalley_up.png" />
+    <None Include="tests\Components\images\lost_valley\lostvalley_west.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1225,5 +1232,7 @@
     <Folder Include="tests\Components\Geometry3D\Extrusion\" />
     <Folder Include="tests\Components\PointingDeviceSensor\" />
     <Folder Include="tests\Components\Interpolation\" />
+    <Folder Include="tests\Components\EnvironmentalEffects\" />
+    <Folder Include="tests\Components\images\lost_valley\" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@ define ([
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
@@ -14,6 +15,7 @@ function ($,
           TraverseType,
           X3DConstants,
           Complex,
+          Vector3,
           Rotation4,
           Matrix4,
           Algorithm)
@@ -21,6 +23,71 @@ function ($,
 	var
 		SIZE        = 10000,
 		U_DIMENSION = 20;
+	
+	var s = Math .sqrt (Math .pow (2 * SIZE, 2) / 2) / 2;
+
+	var texCoords = [
+		1, 1, 0, 1,
+		0, 1, 0, 1,
+		0, 0, 0, 1,
+		1, 1, 0, 1,
+		0, 0, 0, 1,
+		1, 0, 0, 1,
+	];
+
+	var frontVertices = [
+		 s,  s, -s, 1,
+		-s,  s, -s, 1,
+		-s, -s, -s, 1,
+		 s,  s, -s, 1,
+		-s, -s, -s, 1,
+		 s, -s, -s, 1,
+	];
+
+	var backVertices = [
+		-s,  s,  s, 1,
+		 s,  s,  s, 1,
+		 s, -s,  s, 1,
+		-s,  s,  s, 1,
+		 s, -s,  s, 1,
+		-s, -s,  s, 1,
+	];
+
+	var leftVertices = [
+		-s,  s, -s, 1,
+		-s,  s,  s, 1,
+		-s, -s,  s, 1,
+		-s,  s, -s, 1,
+		-s, -s,  s, 1,
+		-s, -s, -s, 1,
+	];
+
+	var rightVertices = [
+		s,  s,  s, 1,
+		s,  s, -s, 1,
+		s, -s, -s, 1,
+		s,  s,  s, 1,
+		s, -s, -s, 1,
+		s, -s,  s, 1,
+	];
+
+	var topVertices = [
+		 s, s,  s, 1,
+		-s, s,  s, 1,
+		-s, s, -s, 1,
+		 s, s,  s, 1,
+		-s, s, -s, 1,
+		 s, s, -s, 1,
+	];
+
+	var bottomVertices = [
+		 s, -s, -s, 1,
+		-s, -s, -s, 1,
+		-s, -s,  s, 1,
+		 s, -s, -s, 1,
+		-s, -s,  s, 1,
+		 s, -s,  s, 1,
+	];
 
 	function X3DBackgroundNode (browser, executionContext)
 	{
@@ -28,28 +95,37 @@ function ($,
 
 		this .addType (X3DConstants .X3DBackgroundNode);
 
-		this .hidden               = false;
-		this .rotation             = new Rotation4 ();
-		this .modelViewMatrix      = new Matrix4 ();
-		this .modelViewMatrixArray = new Float32Array (16);
-		this .colors               = [ ];
-		this .sphere               = [ ];
+		this .hidden                = false;
+		this .rotation              = new Rotation4 ();
+		this .modelViewMatrix       = new Matrix4 ();
+		this .modelViewMatrixArray  = new Float32Array (16);
+		this .colors                = [ ];
+		this .sphere                = [ ];
 	}
 
 	X3DBackgroundNode .prototype = $.extend (new X3DBindableNode (),
 	{
 		constructor: X3DBackgroundNode,
+		textureMatrixArray: new Float32Array (new Matrix4 ()),
+		rectangleCount: 6,
 		initialize: function ()
 		{
 			X3DBindableNode .prototype .initialize .call (this);
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .colorBuffer    = gl .createBuffer ();
-			this .sphereBuffer   = gl .createBuffer ();
-			this .texCoordBuffer = gl .createBuffer ();
-			this .cubeBuffer     = gl .createBuffer ();
-			
+			this .colorBuffer     = gl .createBuffer ();
+			this .sphereBuffer    = gl .createBuffer ();
+			this .texCoordBuffer  = gl .createBuffer ();
+			this .cubeBuffer      = gl .createBuffer ();
+			this .texCoordsBuffer = gl .createBuffer ();
+			this .frontBuffer     = gl .createBuffer ();
+			this .backBuffer      = gl .createBuffer ();
+			this .leftBuffer      = gl .createBuffer ();
+			this .rightBuffer     = gl .createBuffer ();
+			this .topBuffer       = gl .createBuffer ();
+			this .bottomBuffer    = gl .createBuffer ();
+
 			this .groundAngle_  .addInterest (this, "build");
 			this .groundColor_  .addInterest (this, "build");
 			this .skyAngle_     .addInterest (this, "build");
@@ -57,6 +133,31 @@ function ($,
 			this .transparency_ .addInterest (this, "build");
 
 			this .build ();
+			this .transferRectangle ();
+		},
+		set_frontTexture__: function (value)
+		{
+			this .frontTexture = value;
+		},
+		set_backTexture__: function (value)
+		{
+			this .backTexture = value;
+		},
+		set_leftTexture__: function (value)
+		{
+			this .leftTexture = value;
+		},
+		set_rightTexture__: function (value)
+		{
+			this .rightTexture = value;
+		},
+		set_topTexture__: function (value)
+		{
+			this .topTexture = value;
+		},
+		set_bottomTexture__: function (value)
+		{
+			this .bottomTexture = value;
 		},
 		bindToLayer: function (layer)
 		{
@@ -174,7 +275,7 @@ function ($,
 				}
 			}
 
-			this .transfer ();
+			this .transferSphere ();
 		},
 		buildSphere: function (radius, vAngle, angle, color, alpha, bottom)
 		{
@@ -246,7 +347,7 @@ function ($,
 				}
 			}
 		},
-		transfer: function ()
+		transferSphere: function ()
 		{
 			var gl = this .getBrowser () .getContext ();
 
@@ -260,6 +361,35 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .sphere), gl .STATIC_DRAW);
 			this .sphereCount = this .sphere .length / 4;
+		},
+		transferRectangle: function ()
+		{
+			var gl = this .getBrowser () .getContext ();
+
+			// Transfer texCoords.
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (texCoords), gl .STATIC_DRAW);
+
+			// Transfer rectangle.
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .frontBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (frontVertices), gl .STATIC_DRAW);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .backBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (backVertices), gl .STATIC_DRAW);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .leftBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (leftVertices), gl .STATIC_DRAW);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .rightBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (rightVertices), gl .STATIC_DRAW);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .topBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (topVertices), gl .STATIC_DRAW);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .bottomBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (bottomVertices), gl .STATIC_DRAW);
 		},
 		traverse: function (type)
 		{
@@ -306,6 +436,7 @@ function ($,
 
 			this .modelViewMatrixArray .set (modelViewMatrix);
 			this .drawSphere ();
+			this .drawCube ();
 		},
 		drawSphere: function ()
 		{
@@ -331,14 +462,16 @@ function ($,
 
 			if (transparency)
 				gl .enable (gl .BLEND);
+			else
+				gl .disable (gl .BLEND);
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (0);
+			gl .enableVertexAttribArray (shader .color);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
 			gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (1);
+			gl .enableVertexAttribArray (shader .position);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
 			gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
 
@@ -350,8 +483,74 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (0);
-			gl .disableVertexAttribArray (1);
+			gl .disableVertexAttribArray (shader .color);
+			gl .disableVertexAttribArray (shader .position);
+		},
+		drawCube: function ()
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getGouraudShader ();
+
+			shader .use ();
+
+			gl .uniform1i (shader .fogType,       0);
+			gl .uniform1i (shader .colorMaterial, false);
+			gl .uniform1i (shader .lighting,      false);
+			gl .uniform1i (shader .texturing,     true);
+
+			gl .uniformMatrix4fv (shader .textureMatrix,    false, this .textureMatrixArray);
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+
+			// Setup context.
+	
+			gl .disable (gl .DEPTH_TEST);
+			gl .depthMask (false);
+			gl .enable (gl .CULL_FACE);
+			gl .frontFace (gl .CCW);
+
+			// Enable vertex attribute arrays.
+
+			gl .enableVertexAttribArray (shader .texCoord);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
+			gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+
+			gl .enableVertexAttribArray (shader .position);
+
+			// Draw.
+
+			this .drawRectangle (gl, shader, this .frontTexture,  this .frontBuffer);
+			this .drawRectangle (gl, shader, this .backTexture,   this .backBuffer);
+			this .drawRectangle (gl, shader, this .leftTexture,   this .leftBuffer);
+			this .drawRectangle (gl, shader, this .rightTexture,  this .rightBuffer);
+			this .drawRectangle (gl, shader, this .topTexture,    this .topBuffer);
+			this .drawRectangle (gl, shader, this .bottomTexture, this .bottomBuffer);
+
+			// Disable vertex attribute arrays.
+
+			gl .disableVertexAttribArray (shader .texCoord);
+			gl .disableVertexAttribArray (shader .position);
+		},
+		drawRectangle: function (gl, shader, texture, buffer)
+		{
+			if (texture && texture .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				texture .traverse ();
+
+				if (texture .transparent_ .getValue ())
+					gl .enable (gl .BLEND);
+				else
+					gl .disable (gl .BLEND);
+
+				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
+				gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
+
+				// Draw.
+
+				gl .drawArrays (gl .TRIANGLES, 0, this .rectangleCount);
+			}
 		},
 	});
 

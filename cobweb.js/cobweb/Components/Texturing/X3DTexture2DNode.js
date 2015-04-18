@@ -16,8 +16,8 @@ function ($,
 
 		this .addType (X3DConstants .X3DTexture2DNode);
 			
-		this .width       = 0;
-		this .height      = 0;
+		this .width  = 0;
+		this .height = 0;
 	}
 
 	X3DTexture2DNode .prototype = $.extend (new X3DTextureNode (),

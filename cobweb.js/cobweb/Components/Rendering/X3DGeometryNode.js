@@ -361,38 +361,33 @@ function ($,
 
 				//
 
-				var vertexAttribIndex = 0;
-
 				if (shader .color >= 0)
 				{
-					gl .enableVertexAttribArray (vertexAttribIndex ++);
+					gl .enableVertexAttribArray (shader .color);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .currentColorBuffer);
 					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
 				}
 
 				if (shader .texCoord >= 0)
 				{
-					gl .enableVertexAttribArray (vertexAttribIndex ++);
+					gl .enableVertexAttribArray (shader .texCoord);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
 				}
 
 				if (shader .normal >= 0)
 				{
-					gl .enableVertexAttribArray (vertexAttribIndex ++);
+					gl .enableVertexAttribArray (shader .normal);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
 					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
 				}
 
 				if (shader .position >= 0)
 				{
-					gl .enableVertexAttribArray (vertexAttribIndex ++);
+					gl .enableVertexAttribArray (shader .position);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 					gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
-				}
 
-				if (vertexAttribIndex)
-				{
 					if (shader .wireframe || this .isLineGeometry ())
 					{
 						if (this .isLineGeometry ())
@@ -430,10 +425,12 @@ function ($,
 							gl .drawArrays (shader .primitiveMode, 0, this .count);
 						}
 					}
-
-					for (var i = 0; i < vertexAttribIndex; ++ i)
-						gl .disableVertexAttribArray (i);
 				}
+
+				gl .disableVertexAttribArray (shader .color);
+				gl .disableVertexAttribArray (shader .texCoord);
+				gl .disableVertexAttribArray (shader .normal);
+				gl .disableVertexAttribArray (shader .position);
 			},
 			intersectsLine: function (line, intersections)
 			{

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Sat, 18 Apr 2015 05:45:56 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
+    <meta name='modified' content='Sat, 18 Apr 2015 11:12:01 GMT'/>
+  </head>
+  <Scene>
+    <Background
+        frontUrl='"../images/lost_valley/lostvalley_south.png"'
+        backUrl='"../images/lost_valley/lostvalley_north.png"'
+        leftUrl='"../images/lost_valley/lostvalley_east.png"'
+        rightUrl='"../images/lost_valley/lostvalley_west.png"'
+        topUrl='"../images/lost_valley/lostvalley_up.png"'
+        bottomUrl='"../images/lost_valley/lostvalley_down.png"'
+        skyColor='0.2 0.2 0.2'/>
+    <Transform DEF='_1'>
+      <Shape>
+        <Appearance>
+          <Material
+              diffuseColor='1 0 0'/>
+        </Appearance>
+        <Box/>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>

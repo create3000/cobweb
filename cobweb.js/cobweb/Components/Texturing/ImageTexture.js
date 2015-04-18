@@ -86,6 +86,7 @@ function ($,
 				var URL = new URI (this .urlStack .shift ());
 
 				URL = this .getExecutionContext () .getWorldURL () .transform (URL);
+				// In Firefox we don't need getRelativePath if file scheme, do we in Chrome???
 
 				// Create Image
 

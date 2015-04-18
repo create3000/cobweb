@@ -251,6 +251,11 @@ function (Fields,
 		{
 			return this .lineShader;
 		},
+		getGouraudShader: function ()
+		{
+			// There must always be a gouraud shader available.
+			return this .gouraudShader;
+		},
 		setShader: function (value)
 		{
 			this .shader = value;
