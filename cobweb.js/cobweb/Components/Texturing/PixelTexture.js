@@ -50,14 +50,16 @@ function ($,
 			initialize: function ()
 			{
 				X3DTexture2DNode .prototype .initialize .call (this);
-				
+
+				this .addChildren ("loadState", new SFInt32 (X3DConstants .NOT_STARTED_STATE));
+
 				this .image_ .addInterest (this, "set_image__");
-				
+
 				this .set_image__ ();
 			},
 			checkLoadState: function ()
 			{
-				return X3DConstants .COMPLETE_STATE;
+				return this .loadState_ .getValue ();
 			},
 			getData (data, comp, array)
 			{
@@ -162,9 +164,13 @@ function ($,
 					}
 
 					this .setTexture (width, height, transparent, new Uint8Array (data), false);
+					this .loadState_ = X3DConstants .COMPLETE_STATE;
 				}
 				else
+				{
 					this .clear ();
+					this .loadState_ = X3DConstants .FAILED_STATE;
+				}
 			},
 		});
 
