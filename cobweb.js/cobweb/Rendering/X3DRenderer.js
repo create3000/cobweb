@@ -21,7 +21,7 @@ function (TraverseType,
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, function (lhs, rhs) { return lhs .distance < rhs .distance; });
 		this .traverseTime         = 0;
-		this .drawTime             = 0;
+		this .displayTime          = 0;
 	}
 
 	X3DRenderer .prototype =
@@ -103,7 +103,7 @@ function (TraverseType,
 
 					var t0 = performance .now ();
 					this .draw ();
-					this .drawTime = performance .now () - t0;
+					this .displayTime = performance .now () - t0;
 
 					break;
 				}

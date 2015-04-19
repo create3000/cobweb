@@ -44,6 +44,7 @@ function ($,
 			]),
 			maxLights: MAX_LIGHTS,
 			settings: {
+				shader: null,
 				lights: 0,
 			},
 			wireframe: false,
@@ -165,27 +166,35 @@ function ($,
 			},
 			setGlobalUniforms: function ()
 			{
-				var browser      = this .getBrowser ();
-				var gl           = browser .getContext ();
-				var globalLights = browser .getGlobalLights ();
+				var
+					browser      = this .getBrowser (),
+					gl           = browser .getContext (),
+					globalLights = browser .getGlobalLights ();
 
 				gl .useProgram (this .program);
 
 				for (var i = 0; i < globalLights .length; ++ i)
 					globalLights [i] .use (gl, this, i);
 
-				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
+				this .settings .shader = null;
 			},
 			setLocalUniforms: function (context)
 			{
 				var
-					browser  = this .getBrowser (),
-					gl       = browser .getContext (),
-					material = browser .getMaterial (),
-					texture  = browser .getTexture (),
-					settings = this .settings;
+					settings        = this .settings,
+					browser         = this .getBrowser (),
+					gl              = browser .getContext (),
+					material        = browser .getMaterial (),
+					texture         = browser .getTexture (),
+					modelViewMatrix = context .modelViewMatrix
+					customShader    = (this !== browser .getDefaultShader ());
 
-				gl .useProgram (this .program);
+				if (settings .shader !== this)
+				{
+					settings .shader = this;
+					gl .useProgram (this .program);
+					gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
+				}
 
 				context .fog .use (gl, this);
 				gl .uniform1i (this .colorMaterial, context .colorMaterial);
@@ -200,7 +209,7 @@ function ($,
 						lights       = Math .min (this .maxLights, globalLights .length + localLights .length),
 						lightOn      = this .lightOn;
 
-					if (this !== browser .getDefaultShader ())
+					if (customShader)
 					{
 						for (var i = 0; i < globalLights .length; ++ i)
 							globalLights [i] .use (gl, this, i);
@@ -223,16 +232,34 @@ function ($,
 					gl .uniform3fv (this .emissiveColor,    material .emissiveColor);
 					gl .uniform1f  (this .shininess,        material .shininess);
 					gl .uniform1f  (this .transparency,     material .transparency);
+
+					// Set normal matrix.
+					var normalMatrix = this .normalMatrixArray;
+					normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+					Matrix3 .prototype .inverse .call (normalMatrix);
+					gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
 				}
 				else
 				{
 					gl .uniform1i (this .lighting, false);
+					
+					if (customShader)
+					{
+						// Set normal matrix.
+						var normalMatrix = this .normalMatrixArray;
+						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+						Matrix3 .prototype .inverse .call (normalMatrix);
+						gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
+					}
 				}
-	
+
 				if (texture)
 				{
 					texture .traverse ();
-
 					gl .uniform1i (this .texturing, true);
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 					// Active texture 0 is set on initialization.
@@ -240,19 +267,7 @@ function ($,
 				else
 					gl .uniform1i (this .texturing, false);
 
-				// Set matrices
-
-				var
-					normalMatrix    = this .normalMatrixArray,
-					modelViewMatrix = context .modelViewMatrix;
-
-				normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-				normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-				normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-
-				Matrix3 .prototype .inverse .call (normalMatrix);
-
-				gl .uniformMatrix3fv (this .normalMatrix,    false, normalMatrix);	
+				// Set model view matrix
 				gl .uniformMatrix4fv (this .modelViewMatrix, false, modelViewMatrix);
 			},
 			use: function (context)

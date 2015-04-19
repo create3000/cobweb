@@ -25,10 +25,10 @@ main ()
 	dv          = length (vec3 (p));
 	gl_Position = x3d_ProjectionMatrix * p;
 
-	float alpha = 1.0 - x3d_Transparency;
-
 	if (x3d_Lighting)
 	{
+		float alpha = 1.0 - x3d_Transparency;
+
 		if (x3d_ColorMaterial)
 		{
 			C .rgb = x3d_Color .rgb;

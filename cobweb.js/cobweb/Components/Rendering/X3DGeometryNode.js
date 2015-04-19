@@ -425,12 +425,13 @@ function ($,
 							gl .drawArrays (shader .primitiveMode, 0, this .count);
 						}
 					}
+
+					gl .disableVertexAttribArray (shader .position);
 				}
 
-				gl .disableVertexAttribArray (shader .color);
-				gl .disableVertexAttribArray (shader .texCoord);
-				gl .disableVertexAttribArray (shader .normal);
-				gl .disableVertexAttribArray (shader .position);
+				if (shader .color >= 0)    gl .disableVertexAttribArray (shader .color);
+				if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
+				if (shader .normal >= 0)   gl .disableVertexAttribArray (shader .normal);
 			},
 			intersectsLine: function (line, intersections)
 			{

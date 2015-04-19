@@ -48,10 +48,10 @@ varying vec3 v;  // point on geometry
 float
 getFogInterpolant ()
 {
-	float dv = length (v);
-
 	if (x3d_fogType == NO_FOG)
 		return 1.0;
+
+	float dv = length (v);
 
 	if (dv >= x3d_fogVisibilityRange)
 		return 0.0;

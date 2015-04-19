@@ -55,6 +55,7 @@ x3d .renderingProperties {
 	font-family: monospace;
 	font-size: 9px;
 	white-space: pre;
+	pointer-events: none;
 }
 
 x3d .notification {
@@ -70,4 +71,5 @@ x3d .notification {
 	font-family: sans;
 	font-size: 10px;
 	white-space: pre;
+	pointer-events: none;
 }

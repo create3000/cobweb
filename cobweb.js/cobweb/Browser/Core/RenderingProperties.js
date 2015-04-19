@@ -2,9 +2,11 @@
 define ([
 	"jquery",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Rendering/X3DGeometryNode",
 ],
 function ($,
-          X3DBaseNode)
+          X3DBaseNode,
+          X3DGeometryNode)
 {
 	function RenderingProperties (executionContext)
 	{
@@ -53,7 +55,7 @@ function ($,
 					browser           = this .getBrowser ();
 					layers            = browser .getWorld () .getLayerSet () .getLayers ()
 					traverseTime      = 0,
-					drawTime          = 0,
+					displayTime       = 0,
 					opaqueShapes      = 0,
 					transparentShapes = 0;
 
@@ -65,12 +67,12 @@ function ($,
 				{
 					var layer = layers [i];
 					traverseTime      += layer .traverseTime;
-					drawTime          += layer .drawTime;
+					displayTime       += layer .displayTime;
 					opaqueShapes      += layer .numOpaqueShapes;
 					transparentShapes += layer .numTransparentShapes;
 				}
 
-				var routingTime = browser .browserTime - (browser .cameraTime + traverseTime + drawTime);
+				var routingTime = browser .browserTime - (browser .cameraTime + traverseTime + displayTime);
 
 				var text = "";
 				text += "Rendering Properties\n\n";
@@ -80,7 +82,7 @@ function ($,
 				text += "Routing:    " + routingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Camera:     " + browser .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Traverse:   " + traverseTime .toFixed (2) .toLocaleString () + " ms" + "\n";
-				text += "Draw:       " + drawTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Display:    " + displayTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Picking:    " + browser .pickingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";
 				text += "Sensors:    " + (prepareEvents + sensors) + "\n";

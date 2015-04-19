@@ -50,18 +50,21 @@ void
 main ()
 {
 	vec4 C  = x3d_Color;
-	     t  = x3d_TextureMatrix * x3d_TexCoord;
-	vec3 N  = normalize (x3d_NormalMatrix * x3d_Normal);
-	vec3 bN = -N;
 	vec4 p  = x3d_ModelViewMatrix * x3d_Vertex;
 	vec3 v  = vec3 (p);
-	     dv = length (v);
+
+	if (x3d_Texturing)
+		t = x3d_TextureMatrix * x3d_TexCoord;
+
+	dv = length (v);
 
 	gl_Position = x3d_ProjectionMatrix * p;
 
 	if (x3d_Lighting)
 	{
-		vec3 V = normalize (-v); // normalized vector from point on geometry to viewer's position
+		vec3 N  = normalize (x3d_NormalMatrix * x3d_Normal);
+		vec3 bN = -N;
+		vec3 V  = normalize (-v); // normalized vector from point on geometry to viewer's position
 
 		// Calculate diffuseFactor & alpha
 
