@@ -141,8 +141,9 @@ function ($,
 				if (! destinationNode .getValue ())
 					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
 
-				var sourceField      = sourceNode .getValue () .getField (fromField);
-				var destinationField = destinationNode .getValue () .getField (toField);
+				var
+					sourceField      = sourceNode .getValue () .getField (fromField),
+					destinationField = destinationNode .getValue () .getField (toField);
 
 				if (! sourceField .isOutput ())
 					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
@@ -150,13 +151,49 @@ function ($,
 				if (! destinationField .isInput ())
 					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
 
-				var id    = sourceField .getId () + "." + destinationField .getId ();
-				var route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
+				var
+					id    = sourceField .getId () + "." + destinationField .getId (),
+					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
 
 				this .routes .push (route);
 				this .routeIndex [id] = route;
 
 				return route;
+			},
+			deleteRoute: function (route)
+			{
+				try
+				{
+					var
+						sourceField      = route .sourceField_,
+						destinationField = route .destinationField_;
+						id               = sourceField .getId () + "." + destinationField .getId (),
+						index            = this .routes .indexOf (route);
+
+					if (index !== -1)
+						this .routes .splice (index, 1);
+					
+					delete this .routeIndex [id];
+				}
+				catch (error)
+				{
+					console .log (error);
+				}
+			},
+			getRoute: function (sourceNode, fromField, destinationNode, toField)
+			{
+				if (! sourceNode .getValue ())
+					throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
+
+				if (! destinationNode .getValue ())
+					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
+
+				var
+					sourceField      = sourceNode .getValue () .getField (fromField),
+					destinationField = destinationNode .getValue () .getField (toField),
+					id               = sourceField .getId () + "." + destinationField .getId ();
+
+				return this .routeIndex [id];
 			},
 			changeViewpoint: function (name)
 			{

@@ -100,6 +100,10 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 			}
 			.bind (this), 0);
 		},
+		createVrmlFromString: function (vrmlSyntax)
+		{
+			return this .createX3DFromString (vrmlSyntax);
+		},
 		createX3DFromString: function (x3dSyntax)
 		{
 			var scene = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
@@ -107,6 +111,14 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 			scene .setup ();
 
 			return scene;
+		},
+		createVrmlFromURL: function (url, node, event)
+		{
+			new Loader (this .getWorld ()) .createX3DFromURL (url,
+			function (scene)
+			{
+				node [event] = scene .rootNodes;
+			});
 		},
 		createX3DFromURL: function (url, field, node)
 		{
@@ -281,6 +293,21 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 				viewpoint .set_bind_ = true;
 
 			this .getNotification () .string_ = viewpoint .description_;
+		},
+		addRoute: function (fromNode, fromEventOut, toNode, toEventIn)
+		{
+			this .currentScene .addRoute (fromNode, fromEventOut, toNode, toEventIn);
+		},
+		deleteRoute: function (fromNode, fromEventOut, toNode, toEventIn)
+		{
+			try
+			{
+				this .currentScene .deleteRoute (this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn));
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 		print: function ()
 		{

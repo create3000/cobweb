@@ -15,9 +15,9 @@ function ($, X3DBaseNode)
 		this .destinationField_ = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
-			this .sourceField_ .addFieldInterest (destinationField);
+			sourceField .addFieldInterest (destinationField);
 	}
-	
+
 	X3DRoute .prototype =
 	{
 		toString: function ()
