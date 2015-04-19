@@ -22,7 +22,7 @@ function ($,
 			FRAMES         = 180, // Number of frames after wich a level change takes in affect.
 			FRAME_RATE_MIN = 20,  // Lowest level of detail.
 			FRAME_RATE_MAX = 55;  // Highest level of detail.
-
+	
 		function LOD (executionContext)
 		{
 			X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
@@ -60,6 +60,34 @@ function ($,
 			{
 				return "children";
 			},
+			initialize: function ()
+			{
+				X3DGroupingNode .prototype .initialize .call (this);
+
+				this .child = this .getChild (this .level_changed_ .getValue ());
+				this .set_cameraObjects__ ();
+			},
+			set_cameraObjects__: function ()
+			{
+				if (this .child)
+					this .setCameraObject (this .child .getCameraObject ());
+				else
+					this .setCameraObject (false);
+			},
+			getBBox: function () 
+			{
+				if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
+				{
+					var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .child);
+
+					if (boundedObject)
+						return boundedObject .getBBox ();
+
+					return new Box3 ();
+				}
+
+				return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			},
 			getLevel: function (type)
 			{
 				if (this .range_ .length === 0)
@@ -74,8 +102,9 @@ function ($,
 					if (size === 2)
 						return Number (this .frameRate > FRAME_RATE_MAX);
 
-					var n        = size - 1;
-					var fraction = Math .max ((this .frameRate - FRAME_RATE_MIN) / (FRAME_RATE_MAX - FRAME_RATE_MIN), 0);
+					var
+						n        = size - 1,
+						fraction = Math .max ((this .frameRate - FRAME_RATE_MIN) / (FRAME_RATE_MAX - FRAME_RATE_MIN), 0);
 
 					return Math .min (Math .ceil (fraction * (n - 1)), n);
 				}
@@ -96,8 +125,9 @@ function ($,
 			{
 				if (! this .keepCurrentLevel)
 				{
-					var level        = this .getLevel (type);
-					var currentLevel = this .level_changed_ .getValue ();
+					var
+						level        = this .getLevel (type),
+						currentLevel = this .level_changed_ .getValue ();
 
 					if (level !== currentLevel)
 					{
@@ -113,18 +143,14 @@ function ($,
 						}
 						else
 							this .level_changed_ = level;
+
+						this .child = this .getChild (level);
+						this .set_cameraObjects__ ();
 					}
 				}
 
-				var level = this .level_changed_ .getValue ();
-
-				if (level < this .children_ .length)
-				{
-					var child = this .children_ [level];
-
-					if (child)
-						child .getValue () .traverse (type);
-				}
+				if (this .child)
+					this .child .traverse (type);
 			},
 		});
 

@@ -7,7 +7,6 @@ define ([
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
 	"standard/Math/Geometry/Box3",
 ],
 function ($,
@@ -17,13 +16,10 @@ function ($,
           X3DGroupingNode, 
           X3DCast,
           X3DConstants,
-          Vector3,
           Box3)
 {
 	with (Fields)
 	{
-		var defaultBBoxSize = new Vector3 (-1, -1, -1);
-	
 		function Switch (executionContext)
 		{
 			X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
@@ -65,42 +61,37 @@ function ($,
 				
 				this .set_whichChoice__ ();
 			},
-			set_whichChoice__: function ()
-			{
-				var whichChoice = this .whichChoice_ .getValue ();
-
-				if (whichChoice >= 0 && whichChoice < this .children_ .length)
-				{
-					var child = this .children_ [whichChoice];
-
-					if (child)
-					{
-						child = child .getValue ();
-						this .traverse = child .traverse .bind (child);
-						return;
-					}
-				}
-	
-				this .taverse = function () { };
-			},
 			getBBox: function () 
 			{
-				if (this .bboxSize_ .getValue () .equals (defaultBBoxSize))
+				if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 				{
-					var whichChoice = this .whichChoice_ .getValue ();
-				
-					if (whichChoice >= 0 && whichChoice < this .children_ .length)
-					{
-						var child = X3DCast (X3DConstants .X3DBoundedObject, this .children_ [whichChoice]);
+					var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .child);
 
-						if (child)
-							return child .getBBox ();
-					}
+					if (boundedObject)
+						return boundedObject .getBBox ();
 
 					return new Box3 ();
 				}
 
 				return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			},
+			set_whichChoice__: function ()
+			{
+				this .child = this .getChild (this .whichChoice_ .getValue ());
+
+				if (this .child)
+					this .traverse = this .child .traverse .bind (this .child);
+				else
+					this .traverse = function () { };
+
+				this .set_cameraObjects__ ();
+			},
+			set_cameraObjects__: function ()
+			{
+				if (this .child)
+					this .setCameraObject (this .child .getCameraObject ());
+				else
+					this .setCameraObject (false);
 			},
 		});
 

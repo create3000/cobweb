@@ -3,11 +3,13 @@ define ([
 	"jquery",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Geometry/Box3",
 ],
 function ($,
           X3DCast,
           X3DConstants,
+          Vector3,
           Box3)
 {
 	function X3DBoundedObject (browser, executionContext)
@@ -18,6 +20,7 @@ function ($,
 	X3DBoundedObject .prototype =
 	{
 		constructor: X3DBoundedObject,
+		defaultBBoxSize: new Vector3 (-1, -1, -1),
 		initialize: function () { },
 	};
 

@@ -5,7 +5,6 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
 	"standard/Math/Geometry/Box3",
 ],
 function ($,
@@ -13,7 +12,6 @@ function ($,
           X3DBoundedObject, 
           TraverseType,
           X3DConstants,
-          Vector3,
           Box3)
 {
 	function remove (array, first, last, range, rfirst, rlast, getId)
@@ -76,8 +74,6 @@ function ($,
 
 	//
 
-	var defaultBBoxSize = new Vector3 (-1, -1, -1);
-
 	function getId (value) { return value ? value .getId () : -1; };
 	function getNodeId (value) { return value ? value .getValue () .getId () : -1; }
 
@@ -114,7 +110,7 @@ function ($,
 		},
 		getBBox: function ()
 		{
-			if (this .bboxSize_ .getValue () .equals (defaultBBoxSize))
+			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 				return X3DBoundedObject .getBBox (this .children_);
 
 			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
@@ -133,6 +129,20 @@ function ($,
 			visible = value;
 
 			this .set_children__ ();
+		},
+		getChild: function (index)
+		{
+			// Used in LOD and Switch.
+
+			if (index >= 0 && index < this .children_ .length)
+			{
+				var child = this .children_ [index];
+
+				if (child)
+					return child .getValue ();
+			}
+			
+			return null;
 		},
 		set_addChildren__: function ()
 		{

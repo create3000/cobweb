@@ -5,7 +5,8 @@ define (function ()
 	{
 		if (node)
 		{
-			node = node .getValue ();
+			if (node .getValue)
+				node = node .getValue ();
 
 			if (node)
 			{
