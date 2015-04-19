@@ -497,9 +497,9 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
 			gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .position);
+			gl .enableVertexAttribArray (shader .vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-			gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw.
 
@@ -510,7 +510,7 @@ function ($,
 			// Disable vertex attribute arrays.
 
 			gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .position);
+			gl .disableVertexAttribArray (shader .vertex);
 		},
 		drawCube: function ()
 		{
@@ -543,7 +543,7 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
 			gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .position);
+			gl .enableVertexAttribArray (shader .vertex);
 
 			// Draw.
 
@@ -557,7 +557,7 @@ function ($,
 			// Disable vertex attribute arrays.
 
 			gl .disableVertexAttribArray (shader .texCoord);
-			gl .disableVertexAttribArray (shader .position);
+			gl .disableVertexAttribArray (shader .vertex);
 		},
 		drawRectangle: function (gl, shader, texture, buffer)
 		{
@@ -571,7 +571,7 @@ function ($,
 					gl .disable (gl .BLEND);
 
 				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-				gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
 
 				// Draw.
 

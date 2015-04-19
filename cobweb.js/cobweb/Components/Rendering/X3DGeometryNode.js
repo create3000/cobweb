@@ -68,16 +68,16 @@ function ($,
 
 				var gl = this .getBrowser () .getContext ();
 		
-				this .min       = new Vector3 (0, 0, 0);
-				this .max       = new Vector3 (0, 0, 0);
-				this .bbox      = new Box3 (this .min, this .max, true);
-				this .solid     = true;
-				this .frontFace = 0;
-				this .colors    = [ ];
-				this .texCoords = [ ];
-				this .normals   = [ ];
-				this .vertices  = [ ];
-				this .count     = 0;
+				this .min         = new Vector3 (0, 0, 0);
+				this .max         = new Vector3 (0, 0, 0);
+				this .bbox        = new Box3 (this .min, this .max, true);
+				this .solid       = true;
+				this .frontFace   = 0;
+				this .colors      = [ ];
+				this .texCoords   = [ ];
+				this .normals     = [ ];
+				this .vertices    = [ ];
+				this .vertexCount = 0;
 
 				this .frontFace       = gl .CCW;
 				this .colorBuffer     = gl .createBuffer ();
@@ -260,10 +260,10 @@ function ($,
 
 						for (var q = 0; q < vertex .length; ++ q)
 						{
-							var Q = vertex [q];
+							var Q = normals [vertex [q]];
 		
-							if (normals [Q] .dot (m) >= cosCreaseAngle)
-								n .add (normals [Q]);
+							if (Q .dot (m) >= cosCreaseAngle)
+								n .add (Q);
 						}
 
 						normals_ [P] = n .normalize ();
@@ -305,22 +305,14 @@ function ($,
 			},
 			transfer: function ()
 			{
-				var gl    = this .getBrowser () .getContext ();
-				var count = this .vertices .length / 4;
+				var
+					gl    = this .getBrowser () .getContext (),
+					count = this .vertices .length / 4;
 
 				// Transfer colors.
 
-				if (this .colors .length)
-				{
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-					gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors), gl .STATIC_DRAW);
-					this .currentColorBuffer = this .colorBuffer;
-				}
-				else
-				{
-					this .getBrowser () .setDefaultColorBuffer (count * 4);
-					this .currentColorBuffer = this .getBrowser () .getDefaultColorBuffer ();
-				}
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors), gl .STATIC_DRAW);
 
 				// Transfer texCoords.
 
@@ -344,58 +336,58 @@ function ($,
 
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
-				this .count = count;
+				this .vertexCount = count;
 	  		},
 			traverse: function (context)
 			{
-				context .colorMaterial = this .colors .length;
-
 				var
 					browser = this .getBrowser (),
 					gl      = browser .getContext (),
 					shader  = browser .getShader ();
 
-				// Shader
-
-				shader .setLocalUniforms (context);
-
-				//
-
-				if (shader .color >= 0)
+				if (shader .vertex >= 0)
 				{
-					gl .enableVertexAttribArray (shader .color);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .currentColorBuffer);
-					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
-				}
+					// Setup shader.
+					context .colorMaterial = this .colors .length;
+					shader .setLocalUniforms (context);
 
-				if (shader .texCoord >= 0)
-				{
-					gl .enableVertexAttribArray (shader .texCoord);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
-				}
+					// Setup vertex attributes.
 
-				if (shader .normal >= 0)
-				{
-					gl .enableVertexAttribArray (shader .normal);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
-				}
+					if (this .colors .length && shader .color >= 0)
+					{
+						gl .enableVertexAttribArray (shader .color);
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+						gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+					}
 
-				if (shader .position >= 0)
-				{
-					gl .enableVertexAttribArray (shader .position);
+					if (shader .texCoord >= 0)
+					{
+						gl .enableVertexAttribArray (shader .texCoord);
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
+						gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+					}
+
+					if (shader .normal >= 0)
+					{
+						gl .enableVertexAttribArray (shader .normal);
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+						gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+					}
+
+					gl .enableVertexAttribArray (shader .vertex);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-					gl .vertexAttribPointer (shader .position, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+					// Draw depending on wireframe, solid and transparent.
 
 					if (shader .wireframe || this .isLineGeometry ())
 					{
 						if (this .isLineGeometry ())
-							gl .drawArrays (shader .primitiveMode, 0, this .count);
+							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
 
 						else
 						{
-							for (var i = 0; i < this .count; i += 3)
+							for (var i = 0; i < this .vertexCount; i += 3)
 								gl .drawArrays (shader .primitiveMode, i, 3);
 						}
 					}
@@ -410,10 +402,10 @@ function ($,
 							gl .enable (gl .CULL_FACE);
 
 							gl .cullFace (gl .FRONT);
-							gl .drawArrays (shader .primitiveMode, 0, this .count);		
+							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
 
 							gl .cullFace (gl .BACK);
-							gl .drawArrays (shader .primitiveMode, 0, this .count);		
+							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
 						}
 						else
 						{
@@ -422,16 +414,15 @@ function ($,
 							else
 								gl .disable (gl .CULL_FACE);
 
-							gl .drawArrays (shader .primitiveMode, 0, this .count);
+							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
 						}
 					}
 
-					gl .disableVertexAttribArray (shader .position);
+					if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
+					if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
+					if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
+					gl .disableVertexAttribArray (shader .vertex);
 				}
-
-				if (shader .color >= 0)    gl .disableVertexAttribArray (shader .color);
-				if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
-				if (shader .normal >= 0)   gl .disableVertexAttribArray (shader .normal);
 			},
 			intersectsLine: function (line, intersections)
 			{
@@ -454,7 +445,7 @@ function ($,
 							v1        = this .v1,
 							v2        = this .v2;
 
-						for (var i = 0, length = this .count; i < length; i += 3)
+						for (var i = 0, length = this .vertexCount; i < length; i += 3)
 						{
 							var i4 = i * 4;
 

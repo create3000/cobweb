@@ -155,11 +155,11 @@ function ($,
 				this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
 				this .projectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
 				this .modelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
-
+				
 				this .color    = gl .getAttribLocation (program, "x3d_Color");
 				this .texCoord = gl .getAttribLocation (program, "x3d_TexCoord");
 				this .normal   = gl .getAttribLocation (program, "x3d_Normal");
-				this .position = gl .getAttribLocation (program, "x3d_Vertex");			
+				this .vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
 
 				// Set texture to active texture unit 0.
 				gl .uniform1i (this .texture, 0);
@@ -244,7 +244,7 @@ function ($,
 				else
 				{
 					gl .uniform1i (this .lighting, false);
-					
+
 					if (customShader)
 					{
 						// Set normal matrix.

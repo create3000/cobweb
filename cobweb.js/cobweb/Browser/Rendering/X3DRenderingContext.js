@@ -67,7 +67,6 @@ function (Fields,
 		this .projectionMatrixArray = new Float32Array (16);
 		this .modelViewMatrix       = new MatrixStack (Matrix4);
 		this .viewport              = new Vector4 (0, 0, 0, 0);
-		this .defaultColorBuffer    = null;
 	}
 
 	X3DRenderingContext .prototype =
@@ -88,11 +87,6 @@ function (Fields,
 
 			gl .blendFuncSeparate (gl .SRC_ALPHA, gl .ONE_MINUS_SRC_ALPHA, gl .ONE, gl .ONE_MINUS_SRC_ALPHA);
 			gl .enable (gl .BLEND);
-
-			// Create default color buffer.
-
-			this .defaultColorBuffer         = gl .createBuffer ();
-			this .defaultColorBuffer .length = 0;
 
 			// Configure viewport.
 
@@ -150,20 +144,6 @@ function (Fields,
 		getViewport: function ()
 		{
 			return this .viewport_;
-		},
-		setDefaultColorBuffer: function (length)
-		{
-			if (length > this .defaultColorBuffer .length)
-			{
-				var gl = this .context;
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .defaultColorBuffer);
-				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array ({ length: length }), gl .STATIC_DRAW);
-				this .defaultColorBuffer .length = length;
-			}
-		},
-		getDefaultColorBuffer: function ()
-		{
-			return this .defaultColorBuffer;
 		},
 		setDefaultShader: function (type)
 		{
