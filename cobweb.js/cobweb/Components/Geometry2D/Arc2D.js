@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Arc2D);
 		}
 
-		Arc2D .prototype = $.extend (new X3DGeometryNode (),
+		Arc2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Arc2D,
 			fieldDefinitions: new FieldDefinitionArray ([

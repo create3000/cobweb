@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .NurbsSweptSurface);
 		}
 
-		NurbsSweptSurface .prototype = $.extend (new X3DParametricGeometryNode (),
+		NurbsSweptSurface .prototype = $.extend (Object .create (X3DParametricGeometryNode .prototype),
 		{
 			constructor: NurbsSweptSurface,
 			fieldDefinitions: new FieldDefinitionArray ([

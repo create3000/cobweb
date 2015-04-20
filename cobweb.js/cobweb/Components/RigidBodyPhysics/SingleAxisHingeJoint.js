@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .SingleAxisHingeJoint);
 		}
 
-		SingleAxisHingeJoint .prototype = $.extend (new X3DRigidJointNode (),
+		SingleAxisHingeJoint .prototype = $.extend (Object .create (X3DRigidJointNode .prototype),
 		{
 			constructor: SingleAxisHingeJoint,
 			fieldDefinitions: new FieldDefinitionArray ([

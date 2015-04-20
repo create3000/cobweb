@@ -23,7 +23,7 @@ function ($,
 			this .addAlias ("AntiAliased", this .Antialiased_);
 		}
 
-		BrowserOptions .prototype = $.extend (new X3DBaseNode (),
+		BrowserOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		{
 			constructor: BrowserOptions,
 			fieldDefinitions: new FieldDefinitionArray ([

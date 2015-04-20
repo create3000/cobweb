@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .SplineScalarInterpolator);
 		}
 
-		SplineScalarInterpolator .prototype = $.extend (new X3DInterpolatorNode (),
+		SplineScalarInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: SplineScalarInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

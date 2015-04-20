@@ -39,7 +39,7 @@ function ($,
 			this .addType (X3DConstants .PlaneSensor);
 		}
 
-		PlaneSensor .prototype = $.extend (new X3DDragSensorNode (),
+		PlaneSensor .prototype = $.extend (Object .create (X3DDragSensorNode .prototype),
 		{
 			constructor: PlaneSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

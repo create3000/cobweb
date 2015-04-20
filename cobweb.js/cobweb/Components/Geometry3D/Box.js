@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .Box);
 		}
 
-		Box .prototype = $.extend (new X3DGeometryNode (),
+		Box .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Box,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .HAnimSite);
 		}
 
-		HAnimSite .prototype = $.extend (new X3DGroupingNode (),
+		HAnimSite .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 		{
 			constructor: HAnimSite,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .NurbsTextureCoordinate);
 		}
 
-		NurbsTextureCoordinate .prototype = $.extend (new X3DNode (),
+		NurbsTextureCoordinate .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: NurbsTextureCoordinate,
 			fieldDefinitions: new FieldDefinitionArray ([

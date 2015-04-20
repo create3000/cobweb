@@ -29,7 +29,7 @@ function ($,
 			this .addType (X3DConstants .PackagedShader);
 		}
 
-		PackagedShader .prototype = $.extend (new X3DShaderNode (),new X3DUrlObject (),new X3DProgrammableShaderObject (),
+		PackagedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),new X3DUrlObject (),new X3DProgrammableShaderObject (),
 		{
 			constructor: PackagedShader,
 			fieldDefinitions: new FieldDefinitionArray ([

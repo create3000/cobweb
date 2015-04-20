@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DNurbsControlCurveNode);
 	}
 
-	X3DNurbsControlCurveNode .prototype = $.extend (new X3DNode (),
+	X3DNurbsControlCurveNode .prototype = $.extend (Object .create (X3DNode .prototype),
 	{
 		constructor: X3DNurbsControlCurveNode,
 	});

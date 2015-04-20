@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .PositionChaser2D);
 		}
 
-		PositionChaser2D .prototype = $.extend (new X3DChaserNode (),
+		PositionChaser2D .prototype = $.extend (Object .create (X3DChaserNode .prototype),
 		{
 			constructor: PositionChaser2D,
 			fieldDefinitions: new FieldDefinitionArray ([

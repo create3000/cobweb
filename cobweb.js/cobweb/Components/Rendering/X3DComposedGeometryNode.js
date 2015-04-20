@@ -23,7 +23,7 @@ function ($,
 		this .coordNode    = null;
 	}
 
-	X3DComposedGeometryNode .prototype = $.extend (new X3DGeometryNode (),
+	X3DComposedGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 	{
 		constructor: X3DComposedGeometryNode,
 		initialize: function ()

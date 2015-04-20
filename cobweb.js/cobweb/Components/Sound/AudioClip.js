@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .AudioClip);
 		}
 
-		AudioClip .prototype = $.extend (new X3DSoundSourceNode (),new X3DUrlObject (),
+		AudioClip .prototype = $.extend (Object .create (X3DSoundSourceNode .prototype),new X3DUrlObject (),
 		{
 			constructor: AudioClip,
 			fieldDefinitions: new FieldDefinitionArray ([

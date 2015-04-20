@@ -1,0 +1,22 @@
+#X3D V3.3 utf8 Titania V0.7.8
+
+META "comment" "World of Titania"
+META "created" "Mon, 20 Apr 2015 03:06:31 GMT"
+META "creator" "Holger Seelig"
+META "generator" "Titania V0.7.8, http://titania.create3000.de"
+META "modified" "Mon, 20 Apr 2015 03:06:31 GMT"
+
+PROTO A [
+	inputOutput SFBool enabled FALSE
+]
+{
+	Shape {
+		appearance Appearance {
+			material Material { }
+		}
+		geometry Box { }
+	}
+}
+
+A { }
+

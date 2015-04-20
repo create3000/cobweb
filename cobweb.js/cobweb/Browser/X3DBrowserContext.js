@@ -71,7 +71,7 @@ function ($,
 		this .cameraTime     = 0;
 	};
 
-	X3DBrowserContext .prototype = $.extend (new X3DBaseNode (),
+	X3DBrowserContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		X3DCoreContext .prototype,
 		X3DNetworkingContext .prototype,
 		X3DRenderingContext .prototype,

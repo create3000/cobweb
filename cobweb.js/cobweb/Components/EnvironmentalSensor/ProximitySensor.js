@@ -41,7 +41,7 @@ function ($,
 			this .inside             = false;
 		}
 
-		ProximitySensor .prototype = $.extend (new X3DEnvironmentalSensorNode (),
+		ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
 		{
 			constructor: ProximitySensor,
 			fieldDefinitions: new FieldDefinitionArray ([

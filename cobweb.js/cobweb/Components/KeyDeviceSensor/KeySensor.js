@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .KeySensor);
 		}
 
-		KeySensor .prototype = $.extend (new X3DKeyDeviceSensorNode (),
+		KeySensor .prototype = $.extend (Object .create (X3DKeyDeviceSensorNode .prototype),
 		{
 			constructor: KeySensor,
 			fieldDefinitions: new FieldDefinitionArray ([

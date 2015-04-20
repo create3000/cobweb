@@ -38,7 +38,7 @@ function ($,
 			this .addType (X3DConstants .ShaderPart);
 		}
 
-		ShaderPart .prototype = $.extend (new X3DNode (),
+		ShaderPart .prototype = $.extend (Object .create (X3DNode .prototype),
 			X3DUrlObject .prototype,
 		{
 			constructor: ShaderPart,

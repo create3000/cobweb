@@ -45,7 +45,7 @@ function ($,
 			this .addType (X3DConstants .DirectionalLight);
 		}
 
-		DirectionalLight .prototype = $.extend (new X3DLightNode (),
+		DirectionalLight .prototype = $.extend (Object .create (X3DLightNode .prototype),
 		{
 			constructor: DirectionalLight,
 			fieldDefinitions: new FieldDefinitionArray ([

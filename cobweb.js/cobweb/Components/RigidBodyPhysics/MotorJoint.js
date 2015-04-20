@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .MotorJoint);
 		}
 
-		MotorJoint .prototype = $.extend (new X3DRigidJointNode (),
+		MotorJoint .prototype = $.extend (Object .create (X3DRigidJointNode .prototype),
 		{
 			constructor: MotorJoint,
 			fieldDefinitions: new FieldDefinitionArray ([

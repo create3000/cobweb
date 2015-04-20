@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .MetadataBoolean);
 		}
 
-		MetadataBoolean .prototype = $.extend (new X3DNode (),new X3DMetadataObject (),
+		MetadataBoolean .prototype = $.extend (Object .create (X3DNode .prototype),new X3DMetadataObject (),
 		{
 			constructor: MetadataBoolean,
 			fieldDefinitions: new FieldDefinitionArray ([

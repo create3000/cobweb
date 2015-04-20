@@ -20,7 +20,7 @@ function ($,
 		this .matrixArray = new Float32Array (this .matrix);
 	}
 
-	X3DTextureTransformNode .prototype = $.extend (new X3DAppearanceChildNode (),
+	X3DTextureTransformNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
 	{
 		constructor: X3DTextureTransformNode,
 		setMatrix: function (value)

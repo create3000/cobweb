@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .PolylineEmitter);
 		}
 
-		PolylineEmitter .prototype = $.extend (new X3DParticleEmitterNode (),
+		PolylineEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
 		{
 			constructor: PolylineEmitter,
 			fieldDefinitions: new FieldDefinitionArray ([

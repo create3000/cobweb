@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DFontStyleNode);
 	}
 
-	X3DFontStyleNode .prototype = $.extend (new X3DNode (),
+	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
 	{
 		constructor: X3DFontStyleNode,
 	});

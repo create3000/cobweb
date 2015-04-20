@@ -32,7 +32,7 @@ function ($,
 			this .addType (X3DConstants .NavigationInfo);
 		}
 
-		NavigationInfo .prototype = $.extend (new X3DBindableNode (),
+		NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
 		{
 			constructor: NavigationInfo,
 			fieldDefinitions: new FieldDefinitionArray ([

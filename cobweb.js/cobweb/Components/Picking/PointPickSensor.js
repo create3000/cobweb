@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .PointPickSensor);
 		}
 
-		PointPickSensor .prototype = $.extend (new X3DPickSensorNode (),
+		PointPickSensor .prototype = $.extend (Object .create (X3DPickSensorNode .prototype),
 		{
 			constructor: PointPickSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

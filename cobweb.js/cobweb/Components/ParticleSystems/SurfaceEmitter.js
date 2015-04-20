@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .SurfaceEmitter);
 		}
 
-		SurfaceEmitter .prototype = $.extend (new X3DParticleEmitterNode (),
+		SurfaceEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
 		{
 			constructor: SurfaceEmitter,
 			fieldDefinitions: new FieldDefinitionArray ([

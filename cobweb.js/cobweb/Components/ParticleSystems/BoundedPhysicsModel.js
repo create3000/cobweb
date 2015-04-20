@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .BoundedPhysicsModel);
 		}
 
-		BoundedPhysicsModel .prototype = $.extend (new X3DParticlePhysicsModelNode (),
+		BoundedPhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
 		{
 			constructor: BoundedPhysicsModel,
 			fieldDefinitions: new FieldDefinitionArray ([

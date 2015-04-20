@@ -18,7 +18,7 @@ function ($,
 		this .addType (X3DConstants .X3DNBodyCollisionSpaceNode);
 	}
 
-	X3DNBodyCollisionSpaceNode .prototype = $.extend (new X3DNode (),new X3DBoundedObject (),
+	X3DNBodyCollisionSpaceNode .prototype = $.extend (Object .create (X3DNode .prototype),new X3DBoundedObject (),
 	{
 		constructor: X3DNBodyCollisionSpaceNode,
 	});

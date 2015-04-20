@@ -32,7 +32,7 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 			X3DField .call (this, new Matrix3 ());
 	}
 
-	SFMatrix3 .prototype = $.extend (new X3DField (),
+	SFMatrix3 .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFMatrix3,
 		copy: function ()
@@ -137,7 +137,7 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		SFMatrix3 .apply (this, arguments);
 	}
 
-	SFMatrix3d .prototype = $.extend (new SFMatrix3 (),
+	SFMatrix3d .prototype = $.extend (Object .create (SFMatrix3 .prototype),
 	{
 		constructor: SFMatrix3d,
 		Vector2: SFVec2d,
@@ -162,7 +162,7 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		SFMatrix3 .apply (this, arguments);
 	}
 
-	SFMatrix3f .prototype = $.extend (new SFMatrix3 (),
+	SFMatrix3f .prototype = $.extend (Object .create (SFMatrix3 .prototype),
 	{
 		constructor: SFMatrix3f,
 		Vector2: SFVec2f,

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ColorDamper);
 		}
 
-		ColorDamper .prototype = $.extend (new X3DDamperNode (),
+		ColorDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
 		{
 			constructor: ColorDamper,
 			fieldDefinitions: new FieldDefinitionArray ([

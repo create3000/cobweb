@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .FloatVertexAttribute);
 		}
 
-		FloatVertexAttribute .prototype = $.extend (new X3DVertexAttributeNode (),
+		FloatVertexAttribute .prototype = $.extend (Object .create (X3DVertexAttributeNode .prototype),
 		{
 			constructor: FloatVertexAttribute,
 			fieldDefinitions: new FieldDefinitionArray ([

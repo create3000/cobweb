@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .TransmitterPdu);
 		}
 
-		TransmitterPdu .prototype = $.extend (new X3DSensorNode (),new X3DBoundedObject (),
+		TransmitterPdu .prototype = $.extend (Object .create (X3DSensorNode .prototype),new X3DBoundedObject (),
 		{
 			constructor: TransmitterPdu,
 			fieldDefinitions: new FieldDefinitionArray ([

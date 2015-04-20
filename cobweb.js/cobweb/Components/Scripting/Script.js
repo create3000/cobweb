@@ -52,7 +52,7 @@ function ($,
 			this .setExtendedEventHandling (false);
 		}
 
-		Script .prototype = $.extend (new X3DScriptNode (),
+		Script .prototype = $.extend (Object .create (X3DScriptNode .prototype),
 		{
 			constructor: Script,
 			getTypeName: function ()

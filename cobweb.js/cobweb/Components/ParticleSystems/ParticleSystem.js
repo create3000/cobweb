@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ParticleSystem);
 		}
 
-		ParticleSystem .prototype = $.extend (new X3DShapeNode (),
+		ParticleSystem .prototype = $.extend (Object .create (X3DShapeNode .prototype),
 		{
 			constructor: ParticleSystem,
 			fieldDefinitions: new FieldDefinitionArray ([

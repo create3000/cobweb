@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ContourPolyline2D);
 		}
 
-		ContourPolyline2D .prototype = $.extend (new X3DNurbsControlCurveNode (),
+		ContourPolyline2D .prototype = $.extend (Object .create (X3DNurbsControlCurveNode .prototype),
 		{
 			constructor: ContourPolyline2D,
 			fieldDefinitions: new FieldDefinitionArray ([

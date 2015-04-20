@@ -33,7 +33,7 @@ function ($,
 			this .visible = false;
 		}
 
-		VisibilitySensor .prototype = $.extend (new X3DEnvironmentalSensorNode (),
+		VisibilitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
 		{
 			constructor: VisibilitySensor,
 			fieldDefinitions: new FieldDefinitionArray ([

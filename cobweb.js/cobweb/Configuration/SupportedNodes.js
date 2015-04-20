@@ -221,6 +221,7 @@ define ([
 	//"cobweb/Components/Picking/VolumePickSensor",
 	//"cobweb/Components/ParticleSystems/WindPhysicsModel",
 	"cobweb/Components/Core/WorldInfo",
+	"cobweb/Components/Core/X3DPrototypeInstance",
 ],
 function (Anchor,
           Appearance,
@@ -442,7 +443,8 @@ function (Anchor,
           //VolumeEmitter,
           //VolumePickSensor,
           //WindPhysicsModel,
-          WorldInfo)
+          WorldInfo,
+          X3DPrototypeInstance)
 {
 	var xml =
 	{
@@ -667,6 +669,7 @@ function (Anchor,
 		//VolumePickSensor:             VolumePickSensor,
 		//WindPhysicsModel:             WindPhysicsModel,
 		WorldInfo:                    WorldInfo,
+		X3DPrototypeInstance:         X3DPrototypeInstance,
 	};
 
 	var dom = { };

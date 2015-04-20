@@ -41,7 +41,7 @@ function ($,
 			this .addType (X3DConstants .X3DGeometryNode);
 		}
 
-		X3DGeometryNode .prototype = $.extend (new X3DNode (),
+		X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: X3DGeometryNode,
 			intersection: new Vector3 (0, 0, 0),

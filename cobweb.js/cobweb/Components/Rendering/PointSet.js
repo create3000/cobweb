@@ -31,7 +31,7 @@ function ($,
 			this .coordNode    = null;
 		}
 
-		PointSet .prototype = $.extend (new X3DGeometryNode (),
+		PointSet .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: PointSet,
 			fieldDefinitions: new FieldDefinitionArray ([

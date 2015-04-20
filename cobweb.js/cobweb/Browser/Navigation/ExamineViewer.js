@@ -30,7 +30,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 		this .spinId            = undefined;
 	}
 
-	ExamineViewer .prototype = $.extend (new X3DViewer (),
+	ExamineViewer .prototype = $.extend (Object .create (X3DViewer .prototype),
 	{
 		constructor: ExamineViewer,
 		initialize: function ()

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TextureTransform3D);
 		}
 
-		TextureTransform3D .prototype = $.extend (new X3DTextureTransformNode (),
+		TextureTransform3D .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
 		{
 			constructor: TextureTransform3D,
 			fieldDefinitions: new FieldDefinitionArray ([

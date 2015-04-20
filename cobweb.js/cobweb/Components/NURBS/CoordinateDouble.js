@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .CoordinateDouble);
 		}
 
-		CoordinateDouble .prototype = $.extend (new X3DCoordinateNode (),
+		CoordinateDouble .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
 		{
 			constructor: CoordinateDouble,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ScreenGroup);
 		}
 
-		ScreenGroup .prototype = $.extend (new X3DGroupingNode (),
+		ScreenGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 		{
 			constructor: ScreenGroup,
 			fieldDefinitions: new FieldDefinitionArray ([

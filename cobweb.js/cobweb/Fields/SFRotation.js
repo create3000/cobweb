@@ -32,7 +32,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		}
 	}
 
-	SFRotation .prototype = $.extend (new X3DField (),
+	SFRotation .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFRotation,
 		copy: function ()

@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DEnvironmentTextureNode);
 	}
 
-	X3DEnvironmentTextureNode .prototype = $.extend (new X3DTextureNode (),
+	X3DEnvironmentTextureNode .prototype = $.extend (Object .create (X3DTextureNode .prototype),
 	{
 		constructor: X3DEnvironmentTextureNode,
 	});

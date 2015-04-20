@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Rectangle2D);
 		}
 
-		Rectangle2D .prototype = $.extend (new X3DGeometryNode (),
+		Rectangle2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Rectangle2D,
 			fieldDefinitions: new FieldDefinitionArray ([

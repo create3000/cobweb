@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Contact);
 		}
 
-		Contact .prototype = $.extend (new X3DNode (),
+		Contact .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: Contact,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -14,7 +14,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		X3DBaseNode .call (this, browser, executionContext);
 	}
 
-	X3DViewer .prototype = $.extend (new X3DBaseNode (),
+	X3DViewer .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: X3DViewer,
 		initialize: function ()

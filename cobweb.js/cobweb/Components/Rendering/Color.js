@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .Color);
 		}
 
-		Color .prototype = $.extend (new X3DColorNode (),
+		Color .prototype = $.extend (Object .create (X3DColorNode .prototype),
 		{
 			constructor: Color,
 			fieldDefinitions: new FieldDefinitionArray ([

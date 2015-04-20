@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .FontStyle);
 		}
 
-		FontStyle .prototype = $.extend (new X3DFontStyleNode (),
+		FontStyle .prototype = $.extend (Object .create (X3DFontStyleNode .prototype),
 		{
 			constructor: FontStyle,
 			fieldDefinitions: new FieldDefinitionArray ([

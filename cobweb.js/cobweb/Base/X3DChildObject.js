@@ -12,7 +12,7 @@ function ($, X3DObject)
 		this .parents_ = { };
 	}
 
-	X3DChildObject .prototype = $.extend (new X3DObject (),
+	X3DChildObject .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
 		constructor: X3DChildObject,
 		addParent: function (parent)

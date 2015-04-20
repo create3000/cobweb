@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .GeoLocation);
 		}
 
-		GeoLocation .prototype = $.extend (new X3DTransformMatrix4DNode (),new X3DGeospatialObject (),
+		GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),new X3DGeospatialObject (),
 		{
 			constructor: GeoLocation,
 			fieldDefinitions: new FieldDefinitionArray ([

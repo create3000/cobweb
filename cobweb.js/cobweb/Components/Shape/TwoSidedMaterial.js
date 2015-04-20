@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TwoSidedMaterial);
 		}
 
-		TwoSidedMaterial .prototype = $.extend (new X3DMaterialNode (),
+		TwoSidedMaterial .prototype = $.extend (Object .create (X3DMaterialNode .prototype),
 		{
 			constructor: TwoSidedMaterial,
 			fieldDefinitions: new FieldDefinitionArray ([

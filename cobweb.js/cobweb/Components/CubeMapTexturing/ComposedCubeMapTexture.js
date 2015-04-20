@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ComposedCubeMapTexture);
 		}
 
-		ComposedCubeMapTexture .prototype = $.extend (new X3DEnvironmentTextureNode (),
+		ComposedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
 		{
 			constructor: ComposedCubeMapTexture,
 			fieldDefinitions: new FieldDefinitionArray ([

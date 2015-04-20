@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .BooleanToggle);
 		}
 
-		BooleanToggle .prototype = $.extend (new X3DChildNode (),
+		BooleanToggle .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: BooleanToggle,
 			fieldDefinitions: new FieldDefinitionArray ([

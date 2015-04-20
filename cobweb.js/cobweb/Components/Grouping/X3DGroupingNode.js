@@ -93,7 +93,7 @@ function ($,
 		this .childNodes            = [ ];
 	}
 
-	X3DGroupingNode .prototype = $.extend (new X3DChildNode (),
+	X3DGroupingNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		X3DBoundedObject .prototype,
 	{
 		constructor: X3DGroupingNode,

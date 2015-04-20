@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ClipPlane);
 		}
 
-		ClipPlane .prototype = $.extend (new X3DChildNode (),
+		ClipPlane .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: ClipPlane,
 			fieldDefinitions: new FieldDefinitionArray ([

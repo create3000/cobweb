@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .FogCoordinate);
 		}
 
-		FogCoordinate .prototype = $.extend (new X3DGeometricPropertyNode (),
+		FogCoordinate .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 		{
 			constructor: FogCoordinate,
 			fieldDefinitions: new FieldDefinitionArray ([

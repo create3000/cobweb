@@ -33,7 +33,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 			X3DField .call (this, new Matrix4 ());
 	}
 
-	SFMatrix4 .prototype = $.extend (new X3DField (),
+	SFMatrix4 .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFMatrix4,
 		copy: function ()
@@ -139,7 +139,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 		SFMatrix4 .apply (this, arguments);
 	}
 
-	SFMatrix4d .prototype = $.extend (new SFMatrix4 (),
+	SFMatrix4d .prototype = $.extend (Object .create (SFMatrix4 .prototype),
 	{
 		constructor: SFMatrix4d,
 		getTypeName: function ()
@@ -164,7 +164,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 		SFMatrix4 .apply (this, arguments);
 	}
 
-	SFMatrix4f .prototype = $.extend (new SFMatrix4 (),
+	SFMatrix4f .prototype = $.extend (Object .create (SFMatrix4 .prototype),
 	{
 		constructor: SFMatrix4f,
 		Vector3: SFVec3d,
@@ -190,7 +190,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 		SFMatrix4 .apply (this, arguments);
 	}
 
-	VrmlMatrix .prototype = $.extend (new SFMatrix4 (),
+	VrmlMatrix .prototype = $.extend (Object .create (SFMatrix4 .prototype),
 	{
 		constructor: VrmlMatrix,
 		Vector3: SFVec3f,

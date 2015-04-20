@@ -15,7 +15,7 @@ function ($,
 			X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 		}
 
-		CylinderOptions .prototype = $.extend (new X3DBaseNode (),
+		CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		{
 			constructor: CylinderOptions,
 			initialize: function ()

@@ -21,7 +21,7 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, X3DCast, X3DConstants)
 		this .addChildren ("activeLayer", new SFNode (this .layer0));
 	}
 
-	World .prototype = $.extend (new X3DBaseNode (),
+	World .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: World,
 		getTypeName: function ()

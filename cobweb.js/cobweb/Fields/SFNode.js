@@ -52,7 +52,7 @@ function ($, X3DField, X3DConstants)
 		return new Proxy (this, handler);
 	}
 
-	SFNode .prototype = $.extend (new X3DField (),
+	SFNode .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFNode,
 		copy: function ()

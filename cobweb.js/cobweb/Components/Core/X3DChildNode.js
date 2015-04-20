@@ -17,18 +17,18 @@ function ($,
 			X3DNode .call (this, browser, executionContext);
 
 			this .addType (X3DConstants .X3DChildNode);
+			
+			try
+			{
+				this .addChildren ("isCameraObject", new SFBool (false));
+			}
+			catch (error)
+			{ }
 		}
 
-		X3DChildNode .prototype = $.extend (new X3DNode (),
+		X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: X3DChildNode,
-			initialize: function ()
-			{
-				X3DNode .prototype .initialize .call (this);
-
-				if (! this .hasOwnProperty ("isCameraObject_"))
-					this .addChildren ("isCameraObject", new SFBool (false));
-			},
 			setCameraObject: function (value)
 			{
 				if (value !== this .isCameraObject_ .getValue ())

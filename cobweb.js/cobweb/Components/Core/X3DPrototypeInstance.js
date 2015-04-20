@@ -17,7 +17,7 @@ function ($,
 		this .setExtendedEventHandling (false);
 	}
 
-	X3DPrototypeInstance .prototype = $.extend (new X3DNode (),
+	X3DPrototypeInstance .prototype = $.extend (Object .create (X3DNode .prototype),
 	{
 		constructor: X3DPrototypeInstance,
 	});

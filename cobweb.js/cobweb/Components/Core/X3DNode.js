@@ -17,7 +17,7 @@ function ($,
 		this .addType (X3DConstants .X3DNode);
 	}
 
-	X3DNode .prototype = $.extend (new X3DBaseNode (),
+	X3DNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: X3DNode,
 		getCurrentLayer: function ()

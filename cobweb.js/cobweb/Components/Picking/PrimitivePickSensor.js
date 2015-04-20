@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .PrimitivePickSensor);
 		}
 
-		PrimitivePickSensor .prototype = $.extend (new X3DPickSensorNode (),
+		PrimitivePickSensor .prototype = $.extend (Object .create (X3DPickSensorNode .prototype),
 		{
 			constructor: PrimitivePickSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

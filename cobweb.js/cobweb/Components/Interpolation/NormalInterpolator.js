@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .NormalInterpolator);
 		}
 
-		NormalInterpolator .prototype = $.extend (new X3DInterpolatorNode (),
+		NormalInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: NormalInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

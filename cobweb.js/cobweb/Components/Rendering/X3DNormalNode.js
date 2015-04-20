@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DNormalNode);
 	}
 
-	X3DNormalNode .prototype = $.extend (new X3DGeometricPropertyNode (),
+	X3DNormalNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DNormalNode,
 	});

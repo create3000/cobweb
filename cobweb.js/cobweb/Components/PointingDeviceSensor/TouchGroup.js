@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .TouchGroup);
 		}
 
-		TouchGroup .prototype = $.extend (new X3DGroupingNode (),new X3DSensorNode (),
+		TouchGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),new X3DSensorNode (),
 		{
 			constructor: TouchGroup,
 			fieldDefinitions: new FieldDefinitionArray ([

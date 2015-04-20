@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .CADAssembly);
 		}
 
-		CADAssembly .prototype = $.extend (new X3DGroupingNode (),new X3DProductStructureChildNode (),
+		CADAssembly .prototype = $.extend (Object .create (X3DGroupingNode .prototype),new X3DProductStructureChildNode (),
 		{
 			constructor: CADAssembly,
 			fieldDefinitions: new FieldDefinitionArray ([

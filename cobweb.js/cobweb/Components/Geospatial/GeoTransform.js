@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .GeoTransform);
 		}
 
-		GeoTransform .prototype = $.extend (new X3DTransformMatrix4DNode (),new X3DGeospatialObject (),
+		GeoTransform .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),new X3DGeospatialObject (),
 		{
 			constructor: GeoTransform,
 			fieldDefinitions: new FieldDefinitionArray ([

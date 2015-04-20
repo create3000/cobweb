@@ -9,7 +9,7 @@ function (X3DScene)
 		X3DScene .call (this, browser, this);
 	}
 
-	Scene .prototype = $.extend (new X3DScene (),
+	Scene .prototype = $.extend (Object .create (X3DScene .prototype),
 	{
 		constructor: Scene,
 		getTypeName: function ()

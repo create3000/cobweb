@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .CADLayer);
 		}
 
-		CADLayer .prototype = $.extend (new X3DGroupingNode (),
+		CADLayer .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 		{
 			constructor: CADLayer,
 			fieldDefinitions: new FieldDefinitionArray ([

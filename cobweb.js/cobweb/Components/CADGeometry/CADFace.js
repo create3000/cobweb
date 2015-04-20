@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .CADFace);
 		}
 
-		CADFace .prototype = $.extend (new X3DProductStructureChildNode (),new X3DBoundedObject (),
+		CADFace .prototype = $.extend (Object .create (X3DProductStructureChildNode .prototype),new X3DBoundedObject (),
 		{
 			constructor: CADFace,
 			fieldDefinitions: new FieldDefinitionArray ([

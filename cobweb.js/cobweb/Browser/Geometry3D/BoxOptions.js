@@ -21,7 +21,7 @@ function ($,
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 	}
 
-	BoxOptions .prototype = $.extend (new X3DBaseNode (),
+	BoxOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: BoxOptions,
 		initialize: function ()

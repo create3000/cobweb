@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ForcePhysicsModel);
 		}
 
-		ForcePhysicsModel .prototype = $.extend (new X3DParticlePhysicsModelNode (),
+		ForcePhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
 		{
 			constructor: ForcePhysicsModel,
 			fieldDefinitions: new FieldDefinitionArray ([

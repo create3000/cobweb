@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ScreenFontStyle);
 		}
 
-		ScreenFontStyle .prototype = $.extend (new X3DFontStyleNode (),
+		ScreenFontStyle .prototype = $.extend (Object .create (X3DFontStyleNode .prototype),
 		{
 			constructor: ScreenFontStyle,
 			fieldDefinitions: new FieldDefinitionArray ([

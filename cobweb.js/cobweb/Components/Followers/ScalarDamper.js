@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ScalarDamper);
 		}
 
-		ScalarDamper .prototype = $.extend (new X3DDamperNode (),
+		ScalarDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
 		{
 			constructor: ScalarDamper,
 			fieldDefinitions: new FieldDefinitionArray ([

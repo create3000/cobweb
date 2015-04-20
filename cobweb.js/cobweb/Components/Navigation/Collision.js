@@ -28,7 +28,7 @@ function ($,
 			this .addAlias ("collide", this .enabled_);
 		}
 
-		Collision .prototype = $.extend (new X3DGroupingNode (),
+		Collision .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 			X3DSensorNode .prototype,
 		{
 			constructor: Collision,

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .EaseInEaseOut);
 		}
 
-		EaseInEaseOut .prototype = $.extend (new X3DInterpolatorNode (),
+		EaseInEaseOut .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: EaseInEaseOut,
 			fieldDefinitions: new FieldDefinitionArray ([

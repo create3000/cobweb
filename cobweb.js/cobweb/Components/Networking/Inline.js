@@ -40,7 +40,7 @@ function ($,
 			this .traverse = this .group .traverse .bind (this .group);
 		}
 
-		Inline .prototype = $.extend (new X3DChildNode (),
+		Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),
 			X3DUrlObject .prototype,
 			X3DBoundedObject .prototype,
 		{

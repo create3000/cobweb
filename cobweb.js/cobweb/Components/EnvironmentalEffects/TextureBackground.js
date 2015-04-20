@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TextureBackground);
 		}
 
-		TextureBackground .prototype = $.extend (new X3DBackgroundNode (),
+		TextureBackground .prototype = $.extend (Object .create (X3DBackgroundNode .prototype),
 		{
 			constructor: TextureBackground,
 			fieldDefinitions: new FieldDefinitionArray ([

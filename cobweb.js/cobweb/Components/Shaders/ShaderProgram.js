@@ -29,7 +29,7 @@ function ($,
 			this .addType (X3DConstants .ShaderProgram);
 		}
 
-		ShaderProgram .prototype = $.extend (new X3DNode (),new X3DUrlObject (),new X3DProgrammableShaderObject (),
+		ShaderProgram .prototype = $.extend (Object .create (X3DNode .prototype),new X3DUrlObject (),new X3DProgrammableShaderObject (),
 		{
 			constructor: ShaderProgram,
 			fieldDefinitions: new FieldDefinitionArray ([

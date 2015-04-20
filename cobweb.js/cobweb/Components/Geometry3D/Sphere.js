@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .Sphere);
 		}
 
-		Sphere .prototype = $.extend (new X3DGeometryNode (),
+		Sphere .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Sphere,
 			fieldDefinitions: new FieldDefinitionArray ([

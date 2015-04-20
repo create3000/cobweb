@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .OrthoViewpoint);
 		}
 
-		OrthoViewpoint .prototype = $.extend (new X3DViewpointNode (),
+		OrthoViewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
 		{
 			constructor: OrthoViewpoint,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .LoadSensor);
 		}
 
-		LoadSensor .prototype = $.extend (new X3DNetworkSensorNode (),
+		LoadSensor .prototype = $.extend (Object .create (X3DNetworkSensorNode .prototype),
 		{
 			constructor: LoadSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

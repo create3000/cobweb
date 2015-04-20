@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TriangleSet2D);
 		}
 
-		TriangleSet2D .prototype = $.extend (new X3DGeometryNode (),
+		TriangleSet2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: TriangleSet2D,
 			fieldDefinitions: new FieldDefinitionArray ([

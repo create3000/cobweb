@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Contour2D);
 		}
 
-		Contour2D .prototype = $.extend (new X3DNode (),
+		Contour2D .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: Contour2D,
 			fieldDefinitions: new FieldDefinitionArray ([

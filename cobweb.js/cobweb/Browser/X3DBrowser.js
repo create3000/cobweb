@@ -21,7 +21,7 @@ function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
 		this .supportedProfiles   = undefined;
 	};
 
-	X3DBrowser .prototype = $.extend (new X3DBrowserContext (),
+	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
 	{
 		constructor: X3DBrowser,
 		initialize: function ()

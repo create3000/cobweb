@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TimeTrigger);
 		}
 
-		TimeTrigger .prototype = $.extend (new X3DTriggerNode (),
+		TimeTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
 		{
 			constructor: TimeTrigger,
 			fieldDefinitions: new FieldDefinitionArray ([

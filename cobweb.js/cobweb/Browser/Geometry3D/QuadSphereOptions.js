@@ -27,7 +27,7 @@ function ($,
 			X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 		}
 
-		QuadSphereOptions .prototype = $.extend (new X3DBaseNode (),
+		QuadSphereOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		{
 			constructor: QuadSphereOptions,
 			initialize: function ()

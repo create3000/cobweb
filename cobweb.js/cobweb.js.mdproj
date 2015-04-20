@@ -1195,6 +1195,11 @@
     <None Include="tests\Components\images\lost_valley\lostvalley_south.png" />
     <None Include="tests\Components\images\lost_valley\lostvalley_up.png" />
     <None Include="tests\Components\images\lost_valley\lostvalley_west.png" />
+    <None Include="tests\Components\PROTO\test.x3dv" />
+    <None Include="tests\Components\PROTO\test.x3d" />
+    <None Include="cobweb\Prototype\X3DProtoDeclaration.js" />
+    <None Include="cobweb\Prototype\X3DExternProtoDeclaration.js" />
+    <None Include="cobweb\Prototype\X3DProtoDeclarationNode.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1234,5 +1239,7 @@
     <Folder Include="tests\Components\Interpolation\" />
     <Folder Include="tests\Components\EnvironmentalEffects\" />
     <Folder Include="tests\Components\images\lost_valley\" />
+    <Folder Include="tests\Components\PROTO\" />
+    <Folder Include="cobweb\Prototype\" />
   </ItemGroup>
 </Project>

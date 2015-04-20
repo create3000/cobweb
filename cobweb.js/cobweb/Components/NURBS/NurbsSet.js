@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .NurbsSet);
 		}
 
-		NurbsSet .prototype = $.extend (new X3DChildNode (),new X3DBoundedObject (),
+		NurbsSet .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),
 		{
 			constructor: NurbsSet,
 			fieldDefinitions: new FieldDefinitionArray ([

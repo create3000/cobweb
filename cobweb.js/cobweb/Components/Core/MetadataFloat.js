@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .MetadataFloat);
 		}
 
-		MetadataFloat .prototype = $.extend (new X3DNode (),new X3DMetadataObject (),
+		MetadataFloat .prototype = $.extend (Object .create (X3DNode .prototype),new X3DMetadataObject (),
 		{
 			constructor: MetadataFloat,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -33,7 +33,7 @@ function ($,
 			this .activeLayerNode = null;
 		}
 
-		LayerSet .prototype = $.extend (new X3DNode (),
+		LayerSet .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: LayerSet,
 			fieldDefinitions: new FieldDefinitionArray ([

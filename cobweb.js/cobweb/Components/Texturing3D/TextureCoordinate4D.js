@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TextureCoordinate4D);
 		}
 
-		TextureCoordinate4D .prototype = $.extend (new X3DTextureCoordinateNode (),
+		TextureCoordinate4D .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
 		{
 			constructor: TextureCoordinate4D,
 			fieldDefinitions: new FieldDefinitionArray ([

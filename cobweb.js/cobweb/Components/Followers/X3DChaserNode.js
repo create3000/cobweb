@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DChaserNode);
 	}
 
-	X3DChaserNode .prototype = $.extend (new X3DFollowerNode (),
+	X3DChaserNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
 	{
 		constructor: X3DChaserNode,
 	});

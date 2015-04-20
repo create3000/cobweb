@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .LayoutLayer);
 		}
 
-		LayoutLayer .prototype = $.extend (new X3DLayerNode (),
+		LayoutLayer .prototype = $.extend (Object .create (X3DLayerNode .prototype),
 		{
 			constructor: LayoutLayer,
 			fieldDefinitions: new FieldDefinitionArray ([

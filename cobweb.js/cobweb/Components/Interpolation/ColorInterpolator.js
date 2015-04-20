@@ -27,7 +27,7 @@ function ($,
 			this .hsv = [ ];
 		}
 
-		ColorInterpolator .prototype = $.extend (new X3DInterpolatorNode (),
+		ColorInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: ColorInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

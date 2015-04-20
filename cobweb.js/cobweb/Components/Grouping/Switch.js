@@ -29,7 +29,7 @@ function ($,
 			this .addAlias ("choice", this .children_);
 		}
 
-		Switch .prototype = $.extend (new X3DGroupingNode (),
+		Switch .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 		{
 			constructor: Switch,
 			fieldDefinitions: new FieldDefinitionArray ([

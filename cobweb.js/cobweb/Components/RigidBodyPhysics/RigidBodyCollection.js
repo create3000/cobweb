@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .RigidBodyCollection);
 		}
 
-		RigidBodyCollection .prototype = $.extend (new X3DChildNode (),
+		RigidBodyCollection .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: RigidBodyCollection,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -30,7 +30,7 @@ function ($,
 			this .disabled        = false;
 		}
 
-		X3DTimeDependentNode .prototype = $.extend (new X3DChildNode (),
+		X3DTimeDependentNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: X3DTimeDependentNode,
 			initialize: function ()

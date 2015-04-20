@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ColorChaser);
 		}
 
-		ColorChaser .prototype = $.extend (new X3DChaserNode (),
+		ColorChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
 		{
 			constructor: ColorChaser,
 			fieldDefinitions: new FieldDefinitionArray ([

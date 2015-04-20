@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .CoordinateChaser);
 		}
 
-		CoordinateChaser .prototype = $.extend (new X3DChaserNode (),
+		CoordinateChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
 		{
 			constructor: CoordinateChaser,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .Appearance);
 		}
 
-		Appearance .prototype = $.extend (new X3DAppearanceNode (),
+		Appearance .prototype = $.extend (Object .create (X3DAppearanceNode .prototype),
 		{
 			constructor: Appearance,
 			fieldDefinitions: new FieldDefinitionArray ([

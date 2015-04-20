@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .RigidBody);
 		}
 
-		RigidBody .prototype = $.extend (new X3DNode (),
+		RigidBody .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: RigidBody,
 			fieldDefinitions: new FieldDefinitionArray ([

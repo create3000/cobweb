@@ -27,7 +27,7 @@ function ($,
 			this .addType (X3DConstants .TouchSensor);
 		}
 
-		TouchSensor .prototype = $.extend (new X3DTouchSensorNode (),
+		TouchSensor .prototype = $.extend (Object .create (X3DTouchSensorNode .prototype),
 		{
 			constructor: TouchSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

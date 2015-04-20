@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Group);
 		}
 
-		Group .prototype = $.extend (new X3DGroupingNode (),
+		Group .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 		{
 			constructor: Group,
 			fieldDefinitions: new FieldDefinitionArray ([

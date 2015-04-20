@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .BooleanTrigger);
 		}
 
-		BooleanTrigger .prototype = $.extend (new X3DTriggerNode (),
+		BooleanTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
 		{
 			constructor: BooleanTrigger,
 			fieldDefinitions: new FieldDefinitionArray ([

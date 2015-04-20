@@ -37,7 +37,7 @@ function ($,
 			this .addType (X3DConstants .CylinderSensor);
 		}
 
-		CylinderSensor .prototype = $.extend (new X3DDragSensorNode (),
+		CylinderSensor .prototype = $.extend (Object .create (X3DDragSensorNode .prototype),
 		{
 			constructor: CylinderSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

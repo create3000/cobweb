@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .NurbsTrimmedSurface);
 		}
 
-		NurbsTrimmedSurface .prototype = $.extend (new X3DNurbsSurfaceGeometryNode (),
+		NurbsTrimmedSurface .prototype = $.extend (Object .create (X3DNurbsSurfaceGeometryNode .prototype),
 		{
 			constructor: NurbsTrimmedSurface,
 			fieldDefinitions: new FieldDefinitionArray ([

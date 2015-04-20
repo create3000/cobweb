@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .NurbsSurfaceInterpolator);
 		}
 
-		NurbsSurfaceInterpolator .prototype = $.extend (new X3DChildNode (),
+		NurbsSurfaceInterpolator .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: NurbsSurfaceInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

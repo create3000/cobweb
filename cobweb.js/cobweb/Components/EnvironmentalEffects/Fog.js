@@ -28,7 +28,7 @@ function ($,
 			this .addType (X3DConstants .Fog);
 		}
 
-		Fog .prototype = $.extend (new X3DBindableNode (),
+		Fog .prototype = $.extend (Object .create (X3DBindableNode .prototype),
 			X3DFogObject .prototype,
 		{
 			constructor: Fog,

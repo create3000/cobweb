@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TexCoordChaser2D);
 		}
 
-		TexCoordChaser2D .prototype = $.extend (new X3DChaserNode (),
+		TexCoordChaser2D .prototype = $.extend (Object .create (X3DChaserNode .prototype),
 		{
 			constructor: TexCoordChaser2D,
 			fieldDefinitions: new FieldDefinitionArray ([

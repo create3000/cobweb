@@ -11,7 +11,7 @@ function (jquery,
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 	}
 
-	PointingDevice .prototype = $.extend (new X3DBaseNode (),
+	PointingDevice .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: PointingDevice,
 		initialize: function ()

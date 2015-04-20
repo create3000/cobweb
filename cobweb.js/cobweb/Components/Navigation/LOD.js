@@ -33,7 +33,7 @@ function ($,
 			this .keepCurrentLevel = false;
 		}
 
-		LOD .prototype = $.extend (new X3DGroupingNode (),
+		LOD .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 		{
 			constructor: LOD,
 			fieldDefinitions: new FieldDefinitionArray ([

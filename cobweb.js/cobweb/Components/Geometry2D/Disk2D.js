@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Disk2D);
 		}
 
-		Disk2D .prototype = $.extend (new X3DGeometryNode (),
+		Disk2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Disk2D,
 			fieldDefinitions: new FieldDefinitionArray ([

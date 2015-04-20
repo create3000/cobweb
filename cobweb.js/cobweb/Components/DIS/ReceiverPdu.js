@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .ReceiverPdu);
 		}
 
-		ReceiverPdu .prototype = $.extend (new X3DSensorNode (),new X3DBoundedObject (),
+		ReceiverPdu .prototype = $.extend (Object .create (X3DSensorNode .prototype),new X3DBoundedObject (),
 		{
 			constructor: ReceiverPdu,
 			fieldDefinitions: new FieldDefinitionArray ([

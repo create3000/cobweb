@@ -29,7 +29,7 @@ function ($,
 			this .addType (X3DConstants .Cylinder);
 		}
 
-		Cylinder .prototype = $.extend (new X3DGeometryNode (),
+		Cylinder .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Cylinder,
 			fieldDefinitions: new FieldDefinitionArray ([

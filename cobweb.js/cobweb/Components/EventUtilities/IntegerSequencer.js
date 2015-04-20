@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .IntegerSequencer);
 		}
 
-		IntegerSequencer .prototype = $.extend (new X3DSequencerNode (),
+		IntegerSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
 		{
 			constructor: IntegerSequencer,
 			fieldDefinitions: new FieldDefinitionArray ([

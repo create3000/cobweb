@@ -14,7 +14,7 @@ function ($, X3DBaseNode)
 		this .setup ();
 	}
 
-	BindableStack .prototype = $.extend (new X3DBaseNode (),
+	BindableStack .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		get: function ()
 		{

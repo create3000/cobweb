@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DTextureCoordinateNode);
 	}
 
-	X3DTextureCoordinateNode .prototype = $.extend (new X3DGeometricPropertyNode (),
+	X3DTextureCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DTextureCoordinateNode,
 	});

@@ -27,7 +27,7 @@ function ($,
 			this .addType (X3DConstants .Viewport);
 		}
 
-		Viewport .prototype = $.extend (new X3DViewportNode (),
+		Viewport .prototype = $.extend (Object .create (X3DViewportNode .prototype),
 		{
 			constructor: Viewport,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .VolumePickSensor);
 		}
 
-		VolumePickSensor .prototype = $.extend (new X3DPickSensorNode (),
+		VolumePickSensor .prototype = $.extend (Object .create (X3DPickSensorNode .prototype),
 		{
 			constructor: VolumePickSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

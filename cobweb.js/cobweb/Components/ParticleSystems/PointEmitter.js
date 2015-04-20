@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .PointEmitter);
 		}
 
-		PointEmitter .prototype = $.extend (new X3DParticleEmitterNode (),
+		PointEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
 		{
 			constructor: PointEmitter,
 			fieldDefinitions: new FieldDefinitionArray ([

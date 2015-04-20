@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DTexture3DNode);
 	}
 
-	X3DTexture3DNode .prototype = $.extend (new X3DTextureNode (),
+	X3DTexture3DNode .prototype = $.extend (Object .create (X3DTextureNode .prototype),
 	{
 		constructor: X3DTexture3DNode,
 	});

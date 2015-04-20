@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ScalarChaser);
 		}
 
-		ScalarChaser .prototype = $.extend (new X3DChaserNode (),
+		ScalarChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
 		{
 			constructor: ScalarChaser,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -32,7 +32,7 @@ function ($,
 			this .addType (X3DConstants .Anchor);
 		}
 
-		Anchor .prototype = $.extend (new X3DGroupingNode (),
+		Anchor .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 			X3DUrlObject .prototype,
 		{
 			constructor: Anchor,

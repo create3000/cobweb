@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .SquadOrientationInterpolator);
 		}
 
-		SquadOrientationInterpolator .prototype = $.extend (new X3DInterpolatorNode (),
+		SquadOrientationInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: SquadOrientationInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

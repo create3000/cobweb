@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .ScalarInterpolator);
 		}
 
-		ScalarInterpolator .prototype = $.extend (new X3DInterpolatorNode (),
+		ScalarInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: ScalarInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

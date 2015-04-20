@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Matrix4VertexAttribute);
 		}
 
-		Matrix4VertexAttribute .prototype = $.extend (new X3DVertexAttributeNode (),
+		Matrix4VertexAttribute .prototype = $.extend (Object .create (X3DVertexAttributeNode .prototype),
 		{
 			constructor: Matrix4VertexAttribute,
 			fieldDefinitions: new FieldDefinitionArray ([

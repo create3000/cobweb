@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .GeoTouchSensor);
 		}
 
-		GeoTouchSensor .prototype = $.extend (new X3DTouchSensorNode (),new X3DGeospatialObject (),
+		GeoTouchSensor .prototype = $.extend (Object .create (X3DTouchSensorNode .prototype),new X3DGeospatialObject (),
 		{
 			constructor: GeoTouchSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

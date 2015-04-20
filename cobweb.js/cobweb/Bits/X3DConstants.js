@@ -368,6 +368,10 @@ define (function ()
 		X3DViewpointNode:             nodeType ++,
 		X3DViewpointObject:           nodeType ++,
 		X3DViewportNode:              nodeType ++,
+
+		X3DProtoDeclarationNode:      nodeType ++,
+		X3DProtoDeclaration:          nodeType ++,
+		X3DExternProtoDeclaration:    nodeType ++,
 	};
 
 	Object .preventExtensions (X3DConstants);

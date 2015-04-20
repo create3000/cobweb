@@ -26,7 +26,7 @@ function ($, X3DEventObject, X3DFieldDefinition, Fields, X3DConstants)
 				this .addField (this .fieldDefinitions [i]);
 		}
 
-		X3DBaseNode .prototype = $.extend (new X3DEventObject (),
+		X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
 		{
 			constructor: X3DBaseNode,
 			fieldDefinitions: [ ],

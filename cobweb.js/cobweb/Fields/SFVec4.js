@@ -20,7 +20,7 @@ function ($, Vector4, X3DField, X3DConstants)
 			X3DField .call (this, new Vector4 (0, 0, 0, 0));
 	}
 
-	SFVec4 .prototype = $.extend (new X3DField (),
+	SFVec4 .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFVec4,
 		copy: function ()
@@ -202,7 +202,7 @@ function ($, Vector4, X3DField, X3DConstants)
 		SFVec4 .apply (this, arguments);
 	}
 
-	SFVec4d .prototype = $.extend (new SFVec4 (),
+	SFVec4d .prototype = $.extend (Object .create (SFVec4 .prototype),
 	{
 		constructor: SFVec4d,
 		getTypeName: function ()
@@ -224,7 +224,7 @@ function ($, Vector4, X3DField, X3DConstants)
 		SFVec4 .apply (this, arguments);
 	}
 
-	SFVec4f .prototype = $.extend (new SFVec4 (),
+	SFVec4f .prototype = $.extend (Object .create (SFVec4 .prototype),
 	{
 		constructor: SFVec4f,
 		getTypeName: function ()

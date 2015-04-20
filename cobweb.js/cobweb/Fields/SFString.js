@@ -27,7 +27,7 @@ function ($, X3DField, X3DConstants)
 		},
 	});
 
-	SFString .prototype = $.extend (new X3DField (),
+	SFString .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFString,
 		copy: function ()

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .GeoMetadata);
 		}
 
-		GeoMetadata .prototype = $.extend (new X3DInfoNode (),
+		GeoMetadata .prototype = $.extend (Object .create (X3DInfoNode .prototype),
 		{
 			constructor: GeoMetadata,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -27,7 +27,7 @@ function ($,
 			this .addType (X3DConstants .Coordinate);
 		}
 
-		Coordinate .prototype = $.extend (new X3DCoordinateNode (),
+		Coordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
 		{
 			constructor: Coordinate,
 			fieldDefinitions: new FieldDefinitionArray ([

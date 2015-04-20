@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .BooleanSequencer);
 		}
 
-		BooleanSequencer .prototype = $.extend (new X3DSequencerNode (),
+		BooleanSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
 		{
 			constructor: BooleanSequencer,
 			fieldDefinitions: new FieldDefinitionArray ([

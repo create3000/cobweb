@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .HAnimHumanoid);
 		}
 
-		HAnimHumanoid .prototype = $.extend (new X3DChildNode (),new X3DBoundedObject (),
+		HAnimHumanoid .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),
 		{
 			constructor: HAnimHumanoid,
 			fieldDefinitions: new FieldDefinitionArray ([

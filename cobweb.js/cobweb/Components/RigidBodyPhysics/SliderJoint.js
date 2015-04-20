@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .SliderJoint);
 		}
 
-		SliderJoint .prototype = $.extend (new X3DRigidJointNode (),
+		SliderJoint .prototype = $.extend (Object .create (X3DRigidJointNode .prototype),
 		{
 			constructor: SliderJoint,
 			fieldDefinitions: new FieldDefinitionArray ([

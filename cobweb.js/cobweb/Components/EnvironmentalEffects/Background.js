@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .Background);
 		}
 
-		Background .prototype = $.extend (new X3DBackgroundNode (),
+		Background .prototype = $.extend (Object .create (X3DBackgroundNode .prototype),
 		{
 			constructor: Background,
 			fieldDefinitions: new FieldDefinitionArray ([

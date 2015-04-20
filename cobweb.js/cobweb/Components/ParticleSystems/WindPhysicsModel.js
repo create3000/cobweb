@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .WindPhysicsModel);
 		}
 
-		WindPhysicsModel .prototype = $.extend (new X3DParticlePhysicsModelNode (),
+		WindPhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
 		{
 			constructor: WindPhysicsModel,
 			fieldDefinitions: new FieldDefinitionArray ([

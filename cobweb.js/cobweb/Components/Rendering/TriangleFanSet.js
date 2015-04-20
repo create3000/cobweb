@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TriangleFanSet);
 		}
 
-		TriangleFanSet .prototype = $.extend (new X3DComposedGeometryNode (),
+		TriangleFanSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
 		{
 			constructor: TriangleFanSet,
 			fieldDefinitions: new FieldDefinitionArray ([

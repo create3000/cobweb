@@ -34,7 +34,7 @@ function ($,
 			this .scale    = 1;
 		}
 
-		TimeSensor .prototype = $.extend (new X3DSensorNode (),
+		TimeSensor .prototype = $.extend (Object .create (X3DSensorNode .prototype),
 			X3DTimeDependentNode .prototype,
 		{
 			constructor: TimeSensor,

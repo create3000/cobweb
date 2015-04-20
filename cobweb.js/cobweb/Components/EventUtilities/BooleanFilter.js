@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .BooleanFilter);
 		}
 
-		BooleanFilter .prototype = $.extend (new X3DChildNode (),
+		BooleanFilter .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: BooleanFilter,
 			fieldDefinitions: new FieldDefinitionArray ([

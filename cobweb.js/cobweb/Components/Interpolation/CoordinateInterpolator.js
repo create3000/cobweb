@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .CoordinateInterpolator);
 		}
 
-		CoordinateInterpolator .prototype = $.extend (new X3DInterpolatorNode (),
+		CoordinateInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: CoordinateInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -11,7 +11,7 @@ function ($, X3DField, X3DConstants)
 		X3DField .call (this, arguments .length ? +value : 0);
 	}
 
-	SFFloat .prototype = $.extend (new X3DField (),
+	SFFloat .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFFloat,
 		copy: function ()

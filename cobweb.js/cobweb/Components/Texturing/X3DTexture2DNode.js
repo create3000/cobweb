@@ -20,7 +20,7 @@ function ($,
 		this .height = 0;
 	}
 
-	X3DTexture2DNode .prototype = $.extend (new X3DTextureNode (),
+	X3DTexture2DNode .prototype = $.extend (Object .create (X3DTextureNode .prototype),
 	{
 		constructor: X3DTexture2DNode,
 		initialize: function ()

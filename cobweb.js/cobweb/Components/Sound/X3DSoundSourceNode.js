@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DSoundSourceNode);
 	}
 
-	X3DSoundSourceNode .prototype = $.extend (new X3DTimeDependentNode (),
+	X3DSoundSourceNode .prototype = $.extend (Object .create (X3DTimeDependentNode .prototype),
 	{
 		constructor: X3DSoundSourceNode,
 	});

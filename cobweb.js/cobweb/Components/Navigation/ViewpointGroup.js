@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .ViewpointGroup);
 		}
 
-		ViewpointGroup .prototype = $.extend (new X3DChildNode (),new X3DViewpointObject (),
+		ViewpointGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DViewpointObject (),
 		{
 			constructor: ViewpointGroup,
 			fieldDefinitions: new FieldDefinitionArray ([

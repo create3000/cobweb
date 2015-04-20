@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .GeoOrigin);
 		}
 
-		GeoOrigin .prototype = $.extend (new X3DNode (),
+		GeoOrigin .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: GeoOrigin,
 			fieldDefinitions: new FieldDefinitionArray ([

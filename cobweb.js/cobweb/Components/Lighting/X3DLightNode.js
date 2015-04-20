@@ -17,7 +17,7 @@ function ($,
 		this .addType (X3DConstants .X3DLightNode);
 	}
 
-	X3DLightNode .prototype = $.extend (new X3DChildNode (),
+	X3DLightNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLightNode,
 		traverse: function (type)

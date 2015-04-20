@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .WorldInfo);
 		}
 
-		WorldInfo .prototype = $.extend (new X3DInfoNode (),
+		WorldInfo .prototype = $.extend (Object .create (X3DInfoNode .prototype),
 		{
 			constructor: WorldInfo,
 			fieldDefinitions: new FieldDefinitionArray ([

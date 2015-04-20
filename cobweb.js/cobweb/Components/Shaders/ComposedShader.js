@@ -30,7 +30,7 @@ function ($,
 			this .addType (X3DConstants .ComposedShader);
 		}
 
-		ComposedShader .prototype = $.extend (new X3DShaderNode (),
+		ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
 			X3DProgrammableShaderObject .prototype,
 		{
 			constructor: ComposedShader,

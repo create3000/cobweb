@@ -27,7 +27,7 @@ function ($,
 			this .addType (X3DConstants .Viewpoint);
 		}
 
-		Viewpoint .prototype = $.extend (new X3DViewpointNode (),
+		Viewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
 		{
 			constructor: Viewpoint,
 			fieldDefinitions: new FieldDefinitionArray ([

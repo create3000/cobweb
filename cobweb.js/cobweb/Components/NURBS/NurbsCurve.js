@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .NurbsCurve);
 		}
 
-		NurbsCurve .prototype = $.extend (new X3DParametricGeometryNode (),
+		NurbsCurve .prototype = $.extend (Object .create (X3DParametricGeometryNode .prototype),
 		{
 			constructor: NurbsCurve,
 			fieldDefinitions: new FieldDefinitionArray ([

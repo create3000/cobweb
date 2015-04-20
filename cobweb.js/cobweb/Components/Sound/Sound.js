@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Sound);
 		}
 
-		Sound .prototype = $.extend (new X3DSoundNode (),
+		Sound .prototype = $.extend (Object .create (X3DSoundNode .prototype),
 		{
 			constructor: Sound,
 			fieldDefinitions: new FieldDefinitionArray ([

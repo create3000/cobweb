@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .ColorRGBA);
 		}
 
-		ColorRGBA .prototype = $.extend (new X3DColorNode (),
+		ColorRGBA .prototype = $.extend (Object .create (X3DColorNode .prototype),
 		{
 			constructor: ColorRGBA,
 			fieldDefinitions: new FieldDefinitionArray ([

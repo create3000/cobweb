@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .DISEntityTypeMapping);
 		}
 
-		DISEntityTypeMapping .prototype = $.extend (new X3DInfoNode (),
+		DISEntityTypeMapping .prototype = $.extend (Object .create (X3DInfoNode .prototype),
 		{
 			constructor: DISEntityTypeMapping,
 			fieldDefinitions: new FieldDefinitionArray ([

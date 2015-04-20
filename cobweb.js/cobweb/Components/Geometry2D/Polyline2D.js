@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Polyline2D);
 		}
 
-		Polyline2D .prototype = $.extend (new X3DGeometryNode (),
+		Polyline2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Polyline2D,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ComposedTexture3D);
 		}
 
-		ComposedTexture3D .prototype = $.extend (new X3DTexture3DNode (),
+		ComposedTexture3D .prototype = $.extend (Object .create (X3DTexture3DNode .prototype),
 		{
 			constructor: ComposedTexture3D,
 			fieldDefinitions: new FieldDefinitionArray ([

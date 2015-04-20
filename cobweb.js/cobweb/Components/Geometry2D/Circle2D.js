@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Circle2D);
 		}
 
-		Circle2D .prototype = $.extend (new X3DGeometryNode (),
+		Circle2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Circle2D,
 			fieldDefinitions: new FieldDefinitionArray ([

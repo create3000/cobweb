@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DTransformNode);
 	}
 
-	X3DTransformNode .prototype = $.extend (new X3DTransformMatrix4DNode (),
+	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
 	{
 		constructor: X3DTransformNode,
 		initialize: function ()

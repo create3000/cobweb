@@ -11,7 +11,7 @@ function ($, X3DField, X3DConstants)
 		X3DField .call (this, Boolean (value));
 	}
 
-	SFBool .prototype = $.extend (new X3DField (),
+	SFBool .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFBool,
 		copy: function ()

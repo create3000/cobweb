@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .QuadSet);
 		}
 
-		QuadSet .prototype = $.extend (new X3DComposedGeometryNode (),
+		QuadSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
 		{
 			constructor: QuadSet,
 			fieldDefinitions: new FieldDefinitionArray ([

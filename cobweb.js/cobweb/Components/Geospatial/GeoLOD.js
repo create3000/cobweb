@@ -29,7 +29,7 @@ function ($,
 			this .addType (X3DConstants .GeoLOD);
 		}
 
-		GeoLOD .prototype = $.extend (new X3DChildNode (),new X3DBoundedObject (),new X3DGeospatialObject (),
+		GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),new X3DGeospatialObject (),
 		{
 			constructor: GeoLOD,
 			fieldDefinitions: new FieldDefinitionArray ([

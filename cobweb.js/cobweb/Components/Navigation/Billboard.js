@@ -35,7 +35,7 @@ function ($,
 			this .matrix = new Matrix4 ();
 		}
 
-		Billboard .prototype = $.extend (new X3DGroupingNode (),
+		Billboard .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 		{
 			constructor: Billboard,
 			fieldDefinitions: new FieldDefinitionArray ([

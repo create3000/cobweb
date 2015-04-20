@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Text);
 		}
 
-		Text .prototype = $.extend (new X3DGeometryNode (),
+		Text .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Text,
 			fieldDefinitions: new FieldDefinitionArray ([

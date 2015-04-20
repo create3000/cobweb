@@ -24,7 +24,7 @@ function ($, X3DChildObject)
 		this .browser = browser;
 	}
 
-	X3DEventObject .prototype = $.extend (new X3DChildObject (),
+	X3DEventObject .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DEventObject,
 		extendedEventHandling: true,

@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DVertexAttributeNode);
 	}
 
-	X3DVertexAttributeNode .prototype = $.extend (new X3DGeometricPropertyNode (),
+	X3DVertexAttributeNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DVertexAttributeNode,
 	});

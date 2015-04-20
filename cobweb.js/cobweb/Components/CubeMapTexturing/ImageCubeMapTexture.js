@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .ImageCubeMapTexture);
 		}
 
-		ImageCubeMapTexture .prototype = $.extend (new X3DEnvironmentTextureNode (),new X3DUrlObject (),
+		ImageCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),new X3DUrlObject (),
 		{
 			constructor: ImageCubeMapTexture,
 			fieldDefinitions: new FieldDefinitionArray ([

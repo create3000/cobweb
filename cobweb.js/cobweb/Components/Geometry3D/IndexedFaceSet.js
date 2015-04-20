@@ -31,7 +31,7 @@ function ($,
 			this .addType (X3DConstants .IndexedFaceSet);
 		}
 
-		IndexedFaceSet .prototype = $.extend (new X3DComposedGeometryNode (),
+		IndexedFaceSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
 		{
 			constructor: IndexedFaceSet,
 			fieldDefinitions: new FieldDefinitionArray ([

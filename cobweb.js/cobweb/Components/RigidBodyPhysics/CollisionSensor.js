@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .CollisionSensor);
 		}
 
-		CollisionSensor .prototype = $.extend (new X3DSensorNode (),
+		CollisionSensor .prototype = $.extend (Object .create (X3DSensorNode .prototype),
 		{
 			constructor: CollisionSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

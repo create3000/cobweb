@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .MetadataInteger);
 		}
 
-		MetadataInteger .prototype = $.extend (new X3DNode (),new X3DMetadataObject (),
+		MetadataInteger .prototype = $.extend (Object .create (X3DNode .prototype),new X3DMetadataObject (),
 		{
 			constructor: MetadataInteger,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .LocalFog);
 		}
 
-		LocalFog .prototype = $.extend (new X3DChildNode (),new X3DFogObject (),
+		LocalFog .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DFogObject (),
 		{
 			constructor: LocalFog,
 			fieldDefinitions: new FieldDefinitionArray ([

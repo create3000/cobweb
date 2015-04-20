@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DTouchSensorNode);
 	}
 
-	X3DTouchSensorNode .prototype = $.extend (new X3DPointingDeviceSensorNode (),
+	X3DTouchSensorNode .prototype = $.extend (Object .create (X3DPointingDeviceSensorNode .prototype),
 	{
 		constructor: X3DTouchSensorNode,
 		set_active__: function (hit, value)

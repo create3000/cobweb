@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .GeoElevationGrid);
 		}
 
-		GeoElevationGrid .prototype = $.extend (new X3DGeometryNode (),new X3DGeospatialObject (),
+		GeoElevationGrid .prototype = $.extend (Object .create (X3DGeometryNode .prototype),new X3DGeospatialObject (),
 		{
 			constructor: GeoElevationGrid,
 			fieldDefinitions: new FieldDefinitionArray ([

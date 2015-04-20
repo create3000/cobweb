@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .PositionInterpolator2D);
 		}
 
-		PositionInterpolator2D .prototype = $.extend (new X3DInterpolatorNode (),
+		PositionInterpolator2D .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: PositionInterpolator2D,
 			fieldDefinitions: new FieldDefinitionArray ([

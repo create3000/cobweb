@@ -35,7 +35,7 @@ function ($,
 			this .addType (X3DConstants .Extrusion);
 		}
 
-		Extrusion .prototype = $.extend (new X3DGeometryNode (),
+		Extrusion .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Extrusion,
 			fieldDefinitions: new FieldDefinitionArray ([

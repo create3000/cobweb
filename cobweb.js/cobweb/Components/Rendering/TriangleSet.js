@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TriangleSet);
 		}
 
-		TriangleSet .prototype = $.extend (new X3DComposedGeometryNode (),
+		TriangleSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
 		{
 			constructor: TriangleSet,
 			fieldDefinitions: new FieldDefinitionArray ([

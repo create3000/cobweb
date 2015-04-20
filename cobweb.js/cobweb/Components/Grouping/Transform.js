@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .Transform);
 		}
 
-		Transform .prototype = $.extend (new X3DTransformNode (),
+		Transform .prototype = $.extend (Object .create (X3DTransformNode .prototype),
 		{
 			constructor: Transform,
 			fieldDefinitions: new FieldDefinitionArray ([

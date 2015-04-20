@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .GeoProximitySensor);
 		}
 
-		GeoProximitySensor .prototype = $.extend (new X3DEnvironmentalSensorNode (),new X3DGeospatialObject (),
+		GeoProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),new X3DGeospatialObject (),
 		{
 			constructor: GeoProximitySensor,
 			fieldDefinitions: new FieldDefinitionArray ([

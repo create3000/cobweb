@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .NurbsPositionInterpolator);
 		}
 
-		NurbsPositionInterpolator .prototype = $.extend (new X3DChildNode (),
+		NurbsPositionInterpolator .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: NurbsPositionInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

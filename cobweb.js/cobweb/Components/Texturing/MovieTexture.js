@@ -29,7 +29,7 @@ function ($,
 			this .addType (X3DConstants .MovieTexture);
 		}
 
-		MovieTexture .prototype = $.extend (new X3DTexture2DNode (),new X3DSoundSourceNode (),new X3DUrlObject (),
+		MovieTexture .prototype = $.extend (Object .create (X3DTexture2DNode .prototype),new X3DSoundSourceNode (),new X3DUrlObject (),
 		{
 			constructor: MovieTexture,
 			fieldDefinitions: new FieldDefinitionArray ([

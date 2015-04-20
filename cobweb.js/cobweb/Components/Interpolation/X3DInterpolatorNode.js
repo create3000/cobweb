@@ -17,7 +17,7 @@ function ($,
 		this .addType (X3DConstants .X3DInterpolatorNode);
 	}
 
-	X3DInterpolatorNode .prototype = $.extend (new X3DChildNode (),
+	X3DInterpolatorNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DInterpolatorNode,
 		setup: function ()

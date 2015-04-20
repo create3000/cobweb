@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .LineSet);
 		}
 
-		LineSet .prototype = $.extend (new X3DGeometryNode (),
+		LineSet .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: LineSet,
 			fieldDefinitions: new FieldDefinitionArray ([

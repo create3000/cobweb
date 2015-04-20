@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .OrientationChaser);
 		}
 
-		OrientationChaser .prototype = $.extend (new X3DChaserNode (),
+		OrientationChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
 		{
 			constructor: OrientationChaser,
 			fieldDefinitions: new FieldDefinitionArray ([

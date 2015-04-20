@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .SplinePositionInterpolator2D);
 		}
 
-		SplinePositionInterpolator2D .prototype = $.extend (new X3DInterpolatorNode (),
+		SplinePositionInterpolator2D .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: SplinePositionInterpolator2D,
 			fieldDefinitions: new FieldDefinitionArray ([

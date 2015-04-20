@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .VolumeEmitter);
 		}
 
-		VolumeEmitter .prototype = $.extend (new X3DParticleEmitterNode (),
+		VolumeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
 		{
 			constructor: VolumeEmitter,
 			fieldDefinitions: new FieldDefinitionArray ([

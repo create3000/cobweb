@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .StaticGroup);
 		}
 
-		StaticGroup .prototype = $.extend (new X3DChildNode (),new X3DBoundedObject (),
+		StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),
 		{
 			constructor: StaticGroup,
 			fieldDefinitions: new FieldDefinitionArray ([

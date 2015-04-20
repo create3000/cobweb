@@ -20,7 +20,7 @@ function ($, Color3, X3DField, X3DConstants)
 			X3DField .call (this, new Color3 ());
 	}
 
-	SFColor .prototype = $.extend (new X3DField (),
+	SFColor .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFColor,
 		copy: function ()

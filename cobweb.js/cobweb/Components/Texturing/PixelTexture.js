@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .PixelTexture);
 		}
 
-		PixelTexture .prototype = $.extend (new X3DTexture2DNode (),
+		PixelTexture .prototype = $.extend (Object .create (X3DTexture2DNode .prototype),
 		{
 			constructor: PixelTexture,
 			fieldDefinitions: new FieldDefinitionArray ([

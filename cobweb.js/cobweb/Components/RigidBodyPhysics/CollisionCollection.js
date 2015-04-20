@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .CollisionCollection);
 		}
 
-		CollisionCollection .prototype = $.extend (new X3DChildNode (),
+		CollisionCollection .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: CollisionCollection,
 			fieldDefinitions: new FieldDefinitionArray ([

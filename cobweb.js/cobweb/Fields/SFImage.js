@@ -103,7 +103,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		this .addInterest (this, "set_size__");
 	}
 
-	SFImage .prototype = $.extend (new X3DField (),
+	SFImage .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFImage,
 		set_size__: function ()

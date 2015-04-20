@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .Normal);
 		}
 
-		Normal .prototype = $.extend (new X3DNormalNode (),
+		Normal .prototype = $.extend (Object .create (X3DNormalNode .prototype),
 		{
 			constructor: Normal,
 			fieldDefinitions: new FieldDefinitionArray ([

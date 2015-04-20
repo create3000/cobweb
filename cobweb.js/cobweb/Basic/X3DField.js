@@ -13,7 +13,7 @@ function ($, X3DChildObject, X3DConstants)
 		this .value_ = value;
 	}
 
-	X3DField .prototype = $.extend (new X3DChildObject (),
+	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
 		accessType_: X3DConstants .initializeOnly,

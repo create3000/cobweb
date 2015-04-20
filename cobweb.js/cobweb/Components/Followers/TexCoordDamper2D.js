@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TexCoordDamper2D);
 		}
 
-		TexCoordDamper2D .prototype = $.extend (new X3DDamperNode (),
+		TexCoordDamper2D .prototype = $.extend (Object .create (X3DDamperNode .prototype),
 		{
 			constructor: TexCoordDamper2D,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .BallJoint);
 		}
 
-		BallJoint .prototype = $.extend (new X3DRigidJointNode (),
+		BallJoint .prototype = $.extend (Object .create (X3DRigidJointNode .prototype),
 		{
 			constructor: BallJoint,
 			fieldDefinitions: new FieldDefinitionArray ([

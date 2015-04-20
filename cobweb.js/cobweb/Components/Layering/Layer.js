@@ -27,7 +27,7 @@ function ($,
 			this .addType (X3DConstants .Layer);
 		}
 
-		Layer .prototype = $.extend (new X3DLayerNode (),
+		Layer .prototype = $.extend (Object .create (X3DLayerNode .prototype),
 		{
 			constructor: Layer,
 			fieldDefinitions: new FieldDefinitionArray ([

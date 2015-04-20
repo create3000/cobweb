@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DLayoutNode);
 	}
 
-	X3DLayoutNode .prototype = $.extend (new X3DChildNode (),
+	X3DLayoutNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLayoutNode,
 	});

@@ -19,7 +19,7 @@ function ($,
 		this .matrix = new Matrix4 ();
 	}
 
-	X3DTransformMatrix4DNode .prototype = $.extend (new X3DGroupingNode (),
+	X3DTransformMatrix4DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 	{
 		constructor: X3DTransformMatrix4DNode,
 		getBBox: function ()

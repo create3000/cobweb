@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DDragSensorNode);
 	}
 
-	X3DDragSensorNode .prototype = $.extend (new X3DPointingDeviceSensorNode (),
+	X3DDragSensorNode .prototype = $.extend (Object .create (X3DPointingDeviceSensorNode .prototype),
 	{
 		constructor: X3DDragSensorNode,
 		set_motion__: function (hit)

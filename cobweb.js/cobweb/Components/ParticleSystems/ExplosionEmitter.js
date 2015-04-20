@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ExplosionEmitter);
 		}
 
-		ExplosionEmitter .prototype = $.extend (new X3DParticleEmitterNode (),
+		ExplosionEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
 		{
 			constructor: ExplosionEmitter,
 			fieldDefinitions: new FieldDefinitionArray ([

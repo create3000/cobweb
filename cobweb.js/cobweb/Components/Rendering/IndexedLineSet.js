@@ -29,7 +29,7 @@ function ($,
 			this .coordNode    = null;
 		}
 
-		IndexedLineSet .prototype = $.extend (new X3DGeometryNode (),
+		IndexedLineSet .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: IndexedLineSet,
 			fieldDefinitions: new FieldDefinitionArray ([

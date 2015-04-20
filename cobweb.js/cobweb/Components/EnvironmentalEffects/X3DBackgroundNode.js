@@ -104,7 +104,7 @@ function ($,
 		this .textures              = 0;
 	}
 
-	X3DBackgroundNode .prototype = $.extend (new X3DBindableNode (),
+	X3DBackgroundNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
 	{
 		constructor: X3DBackgroundNode,
 		textureMatrixArray: new Float32Array (new Matrix4 ()),

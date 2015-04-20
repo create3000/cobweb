@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .TransformSensor);
 		}
 
-		TransformSensor .prototype = $.extend (new X3DEnvironmentalSensorNode (),
+		TransformSensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
 		{
 			constructor: TransformSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

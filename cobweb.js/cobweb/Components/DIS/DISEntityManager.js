@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .DISEntityManager);
 		}
 
-		DISEntityManager .prototype = $.extend (new X3DChildNode (),
+		DISEntityManager .prototype = $.extend (Object .create (X3DChildNode .prototype),
 		{
 			constructor: DISEntityManager,
 			fieldDefinitions: new FieldDefinitionArray ([

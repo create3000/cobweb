@@ -10,7 +10,7 @@ function ($, X3DExecutionContext)
 		X3DExecutionContext .call (this, browser, executionContext);
 	}
 
-	X3DScene .prototype = $.extend (new X3DExecutionContext (),
+	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
 	{
 		constructor: X3DScene,
 		isRootContext: function ()

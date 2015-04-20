@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .Material);
 		}
 
-		Material .prototype = $.extend (new X3DMaterialNode (),
+		Material .prototype = $.extend (Object .create (X3DMaterialNode .prototype),
 		{
 			constructor: Material,
 			fieldDefinitions: new FieldDefinitionArray ([

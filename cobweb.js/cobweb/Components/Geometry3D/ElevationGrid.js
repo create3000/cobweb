@@ -37,7 +37,7 @@ function ($,
 			this .coordNode    = null;
 		}
 
-		ElevationGrid .prototype = $.extend (new X3DGeometryNode (),
+		ElevationGrid .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: ElevationGrid,
 			fieldDefinitions: new FieldDefinitionArray ([

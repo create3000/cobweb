@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .CollidableShape);
 		}
 
-		CollidableShape .prototype = $.extend (new X3DNBodyCollidableNode (),
+		CollidableShape .prototype = $.extend (Object .create (X3DNBodyCollidableNode .prototype),
 		{
 			constructor: CollidableShape,
 			fieldDefinitions: new FieldDefinitionArray ([

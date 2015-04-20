@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .UniversalJoint);
 		}
 
-		UniversalJoint .prototype = $.extend (new X3DRigidJointNode (),
+		UniversalJoint .prototype = $.extend (Object .create (X3DRigidJointNode .prototype),
 		{
 			constructor: UniversalJoint,
 			fieldDefinitions: new FieldDefinitionArray ([

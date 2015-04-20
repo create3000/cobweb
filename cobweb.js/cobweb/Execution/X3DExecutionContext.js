@@ -25,7 +25,9 @@ function ($,
 		function X3DExecutionContext (browser, executionContext)
 		{
 			X3DBaseNode .call (this, browser, executionContext);
-			
+
+			this .addChildren ("rootNodes", new MFNode ());
+
 			this .url                = new URI (window .location);
 			this .uninitializedNodes = [ ];
 			this .namedNodes         = { };
@@ -33,15 +35,15 @@ function ($,
 			this .routeIndex         = { };
 		}
 
-		X3DExecutionContext .prototype = $.extend (new X3DBaseNode (),
+		X3DExecutionContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		{
 			constructor: X3DExecutionContext,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNodes", new MFNode ()),
-			]),
 			setup: function ()
 			{
 				X3DBaseNode .prototype .setup .call (this);
+
+				if (this .isPrototDeclaration ())
+					return;
 
 				for (var i = 0; i < this .uninitializedNodes .length; ++ i)
 					this .uninitializedNodes [i] .setup ();
@@ -49,6 +51,10 @@ function ($,
 				this .uninitializedNodes .length = 0;
 			},
 			isRootContext: function ()
+			{
+				return false;
+			},
+			isPrototDeclaration: function ()
 			{
 				return false;
 			},
@@ -132,6 +138,9 @@ function ($,
 			getRootNodes: function ()
 			{
 				return this .rootNodes_;
+			},
+			updateProtoDeclaration (name, proto)
+			{
 			},
 			addRoute: function (sourceNode, fromField, destinationNode, toField)
 			{

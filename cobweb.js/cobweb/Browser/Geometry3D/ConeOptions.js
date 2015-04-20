@@ -15,7 +15,7 @@ function ($,
 			X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 		}
 
-		ConeOptions .prototype = $.extend (new X3DBaseNode (),
+		ConeOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		{
 			constructor: ConeOptions,
 			initialize: function ()

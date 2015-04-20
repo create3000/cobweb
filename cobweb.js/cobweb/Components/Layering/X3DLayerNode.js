@@ -43,7 +43,7 @@ function ($,
 		this .group            = group;
 	}
 
-	X3DLayerNode .prototype = $.extend (new X3DNode (),
+	X3DLayerNode .prototype = $.extend (Object .create (X3DNode .prototype),
 		X3DRenderer .prototype,
 	{
 		constructor: X3DLayerNode,

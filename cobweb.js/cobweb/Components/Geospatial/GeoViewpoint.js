@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .GeoViewpoint);
 		}
 
-		GeoViewpoint .prototype = $.extend (new X3DViewpointNode (),new X3DGeospatialObject (),
+		GeoViewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),new X3DGeospatialObject (),
 		{
 			constructor: GeoViewpoint,
 			fieldDefinitions: new FieldDefinitionArray ([

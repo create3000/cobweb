@@ -17,7 +17,7 @@ function ($,
 		this .layers = { };
 	}
 
-	X3DBindableNode .prototype = $.extend (new X3DChildNode (),
+	X3DBindableNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DBindableNode,
 		initialize: function ()

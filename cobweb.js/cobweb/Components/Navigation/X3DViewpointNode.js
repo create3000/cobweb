@@ -46,7 +46,7 @@ function ($,
 			this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
 		}
 
-		X3DViewpointNode .prototype = $.extend (new X3DBindableNode (),
+		X3DViewpointNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
 			X3DViewpointObject .prototype,
 		{
 			constructor: X3DViewpointNode,

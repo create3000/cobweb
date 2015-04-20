@@ -50,7 +50,7 @@ function ($,
 			this .addType (X3DConstants .PointLight);
 		}
 
-		PointLight .prototype = $.extend (new X3DLightNode (),
+		PointLight .prototype = $.extend (Object .create (X3DLightNode .prototype),
 		{
 			constructor: PointLight,
 			fieldDefinitions: new FieldDefinitionArray ([

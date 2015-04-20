@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .ConeEmitter);
 		}
 
-		ConeEmitter .prototype = $.extend (new X3DParticleEmitterNode (),
+		ConeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
 		{
 			constructor: ConeEmitter,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .NurbsPatchSurface);
 		}
 
-		NurbsPatchSurface .prototype = $.extend (new X3DNurbsSurfaceGeometryNode (),
+		NurbsPatchSurface .prototype = $.extend (Object .create (X3DNurbsSurfaceGeometryNode .prototype),
 		{
 			constructor: NurbsPatchSurface,
 			fieldDefinitions: new FieldDefinitionArray ([

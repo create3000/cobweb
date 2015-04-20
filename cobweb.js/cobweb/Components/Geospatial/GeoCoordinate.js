@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .GeoCoordinate);
 		}
 
-		GeoCoordinate .prototype = $.extend (new X3DCoordinateNode (),new X3DGeospatialObject (),
+		GeoCoordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),new X3DGeospatialObject (),
 		{
 			constructor: GeoCoordinate,
 			fieldDefinitions: new FieldDefinitionArray ([

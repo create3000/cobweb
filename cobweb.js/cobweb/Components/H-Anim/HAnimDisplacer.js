@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .HAnimDisplacer);
 		}
 
-		HAnimDisplacer .prototype = $.extend (new X3DGeometricPropertyNode (),
+		HAnimDisplacer .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 		{
 			constructor: HAnimDisplacer,
 			fieldDefinitions: new FieldDefinitionArray ([

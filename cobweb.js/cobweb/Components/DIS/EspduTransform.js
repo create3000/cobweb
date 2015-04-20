@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .EspduTransform);
 		}
 
-		EspduTransform .prototype = $.extend (new X3DGroupingNode (),new X3DSensorNode (),
+		EspduTransform .prototype = $.extend (Object .create (X3DGroupingNode .prototype),new X3DSensorNode (),
 		{
 			constructor: EspduTransform,
 			fieldDefinitions: new FieldDefinitionArray ([

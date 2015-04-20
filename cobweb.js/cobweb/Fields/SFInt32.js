@@ -11,7 +11,7 @@ function ($, X3DField, X3DConstants)
 		X3DField .call (this, ~~value);
 	}
 
-	SFInt32 .prototype = $.extend (new X3DField (),
+	SFInt32 .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFInt32,
 		copy: function ()

@@ -13,7 +13,7 @@ function ($,
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 	}
 
-	Notification .prototype = $.extend (new X3DBaseNode (),
+	Notification .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: Notification,
 		initialize: function ()

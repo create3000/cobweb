@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .LineProperties);
 		}
 
-		LineProperties .prototype = $.extend (new X3DAppearanceChildNode (),
+		LineProperties .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
 		{
 			constructor: LineProperties,
 			fieldDefinitions: new FieldDefinitionArray ([

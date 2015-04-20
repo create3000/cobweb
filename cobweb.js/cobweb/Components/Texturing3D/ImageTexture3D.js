@@ -26,7 +26,7 @@ function ($,
 			this .addType (X3DConstants .ImageTexture3D);
 		}
 
-		ImageTexture3D .prototype = $.extend (new X3DTexture3DNode (),new X3DUrlObject (),
+		ImageTexture3D .prototype = $.extend (Object .create (X3DTexture3DNode .prototype),new X3DUrlObject (),
 		{
 			constructor: ImageTexture3D,
 			fieldDefinitions: new FieldDefinitionArray ([

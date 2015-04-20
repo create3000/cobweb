@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .PositionDamper);
 		}
 
-		PositionDamper .prototype = $.extend (new X3DDamperNode (),
+		PositionDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
 		{
 			constructor: PositionDamper,
 			fieldDefinitions: new FieldDefinitionArray ([

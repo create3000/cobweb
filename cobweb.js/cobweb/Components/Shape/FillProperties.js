@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .FillProperties);
 		}
 
-		FillProperties .prototype = $.extend (new X3DAppearanceChildNode (),
+		FillProperties .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
 		{
 			constructor: FillProperties,
 			fieldDefinitions: new FieldDefinitionArray ([

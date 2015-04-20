@@ -37,7 +37,7 @@ function ($,
 			this .addType (X3DConstants .SphereSensor);
 		}
 
-		SphereSensor .prototype = $.extend (new X3DDragSensorNode (),
+		SphereSensor .prototype = $.extend (Object .create (X3DDragSensorNode .prototype),
 		{
 			constructor: SphereSensor,
 			fieldDefinitions: new FieldDefinitionArray ([

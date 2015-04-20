@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DNetworkSensorNode);
 	}
 
-	X3DNetworkSensorNode .prototype = $.extend (new X3DSensorNode (),
+	X3DNetworkSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
 	{
 		constructor: X3DNetworkSensorNode,
 	});

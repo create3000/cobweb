@@ -25,7 +25,7 @@ function ($,
 			this .addType (X3DConstants .OrientationInterpolator);
 		}
 
-		OrientationInterpolator .prototype = $.extend (new X3DInterpolatorNode (),
+		OrientationInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
 		{
 			constructor: OrientationInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([

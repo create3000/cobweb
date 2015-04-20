@@ -29,7 +29,7 @@ function ($, X3DBaseNode)
 		this .setup ();
 	}
 
-	BindableList .prototype = $.extend (new X3DBaseNode (),
+	BindableList .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		get: function ()
 		{

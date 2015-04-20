@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .IntegerTrigger);
 		}
 
-		IntegerTrigger .prototype = $.extend (new X3DTriggerNode (),
+		IntegerTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
 		{
 			constructor: IntegerTrigger,
 			fieldDefinitions: new FieldDefinitionArray ([

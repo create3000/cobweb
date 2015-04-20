@@ -29,7 +29,7 @@ function ($,
 			this .addType (X3DConstants .Cone);
 		}
 
-		Cone .prototype = $.extend (new X3DGeometryNode (),
+		Cone .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
 			constructor: Cone,
 			fieldDefinitions: new FieldDefinitionArray ([

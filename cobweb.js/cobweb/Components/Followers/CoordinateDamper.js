@@ -23,7 +23,7 @@ function ($,
 			this .addType (X3DConstants .CoordinateDamper);
 		}
 
-		CoordinateDamper .prototype = $.extend (new X3DDamperNode (),
+		CoordinateDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
 		{
 			constructor: CoordinateDamper,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -60,7 +60,7 @@ function ($,
 			this .addType (X3DConstants .TextureProperties);
 		}
 
-		TextureProperties .prototype = $.extend (new X3DNode (),
+		TextureProperties .prototype = $.extend (Object .create (X3DNode .prototype),
 		{
 			constructor: TextureProperties,
 			fieldDefinitions: new FieldDefinitionArray ([

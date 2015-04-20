@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DMaterialNode);
 	}
 
-	X3DMaterialNode .prototype = $.extend (new X3DAppearanceChildNode (),
+	X3DMaterialNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
 	{
 		constructor: X3DMaterialNode,
 		isTransparent: function ()

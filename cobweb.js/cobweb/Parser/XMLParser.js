@@ -5,9 +5,16 @@ define ([
 	"cobweb/Basic/X3DArrayField",
 	"cobweb/Fields",
 	"cobweb/Parser/Parser",
+	"cobweb/Prototype/X3DProtoDeclaration",
 	"cobweb/Bits/X3DConstants",
 ],
-function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
+function ($,
+          X3DField,
+          X3DArrayField,
+          Fields,
+          Parser,
+          X3DProtoDeclaration,
+          X3DConstants)
 {
 	with (Fields)
 	{
@@ -21,11 +28,12 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 	
 		function XMLParser (scene, xml)
 		{
-			this .isXML            = xml instanceof XMLDocument; // XMLDocument || HTMLElement
-			this .xml              = xml;
-			this .executionContext = [ scene ];
-			this .parents          = [ ];
-			this .parser           = new Parser (this .scene, "", true);
+			this .isXML             = xml instanceof XMLDocument; // XMLDocument || HTMLElement
+			this .xml               = xml;
+			this .executionContexts = [ scene ];
+			this .protoDeclarations = [ ];
+			this .parents           = [ ];
+			this .parser            = new Parser (this .scene, "", true);
 		}
 
 		XMLParser .prototype =
@@ -33,7 +41,27 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 			constructor: XMLParser,
 			getExecutionContext: function ()
 			{
-				return this .executionContext [this .executionContext .length - 1];
+				return this .executionContexts [this .executionContexts .length - 1];
+			},
+			pushExecutionContext: function (executionContext)
+			{
+				return this .executionContexts .push (executionContext);
+			},
+			popExecutionContext: function ()
+			{
+				this .executionContexts .pop ();
+			},
+			getParent: function ()
+			{
+				return this .parents [this .parents .length - 1];
+			},
+			pushParent: function (parent)
+			{
+				return this .parents .push (parent);
+			},
+			popParent: function ()
+			{
+				this .parents .pop ();
 			},
 			parseIntoScene: function ()
 			{
@@ -58,12 +86,12 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 					case "X3D":
 						this .x3d (this .xml);
 						break;
-					case "Scene":
 					case "SCENE":
+					case "Scene":
 						this .scene (this .xml);
 						break;
 					default:
-						this .child (this .xml);
+						this .statement (this .xml);
 						break;
 				}
 
@@ -82,41 +110,38 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 						case "Scene":
 						case "SCENE":
 							this .scene (element);
-							return;
+							continue;
 					}
 				}
 			},
 			scene: function (element)
 			{
-				this .children (element .childNodes);
+				this .statements (element .childNodes);
 			},
-			children: function (childNodes)
+			statements: function (childNodes)
 			{
 				for (var i = 0; i < childNodes .length; ++ i)
-					this .child (childNodes [i]);	
+					this .statement (childNodes [i]);
 			},
-			child: function (element)
+			statement: function (child)
 			{
-				switch (element .nodeName)
+				switch (child .nodeName)
 				{
 					case "#comment":
 					case "#text":
-						return;
-
 					case "#cdata-section":
-						this .cdata (element);
 						return;
 
-					case "field":
-						this .field (element);
+					case "ProtoDeclare":
+						this .protoDeclare (child);
 						return;
 
 					case "ROUTE":
-						this .route (element);
+						this .route (child);
 						return;
 
 					default:
-						this .node (element);
+						this .node (child);
 						return;
 				}
 			},
@@ -131,11 +156,11 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 
 					this .DEF (element, node);
 					this .addNode (element, node);
-					this .parents .push (node);
+					this .pushParent (node);
 					this .attributes (element .attributes, node);
 					this .children (element .childNodes);
 					this .getExecutionContext () .addUninitializedNode (node);
-					this .parents .pop ();
+					this .popParent ();
 				}
 				catch (error)
 				{
@@ -143,6 +168,40 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 						console .log (error);
 
 					console .warn ("Unknown node type '" + element .nodeName + "'.");
+				}
+			},
+			children: function (childNodes)
+			{
+				for (var i = 0; i < childNodes .length; ++ i)
+					this .child (childNodes [i]);
+			},
+			child: function (child)
+			{
+				switch (child .nodeName)
+				{
+					case "#comment":
+					case "#text":
+						return;
+
+					case "#cdata-section":
+						this .cdata (child);
+						return;
+
+					case "field":
+						this .field (child);
+						return;
+
+					case "ProtoDeclare":
+						this .protoDeclare (child);
+						return;
+
+					case "ROUTE":
+						this .route (child);
+						return;
+
+					default:
+						this .node (child);
+						return;
 				}
 			},
 			DEF: function (element, node)
@@ -163,7 +222,7 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 				{
 					var name = element .getAttribute ("USE");
 
-					if (name)
+					if (this .id (name))
 					{
 						var node = this .getExecutionContext () .getNamedNode (name);
 
@@ -182,8 +241,8 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 			{
 				if (this .parents .length)
 				{
-					var parent = this .parents [this .parents .length - 1];
-				
+					var parent = this .getParent ();
+
 					if (parent instanceof X3DField)
 					{
 						if (parent instanceof X3DArrayField)
@@ -260,7 +319,7 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 			cdata: function (element)
 			{
 				var
-					node  = this .parents [this .parents .length - 1]
+					node  = this .getParent (),
 					field = node .getCDATA ();
 
 				if (field)
@@ -268,7 +327,7 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 			},
 			field: function (element)
 			{
-				var node = this .parents [this .parents .length - 1];
+				var node = this .getParent ();
 
 				if (! node .hasUserDefinedFields ())
 					return;
@@ -285,7 +344,7 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 
 				var name = element .getAttribute ("name");
 
-				if (! name)
+				if (! this .id (name))
 					return;
 
 				var field = new type ();
@@ -306,11 +365,65 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 					}
 				}
 
-				this .parents .push (field);
-				this .children (element .childNodes);
-				this .parents .pop ();
+				this .pushParent (field);
+				this .statements (element .childNodes);
+				this .popParent ();
 
 				node .addUserDefinedField (accessType, name, field);
+			},
+			protoDeclare: function (element)
+			{
+				var name = element .getAttribute ("name");
+
+				if (this .id (name))
+				{
+					var
+						proto      = new X3DProtoDeclaration (this .getExecutionContext ()),
+						childNodes = element .childNodes;
+
+					for (var i = 0; i < childNodes .length; ++ i)
+					{
+						var child = childNodes [i];
+
+						switch (child .nodeName)
+						{
+							case "ProtoInterface":
+								this .pushParent (proto);
+								this .protoInterface (child);
+								this .popParent ();
+								continue;
+							case "ProtoBody":
+								this .pushExecutionContext (proto);
+								this .protoBody (child);
+								this .popExecutionContext ();
+								continue;
+						}
+					}
+
+					proto .setup ();
+
+					this .getExecutionContext () .updateProtoDeclaration (name, proto);
+				}
+			},
+			protoInterface: function (element)
+			{
+				var childNodes = element .childNodes;
+
+				for (var i = 0; i < childNodes .length; ++ i)
+				{
+					var child = childNodes [i];
+
+					switch (child .nodeName)
+					{
+						case "field": // User-defined field
+							this .field (child);
+							continue;
+					}
+				}
+			},
+			protoBody: function (element)
+			{
+				this .statements (element .childNodes);
 			},
 			route: function (element)
 			{
@@ -322,8 +435,9 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 
 				try
 				{
-					var sourceNode      = this .getExecutionContext () .getNamedNode (fromNode);
-					var destinationNode = this .getExecutionContext () .getNamedNode (toNode);
+					var
+						sourceNode      = this .getExecutionContext () .getNamedNode (fromNode),
+						destinationNode = this .getExecutionContext () .getNamedNode (toNode);
 
 					this .getExecutionContext () .addRoute (sourceNode, fromField, destinationNode, toField);
 				}
@@ -341,6 +455,16 @@ function ($, X3DField, X3DArrayField, Fields, Parser, X3DConstants)
 				}
 				
 				throw Error ("Unknown field '" + name + "' in node " + node .getTypeName ());
+			},
+			id: function (string)
+			{
+				if (string)
+				{
+					// Test for id characters.
+					return true;
+				}
+
+				return false;
 			},
 		};
 

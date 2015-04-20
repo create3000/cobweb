@@ -39,7 +39,7 @@ function ($,
 			this .addType (X3DConstants .Shape);
 		}
 
-		Shape .prototype = $.extend (new X3DShapeNode (),
+		Shape .prototype = $.extend (Object .create (X3DShapeNode .prototype),
 		{
 			constructor: Shape,
 			fieldDefinitions: new FieldDefinitionArray ([

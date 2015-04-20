@@ -15,7 +15,7 @@ function ($,
 		this .addType (X3DConstants .X3DViewportNode);
 	}
 
-	X3DViewportNode .prototype = $.extend (new X3DGroupingNode (),
+	X3DViewportNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 	{
 		constructor: X3DViewportNode,
 	});
