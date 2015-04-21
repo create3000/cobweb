@@ -1202,6 +1202,7 @@
     <None Include="cobweb\Prototype\X3DProtoDeclarationNode.js" />
     <None Include="cobweb\Prototype\ProtoDeclarationArray.js" />
     <None Include="cobweb\Routing\RouteArray.js" />
+    <None Include="tests\Components\PROTO\NestedProtos.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

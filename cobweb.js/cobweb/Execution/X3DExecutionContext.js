@@ -95,7 +95,7 @@ function ($,
 					//if (externproto)
 					//	return externproto .createInstance ();
 
-					executionContext = excutionContext .getExecutionContext ();
+					executionContext = executionContext .getExecutionContext ();
 				}
 				while (! executionContext .isRootContext ());
 
