@@ -6,22 +6,49 @@
     <meta name='created' content='Mon, 20 Apr 2015 03:06:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 20 Apr 2015 03:50:43 GMT'/>
+    <meta name='modified' content='Mon, 20 Apr 2015 14:47:03 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='A'>
       <ProtoInterface>
-        <field accessType='inputOutput' type='SFBool' name='enabled'/>
+        <field accessType='inputOutput' type='SFBool' name='enabled' value='true'/>
       </ProtoInterface>
       <ProtoBody>
-        <Shape>
-          <Appearance>
-            <Material/>
-          </Appearance>
-          <Box/>
-        </Shape>
+        <ProtoDeclare name='B'>
+          <ProtoInterface>
+            <field accessType='inputOutput' type='SFBool' name='enabled' value='true'/>
+          </ProtoInterface>
+          <ProtoBody>
+            <TimeSensor DEF='T'
+                loop='true'>
+              <IS>
+                <connect nodeField='enabled' protoField='enabled'/>
+              </IS>
+            </TimeSensor>
+            <OrientationInterpolator DEF='O'
+                key='0, 0.25, 0.5, 0.75, 1'
+                keyValue='0 0 1 0, 0 0 1 1.5708, 0 0 1 3.14159, 0 0 1 4.71239, 0 0 1 0'/>
+            <Transform DEF='B'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                </Appearance>
+                <Box/>
+              </Shape>
+            </Transform>
+            <ROUTE fromNode='T' fromField='fraction_changed' toNode='O' toField='set_fraction'/>
+            <ROUTE fromNode='O' fromField='value_changed' toNode='B' toField='set_rotation'/>
+          </ProtoBody>
+        </ProtoDeclare>
+        <ProtoInstance name='B'>
+          <IS>
+            <connect nodeField='enabled' protoField='enabled'/>
+          </IS>
+        </ProtoInstance>
       </ProtoBody>
     </ProtoDeclare>
-    <ProtoInstance name='A'/>
+    <ProtoInstance name='A'>
+      <fieldValue name='enabled' value='false'/>
+    </ProtoInstance>
   </Scene>
 </X3D>

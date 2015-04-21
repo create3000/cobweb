@@ -132,8 +132,14 @@ function ($,
 					case "#cdata-section":
 						return;
 
+					case "PROTODECLARE":
 					case "ProtoDeclare":
 						this .protoDeclare (child);
+						return;
+
+					case "PROTOINSTANCE":
+					case "ProtoInstance":
+						this .protoInstance (child);
 						return;
 
 					case "ROUTE":
@@ -158,24 +164,52 @@ function ($,
 					this .addNode (element, node);
 					this .pushParent (node);
 					this .attributes (element .attributes, node);
-					this .children (element .childNodes);
+					this .children (element .childNodes, false);
 					this .getExecutionContext () .addUninitializedNode (node);
 					this .popParent ();
 				}
 				catch (error)
 				{
-					if (element .nodeName === "VisibilitySensor")
-						console .log (error);
+					//if (element .nodeName === "VisibilitySensor")
+					//	console .log (error);
 
 					console .warn ("Unknown node type '" + element .nodeName + "'.");
 				}
 			},
-			children: function (childNodes)
+			protoInstance: function (element)
+			{
+				try
+				{
+					if (this .USE (element))
+						return;
+					
+					var name = element .getAttribute ("name");
+					
+					if (this .id (name))
+					{
+						var node = this .getExecutionContext () .createProto (name);
+
+						this .DEF (element, node);
+						this .addNode (element, node);
+						this .pushParent (node);
+						this .children (element .childNodes, true);
+						this .getExecutionContext () .addUninitializedNode (node);
+						this .popParent ();
+				
+console .log (node);
+					}
+				}
+				catch (error)
+				{
+					console .warn (error .message);
+				}
+			},
+			children: function (childNodes, proto)
 			{
 				for (var i = 0; i < childNodes .length; ++ i)
 					this .child (childNodes [i]);
 			},
-			child: function (child)
+			child: function (child, proto)
 			{
 				switch (child .nodeName)
 				{
@@ -186,13 +220,30 @@ function ($,
 					case "#cdata-section":
 						this .cdata (child);
 						return;
+					
+					case "IS":
+						this .IS (child);
+						return;
 
+					case "FIELD":
 					case "field":
 						this .field (child);
 						return;
 
+					case "FIELDVALUE":
+					case "fieldValue":
+						if (proto)
+							this .fieldValue (child);
+						return;
+
+					case "PROTODECLARE":
 					case "ProtoDeclare":
 						this .protoDeclare (child);
+						return;
+
+					case "PROTOINSTANCE":
+					case "ProtoInstance":
+						this .protoInstance (child);
 						return;
 
 					case "ROUTE":
@@ -245,11 +296,11 @@ function ($,
 
 					if (parent instanceof X3DField)
 					{
-						if (parent instanceof X3DArrayField)
-							parent .push (node);
-
-						else
+						if (field .getType () === X3DConstants .SFNode)
 							parent .set (node);
+
+						if (field .getType () === X3DConstants .MFNode)
+							parent .push (node);
 					}
 					else
 					{
@@ -262,7 +313,7 @@ function ($,
 								var field = parent .getField (containerField);
 
 								if (field .getType () === X3DConstants .SFNode)
-									return field .setValue (node);
+									return field .set (node);
 
 								if (field .getType () === X3DConstants .MFNode)
 									return field .push (node);
@@ -371,6 +422,58 @@ function ($,
 
 				node .addUserDefinedField (accessType, name, field);
 			},
+			fieldValue: function (element)
+			{
+				
+			},
+			IS: function (element)
+			{
+				if (this .getExecutionContext () instanceof X3DProtoDeclaration)
+				{
+					var childNodes = element .childNodes;
+
+					for (var i = 0; i < childNodes .length; ++ i)
+					{
+						var child = childNodes [i];
+
+						switch (child .nodeName)
+						{
+							case "CONNECT":
+							case "connect":
+								this .connect (child);
+								continue;
+						}
+					}
+				}
+			},
+			connect: function (element)
+			{
+				var
+					nodeFieldName  = element .getAttribute ("nodeField"),
+					protoFieldName = element .getAttribute ("protoField");
+
+				if (! nodeFieldName || ! protoFieldName)
+					return;
+
+				try
+				{
+					var
+						node       = this .getParent (),
+						proto      = this .getExecutionContext (),
+						nodeField  = node .getField (nodeFieldName),
+						protoField = proto .getField (protoFieldName);
+
+					if (nodeField .getAccessType () === protoField .getAccessType () || nodeField .getAccessType () === X3DConstants .inputOutput)
+					{
+						if (nodeField .getType () === protoField .getType ())
+							nodeField .addReference (protoField);
+					}
+				}
+				catch (error)
+				{
+					console .log ("Couldn't create IS reference: " + error .message);
+				}
+			},
 			protoDeclare: function (element)
 			{
 				var name = element .getAttribute ("name");
@@ -400,9 +503,10 @@ function ($,
 						}
 					}
 
+					proto .setName (name);
 					proto .setup ();
 
-					this .getExecutionContext () .updateProtoDeclaration (name, proto);
+					this .getExecutionContext () .protos .push (proto);
 				}
 			},
 			protoInterface: function (element)
@@ -415,6 +519,7 @@ function ($,
 
 					switch (child .nodeName)
 					{
+						case "FIELD": // User-defined field
 						case "field": // User-defined field
 							this .field (child);
 							continue;
@@ -453,7 +558,7 @@ function ($,
 					if (key .toLowerCase () === name)
 						return node .fields [key];
 				}
-				
+
 				throw Error ("Unknown field '" + name + "' in node " + node .getTypeName ());
 			},
 			id: function (string)

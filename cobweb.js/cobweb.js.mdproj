@@ -1200,6 +1200,8 @@
     <None Include="cobweb\Prototype\X3DProtoDeclaration.js" />
     <None Include="cobweb\Prototype\X3DExternProtoDeclaration.js" />
     <None Include="cobweb\Prototype\X3DProtoDeclarationNode.js" />
+    <None Include="cobweb\Prototype\ProtoDeclarationArray.js" />
+    <None Include="cobweb\Routing\RouteArray.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

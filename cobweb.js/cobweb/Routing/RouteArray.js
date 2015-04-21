@@ -19,21 +19,21 @@ function ($)
 		},
 	};
 
-	function FieldDefinitionArray (value)
+	function RouteArray ()
 	{
-		this .array = value;
-
+		this .array = [ ];
+		
 		return new Proxy (this, handler);
 	}
 
-	$.extend (FieldDefinitionArray .prototype,
+	$.extend (RouteArray .prototype,
 	{
-		constructor: FieldDefinitionArray,
+		constructor: RouteArray,
 		getValue: function ()
 		{
 			return this .array;
 		},
 	});
 
-	return FieldDefinitionArray;
+	return RouteArray;
 });

@@ -17,6 +17,7 @@ function ($, X3DChildObject, X3DConstants)
 	{
 		constructor: X3DField,
 		accessType_: X3DConstants .initializeOnly,
+		references_: { },
 		fieldInterests_: { },
 		fieldCallbacks_: { },
 		setValue: function (value)
@@ -55,6 +56,63 @@ function ($, X3DChildObject, X3DConstants)
 		isOutput: function ()
 		{
 			return this .accessType_ & X3DConstants .outputOnly;
+		},
+		addReference: function (reference)
+		{
+			var references = this .getReferences ();
+
+			if (! references [reference .getId ()])
+			{
+				references [reference .getId ()] = reference;
+
+				// Create IS relationship
+
+				switch (this .accessType_ & reference .getAccessType ())
+				{
+					case X3DConstants .initializeOnly:
+						this .set (reference .getValue ());
+						return;
+					case X3DConstants .inputOnly:
+						reference .addFieldInterest (this);
+						return;
+					case X3DConstants .outputOnly:
+						this .addFieldInterest (reference);
+						return;
+					case X3DConstants .inputOutput:
+						reference .addFieldInterest (this);
+						this .addFieldInterest (reference);
+						this .set (reference .getValue ());
+						return;
+				}
+			}
+		},
+		getReferences: function ()
+		{
+			if (! this .hasOwnProperty ("references_"))
+				this .references_ = { };
+
+			return this .references_;
+		},
+		updateReferences: function ()
+		{
+			if (this .hasOwnProperty ("references_"))
+			{
+				for (var id in this .references_)
+				{
+					var reference = this .references_ [id];
+
+					switch (this .accessType_ & reference .getAccessType ())
+					{
+						case X3DConstants .inputOnly:
+						case X3DConstants .outputOnly:
+							continue;
+						case X3DConstants .initializeOnly:
+						case X3DConstants .inputOutput:
+							this .set (reference .getValue ());
+							continue;
+					}
+				}
+			}
 		},
 		addFieldInterest: function (field)
 		{

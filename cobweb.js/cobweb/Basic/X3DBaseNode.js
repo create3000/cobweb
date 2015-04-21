@@ -58,7 +58,11 @@ function ($, X3DEventObject, X3DFieldDefinition, Fields, X3DConstants)
 				this .addChildren ("isLive", new SFBool (true));
 
 				for (var i = 0; i < this .fieldDefinitions .length; ++ i)
-					this .fields [this .fieldDefinitions [i] .name] .setTainted (false);
+				{
+					var field = this .fields [this .fieldDefinitions [i] .name];
+					field .updateReferences ();
+					field .setTainted (false);
+				}
 
 				this .initialize ();
 			},
@@ -120,7 +124,7 @@ function ($, X3DEventObject, X3DFieldDefinition, Fields, X3DConstants)
 				if (field)
 					return field;
 
-				throw Error ("Unkown field '" + name + "' in node class " + this .getTypeName ());
+				throw Error ("Unkown field '" + name + "' in node class " + this .getTypeName () + ".");
 			},
 			getFieldDefinitions: function ()
 			{

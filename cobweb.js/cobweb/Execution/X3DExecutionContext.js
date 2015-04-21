@@ -5,6 +5,8 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Prototype/ProtoDeclarationArray",
+	"cobweb/Routing/RouteArray",
 	"cobweb/Routing/X3DRoute",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
@@ -15,6 +17,8 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DBaseNode,
+          ProtoDeclarationArray,
+          RouteArray,
           X3DRoute,
           X3DCast,
           X3DConstants,
@@ -31,7 +35,9 @@ function ($,
 			this .url                = new URI (window .location);
 			this .uninitializedNodes = [ ];
 			this .namedNodes         = { };
-			this .routes             = [ ]; // RouteArray
+			this .protos             = new ProtoDeclarationArray ();
+			this .externprotos       = [ ]; // ExternProtoDeclarationArray
+			this .routes             = new RouteArray ();
 			this .routeIndex         = { };
 		}
 
@@ -42,19 +48,12 @@ function ($,
 			{
 				X3DBaseNode .prototype .setup .call (this);
 
-				if (this .isPrototDeclaration ())
-					return;
-
 				for (var i = 0; i < this .uninitializedNodes .length; ++ i)
 					this .uninitializedNodes [i] .setup ();
 
 				this .uninitializedNodes .length = 0;
 			},
 			isRootContext: function ()
-			{
-				return false;
-			},
-			isPrototDeclaration: function ()
 			{
 				return false;
 			},
@@ -79,6 +78,28 @@ function ($,
 					case false:
 						return new (this .getBrowser () .supportedNodes .dom [typeName .toUpperCase ()]) (this);
 				}
+			},
+			createProto: function (name)
+			{
+				var executionContext = this;
+
+				do
+				{
+					var proto = executionContext .protos [name];
+	
+					if (proto)
+						return proto .createInstance ();
+
+					//var externproto = executionContext .externprotos [name];
+
+					//if (externproto)
+					//	return externproto .createInstance ();
+
+					executionContext = excutionContext .getExecutionContext ();
+				}
+				while (! executionContext .isRootContext ());
+
+				throw new Error ("Unknown proto or externproto type '" + name + "'.");
 			},
 			addUninitializedNode: function (node)
 			{
@@ -139,9 +160,6 @@ function ($,
 			{
 				return this .rootNodes_;
 			},
-			updateProtoDeclaration (name, proto)
-			{
-			},
 			addRoute: function (sourceNode, fromField, destinationNode, toField)
 			{
 				if (! sourceNode .getValue ())
@@ -164,7 +182,7 @@ function ($,
 					id    = sourceField .getId () + "." + destinationField .getId (),
 					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
 
-				this .routes .push (route);
+				this .routes .getValue () .push (route);
 				this .routeIndex [id] = route;
 
 				return route;
@@ -177,11 +195,11 @@ function ($,
 						sourceField      = route .sourceField_,
 						destinationField = route .destinationField_;
 						id               = sourceField .getId () + "." + destinationField .getId (),
-						index            = this .routes .indexOf (route);
+						index            = this .routes .getValue () .indexOf (route);
 
 					if (index !== -1)
-						this .routes .splice (index, 1);
-					
+						this .routes .getValue () .splice (index, 1);
+
 					delete this .routeIndex [id];
 				}
 				catch (error)

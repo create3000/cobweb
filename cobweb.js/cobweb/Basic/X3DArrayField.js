@@ -59,7 +59,7 @@ function ($, X3DField, X3DConstants, Generator)
 			if (value [0] instanceof Array)
 				value = value [0];
 
-			for (var i = 0; i < value .length; ++ i)
+			for (var i = 0, length = value .length; i < length; ++ i)
 				this .push (value [i]);
 
 			return new Proxy (this, handler);
@@ -71,10 +71,11 @@ function ($, X3DField, X3DConstants, Generator)
 		constructor: X3DArrayField,
 		copy: function (executionContext)
 		{
-			var copy  = new (this .constructor) ();
-			var array = this .getValue ();
+			var
+				copy  = new (this .constructor) (),
+				array = this .getValue ();
 
-			for (var i = 0; i < array .length; ++ i)
+			for (var i = 0, length = array .length; i < length; ++ i)
 				copy .push (array [i]);
 
 			return copy;
@@ -95,8 +96,9 @@ function ($, X3DField, X3DConstants, Generator)
 		},
 		unshift: function (value)
 		{
-			var array = this .getValue ();
-			var field = new (this .valueType_) ();
+			var
+				array = this .getValue (),
+				field = new (this .valueType_) ();
 
 			field .setValue (value);
 			field .addParent (this);
@@ -119,8 +121,9 @@ function ($, X3DField, X3DConstants, Generator)
 		},
 		push: function (value)
 		{
-			var array = this .getValue ();
-			var field = new (this .valueType_) ();
+			var
+				array = this .getValue (),
+				field = new (this .valueType_) ();
 
 			field .setValue (value);
 			field .addParent (this);

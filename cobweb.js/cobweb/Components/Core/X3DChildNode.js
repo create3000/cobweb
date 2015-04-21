@@ -16,14 +16,15 @@ function ($,
 		{
 			X3DNode .call (this, browser, executionContext);
 
-			this .addType (X3DConstants .X3DChildNode);
-			
 			try
 			{
 				this .addChildren ("isCameraObject", new SFBool (false));
+				this .addType (X3DConstants .X3DChildNode);
 			}
 			catch (error)
-			{ }
+			{
+				//console .log (error);
+			}
 		}
 
 		X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
