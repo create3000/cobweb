@@ -57,6 +57,13 @@ function ($, X3DChildObject, X3DConstants)
 		{
 			return this .accessType_ & X3DConstants .outputOnly;
 		},
+		hasReferences: function ()
+		{
+			if (this .hasOwnProperty ("references_"))
+				return ! $.isEmptyObject (this .references_);
+
+			return false;
+		},
 		addReference: function (reference)
 		{
 			var references = this .getReferences ();

@@ -1,10 +1,34 @@
 
 define ([
 	"jquery",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DField",
+	"cobweb/Basic/X3DArrayField",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowser",
+	"cobweb/Execution/X3DExecutionContext",
+	"cobweb/Execution/X3DScene",
+	"cobweb/Prototype/ProtoDeclarationArray",
+	"cobweb/Prototype/X3DProtoDeclaration",
+	"cobweb/Routing/RouteArray",
+	"cobweb/Routing/X3DRoute",
+	"cobweb/Bits/X3DConstants",
 ],
-function ($, Fields, X3DBrowser)
+function ($,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DField,
+          X3DArrayField,
+          Fields,
+          X3DBrowser,
+          X3DExecutionContext,
+          X3DScene,
+          ProtoDeclarationArray,
+          X3DProtoDeclaration,
+          RouteArray,
+          X3DRoute,
+          X3DConstants)
 {
 	// Console fallback
 
@@ -90,11 +114,23 @@ function ($, Fields, X3DBrowser)
 		this .console .log (error);
 	}
 
-	return $.extend (X3D, Fields,
+	return $.extend (X3D,
+		Fields,
 	{
-		initialized: false,
-		getBrowser: getBrowser,
-		createBrowser: createBrowser,
-		error: error
+		initialized:           false,
+		getBrowser:            getBrowser,
+		createBrowser:         createBrowser,
+		error:                 error,
+		X3DConstants:          X3DConstants,
+		X3DFieldDefinition:    X3DFieldDefinition,
+		FieldDefinitionArray:  FieldDefinitionArray,
+		X3DField:              X3DField,
+		X3DArrayField:         X3DArrayField,
+		X3DExecutionContext:   X3DExecutionContext,
+		X3DScene:              X3DScene,
+		ProtoDeclarationArray: ProtoDeclarationArray,
+		X3DProtoDeclaration:   X3DProtoDeclaration,
+		RouteArray:            RouteArray,
+		X3DRoute:              X3DRoute,
 	});
 });

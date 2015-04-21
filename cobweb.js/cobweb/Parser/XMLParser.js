@@ -187,7 +187,7 @@ function ($,
 					
 					if (this .id (name))
 					{
-						var node = this .getExecutionContext () .createProto (name);
+						var node = this .getExecutionContext () .createProto (name, false);
 
 						this .DEF (element, node);
 						this .addNode (element, node);
@@ -195,21 +195,20 @@ function ($,
 						this .children (element .childNodes, true);
 						this .getExecutionContext () .addUninitializedNode (node);
 						this .popParent ();
-				
-console .log (node);
 					}
 				}
 				catch (error)
 				{
+					console .log (error);
 					console .warn (error .message);
 				}
 			},
-			children: function (childNodes, proto)
+			children: function (childNodes, protoInstance)
 			{
 				for (var i = 0; i < childNodes .length; ++ i)
-					this .child (childNodes [i]);
+					this .child (childNodes [i], protoInstance);
 			},
-			child: function (child, proto)
+			child: function (child, protoInstance)
 			{
 				switch (child .nodeName)
 				{
@@ -232,7 +231,7 @@ console .log (node);
 
 					case "FIELDVALUE":
 					case "fieldValue":
-						if (proto)
+						if (protoInstance)
 							this .fieldValue (child);
 						return;
 
@@ -424,7 +423,45 @@ console .log (node);
 			},
 			fieldValue: function (element)
 			{
-				
+				try
+				{
+					var node = this .getParent ();
+
+					var name = element .getAttribute ("name");
+
+					if (! this .id (name))
+						return;
+
+					var
+						field      = node .getField (name),
+						accessType = field .getAccessType ();
+
+					if (accessType & X3DConstants .initializeOnly)
+					{
+						var value = element .getAttribute ("value");
+
+						if (value !== null)
+						{
+							try
+							{
+								this .parser .setInput (value);
+								this .fieldTypes [field .getType ()] .call (this .parser, field);
+							}
+							catch (error)
+							{
+								//console .log (error);
+							}
+						}
+					}
+
+					this .pushParent (field);
+					this .statements (element .childNodes);
+					this .popParent ();
+				}
+				catch (error)
+				{
+					console .warn ("Couldn't assign field value: " + error .message);
+				}
 			},
 			IS: function (element)
 			{
@@ -553,6 +590,8 @@ console .log (node);
 			},
 			getField: function (node, name)
 			{
+				// Return the appropriate field if in HTML dom mode.
+
 				for (var key in node .fields)
 				{
 					if (key .toLowerCase () === name)

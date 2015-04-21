@@ -179,10 +179,15 @@ function ($,
 
 			for (var i = 0; i < this .removeChildren_ .length; ++ i)
 			{
-				var node = this .removeChildren_ [i];
+				try
+				{
+					var node = this .removeChildren_ [i];
 
-				if (node)
-					innerNodes .push (node .getValue () .getInnerNode ());
+					if (node)
+						innerNodes .push (node .getValue () .getInnerNode ());
+				}
+				catch (error)
+				{ }
 			}
 
 			innerNode .isCameraObject_ .removeInterest (this, "set_cameraObjects__");

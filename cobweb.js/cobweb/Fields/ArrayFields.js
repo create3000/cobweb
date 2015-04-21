@@ -326,6 +326,22 @@ function ($,
 		{
 			return X3DConstants .MFNode;
 		},
+		copy: function (executionContext)
+		{
+			var
+				copy   = new MFNode (),
+				array1 = this .getValue (),
+				array2 = copy .getValue ();
+
+			for (var i = 0, length = array1 .length; i < length; ++ i)
+			{
+				var value = array1 [i] .copy (executionContext);
+				value .addParent (copy);
+				array2 .push (value);
+			}
+
+			return copy;
+		},
 	});
 
 	/*

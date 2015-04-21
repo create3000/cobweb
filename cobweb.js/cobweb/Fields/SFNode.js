@@ -55,9 +55,14 @@ function ($, X3DField, X3DConstants)
 	SFNode .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFNode,
-		copy: function ()
+		copy: function (executionContext)
 		{
-			return new SFNode (this .getValue ());
+			var value = this .getValue ();
+			
+			if (value)
+				return new SFNode (value .copy (executionContext));
+
+			return new SFNode (null);
 		},
 		getTypeName: function ()
 		{

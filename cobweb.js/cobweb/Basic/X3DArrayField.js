@@ -69,7 +69,7 @@ function ($, X3DField, X3DConstants, Generator)
 	X3DArrayField .prototype = $.extend (new X3DField ([ ]),
 	{
 		constructor: X3DArrayField,
-		copy: function (executionContext)
+		copy: function ()
 		{
 			var
 				copy  = new (this .constructor) (),

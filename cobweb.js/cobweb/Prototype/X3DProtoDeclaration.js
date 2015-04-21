@@ -42,17 +42,28 @@ function ($,
 			{
 				return "PROTO";
 			},
+			/*
 			getComponentName: function ()
 			{
-				return "Titania";
+				return "Cobweb";
 			},
 			getContainerField: function ()
 			{
-				return "proto";
+				return "protos";
 			},
-			createInstance: function ()
+			*/
+			createInstance: function (setup)
 			{
-				return new X3DPrototypeInstance (this .getExecutionContext (), this);
+				var instance = new X3DPrototypeInstance (this .getExecutionContext (), this);
+	
+				if (setup === undefined)
+					instance .setup ();
+	
+				return instance;
+			},
+			isExternproto: function ()
+			{
+				return false;
 			},
 		});
 

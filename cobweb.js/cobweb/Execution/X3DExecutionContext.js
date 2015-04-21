@@ -79,7 +79,7 @@ function ($,
 						return new (this .getBrowser () .supportedNodes .dom [typeName .toUpperCase ()]) (this);
 				}
 			},
-			createProto: function (name)
+			createProto: function (name, setup)
 			{
 				var executionContext = this;
 
@@ -88,7 +88,7 @@ function ($,
 					var proto = executionContext .protos [name];
 	
 					if (proto)
-						return proto .createInstance ();
+						return proto .createInstance (setup);
 
 					//var externproto = executionContext .externprotos [name];
 
@@ -109,8 +109,8 @@ function ($,
 			{
 				if (this .namedNodes [name] !== undefined)
 					throw Error ("Couldn't add named node: node name '" + name + "' is already in use.");
-				
-				this .addNamedNode (name, node);
+
+				this .updateNamedNode (name, node);
 			},
 			updateNamedNode: function (name, node)
 			{
@@ -245,10 +245,6 @@ function ($,
 					else
 						throw error;
 				}
-			},
-			deleteRoute: function (route)
-			{
-			
 			},
 		});
 
