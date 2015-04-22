@@ -42,7 +42,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 			this .width  = image .width;
 			this .height = image .height;
 			this .comp   = image .comp;
-			this .array .assign (image .array);
+			this .array .set (image .array .getValue ());
 		},
 		set: function (width, height, comp, array)
 		{

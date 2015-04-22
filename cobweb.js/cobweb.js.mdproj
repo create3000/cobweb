@@ -1203,6 +1203,19 @@
     <None Include="cobweb\Prototype\ProtoDeclarationArray.js" />
     <None Include="cobweb\Routing\RouteArray.js" />
     <None Include="tests\Components\PROTO\NestedProtos.x3d" />
+    <None Include="tests\Components\PROTO\ExternProto.x3dv" />
+    <None Include="tests\Components\PROTO\ExternProto.x3d" />
+    <None Include="cobweb\Prototype\ExternProtoDeclarationArray.js" />
+    <None Include="tests\Examples\Dolphin\index.wrl" />
+    <None Include="tests\Examples\Dolphin\stage\DolphinPROTO.wrl" />
+    <None Include="tests\Examples\Dolphin\stage\DolphinPROTO.x3d" />
+    <None Include="tests\Examples\Dolphin\stage\index.wrl" />
+    <None Include="tests\Examples\Dolphin\stage\index.x3d" />
+    <None Include="tests\Examples\Dolphin\index.x3d" />
+    <None Include="tests\Examples\Pong\index.wrl" />
+    <None Include="tests\Examples\Pong\stage\4vong.wrl" />
+    <None Include="tests\Examples\Pong\stage\4vong.x3d" />
+    <None Include="tests\Examples\Pong\index.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1244,5 +1257,7 @@
     <Folder Include="tests\Components\images\lost_valley\" />
     <Folder Include="tests\Components\PROTO\" />
     <Folder Include="cobweb\Prototype\" />
+    <Folder Include="tests\Examples\Dolphin\" />
+    <Folder Include="tests\Examples\Pong\" />
   </ItemGroup>
 </Project>

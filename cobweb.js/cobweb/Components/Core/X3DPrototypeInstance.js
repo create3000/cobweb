@@ -12,11 +12,10 @@ function ($,
           X3DExecutionContext,
           X3DConstants)
 {
-	function X3DPrototypeInstance (executionContext, proto)
+	function X3DPrototypeInstance (executionContext, protoNode)
 	{
-		this .proto            = proto;
-		this .metadata_        = proto .metadata_;
-		this .fieldDefinitions = new FieldDefinitionArray (proto .getFieldDefinitions () .getValue () .slice (0));
+		this .protoNode        = protoNode;
+		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice (0));
 
 		X3DExecutionContext .call (this, executionContext .getBrowser (), executionContext);
 		X3DNode             .call (this, executionContext .getBrowser (), executionContext);
@@ -24,24 +23,11 @@ function ($,
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .setExtendedEventHandling (false);
 
-		// Assign protos and root nodes
+		if (protoNode .isExternProto ())
+			protoNode .requestAsyncLoad (this .construct .bind (this));
 
-		for (var i = 0, length = proto .externprotos .length; i < length; ++ i)
-			this .externprotos .push (proto .externprotos [i]);
-
-		for (var i = 0, length = proto .protos .length; i < length; ++ i)
-			this .protos .push (proto .protos [i]);
-
-		var
-			rootNodes1 = proto .getRootNodes () .getValue (),
-			rootNodes2 = this  .getRootNodes () .getValue ();
-
-		for (var i = 0, length = rootNodes1 .length; i < length; ++ i)
-		{
-			var value = rootNodes1 [i] .copy (this);
-			value .addParent (this .getRootNodes ());
-			rootNodes2 .push (value);
-		}
+		else
+			this .construct (protoNode);
 	}
 
 	X3DPrototypeInstance .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -50,11 +36,11 @@ function ($,
 		constructor: X3DPrototypeInstance,
 		create: function (executionContext)
 		{
-			return new X3DPrototypeInstance (executionContext, this .proto);
+			return new X3DPrototypeInstance (executionContext, this .protoNode);
 		},
 		getTypeName: function ()
 		{
-			return this .proto .getName ();
+			return this .protoNode .getName ();
 		},
 		getComponentName: function ()
 		{
@@ -64,6 +50,77 @@ function ($,
 		{
 			return "children";
 		},
+		construct: function (proto)
+		{
+			if (this .protoNode .isExternProto ())
+			{
+				var fieldDefinitions = proto .getFieldDefinitions ();
+			
+				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+				{
+					var
+						fieldDefinition = fieldDefinitions [i],
+						protoField      = proto .getField (fieldDefinition .name);
+
+					try
+					{
+						var field = this .getField (fieldDefinition .name);
+
+						// Return if something is wrong.
+						if (field .getAccessType () !== protoField .getAccessType ())
+							return;
+
+						// Return if something is wrong.
+						if (field .getType () !== protoField .getType ())
+							return;
+
+						if (! (field .getAccessType () & X3DConstants .initializeOnly))
+							continue;
+
+						if (field .getFieldValue () === true)
+							continue;
+
+						field .set (protoField .getValue ());
+					}
+					catch (error)
+					{
+						// Definition exists in proto but does not has exists in extern proto.
+						this .addField (fieldDefinition);
+					}
+				}
+			}
+
+			// Everything is fine, now set proto.
+			this .proto = proto;
+
+			if (proto)
+			{
+				this .metadata_ = proto .metadata_;
+
+				// Assign extern protos.
+				
+				for (var i = 0, length = proto .externprotos .length; i < length; ++ i)
+					this .externprotos .push (proto .externprotos [i]);
+
+				// Assign protos.
+
+				for (var i = 0, length = proto .protos .length; i < length; ++ i)
+					this .protos .push (proto .protos [i]);
+
+				// Assign root nodes.
+
+				var
+					rootNodes1 = proto .getRootNodes () .getValue (),
+					rootNodes2 = this  .getRootNodes () .getValue ();
+
+				for (var i = 0, length = rootNodes1 .length; i < length; ++ i)
+				{
+					var value = rootNodes1 [i] .copy (this);
+					value .addParent (this .getRootNodes ());
+					rootNodes2 .push (value);
+				}
+			}
+		},
 		setup: function ()
 		{
 			X3DExecutionContext .prototype .setup .call (this);
@@ -71,31 +128,34 @@ function ($,
 		},
 		initialize: function ()
 		{
-			// Copy imported nodes.
-
-			// ...
-
-			// Copy routes.
-
-			var routes = this .proto .routes;
-
-			for (var i = 0, length = routes .length; i < length; ++ i)
+			if (this .proto)
 			{
-				try
-				{
-					var route = routes [i];
+				// Copy imported nodes.
 
-					this .addRoute (this .getNamedNode (route .sourceNode .getNodeName ()),
-					                route .sourceField,
-					                this .getNamedNode (route .destinationNode .getNodeName ()),
-					                route .destinationField);
-				}
-				catch (error)
+				// ...
+
+				// Copy routes.
+
+				var routes = this .proto .routes;
+
+				for (var i = 0, length = routes .length; i < length; ++ i)
 				{
-					console .log (error .message);
+					try
+					{
+						var route = routes [i];
+
+						this .addRoute (this .getNamedNode (route .sourceNode .getNodeName ()),
+						                route .sourceField,
+						                this .getNamedNode (route .destinationNode .getNodeName ()),
+						                route .destinationField);
+					}
+					catch (error)
+					{
+						console .log (error .message);
+					}
 				}
 			}
-			
+
 			// Now initialize bases.
 
 			X3DExecutionContext .prototype .initialize .call (this);

@@ -18,9 +18,9 @@ function ($)
 		},
 		set: function (target, key, value)
 		{
-			var X3DProtoDeclaration = require ("cobweb/Prototype/X3DProtoDeclaration");
-		
-			if (value instanceof X3DProtoDeclaration)
+			var X3DExternProtoDeclaration = require ("cobweb/Prototype/X3DExternProtoDeclaration");
+
+			if (value instanceof X3DExternProtoDeclaration)
 			{
 				target .array [key] = value;
 				target .index       = { };
@@ -38,7 +38,7 @@ function ($)
 		},
 	};
 
-	function ProtoDeclarationArray ()
+	function ExternProtoDeclarationArray ()
 	{
 		this .array = [ ];
 		this .index = { };
@@ -46,14 +46,14 @@ function ($)
 		return new Proxy (this, handler);
 	}
 
-	$.extend (ProtoDeclarationArray .prototype,
+	$.extend (ExternProtoDeclarationArray .prototype,
 	{
-		constructor: ProtoDeclarationArray,
+		constructor: ExternProtoDeclarationArray,
 		push: function (value)
 		{
-			var X3DProtoDeclaration = require ("cobweb/Prototype/X3DProtoDeclaration");
+			var X3DExternProtoDeclaration = require ("cobweb/Prototype/X3DExternProtoDeclaration");
 
-			if (value instanceof X3DProtoDeclaration)
+			if (value instanceof X3DExternProtoDeclaration)
 			{
 				this .index [value .getName ()] = value;
 				return this .array .push (value);
@@ -63,5 +63,5 @@ function ($)
 		},
 	});
 
-	return ProtoDeclarationArray;
+	return ExternProtoDeclarationArray;
 });

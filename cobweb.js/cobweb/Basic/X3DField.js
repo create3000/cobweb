@@ -16,10 +16,15 @@ function ($, X3DChildObject, X3DConstants)
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
+		fieldValue_: null,
 		accessType_: X3DConstants .initializeOnly,
 		references_: { },
 		fieldInterests_: { },
 		fieldCallbacks_: { },
+		clone: function ()
+		{
+			return this .copy ();
+		},
 		setValue: function (value)
 		{
 			this .set (value instanceof this .constructor ? value .getValue () : value);
@@ -28,6 +33,15 @@ function ($, X3DChildObject, X3DConstants)
 		set: function (value)
 		{
 			this .value_ = value;
+		},
+		setFieldValue: function (value)
+		{
+			// Boolean indication whether the value is set during parse, or undefined.
+			return this .fieldValue_ = value;
+		},
+		getFieldValue: function ()
+		{
+			return this .fieldValue_;
 		},
 		getValue: function ()
 		{

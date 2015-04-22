@@ -69,7 +69,7 @@ function ($,
 			},
 			set_cameraObjects__: function ()
 			{
-				if (this .child)
+				if (this .child && this .child .getCameraObject)
 					this .setCameraObject (this .child .getCameraObject ());
 				else
 					this .setCameraObject (false);

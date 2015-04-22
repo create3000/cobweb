@@ -13,6 +13,8 @@ function ($,
 		function X3DUrlObject (browser, executionContext)
 		{
 			this .addType (X3DConstants .X3DUrlObject);
+			
+			this .addChildren ("loadState", new SFInt32 (X3DConstants .NOT_STARTED_STATE));
 		}
 
 		X3DUrlObject .prototype =
@@ -20,7 +22,6 @@ function ($,
 			constructor: X3DUrlObject,
 			initialize: function ()
 			{
-				this .addChildren ("loadState", new SFInt32 (X3DConstants .NOT_STARTED_STATE));
 			},
 			setLoadState: function (value, notify)
 			{

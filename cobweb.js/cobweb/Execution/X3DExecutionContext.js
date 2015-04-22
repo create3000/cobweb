@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Prototype/ExternProtoDeclarationArray",
 	"cobweb/Prototype/ProtoDeclarationArray",
 	"cobweb/Routing/RouteArray",
 	"cobweb/Routing/X3DRoute",
@@ -17,6 +18,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DBaseNode,
+          ExternProtoDeclarationArray,
           ProtoDeclarationArray,
           RouteArray,
           X3DRoute,
@@ -36,7 +38,7 @@ function ($,
 			this .uninitializedNodes = [ ];
 			this .namedNodes         = { };
 			this .protos             = new ProtoDeclarationArray ();
-			this .externprotos       = [ ]; // ExternProtoDeclarationArray
+			this .externprotos       = new ExternProtoDeclarationArray ();
 			this .routes             = new RouteArray ();
 			this .routeIndex         = { };
 		}
@@ -90,10 +92,10 @@ function ($,
 					if (proto)
 						return proto .createInstance (setup);
 
-					//var externproto = executionContext .externprotos [name];
+					var externproto = executionContext .externprotos [name];
 
-					//if (externproto)
-					//	return externproto .createInstance ();
+					if (externproto)
+						return externproto .createInstance (setup);
 
 					executionContext = executionContext .getExecutionContext ();
 				}

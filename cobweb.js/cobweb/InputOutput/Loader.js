@@ -1,16 +1,23 @@
 
 define ([
 	"jquery",
+	"cobweb/Base/X3DObject",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
 	"cobweb/Debug",
 ],
-function ($, XMLParser, URI, DEBUG)
+function ($,
+          X3DObject,
+          XMLParser,
+          URI,
+          DEBUG)
 {
 	var TIMEOUT = 16;
 
 	function Loader (node)
 	{
+		X3DObject .call (this);
+
 		this .node             = node;
 		this .browser          = node .getBrowser ();
 		this .external         = this .browser .getScriptStack () .length === 1;
@@ -18,8 +25,9 @@ function ($, XMLParser, URI, DEBUG)
 		this .URL              = new URI ();
 	}
 
-	Loader .prototype =
+	Loader .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
+		constructor: Loader,
 		getWorldURL: function ()
 		{
 			return this .URL;
@@ -54,7 +62,10 @@ function ($, XMLParser, URI, DEBUG)
 				new XMLParser (scene, dom) .parseIntoScene ();
 
 				if (success)
-					setTimeout (success .bind (this, scene), TIMEOUT);
+				{
+					scene .loadCount_ .addInterest (this, "setLoadCount", scene, success);
+					scene .loadCount_ .addEvent ();
+				}
 			}
 			catch (exception)
 			{
@@ -63,6 +74,11 @@ function ($, XMLParser, URI, DEBUG)
 				else
 					throw exception;
 			}
+		},
+		setLoadCount: function (field, scene, success)
+		{
+			if (field .getValue () === 0)
+				success (scene);
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint)
 		{
@@ -213,7 +229,7 @@ function ($, XMLParser, URI, DEBUG)
 
 			return this .executionContext .getWorldURL ();
 		},
-	};
+	});
 
 	return Loader;
 });

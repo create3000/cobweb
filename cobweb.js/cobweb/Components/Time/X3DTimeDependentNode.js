@@ -122,7 +122,7 @@ function ($,
 						this .do_start ();
 
 					else
-						this .addTimeout ("startTimeout", "do_start", startTimeValue);
+						this .addTimeout ("startTimeout", "do_start", this .startTimeValue);
 				}
 			},
 			set_pauseTime__: function ()

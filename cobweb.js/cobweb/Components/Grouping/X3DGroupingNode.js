@@ -133,15 +133,20 @@ function ($,
 		getChild: function (index)
 		{
 			// Used in LOD and Switch.
-
-			if (index >= 0 && index < this .children_ .length)
-			{
-				var child = this .children_ [index];
-
-				if (child)
-					return child .getValue ();
-			}
 			
+			try
+			{
+				if (index >= 0 && index < this .children_ .length)
+				{
+					var child = this .children_ [index];
+
+					if (child)
+						return child .getValue () .getInnerNode ();
+				}
+			}
+			catch (error)
+			{ }
+
 			return null;
 		},
 		set_addChildren__: function ()

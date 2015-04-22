@@ -326,6 +326,12 @@ function ($,
 		{
 			return X3DConstants .MFNode;
 		},
+		clone: function ()
+		{
+			var clone = new MFNode ();
+			clone .setValue (this);
+			return clone;
+		},
 		copy: function (executionContext)
 		{
 			var

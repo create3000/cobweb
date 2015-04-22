@@ -15,7 +15,12 @@ function ($, X3DField, X3DConstants)
 
 			try
 			{
-				return target .getValue () .getField (key) .valueOf ();
+				var
+					field      = target .getValue () .getField (key),
+					accessType = field .getAccessType ();
+
+				if (accessType & X3DConstants .outputOnly)
+					return field .valueOf ();
 			}
 			catch (error)
 			{
@@ -33,7 +38,7 @@ function ($, X3DField, X3DConstants)
 					field      = target .getValue () .getField (key),
 					accessType = field .getAccessType ();
 
-				if (accessType === X3DConstants .initializeOnly || accessType === X3DConstants .outputOnly)
+				if (accessType & X3DConstants .inputOnly)
 					field .setValue (value);
 
 	 			return true;
@@ -55,6 +60,10 @@ function ($, X3DField, X3DConstants)
 	SFNode .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFNode,
+		clone: function ()
+		{
+			return new SFNode (this .getValue ());
+		},
 		copy: function (executionContext)
 		{
 			var value = this .getValue ();

@@ -76,6 +76,11 @@ function ($,
 				if (this .materialNode)
 					this .materialNode .transparent_ .addInterest (this, "set_transparent__");
 			},
+			set_transparent__: function ()
+			{
+				this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
+				                     (this .textureNode && this .textureNode .transparent_ .getValue ());
+			},
 			set_texture__: function ()
 			{
 				if (this .textureNode)
@@ -92,16 +97,11 @@ function ($,
 				
 				if (this .textureTransformNode)
 					return;
-				
+
 				this .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
 			},
 			set_shaders__: function ()
 			{
-			},
-			set_transparent__: function ()
-			{
-				this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
-				                     (this .textureNode && this .textureNode .transparent_ .getValue ());
 			},
 			traverse: function ()
 			{

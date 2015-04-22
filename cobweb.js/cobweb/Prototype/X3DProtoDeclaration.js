@@ -4,7 +4,6 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DPrototypeInstance",
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Prototype/X3DProtoDeclarationNode",
 	"cobweb/Bits/X3DConstants",
@@ -13,7 +12,6 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DPrototypeInstance,
           X3DExecutionContext,
           X3DProtoDeclarationNode, 
           X3DConstants)
@@ -52,16 +50,7 @@ function ($,
 				return "protos";
 			},
 			*/
-			createInstance: function (setup)
-			{
-				var instance = new X3DPrototypeInstance (this .getExecutionContext (), this);
-	
-				if (setup === undefined)
-					instance .setup ();
-	
-				return instance;
-			},
-			isExternproto: function ()
+			isExternProto: function ()
 			{
 				return false;
 			},

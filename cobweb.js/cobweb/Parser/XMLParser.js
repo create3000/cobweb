@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DArrayField",
 	"cobweb/Fields",
 	"cobweb/Parser/Parser",
+	"cobweb/Prototype/X3DExternProtoDeclaration",
 	"cobweb/Prototype/X3DProtoDeclaration",
 	"cobweb/Bits/X3DConstants",
 ],
@@ -13,6 +14,7 @@ function ($,
           X3DArrayField,
           Fields,
           Parser,
+          X3DExternProtoDeclaration,
           X3DProtoDeclaration,
           X3DConstants)
 {
@@ -34,6 +36,7 @@ function ($,
 			this .protoDeclarations = [ ];
 			this .parents           = [ ];
 			this .parser            = new Parser (this .scene, "", true);
+			this .url               = new MFString ();
 		}
 
 		XMLParser .prototype =
@@ -132,6 +135,11 @@ function ($,
 					case "#cdata-section":
 						return;
 
+					case "EXTERNPROTODECLARE":
+					case "ExternProtoDeclare":
+						this .externProtoDeclare (child);
+						return;
+
 					case "PROTODECLARE":
 					case "ProtoDeclare":
 						this .protoDeclare (child);
@@ -171,9 +179,9 @@ function ($,
 				catch (error)
 				{
 					//if (element .nodeName === "VisibilitySensor")
-					//	console .log (error);
+						console .warn (error);
 
-					console .warn ("Unknown node type '" + element .nodeName + "'.");
+					console .warn ("XML Parser Error: Unknown node type '" + element .nodeName + "'.");
 				}
 			},
 			protoInstance: function (element)
@@ -199,8 +207,8 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error);
-					console .warn (error .message);
+					console .warn ("XML Parser Error: " + error .message);
+					console .warn (error);
 				}
 			},
 			children: function (childNodes, protoInstance)
@@ -233,6 +241,11 @@ function ($,
 					case "fieldValue":
 						if (protoInstance)
 							this .fieldValue (child);
+						return;
+
+					case "EXTERNPROTODECLARE":
+					case "ExternProtoDeclare":
+						this .externProtoDeclare (child);
 						return;
 
 					case "PROTODECLARE":
@@ -282,7 +295,7 @@ function ($,
 				}
 				catch (error)
 				{
-					//console .log (error .message);
+					//console .warn (error .message);
 				}
 
 				return false;
@@ -295,14 +308,19 @@ function ($,
 
 					if (parent instanceof X3DField)
 					{
-						if (field .getType () === X3DConstants .SFNode)
+						if (parent .getFieldValue () === false)
+							parent .setFieldValue (true);
+
+						if (parent .getType () === X3DConstants .SFNode)
 							parent .set (node);
 
-						if (field .getType () === X3DConstants .MFNode)
+						if (parent .getType () === X3DConstants .MFNode)
 							parent .push (node);
 					}
 					else
 					{
+						// parent is a node.
+
 						try
 						{
 							var containerField = element .getAttribute ("containerField");
@@ -320,22 +338,24 @@ function ($,
 						}
 						catch (error)
 						{
-							//console .log (error .message);
+							//console .warn (error .message);
 						}
 
 						try
 						{
+							// containerField attribute is not set or not found in node.
+
 							var field = parent .getField (node .getContainerField ());
 
 							if (field .getType () === X3DConstants .SFNode)
-								return field .setValue (node);
+								return field .set (node);
 
 							if (field .getType () === X3DConstants .MFNode)
 								return field .push (node);
 						}
 						catch (error)
 						{
-							//console .log (error .message);
+							//console .warn (error .message);
 						}
 					}
 				}
@@ -358,12 +378,11 @@ function ($,
 						fieldType = this .fieldTypes [field .getType ()];
 
 					this .parser .setInput (value);
-
 					fieldType .call (this .parser, field);
 				}
 				catch (error)
 				{
-					//console .log (error);
+					//console .warn (error .message);
 				}
 			},
 			cdata: function (element)
@@ -405,19 +424,14 @@ function ($,
 
 					if (value !== null)
 					{
-						try
-						{
-							this .parser .setInput (value);
-							this .fieldTypes [field .getType ()] .call (this .parser, field);
-						}
-						catch (error)
-						{ }
+						this .parser .setInput (value);
+						this .fieldTypes [field .getType ()] .call (this .parser, field);
 					}
-				}
 
-				this .pushParent (field);
-				this .statements (element .childNodes);
-				this .popParent ();
+					this .pushParent (field);
+					this .statements (element .childNodes);
+					this .popParent ();
+				}
 
 				node .addUserDefinedField (accessType, name, field);
 			},
@@ -442,25 +456,21 @@ function ($,
 
 						if (value !== null)
 						{
-							try
-							{
-								this .parser .setInput (value);
-								this .fieldTypes [field .getType ()] .call (this .parser, field);
-							}
-							catch (error)
-							{
-								//console .log (error);
-							}
+							this .parser .setInput (value);
+							this .fieldTypes [field .getType ()] .call (this .parser, field);
+							field .setFieldValue (true);
 						}
-					}
+						else
+							field .setFieldValue (false);
 
-					this .pushParent (field);
-					this .statements (element .childNodes);
-					this .popParent ();
+						this .pushParent (field);
+						this .statements (element .childNodes);
+						this .popParent ();
+					}
 				}
 				catch (error)
 				{
-					console .warn ("Couldn't assign field value: " + error .message);
+					console .warn ("XML Parser Error: Couldn't assign field value: " + error .message);
 				}
 			},
 			IS: function (element)
@@ -508,7 +518,36 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log ("Couldn't create IS reference: " + error .message);
+					console .warn ("Couldn't create IS reference: " + error .message);
+				}
+			},
+			externProtoDeclare: function (element)
+			{
+				var name = element .getAttribute ("name");
+
+				if (this .id (name))
+				{
+					var url = element .getAttribute ("url");
+					
+					if (url !== null)
+					{
+						this .parser .setInput (url);
+						Parser .prototype .mfstringValues .call (this .parser, this .url);
+					}
+					else
+						this .url .length = 0;
+
+					var externproto = new X3DExternProtoDeclaration (this .getExecutionContext ());
+								
+					this .pushParent (externproto);
+					this .protoInterface (element); // parse fields
+					this .popParent ();
+
+					externproto .setName (name);
+					externproto .url_ = this .url;
+					externproto .setup ();
+
+					this .getExecutionContext () .externprotos .push (externproto);	
 				}
 			},
 			protoDeclare: function (element)
@@ -585,7 +624,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error .message);
+					console .warn ("XML Parser Error: " + error .message);
 				}
 			},
 			getField: function (node, name)
@@ -598,7 +637,7 @@ function ($,
 						return node .fields [key];
 				}
 
-				throw Error ("Unknown field '" + name + "' in node " + node .getTypeName ());
+				throw Error ("XML Parser Error: Unknown field '" + name + "' in node " + node .getTypeName ());
 			},
 			id: function (string)
 			{
@@ -646,7 +685,7 @@ function ($,
 		XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix3f]  = Parser .prototype .mfmatrix3fValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4d]  = Parser .prototype .mfmatrix4dValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4f]  = Parser .prototype .mfmatrix4fValues;
-		XMLParser .prototype .fieldTypes [X3DConstants .MFNode]      = function (field) { };
+		XMLParser .prototype .fieldTypes [X3DConstants .MFNode]      = function () { };
 		XMLParser .prototype .fieldTypes [X3DConstants .MFRotation]  = Parser .prototype .mfrotationValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFString]    = Parser .prototype .mfstringValues;
 		XMLParser .prototype .fieldTypes [X3DConstants .MFTime]      = Parser .prototype .mftimeValues;

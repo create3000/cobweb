@@ -25,6 +25,8 @@ function ($,
 			this .type              = [ X3DConstants .X3DBaseNode ];
 			this .fields            = { };
 			this .userDefinedFields = { };
+			
+			this .addChildren ("isLive", new SFBool (true));
 
 			for (var i = 0; i < this .fieldDefinitions .length; ++ i)
 				this .addField (this .fieldDefinitions [i]);
@@ -34,9 +36,19 @@ function ($,
 		{
 			constructor: X3DBaseNode,
 			fieldDefinitions: [ ],
+			setup_: false,
 			create: function (executionContext)
 			{
 				return new (this .constructor) (executionContext);
+			},
+			getScene: function ()
+			{
+				var executionContext = this .executionContext;
+
+				while (! executionContext .isRootContext ())
+					executionContext = executionContext .getExecutionContext ();
+
+				return executionContext;
 			},
 			getExecutionContext: function ()
 			{
@@ -56,14 +68,14 @@ function ($,
 			},
 			isInitialized: function ()
 			{
-				return this .hasOwnProperty ("isLive_");
+				return this .setup_;
 			},
 			setup: function ()
 			{
 				if (this .isInitialized ())
 					return;
 
-				this .addChildren ("isLive", new SFBool (true));
+				this .setup_ = true;
 
 				for (var i = 0; i < this .fieldDefinitions .length; ++ i)
 				{
@@ -195,8 +207,8 @@ function ($,
 				var
 					accessType = fieldDefinition .accessType,
 					name       = fieldDefinition .name,
-					field      = fieldDefinition .value .copy ();
-				
+					field      = fieldDefinition .value .clone ();
+
 				field .setTainted (true);
 				field .addParent (this);
 				field .setName (name);

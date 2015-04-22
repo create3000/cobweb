@@ -1,371 +1,399 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
 ],
-function ($, X3DBrowserContext, SupportedNodes, Scene, Loader, XMLParser)
+function ($,
+          Fields,
+          X3DBrowserContext,
+          SupportedNodes,
+          Scene,
+          Loader,
+          XMLParser)
 {
-	function X3DBrowser (xml)
+	with (Fields)
 	{
-		X3DBrowserContext .call (this, xml);
+		function X3DBrowser (xml)
+		{
+			X3DBrowserContext .call (this, xml);
 
-		this .currentSpeed        = 0;
-		this .currentFrameRate    = 0;
-		this .description_        = "";
-		this .supportedNodes      = SupportedNodes;
-		this .supportedComponents = undefined;
-		this .supportedProfiles   = undefined;
-	};
+			this .currentSpeed        = 0;
+			this .currentFrameRate    = 0;
+			this .description_        = "";
+			this .supportedNodes      = SupportedNodes;
+			this .supportedComponents = undefined;
+			this .supportedProfiles   = undefined;
+		};
 
-	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
-	{
-		constructor: X3DBrowser,
-		initialize: function ()
+		X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
 		{
-			X3DBrowserContext .prototype .initialize .call (this);
-
-			this .replaceWorld (this .createScene ());
-			this .traverse ();
-		},
-		getName: function ()
-		{
-			return this .name;
-		},
-		getVersion: function ()
-		{
-			return this .version;
-		},
-		getCurrentSpeed: function ()
-		{
-			return this .currentSpeed;
-		},
-		getCurrentFrameRate: function ()
-		{
-			return this .currentFrameRate;
-		},
-		setDescription: function (value)
-		{
-			this .description = value;
-		},
-		getWorldURL: function ()
-		{
-			return this .currentScene .worldURL;
-		},
-		createScene: function ()
-		{
-			return new Scene (this);
-		},
-		replaceWorld: function (scene)
-		{
-			// Remove world.
-			
-			if (this .getWorld ())
+			constructor: X3DBrowser,
+			initialize: function ()
 			{
-				this .isLive_ .removeFieldInterest (this .getExecutionContext () .isLive_);
-				this .getExecutionContext () .isLive_ = false;
-			}
+				X3DBrowserContext .prototype .initialize .call (this);
 
-			// Replace world.
-
-			this .getCanvas () .stop (true, true) .fadeOut (0);
-			this .description = "";
-
-			if (! scene)
-				scene = this .createScene ();
-
-			scene .setup ();
-			this .setExecutionContext (scene);
-
-			this .isLive_ .addFieldInterest (scene .isLive_);
-			scene .isLive_ = this .isLive_;
-
-			this .loadCount_ .addFieldCallback ("loading", this .bindWorld .bind (this));
-			this .loadCount_ .addEvent ();
-		},
-		bindWorld: function (value)
-		{
-			if (value)
-				return;
-
-			this .loadCount_ .removeFieldCallback ("loading");
-
-			setTimeout (function ()
+				this .replaceWorld (this .createScene ());
+				this .traverse ();
+			},
+			getName: function ()
 			{
-				this .getWorld () .bind ();
-				this .getCanvas () .fadeIn (2000);
-			}
-			.bind (this), 0);
-		},
-		createVrmlFromString: function (vrmlSyntax)
-		{
-			return this .createX3DFromString (vrmlSyntax);
-		},
-		createX3DFromString: function (x3dSyntax)
-		{
-			var scene = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
-
-			scene .setup ();
-
-			return scene;
-		},
-		createVrmlFromURL: function (url, node, event)
-		{
-			new Loader (this .getWorld ()) .createX3DFromURL (url,
-			function (scene)
+				return this .name;
+			},
+			getVersion: function ()
 			{
-				node [event] = scene .rootNodes;
-			});
-		},
-		createX3DFromURL: function (url, field, node)
-		{
-			var scene = new Loader (this .getWorld ()) .createX3DFromURL (url);
-
-			scene .setup ();
-
-			return scene;
-		},
-		loadURL: function (url, parameter)
-		{
-			this .addLoadCount ();
-
-			new Loader (this .getWorld ()) .createX3DFromURL (url,
-			function (scene)
+				return this .version;
+			},
+			getCurrentSpeed: function ()
 			{
-				if (scene)
-					this .replaceWorld (scene);
-
-				this .removeLoadCount ();
-			}
-			.bind (this),
-			function (fragment)
+				return this .currentSpeed;
+			},
+			getCurrentFrameRate: function ()
 			{
-				this .currentScene .changeViewpoint (fragment);
-				this .removeLoadCount ();
-			}
-			.bind (this));
-		},
-		getRenderingProperty: function (name)
-		{
-		},
-		addBrowserListener: function (callback, object)
-		{
-		},
-		removeBrowserListener: function (callback)
-		{	
-		},
-		importDocument: function (dom)
-		{
-			if (! dom) return;
-			
-			new XMLParser (this .currentScene, dom) .parseIntoScene ();
-
-			this .currentScene .setup ();
-		},
-		setBrowserOption: function (name, value)
-		{
-			try
+				return this .currentFrameRate;
+			},
+			setDescription: function (value)
 			{
-				this .getBrowserOptions () .getField (name) .setValue (value);
-			}
-			catch (error)
-			{ }
-		},
-		getBrowserOption: function (name)
-		{
-			try
+				this .description = value;
+			},
+			getWorldURL: function ()
 			{
-				return this .getBrowserOptions () .getField (name) .getValue ();
-			}
-			catch (error)
-			{ }
-		},
-		firstViewpoint: function ()
-		{
-			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
-		
-			if (activeLayer)
+				return this .currentScene .worldURL;
+			},
+			createScene: function ()
 			{
-				var viewpoints = activeLayer .getUserViewpoints ();
-
-				if (viewpoints .length)
-					this .bindViewpoint (viewpoints [0]);
-			}
-		},
-		previousViewpoint: function ()
-		{
-			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
-
-			if (activeLayer)
+				return new Scene (this);
+			},
+			replaceWorld: function (scene)
 			{
-				var viewpoints = activeLayer .getUserViewpoints ();
+				// Remove world.
+				
+				if (this .getWorld ())
+				{
+					this .isLive_ .removeFieldInterest (this .getExecutionContext () .isLive_);
+					this .getExecutionContext () .isLive_ = false;
+				}
 
-				if (viewpoints .length === 0)
+				// Replace world.
+
+				this .getCanvas () .stop (true, true) .fadeOut (0);
+				this .description = "";
+
+				if (! scene)
+					scene = this .createScene ();
+
+				scene .setup ();
+				this .setExecutionContext (scene);
+
+				this .isLive_ .addFieldInterest (scene .isLive_);
+				scene .isLive_ = this .isLive_;
+
+				this .loadCount_ .addFieldCallback ("loading", this .bindWorld .bind (this));
+				this .loadCount_ .addEvent ();
+			},
+			bindWorld: function (value)
+			{
+				if (value)
 					return;
 
-				var index = 0;
+				this .loadCount_ .removeFieldCallback ("loading");
 
-				for (var i = 0; i < viewpoints .length; ++ i)
+				setTimeout (function ()
 				{
-					if (viewpoints [i] .isBound_ .getValue ())
-						break;
-
-					++ index;
+					this .getWorld () .bind ();
+					this .getCanvas () .fadeIn (2000);
 				}
-
-				if (index < viewpoints .length)
-				{
-					if (index === 0)
-						this .bindViewpoint (viewpoints [viewpoints .length - 1]);
-
-					else
-						this .bindViewpoint (viewpoints [index - 1]);
-				}
-				else
-					this .bindViewpoint (viewpoints [viewpoints .length - 1]);
-			}
-		},
-		nextViewpoint: function ()
-		{
-			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
-
-			if (activeLayer)
+				.bind (this), 0);
+			},
+			createVrmlFromString: function (vrmlSyntax)
 			{
-				var viewpoints = activeLayer .getUserViewpoints ();
+				return this .createX3DFromString (vrmlSyntax);
+			},
+			createX3DFromString: function (x3dSyntax)
+			{
+				var scene = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
 
-				if (viewpoints .length === 0)
-					return;
+				scene .setup ();
 
-				var index = 0;
+				return scene;
+			},
+			createVrmlFromURL: function (url, node, event)
+			{
+				if (! (node instanceof SFNode))
+					throw Error ("Browser.createVrmlFromURL: node must be of type SFNode.");
 
-				for (var i = 0; i < viewpoints .length; ++ i)
+				if (! node .getValue ())
+					throw Error ("Browser.createVrmlFromURL: node IS NULL.");
+
+				var field = node .getValue () .getField (event);
+
+				if (field .getType () !== X3DConstants .MFNode)
+					throw Error ("Browser.createVrmlFromURL: event named '" + event + "' must be of type MFNode.");
+
+				new Loader (this .getWorld ()) .createX3DFromURL (url,
+				function (scene)
 				{
-					if (viewpoints [i] .isBound_ .getValue ())
-						break;
-
-					++ index;
+					field .setValue (scene .rootNodes);
+				});
+			},
+			createX3DFromURL: function (url, event, node)
+			{
+				if (arguments .length === 3)
+				{
+					//createX3DFromURL(MFString, String, Object)
+					//??? what is String and what is Object ???
+					return null;
 				}
 
-				if (index < viewpoints .length)
+				var scene = new Loader (this .getWorld ()) .createX3DFromURL (url);
+
+				scene .setup ();
+
+				return scene;
+			},
+			loadURL: function (url, parameter)
+			{
+				this .addLoadCount ();
+
+				new Loader (this .getWorld ()) .createX3DFromURL (url,
+				function (scene)
 				{
-					if (index === viewpoints .length - 1)
+					if (scene)
+						this .replaceWorld (scene);
+
+					this .removeLoadCount ();
+				}
+				.bind (this),
+				function (fragment)
+				{
+					this .currentScene .changeViewpoint (fragment);
+					this .removeLoadCount ();
+				}
+				.bind (this));
+			},
+			getRenderingProperty: function (name)
+			{
+			},
+			addBrowserListener: function (callback, object)
+			{
+			},
+			removeBrowserListener: function (callback)
+			{	
+			},
+			importDocument: function (dom)
+			{
+				if (! dom) return;
+				
+				new XMLParser (this .currentScene, dom) .parseIntoScene ();
+
+				this .currentScene .setup ();
+			},
+			setBrowserOption: function (name, value)
+			{
+				try
+				{
+					this .getBrowserOptions () .getField (name) .setValue (value);
+				}
+				catch (error)
+				{ }
+			},
+			getBrowserOption: function (name)
+			{
+				try
+				{
+					return this .getBrowserOptions () .getField (name) .getValue ();
+				}
+				catch (error)
+				{ }
+			},
+			firstViewpoint: function ()
+			{
+				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+			
+				if (activeLayer)
+				{
+					var viewpoints = activeLayer .getUserViewpoints ();
+
+					if (viewpoints .length)
 						this .bindViewpoint (viewpoints [0]);
-
-					else
-						this .bindViewpoint (viewpoints [index + 1]);
 				}
+			},
+			previousViewpoint: function ()
+			{
+				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+
+				if (activeLayer)
+				{
+					var viewpoints = activeLayer .getUserViewpoints ();
+
+					if (viewpoints .length === 0)
+						return;
+
+					var index = 0;
+
+					for (var i = 0; i < viewpoints .length; ++ i)
+					{
+						if (viewpoints [i] .isBound_ .getValue ())
+							break;
+
+						++ index;
+					}
+
+					if (index < viewpoints .length)
+					{
+						if (index === 0)
+							this .bindViewpoint (viewpoints [viewpoints .length - 1]);
+
+						else
+							this .bindViewpoint (viewpoints [index - 1]);
+					}
+					else
+						this .bindViewpoint (viewpoints [viewpoints .length - 1]);
+				}
+			},
+			nextViewpoint: function ()
+			{
+				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+
+				if (activeLayer)
+				{
+					var viewpoints = activeLayer .getUserViewpoints ();
+
+					if (viewpoints .length === 0)
+						return;
+
+					var index = 0;
+
+					for (var i = 0; i < viewpoints .length; ++ i)
+					{
+						if (viewpoints [i] .isBound_ .getValue ())
+							break;
+
+						++ index;
+					}
+
+					if (index < viewpoints .length)
+					{
+						if (index === viewpoints .length - 1)
+							this .bindViewpoint (viewpoints [0]);
+
+						else
+							this .bindViewpoint (viewpoints [index + 1]);
+					}
+					else
+						this .bindViewpoint (viewpoints [0]);
+				}
+			},
+			lastViewpoint: function ()
+			{
+				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+
+				if (activeLayer)
+				{
+					var viewpoints = activeLayer .getUserViewpoints ();
+
+					if (viewpoints .length)
+						this .bindViewpoint (viewpoints [viewpoints .length - 1]);
+				}
+			},
+			changeViewpoint: function (name)
+			{
+				try
+				{
+					this .currentScene .changeViewpoint (name);
+				}
+				catch (error)
+				{
+					console .log (error .message);
+				}
+			},
+			bindViewpoint: function (viewpoint)
+			{
+				if (viewpoint .isBound_ .getValue ())
+					viewpoint .transitionStart (null, viewpoint);
+
 				else
-					this .bindViewpoint (viewpoints [0]);
-			}
-		},
-		lastViewpoint: function ()
-		{
-			var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+					viewpoint .set_bind_ = true;
 
-			if (activeLayer)
+				this .getNotification () .string_ = viewpoint .description_;
+			},
+			addRoute: function (fromNode, fromEventOut, toNode, toEventIn)
 			{
-				var viewpoints = activeLayer .getUserViewpoints ();
-
-				if (viewpoints .length)
-					this .bindViewpoint (viewpoints [viewpoints .length - 1]);
-			}
-		},
-		changeViewpoint: function (name)
-		{
-			try
+				this .currentScene .addRoute (fromNode, fromEventOut, toNode, toEventIn);
+			},
+			deleteRoute: function (fromNode, fromEventOut, toNode, toEventIn)
 			{
-				this .currentScene .changeViewpoint (name);
-			}
-			catch (error)
+				try
+				{
+					this .currentScene .deleteRoute (this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn));
+				}
+				catch (error)
+				{
+					console .log (error);
+				}
+			},
+			print: function ()
 			{
-				console .log (error .message);
-			}
-		},
-		bindViewpoint: function (viewpoint)
-		{
-			if (viewpoint .isBound_ .getValue ())
-				viewpoint .transitionStart (null, viewpoint);
+				var string = "";
 
-			else
-				viewpoint .set_bind_ = true;
+				for (var i = 0; i < arguments .length; ++ i)
+					string += arguments [i];
 
-			this .getNotification () .string_ = viewpoint .description_;
-		},
-		addRoute: function (fromNode, fromEventOut, toNode, toEventIn)
-		{
-			this .currentScene .addRoute (fromNode, fromEventOut, toNode, toEventIn);
-		},
-		deleteRoute: function (fromNode, fromEventOut, toNode, toEventIn)
-		{
-			try
+				console .log (string);
+			},
+			println: function ()
 			{
-				this .currentScene .deleteRoute (this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn));
-			}
-			catch (error)
+				var string = "";
+
+				for (var i = 0; i < arguments .length; ++ i)
+					string += arguments [i];
+
+				//string += "\n";
+
+				console .log (string);
+			},
+		});
+
+		Object .defineProperty (X3DBrowser .prototype, "name",
+		{
+			get: function () { return "Cobweb"; },
+			enumerable: true,
+			configurable: false
+		});
+
+		Object .defineProperty (X3DBrowser .prototype, "version",
+		{
+			get: function () { return "0.1"; },
+			enumerable: true,
+			configurable: false
+		});
+
+		Object .defineProperty (X3DBrowser .prototype, "description",
+		{
+			get: function () { return this .description_; },
+			set: function (value)
 			{
-				console .log (error);
-			}
-		},
-		print: function ()
+				this .description_                = value;
+				this .getNotification () .string_ = value;
+			},
+			enumerable: true,
+			configurable: false
+		});
+
+		Object .defineProperty (X3DBrowser .prototype, "currentScene",
 		{
-			var string = "";
+			get: function ()
+			{
+				return this .getScriptStack () [this .getScriptStack () .length - 1] .getExecutionContext ();
+			},
+			enumerable: true,
+			configurable: false
+		});
 
-			for (var i = 0; i < arguments .length; ++ i)
-				string += arguments [i];
-
-			console .log (string);
-		},
-		println: function ()
-		{
-			var string = "";
-
-			for (var i = 0; i < arguments .length; ++ i)
-				string += arguments [i];
-
-			//string += "\n";
-
-			console .log (string);
-		},
-	});
-
-	Object .defineProperty (X3DBrowser .prototype, "name",
-	{
-		get: function () { return "Cobweb"; },
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (X3DBrowser .prototype, "version",
-	{
-		get: function () { return "0.1"; },
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (X3DBrowser .prototype, "description",
-	{
-		get: function () { return this .description_; },
-		set: function (value)
-		{
-			this .description_                = value;
-			this .getNotification () .string_ = value;
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (X3DBrowser .prototype, "currentScene",
-	{
-		get: function ()
-		{
-			return this .getScriptStack () [this .getScriptStack () .length - 1] .getExecutionContext ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	return X3DBrowser;
+		return X3DBrowser;
+	}
 });
