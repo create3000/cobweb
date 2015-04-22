@@ -30,9 +30,9 @@ function (Matrix4, Vector3)
 				var
 					min = arguments [0],
 					max = arguments [1],
-					sx  = max .x - min .x,
-					sy  = max .y - min .y,
-					sz  = max .z - min .z,
+					sx  = (max .x - min .x) / 2,
+					sy  = (max .y - min .y) / 2,
+					sz  = (max .z - min .z) / 2,
 					cx  = (max .x + min .x) / 2,
 					cy  = (max .y + min .y) / 2,
 					cz  = (max .z + min .z) / 2;
@@ -73,9 +73,9 @@ function (Matrix4, Vector3)
 		{
 			var
 				m  = this .matrix,
-				sx = max .x - min .x,
-				sy = max .y - min .y,
-				sz = max .z - min .z,
+				sx = (max .x - min .x) / 2,
+				sy = (max .y - min .y) / 2,
+				sz = (max .z - min .z) / 2,
 				cx = (max .x + min .x) / 2,
 				cy = (max .y + min .y) / 2,
 				cz = (max .z + min .z) / 2;

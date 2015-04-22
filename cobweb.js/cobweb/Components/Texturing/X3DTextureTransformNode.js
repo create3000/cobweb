@@ -25,7 +25,6 @@ function ($,
 		constructor: X3DTextureTransformNode,
 		setMatrix: function (value)
 		{
-			this .matrix = value;
 			this .matrixArray .set (value);
 		},
 		getMatrix: function ()

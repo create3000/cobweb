@@ -179,7 +179,7 @@ function ($,
 				catch (error)
 				{
 					//if (element .nodeName === "VisibilitySensor")
-						console .warn (error);
+					//	console .warn (error);
 
 					console .warn ("XML Parser Error: Unknown node type '" + element .nodeName + "'.");
 				}

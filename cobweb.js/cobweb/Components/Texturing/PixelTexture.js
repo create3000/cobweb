@@ -71,7 +71,9 @@ function ($,
 						{
 							var pixel = array [i] .getValue ();
 
-							data [index] = data [index + 1] = data [index + 2] = pixel & 255;
+							data [index] =
+							data [index + 1] =
+							data [index + 2] = pixel & 255;
 							data [index + 3] = 255;
 						}
 
@@ -83,7 +85,9 @@ function ($,
 						{
 							var pixel = array [i] .getValue ();
 
-							data [index] = data [index + 1] = data [index + 2] = (pixel >>> 8) & 255;
+							data [index] =
+							data [index + 1] =
+							data [index + 2] = (pixel >>> 8) & 255;
 							data [index + 3] = pixel & 255;
 						}
 
@@ -128,7 +132,7 @@ function ($,
 					array       = this .image_ .array .getValue (),
 					transparent = ! (comp % 2),
 					data        = null;
-
+			
 				if (width > 0 && height > 0 && comp > 0 && comp < 5)
 				{
 					if (Algorithm .isPowerOfTwo (width) && Algorithm .isPowerOfTwo (height))
@@ -143,7 +147,7 @@ function ($,
 							canvas1   = $("<canvas/>") [0],
 							canvas2   = $("<canvas/>") [0],
 							cx1       = canvas1 .getContext("2d"),
-							cx2       = canvas2 .getContext("2d")
+							cx2       = canvas2 .getContext("2d"),
 							imageData = cx1 .createImageData (width, height);
 
 						canvas1 .width  = width;

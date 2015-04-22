@@ -185,7 +185,7 @@ function ($,
 
 				this .texCoords .push (texCoords);
 
-				for (var i = 0; i < this .vertices .length; i += 4)
+				for (var i = 0, length = this .vertices .length; i < length; i += 4)
 				{
 					texCoords .push ((vertices [i + Sindex] - S) / Ssize,
 					                 (vertices [i + Tindex] - T) / Ssize,

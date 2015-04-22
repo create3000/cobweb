@@ -27,6 +27,8 @@ function ($,
 			X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .TextureTransform);
+
+			this .matrix3 = new Matrix3 ();
 		}
 
 		TextureTransform .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
@@ -61,27 +63,35 @@ function ($,
 			},
 			update: function ()
 			{
-				var matrix = new Matrix3 ();
+				var matrix3 = this .matrix3;
+
+				matrix3 .identity ();
 
 				if (! this .center_ .getValue () .equals (Vector2 .Zero))
-					matrix .translate (Vector2 .negate (this .center_ .getValue ()));
+					matrix3 .translate (Vector2 .negate (this .center_ .getValue ()));
 
 				if (! this .scale_ .getValue () .equals (Vector2 .One))
-					matrix .scale (this .scale_ .getValue ());
+					matrix3 .scale (this .scale_ .getValue ());
 
 				if (this .rotation_ .getValue () !== 0)
-					matrix .rotate (this .rotation_ .getValue ());
+					matrix3 .rotate (this .rotation_ .getValue ());
 
 				if (! this .center_ .getValue () .equals (Vector2 .Zero))
-					matrix .translate (this .center_ .getValue ());
+					matrix3 .translate (this .center_ .getValue ());
 
 				if (! this .translation_ .getValue () .equals (Vector2 .Zero))
-					matrix .translate (this .translation_ .getValue ());
+					matrix3 .translate (this .translation_ .getValue ());
 
-				this .setMatrix (new Matrix4 (matrix [0], matrix [1], 0, matrix [2],
-				                              matrix [3], matrix [4], 0, matrix [5],
-				                              0, 0, 1, 0,
-				                              matrix [6], matrix [7], 0, matrix [8]));
+				var matrix4 = this .getMatrix ();
+				
+				matrix4 [ 0] = matrix3 [0];
+				matrix4 [ 1] = matrix3 [1];
+				matrix4 [ 4] = matrix3 [3];
+				matrix4 [ 5] = matrix3 [4];
+				matrix4 [12] = matrix3 [6]; 
+				matrix4 [13] = matrix3 [7];
+
+				this .setMatrix (matrix4);
 			},
 		});
 
