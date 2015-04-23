@@ -52,49 +52,50 @@ function ($,
 		},
 		construct: function (proto)
 		{
-			if (this .protoNode .isExternProto ())
-			{
-				var fieldDefinitions = proto .getFieldDefinitions ();
-			
-				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
-				{
-					var
-						fieldDefinition = fieldDefinitions [i],
-						protoField      = proto .getField (fieldDefinition .name);
-
-					try
-					{
-						var field = this .getField (fieldDefinition .name);
-
-						// Return if something is wrong.
-						if (field .getAccessType () !== protoField .getAccessType ())
-							return;
-
-						// Return if something is wrong.
-						if (field .getType () !== protoField .getType ())
-							return;
-
-						if (! (field .getAccessType () & X3DConstants .initializeOnly))
-							continue;
-
-						if (field .getFieldValue () === true)
-							continue;
-
-						field .set (protoField .getValue ());
-					}
-					catch (error)
-					{
-						// Definition exists in proto but does not has exists in extern proto.
-						this .addField (fieldDefinition);
-					}
-				}
-			}
-
-			// Everything is fine, now set proto.
 			this .proto = proto;
 
 			if (proto)
 			{
+				if (this .protoNode .isExternProto ())
+				{
+					var fieldDefinitions = proto .getFieldDefinitions ();
+
+					for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+					{
+						var
+							fieldDefinition = fieldDefinitions [i],
+							protoField      = proto .getField (fieldDefinition .name);
+
+						try
+						{
+							var field = this .getField (fieldDefinition .name);
+
+							// Return if something is wrong.
+							if (field .getAccessType () !== protoField .getAccessType ())
+								return;
+
+							// Return if something is wrong.
+							if (field .getType () !== protoField .getType ())
+								return;
+
+							if (! (field .getAccessType () & X3DConstants .initializeOnly))
+								continue;
+
+							if (field .getFieldValue () === true)
+								continue;
+
+							field .set (protoField .getValue ());
+						}
+						catch (error)
+						{
+							// Definition exists in proto but does not has exist in extern proto.
+							this .addField (fieldDefinition);
+						}
+					}
+				}
+
+				// Assign metadata.
+				
 				this .metadata_ = proto .metadata_;
 
 				// Assign extern protos.

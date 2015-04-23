@@ -1,16 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/tests/Components/PROTO/test.x3d">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Parser/XMLParser.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/tests/Components/PROTO/test.x3dv" Line="56" Column="1" />
-      <File FileName="cobweb.js/tests/Components/PROTO/test.x3d" Line="19" Column="82" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="431" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="58" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclarationNode.js" Line="9" Column="18" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="42" Column="6" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DField.js" Line="71" Column="13" />
+      <File FileName="cobweb.js/cobweb.html" Line="82" Column="57" />
+      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="249" Column="1" />
+      <File FileName="cobweb.js/tests/Components/PROTO/ExternProto.x3d" Line="12" Column="60" />
+      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="199" Column="1" />
+      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="210" Column="37" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="129" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclarationNode.js" Line="35" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="57" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="92" Column="38" />
+      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="59" Column="40" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -24,17 +25,40 @@
               <Node name="Components" expanded="True">
                 <Node name="Core" expanded="True" />
                 <Node name="Geometry2D" expanded="True" />
+                <Node name="Geometry3D" expanded="True" />
                 <Node name="Grouping" expanded="True" />
+                <Node name="Navigation" expanded="True" />
+                <Node name="Networking" expanded="True" />
+                <Node name="Rendering" expanded="True" />
                 <Node name="Scripting" expanded="True" />
+                <Node name="Shape" expanded="True" />
+                <Node name="Texturing" expanded="True" />
+                <Node name="Texturing3D" expanded="True" />
+                <Node name="Time" expanded="True" />
               </Node>
               <Node name="Execution" expanded="True" />
-              <Node name="Parser" expanded="True" />
+              <Node name="Fields" expanded="True" />
+              <Node name="InputOutput" expanded="True" />
+              <Node name="Parser" expanded="True">
+                <Node name="XMLParser.js" selected="True" />
+              </Node>
               <Node name="Prototype" expanded="True" />
+              <Node name="Routing" expanded="True" />
+            </Node>
+            <Node name="standard" expanded="True">
+              <Node name="Math" expanded="True">
+                <Node name="Geometry" expanded="True" />
+              </Node>
             </Node>
             <Node name="tests" expanded="True">
               <Node name="Components" expanded="True">
-                <Node name="PROTO" expanded="True">
-                  <Node name="test.x3d" selected="True" />
+                <Node name="PROTO" expanded="True" />
+              </Node>
+              <Node name="Examples" expanded="True">
+                <Node name="BIC" expanded="True" />
+                <Node name="Dolphin" expanded="True" />
+                <Node name="Pong" expanded="True">
+                  <Node name="stage" expanded="True" />
                 </Node>
               </Node>
             </Node>

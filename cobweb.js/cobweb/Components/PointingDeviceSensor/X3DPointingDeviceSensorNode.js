@@ -62,28 +62,31 @@ function ($,
 		},
 		push: function ()
 		{
-			var
-				currentLayer = this .getCurrentLayer (),
-				sensors      = this .getBrowser () .getSensors ();
-
-			sensors [sensors .length - 1] [this .getId ()] = this;
-
-			// Create a matrix set for each layer if needed.
-
-			if (! (currentLayer .getId () in this .matrices))
+			if (this .enabled_ .getValue ())
 			{
-				this .matrices [currentLayer .getId ()] = {
-					modelViewMatrix:  new Matrix4 (),
-					projectionMatrix: new Matrix4 (),
-					viewport:         new Vector4 (),
-				};
+				var
+					currentLayer = this .getCurrentLayer (),
+					sensors      = this .getBrowser () .getSensors ();
+
+				sensors [sensors .length - 1] [this .getId ()] = this;
+
+				// Create a matrix set for each layer if needed.
+
+				if (! (currentLayer .getId () in this .matrices))
+				{
+					this .matrices [currentLayer .getId ()] = {
+						modelViewMatrix:  new Matrix4 (),
+						projectionMatrix: new Matrix4 (),
+						viewport:         new Vector4 (),
+					};
+				}
+
+				var matrices = this .matrices [currentLayer .getId ()];
+
+				matrices .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+				matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix ());
+				matrices .viewport .assign (currentLayer .getViewport () .getRectangle ());
 			}
-
-			var matrices = this .matrices [currentLayer .getId ()];
-
-			matrices .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-			matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix ());
-			matrices .viewport .assign (currentLayer .getViewport () .getRectangle ());
 		},
 	});
 

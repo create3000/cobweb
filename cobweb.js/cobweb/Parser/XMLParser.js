@@ -190,9 +190,9 @@ function ($,
 				{
 					if (this .USE (element))
 						return;
-					
+
 					var name = element .getAttribute ("name");
-					
+
 					if (this .id (name))
 					{
 						var node = this .getExecutionContext () .createProto (name, false);
@@ -208,7 +208,7 @@ function ($,
 				catch (error)
 				{
 					console .warn ("XML Parser Error: " + error .message);
-					console .warn (error);
+					//console .warn (error);
 				}
 			},
 			children: function (childNodes, protoInstance)

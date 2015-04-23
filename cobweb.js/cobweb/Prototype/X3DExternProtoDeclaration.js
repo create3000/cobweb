@@ -31,6 +31,8 @@ function ($,
 
 			this .addType (X3DConstants .X3DExternProtoDeclaration);
 
+			this .addChildren ("url", new MFString ());
+
 			this .callbacks = [ ];
 		}
 
@@ -115,7 +117,7 @@ function ($,
 					name  = this .inlineNode .getScene () .getWorldURL () .fragment || this .getName (),
 					proto = this .inlineNode .getScene () .protos [name];
 
-				return proto;
+				return proto || null;
 			},
 		});
 
