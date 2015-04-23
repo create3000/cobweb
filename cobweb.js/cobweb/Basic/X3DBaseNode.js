@@ -238,9 +238,13 @@ function ($,
 			{
 				var name = field .getName ();
 
+				if (field .getAccessType () === X3DConstants .inputOutput)
+				{
+					delete this .fields ["set_" + name];
+					delete this .fields [name + "_changed"];
+				}
+
 				delete this .fields [name];
-				delete this .fields ["set_" + name];
-				delete this .fields [name + "_changed"];
 				delete this .userDefinedFields [name];
 
 				var fieldDefinitions = this .fieldDefinitions .getValue ();
