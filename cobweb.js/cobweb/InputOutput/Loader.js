@@ -217,7 +217,9 @@ function ($,
 		{
 			URL = this .getReferer () .transform (new URI (URL));
 
-			return URL .isLocal () ? this .browser .getLocation () .getRelativePath (URL) : URL;
+			URL = URL .isLocal () ? this .browser .getLocation () .getRelativePath (URL) : URL;
+
+			return URL;
 		},
 		getReferer: function ()
 		{

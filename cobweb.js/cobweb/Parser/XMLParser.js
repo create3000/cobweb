@@ -277,7 +277,9 @@ function ($,
 						this .getExecutionContext () .updateNamedNode (name, node);
 				}
 				catch (error)
-				{ }
+				{
+					console .warn ("Invalid DEF name: " + error .message);
+				}
 			},
 			USE: function (element)
 			{
@@ -295,7 +297,7 @@ function ($,
 				}
 				catch (error)
 				{
-					//console .warn (error .message);
+					console .warn ("Invalid USE name: " + error .message);
 				}
 
 				return false;
@@ -514,7 +516,11 @@ function ($,
 					{
 						if (nodeField .getType () === protoField .getType ())
 							nodeField .addReference (protoField);
+						else
+							throw new Error ("Field types do not match.");
 					}
+					else
+						throw new Error ("Field access types do not match.");
 				}
 				catch (error)
 				{

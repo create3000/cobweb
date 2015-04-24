@@ -54,6 +54,10 @@ function ($,
 			{
 				return false;
 			},
+			getWorldURL: function ()
+			{
+				return this .getExecutionContext () .getWorldURL ();
+			},
 		});
 
 		return X3DProtoDeclaration;

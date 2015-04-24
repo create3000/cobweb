@@ -95,7 +95,8 @@ function ($,
 				}
 
 				// Assign metadata.
-				
+
+				this .setWorldURL (proto .getWorldURL ());
 				this .metadata_ = proto .metadata_;
 
 				// Assign extern protos.
@@ -145,6 +146,7 @@ function ($,
 					{
 						var route = routes [i];
 
+						// new Route ... addUninitializedNode ...
 						this .addRoute (this .getNamedNode (route .sourceNode .getNodeName ()),
 						                route .sourceField,
 						                this .getNamedNode (route .destinationNode .getNodeName ()),

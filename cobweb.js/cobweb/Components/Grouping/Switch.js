@@ -79,11 +79,6 @@ function ($,
 			{
 				this .child = this .getChild (this .whichChoice_ .getValue ());
 
-				if (this .child)
-					this .traverse = this .child .traverse .bind (this .child);
-				else
-					this .traverse = function () { };
-
 				this .set_cameraObjects__ ();
 			},
 			set_cameraObjects__: function ()
@@ -92,6 +87,11 @@ function ($,
 					this .setCameraObject (this .child .getCameraObject ());
 				else
 					this .setCameraObject (false);
+			},
+			traverse: function (type)
+			{
+				if (this .child)
+					this .child .traverse (type);
 			},
 		});
 

@@ -7,6 +7,7 @@ define ([
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -14,7 +15,8 @@ function ($,
           SupportedNodes,
           Scene,
           Loader,
-          XMLParser)
+          XMLParser,
+          X3DConstants)
 {
 	with (Fields)
 	{
@@ -137,7 +139,12 @@ function ($,
 				new Loader (this .getWorld ()) .createX3DFromURL (url,
 				function (scene)
 				{
-					field .setValue (scene .rootNodes);
+					if (scene)
+					{
+						scene .setup ();
+						// Wait until scene is completely loaded, scene .loadCount_ must be 0.
+						field .setValue (scene .rootNodes);
+					}
 				});
 			},
 			createX3DFromURL: function (url, event, node)
@@ -152,7 +159,6 @@ function ($,
 				var scene = new Loader (this .getWorld ()) .createX3DFromURL (url);
 
 				scene .setup ();
-
 				return scene;
 			},
 			loadURL: function (url, parameter)

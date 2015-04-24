@@ -81,7 +81,9 @@ function ($,
 			{
 				X3DScriptNode .prototype .initialize .call (this);
 
-				setTimeout (this .requestImmediateLoad .bind (this), 0);
+				this .url_ .addInterest (this, "set_url__");
+
+				this .requestAsyncLoad ();
 			},
 			hasUserDefinedFields: function ()
 			{
@@ -91,8 +93,13 @@ function ($,
 			{
 				return this .url_;
 			},
-			requestImmediateLoad: function ()
+			requestAsyncLoad: function ()
 			{
+				if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+					return;
+
+				//this .getExecutionContext () .getScene () .addLoadCount ();
+
 				for (var i = 0, length = this .url_ .length; i < length; ++ i)
 				{
 					var
@@ -112,6 +119,14 @@ function ($,
 						console .error (error .message);
 					}
 				}
+
+				//this .getExecutionContext () .getScene () .removeLoadCount ();
+			},
+			set_url__: function ()
+			{
+				this .setLoadState (X3DConstants .NOT_STATED_STATE);
+
+				this .requestAsyncLoad ();
 			},
 			getContext: function (text)
 			{
@@ -274,10 +289,10 @@ function ($,
 
 				if (this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ())
 				{
-					if (this .context .prepareEvents)
+					if ($.isFunction (this .context .prepareEvents))
 						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
 
-					if (this .context .eventsProcessed)
+					if ($.isFunction (this .context .eventsProcessed))
 						this .addInterest (this, "eventsProcessed__");
 
 					for (var name in userDefinedFields)
@@ -288,16 +303,20 @@ function ($,
 						{
 							case X3DConstants .inputOnly:
 							{
-								if (this .context [field .getName ()])
-									field .addInterest (this, "set_field__", field .getName ());
+								var callback = this .context [field .getName ()];
+	
+								if ($.isFunction (callback))
+									field .addInterest (this, "set_field__", callback);
+
 								break;
 							}
 							case X3DConstants .inputOutput:
 							{
-								var callback = "set_" + field .getName ();
+								var callback = this .context ["set_" + field .getName ()];
 	
-								if (this .context [callback])
+								if ($.isFunction (callback))
 									field .addInterest (this, "set_field__", callback);
+
 								break;
 							}
 						}
@@ -314,19 +333,13 @@ function ($,
 					for (var name in userDefinedFields)
 					{
 						var field = userDefinedFields [name];
-						
+
 						switch (field .getAccessType ())
 						{
 							case X3DConstants .inputOnly:
-							{
-								field .removeInterest (this, "set_field__");
-								break;
-							}
 							case X3DConstants .inputOutput:
-							{
 								field .removeInterest (this, "set_field__");
 								break;
-							}
 						}
 					}
 				}
@@ -374,12 +387,12 @@ function ($,
 				try
 				{
 					this .getBrowser () .getScriptStack () .push (this);
-					this .context [callback] (field .valueOf (), this .getBrowser () .getCurrentTime ());
+					callback (field .valueOf (), this .getBrowser () .getCurrentTime ());
 					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
-					this .setError (callback, error);
+					this .setError (field .getName (), error);
 				}
 
 				field .setTainted (false);
@@ -412,7 +425,7 @@ function ($,
 			},
 			setError: function (callback, error)
 			{
-				console .error (new Error ("JavaScript Error in '" + callback + "': " + error .message));
+				console .error ("JavaScript Error in '" + callback + "': ", error);
 			},
 		});
 

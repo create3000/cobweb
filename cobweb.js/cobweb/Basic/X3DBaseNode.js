@@ -24,6 +24,7 @@ function ($,
 			this .executionContext  = executionContext;
 			this .type              = [ X3DConstants .X3DBaseNode ];
 			this .fields            = { };
+			this .preDefinedFields  = { };
 			this .userDefinedFields = { };
 			
 			this .addChildren ("isLive", new SFBool (true));
@@ -36,7 +37,7 @@ function ($,
 		{
 			constructor: X3DBaseNode,
 			fieldDefinitions: [ ],
-			setup_: false,
+			$initialized: false,
 			create: function (executionContext)
 			{
 				return new (this .constructor) (executionContext);
@@ -68,14 +69,14 @@ function ($,
 			},
 			isInitialized: function ()
 			{
-				return this .setup_;
+				return this .$initialized;
 			},
 			setup: function ()
 			{
-				if (this .isInitialized ())
+				if (this .$initialized)
 					return;
 
-				this .setup_ = true;
+				this .$initialized = true;
 
 				for (var i = 0; i < this .fieldDefinitions .length; ++ i)
 				{
@@ -110,60 +111,20 @@ function ($,
 				if (name .length)
 					executionContext .updateNamedNode (name, copy);
 
-				for (var i = 0, length = this .fieldDefinitions .length; i < length; ++ i)
+				// Default fields
+				
+				for (var i = 0, length = copy .fieldDefinitions .length; i < length; ++ i)
 				{
-					var
-						fieldDefinition = this .fieldDefinitions [i],
-						field1          = this .getField (fieldDefinition .name);
-	
 					try
 					{
-						// Default fields
-
-						var field2 = copy .getField (fieldDefinition .name);
-
-						if (field2 .getAccessType () === field1 .getAccessType () && field2 .getType () === field1 .getType ())
-						{
-							if (field1 .hasReferences ())
-							{
-								// IS relationship
-								for (var id in field1 .getReferences ())
-								{
-									var originalReference = field1 .getReferences () [id];
-
-									try
-									{
-										field2 .addReference (executionContext .getField (originalReference .getName ()));
-									}
-									catch (error)
-									{
-										console .log (error .message);
-									}
-								}
-							}
-							else
-							{
-								if (field1 .getAccessType () & X3DConstants .initializeOnly)
-									field2 .set (field1 .copy (executionContext) .getValue ());
-							}
-						}
-						else
-							throw false; /// XXX: Why?
-					}
-					catch (error)
-					{
-						// User defined fields from Script and Shader
-
-						var field2 = field1 .copy (executionContext);
-
-						copy .addUserDefinedField (fieldDefinition .accessType,
-						                           fieldDefinition .name,
-						                           field2);
+						var
+							fieldDefinition = copy .fieldDefinitions [i],
+							field1          = this .preDefinedFields [fieldDefinition .name],
+							field2          = copy .getField (fieldDefinition .name);
 
 						if (field1 .hasReferences ())
 						{
 							// IS relationship
-
 							for (var id in field1 .getReferences ())
 							{
 								var originalReference = field1 .getReferences () [id];
@@ -174,8 +135,49 @@ function ($,
 								}
 								catch (error)
 								{
-									console .log ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
+									console .log (error .message);
 								}
+							}
+						}
+						else
+						{
+							if (field1 .getAccessType () & X3DConstants .initializeOnly)
+								field2 .set (field1 .copy (executionContext) .getValue ());
+						}
+					}
+					catch (error)
+					{
+						console .log (error .message);
+					}
+				}
+
+				// User-defined fields
+
+				for (var name in this .userDefinedFields)
+				{
+					var
+						field1 = this .userDefinedFields [name],
+						field2 = field1 .copy (executionContext);
+
+					copy .addUserDefinedField (field1 .getAccessType (),
+					                           field1 .getName (),
+					                           field2);
+
+					if (field1 .hasReferences ())
+					{
+						// IS relationship
+
+						for (var id in field1 .getReferences ())
+						{
+							var originalReference = field1 .getReferences () [id];
+
+							try
+							{
+								field2 .addReference (executionContext .getField (originalReference .getName ()));
+							}
+							catch (error)
+							{
+								console .log ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
 							}
 						}
 					}
@@ -214,17 +216,21 @@ function ($,
 				field .setName (name);
 				field .setAccessType (accessType);
 
-				this .addAlias (name, field);
+				this .addAlias (name, field, fieldDefinition .userDefined);
 			},
-			addAlias: function (name, field)
+			addAlias: function (name, field, userDefined)
 			{
-				this .fields [name] = field;
-				
+				this .fields [name]           = field;
+				this .preDefinedFields [name] = field;
+
 				if (field .getAccessType () === X3DConstants .inputOutput)
 				{
 					this .fields ["set_" + name]     = field;
 					this .fields [name + "_changed"] = field;
 				}
+
+				if (userDefined)
+					return;
 
 				Object .defineProperty (this, name + "_",
 				{
@@ -234,15 +240,15 @@ function ($,
 					configurable: false,
 				});
 			},
-			removeField: function (field)
+			removeField: function (name)
 			{
-				var name = field .getName ();
+				var field = this .fields [name];
 
-				if (field .getAccessType () === X3DConstants .inputOutput)
-				{
-					delete this .fields ["set_" + name];
-					delete this .fields [name + "_changed"];
-				}
+				//if (field .getAccessType () === X3DConstants .inputOutput)
+				//{
+				//	delete this .fields ["set_" + field .getName ()];
+				//	delete this .fields [field .getName () + "_changed"];
+				//}
 
 				delete this .fields [name];
 				delete this .userDefinedFields [name];
@@ -277,17 +283,15 @@ function ($,
 			},
 			addUserDefinedField: function (accessType, name, field)
 			{
-				var current = this .fields [name];
-
-				if (current)
-					this .removeField (current);
+				if (this .fields [name])
+					this .removeField (name);
 
 				field .setTainted (true);
 				field .addParent (this);
 				field .setName (name);
 				field .setAccessType (accessType);
 
-				this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field));
+				this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field, true));
 				this .fields [name] = field;
 				this .userDefinedFields [name] = field;
 

@@ -35,7 +35,8 @@ function ($,
 			constructor: X3DTimeDependentNode,
 			initialize: function ()
 			{
-//return;
+				X3DChildNode .prototype .initialize .call (this);
+
 				this .addChildren ("initialized", new SFTime (),
 				                   "isEvenLive",  new SFBool ());
 

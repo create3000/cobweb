@@ -164,30 +164,37 @@ function ($,
 			},
 			addRoute: function (sourceNode, fromField, destinationNode, toField)
 			{
-				if (! sourceNode .getValue ())
-					throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
+				try
+				{
+					if (! sourceNode .getValue ())
+						throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
 
-				if (! destinationNode .getValue ())
-					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
+					if (! destinationNode .getValue ())
+						throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
 
-				var
-					sourceField      = sourceNode .getValue () .getField (fromField),
-					destinationField = destinationNode .getValue () .getField (toField);
+					var
+						sourceField      = sourceNode .getValue () .getField (fromField),
+						destinationField = destinationNode .getValue () .getField (toField);
 
-				if (! sourceField .isOutput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
+					if (! sourceField .isOutput ())
+						throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
 
-				if (! destinationField .isInput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
+					if (! destinationField .isInput ())
+						throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
 
-				var
-					id    = sourceField .getId () + "." + destinationField .getId (),
-					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
+					var
+						id    = sourceField .getId () + "." + destinationField .getId (),
+						route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
 
-				this .routes .getValue () .push (route);
-				this .routeIndex [id] = route;
+					this .routes .getValue () .push (route);
+					this .routeIndex [id] = route;
 
-				return route;
+					return route;
+				}
+				catch (error)
+				{
+					throw new Error ("Bad ROUTE specification: " + error .message); 
+				}
 			},
 			deleteRoute: function (route)
 			{

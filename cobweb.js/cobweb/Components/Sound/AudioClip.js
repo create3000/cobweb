@@ -21,12 +21,13 @@ function ($,
 		function AudioClip (executionContext)
 		{
 			X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+			X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .AudioClip);
 		}
 
-		AudioClip .prototype = $.extend (Object .create (X3DSoundSourceNode .prototype),new X3DUrlObject (),
+		AudioClip .prototype = $.extend (Object .create (X3DSoundSourceNode .prototype),
+			X3DUrlObject .prototype,
 		{
 			constructor: AudioClip,
 			fieldDefinitions: new FieldDefinitionArray ([
@@ -58,6 +59,11 @@ function ($,
 			getContainerField: function ()
 			{
 				return "source";
+			},
+			initialize: function ()
+			{
+				X3DSoundSourceNode .prototype .initialize .call (this);
+				X3DUrlObject       .prototype .initialize .call (this);
 			},
 		});
 

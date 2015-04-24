@@ -16,11 +16,11 @@ function ($, X3DChildObject, X3DConstants)
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
-		fieldValue_: null,
-		accessType_: X3DConstants .initializeOnly,
-		references_: { },
-		fieldInterests_: { },
-		fieldCallbacks_: { },
+		fieldValue: null,
+		accessType: X3DConstants .initializeOnly,
+		references: { },
+		fieldInterests: { },
+		fieldCallbacks: { },
 		clone: function ()
 		{
 			return this .copy ();
@@ -37,11 +37,11 @@ function ($, X3DChildObject, X3DConstants)
 		setFieldValue: function (value)
 		{
 			// Boolean indication whether the value is set during parse, or undefined.
-			return this .fieldValue_ = value;
+			return this .fieldValue = value;
 		},
 		getFieldValue: function ()
 		{
-			return this .fieldValue_;
+			return this .fieldValue;
 		},
 		getValue: function ()
 		{
@@ -49,32 +49,32 @@ function ($, X3DChildObject, X3DConstants)
 		},
 		setAccessType: function (value)
 		{
-			this .accessType_ = value;
+			this .accessType = value;
 		},
 		getAccessType: function ()
 		{
-			return this .accessType_;
+			return this .accessType;
 		},
 		isReadable: function ()
 		{
-			return this .accessType_ !== X3DConstants .inputOnly;
+			return this .accessType !== X3DConstants .inputOnly;
 		},
 		isWritable: function ()
 		{
-			return this .accessType_ !== X3DConstants .initializeOnly;
+			return this .accessType !== X3DConstants .initializeOnly;
 		},
 		isInput: function ()
 		{
-			return this .accessType_ & X3DConstants .inputOnly;
+			return this .accessType & X3DConstants .inputOnly;
 		},
 		isOutput: function ()
 		{
-			return this .accessType_ & X3DConstants .outputOnly;
+			return this .accessType & X3DConstants .outputOnly;
 		},
 		hasReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
-				return ! $.isEmptyObject (this .references_);
+			if (this .hasOwnProperty ("references"))
+				return ! $.isEmptyObject (this .references);
 
 			return false;
 		},
@@ -82,47 +82,47 @@ function ($, X3DChildObject, X3DConstants)
 		{
 			var references = this .getReferences ();
 
-			if (! references [reference .getId ()])
+			if (references [reference .getId ()])
+				return;
+
+			references [reference .getId ()] = reference;
+
+			// Create IS relationship
+
+			switch (this .accessType & reference .getAccessType ())
 			{
-				references [reference .getId ()] = reference;
-
-				// Create IS relationship
-
-				switch (this .accessType_ & reference .getAccessType ())
-				{
-					case X3DConstants .initializeOnly:
-						this .set (reference .getValue ());
-						return;
-					case X3DConstants .inputOnly:
-						reference .addFieldInterest (this);
-						return;
-					case X3DConstants .outputOnly:
-						this .addFieldInterest (reference);
-						return;
-					case X3DConstants .inputOutput:
-						reference .addFieldInterest (this);
-						this .addFieldInterest (reference);
-						this .set (reference .getValue ());
-						return;
-				}
+				case X3DConstants .initializeOnly:
+					this .set (reference .getValue ());
+					return;
+				case X3DConstants .inputOnly:
+					reference .addFieldInterest (this);
+					return;
+				case X3DConstants .outputOnly:
+					this .addFieldInterest (reference);
+					return;
+				case X3DConstants .inputOutput:
+					reference .addFieldInterest (this);
+					this .addFieldInterest (reference);
+					this .set (reference .getValue ());
+					return;
 			}
 		},
 		getReferences: function ()
 		{
-			if (! this .hasOwnProperty ("references_"))
-				this .references_ = { };
+			if (! this .hasOwnProperty ("references"))
+				this .references = { };
 
-			return this .references_;
+			return this .references;
 		},
 		updateReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
+			if (this .hasOwnProperty ("references"))
 			{
-				for (var id in this .references_)
+				for (var id in this .references)
 				{
-					var reference = this .references_ [id];
+					var reference = this .references [id];
 
-					switch (this .accessType_ & reference .getAccessType ())
+					switch (this .accessType & reference .getAccessType ())
 					{
 						case X3DConstants .inputOnly:
 						case X3DConstants .outputOnly:
@@ -137,37 +137,37 @@ function ($, X3DChildObject, X3DConstants)
 		},
 		addFieldInterest: function (field)
 		{
-			if (! this .hasOwnProperty ("fieldInterests_"))
-				this .fieldInterests_ = { };
+			if (! this .hasOwnProperty ("fieldInterests"))
+				this .fieldInterests = { };
 
-			this .fieldInterests_ [field .getId ()] = field;
+			this .fieldInterests [field .getId ()] = field;
 		},
 		removeFieldInterest: function (field)
 		{
-			delete this .fieldInterests_ [field .getId ()];
+			delete this .fieldInterests [field .getId ()];
 		},
 		addFieldCallback: function (string, object)
 		{
-			if (! this .hasOwnProperty ("fieldCallbacks_"))
-				this .fieldCallbacks_ = { };
+			if (! this .hasOwnProperty ("fieldCallbacks"))
+				this .fieldCallbacks = { };
 
-			this .fieldCallbacks_ [string] = object;
+			this .fieldCallbacks [string] = object;
 		},
 		removeFieldCallback: function (string)
 		{
-			delete this .fieldCallbacks_ [string];
+			delete this .fieldCallbacks [string];
 		},
 		addEvent: function ()
 		{
-			var parents = this .parents_;
+			var parents = this .getParents ();
 
 			for (var key in parents)
 				parents [key] .addEvent (this);
 		},
 		addEventObject: function (field, event)
 		{
-			var parents = this .parents_;
-		
+			var parents = this .getParents ();
+
 			for (var key in parents)
 				parents [key] .addEventObject (this, event);
 		},
@@ -192,7 +192,7 @@ function ($, X3DChildObject, X3DConstants)
 			// Process routes
 
 			var
-				fieldInterests = this .fieldInterests_,
+				fieldInterests = this .fieldInterests,
 				first          = true;
 
 			for (var key in fieldInterests)
@@ -208,7 +208,7 @@ function ($, X3DChildObject, X3DConstants)
 
 			// Process field callbacks
 
-			var fieldCallbacks = this .fieldCallbacks_;
+			var fieldCallbacks = this .fieldCallbacks;
 
 			for (var key in fieldCallbacks)
 				fieldCallbacks [key] (this .valueOf ());

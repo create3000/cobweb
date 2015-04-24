@@ -27,26 +27,34 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
-				console .log (error);
+				console .log (key, error);
 			}
 		},
 		set: function (target, key, value)
 		{
-			if (key in target)
+			try
 			{
-				target [key] = value;
-				return;
+				if (key in target)
+				{
+					target [key] = value;
+					return true;
+				}
+
+				var
+					array = target .getValue (),
+					index = parseInt (key);
+
+				if (index >= array .length)
+					target .resize (index + 1);
+
+				array [index] .setValue (value);
+				return true;
 			}
-
-			var
-				array = target .getValue (),
-				index = parseInt (key);
-
-			if (index >= array .length)
-				target .resize (index + 1);
-
-			array [index] .setValue (value);
-			return true;
+			catch (error)
+			{
+				console .log (key, error);
+				return false;
+			}
 		},
 	};
 
