@@ -26,8 +26,8 @@ function ($,
 
 			this .setCameraObject (true);
 
-			this .getExecutionContext () .isLive_ .addInterest (this, "set_enabled__");
-			this .isLive_ .addInterest (this, "set_enabled__");
+			this .getExecutionContext () .isLive () .addInterest (this, "set_enabled__");
+			this .isLive () .addInterest (this, "set_enabled__");
 
 			this .enabled_ .addInterest (this, "set_enabled__");
 			this .size_    .addInterest (this, "set_enabled__");
@@ -36,7 +36,7 @@ function ($,
 		},
 		set_enabled__: function ()
 		{
-			if (this .enabled_ .getValue () && this .isLive_ .getValue () && this .getExecutionContext () .isLive_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			if (this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 				this .getBrowser () .sensors () .addInterest (this, "update");
 
 			else

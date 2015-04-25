@@ -70,8 +70,8 @@ function ($,
 				X3DUrlObject     .prototype .initialize .call (this);
 				X3DBoundedObject .prototype .initialize .call (this);
 
-				this .getExecutionContext () .isLive_ .addInterest (this, "set_live__");
-				this .isLive_ .addInterest (this, "set_live__");
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest (this, "set_live__");
 
 				this .group .setup ();
 				this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
@@ -86,10 +86,10 @@ function ($,
 			{
 				if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
 				{
-					var value = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+					var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
 
-					if (value !== this .scene .isLive_ .getValue ())
-						this .scene .isLive_ = value;
+					if (live !== this .scene .isLive () .getValue ())
+						this .scene .isLive () .setValue (live);
 				}
 			},
 			set_load__: function ()
@@ -157,7 +157,7 @@ function ($,
 			},
 			setScene: function (scene)
 			{
-				this .scene .isLive_ = false;
+				this .scene .endUpdate ();
 				this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 				// Set new scene.

@@ -40,9 +40,9 @@ function ($,
 				this .addChildren ("initialized", new SFTime (),
 				                   "isEvenLive",  new SFBool ());
 
-				this .getExecutionContext () .isLive_ .addInterest (this, "set_live__");
-				this .isEvenLive_                     .addInterest (this, "set_live__");
-				this .isLive_                         .addInterest (this, "set_live__");
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive ()                         .addInterest (this, "set_live__");
+				this .isEvenLive_                       .addInterest (this, "set_live__");
 
 				this .initialized_ .addInterest (this, "set_loop__");
 				this .enabled_     .addInterest (this, "set_enabled__");
@@ -65,7 +65,7 @@ function ($,
 			},
 			getLive: function ()
 			{
-				return (this .getExecutionContext () .isLive_ .getValue () || this .isEvenLive_ .getValue ()) && this .isLive_ .getValue ();
+				return (this .getExecutionContext () .isLive () .getValue () || this .isEvenLive_ .getValue ()) && this .isLive () .getValue ();
 			},
 			set_live__: function ()
 			{

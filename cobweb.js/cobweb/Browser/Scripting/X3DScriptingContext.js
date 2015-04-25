@@ -13,6 +13,10 @@ function ()
 		initialize: function ()
 		{
 		},
+		isExternal: function ()
+		{
+		   return this .scripts .length === 1;
+		},
 		getScriptStack: function ()
 		{
 			return this .scripts;

@@ -71,6 +71,10 @@ function ($,
 			{
 				return this .$initialized;
 			},
+			isLive: function ()
+			{
+			   return this .isLive_;
+			},
 			setup: function ()
 			{
 				if (this .$initialized)
@@ -240,11 +244,11 @@ function ($,
 					configurable: false,
 				});
 			},
-			removeField: function (name)
+			removeField: function (name /*, completely */)
 			{
 				var field = this .fields [name];
 
-				//if (field .getAccessType () === X3DConstants .inputOutput)
+				//if (completely && field .getAccessType () === X3DConstants .inputOutput)
 				//{
 				//	delete this .fields ["set_" + field .getName ()];
 				//	delete this .fields [field .getName () + "_changed"];
@@ -310,6 +314,18 @@ function ($,
 				return null;
 			},
 			traverse: function () { },
+			beginUpdate: function ()
+			{
+			   if (this .isLive () .getValue ())
+			      return;
+
+			   this .isLive () .setValue (true);
+			},
+			endUpdate: function ()
+			{
+			   if (this .isLive () .getValue ())
+			      this .isLive () .setValue (false);
+			},
 			toString: function ()
 			{
 				return this .getTypeName () + " { }";

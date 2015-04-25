@@ -20,7 +20,7 @@ function ($,
 
 		this .node             = node;
 		this .browser          = node .getBrowser ();
-		this .external         = this .browser .getScriptStack () .length === 1;
+		this .external         = this .browser .isExternal ();
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
 		this .URL              = new URI ();
 	}

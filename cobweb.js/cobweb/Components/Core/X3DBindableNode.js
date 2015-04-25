@@ -26,14 +26,14 @@ function ($,
 			
 			this .setCameraObject (true);
 
-			this .getExecutionContext () .isLive_ .addInterest (this, "set_live__");
-			this .isLive_ .addInterest (this, "set_live__");
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
 
 			this .set_live__ ();
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ())
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
 				return;
 
 			for (var id in this .layers)

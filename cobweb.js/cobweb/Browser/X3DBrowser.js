@@ -76,8 +76,8 @@ function ($,
 				
 				if (this .getWorld ())
 				{
-					this .isLive_ .removeFieldInterest (this .getExecutionContext () .isLive_);
-					this .getExecutionContext () .isLive_ = false;
+					this .isLive () .removeFieldInterest (this .getExecutionContext () .isLive ());
+					this .getExecutionContext () .endUpdate ();
 				}
 
 				// Replace world.
@@ -91,8 +91,8 @@ function ($,
 				scene .setup ();
 				this .setExecutionContext (scene);
 
-				this .isLive_ .addFieldInterest (scene .isLive_);
-				scene .isLive_ = this .isLive_;
+				this .isLive () .addFieldInterest (scene .isLive ());
+				scene .isLive () .setValue (this .isLive ());
 
 				this .loadCount_ .addFieldCallback ("loading", this .bindWorld .bind (this));
 				this .loadCount_ .addEvent ();
@@ -117,7 +117,13 @@ function ($,
 			},
 			createX3DFromString: function (x3dSyntax)
 			{
-				var scene = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
+				var
+					currentScene = this .currentScene,
+					external     = this .isExternal (),
+					scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
+
+				if (! external)
+					currentScene .isLive () .addFieldInterest (scene .isLive ());
 
 				scene .setup ();
 
@@ -136,11 +142,20 @@ function ($,
 				if (field .getType () !== X3DConstants .MFNode)
 					throw Error ("Browser.createVrmlFromURL: event named '" + event + "' must be of type MFNode.");
 
+				var
+					currentScene = this .currentScene,
+					external     = this .isExternal ();
+
 				new Loader (this .getWorld ()) .createX3DFromURL (url,
 				function (scene)
 				{
 					if (scene)
 					{
+					   if (! external)
+					      currentScene .isLive () .addFieldInterest (scene .isLive ());
+
+						console .log (external, currentScene .worldURL);
+
 						scene .setup ();
 						// Wait until scene is completely loaded, scene .loadCount_ must be 0.
 						field .setValue (scene .rootNodes);
@@ -156,9 +171,16 @@ function ($,
 					return null;
 				}
 
-				var scene = new Loader (this .getWorld ()) .createX3DFromURL (url);
+				var
+					currentScene = this .currentScene,
+					external     = this .isExternal (),
+					scene        = new Loader (this .getWorld ()) .createX3DFromURL (url);
+
+				if (! external)
+					currentScene .isLive () .addFieldInterest (scene .isLive ());
 
 				scene .setup ();
+
 				return scene;
 			},
 			loadURL: function (url, parameter)

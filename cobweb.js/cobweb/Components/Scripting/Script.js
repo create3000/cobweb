@@ -58,8 +58,6 @@ function ($,
 			X3DScriptNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Script);
-
-			this .setExtendedEventHandling (false);
 		}
 
 		Script .prototype = $.extend (Object .create (X3DScriptNode .prototype),
@@ -84,6 +82,10 @@ function ($,
 				this .url_ .addInterest (this, "set_url__");
 
 				this .requestAsyncLoad ();
+			},
+			getExtendedEventHandling: function ()
+			{
+				return false;
 			},
 			hasUserDefinedFields: function ()
 			{
@@ -287,7 +289,7 @@ function ($,
 			{
 				var userDefinedFields = this .getUserDefinedFields ();
 
-				if (this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ())
+				if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
 				{
 					if ($.isFunction (this .context .prepareEvents))
 						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
@@ -348,8 +350,8 @@ function ($,
 			{
 				this .context = this .getContext (text);
 
-				this .getExecutionContext () .isLive_ .addInterest (this, "set_live__");
-				this .isLive_ .addInterest (this, "set_live__");
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest (this, "set_live__");
 
 				this .set_live__ ();
 

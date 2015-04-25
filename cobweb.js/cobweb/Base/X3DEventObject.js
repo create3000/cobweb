@@ -27,26 +27,18 @@ function ($, X3DChildObject)
 	X3DEventObject .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DEventObject,
-		extendedEventHandling: true,
 		getBrowser: function ()
 		{
 			return this .browser;
 		},
-		setExtendedEventHandling: function (value)
+		getExtendedEventHandling: function ()
 		{
-			this .extendedEventHandling = value;
+			return true;
 		},
 		addEvent: function (field)
 		{
 			if (field .getTainted ())
 				return;
-
-			//try
-			//{
-			//	console .log (this .getId (), this .getTypeName (), field .getName ());
-			//}
-			//catch (error)
-			//{ }
 
 			field .setTainted (true);
 
@@ -62,22 +54,22 @@ function ($, X3DChildObject)
 
 			// Register for eventsProcessed
 
-			if (! this .getTainted ())
-			{
-				if (field .isInput () || (this .extendedEventHandling && ! field .isOutput ()))
-				{
-					this .setTainted (true);
-					this .getBrowser () .addTaintedNode (this);
-				}
-			}
-		},
-		addNodeEvent: function ()
-		{
-			if (! this .getTainted ())
+			if (this .getTainted ())
+			   return;
+
+			if (field .isInput () || (this .getExtendedEventHandling () && ! field .isOutput ()))
 			{
 				this .setTainted (true);
 				this .getBrowser () .addTaintedNode (this);
 			}
+		},
+		addNodeEvent: function ()
+		{
+			if (this .getTainted ())
+			   return;
+
+			this .setTainted (true);
+			this .getBrowser () .addTaintedNode (this);
 		},
 		eventsProcessed: function ()
 		{
