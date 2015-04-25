@@ -3,11 +3,15 @@ define ([
 	"jquery",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DGroupingNode,
           X3DConstants,
+          Vector3,
+          Rotation4,
           Matrix4)
 {
 	function X3DTransformMatrix4DNode (browser, executionContext)
@@ -33,13 +37,16 @@ function ($,
 		},
 		setTransform: function (t, r, s, so, c)
 		{
-			this .matrix .set (t, r, s, so, c);
-
-			if (this .matrix .equals (Matrix4 .Identity))
-				delete this .traverse;
-
+			if (t .equals (Vector3 .Zero) && r .equals (Rotation4 .Identity) && s .equals (Vector3 .One))
+			{
+				this .matrix .identity ();
+				this .traverse = X3DGroupingNode .prototype .traverse;
+			}
 			else
+			{
+			   this .matrix .set (t, r, s, so, c);
 				this .traverse = traverse;
+			}
 		},
 	});
 

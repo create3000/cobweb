@@ -177,9 +177,7 @@ function ($,
 		},
 		processEvent: function (event)
 		{
-			//console .log (this .getName ());
-
-			if (this .getId () in event .sources)
+			if (event .sources .hasOwnProperty (this .getId ()))
 				return;
 
 			event .sources [this .getId ()] = true;
