@@ -99,6 +99,8 @@ function ($,
 			{
 				try
 				{
+					this .setTraversed (false);
+
 					if (this .inside)
 					{
 						var centerOfRotationMatrix = this .viewpoint .getParentMatrix ();
@@ -163,6 +165,8 @@ function ($,
 						}
 						case TraverseType .DISPLAY:
 						{
+						   this .setTraversed (true);
+
 							if (this .inside)
 								return;
 

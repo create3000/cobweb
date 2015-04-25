@@ -65,6 +65,8 @@ function ($,
 			},
 			update: function ()
 			{
+				this .setTraversed (false);
+
 				if (this .visible)
 				{
 					if (! this .isActive_ .getValue ())
@@ -86,24 +88,32 @@ function ($,
 			},
 			traverse: function (type)
 			{
-				if (TraverseType .CAMERA)
-				{
-					if (! this .enabled_ .getValue () || this .visible)
-						return;
-
-					if (this .size_ .getValue () .equals (unlimited))
-						this .visible = true;
-
-					else
+			   switch (type)
+			   {
+					case TraverseType .CAMERA:
 					{
-						var
-							viewVolumes     = this .getCurrentLayer () .getViewVolumeStack (),
-							modelViewMatrix = this .getModelViewMatrix (type),
-							size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
-							center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
+						if (! this .enabled_ .getValue () || this .visible)
+							return;
 
-						this .visible = viewVolumes [viewVolumes .length - 1] .intersectsSphere (size .abs () / 2, center);
+						if (this .size_ .getValue () .equals (unlimited))
+							this .visible = true;
+
+						else
+						{
+							var
+								viewVolumes     = this .getCurrentLayer () .getViewVolumeStack (),
+								modelViewMatrix = this .getModelViewMatrix (type),
+								size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
+								center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
+
+							this .visible = viewVolumes [viewVolumes .length - 1] .intersectsSphere (size .abs () / 2, center);
+						}
+
+						break;
 					}
+					case TraverseType .DISPLAY:
+						this .setTraversed (true);
+						break;
 				}
 			},
 		});

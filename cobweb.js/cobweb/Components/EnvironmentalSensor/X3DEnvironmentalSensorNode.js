@@ -15,6 +15,8 @@ function ($,
 		X3DSensorNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
+
+		this .traversed = true;
 	}
 
 	X3DEnvironmentalSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
@@ -29,14 +31,24 @@ function ($,
 			this .getExecutionContext () .isLive () .addInterest (this, "set_enabled__");
 			this .isLive () .addInterest (this, "set_enabled__");
 
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .size_    .addInterest (this, "set_enabled__");
+			this .enabled_        .addInterest (this, "set_enabled__");
+			this .size_           .addInterest (this, "set_enabled__");
+			this .isCameraObject_ .addInterest (this, "set_enabled__");
 
 			this .set_enabled__ ();
 		},
+		setTraversed: function (value)
+		{
+		   if (value)
+				this .setCameraObject (true);
+			else
+				this .setCameraObject (this .traversed);
+
+		   this .traversed = value;
+		},
 		set_enabled__: function ()
 		{
-			if (this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			if (this .getCameraObject () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 				this .getBrowser () .sensors () .addInterest (this, "update");
 
 			else
