@@ -23,21 +23,15 @@ function ($,
 		initialize: function ()
 		{
 			X3DChildNode .prototype .initialize .call (this);
-			
-			this .setCameraObject (true);
 
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .set_live__ ();
 		},
-		set_live__: function ()
+		getCameraObject: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				return;
-
-			for (var id in this .layers)
-				this .removeFromLayer (this .layers [id]);
+		   return true;
 		},
 		getLayers: function ()
 		{
@@ -51,7 +45,16 @@ function ($,
 		{
 			delete this .layers [layer .getId ()];
 		},
-		transitionStart: function () { },
+		transitionStart: function ()
+		{ },
+		set_live__: function ()
+		{
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+				return;
+
+			for (var id in this .layers)
+				this .removeFromLayer (this .layers [id]);
+		},
 	});
 
 	return X3DBindableNode;

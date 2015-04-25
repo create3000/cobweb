@@ -3,8 +3,12 @@ define ([
 	"jquery",
 	"cobweb/Base/X3DChildObject",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Base/Event",
 ],
-function ($, X3DChildObject, X3DConstants)
+function ($,
+	       X3DChildObject,
+	       X3DConstants,
+	       Event)
 {
 	function X3DField (value)
 	{
@@ -203,8 +207,11 @@ function ($, X3DChildObject, X3DConstants)
 					fieldInterests [key] .addEventObject (this, event);
 				}
 				else
-					fieldInterests [key] .addEventObject (this, event .copy ());
+					fieldInterests [key] .addEventObject (this, Event .copy (event));
 			}
+
+			if (first)
+			   Event .push (event);
 
 			// Process field callbacks
 

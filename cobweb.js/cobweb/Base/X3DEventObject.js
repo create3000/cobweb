@@ -2,21 +2,12 @@
 define ([
 	"jquery",
 	"cobweb/Base/X3DChildObject",
+	"cobweb/Base/Event",
 ],
-function ($, X3DChildObject)
+function ($,
+	       X3DChildObject,
+	       Event)
 {
-	function Event (field, sources)
-	{
-		return {
-			field: field,
-			sources: sources,
-			copy: function ()
-			{
-				return Event (this .field, $.extend ({  }, this .sources));
-			},
-		};
-	}
-
 	function X3DEventObject (browser)
 	{
 		X3DChildObject .call (this);
@@ -42,7 +33,7 @@ function ($, X3DChildObject)
 
 			field .setTainted (true);
 
-			this .addEventObject (field, Event (field, { }));
+			this .addEventObject (field, Event .create (field));
 		},
 		addEventObject: function (field, event)
 		{

@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ItemType>GenericProject</ItemType>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{228A9B59-96B2-4F22-BE2F-DA87FCFC3444}</ProjectGuid>
   </PropertyGroup>
@@ -1706,6 +1706,7 @@
     <None Include="tests\Examples\ICTS\stage\zoom.gif" />
     <None Include="tests\Examples\ICTS\stage\zoom.wrl" />
     <None Include="tests\Examples\ICTS\stage\zoom.x3d" />
+    <None Include="cobweb\Base\Event.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
