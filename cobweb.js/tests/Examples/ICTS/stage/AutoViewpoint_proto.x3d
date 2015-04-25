@@ -127,7 +127,7 @@ function set_isActive(value, time)
 	if (!value) {
 		timeSensor.enabled = FALSE;
 		if (autoViewpoint.isBound) {
-			autoViewpoint.set_bind = FALSE;
+			//autoViewpoint.set_bind = FALSE;
 			viewpoint.set_bind = TRUE;
 		}
 	}

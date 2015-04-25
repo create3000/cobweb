@@ -1707,6 +1707,7 @@
     <None Include="tests\Examples\ICTS\stage\zoom.wrl" />
     <None Include="tests\Examples\ICTS\stage\zoom.x3d" />
     <None Include="cobweb\Base\Event.js" />
+    <None Include="tests\Examples\ICTS\soccer.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
