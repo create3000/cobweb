@@ -9,26 +9,26 @@
     <meta name='modified' content='Fri, 24 Apr 2015 17:09:09 GMT'/>
   </head>
   <Scene>
-    <ExternProtoDeclare name='Console' url='"Console_proto.wrl"'>
+    <ExternProtoDeclare name='Console' url='"Console_proto.x3d"'>
       <field accessType='inputOutput' type='MFString' name='string'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Bool' url='"Bool_proto.wrl"'>
+    <ExternProtoDeclare name='Bool' url='"Bool_proto.x3d"'>
       <field accessType='inputOnly' type='SFTime' name='startTime'/>
       <field accessType='outputOnly' type='SFBool' name='value_changed'/>
       <field accessType='inputOutput' type='SFBool' name='keyValue'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Int' url='"Int_proto.wrl"'>
+    <ExternProtoDeclare name='Int' url='"Int_proto.x3d"'>
       <field accessType='inputOnly' type='SFTime' name='startTime'/>
       <field accessType='outputOnly' type='SFInt32' name='value_changed'/>
       <field accessType='inputOutput' type='SFInt32' name='keyValue'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='AnimCtrl' url='"AnimCtrl_proto.wrl"'>
+    <ExternProtoDeclare name='AnimCtrl' url='"AnimCtrl_proto.x3d"'>
       <field accessType='inputOnly' type='SFBool' name='start'/>
       <field accessType='inputOnly' type='SFBool' name='stop'/>
       <field accessType='outputOnly' type='SFBool' name='stoped'/>
       <field accessType='outputOnly' type='SFBool' name='isActive'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='IntCountDown' url='"IntCountDown_proto.wrl"'>
+    <ExternProtoDeclare name='IntCountDown' url='"IntCountDown_proto.x3d"'>
       <field accessType='inputOutput' type='SFInt32' name='startValue'/>
       <field accessType='inputOutput' type='SFInt32' name='stopValue'/>
       <field accessType='inputOutput' type='SFTime' name='next'/>
@@ -36,22 +36,22 @@
       <field accessType='outputOnly' type='SFInt32' name='whichChoice_changed'/>
       <field accessType='outputOnly' type='SFTime' name='stopTime'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Digit' url='"Digit_proto.wrl"'>
+    <ExternProtoDeclare name='Digit' url='"Digit_proto.x3d"'>
       <field accessType='inputOutput' type='SFInt32' name='whichChoice'/>
       <field accessType='initializeOnly' type='MFNode' name='children'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='MediaCtrl' url='"MediaCtrl_proto.wrl"'>
+    <ExternProtoDeclare name='MediaCtrl' url='"MediaCtrl_proto.x3d"'>
       <field accessType='inputOutput' type='SFBool' name='reset'/>
       <field accessType='inputOutput' type='SFTime' name='startTime'/>
       <field accessType='inputOutput' type='SFTime' name='stopTime'/>
       <field accessType='inputOnly' type='SFBool' name='set_isActive'/>
       <field accessType='initializeOnly' type='SFNode' name='source'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='BoolSwitch' url='"BoolSwitch_proto.wrl"'>
+    <ExternProtoDeclare name='BoolSwitch' url='"BoolSwitch_proto.x3d"'>
       <field accessType='inputOnly' type='SFBool' name='isActive'/>
       <field accessType='outputOnly' type='SFInt32' name='wichChoice_changed'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Delay' url='"Delay_proto.wrl"'>
+    <ExternProtoDeclare name='Delay' url='"Delay_proto.x3d"'>
       <field accessType='inputOutput' type='SFTime' name='cycleInterval'/>
       <field accessType='inputOutput' type='SFBool' name='enabled'/>
       <field accessType='inputOutput' type='SFTime' name='startTime'/>
@@ -59,7 +59,7 @@
       <field accessType='outputOnly' type='SFBool' name='isActive'/>
       <field accessType='outputOnly' type='SFTime' name='exitTime'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='CountDown' url='"CountDown_proto.wrl"'>
+    <ExternProtoDeclare name='CountDown' url='"CountDown_proto.x3d"'>
       <field accessType='inputOutput' type='SFTime' name='startTime'/>
       <field accessType='inputOutput' type='SFTime' name='stopTime'/>
       <field accessType='inputOnly' type='SFTime' name='set_time'/>
@@ -67,25 +67,25 @@
       <field accessType='outputOnly' type='SFTime' name='time'/>
       <field accessType='outputOnly' type='SFTime' name='exitTime'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='DigitalClock' url='"DigitalClock_proto.wrl"'>
+    <ExternProtoDeclare name='DigitalClock' url='"DigitalClock_proto.x3d"'>
       <field accessType='inputOutput' type='SFTime' name='time'/>
       <field accessType='initializeOnly' type='MFNode' name='children'/>
       <field accessType='initializeOnly' type='MFNode' name='fraction'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Time' url='"Time_proto.wrl"'>
+    <ExternProtoDeclare name='Time' url='"Time_proto.x3d"'>
       <field accessType='inputOutput' type='SFTime' name='time'/>
       <field accessType='inputOutput' type='SFTime' name='startTime'/>
       <field accessType='outputOnly' type='SFTime' name='value_changed'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='False' url='"False_proto.wrl"'>
+    <ExternProtoDeclare name='False' url='"False_proto.x3d"'>
       <field accessType='inputOnly' type='SFBool' name='set_SFBool'/>
       <field accessType='outputOnly' type='SFTime' name='startTime'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Matrix' url='"Matrix_proto.wrl"'>
+    <ExternProtoDeclare name='Matrix' url='"Matrix_proto.x3d"'>
       <field accessType='inputOutput' type='SFVec2f' name='size'/>
       <field accessType='inputOutput' type='MFInt32' name='matrix'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Ghost' url='"Ghost_proto.wrl"'>
+    <ExternProtoDeclare name='Ghost' url='"Ghost_proto.x3d"'>
       <field accessType='inputOutput' type='SFVec2f' name='startPosition'/>
       <field accessType='inputOutput' type='SFVec2f' name='step'/>
       <field accessType='inputOutput' type='SFFloat' name='visibilityLimit'/>
@@ -98,20 +98,20 @@
       <field accessType='inputOutput' type='SFNode' name='matrix'/>
       <field accessType='inputOutput' type='SFNode' name='proximitySensor'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='RandomTime' url='"RandomTime_proto.wrl"'>
+    <ExternProtoDeclare name='RandomTime' url='"RandomTime_proto.x3d"'>
       <field accessType='inputOutput' type='SFTime' name='minTime'/>
       <field accessType='inputOutput' type='SFTime' name='maxTime'/>
       <field accessType='inputOutput' type='SFTime' name='startTime'/>
       <field accessType='outputOnly' type='SFTime' name='randomTime'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Gate' url='"Gate_proto.wrl"'>
+    <ExternProtoDeclare name='Gate' url='"Gate_proto.x3d"'>
       <field accessType='inputOutput' type='SFBool' name='offset'/>
       <field accessType='inputOutput' type='SFTime' name='startTime'/>
       <field accessType='outputOnly' type='SFBool' name='isActive'/>
       <field accessType='outputOnly' type='SFTime' name='enterTime'/>
       <field accessType='outputOnly' type='SFTime' name='exitTime'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='Bonus' url='"Bonus_proto.wrl"'>
+    <ExternProtoDeclare name='Bonus' url='"Bonus_proto.x3d"'>
       <field accessType='inputOutput' type='SFTime' name='startTime'/>
       <field accessType='inputOutput' type='SFTime' name='stopTime'/>
       <field accessType='inputOutput' type='SFVec3f' name='axisOfRotation'/>
@@ -238,7 +238,7 @@
             </Transform>
             <Transform DEF='building'>
               <Inline
-                  url='"building.wrl"'
+                  url='"building.x3d"'
                   bboxSize='80 10.65 80.36'
                   bboxCenter='40 5.27 -39.82'/>
             </Transform>
@@ -261,7 +261,7 @@
                               translation='0.222522 -1.2301 -0.30027'
                               scale='0.177338 0.176656 0.348236'>
                             <Inline
-                                url='"hudflame.wrl"'
+                                url='"hudflame.x3d"'
                                 bboxSize='1.35777 1.35777 0.0905364'
                                 bboxCenter='0 0.678885 0.0452682'/>
                           </Transform>
@@ -1118,7 +1118,7 @@
                         </Transform>
                         <Transform DEF='geistModel_1'>
                           <Inline
-                              url='"mummy.wrl"'
+                              url='"mummy.x3d"'
                               bboxSize='6.67 6.67 6.67'/>
                         </Transform>
                       </Collision>
@@ -1131,7 +1131,7 @@
                         </Transform>
                         <Transform DEF='freeze_3'>
                           <Inline
-                              url='"mummy-freeze.wrl"'
+                              url='"mummy-freeze.x3d"'
                               bboxSize='4.9 4.9 4.9'/>
                         </Transform>
                       </Collision>
@@ -1174,7 +1174,7 @@
                         </Transform>
                         <Transform DEF='geistModel_2'>
                           <Inline
-                              url='"mummy.wrl"'
+                              url='"mummy.x3d"'
                               bboxSize='6.67 6.67 6.67'/>
                         </Transform>
                       </Collision>
@@ -1187,7 +1187,7 @@
                         </Transform>
                         <Transform DEF='freeze_4'>
                           <Inline
-                              url='"mummy-freeze.wrl"'
+                              url='"mummy-freeze.x3d"'
                               bboxSize='4.9 4.9 4.9'/>
                         </Transform>
                       </Collision>
@@ -1229,7 +1229,7 @@
                         </Transform>
                         <Transform DEF='geistModel_3'>
                           <Inline
-                              url='"mummy.wrl"'
+                              url='"mummy.x3d"'
                               bboxSize='6.67 6.67 6.67'/>
                         </Transform>
                       </Collision>
@@ -1242,7 +1242,7 @@
                         </Transform>
                         <Transform DEF='freeze_5'>
                           <Inline
-                              url='"mummy-freeze.wrl"'
+                              url='"mummy-freeze.x3d"'
                               bboxSize='4.9 4.9 4.9'/>
                         </Transform>
                       </Collision>
@@ -1285,14 +1285,14 @@
                         </Transform>
                         <Transform DEF='geistModel'>
                           <Inline
-                              url='"mummy.wrl"'
+                              url='"mummy.x3d"'
                               bboxSize='6.67 6.67 6.67'/>
                         </Transform>
                       </Collision>
                       <Collision DEF='_75'>
                         <Transform DEF='freeze'>
                           <Inline
-                              url='"mummy-freeze.wrl"'
+                              url='"mummy-freeze.x3d"'
                               bboxSize='4.9 4.9 4.9'/>
                         </Transform>
                       </Collision>

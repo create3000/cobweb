@@ -1,17 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Parser/XMLParser.js">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="82" Column="57" />
-      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="249" Column="1" />
-      <File FileName="cobweb.js/tests/Components/PROTO/ExternProto.x3d" Line="12" Column="60" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="199" Column="1" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="210" Column="37" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="129" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="101" Column="18" />
+      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="102" Column="1" />
+      <File FileName="cobweb.js/tests/Components/PROTO/ExternProto.x3d" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="182" Column="8" />
+      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="225" Column="1" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="79" Column="21" />
       <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclarationNode.js" Line="35" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="57" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="92" Column="38" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="59" Column="40" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="59" Column="57" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="102" Column="69" />
+      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="52" Column="5" />
+      <File FileName="cobweb.js/tests/Examples/ICTS/stage/level1.x3d" Line="2837" Column="50" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="143" Column="7" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -24,24 +26,27 @@
               <Node name="Browser" expanded="True" />
               <Node name="Components" expanded="True">
                 <Node name="Core" expanded="True" />
+                <Node name="EnvironmentalSensor" expanded="True" />
                 <Node name="Geometry2D" expanded="True" />
                 <Node name="Geometry3D" expanded="True" />
                 <Node name="Grouping" expanded="True" />
+                <Node name="Layering" expanded="True" />
                 <Node name="Navigation" expanded="True" />
                 <Node name="Networking" expanded="True" />
+                <Node name="PointingDeviceSensor" expanded="True" />
                 <Node name="Rendering" expanded="True" />
                 <Node name="Scripting" expanded="True" />
                 <Node name="Shape" expanded="True" />
+                <Node name="Sound" expanded="True" />
                 <Node name="Texturing" expanded="True" />
                 <Node name="Texturing3D" expanded="True" />
                 <Node name="Time" expanded="True" />
               </Node>
+              <Node name="Configuration" expanded="True" />
               <Node name="Execution" expanded="True" />
               <Node name="Fields" expanded="True" />
               <Node name="InputOutput" expanded="True" />
-              <Node name="Parser" expanded="True">
-                <Node name="XMLParser.js" selected="True" />
-              </Node>
+              <Node name="Parser" expanded="True" />
               <Node name="Prototype" expanded="True" />
               <Node name="Routing" expanded="True" />
             </Node>
@@ -57,6 +62,11 @@
               <Node name="Examples" expanded="True">
                 <Node name="BIC" expanded="True" />
                 <Node name="Dolphin" expanded="True" />
+                <Node name="ICTS" expanded="True">
+                  <Node name="stage" expanded="True">
+                    <Node name="level1.x3d" selected="True" />
+                  </Node>
+                </Node>
                 <Node name="Pong" expanded="True">
                   <Node name="stage" expanded="True" />
                 </Node>
