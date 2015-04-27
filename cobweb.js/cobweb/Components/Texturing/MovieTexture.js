@@ -54,7 +54,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",          new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "cycleTime",         new SFTime ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "elapsedTime",       new SFTime ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "duration_changed",  new SFTime ()),
+				new X3DFieldDefinition (X3DConstants .outputOnly,     "duration_changed",  new SFTime (-1)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatS",           new SFBool (true)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatT",           new SFBool (true)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new SFNode ()),
@@ -94,6 +94,7 @@ function ($,
 			{
 				if (this .urlStack .length === 0)
 				{
+				   this .duration_changed_ = -1;
 					this .clear ();
 					this .setLoadState (X3DConstants .FAILED_STATE);
 					return;
