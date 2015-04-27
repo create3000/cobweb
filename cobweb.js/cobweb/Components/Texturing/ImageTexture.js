@@ -60,6 +60,22 @@ function ($,
 				X3DTexture2DNode .prototype .initialize .call (this);
 				X3DUrlObject     .prototype .initialize .call (this);
 
+				this .url_ .addInterest (this, "set_url__");
+
+				this .canvas = $("<canvas>");
+
+				this .image = $("<img>");
+				this .image .load (this .setImage .bind (this));
+				this .image .error (this .setError .bind (this));
+				this .image .bind ("abort", this .setError .bind (this));
+				this .image .attr ("crossOrigin", "anonymous");
+
+				this .requestAsyncLoad ();
+			},
+			set_url__: function ()
+			{
+				this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+
 				this .requestAsyncLoad ();
 			},
 			requestAsyncLoad: function ()
@@ -83,34 +99,28 @@ function ($,
 
 				// Get URL.
 
-				var URL = new URI (this .urlStack .shift ());
-
-				URL = this .getExecutionContext () .getWorldURL () .transform (URL);
+				this .URL = new URI (this .urlStack .shift ());
+				this .URL = this .getExecutionContext () .getWorldURL () .transform (this .URL);
 				// In Firefox we don't need getRelativePath if file scheme, do we in Chrome???
 
-				// Create Image
-
-				var image = $("<img>");
-				image .load (this .setImage .bind (this, image [0]));
-				image .error (this .setError .bind (this, URL));
-				image .attr ("crossOrigin", "anonymous");
-				image .attr ("src", URL);
+				this .image .attr ("src", this .URL);
 			},
-			setError: function (URL)
+			setError: function ()
 			{
-				console .warn ("Error loading image URL '" + URL + "'.");
+				console .warn ("Error loading image:", this .URL .toString ());
 				this .loadNext ();
 			},
-			setImage: function (image)
+			setImage: function ()
 			{
 				try
 				{
 					var
+					   image  = this .image [0],
 						width  = image .width,
 						height = image .height;
 
 					var
-						canvas = $("<canvas>") [0],
+						canvas = this .canvas [0],
 						cx     = canvas .getContext ("2d");
 
 					// Scale image.
@@ -159,7 +169,7 @@ function ($,
 				{
 					// Catch security error from cross origin requests.
 					console .log (error .message);
-					this .setError (image .src);
+					this .setError ();
 				}
 			},
 		});

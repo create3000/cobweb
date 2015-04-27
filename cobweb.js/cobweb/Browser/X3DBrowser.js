@@ -183,7 +183,7 @@ function ($,
 			},
 			loadURL: function (url, parameter)
 			{
-				this .addLoadCount ();
+				this .addLoadCount (this);
 
 				new Loader (this .getWorld ()) .createX3DFromURL (url,
 				function (scene)
@@ -191,13 +191,13 @@ function ($,
 					if (scene)
 						this .replaceWorld (scene);
 
-					this .removeLoadCount ();
+					this .removeLoadCount (this);
 				}
 				.bind (this),
 				function (fragment)
 				{
 					this .currentScene .changeViewpoint (fragment);
-					this .removeLoadCount ();
+					this .removeLoadCount (this);
 				}
 				.bind (this));
 			},

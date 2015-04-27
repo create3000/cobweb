@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 27 Apr 2015 02:03:36 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 27 Apr 2015 05:19:36 GMT'/>
+    <meta name='modified' content='Mon, 27 Apr 2015 10:53:09 GMT'/>
     <meta name='title' content='MovieTexture'/>
   </head>
   <Scene>
@@ -19,10 +19,10 @@
         <Appearance>
           <Material/>
           <MovieTexture DEF='Movie'
-              url='"../../Examples/Vattenfall/stage/film6.mp4"'
+              url='"../../Examples/Vattenfall/stage/film6.mpv", "../../Examples/Vattenfall/stage/film6.mp4"'
               loop='true'
-              startTime='1394361843.25533'
-              stopTime='1394355536.05188'
+              startTime='1430125541.69667'
+              stopTime='1430125555.56068'
               repeatS='false'
               repeatT='false'/>
         </Appearance>

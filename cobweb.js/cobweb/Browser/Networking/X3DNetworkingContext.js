@@ -15,6 +15,7 @@ function (Fields,
 			initialize: function ()
 			{
 				this .addChildren ("loadCount", new SFInt32 ());
+				this .loadingObjects = { };
 
 				this .location     = new URI (this .getXML () [0] .baseURI);
 				this .defaultScene = this .createScene ();
@@ -35,15 +36,25 @@ function (Fields,
 			{
 				return this .privateScene;
 			},
-			addLoadCount: function ()
+			addLoadCount: function (object)
 			{
+			   if (this .loadingObjects .hasOwnProperty (object .getId ()))
+			      return;
+
+			   this .loadingObjects [object .getId ()] = true;
+
 				var value = this .loadCount_ .getValue () + 1;
 				this .loadCount_ = value;
 				this .getNotification () .string_ = "Loading " + value;
 				this .setCursor ("DEFAULT");
 			},
-			removeLoadCount: function ()
+			removeLoadCount: function (object)
 			{
+			   if (! this .loadingObjects .hasOwnProperty (object .getId ()))
+			      return;
+
+			   delete this .loadingObjects [object .getId ()];
+
 				var value = this .loadCount_ .getValue () - 1;
 				this .loadCount_ = value;
 

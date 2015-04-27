@@ -82,7 +82,7 @@ function ($,
 					this .inlineNode .loadState_ .addInterest (this, "set_loadState__");
 					this .inlineNode .setup ();
 					
-					this .getExecutionContext () .getScene () .addLoadCount ();
+					this .getExecutionContext () .getScene () .addLoadCount (this);
 				}
 			},
 			set_loadState__ (field)
@@ -99,7 +99,7 @@ function ($,
 					case X3DConstants .FAILED_STATE:
 					{
 						this .setLoadState (loadState);
-						this .getExecutionContext () .getScene () .removeLoadCount ();
+						this .getExecutionContext () .getScene () .removeLoadCount (this);
 
 						var proto = this .getProto ();
 
