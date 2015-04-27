@@ -8,6 +8,7 @@ define ([
 	"cobweb/Components/Sound/X3DSoundSourceNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Networking/URI",
 ],
 function ($,
           Fields,
@@ -16,20 +17,25 @@ function ($,
           X3DTexture2DNode, 
           X3DSoundSourceNode, 
           X3DUrlObject, 
-          X3DConstants)
+          X3DConstants,
+          URI)
 {
 	with (Fields)
 	{
 		function MovieTexture (executionContext)
 		{
-			X3DTexture2DNode .call (this, executionContext .getBrowser (), executionContext);
+			X3DTexture2DNode   .call (this, executionContext .getBrowser (), executionContext);
 			X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+			X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .MovieTexture);
+
+			this .urlStack = new MFString ();
 		}
 
-		MovieTexture .prototype = $.extend (Object .create (X3DTexture2DNode .prototype),new X3DSoundSourceNode (),new X3DUrlObject (),
+		MovieTexture .prototype = $.extend (Object .create (X3DTexture2DNode .prototype),
+			X3DSoundSourceNode .prototype,
+			X3DUrlObject .prototype,
 		{
 			constructor: MovieTexture,
 			fieldDefinitions: new FieldDefinitionArray ([
@@ -65,6 +71,102 @@ function ($,
 			{
 				return "texture";
 			},
+			initialize: function ()
+			{
+				X3DTexture2DNode   .prototype .initialize .call (this);
+				X3DSoundSourceNode .prototype .initialize .call (this);
+				X3DUrlObject       .prototype .initialize .call (this);
+
+				this .requestAsyncLoad ();
+			},
+			requestAsyncLoad: function ()
+			{
+				if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+					return;
+
+				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+				this .setMedia (null);
+				this .urlStack .setValue (this .url_);
+				this .loadNext ();
+			},
+			loadNext: function ()
+			{
+				if (this .urlStack .length === 0)
+				{
+					this .clear ();
+					this .setLoadState (X3DConstants .FAILED_STATE);
+					return;
+				}
+
+				// Get URL.
+
+				var URL = new URI (this .urlStack .shift ());
+
+				URL = this .getExecutionContext () .getWorldURL () .transform (URL);
+				// In Firefox we don't need getRelativePath if file scheme, do we in Chrome???
+
+				// Create Image
+
+				var video = $("<video>");
+				video .bind ("canplaythrough", this .setVideo .bind (this, video));
+				video .error (this .setError .bind (this, URL));
+				video .attr ("volume", 0);
+				video .attr ("crossOrigin", "anonymous");
+				video .attr ("src", URL);
+			},
+			setError: function (URL)
+			{
+				console .warn ("Error loading image URL '" + URL + "'.");
+				this .loadNext ();
+			},
+			setVideo: function ($video)
+			{
+			   var video = $video [0];
+	
+				try
+				{
+					var
+						width  = video .videoWidth,
+						height = video .videoHeight;
+
+					var
+						canvas = $("<canvas>") [0],
+						cx     = canvas .getContext ("2d");
+
+					canvas .width  = width;
+					canvas .height = height;
+
+					cx .drawImage (video, 0, 0);
+
+					var data = cx .getImageData (0, 0, width, height) .data;
+
+					setTimeout (function ()
+					{
+					   $video .unbind ("canplaythrough");
+					   this .setMedia (video);
+						this .setTexture (width, height, false, new Uint8Array (data), true);
+						this .setLoadState (X3DConstants .COMPLETE_STATE);
+					}
+					.bind (this), 16);
+				}
+				catch (error)
+				{
+					// Catch security error from cross origin requests.
+					console .log (error .message);
+					this .setError (video .src);
+				}
+			},
+			prepareEvents: function ()
+			{
+			   X3DSoundSourceNode .prototype .prepareEvents .call (this);
+
+			   var video = this .getMedia ();
+
+				if (video)
+					this .updateTexture (video);
+			},
+			traverse: X3DTexture2DNode .prototype .traverse,
 		});
 
 		return MovieTexture;

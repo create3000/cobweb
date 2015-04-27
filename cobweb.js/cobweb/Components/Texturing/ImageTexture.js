@@ -98,7 +98,7 @@ function ($,
 			},
 			setError: function (URL)
 			{
-				this .getBrowser () .println ("Error loading image URL '" + URL + "'.");
+				console .warn ("Error loading image URL '" + URL + "'.");
 				this .loadNext ();
 			},
 			setImage: function (image)

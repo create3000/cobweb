@@ -17,6 +17,8 @@ function ($,
 			X3DAppearanceChildNode .call (this, browser, executionContext);
 
 			this .addType (X3DConstants .X3DTextureNode);
+
+			this .addChildren ("transparent", new SFBool (false));
 		}
 
 		X3DTextureNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
@@ -25,8 +27,6 @@ function ($,
 			initialize: function ()
 			{
 				X3DAppearanceChildNode .prototype .initialize .call (this);
-				
-				this .addChildren ("transparent", new SFBool (false));
 
 				var gl = this .getBrowser () .getContext ();
 

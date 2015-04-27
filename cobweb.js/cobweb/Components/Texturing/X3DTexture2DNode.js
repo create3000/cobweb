@@ -55,7 +55,7 @@ function ($,
 		{
 			return this .height;
 		},
-		setTexture: function (width, height, transparent, data, flip)
+		setTexture: function (width, height, transparent, data, flipY)
 		{
 			this .transparent_ = transparent;
 			this .width        = width;
@@ -63,7 +63,7 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flip);
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
 			gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
@@ -72,6 +72,18 @@ function ($,
 			this .updateTextureProperties ();
 
 			this .getBrowser () .addBrowserEvent ();
+		},
+		updateTexture: function (object)
+		{
+			var gl = this .getBrowser () .getContext ();
+
+			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+			gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, object);
+
+			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
+				gl .generateMipmap (gl .TEXTURE_2D);
+
+			gl .bindTexture (gl .TEXTURE_2D, null);
 		},
 		updateTextureProperties: function ()
 		{

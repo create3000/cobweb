@@ -154,8 +154,6 @@ function ($,
 					   if (! external)
 					      currentScene .isLive () .addFieldInterest (scene .isLive ());
 
-						console .log (external, currentScene .worldURL);
-
 						scene .setup ();
 						// Wait until scene is completely loaded, scene .loadCount_ must be 0.
 						field .setValue (scene .rootNodes);

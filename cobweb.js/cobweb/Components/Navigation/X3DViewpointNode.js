@@ -249,21 +249,21 @@ function ($,
 						this .scaleInterpolator            .keyValue_ = [ startScale, endScale ];
 						this .scaleOrientationInterpolator .keyValue_ = [ startScaleOrientation, endScaleOrientation ];
 					}
-               else
-               {
- 						var
+					else
+					{
+						var
 							relativePosition         = new Vector3 (0, 0, 0),
 							relativeOrientation      = new Rotation4 (),
 							relativeScale            = new Vector3 (0, 0, 0),
 							relativeScaleOrientation = new Rotation4 ();
 
 						this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
-                 
+		 
 						this .positionOffset_         = relativePosition;
 						this .orientationOffset_      = relativeOrientation;
 						this .scaleOffset_            = relativeScale;
 						this .scaleOrientationOffset_ = relativeScaleOrientation;
-               }
+					}
 				}
 				catch (error)
 				{
@@ -296,7 +296,7 @@ function ($,
 			},
 			set_active__: function (value)
 			{
-				if (! value .getValue ())
+				if (! value .getValue () && this .timeSensor .fraction_changed_ .getValue () === 1)
 				{
 					for (var id in this .getLayers ())
 					{
