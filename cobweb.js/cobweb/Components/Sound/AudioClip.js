@@ -46,7 +46,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",         new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "cycleTime",        new SFTime ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "elapsedTime",      new SFTime ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "duration_changed", new SFTime ()),
+				new X3DFieldDefinition (X3DConstants .outputOnly,  "duration_changed", new SFTime (-1)),
 			]),
 			getTypeName: function ()
 			{
