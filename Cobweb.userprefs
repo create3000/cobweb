@@ -1,88 +1,27 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Sound/X3DSoundSourceNode.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="101" Column="18" />
-      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="102" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="1" Column="1" />
       <File FileName="cobweb.js/tests/Components/PROTO/ExternProto.x3d" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="182" Column="8" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="225" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="79" Column="21" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclarationNode.js" Line="35" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="59" Column="57" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="102" Column="69" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="52" Column="5" />
-      <File FileName="cobweb.js/tests/Examples/ICTS/stage/level1.x3d" Line="2837" Column="50" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="143" Column="7" />
+      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclarationNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/MovieTexture.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/ImageTexture.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/X3DTexture2DNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Sound/X3DSoundSourceNode.js" Line="2" Column="2" />
+      <File FileName="cobweb.js/cobweb/Components/Time/X3DTimeDependentNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/X3DTextureNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Networking/X3DUrlObject.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Networking/X3DNetworkingContext.js" Line="1" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="cobweb.js" expanded="True">
-            <Node name="cobweb" expanded="True">
-              <Node name="Base" expanded="True" />
-              <Node name="Basic" expanded="True" />
-              <Node name="Bits" expanded="True" />
-              <Node name="Browser" expanded="True" />
-              <Node name="Components" expanded="True">
-                <Node name="Core" expanded="True" />
-                <Node name="EnvironmentalSensor" expanded="True" />
-                <Node name="Geometry2D" expanded="True" />
-                <Node name="Geometry3D" expanded="True" />
-                <Node name="Grouping" expanded="True" />
-                <Node name="Layering" expanded="True" />
-                <Node name="Navigation" expanded="True" />
-                <Node name="Networking" expanded="True" />
-                <Node name="PointingDeviceSensor" expanded="True" />
-                <Node name="Rendering" expanded="True" />
-                <Node name="Scripting" expanded="True" />
-                <Node name="Shape" expanded="True" />
-                <Node name="Sound" expanded="True" />
-                <Node name="Texturing" expanded="True" />
-                <Node name="Texturing3D" expanded="True" />
-                <Node name="Time" expanded="True" />
-              </Node>
-              <Node name="Configuration" expanded="True" />
-              <Node name="Execution" expanded="True" />
-              <Node name="Fields" expanded="True" />
-              <Node name="InputOutput" expanded="True" />
-              <Node name="Parser" expanded="True" />
-              <Node name="Prototype" expanded="True" />
-              <Node name="Routing" expanded="True" />
-            </Node>
-            <Node name="standard" expanded="True">
-              <Node name="Math" expanded="True">
-                <Node name="Geometry" expanded="True" />
-              </Node>
-            </Node>
-            <Node name="tests" expanded="True">
-              <Node name="Components" expanded="True">
-                <Node name="PROTO" expanded="True" />
-              </Node>
-              <Node name="Examples" expanded="True">
-                <Node name="BIC" expanded="True" />
-                <Node name="Dolphin" expanded="True" />
-                <Node name="ICTS" expanded="True">
-                  <Node name="stage" expanded="True">
-                    <Node name="level1.x3d" selected="True" />
-                  </Node>
-                </Node>
-                <Node name="Pong" expanded="True">
-                  <Node name="stage" expanded="True" />
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-          <Node name="meta" expanded="True" />
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State selected="True" />
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
