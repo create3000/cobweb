@@ -15,35 +15,35 @@ function ($, Fields)
 		var Grammar =
 		{
 			// General
-			Whitespaces: /^([\x20\n,\t\r]+)/y,
+			Whitespaces: new RegExp ('^([\\x20\\n,\\t\\r]+)', 'y'),
 
 			// Header
 
 			// Keywords
-			FALSE: /^FALSE/y,
-			TRUE:  /^TRUE/y,
-			false: /^false/y,
-			true:  /^true/y,
+			FALSE: new RegExp ('^FALSE', 'y'),
+			TRUE:  new RegExp ('^TRUE', 'y'),
+			false: new RegExp ('^false', 'y'),
+			true:  new RegExp ('^true', 'y'),
 
 			// Terminal symbols
-			OpenBrace:    /^\{/y,
-			CloseBrace:   /^\}/y,
-			OpenBracket:  /^\[/y,
-			CloseBracket: /^\]/y,
-			Period:       /^\./y,
-			Colon:        /^\:/y,
+			OpenBrace:    new RegExp ('^\\{', 'y'),
+			CloseBrace:   new RegExp ('^\\}', 'y'),
+			OpenBracket:  new RegExp ('^\\[', 'y'),
+			CloseBracket: new RegExp ('^\\]', 'y'),
+			Period:       new RegExp ('^\\.', 'y'),
+			Colon:        new RegExp ('^\\:', 'y'),
 
 			// Values
-			int32:  /^((?:0[xX][\da-fA-F]+)|(?:[+-]?\d+))/y,
-			double: /^([+-]?(?:(?:(?:\d*\.\d+)|(?:\d+(?:\.)?))(?:[eE][+-]?\d+)?))/y,
-			string: /^"((?:[^\\"]|\\\\|\\\")*)"/y,
+			int32:  new RegExp ('^((?:0[xX][\\da-fA-F]+)|(?:[+-]?\\d+))', 'y'),
+			double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
+			string: new RegExp ('^"((?:[^\\\\"]|\\\\\\\\|\\\\\\")*)"', 'y'),
 			
-			Inf:         /^[+]?inf/y,
-			NegativeInf: /^-inf/y,
-			NaN:         /^[+-]?nan/y,
+			Inf:         new RegExp ('^[+]?inf', 'y'),
+			NegativeInf: new RegExp ('^-inf', 'y'),
+			NaN:         new RegExp ('^[+-]?nan', 'y'),
 
 			// Misc
-			Break: /\n/g,
+			Break: new RegExp ('\\n', 'g'),
 		};
 
 		function parse (parser)

@@ -85,7 +85,7 @@ function ($,
 					this .getExecutionContext () .getScene () .addLoadCount (this);
 				}
 			},
-			set_loadState__ (field)
+			set_loadState__: function (field)
 			{
 				var loadState = field .getValue ();
 

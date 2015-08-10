@@ -61,7 +61,7 @@ function ($,
 			{
 				return this .loadState_ .getValue ();
 			},
-			getData (data, comp, array)
+			getData: function (data, comp, array)
 			{
 				switch (comp)
 				{

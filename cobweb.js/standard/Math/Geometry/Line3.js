@@ -76,7 +76,7 @@ function (Vector3)
 
 			return d .subtract (this .direction .copy () .multiply (Vector3 .dot (d, this .direction)));
 		},
-		intersectsTriangle (A, B, C, uvt)
+		intersectsTriangle: function (A, B, C, uvt)
 		{
 			// Find vectors for two edges sharing vert0.
 			var
