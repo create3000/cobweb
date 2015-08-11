@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
+    <meta name='modified' content='Thu, 02 Apr 2015 11:56:36 GMT'/>
+  </head>
+  <Scene>
+    <ExternProtoDeclare name='Torus' url='"../../../../../Titania/Titania/share/titania/Prototypes/0.1/Geometry3D/Torus.x3dv", "file:///usr/share/titania/Prototypes/0.1/Geometry3D/Torus.x3dv", "http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/Torus.x3dv"'>
+      <field accessType='inputOutput' type='SFFloat' name='minorRadius'/>
+      <field accessType='inputOutput' type='SFFloat' name='majorRadius'/>
+      <field accessType='inputOutput' type='SFInt32' name='minorDimension'/>
+      <field accessType='inputOutput' type='SFInt32' name='majorDimension'/>
+      <field accessType='initializeOnly' type='SFBool' name='solid'/>
+    </ExternProtoDeclare>
+    <ExternProtoDeclare name='IcoSphere' url='"../../../../../Titania/Titania/share/titania/Prototypes/0.1/Geometry3D/IcoSphere.x3dv", "file:///usr/share/titania/Prototypes/0.1/Geometry3D/IcoSphere.x3dv", "http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/IcoSphere.x3dv"'>
+      <field accessType='inputOutput' type='SFString' name='type'/>
+      <field accessType='inputOutput' type='SFInt32' name='order'/>
+      <field accessType='inputOutput' type='SFFloat' name='radius'/>
+      <field accessType='initializeOnly' type='SFBool' name='solid'/>
+    </ExternProtoDeclare>
+    <ExternProtoDeclare name='ToolShader' url='"../../../../../Titania/libtitania-x3d/share/titania/tools/library/ToolShader.x3dv"'>
+      <field accessType='inputOutput' type='SFFloat' name='ambientIntensity'/>
+      <field accessType='inputOutput' type='SFColor' name='diffuseColor'/>
+      <field accessType='inputOutput' type='SFColor' name='specularColor'/>
+      <field accessType='inputOutput' type='SFColor' name='emissiveColor'/>
+      <field accessType='inputOutput' type='SFFloat' name='shininess'/>
+      <field accessType='inputOutput' type='SFFloat' name='transparency'/>
+    </ExternProtoDeclare>
+    <ExternProtoDeclare name='QuadSphere' url='"../../../../../Titania/Titania/share/titania/Prototypes/0.1/Geometry3D/QuadSphere.x3dv", "file:///usr/share/titania/Prototypes/0.1/Geometry3D/QuadSphere.x3dv", "http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/QuadSphere.x3dv"'>
+      <field accessType='inputOutput' type='SFInt32' name='uDimension'/>
+      <field accessType='inputOutput' type='SFInt32' name='vDimension'/>
+      <field accessType='inputOutput' type='SFFloat' name='radius'/>
+      <field accessType='initializeOnly' type='SFBool' name='solid'/>
+    </ExternProtoDeclare>
+    <WorldInfo
+        title='Smash'>
+      <MetadataSet
+          name='Titania'>
+        <MetadataSet containerField='value'
+            name='AngleGrid'>
+          <MetadataBoolean containerField='value'
+              name='enabled'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet containerField='value'
+            name='Grid'>
+          <MetadataBoolean containerField='value'
+              name='enabled'
+              value='true'/>
+          <MetadataFloat containerField='value'
+              name='rotation'
+              value='1, 0, 0, 1.5708'/>
+          <MetadataInteger containerField='value'
+              name='dimension'
+              value='60, 10, 32'/>
+          <MetadataInteger containerField='value'
+              name='majorLineEvery'
+              value='3, 3, 3'/>
+          <MetadataFloat containerField='value'
+              name='translation'
+              value='7, 0, 0'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Background DEF='Gray_1'
+        skyColor='0.2 0.2 0.2'/>
+    <Viewpoint DEF='_1'
+        description='Home'
+        position='-5.87413 4.16723 9.77653'
+        orientation='-0.6247 0.769548 0.132461 0.494351'
+        centerOfRotation='-10.0501 0.539258 -0.596923'/>
+    <Transform DEF='Box_1'
+        translation='-18 12 4.40964e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture DEF='_2'
+              url='"../images/image.png"'
+              repeatS='false'
+              repeatT='false'/>
+        </Appearance>
+        <Box/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Box'
+        translation='-15 12 4.40964e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Box
+            size='3 2 1'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Sphere_1'
+        translation='-12 12 4.40964e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Sphere/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Sphere'
+        translation='-9 12 4.40964e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Sphere
+            radius='0.5'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cylinder_1'
+        translation='-18 9.00002 3.30724e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cylinder/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cylinder'
+        translation='-15.2188 9.00002 3.30724e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cylinder
+            top='false'
+            bottom='false'
+            height='1'
+            radius='0.5'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Torus_1'
+        translation='-18 -2.99998 -1.1024e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ProtoInstance name='Torus' containerField='geometry'>
+          <fieldValue name='minorRadius' value='0.5'/>
+          <fieldValue name='majorRadius' value='0.5'/>
+        </ProtoInstance>
+      </Shape>
+    </Transform>
+    <Transform DEF='Octahedron_1'
+        translation='-15 -2.99998 -1.1024e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ProtoInstance name='IcoSphere' containerField='geometry'>
+          <fieldValue name='type' value='OCTAHEDRON'/>
+        </ProtoInstance>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cone_1'
+        translation='-18 6.00001 2.20482e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cone
+            bottomRadius='1.5'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cone'
+        translation='-15 6.00001 2.20482e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cone
+            bottom='false'
+            height='1'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cone_2'
+        translation='-12 6.00001 2.20482e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cone
+            side='false'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cylinder_2'
+        translation='-12 9.00002 3.30724e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cylinder
+            side='false'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cylinder_3'
+        translation='-9 9.00002 3.30724e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cylinder
+            bottom='false'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Cylinder_4'
+        translation='-6 9.00002 3.30724e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Cylinder
+            top='false'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='ElevationGrid_1'
+        translation='-19 3.00002 1.10241e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ElevationGrid
+            xDimension='4'
+            zDimension='4'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='ElevationGrid'
+        translation='-12 2 7.3494e-06'
+        scale='0.358296 0.358296 0.358296'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ElevationGrid
+            xDimension='9'
+            zDimension='9'
+            creaseAngle='1.19952'
+            normalPerVertex='false'
+            height='0, 0, 0.5, 1, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 2.5, 0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 3, 1, 0.5, 0, 1, 0, 0, 0.5, 2, 4.5, 2.5, 1, 1.5, 0.5, 1, 2.5, 3, 4.5, 5.5, 3.5, 3, 1, 0, 0.5, 2, 2, 2.5, 3.5, 4, 2, 0.5, 0, 0, 0, 0.5, 1.5, 1, 2, 3, 1.5, 0, 0, 0, 0, 0, 0, 0, 2, 1.5, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='-18 -0.999987 -0.530228'
+        scale='0.543962 0.543962 0.543962'>
+      <Shape>
+        <Appearance>
+          <Material DEF='_3'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Extrusion
+            endCap='false'
+            solid='false'
+            creaseAngle='1'
+            crossSection='1 0, 0.92 -0.38, 0.71 -0.71, 0.38 -0.92, 0 -1, -0.38 -0.92, -0.71 -0.71, -0.92 -0.38, -1 -0, -0.92 0.38, -0.71 0.71, -0.38 0.92, 0 1, 0.38 0.92, 0.71 0.71, 0.92 0.38, 1 0'
+            scale='1.8 1.8, 1.95 1.95, 2 2, 1.95 1.95, 1.8 1.8, 1.5 1.5, 1.2 1.2, 1.05 1.05, 1 1, 1.05 1.05, 1.15 1.15'
+            spine='0 0 0, 0 0.4 0, 0 0.8 0, 0 1.2 0, 0 1.6 0, 0 2 0, 0 2.4 0, 0 2.8 0, 0 3.2 0, 0 3.6 0, 0 4 0'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Edge_1'
+        translation='-14 1.34501e-05 1'
+        scale='0.319951 0.319951 0.319951'>
+      <Shape>
+        <Appearance>
+          <Material USE='_3'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Extrusion
+            convex='false'
+            crossSection='1 1, 1 -5, -1 -5, -1 -1, -5 -1, -5 1, 1 1'
+            spine='0 -1 0, 0 1 0'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='-12 -0.999987 -0.530228'
+        scale='0.543962 0.543962 0.543962'>
+      <Shape>
+        <Appearance>
+          <Material USE='_3'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Extrusion
+            endCap='false'
+            solid='false'
+            convex='false'
+            creaseAngle='1'
+            crossSection='1 0, 0.92 -0.38, 0.71 -0.71, 0.38 -0.92, 0 -1, -0.38 -0.92, -0.71 -0.71, -0.92 -0.38, -1 -0, -0.92 0.38, -0.71 0.71, -0.38 0.92, 0 1, 0.38 0.92, 0.71 0.71, 0.92 0.38'
+            scale='1.8 1.8, 1.95 1.95, 2 2, 1.95 1.95, 1.8 1.8, 1.5 1.5, 1.2 1.2, 1.05 1.05, 1 1, 1.05 1.05, 1.15 1.15'
+            spine='0 0 0, 0 0.4 0, 0 0.8 0, 0 1.2 0, 0 1.6 0, 0 2 0, 0 2.4 0, 0 2.8 0, 0 3.2 0, 0 3.6 0, 0 4 0'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Torus'
+        translation='-9 1.34501e-05 -5.16422e-11'>
+      <Shape>
+        <Appearance>
+          <Material
+              transparency='0.375'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Extrusion DEF='Geometry_1'
+            creaseAngle='3.14159'
+            crossSection='0 0.5, 0.293893 0.404509, 0.475528 0.154509, 0.475528 -0.154509, 0.293893 -0.404509, 6.12323e-17 -0.5, -0.293893 -0.404509, -0.475528 -0.154509, -0.475528 0.154509, -0.293893 0.404509, 0 0.5'
+            spine='0 0 0.5, 0.293893 0 0.404509, 0.475528 0 0.154509, 0.475528 0 -0.154509, 0.293893 0 -0.404509, 6.12323e-17 0 -0.5, -0.293893 0 -0.404509, -0.475528 0 -0.154509, -0.475528 0 0.154509, -0.293893 0 0.404509, 0 0 0.5'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='-6 1.34501e-05 -5.16422e-11'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Extrusion
+            convex='false'
+            crossSection='1 0, 0.67 -0.27, 0.71 -0.71, 0.27 -0.67, 0 -1, -0.27 -0.67, -0.71 -0.71, -0.67 -0.27, -1 0, -0.67 0.27, -0.71 0.71, -0.27 0.67, 0 1, 0.27 0.67, 0.71 0.71, 0.67 0.27, 1 0'
+            spine='0 0 1, 0 0 -1'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='-3 -6.5771e-06 -5.16422e-11'>
+      <Shape>
+        <Appearance>
+          <Material
+              specularColor='0.47 0.24 0.13'
+              shininess='1'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Extrusion
+            beginCap='false'
+            endCap='false'
+            solid='false'
+            creaseAngle='2'
+            crossSection='1 0, 0.924 -0.383, 0.707 -0.707, 0.383 -0.924, 0 -1, -0.383 -0.924, -0.707 -0.707, -0.924 -0.383, -1 0, -0.924 0.383, -0.707 0.707, -0.383 0.924, 0 1, 0.383 0.924, 0.707 0.707, 0.924 0.383, 1 0'
+            orientation='0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0'
+            scale='0.31 0.31, 0.32 0.32, 0.31 0.31, 0.3 0.3, 0.28 0.28, 0.22 0.22, 0.2 0.2, 0.18 0.18, 0.15 0.15, 0.09 0.11, 0.06 0.09, 0.03 0.07'
+            spine='-1 0.5 0, -1 0.15 0, -1 -0.1 0, -0.94 -0.2 0, -0.83 -0.26 0, -0.66 -0.31 0, -0.55 -0.28 0, -0.18 -0.1 0, 0.05 0.1 0, 0.35 0.3 0, 0.7 0.37 0, 1 0.39 0'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 12 4.40964e-05'>
+      <Shape>
+        <Appearance>
+          <LineProperties DEF='_4'
+              linewidthScaleFactor='4.55'/>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <Circle2D
+            radius='0.5'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 9 3.30723e-05'>
+      <Shape>
+        <Appearance>
+          <LineProperties USE='_4'/>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <Arc2D
+            endAngle='0'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 9 3.30723e-05'>
+      <Shape>
+        <Appearance>
+          <LineProperties USE='_4'/>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <Arc2D
+            startAngle='2'
+            endAngle='6'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 5.99999 2.20482e-05'>
+      <Shape>
+        <Appearance>
+          <LineProperties USE='_4'/>
+          <Material
+              emissiveColor='1 0 0'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Polypoint2D
+            point='0 0, 1 0, 0 1, -1 0, 0 -1'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 2 7.3494e-06'
+        scale='0.681115 0.681115 0.681115'>
+      <Shape>
+        <Appearance>
+          <LineProperties USE='_4'/>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <Polyline2D
+            lineSegments='0 0, 1 2, 2 1, 4 3, 10 0'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 -2.66043e-05 -5.16422e-11'
+        rotation='0 -1 0 1.5708'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Rectangle2D/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 -2.66043e-05 -5.16422e-11'
+        rotation='0 1 0 4.71239'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Rectangle2D
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 -3 0.999989'>
+      <Shape>
+        <Appearance>
+          <Material DEF='_5'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ArcClose2D
+            endAngle='0'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 -3 0.999989'>
+      <Shape>
+        <Appearance>
+          <Material USE='_5'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ArcClose2D
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 -3 0.999989'>
+      <Shape>
+        <Appearance>
+          <Material USE='_5'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ArcClose2D
+            startAngle='2'
+            endAngle='6'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='9 -3 0.999989'>
+      <Shape>
+        <Appearance>
+          <Material USE='_5'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ArcClose2D
+            closureType='CHORD'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='9 -3 0.999989'>
+      <Shape>
+        <Appearance>
+          <Material USE='_5'/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ArcClose2D
+            closureType='CHORD'
+            startAngle='2'
+            endAngle='6'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 -6.00001 -2.20483e-05'>
+      <Shape>
+        <Appearance>
+          <LineProperties USE='_4'/>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <Disk2D
+            innerRadius='1'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 -6.00001 0.999978'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Disk2D
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='9 -6.00001 0.999978'>
+      <Shape>
+        <Appearance>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <Disk2D
+            innerRadius='0.5'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 -9 0.999967'
+        scale='0.18339 0.18339 0.18339'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <TriangleSet2D
+            vertices='0 0, -1 3, -3 1, 0 0, 6 2, 2 6, 0 0, -1 -9, 8 -4'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 -9 1.00768'
+        scale='0.18339 0.18339 0.18339'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <TriangleSet2D
+            vertices='0 0, -1 3, -3 1, 0 0, 6 2, 2 6, 0 0, -1 -9, 8 -4'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='15 12 1.00004'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <IndexedQuadSet
+            solid='false'
+            index='0, 1, 2, 3, 1, 4, 5, 2'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0, 3 -1 0, 3 1 0'/>
+        </IndexedQuadSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='16 9 1.00003'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <QuadSet
+            solid='false'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+        </QuadSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='16 6 1.00002'
+        scale='0.607466 0.607466 0.607466'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <IndexedTriangleFanSet
+            solid='false'
+            normalPerVertex='false'
+            index='0, 1, 2, 3, -1, 4, 5, 6, 7, 8, -1'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 -1, 1 1 0, -1 1 0, 5 0 0, 5 -1 0, 6 -2 0, 7 -1 0, 7 0 0'/>
+        </IndexedTriangleFanSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='16 3 1.00001'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <IndexedTriangleSet
+            solid='false'
+            index='0, 1, 2, 0, 2, 3'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+        </IndexedTriangleSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='15 -3.6747e-06 1'
+        scale='0.575613 0.575613 0.575613'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <IndexedTriangleStripSet
+            solid='false'
+            index='0, 1, 2, 3, -1, 4, 5, 6, 7, 8, -1'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 -1, 1 1 0, 2 1 0, 5 0 0, 5 -1 0, 6 -2 0, 5 -3 0, 6 -3 0'/>
+        </IndexedTriangleStripSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='15 -3 0.999989'
+        scale='0.541327 0.541327 0.541327'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <TriangleFanSet
+            solid='false'
+            normalPerVertex='false'
+            fanCount='4, 5'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 -1, 1 1 0, -1 1 0, 5 0 0, 5 -1 0, 6 -2 0, 7 -1 0, 7 0 0'/>
+        </TriangleFanSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='16 -6 0.999978'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <TriangleSet
+            solid='false'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 0, 1 1 0, -1 -1 0, 1 1 0, -1 1 0'/>
+        </TriangleSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='15 -9 0.732057'
+        scale='0.464181 0.464181 0.464181'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <TriangleStripSet
+            solid='false'
+            stripCount='4, 5'>
+          <Coordinate
+              point='-1 -1 0, 1 -1 -1, 1 1 0, 2 1 0, 5 0 0, 5 -1 0, 6 -2 0, 5 -3 0, 6 -3 0'/>
+        </TriangleStripSet>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='25 12 4.40964e-05'>
+      <Shape>
+        <Appearance>
+          <LineProperties USE='_4'/>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <LineSet
+            vertexCount='8, 2'>
+          <Coordinate
+              point='-1 1 1, -1 -1 1, 1 -1 1, 1 1 1, -1 1 -1, -1 -1 -1, 1 -1 -1, 1 1 -1, -1 0 0, 1 0 0'/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform DEF='QuadSphere_1'
+        translation='-12 -3 -1.10241e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture USE='_2'/>
+        </Appearance>
+        <ProtoInstance name='QuadSphere' containerField='geometry'/>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>

@@ -1,25 +1,36 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
+          Fields,
           X3DNode, 
           X3DConstants)
 {
-	function X3DAppearanceNode (browser, executionContext)
+	with (Fields)
 	{
-		X3DNode .call (this, browser, executionContext);
+		function X3DAppearanceNode (browser, executionContext)
+		{
+			X3DNode .call (this, browser, executionContext);
 
-		this .addType (X3DConstants .X3DAppearanceNode);
+			this .addType (X3DConstants .X3DAppearanceNode);
+		}
+
+		X3DAppearanceNode .prototype = $.extend (Object .create (X3DNode .prototype),
+		{
+			constructor: X3DAppearanceNode,
+			initialize: function ()
+			{
+				X3DNode .prototype .initialize .call (this);
+				
+				this .addChildren ("transparent", new SFBool (false));
+			},
+		});
+
+		return X3DAppearanceNode;
 	}
-
-	X3DAppearanceNode .prototype = $.extend (Object .create (X3DNode .prototype),
-	{
-		constructor: X3DAppearanceNode,
-	});
-
-	return X3DAppearanceNode;
 });
 

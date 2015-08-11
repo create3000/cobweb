@@ -1932,6 +1932,7 @@
     <None Include="tests\Examples\Vattenfall\stage\film5.mpv.idx" />
     <None Include="tests\Examples\Vattenfall\stage\film6.mp4" />
     <None Include="tests\Examples\Vattenfall\stage\film6.mpv.idx" />
+    <None Include="tests\Components\Geometry3D\Smash.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -52,8 +52,6 @@ function ($,
 			initialize: function ()
 			{
 				X3DAppearanceNode .prototype .initialize .call (this);
-				
-				this .addChildren ("transparent", new SFBool (false));
 
 				this .material_         .addInterest (this, "set_material__");
 				this .texture_          .addInterest (this, "set_texture__");

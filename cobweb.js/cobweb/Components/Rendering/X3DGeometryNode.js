@@ -86,10 +86,6 @@ function ($,
 				this .vertexBuffer    = gl .createBuffer ();
 				this .planes          = [ ];
 			},
-			isTransparent: function ()
-			{
-				return false;
-			},
 			isLineGeometry: function ()
 			{
 				return false;

@@ -3,11 +3,13 @@ define ([
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
-          X3DBoundedObject, 
+          X3DBoundedObject,
+          X3DCast,
           X3DConstants)
 {
 	function X3DShapeNode (browser, executionContext)
@@ -52,8 +54,8 @@ function ($,
 			if (this .apparanceNode)
 				this .apparanceNode .removeInterest (this, "set_transparent__");
 
-			this .apparanceNode = this .appearance_ .getValue ();
-			
+			this .apparanceNode = X3DCast (X3DConstants .X3DAppearanceNode, this .appearance_);
+
 			if (this .apparanceNode)
 				this .apparanceNode .addInterest (this, "set_transparent__");
 
@@ -70,7 +72,7 @@ function ($,
 				this .geometryNode .removeInterest (this, "set_transparent__");
 			}
 
-			this .geometryNode = this .geometry_ .getValue ();
+			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
 			{
