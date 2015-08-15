@@ -40,7 +40,7 @@ function ($,
 		{
 			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
 		
-			if (type == TraverseType .CAMERA)
+			if (type === TraverseType .CAMERA)
 				modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
 
 			return modelViewMatrix;

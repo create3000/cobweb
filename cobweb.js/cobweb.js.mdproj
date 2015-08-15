@@ -1933,6 +1933,9 @@
     <None Include="tests\Examples\Vattenfall\stage\film6.mp4" />
     <None Include="tests\Examples\Vattenfall\stage\film6.mpv.idx" />
     <None Include="tests\Components\Geometry3D\Smash.x3d" />
+    <None Include="tests\Components\Sound\04. Like A Virgin.mp3" />
+    <None Include="tests\Components\Sound\AudioClip.wrl" />
+    <None Include="tests\Components\Sound\AudioClip.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1978,5 +1981,6 @@
     <Folder Include="tests\Examples\Pong\" />
     <Folder Include="tests\Examples\ICTS\" />
     <Folder Include="tests\Examples\Vattenfall\" />
+    <Folder Include="tests\Components\Sound\" />
   </ItemGroup>
 </Project>

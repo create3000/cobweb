@@ -112,7 +112,7 @@ function ($,
 				if (this .urlStack .length === 0)
 				{
 				   this .duration_changed_ = -1;
-					this .clear ();
+					this .clear (); // clearTexture
 					this .setLoadState (X3DConstants .FAILED_STATE);
 					return;
 				}
@@ -121,7 +121,7 @@ function ($,
 
 				this .URL = new URI (this .urlStack .shift ());
 				this .URL = this .getExecutionContext () .getWorldURL () .transform (this .URL);
-				// In Firefox we don't need getRelativePath if file scheme, do we in Chrome???
+				// In Firefox we don't need getRelativePath if there is a file scheme, do we in Chrome???
 	
 				this .video .attr ("src", this .URL);
 			},

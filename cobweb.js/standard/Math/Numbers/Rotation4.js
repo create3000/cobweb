@@ -27,65 +27,15 @@ function ($, Quaternion, Vector3)
 			}
 			case 2:
 			{
-				if (arguments [1] instanceof Vector3)
-				{
-					// https://bitbucket.org/Coin3D/coin/src/abc9f50968c9/src/base/SbRotation.cpp
-
-					var
-						from = Vector3 .normalize (arguments [0]),
-						to   = Vector3 .normalize (arguments [1]);
-
-					var
-						cos_angle = from .dot (to),
-						crossvec  = Vector3 .cross (from, to) .normalize (),
-						crosslen  = crossvec .abs ();
-
-					if (crosslen === 0)
-					{
-						// Parallel vectors
-						// Check if they are pointing in the same direction.
-						if (cos_angle > 0)
-							this .value = new Quaternion (0, 0, 0, 1); // standard rotation
-
-						// Ok, so they are parallel and pointing in the opposite direction
-						// of each other.
-						else
-						{
-							// Try crossing with x axis.
-							var t = Vector3 .cross (from, xAxis);
-
-							// If not ok, cross with y axis.
-							if (t .norm () === 0)
-								t = Vector3 .cross (from , yAxis);
-
-							t .normalize ();
-
-							this .value = new Quaternion (t .x, t .y, t .z, 0);
-						}
-					}
-					else
-					{
-						// Vectors are not parallel
-						// The abs () wrapping is to avoid problems when `dot' "overflows" a tiny wee bit,
-						// which can lead to sqrt () returning NaN.
-						crossvec .multiply (Math .sqrt (Math .abs (1 - cos_angle) / 2));
-
-						this .value = new Quaternion (crossvec .x,
-						                              crossvec .y,
-						                              crossvec .z,
-						                              Math .sqrt (Math .abs (1 + cos_angle) / 2));
-					}
-
-					return;
-				}
-				
 				this .value = new Quaternion (0, 0, 0, 1);
+
+				if (arguments [1] instanceof Vector3)
+				   return this .setFromTo (arguments [0], arguments [1]);
+				
 				this .set (arguments [0] .x,
 				           arguments [0] .y,
 				           arguments [0] .z,
 				           arguments [1]);
-
-				return;
 			}
 			case 4:
 			{
@@ -143,6 +93,55 @@ function ($, Quaternion, Vector3)
 				      vector .y,
 				      vector .z,
 				      2 * Math .acos (this .value .w) ];
+		},
+		setFromTo: function (fromVec, toVec)
+		{
+			// https://bitbucket.org/Coin3D/coin/src/abc9f50968c9/src/base/SbRotation.cpp
+
+			var
+				from = Vector3 .normalize (fromVec),
+				to   = Vector3 .normalize (toVec);
+
+			var
+				cos_angle = from .dot (to),
+				crossvec  = Vector3 .cross (from, to) .normalize (),
+				crosslen  = crossvec .abs ();
+
+			if (crosslen === 0)
+			{
+				// Parallel vectors
+				// Check if they are pointing in the same direction.
+				if (cos_angle > 0)
+					this .value = new Quaternion (0, 0, 0, 1); // standard rotation
+
+				// Ok, so they are parallel and pointing in the opposite direction
+				// of each other.
+				else
+				{
+					// Try crossing with x axis.
+					var t = Vector3 .cross (from, xAxis);
+
+					// If not ok, cross with y axis.
+					if (t .norm () === 0)
+						t = Vector3 .cross (from , yAxis);
+
+					t .normalize ();
+
+					this .value .set (t .x, t .y, t .z, 0);
+				}
+			}
+			else
+			{
+				// Vectors are not parallel
+				// The abs () wrapping is to avoid problems when `dot' "overflows" a tiny wee bit,
+				// which can lead to sqrt () returning NaN.
+				crossvec .multiply (Math .sqrt (Math .abs (1 - cos_angle) / 2));
+
+				this .value .set (crossvec .x,
+				                  crossvec .y,
+				                  crossvec .z,
+				                  Math .sqrt (Math .abs (1 + cos_angle) / 2));
+			}
 		},
 		getAxis: function ()
 		{

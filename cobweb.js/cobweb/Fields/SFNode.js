@@ -21,6 +21,8 @@ function ($, X3DField, X3DConstants)
 
 				if (accessType & X3DConstants .outputOnly)
 					return field .valueOf ();
+
+				return undefined;
 			}
 			catch (error)
 			{

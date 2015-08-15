@@ -2,8 +2,7 @@
 require (["cobweb/X3D"],
 function (X3D)
 {
-	return;
-
+	/*
 	X3D (function (dom)
 	{
 		var Browser = X3D .getBrowser (dom);
@@ -21,4 +20,5 @@ function (X3D)
 		                "                Antialiased: " + Browser .getAntialiased () + "\n" +
 		                "                Color depth: " + Browser .getColorDepth () + " bits\n");
 	});
+	*/
 });

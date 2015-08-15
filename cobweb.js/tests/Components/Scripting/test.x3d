@@ -42,7 +42,11 @@ function initialize ()
 	
 	var node = new SFNode ("<Transform/>");
 	print (child instanceof SFNode);
-	print (child .children [0] .geometry .size .getName ());
+	print (child);
+	print (child .children [0]);
+	print (child .children [0] .geometry);
+	print (child .children [0] .geometry .size);
+	print (child .children [0] .geometry .getName ());
 	print (node .scale);
 	print (node instanceof SFNode);
 	print (node .toString ());
