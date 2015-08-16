@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html manifest="manifest.appcache">
+	<head>
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+		<meta http-equiv="Pragma" content="no-cache"/>
+		<meta http-equiv="Expires" content="0"/>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
+		<link rel="stylesheet" type="text/css" href="cobweb.css"/>
+		<style>
+html, body {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	background: #414141;
+	color: white;
+}
+
+x3d {
+	height: 100%;
+}
+
+#bookmarks {
+	padding: 5px;
+	width: 100px;
+	float: right;
+	font-size: 9px;
+}
+		</style>
+		<!--
+		<script src="jam/require.js"></script>
+		<script type="text/javascript" src="cobweb.js"></script>
+		-->
+		<script type="text/javascript" src="cobweb.min.js"></script>
+		<script type="text/javascript">
+require ([
+	"jquery",
+	"cobweb/X3D",
+],
+function ($, X3D)
+{
+	X3D (function (dom)
+	{
+		with (X3D)
+		{
+			var Browser = getBrowser (dom);
+			var scene   = Browser .currentScene;			
+
+			var urls =
+			{
+				'Approach':           "tests/Examples/Approach/stage/index.x3d",
+				'Arcadia':            "tests/Examples/Arcadia/stage/index.x3d",
+				'Astronomy':          "tests/Examples/Astronomy/stage/astrnmy.x3d",
+				'BIC Man':            "tests/Examples/BIC/index.x3d",
+				'BIC Building':       "tests/Examples/BIC/building.x3d",
+				'BIC Buero':          "tests/Examples/BIC/buero.x3d",
+				'BIC Info':           "tests/Examples/BIC/info.x3d",
+				'Cathedral':          "tests/Examples/Cathedral/stage/index.x3d",
+				'Dolphin':            "tests/Examples/Dolphin/index.x3d",
+				'Hamburger':          "tests/Examples/ICTS/hamburger.x3d",
+				'ICTS':               "tests/Examples/ICTS/index.x3d",
+				'Labyrinth':          "tests/Examples/ICTS/labyrinth.x3d",
+				'Soccer':             "tests/Examples/ICTS/soccer.x3d",
+				'LogoPieces':         "tests/Examples/LogoPieces/index.x3d",
+				'LustForLife':        "tests/Examples/LustForLife/stage/index.x3d",
+				'MovieTruck':         "tests/Examples/MovieTruck/stage/index.x3d",
+				'NIST-Logo':          "tests/Examples/NIST-Logo/index.x3d",
+				'Pong':               "tests/Examples/Pong/index.x3d",
+				'Rathaus':            "tests/Examples/Rathaus/stage/index.x3d",
+				'Mediafacade':        "tests/Examples/Vattenfall/index.x3d",
+			};
+
+			var bookmarks = $("#bookmarks");
+
+			$.each (urls, function (name, URL)
+			{
+				$("<a/>")
+					.attr ("href", "#")
+					.click (function ()
+					{
+						Browser .loadURL (new MFString (URL), new MFString ());
+					})
+					.text (name)
+					.appendTo (bookmarks);
+
+				bookmarks .append ("<br/>")
+			});
+		}
+	});
+});
+		</script>
+	</head>
+	<body>
+		<div id="bookmarks">
+		</div>
+		<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd' statistics="false" log="false">
+			<Scene>
+				<!--<Background skyColor='0.2 0.2 0.2'></Background>-->
+				<Inline DEF='Inline' url='
+					 "tests/Examples/Approach/stage/index.x3d",
+				'></Inline>
+			</Scene>
+		</X3D>
+	</body>
+</html>

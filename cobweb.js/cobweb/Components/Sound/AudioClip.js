@@ -74,6 +74,7 @@ function ($,
 				this .audio = $("<audio>");
 				this .audio .error (this .setError .bind (this));
 				this .audio .bind ("abort", this .setError .bind (this));
+				this .audio .attr ("preload", "auto");
 				this .audio .attr ("volume", 0);
 				this .audio .attr ("crossOrigin", "anonymous");
 
@@ -113,6 +114,8 @@ function ($,
 				// In Firefox we don't need getRelativePath if there is a file scheme, do we in Chrome???
 	
 				this .audio .attr ("src", this .URL);
+			   
+			   console .log ("loadNext", this .URL .toString ());
 			},
 			setError: function ()
 			{
@@ -122,6 +125,7 @@ function ($,
 			setAudio: function ()
 			{
 			   // Everything is fine.
+			   console .log ("setAudio", this .audio [0] .src);
 				
 				this .audio .unbind ("canplaythrough");
 				this .setMedia (this .audio [0]);

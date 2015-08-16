@@ -1936,6 +1936,7 @@
     <None Include="tests\Components\Sound\04. Like A Virgin.mp3" />
     <None Include="tests\Components\Sound\AudioClip.wrl" />
     <None Include="tests\Components\Sound\AudioClip.x3d" />
+    <None Include="cobweb.min.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
