@@ -34,11 +34,14 @@ function ($,
 
 			this .addType (X3DConstants .ProximitySensor);
 
-			this .viewpoint          = null;
-			this .modelViewMatrix    = new Matrix4 ();
-			this .invModelViewMatrix = new Matrix4 ();
-			this .rotation           = new Rotation4 ();
-			this .inside             = false;
+			this .viewpoint              = null;
+			this .modelViewMatrix        = new Matrix4 ();
+			this .invModelViewMatrix     = new Matrix4 ();
+			this .centerOfRotationMatrix = new Matrix4 ();
+			this .position               = new Vector3 ();
+			this .orientation            = new Rotation4 ();
+			this .centerOfRotation       = new Vector3 ();
+			this .inside                 = false;
 		}
 
 		ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
@@ -103,36 +106,47 @@ function ($,
 
 					if (this .inside)
 					{
-						var centerOfRotationMatrix = this .viewpoint .getParentMatrix ();
+					   var
+					      modelViewMatrix        = this .modelViewMatrix,
+					      centerOfRotationMatrix = this .centerOfRotationMatrix;
+
+						centerOfRotationMatrix .assign (this .viewpoint .getParentMatrix ());
 						centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
-						centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ());
+						centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
 
-						this .modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
-						this .modelViewMatrix .get (null, this .rotation);
+						modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
+						modelViewMatrix .get (null, this .orientation);
+						modelViewMatrix .inverse ();
 
-						var position         = this .modelViewMatrix .inverse () .origin;
-						var orientation      = this .rotation .inverse ();
-						var centerOfRotation = centerOfRotationMatrix .origin;
+						this .position .set (modelViewMatrix [12],
+						                     modelViewMatrix [13],
+						                     modelViewMatrix [14]);
+
+						this .orientation .inverse ();
+
+						this .centerOfRotation .set (centerOfRotationMatrix [12],
+						                             centerOfRotationMatrix [13],
+						                             centerOfRotationMatrix [14]);
 
 						if (this .isActive_ .getValue ())
 						{
-							if (! this .position_changed_ .getValue () .equals (position))
-								this .position_changed_ = position;
+							if (! this .position_changed_ .getValue () .equals (this .position))
+								this .position_changed_ = this .position;
 
-							if (! this .orientation_changed_ .getValue () .equals (orientation))
-								this .orientation_changed_ = orientation;
+							if (! this .orientation_changed_ .getValue () .equals (this .orientation))
+								this .orientation_changed_ = this .orientation;
 
-							if (! this .centerOfRotation_changed_ .getValue () .equals (centerOfRotation))
-								this .centerOfRotation_changed_ = centerOfRotation;
+							if (! this .centerOfRotation_changed_ .getValue () .equals (this .centerOfRotation))
+								this .centerOfRotation_changed_ = this .centerOfRotation;
 						}
 						else
 						{
 							this .isActive_  = true;
 							this .enterTime_ = this .getBrowser () .getCurrentTime ();
 
-							this .position_changed_         = position;
-							this .orientation_changed_      = orientation;
-							this .centerOfRotation_changed_ = centerOfRotation;
+							this .position_changed_         = this .position;
+							this .orientation_changed_      = this .orientation;
+							this .centerOfRotation_changed_ = this .centerOfRotation;
 						}
 
 						this .inside = false;

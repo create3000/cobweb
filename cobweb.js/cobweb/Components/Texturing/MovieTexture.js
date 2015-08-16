@@ -172,10 +172,10 @@ function ($,
 			{
 			   X3DSoundSourceNode .prototype .prepareEvents .call (this);
 
-			   var video = this .getMedia () [0];
+			   var video = this .getMedia ();
 
 				if (video)
-					this .updateTexture (video);
+					this .updateTexture (video [0]);
 			},
 			traverse: X3DTexture2DNode .prototype .traverse,
 		});
