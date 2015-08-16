@@ -33,28 +33,29 @@ function ($,
 		{
 		   if (this .media)
 		   {
-		      this .media .volume = 0;
-		      this .media .pause ();
+		      this .media [0] .volume = 0;
+		      this .media [0] .pause ();
+		      this .media .unbind ("ended");
 		   }
 
 		   this .media = value;
 
 		   if (this .media)
 		   {
-		      this .media .volume     = 0;
-		      this .media .onended    = this .set_ended .bind (this);
-		      this .duration_changed_ = this .media .duration;
+		      this .media [0] .volume = 0;
+		      this .duration_changed_ = this .media [0] .duration;
 
 			   if (this .isActive_ .getValue ())
 			   {
-					this .media .currentTime = this .getElapsedTime () % this .media .duration;
+					this .media [0] .currentTime = this .getElapsedTime () % this .media [0] .duration;
 
 					if (! this .isPaused_ .getValue ())
 					{							
 						if (this .speed_ .getValue ())
 						{
-						   this .media .currentTime = this .getElapsedTime ();
-							this .media .play ();
+							this .media .bind ("ended", this .set_ended .bind (this));
+							this .media [0] .currentTime = this .getElapsedTime ();
+							this .media [0] .play ();
 						}
 					}
 				}
@@ -67,7 +68,7 @@ function ($,
 		setVolume: function (value)
 		{
 		   if (this .media)
-			   this .media .volume = value;
+			   this .media [0] .volume = value;
 		},
 		set_speed: function ()
 		{ },
@@ -79,28 +80,38 @@ function ($,
 		   {
 				if (this .speed_ .getValue ())
 				{
-				   this .media .currentTime = 0;
-					this .media .play ();
+					this .media .bind ("ended", this .set_ended .bind (this));
+				   this .media [0] .currentTime = 0;
+					this .media [0] .play ();
 				}
 			}
 		},
 		set_pause: function ()
 		{
 		   if (this .media)
-				this .media .pause ();
+		   {
+		      this .media .unbind ("ended");
+				this .media [0] .pause ();
+			}
 		},
 		set_resume: function ()
 		{
 		   if (this .media)
 		   {
 				if (this .speed_ .getValue ())
-					this .media .play ();
+				{
+					this .media .bind ("ended", this .set_ended .bind (this));
+					this .media [0] .play ();
+				}
 			}
 		},
 		set_stop: function ()
 		{
 		   if (this .media)
-				this .media .pause ();
+			{
+		      this .media .unbind ("ended");
+				this .media [0] .pause ();
+			}
 		},
 		set_ended: function ()
 		{
@@ -109,7 +120,7 @@ function ($,
 				if (this .loop_ .getValue ())
 				{
 					if (this .speed_ .getValue ())
-						this .media .play ();
+						this .media [0] .play ();
 
 					// The event order below is very important.
 

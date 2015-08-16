@@ -125,7 +125,7 @@ function ($,
 			   // Everything is fine.
 				
 				this .audio .unbind ("canplaythrough");
-				this .setMedia (this .audio [0]);
+				this .setMedia (this .audio);
 				this .setLoadState (X3DConstants .COMPLETE_STATE);
 			},
 		});

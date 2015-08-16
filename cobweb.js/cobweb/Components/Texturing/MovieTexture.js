@@ -155,7 +155,7 @@ function ($,
 					setTimeout (function ()
 					{
 					   this .video .unbind ("canplaythrough");
-					   this .setMedia (video);
+					   this .setMedia (this .video);
 						this .setTexture (width, height, false, new Uint8Array (data), true);
 						this .setLoadState (X3DConstants .COMPLETE_STATE);
 					}
@@ -172,7 +172,7 @@ function ($,
 			{
 			   X3DSoundSourceNode .prototype .prepareEvents .call (this);
 
-			   var video = this .getMedia ();
+			   var video = this .getMedia () [0];
 
 				if (video)
 					this .updateTexture (video);
