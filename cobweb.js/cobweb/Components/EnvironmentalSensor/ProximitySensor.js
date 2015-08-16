@@ -41,6 +41,7 @@ function ($,
 			this .position               = new Vector3 ();
 			this .orientation            = new Rotation4 ();
 			this .centerOfRotation       = new Vector3 ();
+			this .viewer                 = new Vector3 ();
 			this .inside                 = false;
 		}
 
@@ -189,9 +190,15 @@ function ($,
 
 							else
 							{
-								var viewer = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse () .origin;
+							   var invModelViewMatrix = this .invModelViewMatrix;
 
-								this .inside = this .intersectsPoint (viewer);
+								invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
+
+								this .viewer .set (invModelViewMatrix [12],
+						                         invModelViewMatrix [13],
+						                         invModelViewMatrix [14]);
+
+								this .inside = this .intersectsPoint (this .viewer);
 							}
 
 							return;

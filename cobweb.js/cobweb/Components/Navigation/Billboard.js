@@ -70,9 +70,10 @@ function ($,
 					{
 						var viewerYAxis = inverseModelViewMatrix .multDirMatrix (yAxis .copy ()) .normalize (); // Normalized to get work with Geo
 
-						var x = Vector3 .cross (viewerYAxis, billboardToViewer);
-						var y = Vector3 .cross (billboardToViewer, x);
-						var z = billboardToViewer;
+						var
+							x = Vector3 .cross (viewerYAxis, billboardToViewer),
+							y = Vector3 .cross (billboardToViewer, x),
+							z = billboardToViewer;
 
 						// Compose rotation
 
@@ -86,8 +87,9 @@ function ($,
 					}
 					else
 					{
-						var N1 = Vector3 .cross (this .axisOfRotation_ .getValue (), billboardToViewer); // Normal vector of plane as in specification
-						var N2 = Vector3 .cross (this .axisOfRotation_ .getValue (), zAxis);             // Normal vector of plane between axisOfRotation and zAxis
+						var
+							N1 = Vector3 .cross (this .axisOfRotation_ .getValue (), billboardToViewer), // Normal vector of plane as in specification
+							N2 = Vector3 .cross (this .axisOfRotation_ .getValue (), zAxis);             // Normal vector of plane between axisOfRotation and zAxis
 
 						this .matrix = new Matrix4 .Rotation (new Rotation4 (N2, N1));                   // Rotate zAxis in plane
 					}
