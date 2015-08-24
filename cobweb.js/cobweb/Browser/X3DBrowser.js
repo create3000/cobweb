@@ -96,6 +96,8 @@ function ($,
 
 				this .loadCount_ .addFieldCallback ("loading", this .bindWorld .bind (this));
 				this .loadCount_ .addEvent ();
+
+				//this .initialized () .setValue (this .getCurrentTime ());
 			},
 			bindWorld: function (value)
 			{

@@ -20,9 +20,11 @@ function (Fields,
 				this .location     = new URI (this .getXML () [0] .baseURI);
 				this .defaultScene = this .createScene ();
 				this .defaultScene .setup ();
+				this .defaultScene .beginUpdate ();
 
 				this .privateScene = this .createScene ();
 				this .privateScene .setup ();
+				this .privateScene .beginUpdate ();
 			},
 			getLocation: function ()
 			{

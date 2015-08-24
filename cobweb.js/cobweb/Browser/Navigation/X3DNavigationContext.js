@@ -23,7 +23,7 @@ function (ExamineViewer, DirectionalLight)
 		getHeadlight: function ()
 		{
 			return this .headlight;
-		}
+		},
 	};
 
 	return X3DNavigationContext;

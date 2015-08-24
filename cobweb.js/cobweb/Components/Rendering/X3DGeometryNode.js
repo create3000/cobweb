@@ -85,6 +85,8 @@ function ($,
 				this .normalBuffer    = gl .createBuffer ();
 				this .vertexBuffer    = gl .createBuffer ();
 				this .planes          = [ ];
+
+				this .setCurrentTexCoord (null);
 			},
 			isLineGeometry: function ()
 			{

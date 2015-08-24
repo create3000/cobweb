@@ -87,7 +87,7 @@ function ($,
 			},
 			set_activeLayer: function ()
 			{
-				if (+this .activeLayer_ === 0)
+				if (this .activeLayer_ .getValue () === 0)
 				{
 					if (this .activeLayerNode !== this .layerNode0)
 						this .activeLayerNode = this .layerNode0;

@@ -2030,6 +2030,16 @@ var jam = {
             "name": "jquery-resize",
             "location": "jam/jquery-resize",
             "main": "jquery.ba-resize.min.js"
+        },
+        {
+            "name": "opentype",
+            "location": "jam/opentype.js",
+            "main": "dist/opentype.js"
+        },
+        {
+            "name": "bezier",
+            "location": "jam/bezierjs",
+            "main": "bezier.js"
         }
     ],
     "version": "0.2.17",
@@ -2068,6 +2078,16 @@ if (typeof require !== "undefined" && require.config) {
             "name": "jquery-resize",
             "location": "jam/jquery-resize",
             "main": "jquery.ba-resize.min.js"
+        },
+        {
+            "name": "opentype",
+            "location": "jam/opentype.js",
+            "main": "dist/opentype.js"
+        },
+        {
+            "name": "bezier",
+            "location": "jam/bezierjs",
+            "main": "bezier.js"
         }
     ],
     "shim": {}
@@ -2105,6 +2125,16 @@ else {
             "name": "jquery-resize",
             "location": "jam/jquery-resize",
             "main": "jquery.ba-resize.min.js"
+        },
+        {
+            "name": "opentype",
+            "location": "jam/opentype.js",
+            "main": "dist/opentype.js"
+        },
+        {
+            "name": "bezier",
+            "location": "jam/bezierjs",
+            "main": "bezier.js"
         }
     ],
     "shim": {}
