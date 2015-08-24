@@ -2002,6 +2002,26 @@
     <None Include="jam\opentype.js\test\tables\loca.js" />
     <None Include="jam\opentype.js\test\tables\ltag.js" />
     <None Include="jam\opentype.js\test\tables\name.js" />
+    <None Include="jam\bezierjs\README.md" />
+    <None Include="jam\bezierjs\bezier.js" />
+    <None Include="jam\bezierjs\index.html" />
+    <None Include="jam\bezierjs\package.json" />
+    <None Include="jam\bezierjs\style.css" />
+    <None Include="jam\bezierjs\test.js" />
+    <None Include="jam\bezierjs\js\draw.js" />
+    <None Include="jam\bezierjs\js\interaction.js" />
+    <None Include="jam\bezierjs\js\loader.js" />
+    <None Include="jam\bezierjs\lib\bezier.js" />
+    <None Include="jam\bezierjs\lib\index.js" />
+    <None Include="jam\bezierjs\test\autodraw\Abstractor.js" />
+    <None Include="jam\bezierjs\test\autodraw\CircleAbstractor.js" />
+    <None Include="jam\bezierjs\test\autodraw\Handler.js" />
+    <None Include="jam\bezierjs\test\autodraw\RDP.js" />
+    <None Include="jam\bezierjs\test\autodraw\common.js" />
+    <None Include="jam\bezierjs\test\autodraw\index.html" />
+    <None Include="jam\bezierjs\test\autodraw\javascript.js" />
+    <None Include="jam\bezierjs\test\autodraw\merge.js" />
+    <None Include="jam\bezierjs\test\autodraw\stylesheet.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2051,5 +2071,6 @@
     <Folder Include="tests\Components\Text\" />
     <Folder Include="fonts\" />
     <Folder Include="jam\opentype.js\" />
+    <Folder Include="jam\bezierjs\" />
   </ItemGroup>
 </Project>
