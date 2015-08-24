@@ -114,7 +114,7 @@ function ($,
 				var
 					glyphs = this .font .stringToGlyphs ('Hello Wörld! OÖ &% ABCDEFGHIJKLMNOPQRSTUVW abcdefghijklmnopqrstuvw ÄÖÜäöüß 0123456789 ^°!"§$%&/()=?+*~\'#-_.:,; ÁÓÚáóú ′¹²³¼½¬{[]}\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…–'),
 					offset = 0;
-
+					   
 				for (var g = 0; g < glyphs .length; ++ g)
 				{
 					var
