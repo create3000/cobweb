@@ -5,6 +5,13 @@ define ([
 ],
 function (Matrix4, Vector3)
 {
+	var
+	   min = new Vector3 (0, 0, 0),
+	   max = new Vector3 (0, 0, 0),
+	   x   = new Vector3 (0, 0, 0),
+	   y   = new Vector3 (0, 0, 0),
+	   z   = new Vector3 (0, 0, 0);
+
 	function Box3 (size, center)
 	{
 		switch (arguments .length)
@@ -128,17 +135,21 @@ function (Matrix4, Vector3)
 		},
 		getAbsoluteExtents: function (min, max)
 		{
-			var x = this .matrix .x;
-			var y = this .matrix .y;
-			var z = this .matrix .z;
+		   var m = this .matrix;
 
-			var r1 = Vector3 .add (y, z);
-			var r2 = z .subtract (y);
+			x .set (m [0], m [1], m [2]);
+			y .set (m [4], m [5], m [6]);
+			z .set (m [8], m [9], m [10]);
 
-			var p1 = Vector3 .add (x, r1);
-			var p4 = Vector3 .add (x, r2);
-			var p2 = r1 .subtract (x);
-			var p3 = r2 .subtract (x);
+			var
+				r1 = Vector3 .add (y, z),
+				r2 = z .subtract (y);
+
+			var
+				p1 = Vector3 .add (x, r1),
+				p4 = Vector3 .add (x, r2),
+				p2 = r1 .subtract (x),
+				p3 = r2 .subtract (x);
 
 			min .assign (p1);
 			max .assign (p2);
@@ -156,10 +167,6 @@ function (Matrix4, Vector3)
 		},
 		intersectsPoint: function (point)
 		{
-			var
-				min = new Vector3 (0, 0, 0),
-				max = new Vector3 (0, 0, 0);
-
 			this .getExtents (min, max);
 
 			return min .x <= point .x &&
@@ -179,9 +186,7 @@ function (Matrix4, Vector3)
 	{
 		get: function ()
 		{
-			var
-				min = new Vector3 (0, 0, 0),
-				max = new Vector3 (0, 0, 0);
+			var max = new Vector3 (0, 0, 0);
 			
 			this .getAbsoluteExtents (min, max);
 

@@ -159,6 +159,8 @@ function ($,
 						scene .setup ();
 						scene .beginUpdate ();
 
+						// Handle isLive for script scenes here ...
+
 						// Wait until scene is completely loaded, scene .loadCount_ must be 0.
 						field .setValue (scene .rootNodes);
 					}

@@ -44,22 +44,20 @@ function ($,
 					text .origin_ .setValue (0, 0, 0);
 					text .textBounds_ .setValue (0, 0);
 
-					//setBBox (Box3d ());
+					//this .setBBox (new Box3 ());
 					return;
 				}
 
-			   /*
 				if (this .fontStyle .horizontal_ .getValue ())
 					this .horizontal (text, fontStyle);
 				else
 					this .vertical (text, fontStyle);
-				*/
 			},
-			horizontal: function ()
+			horizontal: function (text, fontStyle)
 			{
 
 			},
-			vertical: function ()
+			vertical: function (text, fontStyle)
 			{
 
 			},
