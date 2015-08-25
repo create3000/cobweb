@@ -35,6 +35,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new MFVec2f ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new SFVec2f ()),
 			]),
+			keyValue: new Vector2 (0, 0),
 			getTypeName: function ()
 			{
 				return "PositionInterpolator2D";
@@ -64,7 +65,7 @@ function ($,
 			},
 			interpolate: function (index0, index1, weight)
 			{
-				this .value_changed_ = Vector2 .lerp (this .keyValue_ [index0] .getValue (), this .keyValue_ [index1] .getValue (), weight);
+				this .value_changed_ = this .keyValue .assign (this .keyValue_ [index0] .getValue ()) .lerp (this .keyValue_ [index1] .getValue (), weight);
 			},
 		});
 

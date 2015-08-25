@@ -263,13 +263,17 @@ function ($, Vector3, Algorithm)
 			this .w = w;
 			return this;
 		},
+		slerp: function (dest, t)
+		{
+			return Algorithm .slerp (this, dest, t);
+		},
 		toString: function ()
 		{
 			return this .x + " " +
 			       this .y + " " +
 			       this .z + " " +
 			       this .w;
-		}
+		},
 	};
 
 	Object .defineProperty (Quaternion .prototype, "0",
@@ -483,7 +487,14 @@ function ($, Vector3, Algorithm)
 
 			return copy;
 		},
-		slerp: Algorithm .slerp,
+		slerp: function (source, dest, t)
+		{
+			return Algorithm .slerp (new Quaternion (source .x, source .y, source .z, source .w), dest, t);
+		},
+		/*
+
+		!!! Algorithm .slerp is in place.
+
 		squad: function (source, a, b, destination, t)
 		{
 			// We must use shortest path slerp to prevent flipping.  Also see spline.
@@ -517,7 +528,8 @@ function ($, Vector3, Algorithm)
 				Quaternion .multiply (q1_i, q0) .log () .add (Quaternion .multiply (q1_i, q2) .log ()) .divide (-4) .exp ()
 			)
 			.normalize ();
-		}
+		},
+		*/
 	});
 
 	return Quaternion;

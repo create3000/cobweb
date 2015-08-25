@@ -138,6 +138,13 @@ function ($, Algorithm)
 			                   this .y * this .y +
 			                   this .z * this .z);
 		},
+		lerp: function (dest, t)
+		{
+			this .x = Algorithm .lerp (this .x, dest .x, t);
+			this .y = Algorithm .lerp (this .y, dest .y, t);
+			this .z = Algorithm .lerp (this .z, dest .z, t);
+			return this;
+		},
 		min: function (vector)
 		{
 			for (var i = 0; i < arguments .length; ++ i)
@@ -300,7 +307,10 @@ function ($, Algorithm)
 			                    Algorithm .lerp (source .y, dest .y, t),
 			                    Algorithm .lerp (source .z, dest .z, t));
 		},
-		slerp: Algorithm .slerp,
+		slerp: function (source, destination, t)
+		{
+			return Algorithm .slerp (new Vector3 (source .x, source .y, source .z), destination, t);
+		},
 		min: function (lhs, rhs)
 		{
 			var

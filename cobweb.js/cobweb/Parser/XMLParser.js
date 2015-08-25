@@ -207,7 +207,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .warn ("XML Parser Error: " + error .message);
+					console .warn ("XML Parser Error: ", + error .message);
 					//console .warn (error);
 				}
 			},

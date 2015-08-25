@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Algorithm",
 ],
 function ($,
@@ -14,6 +15,7 @@ function ($,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
           X3DConstants,
+          Vector3,
           Algorithm)
 {
 	with (Fields)
@@ -35,6 +37,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new MFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new MFVec3f ()),
 			]),
+			keyValue: new Vector3 (0, 0, 0),
 			getTypeName: function ()
 			{
 				return "NormalInterpolator";
@@ -68,9 +71,9 @@ function ($,
 
 				for (var i = 0; i < size; ++ i)
 				{
-					value_changed [i] .set (Algorithm .slerp (keyValue [index0 + i] .getValue (),
-					                                          keyValue [index1 + i] .getValue (),
-					                                          weight));
+					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
+					                                       .slerp (keyValue [index1 + i] .getValue (),
+					                                               weight));
 				}
 
 				this .value_changed_ .addEvent ();

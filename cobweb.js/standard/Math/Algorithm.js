@@ -1,7 +1,9 @@
 
 
-define (function ()
+define (function (Vector3)
 {
+	var destinations = { };
+
 	var Algorithm =
 	{
 		radians: function (value)
@@ -32,8 +34,10 @@ define (function ()
 		},
 		slerp: function (source, destination, t)
 		{
-			source      = source .copy ()
-			destination = destination .copy ()
+			if (destinations [destination .constructor .name])
+				destination = destinations [destination .constructor .name] .assign (destination);
+			else
+				destination = destinations [destination .constructor .name] = destination .copy ();
 
 			var cosom = source .dot (destination);
 

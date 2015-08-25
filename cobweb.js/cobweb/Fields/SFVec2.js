@@ -31,9 +31,12 @@ function ($, Vector2, X3DField, X3DConstants)
 		{
 			return this .getValue () .equals (vector .getValue ());
 		},
-		set: function (value)
+		set: function (x, y)
 		{
-			this .getValue () .assign (value);
+			if (arguments .length === 2)
+			   this .getValue () .set (x, y);
+			else
+				this .getValue () .assign (x);
 		},
 		negate: function ()
 		{

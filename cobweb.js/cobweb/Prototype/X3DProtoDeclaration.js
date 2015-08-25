@@ -26,8 +26,8 @@ function ($,
 		{
 			this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-			X3DExecutionContext     .call (this, executionContext .getBrowser (), executionContext);
 			X3DProtoDeclarationNode .call (this, executionContext .getBrowser (), executionContext);
+			X3DExecutionContext     .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .X3DProtoDeclaration);
 		}

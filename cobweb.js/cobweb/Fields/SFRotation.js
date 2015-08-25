@@ -51,9 +51,12 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		{
 			return X3DConstants .SFRotation;
 		},
-		set: function (value)
+		set: function (x, y, z, angle)
 		{
-			this .getValue () .assign (value);
+			if (arguments .length === 4)
+			   this .getValue () .set (x, y, z, angle);
+			else
+				this .getValue () .assign (x);
 		},
 		inverse: function ()
 		{

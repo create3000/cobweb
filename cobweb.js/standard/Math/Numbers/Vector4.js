@@ -145,6 +145,14 @@ function ($, Algorithm)
 			                   this .z * this .z +
 			                   this .w * this .w);
 		},
+		lerp: function (dest, t)
+		{
+			this .x = Algorithm .lerp (this .x, dest .x, t);
+			this .y = Algorithm .lerp (this .y, dest .y, t);
+			this .z = Algorithm .lerp (this .z, dest .z, t);
+			this .w = Algorithm .lerp (this .w, dest .w, t);
+			return this;
+		},
 		min: function (vector)
 		{
 			for (var i = 0; i < arguments .length; ++ i)

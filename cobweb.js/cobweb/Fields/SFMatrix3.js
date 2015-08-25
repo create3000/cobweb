@@ -14,10 +14,9 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		SFVec2d = SFVec2 .SFVec2d,
 		SFVec2f = SFVec2 .SFVec2f;
 
-	function SFMatrix3 (m00, m01, m02, m03,
-	                    m10, m11, m12, m13,
-	                    m20, m21, m22, m23,
-	                    m30, m31, m32, m33)
+	function SFMatrix3 (m00, m01, m02,
+	                    m10, m11, m12,
+	                    m20, m21, m22)
 	{
 		if (arguments .length)
 		{
@@ -43,9 +42,16 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		{
 			return this .getValue () .equals (matrix .getValue ());
 		},
-		set: function (value)
+		set: function (m00, m01, m02,
+	                  m10, m11, m12,
+	                  m20, m21, m22)
 		{
-			this .getValue () .assign (value);
+			if (arguments .length === 9)
+			   this .getValue () .set (m00, m01, m02,
+	                                 m10, m11, m12,
+	                                 m20, m21, m22);
+			else
+				this .getValue () .assign (m00);
 		},
 		setTransform: function (translation, rotation, scale, scaleOrientation, center)
 		{

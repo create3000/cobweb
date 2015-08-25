@@ -39,7 +39,7 @@ function ($)
 		{
 			event .preventDefault ();
 
-			console .log (event .which);
+			//console .log (event .which);
 
 			switch (event .which)
 			{
@@ -86,6 +86,12 @@ function ($)
 				{
 					if (this .ctrlKey)
 						this .setBrowserOption ("Shading", "PHONG");
+					break;
+				}
+				case 83: // s
+				{
+					if (this .ctrlKey)
+						this .isLive () .setValue (! this .isLive () .getValue ());
 					break;
 				}
 				case 112: // F1

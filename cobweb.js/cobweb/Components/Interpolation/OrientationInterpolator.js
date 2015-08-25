@@ -35,6 +35,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new MFRotation ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new SFRotation ()),
 			]),
+			keyValue: new Rotation4 (),
 			getTypeName: function ()
 			{
 				return "OrientationInterpolator";
@@ -66,7 +67,7 @@ function ($,
 			{
 				try
 				{
-					this .value_changed_ = Rotation4 .slerp (this .keyValue_ [index0] .getValue (), this .keyValue_ [index1] .getValue (), weight);
+					this .value_changed_ = this .keyValue .assign (this .keyValue_ [index0] .getValue ()) .slerp (this .keyValue_ [index1] .getValue (), weight);
 				}
 				catch (error)
 				{ }

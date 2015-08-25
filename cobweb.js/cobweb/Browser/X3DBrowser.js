@@ -157,6 +157,8 @@ function ($,
 					      currentScene .isLive () .addFieldInterest (scene .isLive ());
 
 						scene .setup ();
+						scene .beginUpdate ();
+
 						// Wait until scene is completely loaded, scene .loadCount_ must be 0.
 						field .setValue (scene .rootNodes);
 					}

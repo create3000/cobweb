@@ -98,7 +98,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 					{
 						try
 						{
-							this .rotation = Rotation4 .slerp (new Rotation4 (), this .rotation, SPIN_FACTOR);
+							this .rotation = new Rotation4 () .slerp (this .rotation, SPIN_FACTOR);
 							this .addSpinning ();
 						}
 						catch (error)

@@ -21,12 +21,12 @@ function ($,
 			this .protoNode        = protoNode;
 			this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice (0));
 
-			X3DExecutionContext .call (this, executionContext .getBrowser (), executionContext);
+			this .addChildren ("isLiveX3DPrototypeInstance", new SFBool (true));
+
 			X3DNode             .call (this, executionContext .getBrowser (), executionContext);
+			X3DExecutionContext .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .X3DPrototypeInstance);
-
-			this .addChildren ("isLiveX3DPrototypeInstance", new SFBool (true));
 
 			if (protoNode .isExternProto ())
 				protoNode .requestAsyncLoad (this .construct .bind (this));
@@ -130,8 +130,8 @@ function ($,
 			},
 			setup: function ()
 			{
-				X3DExecutionContext .prototype .setup .call (this);
 				X3DNode             .prototype .setup .call (this);
+				X3DExecutionContext .prototype .setup .call (this);
 			},
 			initialize: function ()
 			{

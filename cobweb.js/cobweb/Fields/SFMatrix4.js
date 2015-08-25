@@ -48,6 +48,19 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 		{
 			this .getValue () .assign (value);
 		},
+		set: function (m00, m01, m02, m03,
+	                  m10, m11, m12, m13,
+	                  m20, m21, m22, m23,
+	                  m30, m31, m32, m33)
+		{
+			if (arguments .length === 16)
+			   this .getValue () .set (m00, m01, m02, m03,
+	                                 m10, m11, m12, m13,
+	                                 m20, m21, m22, m23,
+	                                 m30, m31, m32, m33);
+			else
+				this .getValue () .assign (m00);
+		},
 		setTransform: function (translation, rotation, scale, scaleOrientation, center)
 		{
 			translation      = translation      ? translation      .getValue () : null;

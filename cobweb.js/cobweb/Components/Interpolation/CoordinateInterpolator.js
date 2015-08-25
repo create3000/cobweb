@@ -35,6 +35,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new MFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new MFVec3f ()),
 			]),
+			keyValue: new Vector3 (0, 0, 0),
 			getTypeName: function ()
 			{
 				return "CoordinateInterpolator";
@@ -62,9 +63,9 @@ function ($,
 
 				for (var i = 0; i < size; ++ i)
 				{
-					value_changed [i] .set (Vector3 .lerp (keyValue [index0 + i] .getValue (),
-					                                       keyValue [index1 + i] .getValue (),
-					                                       weight));
+					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
+					                                       .lerp (keyValue [index1 + i] .getValue (),
+					                                              weight));
 				}
 
 				this .value_changed_ .addEvent ();

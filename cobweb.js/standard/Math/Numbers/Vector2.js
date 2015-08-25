@@ -111,6 +111,12 @@ function ($, Algorithm)
 			return Math .sqrt (this .x * this .x +
 			                   this .y * this .y);
 		},
+		lerp: function (dest, t)
+		{
+			this .x = Algorithm .lerp (this .x, dest .x, t);
+			this .y = Algorithm .lerp (this .y, dest .y, t);
+			return this;
+		},
 		min: function (vector)
 		{
 			for (var i = 0; i < arguments .length; ++ i)

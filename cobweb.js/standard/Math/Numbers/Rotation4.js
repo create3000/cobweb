@@ -177,6 +177,11 @@ function ($, Quaternion, Vector3)
 		{
 			return this .value .multQuatVec (vector);
 		},
+		slerp: function (dest, t)
+		{
+			this .value .slerp (dest .value, t);
+			return this;
+		},
 		toString: function ()
 		{
 			var r = this .get ();

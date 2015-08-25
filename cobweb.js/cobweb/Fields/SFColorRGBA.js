@@ -39,9 +39,12 @@ function ($, Color4, X3DField, X3DConstants)
 		{
 			return this .getValue () .equals (color .getValue ());
 		},
-		set: function (value)
+		set: function (r, g, b, a)
 		{
-			this .getValue () .assign (value);
+			if (arguments .length === 4)
+			   this .getValue () .set (r, g, b, a);
+			else
+				this .getValue () .assign (r);
 		},
 		getHSV: function ()
 		{

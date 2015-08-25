@@ -80,6 +80,8 @@ function ($,
 					this .fontStyleNode = this .getBrowser () .getDefaultFontStyle ();
 
 			   this .fontStyleNode .addInterest (this, "addNodeEvent");
+
+			   this .textGeometry = this .fontStyleNode .getTextGeometry (this);
 			},
 			build: function ()
 			{

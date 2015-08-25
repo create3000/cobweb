@@ -18,6 +18,63 @@ function ($,
 {
 	with (Fields)
 	{
+	   function X3DTextGeometry (text, fontStyle)
+		{
+			this .text      = text;
+			this .fontStyle = fontStyle;
+
+			this .update ();
+		}
+
+		X3DTextGeometry .prototype =
+		{
+			constructor: X3DTextGeometry,
+			update: function ()
+			{
+			   console .log ("update");
+
+				var numLines = text .string_ .length;
+
+				text .lineBounds_ .length = numLines;
+				//charSpacings .resize (numLines);
+				//translations .resize (numLines);
+
+				if (numLines === 0)
+				{
+					text .origin_ .setValue (0, 0, 0);
+					text .textBounds_ .setValue (0, 0);
+
+					//setBBox (Box3d ());
+					return;
+				}
+
+			   /*
+				if (this .fontStyle .horizontal_ .getValue ())
+					this .horizontal (text, fontStyle);
+				else
+					this .vertical (text, fontStyle);
+				*/
+			},
+			horizontal: function ()
+			{
+
+			},
+			vertical: function ()
+			{
+
+			},
+		};
+
+	   function PolygonText (text, fontStyle)
+		{
+			X3DTextGeometry .call (text, fontStyle);
+		}
+
+		PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
+		{
+			constructor: PolygonText,
+		});
+
 		function FontStyle (executionContext)
 		{
 			X3DFontStyleNode .call (this, executionContext .getBrowser (), executionContext);
@@ -67,6 +124,10 @@ function ($,
 			getFont: function ()
 			{
 			   return this .font;
+			},
+			getTextGeometry: function (text)
+			{
+			   return new PolygonText (text, this);
 			},
 			set_live__: function ()
 			{

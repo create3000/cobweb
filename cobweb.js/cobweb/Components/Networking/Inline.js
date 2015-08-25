@@ -146,13 +146,13 @@ function ($,
 			{
 				if (scene)
 				{
-					this .setScene (scene);
 					this .setLoadState (X3DConstants .COMPLETE_STATE);
+					this .setScene (scene);
 				}
 				else
 				{
-					this .setScene (this .getBrowser () .getDefaultScene ());
 					this .setLoadState (X3DConstants .FAILED_STATE);
+					this .setScene (this .getBrowser () .getDefaultScene ());
 				}
 			},
 			setScene: function (scene)
