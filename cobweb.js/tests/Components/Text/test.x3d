@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 24 Aug 2015 02:55:59 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 24 Aug 2015 12:16:38 GMT'/>
+    <meta name='modified' content='Tue, 25 Aug 2015 19:20:42 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Text_1'>
@@ -15,8 +15,17 @@
           <Material/>
         </Appearance>
         <Text
-            string='"3D Text"'
-            solid='true'/>
+            string='"Hello Wörld!", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "ÄÖÜäöüß", "0123456789", "^°!\"§$%&amp;/()=?+*~\\&apos;#-_.:,;", "ÁÓÚáóú", "′¹²³¼½¬{[]}\\\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…–", "flfiff"'
+            maxExtent='15.68'
+            solid='true'>
+          <FontStyle
+              family='"Ubuntu"'
+              size='1.37'
+              spacing='1.21'
+              leftToRight='false'
+              topToBottom='false'
+              justify='"END", "FIRST"'/>
+        </Text>
       </Shape>
     </Transform>
     <Transform DEF='Sphere_1'
@@ -28,5 +37,19 @@
         <Sphere/>
       </Shape>
     </Transform>
+    <Transform DEF='Box_1'
+        translation='2.4299 -0.196573 0'
+        scale='4.88949 0.444371 1'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <Box
+            size='1 1 1'/>
+      </Shape>
+    </Transform>
+    <Viewpoint
+        position='-0.151477 -0.0630392 32.1063'
+        centerOfRotation='-0.151477 -0.0630392 0.582693'/>
   </Scene>
 </X3D>

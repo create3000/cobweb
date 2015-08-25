@@ -2025,6 +2025,7 @@
     <None Include="cobweb\Browser\Core\PrimitiveQuality.js" />
     <None Include="cobweb\Browser\Text\X3DTextContext.js" />
     <None Include="standard\Math\Geometry\Box2.js" />
+    <None Include="tests\Components\Text\date.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

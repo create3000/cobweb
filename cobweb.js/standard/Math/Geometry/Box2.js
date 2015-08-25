@@ -17,14 +17,14 @@ function (Matrix3, Vector2)
 		{
 			case 0:
 			{
-				this .matrix = new Matrix4 (0.5, 0,   0,
+				this .matrix = new Matrix3 (0.5, 0,   0,
 				                            0,   0.5, 0,
 				                            0,   0,   0);
 				return;
 			}
 			case 2:
 			{
-				this .matrix = new Matrix4 (size .x / 2, 0, 0,
+				this .matrix = new Matrix3 (size .x / 2, 0, 0,
 				                            0, size .y / 2, 0,
 				                            center .x, center .y, 1);
 				return;
@@ -37,9 +37,9 @@ function (Matrix3, Vector2)
 					sx  = (max .x - min .x) / 2,
 					sy  = (max .y - min .y) / 2,
 					cx  = (max .x + min .x) / 2,
-					cy  = (max .y + min .y) / 2,
+					cy  = (max .y + min .y) / 2;
 
-				this .matrix = new Matrix4 (sx, 0,  0,
+				this .matrix = new Matrix3 (sx, 0,  0,
 				                            0,  sy, 0,
 				                            cx, cy, 1);
 				return;
@@ -47,7 +47,7 @@ function (Matrix3, Vector2)
 		}
 	}
 
-	 .prototype =
+	Box2 .prototype =
 	{
 		constructor: Box2,
 		copy: function ()
@@ -76,7 +76,7 @@ function (Matrix3, Vector2)
 				sx = (max .x - min .x) / 2,
 				sy = (max .y - min .y) / 2,
 				cx = (max .x + min .x) / 2,
-				cy = (max .y + min .y) / 2,
+				cy = (max .y + min .y) / 2;
 
 			m [0] = sx; m [1] = 0;  m [2] = 0;
 			m [3] = 0;  m [4] = sy; m [5] = 0;
