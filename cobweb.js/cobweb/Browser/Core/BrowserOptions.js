@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Core/PrimitiveQuality",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DBaseNode,
-          X3DConstants)
+          X3DConstants,
+          PrimitiveQuality)
 {
 	with (Fields)
 	{
@@ -44,10 +46,27 @@ function ($,
 				
 				this .PrimitiveQuality_ .addInterest (this, "set_primitiveQuality__");
 				this .Shading_          .addInterest (this, "set_shading__");
+
+				this .set_primitiveQuality__ ();
+			},
+			getPrimitiveQuality: function ()
+			{
+			   return this .primitiveQuality;
 			},
 			set_primitiveQuality__: function ()
 			{
-				
+				switch (this .PrimitiveQuality_ .getValue ())
+				{
+				   case "LOW":
+				      this .primitiveQuality = PrimitiveQuality .LOW;
+				      break;
+				   case "HIGH":
+				      this .primitiveQuality = PrimitiveQuality .HIGH;
+				      break;
+				   default:
+				      this .primitiveQuality = PrimitiveQuality .MEDIUM;
+				      break;
+				}
 			},
 			set_shading__: function ()
 			{

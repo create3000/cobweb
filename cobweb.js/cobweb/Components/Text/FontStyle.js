@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Text/X3DFontStyleNode",
 	"cobweb/Bits/X3DConstants",
+	"opentype",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DFontStyleNode, 
-          X3DConstants)
+          X3DConstants,
+          opentype)
 {
 	with (Fields)
 	{
@@ -49,6 +51,75 @@ function ($,
 			getContainerField: function ()
 			{
 				return "fontStyle";
+			},
+			initialize: function ()
+			{
+			   X3DFontStyleNode .prototype .initialize .call (this);
+				
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive ()                         .addInterest (this, "set_live__");
+
+				this .font = null;
+
+				this .set_live__ ();
+			   this .requestAsyncLoad ();
+			},
+			getFont: function ()
+			{
+			   return this .font;
+			},
+			set_live__: function ()
+			{
+			   if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			   {
+			      this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest (this, "addNodeEvent");
+
+			      var primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
+
+			      if (this .primitiveQuality !== undefined && primitiveQuality !== this .primitiveQuality)
+			         this .addNodeEvent ();
+			      
+					this .primitiveQuality = primitiveQuality;
+			   }
+			   else
+			      this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest (this, "addNodeEvent");
+			},
+			requestAsyncLoad: function ()
+			{
+				try
+				{
+					opentype .load ("fonts/Ubuntu-R.ttf", this .setFont .bind (this));
+				}
+				catch (error)
+				{
+					this .setError (error .message);
+				}
+			},
+			setFont: function (error, font)
+			{
+				if (error)
+				{
+				   this .setError (error);
+				}
+				else
+				{
+					console .log ('Font loaded fine.');
+
+					this .font = font;
+			   
+			      // Workaround to initialize composite glyphs.
+			      for (var i = 0; i < this .font .numGlyphs; ++ i)
+						this .font .glyphs .get (i) .getPath (0, 0, 1);
+
+					this .addNodeEvent ();
+					this .getBrowser () .addBrowserEvent ();
+				}
+			},
+			setError: function (error)
+			{
+				this .font = null;
+
+				console .warn ('Font could not be loaded: ' + error);			   
 			},
 		});
 

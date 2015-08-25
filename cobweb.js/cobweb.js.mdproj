@@ -2022,6 +2022,8 @@
     <None Include="jam\bezierjs\test\autodraw\javascript.js" />
     <None Include="jam\bezierjs\test\autodraw\merge.js" />
     <None Include="jam\bezierjs\test\autodraw\stylesheet.css" />
+    <None Include="cobweb\Browser\Core\PrimitiveQuality.js" />
+    <None Include="cobweb\Browser\Text\X3DTextContext.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2072,5 +2074,6 @@
     <Folder Include="fonts\" />
     <Folder Include="jam\opentype.js\" />
     <Folder Include="jam\bezierjs\" />
+    <Folder Include="cobweb\Browser\Text\" />
   </ItemGroup>
 </Project>

@@ -39,7 +39,7 @@ function ($)
 		{
 			event .preventDefault ();
 
-			//console .log (event .which);
+			console .log (event .which);
 
 			switch (event .which)
 			{
@@ -86,6 +86,21 @@ function ($)
 				{
 					if (this .ctrlKey)
 						this .setBrowserOption ("Shading", "PHONG");
+					break;
+				}
+				case 112: // F1
+				{
+					this .setBrowserOption ("PrimitiveQuality", "LOW");
+					break;
+				}
+				case 113: // F2
+				{
+					this .setBrowserOption ("PrimitiveQuality", "MEDIUM");
+					break;
+				}
+				case 114: // F3
+				{
+					this .setBrowserOption ("PrimitiveQuality", "HIGH");
 					break;
 				}
 				case 225: // Alt Gr

@@ -8,7 +8,6 @@ define ([
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Algorithm",
-	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/Line3",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
@@ -22,7 +21,6 @@ function ($,
           TraverseType,
           X3DConstants,
           Algorithm,
-          Box3,
           Line3,
           Vector3,
           Matrix4,
@@ -67,43 +65,6 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
-			},
-			initialize: function ()
-			{
-				X3DShapeNode .prototype .initialize .call (this);
-
-				this .bboxSize_   .addInterest (this, "set_bbox__");
-				this .bboxCenter_ .addInterest (this, "set_bbox__");
-
-				this .set_bbox__ ();
-			},
-			set_bbox__: function ()
-			{
-				if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
-				{
-					if (this .getGeometry ())
-						this .bbox = this .getGeometry () .getBBox ();
-
-					else
-						this .bbox = new Box3 ();
-				}
-				else
-					this .bbox = new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
-				
-				this .bboxSize   = this .bbox .size;
-				this .bboxCenter = this .bbox .center;
-			},
-			getBBox: function ()
-			{
-				return this .bbox;
-			},
-			getBBoxSize: function ()
-			{
-				return this .bboxSize;
-			},
-			getBBoxCenter: function ()
-			{
-				return this .bboxCenter;
 			},
 			traverse: function (type)
 			{

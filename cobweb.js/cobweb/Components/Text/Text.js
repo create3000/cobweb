@@ -5,10 +5,11 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Core/PrimitiveQuality",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Geometry/Triangle3",
-	"opentype",
 	"bezier",
 	"poly2tri",
 ],
@@ -17,10 +18,11 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGeometryNode, 
+          X3DCast,
           X3DConstants,
+          PrimitiveQuality,
           Vector3,
           Triangle3,
-          opentype,
           Bezier,
           poly2tri)
 {
@@ -63,56 +65,33 @@ function ($,
 			{
 			   X3DGeometryNode .prototype .initialize .call (this);
 
-				this .font = null;
+			   this .fontStyle_ .addInterest (this, "set_fontStyle__");
 
-			   this .requestAsyncLoad ();
+				this .set_fontStyle__ ();
 			},
-			requestAsyncLoad: function ()
+			set_fontStyle__: function ()
 			{
-				try
-				{
-					opentype .load ('fonts/Ubuntu-R.ttf', this .setFont .bind (this));
-				}
-				catch (error)
-				{
-					this .setError (error .message);
-				}
-			},
-			setFont: function (error, font)
-			{
-				if (error)
-				{
-				   this .setError (error);
-				}
-				else
-				{
-					console .log ('Font loaded fine.');
+			   if (this .fontStyleNode)
+			      this .fontStyleNode .removeInterest (this, "addNodeEvent");
 
-					this .font = font;
-			   
-			      // Workaround to initialize composite glyphs.
-			      for (var i = 0; i < this .font .numGlyphs; ++ i)
-						this .font .glyphs .get (i) .getPath (0, 0, 1);
+				this .fontStyleNode = X3DCast (X3DConstants .X3DFontStyleNode, this .fontStyle_);
 
-					this .update ();
-					this .getBrowser () .addBrowserEvent ();
-				}
-			},
-			setError: function (error)
-			{
-				this .font = null;
+				if (! this .fontStyleNode)
+					this .fontStyleNode = this .getBrowser () .getDefaultFontStyle ();
 
-				console .warn ('Font could not be loaded: ' + error);			   
+			   this .fontStyleNode .addInterest (this, "addNodeEvent");
 			},
 			build: function ()
 			{
-			   if (! this .font)
+			   var font = this .fontStyleNode .getFont ();
+
+			   if (! font)
 			      return;
 
-			   //console .log ("numGlyphs", this .font .numGlyphs)
+			   //console .log ("numGlyphs", font .numGlyphs)
 					
 				var
-					glyphs = this .font .stringToGlyphs ('Hello Wörld! OÖ &% ABCDEFGHIJKLMNOPQRSTUVW abcdefghijklmnopqrstuvw ÄÖÜäöüß 0123456789 ^°!"§$%&/()=?+*~\'#-_.:,; ÁÓÚáóú ′¹²³¼½¬{[]}\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…– flfiff'),
+					glyphs = font .stringToGlyphs ('Hello Wörld! OÖ &% ABCDEFGHIJKLMNOPQRSTUVW abcdefghijklmnopqrstuvw ÄÖÜäöüß 0123456789 ^°!"§$%&/()=?+*~\'#-_.:,; ÁÓÚáóú ′¹²³¼½¬{[]}\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…– flfiff'),
 					offset = 0
 					paths  = [ ],
 					points = [ ],
@@ -123,9 +102,22 @@ function ($,
 				{
 					var
 					   glyph     = glyphs [g],
-						dimension = 3,
+						dimension = 0,
 						x         = 0,
 						y         = 0;
+
+					switch (this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ())
+					{
+					   case PrimitiveQuality .LOW:
+					      dimension = 2;
+					      break;
+					   case PrimitiveQuality .HIGH:
+					      dimension = 5;
+					      break;
+					   default:
+							dimension = 3;
+							break;
+					}
 
 					paths  .length = 0;
 					points .length = 0;
@@ -139,7 +131,7 @@ function ($,
 					   {
 					      var component = glyph .components [c];
 
-					      paths .push (this .font .glyphs .get (component .glyphIndex) .getPath (component .dx / 1000, component .dy / -1000, 1));
+					      paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / 1000, component .dy / -1000, 1));
 					   }
 					}
 					else
@@ -178,13 +170,25 @@ function ($,
 								}
 								case 'C':
 								{
-									//ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+									//ctx .bezierCurveTo (cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+	
+									var
+										curve = new Bezier (x, y, command .x1, command .y1, command .x2, command .y2, command .x, command .y),
+										lut   = curve .getLUT (dimension);
+
+									lut .shift ();
+									lut .map (function (point)
+									{
+									   point .x += offset;
+										point .y  = -point .y;
+										point .z  = 0;
+									});
+				
+									Array .prototype .push .apply (points, lut);
 									break;
 								}
 								case 'Q':
 								{
-									//ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
-
 									var
 										curve = new Bezier (x, y, command .x1, command .y1, command .x, command .y),
 										lut   = curve .getLUT (dimension);
@@ -290,7 +294,7 @@ function ($,
 					var kerning = 0;
 
 					if (g + 1 < glyphs .length)
-						kerning = this .font .getKerningValue (glyph, glyphs [g + 1]);
+						kerning = font .getKerningValue (glyph, glyphs [g + 1]);
 
 					offset += (glyph .advanceWidth + kerning) / 1000;
 				}
