@@ -2027,6 +2027,36 @@
     <None Include="standard\Math\Geometry\Box2.js" />
     <None Include="tests\Components\Text\date.x3d" />
     <None Include="standard\Math\Geometry\Triangle2.js" />
+    <None Include="tests\Examples\Appartment\index.wrl" />
+    <None Include="tests\Examples\Appartment\index.x3d" />
+    <None Include="tests\Examples\Appartment\preview.gif" />
+    <None Include="tests\Examples\Appartment\stage\baum1.png" />
+    <None Include="tests\Examples\Appartment\stage\empty.html" />
+    <None Include="tests\Examples\Appartment\stage\env.png" />
+    <None Include="tests\Examples\Appartment\stage\flat-notex-anim.wrl" />
+    <None Include="tests\Examples\Appartment\stage\flat-notex-anim.x3d" />
+    <None Include="tests\Examples\Appartment\stage\flat-vr.html" />
+    <None Include="tests\Examples\Appartment\stage\granite.2.png" />
+    <None Include="tests\Examples\Appartment\stage\index.html" />
+    <None Include="tests\Examples\Appartment\stage\index.wrl" />
+    <None Include="tests\Examples\Appartment\stage\index.x3d" />
+    <None Include="tests\Examples\Appartment\stage\link.html" />
+    <None Include="tests\Examples\Appartment\stage\links.gif" />
+    <None Include="tests\Examples\Appartment\stage\links.map" />
+    <None Include="tests\Examples\Appartment\stage\movie.html" />
+    <None Include="tests\Examples\Appartment\stage\plaid.png" />
+    <None Include="tests\Examples\Appartment\stage\poster.png" />
+    <None Include="tests\Examples\Appartment\stage\schrank_dunkel128.png" />
+    <None Include="tests\Examples\Appartment\stage\speck.paper.png" />
+    <None Include="tests\Examples\Appartment\stage\still1.gif" />
+    <None Include="tests\Examples\Appartment\stage\still2.gif" />
+    <None Include="tests\Examples\Appartment\stage\still2.html" />
+    <None Include="tests\Examples\Appartment\stage\still3.gif" />
+    <None Include="tests\Examples\Appartment\stage\still3.html" />
+    <None Include="tests\Examples\Appartment\stage\stills.html" />
+    <None Include="tests\Examples\Appartment\stage\title.gif" />
+    <None Include="tests\Examples\Appartment\stage\title.html" />
+    <None Include="tests\Examples\Appartment\stage\whitespace.gif" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2078,5 +2108,6 @@
     <Folder Include="jam\opentype.js\" />
     <Folder Include="jam\bezierjs\" />
     <Folder Include="cobweb\Browser\Text\" />
+    <Folder Include="tests\Examples\Appartment\" />
   </ItemGroup>
 </Project>
