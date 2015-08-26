@@ -124,7 +124,8 @@ function ($,
 			{
 				console .log ('Font loaded fine.');
 
-				this .font = font;
+				this .font     = font;
+				font .fontName = font .familyName + font .styleName;
 		   
 		      // Workaround to initialize composite glyphs.
 		      for (var i = 0; i < this .font .numGlyphs; ++ i)

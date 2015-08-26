@@ -319,11 +319,16 @@ function ($,
 		 * PolygonText
 		 */
 		
-		var normal = new Vector3 (0, 0, 1);
+		var
+			normal = new Vector3 (0, 0, 1),
+			vertex = new Vector3 (0, 0, 0),
+			zero   = { x: 0, y: 0 };
 
 	   function PolygonText (text, fontStyle)
 		{
 			X3DTextGeometry .call (this, text, fontStyle);
+
+			this .geometryCache = { }; // [fontName] [primitveQuality] [glyphIndex]
 		}
 
 		PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
@@ -377,217 +382,29 @@ function ($,
 					*/
 				}
 			},
-			getBezierDimension: function ()
-			{
-				switch (this .getText () .getBrowser () .getBrowserOptions () .getPrimitiveQuality ())
-				{
-				   case PrimitiveQuality .LOW:
-				      return 2;
-				   case PrimitiveQuality .HIGH:
-				      return 5;
-				   default:
-						return 3;
-				}
-			},
 			render: function (glyphs, minorAlignment, size, translation, charSpacing)
 			{
 				var
-				   text      = this .getText (),
-				   fontStyle = this .getFontStyle (),
-				   font      = fontStyle .getFont (),
-					offset    = 0
-					paths     = [ ],
-					points    = [ ],
-					curves    = [ ]
-					zero      = { x: 0, y: 0 },
-					dimension = this .getBezierDimension ();
-					   
+				   text             = this .getText (),
+				   fontStyle        = this .getFontStyle (),
+				   font             = fontStyle .getFont (),
+					offset           = 0,
+				   primitiveQuality = fontStyle .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
+
 				for (var g = 0; g < glyphs .length; ++ g)
 				{
 					var
-					   glyph     = glyphs [g],
-						x         = 0,
-						y         = 0;
-
-					paths  .length = 0;
-					points .length = 0;
-					curves .length = 0;
-
-					points .push (zero);
-				
-					if (glyph .isComposite)
-					{
-					   for (var c = 0; c < glyph .components .length; ++ c)
-					   {
-					      var component = glyph .components [c];
-
-					      paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx /  1000 * size + minorAlignment .x + g * charSpacing + translation .x,
-					                                                                       component .dy / -1000 * size - minorAlignment .y - translation .y,
-					                                                                       size));
-					   }
-					}
-					else
-					{
-					   paths .push (glyph .getPath (minorAlignment .x + g * charSpacing + translation .x,
-					                                -minorAlignment .y - translation .y,
-					                                size));
-					}
-
-					// Get curves for the current glyph.
-
-					for (var p = 0; p < paths .length; ++ p)
-					{
-					   var path = paths [p];
-
-						for (var i = 0; i < path .commands .length; ++ i)
-						{
-							var command = path .commands [i];
-							      
-							switch (command .type)
-							{
-							   case 'M':
-							   {
-									if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
-										points .pop ();
-
-									if (points .length > 2)
-										curves .push (points .slice ());
-
-							      points .length = 0;
-							      points .push ({ x: (command .x + offset), 
-							                      y: (-command .y ) });
-									break;
-								}
-								case 'L':
-								{
-									points .push ({ x: (command .x + offset),
-									                y: (-command .y) });
-									break;
-								}
-								case 'C':
-								{
-									//ctx .bezierCurveTo (cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
-	
-									var
-										curve = new Bezier (x, y, command .x1, command .y1, command .x2, command .y2, command .x, command .y),
-										lut   = curve .getLUT (dimension);
-
-									lut .shift ();
-									lut .map (function (point)
-									{
-									   point .x += offset;
-										point .y  = -point .y;
-									});
-				
-									Array .prototype .push .apply (points, lut);
-									break;
-								}
-								case 'Q':
-								{
-									var
-										curve = new Bezier (x, y, command .x1, command .y1, command .x, command .y),
-										lut   = curve .getLUT (dimension);
-
-									lut .shift ();
-									lut .map (function (point)
-									{
-									   point .x += offset;
-										point .y  = -point .y;
-									});
-				
-									Array .prototype .push .apply (points, lut);
-									break;
-								}
-								case 'Z':
-								{
-							      if (points .length > 2)
-							      {
-										if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
-											points .pop ();
-
-										if (points .length > 2)
-											curves .push (points .slice ());
-							   
-							         points .length = 0;
-							         points .push (zero);
-							      }
-									
-									continue;
-								}
-								default:
-								   continue;
-							}
-
-							x = command .x;
-							y = command .y;
-						}
-					}
-
-					// Determine contours and holes.
-
-					var
-					   contours = [ ],
-					   holes    = [ ];
-
-					for (var i = 0; i < curves .length; ++ i)
-					{
-					   var
-					      curve       = curves [i],
-					      orientation = this .getCurveOrientation (curve);
-
-					   if (orientation < 0)
-					      contours .push (curve);
-					   else
-							holes .push (curve);
-					}
-
-					contours .map (this .removeCollinearPoints);
-					holes .map (this .removeCollinearPoints);
-
-					switch (contours .length)
-					{
-					   case 0:
-					      break;
-					   case 1:
-							contours [0] .holes = holes;
-							break;
-						default:
-						{
-					      for (var c = 0; c < contours .length; ++ c)
-						      contours [c] .holes = [ ];
-
-						   for (var h = 0; h < holes .length; ++ h)
-						   {
-						      var hole = holes [h];
-
-						      for (var c = 0; c < contours .length; ++ c)
-						      {
-						         var contour = contours [c];
-
-						         // Copy contour, as isPointInPolygon will shuffle the points.
-						         if (this .isPointInPolygon (contour .slice (), hole [0]))
-						         {
-						            contour .holes .push (hole);
-						            break;
-						         }
-						      }
-						   }
-
-						   break;
-						}
-					}
-
-					if (glyph .name == "R" || glyph .name == "S")
-					{
-					   console .log (glyph, paths, contours);
-					}
-
-
-					// Triangulate contours.
-
-					for (var i = 0; i < contours .length; ++ i)
-					   this .triangulate (contours [i], contours [i] .holes);
+					   glyph    = glyphs [g],
+					   vertices = this .getGlyphGeometry (glyph, primitiveQuality);
 					
+					for (var v = 0; v < vertices .length; ++ v)
+					{
+					   text .addNormal (normal);
+					   text .addVertex (vertex .set (vertices [v] .x * size + minorAlignment .x + g * charSpacing + translation .x + offset,
+					                                 vertices [v] .y * size + minorAlignment .y + translation .y,
+					                                 0));
+					}
+
 					// Calculate offset.
 
 					var kerning = 0;
@@ -596,6 +413,211 @@ function ($,
 						kerning = font .getKerningValue (glyph, glyphs [g + 1]);
 
 					offset += (glyph .advanceWidth + kerning) / 1000 * size;
+				}
+			},
+			getGlyphGeometry: function (glyph, primitiveQuality)
+			{
+				var
+				   fontStyle        = this .getFontStyle (),
+				   font             = fontStyle .getFont ();
+			   
+			   var cachedFont = this .geometryCache [font .fontName];
+
+			   if (! cachedFont)
+			      this .geometryCache [font .fontName] = cachedFont = [[], [], []];
+			   
+			   var cachedGeometry = cachedFont [primitiveQuality] [glyph .index];
+
+			   if (cachedGeometry)
+			      return cachedGeometry;
+
+			   cachedGeometry = cachedFont [primitiveQuality] [glyph .index] = [ ];
+
+			   this .createGlyphGeometry (glyph, cachedGeometry, primitiveQuality);
+
+			   return cachedGeometry;
+			},
+			createGlyphGeometry: function (glyph, vertices, primitiveQuality)
+			{
+				var
+				   fontStyle = this .getFontStyle (),
+				   font      = fontStyle .getFont (),
+					paths     = [ ],
+					points    = [ ],
+					curves    = [ ],
+					dimension = this .getBezierDimension (primitiveQuality);
+
+				paths  .length = 0;
+				points .length = 0;
+				curves .length = 0;
+
+				points .push (zero);
+			
+				if (glyph .isComposite)
+				{
+				   for (var c = 0; c < glyph .components .length; ++ c)
+				   {
+				      var component = glyph .components [c];
+
+				      paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / 1000, component .dy / -1000, 1));
+				   }
+				}
+				else
+				   paths .push (glyph .getPath (0, 0, 1));
+
+				// Get curves for the current glyph.
+
+				var
+					x = 0,
+					y = 0;
+
+				for (var p = 0; p < paths .length; ++ p)
+				{
+				   var path = paths [p];
+					   
+					for (var i = 0; i < path .commands .length; ++ i)
+					{
+						var command = path .commands [i];
+						      
+						switch (command .type)
+						{
+						   case 'M':
+						   {
+								if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
+									points .pop ();
+
+								if (points .length > 2)
+									curves .push (points .slice ());
+
+						      points .length = 0;
+						      points .push ({ x: command .x, y: -command .y });
+								break;
+							}
+							case 'L':
+							{
+								points .push ({ x: command .x, y: -command .y });
+								break;
+							}
+							case 'C':
+							{
+								//ctx .bezierCurveTo (cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+
+								var
+									curve = new Bezier (x, y, command .x1, command .y1, command .x2, command .y2, command .x, command .y),
+									lut   = curve .getLUT (dimension);
+
+								lut .shift ();
+								lut .map (function (point) { point .y = -point .y; });
+			
+								Array .prototype .push .apply (points, lut);
+								break;
+							}
+							case 'Q':
+							{
+								var
+									curve = new Bezier (x, y, command .x1, command .y1, command .x, command .y),
+									lut   = curve .getLUT (dimension);
+
+								lut .shift ();
+								lut .map (function (point) { point .y = -point .y; });
+			
+								Array .prototype .push .apply (points, lut);
+								break;
+							}
+							case 'Z':
+							{
+						      if (points .length > 2)
+						      {
+									if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
+										points .pop ();
+
+									if (points .length > 2)
+										curves .push (points .slice ());
+						   
+						         points .length = 0;
+						         points .push (zero);
+						      }
+								
+								continue;
+							}
+							default:
+							   continue;
+						}
+
+						x = command .x;
+						y = command .y;
+					}
+				}
+
+				// Determine contours and holes.
+
+				var
+				   contours = [ ],
+				   holes    = [ ];
+
+				for (var i = 0; i < curves .length; ++ i)
+				{
+				   var
+				      curve       = curves [i],
+				      orientation = this .getCurveOrientation (curve);
+
+				   if (orientation < 0)
+				      contours .push (curve);
+				   else
+						holes .push (curve);
+				}
+
+				contours .map (this .removeCollinearPoints);
+				holes .map (this .removeCollinearPoints);
+
+				switch (contours .length)
+				{
+				   case 0:
+				      break;
+				   case 1:
+						contours [0] .holes = holes;
+						break;
+					default:
+					{
+				      for (var c = 0; c < contours .length; ++ c)
+					      contours [c] .holes = [ ];
+
+					   for (var h = 0; h < holes .length; ++ h)
+					   {
+					      var hole = holes [h];
+
+					      for (var c = 0; c < contours .length; ++ c)
+					      {
+					         var contour = contours [c];
+
+					         // Copy contour, as isPointInPolygon will shuffle the points.
+					         if (this .isPointInPolygon (contour .slice (), hole [0]))
+					         {
+					            contour .holes .push (hole);
+					            break;
+					         }
+					      }
+					   }
+
+					   break;
+					}
+				}
+
+				// Triangulate contours.
+
+				for (var i = 0; i < contours .length; ++ i)
+				   this .triangulate (contours [i], contours [i] .holes, vertices);
+			},
+			getBezierDimension: function (primitiveQuality)
+			{
+				switch (primitiveQuality)
+				{
+				   case PrimitiveQuality .LOW:
+				      return 2;
+				   case PrimitiveQuality .HIGH:
+				      return 5;
+				   default:
+						return 3;
 				}
 			},
 			getCurveOrientation: function (curve)
@@ -672,7 +694,7 @@ function ($,
 
 			   contour .length = k;
 			},
-			triangulate: function (contour, holes)
+			triangulate: function (contour, holes, vertices)
 			{
 			   contour .map (function (point) { point .z = 0; });
 			   holes .map (function (hole) { hole .map (function (point) { point .z = 0; }); });
@@ -682,19 +704,14 @@ function ($,
 					// Triangulate polygon.
 
 					var
-					   text    = this .getText (),
 						context = new poly2tri .SweepContext (contour) .addHoles (holes),
 						ts      = context .triangulate () .getTriangles ();
 
 					for (var i = 0; i < ts .length; ++ i)
 					{
-						text .addNormal (normal);
-						text .addNormal (normal);
-						text .addNormal (normal);
-
-						text .addVertex (ts [i] .getPoint (0));
-						text .addVertex (ts [i] .getPoint (1));
-						text .addVertex (ts [i] .getPoint (2));
+						vertices .push (ts [i] .getPoint (0));
+						vertices .push (ts [i] .getPoint (1));
+						vertices .push (ts [i] .getPoint (2));
 					}
 				}
 				catch (error)
