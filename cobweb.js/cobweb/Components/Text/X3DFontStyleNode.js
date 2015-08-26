@@ -188,7 +188,7 @@ function ($,
 			}
 			else
 			{
-				console .log ('Font loaded fine:', font .familyName, font .styleName);
+				//console .log ('Font loaded fine:', font .familyName, font .styleName);
 
 				this .font     = font;
 				font .fontName = font .familyName + font .styleName;

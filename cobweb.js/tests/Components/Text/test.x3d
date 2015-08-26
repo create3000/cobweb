@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 24 Aug 2015 02:55:59 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 26 Aug 2015 15:31:38 GMT'/>
+    <meta name='modified' content='Wed, 26 Aug 2015 18:37:21 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Text_1'>
@@ -16,10 +16,9 @@
         </Appearance>
         <Text
             string='"Hello Wörld!", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "ÄÖÜäöüß", "0123456789", "^°!\"§$%&amp;/()=?+*~\\&apos;#-_.:,;", "ÁÓÚáóú", "′¹²³¼½¬{[]}\\\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…–", "flfiff"'
-            maxExtent='15.68'
             solid='true'>
           <FontStyle
-              family='"Ubuntu"'
+              family='"Ubuntu", "CHOPS___.TTF"'
               size='1.37'
               spacing='1.21'
               justify='"END", "END"'/>

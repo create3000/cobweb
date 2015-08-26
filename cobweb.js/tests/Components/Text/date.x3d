@@ -7,14 +7,14 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
     <meta name='icon' content='about:icon'/>
-    <meta name='modified' content='Wed, 26 Aug 2015 16:54:02 GMT'/>
+    <meta name='modified' content='Wed, 26 Aug 2015 18:33:59 GMT'/>
     <meta name='title' content='Random Text'/>
   </head>
   <Scene>
     <Viewpoint
         position='0 0 8.74054'
         centerOfRotation='-1.38477 0.122227 0'/>
-    <Transform DEF='_1'>
+    <Transform>
       <Shape>
         <Appearance>
           <Material
@@ -38,9 +38,23 @@
         <Text USE='Time'/>
       </field>
 <![CDATA[vrmlscript:
+function makeid (size)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < size; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 function set_time (value)
 {
-	time .string = new MFString (new Date (value * 1000) .toUTCString ());
+	var date    = new Date (value * 1000) .toUTCString ();
+	var browser = Browser .getName () + " " + Browser .getVersion ();
+
+	time .string = new MFString (date, browser, makeid (8));
 }
   ]]> 
     </Script>

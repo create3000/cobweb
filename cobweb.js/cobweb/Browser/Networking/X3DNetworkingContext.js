@@ -14,6 +14,8 @@ function (Fields,
 		{
 			initialize: function ()
 			{
+			   this .cache = this .getXML () [0] .getAttribute ("cache") != "false";
+
 				this .addChildren ("loadCount", new SFInt32 ());
 				this .loadingObjects = { };
 
@@ -25,6 +27,10 @@ function (Fields,
 				this .privateScene = this .createScene ();
 				this .privateScene .setup ();
 				this .privateScene .beginUpdate ();
+			},
+			doCaching: function ()
+			{
+			   return this .cache;
 			},
 			getLocation: function ()
 			{
