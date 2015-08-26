@@ -83,11 +83,11 @@ function ($,
 			   this .fontStyleNode .addInterest (this, "set_textGeometry__");
 			   this .fontStyleNode .addInterest (this, "addNodeEvent");
 
-			   this .set_textGeometry__ ();
+			   this .textGeometry = this .fontStyleNode .getTextGeometry (this);
 			},
 			set_textGeometry__: function ()
 			{
-			   this .textGeometry = this .fontStyleNode .getTextGeometry (this);
+			   this .textGeometry .update ();
 			},
 			debug: function ()
 			{

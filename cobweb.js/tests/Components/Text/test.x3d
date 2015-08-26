@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 24 Aug 2015 02:55:59 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 25 Aug 2015 19:20:42 GMT'/>
+    <meta name='modified' content='Wed, 26 Aug 2015 10:24:11 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Text_1'>
@@ -22,9 +22,7 @@
               family='"Ubuntu"'
               size='1.37'
               spacing='1.21'
-              leftToRight='false'
-              topToBottom='false'
-              justify='"END", "FIRST"'/>
+              justify='"END", "BEGIN"'/>
         </Text>
       </Shape>
     </Transform>
@@ -38,11 +36,15 @@
       </Shape>
     </Transform>
     <Transform DEF='Box_1'
-        translation='2.4299 -0.196573 0'
-        scale='4.88949 0.444371 1'>
+        translation='-7.83212 7.13758 -0.558724'
+        scale='15.8581 14.384 1.01075'>
       <Shape>
         <Appearance>
-          <Material/>
+          <Material DEF='Artdeco1_1'
+              ambientIntensity='0.0673077'
+              diffuseColor='0.29 0.0968013 0.0957'
+              specularColor='0.078 0.0591786 0.05772'
+              shininess='0.0584795'/>
         </Appearance>
         <Box
             size='1 1 1'/>

@@ -70,11 +70,44 @@ function (Matrix4, Vector3)
 		set: function (size, center)
 		{
 			var m = this .matrix;
-			m [ 0] = size .x / 2; m [ 1] = 0;           m [ 2] = 0;           m [ 3] = 0;
-			m [ 4] = 0;           m [ 5] = size .y / 2; m [ 6] = 0;           m [ 7] = 0;
-			m [ 8] = 0;           m [ 9] = 0;           m [10] = size .z / 2; m [11] = 0;
-			m [12] = center .x;   m [13] = center .y;   m [14] = center .z;   m [15] = 1;
-			return this;
+		
+			switch (arguments .length)
+			{
+				case 0:
+				{
+					m [ 0] = 0.5; m [ 1] = 0;   m [ 2] = 0;   m [ 3] = 0;
+					m [ 4] = 0;   m [ 5] = 0.5; m [ 6] = 0;   m [ 7] = 0;
+					m [ 8] = 0;   m [ 9] = 0;   m [10] = 0.5; m [11] = 0;
+					m [12] = 0;   m [13] = 0;   m [14] = 0;   m [15] = 0;
+					return this;
+				}
+				case 2:
+				{
+					m [ 0] = size .x / 2; m [ 1] = 0;           m [ 2] = 0;           m [ 3] = 0;
+					m [ 4] = 0;           m [ 5] = size .y / 2; m [ 6] = 0;           m [ 7] = 0;
+					m [ 8] = 0;           m [ 9] = 0;           m [10] = size .z / 2; m [11] = 0;
+					m [12] = center .x;   m [13] = center .y;   m [14] = center .z;   m [15] = 1;
+					return this;
+				}
+				case 3:
+				{
+					var
+						min = arguments [0],
+						max = arguments [1],
+						sx  = (max .x - min .x) / 2,
+						sy  = (max .y - min .y) / 2,
+						sz  = (max .z - min .z) / 2,
+						cx  = (max .x + min .x) / 2,
+						cy  = (max .y + min .y) / 2,
+						cz  = (max .z + min .z) / 2;
+
+					m [ 0] = sx; m [ 1] = 0;  m [ 2] = 0;  m [ 3] = 0;
+					m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
+					m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
+					m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
+					return this;
+				}
+			}
 		},
 		setExtents: function (min, max)
 		{

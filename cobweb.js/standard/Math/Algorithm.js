@@ -76,6 +76,24 @@ define (function (Vector3)
 
 			return ++ n;
 		},
+		/*
+		isInt: function(n)
+		{
+			return typeof n === 'number' && 
+			       parseFloat (n) == parseInt (n, 10) && ! isNaN (n);
+		},
+		decimalPlaces: function (n)
+		{
+			var
+				a = Math.abs(n),
+				c = a, count = 1;
+
+			while(! Algorithm .isInt (c) && isFinite (c))
+				c = a * Math .pow (10, count ++);
+	
+			return count-1;
+		},
+		*/
 		less: function (lhs, rhs)
 		{
 			return lhs < rhs;

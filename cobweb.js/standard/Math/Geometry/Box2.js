@@ -69,6 +69,43 @@ function (Matrix3, Vector2)
 			m [6] = center .x;   m [7] = center .y;   m [8] = 1;
 			return this;
 		},
+		set: function (size, center)
+		{
+			var m = this .matrix;
+		
+			switch (arguments .length)
+			{
+				case 0:
+				{
+					m [0] = 0.5; m [1] = 0;   m [2] = 0;
+					m [3] = 0;   m [4] = 0.5; m [5] = 0;
+					m [6] = 0;   m [7] = 0;   m [8] = 0;
+					return this;
+				}
+				case 2:
+				{
+					m [0] = size .x / 2; m [1] = 0;           m [2] = 0;
+					m [3] = 0;           m [4] = size .y / 2; m [5] = 0;
+					m [6] = center .x;   m [7] = center .y;   m [8] = 1;
+					return this;
+				}
+				case 3:
+				{
+					var
+						min = arguments [0],
+						max = arguments [1],
+						sx  = (max .x - min .x) / 2,
+						sy  = (max .y - min .y) / 2,
+						cx  = (max .x + min .x) / 2,
+						cy  = (max .y + min .y) / 2;
+
+					m [0] = sx; m [1] = 0;  m [2] = 0;
+					m [3] = 0;  m [4] = sy; m [5] = 0;
+					m [6] = cx; m [7] = cy; m [8] = 1;
+					return this;
+				}
+			}
+		},
 		setExtents: function (min, max)
 		{
 			var

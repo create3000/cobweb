@@ -12,7 +12,8 @@ define ([
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Geometry/Triangle2",
+	"standard/Math/Algorithm",
 	"bezier",
 	"poly2tri",
 ],
@@ -28,15 +29,22 @@ function ($,
           Vector2,
           Vector3,
           Vector3,
-          Triangle3,
+          Triangle2,
+          Algorithm,
           Bezier,
           poly2tri)
 {
 	with (Fields)
 	{
 		var
-			min = new Vector2 (0, 0),
-			max = new Vector2 (0, 0);
+			min       = new Vector2 (0, 0),
+			max       = new Vector2 (0, 0),
+			min3      = new Vector3 (0, 0, 0),
+			max3      = new Vector3 (0, 0, 0),
+			size      = new Vector2 (0, 0),
+			center    = new Vector2 (0, 0),
+			lineBound = new Vector2 (0, 0),
+			box2      = new Box2 ();
 
 	   function X3DTextGeometry (text, fontStyle)
 		{
@@ -47,6 +55,7 @@ function ($,
 			this .translations   = [ ];
 			this .charSpacings   = [ ];
 			this .bearing        = new Vector2 (0, 0);
+			this .bbox           = new Box3 ();
 
 			this .update ();
 		}
@@ -89,10 +98,11 @@ function ($,
 					fontStyle = this .fontStyle,
 					numLines  = text .string_ .length;
 				
-				text .lineBounds_ .length  = numLines;
-				this .glyphs .length       = 0;
-				this .charSpacings .length = numLines;
-				this .translations .length = numLines;
+				text .lineBounds_ .length = numLines;
+				this .glyphs .length      = 0;
+
+				this .resizeArray (this .translations, Vector2, numLines, 0, 0);
+				this .resizeArray (this .charSpacings, Vector2, numLines, 0, 0);
 
 				if (numLines === 0 || ! fontStyle .getFont ())
 				{
@@ -107,6 +117,21 @@ function ($,
 					this .horizontal (text, fontStyle);
 				else
 					this .vertical (text, fontStyle);
+			},
+			resizeArray: function (array, constructor, size)
+			{
+			   // Resize array in grow only fashion.
+
+			   var args = Array .prototype .slice .call (arguments, 3);
+
+			   for (var i = array .length; i < size; ++ i)
+			   {
+			      var value = Object .create (constructor .prototype);
+
+					constructor .apply (value, args);
+
+			      array .push (value);
+			   }
 			},
 			horizontal: function (text, fontStyle)
 			{
@@ -134,7 +159,7 @@ function ($,
 
 					this .glyphs .push (glyphs);
 
-					var size = Vector2 .subtract (max, min);
+					size .assign (max) .subtract (min);
 
 					// Calculate charSpacing and lineBounds.
 
@@ -142,8 +167,9 @@ function ($,
 
 					var
 						charSpacing = 0,
-						lineBound   = new Vector2 (size .x, lineNumber == 0 ? size .y : lineHeight) .multiply (scale),
 						length      = text .getLength (l);
+	
+					lineBound .set (size .x, lineNumber == 0 ? size .y : lineHeight) .multiply (scale);
 
 					if (text .maxExtent_ .getValue ())
 					{
@@ -170,32 +196,34 @@ function ($,
 					{
 						case X3DFontStyleNode .Alignment .BEGIN:
 						case X3DFontStyleNode .Alignment .FIRST:
-							this .translations [l] = new Vector2 (0, -(lineNumber * lineHeight));
+							this .translations [l] .set (0, -(l * lineHeight));
 							break;
 						case X3DFontStyleNode .Alignment .MIDDLE:
-							this .translations [l] = new Vector2 (-min .x - size .x / 2, -(lineNumber * lineHeight));
+							this .translations [l] .set (-min .x - size .x / 2, -(l * lineHeight));
 							break;
 						case X3DFontStyleNode .Alignment .END:
-							this .translations [l] = new Vector2 (-min .x - size .x, -(lineNumber * lineHeight));
+							this .translations [l] .set (-min .x - size .x, -(l * lineHeight));
 							break;
 					}
 
-					this .translations [l] .multiply (scale);
-
 					// Calculate center.
 
-					var center = Vector2 .add (min, size) .divide (2);
+					center .assign (min) .add (size) .divide (2);
 
 					// Add bbox.
 
-					bbox .add (new Box2 (size .multiply (scale), center .add (this .translations [l]) .multiply (scale)));
+					bbox .add (box2 .set (size .multiply (scale), center .add (this .translations [l]) .multiply (scale)));
+
+					this .translations [l] .multiply (scale);
 				}
+
+				//console .log ("size", bbox .size, "center", bbox .center);
 
 				// Get text extents.
 
 				bbox .getExtents (min, max);
 
-				var size = Vector2 .subtract (max, min);
+				size .assign (max) .subtract (min);
 
 				// Calculate text position
 
@@ -227,9 +255,9 @@ function ($,
 
 				text .origin_ .setValue (min .x, max .y, 0);
 
-				this .bbox = new Box3 (new Vector3 (min .x, min .y, 0),
-				                       new Vector3 (max .x, max .y, 0),
-				                       true);
+				this .bbox .set (min3 .set (min .x, min .y, 0),
+				                 max3 .set (max .x, max .y, 0),
+				                 true);
 			},
 			vertical: function (text, fontStyle)
 			{
@@ -287,6 +315,12 @@ function ($,
 			},
 		};
 
+		/*
+		 * PolygonText
+		 */
+		
+		var normal = new Vector3 (0, 0, 1);
+
 	   function PolygonText (text, fontStyle)
 		{
 			X3DTextGeometry .call (this, text, fontStyle);
@@ -306,14 +340,7 @@ function ($,
 				{
 					var size  = fontStyle .getScale ();
 
-					// Render lines.
-					var
-						topToBottom = fontStyle .topToBottom_ .getValue (),
-						first       = topToBottom ? 0 : this .getGlyphs () .length - 1,
-						last        = topToBottom ? this .getGlyphs () .length : -1,
-						step        = topToBottom ? 1 : -1;
-
-					for (var i = first; i !== last; i += step)
+					for (var i = 0; i < this .getGlyphs () .length; ++ i)
 						this .render (this .getGlyphs () [i], this .getMinorAlignment (), size, this .getTranslations () [i], this .getCharSpacings () [i]);
 				}
 				else
@@ -350,6 +377,18 @@ function ($,
 					*/
 				}
 			},
+			getBezierDimension: function ()
+			{
+				switch (this .getText () .getBrowser () .getBrowserOptions () .getPrimitiveQuality ())
+				{
+				   case PrimitiveQuality .LOW:
+				      return 2;
+				   case PrimitiveQuality .HIGH:
+				      return 5;
+				   default:
+						return 3;
+				}
+			},
 			render: function (glyphs, minorAlignment, size, translation, charSpacing)
 			{
 				var
@@ -360,28 +399,15 @@ function ($,
 					paths     = [ ],
 					points    = [ ],
 					curves    = [ ]
-					zero      = { x: 0, y: 0, z: 0 };
+					zero      = { x: 0, y: 0 },
+					dimension = this .getBezierDimension ();
 					   
 				for (var g = 0; g < glyphs .length; ++ g)
 				{
 					var
 					   glyph     = glyphs [g],
-						dimension = 0,
 						x         = 0,
 						y         = 0;
-
-					switch (text .getBrowser () .getBrowserOptions () .getPrimitiveQuality ())
-					{
-					   case PrimitiveQuality .LOW:
-					      dimension = 2;
-					      break;
-					   case PrimitiveQuality .HIGH:
-					      dimension = 5;
-					      break;
-					   default:
-							dimension = 3;
-							break;
-					}
 
 					paths  .length = 0;
 					points .length = 0;
@@ -401,9 +427,11 @@ function ($,
 					   }
 					}
 					else
+					{
 					   paths .push (glyph .getPath (minorAlignment .x + g * charSpacing + translation .x,
 					                                -minorAlignment .y - translation .y,
 					                                size));
+					}
 
 					// Get curves for the current glyph.
 
@@ -427,15 +455,13 @@ function ($,
 
 							      points .length = 0;
 							      points .push ({ x: (command .x + offset), 
-							                      y: (-command .y ),
-							                      z: 0 });
+							                      y: (-command .y ) });
 									break;
 								}
 								case 'L':
 								{
 									points .push ({ x: (command .x + offset),
-									                y: (-command .y),
-									                z: 0 });
+									                y: (-command .y) });
 									break;
 								}
 								case 'C':
@@ -451,7 +477,6 @@ function ($,
 									{
 									   point .x += offset;
 										point .y  = -point .y;
-										point .z  = 0;
 									});
 				
 									Array .prototype .push .apply (points, lut);
@@ -468,7 +493,6 @@ function ($,
 									{
 									   point .x += offset;
 										point .y  = -point .y;
-										point .z  = 0;
 									});
 				
 									Array .prototype .push .apply (points, lut);
@@ -517,6 +541,9 @@ function ($,
 							holes .push (curve);
 					}
 
+					contours .map (this .removeCollinearPoints);
+					holes .map (this .removeCollinearPoints);
+
 					switch (contours .length)
 					{
 					   case 0:
@@ -549,6 +576,12 @@ function ($,
 						   break;
 						}
 					}
+
+					if (glyph .name == "R" || glyph .name == "S")
+					{
+					   console .log (glyph, paths, contours);
+					}
+
 
 					// Triangulate contours.
 
@@ -605,7 +638,7 @@ function ($,
 							b = ts [i] .getPoint (1),
 							c = ts [i] .getPoint (2);
 						
-						if (Triangle3 .isPointInTriangle (a, b, c, point))
+						if (Triangle2 .isPointInTriangle (a, b, c, point))
 						   return true;
 					}
 
@@ -616,8 +649,34 @@ function ($,
 					//console .warn (error);
 				}
 			},
+			removeCollinearPoints: function (contour)
+			{
+				function isCollinear (a, b, c)
+				{
+					return Math .abs ((a.y - b.y) * (a.x - c.x) - (a.y - c.y) * (a.x - b.x)) < 1e-8;
+				}
+
+			   var k = 0;
+
+			   for (var i = 0; i < contour .length; ++ i)
+			   {
+			      var
+			         i0 = (i - 1 + contour .length) % contour .length,
+			         i1 = (i + 1) % contour .length;
+
+			      if (isCollinear (contour [i0], contour [i], contour [i1]))
+						continue;
+
+					contour [k ++] = contour [i];
+			   }
+
+			   contour .length = k;
+			},
 			triangulate: function (contour, holes)
 			{
+			   contour .map (function (point) { point .z = 0; });
+			   holes .map (function (hole) { hole .map (function (point) { point .z = 0; }); });
+
 			   try
 			   {
 					// Triangulate polygon.
@@ -625,8 +684,7 @@ function ($,
 					var
 					   text    = this .getText (),
 						context = new poly2tri .SweepContext (contour) .addHoles (holes),
-						ts      = context .triangulate () .getTriangles (),
-						normal  = new Vector3 (0, 0, 1);
+						ts      = context .triangulate () .getTriangles ();
 
 					for (var i = 0; i < ts .length; ++ i)
 					{

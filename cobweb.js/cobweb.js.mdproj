@@ -2026,6 +2026,7 @@
     <None Include="cobweb\Browser\Text\X3DTextContext.js" />
     <None Include="standard\Math\Geometry\Box2.js" />
     <None Include="tests\Components\Text\date.x3d" />
+    <None Include="standard\Math\Geometry\Triangle2.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
