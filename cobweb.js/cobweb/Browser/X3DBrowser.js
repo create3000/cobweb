@@ -73,13 +73,15 @@ function ($,
 			replaceWorld: function (scene)
 			{
 				// Remove world.
-				
+
 				if (this .getWorld ())
 				{
 					this .isLive () .removeFieldInterest (this .getExecutionContext () .isLive ());
 					this .getExecutionContext () .endUpdate ();
 				}
 
+				this .shutdown () .processInterests ();
+				
 				// Replace world.
 
 				this .getCanvas () .stop (true, true) .fadeOut (0);
@@ -97,7 +99,7 @@ function ($,
 				this .loadCount_ .addFieldCallback ("loading", this .bindWorld .bind (this));
 				this .loadCount_ .addEvent ();
 
-				//this .initialized () .setValue (this .getCurrentTime ());
+				this .initialized () .setValue (this .getCurrentTime ());
 			},
 			bindWorld: function (value)
 			{

@@ -63,6 +63,10 @@ function ($,
 		X3DTextGeometry .prototype =
 		{
 			constructor: X3DTextGeometry,
+			getBrowser: function ()
+			{
+			   return this .text .getBrowser ();
+			},
 			getText: function ()
 			{
 			   return this .text;
@@ -327,8 +331,6 @@ function ($,
 	   function PolygonText (text, fontStyle)
 		{
 			X3DTextGeometry .call (this, text, fontStyle);
-
-			this .geometryCache = { }; // [fontName] [primitveQuality] [glyphIndex]
 		}
 
 		PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
@@ -389,7 +391,7 @@ function ($,
 				   fontStyle        = this .getFontStyle (),
 				   font             = fontStyle .getFont (),
 					offset           = 0,
-				   primitiveQuality = fontStyle .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
+				   primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
 
 				for (var g = 0; g < glyphs .length; ++ g)
 				{
@@ -418,13 +420,14 @@ function ($,
 			getGlyphGeometry: function (glyph, primitiveQuality)
 			{
 				var
-				   fontStyle        = this .getFontStyle (),
-				   font             = fontStyle .getFont ();
+				   fontStyle  = this .getFontStyle (),
+				   font       = fontStyle .getFont (),
+				   glyphCache = this .getBrowser () .getGlyphCache ();
 			   
-			   var cachedFont = this .geometryCache [font .fontName];
+			   var cachedFont = glyphCache [font .fontName];
 
 			   if (! cachedFont)
-			      this .geometryCache [font .fontName] = cachedFont = [[], [], []];
+			      glyphCache [font .fontName] = cachedFont = [[], [], []];
 			   
 			   var cachedGeometry = cachedFont [primitiveQuality] [glyph .index];
 
