@@ -2,14 +2,46 @@
 define ([
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
+	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
 	"opentype",
 ],
 function ($,
           X3DNode, 
+          Loader,
           X3DConstants,
           opentype)
 {
+   /*
+    * Font paths for default SERIF, SANS and TYPWRITER families.
+    */
+
+	var FontDirectory = "https://cdn.rawgit.com/holger-seelig/cobweb/master/cobweb.js/fonts/";
+
+	var Fonts =
+	{
+	   SERIF: {
+	      PLAIN:      FontDirectory + "DroidSerif-Regular.ttf",
+	      ITALIC:     FontDirectory + "DroidSerif-Italic.ttf",
+	      BOLD:       FontDirectory + "DroidSerif-Bold.ttf",
+	      BOLDITALIC: FontDirectory + "DroidSerif-BoldItalic.ttf",
+	   },
+	   SANS: {
+	      PLAIN:      FontDirectory + "Ubuntu-R.ttf",
+	      ITALIC:     FontDirectory + "Ubuntu-RI.ttf",
+	      BOLD:       FontDirectory + "Ubuntu-B.ttf",
+	      BOLDITALIC: FontDirectory + "Ubuntu-BI.ttf",
+	   },
+	   TYPEWRITER: {
+	      PLAIN:      FontDirectory + "UbuntuMono-R.ttf",
+	      ITALIC:     FontDirectory + "UbuntuMono-RI.ttf",
+	      BOLD:       FontDirectory + "UbuntuMono-B.ttf",
+	      BOLDITALIC: FontDirectory + "UbuntuMono-BI.ttf",
+	   },
+	};
+
+	//
+
 	var i = 0;
 
 	var Alignment =
@@ -20,28 +52,6 @@ function ($,
 	   END:    ++ i,
 	};
 
-	var Fonts =
-	{
-	   SERIF: {
-	      PLAIN:      "fonts/DroidSerif-Regular.ttf",
-	      ITALIC:     "fonts/DroidSerif-Italic.ttf",
-	      BOLD:       "fonts/DroidSerif-Bold.ttf",
-	      BOLDITALIC: "fonts/DroidSerif-BoldItalic.ttf",
-	   },
-	   SANS: {
-	      PLAIN:      "fonts/Ubuntu-R.ttf",
-	      ITALIC:     "fonts/Ubuntu-RI.ttf",
-	      BOLD:       "fonts/Ubuntu-B.ttf",
-	      BOLDITALIC: "fonts/Ubuntu-BI.ttf",
-	   },
-	   TYPEWRITER: {
-	      PLAIN:      "fonts/UbuntuMono-R.ttf",
-	      ITALIC:     "fonts/UbuntuMono-RI.ttf",
-	      BOLD:       "fonts/UbuntuMono-B.ttf",
-	      BOLDITALIC: "fonts/UbuntuMono-BI.ttf",
-	   },
-	};
-
 	function X3DFontStyleNode (browser, executionContext)
 	{
 		X3DNode .call (this, browser, executionContext);
@@ -49,6 +59,7 @@ function ($,
 		this .addType (X3DConstants .X3DFontStyleNode);
 
 		this .alignments = [ ];
+		this .loader     = new Loader (this);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -141,7 +152,7 @@ function ($,
 			   {
 					var
 						familyName = this .family_ [this .familyIndex],
-						fontPath   = this .getDefaultFont (familyName) || familyName;
+						fontPath   = this .getDefaultFont (familyName) || this .loader .transform (familyName);
 
 					opentype .load (fontPath, this .setFont .bind (this));
 				}

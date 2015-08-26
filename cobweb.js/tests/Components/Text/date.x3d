@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
     <meta name='icon' content='about:icon'/>
-    <meta name='modified' content='Wed, 26 Aug 2015 14:51:21 GMT'/>
+    <meta name='modified' content='Wed, 26 Aug 2015 16:54:02 GMT'/>
     <meta name='title' content='Random Text'/>
   </head>
   <Scene>
@@ -23,7 +23,7 @@
         <Text DEF='Time'
             string='"Date"'>
           <FontStyle
-              family='"Ubuntu Mono", "SANS"'
+              family='"Ubuntu Mono", "CHOPS___.TTF", "SANS"'
               style='BOLDITALIC'
               size='0.5'
               justify='"MIDDLE", "BEGIN"'/>

@@ -2068,6 +2068,7 @@
     <None Include="fonts\UbuntuMono-R.ttf" />
     <None Include="fonts\UbuntuMono-RI.ttf" />
     <None Include="fonts\Ubuntu-RI.ttf" />
+    <None Include="tests\Components\Text\CHOPS___.TTF" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
