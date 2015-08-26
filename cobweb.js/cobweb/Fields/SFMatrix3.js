@@ -42,16 +42,9 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		{
 			return this .getValue () .equals (matrix .getValue ());
 		},
-		set: function (m00, m01, m02,
-	                  m10, m11, m12,
-	                  m20, m21, m22)
+		set: function (value)
 		{
-			if (arguments .length === 9)
-			   this .getValue () .set (m00, m01, m02,
-	                                 m10, m11, m12,
-	                                 m20, m21, m22);
-			else
-				this .getValue () .assign (m00);
+			this .getValue () .assign (value);
 		},
 		setTransform: function (translation, rotation, scale, scaleOrientation, center)
 		{

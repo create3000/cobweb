@@ -44,7 +44,10 @@ function ($,
 			size      = new Vector2 (0, 0),
 			center    = new Vector2 (0, 0),
 			lineBound = new Vector2 (0, 0),
-			box2      = new Box2 ();
+			origin    = new Vector3 (0, 0, 0),
+			box2      = new Box2 (),
+			zero2     = new Vector2 (0, 0),
+			zero3     = new Vector3 (0, 0, 0);
 
 	   function X3DTextGeometry (text, fontStyle)
 		{
@@ -110,10 +113,10 @@ function ($,
 
 				if (numLines === 0 || ! fontStyle .getFont ())
 				{
-					text .origin_ .setValue (0, 0, 0);
-					text .textBounds_ .setValue (0, 0);
+					text .origin_ .setValue (zero3);
+					text .textBounds_ .setValue (zero2);
 
-					this .bbox = new Box3 ();
+					this .bbox .set ();
 					return;
 				}
 
@@ -257,7 +260,7 @@ function ($,
 
 				// The value of the origin field represents the upper left corner of the textBounds.
 
-				text .origin_ .setValue (min .x, max .y, 0);
+				text .origin_ .setValue (origin .set (min .x, max .y, 0));
 
 				this .bbox .set (min3 .set (min .x, min .y, 0),
 				                 max3 .set (max .x, max .y, 0),

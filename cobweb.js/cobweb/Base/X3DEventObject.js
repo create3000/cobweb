@@ -37,6 +37,8 @@ function ($,
 		},
 		addEventObject: function (field, event)
 		{
+			this .getBrowser () .addBrowserEvent ();
+
 			// Register for processEvent
 
 			this .getBrowser () .addTaintedField (field, event);
@@ -45,8 +47,6 @@ function ($,
 
 			if (this .getTainted ())
 			   return;
-
-			this .getBrowser () .addBrowserEvent ();
 
 			if (field .isInput () || (this .getExtendedEventHandling () && ! field .isOutput ()))
 			{

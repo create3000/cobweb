@@ -31,11 +31,7 @@ function ($,
 		},
 		setValue: function (value)
 		{
-		   if (value instanceof this .constructor)
-				this .set (value .getValue ());
-			else
-				this .set .apply (this, arguments);
-
+			this .set (value instanceof this .constructor ? value .getValue () : value);
 			this .addEvent ();
 		},
 		set: function (value)
