@@ -304,8 +304,8 @@ function ($,
 					yMax = 0;			   
 				}
 
-				min .set (xMin, yMin) .divide (1000);
-				max .set (xMax, yMax) .divide (1000);
+				min .set (xMin, yMin) .divide (font .unitsPerEm);
+				max .set (xMax, yMax) .divide (font .unitsPerEm);
 
 				switch (fontStyle .getMajorAlignment ())
 				{
@@ -417,7 +417,7 @@ function ($,
 					if (g + 1 < glyphs .length)
 						kerning = font .getKerningValue (glyph, glyphs [g + 1]);
 
-					offset += (glyph .advanceWidth + kerning) / 1000 * size;
+					offset += (glyph .advanceWidth + kerning) / font .unitsPerEm * size;
 				}
 			},
 			getGlyphGeometry: function (glyph, primitiveQuality)
@@ -465,7 +465,7 @@ function ($,
 				   {
 				      var component = glyph .components [c];
 
-				      paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / 1000, component .dy / -1000, 1));
+				      paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, 1));
 				   }
 				}
 				else
