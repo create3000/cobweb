@@ -20,6 +20,28 @@ function ($,
 	   END:    ++ i,
 	};
 
+	var Fonts =
+	{
+	   SERIF: {
+	      PLAIN:      "fonts/DroidSerif-Regular.ttf",
+	      ITALIC:     "fonts/DroidSerif-Italic.ttf",
+	      BOLD:       "fonts/DroidSerif-Bold.ttf",
+	      BOLDITALIC: "fonts/DroidSerif-BoldItalic.ttf",
+	   },
+	   SANS: {
+	      PLAIN:      "fonts/Ubuntu-R.ttf",
+	      ITALIC:     "fonts/Ubuntu-RI.ttf",
+	      BOLD:       "fonts/Ubuntu-B.ttf",
+	      BOLDITALIC: "fonts/Ubuntu-BI.ttf",
+	   },
+	   TYPEWRITER: {
+	      PLAIN:      "fonts/UbuntuMono-R.ttf",
+	      ITALIC:     "fonts/UbuntuMono-RI.ttf",
+	      BOLD:       "fonts/UbuntuMono-B.ttf",
+	      BOLDITALIC: "fonts/UbuntuMono-BI.ttf",
+	   },
+	};
+
 	function X3DFontStyleNode (browser, executionContext)
 	{
 		X3DNode .call (this, browser, executionContext);
@@ -39,11 +61,11 @@ function ($,
 		   this .style_   .addInterest (this, "set_style__");
 		   this .justify_ .addInterest (this, "set_justify__");
 
-			this .font = null;
+			this .font        = null;
+			this .familyIndex = 0;
 
-		   this .set_style__ ();
 		   this .set_justify__ ();
-		   this .requestAsyncLoad ();
+		   this .set_style__ ();
 		},
 		getMajorAlignment: function ()
 		{
@@ -55,10 +77,12 @@ function ($,
 		},
 		set_style__: function ()
 		{
-		   var style = this .style_ .getValue ();
+		   //var style = this .style_ .getValue ();
 
-			this .italic = (style == "ITALIC" || style == "BOLDITALIC");
-			this .bold   = (style == "BOLD"   || style == "BOLDITALIC");
+			//this .italic = (style == "ITALIC" || style == "BOLDITALIC");
+			//this .bold   = (style == "BOLD"   || style == "BOLDITALIC");
+		  
+		   this .requestAsyncLoad ();
 		},
 		set_justify__: function ()
 		{
@@ -105,14 +129,45 @@ function ($,
 		},
 		requestAsyncLoad: function ()
 		{
+			this .familyIndex = 0;
+
+			this .loadFont ();
+		},
+		loadFont: function ()
+		{
 			try
 			{
-				opentype .load ("fonts/Ubuntu-R.ttf", this .setFont .bind (this));
+			   if (this .familyIndex < this .family_ .length)
+			   {
+					var
+						familyName = this .family_ [this .familyIndex],
+						fontPath   = this .getDefaultFont (familyName) || familyName;
+
+					opentype .load (fontPath, this .setFont .bind (this));
+				}
+				else if (this .familyIndex === this .family_ .length)
+				   opentype .load (this .getDefaultFont ("SERIF"), this .setFont .bind (this));
 			}
 			catch (error)
 			{
 				this .setError (error .message);
 			}
+		},
+		getDefaultFont: function (familyName)
+		{
+		   var family = Fonts [familyName];
+
+		   if (family)
+		   {
+		      var style = family [this .style_ .getValue ()];
+
+		      if (style)
+		         return style;
+
+		      return family .PLAIN;
+		   }
+
+		   return;
 		},
 		setFont: function (error, font)
 		{
@@ -122,7 +177,7 @@ function ($,
 			}
 			else
 			{
-				console .log ('Font loaded fine.');
+				console .log ('Font loaded fine:', font .familyName, font .styleName);
 
 				this .font     = font;
 				font .fontName = font .familyName + font .styleName;
@@ -141,8 +196,11 @@ function ($,
 		setError: function (error)
 		{
 			this .font = null;
+			this .familyIndex ++;
 
-			console .warn ('Font could not be loaded: ' + error);			   
+			console .warn ('Font could not be loaded: ' + error);
+
+			this .loadFont ();
 		},
 	});
 
