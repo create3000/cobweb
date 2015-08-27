@@ -684,7 +684,7 @@ DEF Scene Transform {
 }
 DEF open Sound {
   source	DEF open_66 AudioClip {
-    url	"open.aiff"
+    url	[ "open.aiff", "open.wav" ]
     startTime	0
     description	"open"
   }
@@ -698,7 +698,7 @@ DEF open Sound {
 }
 DEF close Sound {
   source	DEF close_67 AudioClip {
-    url	"close.aiff"
+    url	[ "close.aiff", "close.wav" ]
     startTime	0
     description	"close"
   }
@@ -712,7 +712,7 @@ DEF close Sound {
 }
 DEF ok Sound {
   source	DEF ok_68 AudioClip {
-    url	"ok.aiff"
+    url	[ "ok.aiff", "ok.wav" ]
     startTime	0
     description	"ok"
   }

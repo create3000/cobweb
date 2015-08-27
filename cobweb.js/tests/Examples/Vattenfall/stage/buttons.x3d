@@ -472,7 +472,7 @@
         maxFront='30'>
       <AudioClip DEF='open_1'
           description='open'
-          url='"open.aiff"'/>
+          url='"open.aiff", "open.wav"'/>
     </Sound>
     <Sound DEF='close'
         minBack='3'
@@ -481,7 +481,7 @@
         maxFront='30'>
       <AudioClip DEF='close_1'
           description='close'
-          url='"close.aiff"'/>
+          url='"close.aiff", "close.wav"'/>
     </Sound>
     <Sound DEF='ok'
         intensity='0.5'
@@ -491,7 +491,7 @@
         maxFront='30'>
       <AudioClip DEF='ok_1'
           description='ok'
-          url='"ok.aiff"'/>
+          url='"ok.aiff", "ok.wav"'/>
     </Sound>
     <ProtoInstance name='Delay' DEF='MovieDelay'>
       <fieldValue name='cycleInterval' value='300'/>

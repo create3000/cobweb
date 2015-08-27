@@ -1849,7 +1849,6 @@
     <None Include="tests\Examples\Vattenfall\stage\help.html" />
     <None Include="tests\Examples\Vattenfall\stage\hud.wrl" />
     <None Include="tests\Examples\Vattenfall\stage\hud.x3d" />
-    <None Include="tests\Examples\Vattenfall\stage\index.C.wrl" />
     <None Include="tests\Examples\Vattenfall\stage\index.html" />
     <None Include="tests\Examples\Vattenfall\stage\index.wrl" />
     <None Include="tests\Examples\Vattenfall\stage\index.wrl.gz" />
@@ -2095,6 +2094,9 @@
     <None Include="jam\earcut\viz\index.html" />
     <None Include="jam\earcut\viz\viz.js" />
     <None Include="cobweb\Browser\Navigation\NoneViewer.js" />
+    <None Include="tests\Examples\Vattenfall\stage\close.wav" />
+    <None Include="tests\Examples\Vattenfall\stage\ok.wav" />
+    <None Include="tests\Examples\Vattenfall\stage\open.wav" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
