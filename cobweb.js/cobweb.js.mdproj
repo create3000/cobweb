@@ -2097,12 +2097,17 @@
     <None Include="tests\Examples\Vattenfall\stage\close.wav" />
     <None Include="tests\Examples\Vattenfall\stage\ok.wav" />
     <None Include="tests\Examples\Vattenfall\stage\open.wav" />
+    <None Include="stable\1.0\images\icon.bw.png" />
+    <None Include="stable\1.0\images\icon.png" />
+    <None Include="stable\1.0\images\logo.bw.png" />
+    <None Include="stable\1.0\images\logo.png" />
+    <None Include="stable\1.0\cobweb.min.js" />
+    <None Include="stable\1.0\cobweb.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
     <Folder Include="cobweb\Browser\Shaders\" />
     <Folder Include="stable\" />
-    <Folder Include="stable\0.1\" />
     <Folder Include="tests\" />
     <Folder Include="tests\Components\" />
     <Folder Include="tests\Components\images\" />
@@ -2150,5 +2155,6 @@
     <Folder Include="cobweb\Browser\Text\" />
     <Folder Include="tests\Examples\Appartment\" />
     <Folder Include="jam\earcut\" />
+    <Folder Include="stable\1.0\" />
   </ItemGroup>
 </Project>
