@@ -34,7 +34,7 @@ function ($,
 			constructor: GeoLOD,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",      new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new MFString ([, "GD",, "WE", ])),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new MFString ([ "GD", "WE" ])),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "rootUrl",       new MFString ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "child1Url",     new MFString ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "child2Url",     new MFString ()),

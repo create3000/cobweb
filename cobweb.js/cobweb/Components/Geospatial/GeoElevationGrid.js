@@ -31,7 +31,7 @@ function ($,
 			constructor: GeoElevationGrid,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",       new MFString ([, "GD",, "WE", ])),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",       new MFString ([ "GD", "WE" ])),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoGridOrigin",   new SFVec3d (0, 0, 0)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "xDimension",      new SFInt32 ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "zDimension",      new SFInt32 ()),

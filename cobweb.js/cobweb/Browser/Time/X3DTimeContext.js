@@ -28,11 +28,11 @@ function (Vector3)
 			this .currentTime      = time / 1000;
 			this .currentFrameRate = 1 / (this .currentTime - lastTime);
 
-			if (this .getWorld () && this .getWorld () .getActiveLayer ())
+			if (this .getWorld () && this .getActiveLayer ())
 			{
 				var
 					lastPosition      = this .currentPosition,
-					cameraSpaceMatrix = this .getWorld () .getActiveLayer () .getValue () .getViewpoint () .getCameraSpaceMatrix ();
+					cameraSpaceMatrix = this .getActiveLayer () .getViewpoint () .getCameraSpaceMatrix ();
 
 				this .currentPosition .set (cameraSpaceMatrix [12], cameraSpaceMatrix [13], cameraSpaceMatrix [14]);
 				this .currentSpeed = Vector3 .subtract (this .currentPosition, lastPosition) .abs () * this .currentFrameRate;

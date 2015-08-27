@@ -31,7 +31,7 @@ function ($,
 			constructor: GeoCoordinate,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new MFString ([, "GD",, "WE", ])),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new MFString ([ "GD", "WE" ])),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "point",     new MFVec3d ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin", new SFNode ()),
 			]),

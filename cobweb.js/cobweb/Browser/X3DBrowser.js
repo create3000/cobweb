@@ -98,10 +98,9 @@ function ($,
 				{
 					this .isLive () .removeFieldInterest (this .getExecutionContext () .isLive ());
 					this .getExecutionContext () .endUpdate ();
+					this .shutdown () .processInterests ();
 				}
-
-				this .shutdown () .processInterests ();
-				
+					
 				// Replace world.
 
 				this .getCanvas () .stop (true, true) .fadeOut (0);
@@ -266,7 +265,7 @@ function ($,
 			},
 			firstViewpoint: function ()
 			{
-				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+				var activeLayer = this .getActiveLayer ();
 			
 				if (activeLayer)
 				{
@@ -278,7 +277,7 @@ function ($,
 			},
 			previousViewpoint: function ()
 			{
-				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+				var activeLayer = this .getActiveLayer ();
 
 				if (activeLayer)
 				{
@@ -311,7 +310,7 @@ function ($,
 			},
 			nextViewpoint: function ()
 			{
-				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+				var activeLayer = this .getActiveLayer ();
 
 				if (activeLayer)
 				{
@@ -344,7 +343,7 @@ function ($,
 			},
 			lastViewpoint: function ()
 			{
-				var activeLayer = this .getWorld () .getActiveLayer () .getValue ();
+				var activeLayer = this .getActiveLayer ();
 
 				if (activeLayer)
 				{

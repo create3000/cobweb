@@ -29,7 +29,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new SFBool (false)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new MFString ([, "GD",, "WE", ])),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new MFString ([ "GD", "WE" ])),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new SFVec3d (0, 0, 0)),
 			]),
 			getTypeName: function ()

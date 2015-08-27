@@ -46,7 +46,7 @@ function ($, SFNode, X3DBaseNode, LayerSet, Layer, X3DCast, X3DConstants)
 		},
 		getActiveLayer: function ()
 		{
-			return this .activeLayer_;
+			return this .activeLayer_ .getValue ();
 		},
 		set_rootNodes: function ()
 		{

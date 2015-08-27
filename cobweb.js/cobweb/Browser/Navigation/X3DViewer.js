@@ -22,15 +22,15 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		},
 		getViewport: function ()
 		{
-			return this .getBrowser () .getWorld () .getActiveLayer () .getValue () .getViewport ();
+			return this .getBrowser () .getActiveLayer () .getViewport ();
 		},
 		getNavigationInfo: function ()
 		{
-			return this .getBrowser () .getWorld () .getActiveLayer () .getValue () .getNavigationInfo ();
+			return this .getBrowser () .getActiveLayer () .getNavigationInfo ();
 		},
 		getActiveViewpoint: function ()
 		{
-			return this .getBrowser () .getWorld () .getActiveLayer () .getValue () .getViewpoint ();
+			return this .getBrowser () .getActiveLayer () .getViewpoint ();
 		},
 		getPointOnCenterPlane: function (x, y)
 		{
@@ -71,6 +71,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 
 			return new Vector3 (x, y, tbProjectToSphere (0.5, x, y));
 		},
+		dispose: function () { },
 	});
 
 	function tbProjectToSphere (r, x, y)

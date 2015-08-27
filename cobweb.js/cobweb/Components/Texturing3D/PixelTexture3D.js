@@ -31,7 +31,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatS",           new SFBool (false)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatT",           new SFBool (false)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatR",           new SFBool (false)),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "image",             new MFInt32 ([, 0,, 0,, 0,, 0, ])),
+				new X3DFieldDefinition (X3DConstants .inputOutput,    "image",             new MFInt32 ([ 0, 0, 0, 0 ])),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new SFNode ()),
 			]),
 			getTypeName: function ()

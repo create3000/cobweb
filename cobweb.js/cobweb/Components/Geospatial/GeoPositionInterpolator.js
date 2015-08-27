@@ -31,7 +31,7 @@ function ($,
 			constructor: GeoPositionInterpolator,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new MFString ([, "GD",, "WE", ])),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new MFString ([ "GD", "WE" ])),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "set_fraction",     new SFFloat ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "key",              new MFFloat ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "keyValue",         new MFVec3d ()),

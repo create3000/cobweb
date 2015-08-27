@@ -32,7 +32,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",                 new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",                  new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",                new MFString ([, "GD",, "WE", ])),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",                new MFString ([ "GD", "WE" ])),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "size",                     new SFVec3f (0, 0, 0)),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "center",                   new SFVec3f (0, 0, 0)),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",                 new SFBool ()),
