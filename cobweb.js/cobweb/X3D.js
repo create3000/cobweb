@@ -54,7 +54,6 @@ function ($,
 		var browser = new X3DBrowser (xml);
 
 		browser .setup ();
-		browser .importDocument (xml [0]);
 		browser .loadCount_ .addFieldCallback ("loading", browser .bindWorld .bind (browser));
 		browser .loadCount_ .addEvent ();
 

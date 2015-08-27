@@ -7,6 +7,7 @@ define ([
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
+	"cobweb/Parser/Parser",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -16,6 +17,7 @@ function ($,
           Scene,
           Loader,
           XMLParser,
+          Parser,
           X3DConstants)
 {
 	with (Fields)
@@ -39,7 +41,25 @@ function ($,
 			{
 				X3DBrowserContext .prototype .initialize .call (this);
 
-				this .replaceWorld (this .createScene ());
+				// Create an empty scene if any thing goes wrong in loadURL.
+				var scene = this .createScene ();
+
+				this .replaceWorld (scene);
+
+				var urlCharacters = this .getXML () [0] .getAttribute ("url");
+
+				if (urlCharacters)
+				{
+				   var
+				      parser = new Parser (scene, "", true),
+				      url = new MFString ();
+
+					parser .setInput (urlCharacters);
+					parser .mfstringValues (url);
+
+					this .loadURL (url);
+				}
+
 				this .traverse ();
 			},
 			getName: function ()

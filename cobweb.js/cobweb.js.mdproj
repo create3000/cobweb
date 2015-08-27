@@ -2069,6 +2069,31 @@
     <None Include="fonts\UbuntuMono-RI.ttf" />
     <None Include="fonts\Ubuntu-RI.ttf" />
     <None Include="tests\Components\Text\CHOPS___.TTF" />
+    <None Include="jam\earcut\LICENSE" />
+    <None Include="jam\earcut\README.md" />
+    <None Include="jam\earcut\package.json" />
+    <None Include="jam\earcut\bench\basic.js" />
+    <None Include="jam\earcut\bench\bench.js" />
+    <None Include="jam\earcut\src\earcut.js" />
+    <None Include="jam\earcut\test\test.js" />
+    <None Include="jam\earcut\test\fixtures\bad-hole.json" />
+    <None Include="jam\earcut\test\fixtures\building.json" />
+    <None Include="jam\earcut\test\fixtures\degenerate.json" />
+    <None Include="jam\earcut\test\fixtures\dude.json" />
+    <None Include="jam\earcut\test\fixtures\empty-square.json" />
+    <None Include="jam\earcut\test\fixtures\issue16.json" />
+    <None Include="jam\earcut\test\fixtures\issue17.json" />
+    <None Include="jam\earcut\test\fixtures\issue29.json" />
+    <None Include="jam\earcut\test\fixtures\steiner.json" />
+    <None Include="jam\earcut\test\fixtures\water-huge.json" />
+    <None Include="jam\earcut\test\fixtures\water-huge2.json" />
+    <None Include="jam\earcut\test\fixtures\water.json" />
+    <None Include="jam\earcut\test\fixtures\water2.json" />
+    <None Include="jam\earcut\test\fixtures\water3.json" />
+    <None Include="jam\earcut\test\fixtures\water3b.json" />
+    <None Include="jam\earcut\test\fixtures\water4.json" />
+    <None Include="jam\earcut\viz\index.html" />
+    <None Include="jam\earcut\viz\viz.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2121,5 +2146,6 @@
     <Folder Include="jam\bezierjs\" />
     <Folder Include="cobweb\Browser\Text\" />
     <Folder Include="tests\Examples\Appartment\" />
+    <Folder Include="jam\earcut\" />
   </ItemGroup>
 </Project>

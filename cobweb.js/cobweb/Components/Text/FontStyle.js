@@ -16,6 +16,7 @@ define ([
 	"standard/Math/Algorithm",
 	"bezier",
 	"poly2tri",
+	"earcut",
 ],
 function ($,
           Fields,
@@ -32,7 +33,8 @@ function ($,
           Triangle2,
           Algorithm,
           Bezier,
-          poly2tri)
+          poly2tri,
+          earcut)
 {
 	with (Fields)
 	{
@@ -448,7 +450,8 @@ function ($,
 					paths     = [ ],
 					points    = [ ],
 					curves    = [ ],
-					dimension = this .getBezierDimension (primitiveQuality);
+					dimension = this .getBezierDimension (primitiveQuality),
+					reverse   = font .outlinesFormat === "cff";
 
 				paths  .length = 0;
 				points .length = 0;
@@ -474,9 +477,7 @@ function ($,
 
 				for (var p = 0; p < paths .length; ++ p)
 				{
-				   var
-				      path    = paths [p],
-				      reverse = false;
+				   var path = paths [p];
 					   
 					for (var i = 0; i < path .commands .length; ++ i)
 					{
@@ -491,11 +492,10 @@ function ($,
 								{
 									if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
 										points .pop ();
-									
-									curves .push (reverse ? points .reverse () .slice () :  points .slice ());
+
+									curves .push (reverse ? points .reverse () .slice () : points .slice ());
 								}
 									
-								reverse = false;
 						      points .length = 0;
 						     
 						      if (command .type === "M")
@@ -510,8 +510,6 @@ function ($,
 							}
 							case "C":
 							{
-								reverse = true;
-
 								var
 									curve = new Bezier (x, -y, command .x1, -command .y1, command .x2, -command .y2, command .x, -command .y),
 									lut   = curve .getLUT (dimension);
@@ -572,8 +570,15 @@ function ($,
 					}
 				}
 
-				if (glyph .name == "B")
-					console .log (glyph .name, glyph, paths, contours);
+				/*
+				if (glyph .name [0] == "O")
+					console .log (glyph .name, "\n",
+					              "font: ", font, "\n",
+					              "glyph: ", glyph, "\n",
+					              "paths: ", paths, "\n",
+					              "contours: ", contours, "\n",
+					              "holes: ", holes);
+				*/
 				   
 				// Determine the holes for every contour.
 
@@ -655,8 +660,44 @@ function ($,
 
 			   return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
 			},
+			/*isPointInPolygon: function (polygon, point)
+			{
+			   // earcut version
+			   // not always working!!!
+
+			   try
+			   {
+					// Triangulate polygon.
+
+					var coords = [ ];
+
+					for (var p = 0; p < contour .length; ++ p)
+					   coords .push (contour [p] .x, contour [p] .y);
+
+					var t = earcut (coords, holesIndices);
+
+					for (var i = 0; i < t .length; i += 3)
+					{
+					   var  
+							a = polygon [t [i]],
+							b = polygon [t [i + 1]],
+							c = polygon [t [i + 2]];
+						
+						if (Triangle2 .isPointInTriangle (a, b, c, point))
+						   return true;
+					}
+
+					return false;
+				}
+				catch (error)
+				{
+					//console .warn (error);
+				}
+			},*/
 			isPointInPolygon: function (polygon, point)
 			{
+			   // poly2tri version
+
 			   try
 			   {
 					// Triangulate polygon.
@@ -712,6 +753,7 @@ function ($,
 			   {
 					// Triangulate polygon.
 
+
 					var
 						context = new poly2tri .SweepContext (contour) .addHoles (holes),
 						ts      = context .triangulate () .getTriangles ();
@@ -722,6 +764,42 @@ function ($,
 						vertices .push (ts [i] .getPoint (1));
 						vertices .push (ts [i] .getPoint (2));
 					}
+				}
+				catch (error)
+				{
+					//console .warn (error);
+					this .earcutTriangulate (contour, holes, vertices);
+				}
+			},
+			earcutTriangulate: function (contour, holes, vertices)
+			{
+			   try
+			   {
+					// Triangulate polygon.
+
+					var
+						coords       = [ ],
+						holesIndices = [ ];
+
+					for (var p = 0; p < contour .length; ++ p)
+					   coords .push (contour [p] .x, contour [p] .y);
+
+					for (var h = 0; h < holes .length; ++ h)
+					{
+					   var hole = holes [h];
+
+						for (var p = 0; p < hole .length; ++ p)
+						{
+						   holesIndices .push (coords .length / 2);
+					      coords .push (hole [p] .x, hole [p] .y);
+					      contour .push (hole);
+					   }
+					}
+
+					var t = earcut (coords, holesIndices);
+
+					for (var i = 0; i < t .length; ++ i)
+						vertices .push (contour [t [i]]);
 				}
 				catch (error)
 				{

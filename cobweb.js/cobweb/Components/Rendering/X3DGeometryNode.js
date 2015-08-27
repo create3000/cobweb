@@ -34,6 +34,8 @@ function ($,
 			// left: We do not have to test for left.
 		];
 
+		var zero = new Vector3 (0,  0,  0);
+
 		function X3DGeometryNode (browser, executionContext)
 		{
 			X3DNode .call (this, browser, executionContext);
@@ -85,6 +87,12 @@ function ($,
 				this .normalBuffer    = gl .createBuffer ();
 				this .vertexBuffer    = gl .createBuffer ();
 				this .planes          = [ ];
+
+				if (! this .isLineGeometry ())
+				{
+					for (var i = 0; i < 5; ++ i)
+						this .planes [i] = new Plane3 (zero, boxNormals [0]);
+				}
 
 				this .setCurrentTexCoord (null);
 			},
@@ -283,7 +291,7 @@ function ($,
 				if (! this .isLineGeometry ())
 				{
 					for (var i = 0; i < 5; ++ i)
-						this .planes [i] = new Plane3 (i % 2 ? this .min : this .max, boxNormals [i]);
+						this .planes [i] .set (i % 2 ? this .min : this .max, boxNormals [i]);
 
 					if (this .texCoords .length === 0)
 						this .buildTexCoords ();

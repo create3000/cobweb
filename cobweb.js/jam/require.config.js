@@ -39,6 +39,11 @@ var jam = {
             "name": "bezier",
             "location": "jam/bezierjs",
             "main": "bezier.js"
+        },
+        {
+            "name": "earcut",
+            "location": "jam/earcut",
+            "main": "src/earcut.js"
         }
     ],
     "version": "0.2.17",
@@ -82,6 +87,11 @@ if (typeof require !== "undefined" && require.config) {
             "name": "bezier",
             "location": "jam/bezierjs",
             "main": "bezier.js"
+        },
+        {
+            "name": "earcut",
+            "location": "jam/earcut",
+            "main": "src/earcut.js"
         }
     ],
     "shim": {}
@@ -124,6 +134,11 @@ else {
             "name": "bezier",
             "location": "jam/bezierjs",
             "main": "bezier.js"
+        },
+        {
+            "name": "earcut",
+            "location": "jam/earcut",
+            "main": "src/earcut.js"
         }
     ],
     "shim": {}

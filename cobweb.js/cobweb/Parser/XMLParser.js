@@ -30,7 +30,6 @@ function ($,
 	
 		function XMLParser (scene, xml)
 		{
-			this .isXML             = xml instanceof XMLDocument; // XMLDocument || HTMLElement
 			this .xml               = xml;
 			this .executionContexts = [ scene ];
 			this .protoDeclarations = [ ];
@@ -89,7 +88,6 @@ function ($,
 					case "X3D":
 						this .x3d (this .xml);
 						break;
-					case "SCENE":
 					case "Scene":
 						this .scene (this .xml);
 						break;
@@ -111,7 +109,6 @@ function ($,
 					switch (element .nodeName)
 					{
 						case "Scene":
-						case "SCENE":
 							this .scene (element);
 							continue;
 					}
@@ -134,18 +131,15 @@ function ($,
 					case "#text":
 					case "#cdata-section":
 						return;
-
-					case "EXTERNPROTODECLARE":
+					
 					case "ExternProtoDeclare":
 						this .externProtoDeclare (child);
 						return;
 
-					case "PROTODECLARE":
 					case "ProtoDeclare":
 						this .protoDeclare (child);
 						return;
 
-					case "PROTOINSTANCE":
 					case "ProtoInstance":
 						this .protoInstance (child);
 						return;
@@ -166,7 +160,7 @@ function ($,
 					if (this .USE (element))
 						return;
 				
-					var node = this .getExecutionContext () .createNode (element .nodeName, this .isXML);
+					var node = this .getExecutionContext () .createNode (element .nodeName, true);
 
 					this .DEF (element, node);
 					this .addNode (element, node);
@@ -232,28 +226,23 @@ function ($,
 						this .IS (child);
 						return;
 
-					case "FIELD":
 					case "field":
 						this .field (child);
 						return;
 
-					case "FIELDVALUE":
 					case "fieldValue":
 						if (protoInstance)
 							this .fieldValue (child);
 						return;
-
-					case "EXTERNPROTODECLARE":
+							
 					case "ExternProtoDeclare":
 						this .externProtoDeclare (child);
 						return;
 
-					case "PROTODECLARE":
 					case "ProtoDeclare":
 						this .protoDeclare (child);
 						return;
 
-					case "PROTOINSTANCE":
 					case "ProtoInstance":
 						this .protoInstance (child);
 						return;
@@ -376,7 +365,7 @@ function ($,
 					var
 						name      = attribute .name,
 						value     = attribute .value,
-						field     = this .isXML ? node .getField (name) : this .getField (node, name),
+						field     = node .getField (name),
 						fieldType = this .fieldTypes [field .getType ()];
 
 					this .parser .setInput (value);
@@ -632,18 +621,6 @@ function ($,
 				{
 					console .warn ("XML Parser Error: " + error .message);
 				}
-			},
-			getField: function (node, name)
-			{
-				// Return the appropriate field if in HTML dom mode.
-
-				for (var key in node .fields)
-				{
-					if (key .toLowerCase () === name)
-						return node .fields [key];
-				}
-
-				throw Error ("XML Parser Error: Unknown field '" + name + "' in node " + node .getTypeName ());
 			},
 			id: function (string)
 			{

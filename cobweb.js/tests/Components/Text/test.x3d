@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 24 Aug 2015 02:55:59 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 27 Aug 2015 09:15:48 GMT'/>
+    <meta name='modified' content='Thu, 27 Aug 2015 11:04:59 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Text_1'>
@@ -18,7 +18,7 @@
             string='"Hello Wörld!", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "ÄÖÜäöüß", "0123456789", "^°!\"§$%&amp;/()=?+*~\\&apos;#-_.:,;", "ÁÓÚáóú", "′¹²³¼½¬{[]}\\\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…–", "flfiff"'
             solid='true'>
           <FontStyle
-              family='"I Love Ubuntu", "G/Ganymede3D/ganymede_3D.ttf", "CHOPS___.TTF"'
+              family='"I Love Ubuntu", "G/Gogo/GogoFi--e.otf", "CHOPS___.TTF"'
               size='1.37'
               spacing='1.21'
               justify='"END", "END"'/>

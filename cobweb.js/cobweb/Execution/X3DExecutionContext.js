@@ -71,17 +71,13 @@ function ($,
 			},
 			createNode: function (typeName, xml)
 			{
-				switch (xml)
-				{
-					case undefined:
-						var node = new (this .getBrowser () .supportedNodes .xml [typeName]) (this);
-						node .setup ();
-						return new SFNode (node);
-					case true:
-						return new (this .getBrowser () .supportedNodes .xml [typeName]) (this);
-					case false:
-						return new (this .getBrowser () .supportedNodes .dom [typeName .toUpperCase ()]) (this);
-				}
+				var node = new (this .getBrowser () .supportedNodes .xml [typeName]) (this);
+
+				if (xml)
+					return node;
+				
+				node .setup ();
+				return new SFNode (node);
 			},
 			createProto: function (name, setup)
 			{

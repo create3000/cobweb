@@ -13,6 +13,11 @@ function (Vector3)
 	Plane3 .prototype =
 	{
 		constructor: Plane3,
+		set: function (point, normal)
+		{
+			this .normal             = normal .copy ();
+			this .distanceFromOrigin = normal .dot (point);	   
+		},
 		distance: function (point)
 		{
 			return point .dot (this .normal) - this .distanceFromOrigin;
