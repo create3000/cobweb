@@ -281,11 +281,11 @@ function ($,
 					yMin   = Number .POSITIVE_INFINITY,
 					yMax   = Number .NEGATIVE_INFINITY;
 			
-				for (var g = 0, length = glyphs .length - 1; g < length; ++ g)
+				for (var g = 0, length = glyphs .length; g < length; ++ g)
 				{
 					var
 						glyph   = glyphs [g],
-						kerning = font .getKerningValue (glyph, glyphs [g + 1]);
+						kerning = g + 1 < length ? font .getKerningValue (glyph, glyphs [g + 1]) : 0;
 
 					xMax += (glyph .advanceWidth + kerning);
 					yMin  = Math .min (yMin, glyph .yMin || 0);
@@ -295,8 +295,6 @@ function ($,
 				if (glyphs .length)
 				{
 					xMin  = glyphs [0] .xMin || 0;
-					xMax += glyphs [glyphs .length - 1] .xMax || 0;
-					xMax  = Math .max (xMax, xMin);
 				}
 				else
 				{
@@ -328,8 +326,7 @@ function ($,
 		
 		var
 			normal = new Vector3 (0, 0, 1),
-			vertex = new Vector3 (0, 0, 0),
-			zero   = { x: 0, y: 0 };
+			vertex = new Vector3 (0, 0, 0);
 
 	   function PolygonText (text, fontStyle)
 		{
@@ -456,8 +453,6 @@ function ($,
 				paths  .length = 0;
 				points .length = 0;
 				curves .length = 0;
-
-				points .push (zero);
 			
 				if (glyph .isComposite)
 				{
@@ -479,72 +474,63 @@ function ($,
 
 				for (var p = 0; p < paths .length; ++ p)
 				{
-				   var path = paths [p];
+				   var
+				      path    = paths [p],
+				      reverse = false;
 					   
 					for (var i = 0; i < path .commands .length; ++ i)
 					{
 						var command = path .commands [i];
-						      
+											      
 						switch (command .type)
 						{
-						   case 'M':
+						   case "M":
+							case "Z":
 						   {
-								if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
-									points .pop ();
-
 								if (points .length > 2)
-									curves .push (points .slice ());
-
+								{
+									if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
+										points .pop ();
+									
+									curves .push (reverse ? points .reverse () .slice () :  points .slice ());
+								}
+									
+								reverse = false;
 						      points .length = 0;
-						      points .push ({ x: command .x, y: -command .y });
+						     
+						      if (command .type === "M")
+						          points .push ({ x: command .x, y: -command .y });
+								
 								break;
 							}
-							case 'L':
+							case "L":
 							{
 								points .push ({ x: command .x, y: -command .y });
 								break;
 							}
-							case 'C':
+							case "C":
 							{
-								//ctx .bezierCurveTo (cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+								reverse = true;
 
 								var
-									curve = new Bezier (x, y, command .x1, command .y1, command .x2, command .y2, command .x, command .y),
+									curve = new Bezier (x, -y, command .x1, -command .y1, command .x2, -command .y2, command .x, -command .y),
 									lut   = curve .getLUT (dimension);
 
 								lut .shift ();
-								lut .map (function (point) { point .y = -point .y; });
 			
 								Array .prototype .push .apply (points, lut);
 								break;
 							}
-							case 'Q':
+							case "Q":
 							{
 								var
-									curve = new Bezier (x, y, command .x1, command .y1, command .x, command .y),
+									curve = new Bezier (x, -y, command .x1, -command .y1, command .x, -command .y),
 									lut   = curve .getLUT (dimension);
 
 								lut .shift ();
-								lut .map (function (point) { point .y = -point .y; });
 			
 								Array .prototype .push .apply (points, lut);
 								break;
-							}
-							case 'Z':
-							{
-						      if (points .length > 2)
-						      {
-									if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
-										points .pop ();
-
-									if (points .length > 2)
-										curves .push (points .slice ());
-						   
-						         points .length = 0;
-						         points .push (zero);
-						      }
-								
-								continue;
 							}
 							default:
 							   continue;
@@ -561,17 +547,35 @@ function ($,
 				   contours = [ ],
 				   holes    = [ ];
 
-				for (var i = 0; i < curves .length; ++ i)
+				switch (curves .length)
 				{
-				   var
-				      curve       = curves [i],
-				      orientation = this .getCurveOrientation (curve);
+				   case 0:
+				      break;
+				   case 1:
+						contours = curves;
+						break;
+					default:
+					{
+						for (var i = 0; i < curves .length; ++ i)
+						{
+						   var
+						      curve       = curves [i],
+						      orientation = this .getCurveOrientation (curve);
 
-				   if (orientation < 0)
-				      contours .push (curve);
-				   else
-						holes .push (curve);
+						   if (orientation < 0)
+						      contours .push (curve);
+						   else
+								holes .push (curve);
+						}
+
+						break;
+					}
 				}
+
+				if (glyph .name == "B")
+					console .log (glyph .name, glyph, paths, contours);
+				   
+				// Determine the holes for every contour.
 
 				contours .map (this .removeCollinearPoints);
 				holes .map (this .removeCollinearPoints);
@@ -628,6 +632,8 @@ function ($,
 			},
 			getCurveOrientation: function (curve)
 			{
+			   // From Wikipedia:
+
 			   var
 			      minX        = Number .POSITIVE_INFINITY,
 					minIndex    = 0,
@@ -702,9 +708,6 @@ function ($,
 			},
 			triangulate: function (contour, holes, vertices)
 			{
-			   contour .map (function (point) { point .z = 0; });
-			   holes .map (function (hole) { hole .map (function (point) { point .z = 0; }); });
-
 			   try
 			   {
 					// Triangulate polygon.

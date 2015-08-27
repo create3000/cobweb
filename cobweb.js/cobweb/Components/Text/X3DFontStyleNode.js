@@ -209,7 +209,7 @@ function ($,
 			this .font = null;
 			this .familyIndex ++;
 
-			console .warn (error);
+			console .warn ("Font error:", error);
 
 			this .loadFont ();
 		},

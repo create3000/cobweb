@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Mon, 24 Aug 2015 02:55:59 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 26 Aug 2015 18:37:21 GMT'/>
+    <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
+    <meta name='modified' content='Thu, 27 Aug 2015 09:15:48 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Text_1'>
@@ -18,7 +18,7 @@
             string='"Hello Wörld!", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "ÄÖÜäöüß", "0123456789", "^°!\"§$%&amp;/()=?+*~\\&apos;#-_.:,;", "ÁÓÚáóú", "′¹²³¼½¬{[]}\\\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…–", "flfiff"'
             solid='true'>
           <FontStyle
-              family='"Ubuntu", "CHOPS___.TTF"'
+              family='"I Love Ubuntu", "G/Ganymede3D/ganymede_3D.ttf", "CHOPS___.TTF"'
               size='1.37'
               spacing='1.21'
               justify='"END", "END"'/>
@@ -50,7 +50,7 @@
       </Shape>
     </Transform>
     <Viewpoint
-        position='-0.151477 -0.0630392 32.1063'
+        position='-0.151477 -0.0630392 35.3873'
         centerOfRotation='-0.151477 -0.0630392 0.582693'/>
   </Scene>
 </X3D>
