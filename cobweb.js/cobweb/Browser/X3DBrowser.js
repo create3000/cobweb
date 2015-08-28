@@ -57,7 +57,8 @@ function ($,
 					parser .setInput (urlCharacters);
 					parser .mfstringValues (url);
 
-					this .loadURL (url);
+					if (url .length)
+						this .loadURL (url);
 				}
 
 				this .traverse ();
