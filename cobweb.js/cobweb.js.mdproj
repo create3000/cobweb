@@ -2101,8 +2101,8 @@
     <None Include="stable\1.0\images\icon.png" />
     <None Include="stable\1.0\images\logo.bw.png" />
     <None Include="stable\1.0\images\logo.png" />
-    <None Include="stable\1.0\cobweb.min.js" />
     <None Include="stable\1.0\cobweb.css" />
+    <None Include="stable\1.0\cobweb.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

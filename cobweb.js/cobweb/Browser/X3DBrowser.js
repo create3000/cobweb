@@ -413,7 +413,7 @@ function ($,
 
 		Object .defineProperty (X3DBrowser .prototype, "name",
 		{
-			get: function () { return "Cobweb"; },
+			get: function () { return "Cobweb X3D Browser"; },
 			enumerable: true,
 			configurable: false
 		});
