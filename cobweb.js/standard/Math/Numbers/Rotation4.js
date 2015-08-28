@@ -36,6 +36,8 @@ function ($, Quaternion, Vector3)
 				           arguments [0] .y,
 				           arguments [0] .z,
 				           arguments [1]);
+			
+			   break;
 			}
 			case 4:
 			{

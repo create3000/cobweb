@@ -1,0 +1,81 @@
+#VRML V2.0 utf8
+
+PROTO Random [
+  exposedField  SFInt32   value		0
+  exposedField  SFInt32   numValues		0
+  exposedField  SFTime    startTime		0
+  exposedField  SFTime    stopTime		0
+  eventOut      SFInt32   whichChoice_changed		
+  eventOut      SFFloat   fraction_changed		
+]
+{
+  PROTO Data [
+    exposedField  SFInt32   value		0
+    exposedField  SFInt32   numValues		0
+    exposedField  SFTime    startTime		0
+    exposedField  SFTime    stopTime		0
+  ]
+  {
+    Group { }
+  }
+
+  DEF _random Script { 
+    eventIn   SFInt32   set_value
+    eventIn   SFInt32   set_numValues
+    eventIn   SFTime    set_startTime
+    eventIn   SFTime    set_stopTime
+    eventOut  SFInt32   whichChoice_changed IS whichChoice_changed
+    eventOut  SFFloat   fraction_changed IS fraction_changed
+    field     MFInt32   values [ ]
+    field     SFInt32   vi 0
+    field     SFNode    data DEF Data Data { 
+      value IS value
+      numValues IS numValues
+      startTime IS startTime
+      stopTime IS stopTime
+    }
+    url "vrmlscript:
+function rand(value) { return Math.round(Math.random() * value); }
+function isIn(value) {
+	for (i = 0; i < values.length; ++i) {
+		if (value == values[i]) return TRUE;
+	}
+	return FALSE;
+}
+function set_value(value, time) {
+	if (value < 0) data.value = 0;
+	else if (value < data.numValues) data.numValues = value;
+}
+function set_numValues(value, time) {
+	if (value < 0) data.numValues = 0;
+	else if (value > data.value) data.numValues = data.value;
+}
+function set_startTime(value, time)
+{
+	whichChoice = rand(data.value);
+	while (isIn(whichChoice)) {
+		whichChoice = rand(data.value);
+	}
+	whichChoice_changed = whichChoice;
+	fraction_changed = whichChoice / data.value;
+
+	if (values.length < data.numValues) ++values.length;
+	values[vi++] = whichChoice;
+	if (vi >= data.numValues) vi = 0;
+}
+function set_stopTime(value, time) { values = new MFInt32(); vi = 0; }
+function initialize() {
+	set_numValues(data.numValues, 0);
+	set_value(data.numValues, 0);
+	if (data.startTime) set_startTime(1, 0);
+}
+	"
+    directOutput TRUE
+  }
+
+  ROUTE Data.value TO _random.set_value
+  ROUTE Data.numValues TO _random.set_numValues
+  ROUTE Data.startTime TO _random.set_startTime
+  ROUTE Data.stopTime TO _random.set_stopTime
+}
+

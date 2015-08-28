@@ -1,0 +1,33 @@
+#VRML V2.0 utf8
+
+PROTO Bool [
+  exposedField  SFBool    value		FALSE
+  exposedField  SFTime    startTime		0
+  eventOut      SFBool    bool		
+]
+{
+  PROTO Data [
+    exposedField  SFBool    value		FALSE
+    exposedField  SFTime    startTime		0
+  ]
+  {
+    Group { }
+  }
+
+  DEF _bool Script { 
+    eventIn   SFTime    set_startTime
+    eventOut  SFBool    b IS bool
+    field     SFNode    data DEF _0 Data { 
+      value IS value
+      startTime IS startTime
+    }
+    url "vrmlscript:
+function set_startTime(value, time) { b = data.value; }
+function initialize() { if (data.startTime == 1) set_startTime(data.value, 1); }
+"
+    directOutput TRUE
+  }
+
+  ROUTE _0.startTime_changed TO _bool.set_startTime
+}
+
