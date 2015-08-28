@@ -52,8 +52,8 @@ function ($,
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
 				return;
 
-			for (var id in this .layers)
-				this .removeFromLayer (this .layers [id]);
+			//for (var id in this .layers)
+			//	this .removeFromLayer (this .layers [id]);
 		},
 	});
 

@@ -114,6 +114,10 @@ function ($,
 				this .fraction_changed_ = this .range_ [1];
 				this .time_             = this .getBrowser () .getCurrentTime ();
 			},			
+			set_resume: function (pauseInterval)
+			{
+				this .cycle += pauseInterval;
+			},
 		});
 
 		return TimeSensor;
