@@ -421,7 +421,7 @@ function ($,
 
 		Object .defineProperty (X3DBrowser .prototype, "version",
 		{
-			get: function () { return "1.0"; },
+			get: function () { return "1.1"; },
 			enumerable: true,
 			configurable: false
 		});

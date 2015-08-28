@@ -2217,6 +2217,12 @@
     <None Include="tests\Examples\Compel\jungle\textures\watfall2.jpg" />
     <None Include="tests\Examples\Compel\jungle\jungle.x3d" />
     <None Include="stable\1.0\cobweb.min.js" />
+    <None Include="stable\1.1\images\icon.bw.png" />
+    <None Include="stable\1.1\images\icon.png" />
+    <None Include="stable\1.1\images\logo.bw.png" />
+    <None Include="stable\1.1\images\logo.png" />
+    <None Include="stable\1.1\cobweb.css" />
+    <None Include="stable\1.1\cobweb.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2274,5 +2280,6 @@
     <Folder Include="tests\Examples\Compel\" />
     <Folder Include="tests\Examples\Compel\anatomy\" />
     <Folder Include="tests\Examples\Compel\jungle\" />
+    <Folder Include="stable\1.1\" />
   </ItemGroup>
 </Project>
