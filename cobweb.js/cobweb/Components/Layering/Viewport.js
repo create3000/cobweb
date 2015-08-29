@@ -7,7 +7,7 @@ define ([
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Bits/TraverseType",
-	"standard/Utility/Cache",
+	"standard/Utility/ObjectCache",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector4",
 ],
@@ -18,46 +18,13 @@ function ($,
           X3DViewportNode, 
           X3DConstants,
           TraverseType,
-          Cache,
+          ObjectCache,
           ViewVolume,
           Vector4)
 {
 	with (Fields)
 	{
-	   var Cache = function (Type)
-	   {
-		   return {
-		      stack: [ ],
-		      last: -1,
-		      pop: function ()
-		      {
-					if (this .last > -1)
-					{
-						var object = this .stack [this .last];
-
-						this .last --;
-					}
-					else
-						var object = Object .create (Type .prototype);
-
-		         Type .apply (object, arguments);
-
-		         return object;
-		      },
-				push: function (object)
-		      {
-		         this .last ++;
-		         this .stack [this .last] = object;
-		      },
-				clear: function ()
-				{
-				   this .stack .length = 0;
-				   this .last          = -1;
-				},
-		   };
-	   };
-		   
-	   var ViewVolumes = Cache (ViewVolume);
+	   var ViewVolumes = ObjectCache (ViewVolume);
 
 		function Viewport (executionContext)
 		{
