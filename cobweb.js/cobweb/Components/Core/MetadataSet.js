@@ -20,13 +20,14 @@ function ($,
 	{
 		function MetadataSet (executionContext)
 		{
-			X3DNode .call (this, executionContext .getBrowser (), executionContext);
+			X3DNode           .call (this, executionContext .getBrowser (), executionContext);
 			X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .MetadataSet);
 		}
 
-		MetadataSet .prototype = $.extend (Object .create (X3DNode .prototype),new X3DMetadataObject (),
+		MetadataSet .prototype = $.extend (Object .create (X3DNode .prototype),
+			X3DMetadataObject .prototype,
 		{
 			constructor: MetadataSet,
 			fieldDefinitions: new FieldDefinitionArray ([
