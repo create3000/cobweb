@@ -2234,6 +2234,7 @@
     <None Include="tests\Components\Layering\Viewport.x3d" />
     <None Include="tests\Components\Layering\ViewportLayer.x3d" />
     <None Include="tests\Components\Geometry3D\dragon.x3d" />
+    <None Include="standard\Utility\Cache.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2293,5 +2294,7 @@
     <Folder Include="tests\Examples\Compel\jungle\" />
     <Folder Include="stable\1.1\" />
     <Folder Include="tests\Components\Layering\" />
+    <Folder Include="cobweb\Misc\" />
+    <Folder Include="standard\Utility\" />
   </ItemGroup>
 </Project>

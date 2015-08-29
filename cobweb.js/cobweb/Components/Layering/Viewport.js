@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Bits/TraverseType",
+	"standard/Utility/Cache",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector4",
 ],
@@ -17,11 +18,47 @@ function ($,
           X3DViewportNode, 
           X3DConstants,
           TraverseType,
+          Cache,
           ViewVolume,
           Vector4)
 {
 	with (Fields)
 	{
+	   var Cache = function (Type)
+	   {
+		   return {
+		      stack: [ ],
+		      last: -1,
+		      pop: function ()
+		      {
+					if (this .last > -1)
+					{
+						var object = this .stack [this .last];
+
+						this .last --;
+					}
+					else
+						var object = Object .create (Type .prototype);
+
+		         Type .apply (object, arguments);
+
+		         return object;
+		      },
+				push: function (object)
+		      {
+		         this .last ++;
+		         this .stack [this .last] = object;
+		      },
+				clear: function ()
+				{
+				   this .stack .length = 0;
+				   this .last          = -1;
+				},
+		   };
+	   };
+		   
+	   var ViewVolumes = Cache (ViewVolume);
+
 		function Viewport (executionContext)
 		{
 			X3DViewportNode .call (this, executionContext .getBrowser (), executionContext);
@@ -144,13 +181,13 @@ function ($,
 					viewVolumes = this .getCurrentLayer () .getViewVolumeStack (),
 					viewport    = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
 
-				this .getCurrentLayer () .getViewVolumeStack () .push (new ViewVolume (this .getBrowser () .getProjectionMatrix (),
-				                                                                       viewport,
-				                                                                       this .rectangle));
+				this .getCurrentLayer () .getViewVolumeStack () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
+				                                                                         viewport,
+				                                                                         this .rectangle));
 			},
 			pop: function ()
 			{
-				this .getCurrentLayer () .getViewVolumeStack () .pop ();
+				ViewVolumes .push (this .getCurrentLayer () .getViewVolumeStack () .pop ());
 			},
 		});
 
