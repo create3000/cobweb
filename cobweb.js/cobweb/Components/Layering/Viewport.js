@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector4",
 ],
@@ -15,6 +16,7 @@ function ($,
           FieldDefinitionArray,
           X3DViewportNode, 
           X3DConstants,
+          TraverseType,
           ViewVolume,
           Vector4)
 {
@@ -54,25 +56,42 @@ function ($,
 			initialize: function ()
 			{
 				X3DViewportNode .prototype .initialize .call (this);
+
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive ()                         .addInterest (this, "set_live__");
 				
 				this .getBrowser () .getViewport () .addInterest (this, "set_rectangle__");
 				this .clipBoundary_                 .addInterest (this, "set_rectangle__");
 
-				this .set_rectangle__ ();
+				this .rectangle = new Vector4 (0, 0, 0, 0);
+
+				this .set_live__ ();
+			},
+			set_live__: function ()
+			{
+			  if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			  {
+			      this .getBrowser () .getViewport () .addInterest (this, "set_rectangle__");
+
+					this .set_rectangle__ ();
+			  }
+			  else
+					this .getBrowser () .getViewport () .removeInterest (this, "set_rectangle__");
 			},
 			set_rectangle__: function ()
 			{
 				var viewport = this .getBrowser () .getViewport ();
 
-				var left   = Math .floor (viewport [2] * this .getLeft ());
-				var right  = Math .floor (viewport [2] * this .getRight ());
-				var bottom = Math .floor (viewport [3] * this .getBottom ());
-				var top    = Math .floor (viewport [3] * this .getTop ());
+				var
+					left   = Math .floor (viewport [2] * this .getLeft ()),
+					right  = Math .floor (viewport [2] * this .getRight ()),
+					bottom = Math .floor (viewport [3] * this .getBottom ()),
+					top    = Math .floor (viewport [3] * this .getTop ());
 
-				this .rectangle = new Vector4 (left,
-				                               bottom,
-				                               Math .max (0, right - left),
-				                               Math .max (0, top - bottom));
+				this .rectangle .set (left,
+				                      bottom,
+				                      Math .max (0, right - left),
+				                      Math .max (0, top - bottom));
 			},
 			getRectangle: function ()
 			{
@@ -109,11 +128,11 @@ function ($,
 						if (! this .getBrowser () .isPointerInRectangle (viewVolume .getScissor ()))
 							return;
 
-						X3DGroupingNode .prototype .traverse .call (this, type);
+						X3DViewportNode .prototype .traverse .call (this, type);
 						break;
 					}
 					default:
-						X3DGroupingNode .prototype .traverse .call (this, type);
+						X3DViewportNode .prototype .traverse .call (this, type);
 						break;
 				}
 
@@ -121,12 +140,13 @@ function ($,
 			},
 			push: function ()
 			{
-				var viewVolumes = this .getCurrentLayer () .getViewVolumeStack ();
-				var viewport    = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
+				var
+					viewVolumes = this .getCurrentLayer () .getViewVolumeStack (),
+					viewport    = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
 
 				this .getCurrentLayer () .getViewVolumeStack () .push (new ViewVolume (this .getBrowser () .getProjectionMatrix (),
-				                                                                   viewport,
-				                                                                   this .rectangle));
+				                                                                       viewport,
+				                                                                       this .rectangle));
 			},
 			pop: function ()
 			{

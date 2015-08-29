@@ -170,7 +170,7 @@ function ($,
 		},
 		set_viewport__: function ()
 		{
-			this .currentViewport = X3DCast (X3DViewportNode, this .viewport_);
+			this .currentViewport = X3DCast (X3DConstants .X3DViewportNode, this .viewport_);
 
 			if (! this .currentViewport)
 				this .currentViewport = this .getBrowser () .getDefaultViewport ();

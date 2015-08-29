@@ -2229,6 +2229,11 @@
     <None Include="stable\1.2\images\icon.png" />
     <None Include="stable\1.2\images\logo.bw.png" />
     <None Include="stable\1.2\images\logo.png" />
+    <None Include="tests\Components\Layering\LayerSet.x3d" />
+    <None Include="tests\Components\Layering\Simple.x3d" />
+    <None Include="tests\Components\Layering\Viewport.x3d" />
+    <None Include="tests\Components\Layering\ViewportLayer.x3d" />
+    <None Include="tests\Components\Geometry3D\dragon.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2287,5 +2292,6 @@
     <Folder Include="tests\Examples\Compel\anatomy\" />
     <Folder Include="tests\Examples\Compel\jungle\" />
     <Folder Include="stable\1.1\" />
+    <Folder Include="tests\Components\Layering\" />
   </ItemGroup>
 </Project>

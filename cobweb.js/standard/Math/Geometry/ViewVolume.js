@@ -47,7 +47,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			this .viewport         = new Vector3 (0, 0, 0);
 			this .scissor          = new Vector3 (0, 0, 0);
 			this .intersectsSphere = intersectsSphere;
-			console .log (error .message);
+			console .log (error);
 		}
 	}
 

@@ -66,7 +66,6 @@ function (Fields,
 		this .projectionMatrix      = new Matrix4 ();
 		this .projectionMatrixArray = new Float32Array (16);
 		this .modelViewMatrix       = new MatrixStack (Matrix4);
-		this .viewport              = new Vector4 (0, 0, 0, 0);
 	}
 
 	X3DRenderingContext .prototype =
