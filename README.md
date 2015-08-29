@@ -1,4 +1,4 @@
-[Cobweb](titania.create3000.de/cobweb/) — Cobweb WebGL X3D Browser
+[Cobweb](http://titania.create3000.de/cobweb/) — Cobweb WebGL X3D Browser
 ==================================================
 
 Introduction
