@@ -51,6 +51,7 @@ function ($, X3D)
 			var Browser = getBrowser (dom);
 			var scene   = Browser .currentScene;			
 
+			var index = 3;
 			var pages = [ "Tests 1", "Tests 2", "Page 1", "Page 2" ];
 
 			var urls =
@@ -116,10 +117,9 @@ function ($, X3D)
 					'Huey':    "tests/Examples/Compel/huey.x3d",
 					'Foldup':  "tests/Examples/Compel/foldup.x3d",
 				   'Ripple':  "tests/Examples/Compel/ripple.x3d",
+				   'Snake':   "tests/Examples/Snake/snake.x3d",
 				},
 			];
-
-			var index = 0;
 
 			function toggleBookmarks ()
 			{
@@ -162,7 +162,7 @@ function ($, X3D)
 	<body>
 		<div id="bookmarks"></div>
 		<X3D statistics="false" cache="false" url='
-			"tests/Components/Layering/ViewportLayer.x3d",
+			"tests/Examples/Snake/snake.x3d",
 		' />
 	</body>
 </html>

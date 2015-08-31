@@ -1,16 +1,18 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Execution/World.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Text/FontStyle.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="2" Column="2" />
-      <File FileName="cobweb.js/cobweb/Components/Layering/LayerSet.js" Line="19" Column="19" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DNavigationContext.js" Line="38" Column="38" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DViewer.js" Line="2" Column="2" />
-      <File FileName="cobweb.js/cobweb/Components/Navigation/NavigationInfo.js" Line="72" Column="72" />
-      <File FileName="cobweb.js/cobweb/Execution/World.js" Line="54" Column="54" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="6" Column="6" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js" Line="10" Column="10" />
-      <File FileName="cobweb.js/tests/Examples/Vattenfall/stage/buttons.wrl" Line="3" Column="3" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/Viewport.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserOptions.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Configuration/SupportedNodes.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/tests/Examples/Snake/snake.x3d" Line="3" Column="3" />
+      <File FileName="cobweb.js/cobweb/Components/Text/X3DFontStyleNode.js" Line="29" Column="29" />
+      <File FileName="cobweb.js/cobweb/Components/Text/Text.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Text/FontStyle.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -2235,6 +2235,10 @@
     <None Include="tests\Components\Layering\ViewportLayer.x3d" />
     <None Include="tests\Components\Geometry3D\dragon.x3d" />
     <None Include="standard\Utility\ObjectCache.js" />
+    <None Include="tests\Examples\Snake\Zeichnung.svg" />
+    <None Include="tests\Examples\Snake\cube.blend" />
+    <None Include="tests\Examples\Snake\cube.x3d" />
+    <None Include="tests\Examples\Snake\snake.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2296,5 +2300,6 @@
     <Folder Include="tests\Components\Layering\" />
     <Folder Include="cobweb\Misc\" />
     <Folder Include="standard\Utility\" />
+    <Folder Include="tests\Examples\Snake\" />
   </ItemGroup>
 </Project>

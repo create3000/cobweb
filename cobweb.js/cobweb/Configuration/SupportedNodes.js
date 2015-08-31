@@ -446,8 +446,7 @@ function (Anchor,
           WorldInfo,
           X3DPrototypeInstance)
 {
-	var xml =
-	{
+	return {
 		MetadataBool:                 MetadataBoolean,
 
 		Anchor:                       Anchor,
@@ -672,15 +671,5 @@ function (Anchor,
 		//WindPhysicsModel:             WindPhysicsModel,
 		WorldInfo:                    WorldInfo,
 		X3DPrototypeInstance:         X3DPrototypeInstance,
-	};
-
-	var dom = { };
-	
-	for (var typeName in xml)
-		dom [typeName .toUpperCase ()] = xml [typeName];
-
-	return {
-		xml: xml,
-		dom: dom,
 	};
 });

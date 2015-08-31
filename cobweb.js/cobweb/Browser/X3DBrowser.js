@@ -89,7 +89,16 @@ function ($,
 			},
 			createScene: function ()
 			{
-				return new Scene (this);
+			   var scene = new Scene (this);
+
+				scene .setup ();
+
+				if (this .isExternal ())
+				   return scene;
+
+				scene .beginUpdate ();
+
+				return scene;
 			},
 			replaceWorld: function (scene)
 			{
@@ -147,7 +156,11 @@ function ($,
 					scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
 
 				if (! external)
+				{
 					currentScene .isLive () .addFieldInterest (scene .isLive ());
+
+					scene .isLive () .setValue (currentScene .isLive ());
+				}
 
 				scene .setup ();
 
@@ -175,14 +188,17 @@ function ($,
 				{
 					if (scene)
 					{
+						// Handle isLive for script scenes here:
+
 					   if (! external)
+					   {
 					      currentScene .isLive () .addFieldInterest (scene .isLive ());
 
+							scene .isLive () .setValue (currentScene .isLive ());
+						}
+
 						scene .setup ();
-						scene .beginUpdate ();
-
-						// Handle isLive for script scenes here ...
-
+					   
 						// Wait until scene is completely loaded, scene .loadCount_ must be 0.
 						field .setValue (scene .rootNodes);
 					}
@@ -203,7 +219,11 @@ function ($,
 					scene        = new Loader (this .getWorld ()) .createX3DFromURL (url);
 
 				if (! external)
+				{
 					currentScene .isLive () .addFieldInterest (scene .isLive ());
+
+					scene .isLive () .setValue (currentScene .isLive ());
+				}
 
 				scene .setup ();
 
@@ -248,21 +268,11 @@ function ($,
 			},
 			setBrowserOption: function (name, value)
 			{
-				try
-				{
-					this .getBrowserOptions () .getField (name) .setValue (value);
-				}
-				catch (error)
-				{ }
+				this .getBrowserOptions () .getField (name) .setValue (value);
 			},
 			getBrowserOption: function (name)
 			{
-				try
-				{
-					return this .getBrowserOptions () .getField (name) .getValue ();
-				}
-				catch (error)
-				{ }
+				return this .getBrowserOptions () .getField (name) .getValue ();
 			},
 			firstViewpoint: function ()
 			{

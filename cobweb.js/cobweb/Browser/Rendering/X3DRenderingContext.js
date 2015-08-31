@@ -96,7 +96,7 @@ function (Fields,
 			this .lineShader  = getShader (this, wireframeVS, wireframeFS);
 			this .pointShader = getPointShader (this, this .lineShader);
 
-			this .setDefaultShader ("GOURAUD");
+			this .setDefaultShader (this .getXML () [0] .getAttribute ("shading"));
 			this .setShader (this .getDefaultShader ());
 		},
 		getVendor: function ()

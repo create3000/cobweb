@@ -71,7 +71,7 @@ function ($,
 			},
 			createNode: function (typeName, xml)
 			{
-				var node = new (this .getBrowser () .supportedNodes .xml [typeName]) (this);
+				var node = new (this .getBrowser () .supportedNodes [typeName]) (this);
 
 				if (xml)
 					return node;

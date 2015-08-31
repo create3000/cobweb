@@ -35,10 +35,6 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new SFString ("")),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new SFString ("")),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new MFBool ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new SFString ("")),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new SFString ("")),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new MFBool ()),
 			]),
 			getTypeName: function ()
 			{

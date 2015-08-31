@@ -14,6 +14,7 @@ function ($,
 	X3DMetadataObject .prototype =
 	{
 		constructor: X3DMetadataObject,
+		initialize: function () { },
 	};
 
 	return X3DMetadataObject;
