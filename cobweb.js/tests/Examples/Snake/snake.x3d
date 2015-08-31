@@ -3082,7 +3082,9 @@ function eventsProcessed ()
     </Script>
     <Transform DEF='Floor'
         translation='0 -1 0'>
-      <Transform USE='_2'/>
+      <StaticGroup>
+         <Transform USE='_2'/>
+      </StaticGroup>
       <Group DEF='Lights'>
         <Transform DEF='TopLight'
             translation='0 5 0'>

@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -14,6 +15,7 @@ function ($,
           FieldDefinitionArray,
           X3DChildNode, 
           X3DBoundedObject, 
+          Group,
           X3DConstants)
 {
 	with (Fields)
@@ -26,7 +28,8 @@ function ($,
 			this .addType (X3DConstants .StaticGroup);
 		}
 
-		StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),
+		StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),
+			X3DBoundedObject .prototype,
 		{
 			constructor: StaticGroup,
 			fieldDefinitions: new FieldDefinitionArray ([
@@ -46,6 +49,19 @@ function ($,
 			getContainerField: function ()
 			{
 				return "children";
+			},
+			initialize: function ()
+			{
+			   X3DChildNode .prototype .initialize .call (this);
+			   X3DBoundedObject .prototype .initialize .call (this);
+
+			   this .group = new Group (this .getExecutionContext ());
+
+			   this .children_ .addFieldInterest (this .group .children_);
+			   this .group .children_ = this .children_;
+				this .group .setup ();
+
+				this .traverse = this .group .traverse .bind (this .group);
 			},
 		});
 
