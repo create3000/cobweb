@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 31 Aug 2015 16:22:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 31 Aug 2015 16:51:15 GMT'/>
+    <meta name='modified' content='Mon, 31 Aug 2015 17:18:07 GMT'/>
   </head>
   <Scene>
     <Script>
@@ -24,6 +24,7 @@ function initialize ()
 	var vrmlSyntax = "<?xml version='1.0' encoding='UTF-8'?>" +
  "<X3D><Scene>" +
  " <TimeSensor DEF='T'" +
+ "     cycleInterval='10'" +
  "     loop='true'/>" +
  " <PositionInterpolator DEF='I'" +
  "     key='0, 1'" +
