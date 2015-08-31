@@ -2245,6 +2245,7 @@
     <None Include="stable\1.3\images\logo.bw.png" />
     <None Include="stable\1.3\images\logo.png" />
     <None Include="stable\1.3\cobweb.min.js" />
+    <None Include="tests\Components\Scripting\createVrmlFromString.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

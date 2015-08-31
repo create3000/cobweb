@@ -146,7 +146,11 @@ function ($,
 			},
 			createVrmlFromString: function (vrmlSyntax)
 			{
-				return this .createX3DFromString (vrmlSyntax);
+			   var rootNodes = new MFNode ();
+
+				rootNodes .setValue (this .createX3DFromString (vrmlSyntax) .rootNodes);
+
+				return rootNodes;
 			},
 			createX3DFromString: function (x3dSyntax)
 			{
