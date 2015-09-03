@@ -25,26 +25,34 @@ function ($,
 			},
 			setLoadState: function (value, notify)
 			{
+			   if (this .hasOwnProperty ("loadId"))
+			   {
+			      this .getBrowser () .removeLoadCount (this .loadId);
+					
+					delete this .loadId;
+			   }
+
 				if (notify !== false)
 				{
 					switch (value)
 					{
-						case X3DConstants .NOT_STARTED_STATE:
-						{
-							if (this .loadState_ .getValue () === X3DConstants .IN_PROGRESS_STATE)
-							   this .getBrowser () .removeLoadCount (this);
-
-							break;
-						}
 						case X3DConstants .IN_PROGRESS_STATE:
 						{
-							this .getBrowser () .addLoadCount (this);
+							this .loadId = this .getBrowser () .addLoadCount ();
 							break;
+						}
+						case X3DConstants .NOT_STARTED_STATE:
+						{
+							if (this .loadState_ .getValue () !== X3DConstants .IN_PROGRESS_STATE)
+							   break;
+
+							// Procced with next case:
 						}
 						case X3DConstants .COMPLETE_STATE:
 						case X3DConstants .FAILED_STATE:
 						{
-							this .getBrowser () .removeLoadCount (this);
+							this .getBrowser () .removeLoadCount (this .loadId);
+							delete this .loadId;
 							break;
 						}
 					}

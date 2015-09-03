@@ -21,7 +21,6 @@
     <None Include="..\README.md">
       <Link>README.md</Link>
     </None>
-    <None Include="cobweb.html" />
     <None Include="logo\icon.svg" />
     <None Include="logo\logo.svg" />
   </ItemGroup>

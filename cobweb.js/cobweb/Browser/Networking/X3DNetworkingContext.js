@@ -8,6 +8,8 @@ function (Fields,
 {
 	with (Fields)
 	{
+		var loadCountId = 0;
+
 		function X3DNetworkingContext () { }
 
 		X3DNetworkingContext .prototype =
@@ -44,26 +46,24 @@ function (Fields,
 			{
 				return this .privateScene;
 			},
-			addLoadCount: function (object)
+			addLoadCount: function ()
 			{
-			   if (! this .loadingObjects [object .getId ()])
-			      this .loadingObjects [object .getId ()] = 0;
+			   var id = loadCountId ++;
 
-			   ++ this .loadingObjects [object .getId ()];
+			   this .loadingObjects [id] = true;
+				this .loadCount_          = this .loadCount_ .getValue () + 1;
 
-				this .loadCount_ = this .loadCount_ .getValue () + 1;
 				this .getNotification () .string_ = "Loading " + this .loadCount_;
 				this .setCursor ("DEFAULT");
+
+				return id;
 			},
-			removeLoadCount: function (object)
+			removeLoadCount: function (id)
 			{
-			   if (! this .loadingObjects .hasOwnProperty (object .getId ()))
+			   if (! this .loadingObjects .hasOwnProperty (id))
 			      return;
 			   
-				-- this .loadingObjects [object .getId ()];
-
-			   if (! this .loadingObjects [object .getId ()])
-			   	delete this .loadingObjects [object .getId ()];
+				delete this .loadingObjects [id];
 
 				this .loadCount_ = this .loadCount_ .getValue () - 1;
 

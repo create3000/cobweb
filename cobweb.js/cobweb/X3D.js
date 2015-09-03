@@ -54,8 +54,6 @@ function ($,
 		var browser = new X3DBrowser (xml);
 
 		browser .setup ();
-		browser .loadCount_ .addFieldCallback ("loading", browser .bindWorld .bind (browser));
-		browser .loadCount_ .addEvent ();
 
 		if (xml .attr ("splashScreen") !== "false")
 			browser .getCanvas () .fadeOut (0);
@@ -116,6 +114,8 @@ function ($,
 		this .console .log ("Unable to initialize Cobweb. Your browser may not support it.");
 		this .console .log (error);
 	}
+
+	X3D ();
 
 	return $.extend (X3D,
 		Fields,

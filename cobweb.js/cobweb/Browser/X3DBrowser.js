@@ -118,10 +118,11 @@ function ($,
 
 				if (! scene)
 					scene = this .createScene ();
+				
+				var id = performance .now ();
 
-				this .loadCount_ .addFieldCallback ("loading", this .bindWorld .bind (this));
 				this .resetLoadCount ();
-				this .addLoadCount (this);
+				this .loadCount_ .addFieldCallback ("loading" + id, this .bindWorld .bind (this, id));
 
 				scene .setup ();
 				this .setExecutionContext (scene);
@@ -131,13 +132,12 @@ function ($,
 
 				this .initialized () .setValue (this .getCurrentTime ());
 			},
-			bindWorld: function (value)
+			bindWorld: function (id, value)
 			{
 				if (value)
 					return;
 
-				this .removeLoadCount (this);
-				this .loadCount_ .removeFieldCallback ("loading");
+				this .loadCount_ .removeFieldCallback ("loading" + id);
 
 				setTimeout (function ()
 				{
@@ -237,7 +237,7 @@ function ($,
 			},
 			loadURL: function (url, parameter)
 			{
-				this .addLoadCount (this);
+				var id = this .addLoadCount ();
 
 				new Loader (this .getWorld ()) .createX3DFromURL (url,
 				function (scene)
@@ -245,13 +245,13 @@ function ($,
 					if (scene)
 						this .replaceWorld (scene);
 
-					this .removeLoadCount (this);
+					this .removeLoadCount (id);
 				}
 				.bind (this),
 				function (fragment)
 				{
 					this .currentScene .changeViewpoint (fragment);
-					this .removeLoadCount (this);
+					this .removeLoadCount (id);
 				}
 				.bind (this));
 			},
