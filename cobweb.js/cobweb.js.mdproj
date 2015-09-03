@@ -2253,6 +2253,12 @@
     <None Include="stable\1.4\images\icon.png" />
     <None Include="stable\1.4\images\logo.bw.png" />
     <None Include="stable\1.4\images\logo.png" />
+    <None Include="stable\1.5\images\icon.bw.png" />
+    <None Include="stable\1.5\images\icon.png" />
+    <None Include="stable\1.5\images\logo.bw.png" />
+    <None Include="stable\1.5\images\logo.png" />
+    <None Include="stable\1.5\cobweb.css" />
+    <None Include="stable\1.5\cobweb.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2316,5 +2322,6 @@
     <Folder Include="standard\Utility\" />
     <Folder Include="tests\Examples\Snake\" />
     <Folder Include="stable\1.3\" />
+    <Folder Include="stable\1.5\" />
   </ItemGroup>
 </Project>
