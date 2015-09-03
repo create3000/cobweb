@@ -46,33 +46,39 @@ function (Fields,
 			},
 			addLoadCount: function (object)
 			{
-			   if (this .loadingObjects .hasOwnProperty (object .getId ()))
-			      return;
+			   if (! this .loadingObjects [object .getId ()])
+			      this .loadingObjects [object .getId ()] = 0;
 
-			   this .loadingObjects [object .getId ()] = true;
+			   ++ this .loadingObjects [object .getId ()];
 
-				var value = this .loadCount_ .getValue () + 1;
-				this .loadCount_ = value;
-				this .getNotification () .string_ = "Loading " + value;
+				this .loadCount_ = this .loadCount_ .getValue () + 1;
+				this .getNotification () .string_ = "Loading " + this .loadCount_;
 				this .setCursor ("DEFAULT");
 			},
 			removeLoadCount: function (object)
 			{
 			   if (! this .loadingObjects .hasOwnProperty (object .getId ()))
 			      return;
+			   
+				-- this .loadingObjects [object .getId ()];
 
-			   delete this .loadingObjects [object .getId ()];
+			   if (! this .loadingObjects [object .getId ()])
+			   	delete this .loadingObjects [object .getId ()];
 
-				var value = this .loadCount_ .getValue () - 1;
-				this .loadCount_ = value;
+				this .loadCount_ = this .loadCount_ .getValue () - 1;
 
-				if (value)
-					this .getNotification () .string_ = "Loading " + value;
+				if (this .loadCount_ .getValue ())
+					this .getNotification () .string_ = "Loading " + this .loadCount_;
 				else
 				{
 					this .getNotification () .string_ = "Loading done";
 					this .setCursor ("DEFAULT");
 				}
+			},
+			resetLoadCount: function ()
+			{
+				this .loadCount_     = 0;
+				this .loadingObjects = { };			   
 			},
 		};
 

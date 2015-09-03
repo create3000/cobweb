@@ -25,30 +25,28 @@ function ($,
 			},
 			setLoadState: function (value, notify)
 			{
-				switch (value)
+				if (notify !== false)
 				{
-					case X3DConstants .NOT_STARTED_STATE:
+					switch (value)
 					{
-						if (notify !== false)
+						case X3DConstants .NOT_STARTED_STATE:
 						{
 							if (this .loadState_ .getValue () === X3DConstants .IN_PROGRESS_STATE)
-						      this .getBrowser () .removeLoadCount (this);
-						}
+							   this .getBrowser () .removeLoadCount (this);
 
-						break;
-					}
-					case X3DConstants .IN_PROGRESS_STATE:
-					{
-						if (notify !== false)
+							break;
+						}
+						case X3DConstants .IN_PROGRESS_STATE:
+						{
 							this .getBrowser () .addLoadCount (this);
-						break;
-					}
-					case X3DConstants .COMPLETE_STATE:
-					case X3DConstants .FAILED_STATE:
-					{
-						if (notify !== false)
+							break;
+						}
+						case X3DConstants .COMPLETE_STATE:
+						case X3DConstants .FAILED_STATE:
+						{
 							this .getBrowser () .removeLoadCount (this);
-						break;
+							break;
+						}
 					}
 				}
 

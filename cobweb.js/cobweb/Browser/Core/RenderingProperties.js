@@ -63,7 +63,7 @@ function ($,
 					transparentShapes = 0;
 
 				var
-					prepareEvents = Object .keys (browser .prepareEvents () .getInterests ()) .length,
+					prepareEvents = Object .keys (browser .prepareEvents () .getInterests ()) .length - 1,
 					sensors       = Object .keys (browser .sensors () .getInterests ()) .length;
 
 				for (var i = 0; i < layers .length; ++ i)
