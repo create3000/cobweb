@@ -32,7 +32,10 @@ function ($,
 {
 	with (Fields)
 	{
-		var upVector = new Vector3 (0, 1, 0);
+		var
+			upVector = new Vector3 (0, 1, 0),
+			yAxis    = new Vector3 (0, 1, 0),
+			zAxis    = new Vector3 (0, 0, 1);
 
 		function X3DViewpointNode (browser, executionContext)
 		{
@@ -56,11 +59,11 @@ function ($,
 				X3DViewpointObject .prototype .initialize .call (this);
 
 				this .addChildren ("positionOffset",         new SFVec3f (),
-			                      "orientationOffset",      new SFRotation (),
-			                      "scaleOffset",            new SFVec3f (1, 1, 1),
-			                      "scaleOrientationOffset", new SFRotation (),
-			                      "centerOfRotationOffset", new SFVec3f (),
-			                      "fieldOfViewScale",       new SFFloat (1));
+				                   "orientationOffset",      new SFRotation (),
+				                   "scaleOffset",            new SFVec3f (1, 1, 1),
+				                   "scaleOrientationOffset", new SFRotation (),
+				                   "centerOfRotationOffset", new SFVec3f (),
+				                   "fieldOfViewScale",       new SFFloat (1));
 
 				this .timeSensor                   = new TimeSensor              (this .getBrowser () .getPrivateScene ());
 				this .easeInEaseOut                = new EaseInEaseOut           (this .getBrowser () .getPrivateScene ());
@@ -152,6 +155,10 @@ function ($,
 			getUpVector: function ()
 			{
 				return upVector;
+			},
+			getSpeedFactor: function ()
+			{
+				return 1;
 			},
 			getMaxZFar: function ()
 			{
@@ -293,6 +300,17 @@ function ($,
 
 				relativePosition .subtract (this .position_ .getValue ());
 				relativeOrientation .assign (this .orientation_ .getValue () .copy () .inverse () .multRight (relativeOrientation)); // mit gepuffereter location matrix
+			},
+			straightenHorizon: function (orientation)
+			{
+				// Taken from Billboard
+
+				var
+					direction = orientation .multVecRot (zAxis .copy ()),
+					normal    = Vector3 .cross (direction, this .getUpVector ()),
+					vector    = Vector3 .cross (direction, orientation .multVecRot (yAxis .copy ()));
+
+				return new Rotation4 (vector, normal);
 			},
 			set_active__: function (value)
 			{

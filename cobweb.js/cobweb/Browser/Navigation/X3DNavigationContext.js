@@ -2,13 +2,17 @@
 define ([
 	"cobweb/Fields",
 	"cobweb/Browser/Navigation/ExamineViewer",
+	"cobweb/Browser/Navigation/WalkViewer",
+	"cobweb/Browser/Navigation/FlyViewer",
 	"cobweb/Browser/Navigation/NoneViewer",
 	"cobweb/Components/Lighting/DirectionalLight",
 ],
 function (Fields,
-	       ExamineViewer,
-	       NoneViewer,
-	       DirectionalLight)
+          ExamineViewer,
+          WalkViewer,
+          FlyViewer,
+          NoneViewer,
+          DirectionalLight)
 {
 	with (Fields)
 	{
@@ -221,10 +225,10 @@ function (Fields,
 					   this .viewer = new ExamineViewer (this);
 						break;
 					case "WALK":
-					   this .viewer = new NoneViewer (this);
+					   this .viewer = new WalkViewer (this);
 						break;
 					case "FLY":
-					   this .viewer = new NoneViewer (this);
+					   this .viewer = new FlyViewer (this);
 						break;
 					case "PLANE":
 					   this .viewer = new NoneViewer (this);

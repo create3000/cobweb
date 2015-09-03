@@ -40,6 +40,18 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "Shading",                new SFString ("GOURAUD")),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "MotionBlur",             new SFBool (false)),
 			]),
+			getTypeName: function ()
+			{
+				return "BrowserOptions";
+			},
+			getComponentName: function ()
+			{
+				return "Cobweb";
+			},
+			getContainerField: function ()
+			{
+				return "browserOptions";
+			},
 			initialize: function ()
 			{
 				X3DBaseNode .prototype .initialize .call (this);

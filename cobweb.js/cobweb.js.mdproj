@@ -2259,6 +2259,9 @@
     <None Include="stable\1.5\images\logo.png" />
     <None Include="stable\1.5\cobweb.css" />
     <None Include="stable\1.5\cobweb.min.js" />
+    <None Include="cobweb\Browser\Navigation\X3DFlyViewer.js" />
+    <None Include="cobweb\Browser\Navigation\FlyViewer.js" />
+    <None Include="cobweb\Browser\Navigation\WalkViewer.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

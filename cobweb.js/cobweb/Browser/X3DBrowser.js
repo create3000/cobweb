@@ -257,6 +257,7 @@ function ($,
 			},
 			getRenderingProperty: function (name)
 			{
+				this .getRenderingProperties () .getField (name) .getValue ();
 			},
 			addBrowserListener: function (callback, object)
 			{

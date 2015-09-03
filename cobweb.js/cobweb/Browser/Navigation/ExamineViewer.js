@@ -153,7 +153,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 					event .preventDefault ();
 
-		         // Move.
+					// Move.
 
 					var
 						viewpoint   = this .getActiveViewpoint (),
@@ -174,7 +174,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 			event .preventDefault ();
 
-         // Determine scroll direction.
+			// Determine scroll direction.
 
 			var direction = 0;
 

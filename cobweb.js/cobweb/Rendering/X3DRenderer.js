@@ -146,9 +146,9 @@ function (TraverseType,
 					scissor = context .scissor;
 
 				gl .scissor (scissor .x,
-	                      scissor .y,
-	                      scissor .z,
-	                      scissor .w);
+				             scissor .y,
+				             scissor .z,
+				             scissor .w);
 
 				context .shape .draw (context);
 			}
@@ -167,9 +167,9 @@ function (TraverseType,
 					scissor = context .scissor;
 
 				gl .scissor (scissor .x,
-	                      scissor .y,
-	                      scissor .z,
-	                      scissor .w);
+				             scissor .y,
+				             scissor .z,
+				             scissor .w);
 
 				context .shape .draw (context);
 			}

@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 29 Aug 2015 07:24:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 02 Sep 2015 12:19:12 GMT'/>
+    <meta name='modified' content='Thu, 03 Sep 2015 20:04:10 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -55,10 +55,13 @@
                 centerOfRotation='0.587624 1.66016 -1.38991'/>
             <Viewpoint DEF='Top'
                 description='Top'
-                position='0 21.6978 0'
-                orientation='-1 0 0 1.57'/>
+                position='0 52.8537 0.0248073'
+                orientation='1 0 0 4.71319'/>
           </Group>
-          <NavigationInfo
+          <NavigationInfo DEF='Walk'
+              type='"WALK"'
+              headlight='false'/>
+          <NavigationInfo DEF='Examine'
               headlight='false'/>
           <Background DEF='White_1'
               skyAngle='1.5708'
@@ -450,107 +453,151 @@ function initialize ()
             translation='-31 1 -19'>
           <Group DEF='_5'>
             <Transform
-                translation='36 0 16'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='62 0 24'>
+                translation='4 0 12'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='54 0 10'>
+                translation='8 0 14'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='32 0 6'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='50 0 14'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='26 0 4'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='8 0 22'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='52 0 16'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='60 0 24'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
-                translation='10 0 20'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='6 0 24'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='6 0 24'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='2 0 28'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='16 0 6'>
+                translation='28 0 36'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
-                translation='38 0 34'>
+                translation='12 0 34'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='0 0 16'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='28 0 32'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='24 0 36'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='16 0 14'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='8 0 2'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='52 0 2'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='60 0 38'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='44 0 20'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='36 0 24'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='18 0 18'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='22 0 22'>
+                translation='42 0 10'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
-                translation='62 0 4'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='36 0 2'>
+                translation='34 0 4'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='42 0 12'>
+                translation='62 0 2'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='22 0 24'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='38 0 8'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='20 0 0'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='46 0 8'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='6 0 8'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='4 0 4'>
+                translation='32 0 2'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='8 0 6'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='10 0 14'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='12 0 8'>
+                translation='36 0 20'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='36 0 22'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='52 0 24'>
+                translation='0 0 8'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='32 0 30'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='30 0 36'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='52 0 26'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='34 0 36'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='20 0 10'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='50 0 38'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='28 0 26'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='50 0 26'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='16 0 18'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='40 0 12'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='6 0 18'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='50 0 4'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='34 0 22'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
@@ -558,295 +605,251 @@ function initialize ()
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='16 0 30'>
+                translation='32 0 36'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='28 0 36'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
-                translation='24 0 34'>
+                translation='26 0 8'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='54 0 26'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='10 0 26'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='32 0 24'>
+                translation='12 0 28'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='14 0 26'>
+                translation='18 0 6'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='2 0 38'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='42 0 10'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='58 0 20'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='30 0 14'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='6 0 10'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='14 0 8'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='36 0 6'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='6 0 30'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='28 0 20'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='54 0 6'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='40 0 32'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='26 0 14'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='46 0 16'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='48 0 36'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='50 0 2'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='20 0 14'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='50 0 32'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='26 0 8'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='36 0 16'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='36 0 34'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='62 0 12'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='32 0 36'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='58 0 10'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
                 translation='4 0 30'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='48 0 6'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='22 0 34'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='8 0 20'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='56 0 10'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='58 0 32'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='22 0 34'>
+                translation='14 0 26'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
-                translation='58 0 8'>
+                translation='22 0 26'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='52 0 8'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='36 0 4'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='62 0 8'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
-                translation='48 0 0'>
+                translation='58 0 14'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='12 0 0'>
+                translation='12 0 38'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='26 0 30'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='30 0 0'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='52 0 28'>
+                translation='16 0 34'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='8 0 4'>
+                translation='30 0 36'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='54 0 22'>
+                translation='12 0 28'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='22 0 6'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='50 0 36'>
+                translation='20 0 22'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='2 0 26'>
+                translation='30 0 32'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='48 0 30'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='30 0 36'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='14 0 0'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='2 0 36'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
                 translation='16 0 18'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='32 0 22'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='20 0 8'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='14 0 30'>
+                translation='48 0 10'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='20 0 8'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='16 0 20'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='36 0 8'>
+                translation='52 0 32'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='8 0 2'>
+                translation='42 0 38'>
               <Shape USE='YellowBox'/>
             </Transform>
             <Transform
-                translation='52 0 36'>
-              <Shape USE='YellowBox'/>
+                translation='14 0 28'>
+              <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='34 0 26'>
+                translation='48 0 32'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='44 0 30'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='32 0 8'>
+                translation='48 0 10'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='16 0 30'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='8 0 38'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='14 0 14'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='50 0 24'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='38 0 32'>
+                translation='10 0 32'>
               <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='38 0 30'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='32 0 4'>
+                translation='18 0 22'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='54 0 28'>
+                translation='28 0 16'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='56 0 0'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='22 0 10'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='54 0 16'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='58 0 32'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='8 0 6'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='26 0 6'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='34 0 0'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='54 0 30'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='22 0 16'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='44 0 22'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='34 0 24'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='42 0 8'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='24 0 16'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='40 0 2'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='26 0 4'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='40 0 14'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='60 0 14'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='18 0 36'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='8 0 20'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='8 0 22'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='12 0 32'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='4 0 28'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='40 0 12'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='8 0 22'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='46 0 38'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='20 0 14'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='12 0 16'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='34 0 4'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='52 0 30'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='34 0 20'>
-              <Shape USE='YellowBox'/>
-            </Transform>
-            <Transform
-                translation='48 0 4'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='2 0 24'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='48 0 2'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='30 0 22'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='10 0 20'>
+                translation='36 0 4'>
               <Shape USE='OrangeBox'/>
             </Transform>
           </Group>
@@ -900,5 +903,7 @@ function random (max)
       </Layer>
       <LayoutLayer/>
     </LayerSet>
+    <ROUTE fromNode='Inside' fromField='isBound' toNode='Walk' toField='set_bind'/>
+    <ROUTE fromNode='Top' fromField='isBound' toNode='Examine' toField='set_bind'/>
   </Scene>
 </X3D>

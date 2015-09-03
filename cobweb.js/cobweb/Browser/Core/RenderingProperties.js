@@ -16,6 +16,18 @@ function ($,
 	RenderingProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: RenderingProperties,
+		getTypeName: function ()
+		{
+			return "RenderingProperties";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "renderingProperties";
+		},
 		initialize: function ()
 		{
 			X3DBaseNode .prototype .initialize .call (this);
