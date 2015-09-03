@@ -134,6 +134,8 @@ function ($,
 			},
 			bindWorld: function (id, value)
 			{
+			   console .log (value);
+
 				if (value)
 					return;
 
