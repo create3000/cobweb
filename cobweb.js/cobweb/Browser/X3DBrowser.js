@@ -134,8 +134,6 @@ function ($,
 			},
 			bindWorld: function (id, value)
 			{
-			   console .log (value, this .getWorld () .getExecutionContext () .worldURL);
-
 				if (value)
 					return;
 
