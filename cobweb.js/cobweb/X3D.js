@@ -115,7 +115,10 @@ function ($,
 		this .console .log (error);
 	}
 
-	X3D ();
+	$(document) .ready (function ()
+	{
+		X3D ();
+	});
 
 	return $.extend (X3D,
 		Fields,
