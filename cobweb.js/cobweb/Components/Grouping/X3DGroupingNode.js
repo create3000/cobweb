@@ -356,14 +356,14 @@ function ($,
 							this .pointingDeviceSensors [i] .push ();
 					}
 
-					//for (var i = 0; i < this .clipPlanes .length; ++ i)
-					//	this .clipPlanes [i] .push ();
+					for (var i = 0; i < this .clipPlanes .length; ++ i)
+						this .clipPlanes [i] .push ();
 
 					for (var i = 0; i < this .childNodes .length; ++ i)
 						this .childNodes [i] .traverse (type);
 
-					//for (var i = 0; i < this .clipPlanes .length; ++ i)
-					//	this .clipPlanes [i] .pop ();
+					for (var i = 0; i < this .clipPlanes .length; ++ i)
+						this .clipPlanes [i] .pop ();
 
 					if (this .pointingDeviceSensors .length)
 						this .getBrowser () .getSensors () .pop ();
@@ -377,11 +377,37 @@ function ($,
 
 					return;
 				}
-				case TraverseType .DISPLAY:
-				{
+				case TraverseType .NAVIGATION:
+				case TraverseType .COLLISION:
+				{					
+					for (var i = 0; i < this .clipPlanes .length; ++ i)
+						this .clipPlanes [i] .push ();
+
 					for (var i = 0; i < this .childNodes .length; ++ i)
 						this .childNodes [i] .traverse (type);
 
+					for (var i = 0; i < this .clipPlanes .length; ++ i)
+						this .clipPlanes [i] .pop ();
+					
+					return;
+				}
+				case TraverseType .DISPLAY:
+				{
+					for (var i = 0; i < this .localFogs .length; ++ i)
+						this .localFogs [i] .push ();
+
+					for (var i = 0; i < this .clipPlanes .length; ++ i)
+						this .clipPlanes [i] .push ();
+
+					for (var i = 0; i < this .childNodes .length; ++ i)
+						this .childNodes [i] .traverse (type);
+
+					for (var i = 0; i < this .clipPlanes .length; ++ i)
+						this .clipPlanes [i] .pop ();
+					
+					for (var i = 0; i < this .localFogs .length; ++ i)
+						this .localFogs [i] .pop ();
+					
 					return;
 				}
 			}

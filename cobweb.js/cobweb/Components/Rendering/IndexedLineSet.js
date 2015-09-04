@@ -27,7 +27,7 @@ function ($,
 			this .attribNodes  = [ ];
 			this .colorNode    = null;
 			this .coordNode    = null;
-		}
+					}
 
 		IndexedLineSet .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 		{
@@ -62,6 +62,8 @@ function ($,
 				this .color_  .addInterest (this, "set_color__");
 				this .coord_  .addInterest (this, "set_coord__");
 
+				this .setPrimitiveMode (this .getBrowser () .getContext () .LINES);
+				
 				this .set_attrib__ ();
 				this .set_color__ ();
 				this .set_coord__ ();

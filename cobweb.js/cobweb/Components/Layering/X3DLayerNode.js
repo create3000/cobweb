@@ -12,8 +12,10 @@ define ([
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Line3",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
@@ -28,14 +30,18 @@ function ($,
           X3DCast,
           TraverseType,
           X3DConstants,
+          Camera,
           Line3,
           Vector3,
+          Rotation4,
           Matrix4)
 {
 	var
 		positionOffset   = new Vector3 (0, 0, 0),
 		projectionMatrix = new Matrix4 (),
-		line             = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+		localOrientation = new Rotation4 (0, 0, 1, 0),
+		line             = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
+		zAxis            = new Vector3 (0, 0, 1);
 
 	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
 	{
@@ -46,6 +52,8 @@ function ($,
 
 		this .defaultViewpoint = defaultViewpoint;
 		this .group            = group;
+
+		this .inverseCameraSpaceMatrix = new Matrix4 ();
 	}
 
 	X3DLayerNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -173,7 +181,11 @@ function ($,
 		{
 			return this .hitRay;
 		},
-		getConstrainedTranslation: function (translation)
+		getInverseCameraSpaceMatrix: function ()
+		{
+			return this .inverseCameraSpaceMatrix;
+		},
+		constrainTranslation: function (translation)
 		{
 			var
 				navigationInfo  = this .getNavigationInfo (),
@@ -195,7 +207,7 @@ function ($,
 					if (length > distance)
 					{
 						// Collision: The wall has reached.
-						return translation .normalize () .multiplay (distance);
+						return translation .normalize () .multiply (distance);
 					}
 
 					return translation;
@@ -214,11 +226,12 @@ function ($,
 				// Apply collision to translation.
 
 				var
+					browser         = this .getBrowser (),
 					viewpoint       = this .getViewpoint (),
 					navigationInfo  = this .getNavigationInfo (),
 					collisionRadius = navigationInfo .getCollisionRadius (),
 					zNear           = navigationInfo .getNearPlane (),
-					zFar            = navigationInfo .getFarPlane (getViewpoint ());
+					zFar            = navigationInfo .getFarPlane (viewpoint);
 
 				// Get width and height of camera
 
@@ -236,34 +249,29 @@ function ($,
 
 				Camera .ortho (-width1_2, width1_2, -height1_2, height1_2, zNear, zFar, projectionMatrix);
 
-				this .getBrowser () .setProjectionMatrix (projectionMatrix);
-
 				// Translate camera
 
-				var
-					localOrientation = Rotation4 .inverse (viewpoint .orientation_ .getValue ()) .multRight (viewpoint .getOrientation ()),
-					modelViewMatrix  = viewpoint .getParentMatrix () .copy ();
+				var modelViewMatrix = this .inverseCameraSpaceMatrix;
+
+				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
+				modelViewMatrix  .assign (viewpoint .getParentMatrix ());
 
 				modelViewMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
 				modelViewMatrix .rotate (new Rotation4 (zAxis, Vector3 .negate (translation)) .multRight (localOrientation));
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .getModelViewMatrix () .set (modelViewMatrix);
+				browser .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
 
 				// Traverse and get distance
 
-				this .getBrowser () .getLayers () .push (this);
-				this .currentViewport .push ();
-
-				//this .traverse (TraverseType .NAVIGATION);
-
-				this .currentViewport .pop ();
-				this .getBrowser () .getLayers () .pop ();
+				this .traverse (TraverseType .NAVIGATION);
 
 				return X3DRenderer .prototype .getDistance .call (this);
 			}
 			catch (error)
-			{ }
+			{
+				console .log (error);
+			}
 		},
 		set_viewport__: function ()
 		{
@@ -320,7 +328,7 @@ function ($,
 					this .camera ();
 					break;
 				case TraverseType .NAVIGATION:
-					this .navigation ();
+					this .render (type)
 					break;
 				case TraverseType .COLLISION:
 					this .collision ();
@@ -377,10 +385,6 @@ function ($,
 			this .fogs            .update ();
 			this .viewpoints      .update ();
 		},
-		navigation: function ()
-		{
-		
-		},
 		collision: function ()
 		{
 		
@@ -410,7 +414,10 @@ function ($,
 
 			this .render (TraverseType .DISPLAY);
 		},
-		collect: function (type) { },
+		collect: function (type)
+		{
+			// Taken from group.traverse.
+		},
 	});
 
 	return X3DLayerNode;

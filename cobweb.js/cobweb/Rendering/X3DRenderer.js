@@ -10,6 +10,28 @@ function (TraverseType,
           Vector3,
           Matrix4)
 {
+	function FrameBuffer ()
+	{
+
+	}
+
+	FrameBuffer .prototype =
+	{
+		constructor: FrameBuffer,
+		getDistance: function (zNear, zFar)
+		{
+			return 1000000;
+		},
+		bind: function ()
+		{
+
+		},
+		unbind: function ()
+		{
+
+		},
+	};
+
 	function X3DRenderer (browser, executionContext)
 	{
 		this .viewVolumes          = [ ];
@@ -20,8 +42,11 @@ function (TraverseType,
 		this .opaqueShapes         = [ ];
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, function (lhs, rhs) { return lhs .distance < rhs .distance; });
+		this .collisionShapes      = [ ];
 		this .traverseTime         = 0;
 		this .displayTime          = 0;
+		this .depthBuffer          = new FrameBuffer ();
+		this .distance             = 0;
 	}
 
 	X3DRenderer .prototype =
@@ -74,9 +99,34 @@ function (TraverseType,
 				context .fog      = this .getFog ();
 			}
 		},
+		addCollision: function (shape)
+		{
+			var
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize .assign (shape .getBBoxSize ())),
+				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shape .getBBoxCenter ())),
+				radius          = bboxSize .abs () / 2,
+				distance        = bboxCenter .z,
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
+
+			if (viewVolume .intersectsSphere (radius, bboxCenter))
+			{
+				if (this .numCollisionShapes === this .collisionShapes .length)
+					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16) });
+
+				var context = this .collisionShapes [this .numCollisionShapes];
+
+				++ this .numCollisionShapes;
+
+				context .modelViewMatrix .set (modelViewMatrix);
+				context .geometry = shape .getGeometry ();
+				context .scissor  = viewVolume .getScissor ();
+				context .distance = distance;
+			}
+		},
 		getDistance: function ()
 		{
-			return 1000000;
+			return this .distance;
 		},
 		render: function (type)
 		{
@@ -117,7 +167,50 @@ function (TraverseType,
 		},
 		navigate: function ()
 		{
-		
+			// Measure distance
+
+			// Get NavigationInfo values
+
+			var
+				navigationInfo = this .getNavigationInfo (),
+				viewpoint      = this .getViewpoint ();
+
+			var
+				zNear = navigationInfo .getNearPlane (),
+				zFar  = navigationInfo .getFarPlane (viewpoint);
+
+			// Render all objects
+
+			var
+				browser         = this .getBrowser (),
+				gl              = browser .getContext (),
+				shader          = browser .getSolidShader (),
+				collisionShapes = this .collisionShapes;
+			
+			shader .use ();
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+
+			this .depthBuffer .bind ();
+
+			for (var i = 0, length = this .numCollisionShapes; i < length; ++ i)
+			{
+				var
+					context = collisionShapes [i],
+					scissor = context .scissor;
+
+				gl .scissor (scissor .x,
+				             scissor .y,
+				             scissor .z,
+				             scissor .w);
+
+				gl .uniformMatrix4fv (shader .modelViewMatrix,  false, context .modelViewMatrix);
+
+				context .geometry .collision (shader);
+			}
+
+			this .distance = this .depthBuffer .getDistance (zNear, zFar);
+
+			this .depthBuffer .unbind ();
 		},
 		collide: function ()
 		{

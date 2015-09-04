@@ -61,6 +61,8 @@ function ($,
 				this .color_  .addInterest (this, "set_color__");
 				this .coord_  .addInterest (this, "set_coord__");
 
+				this .setPrimitiveMode (this .getBrowser () .getContext () .PONTS);
+
 				this .set_attrib__ ();
 				this .set_color__ ();
 				this .set_coord__ ();

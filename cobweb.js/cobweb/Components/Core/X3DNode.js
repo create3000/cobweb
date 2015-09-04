@@ -40,8 +40,16 @@ function ($,
 		{
 			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
 		
-			if (type === TraverseType .CAMERA)
-				modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
+			switch (type)
+			{
+				case TraverseType .CAMERA:
+					modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
+					break;
+				
+				case TraverseType .NAVIGATION:
+					modelViewMatrix .multRight (this .getCurrentLayer () .getInverseCameraSpaceMatrix ());
+					break;
+			}
 
 			return modelViewMatrix;
 		},

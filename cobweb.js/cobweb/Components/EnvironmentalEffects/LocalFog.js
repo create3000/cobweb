@@ -48,6 +48,14 @@ function ($,
 			{
 				return "children";
 			},
+			push: function ()
+			{
+				// Used in X3DGroupingNode.
+			},
+			pop: function ()
+			{
+				// Used in X3DGroupingNode.
+			},
 		});
 
 		return LocalFog;

@@ -2262,6 +2262,8 @@
     <None Include="cobweb\Browser\Navigation\X3DFlyViewer.js" />
     <None Include="cobweb\Browser\Navigation\FlyViewer.js" />
     <None Include="cobweb\Browser\Navigation\WalkViewer.js" />
+    <None Include="cobweb\Browser\Rendering\Solid.fs" />
+    <None Include="cobweb\Browser\Rendering\Solid.vs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

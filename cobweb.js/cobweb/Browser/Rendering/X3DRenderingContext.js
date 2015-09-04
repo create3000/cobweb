@@ -11,6 +11,8 @@ define ([
 	"text!cobweb/Browser/Rendering/Gouraud.fs",
 	"text!cobweb/Browser/Rendering/Phong.vs",
 	"text!cobweb/Browser/Rendering/Phong.fs",
+	"text!cobweb/Browser/Rendering/Solid.vs",
+	"text!cobweb/Browser/Rendering/Solid.fs",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
@@ -24,6 +26,8 @@ function (Fields,
           gouraudFS,
           phongVS,
           phongFS,
+          solidVS,
+          solidFS,
           Vector4,
           Matrix4,
           MatrixStack)
@@ -153,7 +157,7 @@ function (Fields,
 				case "POINTSET":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = getShader (this, gouraudVS, gouraudFS, gl .TRIANGLES);
+						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -169,7 +173,7 @@ function (Fields,
 				case "WIREFRAME":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = getShader (this, gouraudVS, gouraudFS, gl .TRIANGLES);
+						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -185,7 +189,7 @@ function (Fields,
 				case "PHONG":
 				{
 					if (! this .phongShader)
-						this .phongShader = getShader (this, phongVS, phongFS, gl .TRIANGLES);
+						this .phongShader = getShader (this, phongVS, phongFS);
 
 					this .defaultShader = this .phongShader;
 
@@ -203,7 +207,7 @@ function (Fields,
 					// case "GOURAUD":
 
 					if (! this .gouraudShader)
-						this .gouraudShader = getShader (this, gouraudVS, gouraudFS, gl .TRIANGLES);
+						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -242,6 +246,13 @@ function (Fields,
 		getShader: function ()
 		{
 			return this .shader;
+		},
+		getSolidShader: function ()
+		{
+			if (! this .solidShader)
+				this .solidShader = getShader (this, solidVS, solidFS);
+			
+			return this .solidShader;
 		},
 		reshape: function ()
 		{

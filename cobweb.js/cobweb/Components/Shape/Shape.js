@@ -51,8 +51,8 @@ function ($,
 			hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 			intersections: intersections,
 			intersectionSorter: new QuickSort (intersections, function (lhs, rhs)
-         {
-            return lhs .point .z > rhs .point .z;
+			{
+				return lhs .point .z > rhs .point .z;
 			}),
 			getTypeName: function ()
 			{
@@ -78,8 +78,8 @@ function ($,
 					case TraverseType .NAVIGATION:
 					case TraverseType .COLLISION:
 					{
-						//if (this .getGeometry ())
-						//	this .getCurrentLayer () .addCollision (this);
+						if (this .getGeometry ())
+							this .getCurrentLayer () .addCollision (this);
 
 						break;
 					}

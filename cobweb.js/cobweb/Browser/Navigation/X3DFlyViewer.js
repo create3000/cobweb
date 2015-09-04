@@ -39,8 +39,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 	
 	function X3DFlyViewer (executionContext)
 	{
-		console .log ("X3DFlyViewer");
-
 		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
 
 		var gl = this .getBrowser () .getContext ();
@@ -161,7 +159,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 						orientation = new Rotation4 (toVector, this .fromVector) .multRight (orientation);
 						orientation .multRight (viewpoint .straightenHorizon (orientation));
 
-						viewpoint .orientationOffset_ = viewpoint .getOrentation () .inverse () .multRight (orientation);
+						viewpoint .orientationOffset_ = viewpoint .getOrientation () .inverse () .multRight (orientation);
 
 						this .fromVector .assign (toVector);
 					}
@@ -259,7 +257,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var translation = this .getTranslationOffset (Vector3 .multiply (this .direction, speedFactor));
 
-			viewpoint .positionOffset_ = this .getActiveLayer () .getConstrainedTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
+			viewpoint .positionOffset_ = this .getActiveLayer () .constrainTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
 
 			// Rotation
 
@@ -298,7 +296,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector));
 				translation = orientation .multVecRot (this .direction .copy () .multiply (speedFactor));
 
-			viewpoint .positionOffset_ = this .getActiveLayer () .getConstrainedTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
+			viewpoint .positionOffset_ = this .getActiveLayer () .constrainTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
 
 			this .startTime = now;
 		},

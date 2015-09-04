@@ -81,6 +81,7 @@ function ($,
 				this .vertices    = [ ];
 				this .vertexCount = 0;
 
+				this .primitiveMode   = gl .TRIANGLES;
 				this .frontFace       = gl .CCW;
 				this .colorBuffer     = gl .createBuffer ();
 				this .texCoordBuffers = [ ];
@@ -116,6 +117,10 @@ function ($,
 			getMatrix: function ()
 			{
 				return Matrix4 .Identity;
+			},
+			setPrimitiveMode: function (value)
+			{
+				this .primitiveMode = value;
 			},
 			setSolid: function (value)
 			{
@@ -429,6 +434,33 @@ function ($,
 					if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
 					gl .disableVertexAttribArray (shader .vertex);
 				}
+			},
+			collision: function (shader)
+			{
+				var
+					browser = this .getBrowser (),
+					gl      = browser .getContext ();
+
+				// Setup vertex attributes.
+
+				gl .enableVertexAttribArray (shader .vertex);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+				// Draw depending on wireframe, solid and transparent.
+
+				if (this .isLineGeometry ())
+					gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
+
+				else
+				{
+					gl .frontFace (gl .CCW);
+					gl .enable (gl .CULL_FACE);
+
+					gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
+				}
+
+				gl .disableVertexAttribArray (shader .vertex);
 			},
 			intersectsLine: function (line, intersections)
 			{
