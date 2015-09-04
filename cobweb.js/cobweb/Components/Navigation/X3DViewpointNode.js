@@ -119,9 +119,17 @@ function ($,
 			{
 				layer .getViewpointStack () .remove (this);
 			},
+			getPosition: function ()
+			{
+				return this .position_ .getValue () .copy ();
+			},
 			getUserPosition: function ()
 			{
 				return Vector3 .add (this .position_ .getValue (), this .positionOffset_ .getValue ());
+			},
+			getOrientation: function ()
+			{
+				return this .orientation_ .getValue () .copy ();
 			},
 			getUserOrientation: function ()
 			{

@@ -8,6 +8,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -16,7 +17,8 @@ function ($,
           X3DViewpointNode, 
           X3DConstants,
           Camera,
-          Vector3)
+          Vector3,
+          Matrix4)
 {
 	with (Fields)
 	{
@@ -25,6 +27,8 @@ function ($,
 			X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Viewpoint);
+
+			this .projectionMatrix = new Matrix4 ();
 		}
 
 		Viewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -77,7 +81,7 @@ function ($,
 			},
 			getProjectionMatrix: function (zNear, zFar, viewport)
 			{
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport);
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
 			},
 		});
 

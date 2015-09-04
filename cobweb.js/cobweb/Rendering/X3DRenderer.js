@@ -74,6 +74,10 @@ function (TraverseType,
 				context .fog      = this .getFog ();
 			}
 		},
+		getDistance: function ()
+		{
+			return 1000000;
+		},
 		render: function (type)
 		{
 			this .numOpaqueShapes      = 0;

@@ -4,9 +4,11 @@ define ([
 	"cobweb/Browser/Navigation/X3DViewer",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Camera",
 	"jquery-mousewheel",
 ],
-function ($, X3DViewer, Vector3, Rotation4)
+function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 {
 	var
 		SPEED_FACTOR           = 0.007,
@@ -23,11 +25,25 @@ function ($, X3DViewer, Vector3, Rotation4)
 		yAxis = new Vector3 (0, 1, 0),
 		zAxis = new Vector3 (0, 0, 1);
 
+	var
+		black = new Float32Array ([0, 0, 0]),
+		white = new Float32Array ([1, 1, 1]);
+
+	var
+		fromPoint = new Vector3 (0, 0, 0),
+		toPoint   = new Vector3 (0, 0, 0);
+	
+	var
+		MOVE = 0,
+		PAN  = 1;
+	
 	function X3DFlyViewer (executionContext)
 	{
 		console .log ("X3DFlyViewer");
 
 		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+
+		var gl = this .getBrowser () .getContext ();
 
 		this .fromVector          = new Vector3 (0, 0, 0);
 		this .toVector            = new Vector3 (0, 0, 0);
@@ -36,6 +52,14 @@ function ($, X3DViewer, Vector3, Rotation4)
 		this .destinationRotation = new Rotation4 (0, 0, 1, 0);
 		this .startTime           = 0;
 		this .button              = -1;
+		this .lineBuffer          = gl .createBuffer ();
+		this .lineCount           = 2;
+		this .lineVertices        = new Array (this .lineCount * 4);
+		this .lineArray           = new Float32Array (this .lineVertices);
+
+		this .projectionMatrix      = new Matrix4 ();;
+		this .projectionMatrixArray = new Float32Array (this .projectionMatrix);
+		this .modelViewMatrixArray  = new Float32Array (this .projectionMatrix);
 	}
 
 	X3DFlyViewer .prototype = $.extend (Object .create (X3DViewer .prototype),
@@ -53,8 +77,6 @@ function ($, X3DViewer, Vector3, Rotation4)
 		mousedown: function (event)
 		{
 			this .button = event .button;
-
-			this .getBrowser () .addBrowserEvent ();
 
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
@@ -85,7 +107,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 						this .direction  .set (0, 0, 0);
 
 						if (this .getBrowser () .getBrowserOption ("Rubberband"))
-							this .getBrowser () .finished () .addInterest (this, "display");
+							this .getBrowser () .finished () .addInterest (this, "display", MOVE);
 					}
 
 					break;
@@ -99,6 +121,10 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 					this .fromVector .set (x, -y, 0);
 					this .toVector   .assign (this .fromVector);
+
+					if (this .getBrowser () .getBrowserOption ("Rubberband"))
+						this .getBrowser () .finished () .addInterest (this, "display", PAN);
+					
 					break;
 				}
 			}
@@ -135,7 +161,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 						orientation = new Rotation4 (toVector, this .fromVector) .multRight (orientation);
 						orientation .multRight (viewpoint .straightenHorizon (orientation));
 
-						viewpoint .orientationOffset_ = Rotation4 .inverse (viewpoint .orientation_ .getValue ()) .multRight (orientation);
+						viewpoint .orientationOffset_ = viewpoint .getOrentation () .inverse () .multRight (orientation);
 
 						this .fromVector .assign (toVector);
 					}
@@ -166,7 +192,40 @@ function ($, X3DViewer, Vector3, Rotation4)
 		},
 		mousewheel: function (event)
 		{
-			console .log ("mousewheel");
+			// Stop event propagation.
+			event .preventDefault ();
+
+			// Determine scroll direction.
+
+			var direction = 0;
+
+			// IE & Opera
+			if (event .originalEvent .wheelDelta)
+				direction = -event .originalEvent .wheelDelta / 120;
+
+			// Mozilla
+			else if (event .originalEvent .detail)
+				direction = event .originalEvent .detail / 3;
+
+			// Change viewpoint position.
+
+			var viewpoint = this .getActiveViewpoint ();
+
+			viewpoint .transitionStop ();
+
+			if (direction > 0)
+			{
+				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
+				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (-1, 0, 0)), ROLL_ANGLE));
+				this .addRoll ();
+			}
+
+			else if (direction < 0)
+			{
+				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
+				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (1, 0, 0)), ROLL_ANGLE));
+				this .addRoll ();
+			}
 		},
 		fly: function ()
 		{
@@ -200,7 +259,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 			var translation = this .getTranslationOffset (Vector3 .multiply (this .direction, speedFactor));
 
-			viewpoint .positionOffset_ = this .getTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
+			viewpoint .positionOffset_ = this .getActiveLayer () .getConstrainedTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
 
 			// Rotation
 
@@ -219,35 +278,42 @@ function ($, X3DViewer, Vector3, Rotation4)
 		},
 		pan: function ()
 		{
+			var
+				now = performance .now (),
+				dt  = (now - this .startTime) / 1000;
 
+			var
+				navigationInfo = this .getNavigationInfo (),
+				viewpoint      = this .getActiveViewpoint (),
+				upVector       = viewpoint .getUpVector ();
+
+			var speedFactor = 1;
+
+			speedFactor *= navigationInfo .speed_ .getValue ();
+			speedFactor *= viewpoint .getSpeedFactor ();
+			speedFactor *= this .getBrowser () .hasShiftKey () ? PAN_SHIFT_SPEED_FACTOR : PAN_SPEED_FACTOR;
+			speedFactor *= dt;
+
+			var
+				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector));
+				translation = orientation .multVecRot (this .direction .copy () .multiply (speedFactor));
+
+			viewpoint .positionOffset_ = this .getActiveLayer () .getConstrainedTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
+
+			this .startTime = now;
 		},
 		roll: function ()
 		{
-
-		},
-		getTranslation: function (translation)
-		{
-			return translation;
-
-			/*
-			// Apply collision to translation.
-
 			var
-				navigationInfo  = this .getNavigationInfo (),
-				collisionRadius = navigationInfo .getCollisionRadius ();
+				now          = performance .now (),
+				elapsedTime  = (now - this .startTime) / 1000;
 
-			// Get width and height of camera
+			if (elapsedTime > ROLL_TIME)
+				return this .disconnect ();
 
-			var
-				width  = collisionRadius * 2,
-				height = collisionRadius + navigationInfo .getAvatarHeight () - navigationInfo .getStepHeight ();
+			var viewpoint = this .getActiveViewpoint ();
 
-			// Get position offset
-
-			var positionOffset = height / 2 - collisionRadius;
-
-			return this .getBrowser () .getActiveLayer () .getTranslation (new Vector3 (0, -positionOffset, 0), width, height, translation);
-			*/
+			viewpoint .orientationOffset_ = Rotation4 .slerp (this .sourceRotation, this .destinationRotation, elapsedTime / ROLL_TIME);
 		},
 		addFly: function ()
 		{
@@ -279,60 +345,100 @@ function ($, X3DViewer, Vector3, Rotation4)
 			
 			this .startTime = performance .now ();
 		},
-		display: function ()
-		{/*
-			try
+		display: function (interest, type)
+		{
+			// Configure HUD
+
+			var
+				browser  = this .getBrowser (),
+				viewport = browser .getViewport (),
+				width    = viewport [2];
+				height   = viewport [3];
+
+			Camera .ortho (0, width, 0, height, -1, 1, this .projectionMatrix);
+
+			this .projectionMatrixArray .set (this .projectionMatrix);
+
+			// Display Rubberband.
+
+			if (type === MOVE)
 			{
-				// Configure HUD
-
-				const auto & viewport = getBrowser () -> getRectangle ();
-				const int    width    = viewport [2];
-				const int    height   = viewport [3];
-
-				const Matrix4d projection = ortho <float> (0, width, 0, height, -1, 1);
-
-				glDisable (GL_DEPTH_TEST);
-
-				glMatrixMode (GL_PROJECTION);
-				glLoadMatrixd (projection .data ());
-				glMatrixMode (GL_MODELVIEW);
-
-				// Display Rubberband.
-
-				glLoadIdentity ();
-
-				const Vector3d fromPoint (fromVector .x (), height - fromVector .z (), 0);
-				const Vector3d toPoint   (toVector   .x (), height - toVector   .z (), 0);
-
-				// Draw a black and a white line.
-				glLineWidth (2);
-				glColor3f (0, 0, 0);
-
-				glBegin (GL_LINES);
-				glVertex3dv (fromPoint .data ());
-				glVertex3dv (toPoint   .data ());
-				glEnd ();
-
-				glLineWidth (1);
-				glColor3f (1, 1, 1);
-
-				glBegin (GL_LINES);
-				glVertex3dv (fromPoint .data ());
-				glVertex3dv (toPoint   .data ());
-				glEnd ();
-
-				glEnable (GL_DEPTH_TEST);
+				fromPoint .set (this .fromVector .x, height - this .fromVector .z, 0);
+				toPoint   .set (this .toVector   .x, height - this .toVector   .z, 0);
 			}
-			catch (const std::domain_error &)
+			else
 			{
-				// unProjectPoint is not posible
+				fromPoint .set (this .fromVector .x, height + this .fromVector .y, 0);
+				toPoint   .set (this .toVector   .x, height + this .toVector   .y, 0);
 			}
-		*/},
+
+			this .transfer (fromPoint, toPoint);
+
+			var
+				gl     = browser .getContext (),
+				shader = browser .getLineShader ();
+
+			shader .use ();
+
+			gl .uniform1i (shader .fogType,       0);
+			gl .uniform1i (shader .colorMaterial, false);
+			gl .uniform1i (shader .lighting,      true);
+
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+			
+			gl .disable (gl .DEPTH_TEST);
+
+			// Draw a black and a white line.
+			gl .lineWidth (2);
+			gl .uniform3fv (shader .emissiveColor, black);
+			gl .uniform1f  (shader .transparency,  0);
+
+			gl .enableVertexAttribArray (shader .vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .lineBuffer);
+			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .drawArrays (gl .LINES, 0, this .lineCount);
+
+			gl .lineWidth (1);
+			gl .uniform3fv (shader .emissiveColor, white);
+
+			gl .drawArrays (gl .LINES, 0, this .lineCount);
+			gl .disableVertexAttribArray (shader .vertex);
+			gl .enable (gl .DEPTH_TEST);
+		},
+		transfer: function (fromPoint, toPoint)
+		{
+			var
+				gl           = this .getBrowser () .getContext (),
+				lineVertices = this .lineVertices;
+
+			lineVertices [0] = fromPoint .x;
+			lineVertices [1] = fromPoint .y;
+			lineVertices [2] = fromPoint .z;
+			lineVertices [3] = 1;
+
+			lineVertices [4] = toPoint .x;
+			lineVertices [5] = toPoint .y;
+			lineVertices [6] = toPoint .z;
+			lineVertices [7] = 1;
+
+			this .lineArray .set (lineVertices);
+
+			// Transfer line.
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .lineBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, this .lineArray, gl .STATIC_DRAW);
+		},
 		disconnect: function ()
 		{
-			this .getBrowser () .prepareEvents () .removeInterest (this, "fly");
-			this .getBrowser () .prepareEvents () .removeInterest (this, "pan");
-			this .getBrowser () .prepareEvents () .removeInterest (this, "roll");
+			var browser = this .getBrowser ();
+
+			browser .addBrowserEvent ();
+
+			browser .prepareEvents () .removeInterest (this, "fly");
+			browser .prepareEvents () .removeInterest (this, "pan");
+			browser .prepareEvents () .removeInterest (this, "roll");
+			browser .finished ()      .removeInterest (this, "display");
 
 			this .startTime = 0;
 		},

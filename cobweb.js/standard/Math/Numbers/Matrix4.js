@@ -112,6 +112,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		set1: function (r, c, value)
 		{
 			this [r * this .order + c] = value;
+
+			return this;
 		},
 		get1: function (r, c)
 		{
@@ -251,6 +253,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 					break;
 				}
 			}
+
+			return this;
 		},
 		get: function (translation, rotation, scale, scaleOrientation, center)
 		{

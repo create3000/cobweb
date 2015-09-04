@@ -5,7 +5,7 @@ define ([
 function (Matrix4)
 {
 	return {
-		frustum: function (l, r, b, t, n, f)
+		frustum: function (l, r, b, t, n, f, matrix)
 		{
 			var
 				r_l = r - l,
@@ -20,12 +20,12 @@ function (Matrix4)
 				E = n_2 / r_l,
 				F = n_2 / t_b;
 
-			return new Matrix4 (E, 0, 0, 0,
+			return matrix .set (E, 0, 0, 0,
 			                    0, F, 0, 0,
 			                    A, B, C, -1,
 			                    0, 0, D, 0);
 		},
-		perspective: function (fieldOfView, zNear, zFar, viewport)
+		perspective: function (fieldOfView, zNear, zFar, viewport, matrix)
 		{
 			var
 				width  = viewport [2],
@@ -35,15 +35,15 @@ function (Matrix4)
 			if (width > height)
 			{
 				var aspect = width * ratio / height;
-				return this .frustum (-aspect, aspect, -ratio, ratio, zNear, zFar);
+				return this .frustum (-aspect, aspect, -ratio, ratio, zNear, zFar, matrix);
 			}
 			else
 			{
 				var aspect = height * ratio / width;
-				return this .frustum (-ratio, ratio, -aspect, aspect, zNear, zFar);
+				return this .frustum (-ratio, ratio, -aspect, aspect, zNear, zFar, matrix);
 			}
 		},
-		ortho: function (l, r, b, t, n, f)
+		ortho: function (l, r, b, t, n, f, matrix)
 		{
 			var
 				r_l = r - l,
@@ -57,7 +57,7 @@ function (Matrix4)
 				E = -(t + b) / t_b,
 				F = -(f + n) / f_n;
 
-			return new Matrix4 (A, 0, 0, 0,
+			return matrix .set (A, 0, 0, 0,
 			                    0, B, 0, 0,
 			                    0, 0, C, 0,
 			                    D, E, F, 1);

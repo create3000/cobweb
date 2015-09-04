@@ -20,6 +20,10 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		initialize: function ()
 		{
 		},
+		getActiveLayer: function ()
+		{
+			return this .getBrowser () .getActiveLayer ();
+		},
 		getViewport: function ()
 		{
 			return this .getBrowser () .getActiveLayer () .getViewport ();
@@ -36,11 +40,12 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		{
 			try
 			{
-				var viewport       = this .getViewport () .getRectangle ();
-				var navigationInfo = this .getNavigationInfo ();
-				var viewpoint      = this .getActiveViewpoint ();
-				var projection     = viewpoint .getProjectionMatrix (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (viewpoint), viewport);
-				var modelview      = new Matrix4 (); // Use identity
+				var
+					viewport       = this .getViewport () .getRectangle (),
+					navigationInfo = this .getNavigationInfo (),
+					viewpoint      = this .getActiveViewpoint (),
+					projection     = viewpoint .getProjectionMatrix (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (viewpoint), viewport),
+					modelview      = new Matrix4 (); // Use identity
 
 				// Far plane point
 				var far = ViewVolume .unProjectPoint (x, this .getBrowser () .getViewport () [3] - y, 0.9, modelview, projection, viewport);

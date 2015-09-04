@@ -171,7 +171,6 @@ function ($, X3DViewer, Vector3, Rotation4)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-
 			event .preventDefault ();
 
 			// Determine scroll direction.
@@ -220,7 +219,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 
 			this .orientationOffset .assign (viewpoint .orientationOffset_ .getValue ());
 
-			return Rotation4 .inverse (viewpoint .orientation_ .getValue ()) .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
+			return viewpoint .getOrientation () .inverse () .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
 		},
 		spin: function ()
 		{

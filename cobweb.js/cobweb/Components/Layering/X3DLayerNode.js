@@ -14,6 +14,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Geometry/Line3",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DNode,
@@ -28,9 +29,13 @@ function ($,
           TraverseType,
           X3DConstants,
           Line3,
-          Vector3)
+          Vector3,
+          Matrix4)
 {
-	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+	var
+		positionOffset   = new Vector3 (0, 0, 0),
+		projectionMatrix = new Matrix4 (),
+		line             = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
 	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
 	{
@@ -167,6 +172,98 @@ function ($,
 		getHitRay: function ()
 		{
 			return this .hitRay;
+		},
+		getConstrainedTranslation: function (translation)
+		{
+			var
+				navigationInfo  = this .getNavigationInfo (),
+				distance        = this .getDistance (translation),
+				length          = translation .abs ();
+
+			var
+				zFar            = navigationInfo .getFarPlane (this .getViewpoint ()),
+				collisionRadius = navigationInfo .getCollisionRadius ();
+
+			if (zFar - distance > 0) // Are there polygons under the viewer
+			{
+				distance -= collisionRadius;
+
+				if (distance > 0)
+				{
+					// Move
+
+					if (length > distance)
+					{
+						// Collision: The wall has reached.
+						return translation .normalize () .multiplay (distance);
+					}
+
+					return translation;
+				}
+
+				// Collision
+				return translation .set (0, 0, 0);
+			}
+
+			return translation;
+		},
+		getDistance: function (translation)
+		{
+			try
+			{
+				// Apply collision to translation.
+
+				var
+					viewpoint       = this .getViewpoint (),
+					navigationInfo  = this .getNavigationInfo (),
+					collisionRadius = navigationInfo .getCollisionRadius (),
+					zNear           = navigationInfo .getNearPlane (),
+					zFar            = navigationInfo .getFarPlane (getViewpoint ());
+
+				// Get width and height of camera
+
+				var
+					width     = collisionRadius * 2,
+					height    = collisionRadius + navigationInfo .getAvatarHeight () - navigationInfo .getStepHeight (),
+					width1_2  = width / 2,
+					height1_2 = height / 2;
+
+				// Get position offset
+
+				positionOffset .set (0, -height / 2 - collisionRadius, 0);
+	
+				// Reshape camera
+
+				Camera .ortho (-width1_2, width1_2, -height1_2, height1_2, zNear, zFar, projectionMatrix);
+
+				this .getBrowser () .setProjectionMatrix (projectionMatrix);
+
+				// Translate camera
+
+				var
+					localOrientation = Rotation4 .inverse (viewpoint .orientation_ .getValue ()) .multRight (viewpoint .getOrientation ()),
+					modelViewMatrix  = viewpoint .getParentMatrix () .copy ();
+
+				modelViewMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
+				modelViewMatrix .rotate (new Rotation4 (zAxis, Vector3 .negate (translation)) .multRight (localOrientation));
+				modelViewMatrix .inverse ();
+
+				this .getBrowser () .getModelViewMatrix () .set (modelViewMatrix);
+
+				// Traverse and get distance
+
+				this .getBrowser () .getLayers () .push (this);
+				this .currentViewport .push ();
+
+				//this .traverse (TraverseType .NAVIGATION);
+
+				this .currentViewport .pop ();
+				this .getBrowser () .getLayers () .pop ();
+
+				return X3DRenderer .prototype .getDistance .call (this);
+			}
+			catch (error)
+			{ }
 		},
 		set_viewport__: function ()
 		{
