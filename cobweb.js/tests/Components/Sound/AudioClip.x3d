@@ -5,13 +5,16 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sat, 15 Aug 2015 18:52:55 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 15 Aug 2015 18:52:55 GMT'/>
+    <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
+    <meta name='modified' content='Fri, 04 Sep 2015 09:48:49 GMT'/>
   </head>
   <Scene>
-    <Sound>
+    <Sound
+        maxBack='20'
+        maxFront='20'>
       <AudioClip DEF='Song'
-          url='"04. Like A Virgin.mp3"'/>
+          url='"04. Like A Virgin.mp3"'
+          startTime='1441360100.29156'/>
     </Sound>
     <Transform DEF='Max'
         scale='10 10 10'>
@@ -39,7 +42,7 @@
           <Material/>
         </Appearance>
         <Text DEF='ElapsedTime'
-            string='"0"'/>
+            string='"28.9"'/>
       </Shape>
     </Transform>
     <Transform

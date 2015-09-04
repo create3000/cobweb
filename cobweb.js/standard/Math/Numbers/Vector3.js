@@ -145,6 +145,10 @@ function ($, Algorithm)
 			this .z = Algorithm .lerp (this .z, dest .z, t);
 			return this;
 		},
+		slerp: function (destination, t)
+		{
+			return Algorithm .slerp (this, destination, t);
+		},
 		min: function (vector)
 		{
 			for (var i = 0; i < arguments .length; ++ i)
@@ -309,7 +313,7 @@ function ($, Algorithm)
 		},
 		slerp: function (source, destination, t)
 		{
-			return Algorithm .slerp (new Vector3 (source .x, source .y, source .z), destination, t);
+			return Algorithm .slerp (source, destination, t);
 		},
 		min: function (lhs, rhs)
 		{
