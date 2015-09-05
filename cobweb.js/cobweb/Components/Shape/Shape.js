@@ -68,80 +68,72 @@ function ($,
 			},
 			traverse: function (type)
 			{
-				switch (type)
+				if (this .getGeometry ())
 				{
-					case TraverseType .POINTER:
+					switch (type)
 					{
-						this .pointer ();
-						break;
-					}
-					case TraverseType .NAVIGATION:
-					case TraverseType .COLLISION:
-					{
-						if (this .getGeometry ())
+						case TraverseType .POINTER:
+							this .pointer ();
+							break;
+
+						case TraverseType .NAVIGATION:
+						case TraverseType .COLLISION:
 							this .getCurrentLayer () .addCollision (this);
+							break;
 
-						break;
-					}
-					case TraverseType .DISPLAY:
-					{
-						if (this .getGeometry ())
+						case TraverseType .DISPLAY:
 							this .getCurrentLayer () .addShape (this);
-
-						break;
+							break;
 					}
 				}
 			},
 			pointer: function ()
 			{
-				if (this .getGeometry ())
+				try
 				{
-					try
+					if (this .getGeometry () .isLineGeometry ())
+						return;
+
+					var
+						browser            = this .getBrowser (),
+						modelViewMatrix    = browser .getModelViewMatrix () .get (),
+						invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
+						intersections      = this .intersections;
+
+					this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
+
+					if (this .getGeometry () .intersectsLine (this .hitRay, intersections))
 					{
-						if (this .getGeometry () .isLineGeometry ())
-							return;
+						// Finally we have intersections and must now find the closest hit in front of the camera.
 
-						var
-							browser            = this .getBrowser (),
-							modelViewMatrix    = browser .getModelViewMatrix () .get (),
-							invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
-							intersections      = this .intersections;
+						// Transform hitPoints to absolute space.
+						for (var i = 0; i < intersections .length; ++ i)
+							modelViewMatrix .multVecMatrix (intersections [i] .point);
 
-						this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
+						this .intersectionSorter .sort (0, intersections .length);
 
-						if (this .getGeometry () .intersectsLine (this .hitRay, intersections))
+						// Find first point that is not greater than near plane;
+						var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
+						                                   function (lhs, rhs)
+						                                   {
+						                                      return lhs .point .z > rhs;
+						                                   });
+
+						// Are there intersections before the camera.?
+						if (index !== intersections .length)
 						{
-							// Finally we have intersections and must now find the closest hit in front of the camera.
+							// Transform hitNormal to absolute space.
+							invModelViewMatrix .multMatrixDir (intersections [index] .normal) .normalize ();
 
-							// Transform hitPoints to absolute space.
-							for (var i = 0; i < intersections .length; ++ i)
-								modelViewMatrix .multVecMatrix (intersections [i] .point);
-
-							this .intersectionSorter .sort (0, intersections .length);
-
-							// Find first point that is not greater than near plane;
-							var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
-							                                   function (lhs, rhs)
-							                                   {
-							                                      return lhs .point .z > rhs;
-							                                   });
-
-							// Are there intersections before the camera.?
-							if (index !== intersections .length)
-							{
-								// Transform hitNormal to absolute space.
-								invModelViewMatrix .multMatrixDir (intersections [index] .normal) .normalize ();
-
-								browser .addHit (intersections [index], this .getCurrentLayer ());
-							}
-
-							intersections .length = 0;
+							browser .addHit (intersections [index], this .getCurrentLayer ());
 						}
+
+						intersections .length = 0;
 					}
-					catch (error)
-					{
-						//console .log (error);
-					}
+				}
+				catch (error)
+				{
+					//console .log (error);
 				}
 			},
 			draw: function (context)

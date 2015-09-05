@@ -11,8 +11,8 @@ define ([
 	"text!cobweb/Browser/Rendering/Gouraud.fs",
 	"text!cobweb/Browser/Rendering/Phong.vs",
 	"text!cobweb/Browser/Rendering/Phong.fs",
-	"text!cobweb/Browser/Rendering/Solid.vs",
-	"text!cobweb/Browser/Rendering/Solid.fs",
+	"text!cobweb/Browser/Rendering/Depth.vs",
+	"text!cobweb/Browser/Rendering/Depth.fs",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
@@ -26,8 +26,8 @@ function (Fields,
           gouraudFS,
           phongVS,
           phongFS,
-          solidVS,
-          solidFS,
+          depthVS,
+          depthFS,
           Vector4,
           Matrix4,
           MatrixStack)
@@ -247,12 +247,12 @@ function (Fields,
 		{
 			return this .shader;
 		},
-		getSolidShader: function ()
+		getDepthShader: function ()
 		{
-			if (! this .solidShader)
-				this .solidShader = getShader (this, solidVS, solidFS);
+			if (! this .depthShader)
+				this .depthShader = getShader (this, depthVS, depthFS);
 			
-			return this .solidShader;
+			return this .depthShader;
 		},
 		reshape: function ()
 		{

@@ -1,19 +1,22 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="4" Column="4" />
-      <File FileName="cobweb.js/cobweb/Components/Layering/Viewport.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserOptions.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Configuration/SupportedNodes.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/tests/Examples/Snake/snake.x3d" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Text/X3DFontStyleNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Text/Text.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Text/FontStyle.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Core/RenderingProperties.js" Line="5" Column="5" />
+      <File FileName="cobweb.js/cobweb.html" Line="41" Column="41" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DFlyViewer.js" Line="43" Column="43" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/FlyViewer.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/WalkViewer.js" Line="42" Column="42" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="73" Column="73" />
+      <File FileName="cobweb.js/cobweb/Components/Navigation/Viewpoint.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Navigation/X3DViewpointNode.js" Line="30" Column="30" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="43" Column="43" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/Shape.js" Line="48" Column="48" />
+      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DGroupingNode.js" Line="6" Column="6" />
+      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="8" Column="8" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="17" Column="17" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Solid.fs" Line="23" Column="23" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Solid.vs" Line="70" Column="70" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -261,6 +261,7 @@ function ($,
 				modelViewMatrix .inverse ();
 
 				browser .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				browser .getModelViewMatrix () .identity ();
 
 				// Traverse and get distance
 
