@@ -6,6 +6,8 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -13,7 +15,9 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGroupingNode, 
-          X3DSensorNode, 
+          X3DSensorNode,
+          X3DCast,
+          TraverseType,
           X3DConstants)
 {
 	with (Fields)
@@ -59,11 +63,53 @@ function ($,
 			initialize: function ()
 			{
 				X3DGroupingNode .prototype .initialize .call (this);
-				X3DSensorNode   .prototype .initialize .call (this);
+				//X3DSensorNode   .prototype .initialize .call (this); // We cannot only call the base of a *Object.
+	
+				this .proxy_ .addInterest (this, "set_proxy__");
+
+				this .set_proxy__ ();
+			},
+			set_active: function (value)
+			{
+				if (this .isActive_ .getValue () !== value)
+				{
+					this .isActive_ = value;
+
+					if (value)
+						this .collideTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			},
+			set_proxy__: function ()
+			{
+			   this .proxyNode = X3DCast (X3DConstants .X3DChildNode, this .proxy_);
 			},
 			traverse: function (type)
 			{
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				switch (type)
+				{
+					case TraverseType .NAVIGATION:
+					case TraverseType .COLLISION:
+					{
+						if (this .enabled_ .getValue ())
+						{
+							//this .getCurrentLayer () .getCollisions () .push (this);
+
+							if (this .proxyNode)
+								this .proxyNode .traverse (type);
+
+							else
+								X3DGroupingNode .prototype .traverse .call (this, type);
+
+							//this .getCurrentLayer () .getCollisions () .pop ();
+						}
+
+						break;
+					}
+
+					default:
+						X3DGroupingNode .prototype .traverse .call (this, type);
+						break;
+				}
 			},
 		});
 
