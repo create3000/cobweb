@@ -2267,6 +2267,7 @@
     <None Include="tests\Components\Shape\Connectors.x3d" />
     <None Include="cobweb\Browser\Rendering\Depth.fs" />
     <None Include="cobweb\Browser\Rendering\Depth.vs" />
+    <None Include="cobweb\Rendering\DepthBuffer.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
