@@ -5,10 +5,6 @@ define (function ()
 	{
 		var gl = browser .getContext ();
 	
-		if (! gl .getExtension ("WEBGL_depth_texture"))
-		{
-		}
-
 		this .browser = browser;
 		this .width   = width;
 		this .height  = height;
@@ -43,21 +39,11 @@ define (function ()
 		gl .framebufferRenderbuffer (gl .FRAMEBUFFER, gl .DEPTH_ATTACHMENT, gl .RENDERBUFFER, depthBuffer);
 
 		// Always check that our framebuffer is ok
+
 		if (gl .checkFramebufferStatus (gl .FRAMEBUFFER) !== gl .FRAMEBUFFER_COMPLETE)
 			throw new Error ("Couldn't create frame buffer.");
 
 		gl .bindFramebuffer (gl .FRAMEBUFFER, null);
-	}
-
-	function unpack (r, g, b)
-	{
-		var f = 0;
-
-		f += r / 255;
-		f += g / 65025;
-		f += b / 16581375;
-
-		return f;
 	}
 
 	DepthBuffer .prototype =
@@ -78,11 +64,7 @@ define (function ()
 				z = Math .min (z, unpack (array [i], array [i + 1], array [i + 2]));
 			}
 
-			var distance = zNear + (zFar - zNear) * z;
-
-			//console .log (distance);
-
-			return distance;
+			return zNear + (zFar - zNear) * z;
 		},
 		bind: function ()
 		{
@@ -102,6 +84,19 @@ define (function ()
 			gl .bindFramebuffer (gl .FRAMEBUFFER, null);
 		},
 	};
+
+	// Unpacks a floating point number from three component integer color.
+	// See Depth.vs vertex shader for pack.
+	function unpack (r, g, b)
+	{
+		var f = 0;
+
+		f += r / 255;
+		f += g / 65025;
+		f += b / 16581375;
+
+		return f;
+	}
 
 	return DepthBuffer;
 });

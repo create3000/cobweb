@@ -105,7 +105,6 @@ function ($,
 
 						break;
 					}
-
 					default:
 						X3DGroupingNode .prototype .traverse .call (this, type);
 						break;

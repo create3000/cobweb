@@ -195,11 +195,11 @@ function ($, X3DViewer, Vector3, Rotation4)
 				step           = this .getDistanceToCenter () .multiply (SCROLL_FACTOR),
 				positionOffset = viewpoint .getUserOrientation () .multVecRot (new Vector3 (0, 0, step .abs ()));
 
-			if (direction > 0)
-				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .add (positionOffset));
-
-			else if (direction < 0)
+			if (direction < 0)
 				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .subtract (positionOffset));		
+			
+			else if (direction > 0)
+				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .add (positionOffset));
 		},
 		getPositionOffset: function ()
 		{

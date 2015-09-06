@@ -211,14 +211,14 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			viewpoint .transitionStop ();
 
-			if (direction > 0)
+			if (direction < 0)
 			{
 				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
 				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (-1, 0, 0)), ROLL_ANGLE));
 				this .addRoll ();
 			}
 
-			else if (direction < 0)
+			else if (direction > 0)
 			{
 				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
 				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (1, 0, 0)), ROLL_ANGLE));

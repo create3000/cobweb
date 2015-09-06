@@ -454,9 +454,7 @@ function ($,
 
 				else
 				{
-					gl .frontFace (gl .CCW);
-					gl .enable (gl .CULL_FACE);
-
+					gl .disable (gl .CULL_FACE);
 					gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 				}
 

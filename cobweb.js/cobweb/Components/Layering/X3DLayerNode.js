@@ -196,7 +196,7 @@ function ($,
 				zFar            = navigationInfo .getFarPlane (this .getViewpoint ()),
 				collisionRadius = navigationInfo .getCollisionRadius ();
 
-			if (zFar - distance > 0) // Are there polygons under the viewer
+			if (zFar - distance > 0) // Are there polygons before the viewer
 			{
 				distance -= collisionRadius;
 
@@ -206,7 +206,7 @@ function ($,
 
 					if (length > distance)
 					{
-						// Collision: The wall has reached.
+						// Collision: The wall is reached.
 						return translation .normalize () .multiply (distance);
 					}
 
@@ -233,17 +233,17 @@ function ($,
 					zNear           = navigationInfo .getNearPlane (),
 					zFar            = navigationInfo .getFarPlane (viewpoint);
 
-				// Get width and height of camera
+				// Determine width and height of camera
 
 				var
 					width     = collisionRadius * 2,
-					height    = collisionRadius + navigationInfo .getAvatarHeight () - navigationInfo .getStepHeight (),
+					height    = navigationInfo .getAvatarHeight () - navigationInfo .getStepHeight (),
 					width1_2  = width / 2,
 					height1_2 = height / 2;
 
 				// Get position offset
 
-				positionOffset .set (0, -height / 2 - collisionRadius, 0);
+				positionOffset .set (0, -height1_2, 0);
 	
 				// Reshape camera
 

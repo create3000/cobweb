@@ -2268,6 +2268,7 @@
     <None Include="cobweb\Browser\Rendering\Depth.fs" />
     <None Include="cobweb\Browser\Rendering\Depth.vs" />
     <None Include="cobweb\Rendering\DepthBuffer.js" />
+    <None Include="tests\Examples\Snake\MFInt32.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
