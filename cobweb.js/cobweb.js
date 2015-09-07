@@ -1,6 +1,6 @@
 
 // Temporary X3D before page load.
-if (! window .X3D)
+if (window .X3D === undefined)
 {
 	window .X3D = (function ()
 	{
