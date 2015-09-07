@@ -10,26 +10,39 @@ define ([
 ],
 function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 {
+	var
+		p1     = new Vector3 (0, 0, 0),
+		p2     = new Vector3 (0, 0, 0),
+		p3     = new Vector3 (0, 0, 0),
+		p4     = new Vector3 (0, 0, 0),
+		p5     = new Vector3 (0, 0, 0),
+		p6     = new Vector3 (0, 0, 0),
+		near   = new Vector3 (0, 0, 0),
+		far    = new Vector3 (0, 0, 0),
+		matrix = new Matrix4 (),
+		vin    = new Vector4 (0, 0, 0, 0);
+
 	function ViewVolume (projectionMatrix, viewport, scissor)
 	{
 		try
 		{
-			var x1 = scissor [0];
-			var x2 = scissor [0] + scissor [2];
-			var y1 = scissor [1];
-			var y2 = scissor [1] + scissor [3];
+			var
+				x1 = scissor [0],
+				x2 = scissor [0] + scissor [2],
+				y1 = scissor [1],
+				y2 = scissor [1] + scissor [3];
 
-			var matrix = Matrix4 .inverse (projectionMatrix);
+			matrix .assign (projectionMatrix) .inverse ();
 
 			this .viewport = viewport;
 			this .scissor  = scissor;
 
-			var p1 = ViewVolume .unProjectPointMatrix (x1, y2, 1, matrix, viewport);
-			var p2 = ViewVolume .unProjectPointMatrix (x1, y1, 1, matrix, viewport);
-			var p3 = ViewVolume .unProjectPointMatrix (x1, y1, 0, matrix, viewport);
-			var p4 = ViewVolume .unProjectPointMatrix (x2, y1, 0, matrix, viewport);
-			var p5 = ViewVolume .unProjectPointMatrix (x2, y2, 0, matrix, viewport);
-			var p6 = ViewVolume .unProjectPointMatrix (x2, y2, 1, matrix, viewport);
+			ViewVolume .unProjectPointMatrix (x1, y2, 1, matrix, viewport, p1),
+			ViewVolume .unProjectPointMatrix (x1, y1, 1, matrix, viewport, p2),
+			ViewVolume .unProjectPointMatrix (x1, y1, 0, matrix, viewport, p3),
+			ViewVolume .unProjectPointMatrix (x2, y1, 0, matrix, viewport, p4),
+			ViewVolume .unProjectPointMatrix (x2, y2, 0, matrix, viewport, p5),
+			ViewVolume .unProjectPointMatrix (x2, y2, 1, matrix, viewport, p6);
 
 			this .planes = [ ];
 			this .planes .push (new Plane3 (p4, Triangle3 .normal (p5, p4, p3)));  // front
@@ -90,19 +103,19 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 	$.extend (ViewVolume,
 	{
-		unProjectPoint: function (winx, winy, winz, modelview, projection, viewport)
+		unProjectPoint: function (winx, winy, winz, modelview, projection, viewport, point)
 		{
 			var matrix = Matrix4 .multRight (modelview, projection) .inverse ();
 
-			return this .unProjectPointMatrix (winx, winy, winz, matrix, viewport);
+			return this .unProjectPointMatrix (winx, winy, winz, matrix, viewport, point);
 		},
-		unProjectPointMatrix: function (winx, winy, winz, matrix, viewport)
+		unProjectPointMatrix: function (winx, winy, winz, matrix, viewport, point)
 		{
 			// Transformation of normalized coordinates between -1 and 1
-			var vin = new Vector4 ((winx - viewport [0]) / viewport [2] * 2 - 1,
-			                       (winy - viewport [1]) / viewport [3] * 2 - 1,
-			                       2 * winz - 1,
-			                       1);
+			vin .set ((winx - viewport [0]) / viewport [2] * 2 - 1,
+			          (winy - viewport [1]) / viewport [3] * 2 - 1,
+			          2 * winz - 1,
+			          1);
 
 			//Objects coordinates
 			matrix .multVecMatrix (vin);
@@ -112,26 +125,26 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			var d = 1 / vin .w;
 
-			return new Vector3 (vin .x * d, vin .y * d, vin .z * d);
+			return point .set (vin .x * d, vin .y * d, vin .z * d);
 		},
 		unProjectLine: function (winx, winy, modelview, projection, viewport)
 		{
-			var
-				matrix = Matrix4 .multRight (modelview, projection) .inverse (),
-				near   = ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport),
-				far    = ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport);
+			matrix .assign (modelview) .multRight (projection) .inverse ();
+
+			ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport, near);
+			ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport, far);
 
 			return new Line3 .Points (near, far);
 		},
-		projectPoint: function (point, modelview, projection, viewport)
+		projectPoint: function (point, modelview, projection, viewport, point)
 		{
-			var matrix = Matrix4 .multRight (modelview, projection);
+			matrix .assign (modelview) .multRight (projection);
 
-			return this .projectPointMatrix (point, matrix, viewport);
+			return this .projectPointMatrix (point, matrix, viewport, point);
 		},
-		projectPointMatrix: function (point, matrix, viewport)
+		projectPointMatrix: function (point, matrix, viewport, point)
 		{
-			var vin = new Vector4 (point .x, point .y, point .z, 1);
+			vin .set (point .x, point .y, point .z, 1);
 
 			matrix .multVecMatrix (vin);
 
@@ -140,21 +153,21 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			var d = 1 / vin .w;
 
-			return new Vector3 ((vin .x * d / 2 + 0.5) * viewport [2] + viewport [0],
-			                    (vin .y * d / 2 + 0.5) * viewport [3] + viewport [1],
-			                    (1 + vin .z * d) / 2);
+			return point .set ((vin .x * d / 2 + 0.5) * viewport [2] + viewport [0],
+			                   (vin .y * d / 2 + 0.5) * viewport [3] + viewport [1],
+			                   (1 + vin .z * d) / 2);
 		},
 		projectLine: function (line, modelview, projection, viewport)
 		{
-			var
-				matrix = Matrix4 .multRight (modelview, projection),
-				point1 = ViewVolume .projectPointMatrix (line .point, matrix, viewport),
-				point2 = ViewVolume .projectPointMatrix (Vector3 .multiply (line .direction, 1e9) .add (line .point), matrix, viewport);
+			matrix .assign (modelview) .multRight (projection);
+			
+			ViewVolume .projectPointMatrix (line .point, matrix, viewport, near);
+			ViewVolume .projectPointMatrix (Vector3 .multiply (line .direction, 1e9) .add (line .point), matrix, viewport, far);
 
-			point1 .z = 0;
-			point2 .z = 0;
+			near .z = 0;
+			far  .z = 0;
 
-			return new Line3 .Points (point1, point2);
+			return new Line3 .Points (near, far);
 		},
 	});
 

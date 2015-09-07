@@ -318,7 +318,6 @@ function ($,
 		traverse: function (type)
 		{
 			this .getBrowser () .getLayers () .push (this);
-			this .currentViewport .push ();
 
 			switch (type)
 			{
@@ -329,7 +328,7 @@ function ($,
 					this .camera ();
 					break;
 				case TraverseType .NAVIGATION:
-					this .render (type)
+					this .navigation ();
 					break;
 				case TraverseType .COLLISION:
 					this .collision ();
@@ -339,16 +338,19 @@ function ($,
 					break;
 			}
 
-			this .currentViewport .pop ();
 			this .getBrowser () .getLayers () .pop ();
+		},
+		navigation: function () // collision
+		{
+			this .currentViewport .push ();
+			this .render (TraverseType .NAVIGATION);
+			this .currentViewport .pop ();
 		},
 		pointer: function ()
 		{
 			if (this .isPickable_ .getValue ())
 			{
-				var
-					viewVolumes = this .getViewVolumeStack (),
-					viewVolume  = viewVolumes [viewVolumes .length - 1];
+				var viewport = this .currentViewport .getRectangle ();
 
 				if (this .getBrowser () .getSelectedLayer ())
 				{
@@ -357,15 +359,18 @@ function ($,
 				}
 				else
 				{
-					if (! this .getBrowser () .isPointerInRectangle (viewVolume .getScissor ()))
+					if (! this .getBrowser () .isPointerInRectangle (viewport))
 						return;
 				}
+
+				this .getBrowser () .setHitRay (viewport);
 
 				this .getViewpoint () .reshape ();
 				this .getViewpoint () .transform ();
 
-				this .getBrowser () .setHitRay (viewVolume .getScissor ());
+				this .currentViewport .push ();
 				this .collect (TraverseType .POINTER);
+				this .currentViewport .pop ();
 
 				this .getBrowser () .getGlobalLights () .length = 0;
 			}
@@ -379,7 +384,9 @@ function ($,
 			this .defaultBackground     .traverse (TraverseType .CAMERA);
 			this .defaultViewpoint      .traverse (TraverseType .CAMERA);
 
+			this .currentViewport .push ();
 			this .collect (TraverseType .CAMERA);
+			this .currentViewport .pop ();
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -392,8 +399,9 @@ function ($,
 		},
 		display: function (type)
 		{
-			var gl       = this .getBrowser () .getContext ();
-			var viewport = this .currentViewport .getRectangle ();
+			var
+				gl       = this .getBrowser () .getContext (),
+				viewport = this .currentViewport .getRectangle ();
 
 			gl .viewport (viewport [0],
 			              viewport [1],
@@ -407,13 +415,14 @@ function ($,
 
 			gl .clear (gl .DEPTH_BUFFER_BIT);
 
-			this .getBackground () .draw ();
-
+			this .getBackground ()     .draw (viewport);
 			this .getNavigationInfo () .enable ();
 			this .getViewpoint ()      .reshape ();
 			this .getViewpoint ()      .transform ();
 
+			this .currentViewport .push ();
 			this .render (TraverseType .DISPLAY);
+			this .currentViewport .pop ();
 		},
 		collect: function (type)
 		{

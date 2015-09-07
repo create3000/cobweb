@@ -430,7 +430,7 @@ function ($,
 				}
 			}
 		},
-		draw: function ()
+		draw: function (viewport)
 		{
 			if (this .hidden)
 				return;
@@ -438,7 +438,6 @@ function ($,
 			// Get background scale
 
 			var
-				viewport        = this .getBrowser () .getViewport (),
 				viewpoint       = this .getCurrentViewpoint (),
 				scale           = viewpoint .getScreenScale (SIZE, viewport),
 				rotation        = this .rotation,

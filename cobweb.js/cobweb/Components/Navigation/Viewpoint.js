@@ -80,6 +80,10 @@ function ($,
 
 				return new Vector3 (size, size, size);
 			},
+			getLookAtDistance: function (bbox)
+			{
+				return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
+			},
 			getProjectionMatrix: function (zNear, zFar, viewport)
 			{
 				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);

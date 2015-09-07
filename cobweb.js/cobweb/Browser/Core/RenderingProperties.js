@@ -37,7 +37,7 @@ function ($,
 			this .startTime = 0;
 			this .frames    = 0;
 
-			if (this .getBrowser () .getXML () [0] .getAttribute ("statistics") != "false")
+			if (this .getBrowser () .getXML () [0] .getAttribute ("statistics") == "true")
 				this .setEnabled (true);
 		},
 		setEnabled: function (value)

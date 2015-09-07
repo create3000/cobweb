@@ -145,12 +145,13 @@ function ($,
 			push: function ()
 			{
 				var
-					viewVolumes = this .getCurrentLayer () .getViewVolumeStack (),
-					viewport    = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
+				   currentLayer = this .getCurrentLayer (),
+					viewVolumes  = currentLayer .getViewVolumeStack (),
+					viewport     = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
 
-				this .getCurrentLayer () .getViewVolumeStack () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
-				                                                                         viewport,
-				                                                                         this .rectangle));
+				currentLayer .getViewVolumeStack () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
+				                                                             viewport,
+				                                                             this .rectangle));
 			},
 			pop: function ()
 			{

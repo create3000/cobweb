@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 29 Aug 2015 07:24:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 07 Sep 2015 05:11:08 GMT'/>
+    <meta name='modified' content='Mon, 07 Sep 2015 06:54:30 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"MFInt32.x3d", "http://titania.create3000.de/Library/Prototypes/0.1/Fields/MFInt32.x3d"'>
@@ -151,7 +151,7 @@
     </Switch>
     <LayerSet
         activeLayer='1'
-        order='1'>
+        order='1, 2'>
       <Layer>
         <Group DEF='Environment'>
           <Group DEF='Viewpoints'>
@@ -1002,7 +1002,26 @@ function random (max)
 }]]> 
         </Script>
       </Layer>
-      <LayoutLayer/>
+      <Layer>
+        <OrthoViewpoint DEF='_6'/>
+        <Transform DEF='Rectangle2D_5'
+            translation='1.73939 0.875731 0'
+            scale='0.0790629 0.0790629 0.0790629'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <IndexedFaceSet
+                texCoordIndex='0, 1, 2, 3, -1'
+                coordIndex='0, 1, 2, 3, -1'>
+              <TextureCoordinate
+                  point='0 0, 1 0, 1 1, 0 1'/>
+              <Coordinate
+                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+            </IndexedFaceSet>
+          </Shape>
+        </Transform>
+      </Layer>
     </LayerSet>
     <ROUTE fromNode='Inside' fromField='isBound' toNode='Walk' toField='set_bind'/>
     <ROUTE fromNode='Top' fromField='isBound' toNode='Examine' toField='set_bind'/>

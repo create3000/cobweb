@@ -9,6 +9,8 @@ define ([
 ],
 function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 {
+	var far = new Vector3 (0, 0, 0);
+
 	function X3DViewer (browser, executionContext)
 	{
 		X3DBaseNode .call (this, browser, executionContext);
@@ -48,7 +50,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 					modelview      = new Matrix4 (); // Use identity
 
 				// Far plane point
-				var far = ViewVolume .unProjectPoint (x, this .getBrowser () .getViewport () [3] - y, 0.9, modelview, projection, viewport);
+				ViewVolume .unProjectPoint (x, this .getBrowser () .getViewport () [3] - y, 0.9, modelview, projection, viewport, far);
 
 				if (viewpoint instanceof OrthoViewpoint)
 					return new Vector3 (far .x, far .y, -this .getDistanceToCenter () .abs ());

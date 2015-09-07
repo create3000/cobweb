@@ -9,7 +9,7 @@
     <ProjectGuid>{389C9D4C-0FDF-453E-B6FF-06A9536DD7E5}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
-    <OutputPath>.\</OutputPath>
+    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="1\1.0\cobweb.css" />
@@ -48,8 +48,15 @@
     <None Include="1\1.5\images\icon.png" />
     <None Include="1\1.5\images\logo.bw.png" />
     <None Include="1\1.5\images\logo.png" />
+    <None Include="latest\cobweb.css" />
+    <None Include="latest\cobweb.min.js" />
+    <None Include="latest\images\icon.bw.png" />
+    <None Include="latest\images\icon.png" />
+    <None Include="latest\images\logo.bw.png" />
+    <None Include="latest\images\logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
+    <Folder Include="latest\" />
   </ItemGroup>
 </Project>
