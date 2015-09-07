@@ -13,14 +13,17 @@ function (X3D)
 });
 
 // Temporary X3D before page load.
-window .X3D = (function ()
+if (! window .X3D)
 {
-	function X3D (callback)
+	window .X3D = (function ()
 	{
-	   X3D .callbacks .push (callback);
-	};
+		function X3D (callback)
+		{
+		   X3D .callbacks .push (callback);
+		};
 
-	X3D .callbacks = [ ];
+		X3D .callbacks = [ ];
 
-	return X3D;
-}) ();
+		return X3D;
+	}) ();
+}
