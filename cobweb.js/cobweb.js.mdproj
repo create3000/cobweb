@@ -2235,10 +2235,6 @@
     <None Include="tests\Components\Layering\ViewportLayer.x3d" />
     <None Include="tests\Components\Geometry3D\dragon.x3d" />
     <None Include="standard\Utility\ObjectCache.js" />
-    <None Include="tests\Examples\Snake\Zeichnung.svg" />
-    <None Include="tests\Examples\Snake\cube.blend" />
-    <None Include="tests\Examples\Snake\cube.x3d" />
-    <None Include="tests\Examples\Snake\snake.x3d" />
     <None Include="stable\1.3\cobweb.css" />
     <None Include="stable\1.3\images\icon.bw.png" />
     <None Include="stable\1.3\images\icon.png" />
@@ -2268,7 +2264,11 @@
     <None Include="cobweb\Browser\Rendering\Depth.fs" />
     <None Include="cobweb\Browser\Rendering\Depth.vs" />
     <None Include="cobweb\Rendering\DepthBuffer.js" />
-    <None Include="tests\Examples\Snake\MFInt32.x3d" />
+    <None Include="tests\Examples\Boxes\Zeichnung.svg" />
+    <None Include="tests\Examples\Boxes\cube.blend" />
+    <None Include="tests\Examples\Boxes\cube.x3d" />
+    <None Include="tests\Examples\Boxes\MFInt32.x3d" />
+    <None Include="tests\Examples\Boxes\boxes.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2330,9 +2330,9 @@
     <Folder Include="tests\Components\Layering\" />
     <Folder Include="cobweb\Misc\" />
     <Folder Include="standard\Utility\" />
-    <Folder Include="tests\Examples\Snake\" />
     <Folder Include="stable\1.3\" />
     <Folder Include="stable\1.5\" />
     <Folder Include="tests\Components\Shape\" />
+    <Folder Include="tests\Examples\Boxes\" />
   </ItemGroup>
 </Project>
