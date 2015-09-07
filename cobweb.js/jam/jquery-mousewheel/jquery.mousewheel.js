@@ -83,8 +83,4 @@ function handler(event) {
 
 };
 
-if (window.define !== undefined){
-    define(["jquery"], jQueryMouseWheel);
-} else {
-    jQueryMouseWheel(jQuery);
-}
+define(["jquery"], jQueryMouseWheel);
