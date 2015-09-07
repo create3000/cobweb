@@ -67,9 +67,10 @@ function ($,
 			},
 			getScreenScale: function (distance, viewport)
 			{
-				var width  = viewport [2];
-				var height = viewport [3];
-				var size   = distance * Math .tan (this .getFieldOfView () / 2) * 2;
+				var
+					width  = viewport [2],
+					height = viewport [3],
+					size   = distance * Math .tan (this .getFieldOfView () / 2) * 2;
 
 				if (width > height)
 					size /= height;

@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 29 Aug 2015 07:24:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 06 Sep 2015 17:01:29 GMT'/>
+    <meta name='modified' content='Mon, 07 Sep 2015 05:11:08 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"MFInt32.x3d", "http://titania.create3000.de/Library/Prototypes/0.1/Fields/MFInt32.x3d"'>
@@ -157,8 +157,8 @@
           <Group DEF='Viewpoints'>
             <Viewpoint DEF='Inside'
                 description='Inside'
-                position='-13.2788 1.6 14.0583'
-                orientation='0.0315202 -0.99943 0.0120728 0.73187'
+                position='23 1.6 -15'
+                orientation='0 1 0 0.785'
                 centerOfRotation='0.587624 1.66016 -1.38991'/>
             <Viewpoint DEF='Top'
                 description='Top'
@@ -494,421 +494,423 @@ function initialize ()
             </Transform>
           </Collision>
           <Transform DEF='Obstacles'
-              translation='-31 1 -19'>
-            <Group DEF='_6'>
-              <Transform
-                  translation='30 0 26'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 8'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='10 0 4'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='6 0 24'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='22 0 0'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='50 0 30'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 22'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='30 0 32'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='60 0 28'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='22 0 18'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='18 0 18'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 2'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='0 0 38'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 6'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='24 0 28'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='62 0 30'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='12 0 28'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='34 0 26'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 28'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 10'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 38'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='4 0 38'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='52 0 16'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='56 0 34'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='0 0 6'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='34 0 8'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='42 0 26'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='54 0 30'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='54 0 8'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='56 0 14'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='6 0 0'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='14 0 6'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='24 0 0'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='36 0 22'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 26'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='28 0 30'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='48 0 10'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='36 0 0'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='46 0 0'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='26 0 4'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='24 0 34'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='0 0 36'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='58 0 6'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='28 0 20'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='50 0 36'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='10 0 20'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='12 0 38'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='2 0 22'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='52 0 26'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='18 0 2'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='38 0 8'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='48 0 30'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='20 0 34'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='60 0 2'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='40 0 0'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='14 0 20'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 0'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 14'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='46 0 28'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='48 0 36'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='58 0 0'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='10 0 0'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='0 0 16'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='12 0 4'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='6 0 10'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='0 0 2'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='24 0 8'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 36'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='22 0 16'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 4'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='46 0 20'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='6 0 34'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='26 0 8'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='2 0 24'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='28 0 4'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='4 0 8'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='2 0 34'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='24 0 26'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='28 0 12'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='52 0 8'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='18 0 36'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='60 0 26'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='62 0 4'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 14'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='50 0 38'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='50 0 14'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='0 0 4'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 12'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='54 0 36'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='30 0 30'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='60 0 16'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='58 0 4'>
-                <Shape USE='RedBox'/>
-              </Transform>
-              <Transform
-                  translation='32 0 16'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='2 0 16'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='14 0 34'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='34 0 18'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='44 0 20'>
-                <Shape USE='YellowBox'/>
-              </Transform>
-              <Transform
-                  translation='50 0 4'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-              <Transform
-                  translation='28 0 32'>
-                <Shape USE='OrangeBox'/>
-              </Transform>
-            </Group>
+              translation='0 1 0'>
+            <Transform
+                translation='-7 0 5'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 -11'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-9 0 19'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 -5'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='9 0 3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-23 0 9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='11 0 5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-21 0 17'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-11 0 -5'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='13 0 11'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-3 0 9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-9 0 1'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='17 0 17'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='9 0 -1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-11 0 -11'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-29 0 15'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-7 0 -1'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 -5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='19 0 -11'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-15 0 -3'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='13 0 3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='29 0 3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='17 0 -13'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='11 0 3'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='5 0 5'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-1 0 -17'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='1 0 -11'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='31 0 3'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='13 0 13'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 -17'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-31 0 -7'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-7 0 7'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='7 0 3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-29 0 -7'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='25 0 17'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='15 0 -9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 19'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 15'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-23 0 -15'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-7 0 -17'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='27 0 -7'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='5 0 -19'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-31 0 -1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='23 0 9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='1 0 1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-17 0 11'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='7 0 11'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='7 0 -15'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='11 0 -11'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 -7'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-23 0 1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='27 0 -5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='5 0 3'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 19'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-5 0 9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='1 0 -17'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-5 0 -5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='25 0 19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='19 0 -1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='15 0 13'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='25 0 1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='3 0 9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-17 0 -19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='5 0 9'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='9 0 -13'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-21 0 -19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 -7'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='1 0 -5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 17'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-17 0 -5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='17 0 9'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='29 0 5'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='-29 0 -15'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='13 0 -1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-3 0 5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-13 0 -15'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='1 0 13'>
+              <Shape USE='YellowBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 9'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-7 0 17'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 -13'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-23 0 -7'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 -19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='23 0 -7'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 -3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-5 0 -1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 13'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 7'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-15 0 -9'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='27 0 -3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 15'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='3 0 -19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='29 0 -3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-3 0 -5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-9 0 7'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-1 0 -3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='31 0 -15'>
+              <Shape USE='RedBox'/>
+            </Transform>
           </Transform>
         </Group>
         <Script DEF='PlayGroundScript'>
           <field accessType='inputOutput' type='SFInt32' name='numChildren' value='100'/>
           <field accessType='inputOutput' type='MFInt32' name='dimension' value='32, 20'/>
           <field accessType='inputOutput' type='SFVec2f' name='size' value='2 2'/>
+          <field accessType='inputOutput' type='SFNode' name='viewpoint'>
+            <Viewpoint USE='Inside'/>
+          </field>
           <field accessType='inputOutput' type='SFNode' name='playground'>
             <ProtoInstance name='MFInt32'>
-              <fieldValue name='keyValue' value='1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1'/>
+              <fieldValue name='keyValue' value='0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1'/>
             </ProtoInstance>
           </field>
           <field accessType='inputOutput' type='SFNode' name='group'>
-            <Group USE='_6'/>
+            <Transform USE='Obstacles'/>
           </field>
           <field accessType='inputOutput' type='MFNode' name='children'>
             <Shape USE='YellowBox'/>
@@ -934,6 +936,10 @@ function eventsProcessed ()
 	group .children .length      = 0;
 	
 	var positions = shuffle (fill ([ ], dimension [0] * dimension [1]));
+	
+	var
+		xOffset = (dimension [0] * size .x - size .x) / -2,
+		yOffset = (dimension [1] * size .y - size .y) / -2;
 
 	for (var i = 0; i < numChildren; ++ i)
 	{
@@ -946,12 +952,20 @@ function eventsProcessed ()
 		
 		var transform = scene .createNode ("Transform");
 		
-		transform .translation .x = x * size .x;
-		transform .translation .z = y * size .y;
+		transform .translation .x = x * size .x + xOffset;
+		transform .translation .z = y * size .y + yOffset;
 		transform .children [0]   = children [random (2)];
 		
 		group .children [group .children .length] = transform;
 	}
+
+	var
+		k = positions [numChildren],
+		x = k % dimension [0],
+		y = Math .floor (k / dimension [0]);
+	
+	viewpoint .position .x = x * size .x + xOffset;
+	viewpoint .position .z = y * size .y + yOffset;
 }
 
 function fill (array, length)
