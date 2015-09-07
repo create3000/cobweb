@@ -303,6 +303,46 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				}
 			}
 		},
+		setRotation: function (rotation)
+		{
+			return this .setQuaternion (rotation .value);
+		},
+		setQuaternion: function (quaternion)
+		{
+			var
+				x = quaternion .x,
+				y = quaternion .y,
+				z = quaternion .z,
+				w = quaternion .w,
+				A = y * y,
+				B = z * z,
+				C = x * y,
+				D = z * w,
+				E = z * x,
+				F = y * w,
+				G = x * x,
+				H = y * z,
+				I = x * w;
+
+			this [0]  = 1 - 2 * (A + B);
+			this [1]  = 2 * (C + D);
+			this [2]  = 2 * (E - F);
+			this [3]  = 0;
+			this [4]  = 2 * (C - D);
+			this [5]  = 1 - 2 * (B + G);
+			this [6]  = 2 * (H + I);
+			this [7]  = 0;
+			this [8]  = 2 * (E + F);
+			this [9]  = 2 * (H - I);
+			this [10] = 1 - 2 * (A + G);
+			this [11] = 0;
+			this [12] = 0;
+			this [13] = 0;
+			this [14] = 0;
+			this [15] = 1;
+
+			return this;
+		},
 		factor: function (translation, rotation, scale, scaleOrientation)
 		{
 			// (1) Get translation.
@@ -725,29 +765,11 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		Identity: new Matrix4 (),
 		Rotation: function (rotation)
 		{
-			return Matrix4 .Quaternion (rotation .value);
+			return Object .create (this .prototype) .setQuaternion (rotation .value);
 		},
 		Quaternion: function (quaternion)
 		{
-			var
-				x = quaternion .x,
-				y = quaternion .y,
-				z = quaternion .z,
-				w = quaternion .w,
-				A = y * y,
-				B = z * z,
-				C = x * y,
-				D = z * w,
-				E = z * x,
-				F = y * w,
-				G = x * x,
-				H = y * z,
-				I = x * w;
-
-			return new Matrix4 (1 - 2 * (A + B),     2 * (C + D),     2 * (E - F), 0,
-					                  2 * (C - D), 1 - 2 * (B + G),     2 * (H + I), 0,
-					                  2 * (E + F),     2 * (H - I), 1 - 2 * (A + G), 0,
-				                               0,               0,               0, 1);
+			return Object .create (this .prototype) .setQuaternion (quaternion);
 		},
 		Matrix3: function (matrix)
 		{

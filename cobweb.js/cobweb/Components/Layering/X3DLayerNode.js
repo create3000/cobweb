@@ -251,16 +251,16 @@ function ($,
 
 				// Translate camera
 
-				var modelViewMatrix = this .inverseCameraSpaceMatrix;
+				var inverseCameraSpaceMatrix = this .inverseCameraSpaceMatrix;
 
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
-				modelViewMatrix  .assign (viewpoint .getParentMatrix ());
+				inverseCameraSpaceMatrix .assign (viewpoint .getParentMatrix ());
 
-				modelViewMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
-				modelViewMatrix .rotate (new Rotation4 (zAxis, Vector3 .negate (translation)) .multRight (localOrientation));
-				modelViewMatrix .inverse ();
+				inverseCameraSpaceMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
+				inverseCameraSpaceMatrix .rotate (new Rotation4 (zAxis, Vector3 .negate (translation)) .multRight (localOrientation));
+				inverseCameraSpaceMatrix .inverse ();
 
-				browser .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				browser .setProjectionMatrix (inverseCameraSpaceMatrix .multRight (projectionMatrix));
 				browser .getModelViewMatrix () .identity ();
 
 				// Traverse and get distance

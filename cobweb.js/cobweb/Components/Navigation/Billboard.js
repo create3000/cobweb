@@ -22,9 +22,10 @@ function ($,
 {
 	with (Fields)
 	{
-		var xAxis = new Vector3 (1, 0, 0);
-		var yAxis = new Vector3 (0, 1, 0);
-		var zAxis = new Vector3 (0, 0, 1);
+		var
+			xAxis = new Vector3 (1, 0, 0),
+			yAxis = new Vector3 (0, 1, 0),
+			zAxis = new Vector3 (0, 0, 1);
 
 		function Billboard (executionContext)
 		{
@@ -63,8 +64,9 @@ function ($,
 			{
 				try
 				{
-					var inverseModelViewMatrix = this .getModelViewMatrix (type) .inverse ();
-					var billboardToViewer      = inverseModelViewMatrix .origin .normalize ();       // Normalized to get work with Geo
+					var
+						inverseModelViewMatrix = this .getModelViewMatrix (type) .inverse (),
+						billboardToViewer      = inverseModelViewMatrix .origin .normalize ();       // Normalized to get work with Geo
 
 					if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 					{
@@ -80,10 +82,10 @@ function ($,
 						x .normalize ();
 						y .normalize ();
 
-						this .matrix = new Matrix4 (x [0], x [1], x [2], 0,
-						                            y [0], y [1], y [2], 0,
-						                            z [0], z [1], z [2], 0,
-						                            0,     0,     0,     1);
+						this .matrix .set (x [0], x [1], x [2], 0,
+						                   y [0], y [1], y [2], 0,
+						                   z [0], z [1], z [2], 0,
+						                   0,     0,     0,     1);
 					}
 					else
 					{
@@ -91,7 +93,7 @@ function ($,
 							N1 = Vector3 .cross (this .axisOfRotation_ .getValue (), billboardToViewer), // Normal vector of plane as in specification
 							N2 = Vector3 .cross (this .axisOfRotation_ .getValue (), zAxis);             // Normal vector of plane between axisOfRotation and zAxis
 
-						this .matrix = new Matrix4 .Rotation (new Rotation4 (N2, N1));                   // Rotate zAxis in plane
+						this .matrix .setRotation (new Rotation4 (N2, N1));                             // Rotate zAxis in plane
 					}
 
 					this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);

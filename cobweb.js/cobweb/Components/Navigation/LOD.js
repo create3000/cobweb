@@ -29,6 +29,8 @@ function ($,
 
 			this .addType (X3DConstants .LOD);
 
+			this .addAlias ("level", this .children_);
+
 			this .frameRate        = 60;
 			this .keepCurrentLevel = false;
 		}
@@ -143,8 +145,8 @@ function ($,
 						}
 						else
 							this .level_changed_ = level;
-
-						this .child = this .getChild (level);
+						
+						this .child = this .getChild (Math .min (level, this .children_ .length - 1));
 						this .set_cameraObjects__ ();
 					}
 				}
