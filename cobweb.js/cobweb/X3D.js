@@ -42,38 +42,42 @@ function ($,
 	if (! console .warn)  console .warn  = console .log;
 	if (! console .error) console .error = console .log;
 
-	function getBrowser (xml)
+	function getBrowser (dom)
 	{
-		return $(xml) [0] .browser;
+		return $(dom) .data ("browser");
 	}
 
-	function createBrowser (xml)
+	function createBrowser (dom)
 	{
-		xml = $(xml);
+		dom = $(dom);
 
-		var browser = new X3DBrowser (xml);
+		var browser = new X3DBrowser (dom);
+
+		dom .data ("browser", browser);
 
 		browser .setup ();
 
-		if (xml .attr ("splashScreen") !== "false")
+		if (dom .attr ("splashScreen") !== "false")
 			browser .getCanvas () .fadeOut (0);
-
+		
 		return browser;
 	}
 
 	// X3D
 
-	var deferred = $.Deferred ();
+	var
+	   initialized = false,
+		deferred    = $.Deferred ();
 
 	function X3D (callback)
 	{
 		if (callback)
 			deferred .done (callback);
 
-		if (X3D .initialized)
+		if (initialized)
 			return;
 
-		X3D .initialized = true;
+		initialized = true;
 
 		$(document) .ready (function ()
 		{
@@ -115,18 +119,11 @@ function ($,
 		this .console .log (error);
 	}
 
-	$(document) .ready (function ()
-	{
-		X3D ();
-	});
-
-	return $.extend (X3D,
+	$.extend (X3D,
 		Fields,
 	{
-		initialized:                 false,
 		getBrowser:                  getBrowser,
 		createBrowser:               createBrowser,
-		error:                       error,
 		X3DConstants:                X3DConstants,
 		X3DFieldDefinition:          X3DFieldDefinition,
 		FieldDefinitionArray:        FieldDefinitionArray,
@@ -141,4 +138,6 @@ function ($,
 		RouteArray:                  RouteArray,
 		X3DRoute:                    X3DRoute,
 	});
+
+	return X3D;
 });
