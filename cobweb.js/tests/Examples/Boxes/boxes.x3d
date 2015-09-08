@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 29 Aug 2015 07:24:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 08 Sep 2015 18:36:50 GMT'/>
+    <meta name='modified' content='Tue, 08 Sep 2015 19:27:42 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"MFInt32.x3d", "http://titania.create3000.de/Library/Prototypes/0.1/Fields/MFInt32.x3d"'>
@@ -174,19 +174,18 @@ function set_isActive (value, time)
         <Group DEF='Environment'>
           <Group DEF='Viewpoints'>
             <Viewpoint DEF='Inside'
-                description='Inside'
                 position='-23 1.6 19'
                 orientation='0 1 0 0.785'
                 centerOfRotation='0.587624 1.66016 -1.38991'/>
             <Viewpoint DEF='Top'
-                description='Top'
                 position='0 52.8537 0.0248073'
                 orientation='1 0 0 4.71319'/>
           </Group>
+          <NavigationInfo DEF='None'
+              type='"NONE"'
+              headlight='false'/>
           <NavigationInfo DEF='Walk'
               type='"WALK"'
-              headlight='false'/>
-          <NavigationInfo DEF='Examine'
               headlight='false'/>
           <Background DEF='White_1'
               skyAngle='1.5708'
@@ -1185,8 +1184,11 @@ function eventsProcessed ()
 	t /= 60;
 	if (minutes < 10) minutes = "0" + minutes;
 	
+	var hours = Math .floor (t);
+	if (hours && hours < 10) minutes = "0" + minutes;
+	
 	string_changed [0] = "Boxes left: " + boxesLeft;
-	string_changed [1] = "Time: " + minutes + ":" + seconds;
+	string_changed [1] = "Time: " + (hours ? hours + ":" : "") + minutes + ":" + seconds;
 }]]> 
         </Script>
         <Transform DEF='TitaniaText'
@@ -1363,8 +1365,6 @@ function eventsProcessed ()
         </Transform>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='Inside' fromField='isBound' toNode='Walk' toField='set_bind'/>
-    <ROUTE fromNode='Top' fromField='isBound' toNode='Examine' toField='set_bind'/>
     <ROUTE fromNode='StatusScript' fromField='string_changed' toNode='_29' toField='set_string'/>
     <ROUTE fromNode='PlayGroundScript' fromField='boxesLeft' toNode='StatusScript' toField='set_boxesLeft'/>
     <ROUTE fromNode='_30' fromField='cycleTime' toNode='StatusScript' toField='set_cycleTime'/>
@@ -1408,5 +1408,8 @@ function eventsProcessed ()
     <ROUTE fromNode='_26' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
     <ROUTE fromNode='_27' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
     <ROUTE fromNode='_36' fromField='touchTime' toNode='PlayGroundScript' toField='set_startTime'/>
+    <ROUTE fromNode='_30' fromField='isActive' toNode='Walk' toField='set_bind'/>
+    <ROUTE fromNode='_34' fromField='isActive' toNode='Top' toField='set_bind'/>
+    <ROUTE fromNode='_31' fromField='isActive' toNode='Top' toField='set_bind'/>
   </Scene>
 </X3D>
