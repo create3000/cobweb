@@ -155,7 +155,7 @@ function ($,
 				text += "\n[" + callbacks .join (",") + "];"
 
 				var
-					global  = Object .create ({ }, this .getGlobal ()),
+					global  = this .getGlobal (),
 					result  = evaluate (global, text),
 					context = { };
 
@@ -283,7 +283,7 @@ function ($,
 					}
 				}
 
-				return global;
+				return Object .create (Object .prototype, global);
 			},
 			set_live__: function ()
 			{

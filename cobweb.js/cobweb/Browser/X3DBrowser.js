@@ -124,11 +124,12 @@ function ($,
 				this .resetLoadCount ();
 				this .loadCount_ .addFieldCallback ("loading" + id, this .bindWorld .bind (this, id));
 
-				scene .setup ();
-				this .setExecutionContext (scene);
-
 				this .isLive () .addFieldInterest (scene .isLive ());
 				scene .isLive () .setValue (this .isLive ());
+				this .processEvents ();
+
+				scene .setup ();
+				this .setExecutionContext (scene);
 
 				this .initialized () .setValue (this .getCurrentTime ());
 			},
@@ -164,8 +165,8 @@ function ($,
 				if (! external)
 				{
 					currentScene .isLive () .addFieldInterest (scene .isLive ());
-
 					scene .isLive () .setValue (currentScene .isLive ());
+					this .processEvents ();
 				}
 
 				scene .setup ();
@@ -199,8 +200,8 @@ function ($,
 					   if (! external)
 					   {
 					      currentScene .isLive () .addFieldInterest (scene .isLive ());
-
 							scene .isLive () .setValue (currentScene .isLive ());
+							this .processEvents ();
 						}
 
 						scene .setup ();
