@@ -14,8 +14,8 @@ html, body {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-	width: 740px;
-	height: 416px;
+	width: 920px;
+	height: 440px;
 }
 
 body {
@@ -24,9 +24,10 @@ body {
 	padding: 10px;
 }
 
-#page {
+#x3d-page {
 	background: #414141;
 	height: 100%;
+	box-shadow: 0px 2px 12px 1px rgba(0, 0, 0, 0.75);
 }
 
 x3d {
@@ -36,15 +37,15 @@ x3d {
 #bookmarks {
 	overflow: hidden;
 	padding: 5px;
-	width: 100px;
-	float: right;
+	width: 110px;
+	float: left;
 	font-size: 12px;
 }
 
 .u {
 	font-family: Ubuntu;
 	font-weight: 900;
-	font-size: 100px;
+	font-size: 60px;
 }
 	</style>
 	<script type="text/javascript">
@@ -162,7 +163,7 @@ X3D (function (dom)
 	</script>
 </head>
 <body>
-	<div id="page">
+	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D statistics="true" cache="false" url='
 			"tests/Examples/Boxes/boxes.x3d",

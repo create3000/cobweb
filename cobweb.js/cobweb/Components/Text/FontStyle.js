@@ -49,8 +49,8 @@ function ($,
 			origin    = new Vector3 (0, 0, 0),
 			box2      = new Box2 (),
 			zero2     = new Vector2 (0, 0),
-			zero3     = new Vector3 (0, 0, 0)
-			fontScale = 0.84;
+			zero3     = new Vector3 (0, 0, 0),
+			fontScale = 0.84;                  // All glyphs must be scaled by this amount to get the correct size.
 
 	   function X3DTextGeometry (text, fontStyle)
 		{

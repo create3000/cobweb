@@ -96,7 +96,7 @@ function ($,
 
 				if (aspect > sizeX / sizeY)
 				{
-					var s = getSizeY () / height;
+					var s = this .getSizeY () / height;
 
 					return new Vector3 (s, s, s);
 				}

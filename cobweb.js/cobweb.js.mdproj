@@ -2274,6 +2274,7 @@
     <None Include="tests\Examples\Compel\jungle\textures\palmtrnk.png" />
     <None Include="tests\Examples\Compel\jungle\textures\strawrf2.png" />
     <None Include="tests\Examples\Compel\jungle\textures\strwfrng.png" />
+    <None Include="tests\Examples\Boxes\BertramLetPlain.otf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
