@@ -58,5 +58,6 @@
   <ItemGroup>
     <Folder Include="1\" />
     <Folder Include="latest\" />
+    <Folder Include="1\Neuer Ordner\" />
   </ItemGroup>
 </Project>

@@ -125,9 +125,7 @@ function ($,
 				{
 					case TraverseType .POINTER:
 					{
-						var
-							viewVolumes = this .getCurrentLayer () .getViewVolumeStack (),
-							viewVolume  = viewVolumes [viewVolumes .length - 1];
+						var viewVolume = this .getCurrentLayer () .getViewVolume ();
 
 						if (! this .getBrowser () .isPointerInRectangle (viewVolume .getScissor ()))
 							return;

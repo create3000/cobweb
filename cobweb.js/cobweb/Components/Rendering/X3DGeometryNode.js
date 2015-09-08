@@ -47,7 +47,7 @@ function ($,
 		{
 			constructor: X3DGeometryNode,
 			intersection: new Vector3 (0, 0, 0),
-			uvt: new Vector3 (0, 0, 0),
+			uvt: { u: 0, v: 0, t: 0 },
 			v0: new Vector3 (0, 0, 0),
 			v1: new Vector3 (0, 0, 0),
 			v2: new Vector3 (0, 0, 0),
@@ -494,8 +494,8 @@ function ($,
 								// Get barycentric coordinates.
 
 								var
-									u = uvt .x,
-									v = uvt .y,
+									u = uvt .u,
+									v = uvt .v,
 									t = 1 - u - v;
 
 								// Determine vectors for X3DPointingDeviceSensors.

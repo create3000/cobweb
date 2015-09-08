@@ -60,17 +60,16 @@ function ($,
 			if (value !== this .isActive_ .getValue ())
 				this .isActive_ = value;
 		},
-		push: function ()
+		traverse: function (sensors)
 		{
 			if (this .enabled_ .getValue ())
 			{
 				var
-					currentLayer = this .getCurrentLayer (),
-					sensors      = this .getBrowser () .getSensors ();
+					currentLayer = this .getCurrentLayer ();
 
-				sensors [sensors .length - 1] [this .getId ()] = this;
+				sensors [this .getId ()] = this;
 
-				// Create a matrix set for each layer if needed.
+				// Create a matrix set for each layer if needed in the case the sensor is cloned over multiple layers.
 
 				if (! (currentLayer .getId () in this .matrices))
 				{

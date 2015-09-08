@@ -182,7 +182,7 @@ function ($,
 
 			var innerNodes = [ ];
 
-			for (var i = 0; i < this .removeChildren_ .length; ++ i)
+			for (var i = 0, length = this .removeChildren_ .length; i < length; ++ i)
 			{
 				try
 				{
@@ -195,32 +195,33 @@ function ($,
 				{ }
 			}
 
-			innerNode .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
+			for (var i = 0, length = innerNodes .length; i < length; ++ i)
+				innerNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
 
 			if (this .localFogs .length)
 			{
-				this .localFogs .splice (remove (localFogs,  0, localFogs  .length,
+				this .localFogs .splice (remove (this .localFogs, 0, this .localFogs .length,
 				                                 innerNodes, 0, innerNodes .length,
 				                                 getId));
 			}
 
 			if (this .pointingDeviceSensors .length)
 			{
-				this .pointingDeviceSensors .splice (remove (pointingDeviceSensors, 0, pointingDeviceSensors .length,
-				                                             innerNodes,            0, innerNodes .length,
+				this .pointingDeviceSensors .splice (remove (this .pointingDeviceSensors, 0, this .pointingDeviceSensors .length,
+				                                             innerNodes, 0, innerNodes .length,
 				                                             getId));
 			}
 
 			if (this .clipPlanes .length)
 			{
-				this .clipPlanes .splice (remove (clipPlanes, 0, clipPlanes .length,
+				this .clipPlanes .splice (remove (this .clipPlanes, 0, this .clipPlanes .length,
 				                                  innerNodes, 0, innerNodes .length,
 				                                  getId));
 			}
 
 			if (this .childNodes .length)
 			{
-				this .childNodes .splice (remove (childNodes, 0, childNodes .length,
+				this .childNodes .splice (remove (this .childNodes, 0, this .childNodes .length,
 				                                  innerNodes, 0, innerNodes .length,
 				                                  getId));
 			}
@@ -253,7 +254,7 @@ function ($,
 			if (this .hidden)
 				return;
 
-			for (var i = 0; i < children .length; ++ i)
+			for (var i = 0, length = children .length; i < length; ++ i)
 			{
 				var child = children [i];
 			
@@ -261,8 +262,9 @@ function ($,
 				{
 					try
 					{
-						var innerNode = child .getValue () .getInnerNode ();
-						var type      = Array .prototype .slice .call (innerNode .getType (), 0) .reverse ();
+						var
+							innerNode = child .getValue () .getInnerNode (),
+							type      = Array .prototype .slice .call (innerNode .getType (), 0) .reverse ();
 
 						for (var t = 0; t < type .length; ++ t)
 						{
@@ -330,7 +332,7 @@ function ($,
 		{
 			this .cameraObjects .length = 0;
 
-			for (var i = 0; i < this .childNodes .length; ++ i)
+			for (var i = 0, length = this .childNodes .length; i < length; ++ i)
 			{
 				var childNode = this .childNodes [i];
 
@@ -352,17 +354,17 @@ function ($,
 						
 						this .getBrowser () .getSensors () .push (sensors);
 					
-						for (var i = 0; i < this .pointingDeviceSensors .length; ++ i)
-							this .pointingDeviceSensors [i] .push ();
+						for (var i = 0, length = this .pointingDeviceSensors .length; i < length; ++ i)
+							this .pointingDeviceSensors [i] .traverse (sensors);
 					}
 
-					for (var i = 0; i < this .clipPlanes .length; ++ i)
+					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .push ();
 
-					for (var i = 0; i < this .childNodes .length; ++ i)
+					for (var i = 0, length = this .childNodes .length; i < length; ++ i)
 						this .childNodes [i] .traverse (type);
 
-					for (var i = 0; i < this .clipPlanes .length; ++ i)
+					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .pop ();
 
 					if (this .pointingDeviceSensors .length)
@@ -372,7 +374,7 @@ function ($,
 				}
 				case TraverseType .CAMERA:
 				{
-					for (var i = 0; i < this .cameraObjects .length; ++ i)
+					for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
 						this .cameraObjects [i] .traverse (type);
 
 					return;
@@ -380,32 +382,32 @@ function ($,
 				case TraverseType .NAVIGATION:
 				case TraverseType .COLLISION:
 				{					
-					for (var i = 0; i < this .clipPlanes .length; ++ i)
+					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .push ();
 
-					for (var i = 0; i < this .childNodes .length; ++ i)
+					for (var i = 0, length = this .childNodes .length; i < length; ++ i)
 						this .childNodes [i] .traverse (type);
 
-					for (var i = 0; i < this .clipPlanes .length; ++ i)
+					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .pop ();
 					
 					return;
 				}
 				case TraverseType .DISPLAY:
 				{
-					for (var i = 0; i < this .localFogs .length; ++ i)
+					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
 						this .localFogs [i] .push ();
 
-					for (var i = 0; i < this .clipPlanes .length; ++ i)
+					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .push ();
 
-					for (var i = 0; i < this .childNodes .length; ++ i)
+					for (var i = 0, length = this .childNodes .length; i < length; ++ i)
 						this .childNodes [i] .traverse (type);
 
-					for (var i = 0; i < this .clipPlanes .length; ++ i)
+					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .pop ();
 					
-					for (var i = 0; i < this .localFogs .length; ++ i)
+					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
 						this .localFogs [i] .pop ();
 					
 					return;

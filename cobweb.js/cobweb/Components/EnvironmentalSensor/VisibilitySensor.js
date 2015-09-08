@@ -101,12 +101,12 @@ function ($,
 						else
 						{
 							var
-								viewVolumes     = this .getCurrentLayer () .getViewVolumeStack (),
+								viewVolume      = this .getCurrentLayer () .getViewVolume (),
 								modelViewMatrix = this .getModelViewMatrix (type),
 								size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
 								center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
 
-							this .visible = viewVolumes [viewVolumes .length - 1] .intersectsSphere (size .abs () / 2, center);
+							this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
 						}
 
 						break;

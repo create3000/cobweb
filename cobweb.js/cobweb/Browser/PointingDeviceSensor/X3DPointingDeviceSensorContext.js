@@ -156,14 +156,12 @@ function (jquery,
 		{
 			try
 			{
-				this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix (), viewport);
+				return this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix (), viewport);
 			}
 			catch (error)
 			{
-				this .hitRay = line;
+				return this .hitRay = line;
 			}
-
-			this .getLayers () [0] .setHitRay (this .hitRay);
 		},
 		getHitRay: function ()
 		{

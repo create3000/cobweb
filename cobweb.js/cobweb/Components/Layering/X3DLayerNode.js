@@ -173,10 +173,6 @@ function ($,
 		{
 			return this .viewpointStack;
 		},
-		setHitRay: function (value)
-		{
-			this .hitRay = value;
-		},
 		getHitRay: function ()
 		{
 			return this .hitRay;
@@ -363,10 +359,10 @@ function ($,
 						return;
 				}
 
-				this .getBrowser () .setHitRay (viewport);
-
 				this .getViewpoint () .reshape ();
 				this .getViewpoint () .transform ();
+
+				this .hitRay = this .getBrowser () .setHitRay (viewport);
 
 				this .currentViewport .push ();
 				this .collect (TraverseType .POINTER);

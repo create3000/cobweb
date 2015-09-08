@@ -54,6 +54,10 @@ function (DepthBuffer,
 		{
 			return this .viewVolumes;
 		},
+		getViewVolume: function ()
+		{
+			return this .viewVolumes [this .viewVolumes .length - 1];
+		},
 		addShape: function (shape)
 		{
 			var

@@ -12,6 +12,7 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Geometry/ViewVolume",
 ],
 function ($,
           Fields,
@@ -24,7 +25,8 @@ function ($,
           Line3,
           Vector3,
           Matrix4,
-          QuickSort)
+          QuickSort,
+          ViewVolume)
 {
 	with (Fields)
 	{
@@ -94,6 +96,13 @@ function ($,
 					if (this .getGeometry () .isLineGeometry ())
 						return;
 
+					//XXX implement isSensorObject_ like isCameraObject_ in X3DGroupingNode if it is faster.
+					var sensors = this .getBrowser () .getSensors ();
+
+					if ($.isEmptyObject (sensors [sensors .length - 1]))
+					   return;
+					//XXX isSensorObject_
+
 					var
 						browser            = this .getBrowser (),
 						modelViewMatrix    = browser .getModelViewMatrix () .get (),
@@ -119,7 +128,7 @@ function ($,
 						                                      return lhs .point .z > rhs;
 						                                   });
 
-						// Are there intersections before the camera.?
+						// Are there intersections before the camera?
 						if (index !== intersections .length)
 						{
 							// Transform hitNormal to absolute space.

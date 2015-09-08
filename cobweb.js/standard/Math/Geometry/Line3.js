@@ -116,9 +116,9 @@ function (Vector3)
 
 			var t = edge2 .dot (qvec) * inv_det;
 
-			uvt .x = u;
-			uvt .y = v;
-			uvt .z = t;
+			uvt .u = u;
+			uvt .v = v;
+			uvt .t = t;
 
 			return true;
 		},
@@ -131,7 +131,7 @@ function (Vector3)
 	Line3 .Points = function (point1, point2)
 	{
 		var line = Object .create (Line3 .prototype);
-		line .point     = point1;
+		line .point     = point1 .copy ();
 		line .direction = Vector3 .subtract (point2, point1) .normalize ();
 		return line;
 	};
