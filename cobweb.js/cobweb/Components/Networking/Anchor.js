@@ -99,8 +99,10 @@ function ($,
 			{
 				if (type === TraverseType .POINTER)
 				{
-					this .getBrowser () .getSensors () .push ({ });
-					this .touchSensorNode .push ();
+				   var sensors = { };
+
+					this .getBrowser () .getSensors () .push (sensors);
+					this .touchSensorNode .traverse (sensors);
 
 					X3DGroupingNode .prototype .traverse .call (this, type);
 

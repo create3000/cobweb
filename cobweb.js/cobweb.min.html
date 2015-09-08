@@ -61,6 +61,8 @@ X3D (function (dom)
 			{ name: 'Hamburger',          url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/hamburger.x3d" },
 			{ name: 'ICTS',               url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/index.x3d" },
 			{ name: 'Labyrinth',          url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/labyrinth.x3d" },
+		],
+		[
 			{ name: 'Soccer',             url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/soccer.x3d" },
 			{ name: 'LogoPieces',         url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LogoPieces/index.x3d" },
 			{ name: 'LustForLife',        url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LustForLife/stage/index.x3d" },
@@ -70,13 +72,11 @@ X3D (function (dom)
 			{ name: 'Rathaus',            url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Rathaus/stage/index.x3d" },
 			{ name: 'Schacht',            url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Schacht/index.x3d" },
 			{ name: 'Mediafacade',        url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Vattenfall/index.x3d" },
-		],
-		[
-			{ name: 'Anatomy', url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/anatomy/anatomy.x3d" },
-			{ name: 'Jungle',  url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/jungle/jungle.x3d" },
-			{ name: 'Huey',    url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/huey.x3d" },
-			{ name: 'Foldup',  url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/foldup.x3d" },
-			{ name: 'Ripple',  url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/ripple.x3d" },
+			{ name: 'Anatomy',            url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/anatomy/anatomy.x3d" },
+			{ name: 'Jungle',             url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/jungle/jungle.x3d" },
+			{ name: 'Huey',               url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/huey.x3d" },
+			{ name: 'Foldup',             url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/foldup.x3d" },
+			{ name: 'Ripple',             url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/ripple.x3d" },
 		],
 	];
 
@@ -102,6 +102,16 @@ X3D (function (dom)
 			
 		bookmarks .append ("<br/>");
 
+
+		$("<a/>")
+			.attr ("href", "#")
+			.click (randomWorld)
+			.text ("Random World")
+			.appendTo (bookmarks);
+
+		bookmarks .append ("<br/>");
+		bookmarks .append ("<br/>");
+
 		index = (index + 1) % urls .length;
 
 		$("<a/>")
@@ -112,28 +122,36 @@ X3D (function (dom)
 		
 	}
 
-	toggleBookmarks ();
-
-	var
-		i           = 0,
-		randomIndex = Math .round (Math .random () * (urls [index] .length - 1));
-		
-	urls [index] .forEach (function (item)
+	function randomWorld ()
 	{
-	   if (i == randomIndex)
-	   {
-			Browser .loadURL (new X3D .MFString (item .url), new X3D .MFString ());
-	      return true;
-	   }
+		function random (max)
+		{
+		   return Math .round (Math .random () * max);
+		}
 
-	   ++ i;
-	});
+		var
+			randomPage  = random (urls .length - 1),
+			randomIndex = random (urls [index] .length - 1),
+			i           = 0;
+			
+		urls [randomPage] .forEach (function (item)
+		{
+		   if (i == randomIndex)
+				Browser .loadURL (new X3D .MFString (item .url), new X3D .MFString ());
 
+		   ++ i;
+		});
+	}
+
+	randomWorld ();
+	toggleBookmarks ();
 });
 	</script>
 </head>
 <body>
 	<div id="bookmarks"></div>
-	<X3D cache="false"></X3D>
+	<X3D cache="false" url='
+		"https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/index.x3d",
+	'></X3D>
 </body>
 </html>
