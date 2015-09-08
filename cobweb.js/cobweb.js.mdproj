@@ -2269,6 +2269,11 @@
     <None Include="tests\Examples\Boxes\MFInt32.x3d" />
     <None Include="tests\Examples\Boxes\boxes.x3d" />
     <None Include="cobweb.test.html" />
+    <None Include="tests\Examples\Boxes\cube.blend1" />
+    <None Include="tests\Examples\Compel\jungle\textures\palmtop.png" />
+    <None Include="tests\Examples\Compel\jungle\textures\palmtrnk.png" />
+    <None Include="tests\Examples\Compel\jungle\textures\strawrf2.png" />
+    <None Include="tests\Examples\Compel\jungle\textures\strwfrng.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
