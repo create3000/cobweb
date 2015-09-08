@@ -54,10 +54,16 @@
     <None Include="latest\images\icon.png" />
     <None Include="latest\images\logo.bw.png" />
     <None Include="latest\images\logo.png" />
+    <None Include="1\1.6\images\icon.bw.png" />
+    <None Include="1\1.6\images\icon.png" />
+    <None Include="1\1.6\images\logo.bw.png" />
+    <None Include="1\1.6\images\logo.png" />
+    <None Include="1\1.6\cobweb.css" />
+    <None Include="1\1.6\cobweb.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
     <Folder Include="latest\" />
-    <Folder Include="1\Neuer Ordner\" />
+    <Folder Include="1\1.6\" />
   </ItemGroup>
 </Project>
