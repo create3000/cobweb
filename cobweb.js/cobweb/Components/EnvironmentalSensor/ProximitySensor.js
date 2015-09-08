@@ -103,9 +103,7 @@ function ($,
 			{
 				try
 				{
-					this .setTraversed (false);
-
-					if (this .inside)
+					if (this .inside && this .getTraversed ())
 					{
 					   var
 					      modelViewMatrix        = this .modelViewMatrix,
@@ -165,6 +163,8 @@ function ($,
 				{
 					//console .log (error .message);
 				}
+
+				this .setTraversed (false);
 			},
 			traverse: function (type)
 			{

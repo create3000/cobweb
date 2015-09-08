@@ -46,6 +46,10 @@ function ($,
 
 		   this .traversed = value;
 		},
+		getTraversed: function ()
+		{
+		   return this .traversed;
+		},
 		set_enabled__: function ()
 		{
 			if (this .getCameraObject () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))

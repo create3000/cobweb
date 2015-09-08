@@ -65,9 +65,7 @@ function ($,
 			},
 			update: function ()
 			{
-				this .setTraversed (false);
-
-				if (this .visible)
+				if (this .visible && this .getTraversed ())
 				{
 					if (! this .isActive_ .getValue ())
 					{
@@ -85,6 +83,8 @@ function ($,
 						this .exitTime_ = this .getBrowser () .getCurrentTime ();
 					}
 				}
+					
+				this .setTraversed (false);
 			},
 			traverse: function (type)
 			{
