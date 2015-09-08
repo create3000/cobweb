@@ -96,13 +96,6 @@ function ($,
 					if (this .getGeometry () .isLineGeometry ())
 						return;
 
-					//XXX implement isSensorObject_ like isCameraObject_ in X3DGroupingNode if it is faster.
-					var sensors = this .getBrowser () .getSensors ();
-
-					if ($.isEmptyObject (sensors [sensors .length - 1]))
-					   return;
-					//XXX isSensorObject_
-
 					var
 						browser            = this .getBrowser (),
 						modelViewMatrix    = browser .getModelViewMatrix () .get (),
