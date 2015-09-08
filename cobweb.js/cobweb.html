@@ -6,7 +6,6 @@
 	<meta http-equiv="Expires" content="0"/>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
-	<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
 	<link rel="stylesheet" type="text/css" href="cobweb.css"/>
 	<script src="jam/require.js"></script>
 	<script type="text/javascript" src="cobweb.js"></script>
@@ -40,6 +39,12 @@ x3d {
 	width: 100px;
 	float: right;
 	font-size: 12px;
+}
+
+.u {
+	font-family: Ubuntu;
+	font-weight: 900;
+	font-size: 100px;
 }
 	</style>
 	<script type="text/javascript">
@@ -95,7 +100,7 @@ X3D (function (dom)
 			'BIC Building':       "tests/Examples/BIC/building.x3d",
 			'BIC Buero':          "tests/Examples/BIC/buero.x3d",
 			'BIC Info':           "tests/Examples/BIC/info.x3d",
-			'Cathedral':          "tests/Examples/Cathedral/stage/index.x3d",
+			'Cathedral':          "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/index.x3d",
 			'Dolphin':            "tests/Examples/Dolphin/index.x3d",
 			'Hamburger':          "tests/Examples/ICTS/hamburger.x3d",
 			'ICTS':               "tests/Examples/ICTS/index.x3d",
@@ -162,6 +167,7 @@ X3D (function (dom)
 		<X3D statistics="true" cache="false" url='
 			"tests/Examples/Boxes/boxes.x3d",
 		'></X3D>
+		<p class="u">Falling Boxes</p>
 	</div>
 </body>
 </html>

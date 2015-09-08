@@ -861,7 +861,7 @@ function ($,
 			},
 			getScale: function ()
 			{
-			   return this .size_ .getValue ();
+			   return this .size_ .getValue () * 0.9;
 			},
 			set_live__: function ()
 			{

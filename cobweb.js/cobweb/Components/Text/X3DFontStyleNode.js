@@ -16,27 +16,30 @@ function ($,
     * Font paths for default SERIF, SANS and TYPWRITER families.
     */
 
-	var FontDirectory = "https://cdn.rawgit.com/holger-seelig/cobweb/master/cobweb.js/fonts/";
+	var FontDirectories = [
+		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
+		"https://cdn.rawgit.com/holger-seelig/cobweb/master/cobweb.js/fonts/",
+	];
 
 	var Fonts =
 	{
 	   SERIF: {
-	      PLAIN:      FontDirectory + "DroidSerif-Regular.ttf",
-	      ITALIC:     FontDirectory + "DroidSerif-Italic.ttf",
-	      BOLD:       FontDirectory + "DroidSerif-Bold.ttf",
-	      BOLDITALIC: FontDirectory + "DroidSerif-BoldItalic.ttf",
+	      PLAIN:      "DroidSerif-Regular.ttf",
+	      ITALIC:     "DroidSerif-Italic.ttf",
+	      BOLD:       "DroidSerif-Bold.ttf",
+	      BOLDITALIC: "DroidSerif-BoldItalic.ttf",
 	   },
 	   SANS: {
-	      PLAIN:      FontDirectory + "Ubuntu-R.ttf",
-	      ITALIC:     FontDirectory + "Ubuntu-RI.ttf",
-	      BOLD:       FontDirectory + "Ubuntu-B.ttf",
-	      BOLDITALIC: FontDirectory + "Ubuntu-BI.ttf",
+	      PLAIN:      "Ubuntu-R.ttf",
+	      ITALIC:     "Ubuntu-RI.ttf",
+	      BOLD:       "Ubuntu-B.ttf",
+	      BOLDITALIC: "Ubuntu-BI.ttf",
 	   },
 	   TYPEWRITER: {
-	      PLAIN:      FontDirectory + "UbuntuMono-R.ttf",
-	      ITALIC:     FontDirectory + "UbuntuMono-RI.ttf",
-	      BOLD:       FontDirectory + "UbuntuMono-B.ttf",
-	      BOLDITALIC: FontDirectory + "UbuntuMono-BI.ttf",
+	      PLAIN:      "UbuntuMono-R.ttf",
+	      ITALIC:     "UbuntuMono-RI.ttf",
+	      BOLD:       "UbuntuMono-B.ttf",
+	      BOLDITALIC: "UbuntuMono-BI.ttf",
 	   },
 	};
 
@@ -58,6 +61,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DFontStyleNode);
 
+		this .family     = [ ];
 		this .alignments = [ ];
 		this .loader     = new Loader (this);
 	}
@@ -140,7 +144,27 @@ function ($,
 		},
 		requestAsyncLoad: function ()
 		{
-			this .familyIndex = 0;
+			this .familyIndex    = 0;
+			this .family .length = 0;
+
+			var family = this .family_ .copy ();
+
+			family .push ("SERIF");
+
+			for (var i = 0; i < family .length; ++ i)
+			{
+			   var
+			      familyName  = family [i],
+			      defaultFont = this .getDefaultFont (familyName);
+			   
+				if (defaultFont)
+				{
+				   for (var d = 0; d < FontDirectories .length; ++ d)
+				      this .family .push (FontDirectories [d] + defaultFont);
+				}
+				else
+					this .family .push (familyName);
+			}
 
 			this .loadFont ();
 		},
@@ -148,16 +172,14 @@ function ($,
 		{
 			try
 			{
-			   if (this .familyIndex < this .family_ .length)
+			   if (this .familyIndex < this .family .length)
 			   {
 					var
-						familyName = this .family_ [this .familyIndex],
-						fontPath   = this .getDefaultFont (familyName) || this .loader .transform (familyName);
+						familyName = this .family [this .familyIndex],
+						fontPath   = this .loader .transform (familyName);
 
 					opentype .load (fontPath, this .setFont .bind (this));
 				}
-				else if (this .familyIndex === this .family_ .length)
-				   opentype .load (this .getDefaultFont ("SERIF"), this .setFont .bind (this));
 			}
 			catch (error)
 			{
@@ -206,10 +228,11 @@ function ($,
 		},
 		setError: function (error)
 		{
+			console .warn ("Font error:", error);
+			console .warn (this .family [this .familyIndex]);
+
 			this .font = null;
 			this .familyIndex ++;
-
-			console .warn ("Font error:", error);
 
 			this .loadFont ();
 		},

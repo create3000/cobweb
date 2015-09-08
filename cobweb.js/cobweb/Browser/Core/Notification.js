@@ -8,7 +8,15 @@ function ($,
           SFString,
           X3DBaseNode)
 {
-	function Notification (executionContext)
+$.fn.textWidth = function(){
+  var html_org = $(this).html();
+  var html_calc = '<span>' + html_org + '</span>';
+  $(this).html(html_calc);
+  var width = $(this).find('span:first').width();
+  $(this).html(html_org);
+  return width;
+};
+   function Notification (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 	}
@@ -22,7 +30,10 @@ function ($,
 
 			this .addChildren ("string", new SFString ());
 
-			this .element = $("<div/>") .addClass ("notification") .appendTo (this .getBrowser () .getXML () .find (".canvas"));
+			this .element = $("<div/>")
+				.addClass ("notification")
+				.appendTo (this .getBrowser () .getXML () .find (".canvas"))
+				.animate ({ width: 0 });
 
 			this .string_ .addInterest (this, "set_string__");
 		},
@@ -31,12 +42,22 @@ function ($,
 			if (this .string_ .length === 0)
 				return;
 
-			this .element
-				.text (this .string_ .getValue ())
+			//this .element
+			//	.text (this .string_ .getValue ())
+			//	.stop (true, true)
+			//	.fadeIn ()
+			//	.animate ({ "delay": 1 }, 4000)
+			//	.fadeOut ();
+
+			this .element .text (this .string_ .getValue ());
+
+			this .element 
 				.stop (true, true)
-				.fadeIn ()
-				.animate ({"delay":1}, 4000)
-				.fadeOut ();
+				.fadeIn (0)
+				.animate ({ width: this .element .textWidth (this .string_ .getValue ()) })
+				.animate ({ "delay": 1 }, 5000)
+				.animate ({ width: 0 })
+				.fadeOut (0);
 		},
 	});
 
