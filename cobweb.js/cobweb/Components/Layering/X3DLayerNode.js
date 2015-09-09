@@ -12,11 +12,8 @@ define ([
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Line3",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DNode,
@@ -30,19 +27,10 @@ function ($,
           X3DCast,
           TraverseType,
           X3DConstants,
-          Camera,
           Line3,
-          Vector3,
-          Rotation4,
-          Matrix4)
+          Vector3)
 {
-	var
-		positionOffset   = new Vector3 (0, 0, 0),
-		projectionMatrix = new Matrix4 (),
-		modelViewMatrix  = new Matrix4 (),
-		localOrientation = new Rotation4 (0, 0, 1, 0),
-		line             = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
-		zAxis            = new Vector3 (0, 0, 1);
+	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
 	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
 	{
@@ -178,94 +166,6 @@ function ($,
 		{
 			return this .hitRay;
 		},
-		getInverseCameraSpaceMatrix: function ()
-		{
-			return this .inverseCameraSpaceMatrix;
-		},
-		constrainTranslation: function (translation)
-		{
-		   var t0 = performance .now ();
-
-			var
-				navigationInfo  = this .getNavigationInfo (),
-				distance        = this .getDistance (translation),
-				length          = translation .abs ();
-
-			var
-				zFar            = navigationInfo .getFarPlane (this .getViewpoint ()),
-				collisionRadius = navigationInfo .getCollisionRadius ();
-
-			if (zFar - distance > 0) // Are there polygons before the viewer
-			{
-				distance -= collisionRadius;
-
-				if (distance > 0)
-				{
-					// Move
-
-					if (length > distance)
-					{
-						// Collision: The wall is reached.
-						return translation .normalize () .multiply (distance);
-					}
-
-					return translation;
-				}
-
-				// Collision
-				return translation .set (0, 0, 0);
-			}
-
-			this .collisionTime += performance .now () - t0;
-			return translation;
-		},
-		getDistance: function (translation)
-		{
-			try
-			{
-				// Apply collision to translation.
-
-				var
-					browser         = this .getBrowser (),
-					viewpoint       = this .getViewpoint (),
-					navigationInfo  = this .getNavigationInfo (),
-					collisionRadius = navigationInfo .getCollisionRadius (),
-					zNear           = navigationInfo .getNearPlane (),
-					zFar            = navigationInfo .getFarPlane (viewpoint);
-
-				// Determine width and height of camera
-
-				var
-					width     = collisionRadius * 2,
-					height    = navigationInfo .getAvatarHeight () - navigationInfo .getStepHeight (),
-					width1_2  = width / 2,
-					height1_2 = height / 2;
-
-				// Get position offset
-
-				positionOffset .set (0, -height1_2, 0);
-	
-				// Reshape camera
-
-				Camera .ortho (-width1_2, width1_2, -height1_2, height1_2, zNear, zFar, projectionMatrix);
-
-				// Translate camera
-
-				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
-				modelViewMatrix .assign (viewpoint .getParentMatrix ());
-
-				modelViewMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
-				modelViewMatrix .rotate (new Rotation4 (zAxis, Vector3 .negate (translation)) .multRight (localOrientation));
-				modelViewMatrix .inverse ();
-
-				browser .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
-				return this .getDepth ();
-			}
-			catch (error)
-			{
-				console .log (error);
-			}
-		},
 		set_viewport__: function ()
 		{
 			this .currentViewport = X3DCast (X3DConstants .X3DViewportNode, this .viewport_);
@@ -378,20 +278,15 @@ function ($,
 		},
 		collision: function ()
 		{
-			try
-			{
-				this .collisionTime = 0;
+			this .collisionTime = 0;
 
-				this .getViewpoint () .reshape ();
-				this .getBrowser () .getModelViewMatrix () .identity ();
-	
-				// Render
-				this .currentViewport .push ();
-				this .render (TraverseType .COLLISION);
-				this .currentViewport .pop ();
-			}
-			catch (error)
-			{ }
+			this .getViewpoint () .reshape ();
+			this .getBrowser () .getModelViewMatrix () .identity ();
+
+			// Render
+			this .currentViewport .push ();
+			this .render (TraverseType .COLLISION);
+			this .currentViewport .pop ();
 		},
 		display: function (type)
 		{

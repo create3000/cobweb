@@ -30,7 +30,7 @@ function ($, Quaternion, Vector3)
 				this .value = new Quaternion (0, 0, 0, 1);
 
 				if (arguments [1] instanceof Vector3)
-				   return this .setFromTo (arguments [0], arguments [1]);
+				   return this .setFromToVec (arguments [0], arguments [1]);
 				
 				this .set (arguments [0] .x,
 				           arguments [0] .y,
@@ -96,7 +96,7 @@ function ($, Quaternion, Vector3)
 				      vector .z,
 				      2 * Math .acos (this .value .w) ];
 		},
-		setFromTo: function (fromVec, toVec)
+		setFromToVec: function (fromVec, toVec)
 		{
 			// https://bitbucket.org/Coin3D/coin/src/abc9f50968c9/src/base/SbRotation.cpp
 
@@ -144,6 +144,8 @@ function ($, Quaternion, Vector3)
 				                  crossvec .z,
 				                  Math .sqrt (Math .abs (1 + cos_angle) / 2));
 			}
+
+			return this;
 		},
 		getAxis: function ()
 		{

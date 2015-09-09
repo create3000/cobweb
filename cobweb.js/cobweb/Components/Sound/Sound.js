@@ -140,7 +140,7 @@ function ($,
 					b = Math .sqrt (a * a - e * e);
 				
 				this .translation .z = e;
-				this .rotation .setFromTo (this .zAxis, this .direction_ .getValue ());
+				this .rotation .setFromToVec (this .zAxis, this .direction_ .getValue ());
 				this .scale .z = b / a;
 
 				var transformationMatrix = this .transformationMatrix;

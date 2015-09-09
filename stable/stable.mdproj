@@ -60,10 +60,17 @@
     <None Include="1\1.6\images\logo.png" />
     <None Include="1\1.6\cobweb.css" />
     <None Include="1\1.6\cobweb.min.js" />
+    <None Include="1\1.7\images\icon.bw.png" />
+    <None Include="1\1.7\images\icon.png" />
+    <None Include="1\1.7\images\logo.bw.png" />
+    <None Include="1\1.7\images\logo.png" />
+    <None Include="1\1.7\cobweb.css" />
+    <None Include="1\1.7\cobweb.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
     <Folder Include="latest\" />
     <Folder Include="1\1.6\" />
+    <Folder Include="1\1.7\" />
   </ItemGroup>
 </Project>
