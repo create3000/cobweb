@@ -2,12 +2,14 @@
 define ([
 	"jquery",
 	"cobweb/Base/X3DEventObject",
+	"cobweb/Base/Event",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DEventObject,
+          Event,
           X3DFieldDefinition,
           Fields,
           X3DConstants)
@@ -320,11 +322,15 @@ function ($,
 			      return;
 
 			   this .isLive () .setValue (true);
+				this .isLive () .processEvent (Event .create (this .isLive ()));
 			},
 			endUpdate: function ()
 			{
 			   if (this .isLive () .getValue ())
+			   {
 			      this .isLive () .setValue (false);
+					this .isLive () .processEvent (Event .create (this .isLive ()));
+				}
 			},
 			toString: function ()
 			{

@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 29 Aug 2015 07:24:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 08 Sep 2015 19:27:42 GMT'/>
+    <meta name='modified' content='Tue, 08 Sep 2015 20:15:14 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"MFInt32.x3d", "http://titania.create3000.de/Library/Prototypes/0.1/Fields/MFInt32.x3d"'>
@@ -1185,7 +1185,7 @@ function eventsProcessed ()
 	if (minutes < 10) minutes = "0" + minutes;
 	
 	var hours = Math .floor (t);
-	if (hours && hours < 10) minutes = "0" + minutes;
+	if (hours && hours < 10) hours = "0" + hours;
 	
 	string_changed [0] = "Boxes left: " + boxesLeft;
 	string_changed [1] = "Time: " + (hours ? hours + ":" : "") + minutes + ":" + seconds;

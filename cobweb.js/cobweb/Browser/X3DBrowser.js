@@ -125,9 +125,12 @@ function ($,
 				this .loadCount_ .addFieldCallback ("loading" + id, this .bindWorld .bind (this, id));
 
 				this .isLive () .addFieldInterest (scene .isLive ());
-				scene .isLive () .setValue (this .isLive ());
-				this .processEvents ();
 
+				if (this .isLive () .getValue ())
+					scene .beginUpdate ();
+				else
+					scene .endUpdate ();
+	
 				scene .setup ();
 				this .setExecutionContext (scene);
 
@@ -165,8 +168,9 @@ function ($,
 				if (! external)
 				{
 					currentScene .isLive () .addFieldInterest (scene .isLive ());
-					scene .isLive () .setValue (currentScene .isLive ());
-					this .processEvents ();
+
+					if (currentScene .isLive () .getValue ())
+						scene .beginUpdate ();
 				}
 
 				scene .setup ();
@@ -200,8 +204,9 @@ function ($,
 					   if (! external)
 					   {
 					      currentScene .isLive () .addFieldInterest (scene .isLive ());
-							scene .isLive () .setValue (currentScene .isLive ());
-							this .processEvents ();
+
+							if (currentScene .isLive () .getValue ())
+							   scene .beginUpdate ();
 						}
 
 						scene .setup ();
@@ -228,8 +233,9 @@ function ($,
 				if (! external)
 				{
 					currentScene .isLive () .addFieldInterest (scene .isLive ());
-
-					scene .isLive () .setValue (currentScene .isLive ());
+							
+					if (currentScene .isLive () .getValue ())
+						scene .beginUpdate ();
 				}
 
 				scene .setup ();
