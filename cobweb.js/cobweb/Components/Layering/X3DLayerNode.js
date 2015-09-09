@@ -39,6 +39,7 @@ function ($,
 	var
 		positionOffset   = new Vector3 (0, 0, 0),
 		projectionMatrix = new Matrix4 (),
+		modelViewMatrix  = new Matrix4 (),
 		localOrientation = new Rotation4 (0, 0, 1, 0),
 		line             = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 		zAxis            = new Vector3 (0, 0, 1);
@@ -53,7 +54,7 @@ function ($,
 		this .defaultViewpoint = defaultViewpoint;
 		this .group            = group;
 
-		this .inverseCameraSpaceMatrix = new Matrix4 ();
+		this .collisionTime = 0;
 	}
 
 	X3DLayerNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -183,6 +184,8 @@ function ($,
 		},
 		constrainTranslation: function (translation)
 		{
+		   var t0 = performance .now ();
+
 			var
 				navigationInfo  = this .getNavigationInfo (),
 				distance        = this .getDistance (translation),
@@ -213,6 +216,7 @@ function ($,
 				return translation .set (0, 0, 0);
 			}
 
+			this .collisionTime += performance .now () - t0;
 			return translation;
 		},
 		getDistance: function (translation)
@@ -247,20 +251,15 @@ function ($,
 
 				// Translate camera
 
-				var inverseCameraSpaceMatrix = this .inverseCameraSpaceMatrix;
-
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
-				inverseCameraSpaceMatrix .assign (viewpoint .getParentMatrix ());
+				modelViewMatrix .assign (viewpoint .getParentMatrix ());
 
-				inverseCameraSpaceMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
-				inverseCameraSpaceMatrix .rotate (new Rotation4 (zAxis, Vector3 .negate (translation)) .multRight (localOrientation));
-				inverseCameraSpaceMatrix .inverse ();
+				modelViewMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
+				modelViewMatrix .rotate (new Rotation4 (zAxis, Vector3 .negate (translation)) .multRight (localOrientation));
+				modelViewMatrix .inverse ();
 
-				browser .setProjectionMatrix (inverseCameraSpaceMatrix .multRight (projectionMatrix));
-
-				// Traverse and get distance
-
-				return X3DRenderer .prototype .getDistance .call (this);
+				browser .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				return this .getDepth ();
 			}
 			catch (error)
 			{
@@ -379,12 +378,20 @@ function ($,
 		},
 		collision: function ()
 		{
-			this .getViewpoint () .reshape ();
-			this .getBrowser () .getModelViewMatrix () .identity ();
+			try
+			{
+				this .collisionTime = 0;
 
-			this .currentViewport .push ();
-			this .render (TraverseType .COLLISION);
-			this .currentViewport .pop ();
+				this .getViewpoint () .reshape ();
+				this .getBrowser () .getModelViewMatrix () .identity ();
+	
+				// Render
+				this .currentViewport .push ();
+				this .render (TraverseType .COLLISION);
+				this .currentViewport .pop ();
+			}
+			catch (error)
+			{ }
 		},
 		display: function (type)
 		{

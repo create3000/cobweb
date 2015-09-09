@@ -68,7 +68,8 @@ function ($,
 			{
 				var
 					browser           = this .getBrowser ();
-					layers            = browser .getWorld () .getLayerSet () .getLayers ()
+					layers            = browser .getWorld () .getLayerSet () .getLayers (),
+					activeLayer       = browser .getActiveLayer ()
 					opaqueShapes      = 0,
 					transparentShapes = 0;
 
@@ -83,17 +84,21 @@ function ($,
 					transparentShapes += layer .numTransparentShapes;
 				}
 
-				var routingTime = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime);
+				var 
+					navigationTime = activeLayer ? activeLayer .collisionTime : 0,
+					collisionTime  = browser .collisionTime + navigationTime,
+					routingTime    = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime + navigationTime),
+					systemTime     = browser .systemTime - browser .pickingTime;
 
 				var text = "";
 				text += "Rendering Properties\n\n";
 				text += "Frame rate: " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
-				text += "Browser:    " + browser .systemTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Browser:    " + systemTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "X3D:        " + browser .browserTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Routing:    " + routingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Picking:    " + browser .pickingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Camera:     " + browser .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
-				text += "Collision:  " + browser .collisionTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Collision:  " + collisionTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Display:    " + browser .displayTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";
 				text += "Sensors:    " + (prepareEvents + sensors) + "\n";

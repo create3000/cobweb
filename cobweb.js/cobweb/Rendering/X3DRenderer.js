@@ -3,18 +3,26 @@ define ([
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Geometry/Camera",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 ],
 function (DepthBuffer,
 	       TraverseType,
           QuickSort,
+          Camera,
           Vector3,
+          Rotation4,
           Matrix4)
 {
 	var
 		DEPTH_BUFFER_WIDTH  = 16,
-		DEPTH_BUFFER_HEIGHT = 16;
+		DEPTH_BUFFER_HEIGHT = 16,
+		yAxis               = new Vector3 (0, 1, 0),
+		zAxis               = new Vector3 (0, 0, 1),
+		projectionMatrix    = new Matrix4 (),
+		modelViewMatrix     = new Matrix4 ();
 
 	function X3DRenderer (browser, executionContext)
 	{
@@ -27,8 +35,7 @@ function (DepthBuffer,
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, function (lhs, rhs) { return lhs .distance < rhs .distance; });
 		this .collisionShapes      = [ ];
-		this .displayTime          = 0;
-		this .distance             = 0;
+		this .speed                = 0;
 
 		try
 		{
@@ -125,6 +132,7 @@ function (DepthBuffer,
 					this .numCollisionShapes = 0;
 					this .collect (type);
 					this .collide ();
+					this .gravite ();
 					break;
 				}
 				case TraverseType .DISPLAY:
@@ -140,20 +148,8 @@ function (DepthBuffer,
 
 			this .getBrowser () .getGlobalLights () .length = 0;
 		},
-		getDistance: function ()
+		getDepth: function ()
 		{
-			// Measure distance
-
-			// Get NavigationInfo values
-
-			var
-				navigationInfo = this .getNavigationInfo (),
-				viewpoint      = this .getViewpoint ();
-
-			var
-				zNear = navigationInfo .getNearPlane (),
-				zFar  = navigationInfo .getFarPlane (viewpoint);
-
 			// Render all objects
 
 			var
@@ -187,6 +183,12 @@ function (DepthBuffer,
 				context .geometry .collision (shader);
 			}
 
+			var
+				navigationInfo = this .getNavigationInfo (),
+				viewpoint      = this .getViewpoint ();
+				zNear          = navigationInfo .getNearPlane (),
+				zFar           = navigationInfo .getFarPlane (viewpoint);
+
 			var distance = this .depthBuffer .getDistance (zNear, zFar);
 
 			this .depthBuffer .unbind ();
@@ -196,6 +198,114 @@ function (DepthBuffer,
 		collide: function ()
 		{
 		
+		},
+		gravite: function ()
+		{
+		   try
+		   {
+				// Terrain following and gravitation
+
+				if (this !== this .getBrowser () .getActiveLayer ())
+				   return;
+
+				if (this .getBrowser () .getViewer () != "WALK") // XXX: if (this .getNavigationInfo () .getType () != "WALK")
+					return;
+
+				// Get NavigationInfo values
+
+				var
+					navigationInfo  = this .getNavigationInfo (),
+					viewpoint       = this .getViewpoint (),
+					collisionRadius = navigationInfo .getCollisionRadius (),
+					zNear           = navigationInfo .getNearPlane (),
+					zFar            = navigationInfo .getFarPlane (viewpoint),
+					height          = navigationInfo .getAvatarHeight (),
+					stepHeight      = navigationInfo .getStepHeight ();
+
+				// Reshape viewpoint for gravite.
+
+				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, zNear, zFar, projectionMatrix)
+
+				// Transform viewpoint
+
+				var down = new Rotation4 (viewpoint .getUserOrientation () .multVecRot (zAxis .copy ()), viewpoint .getUpVector ());
+
+				modelViewMatrix .assign (viewpoint .getParentMatrix ());
+				modelViewMatrix .translate (viewpoint .getUserPosition ());
+				modelViewMatrix .rotate (viewpoint .getUserOrientation () .multRight (down));
+				modelViewMatrix .inverse ();
+
+				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+		
+		      var distance = this .getDepth ();
+
+				// Gravite or step up
+
+				if (zFar - distance > 0) // Are there polygons under the viewer
+				{
+					distance -= height;
+
+					var up = new Rotation4 (yAxis, viewpoint .getUpVector ());
+
+					if (distance > 0)
+					{
+						// Gravite and fall down the floor
+
+						var currentFrameRate = this .speed ? this .getBrowser () .getCurrentFrameRate () : 1000000;
+
+						this .speed -= this .getBrowser () .getBrowserOptions () .Gravity_ .getValue () / currentFrameRate;
+
+						var translation = this .speed / currentFrameRate;
+
+						if (translation < -distance)
+						{
+							// The ground is reached.
+							translation = -distance;
+							this .speed = 0;
+						}
+
+						viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .add (up .multVecRot (new Vector3 (0, translation, 0)));
+					}
+					else
+					{
+						this .speed = 0;
+
+						if (-distance > 0.01 && -distance < stepHeight)
+						{
+							// Get size of camera
+							var size = navigationInfo .getCollisionRadius () * 2;
+
+							// Step up
+							var translation = up .multVecRot (new Vector3 (0, -distance, 0));
+
+							//this .constrainTranslation (translation); // Test if there is something above.
+
+							//if (getBrowser () -> getBrowserOptions () -> animateStairWalks ())
+							//{
+							//	float step = getBrowser () -> getCurrentSpeed () / getBrowser () -> getCurrentFrameRate ();
+							//	step = abs (getInverseCameraSpaceMatrix () .mult_matrix_dir (Vector3f (0, step, 0) * up));
+							//
+							//	Vector3f offset = Vector3f (0, step, 0) * up;
+							//
+							//	if (math::abs (offset) > math::abs (translation) or getBrowser () -> getCurrentSpeed () == 0)
+							//		offset = translation;
+							//
+							//	getCurrentViewpoint () -> positionOffset () += offset;
+							//}
+							//else
+								viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .add (translation);
+						}
+					}
+				}
+				else
+				{
+					this .speed = 0;
+				}
+			}
+			catch (error)
+			{
+			   console .log (error);
+			}
 		},
 		draw: function ()
 		{

@@ -42,6 +42,10 @@ function (Fields,
 				headlight .setup ();
 				this .headlight = headlight .getContainer ();
 			},
+			getViewer: function ()
+			{
+			   return this .viewer_ .getValue ();
+			},
 			getHeadlight: function ()
 			{
 				return this .headlight;
