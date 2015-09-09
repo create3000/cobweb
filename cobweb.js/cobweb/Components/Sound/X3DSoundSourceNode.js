@@ -17,7 +17,8 @@ function ($,
 
 		this .addType (X3DConstants .X3DSoundSourceNode);
 
-		this .media = null;
+		this .volume = 0;
+		this .media  = null;
 	}
 
 	X3DSoundSourceNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -28,6 +29,23 @@ function ($,
 		{
 		   X3DChildNode         .prototype .initialize .call (this);
 			X3DTimeDependentNode .prototype .initialize .call (this);
+
+		},
+		set_live__: function ()
+		{
+		   X3DTimeDependentNode .prototype .set_live__ .call (this);
+
+			if (this .disabled)
+			{
+			   this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
+			   this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
+			}
+			else
+			{
+			   this .getBrowser () .volume_ .addInterest (this, "set_volume__");
+			   this .getBrowser () .mute_   .addInterest (this, "set_volume__");
+				this .set_volume__ ();
+			}
 		},
 		setMedia: function (value)
 		{
@@ -67,8 +85,14 @@ function ($,
 		},
 		setVolume: function (value)
 		{
-		   if (this .media)
-			   this .media [0] .volume = value;
+	      this .volume = value;
+
+	      if (this .media)
+				this .media [0] .volume = this .getBrowser () .getMute () ? 0 : value * this .getBrowser () .getVolume ();
+		},
+		set_volume__: function ()
+		{
+		   this .setVolume (this .volume);
 		},
 		set_speed: function ()
 		{ },

@@ -103,13 +103,29 @@ function ($)
 					}
 					break;
 				}
+				case 77: // s
+				{
+					if (this .ctrlKey)
+					{
+						this .setMute (! this .getMute ());
+						
+						this .getNotification () .string_ = this .getMute () ? "Mute" : "Normal Volume";
+					}
+
+					break;
+				}
 				case 83: // s
 				{
 					if (this .ctrlKey)
 					{
-						this .isLive () .setValue (! this .isLive () .getValue ());
+						if (this .isLive () .getValue ())
+							this .endUpdate ();
+						else
+							this .beginUpdate ();
+						
 						this .getNotification () .string_ = this .isLive () .getValue () ? "Begin Update" : "End Update";
 					}
+
 					break;
 				}
 				case 112: // F1

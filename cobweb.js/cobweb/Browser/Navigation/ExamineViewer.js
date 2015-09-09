@@ -37,10 +37,16 @@ function ($, X3DViewer, Vector3, Rotation4)
 		{
 			X3DViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getCanvas () .bind ("mousedown.ExamineViewer",  this .mousedown .bind (this));
-			this .getBrowser () .getCanvas () .bind ("mouseup.ExamineViewer",    this .mouseup .bind (this));
-			this .getBrowser () .getCanvas () .bind ("mousemove.ExamineViewer",  this .mousemove .bind (this));
-			this .getBrowser () .getCanvas () .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
+			var
+			   browser = this .getBrowser (),
+			   canvas  = browser .getCanvas ();
+
+			canvas .bind ("mousedown.ExamineViewer",  this .mousedown .bind (this));
+			canvas .bind ("mouseup.ExamineViewer",    this .mouseup .bind (this));
+			canvas .bind ("mousemove.ExamineViewer",  this .mousemove .bind (this));
+			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
+
+			browser .getNotification () .string_ = "Examine Viewer";
 		},
 		mousedown: function (event)
 		{

@@ -16,6 +16,12 @@ function (X3DFlyViewer, Vector3, Rotation4)
 	WalkViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),
 	{
 		constructor: WalkViewer,
+		initialize: function ()
+		{
+			X3DFlyViewer .prototype .initialize .call (this);
+
+			this .getBrowser () .getNotification () .string_ = "Walk Viewer";
+		},
 		getTranslationOffset: function (velocity)
 		{
 			var

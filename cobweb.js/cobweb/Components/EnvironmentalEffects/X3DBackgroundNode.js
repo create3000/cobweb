@@ -9,6 +9,7 @@ define ([
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
+	"standard/Math/Geometry/Camera",
 ],
 function ($,
           X3DBindableNode,
@@ -18,7 +19,8 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
-          Algorithm)
+          Algorithm,
+          Camera)
 {
 	var
 		SIZE        = 10000,
@@ -96,7 +98,6 @@ function ($,
 		this .addType (X3DConstants .X3DBackgroundNode);
 
 		this .hidden                = false;
-		this .rotation              = new Rotation4 ();
 		this .modelViewMatrix       = new Matrix4 ();
 		this .modelViewMatrixArray  = new Float32Array (16);
 		this .colors                = [ ];
@@ -107,6 +108,8 @@ function ($,
 	X3DBackgroundNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
 	{
 		constructor: X3DBackgroundNode,
+		rotation: new Rotation4 (),
+		orthoMatrix: Camera .ortho (-1, 1, -1, 1, -1, 1, new Matrix4 ()),
 		textureMatrixArray: new Float32Array (new Matrix4 ()),
 		rectangleCount: 6,
 		initialize: function ()
@@ -228,29 +231,13 @@ function ($,
 			{
 				// Build cube
 
-				var
-					r = SIZE,
-					c = this .skyColor_ [0];
+				this .plane = true;
 
-				// Back
-				this .sphere .push ( r,  r, -r, 1, -r,  r, -r, 1, -r, -r, -r, 1);
-				this .sphere .push ( r,  r, -r, 1, -r, -r, -r, 1,  r, -r, -r, 1);
-				// Front
-				this .sphere .push (-r,  r,  r, 1,  r,  r,  r, 1, -r, -r,  r, 1);
-				this .sphere .push (-r, -r,  r, 1,  r,  r,  r, 1,  r, -r,  r, 1);
-				// Left
-				this .sphere .push (-r,  r, -r, 1, -r,  r,  r, 1, -r, -r,  r, 1);
-				this .sphere .push (-r,  r, -r, 1, -r, -r,  r, 1, -r, -r, -r, 1);
-				// Right
-				this .sphere .push ( r,  r,  r, 1,  r,  r, -r, 1,  r, -r,  r, 1);
-				this .sphere .push ( r, -r,  r, 1,  r,  r, -r, 1,  r, -r, -r, 1);
-				// Top
-				this .sphere .push ( r,  r,  r, 1, -r,  r,  r, 1, -r,  r, -r, 1);
-				this .sphere .push ( r,  r,  r, 1, -r,  r, -r, 1,  r,  r, -r, 1);
-				// Bottom
-				this .sphere .push ( -r, -r,  r, 1, r, -r,  r, 1, -r, -r, -r, 1);
-				this .sphere .push ( -r, -r, -r, 1, r, -r,  r, 1,  r, -r, -r, 1);
-				this .sphere .vertices = this .sphere .length / 4;
+				var c = this .skyColor_ [0];
+
+				this .sphere .push (1, 1, 0, 1, -1,  1,  0, 1, -1, -1, 0, 1);
+				this .sphere .push (1, 1, 0, 1, -1, -1,  0, 1,  1, -1, 0, 1);
+				this .sphere .vertices = 6;
 
 				for (var i = 0, vertices = this .sphere .vertices; i < vertices; ++ i)
 					this .colors .push (c .r, c .g, c .b, alpha);
@@ -259,6 +246,8 @@ function ($,
 			{
 				// Build sphere
 
+				this .plane = false;
+			
 				var radius = Math .sqrt (2 * Math .pow (SIZE, 2));
 			
 				if (this .skyColor_ .length > this .skyAngle_ .length)
@@ -437,26 +426,38 @@ function ($,
 
 			// Get background scale
 
-			var
-				viewpoint       = this .getCurrentViewpoint (),
-				scale           = viewpoint .getScreenScale (SIZE, viewport),
-				rotation        = this .rotation,
-				modelViewMatrix = this .modelViewMatrix;
+			if (this .plane)
+			{
+				var modelViewMatrix = this .modelViewMatrix;
 
-			scale .multiply (Math .max (viewport [2], viewport [3]));
+				this .getBrowser () .setProjectionMatrix (this .orthoMatrix);
 
-			viewpoint .reshapeWithLimits (1, Math .max (2, 3 * SIZE * scale .z));
+				modelViewMatrix .identity ();
+				this .modelViewMatrixArray .set (modelViewMatrix);
+			}
+			else
+			{
+				var
+					viewpoint       = this .getCurrentViewpoint (),
+					scale           = viewpoint .getScreenScale (SIZE, viewport),
+					rotation        = this .rotation,
+					modelViewMatrix = this .modelViewMatrix;
 
-			// Rotate and scale background
+				scale .multiply (Math .max (viewport [2], viewport [3]));
 
-			modelViewMatrix .get (null, rotation);
-			modelViewMatrix .identity ();
-			modelViewMatrix .scale (scale);
-			modelViewMatrix .rotate (rotation);
+				viewpoint .reshapeWithLimits (1, Math .max (2, 3 * SIZE * scale .z));
 
-			// Draw
+				// Rotate and scale background
 
-			this .modelViewMatrixArray .set (modelViewMatrix);
+				modelViewMatrix .get (null, rotation);
+				modelViewMatrix .identity ();
+				modelViewMatrix .scale (scale);
+				modelViewMatrix .rotate (rotation);
+
+				// Draw
+
+				this .modelViewMatrixArray .set (modelViewMatrix);
+			}
 
 			this .drawSphere ();
 

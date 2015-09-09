@@ -13,6 +13,12 @@ function ($, X3DViewer)
 	NoneViewer .prototype = $.extend (Object .create (X3DViewer .prototype),
 	{
 		constructor: NoneViewer,
+		initialize: function ()
+		{
+			X3DViewer .prototype .initialize .call (this);
+
+			this .getBrowser () .getNotification () .string_ = "None Viewer";
+		},
 	});
 
 	return NoneViewer;

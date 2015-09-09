@@ -200,8 +200,10 @@ function ($,
 			{
 			   var live = this .getExecutionContext () .isLive () .getValue () && X3DNode .prototype .isLive .call (this) .getValue ();
 
-			   if (live !== this .isLive () .getValue ())
-			      this .isLive () .setValue (live);
+				if (live)
+					this .beginUpdate ();
+				else
+					this .endUpdate ();
 			},
 		});
 

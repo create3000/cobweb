@@ -82,6 +82,9 @@ function ($,
 			},
 			set_source__: function ()
 			{
+			   if (this .sourceNode)
+			      this .sourceNode .setVolume (0);
+
 				this .sourceNode = X3DCast (X3DConstants .X3DSoundSourceNode, this .source_);
 			},
 			traverse: function (type)

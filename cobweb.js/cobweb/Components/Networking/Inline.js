@@ -88,8 +88,10 @@ function ($,
 				{
 					var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
 
-					if (live !== this .scene .isLive () .getValue ())
-						this .scene .isLive () .setValue (live);
+					if (live)
+						this .scene .beginUpdate ();
+					else
+						this .scene .endUpdate ();
 				}
 			},
 			set_load__: function ()

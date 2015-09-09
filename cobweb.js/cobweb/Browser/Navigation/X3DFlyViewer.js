@@ -67,10 +67,12 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		{
 			X3DViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getCanvas () .bind ("mousedown.X3DFlyViewer",  this .mousedown .bind (this));
-			this .getBrowser () .getCanvas () .bind ("mouseup.X3DFlyViewer",    this .mouseup .bind (this));
-			this .getBrowser () .getCanvas () .bind ("mousemove.X3DFlyViewer",  this .mousemove .bind (this));
-			this .getBrowser () .getCanvas () .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
+			var canvas = this .getBrowser () .getCanvas ();
+
+			canvas .bind ("mousedown.X3DFlyViewer",  this .mousedown .bind (this));
+			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup .bind (this));
+			canvas .bind ("mousemove.X3DFlyViewer",  this .mousemove .bind (this));
+			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
 		},
 		mousedown: function (event)
 		{

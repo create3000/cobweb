@@ -16,6 +16,7 @@ define ([
 	"cobweb/Browser/Scripting/X3DScriptingContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
 	"cobweb/Browser/Shape/X3DShapeContext",
+	"cobweb/Browser/Sound/X3DSoundContext",
 	"cobweb/Browser/Text/X3DTextContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
 	"cobweb/Browser/Time/X3DTimeContext",
@@ -39,6 +40,7 @@ function ($,
           X3DScriptingContext,
           X3DShadersContext,
           X3DShapeContext,
+          X3DSoundContext,
           X3DTextContext,
           X3DTexturingContext,
           X3DTimeContext,
@@ -62,6 +64,7 @@ function ($,
 		X3DScriptingContext            .call (this);
 		X3DShadersContext              .call (this);
 		X3DShapeContext                .call (this);
+		X3DSoundContext                .call (this);
 		X3DTextContext                 .call (this);
 		X3DTexturingContext            .call (this);
 		X3DTimeContext                 .call (this);
@@ -88,6 +91,7 @@ function ($,
 		X3DScriptingContext .prototype,
 		X3DShadersContext .prototype,
 		X3DShapeContext .prototype,
+		X3DSoundContext .prototype,
 		X3DTextContext .prototype,
 		X3DTexturingContext .prototype,
 		X3DTimeContext .prototype,
@@ -116,6 +120,7 @@ function ($,
 			X3DScriptingContext            .prototype .initialize .call (this);
 			X3DShadersContext              .prototype .initialize .call (this);
 			X3DShapeContext                .prototype .initialize .call (this);
+			X3DSoundContext                .prototype .initialize .call (this);
 			X3DTextContext                 .prototype .initialize .call (this);
 			X3DTexturingContext            .prototype .initialize .call (this);
 			X3DTimeContext                 .prototype .initialize .call (this);
