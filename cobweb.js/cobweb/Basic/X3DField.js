@@ -29,6 +29,10 @@ function ($,
 		{
 			return this .copy ();
 		},
+		equals: function (value)
+		{
+			return this .getValue () == value .valueOf ();
+		},
 		setValue: function (value)
 		{
 			this .set (value instanceof this .constructor ? value .getValue () : value);

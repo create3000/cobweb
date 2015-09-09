@@ -56,14 +56,29 @@ function ($,
 			{
 				X3DBaseNode .prototype .initialize .call (this);
 				
-				this .PrimitiveQuality_ .addInterest (this, "set_primitiveQuality__");
-				this .Shading_          .addInterest (this, "set_shading__");
+				this .PrimitiveQuality_          .addInterest (this, "set_primitiveQuality__");
+				this .Shading_                   .addInterest (this, "set_shading__");
+				this .getBrowser () .shutdown () .addInterest  (this, "set_shutdown__");
 
 				this .set_primitiveQuality__ ();
 			},
 			getPrimitiveQuality: function ()
 			{
 			   return this .primitiveQuality;
+			},
+			set_shutdown__: function ()
+			{
+			   var fieldDefinitions = this .getFieldDefinitions ();
+
+			   for (var i = 0; i < fieldDefinitions .length; ++ i)
+			   {
+			      var
+			         fieldDefinition = fieldDefinitions [i],
+			         field           = this .getField (fieldDefinition .name);
+
+			      if (! field .equals (fieldDefinition .value))
+			         field .setValue (fieldDefinition .value);
+			   }
 			},
 			set_primitiveQuality__: function ()
 			{

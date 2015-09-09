@@ -18,10 +18,6 @@ function ($, X3DField, X3DConstants)
 		{
 			return new SFBool (this .getValue ());
 		},
-		equals: function (value)
-		{
-			return this .getValue () == value;
-		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, Boolean (value));
