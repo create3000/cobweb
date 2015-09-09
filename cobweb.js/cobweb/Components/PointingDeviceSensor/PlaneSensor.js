@@ -185,7 +185,7 @@ function ($,
 						{
 							try
 							{
-								this .getLineTrackPoint (hit, new Line3 (this .line .direction, this .line .direction), trackPoint);
+								this .getLineTrackPoint (hit, new Line3 (Vector3 .Zero, this .line .direction), trackPoint);
 							}
 							catch (error)
 							{

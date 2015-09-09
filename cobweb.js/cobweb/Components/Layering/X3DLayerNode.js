@@ -257,11 +257,8 @@ function ($,
 				inverseCameraSpaceMatrix .inverse ();
 
 				browser .setProjectionMatrix (inverseCameraSpaceMatrix .multRight (projectionMatrix));
-				browser .getModelViewMatrix () .identity ();
 
 				// Traverse and get distance
-
-				this .traverse (TraverseType .NAVIGATION);
 
 				return X3DRenderer .prototype .getDistance .call (this);
 			}
@@ -323,9 +320,6 @@ function ($,
 				case TraverseType .CAMERA:
 					this .camera ();
 					break;
-				case TraverseType .NAVIGATION:
-					this .navigation ();
-					break;
 				case TraverseType .COLLISION:
 					this .collision ();
 					break;
@@ -335,12 +329,6 @@ function ($,
 			}
 
 			this .getBrowser () .getLayers () .pop ();
-		},
-		navigation: function () // collision
-		{
-			this .currentViewport .push ();
-			this .render (TraverseType .NAVIGATION);
-			this .currentViewport .pop ();
 		},
 		pointer: function ()
 		{
@@ -391,7 +379,12 @@ function ($,
 		},
 		collision: function ()
 		{
-		
+			this .getViewpoint () .reshape ();
+			this .getBrowser () .getModelViewMatrix () .identity ();
+
+			this .currentViewport .push ();
+			this .render (TraverseType .COLLISION);
+			this .currentViewport .pop ();
 		},
 		display: function (type)
 		{

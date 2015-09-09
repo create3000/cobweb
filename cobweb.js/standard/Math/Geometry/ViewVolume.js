@@ -136,33 +136,25 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			return new Line3 .Points (near, far);
 		},
-		projectPoint: function (point, modelview, projection, viewport, point)
-		{
-			matrix .assign (modelview) .multRight (projection);
-
-			return this .projectPointMatrix (point, matrix, viewport, point);
-		},
-		projectPointMatrix: function (point, matrix, viewport, point)
+		projectPoint: function (point, modelview, projection, viewport, vout)
 		{
 			vin .set (point .x, point .y, point .z, 1);
 
-			matrix .multVecMatrix (vin);
+			projection .multVecMatrix (modelview .multVecMatrix (vin));
 
 			if (vin .w === 0)
 				throw Error ("Couldn't project point: divisor is 0.");
 
-			var d = 1 / vin .w;
+			var d = 1 / (2 * vin .w);
 
-			return point .set ((vin .x * d / 2 + 0.5) * viewport [2] + viewport [0],
-			                   (vin .y * d / 2 + 0.5) * viewport [3] + viewport [1],
-			                   (1 + vin .z * d) / 2);
+			return vout .set ((vin .x * d + 0.5) * viewport [2] + viewport [0],
+			                  (vin .y * d + 0.5) * viewport [3] + viewport [1],
+			                  (vin .z * d + 0.5));
 		},
 		projectLine: function (line, modelview, projection, viewport)
 		{
-			matrix .assign (modelview) .multRight (projection);
-			
-			ViewVolume .projectPointMatrix (line .point, matrix, viewport, near);
-			ViewVolume .projectPointMatrix (Vector3 .multiply (line .direction, 1e9) .add (line .point), matrix, viewport, far);
+			ViewVolume .projectPoint (line .point, modelview, projection, viewport, near);
+			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelview, projection, viewport, far);
 
 			near .z = 0;
 			far  .z = 0;

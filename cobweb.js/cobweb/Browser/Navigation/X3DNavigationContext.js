@@ -20,14 +20,16 @@ function (Fields,
 
 		function X3DNavigationContext ()
 		{
-			this .addChildren ("availableViewers", new MFString (),
-			                   "viewer",           new SFString ("EXAMINE"));
+		   this .collisions = [ ];
 		}
 
 		X3DNavigationContext .prototype =
 		{
 			initialize: function ()
 			{
+				this .addChildren ("availableViewers", new MFString (),
+				                   "viewer",           new SFString ("EXAMINE"));
+			   
 			   this .initialized () .addInterest (this, "set_world__");
 			   this .shutdown () .addInterest (this, "remove_world__");
 			   this .viewer_ .addInterest (this, "set_viewer__");
@@ -47,6 +49,10 @@ function (Fields,
 			getActiveLayer: function ()
 			{
 			   return this .activeLayerNode;
+			},
+			getCollisions: function ()
+			{
+			   return this .collisions;
 			},
 			remove_world__: function ()
 			{

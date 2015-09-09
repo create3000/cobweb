@@ -8,6 +8,7 @@ define ([
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/Box3",
 ],
 function ($,
@@ -18,6 +19,7 @@ function ($,
           TraverseType,
           X3DConstants,
           Vector3,
+          Matrix4,
           Box3)
 {
 	with (Fields)
@@ -47,6 +49,7 @@ function ($,
 			]),
 			size: new Vector3 (0, 0, 0),
 			center: new Vector3 (0, 0, 0),
+			modelViewMatrix: new Matrix4 (),
 			getTypeName: function ()
 			{
 				return "VisibilitySensor";
@@ -102,7 +105,7 @@ function ($,
 						{
 							var
 								viewVolume      = this .getCurrentLayer () .getViewVolume (),
-								modelViewMatrix = this .getModelViewMatrix (type),
+								modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix),
 								size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
 								center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
 

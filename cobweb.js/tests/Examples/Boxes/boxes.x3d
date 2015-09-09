@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 29 Aug 2015 07:24:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 09 Sep 2015 05:40:35 GMT'/>
+    <meta name='modified' content='Wed, 09 Sep 2015 06:25:51 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"MFInt32.x3d", "http://titania.create3000.de/Library/Prototypes/0.1/Fields/MFInt32.x3d"'>
@@ -1116,62 +1116,64 @@ function random (max)
       </Layer>
       <Layer DEF='HUD'
           isPickable='false'>
-        <OrthoViewpoint DEF='_35'/>
-        <Transform DEF='Title'
-            translation='1.69646 0.824739 0'
-            scale='0.161213 0.161213 0.161213'>
-          <Shape>
-            <Appearance>
-              <Material DEF='Rococo20_1'
-                  ambientIntensity='0.226102'
-                  diffuseColor='1 0 0'
-                  specularColor='0.0955906 0.0955906 0.0955906'
-                  shininess='0.078125'/>
-            </Appearance>
-            <Text
-                string='"Smashing Boxes"'
-                solid='true'>
-              <FontStyle
-                  family='"BertramLetPlain.otf", "SANS"'
-                  style='BOLD'
-                  size='1.4'
-                  justify='"END", "FIRST"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <Transform DEF='Status_1'
-            translation='1.69646 0.639832 0'
-            scale='0.161213 0.161213 0.161213'>
-          <Shape>
-            <Appearance>
-              <Material DEF='Rococo21_1'
-                  ambientIntensity='0.187004'
-                  diffuseColor='0.504157 0.607004 0.748016'
-                  specularColor='0.309091 0.309091 0.309091'
-                  shininess='0.8'/>
-            </Appearance>
-            <Text DEF='_36'
-                string='"Boxes left: 24", "Time: 00:00"'
-                solid='true'>
-              <FontStyle
-                  family='"BertramLetPlain.otf", "SANS"'
-                  style='BOLD'
-                  justify='"END", "FIRST"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <TimeSensor DEF='_37'
-            loop='true'
-            startTime='1441724287.7888'
-            stopTime='1441731498.48137'/>
-        <Script DEF='StatusScript'>
-          <field accessType='inputOnly' type='SFTime' name='set_cycleTime'/>
-          <field accessType='inputOutput' type='SFInt32' name='boxesLeft' value='28'/>
-          <field accessType='outputOnly' type='MFString' name='string_changed'/>
-          <field accessType='outputOnly' type='SFTime' name='stopTime'/>
-          <field accessType='initializeOnly' type='SFNode' name='timer'>
-            <TimeSensor USE='_37'/>
-          </field>
+        <Collision
+            enabled='false'>
+          <OrthoViewpoint DEF='_35'/>
+          <Transform DEF='Title'
+              translation='1.69646 0.824739 0'
+              scale='0.161213 0.161213 0.161213'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Rococo20_1'
+                    ambientIntensity='0.226102'
+                    diffuseColor='1 0 0'
+                    specularColor='0.0955906 0.0955906 0.0955906'
+                    shininess='0.078125'/>
+              </Appearance>
+              <Text
+                  string='"Smashing Boxes"'
+                  solid='true'>
+                <FontStyle
+                    family='"BertramLetPlain.otf", "SANS"'
+                    style='BOLD'
+                    size='1.4'
+                    justify='"END", "FIRST"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Status_1'
+              translation='1.69646 0.639832 0'
+              scale='0.161213 0.161213 0.161213'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Rococo21_1'
+                    ambientIntensity='0.187004'
+                    diffuseColor='0.504157 0.607004 0.748016'
+                    specularColor='0.309091 0.309091 0.309091'
+                    shininess='0.8'/>
+              </Appearance>
+              <Text DEF='_36'
+                  string='"Boxes left: 24", "Time: 00:00"'
+                  solid='true'>
+                <FontStyle
+                    family='"BertramLetPlain.otf", "SANS"'
+                    style='BOLD'
+                    justify='"END", "FIRST"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <TimeSensor DEF='_37'
+              loop='true'
+              startTime='1441724287.7888'
+              stopTime='1441731498.48137'/>
+          <Script DEF='StatusScript'>
+            <field accessType='inputOnly' type='SFTime' name='set_cycleTime'/>
+            <field accessType='inputOutput' type='SFInt32' name='boxesLeft' value='28'/>
+            <field accessType='outputOnly' type='MFString' name='string_changed'/>
+            <field accessType='outputOnly' type='SFTime' name='stopTime'/>
+            <field accessType='initializeOnly' type='SFNode' name='timer'>
+              <TimeSensor USE='_37'/>
+            </field>
 <![CDATA[javascript:
 
 function set_boxesLeft (value, time)
@@ -1201,24 +1203,25 @@ function eventsProcessed ()
 	string_changed [0] = "Boxes left: " + boxesLeft;
 	string_changed [1] = "Time: " + (hours ? hours + ":" : "") + minutes + ":" + seconds;
 }]]> 
-        </Script>
-        <Transform DEF='TitaniaText'
-            translation='1.69646 -0.955001 0'
-            scale='0.0790629 0.0790629 0.0790629'>
-          <Shape>
-            <Appearance>
-              <Material USE='Rococo21_1'/>
-            </Appearance>
-            <Text
-                string='"Created with Titania"'
-                solid='true'>
-              <FontStyle
-                  family='"BertramLetPlain.otf", "SANS"'
-                  style='BOLD'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
-        </Transform>
+          </Script>
+          <Transform DEF='TitaniaText'
+              translation='1.69646 -0.955001 0'
+              scale='0.0790629 0.0790629 0.0790629'>
+            <Shape>
+              <Appearance>
+                <Material USE='Rococo21_1'/>
+              </Appearance>
+              <Text
+                  string='"Created with Titania"'
+                  solid='true'>
+                <FontStyle
+                    family='"BertramLetPlain.otf", "SANS"'
+                    style='BOLD'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+        </Collision>
       </Layer>
       <Layer DEF='Instructions'>
         <Background DEF='Black'
@@ -1260,7 +1263,7 @@ function eventsProcessed ()
             </PositionInterpolator>
           </Group>
           <Shape>
-            <Appearance>
+            <Appearance DEF='_40'>
               <Material DEF='Rococo1_1'
                   ambientIntensity='0.187004'
                   diffuseColor='0.636212 0.748016 0.300948'
@@ -1281,7 +1284,7 @@ function eventsProcessed ()
             translation='0 -0.247078 0'
             scale='0.873122 0.131886 0.873122'>
           <Shape>
-            <Appearance>
+            <Appearance DEF='_41'>
               <Material/>
             </Appearance>
             <IndexedFaceSet
@@ -1294,112 +1297,106 @@ function eventsProcessed ()
                   point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
             </IndexedFaceSet>
           </Shape>
-          <TouchSensor DEF='_40'/>
+          <TouchSensor DEF='_42'/>
         </Transform>
       </Layer>
       <Layer DEF='Congratulations'>
-        <Background DEF='Black_1'
-            transparency='0.5'/>
-        <OrthoViewpoint/>
-        <VisibilitySensor DEF='_41'
-            size='1 1 1'/>
-        <Transform DEF='CongratualtionsText'
-            scale='0.161213 0.161213 0.161213'>
-          <Group DEF='StartNowAnim_1'>
-            <MetadataSet
-                name='Animation'>
-              <MetadataInteger containerField='value'
-                  name='duration'
-                  value='10'/>
-              <MetadataInteger containerField='value'
-                  name='framesPerSecond'
-                  value='10'/>
-            </MetadataSet>
-            <TimeSensor DEF='_42'
-                enabled='false'
-                loop='true'
-                startTime='1441731498.48137'
-                stopTime='1441729852.59986'/>
-            <PositionInterpolator DEF='StartNowTextScaleInterpolator_1'
-                key='0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1'
-                keyValue='0.161213 0.161213 0.161213, 0.165708 0.165708 0.165708, 0.162808 0.162808 0.162808, 0.158567 0.158567 0.158567, 0.161009 0.161009 0.161009, 0.166131 0.166131 0.166131, 0.157594 0.157594 0.157594, 0.162194 0.162194 0.162194, 0.156723 0.156723 0.156723, 0.16696 0.16696 0.16696, 0.161213 0.161213 0.161213'>
+        <Collision
+            enabled='false'>
+          <Background USE='Black'/>
+          <OrthoViewpoint USE='_35'/>
+          <VisibilitySensor DEF='_43'
+              size='1 1 1'/>
+          <Transform DEF='CongratualtionsText'
+              scale='0.161213 0.161213 0.161213'>
+            <Group DEF='StartNowAnim_1'>
               <MetadataSet
-                  name='Interpolator'>
+                  name='Animation'>
                 <MetadataInteger containerField='value'
-                    name='key'
-                    value='0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10'/>
-                <MetadataDouble containerField='value'
-                    name='keyValue'
-                    value='0.161212995648384, 0.161212995648384, 0.161212995648384, 0.165708273649216, 0.165708273649216, 0.165708273649216, 0.162807703018188, 0.162807703018188, 0.162807703018188, 0.1585673391819, 0.1585673391819, 0.1585673391819, 0.161009162664413, 0.161009162664413, 0.161009162664413, 0.1661307066679, 0.1661307066679, 0.1661307066679, 0.157593905925751, 0.157593905925751, 0.157593905925751, 0.162193983793259, 0.162193983793259, 0.162193983793259, 0.156723067164421, 0.156723067164421, 0.156723067164421, 0.166960373520851, 0.166960373520851, 0.166960373520851, 0.161212995648384, 0.161212995648384, 0.161212995648384'/>
-                <MetadataString containerField='value'
-                    name='keyType'
-                    value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
+                    name='duration'
+                    value='10'/>
+                <MetadataInteger containerField='value'
+                    name='framesPerSecond'
+                    value='10'/>
               </MetadataSet>
-            </PositionInterpolator>
-          </Group>
-          <Shape>
-            <Appearance>
-              <Material DEF='Rococo1'
-                  ambientIntensity='0.187004'
-                  diffuseColor='0.636212 0.748016 0.300948'
-                  specularColor='0.412121 0.412121 0.412121'
-                  shininess='0.8'/>
-            </Appearance>
-            <Text
-                string='"Congratulations!", "You found all yellow boxes.", "", "Continue"'
-                solid='true'>
-              <FontStyle
-                  family='"BertramLetPlain.otf", "SANS"'
-                  style='BOLD'
-                  justify='"MIDDLE", "MIDDLE"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <Transform DEF='Rectangle2D_6'
-            translation='0 -0.247078 0'
-            scale='0.449082 0.131886 0.873122'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <IndexedFaceSet
-                ccw='false'
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_43'/>
-        </Transform>
+              <TimeSensor DEF='_44'
+                  enabled='false'
+                  loop='true'
+                  startTime='1441731498.48137'
+                  stopTime='1441729852.59986'/>
+              <PositionInterpolator DEF='StartNowTextScaleInterpolator_1'
+                  key='0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1'
+                  keyValue='0.161213 0.161213 0.161213, 0.165708 0.165708 0.165708, 0.162808 0.162808 0.162808, 0.158567 0.158567 0.158567, 0.161009 0.161009 0.161009, 0.166131 0.166131 0.166131, 0.157594 0.157594 0.157594, 0.162194 0.162194 0.162194, 0.156723 0.156723 0.156723, 0.16696 0.16696 0.16696, 0.161213 0.161213 0.161213'>
+                <MetadataSet
+                    name='Interpolator'>
+                  <MetadataInteger containerField='value'
+                      name='key'
+                      value='0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10'/>
+                  <MetadataDouble containerField='value'
+                      name='keyValue'
+                      value='0.161212995648384, 0.161212995648384, 0.161212995648384, 0.165708273649216, 0.165708273649216, 0.165708273649216, 0.162807703018188, 0.162807703018188, 0.162807703018188, 0.1585673391819, 0.1585673391819, 0.1585673391819, 0.161009162664413, 0.161009162664413, 0.161009162664413, 0.1661307066679, 0.1661307066679, 0.1661307066679, 0.157593905925751, 0.157593905925751, 0.157593905925751, 0.162193983793259, 0.162193983793259, 0.162193983793259, 0.156723067164421, 0.156723067164421, 0.156723067164421, 0.166960373520851, 0.166960373520851, 0.166960373520851, 0.161212995648384, 0.161212995648384, 0.161212995648384'/>
+                  <MetadataString containerField='value'
+                      name='keyType'
+                      value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
+                </MetadataSet>
+              </PositionInterpolator>
+            </Group>
+            <Shape>
+              <Appearance USE='_40'/>
+              <Text
+                  string='"Congratulations!", "You found all yellow boxes.", "", "Continue"'
+                  solid='true'>
+                <FontStyle
+                    family='"BertramLetPlain.otf", "SANS"'
+                    style='BOLD'
+                    justify='"MIDDLE", "MIDDLE"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_6'
+              translation='0 -0.247078 0'
+              scale='0.449082 0.131886 0.873122'>
+            <Shape>
+              <Appearance USE='_41'/>
+              <IndexedFaceSet
+                  ccw='false'
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_45'/>
+          </Transform>
+        </Collision>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='StatusScript' fromField='string_changed' toNode='_36' toField='set_string'/>
     <ROUTE fromNode='PlayGroundScript' fromField='boxesLeft' toNode='StatusScript' toField='set_boxesLeft'/>
     <ROUTE fromNode='_37' fromField='cycleTime' toNode='StatusScript' toField='set_cycleTime'/>
     <ROUTE fromNode='EnterWorldScript' fromField='enterTime' toNode='_37' toField='set_stopTime'/>
-    <ROUTE fromNode='_40' fromField='touchTime' toNode='_37' toField='set_startTime'/>
-    <ROUTE fromNode='_40' fromField='touchTime' toNode='Game' toField='set_triggerTime'/>
+    <ROUTE fromNode='_42' fromField='touchTime' toNode='_37' toField='set_startTime'/>
+    <ROUTE fromNode='_42' fromField='touchTime' toNode='Game' toField='set_triggerTime'/>
     <ROUTE fromNode='Game' fromField='value_changed' toNode='_2' toField='set_order'/>
     <ROUTE fromNode='_39' fromField='fraction_changed' toNode='StartNowTextScaleInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='StartNowTextScaleInterpolator' fromField='value_changed' toNode='StartNowText' toField='set_scale'/>
     <ROUTE fromNode='_38' fromField='isActive' toNode='_39' toField='set_enabled'/>
     <ROUTE fromNode='_38' fromField='enterTime' toNode='_39' toField='set_startTime'/>
     <ROUTE fromNode='StartNowTextScaleInterpolator_1' fromField='value_changed' toNode='CongratualtionsText' toField='set_scale'/>
-    <ROUTE fromNode='_42' fromField='fraction_changed' toNode='StartNowTextScaleInterpolator_1' toField='set_fraction'/>
-    <ROUTE fromNode='_41' fromField='enterTime' toNode='_42' toField='set_startTime'/>
-    <ROUTE fromNode='_41' fromField='isActive' toNode='_42' toField='set_enabled'/>
-    <ROUTE fromNode='_43' fromField='touchTime' toNode='StartNow' toField='set_triggerTime'/>
+    <ROUTE fromNode='_44' fromField='fraction_changed' toNode='StartNowTextScaleInterpolator_1' toField='set_fraction'/>
+    <ROUTE fromNode='_43' fromField='enterTime' toNode='_44' toField='set_startTime'/>
+    <ROUTE fromNode='_43' fromField='isActive' toNode='_44' toField='set_enabled'/>
+    <ROUTE fromNode='_45' fromField='touchTime' toNode='StartNow' toField='set_triggerTime'/>
     <ROUTE fromNode='StartNow' fromField='value_changed' toNode='_2' toField='set_order'/>
     <ROUTE fromNode='Congratulations_1' fromField='value_changed' toNode='_2' toField='set_order'/>
     <ROUTE fromNode='EnterWorldScript' fromField='enterTime' toNode='StartNow' toField='set_triggerTime'/>
     <ROUTE fromNode='StatusScript' fromField='stopTime' toNode='_37' toField='set_stopTime'/>
     <ROUTE fromNode='StatusScript' fromField='stopTime' toNode='Congratulations_1' toField='set_triggerTime'/>
-    <ROUTE fromNode='_43' fromField='touchTime' toNode='PlayGroundScript' toField='set_startTime'/>
+    <ROUTE fromNode='_45' fromField='touchTime' toNode='PlayGroundScript' toField='set_startTime'/>
     <ROUTE fromNode='_37' fromField='isActive' toNode='Walk' toField='set_bind'/>
-    <ROUTE fromNode='_41' fromField='isActive' toNode='Top' toField='set_bind'/>
+    <ROUTE fromNode='_43' fromField='isActive' toNode='Top' toField='set_bind'/>
     <ROUTE fromNode='_38' fromField='isActive' toNode='Top' toField='set_bind'/>
     <ROUTE fromNode='_7' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
     <ROUTE fromNode='_8' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>

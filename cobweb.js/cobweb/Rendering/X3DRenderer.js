@@ -27,7 +27,6 @@ function (DepthBuffer,
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, function (lhs, rhs) { return lhs .distance < rhs .distance; });
 		this .collisionShapes      = [ ];
-		this .traverseTime         = 0;
 		this .displayTime          = 0;
 		this .distance             = 0;
 
@@ -100,14 +99,10 @@ function (DepthBuffer,
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize .assign (shape .getBBoxSize ())),
 				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shape .getBBoxCenter ())),
-				radius          = bboxSize .abs () / 2,
 				distance        = bboxCenter .z,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-			if (viewVolume .intersectsSphere (radius, bboxCenter))
-			{
 				if (this .numCollisionShapes === this .collisionShapes .length)
 					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16) });
 
@@ -119,50 +114,33 @@ function (DepthBuffer,
 				context .geometry = shape .getGeometry ();
 				context .scissor  = viewVolume .getScissor ();
 				context .distance = distance;
-			}
-		},
-		getDistance: function ()
-		{
-			return this .distance;
 		},
 		render: function (type)
 		{
-			this .numOpaqueShapes      = 0;
-			this .numTransparentShapes = 0;
-			this .numCollisionShapes   = 0;
-
 			switch (type)
 			{
-				case TraverseType .NAVIGATION:
-				{
-					this .collect (type);
-					this .navigate ();
-					break;
-				}
 				case TraverseType .COLLISION:
 				{
 					// Collect for collide and gravite
+					this .numCollisionShapes = 0;
 					this .collect (type);
 					this .collide ();
 					break;
 				}
 				case TraverseType .DISPLAY:
 				{
-					var t0 = performance .now ();
+					this .numOpaqueShapes      = 0;
+					this .numTransparentShapes = 0;
+
 					this .collect (type);
-					this .traverseTime = performance .now () - t0;
-
-					var t0 = performance .now ();
 					this .draw ();
-					this .displayTime = performance .now () - t0;
-
 					break;
 				}
 			}
 
 			this .getBrowser () .getGlobalLights () .length = 0;
 		},
-		navigate: function ()
+		getDistance: function ()
 		{
 			// Measure distance
 
@@ -204,14 +182,16 @@ function (DepthBuffer,
 				             scissor .z,
 				             scissor .w);
 
-				gl .uniformMatrix4fv (shader .modelViewMatrix,  false, context .modelViewMatrix);
+				gl .uniformMatrix4fv (shader .modelViewMatrix, false, context .modelViewMatrix);
 
 				context .geometry .collision (shader);
 			}
 
-			this .distance = this .depthBuffer .getDistance (zNear, zFar);
+			var distance = this .depthBuffer .getDistance (zNear, zFar);
 
 			this .depthBuffer .unbind ();
+
+			return distance;
 		},
 		collide: function ()
 		{

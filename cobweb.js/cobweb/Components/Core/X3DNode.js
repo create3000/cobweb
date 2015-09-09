@@ -36,21 +36,13 @@ function ($,
 		{
 			return this .getBrowser () .getLayers () [0] .getViewpoint ();
 		},
-		getModelViewMatrix: function (type)
+		getModelViewMatrix: function (type, modelViewMatrix)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get () .copy ();
-		
-			switch (type)
-			{
-				case TraverseType .CAMERA:
-					modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
-					break;
-				
-				case TraverseType .NAVIGATION:
-					modelViewMatrix .multRight (this .getCurrentLayer () .getInverseCameraSpaceMatrix ());
-					break;
-			}
-
+			modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			
+			if (type === TraverseType .CAMERA)
+				modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
+			
 			return modelViewMatrix;
 		},
 	});

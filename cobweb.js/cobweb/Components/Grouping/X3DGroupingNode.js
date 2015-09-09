@@ -379,7 +379,6 @@ function ($,
 
 					return;
 				}
-				case TraverseType .NAVIGATION:
 				case TraverseType .COLLISION:
 				{					
 					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)

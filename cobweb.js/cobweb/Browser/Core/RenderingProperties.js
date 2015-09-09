@@ -69,8 +69,6 @@ function ($,
 				var
 					browser           = this .getBrowser ();
 					layers            = browser .getWorld () .getLayerSet () .getLayers ()
-					traverseTime      = 0,
-					displayTime       = 0,
 					opaqueShapes      = 0,
 					transparentShapes = 0;
 
@@ -81,24 +79,22 @@ function ($,
 				for (var i = 0; i < layers .length; ++ i)
 				{
 					var layer = layers [i];
-					traverseTime      += layer .traverseTime;
-					displayTime       += layer .displayTime;
 					opaqueShapes      += layer .numOpaqueShapes;
 					transparentShapes += layer .numTransparentShapes;
 				}
 
-				var routingTime = browser .browserTime - (browser .cameraTime + traverseTime + displayTime);
+				var routingTime = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime);
 
 				var text = "";
 				text += "Rendering Properties\n\n";
 				text += "Frame rate: " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
-				text += "System:     " + browser .systemTime .toFixed (2) .toLocaleString () + " ms" + "\n";
-				text += "Browser:    " + browser .browserTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Browser:    " + browser .systemTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "X3D:        " + browser .browserTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Routing:    " + routingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
-				text += "Camera:     " + browser .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
-				text += "Traverse:   " + traverseTime .toFixed (2) .toLocaleString () + " ms" + "\n";
-				text += "Display:    " + displayTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Picking:    " + browser .pickingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Camera:     " + browser .cameraTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Collision:  " + browser .collisionTime .toFixed (2) .toLocaleString () + " ms" + "\n";
+				text += "Display:    " + browser .displayTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";
 				text += "Sensors:    " + (prepareEvents + sensors) + "\n";
 

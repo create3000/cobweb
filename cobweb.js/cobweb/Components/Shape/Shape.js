@@ -78,7 +78,6 @@ function ($,
 							this .pointer ();
 							break;
 
-						case TraverseType .NAVIGATION:
 						case TraverseType .COLLISION:
 							this .getCurrentLayer () .addCollision (this);
 							break;

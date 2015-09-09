@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 10 Apr 2015 06:06:29 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.7, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 11 Apr 2015 10:18:50 GMT'/>
+    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
+    <meta name='modified' content='Wed, 09 Sep 2015 09:06:33 GMT'/>
     <meta name='title' content='LineSensor'/>
   </head>
   <Scene>
@@ -35,8 +35,10 @@
           orientation='0 1 0 1.5708'/>
       <PlaneSensor DEF='Touch1'
           axisRotation='0 0 1 0.785398'
+          offset='-0.0675507 -0.0675507 0'
           maxPosition='-1 0'/>
-      <Transform DEF='Button1'>
+      <Transform DEF='Button1'
+          translation='-0.0675507 -0.0675507 0'>
         <Transform DEF='Shape1'>
           <Transform
               translation='0 1 0'>
@@ -70,7 +72,8 @@
           </IndexedLineSet>
         </Shape>
       </Transform>
-      <Transform DEF='TrackPoint'>
+      <Transform DEF='TrackPoint'
+          translation='0.187073 0.187073 0'>
         <Shape>
           <Appearance>
             <LineProperties
@@ -117,6 +120,15 @@ function set_isActive1 (value)
 }
 ]]> 
     </Script>
+    <Transform DEF='Sphere_1'
+        scale='3.04509 3.04509 3.04509'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <Sphere/>
+      </Shape>
+    </Transform>
     <ROUTE fromNode='Touch1' fromField='trackPoint_changed' toNode='TrackPoint' toField='set_translation'/>
     <ROUTE fromNode='Line' fromField='rotation_changed' toNode='Touch1' toField='set_axisRotation'/>
     <ROUTE fromNode='Line' fromField='rotation_changed' toNode='Cube' toField='set_rotation'/>

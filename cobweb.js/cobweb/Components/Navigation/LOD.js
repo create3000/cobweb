@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
 ],
 function ($,
@@ -14,6 +15,7 @@ function ($,
           FieldDefinitionArray,
           X3DGroupingNode, 
           X3DConstants,
+          Matrix4,
           Algorithm)
 {
 	with (Fields)
@@ -50,6 +52,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren",   new MFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "children",         new MFNode ()),
 			]),
+			modelViewMatrix: new Matrix4 (),
 			getTypeName: function ()
 			{
 				return "LOD";
@@ -117,7 +120,7 @@ function ($,
 			},
 			getDistance: function (type)
 			{
-				var modelViewMatrix = this .getModelViewMatrix (type);
+				var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
 
 				modelViewMatrix .translate (this .center_ .getValue ());
 

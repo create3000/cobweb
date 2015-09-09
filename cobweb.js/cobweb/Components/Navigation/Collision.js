@@ -87,12 +87,13 @@ function ($,
 			{
 				switch (type)
 				{
-					case TraverseType .NAVIGATION:
 					case TraverseType .COLLISION:
 					{
 						if (this .enabled_ .getValue ())
 						{
-							//this .getCurrentLayer () .getCollisions () .push (this);
+						   var collisions = this .getBrowser () .getCollisions ();
+
+							collisions .push (this);
 
 							if (this .proxyNode)
 								this .proxyNode .traverse (type);
@@ -100,7 +101,7 @@ function ($,
 							else
 								X3DGroupingNode .prototype .traverse .call (this, type);
 
-							//this .getCurrentLayer () .getCollisions () .pop ();
+							collisions .pop ();
 						}
 
 						break;

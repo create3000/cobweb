@@ -5,12 +5,10 @@ define (function ()
 
 	var TraverseType =
 	{
-		POINTER:    i ++,
-		CAMERA:     i ++,
-		NAVIGATION: i ++,
-		COLLISION:  i ++,
-		POINTER:    i ++,
-		DISPLAY:    i ++,
+		POINTER:   i ++,
+		CAMERA:    i ++,
+		COLLISION: i ++,
+		DISPLAY:   i ++,
 	};
 
 	Object .preventExtensions (TraverseType);

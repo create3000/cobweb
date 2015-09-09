@@ -48,6 +48,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new MFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new MFNode ()),
 			]),
+			modelViewMatrix: new Matrix4 (),
 			getTypeName: function ()
 			{
 				return "Billboard";
@@ -65,7 +66,7 @@ function ($,
 				try
 				{
 					var
-						inverseModelViewMatrix = this .getModelViewMatrix (type) .inverse (),
+						inverseModelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix) .inverse (),
 						billboardToViewer      = inverseModelViewMatrix .origin .normalize ();       // Normalized to get work with Geo
 
 					if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))

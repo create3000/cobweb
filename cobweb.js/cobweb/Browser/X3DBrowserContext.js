@@ -70,11 +70,13 @@ function ($,
 		X3DTimeContext                 .call (this);
 		X3DRoutingContext              .call (this);
 
-		this .changedTime    = 0;
-		this .renderCallback = this .traverse .bind (this);
-		this .systemTime     = 0
-		this .browserTime    = 0;
-		this .cameraTime     = 0;
+		this .changedTime     = 0;
+		this .renderCallback  = this .traverse .bind (this);
+		this .systemTime      = 0
+		this .systemStartTime = 0
+		this .browserTime     = 0;
+		this .collisionTime   = 0;
+		this .displayTime     = 0;
 	};
 
 	X3DBrowserContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -170,26 +172,32 @@ function ($,
 		},
 		traverse: function (time)
 		{
-			this .systemTime = performance .now () - this .systemTime;
 			var t0 = performance .now ();
+			this .systemTime = t0 - this .systemStartTime;
 			this .advanceTime (time);
 
 			this .prepareEvents_ .processInterests ();
 			this .processEvents ();
 
-			var t0 = performance .now ();
+			var t1 = performance .now ();
 			this .world .traverse (TraverseType .CAMERA);
-			this .cameraTime = performance .now () - t0;
+			this .cameraTime = performance .now () - t1;
+
+			var t2 = performance .now ();
+			this .world .traverse (TraverseType .COLLISION);
+			this .collisionTime = performance .now () - t2;
 
 			this .sensors_ .processInterests ();
 			this .processEvents ();
 
+			var t3 = performance .now ();
 			this .context .clearColor (0, 0, 0, 0);
 			this .context .clear (this .context .COLOR_BUFFER_BIT);
-
 			this .world .traverse (TraverseType .DISPLAY);
-			this .browserTime = performance .now () - t0;
-			this .systemTime  = performance .now ();
+			this .displayTime = performance .now () - t3;
+
+			this .browserTime     = performance .now () - t0;
+			this .systemStartTime = performance .now ();
 
 			this .finished_ .processInterests ();
 		},
