@@ -430,9 +430,9 @@ function ($,
 			{
 				try
 				{
-					var node = this .getParent ();
-
-					var name = element .getAttribute ("name");
+					var
+						node = this .getParent (),
+						name = element .getAttribute ("name");
 
 					if (! this .id (name))
 						return;

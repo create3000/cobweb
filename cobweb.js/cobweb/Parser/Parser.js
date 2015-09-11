@@ -251,8 +251,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFColor ();
+				var
+					array = field .getValue (),
+					value = new SFColor ();
 
 				while (this .sfcolorValue (value))
 				{
@@ -296,8 +297,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFColorRGBA ();
+				var
+					array = field .getValue (),
+					value = new SFColorRGBA ();
 
 				while (this .sfcolorrgbaValue (value))
 				{
@@ -324,8 +326,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFDouble ();
+				var
+					array = field .getValue (),
+					value = new SFDouble ();
 
 				while (this .sfdoubleValue (value))
 				{
@@ -346,8 +349,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFFloat ();
+				var
+					array = field .getValue (),
+					value = new SFFloat ();
 
 				while (this .sffloatValue (value))
 				{
@@ -368,9 +372,10 @@ function ($, Fields)
 						
 						if (this .int32 ())
 						{
-							var comp  = this .value;
-							var array = [ ];
-							var size  = width * height;
+							var
+								comp  = this .value,
+								array = [ ],
+								size  = width * height;
 
 							for (var i = 0; i < size; ++ i)
 							{
@@ -399,8 +404,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFImage ();
+				var
+					array = field .getValue (),
+					value = new SFImage ();
 
 				while (this .sfimageValue (value))
 				{
@@ -427,8 +433,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFInt32 ();
+				var
+					array = field .getValue (),
+					value = new SFInt32 ();
 
 				while (this .sfint32Value (value))
 				{
@@ -499,8 +506,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFMatrix3d ();
+				var
+					array = field .getValue (),
+					value = new SFMatrix3d ();
 
 				while (this .sfmatrix3dValue (value))
 				{
@@ -521,8 +529,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFMatrix3f ();
+				var
+					array = field .getValue (),
+					value = new SFMatrix3f ();
 
 				while (this .sfmatrix3fValue (value))
 				{
@@ -629,8 +638,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFMatrix4d ();
+				var
+					array = field .getValue (),
+					value = new SFMatrix4d ();
 
 				while (this .sfmatrix4dValue (value))
 				{
@@ -651,8 +661,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFMatrix4f ();
+				var
+					array = field .getValue (),
+					value = new SFMatrix4f ();
 
 				while (this .sfmatrix4fValue (value))
 				{
@@ -696,8 +707,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFRotation ();
+				var
+					array = field .getValue (),
+					value = new SFRotation ();
 
 				while (this .sfrotationValue (value))
 				{
@@ -724,8 +736,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFString ();
+				var
+					array = field .getValue (),
+					value = new SFString ();
 
 				while (this .sfstringValue (value))
 				{
@@ -746,8 +759,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFTime ();
+				var
+					array = field .getValue (),
+					value = new SFTime ();
 
 				while (this .sftimeValue (value))
 				{
@@ -781,8 +795,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFVec2d ();
+				var
+					array = field .getValue (),
+					value = new SFVec2d ();
 
 				while (this .sfvec2dValue (value))
 				{
@@ -803,8 +818,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFVec2f ();
+				var
+					array = field .getValue (),
+					value = new SFVec2f ();
 
 				while (this .sfvec2fValue (value))
 				{
@@ -843,8 +859,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFVec3d ();
+				var
+					array = field .getValue (),
+					value = new SFVec3d ();
 
 				while (this .sfvec3dValue (value))
 				{
@@ -865,8 +882,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFVec3f ();
+				var
+					array = field .getValue (),
+					value = new SFVec3f ();
 
 				while (this .sfvec3fValue (value))
 				{
@@ -910,8 +928,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFVec4d ();
+				var
+					array = field .getValue (),
+					value = new SFVec4d ();
 
 				while (this .sfvec4dValue (value))
 				{
@@ -952,8 +971,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFVec4f ();
+				var
+					array = field .getValue (),
+					value = new SFVec4f ();
 
 				while (this .sfvec4Value (value))
 				{
