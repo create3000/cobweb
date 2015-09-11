@@ -356,84 +356,84 @@ function ($,
 					gl      = browser .getContext (),
 					shader  = browser .getShader ();
 
-				if (shader .vertex >= 0)
+				if (shader .vertex < 0)
+					return;
+
+				// Setup shader.
+				context .colorMaterial = this .colors .length;
+				shader .setLocalUniforms (context);
+
+				// Setup vertex attributes.
+
+				if (this .colors .length && shader .color >= 0)
 				{
-					// Setup shader.
-					context .colorMaterial = this .colors .length;
-					shader .setLocalUniforms (context);
+					gl .enableVertexAttribArray (shader .color);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				}
 
-					// Setup vertex attributes.
+				if (shader .texCoord >= 0)
+				{
+					gl .enableVertexAttribArray (shader .texCoord);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
+					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				}
 
-					if (this .colors .length && shader .color >= 0)
+				if (shader .normal >= 0)
+				{
+					gl .enableVertexAttribArray (shader .normal);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				}
+
+				gl .enableVertexAttribArray (shader .vertex);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+				// Draw depending on wireframe, solid and transparent.
+
+				if (shader .wireframe || this .isLineGeometry ())
+				{
+					if (this .isLineGeometry ())
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+
+					else
 					{
-						gl .enableVertexAttribArray (shader .color);
-						gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-						gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+						for (var i = 0; i < this .vertexCount; i += 3)
+							gl .drawArrays (shader .primitiveMode, i, 3);
 					}
+				}
+				else
+				{
+					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
 
-					if (shader .texCoord >= 0)
+					gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
+
+					if (context .transparent && ! this .solid)
 					{
-						gl .enableVertexAttribArray (shader .texCoord);
-						gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-						gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
-					}
+						gl .enable (gl .CULL_FACE);
 
-					if (shader .normal >= 0)
-					{
-						gl .enableVertexAttribArray (shader .normal);
-						gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-						gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
-					}
+						gl .cullFace (gl .FRONT);
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
 
-					gl .enableVertexAttribArray (shader .vertex);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-					gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
-
-					// Draw depending on wireframe, solid and transparent.
-
-					if (shader .wireframe || this .isLineGeometry ())
-					{
-						if (this .isLineGeometry ())
-							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
-
-						else
-						{
-							for (var i = 0; i < this .vertexCount; i += 3)
-								gl .drawArrays (shader .primitiveMode, i, 3);
-						}
+						gl .cullFace (gl .BACK);
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
 					}
 					else
 					{
-						var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
-
-						gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
-
-						if (context .transparent && ! this .solid)
-						{
+						if (this .solid)
 							gl .enable (gl .CULL_FACE);
-
-							gl .cullFace (gl .FRONT);
-							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
-
-							gl .cullFace (gl .BACK);
-							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
-						}
 						else
-						{
-							if (this .solid)
-								gl .enable (gl .CULL_FACE);
-							else
-								gl .disable (gl .CULL_FACE);
+							gl .disable (gl .CULL_FACE);
 
-							gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
-						}
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
 					}
-
-					if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
-					if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
-					if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
-					gl .disableVertexAttribArray (shader .vertex);
 				}
+
+				if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
+				if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
+				if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
+				gl .disableVertexAttribArray (shader .vertex);
 			},
 			collision: function (shader)
 			{
@@ -505,7 +505,7 @@ function ($,
 							                            t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
 
 								//if (this .isClipped (point, modelViewMatrix))
-								//	return continue;
+								//	continue;
 
 								var texCoord = new Vector2 (t * texCoords [i4 + 0] + u * texCoords [i4 + 4] + v * texCoords [i4 + 8],
 								                            t * texCoords [i4 + 1] + u * texCoords [i4 + 5] + v * texCoords [i4 + 9]);
@@ -538,6 +538,7 @@ function ($,
 					max          = this .max,
 					intersection = this .intersection;
 
+			   // front
 				if (planes [0] .intersectsLine (line, intersection))
 				{
 					if (intersection .x >= min .x && intersection .x <= max .x &&
@@ -545,6 +546,7 @@ function ($,
 						return true;
 				}
 
+				// back
 				if (planes [1] .intersectsLine (line, intersection))
 				{
 					if (intersection .x >= min .x && intersection .x <= max .x &&
@@ -552,6 +554,7 @@ function ($,
 						return true;
 				}
 
+				// top
 				if (planes [2] .intersectsLine (line, intersection))
 				{
 					if (intersection .x >= min .x && intersection .x <= max .x &&
@@ -559,6 +562,7 @@ function ($,
 						return true;
 				}
 
+				// bottom
 				if (planes [3] .intersectsLine (line, intersection))
 				{
 					if (intersection .x >= min .x && intersection .x <= max .x &&
@@ -566,6 +570,7 @@ function ($,
 						return true;
 				}
 
+				// right
 				if (planes [4] .intersectsLine (line, intersection))
 				{
 					if (intersection .y >= min .y && intersection .y <= max .y &&

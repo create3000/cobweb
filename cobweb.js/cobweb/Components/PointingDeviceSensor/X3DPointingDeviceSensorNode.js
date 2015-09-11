@@ -64,8 +64,7 @@ function ($,
 		{
 			if (this .enabled_ .getValue ())
 			{
-				var
-					currentLayer = this .getCurrentLayer ();
+				var currentLayer = this .getCurrentLayer ();
 
 				sensors [this .getId ()] = this;
 

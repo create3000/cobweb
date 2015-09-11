@@ -67,9 +67,9 @@ function ($,
 			if (currentTime - this .startTime > 1)
 			{
 				var
-					browser           = this .getBrowser ();
+					browser           = this .getBrowser (),
 					layers            = browser .getWorld () .getLayerSet () .getLayers (),
-					activeLayer       = browser .getActiveLayer ()
+					activeLayer       = browser .getActiveLayer (),
 					opaqueShapes      = 0,
 					transparentShapes = 0;
 

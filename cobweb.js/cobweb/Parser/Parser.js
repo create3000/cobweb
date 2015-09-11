@@ -210,8 +210,9 @@ function ($, Fields)
 			{
 				field .length = 0;
 
-				var array = field .getValue ();
-				var value = new SFBool ();
+				var
+					array = field .getValue (),
+					value = new SFBool ();
 
 				while (this .sfboolValue (value))
 				{

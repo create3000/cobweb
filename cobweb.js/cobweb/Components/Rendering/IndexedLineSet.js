@@ -188,7 +188,7 @@ function ($,
 				var
 					coordIndex     = this .coordIndex_. getValue (),
 					polylines      = this .getPolylineIndices (),
-					colorPerVertex = this .colorPerVertex_ .getValue ();
+					colorPerVertex = this .colorPerVertex_ .getValue (),
 					attribArrays   = [ ];
 
 				// Fill GeometryNode

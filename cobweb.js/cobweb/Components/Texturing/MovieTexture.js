@@ -139,9 +139,7 @@ function ($,
 				{
 					var
 						width  = video .videoWidth,
-						height = video .videoHeight;
-
-					var
+						height = video .videoHeight,
 						canvas = this .canvas [0],
 						cx     = canvas .getContext ("2d");
 

@@ -50,7 +50,7 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		{
 			translation      = translation      ? translation      .getValue () : Vector2 .Zero;
 			rotation         = rotation         ? rotation         .getValue () : Vector3 .Zero;
-			scale            = scale            ? scale            .getValue () : Vector2 .One
+			scale            = scale            ? scale            .getValue () : Vector2 .One;
 			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : Vector3 .Zero;
 			center           = center           ? center           .getValue () : Vector2 .Zero;
 

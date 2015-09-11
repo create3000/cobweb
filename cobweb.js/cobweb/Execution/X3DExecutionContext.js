@@ -200,7 +200,7 @@ function ($,
 				{
 					var
 						sourceField      = route .sourceField_,
-						destinationField = route .destinationField_;
+						destinationField = route .destinationField_,
 						id               = sourceField .getId () + "." + destinationField .getId (),
 						index            = this .routes .getValue () .indexOf (route);
 

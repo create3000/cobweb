@@ -76,7 +76,7 @@ function ($,
 			},
 			traverse: function (type)
 			{
-				if (TraverseType .CAMERA)
+				if (type === TraverseType .CAMERA)
 					this .getCurrentLayer () .getFogs () .push (this);
 			},
 		});

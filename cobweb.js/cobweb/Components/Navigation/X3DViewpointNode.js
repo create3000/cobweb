@@ -249,9 +249,9 @@ function ($,
 							startScaleOrientation = relativeScaleOrientation;
 
 						var
-							endPosition         = this .positionOffset_         .getValue () .copy ();
-							endOrientation      = this .orientationOffset_      .getValue () .copy ();
-							endScale            = this .scaleOffset_            .getValue () .copy ();
+							endPosition         = this .positionOffset_         .getValue () .copy (),
+							endOrientation      = this .orientationOffset_      .getValue () .copy (),
+							endScale            = this .scaleOffset_            .getValue () .copy (),
 							endScaleOrientation = this .scaleOrientationOffset_ .getValue () .copy ();
 
 						this .positionOffset_         = startPosition;

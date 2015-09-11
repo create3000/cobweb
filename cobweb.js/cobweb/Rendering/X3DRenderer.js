@@ -131,9 +131,7 @@ function (DepthBuffer,
 			var
 				navigationInfo  = this .getNavigationInfo (),
 				distance        = this .getDistance (translation),
-				length          = translation .abs ();
-
-			var
+				length          = translation .abs (),
 				zFar            = navigationInfo .getFarPlane (this .getViewpoint ()),
 				collisionRadius = navigationInfo .getCollisionRadius ();
 
@@ -245,7 +243,7 @@ function (DepthBuffer,
 
 			var
 				navigationInfo = this .getNavigationInfo (),
-				viewpoint      = this .getViewpoint ();
+				viewpoint      = this .getViewpoint (),
 				zNear          = navigationInfo .getNearPlane (),
 				zFar           = navigationInfo .getFarPlane (viewpoint);
 

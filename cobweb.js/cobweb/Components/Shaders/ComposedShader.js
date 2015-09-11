@@ -186,7 +186,7 @@ function ($,
 					gl              = browser .getContext (),
 					material        = browser .getMaterial (),
 					texture         = browser .getTexture (),
-					modelViewMatrix = context .modelViewMatrix
+					modelViewMatrix = context .modelViewMatrix,
 					customShader    = (this !== browser .getDefaultShader ());
 
 				if (settings .shader !== this)

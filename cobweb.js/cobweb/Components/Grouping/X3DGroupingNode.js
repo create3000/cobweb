@@ -126,7 +126,7 @@ function ($,
 		},
 		setVisible: function (value)
 		{
-			visible = value;
+			this .visible = value;
 
 			this .set_children__ ();
 		},
@@ -285,6 +285,10 @@ function ($,
 									this .clipPlanes .push (innerNode);
 									break;
 								}
+								//case X3DConstants .Fog:
+								//case X3DConstants .NavigationInfo:
+								//case X3DConstants .X3DViewpointNode:
+								   // Only camera objects, maybe we can optimize these away.
 								case X3DConstants .X3DChildNode:
 								{
 									this .childNodes .push (innerNode);
