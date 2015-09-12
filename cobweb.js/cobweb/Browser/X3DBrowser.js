@@ -119,10 +119,14 @@ function ($,
 				if (! scene)
 					scene = this .createScene ();
 				
+				// bindWorld
+
 				var id = performance .now ();
 
 				this .resetLoadCount ();
-				this .loadCount_ .addFieldCallback ("loading" + id, this .bindWorld .bind (this, id));
+				this .loadCount_ .addFieldCallback ("bindWorld" + id, this .bindWorld .bind (this, id));
+
+				// isLive
 
 				this .isLive () .addFieldInterest (scene .isLive ());
 
@@ -130,8 +134,9 @@ function ($,
 					scene .beginUpdate ();
 				else
 					scene .endUpdate ();
+
+				//
 	
-				scene .setup ();
 				this .setExecutionContext (scene);
 
 				this .initialized () .setValue (this .getCurrentTime ());
@@ -141,7 +146,7 @@ function ($,
 				if (value)
 					return;
 
-				this .loadCount_ .removeFieldCallback ("loading" + id);
+				this .loadCount_ .removeFieldCallback ("bindWorld" + id);
 
 				setTimeout (function ()
 				{

@@ -39,8 +39,14 @@ function ($,
 
 		this .addType (X3DConstants .X3DLayerNode);
 
-		this .defaultViewpoint = defaultViewpoint;
-		this .group            = group;
+		this .defaultNavigationInfo = new NavigationInfo (executionContext);
+		this .defaultBackground     = new Background (executionContext);
+		this .defaultFog            = new Fog (executionContext);
+		this .defaultViewpoint      = defaultViewpoint;
+		this .group                 = group;
+
+		this .defaultBackground .setHidden (true);
+		this .defaultFog        .setHidden (true);
 
 		this .collisionTime = 0;
 	}
@@ -55,17 +61,10 @@ function ($,
 			X3DNode     .prototype .initialize .call (this);
 			X3DRenderer .prototype .initialize .call (this);
 
-			this .defaultNavigationInfo = new NavigationInfo (this .getExecutionContext ());
-			this .defaultBackground     = new Background (this .getExecutionContext ());
-			this .defaultFog            = new Fog (this .getExecutionContext ());
-
 			this .defaultNavigationInfo .setup ();
 			this .defaultBackground     .setup ();
 			this .defaultFog            .setup ();
 			this .defaultViewpoint      .setup ();
-
-			this .defaultBackground .setHidden (true);
-			this .defaultFog        .setHidden (true);
 
 			this .currentViewport     = null;
 			this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
@@ -85,9 +84,9 @@ function ($,
 			this .hitRay = line;
 
 			this .viewport_       .addInterest (this, "set_viewport__");
-			this .addChildren_    .addInterest (this .group .addChildren_,    "setValue");
-			this .removeChildren_ .addInterest (this .group .removeChildren_, "setValue");
-			this .children_       .addInterest (this .group .children_,       "setValue");
+			this .addChildren_    .addFieldInterest (this .group .addChildren_);
+			this .removeChildren_ .addFieldInterest (this .group .removeChildren_);
+			this .children_       .addFieldInterest (this .group .children_);
 
 			this .set_viewport__ ();
 		},

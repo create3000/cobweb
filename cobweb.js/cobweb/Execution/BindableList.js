@@ -58,11 +58,19 @@ function ($, X3DBaseNode)
 		{
 			if (! equals (this .collected, this .array))
 			{
+				// removeInterest
+
 				for (var i = 0; i < this .array .length; ++ i)
 					this .array [i] .set_bind_ .removeInterest (this, "set_bind__", this .array [i]);
+				
+				// Swap arrays.
+
+				var tmp = this .array;
 
 				this .array     = this .collected;
-				this .collected = [ ];
+				this .collected = tmp;
+
+				// addInterest
 
 				for (var i = 0; i < this .array .length; ++ i)
 					this .array [i] .set_bind_ .addInterest (this, "set_bind__", this .array [i]);

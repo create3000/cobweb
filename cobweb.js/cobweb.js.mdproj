@@ -2278,6 +2278,12 @@
     <None Include="cobweb\Browser\Sound\X3DSoundContext.js" />
     <None Include="tests\Components\Text\Poetica-ChanceryI.otf" />
     <None Include="tests\Components\Text\Text.x3d" />
+    <None Include="tests\Examples\Terrain\index.wrl" />
+    <None Include="tests\Examples\Terrain\stage\9.jpg" />
+    <None Include="tests\Examples\Terrain\stage\floor3.htm" />
+    <None Include="tests\Examples\Terrain\stage\floor3.wrl" />
+    <None Include="tests\Examples\Terrain\index.x3d" />
+    <None Include="tests\Examples\Terrain\stage\floor3.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2344,5 +2350,6 @@
     <Folder Include="tests\Components\Shape\" />
     <Folder Include="tests\Examples\Boxes\" />
     <Folder Include="cobweb\Browser\Sound\" />
+    <Folder Include="tests\Examples\Terrain\" />
   </ItemGroup>
 </Project>
