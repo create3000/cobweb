@@ -56,6 +56,21 @@ function ($, X3DField, X3DConstants, Generator)
 				return false;
 			}
 		},
+		has: function (target, key)
+		{
+			return key in target .getValue ();
+		},
+		enumerate: function (target)
+		{
+			var
+				array = target .getValue (),
+				keys  = [ ];
+
+			for (var i = 0; i < array .length; ++ i)
+				keys .push (i);
+
+			return keys [Symbol.iterator] ();
+		},
 	};
 
 	function X3DArrayField (value)

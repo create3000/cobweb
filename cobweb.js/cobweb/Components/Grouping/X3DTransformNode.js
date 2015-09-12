@@ -26,7 +26,7 @@ function ($,
 
 			this .update ();
 		},
-		update: function ()
+		update: function () // eventsProcessd
 		{
 			this .setHidden (this .scale_ .x === 0 ||
 			                 this .scale_ .y === 0 ||

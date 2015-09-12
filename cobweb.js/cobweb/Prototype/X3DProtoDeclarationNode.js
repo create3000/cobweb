@@ -26,14 +26,16 @@ function ($,
 		{
 			return true;
 		},
-		createInstance: function (setup)
+		createInstance: function (parser)
 		{
 			var instance = new X3DPrototypeInstance (this .getExecutionContext (), this);
 
-			if (setup === undefined)
-				instance .setup ();
+			if (parser)
+			   return instance;
+			
+			instance .setup ();
 
-			return instance;
+			return new Fields .SFNode (instance);
 		},
 	});
 

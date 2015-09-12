@@ -62,8 +62,6 @@ function ($,
 			this .charSpacings   = [ ];
 			this .bearing        = new Vector2 (0, 0);
 			this .bbox           = new Box3 ();
-
-			this .update ();
 		}
 
 		X3DTextGeometry .prototype =

@@ -69,35 +69,37 @@ function ($,
 			{
 				return this .url;
 			},
-			createNode: function (typeName, xml)
+			createNode: function (typeName, parser)
 			{
 				var node = new (this .getBrowser () .supportedNodes [typeName]) (this);
 
-				if (xml)
+				if (parser)
 					return node;
 				
 				node .setup ();
 				return new SFNode (node);
 			},
-			createProto: function (name, setup)
+			createProto: function (name, parser)
 			{
 				var executionContext = this;
 
-				do
+				for (;;)
 				{
 					var proto = executionContext .protos [name];
-	
+
 					if (proto)
-						return proto .createInstance (setup);
+						return proto .createInstance (parser);
 
 					var externproto = executionContext .externprotos [name];
 
 					if (externproto)
-						return externproto .createInstance (setup);
+						return externproto .createInstance (parser);
+
+					if (executionContext .isRootContext ())
+						break;
 
 					executionContext = executionContext .getExecutionContext ();
 				}
-				while (! executionContext .isRootContext ());
 
 				throw new Error ("Unknown proto or externproto type '" + name + "'.");
 			},

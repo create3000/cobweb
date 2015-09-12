@@ -55,10 +55,11 @@ function ($,
 			{
 			   X3DGeometryNode .prototype .initialize .call (this);
 
-			   this .addInterest (this, "set_textGeometry__");
+			   this .addInterest (this, "updateTextGeometry");
 			   this .fontStyle_ .addInterest (this, "set_fontStyle__");
 
 				this .set_fontStyle__ ();
+				this .update ();
 			},
 			getLength: function (index)
 			{
@@ -70,34 +71,24 @@ function ($,
 			set_fontStyle__: function ()
 			{
 			   if (this .fontStyleNode)
-			   {
-			      this .fontStyleNode .removeInterest (this, "set_textGeometry__");
 			      this .fontStyleNode .removeInterest (this, "addNodeEvent");
-			   }
 
 				this .fontStyleNode = X3DCast (X3DConstants .X3DFontStyleNode, this .fontStyle_);
 
 				if (! this .fontStyleNode)
 					this .fontStyleNode = this .getBrowser () .getDefaultFontStyle ();
 
-			   this .fontStyleNode .addInterest (this, "set_textGeometry__");
 			   this .fontStyleNode .addInterest (this, "addNodeEvent");
 
 			   this .textGeometry = this .fontStyleNode .getTextGeometry (this);
 			},
-			set_textGeometry__: function ()
+			updateTextGeometry: function () // eventsProcessd
 			{
 			   this .textGeometry .update ();
-			},
-			debug: function ()
-			{
-			   console .log ("debug");
 			},
 			build: function ()
 			{
 			   this .textGeometry .build ();
-
-			   //'Hello Wörld! OÖ &% ABCDEFGHIJKLMNOPQRSTUVW abcdefghijklmnopqrstuvw ÄÖÜäöüß 0123456789 ^°!"§$%&/()=?+*~\'#-_.:,; ÁÓÚáóú ′¹²³¼½¬{[]}\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…– flfiff'
 
 				this .setSolid (this .solid_ .getValue ());
 			},

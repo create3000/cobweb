@@ -189,7 +189,7 @@ function ($,
 
 					if (this .id (name))
 					{
-						var node = this .getExecutionContext () .createProto (name, false);
+						var node = this .getExecutionContext () .createProto (name, true);
 
 						this .DEF (element, node);
 						this .addNode (element, node);
@@ -201,7 +201,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .warn ("XML Parser Error: ", + error .message);
+					console .warn ("XML Parser Error: ", error .message);
 					//console .warn (error);
 				}
 			},

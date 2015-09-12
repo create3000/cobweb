@@ -118,7 +118,7 @@ function ($,
 					executionContext .updateNamedNode (name, copy);
 
 				// Default fields
-				
+
 				for (var i = 0, length = copy .fieldDefinitions .length; i < length; ++ i)
 				{
 					try

@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
+    <meta name='modified' content='Sat, 12 Sep 2015 06:48:39 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -122,7 +122,7 @@
         translation='0 0.478083 0'>
       <ProtoInstance name='BBox2'>
         <fieldValue name='scale' value='2.39051 0.487029 1'/>
-        <fieldValue name='color' value='1 0 0'/>
+        <fieldValue name='color' value='1 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
         <fieldValue name='translation' value='0 -0.487029 0'/>
@@ -153,11 +153,11 @@
       <field accessType='initializeOnly' type='SFNode' name='lineBounds'>
         <Transform USE='LineBounds'/>
       </field>
-      <field accessType='initializeOnly' type='MFColor' name='color' value='1 0 0, 0 1 0, 0 0 1, 1 1 0, 0 1 1, 1 0 1'/>
+      <field accessType='initializeOnly' type='MFColor' name='color' value='1 0 1, 0 1 0, 0 0 1, 1 1 0, 0 1 1, 1 0 0'/>
       <field accessType='initializeOnly' type='SFNode' name='text'>
         <Text USE='Text'/>
       </field>
-<![CDATA[vrmlscript:
+<![CDATA[javascript:
 
 var
 	BEGIN  = 0,
@@ -220,7 +220,6 @@ function set_lineBounds (value, time)
 			transform .translation = new SFVec3f (get_majorAlignment (i),
 			                                      text .fontStyle .topToBottom ? y : y - text .textBounds .y,
 			                                      0);
-		
 			y += text .fontStyle .topToBottom ? -value [i] .y : value [i] .y;
 
 			transform .scale = new SFVec3f (value [i] .x,

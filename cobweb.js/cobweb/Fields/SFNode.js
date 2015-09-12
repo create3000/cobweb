@@ -19,7 +19,9 @@ function ($, X3DField, X3DConstants)
 					field      = target .getValue () .getField (key),
 					accessType = field .getAccessType ();
 
-				if (accessType & X3DConstants .outputOnly)
+				// Specification conform would be: accessType & X3DConstants .outputOnly.
+				// But we allow read access to plain fields, too.
+				if (accessType !== X3DConstants .inputOnly)
 					return field .valueOf ();
 
 				return undefined;
