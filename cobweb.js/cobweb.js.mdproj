@@ -2276,6 +2276,8 @@
     <None Include="tests\Examples\Compel\jungle\textures\strwfrng.png" />
     <None Include="tests\Examples\Boxes\BertramLetPlain.otf" />
     <None Include="cobweb\Browser\Sound\X3DSoundContext.js" />
+    <None Include="tests\Components\Text\Poetica-ChanceryI.otf" />
+    <None Include="tests\Components\Text\Text.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

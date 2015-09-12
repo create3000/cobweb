@@ -320,8 +320,8 @@ function (DepthBuffer,
 				modelViewMatrix .inverse ();
 
 				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
-		
-		      var distance = this .getDepth ();
+
+				var distance = this .getDepth ();
 
 				// Gravite or step up
 
