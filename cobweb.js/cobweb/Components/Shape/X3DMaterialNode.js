@@ -18,10 +18,6 @@ function ($,
 	X3DMaterialNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
 	{
 		constructor: X3DMaterialNode,
-		isTransparent: function ()
-		{
-			return false;
-		},
 	});
 
 	return X3DMaterialNode;

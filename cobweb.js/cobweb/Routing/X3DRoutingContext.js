@@ -5,8 +5,10 @@ function ()
 {
 	function X3DRoutingContext ()
 	{
-		this .taintedFields = [ ];
-		this .taintedNodes  = [ ];
+		this .taintedFields     = [ ];
+		this .taintedFieldsTemp = [ ];
+		this .taintedNodes      = [ ];
+		this .taintedNodesTemp  = [ ];
 	}
 
 	X3DRoutingContext .prototype =
@@ -25,10 +27,15 @@ function ()
 		{
 			do
 			{
+				// Process field events
 				do
 				{
 					var taintedFields = this .taintedFields;
-					this .taintedFields = [ ];
+
+					// Swap tainted fields.
+					this .taintedFields         = this .taintedFieldsTemp;
+					this .taintedFieldsTemp     = taintedFields;
+					this .taintedFields .length = 0;
 
 					for (var i = 0; i < taintedFields .length; i += 2)
 					{
@@ -37,21 +44,23 @@ function ()
 				}
 				while (this .taintedFields .length);
 
-				this .eventsProcessed ();
+				// Process node events
+				do
+				{
+					var taintedNodes = this .taintedNodes;
+
+					// Swap tainted nodes.
+					this .taintedNodes         = this .taintedNodesTemp;
+					this .taintedNodesTemp     = taintedNodes;
+					this .taintedNodes .length = 0;
+
+					for (var i = 0; i < taintedNodes .length; ++ i)
+						taintedNodes [i] .processEvents ();
+				}
+				while (this .taintedNodes .length && ! this .taintedFields .length);
+
 			}
 			while (this .taintedFields .length);
-		},
-		eventsProcessed: function ()
-		{
-			do
-			{
-				var taintedNodes = this .taintedNodes;
-				this .taintedNodes = [ ];
-
-				for (var i = 0; i < taintedNodes .length; ++ i)
-					taintedNodes [i] .eventsProcessed ();
-			}
-			while (this .taintedNodes .length && ! this .taintedFields .length);
 		},
 	};
 

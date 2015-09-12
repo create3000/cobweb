@@ -57,8 +57,8 @@ function ($,
 			
 				X3DNode .prototype .setup .call (this);
 
-				this .addInterest (this, "update");
-				this .update ();
+				this .addInterest (this, "eventsProcessed");
+				this .eventsProcessed ();
 
 				this .setTainted (false);
 			},
@@ -66,7 +66,7 @@ function ($,
 			{
 				X3DNode .prototype .initialize .call (this);
 
-				this .addChildren ("transparent", new SFBool (false));
+				this .addChildren ("isTransparent", new SFBool (false));
 
 				var gl = this .getBrowser () .getContext ();
 		
@@ -283,8 +283,10 @@ function ($,
 
 				return normals_;
 			},
-			update: function ()
+			eventsProcessed: function ()
 			{
+				X3DNode .prototype .eventsProcessed .call (this);
+
 				this .clear ();
 				this .build ();
 
@@ -409,7 +411,7 @@ function ($,
 
 					gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
 
-					if (context .transparent && ! this .solid)
+					if (context .isTransparent && ! this .solid)
 					{
 						gl .enable (gl .CULL_FACE);
 

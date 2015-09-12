@@ -55,11 +55,11 @@ function ($,
 		{
 			return this .height;
 		},
-		setTexture: function (width, height, transparent, data, flipY)
+		setTexture: function (width, height, isTransparent, data, flipY)
 		{
-			this .transparent_ = transparent;
-			this .width        = width;
-			this .height       = height;
+			this .isTransparent_ = isTransparent;
+			this .width          = width;
+			this .height         = height;
 
 			var gl = this .getBrowser () .getContext ();
 

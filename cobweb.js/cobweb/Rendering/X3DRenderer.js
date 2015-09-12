@@ -84,7 +84,7 @@ function (DepthBuffer,
 				if (shape .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push ({ modelViewMatrix: new Float32Array (16), transparent: true, localLights: [ ] });
+						this .transparentShapes .push ({ modelViewMatrix: new Float32Array (16), isTransparent: true, localLights: [ ] });
 
 					var context = this .transparentShapes [this .numTransparentShapes];
 
@@ -93,7 +93,7 @@ function (DepthBuffer,
 				else
 				{
 					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push ({ modelViewMatrix: new Float32Array (16), transparent: false, localLights: [ ] });
+						this .opaqueShapes .push ({ modelViewMatrix: new Float32Array (16), isTransparent: false, localLights: [ ] });
 
 					var context = this .opaqueShapes [this .numOpaqueShapes];
 

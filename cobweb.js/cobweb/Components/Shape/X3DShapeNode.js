@@ -42,10 +42,6 @@ function ($,
 
 			this .static_ = true;
 		},
-		isTransparent: function ()
-		{
-			return this .transparent;
-		},
 		getBBox: function ()
 		{
 			return this .bbox;
@@ -66,10 +62,9 @@ function ($,
 		{
 			return this .geometryNode;
 		},
-		set_transparent__: function ()
+		isTransparent: function ()
 		{
-			this .transparent = (this .apparanceNode && this .apparanceNode .transparent_ .getValue ()) ||
-			                    (this .geometryNode && this .geometryNode .transparent_ .getValue ());
+			return this .$isTransparent;
 		},
 		set_bbox__: function ()
 		{
@@ -120,6 +115,11 @@ function ($,
 
 			this .set_transparent__ ();
 			this .set_bbox__ ();
+		},
+		set_transparent__: function ()
+		{
+			this .$isTransparent = (this .apparanceNode && this .apparanceNode .isTransparent_ .getValue ()) ||
+			                       (this .geometryNode && this .geometryNode .isTransparent_ .getValue ());
 		},
 	});
 

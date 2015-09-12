@@ -565,7 +565,7 @@ function ($,
 			{
 				texture .traverse ();
 
-				if (texture .transparent_ .getValue ())
+				if (texture .isTransparent_ .getValue ())
 					gl .enable (gl .BLEND);
 				else
 					gl .disable (gl .BLEND);

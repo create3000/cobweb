@@ -53,30 +53,54 @@ function ($,
 			{
 				X3DMaterialNode .prototype .initialize .call (this);
 
-				this .addChildren ("transparent", new SFBool (false));
+				this .addChildren ("isTransparent", new SFBool (false));
 
-				this .transparency_ .addInterest (this, "set_transparent__");
-				this .addInterest (this, "update");
+				this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
+				this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
+				this .specularColor_    .addInterest (this, "set_specularColor__");
+				this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
+				this .shininess_        .addInterest (this, "set_shininess__");
+				this .transparency_     .addInterest (this, "set_transparency__");
 		
 				this .diffuseColor  = new Float32Array (3);
 				this .specularColor = new Float32Array (3);
 				this .emissiveColor = new Float32Array (3);
 
-				this .set_transparent__ ();
-				this .update ();
+				this .set_ambientIntensity__ ();
+				this .set_diffuseColor__ ();
+				this .set_specularColor__ ();
+				this .set_emissiveColor__ ();
+				this .set_shininess__ ();
+				this .set_transparency__ ();
 			},
-			set_transparent__: function ()
+			set_ambientIntensity__: function ()
 			{
-				this .transparent_ = this .transparency_ .getValue ();
-			},
-			update: function ()
-			{
-				this .diffuseColor  .set (this .diffuseColor_  .getValue ());
-				this .specularColor .set (this .specularColor_ .getValue ());
-				this .emissiveColor .set (this .emissiveColor_ .getValue ());
 				this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
-				this .shininess        = Algorithm .clamp (this .shininess_    .getValue (), 0, 1) * 128;
-				this .transparency     = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
+			},
+			set_diffuseColor__: function ()
+			{
+				this .diffuseColor .set (this .diffuseColor_ .getValue ());
+			},
+			set_specularColor__: function ()
+			{
+				this .specularColor .set (this .specularColor_ .getValue ());
+			},
+			set_emissiveColor__: function ()
+			{
+				this .emissiveColor .set (this .emissiveColor_ .getValue ());
+			},
+			set_shininess__: function ()
+			{
+				this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1) * 128;
+			},
+			set_transparency__: function ()
+			{
+				this .transparency = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
+
+				var isTransparent = Boolean (this .transparency);
+
+				if (isTransparent !== this .isTransparent_ .getValue ())
+					this .isTransparent_ = isTransparent;
 			},
 		});
 

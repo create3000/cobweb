@@ -57,12 +57,14 @@ function ($,
 			{
 				X3DTextureTransformNode .prototype .initialize .call (this);
 				
-				this .addInterest (this, "update");
+				this .addInterest (this, "eventsProcessed");
 
-				this .update ();
+				this .eventsProcessed ();
 			},
-			update: function ()
+			eventsProcessed: function ()
 			{
+				X3DTextureTransformNode .prototype .eventsProcessed .call (this);
+				
 				var matrix3 = this .matrix3;
 
 				matrix3 .identity ();

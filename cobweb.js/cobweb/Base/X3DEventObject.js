@@ -63,7 +63,7 @@ function ($,
 			this .getBrowser () .addTaintedNode (this);
 			this .getBrowser () .addBrowserEvent ();
 		},
-		eventsProcessed: function ()
+		processEvents: function ()
 		{
 			this .setTainted (false);
 			this .processInterests ();

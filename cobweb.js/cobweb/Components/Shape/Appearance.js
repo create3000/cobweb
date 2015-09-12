@@ -62,32 +62,30 @@ function ($,
 				this .set_texture__ ();
 				this .set_textureTransform__ ();
 				this .set_shaders__ ();
-				this .set_transparent__ ()
 			},
 			set_material__: function ()
 			{
 				if (this .materialNode)
-					this .materialNode .transparent_ .removeInterest (this, "set_transparent__");
+					this .materialNode .isTransparent_ .removeInterest (this, "set_transparent__");
 
 				this .materialNode = X3DCast (X3DConstants .X3DMaterialNode, this .material_);
 
 				if (this .materialNode)
-					this .materialNode .transparent_ .addInterest (this, "set_transparent__");
-			},
-			set_transparent__: function ()
-			{
-				this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
-				                     (this .textureNode && this .textureNode .transparent_ .getValue ());
+					this .materialNode .isTransparent_ .addInterest (this, "set_transparent__");
+				
+				this .set_transparent__ ();
 			},
 			set_texture__: function ()
 			{
 				if (this .textureNode)
-					this .textureNode .transparent_ .removeInterest (this, "set_transparent__");
+					this .textureNode .isTransparent_ .removeInterest (this, "set_transparent__");
 
 				this .textureNode = X3DCast (X3DConstants .X3DTextureNode, this .texture_);
 
 				if (this .textureNode)
-					this .textureNode .transparent_ .addInterest (this, "set_transparent__");
+					this .textureNode .isTransparent_ .addInterest (this, "set_transparent__");
+				
+				this .set_transparent__ ();
 			},
 			set_textureTransform__: function ()
 			{
@@ -100,6 +98,13 @@ function ($,
 			},
 			set_shaders__: function ()
 			{
+			},
+			set_transparent__: function ()
+			{
+			   
+
+				this .isTransparent_ = (this .materialNode && this .materialNode .isTransparent_ .getValue ()) ||
+				                       (this .textureNode && this .textureNode .isTransparent_ .getValue ());
 			},
 			traverse: function ()
 			{

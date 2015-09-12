@@ -55,11 +55,10 @@ function ($,
 			{
 			   X3DGeometryNode .prototype .initialize .call (this);
 
-			   this .addInterest (this, "updateTextGeometry");
 			   this .fontStyle_ .addInterest (this, "set_fontStyle__");
-
+	
 				this .set_fontStyle__ ();
-				this .update ();
+				this .eventsProcessed ();
 			},
 			getLength: function (index)
 			{
@@ -82,12 +81,9 @@ function ($,
 
 			   this .textGeometry = this .fontStyleNode .getTextGeometry (this);
 			},
-			updateTextGeometry: function () // eventsProcessd
-			{
-			   this .textGeometry .update ();
-			},
 			build: function ()
 			{
+			   this .textGeometry .update ();
 			   this .textGeometry .build ();
 
 				this .setSolid (this .solid_ .getValue ());

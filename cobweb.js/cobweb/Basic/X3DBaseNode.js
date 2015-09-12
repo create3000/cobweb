@@ -94,6 +94,7 @@ function ($,
 				this .initialize ();
 			},
 			initialize: function () { },
+			eventsProcessed: function () { },
 			copy: function (executionContext)
 			{
 				// First try to get a named node with the node's name.

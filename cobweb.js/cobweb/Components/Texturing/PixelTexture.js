@@ -126,12 +126,12 @@ function ($,
 			set_image__: function ()
 			{
 				var
-					width       = this .image_ .width,
-					height      = this .image_ .height,
-					comp        = this .image_ .comp,
-					array       = this .image_ .array .getValue (),
-					transparent = ! (comp % 2),
-					data        = null;
+					width         = this .image_ .width,
+					height        = this .image_ .height,
+					comp          = this .image_ .comp,
+					array         = this .image_ .array .getValue (),
+					isTransparent = ! (comp % 2),
+					data          = null;
 			
 				if (width > 0 && height > 0 && comp > 0 && comp < 5)
 				{
@@ -167,7 +167,7 @@ function ($,
 						data = cx2 .getImageData (0, 0, width, height) .data;
 					}
 
-					this .setTexture (width, height, transparent, new Uint8Array (data), false);
+					this .setTexture (width, height, isTransparent, new Uint8Array (data), false);
 					this .loadState_ = X3DConstants .COMPLETE_STATE;
 				}
 				else

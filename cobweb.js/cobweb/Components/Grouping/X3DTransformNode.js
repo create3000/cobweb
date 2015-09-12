@@ -22,12 +22,14 @@ function ($,
 		{
 			X3DTransformMatrix4DNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "update");
+			this .addInterest (this, "eventsProcessed");
 
-			this .update ();
+			this .eventsProcessed ();
 		},
-		update: function () // eventsProcessd
+		eventsProcessed: function ()
 		{
+			X3DTransformMatrix4DNode .prototype .eventsProcessed .call (this);
+			
 			this .setHidden (this .scale_ .x === 0 ||
 			                 this .scale_ .y === 0 ||
 			                 this .scale_ .z === 0);

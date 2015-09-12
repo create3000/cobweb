@@ -120,11 +120,11 @@ function ($,
 					this .set_transparent__ ();
 				}
 				else
-					this .transparent_ = false;
+					this .isTransparent_ = false;
 			},
 			set_transparent__: function ()
 			{
-				this .transparent_ = this .colorNode .isTransparent ();
+				this .isTransparent_ = this .colorNode .isTransparent ();
 			},
 			set_texCoord__: function ()
 			{
