@@ -289,10 +289,7 @@ function (DepthBuffer,
 		   {
 				// Terrain following and gravitation
 
-				if (this !== this .getBrowser () .getActiveLayer ())
-				   return;
-
-				if (this .getBrowser () .getViewer () != "WALK") // XXX: if (this .getNavigationInfo () .getType () != "WALK")
+				if (this .getNavigationInfo () .getViewer () !== "WALK")
 					return;
 
 				// Get NavigationInfo values

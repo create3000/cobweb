@@ -16,7 +16,7 @@ function (Fields,
 {
 	with (Fields)
 	{
-		var noneViewer = new MFString ("NONE");
+		var NONE = new SFString ("NONE");
 
 		function X3DNavigationContext ()
 		{
@@ -32,7 +32,6 @@ function (Fields,
 			   
 			   this .initialized () .addInterest (this, "set_world__");
 			   this .shutdown () .addInterest (this, "remove_world__");
-			   this .viewer_ .addInterest (this, "set_viewer__");
 
 				this .activeLayerNode    = null;
 				this .navigationInfoNode = null;
@@ -41,10 +40,6 @@ function (Fields,
 				var headlight = new DirectionalLight (this);
 				headlight .setup ();
 				this .headlight = headlight .getContainer ();
-			},
-			getViewer: function ()
-			{
-			   return this .viewer_ .getValue ();
 			},
 			getHeadlight: function ()
 			{
@@ -83,153 +78,39 @@ function (Fields,
 			set_navigationInfo__: function ()
 			{
 			   if (this .navigationInfoNode)
-			      this .navigationInfoNode .type_ .removeInterest (this, "set_viewerType__");
+			      this .navigationInfoNode .viewer_ .removeInterest (this, "set_viewer__");
 
 			   if (! this .activeLayerNode)
 			   {
 			      this .navigationInfoNode = null;
 
-					this .set_viewerType__ (noneViewer);
+					this .set_viewer__ (NONE);
 					return;
 				}
 
 				this .navigationInfoNode = this .activeLayerNode .getNavigationInfo ();
 
-			   this .navigationInfoNode .type_ .addInterest (this, "set_viewerType__");
+			   this .navigationInfoNode .viewer_ .addInterest (this, "set_viewer__");
 
-			   this .set_viewerType__ (this .navigationInfoNode .type_);
+			   this .set_viewer__ (this .navigationInfoNode .viewer_);
 			},
-			set_viewerType__: function (type)
+			set_viewer__: function (value)
 			{
-				this .availableViewers_ .length = 0;;
-
-				var
-					examineViewer = false,
-					walkViewer    = false,
-					flyViewer     = false,
-					planeViewer   = false,
-					noneViewer    = false,
-					lookAt        = false;
-
-				// Determine active viewer.
-
-				this .viewer_ = "EXAMINE";
-
-				for (var i = 0; i < type .length; ++ i)
-				{
-				   var string = type [i];
-
-					switch (string)
-					{
-						case "LOOKAT":
-							// Continue with next type.
-							continue;
-						case "EXAMINE":
-						case "WALK":
-						case "FLY":
-						case "NONE":
-							this .viewer_ = string;
-							break;
-						case "PLANE_create3000.de":
-							this .viewer_ = "PLANE";
-							break;
-						default:
-							continue;
-					}
-
-					// Leave for loop.
-					break;
-				}
-
-				// Determine available viewers.
-
-				if (! type .length)
-				{
-					examineViewer = true;
-					walkViewer    = true;
-					flyViewer     = true;
-					planeViewer   = true;
-					noneViewer    = true;
-					lookAt        = true;
-				}
+			   if (this .navigationInfoNode)
+			   {
+			      this .viewer_           = this .navigationInfoNode .viewer_;
+			      this .availableViewers_ = this .navigationInfoNode .availableViewers_;
+			   }
 				else
 				{
-					for (var i = 0; i < type .length; ++ i)
-					{
-					   var string = type [i];
-
-						switch (string)
-						{
-							case "EXAMINE":
-								examineViewer = true;
-								continue;
-							case "WALK":
-								walkViewer = true;
-								continue;
-							case "FLY":
-								flyViewer = true;
-								continue;
-							case "PLANE":
-								planeViewer = true;
-								continue;
-							case "NONE":
-								noneViewer = true;
-								continue;
-							case "LOOKAT":
-								lookAt = true;
-								continue;
-						}
-
-						if (string == "ANY")
-						{
-							examineViewer = true;
-							walkViewer    = true;
-							flyViewer     = true;
-							planeViewer   = true;
-							noneViewer    = true;
-							lookAt        = true;
-
-							// Leave for loop.
-							break;
-						}
-
-						// Some string defaults to EXAMINE.
-						examineViewer = true;
-					}
-
-					if (examineViewer)
-						this .availableViewers_ .push ("EXAMINE");
-
-					if (walkViewer)
-						this .availableViewers_ .push ("WALK");
-
-					if (flyViewer)
-						this .availableViewers_ .push ("FLY");
-
-					if (planeViewer)
-						this .availableViewers_ .push ("PLANE");
-
-					if (noneViewer)
-						this .availableViewers_ .push ("NONE");
-
-					if (lookAt)
-					{
-						if (! this .availableViewers_ .length)
-						{
-							this .viewer_ = "NONE";
-							this .availableViewers_ .push ("NONE");
-						}
-
-						this .availableViewers_ .push ("LOOKAT");
-					}
+			      this .viewer_ = "NONE";
+			      this .availableViewers_ .length = 0;
 				}
-			},
-			set_viewer__: function ()
-			{
+
 			   if (this .viewer)
 			      this .viewer .dispose ();
 
-				switch (this .viewer_ .getValue ())
+				switch (value .getValue ())
 				{
 					case "EXAMINE":
 					   this .viewer = new ExamineViewer (this);

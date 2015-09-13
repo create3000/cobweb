@@ -30,6 +30,9 @@ function ($,
 			X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .NavigationInfo);
+					
+			this .addChildren ("availableViewers", new MFString (),
+			                   "viewer",           new SFString ("EXAMINE"));
 		}
 
 		NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
@@ -65,9 +68,136 @@ function ($,
 			{
 				X3DBindableNode .prototype .initialize .call (this);
 
+				this .type_      .addInterest (this, "set_type__");
 				this .headlight_ .addInterest (this, "set_headlight__");
-				
+
+				this .set_type__ ();
 				this .set_headlight__ ();
+			},
+			set_type__: function ()
+			{
+				this .availableViewers_ .length = 0;;
+
+				var
+					examineViewer = false,
+					walkViewer    = false,
+					flyViewer     = false,
+					planeViewer   = false,
+					noneViewer    = false,
+					lookAt        = false;
+
+				// Determine active viewer.
+
+				this .viewer_ = "EXAMINE";
+
+				for (var i = 0; i < this .type_ .length; ++ i)
+				{
+				   var string = this .type_ [i];
+
+					switch (string)
+					{
+						case "LOOKAT":
+							// Continue with next type.
+							continue;
+						case "EXAMINE":
+						case "WALK":
+						case "FLY":
+						case "NONE":
+							this .viewer_ = string;
+							break;
+						case "PLANE_create3000.de":
+							this .viewer_ = "PLANE";
+							break;
+						default:
+							continue;
+					}
+
+					// Leave for loop.
+					break;
+				}
+
+				// Determine available viewers.
+
+				if (! this .type_ .length)
+				{
+					examineViewer = true;
+					walkViewer    = true;
+					flyViewer     = true;
+					planeViewer   = true;
+					noneViewer    = true;
+					lookAt        = true;
+				}
+				else
+				{
+					for (var i = 0; i < this .type_ .length; ++ i)
+					{
+					   var string = this .type_ [i];
+
+						switch (string)
+						{
+							case "EXAMINE":
+								examineViewer = true;
+								continue;
+							case "WALK":
+								walkViewer = true;
+								continue;
+							case "FLY":
+								flyViewer = true;
+								continue;
+							case "PLANE":
+								planeViewer = true;
+								continue;
+							case "NONE":
+								noneViewer = true;
+								continue;
+							case "LOOKAT":
+								lookAt = true;
+								continue;
+						}
+
+						if (string == "ANY")
+						{
+							examineViewer = true;
+							walkViewer    = true;
+							flyViewer     = true;
+							planeViewer   = true;
+							noneViewer    = true;
+							lookAt        = true;
+
+							// Leave for loop.
+							break;
+						}
+
+						// Some string defaults to EXAMINE.
+						examineViewer = true;
+					}
+
+					if (examineViewer)
+						this .availableViewers_ .push ("EXAMINE");
+
+					if (walkViewer)
+						this .availableViewers_ .push ("WALK");
+
+					if (flyViewer)
+						this .availableViewers_ .push ("FLY");
+
+					if (planeViewer)
+						this .availableViewers_ .push ("PLANE");
+
+					if (noneViewer)
+						this .availableViewers_ .push ("NONE");
+
+					if (lookAt)
+					{
+						if (! this .availableViewers_ .length)
+						{
+							this .viewer_ = "NONE";
+							this .availableViewers_ .push ("NONE");
+						}
+
+						this .availableViewers_ .push ("LOOKAT");
+					}
+				}
 			},
 			set_headlight__: function ()
 			{
@@ -91,6 +221,10 @@ function ($,
 			removeFromLayer: function (layer)
 			{
 				layer .getNavigationInfoStack () .remove (this);
+			},
+			getViewer: function ()
+			{
+			   return this .viewer_ .getValue ();
 			},
 			getCollisionRadius: function ()
 			{
