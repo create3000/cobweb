@@ -2284,6 +2284,10 @@
     <None Include="tests\Examples\Terrain\stage\floor3.wrl" />
     <None Include="tests\Examples\Terrain\index.x3d" />
     <None Include="tests\Examples\Terrain\stage\floor3.x3d" />
+    <None Include="tests\Examples\Gears\Rotor.x3d" />
+    <None Include="tests\Examples\Gears\Rotor.x3dv" />
+    <None Include="tests\Examples\Gears\gears.x3d" />
+    <None Include="tests\Examples\Gears\gears.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2351,5 +2355,6 @@
     <Folder Include="tests\Examples\Boxes\" />
     <Folder Include="cobweb\Browser\Sound\" />
     <Folder Include="tests\Examples\Terrain\" />
+    <Folder Include="tests\Examples\Gears\" />
   </ItemGroup>
 </Project>

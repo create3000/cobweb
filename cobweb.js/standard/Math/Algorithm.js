@@ -2,8 +2,6 @@
 
 define (function (Vector3)
 {
-	var destinations = { };
-
 	var Algorithm =
 	{
 		radians: function (value)
@@ -34,11 +32,6 @@ define (function (Vector3)
 		},
 		slerp: function (source, destination, t)
 		{
-			if (destinations [destination .constructor .name])
-				destination = destinations [destination .constructor .name] .assign (destination);
-			else
-				destination = destinations [destination .constructor .name] = destination .copy ();
-
 			var cosom = source .dot (destination);
 
 			if (cosom <= -1)
@@ -104,6 +97,8 @@ define (function (Vector3)
 		},
 		lowerBound: function (array, first, last, value, comp)
 		{
+		   // http://en.cppreference.com/w/cpp/algorithm/lower_bound
+
 			var
 				index = 0,
 				step  = 0,
@@ -127,6 +122,8 @@ define (function (Vector3)
 		},
 		upperBound: function (array, first, last, value, comp)
 		{
+		   // http://en.cppreference.com/w/cpp/algorithm/upper_bound
+
 			var
 				index = 0,
 				step  = 0,

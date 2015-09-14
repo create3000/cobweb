@@ -109,7 +109,7 @@ function ($,
 					      modelViewMatrix        = this .modelViewMatrix,
 					      centerOfRotationMatrix = this .centerOfRotationMatrix;
 
-						centerOfRotationMatrix .assign (this .viewpoint .getParentMatrix ());
+						centerOfRotationMatrix .assign (this .viewpoint .getTransformationMatrix ());
 						centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
 						centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
 

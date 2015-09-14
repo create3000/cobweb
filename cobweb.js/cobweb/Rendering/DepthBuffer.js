@@ -62,14 +62,13 @@ define (function ()
 				h1     = this .height - 1,
 				zWidth = zFar - zNear;
 
-			for (var py = 0, p = 0; py < this .height; ++ py)
+			for (var py = 0, i = 0; py < this .height; ++ py)
 			{
 				var y = (2 * py / h1 - 1) * radius;
 
-			   for (var px = 0; px < this .width; ++ px, ++ p)
+			   for (var px = 0; px < this .width; ++ px, i += 4)
 			   {
 				   var
-				      i = p * 4,
 				      x = (2 * px / w1 - 1) * radius,
 				      z = zNear + zWidth * unpack (array [i], array [i + 1], array [i + 2]);
 			      

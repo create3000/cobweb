@@ -44,7 +44,7 @@ function ($,
 
 			this .addType (X3DConstants .X3DViewpointNode);
 
-			this .parentMatrix             = new Matrix4 ();
+			this .transformationMatrix     = new Matrix4 ();
 			this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1);
 			this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
 		}
@@ -139,9 +139,9 @@ function ($,
 			{
 				return Vector3 .add (this .centerOfRotation_ .getValue (), this .centerOfRotationOffset_ .getValue ());
 			},
-			getParentMatrix: function ()
+			getTransformationMatrix: function ()
 			{
-				return this .parentMatrix;
+				return this .transformationMatrix;
 			},
 			getCameraSpaceMatrix: function ()
 			{
@@ -293,7 +293,7 @@ function ($,
 			getRelativeTransformation: function (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation)
 			// throw
 			{
-				var differenceMatrix = this .parentMatrix .copy () .multRight (fromViewpoint .getInverseCameraSpaceMatrix ()) .inverse ();
+				var differenceMatrix = this .transformationMatrix .copy () .multRight (fromViewpoint .getInverseCameraSpaceMatrix ()) .inverse ();
 
 				differenceMatrix .get (relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
@@ -346,28 +346,30 @@ function ($,
 			},
 			traverse: function (type)
 			{
-				if (type === TraverseType .CAMERA)
+				try
 				{
-					this .getCurrentLayer () .getViewpoints () .push (this);
-
-					this .parentMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-
-					if (this .isBound_ .getValue ())
+					if (type === TraverseType .CAMERA)
 					{
-						try
+						this .getCurrentLayer () .getViewpoints () .push (this);
+
+						this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+
+						if (this .isBound_ .getValue ())
 						{
 							this .cameraSpaceMatrix .set (this .getUserPosition (),
 							                              this .getUserOrientation (),
 							                              this .scaleOffset_ .getValue (),
 							                              this .scaleOrientationOffset_ .getValue ());
 
-							this .cameraSpaceMatrix .multRight (this .parentMatrix);
+							this .cameraSpaceMatrix .multRight (this .transformationMatrix);
 
 							this .inverseCameraSpaceMatrix .assign (this .cameraSpaceMatrix) .inverse ();
 						}
-						catch (error)
-						{ }
 					}
+				}
+				catch (error)
+				{
+				   //console .log (error);
 				}
 			},
 		});

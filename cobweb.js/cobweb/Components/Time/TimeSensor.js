@@ -75,14 +75,16 @@ function ($,
 			{
 				// The event order below is very important.
 
-				if (this .getBrowser () .getCurrentTime () - this .cycle >= this .interval)
+				var time = this .getBrowser () .getCurrentTime ();
+
+				if (time - this .cycle >= this .interval)
 				{
 					if (this .loop_ .getValue ())
 					{
-						this .cycle            += this .interval * Math .floor ((this .getBrowser () .getCurrentTime () - this .cycle) / this .interval);
+						this .cycle            += this .interval * Math .floor ((time - this .cycle) / this .interval);
 						this .fraction_changed_ = this .last;
 						this .elapsedTime_      = this .getElapsedTime ();
-						this .cycleTime_        = this .getBrowser () .getCurrentTime ();
+						this .cycleTime_        = time;
 					}
 					else
 					{
@@ -92,13 +94,13 @@ function ($,
 				}
 				else
 				{
-					var t = (this .getBrowser () .getCurrentTime () - this .cycle) / this .interval;
+					var t = (time - this .cycle) / this .interval;
 
 					this .fraction_changed_ = this .first + (t - Math .floor (t)) * this .scale;
 					this .elapsedTime_      = this .getElapsedTime ();
 				}
 
-				this .time_ = this .getBrowser () .getCurrentTime ();
+				this .time_ = time;
 			},
 			set_start: function ()
 			{

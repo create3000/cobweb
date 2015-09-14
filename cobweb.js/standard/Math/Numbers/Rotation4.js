@@ -9,7 +9,9 @@ function ($, Quaternion, Vector3)
 {
 	var
 		xAxis = new Vector3 (1, 0, 0),
-		yAxis = new Vector3 (0, 1, 0);
+		yAxis = new Vector3 (0, 1, 0),
+		from  = new Vector3 (0, 0, 0),
+		to    = new Vector3 (0, 0, 0);
 
 	function Rotation4 (x, y, z, angle)
 	{
@@ -37,7 +39,7 @@ function ($, Quaternion, Vector3)
 				           arguments [0] .z,
 				           arguments [1]);
 			
-			   break;
+			   return;
 			}
 			case 4:
 			{
@@ -100,9 +102,8 @@ function ($, Quaternion, Vector3)
 		{
 			// https://bitbucket.org/Coin3D/coin/src/abc9f50968c9/src/base/SbRotation.cpp
 
-			var
-				from = Vector3 .normalize (fromVec),
-				to   = Vector3 .normalize (toVec);
+			from .assign (fromVec) .normalize ();
+			to   .assign (toVec)   .normalize ();
 
 			var
 				cos_angle = from .dot (to),
@@ -114,7 +115,7 @@ function ($, Quaternion, Vector3)
 				// Parallel vectors
 				// Check if they are pointing in the same direction.
 				if (cos_angle > 0)
-					this .value = new Quaternion (0, 0, 0, 1); // standard rotation
+					this .value .set (0, 0, 0, 1); // standard rotation
 
 				// Ok, so they are parallel and pointing in the opposite direction
 				// of each other.
@@ -327,7 +328,9 @@ function ($, Quaternion, Vector3)
 		Identity: new Rotation4 (),
 		Matrix3: function (matrix)
 		{
-			return new Rotation4 (Quaternion .Matrix3 (matrix));
+			var copy = Object .create (this .prototype);
+			copy .value = Quaternion .Matrix3 (matrix);
+			return copy;
 		},
 		inverse: function (rotation)
 		{
@@ -343,19 +346,27 @@ function ($, Quaternion, Vector3)
 		},
 		slerp: function (source, destination, t)
 		{
-			return new Rotation4 (Quaternion .slerp (source .value, destination .value, t));
+			var copy = Object .create (this .prototype);
+			copy .value = Quaternion .slerp (source .value, destination .value, t);
+			return copy;
 		},
 		squad: function (source, a, b, destination, t)
 		{
-			return new Rotation4 (Quaternion .squad (source .value, a, b, destination .value, t));
+			var copy = Object .create (this .prototype);
+			copy .value = Quaternion .squad (source .value, a, b, destination .value, t);
+			return copy;
 		},
 		bezier: function (source, a, b, destination, t)
 		{
-			return new Rotation4 (Quaternion .bezier (source .value, a, b, destination .value, t));
+			var copy = Object .create (this .prototype);
+			copy .value = Quaternion .bezier (source .value, a, b, destination .value, t);
+			return copy;
 		},
 		spline: function (q0, a1, q2)
 		{
-			return new Rotation4 (Quaternion .spline (q0 .value, q1 .value, q2 .value));
+			var copy = Object .create (this .prototype);
+			copy .value = Quaternion .spline (q0 .value, q1 .value, q2 .value);
+			return copy;
 		},
 	});
 

@@ -34,11 +34,11 @@ function ($,
 			                 this .scale_ .y === 0 ||
 			                 this .scale_ .z === 0);
 
-			this .setTransform (this .translation_ .getValue (),
-			                    this .rotation_ .getValue (),
-			                    this .scale_ .getValue (),
+			this .setTransform (this .translation_      .getValue (),
+			                    this .rotation_         .getValue (),
+			                    this .scale_            .getValue (),
 			                    this .scaleOrientation_ .getValue (),
-			                    this .center_ .getValue ());
+			                    this .center_           .getValue ());
 		},
 	});
 

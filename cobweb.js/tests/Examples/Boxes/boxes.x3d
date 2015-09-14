@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 29 Aug 2015 07:24:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 14 Sep 2015 07:12:17 GMT'/>
+    <meta name='modified' content='Mon, 14 Sep 2015 11:11:59 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"MFInt32.x3d", "http://titania.create3000.de/Library/Prototypes/0.1/Fields/MFInt32.x3d"'>
@@ -178,7 +178,7 @@ function set_isActive (value, time)
           <Group DEF='Viewpoints'>
             <Viewpoint DEF='Inside'
                 description='Inside'
-                position='-3 1.6 1'
+                position='13 1.6 11'
                 orientation='0 1 0 0.785'
                 centerOfRotation='0.587624 1.66016 -1.38991'/>
             <Viewpoint DEF='Top'
@@ -219,9 +219,9 @@ function set_isActive (value, time)
           </Group>
           <Collision DEF='Floor'>
             <Transform DEF='Rectangle2D_1' containerField='proxy'
-                rotation='-1 -3.62308e-06 3.39662e-10 1.5708'
+                rotation='1 3.62308e-06 -3.3963e-10 4.71239'
                 scale='32 20.0001 20.0001'
-                scaleOrientation='1 2.71678e-12 -4.85935e-14 0.785304'>
+                scaleOrientation='1 3.29817e-12 -6.94445e-13 0.785306'>
               <Shape DEF='_4'>
                 <IndexedFaceSet
                     texCoordIndex='0, 1, 2, 3, -1'
@@ -369,14 +369,48 @@ function set_isActive (value, time)
                 <Shape USE='_4'/>
               </Transform>
             </Group>
+            <Group DEF='HighlightWallsAnim'>
+              <MetadataSet
+                  name='Animation'>
+                <MetadataInteger containerField='value'
+                    name='duration'
+                    value='6'/>
+                <MetadataInteger containerField='value'
+                    name='framesPerSecond'
+                    value='10'/>
+              </MetadataSet>
+              <TimeSensor DEF='_6'
+                  cycleInterval='0.6'
+                  startTime='1442228823.72297'
+                  stopTime='1442228827.38663'/>
+              <ColorInterpolator DEF='EmissiveColorInterpolator'
+                  key='0, 0.166667, 0.333333, 0.5, 0.666667, 0.833333, 1'
+                  keyValue='0 0 0, 0.130667 0.130667 0.130667, 0.373333 0.373333 0.373333, 0.504 0.504 0.504, 0.373333 0.373333 0.373333, 0.130667 0.130667 0.130667, 0 0 0'>
+                <MetadataSet
+                    name='Interpolator'>
+                  <MetadataInteger containerField='value'
+                      name='key'
+                      value='0, 3, 6'/>
+                  <MetadataDouble containerField='value'
+                      name='keyValue'
+                      value='0, 0, 0, 0.504000008106232, 0.504000008106232, 0.504000008106232, 0, 0, 0'/>
+                  <MetadataString containerField='value'
+                      name='keyType'
+                      value='"SPLINE", "SPLINE", "SPLINE"'/>
+                </MetadataSet>
+              </ColorInterpolator>
+            </Group>
             <Transform>
               <Transform DEF='Cube_002_TRANSFORM_1'
                   translation='-33 1 11'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='1 0 0 0.785396'>
-                <Shape DEF='_6'>
-                  <Appearance>
-                    <Material USE='_1'/>
+                <Shape DEF='_7'>
+                  <Appearance DEF='_8'>
+                    <Material DEF='_9'
+                        diffuseColor='0 0 0'
+                        specularColor='0.415 0.415 0.415'
+                        shininess='0.102564'/>
                   </Appearance>
                   <IndexedFaceSet
                       creaseAngle='3.14159'
@@ -393,19 +427,19 @@ function set_isActive (value, time)
                   translation='-33 1 1'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='-0.809401 0.224735 0.542553 0.946014'>
-                <Shape USE='_6'/>
+                <Shape USE='_7'/>
               </Transform>
               <Transform DEF='Cube_002_TRANSFORM_2'
                   translation='-33 1 -9'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='-0.809401 0.224735 0.542553 0.946014'>
-                <Shape USE='_6'/>
+                <Shape USE='_7'/>
               </Transform>
               <Transform DEF='Cube_002_TRANSFORM_3'
                   translation='-33 1 -19'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='-0.809401 0.224735 0.542553 0.946014'>
-                <Shape USE='_6'/>
+                <Shape USE='_7'/>
               </Transform>
             </Transform>
             <Transform
@@ -414,10 +448,8 @@ function set_isActive (value, time)
                   translation='15 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.56439e-06 1.91633e-06 0.785386'>
-                <Shape DEF='_7'>
-                  <Appearance>
-                    <Material USE='_1'/>
-                  </Appearance>
+                <Shape DEF='_10'>
+                  <Appearance USE='_8'/>
                   <IndexedFaceSet
                       creaseAngle='3.14159'
                       colorIndex='1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 1, 1, 1, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1'
@@ -433,19 +465,19 @@ function set_isActive (value, time)
                   translation='-1 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.379e-06 2.36391e-06 0.78538'>
-                <Shape USE='_7'/>
+                <Shape USE='_10'/>
               </Transform>
               <Transform DEF='Cube_004_TRANSFORM_2'
                   translation='-17 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.379e-06 2.36391e-06 0.78538'>
-                <Shape USE='_7'/>
+                <Shape USE='_10'/>
               </Transform>
               <Transform DEF='Cube_004_TRANSFORM_3'
                   translation='-33 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.379e-06 2.36391e-06 0.78538'>
-                <Shape USE='_7'/>
+                <Shape USE='_10'/>
               </Transform>
             </Transform>
             <Transform>
@@ -453,25 +485,25 @@ function set_isActive (value, time)
                   translation='15 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.56439e-06 1.91633e-06 0.785386'>
-                <Shape USE='_7'/>
+                <Shape USE='_10'/>
               </Transform>
               <Transform DEF='Cube_004_TRANSFORM_5'
                   translation='-1 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.379e-06 2.36391e-06 0.78538'>
-                <Shape USE='_7'/>
+                <Shape USE='_10'/>
               </Transform>
               <Transform DEF='Cube_004_TRANSFORM_6'
                   translation='-17 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.379e-06 2.36391e-06 0.78538'>
-                <Shape USE='_7'/>
+                <Shape USE='_10'/>
               </Transform>
               <Transform DEF='Cube_004_TRANSFORM_7'
                   translation='-33 1 21'
                   rotation='-1.66745e-06 0.707107 0.707107 3.14159'
                   scaleOrientation='-1 -1.379e-06 2.36391e-06 0.78538'>
-                <Shape USE='_7'/>
+                <Shape USE='_10'/>
               </Transform>
             </Transform>
             <Transform
@@ -480,37 +512,346 @@ function set_isActive (value, time)
                   translation='-33 1 11'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='1 0 0 0.785396'>
-                <Shape USE='_6'/>
+                <Shape USE='_7'/>
               </Transform>
               <Transform DEF='Cube_002_TRANSFORM_5'
                   translation='-33 1 1'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='-0.809401 0.224735 0.542553 0.946014'>
-                <Shape USE='_6'/>
+                <Shape USE='_7'/>
               </Transform>
               <Transform DEF='Cube_002_TRANSFORM_6'
                   translation='-33 1 -9'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='-0.809401 0.224735 0.542553 0.946014'>
-                <Shape USE='_6'/>
+                <Shape USE='_7'/>
               </Transform>
               <Transform DEF='Cube_002_TRANSFORM_7'
                   translation='-33 1 -19'
                   rotation='0.577351 -0.577349 0.577351 2.0944'
                   scaleOrientation='-0.809401 0.224735 0.542553 0.946014'>
-                <Shape USE='_6'/>
+                <Shape USE='_7'/>
               </Transform>
             </Transform>
           </Collision>
           <Transform DEF='Obstacles'
               translation='0 1 0'>
             <Transform
-                translation='-17 0 -5'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_8'/>
+                translation='31 0 15'>
+              <Transform USE='_2'/>
             </Transform>
             <Transform
-                translation='-19 0 1'>
+                translation='-25 0 -19'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_11'/>
+            </Transform>
+            <Transform
+                translation='1 0 -19'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-29 0 5'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_12'/>
+            </Transform>
+            <Transform
+                translation='19 0 -3'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='5 0 15'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 -3'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='29 0 17'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 -7'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-21 0 -9'>
+              <Transform USE='_2'/>
+            </Transform>
+            <Transform
+                translation='31 0 -7'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='9 0 17'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_13'/>
+            </Transform>
+            <Transform
+                translation='29 0 9'>
+              <Transform USE='_2'/>
+            </Transform>
+            <Transform
+                translation='-15 0 -15'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_14'/>
+            </Transform>
+            <Transform
+                translation='15 0 -17'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_15'/>
+            </Transform>
+            <Transform
+                translation='-31 0 15'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='7 0 -5'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_16'/>
+            </Transform>
+            <Transform
+                translation='29 0 1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 5'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-11 0 -1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-23 0 -19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='5 0 -1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 19'>
+              <Transform USE='_2'/>
+            </Transform>
+            <Transform
+                translation='27 0 -3'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='25 0 -19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='11 0 1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-23 0 -1'>
+              <Transform USE='_2'/>
+            </Transform>
+            <Transform
+                translation='19 0 -13'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='5 0 19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='19 0 -1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='29 0 -19'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-31 0 5'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_17'/>
+            </Transform>
+            <Transform
+                translation='-27 0 13'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_18'/>
+            </Transform>
+            <Transform
+                translation='17 0 -19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 17'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_19'/>
+            </Transform>
+            <Transform
+                translation='23 0 5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-21 0 13'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-7 0 17'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_20'/>
+            </Transform>
+            <Transform
+                translation='31 0 1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='7 0 -11'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='15 0 19'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_21'/>
+            </Transform>
+            <Transform
+                translation='23 0 -11'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='11 0 17'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='23 0 7'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='9 0 13'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_22'/>
+            </Transform>
+            <Transform
+                translation='1 0 -7'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_23'/>
+            </Transform>
+            <Transform
+                translation='1 0 -9'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='27 0 5'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='17 0 7'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_24'/>
+            </Transform>
+            <Transform
+                translation='9 0 19'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_25'/>
+            </Transform>
+            <Transform
+                translation='7 0 17'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_26'/>
+            </Transform>
+            <Transform
+                translation='31 0 -13'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-3 0 13'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-13 0 1'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='23 0 13'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-9 0 -3'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-11 0 -19'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='17 0 15'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-25 0 -13'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-23 0 7'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='11 0 15'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-21 0 19'>
+              <Transform USE='_2'/>
+            </Transform>
+            <Transform
+                translation='-31 0 19'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_27'/>
+            </Transform>
+            <Transform
+                translation='13 0 -7'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='27 0 19'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-15 0 -9'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-27 0 -1'>
+              <Transform USE='_2'/>
+            </Transform>
+            <Transform
+                translation='31 0 -15'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-21 0 15'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_28'/>
+            </Transform>
+            <Transform
+                translation='-1 0 -5'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='15 0 -1'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-15 0 -5'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-15 0 15'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='17 0 19'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
@@ -518,409 +859,108 @@ function set_isActive (value, time)
               <Transform USE='_2'/>
             </Transform>
             <Transform
-                translation='13 0 15'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='9 0 -19'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_9'/>
-            </Transform>
-            <Transform
-                translation='5 0 -1'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-23 0 -7'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-23 0 -3'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-15 0 -13'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-15 0 -19'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='31 0 -3'>
+                translation='-15 0 13'>
               <Transform USE='_2'/>
             </Transform>
             <Transform
-                translation='-29 0 -17'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-27 0 -7'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-15 0 -5'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-23 0 -1'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='11 0 13'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='-19 0 7'>
+                translation='-15 0 -7'>
               <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_10'/>
+              <TouchSensor DEF='_29'/>
             </Transform>
             <Transform
-                translation='-21 0 5'>
-              <Transform USE='_2'/>
+                translation='-19 0 5'>
+              <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='23 0 9'>
-              <Shape USE='OrangeBox'/>
+                translation='15 0 -15'>
+              <Shape USE='RedBox'/>
             </Transform>
             <Transform
-                translation='11 0 -17'>
+                translation='-19 0 -15'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='27 0 -9'>
               <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_11'/>
-            </Transform>
-            <Transform
-                translation='-9 0 5'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='11 0 7'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='29 0 7'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_12'/>
-            </Transform>
-            <Transform
-                translation='-19 0 3'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-17 0 -19'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='25 0 11'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='1 0 -9'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-29 0 -19'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='17 0 -11'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='1 0 -1'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-11 0 -17'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_13'/>
-            </Transform>
-            <Transform
-                translation='-13 0 -17'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-19 0 13'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='-1 0 -15'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-29 0 -3'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='3 0 -1'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='23 0 7'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-19 0 -7'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-5 0 5'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-29 0 -5'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-7 0 11'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='19 0 -1'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='23 0 -5'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='25 0 -3'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='21 0 -11'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-11 0 9'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='21 0 -3'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-11 0 -3'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='27 0 -15'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_14'/>
-            </Transform>
-            <Transform
-                translation='-1 0 -17'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-29 0 -7'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-13 0 1'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_15'/>
-            </Transform>
-            <Transform
-                translation='21 0 -1'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='1 0 -13'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-21 0 -17'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='13 0 -5'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='7 0 -19'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-25 0 11'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_16'/>
-            </Transform>
-            <Transform
-                translation='1 0 -15'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-21 0 7'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='19 0 1'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='31 0 13'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='-13 0 -1'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_17'/>
-            </Transform>
-            <Transform
-                translation='-7 0 7'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='9 0 -7'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-5 0 -5'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='7 0 -1'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='-3 0 -5'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='9 0 -3'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='29 0 17'>
-              <Shape USE='OrangeBox'/>
+              <TouchSensor DEF='_30'/>
             </Transform>
             <Transform
                 translation='-7 0 -15'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='-5 0 9'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='21 0 -7'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='-15 0 -11'>
+                translation='19 0 3'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='11 0 9'>
+                translation='29 0 15'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='29 0 -5'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='17 0 3'>
+                translation='31 0 -11'>
               <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_18'/>
+              <TouchSensor DEF='_31'/>
             </Transform>
             <Transform
-                translation='-1 0 -5'>
+                translation='-19 0 -11'>
               <Shape USE='OrangeBox'/>
             </Transform>
             <Transform
-                translation='17 0 -7'>
+                translation='-7 0 -19'>
+              <Shape USE='RedBox'/>
+            </Transform>
+            <Transform
+                translation='3 0 7'>
+              <Transform USE='_2'/>
+            </Transform>
+            <Transform
+                translation='13 0 13'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-31 0 -9'>
               <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_19'/>
+              <TouchSensor DEF='_32'/>
+            </Transform>
+            <Transform
+                translation='-11 0 -5'>
+              <Shape USE='OrangeBox'/>
+            </Transform>
+            <Transform
+                translation='-19 0 -5'>
+              <Shape USE='YellowBox'/>
+              <TouchSensor DEF='_33'/>
             </Transform>
             <Transform
                 translation='-25 0 7'>
               <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_20'/>
+              <TouchSensor DEF='_34'/>
             </Transform>
             <Transform
-                translation='23 0 -1'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-27 0 19'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='19 0 13'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='9 0 19'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='31 0 11'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-27 0 -11'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='5 0 -13'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_21'/>
-            </Transform>
-            <Transform
-                translation='23 0 11'>
+                translation='-17 0 -19'>
               <Transform USE='_2'/>
             </Transform>
             <Transform
-                translation='31 0 9'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-5 0 17'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='-27 0 17'>
+                translation='-25 0 1'>
               <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_22'/>
+              <TouchSensor DEF='_35'/>
             </Transform>
             <Transform
-                translation='-31 0 -15'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='15 0 9'>
+                translation='7 0 -7'>
               <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_23'/>
+              <TouchSensor DEF='_36'/>
             </Transform>
             <Transform
-                translation='-13 0 13'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_24'/>
-            </Transform>
-            <Transform
-                translation='-9 0 9'>
-              <Shape USE='OrangeBox'/>
-            </Transform>
-            <Transform
-                translation='-7 0 -13'>
+                translation='-7 0 15'>
               <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='7 0 -3'>
-              <Shape USE='YellowBox'/>
-              <TouchSensor DEF='_25'/>
-            </Transform>
-            <Transform
-                translation='-31 0 -19'>
-              <Transform USE='_2'/>
-            </Transform>
-            <Transform
-                translation='-21 0 -9'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='15 0 19'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-17 0 7'>
-              <Shape USE='RedBox'/>
-            </Transform>
-            <Transform
-                translation='-11 0 15'>
-              <Transform USE='_2'/>
             </Transform>
           </Transform>
         </Group>
@@ -937,7 +977,7 @@ function set_isActive (value, time)
           </field>
           <field accessType='inputOutput' type='SFNode' name='playground'>
             <ProtoInstance name='MFInt32'>
-              <fieldValue name='keyValue' value='4, 3, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 3, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 2, 3, 2, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 2, 0, 4, 0, 0, 4, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3, 2, 2, 4, 0, 0, 0, 0, 0, 2, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 3'/>
+              <fieldValue name='keyValue' value='0, 0, 0, 1, 2, 0, 0, 4, 0, 0, 3, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 0, 0, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 2, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 3, 0, 0, 4, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 2, 4, 0, 4, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 1, 2, 0, 2, 0, 0, 2'/>
             </ProtoInstance>
           </field>
           <field accessType='inputOutput' type='SFNode' name='group'>
@@ -978,7 +1018,7 @@ function set_touchTime (value)
 
 function set_collideTime (value)
 {
-	print ("collideTime: ", value);
+	//print ("collideTime: ", value);
 }
 
 function set_numChildren ()
@@ -1119,7 +1159,7 @@ function random (max)
           isPickable='false'>
         <Collision
             enabled='false'>
-          <OrthoViewpoint DEF='_26'/>
+          <OrthoViewpoint DEF='_37'/>
           <Transform DEF='Title'
               translation='1.69646 0.824739 0'
               scale='0.161213 0.161213 0.161213'>
@@ -1153,7 +1193,7 @@ function random (max)
                     specularColor='0.309091 0.309091 0.309091'
                     shininess='0.8'/>
               </Appearance>
-              <Text DEF='_27'
+              <Text DEF='_38'
                   string='"Boxes left: 15", "Time: 00:00"'
                   solid='true'>
                 <FontStyle
@@ -1163,18 +1203,18 @@ function random (max)
               </Text>
             </Shape>
           </Transform>
-          <TimeSensor DEF='_28'
+          <TimeSensor DEF='_39'
               loop='true'
               startTime='1441724287.7888'
               stopTime='1441934278.89215'/>
           <Script DEF='StatusScript'
               directOutput='true'>
             <field accessType='inputOnly' type='SFTime' name='set_cycleTime'/>
-            <field accessType='inputOutput' type='SFInt32' name='boxesLeft' value='18'/>
+            <field accessType='inputOutput' type='SFInt32' name='boxesLeft' value='26'/>
             <field accessType='outputOnly' type='MFString' name='string_changed'/>
             <field accessType='outputOnly' type='SFTime' name='stopTime'/>
             <field accessType='initializeOnly' type='SFNode' name='timer'>
-              <TimeSensor USE='_28'/>
+              <TimeSensor USE='_39'/>
             </field>
 <![CDATA[javascript:
 
@@ -1228,10 +1268,10 @@ function eventsProcessed ()
       <Layer DEF='Instructions'>
         <Collision
             enabled='false'>
-          <OrthoViewpoint USE='_26'/>
+          <OrthoViewpoint USE='_37'/>
           <Background DEF='Black'
               transparency='0.5'/>
-          <VisibilitySensor DEF='_29'
+          <VisibilitySensor DEF='_40'
               size='1 1 1'/>
           <Transform DEF='StartNowText'
               scale='0.161213 0.161213 0.161213'>
@@ -1245,7 +1285,7 @@ function eventsProcessed ()
                     name='framesPerSecond'
                     value='10'/>
               </MetadataSet>
-              <TimeSensor DEF='_30'
+              <TimeSensor DEF='_41'
                   loop='true'
                   startTime='1441934278.89215'
                   stopTime='1441729852.59986'/>
@@ -1267,7 +1307,7 @@ function eventsProcessed ()
               </PositionInterpolator>
             </Group>
             <Shape>
-              <Appearance DEF='_31'>
+              <Appearance DEF='_42'>
                 <Material DEF='Rococo1_1'
                     ambientIntensity='0.187004'
                     diffuseColor='0.636212 0.748016 0.300948'
@@ -1288,7 +1328,7 @@ function eventsProcessed ()
               translation='0 -0.247078 1'
               scale='0.873122 0.131886 0.873122'>
             <Shape>
-              <Appearance DEF='_32'>
+              <Appearance DEF='_43'>
                 <Material/>
               </Appearance>
               <IndexedFaceSet
@@ -1301,7 +1341,7 @@ function eventsProcessed ()
                     point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
               </IndexedFaceSet>
             </Shape>
-            <TouchSensor DEF='_33'/>
+            <TouchSensor DEF='_44'/>
           </Transform>
         </Collision>
       </Layer>
@@ -1309,8 +1349,8 @@ function eventsProcessed ()
         <Collision
             enabled='false'>
           <Background USE='Black'/>
-          <OrthoViewpoint USE='_26'/>
-          <VisibilitySensor DEF='_34'
+          <OrthoViewpoint USE='_37'/>
+          <VisibilitySensor DEF='_45'
               size='1 1 1'/>
           <Transform DEF='CongratualtionsText'
               scale='0.158861 0.158861 0.158861'>
@@ -1324,7 +1364,7 @@ function eventsProcessed ()
                     name='framesPerSecond'
                     value='10'/>
               </MetadataSet>
-              <TimeSensor DEF='_35'
+              <TimeSensor DEF='_46'
                   enabled='false'
                   loop='true'
                   startTime='1441934278.89215'
@@ -1347,7 +1387,7 @@ function eventsProcessed ()
               </PositionInterpolator>
             </Group>
             <Shape>
-              <Appearance USE='_31'/>
+              <Appearance USE='_42'/>
               <Text
                   string='"Congratulations!", "You found all yellow boxes.", "", "Continue"'
                   solid='true'>
@@ -1362,7 +1402,7 @@ function eventsProcessed ()
               translation='0 -0.247078 1'
               scale='0.449082 0.131886 0.873122'>
             <Shape>
-              <Appearance USE='_32'/>
+              <Appearance USE='_43'/>
               <IndexedFaceSet
                   ccw='false'
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -1373,39 +1413,39 @@ function eventsProcessed ()
                     point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
               </IndexedFaceSet>
             </Shape>
-            <TouchSensor DEF='_36'/>
+            <TouchSensor DEF='_47'/>
           </Transform>
         </Collision>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='StatusScript' fromField='string_changed' toNode='_27' toField='set_string'/>
+    <ROUTE fromNode='StatusScript' fromField='string_changed' toNode='_38' toField='set_string'/>
     <ROUTE fromNode='PlayGroundScript' fromField='boxesLeft' toNode='StatusScript' toField='set_boxesLeft'/>
-    <ROUTE fromNode='_28' fromField='cycleTime' toNode='StatusScript' toField='set_cycleTime'/>
-    <ROUTE fromNode='EnterWorldScript' fromField='enterTime' toNode='_28' toField='set_stopTime'/>
-    <ROUTE fromNode='_33' fromField='touchTime' toNode='_28' toField='set_startTime'/>
-    <ROUTE fromNode='_33' fromField='touchTime' toNode='Game' toField='set_triggerTime'/>
+    <ROUTE fromNode='_39' fromField='cycleTime' toNode='StatusScript' toField='set_cycleTime'/>
+    <ROUTE fromNode='EnterWorldScript' fromField='enterTime' toNode='_39' toField='set_stopTime'/>
+    <ROUTE fromNode='_44' fromField='touchTime' toNode='_39' toField='set_startTime'/>
+    <ROUTE fromNode='_44' fromField='touchTime' toNode='Game' toField='set_triggerTime'/>
     <ROUTE fromNode='Game' fromField='value_changed' toNode='_3' toField='set_order'/>
-    <ROUTE fromNode='_30' fromField='fraction_changed' toNode='StartNowTextScaleInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_41' fromField='fraction_changed' toNode='StartNowTextScaleInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='StartNowTextScaleInterpolator' fromField='value_changed' toNode='StartNowText' toField='set_scale'/>
-    <ROUTE fromNode='_29' fromField='isActive' toNode='_30' toField='set_enabled'/>
-    <ROUTE fromNode='_29' fromField='enterTime' toNode='_30' toField='set_startTime'/>
+    <ROUTE fromNode='_40' fromField='isActive' toNode='_41' toField='set_enabled'/>
+    <ROUTE fromNode='_40' fromField='enterTime' toNode='_41' toField='set_startTime'/>
     <ROUTE fromNode='StartNowTextScaleInterpolator_1' fromField='value_changed' toNode='CongratualtionsText' toField='set_scale'/>
-    <ROUTE fromNode='_35' fromField='fraction_changed' toNode='StartNowTextScaleInterpolator_1' toField='set_fraction'/>
-    <ROUTE fromNode='_34' fromField='enterTime' toNode='_35' toField='set_startTime'/>
-    <ROUTE fromNode='_34' fromField='isActive' toNode='_35' toField='set_enabled'/>
-    <ROUTE fromNode='_36' fromField='touchTime' toNode='StartNow' toField='set_triggerTime'/>
+    <ROUTE fromNode='_46' fromField='fraction_changed' toNode='StartNowTextScaleInterpolator_1' toField='set_fraction'/>
+    <ROUTE fromNode='_45' fromField='enterTime' toNode='_46' toField='set_startTime'/>
+    <ROUTE fromNode='_45' fromField='isActive' toNode='_46' toField='set_enabled'/>
+    <ROUTE fromNode='_47' fromField='touchTime' toNode='StartNow' toField='set_triggerTime'/>
     <ROUTE fromNode='StartNow' fromField='value_changed' toNode='_3' toField='set_order'/>
     <ROUTE fromNode='Congratulations_1' fromField='value_changed' toNode='_3' toField='set_order'/>
     <ROUTE fromNode='EnterWorldScript' fromField='enterTime' toNode='StartNow' toField='set_triggerTime'/>
-    <ROUTE fromNode='StatusScript' fromField='stopTime' toNode='_28' toField='set_stopTime'/>
+    <ROUTE fromNode='StatusScript' fromField='stopTime' toNode='_39' toField='set_stopTime'/>
     <ROUTE fromNode='StatusScript' fromField='stopTime' toNode='Congratulations_1' toField='set_triggerTime'/>
-    <ROUTE fromNode='_36' fromField='touchTime' toNode='PlayGroundScript' toField='set_startTime'/>
-    <ROUTE fromNode='_28' fromField='isActive' toNode='Walk' toField='set_bind'/>
-    <ROUTE fromNode='_34' fromField='isActive' toNode='Top' toField='set_bind'/>
-    <ROUTE fromNode='_29' fromField='isActive' toNode='Top' toField='set_bind'/>
-    <ROUTE fromNode='_8' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
-    <ROUTE fromNode='_9' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
-    <ROUTE fromNode='_10' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_47' fromField='touchTime' toNode='PlayGroundScript' toField='set_startTime'/>
+    <ROUTE fromNode='_39' fromField='isActive' toNode='Walk' toField='set_bind'/>
+    <ROUTE fromNode='_45' fromField='isActive' toNode='Top' toField='set_bind'/>
+    <ROUTE fromNode='_40' fromField='isActive' toNode='Top' toField='set_bind'/>
+    <ROUTE fromNode='_6' fromField='fraction_changed' toNode='EmissiveColorInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='EmissiveColorInterpolator' fromField='value_changed' toNode='_9' toField='set_emissiveColor'/>
+    <ROUTE fromNode='Walls' fromField='collideTime' toNode='_6' toField='set_startTime'/>
     <ROUTE fromNode='_11' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
     <ROUTE fromNode='_12' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
     <ROUTE fromNode='_13' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
@@ -1421,6 +1461,17 @@ function eventsProcessed ()
     <ROUTE fromNode='_23' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
     <ROUTE fromNode='_24' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
     <ROUTE fromNode='_25' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
-    <ROUTE fromNode='Walls' fromField='collideTime' toNode='PlayGroundScript' toField='set_collideTime'/>
+    <ROUTE fromNode='_26' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_27' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_28' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_29' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_30' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_31' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_32' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_33' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_34' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_35' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='_36' fromField='touchTime' toNode='PlayGroundScript' toField='set_touchTime'/>
+    <ROUTE fromNode='Walls' fromField='isActive' toNode='_6' toField='set_loop'/>
   </Scene>
 </X3D>

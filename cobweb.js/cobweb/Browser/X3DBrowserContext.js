@@ -184,7 +184,7 @@ function ($,
 			this .cameraTime = performance .now () - t1;
 
 			var t2 = performance .now ();
-			this .world .traverse (TraverseType .COLLISION);
+			//this .world .traverse (TraverseType .COLLISION);
 			this .collisionTime = performance .now () - t2;
 
 			this .sensors_ .processInterests ();

@@ -4,6 +4,8 @@ define ([
 ],
 function (Vector3)
 {
+	var lastPosition = new Vector3 (0, 0, 0);
+
 	function X3DTimeContext ()
 	{
 		this .currentPosition = new Vector3 (0, 0, 0);
@@ -30,12 +32,12 @@ function (Vector3)
 
 			if (this .getWorld () && this .getActiveLayer ())
 			{
-				var
-					lastPosition      = this .currentPosition,
-					cameraSpaceMatrix = this .getActiveLayer () .getViewpoint () .getCameraSpaceMatrix ();
+				var cameraSpaceMatrix = this .getActiveLayer () .getViewpoint () .getCameraSpaceMatrix ();
 
+				lastPosition .assign (this .currentPosition);
 				this .currentPosition .set (cameraSpaceMatrix [12], cameraSpaceMatrix [13], cameraSpaceMatrix [14]);
-				this .currentSpeed = Vector3 .subtract (this .currentPosition, lastPosition) .abs () * this .currentFrameRate;
+
+				this .currentSpeed = lastPosition .subtract (this .currentPosition) .abs () * this .currentFrameRate;
 			}
 			else
 				this .currentSpeed = 0;

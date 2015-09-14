@@ -265,7 +265,7 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (dest, t)
 		{
-			return Algorithm .slerp (this, dest, t);
+			return Algorithm .slerp (this, tmp .assign (dest), t);
 		},
 		toString: function ()
 		{
@@ -331,7 +331,7 @@ function ($, Vector3, Algorithm)
 	{
 		Matrix3: function (matrix)
 		{
-			var quat = new Quaternion (0, 0, 0, 1);
+			var quat = Object .create (this .prototype);
 
 			var i;
 
@@ -489,7 +489,7 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (source, dest, t)
 		{
-			return Algorithm .slerp (new Quaternion (source .x, source .y, source .z, source .w), dest, t);
+			return Algorithm .slerp (source .copy (), tmp .assign (dest), t);
 		},
 		/*
 
@@ -531,6 +531,8 @@ function ($, Vector3, Algorithm)
 		},
 		*/
 	});
+
+	var tmp = new Quaternion (0, 0, 0, 1);
 
 	return Quaternion;
 });

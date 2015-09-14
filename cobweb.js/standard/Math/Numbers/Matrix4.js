@@ -496,7 +496,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				K = g * m01 + j * m05 + x * m09 - ((f * m01) + (o * m05) + (r * m09)),
 				B = m00 * H + m04 * I + m08 * J + m12 * K;
 
-			if (B == 0)
+			if (B === 0)
 				throw Error ("Matrix4 .inverse: determinant is 0.");
 
 			B = 1 / B;

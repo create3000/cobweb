@@ -82,7 +82,7 @@ function ($,
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize .assign (shape .getBBoxSize ())),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shape .getBBoxSize ())),
 				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shape .getBBoxCenter ())),
 				radius          = bboxSize .abs () / 2,
 				distance        = bboxCenter .z,
@@ -204,7 +204,7 @@ function ($,
 				// Translate camera
 
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
-				modelViewMatrix .assign (viewpoint .getParentMatrix ());
+				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
 
 				modelViewMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
 				modelViewMatrix .rotate (rotation .setFromToVec (zAxis, vector .assign (translation) .negate ()) .multRight (localOrientation));
@@ -367,7 +367,7 @@ function ($,
 
 				var down = rotation .setFromToVec (viewpoint .getUserOrientation () .multVecRot (vector .assign (zAxis)), viewpoint .getUpVector ());
 
-				modelViewMatrix .assign (viewpoint .getParentMatrix ());
+				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
 				modelViewMatrix .translate (viewpoint .getUserPosition ());
 				modelViewMatrix .rotate (viewpoint .getUserOrientation () .multRight (down));
 				modelViewMatrix .inverse ();

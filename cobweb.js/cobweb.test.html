@@ -3,15 +3,15 @@
 <head>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
-	<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.css"/>
-	<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/stable/1/1.6/cobweb.css"/>
+		<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/stable/1/1.6/cobweb.min.js"></script>
 	<style>
 html, body {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-	width: 740px;
-	height: 416px;
+	width: 920px;
+	height: 440px;
 }
 
 body {
@@ -20,9 +20,10 @@ body {
 	padding: 10px;
 }
 
-#page {
+#x3d-page {
 	background: #414141;
 	height: 100%;
+	box-shadow: 0px 2px 12px 1px rgba(0, 0, 0, 0.75);
 }
 
 x3d {
@@ -32,8 +33,8 @@ x3d {
 #bookmarks {
 	overflow: hidden;
 	padding: 5px;
-	width: 100px;
-	float: right;
+	width: 110px;
+	float: left;
 	font-size: 12px;
 }
 	</style>
@@ -43,76 +44,44 @@ X3D (function (dom)
 	var Browser = X3D .getBrowser (dom);
 	var scene   = Browser .currentScene;			
 
-	var index = 3;
-	var pages = [ "Tests 1", "Tests 2", "Page 1", "Page 2" ];
+	var index = 0;
+	var pages = [ "Page 1", "Page 2" ];
 
 	var urls =
 	[
-		{
-		   'LayerSet':             "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Layering/LayerSet.x3d",
-		   'Simple':               "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Layering/Simple.x3d",
-		   'Viewport':             "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Layering/Viewport.x3d",
-		   'ViewportLayer':        "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Layering/ViewportLayer.x3d",
-		   'createVrmlFromString': "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Scripting/createVrmlFromString.x3d",
-		},
-		{
-			'ImageBackground':    "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/EnvironmentalEffects/ImageBackground.x3d",
-			'Geometry3D':         "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Geometry3D/Geometry3D.x3d",
-			'Smash':              "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Geometry3D/Smash.x3d",
-			'Extrude1':           "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Geometry3D/Extrusion/extrude1.x3d",
-			'NormalInterpolator': "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Interpolation/NormalInterpolator.x3d",
-			'PointLight':         "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/PointLight.x3d",
-			'SpotLight':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/SpotLight.x3d",
-			'Lamp':               "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PointingDeviceSensor/lamp.x3d",
-			'LineSensor':         "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PointingDeviceSensor/LineSensor.x3d",
-			'PlaneSensor':        "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PointingDeviceSensor/PlaneSensor.x3d",
-			'SphereSensor':       "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PointingDeviceSensor/SphereSensor.x3d",
-			'Touch':              "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PointingDeviceSensor/test.x3d",
-			'IndexedLineSet':     "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Rendering/IndexedLineSet.x3d",
-			'Glowing World':      "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Rendering/world.x3d",
-			'Scripting':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Scripting/ColorSpheres.x3d",
-			'Connectors':         "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Shape/Connectors.x3d",
-			'Sound':              "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Sound/AudioClip.x3d",
-			'Text':               "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Text/test.x3d",
-			'Date':               "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Text/date.x3d",
-			'ColorMaterial':      "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Texturing/ColorMaterial.x3d",
-			'MovieTexture':       "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Texturing/MovieTexture.x3d",
-			'NestedProtos':       "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PROTO/NestedProtos.x3d",
-			'Gate':               "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/gate.x3d",
-			'Ghost':              "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/geist.x3d",
-		},
-		{
-			'Appartment':         "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Appartment/index.x3d",
-			'Approach':           "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/index.x3d",
-			'Arcadia':            "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Arcadia/stage/index.x3d",
-			'Astronomy':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Astronomy/stage/astrnmy.x3d",
-			'BIC Man':            "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/index.x3d",
-			'BIC Building':       "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/building.x3d",
-			'BIC Buero':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/buero.x3d",
-			'BIC Info':           "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/info.x3d",
-			'Cathedral':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/index.x3d",
-			'Dolphin':            "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Dolphin/index.x3d",
-			'Hamburger':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/hamburger.x3d",
-			'ICTS':               "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/index.x3d",
-			'Labyrinth':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/labyrinth.x3d",
-			'Soccer':             "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/soccer.x3d",
-			'LogoPieces':         "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LogoPieces/index.x3d",
-			'LustForLife':        "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LustForLife/stage/index.x3d",
-			'MovieTruck':         "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/MovieTruck/stage/index.x3d",
-			'NIST-Logo':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/NIST-Logo/index.x3d",
-			'Pong':               "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Pong/index.x3d",
-			'Rathaus':            "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Rathaus/stage/index.x3d",
-			'Schacht':            "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Schacht/index.x3d",
-			'Mediafacade':        "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Vattenfall/index.x3d",
-		},
-		{
-			'Anatomy':       "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/anatomy/anatomy.x3d",
-			'Jungle':        "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/jungle/jungle.x3d",
-			'Huey':          "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/huey.x3d",
-			'Foldup':        "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/foldup.x3d",
-			'Ripple':        "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/ripple.x3d",
-			'Falling Boxes': "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Boxes/boxes.x3d",
-		},
+		[
+			{ name: 'Smashing Boxes',     url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Boxes/boxes.x3d" },
+			{ name: 'Soccer',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/soccer.x3d" },
+			{ name: 'LogoPieces',         url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LogoPieces/index.x3d" },
+			{ name: 'Astronomy',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Astronomy/stage/astrnmy.x3d" },
+			{ name: 'Foldup',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/foldup.x3d" },
+			{ name: 'Pong',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Pong/index.x3d" },
+			{ name: 'Mediafacade',        url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Vattenfall/index.x3d" },
+			{ name: 'LustForLife',        url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LustForLife/stage/index.x3d" },
+			{ name: 'Cathedral',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/index.x3d" },
+			{ name: 'Arcadia',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Arcadia/stage/index.x3d" },
+			{ name: 'Huey',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/huey.x3d" },
+			{ name: 'Approach',           url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/index.x3d" },
+			{ name: 'Labyrinth',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/labyrinth.x3d" },
+			{ name: 'Terrain',            url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Terrain/index.x3d" },
+		],
+		[
+			{ name: 'Jungle',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/jungle/jungle.x3d" },
+			{ name: 'Ripple',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/ripple.x3d" },
+			{ name: 'BIC Man',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/index.x3d" },
+			{ name: 'BIC Building',       url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/building.x3d" },
+			{ name: 'BIC Buero',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/buero.x3d" },
+			{ name: 'BIC Info',           url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/BIC/info.x3d" },
+			{ name: 'Dolphin',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Dolphin/index.x3d" },
+			//{ name: 'Hamburger',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/hamburger.x3d" },
+			{ name: 'ICTS',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/index.x3d" },
+			{ name: 'MovieTruck',         url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/MovieTruck/stage/index.x3d" },
+			{ name: 'NIST-Logo',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/NIST-Logo/index.x3d" },
+			{ name: 'Rathaus',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Rathaus/stage/index.x3d" },
+			{ name: 'Schacht',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Schacht/index.x3d" },
+			{ name: 'Anatomy',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/anatomy/anatomy.x3d" },
+			{ name: 'Appartment',         url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Appartment/index.x3d" },
+		],
 	];
 
 	function toggleBookmarks ()
@@ -121,20 +90,30 @@ X3D (function (dom)
 
 		bookmarks .empty ();
 
-		$.each (urls [index], function (name, URL)
+		urls [index] .forEach (function (item)
 		{
 			$("<a/>")
 				.attr ("href", "#")
 				.click (function ()
 				{
-					Browser .loadURL (new X3D .MFString (URL), new X3D .MFString ());
+					Browser .loadURL (new X3D .MFString (item .url), new X3D .MFString ());
 				})
-				.text (name)
+				.text (item .name)
 				.appendTo (bookmarks);
 
 			bookmarks .append ("<br/>");
 		});
 			
+		bookmarks .append ("<br/>");
+
+
+		$("<a/>")
+			.attr ("href", "#")
+			.click (randomWorld)
+			.text ("Random World")
+			.appendTo (bookmarks);
+
+		bookmarks .append ("<br/>");
 		bookmarks .append ("<br/>");
 
 		index = (index + 1) % urls .length;
@@ -147,16 +126,36 @@ X3D (function (dom)
 		
 	}
 
+	function randomWorld ()
+	{
+		function random (max)
+		{
+		   return Math .round (Math .random () * max);
+		}
+
+		var
+			randomPage  = random (urls .length - 1),
+			randomIndex = random (urls [index] .length - 1),
+			i           = 0;
+			
+		urls [randomPage] .forEach (function (item)
+		{
+		   if (i == randomIndex)
+				Browser .loadURL (new X3D .MFString (item .url), new X3D .MFString ());
+
+		   ++ i;
+		});
+	}
+
+	randomWorld ();
 	toggleBookmarks ();
 });
 	</script>
 </head>
 <body>
-	<div id="page">
+	<div id="x3d-page">
 		<div id="bookmarks"></div>
-		<X3D statistics="true" cache="false" url='
-			"https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Boxes/boxes.x3d",
-		'></X3D>
+		<X3D statistics="true"></X3D>
 	</div>
 </body>
 </html>

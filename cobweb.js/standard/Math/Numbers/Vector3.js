@@ -147,7 +147,7 @@ function ($, Algorithm)
 		},
 		slerp: function (destination, t)
 		{
-			return Algorithm .slerp (this, destination, t);
+			return Algorithm .slerp (this, tmp .assign (destination), t);
 		},
 		min: function (vector)
 		{
@@ -313,7 +313,7 @@ function ($, Algorithm)
 		},
 		slerp: function (source, destination, t)
 		{
-			return Algorithm .slerp (source, destination, t);
+			return Algorithm .slerp (source .copy (), tmp .assign (destination), t);
 		},
 		min: function (lhs, rhs)
 		{
@@ -352,6 +352,8 @@ function ($, Algorithm)
 			return new Vector3 (x, y, z);
 		},
 	});
+
+	var tmp = new Vector3 (0, 0, 0);
 
 	return Vector3;
 });
