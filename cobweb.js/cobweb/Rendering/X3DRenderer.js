@@ -1,20 +1,26 @@
 
 define ([
+	"jquery",
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/Sphere3",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
-function (DepthBuffer,
+function ($,
+          DepthBuffer,
 	       TraverseType,
           QuickSort,
           Camera,
+          Sphere3,
           Vector3,
           Rotation4,
-          Matrix4)
+          Matrix4,
+          Algorithm)
 {
 	var
 		DEPTH_BUFFER_WIDTH  = 16,
@@ -39,6 +45,9 @@ function (DepthBuffer,
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, function (lhs, rhs) { return lhs .distance < rhs .distance; });
 		this .collisionShapes      = [ ];
+		this .activeCollisions     = { };
+		this .collisionSphere      = new Sphere3 (0, Vector3 .Zero);
+		this .invModelViewMatrix   = new Matrix4 ();
 		this .speed                = 0;
 
 		try
@@ -114,7 +123,7 @@ function (DepthBuffer,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
 				if (this .numCollisionShapes === this .collisionShapes .length)
-					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16) });
+					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ] });
 
 				var context = this .collisionShapes [this .numCollisionShapes];
 
@@ -123,6 +132,9 @@ function (DepthBuffer,
 				context .modelViewMatrix .set (modelViewMatrix);
 				context .geometry = shape .getGeometry ();
 				context .scissor  = viewVolume .getScissor ();
+
+				context .collisions .length = 0;
+				context .collisions .push .apply (context .collisions, this .getBrowser () .getCollisions ());
 		},
 		constrainTranslation: function (translation)
 		{
@@ -245,9 +257,10 @@ function (DepthBuffer,
 				navigationInfo = this .getNavigationInfo (),
 				viewpoint      = this .getViewpoint (),
 				zNear          = navigationInfo .getNearPlane (),
-				zFar           = navigationInfo .getFarPlane (viewpoint);
+				zFar           = navigationInfo .getFarPlane (viewpoint),
+				radius         = navigationInfo .getCollisionRadius ();
 
-			var distance = this .depthBuffer .getDistance (zNear, zFar);
+			var distance = this .depthBuffer .getDistance (radius, zNear, zFar);
 
 			this .depthBuffer .unbind ();
 
@@ -281,7 +294,50 @@ function (DepthBuffer,
 		},
 		collide: function ()
 		{
+			// Collision nodes are handled here.
+
+			var activeCollisions = { }; // current active Collision nodes
+
+			this .collisionSphere .radius = this .getNavigationInfo () .getCollisionRadius () * 1.2; // Make the radius a little bit larger.
+
+			for (var i = 0; i < this .numCollisionShapes; ++ i)
+			{
+				var
+					context    = this .collisionShapes [i],
+					collisions = context .collisions;
+
+				if (collisions .length)
+				{
+				   this .invModelViewMatrix .assign (context .modelViewMatrix) .multRight (this .getViewpoint () .getInverseCameraSpaceMatrix ()) .inverse ();
+
+				   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
+
+					if (context .geometry .intersectsSphere (this .collisionSphere))
+					{
+					   for (var c = 0; c < collisions .length; ++ c)
+							activeCollisions [collisions [c] .getId ()] = collisions [c];
+					}
+				}
+			}
+
+			// Set isActive to FALSE for affected nodes.
+
+			if (! $.isEmptyObject (this .activeCollisions))
+			{
+				var inActiveCollisions = $.isEmptyObject (activeCollisions)
+				                         ? this .activeCollisions
+				                         : Algorithm .set_difference (this .activeCollisions, activeCollisions, { });
 		
+				for (var key in inActiveCollisions)
+					inActiveCollisions [key] .set_active (false);
+			}
+
+			// Set isActive to TRUE for affected nodes.
+
+			this .activeCollisions = activeCollisions;
+
+			for (var key in activeCollisions)
+				activeCollisions [key] .set_active (true);
 		},
 		gravite: function ()
 		{

@@ -149,6 +149,18 @@ define (function (Vector3)
 
 			return first;
 		},
+		set_difference: function (lhs, rhs, result)
+		{
+			for (var key in lhs)
+			{
+				if (key in rhs)
+					continue;
+
+				result [key] = lhs [key];
+			}
+
+			return result;
+		},
 	};
 
 	Object .preventExtensions (Algorithm);

@@ -10,8 +10,9 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithms/MergeSort",
+	"standard/Math/Algorithm",
 ],
-function (jquery,
+function ($,
           PointingDevice,
           TraverseType,
           X3DConstants,
@@ -20,22 +21,10 @@ function (jquery,
           Vector2,
           Vector3,
           Matrix4,
-          MergeSort)
+          MergeSort,
+          Algorithm)
 {
 	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
-
-	function set_difference (lhs, rhs, result)
-	{
-		for (var key in lhs)
-		{
-			if (key in rhs)
-				continue;
-
-			result [key] = lhs [key];
-		}
-
-		return result;
-	}
 
 	function X3DPointingDeviceSensorContext ()
 	{
@@ -96,47 +85,6 @@ function (jquery,
 		{
 			return this .cursorType;
 		},
-		buttonPressEvent: function (x, y)
-		{
-			this .touch (x, y);
-
-			if (this .hits .length === 0)
-				return false;
-
-			var nearestHit = this .hits [this .hits .length - 1];
-
-			this .selectedLayer = nearestHit .layer;
-			this .activeSensors = nearestHit .sensors;
-
-			for (var key in this .activeSensors)
-				this .activeSensors [key] .set_active__ (nearestHit, true);
-
-			return ! $.isEmptyObject (nearestHit .sensors);
-		},
-		buttonReleaseEvent: function ()
-		{
-			this .selectedLayer = null;
-
-			for (var key in this .activeSensors)
-				this .activeSensors [key] .set_active__ (null, false);
-
-			this .activeSensors = { };
-
-			// Selection
-
-			return true;
-		},
-		motionNotifyEvent: function (x, y)
-		{
-			this .touch (x, y);
-
-			this .motion ();
-
-			return this .hits .length && ! $.isEmptyObject (this .hits [this .hits .length - 1] .sensors);
-		},
-		leaveNotifyEvent: function ()
-		{
-		},
 		isPointerInRectangle: function (rectangle)
 		{
 			return this .pointer .x > rectangle .x &&
@@ -181,6 +129,47 @@ function (jquery,
 				layer:           layer,
 				layerNumber:     this .layerNumber,
 			});
+		},
+		buttonPressEvent: function (x, y)
+		{
+			this .touch (x, y);
+
+			if (this .hits .length === 0)
+				return false;
+
+			var nearestHit = this .hits [this .hits .length - 1];
+
+			this .selectedLayer = nearestHit .layer;
+			this .activeSensors = nearestHit .sensors;
+
+			for (var key in this .activeSensors)
+				this .activeSensors [key] .set_active__ (nearestHit, true);
+
+			return ! $.isEmptyObject (nearestHit .sensors);
+		},
+		buttonReleaseEvent: function ()
+		{
+			this .selectedLayer = null;
+
+			for (var key in this .activeSensors)
+				this .activeSensors [key] .set_active__ (null, false);
+
+			this .activeSensors = { };
+
+			// Selection
+
+			return true;
+		},
+		motionNotifyEvent: function (x, y)
+		{
+			this .touch (x, y);
+
+			this .motion ();
+
+			return this .hits .length && ! $.isEmptyObject (this .hits [this .hits .length - 1] .sensors);
+		},
+		leaveNotifyEvent: function ()
+		{
 		},
 		touch: function (x, y)
 		{
@@ -227,7 +216,7 @@ function (jquery,
 			// Set isOver to FALSE for appropriate nodes
 
 			if (this .hits .length)
-				var difference = set_difference (this .overSensors, nearestHit .sensors, { });
+				var difference = Algorithm .set_difference (this .overSensors, nearestHit .sensors, { });
 
 			else
 				var difference = $.extend ({ }, this .overSensors);

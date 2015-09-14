@@ -586,6 +586,28 @@ function ($,
 			{
 				//line .multLineMatrix (Matrix4 .inverse (this .getMatrix ()));
 			},
+			intersectsSphere: function (sphere)
+			{
+				var
+					vertices = this .vertices,
+					v0       = this .v0,
+					v1       = this .v1,
+					v2       = this .v2;
+
+				for (var i = 0, length = this .vertexCount; i < length; i += 3)
+				{
+					var i4 = i * 4;
+
+					v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+					v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+					v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+
+					if (sphere .intersectsTriangle (v0, v1, v2))
+					   return true;
+			   }
+
+			   return false;
+			},
 		});
 
 		return X3DGeometryNode;

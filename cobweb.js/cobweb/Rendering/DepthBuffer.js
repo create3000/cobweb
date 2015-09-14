@@ -49,22 +49,35 @@ define (function ()
 	DepthBuffer .prototype =
 	{
 		constructor: DepthBuffer,
-		getDistance: function (zNear, zFar)
+		getDistance: function (radius, zNear, zFar)
 		{
 			var gl = this .browser .getContext ();
 
 			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, this .array);
 
 			var
-				array = this .array,
-				z     = Number .POSITIVE_INFINITY;
+				array  = this .array,
+				d      = Number .POSITIVE_INFINITY,
+				w1     = this .width  - 1,
+				h1     = this .height - 1,
+				zWidth = zFar - zNear;
 
-			for (var i = 0; i < array .length; i += 4)
+			for (var py = 0, p = 0; py < this .height; ++ py)
 			{
-				z = Math .min (z, unpack (array [i], array [i + 1], array [i + 2]));
+				var y = (2 * py / h1 - 1) * radius;
+
+			   for (var px = 0; px < this .width; ++ px, ++ p)
+			   {
+				   var
+				      i = p * 4,
+				      x = (2 * px / w1 - 1) * radius,
+				      z = zNear + zWidth * unpack (array [i], array [i + 1], array [i + 2]);
+			      
+					d = Math .min (d, Math .sqrt (x * x + y * y + z * z));
+			   }
 			}
 
-			return zNear + (zFar - zNear) * z;
+			return d;
 		},
 		bind: function ()
 		{
@@ -73,7 +86,7 @@ define (function ()
 			gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
 
 			gl .viewport (0, 0, this .width, this .height);
-			gl .scissor (0, 0, this .width, this .height);
+			gl .scissor  (0, 0, this .width, this .height);
 			
 			gl .clearColor (1, 0, 0, 0);
 			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);

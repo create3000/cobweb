@@ -96,16 +96,14 @@ function (Fields,
 			},
 			set_viewer__: function (value)
 			{
+			   this .viewer_ = value;
+			  
 			   if (this .navigationInfoNode)
-			   {
-			      this .viewer_           = this .navigationInfoNode .viewer_;
 			      this .availableViewers_ = this .navigationInfoNode .availableViewers_;
-			   }
 				else
-				{
-			      this .viewer_ = "NONE";
 			      this .availableViewers_ .length = 0;
-				}
+
+			   // Create viewer node.
 
 			   if (this .viewer)
 			      this .viewer .dispose ();

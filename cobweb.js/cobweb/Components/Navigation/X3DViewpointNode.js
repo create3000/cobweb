@@ -147,15 +147,6 @@ function ($,
 			{
 				return this .cameraSpaceMatrix;
 			},
-			setInverseCameraSpaceMatrix: function (value)
-			{
-				try
-				{
-					this .inverseCameraSpaceMatrix = value .copy () .inverse ();
-				}
-				catch (error)
-				{ }
-			},
 			getInverseCameraSpaceMatrix: function ()
 			{
 				return this .inverseCameraSpaceMatrix;
@@ -363,14 +354,19 @@ function ($,
 
 					if (this .isBound_ .getValue ())
 					{
-						this .cameraSpaceMatrix .set (this .getUserPosition (),
-						                              this .getUserOrientation (),
-						                              this .scaleOffset_ .getValue (),
-						                              this .scaleOrientationOffset_ .getValue ());
+						try
+						{
+							this .cameraSpaceMatrix .set (this .getUserPosition (),
+							                              this .getUserOrientation (),
+							                              this .scaleOffset_ .getValue (),
+							                              this .scaleOrientationOffset_ .getValue ());
 
-						this .cameraSpaceMatrix .multRight (this .parentMatrix);
+							this .cameraSpaceMatrix .multRight (this .parentMatrix);
 
-						this .setInverseCameraSpaceMatrix (this .cameraSpaceMatrix);
+							this .inverseCameraSpaceMatrix .assign (this .cameraSpaceMatrix) .inverse ();
+						}
+						catch (error)
+						{ }
 					}
 				}
 			},
