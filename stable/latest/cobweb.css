@@ -42,6 +42,22 @@ x3d canvas {
 	height: 100%;
 }
 
+x3d .notification {
+	display: none;
+	position: absolute;
+	top: 20px;
+	right: -4px;
+	padding: 5px 29px 5px 25px;
+	background: url(images/icon.bw.png) no-repeat 5px 4px rgba(0,0,0,0.5);
+	border: 1px solid white;
+	border-radius: 5px;
+	color: white;
+	font-family: sans;
+	font-size: 10px;
+	white-space: pre;
+	pointer-events: none;
+}
+
 x3d .renderingProperties {
 	display: none;
 	position: absolute;
@@ -58,18 +74,22 @@ x3d .renderingProperties {
 	pointer-events: none;
 }
 
-x3d .notification {
-	display: none;
-	position: absolute;
-	top: 20px;
-	right: -4px;
-	padding: 5px 29px 5px 25px;
-	background: url(images/icon.bw.png) no-repeat 5px 4px rgba(0,0,0,0.5);
-	border: 1px solid white;
-	border-radius: 5px;
-	color: white;
-	font-family: sans;
-	font-size: 10px;
-	white-space: pre;
-	pointer-events: none;
+x3d .renderingProperties div.header {
+	font-size: 9px;
+	margin-bottom: 9px;
+	font-weight: bold;
+}
+
+x3d .renderingProperties button {
+	border: 0;
+	padding: 0;
+	background: rgba(0,0,0,0.5);
+	font-size: 9px;
+	font-family: monospace;
+	pointer-events: all;
+	cursor: default;
+}
+
+x3d .renderingProperties button:hover {
+	cursor: pointer;
 }
