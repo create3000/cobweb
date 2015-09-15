@@ -66,6 +66,12 @@
     <None Include="1\1.7\images\logo.png" />
     <None Include="1\1.7\cobweb.css" />
     <None Include="1\1.7\cobweb.min.js" />
+    <None Include="1\1.8\cobweb.css" />
+    <None Include="1\1.8\cobweb.min.js" />
+    <None Include="1\1.8\images\icon.bw.png" />
+    <None Include="1\1.8\images\icon.png" />
+    <None Include="1\1.8\images\logo.bw.png" />
+    <None Include="1\1.8\images\logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
