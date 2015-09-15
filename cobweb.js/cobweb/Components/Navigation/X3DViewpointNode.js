@@ -37,6 +37,12 @@ function ($,
 			yAxis    = new Vector3 (0, 1, 0),
 			zAxis    = new Vector3 (0, 0, 1);
 
+		var
+			relativePosition         = new Vector3 (0, 0, 0),
+			relativeOrientation      = new Rotation4 (),
+			relativeScale            = new Vector3 (0, 0, 0),
+			relativeScaleOrientation = new Rotation4 ();
+
 		function X3DViewpointNode (browser, executionContext)
 		{
 			X3DBindableNode    .call (this, browser, executionContext);
@@ -44,8 +50,11 @@ function ($,
 
 			this .addType (X3DConstants .X3DViewpointNode);
 
+		   this .userPosition             = new Vector3 (0, 1, 0);
+		   this .userOrientation          = new Rotation4 (0, 0, 1, 0);
+		   this .userCenterOfRotation     = new Vector3 (0, 0, 0);
 			this .transformationMatrix     = new Matrix4 ();
-			this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1);
+			this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,  10, 1);
 			this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
 		}
 
@@ -121,23 +130,27 @@ function ($,
 			},
 			getPosition: function ()
 			{
-				return this .position_ .getValue () .copy ();
+				return this .position_ .getValue ();
 			},
 			getUserPosition: function ()
 			{
-				return Vector3 .add (this .position_ .getValue (), this .positionOffset_ .getValue ());
+				return this .userPosition .assign (this .getPosition ()) .add (this .positionOffset_ .getValue ());
 			},
 			getOrientation: function ()
 			{
-				return this .orientation_ .getValue () .copy ();
+				return this .orientation_ .getValue ();
 			},
 			getUserOrientation: function ()
 			{
-				return Rotation4 .multRight (this .orientation_ .getValue (), this .orientationOffset_ .getValue ());
+				return this .userOrientation .assign (this .getOrientation ()) .multRight (this .orientationOffset_ .getValue ());
+			},
+			getCenterOfRotation: function ()
+			{
+				return this .centerOfRotation_ .getValue ();
 			},
 			getUserCenterOfRotation: function ()
 			{
-				return Vector3 .add (this .centerOfRotation_ .getValue (), this .centerOfRotationOffset_ .getValue ());
+				return this .userCenterOfRotation .assign (this .getCenterOfRotation ()) .add (this .centerOfRotationOffset_ .getValue ());
 			},
 			getTransformationMatrix: function ()
 			{
@@ -225,44 +238,20 @@ function ($,
 						this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
 						this .timeSensor .isActive_ .addInterest (this, "set_active__");
 
-						var
-							relativePosition         = new Vector3 (0, 0, 0),
-							relativeOrientation      = new Rotation4 (),
-							relativeScale            = new Vector3 (0, 0, 0),
-							relativeScaleOrientation = new Rotation4 ();
-
 						this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
-						var
-							startPosition         = relativePosition,
-							startOrientation      = relativeOrientation,
-							startScale            = relativeScale,
-							startScaleOrientation = relativeScaleOrientation;
+						this .positionInterpolator         .keyValue_ = [ relativePosition,         this .positionOffset_         .getValue () ];
+						this .orientationInterpolator      .keyValue_ = [ relativeOrientation,      this .orientationOffset_      .getValue () ];
+						this .scaleInterpolator            .keyValue_ = [ relativeScale,            this .scaleOffset_            .getValue () ];
+						this .scaleOrientationInterpolator .keyValue_ = [ relativeScaleOrientation, this .scaleOrientationOffset_ .getValue () ];
 
-						var
-							endPosition         = this .positionOffset_         .getValue () .copy (),
-							endOrientation      = this .orientationOffset_      .getValue () .copy (),
-							endScale            = this .scaleOffset_            .getValue () .copy (),
-							endScaleOrientation = this .scaleOrientationOffset_ .getValue () .copy ();
-
-						this .positionOffset_         = startPosition;
-						this .orientationOffset_      = startOrientation;
-						this .scaleOffset_            = startScale;
-						this .scaleOrientationOffset_ = startScaleOrientation;
-
-						this .positionInterpolator         .keyValue_ = [ startPosition, endPosition ];
-						this .orientationInterpolator      .keyValue_ = [ startOrientation, endOrientation ];
-						this .scaleInterpolator            .keyValue_ = [ startScale, endScale ];
-						this .scaleOrientationInterpolator .keyValue_ = [ startScaleOrientation, endScaleOrientation ];
+						this .positionOffset_         = relativePosition;
+						this .orientationOffset_      = relativeOrientation;
+						this .scaleOffset_            = relativeScale;
+						this .scaleOrientationOffset_ = relativeScaleOrientation;
 					}
 					else
 					{
-						var
-							relativePosition         = new Vector3 (0, 0, 0),
-							relativeOrientation      = new Rotation4 (),
-							relativeScale            = new Vector3 (0, 0, 0),
-							relativeScaleOrientation = new Rotation4 ();
-
 						this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 		 
 						this .positionOffset_         = relativePosition;
@@ -369,7 +358,7 @@ function ($,
 				}
 				catch (error)
 				{
-				   //console .log (error);
+				   console .log (error);
 				}
 			},
 		});

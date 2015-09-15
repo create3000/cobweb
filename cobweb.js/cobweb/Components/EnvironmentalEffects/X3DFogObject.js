@@ -9,6 +9,8 @@ function ($,
 	function X3DFogObject (browser, executionContext)
 	{
 		this .addType (X3DConstants .X3DFogObject);
+
+		this .hidden = false;
 	}
 
 	X3DFogObject .prototype =
@@ -16,8 +18,6 @@ function ($,
 		constructor: X3DFogObject,
 		initialize: function ()
 		{
-			this .hidden = false;
-
 			this .fogType_ .addInterest (this, "set_fogType__");
 
 			this .set_fogType__ ();

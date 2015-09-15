@@ -20,22 +20,23 @@ function (Fields,
 
 		function X3DNavigationContext ()
 		{
-		   this .collisions = [ ];
+			this .addChildren ("availableViewers", new MFString (),
+			                   "viewer",           new SFString ("EXAMINE"));
+		   
+		   this .collisions         = [ ];
+		   this .activeCollisions   = { };
+		   this .collisionCount     = 0;
+			this .activeLayerNode    = null;
+			this .navigationInfoNode = null;
+			this .viewerNode         = null;
 		}
 
 		X3DNavigationContext .prototype =
 		{
 			initialize: function ()
 			{
-				this .addChildren ("availableViewers", new MFString (),
-				                   "viewer",           new SFString ("EXAMINE"));
-			   
 			   this .initialized () .addInterest (this, "set_world__");
-			   this .shutdown () .addInterest (this, "remove_world__");
-
-				this .activeLayerNode    = null;
-				this .navigationInfoNode = null;
-				this .viewer             = null;
+			   this .shutdown ()    .addInterest (this, "remove_world__");
 				
 				var headlight = new DirectionalLight (this);
 				headlight .setup ();
@@ -52,6 +53,28 @@ function (Fields,
 			getCollisions: function ()
 			{
 			   return this .collisions;
+			},
+			addCollision: function (object)
+			{
+			   if (this .activeCollisions .hasOwnProperty (object .getId ()))
+			      return;
+
+				this .activeCollisions [object .getId ()] = true;
+
+			   ++ this .collisionCount;
+			},
+			removeCollision: function (object)
+			{
+			   if (! this .activeCollisions .hasOwnProperty (object .getId ()))
+			      return;
+
+				delete this .activeCollisions [object .getId ()];
+
+			   -- this .collisionCount;
+			},
+			getCollisionCount: function ()
+			{
+			   return this .collisionCount;
 			},
 			remove_world__: function ()
 			{
@@ -105,32 +128,33 @@ function (Fields,
 
 			   // Create viewer node.
 
-			   if (this .viewer)
-			      this .viewer .dispose ();
+			   if (this .viewerNode)
+			      this .viewerNode .dispose ();
 
 				switch (value .getValue ())
 				{
 					case "EXAMINE":
-					   this .viewer = new ExamineViewer (this);
+					   this .viewerNode = new ExamineViewer (this);
 						break;
 					case "WALK":
-					   this .viewer = new WalkViewer (this);
+					   this .viewerNode = new WalkViewer (this);
 						break;
 					case "FLY":
-					   this .viewer = new FlyViewer (this);
+					   this .viewerNode = new FlyViewer (this);
 						break;
 					case "PLANE":
-					   this .viewer = new NoneViewer (this);
+					case "PLANE_create3000.de":
+					   this .viewerNode = new NoneViewer (this);
 						break;
 					case "NONE":
-					   this .viewer = new NoneViewer (this);
+					   this .viewerNode = new NoneViewer (this);
 						break;
 					default:
-					   this .viewer = new ExamineViewer (this);
+					   this .viewerNode = new ExamineViewer (this);
 						break;
 				}
 
-				this .viewer .setup ();
+				this .viewerNode .setup ();
 			},
 		};
 

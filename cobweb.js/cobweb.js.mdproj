@@ -2288,6 +2288,7 @@
     <None Include="tests\Examples\Gears\Rotor.x3dv" />
     <None Include="tests\Examples\Gears\gears.x3d" />
     <None Include="tests\Examples\Gears\gears.x3dv" />
+    <None Include="tests\Components\Interpolation\PositionInterpolator.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

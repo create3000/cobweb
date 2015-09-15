@@ -65,9 +65,22 @@ function ($,
 				X3DGroupingNode .prototype .initialize .call (this);
 				//X3DSensorNode   .prototype .initialize .call (this); // We cannot only call the base of a *Object.
 	
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest (this, "set_live__");
+
+				this .enabled_ .addInterest (this, "set_live__");
 				this .proxy_ .addInterest (this, "set_proxy__");
 
+				this .set_live__ ();
 				this .set_proxy__ ();
+			},
+			set_live__: function ()
+			{
+			   if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue () && this .enabled_ .getValue ())
+			      this .getBrowser () .addCollision (this);
+			   
+			   else
+			      this .getBrowser () .removeCollision (this);
 			},
 			set_active: function (value)
 			{

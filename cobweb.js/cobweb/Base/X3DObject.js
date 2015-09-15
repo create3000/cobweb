@@ -26,8 +26,7 @@ function ()
 		interests: { },
 		getId: function ()
 		{
-			if (! this .hasOwnProperty ("getId"))
-				this .getId = getId;
+			this .getId = getId;
 
 			return this .id = ++ id;
 		},

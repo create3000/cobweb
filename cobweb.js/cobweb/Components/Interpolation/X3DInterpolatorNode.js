@@ -59,9 +59,6 @@ function ($,
 					if (fraction <= key [0])
 						return this .interpolate (0, 1, 0);
 
-					if (fraction >= key [length - 1])
-						return this .interpolate (length - 2, length - 1, 1);
-
 					var index1 = Algorithm .upperBound (key, 0, length, fraction, Algorithm .less);
 
 					if (index1 !== length)
@@ -72,6 +69,8 @@ function ($,
 
 						this .interpolate (index0, index1, Algorithm .clamp (weight, 0, 1));
 					}
+					else
+						this .interpolate (length - 2, length - 1, 1);
 				}
 			}
 		},

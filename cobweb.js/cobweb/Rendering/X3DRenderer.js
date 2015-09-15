@@ -34,6 +34,8 @@ function ($,
 		vector              = new Vector3 (0, 0, 0),
 		rotation            = new Rotation4 ();
 
+	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
+
 	function X3DRenderer (browser, executionContext)
 	{
 		this .viewVolumes          = [ ];
@@ -43,7 +45,7 @@ function ($,
 		this .numCollisionShapes   = 0;
 		this .opaqueShapes         = [ ];
 		this .transparentShapes    = [ ];
-		this .transparencySorter   = new QuickSort (this .transparentShapes, function (lhs, rhs) { return lhs .distance < rhs .distance; });
+		this .transparencySorter   = new QuickSort (this .transparentShapes, compareDistance);
 		this .collisionShapes      = [ ];
 		this .activeCollisions     = { };
 		this .collisionSphere      = new Sphere3 (0, Vector3 .Zero);
@@ -206,7 +208,7 @@ function ($,
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
 				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
 
-				modelViewMatrix .translate (viewpoint .getUserPosition () .add (positionOffset));
+				modelViewMatrix .translate (positionOffset .add (viewpoint .getUserPosition ()));
 				modelViewMatrix .rotate (rotation .setFromToVec (zAxis, vector .assign (translation) .negate ()) .multRight (localOrientation));
 				modelViewMatrix .inverse ();
 

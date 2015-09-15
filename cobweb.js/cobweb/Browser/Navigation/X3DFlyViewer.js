@@ -161,7 +161,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 						orientation = new Rotation4 (toVector, this .fromVector) .multRight (orientation);
 						orientation .multRight (viewpoint .straightenHorizon (orientation));
 
-						viewpoint .orientationOffset_ = viewpoint .getOrientation () .inverse () .multRight (orientation);
+						viewpoint .orientationOffset_ = viewpoint .getOrientation () .copy () .inverse () .multRight (orientation);
 
 						this .fromVector .assign (toVector);
 					}
@@ -322,6 +322,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			this .getBrowser () .prepareEvents () .addInterest (this, "fly");
 			this .getBrowser () .addBrowserEvent ();
+			this .getBrowser () .addCollision (this);
 
 			this .startTime = performance .now ();
 		},
@@ -332,6 +333,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			
 			this .getBrowser () .prepareEvents () .addInterest (this, "pan");
 			this .getBrowser () .addBrowserEvent ();
+			this .getBrowser () .addCollision (this);
 			
 			this .startTime = performance .now ();
 		},
@@ -434,6 +436,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var browser = this .getBrowser ();
 
 			browser .addBrowserEvent ();
+			browser .removeCollision (this);
 
 			browser .prepareEvents () .removeInterest (this, "fly");
 			browser .prepareEvents () .removeInterest (this, "pan");

@@ -27,6 +27,7 @@ function ($,
 			X3DExecutionContext .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .X3DPrototypeInstance);
+			this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);
 
 			if (protoNode .isExternProto ())
 				protoNode .requestAsyncLoad (this .construct .bind (this));
