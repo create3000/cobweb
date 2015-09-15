@@ -63,7 +63,7 @@ function ($,
 			initialize: function ()
 			{
 				X3DGroupingNode .prototype .initialize .call (this);
-				//X3DSensorNode   .prototype .initialize .call (this); // We cannot only call the base of a *Object.
+				//X3DSensorNode   .prototype .initialize .call (this); // We can only call the base of a *Object.
 	
 				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 				this .isLive () .addInterest (this, "set_live__");

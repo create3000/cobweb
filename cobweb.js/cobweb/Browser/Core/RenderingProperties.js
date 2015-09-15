@@ -85,7 +85,7 @@ function ($,
 				}
 
 				var 
-					navigationTime = activeLayer ? activeLayer .collisionTime : 0,
+					navigationTime = activeLayer && browser .getCollisionCount () ? activeLayer .collisionTime : 0,
 					collisionTime  = browser .collisionTime + navigationTime,
 					routingTime    = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime + navigationTime),
 					systemTime     = browser .systemTime - browser .pickingTime;

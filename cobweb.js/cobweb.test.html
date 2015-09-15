@@ -1,29 +1,25 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
-		<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/stable/1/1.6/cobweb.css"/>
-		<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/stable/1/1.6/cobweb.min.js"></script>
-	<style>
+<html manifest="manifest.appcache">
+	<head>
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+		<meta http-equiv="Pragma" content="no-cache"/>
+		<meta http-equiv="Expires" content="0"/>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
+		<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.css"/>
+		<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/stable/cobweb.js/cobweb.min.js"></script>
+		<style>
 html, body {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-	width: 920px;
-	height: 440px;
+	width: 100%;
+	height: 100%;
 }
 
 body {
-	background: lightgray;
-	color: white;
-	padding: 10px;
-}
-
-#x3d-page {
 	background: #414141;
-	height: 100%;
-	box-shadow: 0px 2px 12px 1px rgba(0, 0, 0, 0.75);
+	color: white;
 }
 
 x3d {
@@ -36,8 +32,9 @@ x3d {
 	width: 110px;
 	float: left;
 	font-size: 12px;
+	text-align: right;
 }
-	</style>
+		</style>
 	<script type="text/javascript">
 X3D (function (dom)
 {
@@ -64,6 +61,7 @@ X3D (function (dom)
 			{ name: 'Approach',           url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/index.x3d" },
 			{ name: 'Labyrinth',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/labyrinth.x3d" },
 			{ name: 'Terrain',            url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Terrain/index.x3d" },
+			{ name: 'Gears',              url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Gears/gears.x3d" },
 		],
 		[
 			{ name: 'Jungle',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/jungle/jungle.x3d" },
@@ -153,9 +151,7 @@ X3D (function (dom)
 	</script>
 </head>
 <body>
-	<div id="x3d-page">
-		<div id="bookmarks"></div>
-		<X3D statistics="true"></X3D>
-	</div>
+	<div id="bookmarks"></div>
+	<X3D></X3D>
 </body>
 </html>
