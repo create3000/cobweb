@@ -11,6 +11,7 @@ function ($,
 	function RenderingProperties (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+
 	}
 
 	RenderingProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -32,13 +33,34 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .element   = $("<div/>") .addClass ("renderingProperties") .appendTo (this .getBrowser () .getXML () .find (".canvas"));
 			this .enabled   = false;
+			this .type      = "LESS";
 			this .startTime = 0;
 			this .frames    = 0;
 
+			this .element = $("<div/>") .addClass ("renderingProperties") .appendTo (this .getBrowser () .getXML () .find (".canvas"));
+			this .header  = $("<div/>") .addClass ("header") .text ("Rendering Statistics") .appendTo (this .element);
+			this .text    = $("<div/>") .appendTo (this .element);
+			this .buttons = $("<div/>") .appendTo (this .element);
+			this .button  = $("<button/>") .text ("More Properties") .click (this .set_type__ .bind (this)) .appendTo (this .buttons);
+
 			if (this .getBrowser () .getXML () [0] .getAttribute ("statistics") == "true")
 				this .setEnabled (true);
+		},
+		set_type__: function ()
+		{
+		   if (this .type === "MORE")
+		   {
+		      this .type = "LESS";
+		      this .button .text ("More Properties");
+		   }
+		   else
+		   {
+				this .type = "MORE";
+		      this .button .text ("Less Properties");
+			}
+
+		   this .build ();
 		},
 		setEnabled: function (value)
 		{
@@ -66,33 +88,49 @@ function ($,
 		
 			if (currentTime - this .startTime > 1)
 			{
-				var
-					browser           = this .getBrowser (),
-					layers            = browser .getWorld () .getLayerSet () .getLayers (),
-					activeLayer       = browser .getActiveLayer (),
-					opaqueShapes      = 0,
-					transparentShapes = 0;
+			   this .build ();
+				
+				this .frames    = 0;
+				this .startTime = currentTime;
+			}
+			else
+				++ this .frames;
+		},
+		build: function ()
+		{
+			var currentTime = this .getBrowser () .getCurrentTime ();
+		
+			var
+				browser           = this .getBrowser (),
+				layers            = browser .getWorld () .getLayerSet () .getLayers (),
+				activeLayer       = browser .getActiveLayer (),
+				opaqueShapes      = 0,
+				transparentShapes = 0;
 
-				var
-					prepareEvents = Object .keys (browser .prepareEvents () .getInterests ()) .length - 1,
-					sensors       = Object .keys (browser .sensors () .getInterests ()) .length;
+			var
+				prepareEvents = Object .keys (browser .prepareEvents () .getInterests ()) .length - 1,
+				sensors       = Object .keys (browser .sensors () .getInterests ()) .length;
 
-				for (var i = 0; i < layers .length; ++ i)
-				{
-					var layer = layers [i];
-					opaqueShapes      += layer .numOpaqueShapes;
-					transparentShapes += layer .numTransparentShapes;
-				}
+			for (var i = 0; i < layers .length; ++ i)
+			{
+				var layer = layers [i];
+				opaqueShapes      += layer .numOpaqueShapes;
+				transparentShapes += layer .numTransparentShapes;
+			}
 
-				var 
-					navigationTime = activeLayer && browser .getCollisionCount () ? activeLayer .collisionTime : 0,
-					collisionTime  = browser .collisionTime + navigationTime,
-					routingTime    = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime + navigationTime),
-					systemTime     = browser .systemTime - browser .pickingTime;
+			var 
+				navigationTime = activeLayer && browser .getCollisionCount () ? activeLayer .collisionTime : 0,
+				collisionTime  = browser .collisionTime + navigationTime,
+				routingTime    = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime + navigationTime),
+				systemTime     = browser .systemTime - browser .pickingTime;
 
-				var text = "";
-				text += "Rendering Properties\n\n";
-				text += "Frame rate: " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
+			var text = "";
+			text += "Frame rate: " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
+			text += "Speed:      " + browser .currentSpeed .toFixed (2) .toLocaleString () + " m/s\n";
+			text += "\n";
+
+			if (this .type === "MORE")
+			{
 				text += "Browser:    " + systemTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "X3D:        " + browser .browserTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Routing:    " + routingTime .toFixed (2) .toLocaleString () + " ms" + "\n";
@@ -102,14 +140,10 @@ function ($,
 				text += "Display:    " + browser .displayTime .toFixed (2) .toLocaleString () + " ms" + "\n";
 				text += "Shapes:     " + opaqueShapes + " + " + transparentShapes + "\n";
 				text += "Sensors:    " + (prepareEvents + sensors) + "\n";
-
-				this .element .text (text);
-
-				this .frames    = 0;
-				this .startTime = currentTime;
+				text += "\n";
 			}
-			else
-				++ this .frames;
+
+			this .text .text (text);
 		},
 	});
 
