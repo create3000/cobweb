@@ -31,6 +31,7 @@ function ($,
 		positionOffset      = new Vector3 (0, 0, 0),
 		yAxis               = new Vector3 (0, 1, 0),
 		zAxis               = new Vector3 (0, 0, 1),
+		upVector            = new Vector3 (0, 1, 0),
 		vector              = new Vector3 (0, 0, 0),
 		rotation            = new Rotation4 ();
 
@@ -180,39 +181,33 @@ function ($,
 				// Apply collision to translation.
 
 				var
-					browser         = this .getBrowser (),
 					viewpoint       = this .getViewpoint (),
 					navigationInfo  = this .getNavigationInfo (),
 					collisionRadius = navigationInfo .getCollisionRadius (),
+					bottom          = navigationInfo .getStepHeight () - navigationInfo .getAvatarHeight (),
 					zNear           = navigationInfo .getNearPlane (),
 					zFar            = navigationInfo .getFarPlane (viewpoint);
 
 				// Determine width and height of camera
-
-				var
-					width     = collisionRadius * 2,
-					height    = navigationInfo .getAvatarHeight () - navigationInfo .getStepHeight (),
-					width1_2  = width / 2,
-					height1_2 = height / 2;
-
-				// Get position offset
-
-				positionOffset .set (0, -height1_2, 0);
-	
+					
+			
 				// Reshape camera
 
-				Camera .ortho (-width1_2, width1_2, -height1_2, height1_2, zNear, zFar, projectionMatrix);
+				Camera .ortho (-collisionRadius, collisionRadius, bottom, collisionRadius, zNear, zFar, projectionMatrix);
 
-				// Translate camera
+				// Translate camera to user position and to look in the direction of the translation.
 
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
-				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
+				rotation .setFromToVec (zAxis, vector .assign (translation) .negate ()) .multRight (localOrientation);
+				viewpoint .straightenHorizon (rotation);
 
-				modelViewMatrix .translate (positionOffset .add (viewpoint .getUserPosition ()));
-				modelViewMatrix .rotate (rotation .setFromToVec (zAxis, vector .assign (translation) .negate ()) .multRight (localOrientation));
+				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
+				modelViewMatrix .translate (viewpoint .getUserPosition ());
+				modelViewMatrix .rotate (rotation);
 				modelViewMatrix .inverse ();
 
-				browser .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+
 				return this .getDepth ();
 			}
 			catch (error)
@@ -365,13 +360,15 @@ function ($,
 
 				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, zNear, zFar, projectionMatrix)
 
-				// Transform viewpoint
+				// Transform viewpoint to look down the up vector
 
-				var down = rotation .setFromToVec (viewpoint .getUserOrientation () .multVecRot (vector .assign (zAxis)), viewpoint .getUpVector ());
+				var
+					upVector = viewpoint .getUpVector (),
+					down     = rotation .setFromToVec (zAxis, upVector);
 
 				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
 				modelViewMatrix .translate (viewpoint .getUserPosition ());
-				modelViewMatrix .rotate (viewpoint .getUserOrientation () .multRight (down));
+				modelViewMatrix .rotate (down);
 				modelViewMatrix .inverse ();
 
 				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
@@ -384,7 +381,7 @@ function ($,
 				{
 					distance -= height;
 
-					var up = rotation .setFromToVec (yAxis, viewpoint .getUpVector ());
+					var up = rotation .setFromToVec (yAxis, upVector);
 
 					if (distance > 0)
 					{

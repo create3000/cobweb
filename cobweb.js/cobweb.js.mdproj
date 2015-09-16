@@ -2289,6 +2289,8 @@
     <None Include="tests\Examples\Gears\gears.x3d" />
     <None Include="tests\Examples\Gears\gears.x3dv" />
     <None Include="tests\Components\Interpolation\PositionInterpolator.x3d" />
+    <None Include="tests\Components\Navigation\ClonedLOD.x3d" />
+    <None Include="tests\Components\Navigation\Gravitation.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2357,5 +2359,6 @@
     <Folder Include="cobweb\Browser\Sound\" />
     <Folder Include="tests\Examples\Terrain\" />
     <Folder Include="tests\Examples\Gears\" />
+    <Folder Include="tests\Components\Navigation\" />
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ function ($,
 
 	var FontDirectories = [
 		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
-		"https://cdn.rawgit.com/holger-seelig/cobweb/master/cobweb.js/fonts/",
+		"https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 	];
 
 	var Fonts =
@@ -63,7 +63,7 @@ function ($,
 
 		this .family     = [ ];
 		this .alignments = [ ];
-		this .loader     = new Loader (this);
+		this .loader     = new Loader (this, true);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),

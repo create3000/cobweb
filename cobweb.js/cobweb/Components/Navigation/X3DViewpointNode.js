@@ -33,9 +33,10 @@ function ($,
 	with (Fields)
 	{
 		var
-			upVector = new Vector3 (0, 1, 0),
-			yAxis    = new Vector3 (0, 1, 0),
-			zAxis    = new Vector3 (0, 0, 1);
+			invTransformationMatrix = new Matrix4 (),
+			upVector                = new Vector3 (0, 1, 0),
+			yAxis                   = new Vector3 (0, 1, 0),
+			zAxis                   = new Vector3 (0, 0, 1);
 
 		var
 			relativePosition         = new Vector3 (0, 0, 0),
@@ -166,7 +167,11 @@ function ($,
 			},
 			getUpVector: function ()
 			{
-				return upVector;
+				return (invTransformationMatrix
+					.assign (this .transformationMatrix)
+					.inverse ()
+					.multDirMatrix (upVector .assign (yAxis))
+					.normalize ());
 			},
 			getSpeedFactor: function ()
 			{
@@ -298,7 +303,7 @@ function ($,
 					normal    = Vector3 .cross (direction, this .getUpVector ()),
 					vector    = Vector3 .cross (direction, orientation .multVecRot (yAxis .copy ()));
 
-				return new Rotation4 (vector, normal);
+				return orientation .multRight (new Rotation4 (vector, normal));
 			},
 			set_active__: function (value)
 			{

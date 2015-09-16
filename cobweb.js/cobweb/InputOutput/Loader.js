@@ -14,13 +14,13 @@ function ($,
 {
 	var TIMEOUT = 16;
 
-	function Loader (node)
+	function Loader (node, external)
 	{
 		X3DObject .call (this);
 
 		this .node             = node;
 		this .browser          = node .getBrowser ();
-		this .external         = this .browser .isExternal ();
+		this .external         = this .browser .isExternal () || external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
 		this .URL              = new URI ();
 	}

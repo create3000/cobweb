@@ -73,6 +73,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup .bind (this));
 			canvas .bind ("mousemove.X3DFlyViewer",  this .mousemove .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
+
+			this .getBrowser () .addCollision (this);
 		},
 		mousedown: function (event)
 		{
@@ -159,7 +161,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 							toVector    = this .trackballProjectToSphere (x, y);
 
 						orientation = new Rotation4 (toVector, this .fromVector) .multRight (orientation);
-						orientation .multRight (viewpoint .straightenHorizon (orientation));
+						viewpoint .straightenHorizon (orientation);
 
 						viewpoint .orientationOffset_ = viewpoint .getOrientation () .copy () .inverse () .multRight (orientation);
 
@@ -322,7 +324,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			this .getBrowser () .prepareEvents () .addInterest (this, "fly");
 			this .getBrowser () .addBrowserEvent ();
-			this .getBrowser () .addCollision (this);
 
 			this .startTime = performance .now ();
 		},
@@ -333,8 +334,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			
 			this .getBrowser () .prepareEvents () .addInterest (this, "pan");
 			this .getBrowser () .addBrowserEvent ();
-			this .getBrowser () .addCollision (this);
-			
+
 			this .startTime = performance .now ();
 		},
 		addRoll: function ()
@@ -436,7 +436,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var browser = this .getBrowser ();
 
 			browser .addBrowserEvent ();
-			browser .removeCollision (this);
 
 			browser .prepareEvents () .removeInterest (this, "fly");
 			browser .prepareEvents () .removeInterest (this, "pan");
@@ -448,6 +447,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		dispose: function ()
 		{
 			this .disconnect ();
+			this .getBrowser () .removeCollision (this);
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
 		},
 	});

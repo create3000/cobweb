@@ -29,7 +29,7 @@ function (X3DFlyViewer, Vector3, Rotation4)
 				upVector  = viewpoint .getUpVector ();
 
 			var
-				userOrientation = viewpoint .getUserOrientation (),
+				userOrientation = viewpoint .getUserOrientation () .copy (),
 				orientation     = userOrientation .multRight (new Rotation4 (userOrientation .multVecRot (yAxis .copy ()), upVector));
 
 			return orientation .multVecRot (velocity);

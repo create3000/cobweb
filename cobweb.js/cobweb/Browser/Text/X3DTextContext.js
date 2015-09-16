@@ -19,7 +19,7 @@ function (FontStyle)
 		{
 			if (! this .defaultFontStyle)
 			{
-				this .defaultFontStyle = new FontStyle (this);
+				this .defaultFontStyle = new FontStyle (this .getPrivateScene ());
 				this .defaultFontStyle .setup ();
 			}
 
