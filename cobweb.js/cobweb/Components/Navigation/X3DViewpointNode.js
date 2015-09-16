@@ -40,9 +40,16 @@ function ($,
 
 		var
 			relativePosition         = new Vector3 (0, 0, 0),
-			relativeOrientation      = new Rotation4 (),
+			relativeOrientation      = new Rotation4 (0, 0, 1, 0),
 			relativeScale            = new Vector3 (0, 0, 0),
-			relativeScaleOrientation = new Rotation4 ();
+			relativeScaleOrientation = new Rotation4 (0, 0, 1, 0);
+				
+		var
+			localYAxis = new Vector3 (0, 0, 0),
+			direction  = new Vector3 (0, 0, 0),
+			normal     = new Vector3 (0, 0, 0),
+			vector     = new Vector3 (0, 0, 0),
+			rotation   = new Rotation4 (0, 0, 1, 0);
 
 		function X3DViewpointNode (browser, executionContext)
 		{
@@ -167,11 +174,9 @@ function ($,
 			},
 			getUpVector: function ()
 			{
-				return (invTransformationMatrix
-					.assign (this .transformationMatrix)
-					.inverse ()
-					.multDirMatrix (upVector .assign (yAxis))
-					.normalize ());
+			   // Local y-axis,
+			   // see http://www.web3d.org/documents/specifications/19775-1/V3.3/index.html#NavigationInfo.
+			   return yAxis;
 			},
 			getSpeedFactor: function ()
 			{
@@ -298,12 +303,15 @@ function ($,
 			{
 				// Taken from Billboard
 
-				var
-					direction = orientation .multVecRot (zAxis .copy ()),
-					normal    = Vector3 .cross (direction, this .getUpVector ()),
-					vector    = Vector3 .cross (direction, orientation .multVecRot (yAxis .copy ()));
+				orientation .multVecRot (direction .assign (zAxis));
+				orientation .multVecRot (localYAxis .assign (yAxis));
 
-				return orientation .multRight (new Rotation4 (vector, normal));
+				normal .assign (direction) .cross (this .getUpVector ());
+				vector .assign (direction) .cross (localYAxis);
+
+				rotation .setFromToVec (vector, normal);
+
+				return orientation .multRight (rotation);
 			},
 			set_active__: function (value)
 			{
