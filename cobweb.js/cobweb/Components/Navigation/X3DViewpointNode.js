@@ -282,11 +282,11 @@ function ($,
 			},
 			resetUserOffsets: function ()
 			{
-				this .positionOffset_         = new Vector3 (0, 0, 0);
-				this .orientationOffset_      = new Rotation4 ();
-				this .scaleOffset_            = new Vector3 (1, 1, 1);
-				this .scaleOrientationOffset_ = new Rotation4 ();
-				this .centerOfRotationOffset_ = new Vector3 (0, 0, 0);
+				this .positionOffset_         = Vector3   .Zero;
+				this .orientationOffset_      = Rotation4 .Identity;
+				this .scaleOffset_            = Vector3   .One;
+				this .scaleOrientationOffset_ = Rotation4 .Identity;
+				this .centerOfRotationOffset_ = Vector3   .Zero;
 				this .fieldOfViewScale_       = 1;
 			},
 			getRelativeTransformation: function (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation)
@@ -297,7 +297,7 @@ function ($,
 				differenceMatrix .get (relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
 				relativePosition .subtract (this .position_ .getValue ());
-				relativeOrientation .assign (this .orientation_ .getValue () .copy () .inverse () .multRight (relativeOrientation)); // mit gepuffereter location matrix
+				relativeOrientation .assign (this .orientation_ .getValue () .copy () .inverse () .multRight (relativeOrientation));
 			},
 			straightenHorizon: function (orientation)
 			{

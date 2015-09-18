@@ -355,79 +355,87 @@ function ($,
 
 				this .set_live__ ();
 
-				try
+				if (this .context .initialize)
 				{
-					if (this .context .initialize)
+					this .getBrowser () .getScriptStack () .push (this);
+
+					try
 					{
-						this .getBrowser () .getScriptStack () .push (this);
 						this .context .initialize ();
-						this .getBrowser () .getScriptStack () .pop ();
 					}
-				}
-				catch (error)
-				{
-					this .setError ("initialize", error);
+					catch (error)
+					{
+						this .setError ("initialize", error);
+					}
+
+					this .getBrowser () .getScriptStack () .pop ();
 				}
 			},
 			prepareEvents__: function ()
 			{
+				this .getBrowser () .getScriptStack () .push (this);
+
 				try
 				{
-					this .getBrowser () .getScriptStack () .push (this);
 					this .context .prepareEvents ();
-					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
 					this .setError ("prepareEvents", error);
 				}
+
+				this .getBrowser () .getScriptStack () .pop ();
 			},
 			set_field__: function (field, callback)
 			{
 				field .setTainted (true);
+				this .getBrowser () .getScriptStack () .push (this);
 
 				try
 				{
-					this .getBrowser () .getScriptStack () .push (this);
 					callback (field .valueOf (), this .getBrowser () .getCurrentTime ());
-					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
 					this .setError (field .getName (), error);
 				}
 
+				this .getBrowser () .getScriptStack () .pop ();
 				field .setTainted (false);
 			},
 			eventsProcessed__: function ()
 			{
+				this .getBrowser () .getScriptStack () .push (this);
+
 				try
 				{
-					this .getBrowser () .getScriptStack () .push (this);
 					this .context .eventsProcessed ();
-					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
 					this .setError ("eventsProcessed", error);
 				}
+
+				this .getBrowser () .getScriptStack () .pop ();
 			},
 			shutdown__: function ()
 			{
+				this .getBrowser () .getScriptStack () .push (this);
+
 				try
 				{
-					this .getBrowser () .getScriptStack () .push (this);
 					this .context .shutdown ();
-					this .getBrowser () .getScriptStack () .pop ();
 				}
 				catch (error)
 				{
 					this .setError ("shutdown", error);
 				}
+
+				this .getBrowser () .getScriptStack () .pop ();
 			},
 			setError: function (callback, error)
 			{
-				console .error ("JavaScript Error in '" + callback + "': ", error);
+				console .error ("JavaScript Error from '" + callback + "': ", error);
 			},
 		});
 

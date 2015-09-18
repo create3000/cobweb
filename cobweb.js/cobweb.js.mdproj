@@ -2291,6 +2291,7 @@
     <None Include="tests\Components\Interpolation\PositionInterpolator.x3d" />
     <None Include="tests\Components\Navigation\ClonedLOD.x3d" />
     <None Include="tests\Components\Navigation\Gravitation.x3d" />
+    <None Include="tests\Components\Navigation\Billboard.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

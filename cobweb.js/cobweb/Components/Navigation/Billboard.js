@@ -23,9 +23,17 @@ function ($,
 	with (Fields)
 	{
 		var
-			xAxis = new Vector3 (1, 0, 0),
-			yAxis = new Vector3 (0, 1, 0),
-			zAxis = new Vector3 (0, 0, 1);
+		   inverseModelViewMatrix = new Matrix4 (),
+			xAxis                  = new Vector3 (1, 0, 0),
+			yAxis                  = new Vector3 (0, 1, 0),
+			zAxis                  = new Vector3 (0, 0, 1),
+			viewerYAxis            = new Vector3 (0, 0, 0),
+			billboardToViewer      = new Vector3 (0, 0, 0),
+			x                      = new Vector3 (0, 0, 0),
+			y                      = new Vector3 (0, 0, 0),
+			N1                     = new Vector3 (0, 0, 0),
+			N2                     = new Vector3 (0, 0, 0),
+			rotation               = new Rotation4 (0, 0, 1, 0);
 
 		function Billboard (executionContext)
 		{
@@ -48,7 +56,6 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new MFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new MFNode ()),
 			]),
-			modelViewMatrix: new Matrix4 (),
 			getTypeName: function ()
 			{
 				return "Billboard";
@@ -65,18 +72,16 @@ function ($,
 			{
 				try
 				{
-					var
-						inverseModelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix) .inverse (),
-						billboardToViewer      = inverseModelViewMatrix .origin .normalize ();       // Normalized to get work with Geo
+					this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+					billboardToViewer .set (inverseModelViewMatrix [12], inverseModelViewMatrix [13], inverseModelViewMatrix [14]) .normalize (); // Normalized to get work with Geo
 
 					if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 					{
-						var viewerYAxis = inverseModelViewMatrix .multDirMatrix (yAxis .copy ()) .normalize (); // Normalized to get work with Geo
+						inverseModelViewMatrix .multDirMatrix (viewerYAxis .assign (yAxis)) .normalize (); // Normalized to get work with Geo
 
-						var
-							x = Vector3 .cross (viewerYAxis, billboardToViewer),
-							y = Vector3 .cross (billboardToViewer, x),
-							z = billboardToViewer;
+						x .assign (viewerYAxis) .cross (billboardToViewer);
+						y .assign (billboardToViewer) .cross (x);
+						var z = billboardToViewer;
 
 						// Compose rotation
 
@@ -90,11 +95,10 @@ function ($,
 					}
 					else
 					{
-						var
-							N1 = Vector3 .cross (this .axisOfRotation_ .getValue (), billboardToViewer), // Normal vector of plane as in specification
-							N2 = Vector3 .cross (this .axisOfRotation_ .getValue (), zAxis);             // Normal vector of plane between axisOfRotation and zAxis
+						N1 .assign (this .axisOfRotation_ .getValue ()) .cross (billboardToViewer); // Normal vector of plane as in specification
+						N2 .assign (this .axisOfRotation_ .getValue ()) .cross (zAxis);             // Normal vector of plane between axisOfRotation and zAxis
 
-						this .matrix .setRotation (new Rotation4 (N2, N1));                             // Rotate zAxis in plane
+						this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
 					}
 
 					this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);

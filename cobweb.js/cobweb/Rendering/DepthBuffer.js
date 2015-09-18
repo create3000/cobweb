@@ -4,7 +4,7 @@ define (function ()
 	function DepthBuffer (browser, width, height)
 	{
 		var gl = browser .getContext ();
-	
+
 		this .browser = browser;
 		this .width   = width;
 		this .height  = height;
@@ -56,11 +56,11 @@ define (function ()
 			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, this .array);
 
 			var
-				array  = this .array,
-				d      = Number .POSITIVE_INFINITY,
-				w1     = this .width  - 1,
-				h1     = this .height - 1,
-				zWidth = zFar - zNear;
+				array    = this .array,
+				distance = Number .POSITIVE_INFINITY,
+				w1       = this .width  - 1,
+				h1       = this .height - 1,
+				zWidth   = zFar - zNear;
 
 			for (var py = 0, i = 0; py < this .height; ++ py)
 			{
@@ -71,12 +71,12 @@ define (function ()
 				   var
 				      x = (2 * px / w1 - 1) * radius,
 				      z = zNear + zWidth * unpack (array [i], array [i + 1], array [i + 2]);
-			      
-					d = Math .min (d, Math .sqrt (x * x + y * y + z * z));
+
+					distance = Math .min (distance, Math .sqrt (x * x + y * y + z * z));
 			   }
 			}
 
-			return d;
+			return distance;
 		},
 		bind: function ()
 		{
@@ -86,7 +86,7 @@ define (function ()
 
 			gl .viewport (0, 0, this .width, this .height);
 			gl .scissor  (0, 0, this .width, this .height);
-			
+
 			gl .clearColor (1, 0, 0, 0);
 			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);
 		},
