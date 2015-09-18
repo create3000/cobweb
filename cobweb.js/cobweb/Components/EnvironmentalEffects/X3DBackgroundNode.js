@@ -103,6 +103,7 @@ function ($,
 		this .colors                = [ ];
 		this .sphere                = [ ];
 		this .textures              = 0;
+		this .plane                 = false;
 	}
 
 	X3DBackgroundNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
@@ -426,7 +427,7 @@ function ($,
 
 			// Get background scale
 
-			if (this .plane)
+			if (this .plane && ! this .textures)
 			{
 				var modelViewMatrix = this .modelViewMatrix;
 

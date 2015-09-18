@@ -54,9 +54,16 @@ function ($,
 		{
 			if (this .getCameraObject () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 				this .getBrowser () .sensors () .addInterest (this, "update");
-
 			else
+			{
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+
 				this .getBrowser () .sensors () .removeInterest (this, "update");
+			}
 		},
 		update: function () { },
 	});

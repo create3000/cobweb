@@ -2293,6 +2293,12 @@
     <None Include="tests\Components\Navigation\Gravitation.x3d" />
     <None Include="tests\Components\Navigation\Billboard.x3d" />
     <None Include="cobweb\Browser\Navigation\PlaneViewer.js" />
+    <None Include="tests\Examples\Rathaus\stage\heaven\back.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\heaven\bottom.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\heaven\front.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\heaven\left.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\heaven\right.jpg" />
+    <None Include="tests\Examples\Rathaus\stage\heaven\top.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2362,5 +2368,6 @@
     <Folder Include="tests\Examples\Terrain\" />
     <Folder Include="tests\Examples\Gears\" />
     <Folder Include="tests\Components\Navigation\" />
+    <Folder Include="tests\Examples\Rathaus\stage\heaven\" />
   </ItemGroup>
 </Project>

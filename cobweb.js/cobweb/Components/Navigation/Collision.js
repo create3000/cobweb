@@ -29,7 +29,7 @@ function ($,
 
 			this .addType (X3DConstants .Collision);
 
-			this .addAlias ("collide", this .enabled_);
+			this .addAlias ("collide", this .enabled_); // VRML2
 		}
 
 		Collision .prototype = $.extend (Object .create (X3DGroupingNode .prototype),

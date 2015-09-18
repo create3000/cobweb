@@ -85,5 +85,6 @@
     <Folder Include="1\1.6\" />
     <Folder Include="1\1.7\" />
     <Folder Include="1\1.9\" />
+    <Folder Include="1\1.10\" />
   </ItemGroup>
 </Project>

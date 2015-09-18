@@ -24,7 +24,7 @@ function ($,
 {
 	with (Fields)
 	{
-		var unlimited = new Vector3 (-1, -1, -1);
+		var infinity = new Vector3 (-1, -1, -1);
 	
 		function VisibilitySensor (executionContext)
 		{
@@ -65,6 +65,19 @@ function ($,
 			initialize: function ()
 			{
 				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+
+				this .enabled_ .addInterest (this, "set_enabled___");
+
+				this .set_enabled___ ();
+			},
+			set_enabled___: function ()
+			{
+				this .setCameraObject (this .enabled_ .getValue ());
+				
+				if (this .enabled_ .getValue ())
+					this .traverse = traverse;
+				else
+					delete this .traverse;
 			},
 			update: function ()
 			{
@@ -89,37 +102,39 @@ function ($,
 					
 				this .setTraversed (false);
 			},
-			traverse: function (type)
-			{
-			   switch (type)
-			   {
-					case TraverseType .CAMERA:
-					{
-						if (! this .enabled_ .getValue () || this .visible)
-							return;
-
-						if (this .size_ .getValue () .equals (unlimited))
-							this .visible = true;
-
-						else
-						{
-							var
-								viewVolume      = this .getCurrentLayer () .getViewVolume (),
-								modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix),
-								size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
-								center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
-
-							this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
-						}
-
-						break;
-					}
-					case TraverseType .DISPLAY:
-						this .setTraversed (true);
-						break;
-				}
-			},
+			traverse: function () { },
 		});
+			
+		function traverse (type)
+		{
+		   switch (type)
+		   {
+				case TraverseType .CAMERA:
+				{
+					if (this .visible)
+						return;
+
+					if (this .size_ .getValue () .equals (infinity))
+						this .visible = true;
+
+					else
+					{
+						var
+							viewVolume      = this .getCurrentLayer () .getViewVolume (),
+							modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix),
+							size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
+							center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
+
+						this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
+					}
+
+					break;
+				}
+				case TraverseType .DISPLAY:
+					this .setTraversed (true);
+					break;
+			}
+		}
 
 		return VisibilitySensor;
 	}

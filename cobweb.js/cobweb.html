@@ -56,7 +56,7 @@ X3D (function (dom)
 	var Browser = X3D .getBrowser (dom);
 	var scene   = Browser .currentScene;
 
-	var index = 2;
+	var index = 0;
 	var pages = [ "Tests 1", "Tests 2", "Page 1", "Page 2" ];
 
 	var urls =
@@ -69,6 +69,8 @@ X3D (function (dom)
 		   'createVrmlFromString': "tests/Components/Scripting/createVrmlFromString.x3d",
 		   'Gravitation':          "tests/Components/Navigation/Gravitation.x3d",
 		   'Billboard':            "tests/Components/Navigation/Billboard.x3d",
+		   'VisibilitySensor':     "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d",
+		   'ProximitySensor':      "tests/Components/EnvironmentalSensor/ProximitySensor.x3d",
 		},
 		{
 			'ImageBackground':      "tests/Components/EnvironmentalEffects/ImageBackground.x3d",
@@ -176,7 +178,7 @@ X3D (function (dom)
 	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D statistics="true" cache="false" url='
-		   "tests/Components/Shape/Connectors.x3d",
+		   "tests/Components/EnvironmentalEffects/ImageBackground.x3d",
 			"tests/Examples/Boxes/boxes.x3d",
 		'></X3D>
 		<p class="u"></p>

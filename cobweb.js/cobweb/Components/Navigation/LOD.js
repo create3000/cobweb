@@ -31,7 +31,7 @@ function ($,
 
 			this .addType (X3DConstants .LOD);
 
-			this .addAlias ("level", this .children_);
+			this .addAlias ("level", this .children_); // VRML2
 
 			this .frameRate        = 60;
 			this .keepCurrentLevel = false;

@@ -26,7 +26,7 @@ function ($,
 {
 	with (Fields)
 	{
-		var unlimited = new Vector3 (-1, -1, -1);
+		var infinity = new Vector3 (-1, -1, -1);
 	
 		function ProximitySensor (executionContext)
 		{
@@ -76,13 +76,24 @@ function ($,
 			{
 				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 				
-				this .size_   .addInterest (this, "set_extents__");
-				this .center_ .addInterest (this, "set_extents__");
+				this .enabled_ .addInterest (this, "set_enabled___");
+				this .size_    .addInterest (this, "set_extents__");
+				this .center_  .addInterest (this, "set_extents__");
 	
 				this .min = new Vector3 (0, 0, 0);
 				this .max = new Vector3 (0, 0, 0);
 				
+				this .set_enabled___ ();
 				this .set_extents__ ();
+			},
+			set_enabled___: function ()
+			{
+				this .setCameraObject (this .enabled_ .getValue ());
+				
+				if (this .enabled_ .getValue ())
+					this .traverse = traverse;
+				else
+					delete this .traverse;
 			},
 			set_extents__: function ()
 			{
@@ -166,50 +177,8 @@ function ($,
 
 				this .setTraversed (false);
 			},
-			traverse: function (type)
-			{
-				try
-				{
-					switch (type)
-					{
-						case TraverseType .CAMERA:
-						{
-							this .viewpoint = this .getCurrentViewpoint ();
-							this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-							return;
-						}
-						case TraverseType .DISPLAY:
-						{
-						   this .setTraversed (true);
-
-							if (this .inside)
-								return;
-
-							if (this .size_ .getValue () .equals (unlimited))
-								this .inside = true;
-
-							else
-							{
-							   var invModelViewMatrix = this .invModelViewMatrix;
-
-								invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
-
-								this .viewer .set (invModelViewMatrix [12],
-						                         invModelViewMatrix [13],
-						                         invModelViewMatrix [14]);
-
-								this .inside = this .intersectsPoint (this .viewer);
-							}
-
-							return;
-						}
-					}
-				}
-				catch (error)
-				{
-					//console .log (error);
-				}
-			},
+			traverse: function ()
+			{ },
 			intersectsPoint: function (point)
 			{
 				var
@@ -224,6 +193,49 @@ function ($,
 				       max .z >= point .z;
 			},
 		});
+			
+		function traverse (type)
+		{
+			try
+			{
+				switch (type)
+				{
+					case TraverseType .CAMERA:
+					{
+						this .viewpoint = this .getCurrentViewpoint ();
+						this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+						return;
+					}
+					case TraverseType .DISPLAY:
+					{
+					   this .setTraversed (true);
+
+						if (this .inside)
+							return;
+
+						if (this .size_ .getValue () .equals (infinity))
+							this .inside = true;
+
+						else
+						{
+						   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
+
+							this .viewer .set (invModelViewMatrix [12],
+					                         invModelViewMatrix [13],
+					                         invModelViewMatrix [14]);
+
+							this .inside = this .intersectsPoint (this .viewer);
+						}
+
+						return;
+					}
+				}
+			}
+			catch (error)
+			{
+				//console .log (error);
+			}
+		}
 
 		return ProximitySensor;
 	}
