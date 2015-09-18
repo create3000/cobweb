@@ -156,7 +156,7 @@ function ($,
 						// Find trackPoint behind sphere
 
 						var
-							triNormal     = Triangle3 .normal (this .sphere .center, trackPoint, this .startPoint),
+							triNormal     = Triangle3 .normal (this .sphere .center, trackPoint, this .startPoint, new Vector3 (0, 0, 0)),
 							dirFromCenter = Vector3 .subtract (trackPoint, this .sphere .center) .normalize (),
 							normal        = Vector3 .cross (triNormal, dirFromCenter) .normalize ();
 

@@ -4,6 +4,7 @@ define ([
 	"cobweb/Browser/Navigation/ExamineViewer",
 	"cobweb/Browser/Navigation/WalkViewer",
 	"cobweb/Browser/Navigation/FlyViewer",
+	"cobweb/Browser/Navigation/PlaneViewer",
 	"cobweb/Browser/Navigation/NoneViewer",
 	"cobweb/Components/Lighting/DirectionalLight",
 ],
@@ -11,6 +12,7 @@ function (Fields,
           ExamineViewer,
           WalkViewer,
           FlyViewer,
+          PlaneViewer,
           NoneViewer,
           DirectionalLight)
 {
@@ -144,7 +146,7 @@ function (Fields,
 						break;
 					case "PLANE":
 					case "PLANE_create3000.de":
-					   this .viewerNode = new NoneViewer (this);
+					   this .viewerNode = new PlaneViewer (this);
 						break;
 					case "NONE":
 					   this .viewerNode = new NoneViewer (this);

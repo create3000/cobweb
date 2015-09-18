@@ -21,8 +21,8 @@ function ($, X3DViewer, Vector3, Rotation4)
 		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
 
 		this .button            = -1;
-		this .orientationOffset = new Rotation4 ();
-		this .rotation          = new Rotation4 ();
+		this .orientationOffset = new Rotation4 (0, 0, 1, 0);
+		this .rotation          = new Rotation4 (0, 0, 1, 0);
 		this .fromVector        = new Vector3 (0, 0, 0);
 		this .fromPoint         = new Vector3 (0, 0, 0);
 		this .pressTime         = 0;
@@ -104,7 +104,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 					{
 						try
 						{
-							this .rotation .set (0, 0, 1, 0) .slerp (this .rotation, SPIN_FACTOR);
+							this .rotation = new Rotation4 (0, 0, 1, 0) .slerp (this .rotation, SPIN_FACTOR);
 							this .addSpinning ();
 						}
 						catch (error)

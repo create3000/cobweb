@@ -14,7 +14,7 @@ function (Vector3)
 	   {
 	      return A .assign (v2) .subtract (v1) .cross (B .assign (v3) .subtract (v1)) .abs () / 2;
 	   },
-		normal: function (v1, v2, v3)
+		normal: function (v1, v2, v3, normal)
 		{
 			var
 				x1 = v3 .x - v2 .x,
@@ -24,13 +24,13 @@ function (Vector3)
 				y2 = v1 .y - v2 .y,
 				z2 = v1 .z - v2 .z;
 
-			var normal = new Vector3 (y1 * z2 - z1 * y2,
-			                          z1 * x2 - x1 * z2,
-			                          x1 * y2 - y1 * x2);
+			normal .set (y1 * z2 - z1 * y2,
+			             z1 * x2 - x1 * z2,
+			             x1 * y2 - y1 * x2);
 
 			return normal .normalize ();
 		},
-		quadNormal: function (v1, v2, v3, v4)
+		quadNormal: function (v1, v2, v3, v4, normal)
 		{
 			var
 				x1 = v3 .x - v1 .x,
@@ -40,9 +40,9 @@ function (Vector3)
 				y2 = v4 .y - v2 .y,
 				z2 = v4 .z - v2 .z;
 
-			var normal = new Vector3 (y1 * z2 - z1 * y2,
-			                          z1 * x2 - x1 * z2,
-			                          x1 * y2 - y1 * x2);
+			normal .set (y1 * z2 - z1 * y2,
+			             z1 * x2 - x1 * z2,
+			             x1 * y2 - y1 * x2);
 
 			return normal .normalize ();
 		},

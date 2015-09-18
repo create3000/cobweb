@@ -313,14 +313,14 @@ function ($,
 						if (cw)
 						{
 							var
-								normal1 = Triangle3 .normal (p3, p2, p1),
-								normal2 = Triangle3 .normal (p4, p3, p1);
+								normal1 = Triangle3 .normal (p3, p2, p1, new Vector3 (0, 0, 0)),
+								normal2 = Triangle3 .normal (p4, p3, p1, new Vector3 (0, 0, 0));
 						}
 						else
 						{
 							var
-								normal1 = Triangle3 .normal (p1, p2, p3),
-								normal2 = Triangle3 .normal (p1, p3, p4);
+								normal1 = Triangle3 .normal (p1, p2, p3, new Vector3 (0, 0, 0)),
+								normal2 = Triangle3 .normal (p1, p3, p4, new Vector3 (0, 0, 0));
 						}
 
 						// Triangle one
@@ -398,7 +398,8 @@ function ($,
 
 						var normal = Triangle3 .normal (vertices [triangles [0]],
 						                                vertices [triangles [1]],
-						                                vertices [triangles [2]]);
+						                                vertices [triangles [2]],
+						                                new Vector3 (0, 0, 0));
 
 						if (cw)
 							normal .negate ();
@@ -428,7 +429,8 @@ function ($,
 
 						var normal = Triangle3 .normal (vertices [triangles [0]],
 						                                vertices [triangles [1]],
-						                                vertices [triangles [2]]);
+						                                vertices [triangles [2]],
+						                                new Vector3 (0, 0, 0));
 
 						if (cw)
 							normal .negate ();

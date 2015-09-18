@@ -93,7 +93,7 @@ function ($,
 				for (var i = 0; i < this .type_ .length; ++ i)
 				{
 				   var string = this .type_ [i];
-
+				
 					switch (string)
 					{
 						case "LOOKAT":
@@ -102,6 +102,7 @@ function ($,
 						case "EXAMINE":
 						case "WALK":
 						case "FLY":
+						case "PLANE":
 						case "NONE":
 							this .viewer_ = string;
 							break;

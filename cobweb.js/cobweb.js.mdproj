@@ -2292,6 +2292,7 @@
     <None Include="tests\Components\Navigation\ClonedLOD.x3d" />
     <None Include="tests\Components\Navigation\Gravitation.x3d" />
     <None Include="tests\Components\Navigation\Billboard.x3d" />
+    <None Include="cobweb\Browser\Navigation\PlaneViewer.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

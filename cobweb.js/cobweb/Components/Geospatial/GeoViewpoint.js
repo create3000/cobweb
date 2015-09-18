@@ -20,13 +20,14 @@ function ($,
 	{
 		function GeoViewpoint (executionContext)
 		{
-			X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
+			X3DViewpointNode    .call (this, executionContext .getBrowser (), executionContext);
 			X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .GeoViewpoint);
 		}
 
-		GeoViewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),new X3DGeospatialObject (),
+		GeoViewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
+			X3DGeospatialObject .prototype,
 		{
 			constructor: GeoViewpoint,
 			fieldDefinitions: new FieldDefinitionArray ([

@@ -15,7 +15,7 @@ function (Vector3)
 		constructor: Plane3,
 		set: function (point, normal)
 		{
-			this .normal             = normal .copy ();
+			this .normal .assign (normal);
 			this .distanceFromOrigin = normal .dot (point);	   
 		},
 		distance: function (point)

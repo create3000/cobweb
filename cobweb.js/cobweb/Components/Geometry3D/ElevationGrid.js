@@ -207,7 +207,7 @@ function ($,
 					normalIndex [c1] .push (normals .length + 1);
 					normalIndex [c2] .push (normals .length + 2);
 
-					var normal = Triangle3 .normal (points [c0], points [c1], points [c2]);
+					var normal = Triangle3 .normal (points [c0], points [c1], points [c2], new Vector3 (0, 0, 0));
 
 					if (cw)
 						normal .negate ();

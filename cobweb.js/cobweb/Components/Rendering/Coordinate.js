@@ -64,7 +64,8 @@ function ($,
 				if (index1 < length && index2 < length && index3 < length)
 					return Triangle3 .normal (this .point_ [index1] .getValue (),
 					                          this .point_ [index2] .getValue (),
-					                          this .point_ [index3] .getValue ());
+					                          this .point_ [index3] .getValue (),
+					                          new Vector3 (0, 0, 0));
 
 				return new Vector3 (0, 0, 0);
 			},
@@ -76,7 +77,8 @@ function ($,
 					return Triangle3 .quadNormal (this .point_ [index1] .getValue (),
 					                              this .point_ [index2] .getValue (),
 					                              this .point_ [index3] .getValue (),
-					                              this .point_ [index4] .getValue ());
+					                              this .point_ [index4] .getValue (),
+					                              new Vector3 (0, 0, 0));
 
 				return new Vector3 (0, 0, 0);
 			},
