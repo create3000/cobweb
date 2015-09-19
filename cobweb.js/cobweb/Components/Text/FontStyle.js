@@ -49,8 +49,7 @@ function ($,
 			origin    = new Vector3 (0, 0, 0),
 			box2      = new Box2 (),
 			zero2     = new Vector2 (0, 0),
-			zero3     = new Vector3 (0, 0, 0),
-			fontScale = 0.84;                  // All glyphs must be scaled by this amount to get the correct size.
+			zero3     = new Vector3 (0, 0, 0);                  // All glyphs must be scaled by this amount to get the correct size.
 
 	   function X3DTextGeometry (text, fontStyle)
 		{
@@ -288,7 +287,7 @@ function ($,
 						glyph   = glyphs [g],
 						kerning = g + 1 < length ? font .getKerningValue (glyph, glyphs [g + 1]) : 0;
 
-					xMax += (glyph .advanceWidth * fontScale + kerning);
+					xMax += glyph .advanceWidth + kerning;
 					yMin  = Math .min (yMin, glyph .yMin || 0);
 					yMax  = Math .max (yMax, glyph .yMax || 0);
 				}
@@ -415,7 +414,7 @@ function ($,
 					if (g + 1 < glyphs .length)
 						kerning = font .getKerningValue (glyph, glyphs [g + 1]);
 
-					offset += (glyph .advanceWidth * fontScale + kerning) / font .unitsPerEm * size;
+					offset += (glyph .advanceWidth + kerning) / font .unitsPerEm * size;
 				}
 			},
 			getGlyphGeometry: function (glyph, primitiveQuality)
@@ -491,12 +490,6 @@ function ($,
 								{
 									if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
 										points .pop ();
-
-									points .forEach (function (p)
-									{
-									   p .x *= fontScale;
-									   p .y *= fontScale;
-									});
 
 									curves .push (reverse ? points .reverse () .slice () : points .slice ());
 								}

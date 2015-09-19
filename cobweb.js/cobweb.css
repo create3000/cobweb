@@ -19,7 +19,7 @@ x3d.cobweb-fallback {
 	background: url(images/logo.bw.png) center center no-repeat #101010;
 }
 
-x3d .cobweb-fallback {
+x3d.cobweb-fallback > * {
 	display: initial;
 }
 

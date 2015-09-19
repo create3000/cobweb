@@ -1,10 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/EnvironmentalSensor/ProximitySensor.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.css">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="28" Column="28" />
-      <File FileName="cobweb.js/cobweb/Components/Navigation/ViewpointGroup.js" Line="60" Column="60" />
-      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/ProximitySensor.js" Line="5" Column="5" />
+      <File FileName="cobweb.js/cobweb.html" Line="49" Column="49" />
+      <File FileName="cobweb.js/cobweb.js" Line="2" Column="2" />
+      <File FileName="cobweb.js/cobweb/X3D.js" Line="16" Column="16" />
+      <File FileName="cobweb.js/cobweb/Error.js" Line="2" Column="2" />
+      <File FileName="cobweb.js/cobweb.css" Line="14" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

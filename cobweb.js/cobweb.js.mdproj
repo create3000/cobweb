@@ -2299,6 +2299,8 @@
     <None Include="tests\Examples\Rathaus\stage\heaven\right.jpg" />
     <None Include="tests\Examples\Rathaus\stage\heaven\top.jpg" />
     <None Include="cobweb\Error.js" />
+    <None Include="tests\Components\images\test.svg" />
+    <None Include="tests\Components\images\test.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
