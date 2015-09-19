@@ -36,8 +36,8 @@ function (BrowserOptions,
 		{
 			// Get canvas & context.
 
-			var browser = $("<div/>") .addClass ("browser") .prependTo (this .xml);
-			var canvas  = $("<div/>") .addClass ("canvas")  .prependTo (browser);
+			var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .xml);
+			var canvas  = $("<div/>") .addClass ("cobweb-canvas")  .prependTo (browser);
 
 			this .canvas  = $("<canvas/>") .prependTo (canvas);
 			this .context = getContext (this .canvas [0]);

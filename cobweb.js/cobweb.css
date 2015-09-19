@@ -11,13 +11,20 @@ x3d {
 	background: url(images/logo.png) center center no-repeat #414141;
 }
 
-x3d .fallback {
-	width: 100%;
-	height: 100%;
+x3d > * {
+	display: none;
+}
+
+x3d.cobweb-fallback {
 	background: url(images/logo.bw.png) center center no-repeat #101010;
 }
 
-x3d .browser {
+x3d .cobweb-fallback {
+	display: initial;
+}
+
+x3d .cobweb-browser {
+	display: block;
 	position: relative;
 	margin: 0px;
 	padding: 0px;
@@ -26,7 +33,7 @@ x3d .browser {
 	height: 100%;
 }
 
-x3d .canvas {
+x3d .cobweb-canvas {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
@@ -42,7 +49,7 @@ x3d canvas {
 	height: 100%;
 }
 
-x3d .notification {
+x3d .cobweb-notification {
 	display: none;
 	position: absolute;
 	top: 20px;
@@ -58,7 +65,7 @@ x3d .notification {
 	pointer-events: none;
 }
 
-x3d .renderingProperties {
+x3d .cobweb-browser-timing {
 	display: none;
 	position: absolute;
 	bottom: -4px;
@@ -74,13 +81,13 @@ x3d .renderingProperties {
 	pointer-events: none;
 }
 
-x3d .renderingProperties div.header {
+x3d .cobweb-browser-timing div.header {
 	font-size: 9px;
 	margin-bottom: 9px;
 	font-weight: bold;
 }
 
-x3d .renderingProperties button {
+x3d .cobweb-browser-timing button {
 	border: 0;
 	padding: 0;
 	background: rgba(0,0,0,0.5);
@@ -90,6 +97,6 @@ x3d .renderingProperties button {
 	cursor: default;
 }
 
-x3d .renderingProperties button:hover {
+x3d .cobweb-browser-timing button:hover {
 	cursor: pointer;
 }

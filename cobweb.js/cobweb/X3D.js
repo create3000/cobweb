@@ -16,6 +16,7 @@ define ([
 	"cobweb/Routing/RouteArray",
 	"cobweb/Routing/X3DRoute",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Error",
 ],
 function ($,
           X3DFieldDefinition,
@@ -32,7 +33,8 @@ function ($,
           X3DProtoDeclaration,
           RouteArray,
           X3DRoute,
-          X3DConstants)
+          X3DConstants,
+          Error)
 {
 	// Console fallback
 
@@ -67,12 +69,16 @@ function ($,
 
 	var
 	   initialized = false,
-		deferred    = $.Deferred ();
+		callbacks   = $.Deferred (),
+		fallbacks   = $.Deferred ();
 
-	function X3D (callback)
+	function X3D (callback, fallback)
 	{
-		if (callback)
-			deferred .done (callback);
+		if (typeof callback === "function")
+			callbacks .done (callback);
+
+		if (typeof fallback === "function")
+			fallbacks .done (fallback);
 
 		if (initialized)
 			return;
@@ -83,40 +89,19 @@ function ($,
 		{
 			var elements = $("X3D");
 		
-			elements .each (function ()
+			try
 			{
-				try
-				{
-					this .browser = createBrowser (this);
-				}
-				catch (error)
-				{
-					fallback ($(this), error);
-				}
-			});
-
-			if (elements .length)
-				deferred .resolve (elements);
-		});
-	}
-
-	function error (what)
-	{
-		$(document) .ready (function ()
-		{
-			$("X3D") .each (function ()
+				$.map (elements, createBrowser);
+	
+				if (elements .length)
+					callbacks .resolve (elements);
+			}
+			catch (error)
 			{
-				fallback ($(this), what);
-			});
+				Error .fallback (elements);
+				fallbacks .resolve (elements, error);
+			}
 		});
-	}
-
-	function fallback (node, error)
-	{
-		node .children ("canvas") .remove ();
-		$("<div/>") .appendTo (node) .addClass ("fallback");
-		this .console .log ("Unable to initialize Cobweb. Your browser may not support it.");
-		this .console .log (error);
 	}
 
 	$.extend (X3D,

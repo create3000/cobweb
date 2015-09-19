@@ -750,7 +750,6 @@
     <None Include="tests\Examples\Rathaus\x3dom.html" />
     <None Include="cobweb\Browser\Core\X3DCoreContext.js" />
     <None Include="cobweb\Browser\Core\RenderingProperties.js" />
-    <None Include="manifest.appcache" />
     <None Include="cobweb\Browser\Core\BrowserOptions.js" />
     <None Include="tests\Components\Rendering\IndexedLineSet.x3d" />
     <None Include="cobweb\Browser\Rendering\Wireframe.vs" />
@@ -2299,6 +2298,7 @@
     <None Include="tests\Examples\Rathaus\stage\heaven\left.jpg" />
     <None Include="tests\Examples\Rathaus\stage\heaven\right.jpg" />
     <None Include="tests\Examples\Rathaus\stage\heaven\top.jpg" />
+    <None Include="cobweb\Error.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

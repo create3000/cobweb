@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="manifest.appcache">
+<html>
 <head>
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 	<meta http-equiv="Pragma" content="no-cache"/>
@@ -48,6 +48,12 @@ x3d {
 	font-family: Ubuntu;
 	font-weight: 900;
 	font-size: 50px;
+}
+
+.cobweb-fallback p {
+	display: block;
+	margin: 300px 0 0 0;
+	text-align: center;
 }
 	</style>
 	<script type="text/javascript">
@@ -171,6 +177,11 @@ X3D (function (dom)
 	toggleBookmarks ();
 
 	$(".u") .text (Browser .name + " V" + Browser .version);
+},
+function (elements, error)
+{
+	console .error ("Please forgive me, your browser may not support all features required by Cobweb!");
+	console .error (error);
 });
 	</script>
 </head>
@@ -178,9 +189,11 @@ X3D (function (dom)
 	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D statistics="true" cache="false" url='
-		   "tests/Components/EnvironmentalEffects/ImageBackground.x3d",
+			"tests/Components/EnvironmentalEffects/ImageBackground.x3d",
 			"tests/Examples/Boxes/boxes.x3d",
-		'></X3D>
+		'>
+			<p>Sorry,<br>it wasn't me!</p>
+		</X3D>
 		<p class="u"></p>
 	</div>
 </body>

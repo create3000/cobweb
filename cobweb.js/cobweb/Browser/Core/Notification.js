@@ -8,14 +8,16 @@ function ($,
           SFString,
           X3DBaseNode)
 {
-$.fn.textWidth = function(){
-  var html_org = $(this).html();
-  var html_calc = '<span>' + html_org + '</span>';
-  $(this).html(html_calc);
-  var width = $(this).find('span:first').width();
-  $(this).html(html_org);
-  return width;
-};
+	$.fn.textWidth = function ()
+	{
+		var html_org = $(this) .html ();
+		var html_calc = '<span>' + html_org + '</span>';
+		$(this) .html (html_calc);
+		var width = $(this) .find('span:first') .width ();
+		$(this) .html (html_org);
+		return width;
+	};
+
    function Notification (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
@@ -31,8 +33,8 @@ $.fn.textWidth = function(){
 			this .addChildren ("string", new SFString ());
 
 			this .element = $("<div/>")
-				.addClass ("notification")
-				.appendTo (this .getBrowser () .getXML () .find (".canvas"))
+				.addClass ("cobweb-notification")
+				.appendTo (this .getBrowser () .getXML () .find (".cobweb-canvas"))
 				.animate ({ width: 0 });
 
 			this .string_ .addInterest (this, "set_string__");
