@@ -262,7 +262,13 @@ function ($,
 				.bind (this),
 				function (fragment)
 				{
-					this .currentScene .changeViewpoint (fragment);
+				   try
+				   {
+						this .currentScene .changeViewpoint (fragment);
+					}
+					catch (error)
+					{ }
+
 					this .removeLoadCount (id);
 				}
 				.bind (this));

@@ -30,7 +30,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "coordIndex",    new MFInt32 ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "displacements", new MFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "name",          new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "name",          new SFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "weight",        new SFFloat ()),
 			]),
 			getTypeName: function ()

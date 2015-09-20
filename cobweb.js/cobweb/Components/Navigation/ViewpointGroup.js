@@ -40,10 +40,10 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",          new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "displayed",         new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "description",       new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "description",       new SFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "retainUserOffsets", new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "size",              new SFVec3f (0, 0, 0)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "center",            new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "size",              new SFVec3f ()),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "center",            new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "children",          new MFNode ()),
 			]),
 			getTypeName: function ()

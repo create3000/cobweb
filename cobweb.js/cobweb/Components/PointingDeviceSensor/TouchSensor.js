@@ -33,7 +33,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",            new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",             new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "description",         new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "description",         new SFString ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "hitTexCoord_changed", new SFVec2f ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "hitNormal_changed",   new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "hitPoint_changed",    new SFVec3f ()),

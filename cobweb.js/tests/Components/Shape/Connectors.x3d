@@ -40,7 +40,7 @@
 function initialize ()
 {
 	var point         = new SFVec3f (cornerRadius, 0, 0);
-	var startRotation = new SFRotation (0, 0, 1, 0);
+	var startRotation = new SFRotation ();
 	var endRotation   = new SFRotation (0, 0, 1, Math .PI / 2);
 	var corner        = new MFVec3f ();
 	var coordIndex    = new MFInt32 ();

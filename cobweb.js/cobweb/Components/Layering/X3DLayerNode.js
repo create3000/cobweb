@@ -227,7 +227,6 @@ function ($,
 					break;
 			}
 
-			browser .getGlobalLights () .length = 0;
 			browser .getLayers () .pop ();
 		},
 		pointer: function ()

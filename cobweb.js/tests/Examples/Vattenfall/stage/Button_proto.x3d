@@ -98,8 +98,9 @@ function set_choice(value, time) {
 	choose();
 }
 function initialize() {
-	if (Browser.getName() != "Cosmo Player" && Browser.getVersion() != 1.1)
-		set_choice(button.choice, 0);
+	if (Browser.getName() == "Cosmo Player" && Browser.getVersion() == 1.1)
+	   return;
+	set_choice(button.choice, 0);
 }
 function eventsProcessed() {
 	out = !(isOver || isActive);

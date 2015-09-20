@@ -38,11 +38,11 @@ function ($,
 			constructor: Anchor,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "description",    new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .inputOutput,    "description",    new SFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "url",            new MFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "parameter",      new MFString ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new MFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new MFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new MFNode ()),
@@ -90,7 +90,13 @@ function ($,
 				.bind (this),
 				function (fragment)
 				{
-					this .getExecutionContext () .changeViewpoint (fragment);
+				   try
+				   {
+						this .getExecutionContext () .changeViewpoint (fragment);
+					}
+					catch (error)
+					{ }
+
 					this .setLoadState (X3DConstants .COMPLETE_STATE, false);
 				}
 				.bind (this));

@@ -20,18 +20,23 @@ function ($,
 	X3DLightNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLightNode,
-		traverse: function (type)
+		push: function ()
 		{
-			if (type !== TraverseType .DISPLAY)
-				return;
-
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
-					this .getBrowser () .getGlobalLights () .push (this .getContainer ());
+					this .getBrowser () .getGlobalLights () .push (this .getLights () .pop (this));
 
-				//else
-				//	this .getCurrentLayer () .getLocalObjects () .push (new DirectionalLightContainer (this));
+				else
+					this .getCurrentLayer () .getLocalLights () .push (this .getLights () .pop (this));
+			}
+		},
+		pop: function ()
+		{
+			if (this .on_ .getValue ())
+			{
+				if (! this .global_ .getValue ())
+					this .getLights () .push (this .getCurrentLayer () .getLocalLights () .pop ());
 			}
 		},
 	});

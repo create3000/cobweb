@@ -20,6 +20,15 @@ function (Fields,
 	{
 		var NONE = new SFString ("NONE");
 
+		getHeadLight = function (executionContext)
+		{
+			var light = new DirectionalLight (executionContext);
+			light .setup ();
+			var headlight = light .getLights () .pop (light);
+			headlight .pop = function () { };
+			return headlight;
+		};
+
 		function X3DNavigationContext ()
 		{
 			this .addChildren ("availableViewers", new MFString (),
@@ -39,10 +48,8 @@ function (Fields,
 			{
 			   this .initialized () .addInterest (this, "set_world__");
 			   this .shutdown ()    .addInterest (this, "remove_world__");
-				
-				var headlight = new DirectionalLight (this);
-				headlight .setup ();
-				this .headlight = headlight .getContainer ();
+
+				this .headlight = getHeadLight (this);
 			},
 			getHeadlight: function ()
 			{

@@ -822,7 +822,7 @@ function ($,
 			constructor: FontStyle,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "language",    new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "language",    new SFString ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "family",      new MFString ("SERIF")),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "style",       new SFString ("PLAIN")),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "size",        new SFFloat (1)),

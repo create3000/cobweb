@@ -29,10 +29,10 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",    new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",  new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",  new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",     new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",    new SFRotation (0, 0, 1, 0)),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "translation", new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",    new SFRotation ()),
+				new X3DFieldDefinition (X3DConstants .inputOutput,    "translation", new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "collidable",  new SFNode ()),
 			]),
 			getTypeName: function ()

@@ -235,8 +235,9 @@ function ($,
 			{
 				try
 				{
-					var namedNode = this .getNamedNode (name);
-					var viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
+					var
+						namedNode = this .getNamedNode (name),
+						viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
 
 					if (! viewpoint)
 						throw Error ("Node named '" + name + "' is not a viewpoint node.");

@@ -32,8 +32,8 @@ function ($,
 			constructor: MetadataInteger,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new SFString ("")),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new SFString ()),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new SFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new MFInt32 ()),
 			]),
 			getTypeName: function ()

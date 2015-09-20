@@ -29,7 +29,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",   new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",    new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "direction",  new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "direction",  new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "speed",      new SFFloat (0.1)),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "gustiness",  new SFFloat (0.1)),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "turbulence", new SFFloat ()),

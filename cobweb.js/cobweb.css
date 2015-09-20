@@ -81,7 +81,7 @@ x3d .cobweb-browser-timing {
 	pointer-events: none;
 }
 
-x3d .cobweb-browser-timing div.header {
+x3d .cobweb-browser-timing div.cobweb-header {
 	font-size: 9px;
 	margin-bottom: 9px;
 	font-weight: bold;

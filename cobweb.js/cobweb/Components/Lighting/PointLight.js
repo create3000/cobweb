@@ -6,38 +6,57 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Lighting/X3DLightNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLightNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          ObjectCache)
 {
+	var PointLights = ObjectCache (PointLightContainer);
+	
 	function PointLightContainer (light)
 	{
-		this .light    = light;
-		this .location = light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (light .location_ .getValue () .copy ());
+		this .location = new Vector3 (0, 0, 0);
+
+		this .set (light);
 	}
 
 	PointLightContainer .prototype =
 	{
+	   set: function (light)
+	   {
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .intensity_ .getValue ();
+			this .ambientIntensity = light .ambientIntensity_ .getValue ();
+			this .attenuation      = light .attenuation_ .getValue ();
+			this .radius           = light .radius_ .getValue ();
+
+			light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (light .location_ .getValue ()));
+	   },
 		use: function (gl, shader, i)
 		{
-			var light = this .light;
-		
 			gl .uniform1i (shader .lightType [i],             1);
 			gl .uniform1i (shader .lightOn [i],               true);
-			gl .uniform3f (shader .lightColor [i],            light .color_ .r, light .color_ .g, light .color_ .b);
-			gl .uniform1f (shader .lightIntensity [i],        light .intensity_ .getValue ()); // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], light .ambientIntensity_ .getValue ()); // clamp
-			gl .uniform3f (shader .lightAttenuation [i],      light .attenuation_ .x, light .attenuation_ .y, light .attenuation_ .z); // max
+			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity); // clamp
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
+			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
 			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform1f (shader .lightRadius [i],           light .radius_ .getValue ());
+			gl .uniform1f (shader .lightRadius [i],           this .radius);
 
 			// For correct results the radius must be transform by the modelViewMatrix. This can only be done in the shader.
 			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|
 			// distanceOfLightToFragmentInLightSpace can then be compared with radius.
+		},
+		pop: function ()
+		{
+		   PointLights .push (this);
 		},
 	};
 
@@ -61,7 +80,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "intensity",        new SFFloat (1)),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity", new SFFloat ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "attenuation",      new SFVec3f (1, 0, 0)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "location",         new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "location",         new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "radius",           new SFFloat (100)),
 			]),
 			getTypeName: function ()
@@ -76,9 +95,9 @@ function ($,
 			{
 				return "children";
 			},
-			getContainer: function ()
+			getLights: function ()
 			{
-				return new PointLightContainer (this);
+				return PointLights;
 			},
 		});
 

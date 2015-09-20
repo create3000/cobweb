@@ -154,7 +154,7 @@ function ($)
 				case 171: // Plus
 				{
 					if (this .ctrlKey)
-						this .getRenderingProperties () .setEnabled (!this .getRenderingProperties () .getEnabled ());
+						this .getBrowserTimings () .enabled_ = ! this .getBrowserTimings () .enabled_ .getValue ();
 					break;
 				}
 				case 36: // Pos 1

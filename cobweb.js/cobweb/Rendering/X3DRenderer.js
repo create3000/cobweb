@@ -7,6 +7,7 @@ define ([
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Sphere3",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
@@ -18,6 +19,7 @@ function ($,
           Camera,
           Sphere3,
           Vector3,
+          Vector4,
           Rotation4,
           Matrix4,
           Algorithm)
@@ -40,7 +42,7 @@ function ($,
 	function X3DRenderer (browser, executionContext)
 	{
 		this .viewVolumes          = [ ];
-		this .localObjects         = [ ];
+		this .localLights          = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -73,13 +75,17 @@ function ($,
 		initialize: function ()
 		{
 		},
-		getViewVolumeStack: function ()
+		getViewVolumes: function ()
 		{
 			return this .viewVolumes;
 		},
 		getViewVolume: function ()
 		{
 			return this .viewVolumes [this .viewVolumes .length - 1];
+		},
+		getLocalLights: function ()
+		{
+			return this .localLights;
 		},
 		addShape: function (shape)
 		{
@@ -96,7 +102,7 @@ function ($,
 				if (shape .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push ({ modelViewMatrix: new Float32Array (16), isTransparent: true, localLights: [ ] });
+						this .transparentShapes .push ({ modelViewMatrix: new Float32Array (16), isTransparent: true, scissor: new Vector4 (0, 0, 0, 0), localLights: [ ] });
 
 					var context = this .transparentShapes [this .numTransparentShapes];
 
@@ -105,7 +111,7 @@ function ($,
 				else
 				{
 					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push ({ modelViewMatrix: new Float32Array (16), isTransparent: false, localLights: [ ] });
+						this .opaqueShapes .push ({ modelViewMatrix: new Float32Array (16), isTransparent: false, scissor: new Vector4 (0, 0, 0, 0), localLights: [ ] });
 
 					var context = this .opaqueShapes [this .numOpaqueShapes];
 
@@ -114,9 +120,18 @@ function ($,
 
 				context .modelViewMatrix .set (modelViewMatrix);
 				context .shape    = shape;
-				context .scissor  = viewVolume .getScissor ();
+				context .scissor .assign (viewVolume .getScissor ());
 				context .distance = distance;
 				context .fog      = this .getFog ();
+
+				var
+				   sourceLights = this .localLights,
+				   destLights   = context .localLights;
+
+				for (var i = 0, length = sourceLights .length; i < length; ++ i)
+				   destLights [i] = sourceLights [i];
+				
+				destLights .length = sourceLights .length;
 			}
 		},
 		addCollision: function (shape)
@@ -136,8 +151,14 @@ function ($,
 				context .geometry = shape .getGeometry ();
 				context .scissor  = viewVolume .getScissor ();
 
-				context .collisions .length = 0;
-				context .collisions .push .apply (context .collisions, this .getBrowser () .getCollisions ());
+				var
+					sourceCollisions = this .getBrowser () .getCollisions (),
+					destCollisions   = context .collisions;
+
+				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+				   destCollisions [i] = sourceCollisions [i];
+				
+				destCollisions .length = sourceCollisions .length;
 		},
 		constrainTranslation: function (translation)
 		{
@@ -495,6 +516,15 @@ function ($,
 
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
+
+			// Remove global lights.
+
+			var lights = this .getBrowser () .getGlobalLights ();
+
+			for (var i = 0; i < lights .length; ++ i)
+			   lights [i] .pop ();
+
+			lights .length = 0;
 		},
 	};
 

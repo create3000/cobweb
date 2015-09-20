@@ -75,7 +75,7 @@ function ($, X3DField, X3DConstants)
 			if (value)
 				return new SFNode (value .copy (executionContext));
 
-			return new SFNode (null);
+			return new SFNode ();
 		},
 		getTypeName: function ()
 		{

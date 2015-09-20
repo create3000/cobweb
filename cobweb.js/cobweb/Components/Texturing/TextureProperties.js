@@ -65,7 +65,7 @@ function ($,
 			constructor: TextureProperties,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",            new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "borderColor",         new SFColorRGBA (0, 0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput,    "borderColor",         new SFColorRGBA ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "borderWidth",         new SFInt32 ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "anisotropicDegree",   new SFFloat (1)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "generateMipMaps",     new SFBool ()),

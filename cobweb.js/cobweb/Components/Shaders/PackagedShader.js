@@ -38,7 +38,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new SFString ()),
 			]),
 			getTypeName: function ()
 			{

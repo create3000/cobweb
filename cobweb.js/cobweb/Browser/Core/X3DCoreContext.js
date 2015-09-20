@@ -3,10 +3,12 @@ define ([
 	"cobweb/Browser/Core/BrowserOptions",
 	"cobweb/Browser/Core/RenderingProperties",
 	"cobweb/Browser/Core/Notification",
+	"cobweb/Browser/Core/BrowserTimings",
 ],
 function (BrowserOptions,
           RenderingProperties,
-          Notification)
+          Notification,
+          BrowserTimings)
 {
 	function getContext (canvas)
 	{
@@ -40,10 +42,12 @@ function (BrowserOptions,
 			this .browserOptions      = new BrowserOptions (this);
 			this .renderingProperties = new RenderingProperties (this);
 			this .notification        = new Notification (this);
+			this .browserTimings      = new BrowserTimings (this);
 
 			this .browserOptions      .setup ()
 			this .renderingProperties .setup ();
 			this .notification        .setup ();
+			this .browserTimings      .setup ();
 		},
 		getXML: function ()
 		{
@@ -68,6 +72,10 @@ function (BrowserOptions,
 		getNotification: function ()
 		{
 			return this .notification;
+		},
+		getBrowserTimings: function ()
+		{
+			return this .browserTimings;
 		},
 	};
 

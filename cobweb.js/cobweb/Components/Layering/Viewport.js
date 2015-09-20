@@ -24,7 +24,7 @@ function ($,
 {
 	with (Fields)
 	{
-	   var ViewVolumes = ObjectCache (ViewVolume);
+		var ViewVolumes = ObjectCache (ViewVolume);
 
 		function Viewport (executionContext)
 		{
@@ -40,7 +40,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "clipBoundary",   new MFFloat (0, 1, 0, 1)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new MFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new MFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new MFNode ()),
@@ -125,12 +125,9 @@ function ($,
 				{
 					case TraverseType .POINTER:
 					{
-						var viewVolume = this .getCurrentLayer () .getViewVolume ();
+						if (this .getBrowser () .isPointerInRectangle (this .rectangle))
+							X3DViewportNode .prototype .traverse .call (this, type);
 
-						if (! this .getBrowser () .isPointerInRectangle (viewVolume .getScissor ()))
-							return;
-
-						X3DViewportNode .prototype .traverse .call (this, type);
 						break;
 					}
 					default:
@@ -144,16 +141,16 @@ function ($,
 			{
 				var
 				   currentLayer = this .getCurrentLayer (),
-					viewVolumes  = currentLayer .getViewVolumeStack (),
+					viewVolumes  = currentLayer .getViewVolumes (),
 					viewport     = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
 
-				currentLayer .getViewVolumeStack () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
-				                                                             viewport,
-				                                                             this .rectangle));
+				currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
+				                                                         viewport,
+				                                                         this .rectangle));
 			},
 			pop: function ()
 			{
-				ViewVolumes .push (this .getCurrentLayer () .getViewVolumeStack () .pop ());
+				ViewVolumes .push (this .getCurrentLayer () .getViewVolumes () .pop ());
 			},
 		});
 

@@ -86,10 +86,11 @@ function ($,
 	               
 		this .hidden                = false;
 		this .visible               = [ ];
-		this .pointingDeviceSensors = [ ];
 		this .cameraObjects         = [ ];
-		this .localFogs             = [ ];
 		this .clipPlanes            = [ ];
+		this .localFogs             = [ ];
+		this .lights                = [ ];
+		this .pointingDeviceSensors = [ ];
 		this .childNodes            = [ ];
 	}
 
@@ -198,6 +199,13 @@ function ($,
 			for (var i = 0, length = innerNodes .length; i < length; ++ i)
 				innerNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
 
+			if (this .clipPlanes .length)
+			{
+				this .clipPlanes .splice (remove (this .clipPlanes, 0, this .clipPlanes .length,
+				                                  innerNodes, 0, innerNodes .length,
+				                                  getId));
+			}
+
 			if (this .localFogs .length)
 			{
 				this .localFogs .splice (remove (this .localFogs, 0, this .localFogs .length,
@@ -205,18 +213,18 @@ function ($,
 				                                 getId));
 			}
 
+			if (this .lights .length)
+			{
+				this .lights .splice (remove (this .lights, 0, this .lights .length,
+				                              innerNodes, 0, innerNodes .length,
+				                              getId));
+			}
+
 			if (this .pointingDeviceSensors .length)
 			{
 				this .pointingDeviceSensors .splice (remove (this .pointingDeviceSensors, 0, this .pointingDeviceSensors .length,
 				                                             innerNodes, 0, innerNodes .length,
 				                                             getId));
-			}
-
-			if (this .clipPlanes .length)
-			{
-				this .clipPlanes .splice (remove (this .clipPlanes, 0, this .clipPlanes .length,
-				                                  innerNodes, 0, innerNodes .length,
-				                                  getId));
 			}
 
 			if (this .childNodes .length)
@@ -270,9 +278,9 @@ function ($,
 						{
 							switch (type [t])
 							{
-								case X3DConstants .X3DPointingDeviceSensorNode:
+								case X3DConstants .ClipPlane:
 								{
-									this .pointingDeviceSensors .push (innerNode);
+									this .clipPlanes .push (innerNode);
 									break;
 								}
 								case X3DConstants .LocalFog:
@@ -280,9 +288,14 @@ function ($,
 									this .localFogs .push (innerNode);
 									break;
 								}
-								case X3DConstants .ClipPlane:
+								case X3DConstants .X3DLightNode:
 								{
-									this .clipPlanes .push (innerNode);
+									this .lights .push (innerNode);
+									break;
+								}
+								case X3DConstants .X3DPointingDeviceSensorNode:
+								{
+									this .pointingDeviceSensors .push (innerNode);
 									break;
 								}
 								//case X3DConstants .Fog:
@@ -326,10 +339,11 @@ function ($,
 		},
 		clear: function ()
 		{
-			this .pointingDeviceSensors .length = 0;
 			this .cameraObjects         .length = 0;
-			this .localFogs             .length = 0;
 			this .clipPlanes            .length = 0;
+			this .localFogs             .length = 0;
+			this .lights                .length = 0;
+			this .pointingDeviceSensors .length = 0;
 			this .childNodes            .length = 0;
 		},
 		set_cameraObjects__: function ()
@@ -398,20 +412,26 @@ function ($,
 				}
 				case TraverseType .DISPLAY:
 				{
-					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
-						this .localFogs [i] .push ();
-
 					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .push ();
 
+					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
+						this .localFogs [i] .push ();
+
+					for (var i = 0, length = this .lights .length; i < length; ++ i)
+						this .lights [i] .push ();
+
 					for (var i = 0, length = this .childNodes .length; i < length; ++ i)
 						this .childNodes [i] .traverse (type);
+					
+					for (var i = 0, length = this .lights .length; i < length; ++ i)
+						this .lights [i] .pop ();
+
+					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
+						this .localFogs [i] .pop ();
 
 					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
 						this .clipPlanes [i] .pop ();
-					
-					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
-						this .localFogs [i] .pop ();
 					
 					return;
 				}

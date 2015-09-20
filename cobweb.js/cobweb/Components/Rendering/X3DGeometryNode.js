@@ -269,14 +269,14 @@ function ($,
 				{
 					var vertex = normalIndex [i];
 
-					for (var p = 0; p < vertex .length; ++ p)
+					for (var p = 0, length = vertex .length; p < length; ++ p)
 					{
 						var
 							P = vertex [p],
 							m = normals [P],
 							n = new Vector3 (0, 0, 0);
 
-						for (var q = 0; q < vertex .length; ++ q)
+						for (var q = 0; q < length; ++ q)
 						{
 							var Q = normals [vertex [q]];
 		

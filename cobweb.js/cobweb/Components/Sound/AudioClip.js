@@ -37,7 +37,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",          new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "description",      new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "description",      new SFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "url",              new MFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "speed",            new SFFloat (1)),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "pitch",            new SFFloat (1)),

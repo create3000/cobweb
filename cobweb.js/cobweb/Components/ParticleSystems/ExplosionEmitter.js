@@ -28,7 +28,7 @@ function ($,
 			constructor: ExplosionEmitter,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new SFVec3f (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new SFFloat ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new SFFloat (0.25)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new SFFloat ()),

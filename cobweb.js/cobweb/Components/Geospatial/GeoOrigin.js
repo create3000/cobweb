@@ -30,7 +30,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new MFString ([ "GD", "WE" ])),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new SFVec3d (0, 0, 0)),
+				new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new SFVec3d ()),
 			]),
 			getTypeName: function ()
 			{

@@ -28,7 +28,7 @@ function ($,
 			constructor: Matrix3VertexAttribute,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "name",     new SFString ("")),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "name",     new SFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "value",    new MFMatrix3f ()),
 			]),
 			getTypeName: function ()

@@ -6,33 +6,50 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Lighting/X3DLightNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLightNode,
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          ObjectCache)
 {
+	var DirectionalLights = ObjectCache (DirectionalLightContainer);
+	
 	function DirectionalLightContainer (light)
 	{
-		this .light     = light;
-		this .direction = light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (light .direction_ .getValue () .copy ()) .normalize ();
+		this .direction = new Vector3 (0, 0, 0);
+
+		this .set (light);
 	}
 
 	DirectionalLightContainer .prototype =
 	{
+	   set: function (light)
+	   {
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .intensity_ .getValue ();
+			this .ambientIntensity = light .ambientIntensity_ .getValue ();
+
+			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
+      },
 		use: function (gl, shader, i)
 		{
-			var light = this .light;
-		
 			gl .uniform1i (shader .lightType [i],             0);
 			gl .uniform1i (shader .lightOn [i],               true);
-			gl .uniform3f (shader .lightColor [i],            light .color_ .r, light .color_ .g, light .color_ .b);
-			gl .uniform1f (shader .lightIntensity [i],        light .intensity_ .getValue ()); // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], light .ambientIntensity_ .getValue ()); // clamp
-			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);        // clamp
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
 			gl .uniform3f (shader .lightAttenuation [i],      1, 0, 0);
+			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+		},
+		pop: function ()
+		{
+		   DirectionalLights .push (this);
 		},
 	};
 
@@ -69,9 +86,9 @@ function ($,
 			{
 				return "children";
 			},
-			getContainer: function ()
+			getLights: function ()
 			{
-				return new DirectionalLightContainer (this);
+				return DirectionalLights;
 			},
 		});
 
