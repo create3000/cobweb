@@ -125,18 +125,19 @@ function ($,
 				if (texCoordNode)
 					texCoordNode .init (this .getTexCoords ());
 
-				for (var p = 0; p < polygons .length; ++ p)
+				for (var p = 0, pl = polygons .length; p < pl; ++ p)
 				{
-					var polygon = polygons [p];
+					var triangles = polygons [p] .triangles;
 
-					for (var t = 0; t < polygon .triangles .length; ++ t)
+					for (var t = 0, tl = triangles .length; t < tl; ++ t)
 					{
-						var triangle = polygon .triangles [t];
+						var triangle = triangles [t];
 
-						for (var v = 0; v < triangle .length; ++ v)
+						for (var v = 0; v < 3; ++ v)
 						{
-							var i     = triangle [v];
-							var index = coordIndex [i] .getValue ();
+							var
+								i     = triangle [v],
+								index = coordIndex [i] .getValue ();
 
 							if (colorNode)
 							{
@@ -177,17 +178,18 @@ function ($,
 			triangulate: function ()
 			{
 				var
-					convex     = this .convex_ .getValue (),
-					coordIndex = this .coordIndex_ .getValue (),
-					polygons   = [ ];
+					convex      = this .convex_ .getValue (),
+					coordIndex  = this .coordIndex_ .getValue (),
+					coordLength = coordIndex .length,
+					polygons    = [ ];
 
 				if (! this .getCoord ())
 					return polygons;
 
-				if (this .coordIndex_ .length)
+				if (coordLength)
 				{
 					// Add -1 (polygon end marker) to coordIndex if not present.
-					if (this .coordIndex_ [this .coordIndex_ .length - 1] > -1)
+					if (this .coordIndex_ [coordLength - 1] > -1)
 						this .coordIndex_ .push (-1);
 
 					// Construct triangle array and determine the number of used points.
@@ -195,7 +197,7 @@ function ($,
 
 					polygons .push ({ vertices: [ ], triangles: [ ] });
 
-					for (var c = 0; c < this .coordIndex_ .length; ++ c)
+					for (var c = 0; c < coordLength; ++ c)
 					{
 						var
 							index    = coordIndex [c] .getValue (),
@@ -295,7 +297,7 @@ function ($,
 
 					var contour = [ ];
 
-					for (var i = 0; i < vertices .length; ++ i)
+					for (var i = 0, length = vertices .length; i < length; ++ i)
 					{
 						var
 							index   = vertices [i],
@@ -311,7 +313,7 @@ function ($,
 						context = new poly2tri .SweepContext (contour),
 						ts      = context .triangulate () .getTriangles ();
 
-					for (var i = 0; i < ts .length; ++ i)
+					for (var i = 0, length = ts .length; i < length; ++ i)
 						triangles .push ([ ts [i] .getPoint (0) .index, ts [i] .getPoint (1) .index, ts [i] .getPoint (2) .index ]);
 				}
 				catch (error)
@@ -322,29 +324,29 @@ function ($,
 			},
 			triangulateConvexPolygon: function (polygon)
 			{
-				var vertices  = polygon .vertices;
-				var triangles = polygon .triangles;
+				var
+					vertices  = polygon .vertices,
+					triangles = polygon .triangles;
 
 				// Fallback: Very simple triangulation for convex polygons.
-				for (var i = 1, size = vertices .length - 1; i < size; ++ i)
+				for (var i = 1, length = vertices .length - 1; i < length; ++ i)
 					triangles .push ([ vertices [0], vertices [i], vertices [i + 1] ]);
 			},
 			buildNormals: function (polygons)
 			{
 				var normals = this .createNormals (polygons);
 
-				for (var p = 0; p < polygons .length; ++ p)
+				for (var p = 0, pl = polygons .length; p < pl; ++ p)
 				{
 					var triangles = polygons [p] .triangles;
 				
-					for (var t = 0; t < triangles .length; ++ t)
+					for (var t = 0, tl = triangles .length; t < tl; ++ t)
 					{
 						var triangle = triangles [t];
 					
-						for (var v = 0; v < triangle .length; ++ v)
-						{
-							this .addNormal (normals [triangle [v]]);
-						}
+						this .addNormal (normals [triangle [0]]);
+						this .addNormal (normals [triangle [1]]);
+						this .addNormal (normals [triangle [2]]);
 					}
 				}
 			},
@@ -358,13 +360,14 @@ function ($,
 					coord       = this .getCoord (),
 					normal      = null;
 
-				for (var p = 0; p < polygons .length; ++ p)
+				for (var p = 0, pl = polygons .length; p < pl; ++ p)
 				{
 					var
 						polygon  = polygons [p],
-						vertices = polygon .vertices;
+						vertices = polygon .vertices,
+						length   = vertices .length;
 
-					switch (vertices .length)
+					switch (length)
 					{
 						case 3:
 						{
@@ -389,7 +392,7 @@ function ($,
 					}
 
 					// Add a normal index for each point.
-					for (var i = 0, length = vertices .length; i < length; ++ i)
+					for (var i = 0; i < length; ++ i)
 					{
 						var index = coordIndex [vertices [i]] .getValue ();
 
@@ -404,7 +407,7 @@ function ($,
 
 					// Add this normal for each vertex and for -1.
 
-					for (var i = 0, length = vertices .length + 1; i < length; ++ i)
+					for (var i = 0, nl = length + 1; i < nl; ++ i)
 						normals .push (normal);
 				}
 
