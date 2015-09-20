@@ -15,7 +15,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="test.svg">
+   sodipodi:docname="test.svg"
+   inkscape:export-filename="/home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/test.png"
+   inkscape:export-xdpi="92.903229"
+   inkscape:export-ydpi="92.903229">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,8 +29,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="487.09566"
-     inkscape:cy="461.01836"
+     inkscape:cx="541.38137"
+     inkscape:cy="411.01836"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -505,5 +508,93 @@
        height="96"
        x="928"
        y="956.36218" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="106.06875"
+       y="136.08215"
+       id="text4453"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455"
+         x="106.06875"
+         y="136.08215">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="231.54875"
+       y="136.72215"
+       id="text4453-4"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455-6"
+         x="231.54875"
+         y="136.72215">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="359.34875"
+       y="136.12216"
+       id="text4453-4-2"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455-6-9"
+         x="359.34875"
+         y="136.12216">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="486.82874"
+       y="136.08215"
+       id="text4453-4-2-5"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455-6-9-4"
+         x="486.82874"
+         y="136.08215">4</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="614.94873"
+       y="135.48216"
+       id="text4453-4-2-5-4"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455-6-9-4-5"
+         x="614.94873"
+         y="135.48216">5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="742.38873"
+       y="135.64217"
+       id="text4453-4-2-5-4-0"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455-6-9-4-5-3"
+         x="742.38873"
+         y="135.64217">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="870.70874"
+       y="136.08215"
+       id="text4453-4-2-5-4-0-8"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455-6-9-4-5-3-1"
+         x="870.70874"
+         y="136.08215">7</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:80px;line-height:129.99999523%;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Medium';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="998.74878"
+       y="136.12216"
+       id="text4453-4-2-5-4-0-8-4"
+       sodipodi:linespacing="130%"><tspan
+         sodipodi:role="line"
+         id="tspan4455-6-9-4-5-3-1-5"
+         x="998.74878"
+         y="136.12216">8</tspan></text>
   </g>
 </svg>

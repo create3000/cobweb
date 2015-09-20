@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 12 Mar 2015 06:39:51 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.6, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 12 Mar 2015 06:39:51 GMT'/>
+    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
+    <meta name='modified' content='Sun, 20 Sep 2015 03:59:33 GMT'/>
     <meta name='title' content='NIST Logo'/>
   </head>
   <Scene>
@@ -60,7 +60,7 @@
                 diffuseColor='0 0 0'/>
           </Appearance>
           <Text DEF='LOGO_TEXT'
-              string='"Titania 0.7.6"'>
+              string='"Titania 1.1.0"'>
             <FontStyle
                 family='"SANS"'
                 style='BOLD'
@@ -71,19 +71,23 @@
       </Transform>
       <Viewpoint
           description='view1'
-          position='-2.95 2.57 2.36'
-          orientation='0 -1 0 0.59'/>
+          position='-2.89246 2.77921 2.64677'
+          orientation='-0.134438 -0.990326 -0.0343752 0.542705'
+          centerOfRotation='-0.846057 2.48146 -0.784584'/>
       <Viewpoint
           description='view2'
-          position='-0.61 2.65 3.2'/>
+          position='-0.588 2.494 3.13715'
+          centerOfRotation='-0.588 2.494 -0.617'/>
       <Viewpoint
           description='view3'
-          position='-0.71511 1.81772 0.375534'
-          orientation='0.999793 -0.0130949 -0.0155546 1.2437'/>
+          position='-0.505127 1.5449 0.355126'
+          orientation='0.999526 -0.0262376 -0.016102 1.17229'
+          centerOfRotation='-0.460265 2.75896 -0.156626'/>
       <Viewpoint
           description='view4'
-          position='1.62515 2.66472 -2.86028'
-          orientation='0 1 0 2.46091'/>
+          position='1.38682 2.73609 -2.5325'
+          orientation='0 1 0 2.46091'
+          centerOfRotation='-0.332126 2.7361 -0.409796'/>
       <Script DEF='LOGO_SCRIPT'>
         <field accessType='outputOnly' type='MFString' name='Logo'/>
 <![CDATA[vrmlscript:

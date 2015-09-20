@@ -22,10 +22,6 @@ body {
 	color: white;
 }
 
-x3d {
-	height: 100%;
-}
-
 #bookmarks {
 	overflow: hidden;
 	padding: 5px;
@@ -33,6 +29,16 @@ x3d {
 	float: left;
 	font-size: 12px;
 	text-align: right;
+}
+
+x3d {
+	height: 100%;
+}
+
+.cobweb-fallback p {
+	display: block;
+	margin: 300px 0 0 0;
+	text-align: center;
 }
 		</style>
 	<script type="text/javascript">
@@ -147,11 +153,23 @@ X3D (function (dom)
 
 	randomWorld ();
 	toggleBookmarks ();
+},
+function (elements, error)
+{
+	console .error ("Please forgive me, your browser may not support all features required by Cobweb!");
+	console .error (error);
 });
 	</script>
 </head>
 <body>
 	<div id="bookmarks"></div>
-	<X3D></X3D>
+	<X3D>
+		<p>Sorry,<br>
+			it wasn't me!<br>
+			<br>
+			Your browser may not support all features required by Cobweb!<br>
+			You can use Firefox, because this is currently the choice of the choice.
+		</p>
+	</X3D>
 </body>
 </html>
