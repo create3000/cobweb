@@ -45,7 +45,7 @@ function ($,
 			maxLights: MAX_LIGHTS,
 			settings: {
 				shader: null,
-				lights: 0,
+				lights: MAX_LIGHTS,
 			},
 			wireframe: false,
 			getTypeName: function ()

@@ -45,9 +45,21 @@ function ($,
 		this .defaultViewpoint      = defaultViewpoint;
 		this .group                 = group;
 
+		this .currentViewport     = null;
+		this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
+		this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
+		this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
+		this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
+
+		this .navigationInfos = new BindableList (this .getExecutionContext (), this);
+		this .backgrounds     = new BindableList (this .getExecutionContext (), this);
+		this .fogs            = new BindableList (this .getExecutionContext (), this);
+		this .viewpoints      = new BindableList (this .getExecutionContext (), this);
+
 		this .defaultBackground .setHidden (true);
 		this .defaultFog        .setHidden (true);
 
+		this .hitRay        = line;
 		this .collisionTime = 0;
 	}
 
@@ -66,22 +78,9 @@ function ($,
 			this .defaultFog            .setup ();
 			this .defaultViewpoint      .setup ();
 
-			this .currentViewport     = null;
-			this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
-			this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
-			this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
-			this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
-
-			this .navigationInfos = new BindableList (this .getExecutionContext (), this);
-			this .backgrounds     = new BindableList (this .getExecutionContext (), this);
-			this .fogs            = new BindableList (this .getExecutionContext (), this);
-			this .viewpoints      = new BindableList (this .getExecutionContext (), this);
-
 			this .group .children_ = this .children_;
 			this .group .setup ();
 			this .collect = this .group .traverse .bind (this .group);
-
-			this .hitRay = line;
 
 			this .viewport_       .addInterest (this, "set_viewport__");
 			this .addChildren_    .addFieldInterest (this .group .addChildren_);
@@ -208,7 +207,9 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			this .getBrowser () .getLayers () .push (this);
+		   var browser = this .getBrowser ();
+
+			browser .getLayers () .push (this);
 
 			switch (type)
 			{
@@ -226,7 +227,8 @@ function ($,
 					break;
 			}
 
-			this .getBrowser () .getLayers () .pop ();
+			browser .getGlobalLights () .length = 0;
+			browser .getLayers () .pop ();
 		},
 		pointer: function ()
 		{
@@ -253,8 +255,6 @@ function ($,
 				this .currentViewport .push ();
 				this .collect (TraverseType .POINTER);
 				this .currentViewport .pop ();
-
-				this .getBrowser () .getGlobalLights () .length = 0;
 			}
 		},
 		camera: function ()

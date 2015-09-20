@@ -53,7 +53,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "motor2AngleRate",      new SFFloat ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "motor3Angle",          new SFFloat ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "motor3AngleRate",      new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "autoCalc",             new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "autoCalc",             new SFBool ()),
 			]),
 			getTypeName: function ()
 			{

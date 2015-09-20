@@ -1,6 +1,7 @@
 
 define ([
 	"jquery",
+	"cobweb/Error",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DField",
@@ -16,9 +17,9 @@ define ([
 	"cobweb/Routing/RouteArray",
 	"cobweb/Routing/X3DRoute",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/Error",
 ],
 function ($,
+          Error,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DField,
@@ -33,8 +34,7 @@ function ($,
           X3DProtoDeclaration,
           RouteArray,
           X3DRoute,
-          X3DConstants,
-          Error)
+          X3DConstants)
 {
 	// Console fallback
 

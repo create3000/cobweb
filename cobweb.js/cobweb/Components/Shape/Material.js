@@ -53,7 +53,7 @@ function ($,
 			{
 				X3DMaterialNode .prototype .initialize .call (this);
 
-				this .addChildren ("isTransparent", new SFBool (false));
+				this .addChildren ("isTransparent", new SFBool ());
 
 				this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
 				this .diffuseColor_     .addInterest (this, "set_diffuseColor__");

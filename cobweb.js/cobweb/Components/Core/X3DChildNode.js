@@ -21,7 +21,7 @@ function ($,
 
 			this .addType (X3DConstants .X3DChildNode);
 
-			this .addChildren ("isCameraObject", new SFBool (false));
+			this .addChildren ("isCameraObject", new SFBool ());
 		}
 
 		X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),

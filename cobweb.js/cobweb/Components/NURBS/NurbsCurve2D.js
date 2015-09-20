@@ -29,7 +29,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "tessellation", new SFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "closed",       new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "closed",       new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "order",        new SFInt32 (3)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "knot",         new MFDouble ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "weight",       new MFDouble ()),

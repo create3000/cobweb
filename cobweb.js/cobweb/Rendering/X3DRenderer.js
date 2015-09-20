@@ -286,8 +286,6 @@ function ($,
 					break;
 				}
 			}
-
-			this .getBrowser () .getGlobalLights () .length = 0;
 		},
 		collide: function ()
 		{

@@ -12,12 +12,7 @@ function (BrowserOptions,
 	{
 		try
 		{
-			var gl = canvas .getContext ('experimental-webgl');
-
-			if (gl === null)
-				gl = canvas .getContext ('webgl');
-
-			return gl;
+			return canvas .getContext ("webgl") || canvas .getContext ("experimental-webgl");
 		}
 		catch (error)
 		{

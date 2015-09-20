@@ -42,7 +42,7 @@ function ($,
 			constructor: LOD,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "forceTransitions", new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "forceTransitions", new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "center",           new SFVec3f (0, 0, 0)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "range",            new MFFloat ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed",    new SFInt32 ()),

@@ -10,6 +10,7 @@ define ([
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Triangle3",
 ],
 function ($,
           Fields,
@@ -20,7 +21,8 @@ function ($,
           Vector3,
           Matrix4,
           Box3,
-          Plane3)
+          Plane3,
+          Triangle3)
 {
 	with (Fields)
 	{
@@ -34,13 +36,13 @@ function ($,
 			// left: We do not have to test for left.
 		];
 
-		var zero = new Vector3 (0,  0,  0);
-
 		function X3DGeometryNode (browser, executionContext)
 		{
 			X3DNode .call (this, browser, executionContext);
 
 			this .addType (X3DConstants .X3DGeometryNode);
+				
+			this .addChildren ("isTransparent", new SFBool ());
 		}
 
 		X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -51,6 +53,7 @@ function ($,
 			v0: new Vector3 (0, 0, 0),
 			v1: new Vector3 (0, 0, 0),
 			v2: new Vector3 (0, 0, 0),
+			normal: new Vector3 (0, 0, 0),
 			setup: function ()
 			{
 				this .setTainted (true);
@@ -66,18 +69,20 @@ function ($,
 			{
 				X3DNode .prototype .initialize .call (this);
 
-				this .addChildren ("isTransparent", new SFBool (false));
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest (this, "set_live__");
 
 				var gl = this .getBrowser () .getContext ();
-		
+
 				this .min         = new Vector3 (0, 0, 0);
 				this .max         = new Vector3 (0, 0, 0);
 				this .bbox        = new Box3 (this .min, this .max, true);
 				this .solid       = true;
-				this .frontFace   = 0;
+				this .flatShading = undefined;
 				this .colors      = [ ];
 				this .texCoords   = [ ];
 				this .normals     = [ ];
+				this .flatNormals = [ ];
 				this .vertices    = [ ];
 				this .vertexCount = 0;
 
@@ -92,10 +97,12 @@ function ($,
 				if (! this .isLineGeometry ())
 				{
 					for (var i = 0; i < 5; ++ i)
-						this .planes [i] = new Plane3 (zero, boxNormals [0]);
+						this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 				}
 
 				this .setCurrentTexCoord (null);
+
+				this .set_live__ ();
 			},
 			isLineGeometry: function ()
 			{
@@ -283,6 +290,66 @@ function ($,
 
 				return normals_;
 			},
+			set_live__: function ()
+			{
+				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
+
+				if (live)
+					this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+				else
+					this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest (this, "set_shading__");
+			},
+			set_shading__: function (shading)
+			{
+				if (this .isLineGeometry ())
+					return;
+				
+				var flatShading = shading .getValue () === "FLAT";
+
+				if (flatShading === this .flatShading)
+					return;
+			   
+			   this .flatShading = flatShading;
+
+			   // Generate flat normals if needed.
+
+				var gl = this .getBrowser () .getContext ();
+
+				if (flatShading)
+				{
+					if (! this .flatNormals .length)
+					{
+						var
+							cw          = this .frontFace === gl .CW,
+							flatNormals = this .flatNormals,
+							vertices    = this .vertices,
+							v0          = this .v0,
+							v1          = this .v1,
+							v2          = this .v2,
+							normal      = this .normal;
+
+						for (var i = 0, length = vertices .length; i < length; i += 12)
+						{
+						   Triangle3 .normal (v0 .set (vertices [i + 0], vertices [i + 1], vertices [i + 2]),
+						                      v1 .set (vertices [i + 4], vertices [i + 5], vertices [i + 6]),
+						                      v2 .set (vertices [i + 8], vertices [i + 9], vertices [i + 10]),
+						                      normal);
+						   
+							if (cw)
+								normal .negate ();
+
+							flatNormals .push (normal .x, normal .y, normal .z,
+							                   normal .x, normal .y, normal .z,
+							                   normal .x, normal .y, normal .z);
+						}
+					}
+				}
+
+				// Transfer normals.
+
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (flatShading ? this .flatNormals : this .normals), gl .STATIC_DRAW);
+			},
 			eventsProcessed: function ()
 			{
 				X3DNode .prototype .eventsProcessed .call (this);
@@ -304,6 +371,7 @@ function ($,
 						this .buildTexCoords ();
 				}
 
+				this .set_shading__ (this .getBrowser () .getBrowserOptions () .Shading_);
 				this .transfer ();
 			},
 			clear: function ()
@@ -311,10 +379,12 @@ function ($,
 				this .min .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
 				this .max .set (Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY);
 
-				this .colors    .length = 0;
-				this .texCoords .length = 0;
-				this .normals   .length = 0;
-				this .vertices  .length = 0;
+				this .flatShading = undefined;
+				this .colors      .length = 0;
+				this .texCoords   .length = 0;
+				this .normals     .length = 0;
+				this .flatNormals .length = 0;
+				this .vertices    .length = 0;
 			},
 			transfer: function ()
 			{
@@ -339,11 +409,6 @@ function ($,
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [i]);
 					gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .texCoords [i]), gl .STATIC_DRAW);
 				}
-
-				// Transfer normals.
-
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .normals), gl .STATIC_DRAW);
 
 				// Transfer vertices.
 

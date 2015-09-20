@@ -47,8 +47,8 @@ function ($,
 			fieldDefinitions = [
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new SFBool (false)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new SFBool ()),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new SFBool ()),
 			];
 	
 		function Script (executionContext)

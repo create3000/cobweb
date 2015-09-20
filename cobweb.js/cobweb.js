@@ -27,8 +27,12 @@ if (window .X3D === undefined)
 	},
 	function (error)
 	{
-		require ("cobweb/Error") (error, window .X3D .fallbacks);
+		require (["cobweb/Error"],
+		function (Error)
+		{
+			Error (error, window .X3D .fallbacks);
 
-		delete window .X3D;
+			delete window .X3D;
+		});
 	});
 }

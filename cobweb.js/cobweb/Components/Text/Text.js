@@ -33,7 +33,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "string",     new MFString ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "length",     new MFFloat ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "maxExtent",  new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",      new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",      new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "origin",     new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "textBounds", new SFVec2f ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,     "lineBounds", new MFVec2f ()),
@@ -66,6 +66,15 @@ function ($,
 					return this .length_ [index];
 
 				return 0;
+			},
+			set_live__: function ()
+			{
+			    X3DGeometryNode .prototype .set_live__ .call (this);
+
+			   if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+					this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest (this, "eventsProcessed");
+			   else
+					this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest (this, "eventsProcessed");
 			},
 			set_fontStyle__: function ()
 			{

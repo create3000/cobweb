@@ -29,7 +29,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "closed",        new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "closed",        new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new MFFloat ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new MFRotation ()),
 				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new SFRotation ()),

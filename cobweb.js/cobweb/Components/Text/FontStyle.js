@@ -844,15 +844,6 @@ function ($,
 			{
 				return "fontStyle";
 			},
-			initialize: function ()
-			{
-			   X3DFontStyleNode .prototype .initialize .call (this);
-				
-				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-				this .isLive ()                         .addInterest (this, "set_live__");
-
-				this .set_live__ ();
-			},
 			getTextGeometry: function (text)
 			{
 			   return new PolygonText (text, this);
@@ -860,22 +851,6 @@ function ($,
 			getScale: function ()
 			{
 			   return this .size_ .getValue ();
-			},
-			set_live__: function ()
-			{
-			   if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-			   {
-			      this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest (this, "addNodeEvent");
-
-			      var primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
-
-			      if (this .primitiveQuality !== undefined && primitiveQuality !== this .primitiveQuality)
-			         this .addNodeEvent ();
-			      
-					this .primitiveQuality = primitiveQuality;
-			   }
-			   else
-			      this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest (this, "addNodeEvent");
 			},
 		});
 

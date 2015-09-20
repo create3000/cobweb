@@ -28,7 +28,7 @@ function ($,
 			constructor: TwoSidedMaterial,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",             new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "separateBackColor",    new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "separateBackColor",    new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity",     new SFFloat (0.2)),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "diffuseColor",         new SFColor (0.8, 0.8, 0.8)),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "specularColor",        new SFColor (0, 0, 0)),
@@ -58,7 +58,7 @@ function ($,
 			{
 				X3DMaterialNode . prototype .initialize .call (this);
 				
-				this .addChildren ("isTransparent", new SFBool (false));
+				this .addChildren ("isTransparent", new SFBool ());
 
 				this .transparency_     .addInterest (this, "set_transparent__");
 				this .backTransparency_ .addInterest (this, "set_transparent__");

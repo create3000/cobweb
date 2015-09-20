@@ -199,7 +199,7 @@ function ($,
 			},
 			set_live__: function ()
 			{
-			   var live = this .getExecutionContext () .isLive () .getValue () && X3DNode .prototype .isLive .call (this) .getValue ();
+				var live = this .getExecutionContext () .isLive () .getValue () && X3DNode .prototype .isLive .call (this) .getValue ();
 
 				if (live)
 					this .beginUpdate ();

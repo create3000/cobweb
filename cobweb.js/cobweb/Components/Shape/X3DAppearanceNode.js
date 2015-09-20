@@ -26,7 +26,7 @@ function ($,
 			{
 				X3DNode .prototype .initialize .call (this);
 				
-				this .addChildren ("isTransparent", new SFBool (false));
+				this .addChildren ("isTransparent", new SFBool ());
 			},
 		});
 

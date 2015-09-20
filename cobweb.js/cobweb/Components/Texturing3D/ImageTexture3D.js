@@ -32,9 +32,9 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput,    "url",               new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatS",           new SFBool (false)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatT",           new SFBool (false)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatR",           new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatS",           new SFBool ()),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatT",           new SFBool ()),
+				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatR",           new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new SFNode ()),
 			]),
 			getTypeName: function ()

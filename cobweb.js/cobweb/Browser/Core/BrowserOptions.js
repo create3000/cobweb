@@ -38,7 +38,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .inputOutput, "PrimitiveQuality",       new SFString ("MEDIUM")),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "QualityWhenMoving",      new SFString ("MEDIUM")),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "Shading",                new SFString ("GOURAUD")),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "MotionBlur",             new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "MotionBlur",             new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .inputOutput, "Gravity",                new SFFloat (9.80665)),
 			]),
 			getTypeName: function ()

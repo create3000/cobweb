@@ -29,7 +29,7 @@ function ($,
 			fieldDefinitions: new FieldDefinitionArray ([
 				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new SFNode ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "toggle",      new SFBool (false)),
+				new X3DFieldDefinition (X3DConstants .inputOutput, "toggle",      new SFBool ()),
 			]),
 			getTypeName: function ()
 			{
