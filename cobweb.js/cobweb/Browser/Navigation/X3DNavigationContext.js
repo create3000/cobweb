@@ -18,8 +18,6 @@ function (Fields,
 {
 	with (Fields)
 	{
-		var NONE = new SFString ("NONE");
-
 		getHeadLight = function (executionContext)
 		{
 			var light = new DirectionalLight (executionContext);

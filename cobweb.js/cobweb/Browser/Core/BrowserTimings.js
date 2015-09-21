@@ -46,11 +46,13 @@ function ($,
 			this .buttons = $("<div/>") .appendTo (this .element);
 			this .button  = $("<button/>") .text ("More Properties") .click (this .set_type__ .bind (this)) .appendTo (this .buttons);
 
-			if (this .getBrowser () .getXML () [0] .getAttribute ("timings") == "true")
+			if (this .getBrowser () .getXML () [0] .getAttribute ("timings") == "true" || localStorage ["BrowserTimings.enabled"])
 				this .enabled_ = true;
 		},
 		set_enabled__: function (enabled)
 		{
+		   localStorage ["BrowserTimings.enabled"] = enabled .getValue ();
+
 			if (enabled .getValue ())
 			{
 				this .element .fadeIn ();
