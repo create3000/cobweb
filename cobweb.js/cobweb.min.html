@@ -15,6 +15,7 @@ html, body {
 	border: 0px;
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
 }
 
 body {
@@ -48,7 +49,7 @@ X3D (function (dom)
 	var scene   = Browser .currentScene;			
 
 	var index = 0;
-	var pages = [ "Page 1", "Page 2" ];
+	var pages = [ "Page 1", "Page 2", "Page 3" ];
 
 	var urls =
 	[
@@ -89,6 +90,7 @@ X3D (function (dom)
 			{ name: 'Geometry3D',         url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Geometry3D/Geometry3D.x3d" },
 			{ name: 'PointLight',         url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/PointLight.x3d" },
 			{ name: 'SpotLight',          url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/SpotLight.x3d" },
+			{ name: 'LayerSet',           url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Layering/ViewportLayer.x3d" },
 			{ name: 'Nested Protos',      url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PROTO/NestedProtos.x3d" },
 		],
 	];

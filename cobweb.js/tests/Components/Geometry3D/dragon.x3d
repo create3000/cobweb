@@ -25,8 +25,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 10 Jul 2014 17:28:33 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 29 Aug 2015 04:54:23 GMT'/>
+    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
+    <meta name='modified' content='Mon, 21 Sep 2015 13:36:20 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Material_1'
@@ -36,7 +36,11 @@
         scaleOrientation='0.223266 -0.938908 0.261924 0.134124'>
       <Shape>
         <Appearance DEF='Appearance'>
-          <Material/>
+          <Material DEF='Metal7_1'
+              ambientIntensity='0.00714286'
+              diffuseColor='0.314286 0.0743647 0'
+              specularColor='0.780612 0.691177 0.397036'
+              shininess='0.357143'/>
         </Appearance>
         <IndexedFaceSet
             creaseAngle='0.639628'
@@ -46,7 +50,7 @@
         </IndexedFaceSet>
       </Shape>
     </Transform>
-    <Viewpoint DEF='_1'
+    <Viewpoint
         position='0.366881 0.132366 3.94876'
         orientation='-0.0799954 0.954856 0.286097 0.0997847'
         centerOfRotation='0.17886 0.113906 1.97883'/>
