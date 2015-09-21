@@ -84,6 +84,23 @@
     <None Include="1\1.10\images\logo.png" />
     <None Include="1\1.10\cobweb.css" />
     <None Include="1\1.10\cobweb.min.js" />
+    <None Include="1\1.11\images\ExamineViewer.png" />
+    <None Include="1\1.11\images\FlyViewer.png" />
+    <None Include="1\1.11\images\gtk-zoom-fit.png" />
+    <None Include="1\1.11\images\gtk-zoom-in.png" />
+    <None Include="1\1.11\images\help-about.png" />
+    <None Include="1\1.11\images\icon.bw.png" />
+    <None Include="1\1.11\images\icon.png" />
+    <None Include="1\1.11\images\logo.bw.png" />
+    <None Include="1\1.11\images\logo.png" />
+    <None Include="1\1.11\images\NoneViewer.png" />
+    <None Include="1\1.11\images\PlaneViewer.png" />
+    <None Include="1\1.11\images\PrimitiveQuality.png" />
+    <None Include="1\1.11\images\TextureQuality.png" />
+    <None Include="1\1.11\images\Viewpoint.png" />
+    <None Include="1\1.11\images\WalkViewer.png" />
+    <None Include="1\1.11\cobweb.css" />
+    <None Include="1\1.11\cobweb.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
