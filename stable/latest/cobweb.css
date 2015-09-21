@@ -1,6 +1,8 @@
 /* CSS StyleSheet */
 @charset "utf-8";
 
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu+Mono:400,700);
+
 x3d {
 	position: relative;
 	display: block;
@@ -11,13 +13,20 @@ x3d {
 	background: url(images/logo.png) center center no-repeat #414141;
 }
 
-x3d .fallback {
-	width: 100%;
-	height: 100%;
+x3d > * {
+	display: none;
+}
+
+x3d.cobweb-fallback {
 	background: url(images/logo.bw.png) center center no-repeat #101010;
 }
 
-x3d .browser {
+x3d.cobweb-fallback > * {
+	display: initial;
+}
+
+x3d .cobweb-browser {
+	display: block;
 	position: relative;
 	margin: 0px;
 	padding: 0px;
@@ -26,7 +35,7 @@ x3d .browser {
 	height: 100%;
 }
 
-x3d .canvas {
+x3d .cobweb-surface {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
@@ -42,23 +51,23 @@ x3d canvas {
 	height: 100%;
 }
 
-x3d .notification {
+x3d .cobweb-notification {
 	display: none;
 	position: absolute;
 	top: 20px;
 	right: -4px;
 	padding: 5px 29px 5px 25px;
-	background: url(images/icon.bw.png) no-repeat 5px 4px rgba(0,0,0,0.5);
+	background: url(images/icon.bw.png) no-repeat 5px 5px rgba(0,0,0,0.5);
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;
-	font-family: sans;
-	font-size: 10px;
+	font-family: Ubuntu, sans-serif;
+	font-size: 11px;
 	white-space: pre;
 	pointer-events: none;
 }
 
-x3d .renderingProperties {
+x3d .cobweb-browser-timing {
 	display: none;
 	position: absolute;
 	bottom: -4px;
@@ -68,28 +77,234 @@ x3d .renderingProperties {
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;
-	font-family: monospace;
-	font-size: 9px;
+	font-family: Ubuntu Mono, monospace;
+	font-size: 11px;
+	line-height: 1.1;
 	white-space: pre;
 	pointer-events: none;
 }
 
-x3d .renderingProperties div.header {
-	font-size: 9px;
+x3d .cobweb-browser-timing div.cobweb-header {
 	margin-bottom: 9px;
 	font-weight: bold;
 }
 
-x3d .renderingProperties button {
+x3d .cobweb-browser-timing button {
 	border: 0;
 	padding: 0;
 	background: rgba(0,0,0,0.5);
-	font-size: 9px;
-	font-family: monospace;
+	font-size: 11px;
+	line-height: 1.1;
+	font-family: Ubuntu Mono, monospace;
 	pointer-events: all;
 	cursor: default;
 }
 
-x3d .renderingProperties button:hover {
+x3d .cobweb-browser-timing button:hover {
 	cursor: pointer;
+}
+
+/* menu title */
+.cobweb-menu-title:before {
+    content: "Cobweb X3D Browser";
+    display: block;
+    padding: 4px 32px 4px 8px;
+    font-weight: bold;
+}
+
+.context-menu-selected {
+	font-weight: bold;
+}
+
+/*!
+ * jQuery contextMenu - Plugin for simple contextMenu handling
+ *
+ * Version: v1.8.1
+ *
+ * Authors: Björn Brala (SWIS.nl), Rodney Rehm, Addy Osmani (patches for FF)
+ * Web: http://swisnl.github.io/jQuery-contextMenu/
+ *
+ * Copyright (c) 2011-2015 SWIS BV and contributors
+ *
+ * Licensed under
+ *   MIT License http://www.opensource.org/licenses/mit-license
+
+ * Date: 2015-09-20T18:47:54.927Z
+ */
+
+.context-menu-list {
+	position: absolute;
+	display: inline-block;
+	min-width: 120px;
+	padding: 0;
+	margin: 0;
+	font-family: Ubuntu, sans-serif;
+	font-size: 11px;
+	line-height: 1.2;
+	list-style-type: none;
+	background: #222;
+	color: #eee;
+	border: 0px solid #ddd;
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+	        box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+}
+
+.context-menu-item {
+	position: relative;
+	background: #222;
+	border-top: 1px solid #222;
+	border-bottom: 1px solid #222;
+	padding: 3px 24px 3px 24px;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	    -ms-user-select: none;
+	        user-select: none;
+}
+
+.context-menu-separator {
+	padding-bottom: 0;
+	border-bottom: 1px solid #111;
+}
+
+.context-menu-item > label > input,
+.context-menu-item > label > textarea {
+	-webkit-user-select: text;
+	   -moz-user-select: text;
+	    -ms-user-select: text;
+ 	       user-select: text;
+}
+
+.context-menu-item.hover {
+	cursor: pointer;
+	background-color: #444;
+	border-top: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+}
+
+.context-menu-item.disabled {
+	color: #666;
+}
+
+.context-menu-input.hover,
+.context-menu-item.disabled.hover {
+	cursor: default;
+}
+
+.context-menu-submenu:after {
+	content: "";
+	position: absolute;
+	display: block;
+	right: 0;
+	top: 5px;
+	margin-right: 2px;
+	/* CSS triangle */
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 4px 0 4px 5px;
+	border-color: transparent transparent transparent #eee;
+}
+
+/* icons
+   #protip:
+   In case you want to use sprites for icons (which I would suggest you do) have a look at
+   http://css-tricks.com/13224-pseudo-spriting/ to get an idea of how to implement 
+   .context-menu-item.icon:before {}
+ */
+
+.context-menu-item.context-menu-icon {
+	background-repeat: no-repeat;
+	background-position: 3px 2px;
+}
+
+.cobweb-icon-viewpoint {
+	background: url("images/Viewpoint.png");
+}
+
+.cobweb-icon-examine-viewer {
+	background: url("images/ExamineViewer.png");
+}
+
+.cobweb-icon-walk-viewer {
+	background: url("images/WalkViewer.png");
+}
+
+.cobweb-icon-fly-viewer {
+	background: url("images/FlyViewer.png");
+}
+
+.cobweb-icon-plane-viewer {
+	background: url("images/PlaneViewer.png");
+}
+
+.cobweb-icon-none-viewer {
+	background: url("images/NoneViewer.png");
+}
+
+.cobweb-icon-zoom-fit {
+	background: url("images/gtk-zoom-fit.png");
+}
+
+.cobweb-icon-zoom-in {
+	background: url("images/gtk-zoom-in.png");
+}
+
+.cobweb-icon-primitive-quality {
+	background: url("images/PrimitiveQuality.png");
+}
+
+.cobweb-icon-texture-quality {
+	background: url("images/TextureQuality.png");
+}
+
+.cobweb-icon-help-about {
+	background: url("images/help-about.png");
+}
+
+/* vertically align inside labels */
+.context-menu-input > label > * {
+	vertical-align: top;
+}
+
+/* position checkboxes and radios as icons */
+.context-menu-input > label > input[type="checkbox"],
+.context-menu-input > label > input[type="radio"] {
+	display: inline;
+	margin: 0;
+	margin-left: -20px;
+	padding: 0;
+}
+
+.context-menu-input > label > span {
+	margin-left: 4px;
+}
+
+.context-menu-input > label,
+.context-menu-input > label > input[type="text"],
+.context-menu-input > label > textarea,
+.context-menu-input > label > select {
+	display: block;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+.context-menu-input > label > textarea {
+	height: 100px;
+}
+
+.context-menu-item > .context-menu-list {
+	top: 5px;
+	/* re-positioned by js */
+	right: -5px;
+	display: none;
+}
+
+.context-menu-item.visible > .context-menu-list {
+	display: block;
+}
+
+.context-menu-accesskey {
+	text-decoration: underline;
 }

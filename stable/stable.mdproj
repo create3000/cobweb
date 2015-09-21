@@ -101,6 +101,17 @@
     <None Include="1\1.11\images\WalkViewer.png" />
     <None Include="1\1.11\cobweb.css" />
     <None Include="1\1.11\cobweb.min.js" />
+    <None Include="latest\images\ExamineViewer.png" />
+    <None Include="latest\images\FlyViewer.png" />
+    <None Include="latest\images\gtk-zoom-fit.png" />
+    <None Include="latest\images\gtk-zoom-in.png" />
+    <None Include="latest\images\help-about.png" />
+    <None Include="latest\images\NoneViewer.png" />
+    <None Include="latest\images\PlaneViewer.png" />
+    <None Include="latest\images\PrimitiveQuality.png" />
+    <None Include="latest\images\TextureQuality.png" />
+    <None Include="latest\images\Viewpoint.png" />
+    <None Include="latest\images\WalkViewer.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
