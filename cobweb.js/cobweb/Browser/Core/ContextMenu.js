@@ -207,11 +207,11 @@ function ($,
 					"mute-browser": {
 						name: _("Mute Browser"),
 						type: "checkbox",
-						selected: this .getBrowser () .getMute (),
+						selected: this .getBrowser () .mute_ .getValue (),
 						events: {
 							click: function ()
 							{
-								this .getBrowser () .setMute (! this .getBrowser () .getMute ());
+								this .getBrowser () .mute_ = ! this .getBrowser () .mute_ .getValue ();
 							}
 							.bind (this),
 						},

@@ -8,6 +8,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Core/PrimitiveQuality",
 	"cobweb/Browser/Core/TextureQuality",
+	"lib/dataStorage",
 	"lib/gettext",
 ],
 function ($,
@@ -18,6 +19,7 @@ function ($,
           X3DConstants,
           PrimitiveQuality,
           TextureQuality,
+          dataStorage,
           _)
 {
 	with (Fields)
@@ -67,8 +69,18 @@ function ($,
 				this .Shading_                   .addInterest (this, "set_shading__");
 				this .getBrowser () .shutdown () .addInterest (this, "set_shutdown__");
 
-				this .set_primitiveQuality__ ();
-				this .set_textureQuality__ ();
+				this .configure ();
+			},
+			configure: function ()
+			{
+				var
+					Rubberband       = dataStorage ["BrowserOptions.Rubberband"],
+					PrimitiveQuality = dataStorage ["BrowserOptions.PrimitiveQuality"],
+					TextureQuality   = dataStorage ["BrowserOptions.TextureQuality"];
+					
+				if (Rubberband       !== undefined) this .Rubberband_       = Rubberband;
+				if (PrimitiveQuality !== undefined) this .PrimitiveQuality_ = PrimitiveQuality;
+				if (TextureQuality   !== undefined) this .TextureQuality_   = TextureQuality;
 			},
 			getPrimitiveQuality: function ()
 			{
@@ -91,17 +103,23 @@ function ($,
 					if (! field .equals (fieldDefinition .value))
 						field .setValue (fieldDefinition .value);
 				}
+
+				this .configure ();
 			},
-			set_rubberband__: function ()
+			set_rubberband__: function (Rubberband)
 			{
-			   if (this .Rubberband_ .getValue ())
+				dataStorage ["BrowserOptions.Rubberband"] = Rubberband .getValue ();
+
+			   if (Rubberband .getValue ())
 			      this .getBrowser () .getNotification () .string_ = _("Rubberband: on");
 			   else
 					this .getBrowser () .getNotification () .string_ = _("Rubberband: off");
 			},
-			set_primitiveQuality__: function ()
+			set_primitiveQuality__: function (PrimitiveQuality)
 			{
-				switch (this .PrimitiveQuality_ .getValue ())
+				dataStorage ["BrowserOptions.PrimitiveQuality"] = PrimitiveQuality .getValue ();
+
+				switch (PrimitiveQuality .getValue ())
 				{
 					case "LOW":
 						this .primitiveQuality = PrimitiveQuality .LOW;
@@ -117,9 +135,11 @@ function ($,
 						break;
 				}
 			},
-			set_textureQuality__: function ()
+			set_textureQuality__: function (TextureQuality)
 			{
-				switch (this .TextureQuality_ .getValue ())
+				dataStorage ["BrowserOptions.TextureQuality"] = TextureQuality .getValue ();
+
+				switch (TextureQuality .getValue ())
 				{
 					case "LOW":
 						this .textureQuality = PrimitiveQuality .LOW;

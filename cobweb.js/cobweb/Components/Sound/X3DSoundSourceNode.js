@@ -79,16 +79,18 @@ function ($,
 				}
 			}
 		},
-		getMedia: function (value)
+		getMedia: function ()
 		{
 		   return this .media;
 		},
-		setVolume: function (value)
+		setVolume: function (volume)
 		{
-	      this .volume = value;
+	      if (volume !== this .volume && this .media)
+	      {
+				this .volume = volume;
 
-	      if (this .media)
-				this .media [0] .volume = this .getBrowser () .getMute () ? 0 : value * this .getBrowser () .getVolume ();
+				this .media [0] .volume = (! this .getBrowser () .mute_ .getValue ()) * this .getBrowser () .volume_ .getValue () * volume;
+			}
 		},
 		set_volume__: function ()
 		{
