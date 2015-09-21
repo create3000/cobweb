@@ -32,6 +32,8 @@ function (Fields)
 		setMute: function (value)
 		{
 		   this .mute_ .setValue (value);
+
+			this .getNotification () .string_ = value ? "Mute" : "Normal Volume";
 		},
 	};
 

@@ -43,7 +43,8 @@ function ($,
 			var
 				activeLayer      = this .getBrowser () .getActiveLayer (),
 				currentViewpoint = activeLayer ? activeLayer .getViewpoint () : null,
-				currentViewer    = this .getBrowser () .viewer_ .getValue ();
+				currentViewer    = this .getBrowser () .viewer_ .getValue (),
+				lookat           = this .getLookAtViewer ();
 
 			var menu = {
 				className: 'cobweb-menu-title',
@@ -83,20 +84,139 @@ function ($,
 						className: "context-menu-icon cobweb-icon-zoom-in",
 					},
 					"separator2": "--------",
-					"browser-timings": {
-						name: _("Browser Timings"),
+					//"view": {
+						//name: _("View"),
+						//items : {
+							"primitive-quality": {
+								name: _("Primitive Quality"),
+								className: "context-menu-icon cobweb-icon-primitive-quality",
+								items: {
+									"high": {
+										name: _("High"),
+										type: "radio",
+										radio: "primitive-quality",
+										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "HIGH",
+										events: {
+											click: function ()
+											{
+												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
+											}
+											.bind (this),
+										},
+									},
+									"medium": {
+										name: _("Medium"),
+										type: "radio",
+										radio: "primitive-quality",
+										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "MEDIUM",
+										events: {
+											click: function ()
+											{
+												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
+											}
+											.bind (this),
+										},
+									},
+									"low": {
+										name: _("Low"),
+										type: "radio",
+										radio: "primitive-quality",
+										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "LOW",
+										events: {
+											click: function ()
+											{
+												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
+											}
+											.bind (this),
+										},
+									},
+								},
+							},
+							"texture-quality": {
+								name: _("Texture Quality"),
+								className: "context-menu-icon cobweb-icon-texture-quality",
+								items: {
+									"high": {
+										name: _("High"),
+										type: "radio",
+										radio: "texture-quality",
+										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "HIGH",
+										events: {
+											click: function ()
+											{
+												this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
+											}
+											.bind (this),
+										},
+									},
+									"medium": {
+										name: _("Medium"),
+										type: "radio",
+										radio: "texture-quality",
+										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "MEDIUM",
+										events: {
+											click: function ()
+											{
+												this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
+											}
+											.bind (this),
+										},
+									},
+									"low": {
+										name: _("Low"),
+										type: "radio",
+										radio: "texture-quality",
+										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "LOW",
+										events: {
+											click: function ()
+											{
+												this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
+											}
+											.bind (this),
+										},
+									},
+								},
+							},
+							"display-rubberband": {
+								name: _("Display Rubberband"),
+								type: "checkbox",
+								selected: this .getBrowser () .getBrowserOption ("Rubberband"),
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("Rubberband", ! this .getBrowser () .getBrowserOption ("Rubberband"));
+									}
+									.bind (this),
+								},
+							},
+							"browser-timings": {
+								name: _("Browser Timings"),
+								type: "checkbox",
+								selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
+										this .getBrowser () .getCanvas () .focus ();
+									}
+									.bind (this),
+								},
+							},
+						//},
+					//},
+					"mute-browser": {
+						name: _("Mute Browser"),
 						type: "checkbox",
-						selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+						selected: this .getBrowser () .getMute (),
 						events: {
 							click: function ()
 							{
-								this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
-								this .getBrowser () .getCanvas () .focus ();
+								this .getBrowser () .setMute (! this .getBrowser () .getMute ());
 							}
 							.bind (this),
 						},
-						callback: function () { return true; },
 					},
+					"separator3": "--------",
 					"about": {
 						name: _("About Cobweb"),
 						className: "context-menu-icon cobweb-icon-help-about",
@@ -113,6 +233,9 @@ function ($,
 				delete menu .items .separator0;
 				delete menu .items .viewpoints;
 			}
+
+			if (! lookat)
+			   delete menu .items .lookat;
 
 			return menu;
 		},
@@ -185,6 +308,18 @@ function ($,
 			}
 
 		   return menu;
+		},
+		getLookAtViewer: function ()
+		{
+			var availableViewers = this .getBrowser () .availableViewers_;
+
+			for (var i = 0; i < availableViewers .length; ++ i)
+			{
+				if (availableViewers [i] === "LOOKAT")
+					return true;
+			}
+
+		   return false;
 		},
 		getViewerName: function (viewer)
 		{

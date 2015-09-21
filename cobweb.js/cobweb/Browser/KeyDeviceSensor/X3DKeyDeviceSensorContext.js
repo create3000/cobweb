@@ -103,14 +103,10 @@ function ($)
 					}
 					break;
 				}
-				case 77: // s
+				case 77: // m
 				{
 					if (this .ctrlKey)
-					{
 						this .setMute (! this .getMute ());
-						
-						this .getNotification () .string_ = this .getMute () ? "Mute" : "Normal Volume";
-					}
 
 					break;
 				}
@@ -131,19 +127,16 @@ function ($)
 				case 112: // F1
 				{
 					this .setBrowserOption ("PrimitiveQuality", "LOW");
-					this .getNotification () .string_ = "Primitive Quality: low";
 					break;
 				}
 				case 113: // F2
 				{
 					this .setBrowserOption ("PrimitiveQuality", "MEDIUM");
-					this .getNotification () .string_ = "Primitive Quality: medium";
 					break;
 				}
 				case 114: // F3
 				{
 					this .setBrowserOption ("PrimitiveQuality", "HIGH");
-					this .getNotification () .string_ = "Primitive Quality: high";
 					break;
 				}
 				case 225: // Alt Gr

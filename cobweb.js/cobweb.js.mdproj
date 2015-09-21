@@ -2382,6 +2382,17 @@
     <None Include="lib\gettext.js" />
     <None Include="cobweb\Browser\Core\ContextMenu.js" />
     <None Include="images\PlaneViewer.png" />
+    <None Include="images\ExamineViewer.png" />
+    <None Include="images\FlyViewer.png" />
+    <None Include="images\gtk-zoom-fit.png" />
+    <None Include="images\gtk-zoom-in.png" />
+    <None Include="images\help-about.png" />
+    <None Include="images\NoneViewer.png" />
+    <None Include="images\Viewpoint.png" />
+    <None Include="images\WalkViewer.png" />
+    <None Include="cobweb\Browser\Core\TextureQuality.js" />
+    <None Include="images\TextureQuality.png" />
+    <None Include="images\PrimitiveQuality.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
