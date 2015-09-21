@@ -3,10 +3,12 @@ define ([
 	"jquery",
 	"cobweb/Fields/SFBool",
 	"cobweb/Basic/X3DBaseNode",
+	"lib/dataStorage",
 ],
 function ($,
           SFBool,
-          X3DBaseNode)
+          X3DBaseNode,
+          dataStorage)
 {
 	function BrowserTimings (executionContext)
 	{
@@ -46,12 +48,12 @@ function ($,
 			this .buttons = $("<div/>") .appendTo (this .element);
 			this .button  = $("<button/>") .text ("More Properties") .click (this .set_type__ .bind (this)) .appendTo (this .buttons);
 
-			if (this .getBrowser () .getXML () [0] .getAttribute ("timings") == "true" || localStorage ["BrowserTimings.enabled"])
+			if (dataStorage ["BrowserTimings.enabled"])
 				this .enabled_ = true;
 		},
 		set_enabled__: function (enabled)
 		{
-		   localStorage ["BrowserTimings.enabled"] = enabled .getValue ();
+		   dataStorage ["BrowserTimings.enabled"] = enabled .getValue ();
 
 			if (enabled .getValue ())
 			{
