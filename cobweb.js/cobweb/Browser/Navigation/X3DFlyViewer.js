@@ -43,13 +43,13 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 		var gl = this .getBrowser () .getContext ();
 
+		this .button              = -1;
 		this .fromVector          = new Vector3 (0, 0, 0);
 		this .toVector            = new Vector3 (0, 0, 0);
 		this .direction           = new Vector3 (0, 0, 0);
 		this .sourceRotation      = new Rotation4 (0, 0, 1, 0);
 		this .destinationRotation = new Rotation4 (0, 0, 1, 0);
 		this .startTime           = 0;
-		this .button              = -1;
 		this .lineBuffer          = gl .createBuffer ();
 		this .lineCount           = 2;
 		this .lineVertices        = new Array (this .lineCount * 4);
@@ -69,9 +69,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var canvas = this .getBrowser () .getCanvas ();
 
-			canvas .bind ("mousedown.X3DFlyViewer",  this .mousedown .bind (this));
-			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup .bind (this));
-			canvas .bind ("mousemove.X3DFlyViewer",  this .mousemove .bind (this));
+			canvas .bind ("mousedown.X3DFlyViewer",  this .mousedown  .bind (this));
+			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup    .bind (this));
+			canvas .bind ("mousemove.X3DFlyViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
 
 			this .getBrowser () .addCollision (this);

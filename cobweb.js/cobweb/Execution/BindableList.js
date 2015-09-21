@@ -78,9 +78,9 @@ function ($, X3DBaseNode)
 
 			this .collected .length = 0;
 		},
-		set_bind__: function (value, node)
+		set_bind__: function (bind, node)
 		{
-			if (value .getValue ())
+			if (bind .getValue ())
 				node .bindToLayer (this .layer);
 
 			else

@@ -407,8 +407,6 @@ function ($,
 
 				else
 					viewpoint .set_bind_ = true;
-
-				this .getNotification () .string_ = viewpoint .description_;
 			},
 			addRoute: function (fromNode, fromEventOut, toNode, toEventIn)
 			{

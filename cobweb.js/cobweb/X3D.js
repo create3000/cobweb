@@ -85,7 +85,7 @@ function ($,
 
 		initialized = true;
 
-		$(document) .ready (function ()
+		$(function ()
 		{
 			var elements = $("X3D");
 		

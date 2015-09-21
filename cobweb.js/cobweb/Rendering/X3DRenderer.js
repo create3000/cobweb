@@ -35,7 +35,7 @@ function ($,
 		zAxis               = new Vector3 (0, 0, 1),
 		upVector            = new Vector3 (0, 1, 0),
 		vector              = new Vector3 (0, 0, 0),
-		rotation            = new Rotation4 ();
+		rotation            = new Rotation4 (0, 0, 1, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 

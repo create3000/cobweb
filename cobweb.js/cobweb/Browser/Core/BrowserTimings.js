@@ -40,7 +40,7 @@ function ($,
 			this .startTime = 0;
 			this .frames    = 0;
 
-			this .element = $("<div/>") .addClass ("cobweb-browser-timing") .appendTo (this .getBrowser () .getXML () .find (".cobweb-canvas"));
+			this .element = $("<div/>") .addClass ("cobweb-browser-timing") .appendTo (this .getBrowser () .getXML () .find (".cobweb-surface"));
 			this .header  = $("<div/>") .addClass ("cobweb-header") .text ("Browser Timings") .appendTo (this .element);
 			this .text    = $("<div/>") .appendTo (this .element);
 			this .buttons = $("<div/>") .appendTo (this .element);

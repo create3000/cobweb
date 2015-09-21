@@ -41,18 +41,15 @@ function ($, X3DViewer, Vector3, Rotation4)
 			   browser = this .getBrowser (),
 			   canvas  = browser .getCanvas ();
 
-			canvas .bind ("mousedown.ExamineViewer",  this .mousedown .bind (this));
-			canvas .bind ("mouseup.ExamineViewer",    this .mouseup .bind (this));
-			canvas .bind ("mousemove.ExamineViewer",  this .mousemove .bind (this));
+			canvas .bind ("mousedown.ExamineViewer",  this .mousedown  .bind (this));
+			canvas .bind ("mouseup.ExamineViewer",    this .mouseup    .bind (this));
+			canvas .bind ("mousemove.ExamineViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 
 			browser .getNotification () .string_ = "Examine Viewer";
 		},
 		mousedown: function (event)
 		{
-			if (this .button >= 0)
-				return;
-
 			this .button    = event .button;
 			this .pressTime = performance .now ();
 
@@ -90,10 +87,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 		},
 		mouseup: function (event)
 		{
-			if (event .button !== this .button)
-				return;
-
-			switch (this .button)
+			switch (event .button)
 			{
 				case 0:
 				{
@@ -125,9 +119,6 @@ function ($, X3DViewer, Vector3, Rotation4)
 		},
 		mousemove: function (event)
 		{
-			if (this .button < 0)
-				return;
-
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
 				x      = event .pageX - offset .left,

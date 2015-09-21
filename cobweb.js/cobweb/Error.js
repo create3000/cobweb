@@ -8,7 +8,7 @@ function ($)
 
 	function Error (error, fallbacks)
 	{
-		$(document) .ready (function ()
+		$(function ()
 		{
 		   var elements = $("X3D");
 

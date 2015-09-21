@@ -56,7 +56,7 @@ function ($,
 		{
 			this .cursorType = value;
 
-			var div = this .getBrowser () .getXML () .find (".cobweb-canvas");
+			var div = this .getBrowser () .getXML () .find (".cobweb-surface");
 
 			switch (value)
 			{

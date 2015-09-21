@@ -4,11 +4,13 @@ define ([
 	"cobweb/Browser/Core/RenderingProperties",
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
+	"cobweb/Browser/Core/ContextMenu",
 ],
 function (BrowserOptions,
           RenderingProperties,
           Notification,
-          BrowserTimings)
+          BrowserTimings,
+          ContextMenu)
 {
 	function getContext (canvas)
 	{
@@ -34,7 +36,7 @@ function (BrowserOptions,
 			// Get canvas & context.
 
 			var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .xml);
-			var canvas  = $("<div/>") .addClass ("cobweb-canvas")  .prependTo (browser);
+			var canvas  = $("<div/>") .addClass ("cobweb-surface") .prependTo (browser);
 
 			this .canvas  = $("<canvas/>") .prependTo (canvas);
 			this .context = getContext (this .canvas [0]);
@@ -43,11 +45,13 @@ function (BrowserOptions,
 			this .renderingProperties = new RenderingProperties (this);
 			this .notification        = new Notification (this);
 			this .browserTimings      = new BrowserTimings (this);
+			this .contextMenu         = new ContextMenu (this);
 
 			this .browserOptions      .setup ()
 			this .renderingProperties .setup ();
 			this .notification        .setup ();
 			this .browserTimings      .setup ();
+			this .contextMenu         .setup ();
 		},
 		getXML: function ()
 		{

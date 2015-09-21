@@ -16,7 +16,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4)
 	{
 		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
 
-		this .button    = -1;
+		this .button = -1;
 		this .fromPoint = new Vector3 (0, 0, 0);
 	}
 
@@ -31,18 +31,15 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4)
 			   browser = this .getBrowser (),
 			   canvas  = browser .getCanvas ();
 
-			canvas .bind ("mousedown.PlaneViewer",  this .mousedown .bind (this));
-			canvas .bind ("mouseup.PlaneViewer",    this .mouseup .bind (this));
-			canvas .bind ("mousemove.PlaneViewer",  this .mousemove .bind (this));
+			canvas .bind ("mousedown.PlaneViewer",  this .mousedown  .bind (this));
+			canvas .bind ("mouseup.PlaneViewer",    this .mouseup    .bind (this));
+			canvas .bind ("mousemove.PlaneViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.PlaneViewer", this .mousewheel .bind (this));
 
 			browser .getNotification () .string_ = "Plane Viewer";
 		},
 		mousedown: function (event)
 		{
-			if (this .button >= 0)
-				return;
-
 			this .button    = event .button;
 			this .pressTime = performance .now ();
 
@@ -66,16 +63,10 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4)
 		},
 		mouseup: function (event)
 		{
-			if (event .button !== this .button)
-				return;
-
 			this .button = -1;
 		},
 		mousemove: function (event)
 		{
-			if (this .button < 0)
-				return;
-
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
 				x      = event .pageX - offset .left,

@@ -313,9 +313,9 @@ function ($,
 
 				return orientation .multRight (rotation);
 			},
-			set_active__: function (value)
+			set_active__: function (active)
 			{
-				if (! value .getValue () && this .timeSensor .fraction_changed_ .getValue () === 1)
+				if (! active .getValue () && this .timeSensor .fraction_changed_ .getValue () === 1)
 				{
 					for (var id in this .getLayers ())
 					{
@@ -329,7 +329,9 @@ function ($,
 			},
 			set_bind__: function ()
 			{
-				if (! this .isBound_ .getValue ())
+				if (this .isBound_ .getValue ())
+					this .getBrowser () .getNotification () .string_ = this .description_;
+				else
 					this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
 			},
 			reshape: function ()
