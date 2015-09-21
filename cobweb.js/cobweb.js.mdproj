@@ -2393,6 +2393,7 @@
     <None Include="cobweb\Browser\Core\TextureQuality.js" />
     <None Include="images\TextureQuality.png" />
     <None Include="images\PrimitiveQuality.png" />
+    <None Include="tests\Components\Layering\Rotor.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
