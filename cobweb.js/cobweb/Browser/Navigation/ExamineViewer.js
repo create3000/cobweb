@@ -4,9 +4,10 @@ define ([
 	"cobweb/Browser/Navigation/X3DViewer",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
+	"lib/gettext",
 	"jquery-mousewheel",
 ],
-function ($, X3DViewer, Vector3, Rotation4)
+function ($, X3DViewer, Vector3, Rotation4, _)
 {
 	var
 		MOTION_TIME       = 0.05 * 1000,
@@ -46,7 +47,7 @@ function ($, X3DViewer, Vector3, Rotation4)
 			canvas .bind ("mousemove.ExamineViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 
-			browser .getNotification () .string_ = "Examine Viewer";
+			browser .getNotification () .string_ = _("Examine Viewer");
 		},
 		mousedown: function (event)
 		{

@@ -6,7 +6,7 @@
     <meta name='created' content='Tue, 22 Sep 2015 11:26:52 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Sep 2015 14:07:21 GMT'/>
+    <meta name='modified' content='Tue, 22 Sep 2015 20:15:13 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -27,7 +27,28 @@
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <Viewpoint DEF='_1'
+    <Script DEF='EnterWorldScript_1'>
+<![CDATA[javascript:
+
+function initialize ()
+{
+	isActive = true;
+	
+	try
+	{
+		Browser .setBrowserOption ("Shading", "PHONG");
+	}
+	catch (error)
+	{ }
+}
+
+function set_isActive (value, time)
+{
+	if (value)
+		enterTime = time;
+}]]> 
+    </Script>
+    <Viewpoint
         description='Home'
         position='-4.23514 5.73347 -2.53133'
         orientation='-0.169436 -0.885799 -0.432032 2.26662'/>

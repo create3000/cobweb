@@ -4,11 +4,13 @@ define ([
 	"cobweb/Fields/SFBool",
 	"cobweb/Basic/X3DBaseNode",
 	"lib/dataStorage",
+	"lib/gettext",
 ],
 function ($,
           SFBool,
           X3DBaseNode,
-          dataStorage)
+          dataStorage,
+          _)
 {
 	function BrowserTimings (executionContext)
 	{
@@ -43,10 +45,10 @@ function ($,
 			this .frames    = 0;
 
 			this .element = $("<div/>") .addClass ("cobweb-browser-timing") .appendTo (this .getBrowser () .getXML () .find (".cobweb-surface"));
-			this .header  = $("<div/>") .addClass ("cobweb-header") .text ("Browser Timings") .appendTo (this .element);
+			this .header  = $("<div/>") .addClass ("cobweb-header") .text (_("Browser Timings")) .appendTo (this .element);
 			this .text    = $("<div/>") .appendTo (this .element);
 			this .buttons = $("<div/>") .appendTo (this .element);
-			this .button  = $("<button/>") .text ("More Properties") .click (this .set_type__ .bind (this)) .appendTo (this .buttons);
+			this .button  = $("<button/>") .text (_("More Properties")) .click (this .set_type__ .bind (this)) .appendTo (this .buttons);
 
 			if (dataStorage ["BrowserTimings.enabled"])
 				this .enabled_ = true;
@@ -72,12 +74,12 @@ function ($,
 		   if (this .type === "MORE")
 		   {
 		      this .type = "LESS";
-		      this .button .text ("More Properties");
+		      this .button .text (_("More Properties"));
 		   }
 		   else
 		   {
 				this .type = "MORE";
-		      this .button .text ("Less Properties");
+		      this .button .text (_("Less Properties"));
 			}
 
 		   this .build ();
@@ -125,8 +127,8 @@ function ($,
 				systemTime     = browser .systemTime - browser .pickingTime;
 
 			var text = "";
-			text += "Frame rate: " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
-			text += "Speed:      " + browser .currentSpeed .toFixed (2) .toLocaleString () + " m/s\n";
+			text += _("Frame rate") + ": " + (this .frames / (currentTime - this .startTime)) .toFixed (2) .toLocaleString () + " fps\n";
+			text += _("Speed") + ":      " + browser .currentSpeed .toFixed (2) .toLocaleString () + " m/s\n";
 			text += "\n";
 
 			if (this .type === "MORE")

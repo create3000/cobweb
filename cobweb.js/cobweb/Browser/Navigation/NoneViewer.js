@@ -2,8 +2,9 @@
 define ([
 	"jquery",
 	"cobweb/Browser/Navigation/X3DViewer"
+	"lib/gettext",
 ],
-function ($, X3DViewer)
+function ($, X3DViewer, _)
 {
 	function NoneViewer (executionContext)
 	{
@@ -17,7 +18,7 @@ function ($, X3DViewer)
 		{
 			X3DViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getNotification () .string_ = "None Viewer";
+			this .getBrowser () .getNotification () .string_ = _("None Viewer");
 		},
 	});
 

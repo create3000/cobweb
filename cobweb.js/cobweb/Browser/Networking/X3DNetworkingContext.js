@@ -2,9 +2,11 @@
 define ([
 	"cobweb/Fields",
 	"standard/Networking/URI",
+	"lib/gettext",
 ],
 function (Fields,
-          URI)
+          URI,
+          _)
 {
 	with (Fields)
 	{
@@ -53,7 +55,7 @@ function (Fields,
 			   this .loadingObjects [id] = true;
 				this .loadCount_          = this .loadCount_ .getValue () + 1;
 
-				this .getNotification () .string_ = "Loading " + this .loadCount_;
+				this .getNotification () .string_ = _("Loading") + " " + this .loadCount_;
 				this .setCursor ("DEFAULT");
 
 				return id;
@@ -68,10 +70,10 @@ function (Fields,
 				this .loadCount_ = this .loadCount_ .getValue () - 1;
 
 				if (this .loadCount_ .getValue ())
-					this .getNotification () .string_ = "Loading " + this .loadCount_;
+					this .getNotification () .string_ =  _("Loading") + " " + this .loadCount_;
 				else
 				{
-					this .getNotification () .string_ = "Loading done";
+					this .getNotification () .string_ = _("Loading done");
 					this .setCursor ("DEFAULT");
 				}
 			},

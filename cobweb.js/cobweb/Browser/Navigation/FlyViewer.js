@@ -1,8 +1,9 @@
 ﻿
 define ([
 	"cobweb/Browser/Navigation/X3DFlyViewer",
+	"lib/gettext",
 ],
-function (X3DFlyViewer)
+function (X3DFlyViewer, _)
 {
 	function FlyViewer (executionContext)
 	{
@@ -16,7 +17,7 @@ function (X3DFlyViewer)
 		{
 			X3DFlyViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getNotification () .string_ = "Fly Viewer";
+			this .getBrowser () .getNotification () .string_ = _("Fly Viewer");
 		},
 		getTranslationOffset: function (velocity)
 		{

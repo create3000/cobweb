@@ -326,15 +326,15 @@ function ($,
 			switch (viewer)
 			{
 				case "EXAMINE":
-					return "Examine Viewer";
+					return _("Examine Viewer");
 				case "WALK":
-					return "Walk Viewer";
+					return _("Walk Viewer");
 				case "FLY":
-					return "Fly Viewer";
+					return _("Fly Viewer");
 				case "PLANE":
-					return "Plane Viewer";
+					return _("Plane Viewer");
 				case "NONE":
-					return "None Viewer";
+					return _("None Viewer");
 			}
 		},
 	});

@@ -515,9 +515,9 @@ function ($,
 									curve = new Bezier (x, -y, command .x1, -command .y1, command .x2, -command .y2, command .x, -command .y),
 									lut   = curve .getLUT (dimension);
 
-								lut .shift ();
-			
-								Array .prototype .push .apply (points, lut);
+								for (var l = 1; l < lut .length; ++ l)
+								   points .push (lut [l]);
+
 								break;
 							}
 							case "Q":
@@ -526,9 +526,9 @@ function ($,
 									curve = new Bezier (x, -y, command .x1, -command .y1, command .x, -command .y),
 									lut   = curve .getLUT (dimension);
 
-								lut .shift ();
-			
-								Array .prototype .push .apply (points, lut);
+								for (var l = 1; l < lut .length; ++ l)
+								   points .push (lut [l]);
+								
 								break;
 							}
 							default:

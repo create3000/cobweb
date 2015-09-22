@@ -3,8 +3,9 @@ define ([
 	"cobweb/Browser/Navigation/X3DFlyViewer",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
+	"lib/gettext",
 ],
-function (X3DFlyViewer, Vector3, Rotation4)
+function (X3DFlyViewer, Vector3, Rotation4, _)
 {
 	var yAxis = new Vector3 (0, 1, 0);
 	
@@ -20,7 +21,7 @@ function (X3DFlyViewer, Vector3, Rotation4)
 		{
 			X3DFlyViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getNotification () .string_ = "Walk Viewer";
+			this .getBrowser () .getNotification () .string_ = _("Walk Viewer");
 		},
 		getTranslationOffset: function (velocity)
 		{

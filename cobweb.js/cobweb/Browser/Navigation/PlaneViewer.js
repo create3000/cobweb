@@ -6,9 +6,10 @@ define ([
 	"cobweb/Components/Geospatial/GeoViewpoint",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
+	"lib/gettext",
 	"jquery-mousewheel",
 ],
-function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4)
+function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 {
 	var SCROLL_FACTOR = 0.05;
 
@@ -36,7 +37,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4)
 			canvas .bind ("mousemove.PlaneViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.PlaneViewer", this .mousewheel .bind (this));
 
-			browser .getNotification () .string_ = "Plane Viewer";
+			browser .getNotification () .string_ = _("Plane Viewer");
 		},
 		mousedown: function (event)
 		{

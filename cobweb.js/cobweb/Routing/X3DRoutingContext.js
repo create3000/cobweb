@@ -39,6 +39,7 @@ function ()
 					for (var i = 0, length = taintedFields .length; i < length; i += 2)
 						taintedFields [i] .processEvent (taintedFields [i + 1]);
 
+					// Don't know why this must be done after the for loop, otherwise a fatal error could be thrown.
 					this .taintedFieldsTemp = taintedFields;
 				}
 				while (this .taintedFields .length);
@@ -54,7 +55,8 @@ function ()
 
 					for (var i = 0, length = taintedNodes .length; i < length; ++ i)
 						taintedNodes [i] .processEvents ();
-
+					
+					// Don't know why this must be done after the for loop, otherwise a fatal error could be thrown.
 					this .taintedNodesTemp = taintedNodes;
 				}
 				while (! this .taintedFields .length && this .taintedNodes .length);
