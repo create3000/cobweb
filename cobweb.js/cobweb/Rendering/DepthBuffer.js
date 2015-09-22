@@ -58,21 +58,21 @@ define (function ()
 			var
 				array    = this .array,
 				distance = Number .POSITIVE_INFINITY,
-				w1       = this .width  - 1,
-				h1       = this .height - 1,
+				w1       = 2 / (this .width  - 1),
+				h1       = 2 / (this .height - 1),
 				zWidth   = zFar - zNear;
 
 			for (var py = 0, i = 0; py < this .height; ++ py)
 			{
-				var y = (2 * py / h1 - 1) * radius;
+				var y2 = Math .pow ((py * h1 - 1) * radius, 2);
 
 			   for (var px = 0; px < this .width; ++ px, i += 4)
 			   {
 				   var
-				      x = (2 * px / w1 - 1) * radius,
-				      z = zNear + zWidth * unpack (array [i], array [i + 1], array [i + 2]);
+				      x = (px * w1 - 1) * radius,
+				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375);
 
-					distance = Math .min (distance, Math .sqrt (x * x + y * y + z * z));
+					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
 			   }
 			}
 
@@ -96,19 +96,6 @@ define (function ()
 			gl .bindFramebuffer (gl .FRAMEBUFFER, null);
 		},
 	};
-
-	// Unpacks a floating point number from three component integer color.
-	// See Depth.vs vertex shader for pack.
-	function unpack (r, g, b)
-	{
-		var f = 0;
-
-		f += r / 255;
-		f += g / 65025;
-		f += b / 16581375;
-
-		return f;
-	}
 
 	return DepthBuffer;
 });
