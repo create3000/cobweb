@@ -85,16 +85,13 @@ function ($,
 		},
 		setVolume: function (volume)
 		{
-	      if (volume !== this .volume && this .media)
-	      {
-				this .volume = volume;
+			this .volume = volume;
 
-				this .media [0] .volume = (! this .getBrowser () .mute_ .getValue ()) * this .getBrowser () .volume_ .getValue () * volume;
-			}
+			this .set_volume__ ();
 		},
 		set_volume__: function ()
 		{
-		   this .setVolume (this .volume);
+			this .media [0] .volume = (! this .getBrowser () .mute_ .getValue ()) * this .getBrowser () .volume_ .getValue () * this .volume;
 		},
 		set_speed: function ()
 		{ },
