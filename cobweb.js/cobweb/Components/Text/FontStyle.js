@@ -49,7 +49,8 @@ function ($,
 			origin    = new Vector3 (0, 0, 0),
 			box2      = new Box2 (),
 			zero2     = new Vector2 (0, 0),
-			zero3     = new Vector3 (0, 0, 0);                  // All glyphs must be scaled by this amount to get the correct size.
+			zero3     = new Vector3 (0, 0, 0),
+			FONT_SIZE = 1; // This is the internally used font size of the cached geometry to prevent triangulation errors.
 
 	   function X3DTextGeometry (text, fontStyle)
 		{
@@ -294,7 +295,7 @@ function ($,
 
 				if (glyphs .length)
 				{
-					xMin  = glyphs [0] .xMin || 0;
+					xMin  = glyphs [0] .xMin || 0; // do || 0 to fix a opentype bug.
 				}
 				else
 				{
@@ -387,23 +388,25 @@ function ($,
 			render: function (glyphs, minorAlignment, size, translation, charSpacing)
 			{
 				var
-				   text             = this .getText (),
-				   fontStyle        = this .getFontStyle (),
-				   font             = fontStyle .getFont (),
+					text             = this .getText (),
+					fontStyle        = this .getFontStyle (),
+					font             = fontStyle .getFont (),
 					offset           = 0,
-				   primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
-
+					primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+					fontSize         = size / FONT_SIZE,
+					sizeUnitsPerEm   = size / font .unitsPerEm;
+					
 				for (var g = 0; g < glyphs .length; ++ g)
 				{
 					var
-					   glyph    = glyphs [g],
-					   vertices = this .getGlyphGeometry (glyph, primitiveQuality);
+						glyph    = glyphs [g],
+						vertices = this .getGlyphGeometry (glyph, primitiveQuality);
 					
 					for (var v = 0; v < vertices .length; ++ v)
 					{
 					   text .addNormal (normal);
-					   text .addVertex (vertex .set (vertices [v] .x * size + minorAlignment .x + g * charSpacing + translation .x + offset,
-					                                 vertices [v] .y * size + minorAlignment .y + translation .y,
+					   text .addVertex (vertex .set (vertices [v] .x * fontSize + minorAlignment .x + g * charSpacing + translation .x + offset,
+					                                 vertices [v] .y * fontSize + minorAlignment .y + translation .y,
 					                                 0));
 					}
 
@@ -414,7 +417,7 @@ function ($,
 					if (g + 1 < glyphs .length)
 						kerning = font .getKerningValue (glyph, glyphs [g + 1]);
 
-					offset += (glyph .advanceWidth + kerning) / font .unitsPerEm * size;
+					offset += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
 				}
 			},
 			getGlyphGeometry: function (glyph, primitiveQuality)
@@ -461,11 +464,11 @@ function ($,
 				   {
 				      var component = glyph .components [c];
 
-				      paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, 1));
+				      paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, FONT_SIZE));
 				   }
 				}
 				else
-				   paths .push (glyph .getPath (0, 0, 1));
+				   paths .push (glyph .getPath (0, 0, FONT_SIZE));
 
 				// Get curves for the current glyph.
 

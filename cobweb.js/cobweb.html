@@ -19,7 +19,7 @@ html, body {
 }
 
 body {
-	background: lightgray;
+	background: #414141;
 	color: white;
 	padding: 10px;
 }
@@ -63,84 +63,82 @@ X3D (function (dom)
 	var scene   = Browser .currentScene;
 
 	var index = 1;
-	var pages = [ "Tests 1", "Tests 2", "Page 1", "Page 2" ];
+	var pages = [ "Page 1", "Page 2", "Page 3" ];
 
 	var urls =
 	[
-		{
-			'Ghost':                "tests/Examples/Cathedral/stage/geist.x3d",
-		   'LayerSet':             "tests/Components/Layering/LayerSet.x3d",
-		   'Simple':               "tests/Components/Layering/Simple.x3d",
-		   'Viewport':             "tests/Components/Layering/Viewport.x3d",
-		   'ViewportLayer':        "tests/Components/Layering/ViewportLayer.x3d",
-		   'createVrmlFromString': "tests/Components/Scripting/createVrmlFromString.x3d",
-		   'Gravitation':          "tests/Components/Navigation/Gravitation.x3d",
-		   'Billboard':            "tests/Components/Navigation/Billboard.x3d",
-		   'VisibilitySensor':     "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d",
-		   'ProximitySensor':      "tests/Components/EnvironmentalSensor/ProximitySensor.x3d",
-		},
-		{
-			'ImageBackground':      "tests/Components/EnvironmentalEffects/ImageBackground.x3d",
-			'Geometry3D':           "tests/Components/Geometry3D/Geometry3D.x3d",
-			'Smash':                "tests/Components/Geometry3D/Smash.x3d",
-			'Extrude1':             "tests/Components/Geometry3D/Extrusion/extrude1.x3d",
-			'NormalInterpolator':   "tests/Components/Interpolation/NormalInterpolator.x3d",
-			'PositionInterpolator': "tests/Components/Interpolation/PositionInterpolator.x3d",
-			'PointLight':           "tests/Components/Lighting/PointLight.x3d",
-			'SpotLight':            "tests/Components/Lighting/SpotLight.x3d",
-			'LocalLight':           "tests/Components/Lighting/LocalLight.x3d",
-			'Lamp':                 "tests/Components/PointingDeviceSensor/lamp.x3d",
-			'LineSensor':           "tests/Components/PointingDeviceSensor/LineSensor.x3d",
-			'PlaneSensor':          "tests/Components/PointingDeviceSensor/PlaneSensor.x3d",
-			'SphereSensor':         "tests/Components/PointingDeviceSensor/SphereSensor.x3d",
-			'Touch':                "tests/Components/PointingDeviceSensor/test.x3d",
-			'IndexedLineSet':       "tests/Components/Rendering/IndexedLineSet.x3d",
-			'Glowing World':        "tests/Components/Rendering/world.x3d",
-			'Scripting':            "tests/Components/Scripting/ColorSpheres.x3d",
-			'Connectors':           "tests/Components/Shape/Connectors.x3d",
-			'Sound':                "tests/Components/Sound/AudioClip.x3d",
-			'Text':                 "tests/Components/Text/test.x3d",
-			'Date':                 "tests/Components/Text/date.x3d",
-			'Text':                 "tests/Components/Text/Text.x3d",
-			'ColorMaterial':        "tests/Components/Texturing/ColorMaterial.x3d",
-			'MovieTexture':         "tests/Components/Texturing/MovieTexture.x3d",
-			'NestedProtos':         "tests/Components/PROTO/NestedProtos.x3d",
-			'Gate':                 "tests/Examples/Approach/stage/gate.x3d",
-		},
-		{
-			'Appartment':         "tests/Examples/Appartment/index.x3d",
-			'Approach':           "tests/Examples/Approach/stage/index.x3d",
-			'Arcadia':            "tests/Examples/Arcadia/stage/index.x3d",
-			'Astronomy':          "tests/Examples/Astronomy/stage/astrnmy.x3d",
-			'BIC Man':            "tests/Examples/BIC/index.x3d",
-			'BIC Building':       "tests/Examples/BIC/building.x3d",
-			'BIC Buero':          "tests/Examples/BIC/buero.x3d",
-			'BIC Info':           "tests/Examples/BIC/info.x3d",
-			'Cathedral':          "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/index.x3d",
-			'Dolphin':            "tests/Examples/Dolphin/index.x3d",
-			'Hamburger':          "tests/Examples/ICTS/hamburger.x3d",
-			'ICTS':               "tests/Examples/ICTS/index.x3d",
-			'Labyrinth':          "tests/Examples/ICTS/labyrinth.x3d",
-			'Soccer':             "tests/Examples/ICTS/soccer.x3d",
-			'LogoPieces':         "tests/Examples/LogoPieces/index.x3d",
-			'LustForLife':        "tests/Examples/LustForLife/stage/index.x3d",
-			'MovieTruck':         "tests/Examples/MovieTruck/stage/index.x3d",
-			'NIST-Logo':          "tests/Examples/NIST-Logo/index.x3d",
-			'Pong':               "tests/Examples/Pong/index.x3d",
-			'Rathaus':            "tests/Examples/Rathaus/stage/index.x3d",
-			'Schacht':            "tests/Examples/Schacht/index.x3d",
-			'Mediafacade':        "tests/Examples/Vattenfall/index.x3d",
-		},
-		{
-			'Smashing Boxes': "tests/Examples/Boxes/boxes.x3d",
-			'Anatomy':        "tests/Examples/Compel/anatomy/anatomy.x3d",
-			'Jungle':         "tests/Examples/Compel/jungle/jungle.x3d",
-			'Huey':           "tests/Examples/Compel/huey.x3d",
-			'Foldup':         "tests/Examples/Compel/foldup.x3d",
-			'Ripple':         "tests/Examples/Compel/ripple.x3d",
-			'Terrain':        "tests/Examples/Terrain/index.x3d",
-			'Gears':          "tests/Examples/Gears/gears.x3d",
-		},
+		[
+			{ name: 'Rathaus',              url: "tests/Examples/Rathaus/stage/index.x3d" },
+			{ name: 'Schacht',              url: "tests/Examples/Schacht/index.x3d" },
+			{ name: 'Mediafacade',          url: "tests/Examples/Vattenfall/index.x3d" },
+			{ name: 'Smashing Boxes',       url: "tests/Examples/Boxes/boxes.x3d" },
+			{ name: 'Anatomy',              url: "tests/Examples/Compel/anatomy/anatomy.x3d" },
+			{ name: 'Jungle',               url: "tests/Examples/Compel/jungle/jungle.x3d" },
+			{ name: 'Huey',                 url: "tests/Examples/Compel/huey.x3d" },
+			{ name: 'Foldup',               url: "tests/Examples/Compel/foldup.x3d" },
+			{ name: 'Ripple',               url: "tests/Examples/Compel/ripple.x3d" },
+			{ name: 'Terrain',              url: "tests/Examples/Terrain/index.x3d" },
+			{ name: 'Gears',                url: "tests/Examples/Gears/gears.x3d" },
+			{ name: 'Ghost',                url: "tests/Examples/Cathedral/stage/geist.x3d" },
+			{ name: 'LayerSet',             url: "tests/Components/Layering/LayerSet.x3d" },
+			{ name: 'Simple',               url: "tests/Components/Layering/Simple.x3d" },
+			{ name: 'Viewport',             url: "tests/Components/Layering/Viewport.x3d" },
+			{ name: 'ViewportLayer',        url: "tests/Components/Layering/ViewportLayer.x3d" },
+			{ name: 'createVrmlFromString', url: "tests/Components/Scripting/createVrmlFromString.x3d" },
+			{ name: 'Gravitation',          url: "tests/Components/Navigation/Gravitation.x3d" },
+			{ name: 'Billboard',            url: "tests/Components/Navigation/Billboard.x3d" },
+			{ name: 'VisibilitySensor',     url: "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d" },
+		],
+		[
+		   { name: 'ProximitySensor',      url: "tests/Components/EnvironmentalSensor/ProximitySensor.x3d" },
+			{ name: 'ImageBackground',      url: "tests/Components/EnvironmentalEffects/ImageBackground.x3d" },
+			{ name: 'Geometry3D',           url: "tests/Components/Geometry3D/Geometry3D.x3d" },
+			{ name: 'Smash',                url: "tests/Components/Geometry3D/Smash.x3d" },
+			{ name: 'Extrude1',             url: "tests/Components/Geometry3D/Extrusion/extrude1.x3d" },
+			{ name: 'NormalInterpolator',   url: "tests/Components/Interpolation/NormalInterpolator.x3d" },
+			{ name: 'PositionInterpolator', url: "tests/Components/Interpolation/PositionInterpolator.x3d" },
+			{ name: 'PointLight',           url: "tests/Components/Lighting/PointLight.x3d" },
+			{ name: 'SpotLight',            url: "tests/Components/Lighting/SpotLight.x3d" },
+			{ name: 'LocalLight',           url: "tests/Components/Lighting/LocalLight.x3d" },
+			{ name: 'Lamp',                 url: "tests/Components/PointingDeviceSensor/lamp.x3d" },
+			{ name: 'LineSensor',           url: "tests/Components/PointingDeviceSensor/LineSensor.x3d" },
+			{ name: 'PlaneSensor',          url: "tests/Components/PointingDeviceSensor/PlaneSensor.x3d" },
+			{ name: 'SphereSensor',         url: "tests/Components/PointingDeviceSensor/SphereSensor.x3d" },
+			{ name: 'Touch',                url: "tests/Components/PointingDeviceSensor/test.x3d" },
+			{ name: 'IndexedLineSet',       url: "tests/Components/Rendering/IndexedLineSet.x3d" },
+			{ name: 'Glowing World',        url: "tests/Components/Rendering/world.x3d" },
+			{ name: 'Scripting',            url: "tests/Components/Scripting/ColorSpheres.x3d" },
+			{ name: 'Connectors',           url: "tests/Components/Shape/Connectors.x3d" },
+			{ name: 'Sound',                url: "tests/Components/Sound/AudioClip.x3d" },
+			{ name: 'Text',                 url: "tests/Components/Text/test.x3d" },
+			{ name: 'Date',                 url: "tests/Components/Text/date.x3d" },
+			{ name: 'Text',                 url: "tests/Components/Text/Text.x3d" },
+		],
+		[
+			{ name: 'ColorMaterial',        url: "tests/Components/Texturing/ColorMaterial.x3d" },
+			{ name: 'MovieTexture',         url: "tests/Components/Texturing/MovieTexture.x3d" },
+			{ name: 'NestedProtos',         url: "tests/Components/PROTO/NestedProtos.x3d" },
+			{ name: 'Gate',                 url: "tests/Examples/Approach/stage/gate.x3d" },
+			{ name: 'Appartment',           url: "tests/Examples/Appartment/index.x3d" },
+			{ name: 'Approach',             url: "tests/Examples/Approach/stage/index.x3d" },
+			{ name: 'Arcadia',              url: "tests/Examples/Arcadia/stage/index.x3d" },
+			{ name: 'Astronomy',            url: "tests/Examples/Astronomy/stage/astrnmy.x3d" },
+			{ name: 'BIC Man',              url: "tests/Examples/BIC/index.x3d" },
+			{ name: 'BIC Building',         url: "tests/Examples/BIC/building.x3d" },
+			{ name: 'BIC Buero',            url: "tests/Examples/BIC/buero.x3d" },
+			{ name: 'BIC Info',             url: "tests/Examples/BIC/info.x3d" },
+			{ name: 'Cathedral',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/index.x3d" },
+			{ name: 'Dolphin',              url: "tests/Examples/Dolphin/index.x3d" },
+			{ name: 'Hamburger',            url: "tests/Examples/ICTS/hamburger.x3d" },
+			{ name: 'ICTS',                 url: "tests/Examples/ICTS/index.x3d" },
+			{ name: 'Labyrinth',            url: "tests/Examples/ICTS/labyrinth.x3d" },
+			{ name: 'Soccer',               url: "tests/Examples/ICTS/soccer.x3d" },
+			{ name: 'LogoPieces',           url: "tests/Examples/LogoPieces/index.x3d" },
+			{ name: 'LustForLife',          url: "tests/Examples/LustForLife/stage/index.x3d" },
+			{ name: 'MovieTruck',           url: "tests/Examples/MovieTruck/stage/index.x3d" },
+			{ name: 'NIST-Logo',            url: "tests/Examples/NIST-Logo/index.x3d" },
+			{ name: 'Pong',                 url: "tests/Examples/Pong/index.x3d" },
+		],
 	];
 
 	function toggleBookmarks ()
@@ -149,20 +147,30 @@ X3D (function (dom)
 
 		bookmarks .empty ();
 
-		$.each (urls [index], function (name, URL)
+		urls [index] .forEach (function (item)
 		{
 			$("<a/>")
 				.attr ("href", "#")
 				.click (function ()
 				{
-					Browser .loadURL (new X3D .MFString (URL), new X3D .MFString ());
+					Browser .loadURL (new X3D .MFString (item .url), new X3D .MFString ());
 				})
-				.text (name)
+				.text (item .name)
 				.appendTo (bookmarks);
 
 			bookmarks .append ("<br/>");
 		});
 			
+		bookmarks .append ("<br/>");
+
+
+		$("<a/>")
+			.attr ("href", "#")
+			.click (randomWorld)
+			.text ("Random World")
+			.appendTo (bookmarks);
+
+		bookmarks .append ("<br/>");
 		bookmarks .append ("<br/>");
 
 		index = (index + 1) % urls .length;
@@ -173,6 +181,20 @@ X3D (function (dom)
 			.text (pages [index])
 			.appendTo (bookmarks);
 		
+	}
+
+	function randomWorld ()
+	{
+		function random (max)
+		{
+		   return Math .round (Math .random () * max);
+		}
+
+		var
+			randomPage  = random (urls .length - 1),
+			randomIndex = random (urls [randomPage] .length - 1);
+
+		Browser .loadURL (new X3D .MFString (urls [randomPage] [randomIndex] .url), new X3D .MFString ());
 	}
 
 	toggleBookmarks ();
@@ -190,7 +212,7 @@ function (elements, error)
 	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D cache="false" url='
-		   "tests/Components/Lighting/LocalLight.x3d",
+		   "tests/Components/Text/date.x3d"
 			"tests/Examples/Boxes/boxes.x3d",
 		'>
 			<p>Sorry,<br>

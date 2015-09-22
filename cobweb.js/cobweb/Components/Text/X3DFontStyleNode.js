@@ -229,7 +229,7 @@ function ($,
 		},
 		setError: function (error)
 		{
-			console .warn ('Font error: ' + error + ': "' + this .family [this .familyIndex] + '"');
+			console .warn ('Font error: ' + error + ' in url "' + this .family [this .familyIndex] + '"');
 
 			this .font = null;
 			this .familyIndex ++;

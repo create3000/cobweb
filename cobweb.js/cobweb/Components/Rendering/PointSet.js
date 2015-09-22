@@ -107,11 +107,11 @@ function ($,
 					this .set_transparent__ ();
 				}
 				else
-					this .isTransparent_ = false;
+					this .transparent_ = false;
 			},
 			set_transparent__: function ()
 			{
-				this .isTransparent_ = this .colorNode .isTransparent ();
+				this .transparent_ = this .colorNode .isTransparent ();
 			},
 			set_coord__: function ()
 			{

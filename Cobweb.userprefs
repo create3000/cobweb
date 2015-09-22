@@ -1,9 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Rendering/DepthBuffer.js">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="6" Column="6" />
-      <File FileName="cobweb.js/cobweb/Rendering/DepthBuffer.js" Line="19" Column="19" />
+      <File FileName="cobweb.js/cobweb.html" Line="16" Column="16" />
+      <File FileName="cobweb.js/cobweb.min.html" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

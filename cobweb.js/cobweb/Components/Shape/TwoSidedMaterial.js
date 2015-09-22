@@ -58,7 +58,7 @@ function ($,
 			{
 				X3DMaterialNode . prototype .initialize .call (this);
 				
-				this .addChildren ("isTransparent", new SFBool ());
+				this .addChildren ("transparent", new SFBool ());
 
 				this .transparency_     .addInterest (this, "set_transparent__");
 				this .backTransparency_ .addInterest (this, "set_transparent__");
@@ -67,7 +67,7 @@ function ($,
 			},
 			set_transparent__: function ()
 			{
-				this .isTransparent_ = this .transparency_ .getValue () || this .backTransparency_ .getValue ();
+				this .transparent_ = this .transparency_ .getValue () || this .backTransparency_ .getValue ();
 			},
 		});
 

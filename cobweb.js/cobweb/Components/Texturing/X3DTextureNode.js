@@ -18,7 +18,7 @@ function ($,
 
 			this .addType (X3DConstants .X3DTextureNode);
 
-			this .addChildren ("isTransparent", new SFBool ());
+			this .addChildren ("transparent", new SFBool ());
 		}
 
 		X3DTextureNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),

@@ -42,7 +42,7 @@ function ($,
 
 			this .addType (X3DConstants .X3DGeometryNode);
 				
-			this .addChildren ("isTransparent", new SFBool ());
+			this .addChildren ("transparent", new SFBool ());
 		}
 
 		X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -476,7 +476,7 @@ function ($,
 
 					gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
 
-					if (context .isTransparent && ! this .solid)
+					if (context .transparent && ! this .solid)
 					{
 						gl .enable (gl .CULL_FACE);
 

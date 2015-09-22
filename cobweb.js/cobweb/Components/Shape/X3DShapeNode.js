@@ -64,7 +64,7 @@ function ($,
 		},
 		isTransparent: function ()
 		{
-			return this .$isTransparent;
+			return this .transparent;
 		},
 		set_bbox__: function ()
 		{
@@ -118,8 +118,8 @@ function ($,
 		},
 		set_transparent__: function ()
 		{
-			this .$isTransparent = (this .apparanceNode && this .apparanceNode .isTransparent_ .getValue ()) ||
-			                       (this .geometryNode && this .geometryNode .isTransparent_ .getValue ());
+			this .transparent = (this .apparanceNode && this .apparanceNode .transparent_ .getValue ()) ||
+			                    (this .geometryNode && this .geometryNode .transparent_ .getValue ());
 		},
 	});
 

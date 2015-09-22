@@ -53,7 +53,7 @@ function ($,
 			{
 				X3DMaterialNode .prototype .initialize .call (this);
 
-				this .addChildren ("isTransparent", new SFBool ());
+				this .addChildren ("transparent", new SFBool ());
 
 				this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
 				this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
@@ -97,10 +97,10 @@ function ($,
 			{
 				this .transparency = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
 
-				var isTransparent = Boolean (this .transparency);
+				var transparent = Boolean (this .transparency);
 
-				if (isTransparent !== this .isTransparent_ .getValue ())
-					this .isTransparent_ = isTransparent;
+				if (transparent !== this .transparent_ .getValue ())
+					this .transparent_ = transparent;
 			},
 		});
 
