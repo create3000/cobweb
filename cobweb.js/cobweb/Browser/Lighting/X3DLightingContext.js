@@ -6,7 +6,8 @@ function (Viewport)
 {
 	function X3DLightingContext ()
 	{
-		this .globalLights = [ ];
+		this .globalLights = [ ]; // Global light array
+		this .localLights  = [ ]; // Local light dumpster
 	}
 
 	X3DLightingContext .prototype =
@@ -15,6 +16,10 @@ function (Viewport)
 		getGlobalLights: function ()
 		{
 			return this .globalLights;
+		},
+		getLocalLights: function ()
+		{
+			return this .localLights;
 		},
 	};
 

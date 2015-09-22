@@ -47,7 +47,7 @@ function ($,
 			gl .uniform3f (shader .lightAttenuation [i],      1, 0, 0);
 			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
-		pop: function ()
+		recycle: function ()
 		{
 		   DirectionalLights .push (this);
 		},

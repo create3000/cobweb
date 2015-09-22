@@ -35,8 +35,10 @@ function ($,
 		{
 			if (this .on_ .getValue ())
 			{
-				if (! this .global_ .getValue ())
-					this .getLights () .push (this .getCurrentLayer () .getLocalLights () .pop ());
+				if (this .global_ .getValue ())
+				   return;
+
+				this .getBrowser () .getLocalLights () .push (this .getCurrentLayer () .getLocalLights () .pop ());
 			}
 		},
 	});

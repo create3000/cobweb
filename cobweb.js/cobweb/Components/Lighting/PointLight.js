@@ -54,7 +54,7 @@ function ($,
 			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|
 			// distanceOfLightToFragmentInLightSpace can then be compared with radius.
 		},
-		pop: function ()
+		recycle: function ()
 		{
 		   PointLights .push (this);
 		},

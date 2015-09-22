@@ -59,7 +59,7 @@ function ($,
 			gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);                                                // clamp
 			gl .uniform1f (shader .lightRadius [i],           this .radius);                                                     // max
 		},
-		pop: function ()
+		recycle: function ()
 		{
 		   SpotLights .push (this);
 		},

@@ -29,6 +29,9 @@ function ($,
 			X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addAlias ("AntiAliased", this .Antialiased_);
+
+			this .primitiveQuality = PrimitiveQuality .MEDIUM;
+			this .textureQuality   = TextureQuality   .MEDIUM;
 		}
 
 		BrowserOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -106,20 +109,20 @@ function ($,
 
 				this .configure ();
 			},
-			set_rubberband__: function (Rubberband)
+			set_rubberband__: function (rubberband)
 			{
-				dataStorage ["BrowserOptions.Rubberband"] = Rubberband .getValue ();
+				dataStorage ["BrowserOptions.Rubberband"] = rubberband .getValue ();
 
-			   if (Rubberband .getValue ())
+			   if (rubberband .getValue ())
 			      this .getBrowser () .getNotification () .string_ = _("Rubberband: on");
 			   else
 					this .getBrowser () .getNotification () .string_ = _("Rubberband: off");
 			},
-			set_primitiveQuality__: function (PrimitiveQuality)
+			set_primitiveQuality__: function (primitiveQuality)
 			{
-				dataStorage ["BrowserOptions.PrimitiveQuality"] = PrimitiveQuality .getValue ();
+				dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
-				switch (PrimitiveQuality .getValue ())
+				switch (primitiveQuality .getValue ())
 				{
 					case "LOW":
 						this .primitiveQuality = PrimitiveQuality .LOW;
@@ -135,22 +138,22 @@ function ($,
 						break;
 				}
 			},
-			set_textureQuality__: function (TextureQuality)
+			set_textureQuality__: function (textureQuality)
 			{
-				dataStorage ["BrowserOptions.TextureQuality"] = TextureQuality .getValue ();
+				dataStorage ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
 
-				switch (TextureQuality .getValue ())
+				switch (textureQuality .getValue ())
 				{
 					case "LOW":
-						this .textureQuality = PrimitiveQuality .LOW;
+						this .textureQuality = TextureQuality .LOW;
 						this .getBrowser () .getNotification () .string_ = _("Texture Quality: low");
 						break;
 					case "HIGH":
-						this .textureQuality = PrimitiveQuality .HIGH;
+						this .textureQuality = TextureQuality .HIGH;
 						this .getBrowser () .getNotification () .string_ = _("Texture Quality: high");
 						break;
 					default:
-						this .textureQuality = PrimitiveQuality .MEDIUM;
+						this .textureQuality = TextureQuality .MEDIUM;
 						this .getBrowser () .getNotification () .string_ = _("Texture Quality: medium");
 						break;
 				}

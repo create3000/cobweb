@@ -517,12 +517,21 @@ function ($,
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
 
-			// Remove global lights.
+			// Recycle global lights.
 
 			var lights = this .getBrowser () .getGlobalLights ();
 
 			for (var i = 0; i < lights .length; ++ i)
-			   lights [i] .pop ();
+			   lights [i] .recycle ();
+
+			lights .length = 0;
+
+			// Recycle local lights.
+
+			var lights = this .getBrowser () .getLocalLights ();
+
+			for (var i = 0; i < lights .length; ++ i)
+			   lights [i] .recycle ();
 
 			lights .length = 0;
 		},

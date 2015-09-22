@@ -1,18 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.test.html">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb.css" Line="27" Column="27" />
-      <File FileName="cobweb.js/cobweb/Browser/Core/ContextMenu.js" Line="12" Column="12" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DNavigationContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="5" Column="5" />
-      <File FileName="cobweb.js/cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserOptions.js" Line="2" Column="2" />
-      <File FileName="cobweb.js/cobweb.min.html" Line="11" Column="11" />
-      <File FileName="cobweb.js/cobweb/X3D.js" Line="38" Column="38" />
-      <File FileName="cobweb.js/cobweb.test.html" Line="77" Column="77" />
-      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserTimings.js" Line="24" Column="24" />
+      <File FileName="cobweb.js/cobweb.html" Line="27" Column="27" />
+      <File FileName="cobweb.js/cobweb.css" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Core/ContextMenu.js" Line="26" Column="26" />
+      <File FileName="cobweb.js/cobweb.test.html" Line="2" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

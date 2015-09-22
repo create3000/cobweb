@@ -62,12 +62,13 @@ X3D (function (dom)
 	var Browser = X3D .getBrowser (dom);
 	var scene   = Browser .currentScene;
 
-	var index = 0;
+	var index = 1;
 	var pages = [ "Tests 1", "Tests 2", "Page 1", "Page 2" ];
 
 	var urls =
 	[
 		{
+			'Ghost':                "tests/Examples/Cathedral/stage/geist.x3d",
 		   'LayerSet':             "tests/Components/Layering/LayerSet.x3d",
 		   'Simple':               "tests/Components/Layering/Simple.x3d",
 		   'Viewport':             "tests/Components/Layering/Viewport.x3d",
@@ -87,6 +88,7 @@ X3D (function (dom)
 			'PositionInterpolator': "tests/Components/Interpolation/PositionInterpolator.x3d",
 			'PointLight':           "tests/Components/Lighting/PointLight.x3d",
 			'SpotLight':            "tests/Components/Lighting/SpotLight.x3d",
+			'LocalLight':           "tests/Components/Lighting/LocalLight.x3d",
 			'Lamp':                 "tests/Components/PointingDeviceSensor/lamp.x3d",
 			'LineSensor':           "tests/Components/PointingDeviceSensor/LineSensor.x3d",
 			'PlaneSensor':          "tests/Components/PointingDeviceSensor/PlaneSensor.x3d",
@@ -104,7 +106,6 @@ X3D (function (dom)
 			'MovieTexture':         "tests/Components/Texturing/MovieTexture.x3d",
 			'NestedProtos':         "tests/Components/PROTO/NestedProtos.x3d",
 			'Gate':                 "tests/Examples/Approach/stage/gate.x3d",
-			'Ghost':                "tests/Examples/Cathedral/stage/geist.x3d",
 		},
 		{
 			'Appartment':         "tests/Examples/Appartment/index.x3d",
@@ -189,7 +190,7 @@ function (elements, error)
 	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D cache="false" url='
-		   "tests/Examples/Approach/stage/index.x3d",
+		   "tests/Components/Lighting/LocalLight.x3d",
 			"tests/Examples/Boxes/boxes.x3d",
 		'>
 			<p>Sorry,<br>
