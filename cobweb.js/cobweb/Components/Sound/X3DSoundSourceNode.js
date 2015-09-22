@@ -91,7 +91,8 @@ function ($,
 		},
 		set_volume__: function ()
 		{
-			this .media [0] .volume = (! this .getBrowser () .mute_ .getValue ()) * this .getBrowser () .volume_ .getValue () * this .volume;
+			if (this .media)
+				this .media [0] .volume = (! this .getBrowser () .mute_ .getValue ()) * this .getBrowser () .volume_ .getValue () * this .volume;
 		},
 		set_speed: function ()
 		{ },
