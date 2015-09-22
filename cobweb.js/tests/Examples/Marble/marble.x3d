@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Tue, 22 Sep 2015 11:26:52 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
+    <meta name='modified' content='Tue, 22 Sep 2015 14:07:21 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo
+        title='marble'>
+      <MetadataSet
+          name='Titania'>
+        <MetadataSet containerField='value'
+            name='AngleGrid'>
+          <MetadataBoolean containerField='value'
+              name='enabled'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet containerField='value'
+            name='Grid'>
+          <MetadataBoolean containerField='value'
+              name='enabled'
+              value='false'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Viewpoint DEF='_1'
+        description='Home'
+        position='-4.23514 5.73347 -2.53133'
+        orientation='-0.169436 -0.885799 -0.432032 2.26662'/>
+    <Transform DEF='Sphere_1'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Metal31_1'
+              ambientIntensity='0.0955322'
+              diffuseColor='0.372322 0.371574 0.373173'
+              specularColor='1 0.701006 1'
+              shininess='0.127551'/>
+          <ImageTexture
+              url='"checkerboard.png", "checkerboard.svg"'/>
+        </Appearance>
+        <Sphere/>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>

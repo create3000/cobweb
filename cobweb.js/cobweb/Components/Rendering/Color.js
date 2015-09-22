@@ -50,7 +50,7 @@ function ($,
 			},
 			getColor: function (index)
 			{
-				if (index < this .color_ .length)
+				if (index >= 0 && index < this .color_ .length)
 					return this .color_ [index] .getValue ();
 
 				return new Color3 (1, 1, 1);

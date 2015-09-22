@@ -62,7 +62,7 @@ X3D (function (dom)
 	var Browser = X3D .getBrowser (dom);
 	var scene   = Browser .currentScene;
 
-	var index = 1;
+	var index = 0;
 	var pages = [ "Page 1", "Page 2", "Page 3" ];
 
 	var urls =
@@ -88,6 +88,7 @@ X3D (function (dom)
 			{ name: 'Gravitation',          url: "tests/Components/Navigation/Gravitation.x3d" },
 			{ name: 'Billboard',            url: "tests/Components/Navigation/Billboard.x3d" },
 			{ name: 'VisibilitySensor',     url: "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d" },
+			{ name: 'Marble',               url: "tests/Examples/Marble/marble.x3d" },
 		],
 		[
 		   { name: 'ProximitySensor',      url: "tests/Components/EnvironmentalSensor/ProximitySensor.x3d" },
@@ -212,7 +213,7 @@ function (elements, error)
 	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D cache="false" url='
-		   "tests/Components/Text/date.x3d"
+		   "tests/Examples/Marble/marble.x3d",
 			"tests/Examples/Boxes/boxes.x3d",
 		'>
 			<p>Sorry,<br>

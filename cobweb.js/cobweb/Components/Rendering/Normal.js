@@ -46,7 +46,7 @@ function ($,
 			},
 			getVector: function (index)
 			{
-				if (index < this .vector_ .length)
+				if (index >= 0 && index < this .vector_ .length)
 					return this .vector_ [index] .getValue ();
 
 				return new Vector3 (0, 0, 0);

@@ -52,6 +52,8 @@ function ($,
 			},
 			getPoint: function (index)
 			{
+				// The index cannot be less than 0.
+
 				if (index < this .point_ .length)
 					return this .point_ [index] .getValue ();
 
@@ -59,6 +61,8 @@ function ($,
 			},
 			getNormal: function (index1, index2, index3)
 			{
+				// The index[1,2,3] cannot be less than 0.
+
 				var length = this .point_ .length;
 
 				if (index1 < length && index2 < length && index3 < length)
@@ -71,6 +75,8 @@ function ($,
 			},
 			getQuadNormal: function (index1, index2, index3, index4)
 			{
+				// The index[1,2,3,4] cannot be less than 0.
+
 				var length = this .point_ .length;
 
 				if (index1 < length && index2 < length && index3 < length && index4 < length)

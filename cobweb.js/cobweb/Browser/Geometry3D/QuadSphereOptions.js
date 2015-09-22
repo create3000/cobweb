@@ -40,40 +40,44 @@ function ($,
 			createTexCoordIndex: function ()
 			{
 				var
-					uDimension = this .uDimension_ .getValue (),
-					vDimension = this .vDimension_ .getValue (),
-					geometry   = this .geometry;
+					uDimension    = this .uDimension_ .getValue (),
+					vDimension    = this .vDimension_ .getValue (),
+					texCoordIndex = this .geometry .texCoordIndex_;
 
-				var p = 0;
-
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u, ++ p)
+				// North pole
+				
+				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
 				{
-					geometry .texCoordIndex_ .push (p);
-					geometry .texCoordIndex_ .push (p + uDimension - 1);
-					geometry .texCoordIndex_ .push (p + uDimension);
-					geometry .texCoordIndex_ .push (p);
-					geometry .texCoordIndex_ .push (-1);
+					texCoordIndex .push (u);
+					texCoordIndex .push (u + uDimension - 1);
+					texCoordIndex .push (u + uDimension);
+					texCoordIndex .push (-1);
 				}
 
-				for (var v = 1, vLength = vDimension - 2; v < vLength; ++ v, ++ p)
+				// Sphere segments
+				
+				for (var p = uDimension - 1, v = 0, vLength = vDimension - 3; v < vLength; ++ v, ++ p)
 				{
 					for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u, ++ p)
 					{
-						geometry .texCoordIndex_ .push (p);
-						geometry .texCoordIndex_ .push (p + uDimension);
-						geometry .texCoordIndex_ .push (p + uDimension + 1);
-						geometry .texCoordIndex_ .push (p + 1);
-						geometry .texCoordIndex_ .push (-1);
+						texCoordIndex .push (p);
+						texCoordIndex .push (p + uDimension);
+						texCoordIndex .push (p + uDimension + 1);
+						texCoordIndex .push (p + 1);
+						texCoordIndex .push (-1);
 					}
 				}
+				
+				// South pole
+
+				var p = (vDimension - 2) * uDimension - 1;
 
 				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u, ++ p)
 				{
-					geometry .texCoordIndex_ .push (p);
-					geometry .texCoordIndex_ .push (p + uDimension);
-					geometry .texCoordIndex_ .push (p + uDimension);
-					geometry .texCoordIndex_ .push (p + 1);
-					geometry .texCoordIndex_ .push (-1);
+					texCoordIndex .push (p + uDimension);
+					texCoordIndex .push (p + 1);
+					texCoordIndex .push (p);
+					texCoordIndex .push (-1)
 				}
 			},
 			createTexCoord: function ()
@@ -81,70 +85,114 @@ function ($,
 				var
 					uDimension = this .uDimension_ .getValue (),
 					vDimension = this .vDimension_ .getValue (),
-					texCoord   = this .geometry .texCoord_ .getValue ();
+					point      = this .geometry .texCoord_ .getValue () .point_;
 
-				var polOffset = 1 / (2 * (uDimension - 1));
+					var
+						poleOffset = -0.5 / (uDimension - 1),
+						i          = 0;
 
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
-				{
-					var x = u / uLength + polOffset;
-					texCoord .point_ .push (new Vector2 (x, 1));
-				}
-
-				for (var v = 1, vLength = vDimension - 1; v < vLength; ++ v)
-				{
-					var y = v / vLength;
-
-					for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
+					// North pole
+					
+					for (var u = 1; u < uDimension; ++ u)
 					{
-						var x = u / uLength;
-						texCoord .point_ .push (new Vector2 (x, 1 - y));
+						var x = u / (uDimension - 1) + poleOffset;
+						
+						point .push (new Vector2 (x, 1));
 					}
 
-					texCoord .point_ .push (new Vector2 (1, 1 - y));
-				}
+					// Sphere segments
+					
+					for (var v = 1, vLength = vDimension - 1; v < vLength; ++ v)
+					{
+						var y = 1 - v / (vDimension - 1);
+						
+						for (var u = 0; u < uDimension; ++ u)
+						{
+							var x = u / (uDimension - 1);
+							
+							point .push (new Vector2 (x, y));
+						}
+					}
 
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
-				{
-					var x = u / uLength + polOffset;
-					texCoord .point_ .push (new Vector2 (x, 0));
-				}
+					// South pole
+					
+					for (var u = 1; u < uDimension; ++ u)
+					{
+						var x = u / (uDimension - 1) + poleOffset;
+						
+						point .push (new Vector2 (x, 0));
+					}
 			},
 			createCoordIndex: function ()
 			{
 				var
 					uDimension = this .uDimension_ .getValue (),
 					vDimension = this .vDimension_ .getValue (),
-					geometry   = this .geometry;
+					coordIndex = this .geometry .coordIndex_;
 
-				for (var p = 0, v = 0, vLength = vDimension - 1; v < vLength; ++ v, ++ p)
+				// North pole
+				
+				for (var u = 1, uLength = uDimension - 1; u < uLength; ++ u)
+				{
+					coordIndex .push (0);
+					coordIndex .push (u);
+					coordIndex .push (u + 1);
+					coordIndex .push (-1);
+				}
+
+				coordIndex .push (0);
+				coordIndex .push (u);
+				coordIndex .push (1);
+				coordIndex .push (-1);
+
+				// Sphere segments
+				
+				var p = 1;
+
+				for (var v = 0, vLength = vDimension - 3; v < vLength; ++ v, ++ p)
 				{
 					for (var u = 0, uLength = uDimension - 2; u < uLength; ++ u, ++ p)
 					{
-						geometry .coordIndex_ .push (p);
-						geometry .coordIndex_ .push (p + uDimension - 1);
-						geometry .coordIndex_ .push (p + uDimension);
-						geometry .coordIndex_ .push (p + 1);
-						geometry .coordIndex_ .push (-1);
+						coordIndex .push (p);
+						coordIndex .push (p + uDimension - 1);
+						coordIndex .push (p + uDimension);
+						coordIndex .push (p + 1);
+						coordIndex .push (-1);
 					}
 
-					geometry .coordIndex_ .push (p);
-					geometry .coordIndex_ .push (p + uDimension - 1);
-					geometry .coordIndex_ .push (p + 1);
-					geometry .coordIndex_ .push (p - uDimension + 2);
-					geometry .coordIndex_ .push (-1);
+					coordIndex .push (p);
+					coordIndex .push (p + uDimension - 1);
+					coordIndex .push (p + 1);
+					coordIndex .push (p - uDimension + 2);
+					coordIndex .push (-1);
 				}
+
+				// South pole
+				
+				var last = p + uDimension - 1;
+
+				for (var u = 0, uLength = uDimension - 2; u < uLength; ++ u, ++ p)
+				{
+					coordIndex .push (last);
+					coordIndex .push (p + 1);
+					coordIndex .push (p);
+					coordIndex .push (-1);
+				}
+
+				coordIndex .push (last);
+				coordIndex .push (last - uDimension + 1);
+				coordIndex .push (p);
+				coordIndex .push (-1);
 			},
 			createPoints: function ()
 			{
 				var
 					uDimension = this .uDimension_ .getValue (),
 					vDimension = this .vDimension_ .getValue (),
-					coord      = this .geometry .coord_ .getValue ();
+					point      = this .geometry .coord_ .getValue () .point_;
 
 				// North pole
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
-					coord .point_ .push (new Vector3 (0, 1, 0));
+				point .push (new Vector3 (0, 1, 0));
 
 				// Sphere segments
 				for (var v = 1, vLength = vDimension - 1; v < vLength; ++ v)
@@ -155,13 +203,12 @@ function ($,
 					{
 						var yPlane = Complex .Polar (zPlane .imag, 2 * Math .PI * u / uLength);
 
-						coord .point_ .push (new Vector3 (yPlane .imag, zPlane .real, yPlane .real));
+						point .push (new Vector3 (yPlane .imag, zPlane .real, yPlane .real));
 					}
 				}
 
 				// South pole
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
-					coord .point_ .push (new Vector3 (0, -1, 0));
+				point .push (new Vector3 (0, -1, 0));
 			},
 			getGeometry: function ()
 			{

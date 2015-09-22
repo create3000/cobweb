@@ -120,10 +120,11 @@ function ($,
 					texCoordNode    = this .getTexCoord (),
 					normalNode      = this .getNormal (),
 					coordNode       = this .getCoord (),
+					textCoords      = this .getTexCoords (),
 					face            = 0;
 
 				if (texCoordNode)
-					texCoordNode .init (this .getTexCoords ());
+					texCoordNode .init (textCoords);
 
 				for (var p = 0, pl = polygons .length; p < pl; ++ p)
 				{
@@ -148,7 +149,7 @@ function ($,
 							}
 
 							if (texCoordNode)
-								texCoordNode .addTexCoord (this .getTexCoords (), this .getTexCoordPerVertexIndex (i));
+								texCoordNode .addTexCoord (textCoords, this .getTexCoordPerVertexIndex (i));
 
 							if (normalNode)
 							{

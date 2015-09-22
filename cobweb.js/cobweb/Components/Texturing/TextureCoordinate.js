@@ -52,7 +52,7 @@ function ($,
 			},
 			addTexCoordToChannel: function (texCoords, index)
 			{
-				if (index < this .point_ .length)
+				if (index >= 0 && index < this .point_ .length)
 				{
 					var point2 = this .point_ [index];
 	
