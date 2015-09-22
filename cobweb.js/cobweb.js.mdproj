@@ -2395,6 +2395,7 @@
     <None Include="images\PrimitiveQuality.png" />
     <None Include="tests\Components\Layering\Rotor.x3d" />
     <None Include="lib\dataStorage.js" />
+    <None Include="tests\Components\Lighting\LocalLight.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

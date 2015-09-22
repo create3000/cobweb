@@ -158,9 +158,9 @@ function ($,
 						break;
 				}
 			},
-			set_shading__: function ()
+			set_shading__: function (shading)
 			{
-				this .getBrowser () .setDefaultShader (this .Shading_ .getValue ());
+				this .getBrowser () .setDefaultShader (shading .getValue ());
 			},
 		});
 
