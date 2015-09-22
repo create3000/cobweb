@@ -6,7 +6,7 @@
     <meta name='created' content='Tue, 22 Sep 2015 03:19:15 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Sep 2015 05:24:47 GMT'/>
+    <meta name='modified' content='Tue, 22 Sep 2015 05:41:56 GMT'/>
   </head>
   <Scene>
     <LayerSet
@@ -31,7 +31,6 @@
             <Transform
                 translation='10 10 10'
                 rotation='-1 -2.09955e-10 -1.12942e-09 1.57'
-                scale='1 1 1'
                 scaleOrientation='0.991023 -0.0697251 0.114073 0.180416'>
               <Group DEF='LightAnim'>
                 <MetadataSet
@@ -81,19 +80,18 @@
               </Group>
               <SpotLight DEF='_3'
                   global='false'
-                  color='1 0.653082 0'
+                  color='1 0 0'
                   intensity='0.485207'
-                  direction='-0.513879 -0.0983981 -0.808025'
+                  direction='-0.475709 -0.436148 -0.763856'
                   beamWidth='0.07'
                   cutOffAngle='0.850796'/>
               <Transform DEF='Sphere_1'
                   rotation='1 -9.23607e-09 1.05527e-08 1.57'
-                  scale='0.370046 0.370046 0.370046'
-                  scaleOrientation='0 0 1 0'>
+                  scale='0.370046 0.370046 0.370046'>
                 <Shape>
                   <Appearance>
                     <Material DEF='_4'
-                        emissiveColor='1 0.653082 0'/>
+                        emissiveColor='1 0 0'/>
                   </Appearance>
                   <Sphere/>
                 </Shape>
@@ -139,25 +137,44 @@
       </Layer>
       <Layer>
         <Transform DEF='Text_1'
+            translation='7.173 -3.53232 0'>
+          <Shape>
+            <Appearance>
+              <Material
+                  diffuseColor='0 0 0'/>
+            </Appearance>
+            <Text
+                string='"SpotLight"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  style='BOLD'
+                  size='0.2'
+                  spacing='1.2'
+                  justify='"END", "END"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='Text'
             translation='7.173 -3.92046 0'>
           <Shape>
             <Appearance>
               <Material/>
             </Appearance>
             <Text DEF='_6'
-                string='"SpotLight", "Global: false"'
+                string='"Global: false"'
                 solid='true'>
               <FontStyle
                   family='"Ubuntu", "SANS"'
-                  size='0.31'
+                  size='0.3'
                   spacing='1.2'
                   justify='"END", "END"'/>
             </Text>
           </Shape>
         </Transform>
         <Transform DEF='Rectangle2D_1'
-            translation='6.38615 -3.63668 0'
-            scale='0.950816 0.396843 1'>
+            translation='6.38615 -3.66011 0'
+            scale='0.950816 0.373413 1'>
           <Shape>
             <Appearance>
               <Material
@@ -194,7 +211,7 @@ function set_touchTime ()
 
 function eventsProcessed ()
 {
-	string_changed = new MFString ("SpotLight", "Global: " + light .global);
+	string_changed = new MFString ("Global: " + light .global);
 }]]> 
         </Script>
       </Layer>
