@@ -77,13 +77,13 @@ function ($,
 			configure: function ()
 			{
 				var
-					Rubberband       = dataStorage ["BrowserOptions.Rubberband"],
-					PrimitiveQuality = dataStorage ["BrowserOptions.PrimitiveQuality"],
-					TextureQuality   = dataStorage ["BrowserOptions.TextureQuality"];
+					rubberband       = dataStorage ["BrowserOptions.Rubberband"],
+					primitiveQuality = dataStorage ["BrowserOptions.PrimitiveQuality"],
+					textureQuality   = dataStorage ["BrowserOptions.TextureQuality"];
 					
-				if (Rubberband       !== undefined) this .Rubberband_       = Rubberband;
-				if (PrimitiveQuality !== undefined) this .PrimitiveQuality_ = PrimitiveQuality;
-				if (TextureQuality   !== undefined) this .TextureQuality_   = TextureQuality;
+				if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
+				if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
+				if (textureQuality   !== undefined && textureQuality   !== this .TextureQuality_   .getValue ()) this .TextureQuality_   = textureQuality;
 			},
 			getPrimitiveQuality: function ()
 			{
@@ -122,18 +122,44 @@ function ($,
 			{
 				dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
+				var
+					cone     = this .getBrowser () .getConeOptions (),
+					cylinder = this .getBrowser () .getCylinderOptions (),
+					sphere   = this .getBrowser () .getSphereOptions ();
+
 				switch (primitiveQuality .getValue ())
 				{
 					case "LOW":
 						this .primitiveQuality = PrimitiveQuality .LOW;
+					
+						cone     .vDimension_ = 16;
+						cylinder .vDimension_ = 16;
+
+						sphere .uDimension_ = 24;
+						sphere .vDimension_ = 12;
+
 						this .getBrowser () .getNotification () .string_ = _("Primitive Quality: low");
 						break;
 					case "HIGH":
 						this .primitiveQuality = PrimitiveQuality .HIGH;
+
+						cone     .vDimension_ = 32;
+						cylinder .vDimension_ = 32;
+
+						sphere .uDimension_ = 40;
+						sphere .vDimension_ = 20;
+
 						this .getBrowser () .getNotification () .string_ = _("Primitive Quality: high");
 						break;
 					default:
 						this .primitiveQuality = PrimitiveQuality .MEDIUM;
+
+						cone     .vDimension_ = 20;
+						cylinder .vDimension_ = 20;
+
+						sphere .uDimension_ = 32;
+						sphere .vDimension_ = 16;
+
 						this .getBrowser () .getNotification () .string_ = _("Primitive Quality: medium");
 						break;
 				}

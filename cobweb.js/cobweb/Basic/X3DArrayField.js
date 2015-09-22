@@ -66,7 +66,7 @@ function ($, X3DField, X3DConstants, Generator)
 				array = target .getValue (),
 				keys  = [ ];
 
-			for (var i = 0; i < array .length; ++ i)
+			for (var i = 0, length = array .length; i < length; ++ i)
 				keys .push (i);
 
 			return keys [Symbol.iterator] ();
@@ -114,7 +114,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 			var array = this .getValue ();
 
-			for (var i = 0; i < value .length; ++ i)
+			for (var i = 0, length = value .length; i < length; ++ i)
 				array [i] .set (value [i] instanceof X3DField ? value [i] .getValue () : value [i]);
 		},
 		unshift: function (value)
@@ -189,7 +189,7 @@ function ($, X3DField, X3DConstants, Generator)
 		{
 			var values = this .getValue () .splice (first, last - first);
 				
-			for (var i = 0; i < values .length; ++ i)
+			for (var i = 0, length = values .length; i < length; ++ i)
 				values [i] .removeParent (this);
 			
 			this .addEvent ();
@@ -200,7 +200,7 @@ function ($, X3DField, X3DConstants, Generator)
 		
 			if (size < array .length)
 			{
-				for (var i = size; i < array .length; ++ i)
+				for (var i = size, length = array .length; i < length; ++ i)
 					array [i] .removeParent (this);
 
 				array .length = size;

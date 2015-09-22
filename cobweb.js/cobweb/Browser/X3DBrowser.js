@@ -60,8 +60,6 @@ function ($,
 					if (url .length)
 						this .loadURL (url);
 				}
-
-				this .traverse ();
 			},
 			getName: function ()
 			{

@@ -25,23 +25,44 @@ function ($,
 		function QuadSphereOptions (executionContext)
 		{
 			X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+
+			this .addChildren ("uDimension", new SFInt32 (32),
+			                   "vDimension", new SFInt32 (16))
 		}
 
 		QuadSphereOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		{
 			constructor: QuadSphereOptions,
+			getTypeName: function ()
+			{
+				return "QuadSphereOptions";
+			},
+			getComponentName: function ()
+			{
+				return "Cobweb";
+			},
+			getContainerField: function ()
+			{
+				return "quadSphereOptions";
+			},
 			initialize: function ()
 			{
 				X3DBaseNode .prototype .initialize .call (this);
 
-				this .addChildren ("uDimension", new SFInt32 (40),
-				                   "vDimension", new SFInt32 (20))
+				this .addInterest (this, "eventsProcessed");
+			},
+			getGeometry: function ()
+			{
+				if (! this .geometry)
+					this .eventsProcessed ();
+				
+				return this .geometry;
 			},
 			createTexCoordIndex: function ()
 			{
 				var
-					uDimension    = this .uDimension_ .getValue (),
-					vDimension    = this .vDimension_ .getValue (),
+					uDimension    = this .uDimension_ .getValue () + 1,
+					vDimension    = this .vDimension_ .getValue () + 1,
 					texCoordIndex = this .geometry .texCoordIndex_;
 
 				// North pole
@@ -83,8 +104,8 @@ function ($,
 			createTexCoord: function ()
 			{
 				var
-					uDimension = this .uDimension_ .getValue (),
-					vDimension = this .vDimension_ .getValue (),
+					uDimension = this .uDimension_ .getValue () + 1,
+					vDimension = this .vDimension_ .getValue () + 1,
 					point      = this .geometry .texCoord_ .getValue () .point_;
 
 					var
@@ -126,8 +147,8 @@ function ($,
 			createCoordIndex: function ()
 			{
 				var
-					uDimension = this .uDimension_ .getValue (),
-					vDimension = this .vDimension_ .getValue (),
+					uDimension = this .uDimension_ .getValue () + 1,
+					vDimension = this .vDimension_ .getValue () + 1,
 					coordIndex = this .geometry .coordIndex_;
 
 				// North pole
@@ -187,8 +208,8 @@ function ($,
 			createPoints: function ()
 			{
 				var
-					uDimension = this .uDimension_ .getValue (),
-					vDimension = this .vDimension_ .getValue (),
+					uDimension = this .uDimension_ .getValue () + 1,
+					vDimension = this .vDimension_ .getValue () + 1,
 					point      = this .geometry .coord_ .getValue () .point_;
 
 				// North pole
@@ -210,11 +231,8 @@ function ($,
 				// South pole
 				point .push (new Vector3 (0, -1, 0));
 			},
-			getGeometry: function ()
+			eventsProcessed: function ()
 			{
-				if (this .geometry)
-					return this .geometry;
-	
 				this .geometry            = new IndexedFaceSet (this .getExecutionContext ());
 				this .geometry .texCoord_ = new TextureCoordinate (this .getExecutionContext ());
 				this .geometry .coord_    = new Coordinate (this .getExecutionContext ());
@@ -234,8 +252,6 @@ function ($,
 				texCoord .setup ();
 				coord    .setup ();
 				geometry .setup ();
-
-				return this .geometry;
 			},
 		});
 

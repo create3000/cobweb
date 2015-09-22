@@ -24,6 +24,18 @@ function ($,
 	BoxOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: BoxOptions,
+		getTypeName: function ()
+		{
+			return "BoxOptions";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "boxOptions";
+		},
 		initialize: function ()
 		{
 			X3DBaseNode .prototype .initialize .call (this);

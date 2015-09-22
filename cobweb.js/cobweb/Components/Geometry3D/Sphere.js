@@ -45,6 +45,15 @@ function ($,
 			{
 				return "geometry";
 			},
+			set_live__: function ()
+			{
+				X3DGeometryNode .prototype .set_live__ .call (this);
+			   
+				if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+					this .getBrowser () .getSphereOptions () .addInterest (this, "eventsProcessed");
+				else
+					this .getBrowser () .getSphereOptions () .removeInterest (this, "eventsProcessed");
+			},
 			build: function ()
 			{
 				var

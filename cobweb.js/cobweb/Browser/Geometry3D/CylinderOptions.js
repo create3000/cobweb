@@ -13,17 +13,25 @@ function ($,
 		function CylinderOptions (executionContext)
 		{
 			X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+				
+			this .addChildren ("uDimension", new SFInt32 (1),
+			                   "vDimension", new SFInt32 (20))
 		}
 
 		CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 		{
 			constructor: CylinderOptions,
-			initialize: function ()
+			getTypeName: function ()
 			{
-				X3DBaseNode .prototype .initialize .call (this);
-
-				this .addChildren ("uDimension", new SFInt32 (1),
-				                   "vDimension", new SFInt32 (20))
+				return "CylinderOptions";
+			},
+			getComponentName: function ()
+			{
+				return "Cobweb";
+			},
+			getContainerField: function ()
+			{
+				return "cylinderOptions";
 			},
 		});
 

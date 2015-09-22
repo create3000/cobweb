@@ -34,13 +34,12 @@ function ()
 
 					// Swap tainted fields.
 					this .taintedFields         = this .taintedFieldsTemp;
-					this .taintedFieldsTemp     = taintedFields;
 					this .taintedFields .length = 0;
 
-					for (var i = 0; i < taintedFields .length; i += 2)
-					{
+					for (var i = 0, length = taintedFields .length; i < length; i += 2)
 						taintedFields [i] .processEvent (taintedFields [i + 1]);
-					}
+
+					this .taintedFieldsTemp = taintedFields;
 				}
 				while (this .taintedFields .length);
 
@@ -51,14 +50,14 @@ function ()
 
 					// Swap tainted nodes.
 					this .taintedNodes         = this .taintedNodesTemp;
-					this .taintedNodesTemp     = taintedNodes;
 					this .taintedNodes .length = 0;
 
-					for (var i = 0; i < taintedNodes .length; ++ i)
+					for (var i = 0, length = taintedNodes .length; i < length; ++ i)
 						taintedNodes [i] .processEvents ();
-				}
-				while (this .taintedNodes .length && ! this .taintedFields .length);
 
+					this .taintedNodesTemp = taintedNodes;
+				}
+				while (! this .taintedFields .length && this .taintedNodes .length);
 			}
 			while (this .taintedFields .length);
 		},
