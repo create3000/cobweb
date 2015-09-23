@@ -2399,6 +2399,7 @@
     <None Include="tests\Examples\Marble\marble.x3d" />
     <None Include="tests\Examples\Marble\checkerboard.png" />
     <None Include="tests\Examples\Marble\checkerboard.svg" />
+    <None Include="locale\de.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2466,5 +2467,6 @@
     <Folder Include="tests\Examples\Rathaus\stage\heaven\" />
     <Folder Include="lib\" />
     <Folder Include="tests\Examples\Marble\" />
+    <Folder Include="locale\" />
   </ItemGroup>
 </Project>

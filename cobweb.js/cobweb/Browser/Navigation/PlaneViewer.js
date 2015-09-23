@@ -64,6 +64,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 		},
 		mouseup: function (event)
 		{
+			this .getBrowser () .setCursor ("DEFAULT");
 			this .button = -1;
 		},
 		mousemove: function (event)

@@ -55,7 +55,7 @@ function (Fields,
 			   this .loadingObjects [id] = true;
 				this .loadCount_          = this .loadCount_ .getValue () + 1;
 
-				this .getNotification () .string_ = _("Loading") + " " + this .loadCount_;
+				this .getNotification () .string_ = _("Loading") + " " + this .loadCount_ + " " + _("files");
 				this .setCursor ("DEFAULT");
 
 				return id;
@@ -70,7 +70,7 @@ function (Fields,
 				this .loadCount_ = this .loadCount_ .getValue () - 1;
 
 				if (this .loadCount_ .getValue ())
-					this .getNotification () .string_ =  _("Loading") + " " + this .loadCount_;
+					this .getNotification () .string_ =  _("Loading") + " " + this .loadCount_ + " " + _("files");
 				else
 				{
 					this .getNotification () .string_ = _("Loading done");

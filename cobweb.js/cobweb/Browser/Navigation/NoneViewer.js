@@ -1,7 +1,7 @@
 
 define ([
 	"jquery",
-	"cobweb/Browser/Navigation/X3DViewer"
+	"cobweb/Browser/Navigation/X3DViewer",
 	"lib/gettext",
 ],
 function ($, X3DViewer, _)

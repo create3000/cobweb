@@ -2,9 +2,11 @@
 define ([
 	"cobweb/Fields",
 	"lib/dataStorage",
+	"lib/gettext",
 ],
 function (Fields,
-          dataStorage)
+          dataStorage,
+          _)
 {
 	var
 		SFBool = Fields .SFBool,
@@ -36,7 +38,7 @@ function (Fields,
 		set_mute__: function (mute)
 		{
 			dataStorage ["X3DSoundContext.mute"] = mute .getValue ();
-			this .getNotification () .string_ = mute .getValue () ? "Browser muted" : "Browser unmuted";
+			this .getNotification () .string_ = mute .getValue () ? _("Browser muted") : _("Browser unmuted");
 		},
 	};
 
