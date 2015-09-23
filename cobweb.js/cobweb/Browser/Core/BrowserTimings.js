@@ -145,15 +145,15 @@ function ($,
 			   
 			   rows [1] .addClass ("cobweb-more");
 
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Browser") + ":"))   .append ($("<td>") .text (systemTime .toFixed (2) .toLocaleString () + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("X3D") + ":"))       .append ($("<td>") .text (browser .browserTime .toFixed (2) .toLocaleString () + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Routing") + ":"))   .append ($("<td>") .text (routingTime .toFixed (2) .toLocaleString () + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Picking") + ":"))   .append ($("<td>") .text (browser .pickingTime .toFixed (2) .toLocaleString () + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Camera") + ":"))    .append ($("<td>") .text (browser .cameraTime .toFixed (2) .toLocaleString () + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Collision") + ":")) .append ($("<td>") .text (collisionTime .toFixed (2) .toLocaleString () + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Display") + ":"))   .append ($("<td>") .text (browser .displayTime .toFixed (2) .toLocaleString () + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Shapes") + ":"))    .append ($("<td>") .text (opaqueShapes + " + " + transparentShapes));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Sensors") + ":"))   .append ($("<td>") .text (prepareEvents + sensors));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Browser")   + ":")) .append ($("<td>") .text (systemTime           .toFixed (2) .toLocaleString () + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("X3D")       + ":")) .append ($("<td>") .text (browser .browserTime .toFixed (2) .toLocaleString () + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Routing")   + ":")) .append ($("<td>") .text (routingTime          .toFixed (2) .toLocaleString () + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Picking")   + ":")) .append ($("<td>") .text (browser .pickingTime .toFixed (2) .toLocaleString () + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Camera")    + ":")) .append ($("<td>") .text (browser .cameraTime  .toFixed (2) .toLocaleString () + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Collision") + ":")) .append ($("<td>") .text (collisionTime        .toFixed (2) .toLocaleString () + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Display")   + ":")) .append ($("<td>") .text (browser .displayTime .toFixed (2) .toLocaleString () + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Shapes")    + ":")) .append ($("<td>") .text (opaqueShapes + " + " + transparentShapes));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Sensors")   + ":")) .append ($("<td>") .text (prepareEvents + sensors));
 			}
 
 			rows .length = r;
