@@ -12,6 +12,8 @@ function ($,
           dataStorage,
           _)
 {
+   function f2 (n) { return Math .floor (n * 100) / 100; }
+
 	function BrowserTimings (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
@@ -117,8 +119,8 @@ function ($,
 				rows        = this .rows,
 				r           = 0;
 			
-			rows [r++] = $("<tr>") .append ($("<td>") .text (_("Frame rate") + ":")) .append ($("<td>") .text ((this .frames / (currentTime - this .startTime)) .toLocaleString (language, fixed) + " " + _("fps")));
-			rows [r++] = $("<tr>") .append ($("<td>") .text (_("Speed")      + ":")) .append ($("<td>") .text (browser .currentSpeed                            .toLocaleString (language, fixed) + " " + _("m/s")));
+			rows [r++] = $("<tr>") .append ($("<td>") .text (_("Frame rate") + ":")) .append ($("<td>") .text (f2(this .frames / (currentTime - this .startTime)) .toLocaleString (language, fixed) + " " + _("fps")));
+			rows [r++] = $("<tr>") .append ($("<td>") .text (_("Speed")      + ":")) .append ($("<td>") .text (f2(browser .currentSpeed)                          .toLocaleString (language, fixed) + " " + _("m/s")));
 
 			if (this .type === "MORE")
 			{
@@ -143,13 +145,13 @@ function ($,
 
 			   rows [1] .addClass ("cobweb-more");
 
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Browser")   + ":")) .append ($("<td>") .text (systemTime           .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("X3D")       + ":")) .append ($("<td>") .text (browser .browserTime .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Routing")   + ":")) .append ($("<td>") .text (routingTime          .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Picking")   + ":")) .append ($("<td>") .text (browser .pickingTime .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Camera")    + ":")) .append ($("<td>") .text (browser .cameraTime  .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Collision") + ":")) .append ($("<td>") .text (collisionTime        .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Display")   + ":")) .append ($("<td>") .text (browser .displayTime .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Browser")   + ":")) .append ($("<td>") .text (f2(systemTime)           .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("X3D")       + ":")) .append ($("<td>") .text (f2(browser .browserTime) .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Routing")   + ":")) .append ($("<td>") .text (f2(routingTime)          .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Picking")   + ":")) .append ($("<td>") .text (f2(browser .pickingTime) .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Camera")    + ":")) .append ($("<td>") .text (f2(browser .cameraTime)  .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Collision") + ":")) .append ($("<td>") .text (f2(collisionTime)        .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Display")   + ":")) .append ($("<td>") .text (f2(browser .displayTime) .toLocaleString (language, fixed) + " " + _("ms")));
 				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Shapes")    + ":")) .append ($("<td>") .text (opaqueShapes + " + " + transparentShapes));
 				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Sensors")   + ":")) .append ($("<td>") .text (prepareEvents + sensors));
 			}
