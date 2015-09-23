@@ -38,11 +38,12 @@ define (function ()
 		"Browser": "Browser",
 		"X3D": "X3D",
 		"Routing": "Routen",
-		"Picking": "Picking",
+		"Picking": "Maus Ereignisse",
 		"Camera": "Kamera",
 		"Collision": "Kollision",
 		"Display": "Anzeige",
 		"Shapes": "Formen",
 		"Sensors": "Sensoren",
+		"fps": "BpS",
    };
 });
