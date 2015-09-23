@@ -49,8 +49,10 @@ function ($,
 			this .header  = $("<thead/>") .append ($("<tr/>") .append ($("<th colspan=2/>") .text (_("Browser Timings")))) .appendTo (this .table);
 			this .body    = $("<tbody/>") .appendTo (this .table);
 			this .footer  = $("<tfoot/>") .append ($("<tr/>") .append ($("<td colspan=2/>"))) .appendTo (this .table);
-			this .button  = $("<button/>") .text (_("More Properties")) .click (this .set_type__ .bind (this)) .appendTo (this .footer .find ("td"));
+			this .button  = $("<button/>") .click (this .set_type__ .bind (this)) .appendTo (this .footer .find ("td"));
 			this .rows    = [ ];
+
+			this .set_button__ ();
 
 			if (dataStorage ["BrowserTimings.enabled"])
 				this .enabled_ = true;
@@ -73,21 +75,22 @@ function ($,
 		},
 		set_type__: function ()
 		{
-
-		   if (this .type === "MORE")
-		   {
-		      this .type = "LESS";
-		      this .button .text (_("More Properties"));
-		   }
-		   else
-		   {
+			if (this .type === "MORE")
+				this .type = "LESS";
+			else
 				this .type = "MORE";
-		      this .button .text (_("Less Properties"));
-			}
 
 			dataStorage ["BrowserTimings.type"] = this .type;
-		   
-		   this .build ();
+
+			this .set_button__ ();
+			this .build ();
+		},
+		set_button__: function ()
+		{
+			if (this .type === "MORE")
+				this .button .text (_("Less Properties"));
+			else
+				this .button .text (_("More Properties"));
 		},
 		update: function ()
 		{
