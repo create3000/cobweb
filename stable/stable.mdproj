@@ -129,6 +129,23 @@
     <None Include="1\1.12\images\TextureQuality.png" />
     <None Include="1\1.12\images\Viewpoint.png" />
     <None Include="1\1.12\images\WalkViewer.png" />
+    <None Include="1\1.13\cobweb.min.js" />
+    <None Include="1\1.13\cobweb.css" />
+    <None Include="1\1.13\images\ExamineViewer.png" />
+    <None Include="1\1.13\images\FlyViewer.png" />
+    <None Include="1\1.13\images\gtk-zoom-fit.png" />
+    <None Include="1\1.13\images\gtk-zoom-in.png" />
+    <None Include="1\1.13\images\help-about.png" />
+    <None Include="1\1.13\images\icon.bw.png" />
+    <None Include="1\1.13\images\icon.png" />
+    <None Include="1\1.13\images\logo.bw.png" />
+    <None Include="1\1.13\images\logo.png" />
+    <None Include="1\1.13\images\NoneViewer.png" />
+    <None Include="1\1.13\images\PlaneViewer.png" />
+    <None Include="1\1.13\images\PrimitiveQuality.png" />
+    <None Include="1\1.13\images\TextureQuality.png" />
+    <None Include="1\1.13\images\Viewpoint.png" />
+    <None Include="1\1.13\images\WalkViewer.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
@@ -139,5 +156,6 @@
     <Folder Include="1\1.10\" />
     <Folder Include="1\1.11\" />
     <Folder Include="1\1.12\" />
+    <Folder Include="1\1.13\" />
   </ItemGroup>
 </Project>
