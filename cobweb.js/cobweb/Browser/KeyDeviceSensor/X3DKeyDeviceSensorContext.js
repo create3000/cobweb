@@ -6,6 +6,8 @@ function ($)
 {
 	function X3DKeyDeviceSensorContext ()
 	{
+		this .keyDeviceSensorNode = null;
+
 		this .shiftKey = false;
 		this .ctrlKey  = false;
 		this .altKey   = false;
@@ -18,6 +20,14 @@ function ($)
 		{
 			this .getCanvas () .bind ("keydown.X3DKeyDeviceSensorContext", this .keydown .bind (this));
 			this .getCanvas () .bind ("keyup.X3DKeyDeviceSensorContext",   this .keyup   .bind (this));
+		},
+		setKeyDeviceSensorNode: function (value)
+		{
+			this .keyDeviceSensorNode = value;
+		},
+		getKeyDeviceSensorNode: function ()
+		{
+			return this .keyDeviceSensorNode;
 		},
 		hasShiftKey: function ()
 		{
@@ -37,10 +47,13 @@ function ($)
 		},
 		keydown: function (event)
 		{
-			event .preventDefault ();
-
 			//console .log (event .which);
 
+			event .preventDefault ();
+
+			if (this .keyDeviceSensorNode)
+			   this .keyDeviceSensorNode .keydown (event);
+	
 			switch (event .which)
 			{
 				case 16: // Shift
@@ -65,6 +78,7 @@ function ($)
 						this .setBrowserOption ("Shading", "POINTSET");
 						this .getNotification () .string_ = "Shading: Pointset";
 					}
+
 					break;
 				}
 				case 50: // 2
@@ -74,7 +88,8 @@ function ($)
 						this .setBrowserOption ("Shading", "WIREFRAME");
 						this .getNotification () .string_ = "Shading: Wireframe";
 					}
-				break;
+
+					break;
 				}
 				case 51: // 3
 				{
@@ -83,6 +98,7 @@ function ($)
 						this .setBrowserOption ("Shading", "FLAT");
 						this .getNotification () .string_ = "Shading: Flat";
 					}
+
 					break;
 				}
 				case 52: // 4
@@ -92,6 +108,7 @@ function ($)
 						this .setBrowserOption ("Shading", "GOURAUD");
 						this .getNotification () .string_ = "Shading: Gouraud";
 					}
+
 					break;
 				}
 				case 53: // 5
@@ -101,6 +118,7 @@ function ($)
 						this .setBrowserOption ("Shading", "PHONG");
 						this .getNotification () .string_ = "Shading: Phong";
 					}
+
 					break;
 				}
 				case 83: // s
@@ -152,9 +170,12 @@ function ($)
 		},
 		keyup: function (event)
 		{
+			//console .log (event .which);
+
 			event .preventDefault ();
 
-			//console .log (event .which);
+			if (this .keyDeviceSensorNode)
+			   this .keyDeviceSensorNode .keyup (event);
 
 			switch (event .which)
 			{

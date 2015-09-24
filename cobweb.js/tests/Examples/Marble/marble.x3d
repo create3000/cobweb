@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Tue, 22 Sep 2015 11:26:52 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Sep 2015 20:15:13 GMT'/>
+    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Thu, 24 Sep 2015 06:14:25 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -23,7 +23,7 @@
             name='Grid'>
           <MetadataBoolean containerField='value'
               name='enabled'
-              value='false'/>
+              value='true'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -48,23 +48,130 @@ function set_isActive (value, time)
 		enterTime = time;
 }]]> 
     </Script>
+    <Background DEF='Gray_1'
+        skyColor='0.2 0.2 0.2'/>
+    <Background DEF='Transparent_1'
+        transparency='1'/>
     <Viewpoint
         description='Home'
-        position='-4.23514 5.73347 -2.53133'
-        orientation='-0.169436 -0.885799 -0.432032 2.26662'/>
-    <Transform DEF='Sphere_1'>
-      <Shape>
-        <Appearance>
-          <Material DEF='Metal31_1'
-              ambientIntensity='0.0955322'
-              diffuseColor='0.372322 0.371574 0.373173'
-              specularColor='1 0.701006 1'
-              shininess='0.127551'/>
-          <ImageTexture
-              url='"checkerboard.png", "checkerboard.svg"'/>
-        </Appearance>
-        <Sphere/>
-      </Shape>
+        position='-0.285946 13.0626 0.134137'
+        orientation='-0.999856 -0.0133077 0.0105075 1.55979'
+        centerOfRotation='0 1 0'/>
+    <Transform DEF='Marble'
+        translation='0 1 0'>
+      <Transform DEF='Sphere_1'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Metal31_1'
+                ambientIntensity='0.0955322'
+                diffuseColor='0.372322 0.371574 0.373173'
+                specularColor='1 0.701006 1'
+                shininess='0.127551'/>
+            <ImageTexture
+                url='"checkerboard.png", "checkerboard.svg"'/>
+          </Appearance>
+          <Sphere
+              solid='false'/>
+        </Shape>
+      </Transform>
+      <Script DEF='MarbleScript'
+          directOutput='true'>
+        <field accessType='inputOnly' type='SFInt32' name='set_actionKeyPress'/>
+        <field accessType='inputOutput' type='SFBool' name='active'/>
+        <field accessType='inputOutput' type='SFVec2f' name='fieldSize' value='2 2'/>
+        <field accessType='inputOutput' type='SFFloat' name='marbleRadius' value='1'/>
+        <field accessType='initializeOnly' type='SFNode' name='marble'>
+          <Transform USE='Sphere_1'/>
+        </field>
+        <field accessType='initializeOnly' type='SFNode' name='timer'>
+          <TimeSensor DEF='_1'
+              cycleInterval='0.61803398875'
+              startTime='1443070292.39023'/>
+        </field>
+        <field accessType='initializeOnly' type='SFNode' name='orientationInterpolator'>
+          <OrientationInterpolator DEF='_2'
+              key='0, 0.25, 0.5, 0.75, 1'
+              keyValue='-0.06618 -0.675769 0.734137 2.04099, 0.58542 -0.260322 0.767799 4.02822, 0.640636 0.702722 -0.309464 4.97451, -0.283659 0.50618 -0.814444 3.28462, -0.856897 -0.164789 -0.488439 1.45033'/>
+        </field>
+        <field accessType='initializeOnly' type='SFNode' name='positionInterpolator'>
+          <PositionInterpolator DEF='_3'
+              key='0, 1'
+              keyValue='6 0 2, -4 0 2'/>
+        </field>
+        <Group containerField='metadata'>
+          <KeySensor DEF='_4'/>
+        </Group>
+<![CDATA[javascript:
+
+var
+	up    = new SFVec3f (-1, 0,  0),
+	down  = new SFVec3f ( 1, 0,  0),
+	left  = new SFVec3f ( 0, 0,  1),
+	right = new SFVec3f ( 0, 0, -1);
+
+function initialize ()
+{
+	marble .translation = new SFVec3f ();
+	marble .rotation    = new SFRotation ();
+}
+
+function set_actionKeyPress (value, time)
+{
+	if (active)
+		return;
+	
+	switch (value)
+	{
+		case 17: // up
+			roll (-1, up, "y", time);
+			break;
+		case 18: // down
+			roll (1, down, "y", time);
+			break;
+		case 19: // left
+			roll (-1, left, "x", time);
+			break;
+		case 20: // right
+			roll (1, right, "x", time);
+			break;
+	}
+}
+
+function roll (direction, rotationAxis, axis, time)
+{
+	var
+		startTranslation = marble .translation,
+		translation      = new SFVec3f ();
+		
+	translation [{ x: "x", y: "z" } [axis]] = fieldSize [axis] * direction;
+
+	positionInterpolator .keyValue = new MFVec3f (startTranslation, startTranslation .add (translation));
+	
+
+	var
+		startRotation = marble .rotation,
+		angle         = fieldSize [axis] / marbleRadius,
+	   rotation1     = new SFRotation (rotationAxis, angle * 0.25),
+		rotation2     = new SFRotation (rotationAxis, angle * 0.5),
+		rotation3     = new SFRotation (rotationAxis, angle * 0.75),
+		rotation4     = new SFRotation (rotationAxis, angle);
+	
+	rotation1 = startRotation .multiply (rotation1);
+	rotation2 = startRotation .multiply (rotation2);
+	rotation3 = startRotation .multiply (rotation3);
+	rotation4 = startRotation .multiply (rotation4);
+
+	orientationInterpolator .keyValue = new MFRotation (startRotation, rotation1, rotation2, rotation3, rotation4);
+	timer .startTime = time;
+}
+]]> 
+      </Script>
     </Transform>
+    <ROUTE fromNode='_2' fromField='value_changed' toNode='Sphere_1' toField='set_rotation'/>
+    <ROUTE fromNode='_4' fromField='actionKeyPress' toNode='MarbleScript' toField='set_actionKeyPress'/>
+    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='value_changed' toNode='Sphere_1' toField='set_translation'/>
+    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='_3' toField='set_fraction'/>
+    <ROUTE fromNode='_1' fromField='isActive' toNode='MarbleScript' toField='set_active'/>
   </Scene>
 </X3D>

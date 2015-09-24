@@ -139,6 +139,5 @@
     <Folder Include="1\1.10\" />
     <Folder Include="1\1.11\" />
     <Folder Include="1\1.12\" />
-    <Folder Include="1\1.12\" />
   </ItemGroup>
 </Project>

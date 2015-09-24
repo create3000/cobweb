@@ -6,21 +6,8 @@ function ($)
 {
 	function Complex (real, imag)
 	{
-		switch (arguments .length)
-		{
-			case 0:
-				this .real = 0;
-				this .imag = 0;
-				return this;
-			case 1:
-				this .real = real;
-				this .imag = 0;
-				return this;
-			default:
-				this .real = real
-				this .imag = imag;
-				return this;
-		}
+		this .real = real
+		this .imag = imag;
 	}
 
 	Complex .prototype =

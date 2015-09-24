@@ -91,6 +91,14 @@ function ($,
 		 s, -s,  s, 1,
 	];
 
+	var
+		z1 = new Complex (0, 0),
+		z2 = new Complex (0, 0),
+		y1 = new Complex (0, 0),
+		y2 = new Complex (0, 0),
+		y3 = new Complex (0, 0),
+		y4 = new Complex (0, 0);
+
 	function X3DBackgroundNode (browser, executionContext)
 	{
 		X3DBindableNode .call (this, browser, executionContext);
@@ -255,7 +263,7 @@ function ($,
 				{
 					var vAngle = [ ];
 					
-					for (var i = 0; i < this .skyAngle_ .length; ++ i)
+					for (var i = 0, length = this .skyAngle_ .length; i < length; ++ i)
 						vAngle .push (this .skyAngle_ [i]);
 
 					if (vAngle .length === 0 || vAngle [0] > 0)
@@ -273,7 +281,7 @@ function ($,
 				{
 					var vAngle = [ ];
 					
-					for (var i = 0; i < this .groundAngle_ .length; ++ i)
+					for (var i = 0, length = this .groundAngle_ .length; i < length; ++ i)
 						vAngle .push (this .groundAngle_ [i]);
 
 					vAngle .reverse ();
@@ -294,11 +302,6 @@ function ($,
 		{
 			var
 				phi         = 0,
-				y1          = null,
-				y2          = null,
-				y3          = null,
-				y4          = null,
-				p           = null,
 				vAngleMax   = bottom ? Math .PI / 2 : Math .PI,
 				V_DIMENSION = vAngle .length - 1;
 			
@@ -314,9 +317,10 @@ function ($,
 					theta2 = Math .PI - theta2;
 				}
 
+				z1 .setPolar (radius, theta1);
+				z2 .setPolar (radius, theta2);
+				
 				var
-					z1 = Complex .Polar (radius, theta1),
-					z2 = Complex .Polar (radius, theta2),
 					c1 = this .getColor (vAngle [v],     color, angle),
 					c2 = this .getColor (vAngle [v + 1], color, angle);
 				
@@ -332,31 +336,31 @@ function ($,
 			
 					// p1, p2
 					phi = 2 * Math .PI * (u / U_DIMENSION);
-					y1  = Complex .Polar (-z1 .imag, phi);
-					y2  = Complex .Polar (-z2 .imag, phi);
+					y1  .setPolar (-z1 .imag, phi);
+					y2  .setPolar (-z2 .imag, phi);
 
 					// p3, p4
 					phi = 2 * Math .PI * (u1 / U_DIMENSION);
-					y3  = Complex .Polar (-z2 .imag, phi);
-					y4  = Complex .Polar (-z1 .imag, phi);
+					y3  .setPolar (-z2 .imag, phi);
+					y4  .setPolar (-z1 .imag, phi);
 					
-					// Triangle 1
-					this .colors .push (c1 .r, c1 .g, c1 .b, alpha);
-					this .colors .push (c2 .r, c2 .g, c2 .b, alpha);
-					this .colors .push (c2 .r, c2 .g, c2 .b, alpha);
+					// Triangle 1 and 2
 
-					this .sphere .push (y1 .imag, z1 .real, y1 .real, 1);
-					this .sphere .push (y3 .imag, z2 .real, y3 .real, 1);	
-					this .sphere .push (y2 .imag, z2 .real, y2 .real, 1);
+					this .colors .push (c1 .r, c1 .g, c1 .b, alpha,
+					                    c2 .r, c2 .g, c2 .b, alpha,
+					                    c2 .r, c2 .g, c2 .b, alpha,
+					                    // Triangle 2
+					                    c1 .r, c1 .g, c1 .b, alpha,
+					                    c1 .r, c1 .g, c1 .b, alpha,
+					                    c2 .r, c2 .g, c2 .b, alpha);
 
-					// Triangle 2
-					this .colors .push (c1 .r, c1 .g, c1 .b, alpha);
-					this .colors .push (c1 .r, c1 .g, c1 .b, alpha);
-					this .colors .push (c2 .r, c2 .g, c2 .b, alpha);
-
-					this .sphere .push (y1 .imag, z1 .real, y1 .real, 1);
-					this .sphere .push (y4 .imag, z1 .real, y4 .real, 1);	
-					this .sphere .push (y3 .imag, z2 .real, y3 .real, 1);	
+					this .sphere .push (y1 .imag, z1 .real, y1 .real, 1,
+					                    y3 .imag, z2 .real, y3 .real, 1,
+					                    y2 .imag, z2 .real, y2 .real, 1,
+					                    // Triangle 2
+					                    y1 .imag, z1 .real, y1 .real, 1,
+					                    y4 .imag, z1 .real, y4 .real, 1,
+					                    y3 .imag, z2 .real, y3 .real, 1);	
 				}
 			}
 		},
