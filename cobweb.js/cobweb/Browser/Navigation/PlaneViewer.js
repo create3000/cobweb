@@ -37,7 +37,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 			canvas .bind ("mousemove.PlaneViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.PlaneViewer", this .mousewheel .bind (this));
 
-			browser .getNotification () .string_ = _("Plane Viewer");
+			//browser .getNotification () .string_ = _("Plane Viewer");
 		},
 		mousedown: function (event)
 		{

@@ -17,7 +17,7 @@ function (X3DFlyViewer, _)
 		{
 			X3DFlyViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getNotification () .string_ = _("Fly Viewer");
+			//this .getBrowser () .getNotification () .string_ = _("Fly Viewer");
 		},
 		getTranslationOffset: function (velocity)
 		{

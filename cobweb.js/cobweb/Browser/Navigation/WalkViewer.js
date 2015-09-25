@@ -21,7 +21,7 @@ function (X3DFlyViewer, Vector3, Rotation4, _)
 		{
 			X3DFlyViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getNotification () .string_ = _("Walk Viewer");
+			//this .getBrowser () .getNotification () .string_ = _("Walk Viewer");
 		},
 		getTranslationOffset: function (velocity)
 		{

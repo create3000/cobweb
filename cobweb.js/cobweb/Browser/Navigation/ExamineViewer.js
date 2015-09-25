@@ -47,7 +47,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			canvas .bind ("mousemove.ExamineViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 
-			browser .getNotification () .string_ = _("Examine Viewer");
+			//browser .getNotification () .string_ = _("Examine Viewer");
 		},
 		mousedown: function (event)
 		{

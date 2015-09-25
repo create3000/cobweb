@@ -6,6 +6,7 @@ define ([
 	"cobweb/Browser/Core/X3DCoreContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
 	"cobweb/Browser/Rendering/X3DRenderingContext",
+	"cobweb/Browser/Geometry2D/X3DGeometry2DContext",
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
 	"cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext",
 	"cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext",
@@ -30,6 +31,7 @@ function ($,
           X3DCoreContext,
           X3DNetworkingContext,
           X3DRenderingContext,
+          X3DGeometry2DContext,
           X3DGeometry3DContext,
           X3DPointingDeviceSensorContext,
           X3DKeyDeviceSensorContext,
@@ -54,6 +56,7 @@ function ($,
 		X3DCoreContext                 .call (this, xml);
 		X3DNetworkingContext           .call (this);
 		X3DRenderingContext            .call (this);
+		X3DGeometry2DContext           .call (this);
 		X3DGeometry3DContext           .call (this);
 		X3DPointingDeviceSensorContext .call (this);
 		X3DKeyDeviceSensorContext      .call (this);
@@ -85,6 +88,7 @@ function ($,
 		X3DCoreContext .prototype,
 		X3DNetworkingContext .prototype,
 		X3DRenderingContext .prototype,
+		X3DGeometry2DContext .prototype,
 		X3DGeometry3DContext .prototype,
 		X3DPointingDeviceSensorContext .prototype,
 		X3DKeyDeviceSensorContext .prototype,
@@ -114,6 +118,7 @@ function ($,
 			X3DCoreContext                 .prototype .initialize .call (this);
 			X3DNetworkingContext           .prototype .initialize .call (this);
 			X3DRenderingContext            .prototype .initialize .call (this);
+			X3DGeometry2DContext           .prototype .initialize .call (this);
 			X3DGeometry3DContext           .prototype .initialize .call (this);
 			X3DPointingDeviceSensorContext .prototype .initialize .call (this);
 			X3DKeyDeviceSensorContext      .prototype .initialize .call (this);

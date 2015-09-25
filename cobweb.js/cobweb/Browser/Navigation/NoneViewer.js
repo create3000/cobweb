@@ -18,7 +18,7 @@ function ($, X3DViewer, _)
 		{
 			X3DViewer .prototype .initialize .call (this);
 
-			this .getBrowser () .getNotification () .string_ = _("None Viewer");
+			//this .getBrowser () .getNotification () .string_ = _("None Viewer");
 		},
 	});
 

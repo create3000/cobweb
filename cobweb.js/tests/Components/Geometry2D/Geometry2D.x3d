@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Fri, 25 Sep 2015 08:19:46 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Fri, 25 Sep 2015 08:22:55 GMT'/>
+  </head>
+  <Scene>
+    <Background DEF='Gray_1'
+        skyColor='0.2 0.2 0.2'/>
+    <Viewpoint DEF='_1'
+        position='0.164316 1.32822 10'
+        centerOfRotation='0.164316 1.32822 0'/>
+    <Transform DEF='Rectangle2D_1'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <Rectangle2D/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Rectangle2D'
+        translation='0 3 0'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture
+              url='"../images/test.png"'/>
+        </Appearance>
+        <Rectangle2D
+            solid='false'/>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>

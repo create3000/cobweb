@@ -290,6 +290,22 @@ function ($,
 
 				return normals_;
 			},
+			addBackFaces: function ()
+			{
+				var
+					texCoords = this .texCoords [0],
+					normals   = this .normals,
+					vertices  = this .vertices;
+
+				for (var i = this .vertices .length - 1; i > -1; i -= 4)
+				{
+					texCoords .push (1 - texCoords [i - 3], texCoords [i - 2], texCoords [i - 1], texCoords [i]);
+					normals   .push (0, 0, -1);
+					vertices  .push (vertices [i - 3], vertices [i - 2], vertices [i - 1], 1);
+				}
+
+				console .log (vertices);
+			},
 			set_live__: function ()
 			{
 				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();

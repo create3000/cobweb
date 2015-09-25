@@ -16,6 +16,8 @@ function ($,
           X3DConstants,
           Vector3)
 {
+   var defaultSize = new Vector3 (2, 2, 2);
+
 	with (Fields)
 	{
 		function Box (executionContext)
@@ -54,7 +56,7 @@ function ($,
 				this .setNormals   (options .getGeometry () .getNormals ());
 				this .setTexCoords (options .getGeometry () .getTexCoords ());
 
-				if (size .equals (new Vector3 (2, 2, 2)))
+				if (size .equals (defaultSize))
 				{
 					this .setVertices (options .getGeometry () .getVertices ());
 					this .setExtents  (options .getGeometry () .getExtents ());
