@@ -303,8 +303,6 @@ function ($,
 					normals   .push (0, 0, -1);
 					vertices  .push (vertices [i - 3], vertices [i - 2], vertices [i - 1], 1);
 				}
-
-				console .log (vertices);
 			},
 			set_live__: function ()
 			{
