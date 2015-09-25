@@ -102,7 +102,7 @@ function ($,
 				if (shape .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), localLights: [ ] });
+						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), localLights: [ ], geometryType: 3, });
 
 					var context = this .transparentShapes [this .numTransparentShapes];
 
@@ -111,7 +111,7 @@ function ($,
 				else
 				{
 					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push ({ transparent: false, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), localLights: [ ] });
+						this .opaqueShapes .push ({ transparent: false, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), localLights: [ ], geometryType: 3, });
 
 					var context = this .opaqueShapes [this .numOpaqueShapes];
 

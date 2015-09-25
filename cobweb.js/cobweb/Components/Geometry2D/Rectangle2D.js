@@ -84,15 +84,16 @@ function ($,
 					this .setExtents  ([new Vector3 (-x, -y, 1), new Vector3 (x, y, 1)]);	
 				}
 
-				this .setSolid (true);
+				this .setSolid (this .solid_ .getValue ());
 				this .setCurrentTexCoord (null);
-
-				if (! this .solid_ .getValue ())
-				   this .addBackFaces ();
 			},
 			traverse: function (context)
 			{
+				context .geometryType = 2;
+
 				X3DGeometryNode .prototype .traverse .call (this, context);
+
+				context .geometryType = 3;
 			},
 		});
 

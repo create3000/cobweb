@@ -107,9 +107,9 @@ function ($,
 
 				gl .useProgram (program);
 
-				this .fogType            = gl .getUniformLocation (program, "x3d_fogType");
-				this .fogColor           = gl .getUniformLocation (program, "x3d_fogColor");
-				this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_fogVisibilityRange");
+				this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
+				this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
+				this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
 
 				this .lighting      = gl .getUniformLocation (program, "x3d_Lighting");
 				this .colorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
@@ -148,8 +148,9 @@ function ($,
 				this .shininess        = gl .getUniformLocation (program, "x3d_Shininess");
 				this .transparency     = gl .getUniformLocation (program, "x3d_Transparency");
 
-				this .texturing = gl .getUniformLocation (program, "x3d_Texturing");
-				this .texture   = gl .getUniformLocation (program, "x3d_Texture");
+				this .texturing    = gl .getUniformLocation (program, "x3d_Texturing");
+				this .texture      = gl .getUniformLocation (program, "x3d_Texture");
+				this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 				this .textureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 				this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
@@ -262,6 +263,7 @@ function ($,
 					texture .traverse ();
 					gl .uniform1i (this .texturing, true);
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
+					gl .uniform1i (this .geometryType, context .geometryType);
 					// Active texture 0 is set on initialization.
 				}
 				else
