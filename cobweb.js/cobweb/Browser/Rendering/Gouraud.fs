@@ -13,6 +13,8 @@ uniform float x3d_FogVisibilityRange;
 uniform bool x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false
 uniform bool x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false
 
+uniform bool x3d_SeparateBackColor;
+
 #define GEOMETRY_2D 2
 #define GEOMETRY_3D 3
 
@@ -61,7 +63,7 @@ main ()
 {
 	float f0 = getFogInterpolant ();
 
-	vec4 finalColor = gl_FrontFacing ? frontColor : backColor;
+	vec4 finalColor = gl_FrontFacing || ! x3d_SeparateBackColor ? frontColor : backColor;
 
 	if (x3d_Lighting)
 	{

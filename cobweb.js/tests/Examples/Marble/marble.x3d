@@ -6,7 +6,7 @@
     <meta name='created' content='Tue, 22 Sep 2015 11:26:52 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 25 Sep 2015 07:38:46 GMT'/>
+    <meta name='modified' content='Fri, 25 Sep 2015 19:36:49 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Grid'>
@@ -259,7 +259,7 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
             name='Grid'>
           <MetadataBoolean containerField='value'
               name='enabled'
-              value='false'/>
+              value='true'/>
           <MetadataInteger containerField='value'
               name='majorLineOffset'
               value='1, 0, 1'/>
@@ -365,7 +365,7 @@ function initialize ()
 	
 	try
 	{
-		Browser .setBrowserOption ("Shading", "PHONG");
+		//Browser .setBrowserOption ("Shading", "PHONG");
 	}
 	catch (error)
 	{ }
@@ -381,14 +381,32 @@ function set_isActive (value, time)
         skyColor='0.2 0.2 0.2'/>
     <KeySensor DEF='A'
         enabled='false'/>
+    <Transform DEF='Rectangle2D_1'
+        translation='0 0 4'
+        rotation='1 3.62336e-06 -7.567e-10 4.71239'
+        scaleOrientation='0.999922 0.0107938 0.00620818 0.78524'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Neon22_1'
+              ambientIntensity='0'
+              diffuseColor='0 0 0'
+              specularColor='0.622449 0.622449 0.622449'
+              emissiveColor='0.934028 0.00304288 1'
+              shininess='0.0510204'/>
+        </Appearance>
+        <Rectangle2D/>
+      </Shape>
+    </Transform>
     <Transform DEF='Marble'
         translation='0 1 0'>
-      <Transform DEF='SphereTranslation'>
+      <Transform DEF='SphereTranslation'
+          translation='0 0 4'>
         <Viewpoint
             description='Home'
-            position='-3.61173 7.68 6.00033'
-            orientation='-0.836295 -0.509358 -0.202891 0.977434'/>
-        <Transform DEF='SphereRotation'>
+            position='-3.38726 12.9707 12.1553'
+            orientation='-0.947271 -0.299523 -0.113853 0.840082'/>
+        <Transform DEF='SphereRotation'
+            rotation='-0.627324 -0.770965 -0.109898 1.4681'>
           <Shape>
             <Appearance>
               <Material DEF='Metal31_1'
@@ -412,17 +430,30 @@ function set_isActive (value, time)
         <field accessType='initializeOnly' type='SFNode' name='timer'>
           <TimeSensor DEF='_1'
               cycleInterval='0.61803398875'
-              startTime='1443161445.62837'/>
+              startTime='1443190356.4261'/>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='orientationInterpolator'>
           <OrientationInterpolator DEF='_2'
               key='0, 0.25, 0.5, 0.75, 1'
-              keyValue='0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0'/>
+              keyValue='-0.852783 -0.341376 0.395252 3.04647, -0.841807 -0.44292 0.308516 2.62215, -0.81161 -0.547078 0.204927 2.20782, -0.74963 -0.657972 0.0716097 1.81575, -0.627324 -0.770965 -0.109898 1.4681'/>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='positionInterpolator'>
           <PositionInterpolator DEF='_3'
               key='0, 1'
-              keyValue='0 0 0, 0 0 0'/>
+              keyValue='0 0 2, 0 0 4'/>
+        </field>
+        <field accessType='initializeOnly' type='SFNode' name='rectangle'>
+          <Transform USE='Rectangle2D_1'/>
+        </field>
+        <field accessType='initializeOnly' type='SFNode' name='grid'>
+          <ProtoInstance name='Grid' DEF='_4'>
+            <fieldValue name='dimension' value='22, 0, 22'/>
+            <fieldValue name='majorLineEvery' value='2, 5, 2'/>
+            <fieldValue name='majorLineOffset' value='1, 0, 1'/>
+            <fieldValue name='transparency' value='1'/>
+            <fieldValue name='lineColor' value='0 0 0'/>
+            <fieldValue name='majorLineColor' value='0 0 0'/>
+          </ProtoInstance>
         </field>
         <Group containerField='metadata'>
           <KeySensor DEF='MarbleKeySensor'/>
@@ -439,6 +470,7 @@ function initialize ()
 {
 	positionInterpolator    .keyValue = new MFVec3f ();
 	orientationInterpolator .keyValue = new MFRotation ();
+	rectangle .translation            = new SFVec3f (); 
 
 	positionInterpolator    .set_fraction = 1;
 	orientationInterpolator .set_fraction = 1;
@@ -452,34 +484,41 @@ function set_actionKeyPress (value, time)
 	switch (value)
 	{
 		case 17: // up
-			roll (-1, up, "y", time);
+			roll (-1, up, 2, time);
 			break;
 		case 18: // down
-			roll (1, down, "y", time);
+			roll (1, down, 2, time);
 			break;
 		case 19: // left
-			roll (-1, left, "x", time);
+			roll (-1, left, 0, time);
 			break;
 		case 20: // right
-			roll (1, right, "x", time);
+			roll (1, right, 0, time);
 			break;
 	}
 }
 
 function roll (direction, rotationAxis, axis, time)
 {
+	// PositionInterpolator
+
 	var
 		startTranslation = positionInterpolator .keyValue [1],
 		translation      = new SFVec3f ();
 		
-	translation [{ x: "x", y: "z" } [axis]] = fieldSize [axis] * direction;
+	translation [axis] = 2 * grid .scale [axis] * direction;
+	translation        = startTranslation .add (translation);
 
-	positionInterpolator .keyValue = new MFVec3f (startTranslation, startTranslation .add (translation));
+	if (Math .abs (translation [axis]) > grid .dimension [axis] / 2)
+		return;
+
+	positionInterpolator .keyValue = new MFVec3f (startTranslation, translation);
 	
+	// OrientationInterpolator
 
 	var
 		startRotation = orientationInterpolator .keyValue [4],
-		angle         = fieldSize [axis] / marbleRadius,
+		angle         = 2 * grid .scale [axis] / marbleRadius,
 	   rotation1     = new SFRotation (rotationAxis, angle * 0.25),
 		rotation2     = new SFRotation (rotationAxis, angle * 0.5),
 		rotation3     = new SFRotation (rotationAxis, angle * 0.75),
@@ -492,18 +531,53 @@ function roll (direction, rotationAxis, axis, time)
 
 	orientationInterpolator .keyValue = new MFRotation (startRotation, rotation1, rotation2, rotation3, rotation4);
 	timer .startTime = time;
+	
+	// Rectangle
+	
+	rectangle .translation = positionInterpolator .keyValue [1];
 }
 ]]> 
       </Script>
     </Transform>
-    <ProtoInstance name='Grid'>
-      <fieldValue name='dimension' value='22, 0, 22'/>
-      <fieldValue name='majorLineEvery' value='2, 5, 2'/>
-      <fieldValue name='majorLineOffset' value='1, 0, 1'/>
-      <fieldValue name='transparency' value='0.8'/>
-      <fieldValue name='lineColor' value='0 0 0'/>
-      <fieldValue name='majorLineColor' value='0 0 0'/>
-    </ProtoInstance>
+    <ProtoInstance USE='_4'/>
+    <Transform
+        translation='1.19209e-07 1 -6.98312e-08'
+        rotation='0 1 0 1.5708'
+        scale='1 0.707107 0.707107'
+        scaleOrientation='0 0 1 0'
+        center='4 0 -2'>
+      <Transform DEF='Rectangle2D'
+          translation='4 0 -2'
+          rotation='0.678598 0.281087 -0.678598 3.68962'
+          scale='1 1 1'
+          scaleOrientation='-0.743289 0.203315 0.637326 0.27003'>
+        <Shape>
+          <Appearance>
+            <TwoSidedMaterial
+                separateBackColor='true'
+                ambientIntensity='0'
+                diffuseColor='0 0 0'
+                specularColor='0.622449 0.622449 0.622449'
+                emissiveColor='0.460235 0 1'
+                shininess='0.0510204'
+                backAmbientIntensity='0'
+                backDiffuseColor='0 0 0'
+                backSpecularColor='0.721 0.721 0.721'
+                backEmissiveColor='1 0.0392157 0'
+                backShininess='0.0903955'/>
+          </Appearance>
+          <Rectangle2D
+              solid='false'/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <Transform
+        translation='2 1 0'
+        rotation='0 -1 0 1.57079'
+        scale='1 0.707107 0.707107'
+        center='4 0 -2'>
+      <Transform USE='Rectangle2D'/>
+    </Transform>
     <ROUTE fromNode='_2' fromField='value_changed' toNode='SphereRotation' toField='set_rotation'/>
     <ROUTE fromNode='MarbleKeySensor' fromField='actionKeyPress' toNode='MarbleScript' toField='set_actionKeyPress'/>
     <ROUTE fromNode='_1' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>

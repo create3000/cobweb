@@ -62,35 +62,11 @@ X3D (function (dom)
 	var Browser = X3D .getBrowser (dom);
 	var scene   = Browser .currentScene;
 
-	var index = 0;
+	var index = 2;
 	var pages = [ "Page 1", "Page 2", "Page 3" ];
 
 	var urls =
 	[
-		[
-			{ name: 'Text',                 url: "tests/Components/Text/Text.x3d" },
-			{ name: 'Rathaus',              url: "tests/Examples/Rathaus/stage/index.x3d" },
-			{ name: 'Schacht',              url: "tests/Examples/Schacht/index.x3d" },
-			{ name: 'Mediafacade',          url: "tests/Examples/Vattenfall/index.x3d" },
-			{ name: 'Smashing Boxes',       url: "tests/Examples/Boxes/boxes.x3d" },
-			{ name: 'Anatomy',              url: "tests/Examples/Compel/anatomy/anatomy.x3d" },
-			{ name: 'Jungle',               url: "tests/Examples/Compel/jungle/jungle.x3d" },
-			{ name: 'Huey',                 url: "tests/Examples/Compel/huey.x3d" },
-			{ name: 'Foldup',               url: "tests/Examples/Compel/foldup.x3d" },
-			{ name: 'Ripple',               url: "tests/Examples/Compel/ripple.x3d" },
-			{ name: 'Terrain',              url: "tests/Examples/Terrain/index.x3d" },
-			{ name: 'Gears',                url: "tests/Examples/Gears/gears.x3d" },
-			{ name: 'Ghost',                url: "tests/Examples/Cathedral/stage/geist.x3d" },
-			{ name: 'LayerSet',             url: "tests/Components/Layering/LayerSet.x3d" },
-			{ name: 'Simple',               url: "tests/Components/Layering/Simple.x3d" },
-			{ name: 'Viewport',             url: "tests/Components/Layering/Viewport.x3d" },
-			{ name: 'ViewportLayer',        url: "tests/Components/Layering/ViewportLayer.x3d" },
-			{ name: 'createVrmlFromString', url: "tests/Components/Scripting/createVrmlFromString.x3d" },
-			{ name: 'Gravitation',          url: "tests/Components/Navigation/Gravitation.x3d" },
-			{ name: 'Billboard',            url: "tests/Components/Navigation/Billboard.x3d" },
-			{ name: 'VisibilitySensor',     url: "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d" },
-			{ name: 'Marble',               url: "tests/Examples/Marble/marble.x3d" },
-		],
 		[
 		   { name: 'ProximitySensor',      url: "tests/Components/EnvironmentalSensor/ProximitySensor.x3d" },
 			{ name: 'ImageBackground',      url: "tests/Components/EnvironmentalEffects/ImageBackground.x3d" },
@@ -140,6 +116,31 @@ X3D (function (dom)
 			{ name: 'MovieTruck',           url: "tests/Examples/MovieTruck/stage/index.x3d" },
 			{ name: 'NIST-Logo',            url: "tests/Examples/NIST-Logo/index.x3d" },
 			{ name: 'Pong',                 url: "tests/Examples/Pong/index.x3d" },
+		],
+		[
+			{ name: 'Text',                 url: "tests/Components/Text/Text.x3d" },
+			{ name: 'Rathaus',              url: "tests/Examples/Rathaus/stage/index.x3d" },
+			{ name: 'Schacht',              url: "tests/Examples/Schacht/index.x3d" },
+			{ name: 'Mediafacade',          url: "tests/Examples/Vattenfall/index.x3d" },
+			{ name: 'Smashing Boxes',       url: "tests/Examples/Boxes/boxes.x3d" },
+			{ name: 'Anatomy',              url: "tests/Examples/Compel/anatomy/anatomy.x3d" },
+			{ name: 'Jungle',               url: "tests/Examples/Compel/jungle/jungle.x3d" },
+			{ name: 'Huey',                 url: "tests/Examples/Compel/huey.x3d" },
+			{ name: 'Foldup',               url: "tests/Examples/Compel/foldup.x3d" },
+			{ name: 'Ripple',               url: "tests/Examples/Compel/ripple.x3d" },
+			{ name: 'Terrain',              url: "tests/Examples/Terrain/index.x3d" },
+			{ name: 'Gears',                url: "tests/Examples/Gears/gears.x3d" },
+			{ name: 'Ghost',                url: "tests/Examples/Cathedral/stage/geist.x3d" },
+			{ name: 'LayerSet',             url: "tests/Components/Layering/LayerSet.x3d" },
+			{ name: 'Simple',               url: "tests/Components/Layering/Simple.x3d" },
+			{ name: 'Viewport',             url: "tests/Components/Layering/Viewport.x3d" },
+			{ name: 'ViewportLayer',        url: "tests/Components/Layering/ViewportLayer.x3d" },
+			{ name: 'createVrmlFromString', url: "tests/Components/Scripting/createVrmlFromString.x3d" },
+			{ name: 'Gravitation',          url: "tests/Components/Navigation/Gravitation.x3d" },
+			{ name: 'Billboard',            url: "tests/Components/Navigation/Billboard.x3d" },
+			{ name: 'VisibilitySensor',     url: "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d" },
+			{ name: 'Mushrooms',            url: "tests/Examples/Mushrooms/index.x3d" },
+			{ name: 'Marble',               url: "tests/Examples/Marble/marble.x3d" },
 		],
 	];
 

@@ -23,6 +23,10 @@ function ($,
 			X3DMaterialNode .call (this, executionContext .getBrowser (), executionContext);
 
 			this .addType (X3DConstants .Material);
+				
+			this .diffuseColor  = new Float32Array (3);
+			this .specularColor = new Float32Array (3);
+			this .emissiveColor = new Float32Array (3);
 		}
 
 		Material .prototype = $.extend (Object .create (X3DMaterialNode .prototype),
@@ -62,16 +66,16 @@ function ($,
 				this .shininess_        .addInterest (this, "set_shininess__");
 				this .transparency_     .addInterest (this, "set_transparency__");
 		
-				this .diffuseColor  = new Float32Array (3);
-				this .specularColor = new Float32Array (3);
-				this .emissiveColor = new Float32Array (3);
-
 				this .set_ambientIntensity__ ();
 				this .set_diffuseColor__ ();
 				this .set_specularColor__ ();
 				this .set_emissiveColor__ ();
 				this .set_shininess__ ();
 				this .set_transparency__ ();
+			},
+			getSeparateBackColor: function ()
+			{
+			   return false;
 			},
 			set_ambientIntensity__: function ()
 			{
@@ -95,12 +99,12 @@ function ($,
 			},
 			set_transparency__: function ()
 			{
-				this .transparency = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
+				var transparency = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
 
-				var transparent = Boolean (this .transparency);
+				this .transparency = transparency;
 
-				if (transparent !== this .transparent_ .getValue ())
-					this .transparent_ = transparent;
+				if (transparency != this .transparent_ .getValue ())
+					this .transparent_ = transparency;
 			},
 		});
 

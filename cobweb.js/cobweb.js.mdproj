@@ -2403,6 +2403,55 @@
     <None Include="cobweb\Browser\Geometry2D\X3DGeometry2DContext.js" />
     <None Include="cobweb\Browser\Geometry2D\Rectangle2DOptions.js" />
     <None Include="tests\Components\Geometry2D\Geometry2D.x3d" />
+    <None Include="tests\Examples\Mushrooms\index.wrl" />
+    <None Include="tests\Examples\Mushrooms\preview.gif" />
+    <None Include="tests\Examples\Mushrooms\stage\BodenT.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\OptionButton_proto.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\SFFloat2SFInt32_proto.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\ToggleAnim_proto.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\TourGuide_proto.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\baumrinde02.jpg" />
+    <None Include="tests\Examples\Mushrooms\stage\gras-bw.png" />
+    <None Include="tests\Examples\Mushrooms\stage\gras-na-bw.png" />
+    <None Include="tests\Examples\Mushrooms\stage\gras-na.png" />
+    <None Include="tests\Examples\Mushrooms\stage\gras.png" />
+    <None Include="tests\Examples\Mushrooms\stage\himmelszelt__2.png" />
+    <None Include="tests\Examples\Mushrooms\stage\hupfpilz.T.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\hupfpilz.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\index.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\matches.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilz-awake.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilz-blink.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilz-sleep.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilz.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilz.wav" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzfenster.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzhaus.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzhaus.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzhausT.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzhaus_RemapRamp1.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzshadow.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzstiel.png" />
+    <None Include="tests\Examples\Mushrooms\stage\pilztuer.png" />
+    <None Include="tests\Examples\Mushrooms\stage\plantT.png" />
+    <None Include="tests\Examples\Mushrooms\stage\schattenT.wrl" />
+    <None Include="tests\Examples\Mushrooms\stage\schmett.png" />
+    <None Include="tests\Examples\Mushrooms\stage\schmettaug.png" />
+    <None Include="tests\Examples\Mushrooms\stage\wasser01.png" />
+    <None Include="tests\Examples\Mushrooms\stage\zaun.png" />
+    <None Include="tests\Examples\Mushrooms\stage\zaunsh.png" />
+    <None Include="tests\Examples\Mushrooms\index.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\BodenT.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\OptionButton_proto.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\SFFloat2SFInt32_proto.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\ToggleAnim_proto.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\TourGuide_proto.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\hupfpilz.T.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\hupfpilz.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\index.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzhaus.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\pilzhausT.x3d" />
+    <None Include="tests\Examples\Mushrooms\stage\schattenT.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2473,5 +2522,6 @@
     <Folder Include="locale\" />
     <Folder Include="cobweb\Browser\Geometry2D\" />
     <Folder Include="tests\Components\Geometry2D\" />
+    <Folder Include="tests\Examples\Mushrooms\" />
   </ItemGroup>
 </Project>

@@ -30,12 +30,21 @@ uniform float x3d_LightRadius [MAX_LIGHTS];
 uniform float x3d_LightBeamWidth [MAX_LIGHTS];
 uniform float x3d_LightCutOffAngle [MAX_LIGHTS];
 
+uniform bool x3d_SeparateBackColor;
+
 uniform float x3d_AmbientIntensity;
 uniform vec3  x3d_DiffuseColor;
 uniform vec3  x3d_SpecularColor;
 uniform vec3  x3d_EmissiveColor;
 uniform float x3d_Shininess;
 uniform float x3d_Transparency;
+
+uniform float x3d_BackAmbientIntensity;
+uniform vec3  x3d_BackDiffuseColor;
+uniform vec3  x3d_BackSpecularColor;
+uniform vec3  x3d_BackEmissiveColor;
+uniform float x3d_BackShininess;
+uniform float x3d_BackTransparency;
 
 #define GEOMETRY_2D 2
 #define GEOMETRY_3D 3
@@ -95,8 +104,17 @@ main ()
 
 		// Calculate diffuseFactor & alpha
 
+		bool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;
+
+		float ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;
+		vec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;
+		vec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;
+		vec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;
+		float shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;
+		float transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;
+
 		vec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);
-		float alpha         = 1.0 - x3d_Transparency;
+		float alpha         = 1.0 - transparency;
 
 		if (x3d_ColorMaterial)
 		{
@@ -118,14 +136,14 @@ main ()
 			{
 				vec4 T = getTextureColor ();
 
-				diffuseFactor  = T .rgb * x3d_DiffuseColor;
+				diffuseFactor  = T .rgb * diffuseColor;
 				alpha         *= T .a;
 			}
 			else
-				diffuseFactor = x3d_DiffuseColor;
+				diffuseFactor = diffuseColor;
 		}
 
-		vec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;
+		vec3 ambientTerm = diffuseFactor * ambientIntensity;
 
 		// Apply light sources
 
@@ -142,8 +160,8 @@ main ()
 				vec3 H = normalize (L + V); // specular term
 
 				vec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);
-				float specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;
-				vec3  specularTerm   = x3d_SpecularColor * specularFactor;
+				float specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;
+				vec3  specularTerm   = specularColor * specularFactor;
 
 				float attenuation = 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
 				float spot        = 1.0;
@@ -166,7 +184,7 @@ main ()
 			}
 		}
 
-		finalColor += x3d_EmissiveColor;
+		finalColor += emissiveColor;
 
 		gl_FragColor = vec4 (finalColor, alpha);
 	}

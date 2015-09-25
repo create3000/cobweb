@@ -141,12 +141,21 @@ function ($,
 					this .lightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
 				}
 
+				this .separateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
+
 				this .ambientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
 				this .diffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
 				this .specularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
 				this .emissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
 				this .shininess        = gl .getUniformLocation (program, "x3d_Shininess");
 				this .transparency     = gl .getUniformLocation (program, "x3d_Transparency");
+
+				this .backAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
+				this .backDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
+				this .backSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
+				this .backEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
+				this .backShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
+				this .backTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
 
 				this .texturing    = gl .getUniformLocation (program, "x3d_Texturing");
 				this .texture      = gl .getUniformLocation (program, "x3d_Texture");
@@ -233,6 +242,19 @@ function ($,
 					gl .uniform3fv (this .emissiveColor,    material .emissiveColor);
 					gl .uniform1f  (this .shininess,        material .shininess);
 					gl .uniform1f  (this .transparency,     material .transparency);
+
+					if (material .getSeparateBackColor ())
+					{
+						gl .uniform1i  (this .separateBackColor,    true);
+						gl .uniform1f  (this .backAmbientIntensity, material .backAmbientIntensity);
+						gl .uniform3fv (this .backDiffuseColor,     material .backDiffuseColor);
+						gl .uniform3fv (this .backSpecularColor,    material .backSpecularColor);
+						gl .uniform3fv (this .backEmissiveColor,    material .backEmissiveColor);
+						gl .uniform1f  (this .backShininess,        material .backShininess);
+						gl .uniform1f  (this .backTransparency,     material .backTransparency);
+					}
+					else
+						gl .uniform1i (this .separateBackColor, false);
 
 					// Set normal matrix.
 					var normalMatrix = this .normalMatrixArray;
