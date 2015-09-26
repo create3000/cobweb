@@ -9,7 +9,6 @@ define ([
 	"cobweb/Browser/Core/PrimitiveQuality",
 	"cobweb/Browser/Core/TextureQuality",
 	"lib/dataStorage",
-	"lib/gettext",
 ],
 function ($,
           Fields,
@@ -19,8 +18,7 @@ function ($,
           X3DConstants,
           PrimitiveQuality,
           TextureQuality,
-          dataStorage,
-          _)
+          dataStorage)
 {
 	with (Fields)
 	{
@@ -112,11 +110,6 @@ function ($,
 			set_rubberband__: function (rubberband)
 			{
 				dataStorage ["BrowserOptions.Rubberband"] = rubberband .getValue ();
-
-			   //if (rubberband .getValue ())
-			      //this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
-			   //else
-					//this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
 			},
 			set_primitiveQuality__: function (primitiveQuality)
 			{
@@ -137,8 +130,6 @@ function ($,
 
 						sphere .uDimension_ = 24;
 						sphere .vDimension_ = 12;
-
-						//this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
 						break;
 					case "HIGH":
 						this .primitiveQuality = PrimitiveQuality .HIGH;
@@ -148,8 +139,6 @@ function ($,
 
 						sphere .uDimension_ = 40;
 						sphere .vDimension_ = 20;
-
-						//this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
 						break;
 					default:
 						this .primitiveQuality = PrimitiveQuality .MEDIUM;
@@ -159,8 +148,6 @@ function ($,
 
 						sphere .uDimension_ = 32;
 						sphere .vDimension_ = 16;
-
-						//this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
 						break;
 				}
 			},
@@ -172,15 +159,12 @@ function ($,
 				{
 					case "LOW":
 						this .textureQuality = TextureQuality .LOW;
-						//this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
 						break;
 					case "HIGH":
 						this .textureQuality = TextureQuality .HIGH;
-						//this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
 						break;
 					default:
 						this .textureQuality = TextureQuality .MEDIUM;
-						//this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
 						break;
 				}
 			},

@@ -102,6 +102,7 @@ function ($,
 											click: function ()
 											{
 												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
+												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
 											}
 											.bind (this),
 										},
@@ -115,6 +116,7 @@ function ($,
 											click: function ()
 											{
 												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
+												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
 											}
 											.bind (this),
 										},
@@ -128,6 +130,7 @@ function ($,
 											click: function ()
 											{
 												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
+												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
 											}
 											.bind (this),
 										},
@@ -147,6 +150,7 @@ function ($,
 											click: function ()
 											{
 												this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
+												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
 											}
 											.bind (this),
 										},
@@ -160,6 +164,7 @@ function ($,
 											click: function ()
 											{
 												this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
+												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
 											}
 											.bind (this),
 										},
@@ -173,6 +178,7 @@ function ($,
 											click: function ()
 											{
 												this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
+												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
 											}
 											.bind (this),
 										},
@@ -186,7 +192,14 @@ function ($,
 								events: {
 									click: function ()
 									{
-										this .getBrowser () .setBrowserOption ("Rubberband", ! this .getBrowser () .getBrowserOption ("Rubberband"));
+									   var rubberband = ! this .getBrowser () .getBrowserOption ("Rubberband");
+
+										this .getBrowser () .setBrowserOption ("Rubberband", rubberband);
+
+										if (rubberband)
+											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
+										else
+											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
 									}
 									.bind (this),
 								},
@@ -213,7 +226,9 @@ function ($,
 						events: {
 							click: function ()
 							{
-								this .getBrowser () .mute_ = ! this .getBrowser () .mute_ .getValue ();
+							   var mute = ! this .getBrowser () .mute_ .getValue ();
+								this .getBrowser () .mute_ = mute;
+								this .getBrowser () .getNotification () .string_ = mute ? _("Browser muted") : _("Browser unmuted");
 							}
 							.bind (this),
 						},
