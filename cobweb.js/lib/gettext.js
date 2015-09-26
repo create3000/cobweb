@@ -28,5 +28,10 @@ function (de, fr)
 		return translation;
 	}
 
+	gettext .count = function (count, singular, plural)
+	{
+	   return count == 1 ? gettext (singular) : gettext (plural);
+	};
+
 	return gettext;
 });
