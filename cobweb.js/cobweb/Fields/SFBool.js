@@ -8,7 +8,10 @@ function ($, X3DField, X3DConstants)
 {
 	function SFBool (value)
 	{
-		X3DField .call (this, Boolean (value));
+		if (this instanceof SFBool)
+			return X3DField .call (this, Boolean (value));
+		
+		return X3DField .call (Object .create (SFBool .prototype), Boolean (value));
 	}
 
 	SFBool .prototype = $.extend (Object .create (X3DField .prototype),

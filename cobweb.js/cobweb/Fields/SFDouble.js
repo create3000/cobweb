@@ -8,7 +8,10 @@ function ($, X3DField, X3DConstants)
 {
 	function SFDouble (value)
 	{
-		X3DField .call (this, arguments .length ? +value : 0);
+		if (this instanceof SFDouble)
+			return X3DField .call (this, arguments .length ? +value : 0);
+		
+		return X3DField .call (Object .create (SFDouble .prototype), arguments .length ? +value : 0);
 	}
 
 	SFDouble .prototype = $.extend (Object .create (X3DField .prototype),

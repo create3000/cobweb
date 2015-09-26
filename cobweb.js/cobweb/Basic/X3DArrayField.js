@@ -79,16 +79,13 @@ function ($, X3DField, X3DConstants, Generator)
 	{
 		X3DField .call (this, [ ]);
 		
-		if (value !== undefined)
-		{
-			if (value [0] instanceof Array)
-				value = value [0];
+		if (value [0] instanceof Array)
+			value = value [0];
 
-			for (var i = 0, length = value .length; i < length; ++ i)
-				this .push (value [i]);
+		for (var i = 0, length = value .length; i < length; ++ i)
+			this .push (value [i]);
 
-			return new Proxy (this, handler);
-		}
+		return new Proxy (this, handler);
 	}
 
 	X3DArrayField .prototype = $.extend (new X3DField ([ ]),

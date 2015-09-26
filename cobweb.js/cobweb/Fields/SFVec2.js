@@ -7,17 +7,17 @@ define ([
 ],
 function ($, Vector2, X3DField, X3DConstants)
 {
-	function SFVec2 (x, y)
+	function SFVec2 (v)
 	{
-		if (arguments .length)
+		if (v .length)
 		{
-			if (arguments [0] instanceof Vector2)
-				X3DField .call (this, arguments [0]);
-			else
-				X3DField .call (this, new Vector2 (+x, +y));
+			if (v[0] instanceof Vector2)
+				return X3DField .call (this, v[0]);
+
+			return X3DField .call (this, new Vector2 (+v[0], +v[1]));
 		}
-		else
-			X3DField .call (this, new Vector2 (0, 0));
+
+		return X3DField .call (this, new Vector2 (0, 0));
 	}
 
 	SFVec2 .prototype = $.extend (Object .create (X3DField .prototype),
@@ -139,7 +139,10 @@ function ($, Vector2, X3DField, X3DConstants)
 
 	function SFVec2d (x, y)
 	{
-		SFVec2 .apply (this, arguments);
+	   if (this instanceof SFVec2d)
+			return SFVec2 .call (this, arguments);
+	
+	   return SFVec2 .call (Object .create (SFVec2d .prototype), arguments);
 	}
 
 	SFVec2d .prototype = $.extend (Object .create (SFVec2 .prototype),
@@ -161,7 +164,10 @@ function ($, Vector2, X3DField, X3DConstants)
 
 	function SFVec2f (x, y)
 	{
-		SFVec2 .apply (this, arguments);
+	   if (this instanceof SFVec2f)
+			return SFVec2 .call (this, arguments);
+	
+	   return SFVec2 .call (Object .create (SFVec2f .prototype), arguments);
 	}
 
 	SFVec2f .prototype = $.extend (Object .create (SFVec2 .prototype),

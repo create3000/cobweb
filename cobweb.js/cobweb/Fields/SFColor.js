@@ -9,15 +9,20 @@ function ($, Color3, X3DField, X3DConstants)
 {
 	function SFColor (r, g, b)
 	{
-		if (arguments .length)
+		if (this instanceof SFColor)
 		{
-			if (arguments [0] instanceof Color3)
-				X3DField .call (this, arguments [0]);
-			else
-				X3DField .call (this, new Color3 (+r, +g, +b));
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Color3)
+					return X3DField .call (this, arguments [0]);
+				else
+					return X3DField .call (this, new Color3 (+r, +g, +b));
+			}
+
+			return X3DField .call (this, new Color3 ());
 		}
-		else
-			X3DField .call (this, new Color3 ());
+
+		return SFColor .apply (Object .create (SFColor .prototype), arguments);
 	}
 
 	SFColor .prototype = $.extend (Object .create (X3DField .prototype),

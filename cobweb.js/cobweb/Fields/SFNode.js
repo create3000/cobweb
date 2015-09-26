@@ -56,9 +56,14 @@ function ($, X3DField, X3DConstants)
 
 	function SFNode (value)
 	{
-		X3DField .call (this, value ? value : null);
+	   if (this instanceof SFNode)
+	   {
+			X3DField .call (this, value ? value : null);
 
-		return new Proxy (this, handler);
+			return new Proxy (this, handler);
+		}
+
+		return SFNode .call (Object .create (SFNode .prototype), value);
 	}
 
 	SFNode .prototype = $.extend (Object .create (X3DField .prototype),

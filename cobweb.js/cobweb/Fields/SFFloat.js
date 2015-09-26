@@ -8,7 +8,10 @@ function ($, X3DField, X3DConstants)
 {
 	function SFFloat (value)
 	{
-		X3DField .call (this, arguments .length ? +value : 0);
+		if (this instanceof SFFloat)
+			return X3DField .call (this, arguments .length ? +value : 0);
+		
+		return X3DField .call (Object .create (SFFloat .prototype), arguments .length ? +value : 0);
 	}
 
 	SFFloat .prototype = $.extend (Object .create (X3DField .prototype),

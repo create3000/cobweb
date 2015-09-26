@@ -14,21 +14,19 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		SFVec2d = SFVec2 .SFVec2d,
 		SFVec2f = SFVec2 .SFVec2f;
 
-	function SFMatrix3 (m00, m01, m02,
-	                    m10, m11, m12,
-	                    m20, m21, m22)
+	function SFMatrix3 (m)
 	{
-		if (arguments .length)
+		if (m .length)
 		{
-			if (arguments [0] instanceof Matrix3)
-				X3DField .call (this, arguments [0]);
-			else
-				X3DField .call (this, new Matrix3 (+m00, +m01, +m02,
-	                                            +m10, +m11, +m12,
-	                                            +m20, +m21, +m22));
+			if (m [0] instanceof Matrix3)
+				return X3DField .call (this, m [0]);
+	
+			return X3DField .call (this, new Matrix3 (+m[0], +m[1], +m[2],
+                                                   +m[3], +m[4], +m[5],
+                                                   +m[6], +m[7], +m[8]));
 		}
-		else
-			X3DField .call (this, new Matrix3 ());
+
+		return X3DField .call (this, new Matrix3 ());
 	}
 
 	SFMatrix3 .prototype = $.extend (Object .create (X3DField .prototype),
@@ -133,7 +131,10 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 	                     m10, m11, m12,
 	                     m20, m21, m22)
 	{
-		SFMatrix3 .apply (this, arguments);
+		if (this instanceof SFMatrix3d)
+			return SFMatrix3 .call (this, arguments);
+		
+		return SFMatrix3 .call (Object .create (SFMatrix3d .prototype), arguments);
 	}
 
 	SFMatrix3d .prototype = $.extend (Object .create (SFMatrix3 .prototype),
@@ -158,7 +159,10 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 	                     m10, m11, m12,
 	                     m20, m21, m22)
 	{
-		SFMatrix3 .apply (this, arguments);
+		if (this instanceof SFMatrix3f)
+			return SFMatrix3 .call (this, arguments);
+		
+		return SFMatrix3 .call (Object .create (SFMatrix3f .prototype), arguments);
 	}
 
 	SFMatrix3f .prototype = $.extend (Object .create (SFMatrix3 .prototype),

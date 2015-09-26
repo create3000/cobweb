@@ -12,24 +12,25 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 
 	function SFRotation (x, y, z, angle)
 	{
-		switch (arguments .length)
-		{
-			case 0:
-				X3DField .call (this, new Rotation4 ());
-				return;
-			case 1:
-				X3DField .call (this, arguments [0]);
-				return;
-			case 2:
-				if (arguments [1] instanceof SFVec3f)
-					X3DField .call (this, new Rotation4 (arguments [0] .getValue (), arguments [1] .getValue ()));
-				else
-					X3DField .call (this, new Rotation4 (arguments [0] .getValue (), +arguments [1]));
-				return;
-			case 4:
-				X3DField .call (this, new Rotation4 (+x, +y, +z, +angle));
-				return;
+	   if (this instanceof SFRotation)
+	   {
+			switch (arguments .length)
+			{
+				case 1:
+					return X3DField .call (this, arguments [0]);
+				case 2:
+					if (arguments [1] instanceof SFVec3f)
+						return X3DField .call (this, new Rotation4 (arguments [0] .getValue (), arguments [1] .getValue ()));
+
+					return X3DField .call (this, new Rotation4 (arguments [0] .getValue (), +arguments [1]));
+				case 4:
+					return X3DField .call (this, new Rotation4 (+x, +y, +z, +angle));
+				default:
+					return X3DField .call (this, new Rotation4 ());
+			}
 		}
+
+		return SFRotation .apply (Object .create (SFRotation .prototype), arguments);
 	}
 
 	SFRotation .prototype = $.extend (Object .create (X3DField .prototype),

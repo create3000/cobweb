@@ -58,7 +58,10 @@ function ($,
 
 	function MFBool (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFBool)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFBool .prototype), arguments);
 	}
 
 	MFBool .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -81,7 +84,10 @@ function ($,
 
 	function MFColor (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFColor)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFColor .prototype), arguments);
 	}
 
 	MFColor .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -104,7 +110,10 @@ function ($,
 
 	function MFColorRGBA (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFColorRGBA)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFColorRGBA .prototype), arguments);
 	}
 
 	MFColorRGBA .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -127,7 +136,10 @@ function ($,
 
 	function MFDouble (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFDouble)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFDouble .prototype), arguments);
 	}
 
 	MFDouble .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -150,7 +162,10 @@ function ($,
 
 	function MFFloat (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFFloat)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFFloat .prototype), arguments);
 	}
 
 	MFFloat .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -173,7 +188,10 @@ function ($,
 
 	function MFImage (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFImage)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFImage .prototype), arguments);
 	}
 
 	MFImage .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -196,7 +214,10 @@ function ($,
 
 	function MFInt32 (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFInt32)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFInt32 .prototype), arguments);
 	}
 
 	MFInt32 .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -219,7 +240,10 @@ function ($,
 
 	function MFMatrix3d (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFMatrix3d)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFMatrix3d .prototype), arguments);
 	}
 
 	MFMatrix3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -242,7 +266,10 @@ function ($,
 
 	function MFMatrix3f (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFMatrix3f)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFMatrix3f .prototype), arguments);
 	}
 
 	MFMatrix3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -265,7 +292,10 @@ function ($,
 
 	function MFMatrix4d (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFMatrix4d)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFMatrix4d .prototype), arguments);
 	}
 
 	MFMatrix4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -288,7 +318,10 @@ function ($,
 
 	function MFMatrix4f (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFMatrix4f)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFMatrix4f .prototype), arguments);
 	}
 
 	MFMatrix4f .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -311,7 +344,10 @@ function ($,
 
 	function MFNode (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFNode)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFNode .prototype), arguments);
 	}
 
 	MFNode .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -356,7 +392,10 @@ function ($,
 
 	function MFRotation (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFRotation)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFRotation .prototype), arguments);
 	}
 
 	MFRotation .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -379,7 +418,10 @@ function ($,
 
 	function MFString (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFString)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFString .prototype), arguments);
 	}
 
 	MFString .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -402,7 +444,10 @@ function ($,
 
 	function MFTime (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFTime)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFTime .prototype), arguments);
 	}
 
 	MFTime .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -425,7 +470,10 @@ function ($,
 
 	function MFVec2d (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFVec2d)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFVec2d .prototype), arguments);
 	}
 
 	MFVec2d .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -448,7 +496,10 @@ function ($,
 
 	function MFVec2f (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFVec2f)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFVec2f .prototype), arguments);
 	}
 
 	MFVec2f .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -471,7 +522,10 @@ function ($,
 
 	function MFVec3d (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFVec3d)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFVec3d .prototype), arguments);
 	}
 
 	MFVec3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -494,7 +548,10 @@ function ($,
 
 	function MFVec3f (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFVec3f)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFVec3f .prototype), arguments);
 	}
 
 	MFVec3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -517,7 +574,10 @@ function ($,
 
 	function MFVec4d (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFVec4d)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFVec4d .prototype), arguments);
 	}
 
 	MFVec4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
@@ -540,7 +600,10 @@ function ($,
 
 	function MFVec4f (value)
 	{
-		return X3DArrayField .call (this, arguments);
+		if (this instanceof MFVec4f)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFVec4f .prototype), arguments);
 	}
 
 	MFVec4f .prototype = $.extend (Object .create (X3DArrayField .prototype),

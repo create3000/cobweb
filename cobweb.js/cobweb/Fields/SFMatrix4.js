@@ -14,23 +14,20 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 		SFVec3d = SFVec3 .SFVec3d,
 		SFVec3f = SFVec3 .SFVec3f;
 
-	function SFMatrix4 (m00, m01, m02, m03,
-	                    m10, m11, m12, m13,
-	                    m20, m21, m22, m23,
-	                    m30, m31, m32, m33)
+	function SFMatrix4 (m)
 	{
-		if (arguments .length)
+		if (m .length)
 		{
-			if (arguments [0] instanceof Matrix4)
-				X3DField .call (this, arguments [0]);
-			else
-				X3DField .call (this, new Matrix4 (+m00, +m01, +m02, +m03,
-	                                            +m10, +m11, +m12, +m13,
-	                                            +m20, +m21, +m22, +m23,
-	                                            +m30, +m31, +m32, +m33));
+			if (m [0] instanceof Matrix4)
+				return X3DField .call (this, m [0]);
+
+			return X3DField .call (this, new Matrix4 (+m[ 0], +m[ 1], +m[ 2], +m[ 3],
+                                                   +m[ 4], +m[ 5], +m[ 6], +m[ 7],
+                                                   +m[ 8], +m[ 9], +m[10], +m[11],
+                                                   +m[12], +m[13], +m[14], +m[15]));
 		}
-		else
-			X3DField .call (this, new Matrix4 ());
+
+		return X3DField .call (this, new Matrix4 ());
 	}
 
 	SFMatrix4 .prototype = $.extend (Object .create (X3DField .prototype),
@@ -140,7 +137,10 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 	                     m20, m21, m22, m23,
 	                     m30, m31, m32, m33)
 	{
-		SFMatrix4 .apply (this, arguments);
+		if (this instanceof SFMatrix4d)
+			return SFMatrix4 .apply (this, arguments);
+		
+		return SFMatrix4 .call (Object .create (SFMatrix4d .prototype), arguments);
 	}
 
 	SFMatrix4d .prototype = $.extend (Object .create (SFMatrix4 .prototype),
@@ -165,7 +165,10 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 	                     m20, m21, m22, m23,
 	                     m30, m31, m32, m33)
 	{
-		SFMatrix4 .apply (this, arguments);
+		if (this instanceof SFMatrix4f)
+			return SFMatrix4 .apply (this, arguments);
+		
+		return SFMatrix4 .call (Object .create (SFMatrix4f .prototype), arguments);
 	}
 
 	SFMatrix4f .prototype = $.extend (Object .create (SFMatrix4 .prototype),

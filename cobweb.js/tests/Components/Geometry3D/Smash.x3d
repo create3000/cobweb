@@ -16,7 +16,7 @@
       <field accessType='inputOutput' type='SFInt32' name='majorDimension'/>
       <field accessType='initializeOnly' type='SFBool' name='solid'/>
     </ExternProtoDeclare>
-    <ExternProtoDeclare name='IcoSphere' url='"-http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/IcoSphere.x3d"'>
+    <ExternProtoDeclare name='IcoSphere' url='"http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/IcoSphere.x3d"'>
       <field accessType='inputOutput' type='SFString' name='type'/>
       <field accessType='inputOutput' type='SFInt32' name='order'/>
       <field accessType='inputOutput' type='SFFloat' name='radius'/>

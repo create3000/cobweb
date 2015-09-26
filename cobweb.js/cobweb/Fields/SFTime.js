@@ -8,7 +8,10 @@ function ($, X3DField, X3DConstants)
 {
 	function SFTime (value)
 	{
-		X3DField .call (this, arguments .length ? +value : 0);
+		if (this instanceof SFTime)
+			return X3DField .call (this, arguments .length ? +value : 0);
+	
+		return X3DField .call (Object .create (SFTime .prototype), arguments .length ? +value : 0);
 	}
 
 	SFTime .prototype = $.extend (Object .create (X3DField .prototype),

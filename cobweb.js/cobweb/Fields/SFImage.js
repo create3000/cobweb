@@ -94,13 +94,19 @@ function ($, X3DField, ArrayFields, X3DConstants)
 
 	function SFImage (width, height, comp, array)
 	{
-		if (arguments .length === 4)
-			X3DField .call (this, new Image (+width, +height, +comp, array));
-		else
-			X3DField .call (this, new Image (0, 0, 0, new MFInt32 ()));
+	   if (this instanceof SFImage)
+	   {
+			if (arguments .length === 4)
+				X3DField .call (this, new Image (+width, +height, +comp, array));
+			else
+				X3DField .call (this, new Image (0, 0, 0, new MFInt32 ()));
 
-		this .getValue () .getArray () .addParent (this);
-		this .addInterest (this, "set_size__");
+			this .getValue () .getArray () .addParent (this);
+			this .addInterest (this, "set_size__");
+			return this;
+		}
+
+		return SFImage .apply (Object .create (SFImage .prototype), arguments);
 	}
 
 	SFImage .prototype = $.extend (Object .create (X3DField .prototype),

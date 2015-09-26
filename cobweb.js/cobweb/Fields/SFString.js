@@ -12,7 +12,10 @@ function ($, X3DField, X3DConstants)
 
 	function SFString (value)
 	{
-		X3DField .call (this, arguments .length ? String (value) : "");
+		if (this instanceof SFString)
+			return X3DField .call (this, arguments .length ? String (value) : "");
+	
+		return X3DField .call (Object .create (SFString .prototype), arguments .length ? String (value) : "");
 	}
 	
 	$.extend (SFString,

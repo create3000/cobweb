@@ -15,6 +15,8 @@ function ($,
 		X3DChildObject .call (this);
 	
 		this .value_ = value;
+
+		return this;
 	}
 
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),

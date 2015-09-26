@@ -8,7 +8,10 @@ function ($, X3DField, X3DConstants)
 {
 	function SFInt32 (value)
 	{
-		X3DField .call (this, ~~value);
+		if (this instanceof SFInt32)
+			return X3DField .call (this, ~~value);
+		
+		return X3DField .call (Object .create (SFInt32 .prototype), ~~value);
 	}
 
 	SFInt32 .prototype = $.extend (Object .create (X3DField .prototype),
