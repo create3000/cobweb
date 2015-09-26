@@ -4,7 +4,7 @@ define ([
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
-	"opentype",
+	"lib/opentype.js/dist/opentype.js",
 ],
 function ($,
           X3DNode, 

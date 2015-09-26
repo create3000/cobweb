@@ -93,7 +93,7 @@ function (Fields,
 
 			// Configure viewport.
 
-			setInterval (this .reshape .bind (this), 401);
+			setInterval (this .reshape .bind (this), 401); // Detect canvas resize.
 
 			this .reshape ();
 

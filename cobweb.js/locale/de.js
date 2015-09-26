@@ -38,7 +38,7 @@ define (function ()
 		"Browser": "Browser",
 		"X3D": "X3D",
 		"Routing": "Routen",
-		"Picking": "Maus Ereignisse",
+		"Picking": "Zeigegerät",
 		"Camera": "Kamera",
 		"Collision": "Kollision",
 		"Display": "Anzeige",

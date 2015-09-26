@@ -10,7 +10,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
-	"poly2tri",
+	"lib/poly2tri.js/dist/poly2tri.js",
 ],
 function ($,
           Fields,

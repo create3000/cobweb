@@ -1,12 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/locale/fr.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="22" Column="22" />
-      <File FileName="cobweb.js/cobweb.min.html" Line="33" Column="33" />
-      <File FileName="cobweb.js/locale/fr.js" Line="39" Column="39" />
-      <File FileName="cobweb.js/lib/gettext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/locale/de.js" Line="38" Column="38" />
+      <File FileName="cobweb.js/cobweb.html" Line="8" Column="8" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="43" Column="43" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
