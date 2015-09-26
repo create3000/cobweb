@@ -11,6 +11,7 @@ define ([
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/Plane3",
 	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -22,7 +23,8 @@ function ($,
           Matrix4,
           Box3,
           Plane3,
-          Triangle3)
+          Triangle3,
+          Algorithm)
 {
 	with (Fields)
 	{
@@ -262,7 +264,7 @@ function ($,
 					return normals;
 
 				var
-					cosCreaseAngle = Math .cos (creaseAngle),
+					cosCreaseAngle = Math .cos (Algorithm .clamp (creaseAngle, 0, Math .PI)),
 					normals_       = [ ];
 
 				for (var i in normalIndex) // Don't use forEach

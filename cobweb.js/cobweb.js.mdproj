@@ -2466,6 +2466,8 @@
     <None Include="lib\poly2tri.js\tests\versions\1.3.4\poly2tri.js" />
     <None Include="lib\poly2tri.js\tests\versions\1.3.4\poly2tri.min.js" />
     <None Include="lib\poly2tri.js\tests\versions\README.md" />
+    <None Include="cobweb\Browser\Geometry3D\IcoSphere.js" />
+    <None Include="cobweb\Browser\Geometry3D\IcoSphereOptions.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

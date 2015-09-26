@@ -27,7 +27,8 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
-				console .log (key, error);
+				// if taget not instance of X3DArrayField, then the constuctor is called as function.
+				console .log (target, key, error);
 			}
 		},
 		set: function (target, key, value)
@@ -52,7 +53,8 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
-				console .log (key, error);
+				// if taget not instance of X3DArrayField, then the constuctor is called as function.
+				console .log (target, key, error);
 				return false;
 			}
 		},

@@ -6,7 +6,7 @@
     <meta name='created' content='Tue, 22 Sep 2015 11:26:52 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 25 Sep 2015 19:36:49 GMT'/>
+    <meta name='modified' content='Sat, 26 Sep 2015 12:21:08 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Grid'>
@@ -365,7 +365,7 @@ function initialize ()
 	
 	try
 	{
-		//Browser .setBrowserOption ("Shading", "PHONG");
+		Browser .setBrowserOption ("Shading", "PHONG");
 	}
 	catch (error)
 	{ }
@@ -411,7 +411,7 @@ function set_isActive (value, time)
             <Appearance>
               <Material DEF='Metal31_1'
                   ambientIntensity='0.0955322'
-                  diffuseColor='0.372322 0.371574 0.373173'
+                  diffuseColor='0.99772 0.995715 1'
                   specularColor='1 0.701006 1'
                   shininess='0.127551'/>
               <ImageTexture

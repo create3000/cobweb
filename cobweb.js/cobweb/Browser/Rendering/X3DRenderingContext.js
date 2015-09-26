@@ -257,9 +257,11 @@ function (Fields,
 		reshape: function ()
 		{
 			var
-				width  = this .canvas .width (),
-				height = this .canvas .height (),
-				canvas = this .canvas [0];
+			   canvas = this .canvas,
+				width  = canvas .width (),
+				height = canvas .height ();
+
+			canvas = canvas [0];
 
 			if (width !== canvas .width || height !== canvas .height)
 			{
