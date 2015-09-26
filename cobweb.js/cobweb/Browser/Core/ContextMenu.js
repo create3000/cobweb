@@ -12,6 +12,8 @@ function ($,
 	function ContextMenu (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+
+		$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
 	}
 
 	ContextMenu .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -35,10 +37,10 @@ function ($,
 
 			$.contextMenu ({
 				selector: '.cobweb-surface', 
-				build: this .getMenu .bind (this),
+				build: this .build .bind (this),
 			});
 		},
-		getMenu: function (trigger, event)
+		build: function (trigger, event)
 		{
 			var
 				activeLayer      = this .getBrowser () .getActiveLayer (),

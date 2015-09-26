@@ -1,12 +1,14 @@
 
 define ([
 	"locale/de",
+	"locale/fr",
 ],
-function (de)
+function (de, fr)
 {
 	var ĺocales =
 	{
-	   de: de,
+		de: de,
+		fr: fr,
 	};
 
 	function gettext (string)

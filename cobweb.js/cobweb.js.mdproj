@@ -2452,6 +2452,7 @@
     <None Include="tests\Examples\Mushrooms\stage\pilzhaus.x3d" />
     <None Include="tests\Examples\Mushrooms\stage\pilzhausT.x3d" />
     <None Include="tests\Examples\Mushrooms\stage\schattenT.x3d" />
+    <None Include="locale\fr.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
