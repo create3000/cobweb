@@ -24,23 +24,22 @@ define (function ()
 		"Browser unmuted": "Son de Navigateur réactivé",
 		"About Cobweb": "À propos de Cobweb",
 
-		"High": "Suprême",
-		"Medium": "Central",
-		"Low": "Bas",
-		"high": "suprême",
-		"medium": "central",
-		"low": "bas",
+		"High": "Haut",
+		"Medium": "Moyenne",
+		"Low": "Faible",
+		"high": "haut",
+		"medium": "moyenne",
+		"low": "faible",
 
-		"on": "allumant",
-		"off": "éteindrant",
+		"on": "marche", // ???
+		"off": "arrêt", // ???
 	
-		"Loading": "Télécharger",
+		"Loading %d files": "Télécharger %d fichiers",
+		"Loading %d file": "Télécharger %d fichier",
 		"Loading done": "Téléchargement fini",
-		"files": "fichiers",
-		"file": "fichier",
 		"More Properties": "Plus Propriétés",
-		"Less Properties": "Moins Propriétés",
-		"Frame rate": "Fréquence",
+		"Less Properties": "Moins Propriétés", // Moins???
+		"Frame rate": "Fréquence", // Must be a short word.
 		"Speed": "Vélocité",
 		"Browser": "Navigateur",
 		"X3D": "X3D",
@@ -51,6 +50,6 @@ define (function ()
 		"Display": "Visualisation",
 		"Shapes": "Formes",
 		"Sensors": "Senseurs",
-		"fps": "fps",
+		"fps": "fps", // Is there a frensh abbreviation?
    };
 });

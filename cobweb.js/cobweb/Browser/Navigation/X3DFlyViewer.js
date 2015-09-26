@@ -89,11 +89,15 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			{
 				case 0:
 				{
+					this .getBrowser () .getCanvas () .unbind ("mousemove.X3DFlyViewer");
+					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
+		
 					event .preventDefault ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
-		
+
 					if (this .getBrowser () .hasCtrlKey ())
 					{
 						// Look around.
@@ -116,6 +120,10 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				}
 				case 1:
 				{
+					this .getBrowser () .getCanvas () .unbind ("mousemove.X3DFlyViewer");
+					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
+
 					event .preventDefault ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
@@ -133,6 +141,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		},
 		mouseup: function (event)
 		{
+			$(document) .unbind (".X3DFlyViewer" + this .getId ());
+			this .getBrowser () .getCanvas () .bind ("mousemove.X3DFlyViewer", this .mousemove .bind (this));
+
 			this .disconnect ();
 			this .getBrowser () .setCursor ("DEFAULT");
 
@@ -449,6 +460,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			this .disconnect ();
 			this .getBrowser () .removeCollision (this);
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
+			$(document) .unbind (".X3DFlyViewer" + this .getId ());
 		},
 	});
 

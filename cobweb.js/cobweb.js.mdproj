@@ -2453,6 +2453,20 @@
     <None Include="tests\Examples\Mushrooms\stage\pilzhausT.x3d" />
     <None Include="tests\Examples\Mushrooms\stage\schattenT.x3d" />
     <None Include="locale\fr.js" />
+    <None Include="lib\sprintf.js\LICENSE" />
+    <None Include="lib\sprintf.js\README.md" />
+    <None Include="lib\sprintf.js\bower.json" />
+    <None Include="lib\sprintf.js\gruntfile.js" />
+    <None Include="lib\sprintf.js\package.json" />
+    <None Include="lib\sprintf.js\demo\angular.html" />
+    <None Include="lib\sprintf.js\dist\angular-sprintf.min.js" />
+    <None Include="lib\sprintf.js\dist\angular-sprintf.min.map" />
+    <None Include="lib\sprintf.js\dist\sprintf.min.js" />
+    <None Include="lib\sprintf.js\dist\sprintf.min.map" />
+    <None Include="lib\sprintf.js\src\angular-sprintf.js" />
+    <None Include="lib\sprintf.js\src\sprintf.js" />
+    <None Include="lib\sprintf.js\test\test.js" />
+    <None Include="cobweb\Configuration\SupportedNodes.VRML.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2524,5 +2538,6 @@
     <Folder Include="cobweb\Browser\Geometry2D\" />
     <Folder Include="tests\Components\Geometry2D\" />
     <Folder Include="tests\Examples\Mushrooms\" />
+    <Folder Include="lib\sprintf.js\" />
   </ItemGroup>
 </Project>

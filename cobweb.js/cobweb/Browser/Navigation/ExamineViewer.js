@@ -46,8 +46,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			canvas .bind ("mouseup.ExamineViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousemove.ExamineViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
-
-			//browser .getNotification () .string_ = _("Examine Viewer");
 		},
 		mousedown: function (event)
 		{
@@ -63,6 +61,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
+					this .getBrowser () .getCanvas () .unbind ("mousemove.ExamineViewer");
+					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
+		
 					event .preventDefault ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
@@ -76,6 +78,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				}
 				case 1:
 				{
+					this .getBrowser () .getCanvas () .unbind ("mousemove.ExamineViewer");
+					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
+		
 					event .preventDefault ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
@@ -88,6 +94,9 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		},
 		mouseup: function (event)
 		{
+			$(document) .unbind (".ExamineViewer" + this .getId ());
+			this .getBrowser () .getCanvas () .bind ("mousemove.ExamineViewer", this .mousemove .bind (this));
+
 			switch (event .button)
 			{
 				case 0:
@@ -241,6 +250,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		{
 			this .disconnect ();
 			this .getBrowser () .getCanvas () .unbind (".ExamineViewer");
+			$(document) .unbind (".ExamineViewer" + this .getId ());
 		},
 	});
 

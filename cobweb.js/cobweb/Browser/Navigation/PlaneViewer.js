@@ -36,8 +36,6 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 			canvas .bind ("mouseup.PlaneViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousemove.PlaneViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.PlaneViewer", this .mousewheel .bind (this));
-
-			//browser .getNotification () .string_ = _("Plane Viewer");
 		},
 		mousedown: function (event)
 		{
@@ -53,6 +51,10 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 			{
 				case 1:
 				{
+					this .getBrowser () .getCanvas () .unbind ("mousemove.PlaneViewer");
+					$(document) .bind ("mouseup.PlaneViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mousemove.PlaneViewer" + this .getId (), this .mousemove .bind (this));
+		
 					event .preventDefault ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -64,6 +66,9 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 		},
 		mouseup: function (event)
 		{
+			$(document) .unbind (".PlaneViewer" + this .getId ());
+			this .getBrowser () .getCanvas () .bind ("mousemove.PlaneViewer", this .mousemove .bind (this));
+
 			this .getBrowser () .setCursor ("DEFAULT");
 			this .button = -1;
 		},
@@ -157,6 +162,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 		dispose: function ()
 		{
 			this .getBrowser () .getCanvas () .unbind (".PlaneViewer");
+			$(document) .unbind (".PlaneViewer" + this .getId ());
 		},
 	});
 

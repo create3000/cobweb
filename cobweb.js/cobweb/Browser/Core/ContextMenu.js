@@ -73,6 +73,7 @@ function ($,
 						callback: function (viewer)
 						{
 							this .getBrowser () .viewer_ = viewer;
+							this .getBrowser () .getNotification () .string_ = _(this .getViewerName (viewer));
 							this .getBrowser () .getCanvas () .focus ();
 						}
 						.bind (this, currentViewer),
@@ -315,6 +316,7 @@ function ($,
 					callback: function (viewer)
 					{
 						this .getBrowser () .viewer_ = viewer;
+						this .getBrowser () .getNotification () .string_ = _(this .getViewerName (viewer));
 						this .getBrowser () .getCanvas () .focus ();
 					}
 					.bind (this, viewer),

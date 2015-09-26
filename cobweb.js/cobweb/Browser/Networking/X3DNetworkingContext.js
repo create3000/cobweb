@@ -2,10 +2,12 @@
 define ([
 	"cobweb/Fields",
 	"standard/Networking/URI",
+	"lib/sprintf.js/src/sprintf",
 	"lib/gettext",
 ],
 function (Fields,
           URI,
+          sprintf,
           _)
 {
 	with (Fields)
@@ -53,9 +55,10 @@ function (Fields,
 			   var id = loadCountId ++;
 
 			   this .loadingObjects [id] = true;
-				this .loadCount_          = this .loadCount_ .getValue () + 1;
+				
+				var loadCount = this .loadCount_ = this .loadCount_ .getValue () + 1;
 
-				this .getNotification () .string_ = _("Loading") + " " + this .loadCount_ + " " + _.count (this .loadCount_ .getValue (), "file", "files");
+				this .getNotification () .string_ = sprintf .sprintf (_.count (loadCount, "Loading %d file", "Loading %d files"), loadCount);
 				this .setCursor ("DEFAULT");
 
 				return id;
@@ -67,10 +70,10 @@ function (Fields,
 			   
 				delete this .loadingObjects [id];
 
-				this .loadCount_ = this .loadCount_ .getValue () - 1;
+				var loadCount = this .loadCount_ = this .loadCount_ .getValue () - 1;
 
-				if (this .loadCount_ .getValue ())
-					this .getNotification () .string_ =  _("Loading") + " " + this .loadCount_ + " " + _.count (this .loadCount_ .getValue (), "file", "files");
+				if (loadCount)
+					this .getNotification () .string_ = sprintf .sprintf (_.count (loadCount, "Loading %d file", "Loading %d files"), loadCount);
 				else
 				{
 					this .getNotification () .string_ = _("Loading done");

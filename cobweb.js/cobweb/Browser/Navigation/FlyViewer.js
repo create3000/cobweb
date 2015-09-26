@@ -13,12 +13,6 @@ function (X3DFlyViewer, _)
 	FlyViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),
 	{
 		constructor: FlyViewer,
-		initialize: function ()
-		{
-			X3DFlyViewer .prototype .initialize .call (this);
-
-			//this .getBrowser () .getNotification () .string_ = _("Fly Viewer");
-		},
 		getTranslationOffset: function (velocity)
 		{
 			return this .getActiveViewpoint () .getUserOrientation () .multVecRot (velocity);
