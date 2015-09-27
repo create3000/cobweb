@@ -11,7 +11,7 @@ define (function ()
 		"Plane Viewer": "Ebenen Betrachter",
 		"None Viewer": "Kein Betrachter",
 		"Look At": "Auf Objekte zielen",
-		"Primitive Quality": "Qualität der einfachen Objekte",
+		"Primitive Quality": "Qualität der Grundobjekte",
 		"Texture Quality": "Textur Qualität",
 		"Rubberband": "Gummiband",
 		"Display Rubberband": "Gummiband anzeigen",

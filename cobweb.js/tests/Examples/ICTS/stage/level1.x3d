@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 24 Apr 2015 17:09:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 24 Apr 2015 17:09:09 GMT'/>
+    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Sun, 27 Sep 2015 07:03:33 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Console' url='"Console_proto.x3d"'>
@@ -1141,7 +1141,7 @@
                     <ProtoInstance name='Ghost' DEF='_60'>
                       <fieldValue name='startPosition' value='12 9'/>
                       <fieldValue name='step' value='5 -5'/>
-                      <fieldValue name='startTime' value='4.47866359352277'/>
+                      <fieldValue name='startTime' value='5.00336754998647'/>
                       <fieldValue name='matrix'>
                         <ProtoInstance USE='_56'/>
                       </fieldValue>
@@ -1211,7 +1211,7 @@
                     <ProtoInstance name='RandomTime' DEF='_67'>
                       <fieldValue name='minTime' value='5'/>
                       <fieldValue name='maxTime' value='9'/>
-                      <fieldValue name='startTime' value='4.47866359352277'/>
+                      <fieldValue name='startTime' value='5.00336754998647'/>
                     </ProtoInstance>
                   </Transform>
                 </Transform>
@@ -1687,7 +1687,8 @@
                           <PointLight DEF='Light1_1'
                               color='1 0.505394 0'
                               attenuation='0.2 0.02 0.015'
-                              location='0 0.000457346 0'/>
+                              location='0 0.000457346 0'
+                              radius='10000'/>
                         </Transform>
                       </Transform>
                       <Transform DEF='vs_5'>

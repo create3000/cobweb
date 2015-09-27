@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 23 Apr 2015 06:06:58 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 23 Apr 2015 06:06:58 GMT'/>
+    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Sun, 27 Sep 2015 07:13:51 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -43,8 +43,8 @@
           <Shape>
             <Appearance>
               <Material DEF='_2'
-                  ambientIntensity='0.626666'
-                  diffuseColor='0.255319 0.17459 0.119622'/>
+                  ambientIntensity='0.870057'
+                  diffuseColor='0.395 0.270105 0.185065'/>
               <ImageTexture USE='_1'/>
               <TextureTransform
                   scale='8 8'/>
