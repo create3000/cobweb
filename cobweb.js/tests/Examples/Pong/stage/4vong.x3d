@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Wed, 22 Apr 2015 09:14:06 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 22 Apr 2015 09:14:06 GMT'/>
+    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Mon, 28 Sep 2015 05:19:18 GMT'/>
     <meta name='title' content='Pong'/>
   </head>
   <Scene>
@@ -116,7 +116,7 @@ function initialize ()
               </fieldValue>
             </ProtoInstance>
             <ProtoInstance name='Y' DEF='Player1'>
-              <fieldValue name='T' value='0 -0.534105 0'/>
+              <fieldValue name='T' value='0 0.858697 0'/>
               <fieldValue name='H'>
                 <ProtoInstance name='X' DEF='_4'>
                   <fieldValue name='T' value='5 0 0'/>
@@ -127,7 +127,7 @@ function initialize ()
             <Switch DEF='PuckSwitch'
                 whichChoice='0'>
               <ProtoInstance name='X' DEF='Puck'>
-                <fieldValue name='T' value='0.210442 -1.78035 0'/>
+                <fieldValue name='T' value='1.04829 1.7715 0'/>
                 <fieldValue name='S' value='0.2 0.2 1'/>
               </ProtoInstance>
               <ProtoInstance name='Y'/>
@@ -143,7 +143,9 @@ function initialize ()
                     <Shape>
                       <Appearance>
                         <PixelTexture DEF='Score0'
-                            image='3 5 2 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0xffff 0xffff'/>
+                            image='3 5 2 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0xffff 0xffff'
+                            repeatS='false'
+                            repeatT='false'/>
                       </Appearance>
                       <IndexedFaceSet
                           coordIndex='3, 2, 1, 0, -1'>
@@ -158,7 +160,9 @@ function initialize ()
                     <Shape>
                       <Appearance>
                         <PixelTexture DEF='Score1'
-                            image='3 5 2 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0xffff 0xffff'/>
+                            image='3 5 2 0 0 0xffff 0 0 0xffff 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0 0xffff'
+                            repeatS='false'
+                            repeatT='false'/>
                       </Appearance>
                       <IndexedFaceSet
                           coordIndex='3, 2, 1, 0, -1'>
@@ -181,6 +185,7 @@ function initialize ()
     <DirectionalLight DEF='Light0'
         direction='0 -1 0'/>
     <ProtoInstance name='Y' DEF='BG0X'>
+      <fieldValue name='R' value='1 0 0 0.347657'/>
       <fieldValue name='H'>
         <Background DEF='BG0'
             skyAngle='1.7'
@@ -200,14 +205,16 @@ function initialize ()
     <ProximitySensor DEF='Proximity0'
         size='200 200 200'/>
     <TimeSensor DEF='TimeX'
-        cycleInterval='2'
-        loop='true'/>
+        cycleInterval='1.1'
+        loop='true'
+        startTime='1443414448.83668'
+        stopTime='1443414447.83668'/>
     <PositionInterpolator DEF='MovePlayer1'
         key='0, 1'
         keyValue='0 1 0, 0 -1 0'/>
     <PositionInterpolator DEF='MovePuck'
         key='0, 1'
-        keyValue='4.8 -5.64517 0, -4.8 -2.66341 0'/>
+        keyValue='4.8 5.48778 0, -4.8 2.26548 0'/>
     <Script DEF='Script0'
         directOutput='true'>
       <field accessType='inputOnly' type='SFVec3f' name='bouncepuck'/>
@@ -239,7 +246,7 @@ function initialize ()
         <PixelTexture USE='Score0'/>
       </field>
       <field accessType='initializeOnly' type='MFVec3f' name='moveplayer1keyval' value='0 0 0, 0 0 0'/>
-      <field accessType='initializeOnly' type='MFVec3f' name='movepuckkeyval' value='4.8 -5.64517 0, -4.8 -2.66341 0'/>
+      <field accessType='initializeOnly' type='MFVec3f' name='movepuckkeyval' value='4.8 5.48778 0, -4.8 2.26548 0'/>
       <field accessType='initializeOnly' type='SFImage' name='zero' value='3 5 2 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0 0xffff 0xffff 0xffff 0xffff'/>
       <field accessType='initializeOnly' type='SFImage' name='one' value='3 5 2 0xffff 0xffff 0xffff 0 0xffff 0 0 0xffff 0 0 0xffff 0 0xffff 0xffff 0'/>
       <field accessType='initializeOnly' type='SFImage' name='two' value='3 5 2 0xffff 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0xffff'/>
@@ -251,8 +258,8 @@ function initialize ()
       <field accessType='initializeOnly' type='SFImage' name='eight' value='3 5 2 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0xffff 0xffff'/>
       <field accessType='initializeOnly' type='SFImage' name='nine' value='3 5 2 0 0 0xffff 0 0 0xffff 0xffff 0xffff 0xffff 0xffff 0 0xffff 0xffff 0xffff 0xffff'/>
       <field accessType='initializeOnly' type='SFInt32' name='count'/>
-      <field accessType='initializeOnly' type='SFInt32' name='skill'/>
-      <field accessType='initializeOnly' type='MFInt32' name='scores' value='0, 0'/>
+      <field accessType='initializeOnly' type='SFInt32' name='skill' value='4'/>
+      <field accessType='initializeOnly' type='MFInt32' name='scores' value='4, 0'/>
 <![CDATA[vrmlscript:
   function bouncepuck(v){
    v[1] = (6-Math.abs(6-Math.abs((v[1]+3)%12)))-3;
