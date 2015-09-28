@@ -141,6 +141,21 @@ function ($,
 
 						this .getData (data, comp, array);
 					}
+					else if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && !  this .textureProperties_ .getValue ())
+					{
+						data = new Uint8Array (width * height * 4);
+
+						this .getData (data, comp, array);
+
+						var
+							inputWidth  = width,
+							inputHeight = height;
+
+						width  = Algorithm .nextPowerOfTwo (inputWidth)  * 4;
+						height = Algorithm .nextPowerOfTwo (inputHeight) * 4;
+
+						data = this .resize (data, inputWidth, inputHeight, width, height);
+					}
 					else
 					{
 						var

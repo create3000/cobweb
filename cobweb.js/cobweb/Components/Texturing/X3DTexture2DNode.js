@@ -103,6 +103,36 @@ function ($,
 		{
 			this .setTexture (1, 1, false, new Uint8Array ([ 255, 255, 255, 255 ]), false);
 		},
+		resize: function (input, inputWidth, inputHeight, outputWidth, outputHeight)
+		{
+		   // Nearest neighbor scaling algorithm for very small images.
+
+			var
+				output = new Uint8Array (outputWidth * outputHeight * 4),
+				scaleX = outputWidth / inputWidth,
+				scaleY = outputHeight / inputHeight;
+
+			for (var y = 0; y < outputHeight; ++ y)
+			{
+				var
+					inputW  = Math .floor (y / scaleY) * inputWidth,
+					outputW = y * outputWidth;
+
+				for (var x = 0; x < outputWidth; ++ x)
+				{
+					var
+						index       = (inputW + Math.floor (x / scaleX)) * 4,
+						indexScaled = (outputW + x) * 4;
+
+					output [indexScaled ]    = input [index];
+					output [indexScaled + 1] = input [index + 1];
+					output [indexScaled + 2] = input [index + 2];
+					output [indexScaled + 3] = input [index + 3];
+				}
+			}
+
+			return output;
+		},
 		traverse: function ()
 		{
 			var gl = this .getBrowser () .getContext ();

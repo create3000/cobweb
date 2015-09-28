@@ -12,6 +12,14 @@ function ($,
 {
 	with (Fields)
 	{
+		// Anisotropic Filtering in WebGL is handled by an extension, use one of getExtension depending on browser:
+
+		var ANISOTROPIC_EXT = [
+			"EXT_texture_filter_anisotropic",
+			"MOZ_EXT_texture_filter_anisotropic",
+			"WEBKIT_EXT_texture_filter_anisotropic",
+		];
+		
 		function X3DTextureNode (browser, executionContext)
 		{
 			X3DAppearanceChildNode .call (this, browser, executionContext);
@@ -70,20 +78,19 @@ function ($,
 					//gl .texParameteri (target, gl .TEXTURE_WRAP_R, repeatR ? gl .REPEAT : gl .CLAMP);
 				}
 
-				//gl .texParameterfv (target, gl .TEXTURE_BORDER_COLOR,       textureProperties .borderColor_ .getValue ());
-				//gl .texParameterf  (target, gl .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
-				//gl .texParameterf  (target, gl .TEXTURE_PRIORITY,           textureProperties .texturePriority_ .getValue ());
+				//gl .texParameterfv (target, gl .TEXTURE_BORDER_COLOR, textureProperties .borderColor_ .getValue ());
+				//gl .texParameterf  (target, gl .TEXTURE_PRIORITY,     textureProperties .texturePriority_ .getValue ());
 
-				/*
-				// Anisotropic Filtering in WebGL is handled by an extension, use one of getExtension depending on browser:
-
-				var ext = gl .getExtension ("MOZ_EXT_texture_filter_anisotropic");
-				var ext = gl .getExtension ("WEBKIT_EXT_texture_filter_anisotropic");
-				var ext = gl .getExtension ("EXT_texture_filter_anisotropic");
-
-				if (ext)
-					gl .texParameterf (gl .TEXTURE_2D, ext .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
-				*/
+				for (var i = 0; i < ANISOTROPIC_EXT .length; ++ i)
+				{
+					var ext = gl .getExtension (ANISOTROPIC_EXT [i]);
+					
+					if (ext)
+					{
+						gl .texParameterf (gl .TEXTURE_2D, ext .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
+						break;
+					}
+				}
 
 				gl .bindTexture (target, null);
 			},
