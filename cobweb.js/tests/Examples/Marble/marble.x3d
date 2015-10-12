@@ -6,7 +6,7 @@
     <meta name='created' content='Tue, 22 Sep 2015 11:26:52 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 26 Sep 2015 12:21:08 GMT'/>
+    <meta name='modified' content='Wed, 30 Sep 2015 12:38:28 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Grid'>
@@ -361,28 +361,16 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
 
 function initialize ()
 {
-	isActive = true;
-	
-	try
-	{
-		Browser .setBrowserOption ("Shading", "PHONG");
-	}
-	catch (error)
-	{ }
+	Browser .setBrowserOption ("Shading", "PHONG");
 }
-
-function set_isActive (value, time)
-{
-	if (value)
-		enterTime = time;
-}]]> 
+]]> 
     </Script>
+    <NavigationInfo/>
     <Background DEF='Gray_1'
         skyColor='0.2 0.2 0.2'/>
     <KeySensor DEF='A'
         enabled='false'/>
     <Transform DEF='Rectangle2D_1'
-        translation='0 0 4'
         rotation='1 3.62336e-06 -7.567e-10 4.71239'
         scaleOrientation='0.999922 0.0107938 0.00620818 0.78524'>
       <Shape>
@@ -399,14 +387,12 @@ function set_isActive (value, time)
     </Transform>
     <Transform DEF='Marble'
         translation='0 1 0'>
-      <Transform DEF='SphereTranslation'
-          translation='0 0 4'>
+      <Transform DEF='SphereTranslation'>
         <Viewpoint
             description='Home'
             position='-3.38726 12.9707 12.1553'
-            orientation='-0.947271 -0.299523 -0.113853 0.840082'/>
-        <Transform DEF='SphereRotation'
-            rotation='-0.627324 -0.770965 -0.109898 1.4681'>
+            orientation='-0.947272 -0.299523 -0.113853 0.840082'/>
+        <Transform DEF='SphereRotation'>
           <Shape>
             <Appearance>
               <Material DEF='Metal31_1'
@@ -435,12 +421,12 @@ function set_isActive (value, time)
         <field accessType='initializeOnly' type='SFNode' name='orientationInterpolator'>
           <OrientationInterpolator DEF='_2'
               key='0, 0.25, 0.5, 0.75, 1'
-              keyValue='-0.852783 -0.341376 0.395252 3.04647, -0.841807 -0.44292 0.308516 2.62215, -0.81161 -0.547078 0.204927 2.20782, -0.74963 -0.657972 0.0716097 1.81575, -0.627324 -0.770965 -0.109898 1.4681'/>
+              keyValue='0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0'/>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='positionInterpolator'>
           <PositionInterpolator DEF='_3'
               key='0, 1'
-              keyValue='0 0 2, 0 0 4'/>
+              keyValue='0 0 0, 0 0 0'/>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='rectangle'>
           <Transform USE='Rectangle2D_1'/>
@@ -544,12 +530,10 @@ function roll (direction, rotationAxis, axis, time)
         translation='1.19209e-07 1 -6.98312e-08'
         rotation='0 1 0 1.5708'
         scale='1 0.707107 0.707107'
-        scaleOrientation='0 0 1 0'
         center='4 0 -2'>
       <Transform DEF='Rectangle2D'
           translation='4 0 -2'
           rotation='0.678598 0.281087 -0.678598 3.68962'
-          scale='1 1 1'
           scaleOrientation='-0.743289 0.203315 0.637326 0.27003'>
         <Shape>
           <Appearance>

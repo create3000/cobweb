@@ -1,9 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="8" Column="8" />
-      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="43" Column="43" />
+      <File FileName="cobweb.js/cobweb.html" Line="15" Column="15" />
+      <File FileName="cobweb.js/cobweb.min.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.test.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/PointingDeviceSensor/PointingDevice.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

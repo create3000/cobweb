@@ -68,25 +68,27 @@ function ($,
 
 						for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 						{
-							var
-								fieldDefinition = fieldDefinitions [i],
-								protoField      = proto .getField (fieldDefinition .name);
-
 							try
 							{
+								var
+									fieldDefinition = fieldDefinitions [i],
+									protoField      = proto .getField (fieldDefinition .name);
+
 								var field = this .getField (fieldDefinition .name);
 
-								// Return if something is wrong.
+								// Continue if something is wrong.
 								if (field .getAccessType () !== protoField .getAccessType ())
-									return;
+									continue;
 
-								// Return if something is wrong.
+								// Continue if something is wrong.
 								if (field .getType () !== protoField .getType ())
-									return;
+									continue;
 
+								// Continue if field is eventIn or eventOut.
 								if (! (field .getAccessType () & X3DConstants .initializeOnly))
 									continue;
 
+								// Is set during parse.	
 								if (field .getFieldValue () === true)
 									continue;
 
@@ -94,7 +96,7 @@ function ($,
 							}
 							catch (error)
 							{
-								// Definition exists in proto but does not has exist in extern proto.
+								// Definition exists in proto but does not exist in extern proto.
 								this .addField (fieldDefinition);
 							}
 						}

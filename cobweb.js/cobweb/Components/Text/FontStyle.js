@@ -41,6 +41,8 @@ function ($,
 		var
 			min       = new Vector2 (0, 0),
 			max       = new Vector2 (0, 0),
+			glyphMin  = new Vector2 (0, 0),
+			glyphMax  = new Vector2 (0, 0),
 			min3      = new Vector3 (0, 0, 0),
 			max3      = new Vector3 (0, 0, 0),
 			size      = new Vector2 (0, 0),
@@ -274,38 +276,44 @@ function ($,
 			getLineExtents: function (fontStyle, line, min, max)
 			{
 				var
-				   font   = fontStyle .getFont (),
-					normal = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
-					glyphs = font .stringToGlyphs (normal ? line : line .split ("") .reverse () .join ("")),
-					xMin   = 0,
-					xMax   = 0,
-					yMin   = Number .POSITIVE_INFINITY,
-					yMax   = Number .NEGATIVE_INFINITY;
-			
+				   font             = fontStyle .getFont (),
+					normal           = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
+					glyphs           = font .stringToGlyphs (normal ? line : line .split ("") .reverse () .join ("")),
+					primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+					xMin             = 0,
+					xMax             = 0,
+					yMin             = Number .POSITIVE_INFINITY,
+					yMax             = Number .NEGATIVE_INFINITY;
+
 				for (var g = 0, length = glyphs .length; g < length; ++ g)
 				{
 					var
 						glyph   = glyphs [g],
 						kerning = g + 1 < length ? font .getKerningValue (glyph, glyphs [g + 1]) : 0;
 
+					this .getGlyphExtents (glyph, primitiveQuality, glyphMin, glyphMax);
+
 					xMax += glyph .advanceWidth + kerning;
-					yMin  = Math .min (yMin, glyph .yMin || 0);
-					yMax  = Math .max (yMax, glyph .yMax || 0);
+					yMin  = Math .min (yMin, glyphMin .y);
+					yMax  = Math .max (yMax, glyphMax .y);
+				
 				}
 
 				if (glyphs .length)
 				{
-					xMin  = glyphs [0] .xMin || 0; // do || 0 to fix a opentype bug.
+					this .getGlyphExtents (glyphs [0], primitiveQuality, glyphMin, glyphMax);
+
+					xMin  = glyphMin .x;
 				}
 				else
 				{
 					yMin = 0;
-					yMax = 0;			   
+					yMax = 0;
 				}
 
-				min .set (xMin, yMin) .divide (font .unitsPerEm);
-				max .set (xMax, yMax) .divide (font .unitsPerEm);
-
+				min .set (xMin, yMin);
+				max .set (xMax / font .unitsPerEm, yMax);
+					
 				switch (fontStyle .getMajorAlignment ())
 				{
 					case X3DFontStyleNode .Alignment .BEGIN:
@@ -418,6 +426,24 @@ function ($,
 						kerning = font .getKerningValue (glyph, glyphs [g + 1]);
 
 					offset += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+				}
+			},
+			getGlyphExtents: function (glyph, primitiveQuality, min, max)
+			{
+				var vertices = this .getGlyphGeometry (glyph, primitiveQuality);
+
+				if (vertices .length)
+				{
+					min .assign (vertices [0]);
+					max .assign (vertices [0]);
+
+					Vector2 .prototype .min .apply (min, vertices);
+					Vector2 .prototype .max .apply (max, vertices);
+				}
+				else
+				{
+					min .set (0, 0, 0);
+					max .set (0, 0, 0);			   
 				}
 			},
 			getGlyphGeometry: function (glyph, primitiveQuality)

@@ -10,7 +10,10 @@ function (Matrix4, Vector3)
 	   max = new Vector3 (0, 0, 0),
 	   x   = new Vector3 (0, 0, 0),
 	   y   = new Vector3 (0, 0, 0),
-	   z   = new Vector3 (0, 0, 0);
+	   z   = new Vector3 (0, 0, 0),
+	   r1  = new Vector3 (0, 0, 0),
+	   p1  = new Vector3 (0, 0, 0),
+	   p4  = new Vector3 (0, 0, 0);
 
 	function Box3 (size, center)
 	{
@@ -174,26 +177,27 @@ function (Matrix4, Vector3)
 			y .set (m [4], m [5], m [6]);
 			z .set (m [8], m [9], m [10]);
 
-			var
-				r1 = Vector3 .add (y, z),
-				r2 = z .subtract (y);
+			r1 .assign (y) .add (z);
 
+			var r2 = z .subtract (y);
+
+			p1 .assign (x) .add (r1),
+			p4 .assign (x) .add (r2);
+			
 			var
-				p1 = Vector3 .add (x, r1),
-				p4 = Vector3 .add (x, r2),
 				p2 = r1 .subtract (x),
 				p3 = r2 .subtract (x);
 
 			min .assign (p1);
-			max .assign (p2);
+			max .assign (p1);
 
 			min .min (p2, p3, p4);
 			max .max (p2, p3, p4);
 
-			p3 .negate ();
-			p4 .negate ();
 			p1 .negate ();
 			p2 .negate ();
+			p3 .negate ();
+			p4 .negate ();
 
 			min .min (p1, p2, p3, p4);
 			max .max (p1, p2, p3, p4);

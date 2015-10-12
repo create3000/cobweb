@@ -6,10 +6,11 @@ define ([
 function (Matrix3, Vector2)
 {
 	var
-	   x   = new Vector2 (0, 0),
-	   y   = new Vector2 (0, 0),
-	   min = new Vector2 (0, 0),
-	   max = new Vector2 (0, 0);
+		x   = new Vector2 (0, 0),
+		y   = new Vector2 (0, 0),
+		min = new Vector2 (0, 0),
+		max = new Vector2 (0, 0),
+		p1  = new Vector2 (0, 0);
 
 	function Box2 (size, center)
 	{
@@ -167,11 +168,9 @@ function (Matrix3, Vector2)
 			x .set (m [0], m [1]);
 			y .set (m [3], m [4]);
 
-			var
-				p1 = Vector2 .add (x, y),
-				p2 = y .subtract (x),
-				p3 = -p1,
-				p4 = -p2;
+			p1 .assign (x) .add (y);
+
+			var p2 = y .subtract (x);
 
 			min .assign (p1) .min (p2);
 			max .assign (p1) .max (p2);
