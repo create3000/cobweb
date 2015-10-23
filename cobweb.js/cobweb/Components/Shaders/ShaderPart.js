@@ -114,7 +114,7 @@ function ($,
 					if (this .valid)
 						break;
 
-					this .getBrowser () .print (this .getTypeName () + ": " + gl .getShaderInfoLog (this .shader));
+					this .getBrowser () .print (this .getTypeName () + " '" + this .getName () + "': " + gl .getShaderInfoLog (this .shader));
 				}
 
 				this .setLoadState (this .valid ? X3DConstants .COMPLETE_STATE : X3DConstants .FAILED_STATE);

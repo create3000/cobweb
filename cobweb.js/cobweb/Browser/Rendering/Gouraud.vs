@@ -171,9 +171,12 @@ main ()
 	                       x3d_Transparency);
 
 	
+	backColor = frontColor;
+
+	/*
 	if (x3d_SeparateBackColor)
 	{
-		backColor  = getColor (-1.0, v,
+		backColor = getColor (-1.0, v,
 		                       x3d_BackAmbientIntensity,
 		                       x3d_BackDiffuseColor,
 		                       x3d_BackSpecularColor,
@@ -183,7 +186,7 @@ main ()
 	}
 	else
 	{
-		backColor  = getColor (-1.0, v,
+		backColor = getColor (-1.0, v,
 		                       x3d_AmbientIntensity,
 		                       x3d_DiffuseColor,
 		                       x3d_SpecularColor,
@@ -191,4 +194,5 @@ main ()
 		                       x3d_Shininess,
 		                       x3d_Transparency);
 	}
+	*
 }
