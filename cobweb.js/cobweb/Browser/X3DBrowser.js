@@ -60,6 +60,20 @@ function ($,
 					if (url .length)
 						this .loadURL (url);
 				}
+
+				this .print ("Welcome to " + this .name + " X3D Browser " + this .version + ":\n" +
+				                "        Current Graphics Renderer\n" +
+				                "                Name: " + this .getVendor () + " " + this .getWebGLVersion () + "\n" +
+				                "                Shading language: " + this .getShadingLanguageVersion () + "\n" +
+				                "        Rendering Properties\n" +
+				                "                Texture units: " + this .getMaxTextureUnits () + " / " + this .getMaxCombinedTextureUnits () + "\n" +
+				                "                Max texture size: " + this .getMaxTextureSize () + " × " + this .getMaxTextureSize () + " pixel\n" +
+				                "                Max lights: 0\n" +
+				                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
+				                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
+				                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n" +
+				                "                Antialiased: " + this .getAntialiased () + "\n" +
+				                "                Color depth: " + this .getColorDepth () + " bits\n");
 			},
 			getName: function ()
 			{
@@ -429,6 +443,8 @@ function ($,
 					string += arguments [i];
 
 				console .log (string);
+
+				$(".cobweb-console") .append (string);
 			},
 			println: function ()
 			{
@@ -440,6 +456,8 @@ function ($,
 				//string += "\n";
 
 				console .log (string);
+
+				$(".cobweb-console") .append (string);
 			},
 		});
 

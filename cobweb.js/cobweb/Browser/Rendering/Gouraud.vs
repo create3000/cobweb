@@ -1,11 +1,13 @@
 // -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
 precision mediump float;
 
+// 4 * 16
 uniform mat4 x3d_TextureMatrix;
 uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
 
+// 2
 uniform bool x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
 
@@ -14,6 +16,7 @@ uniform bool x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise
 #define POINT_LIGHT       1
 #define SPOT_LIGHT        2
 
+// 19 * MAX_LIGHTS
 uniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
 uniform bool  x3d_LightOn [MAX_LIGHTS];
 uniform vec3  x3d_LightColor [MAX_LIGHTS];
@@ -26,8 +29,10 @@ uniform float x3d_LightRadius [MAX_LIGHTS];
 uniform float x3d_LightBeamWidth [MAX_LIGHTS];
 uniform float x3d_LightCutOffAngle [MAX_LIGHTS];
 
+// 1
 uniform bool x3d_SeparateBackColor;
 
+// 12
 uniform float x3d_AmbientIntensity;
 uniform vec3  x3d_DiffuseColor;
 uniform vec3  x3d_SpecularColor;
@@ -35,6 +40,7 @@ uniform vec3  x3d_EmissiveColor;
 uniform float x3d_Shininess;
 uniform float x3d_Transparency;
 
+// 12
 uniform float x3d_BackAmbientIntensity;
 uniform vec3  x3d_BackDiffuseColor;
 uniform vec3  x3d_BackSpecularColor;
@@ -42,9 +48,11 @@ uniform vec3  x3d_BackEmissiveColor;
 uniform float x3d_BackShininess;
 uniform float x3d_BackTransparency;
 
+// 2
 uniform bool      x3d_Texturing;      // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D x3d_Texture;
 
+// max 16
 attribute vec4 x3d_Color;
 attribute vec4 x3d_TexCoord;
 attribute vec3 x3d_Normal;

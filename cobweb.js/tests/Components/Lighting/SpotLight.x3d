@@ -5,10 +5,41 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Mon, 09 Mar 2015 08:07:10 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Sep 2015 07:04:26 GMT'/>
+    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Mon, 12 Oct 2015 05:47:54 GMT'/>
   </head>
   <Scene>
+    <WorldInfo
+        title='SpotLight'>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='-3.81654000282288, 4.32736015319824, 9.10122966766357'/>
+          <MetadataDouble containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.793151140213013, -0.575941026210785, -0.197998017072678, 0.75200080871582'/>
+          <MetadataDouble containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='0.0565959997475147, -1.9891699552536, 0.927555024623871'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
     <NavigationInfo
         headlight='false'/>
     <Viewpoint
@@ -21,9 +52,11 @@
             name='Animation'>
           <MetadataInteger containerField='value'
               name='duration'
+              reference='http://titania.create3000.de'
               value='120'/>
           <MetadataInteger containerField='value'
               name='framesPerSecond'
+              reference='http://titania.create3000.de'
               value='10'/>
         </MetadataSet>
         <TimeSensor DEF='_1'
@@ -38,12 +71,15 @@
               name='Interpolator'>
             <MetadataInteger containerField='value'
                 name='key'
+                reference='http://titania.create3000.de'
                 value='0, 24, 48, 72, 96, 120'/>
             <MetadataDouble containerField='value'
                 name='keyValue'
+                reference='http://titania.create3000.de'
                 value='0.417955100536346, -0.797554433345795, 0.434994637966156, 0.459975600242615, -0.885116219520569, -0.0706513971090317, -0.132676854729652, -0.944326639175415, -0.301071435213089, -0.336501747369766, -0.884749174118042, 0.322467744350433, -0.0748160928487778, -0.982556462287903, 0.170251175761223, 0.417955100536346, -0.797554433345795, 0.434994637966156'/>
             <MetadataString containerField='value'
                 name='keyType'
+                reference='http://titania.create3000.de'
                 value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
           </MetadataSet>
         </PositionInterpolator>
@@ -54,12 +90,15 @@
               name='Interpolator'>
             <MetadataInteger containerField='value'
                 name='key'
+                reference='http://titania.create3000.de'
                 value='0, 24, 48, 72, 96, 120'/>
             <MetadataDouble containerField='value'
                 name='keyValue'
+                reference='http://titania.create3000.de'
                 value='0.417955011129379, -0.797554016113281, 0.434994995594025, 0.177197471261024, -0.363913923501968, 0.914422154426575, -0.420632183551788, -0.905587494373322, 0.0545883774757385, -0.233390942215919, -0.932915806770325, -0.274220138788223, 0.416534006595612, -0.908827006816864, -0.0230822339653969, 0.417955011129379, -0.797554016113281, 0.434994995594025'/>
             <MetadataString containerField='value'
                 name='keyType'
+                reference='http://titania.create3000.de'
                 value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
           </MetadataSet>
         </PositionInterpolator>
@@ -70,29 +109,32 @@
               name='Interpolator'>
             <MetadataInteger containerField='value'
                 name='key'
+                reference='http://titania.create3000.de'
                 value='0, 24, 48, 72, 96, 120'/>
             <MetadataDouble containerField='value'
                 name='keyValue'
+                reference='http://titania.create3000.de'
                 value='0.417955011129379, -0.797554016113281, 0.434994995594025, -0.412699520587921, -0.873527228832245, -0.258126258850098, 0.67708683013916, -0.727642059326172, 0.109956502914429, 0.400381177663803, -0.913624346256256, 0.0706085711717606, 0.197781354188919, -0.876452922821045, 0.438990741968155, 0.417955011129379, -0.797554016113281, 0.434994995594025'/>
             <MetadataString containerField='value'
                 name='keyType'
+                reference='http://titania.create3000.de'
                 value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
           </MetadataSet>
         </PositionInterpolator>
       </Group>
       <SpotLight DEF='Red'
           color='1 0 0'
-          direction='0.417955 -0.797554 0.434995'
+          direction='0.162554 -0.925488 -0.263056'
           beamWidth='0.415398'
           cutOffAngle='0.790796'/>
       <SpotLight DEF='Green'
           color='0 1 0'
-          direction='0.417955 -0.797554 0.434995'
+          direction='-0.165221 -0.622609 0.509941'
           beamWidth='0.415398'
           cutOffAngle='0.790796'/>
       <SpotLight DEF='Blue'
           color='0 0 1'
-          direction='0.417955 -0.797554 0.434995'
+          direction='0.131838 -0.788844 -0.102247'
           beamWidth='0.415398'
           cutOffAngle='0.790796'/>
     </Transform>

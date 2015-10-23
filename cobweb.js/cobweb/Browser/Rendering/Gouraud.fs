@@ -6,10 +6,12 @@ precision mediump float;
 #define EXPONENTIAL_FOG  2
 #define EXPONENTIAL2_FOG 3
 
+// 5
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
 
+// 2
 uniform bool x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false
 uniform bool x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false
 
