@@ -25,6 +25,12 @@ x3d.cobweb-fallback > * {
 	display: initial;
 }
 
+.cobweb-console {
+	font-family: monospace;
+	font-size: 10px;
+	white-space: pre;
+}
+
 x3d .cobweb-browser {
 	display: block;
 	position: relative;
