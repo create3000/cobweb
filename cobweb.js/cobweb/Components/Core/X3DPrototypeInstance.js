@@ -62,6 +62,8 @@ function ($,
 
 				if (proto)
 				{
+					// If there is a proto the externproto is completely loaded.
+				
 					if (this .protoNode .isExternProto ())
 					{
 						var fieldDefinitions = proto .getFieldDefinitions ();
@@ -92,6 +94,10 @@ function ($,
 								if (field .getFieldValue () === true)
 									continue;
 
+								// Has IS references.
+								if (field .hasReferences ())
+									continue;
+
 								field .set (protoField .getValue ());
 							}
 							catch (error)
@@ -117,7 +123,7 @@ function ($,
 					for (var i = 0, length = proto .protos .length; i < length; ++ i)
 						this .protos .push (proto .protos [i]);
 
-					// Assign root nodes.
+					// Copy root nodes.
 
 					var
 						rootNodes1 = proto .getRootNodes () .getValue (),

@@ -2468,6 +2468,11 @@
     <None Include="lib\poly2tri.js\tests\versions\README.md" />
     <None Include="cobweb\Browser\Geometry3D\IcoSphere.js" />
     <None Include="cobweb\Browser\Geometry3D\IcoSphereOptions.js" />
+    <None Include="tests\Examples\VRMLBanner\globe.jpg" />
+    <None Include="tests\Examples\VRMLBanner\stripe.png" />
+    <None Include="tests\Examples\VRMLBanner\tonerow3d_16_22.wav" />
+    <None Include="tests\Examples\VRMLBanner\vrmlbanner.wrl" />
+    <None Include="tests\Examples\VRMLBanner\vrmlbanner.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2536,5 +2541,6 @@
     <Folder Include="tests\Components\Geometry2D\" />
     <Folder Include="tests\Examples\Mushrooms\" />
     <Folder Include="lib\sprintf.js\" />
+    <Folder Include="tests\Examples\VRMLBanner\" />
   </ItemGroup>
 </Project>

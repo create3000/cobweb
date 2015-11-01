@@ -167,17 +167,19 @@ function ($,
 			var
 				navigationInfo  = this .getNavigationInfo (),
 				distance        = this .getDistance (translation),
-				length          = translation .abs (),
-				zFar            = navigationInfo .getFarPlane (this .getViewpoint ()),
-				collisionRadius = navigationInfo .getCollisionRadius ();
+				zFar            = navigationInfo .getFarPlane (this .getViewpoint ());
 
 			if (zFar - distance > 0) // Are there polygons before the viewer
 			{
+				var collisionRadius = navigationInfo .getCollisionRadius ();
+			
 				distance -= collisionRadius;
 
 				if (distance > 0)
 				{
 					// Move
+					
+					var length = translation .abs ();
 
 					if (length > distance)
 					{
@@ -189,7 +191,7 @@ function ($,
 				}
 
 				// Collision
-				return translation .set (0, 0, 0);
+				return translation .normalize () .multiply (distance);
 			}
 
 			this .collisionTime += performance .now () - t0;
@@ -220,7 +222,7 @@ function ($,
 
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
 				rotation .setFromToVec (zAxis, vector .assign (translation) .negate ()) .multRight (localOrientation);
-				viewpoint .straightenHorizon (rotation);
+				//viewpoint .straightenHorizon (rotation);
 
 				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
 				modelViewMatrix .translate (viewpoint .getUserPosition ());
@@ -292,6 +294,7 @@ function ($,
 				{
 					// Collect for collide and gravite
 					this .numCollisionShapes = 0;
+
 					this .collect (type);
 					this .collide ();
 					this .gravite ();
@@ -318,22 +321,27 @@ function ($,
 
 			for (var i = 0; i < this .numCollisionShapes; ++ i)
 			{
-				var
-					context    = this .collisionShapes [i],
-					collisions = context .collisions;
-
-				if (collisions .length)
+				try
 				{
-				   this .invModelViewMatrix .assign (context .modelViewMatrix) .multRight (this .getViewpoint () .getInverseCameraSpaceMatrix ()) .inverse ();
+					var
+						context    = this .collisionShapes [i],
+						collisions = context .collisions;
 
-				   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
-
-					if (context .geometry .intersectsSphere (this .collisionSphere))
+					if (collisions .length)
 					{
-					   for (var c = 0; c < collisions .length; ++ c)
-							activeCollisions [collisions [c] .getId ()] = collisions [c];
+					   this .invModelViewMatrix .assign (context .modelViewMatrix) .multRight (this .getViewpoint () .getInverseCameraSpaceMatrix ()) .inverse ();
+
+					   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
+
+						if (context .geometry .intersectsSphere (this .collisionSphere))
+						{
+						   for (var c = 0; c < collisions .length; ++ c)
+								activeCollisions [collisions [c] .getId ()] = collisions [c];
+						}
 					}
 				}
+				catch (error)
+				{ }
 			}
 
 			// Set isActive to FALSE for affected nodes.

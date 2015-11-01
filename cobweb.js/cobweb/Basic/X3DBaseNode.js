@@ -128,6 +128,8 @@ function ($,
 							fieldDefinition = copy .fieldDefinitions [i],
 							field1          = this .preDefinedFields [fieldDefinition .name],
 							field2          = copy .getField (fieldDefinition .name);
+							
+						field2 .setFieldValue (field1 .getFieldValue ());
 
 						if (field1 .hasReferences ())
 						{
@@ -169,6 +171,8 @@ function ($,
 					copy .addUserDefinedField (field1 .getAccessType (),
 					                           field1 .getName (),
 					                           field2);
+
+					field2 .setFieldValue (field1 .getFieldValue ());
 
 					if (field1 .hasReferences ())
 					{

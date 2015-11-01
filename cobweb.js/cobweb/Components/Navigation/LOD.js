@@ -45,7 +45,7 @@ function ($,
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "forceTransitions", new SFBool ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "center",           new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "range",            new MFFloat ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed",    new SFInt32 ()),
+				new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed",    new SFInt32 (-1)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",         new SFVec3f (-1, -1, -1)),
 				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",       new SFVec3f ()),
 				new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",      new MFNode ()),
@@ -150,6 +150,7 @@ function ($,
 							this .level_changed_ = level;
 						
 						this .child = this .getChild (Math .min (level, this .children_ .length - 1));
+						
 						this .set_cameraObjects__ ();
 					}
 				}

@@ -49,7 +49,9 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		},
 		mousedown: function (event)
 		{
-			this .button    = event .button;
+			if (this .button >= 0)
+				return;
+		
 			this .pressTime = performance .now ();
 
 			var
@@ -57,10 +59,12 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				x      = event .pageX - offset .left,
 				y      = event .pageY - offset .top;
 
-			switch (this .button)
+			switch (event .button)
 			{
 				case 0:
 				{
+					this .button = event .button;
+					
 					this .getBrowser () .getCanvas () .unbind ("mousemove.ExamineViewer");
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
@@ -78,6 +82,8 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				}
 				case 1:
 				{
+					this .button = event .button;
+					
 					this .getBrowser () .getCanvas () .unbind ("mousemove.ExamineViewer");
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
@@ -94,6 +100,11 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		},
 		mouseup: function (event)
 		{
+			if (event .button !== this .button)
+				return;
+
+			this .button = -1;
+		
 			$(document) .unbind (".ExamineViewer" + this .getId ());
 			this .getBrowser () .getCanvas () .bind ("mousemove.ExamineViewer", this .mousemove .bind (this));
 
@@ -124,8 +135,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					break;
 				}
 			}
-
-			this .button = -1;
 		},
 		mousemove: function (event)
 		{

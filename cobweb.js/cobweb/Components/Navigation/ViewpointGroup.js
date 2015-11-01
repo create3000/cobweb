@@ -68,6 +68,8 @@ function ($,
 				this .size_   .addFieldInterest (this .proximitySensor .size_);
 				this .center_ .addFieldInterest (this .proximitySensor .center_);
 
+				this .proximitySensor .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+
 				this .proximitySensor .size_   = this .size_;
 				this .proximitySensor .center_ = this .center_;
 
@@ -86,7 +88,6 @@ function ($,
 			{
 				var enabled = this .displayed_ .getValue () && ! this .size_ .getValue () .equals (Vector3 .Zero);
 
-				this .setCameraObject (enabled);
 				this .proximitySensor .enabled_ = enabled;
 
 				if (enabled)

@@ -88,7 +88,7 @@ function ($, Quaternion, Vector3)
 		},
 		get: function ()
 		{
-			if (Math .abs (this .value .w) === 1)
+			if (Math .abs (this .value .w) >= 1)
 				return [0, 0, 1, 0];
 
 			var vector = this .value .imag .normalize ();
@@ -150,7 +150,7 @@ function ($, Quaternion, Vector3)
 		},
 		getAxis: function ()
 		{
-			if (Math .abs (this .value .w) === 1)
+			if (Math .abs (this .value .w) >= 1)
 				return new Vector3 (0, 0, 1);
 
 			return this .value .imag .normalize ();
@@ -291,7 +291,7 @@ function ($, Quaternion, Vector3)
 	{
 		get: function ()
 		{
-			if (Math .abs (this .value .w === 1))
+			if (Math .abs (this .value .w) >= 1)
 				return 0;
 
 			return 2 * Math .acos (this .value .w);
@@ -309,7 +309,7 @@ function ($, Quaternion, Vector3)
 	{
 		get: function ()
 		{
-			if (Math .abs (this .value .w === 1))
+			if (Math .abs (this .value .w) >= 1)
 				return 0;
 
 			return 2 * Math .acos (this .value .w);

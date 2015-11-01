@@ -52,7 +52,7 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : Vector3 .Zero;
 			center           = center           ? center           .getValue () : Vector2 .Zero;
 
-			this .getValue () .setTransform (translation, rotation, scale, scaleOrientation, center);
+			this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
 		},
 		getTransform: function (translation, rotation, scale, scaleOrientation, center)
 		{
@@ -62,7 +62,7 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
 			center           = center           ? center           .getValue () : null;
 
-			this .getValue () .getTransform (translation, rotation, scale, scaleOrientation, center);
+			this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
 		},
 		transpose: function ()
 		{
@@ -82,19 +82,19 @@ function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
 		},
 		multVecMatrix: function (vector)
 		{
-			return new (this .constructor .Vector2) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
+			return new (this .Vector2) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixVec: function (vector)
 		{
-			return new (this .constructor .Vector2) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
+			return new (this .Vector2) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
 		},
 		multDirMatrix: function (vector)
 		{
-			return new (this .constructor .Vector2) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
+			return new (this .Vector2) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixDir: function (vector)
 		{
-			return new (this .constructor .Vector2) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
+			return new (this .Vector2) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
 		},
 		toString: function ()
 		{

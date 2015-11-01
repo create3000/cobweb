@@ -76,7 +76,7 @@ function ($,
 			},
 			set_live__: function ()
 			{
-			   if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue () && this .enabled_ .getValue ())
+			   if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue () && this .enabled_ .getValue ())
 			      this .getBrowser () .addCollision (this);
 			   
 			   else

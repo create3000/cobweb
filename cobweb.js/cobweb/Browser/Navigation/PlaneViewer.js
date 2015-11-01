@@ -39,7 +39,9 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 		},
 		mousedown: function (event)
 		{
-			this .button    = event .button;
+			if (this .button >= 0)
+				return;
+		
 			this .pressTime = performance .now ();
 
 			var
@@ -47,10 +49,12 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 				x      = event .pageX - offset .left,
 				y      = event .pageY - offset .top;
 
-			switch (this .button)
+			switch (event .button)
 			{
 				case 1:
 				{
+					this .button = event .button;
+					
 					this .getBrowser () .getCanvas () .unbind ("mousemove.PlaneViewer");
 					$(document) .bind ("mouseup.PlaneViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.PlaneViewer" + this .getId (), this .mousemove .bind (this));
@@ -66,11 +70,15 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 		},
 		mouseup: function (event)
 		{
+			if (event .button !== this .button)
+				return;
+			
+			this .button = -1;
+		
 			$(document) .unbind (".PlaneViewer" + this .getId ());
 			this .getBrowser () .getCanvas () .bind ("mousemove.PlaneViewer", this .mousemove .bind (this));
 
 			this .getBrowser () .setCursor ("DEFAULT");
-			this .button = -1;
 		},
 		mousemove: function (event)
 		{

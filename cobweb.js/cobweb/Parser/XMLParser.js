@@ -417,6 +417,7 @@ function ($,
 					{
 						this .parser .setInput (value);
 						this .fieldTypes [field .getType ()] .call (this .parser, field);
+						field .setFieldValue (true);
 					}
 
 					this .pushParent (field);

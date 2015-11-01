@@ -86,11 +86,11 @@ function ($,
 	               
 		this .hidden                = false;
 		this .visible               = [ ];
+		this .pointingDeviceSensors = [ ];
 		this .cameraObjects         = [ ];
 		this .clipPlanes            = [ ];
 		this .localFogs             = [ ];
 		this .lights                = [ ];
-		this .pointingDeviceSensors = [ ];
 		this .childNodes            = [ ];
 	}
 
@@ -181,59 +181,6 @@ function ($,
 			if (this .children_ .length === 0)
 				return;
 
-			var innerNodes = [ ];
-
-			for (var i = 0, length = this .removeChildren_ .length; i < length; ++ i)
-			{
-				try
-				{
-					var node = this .removeChildren_ [i];
-
-					if (node)
-						innerNodes .push (node .getValue () .getInnerNode ());
-				}
-				catch (error)
-				{ }
-			}
-
-			for (var i = 0, length = innerNodes .length; i < length; ++ i)
-				innerNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
-
-			if (this .clipPlanes .length)
-			{
-				this .clipPlanes .splice (remove (this .clipPlanes, 0, this .clipPlanes .length,
-				                                  innerNodes, 0, innerNodes .length,
-				                                  getId));
-			}
-
-			if (this .localFogs .length)
-			{
-				this .localFogs .splice (remove (this .localFogs, 0, this .localFogs .length,
-				                                 innerNodes, 0, innerNodes .length,
-				                                 getId));
-			}
-
-			if (this .lights .length)
-			{
-				this .lights .splice (remove (this .lights, 0, this .lights .length,
-				                              innerNodes, 0, innerNodes .length,
-				                              getId));
-			}
-
-			if (this .pointingDeviceSensors .length)
-			{
-				this .pointingDeviceSensors .splice (remove (this .pointingDeviceSensors, 0, this .pointingDeviceSensors .length,
-				                                             innerNodes, 0, innerNodes .length,
-				                                             getId));
-			}
-
-			if (this .childNodes .length)
-			{
-				this .childNodes .splice (remove (this .childNodes, 0, this .childNodes .length,
-				                                  innerNodes, 0, innerNodes .length,
-				                                  getId));
-			}
-
 			if (! this .children_ .getTainted ())
 			{
 				this .children_ .removeInterest (this, "set_children__");
@@ -246,6 +193,8 @@ function ($,
 			                        this .children_ .length);
 
 			this .removeChildren_ .set ([ ]);
+			
+			this .set_children__ ();
 		},
 		set_children__: function ()
 		{
@@ -278,6 +227,11 @@ function ($,
 						{
 							switch (type [t])
 							{
+								case X3DConstants .X3DPointingDeviceSensorNode:
+								{
+									this .pointingDeviceSensors .push (innerNode);
+									break;
+								}
 								case X3DConstants .ClipPlane:
 								{
 									this .clipPlanes .push (innerNode);
@@ -291,11 +245,6 @@ function ($,
 								case X3DConstants .X3DLightNode:
 								{
 									this .lights .push (innerNode);
-									break;
-								}
-								case X3DConstants .X3DPointingDeviceSensorNode:
-								{
-									this .pointingDeviceSensors .push (innerNode);
 									break;
 								}
 								//case X3DConstants .Fog:
@@ -339,11 +288,14 @@ function ($,
 		},
 		clear: function ()
 		{
+			for (var i = 0, length = this .childNodes .length; i < length; ++ i)
+				this .childNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
+			
+			this .pointingDeviceSensors .length = 0;
 			this .cameraObjects         .length = 0;
 			this .clipPlanes            .length = 0;
 			this .localFogs             .length = 0;
 			this .lights                .length = 0;
-			this .pointingDeviceSensors .length = 0;
 			this .childNodes            .length = 0;
 		},
 		set_cameraObjects__: function ()

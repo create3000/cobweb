@@ -57,7 +57,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
 			center           = center           ? center           .getValue () : null;
 
-			this .getValue () .setTransform (translation, rotation, scale, scaleOrientation, center);
+			this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
 		},
 		getTransform: function (translation, rotation, scale, scaleOrientation, center)
 		{
@@ -67,7 +67,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
 			center           = center           ? center           .getValue () : null;
 
-			this .getValue () .getTransform (translation, rotation, scale, scaleOrientation, center);
+			this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
 		},
 		transpose: function ()
 		{
@@ -87,19 +87,19 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 		},
 		multVecMatrix: function (vector)
 		{
-			return new (this .constructo .Vector3r) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
+			return new (this .Vector3) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixVec: function (vector)
 		{
-			return new (this .constructor .Vector3) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
+			return new (this .Vector3) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
 		},
 		multDirMatrix: function (vector)
 		{
-			return new (this .constructor .Vector3) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
+			return new (this .Vector3) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
 		},
 		multMatrixDir: function (vector)
 		{
-			return new (this .constructor .Vector3) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
+			return new (this .Vector3) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
 		},
 		toString: function ()
 		{
@@ -138,7 +138,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 	                     m30, m31, m32, m33)
 	{
 		if (this instanceof SFMatrix4d)
-			return SFMatrix4 .apply (this, arguments);
+			return SFMatrix4 .call (this, arguments);
 		
 		return SFMatrix4 .call (Object .create (SFMatrix4d .prototype), arguments);
 	}
@@ -166,7 +166,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 	                     m30, m31, m32, m33)
 	{
 		if (this instanceof SFMatrix4f)
-			return SFMatrix4 .apply (this, arguments);
+			return SFMatrix4 .call (this, arguments);
 		
 		return SFMatrix4 .call (Object .create (SFMatrix4f .prototype), arguments);
 	}
@@ -194,7 +194,10 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 	                     m20, m21, m22, m23,
 	                     m30, m31, m32, m33)
 	{
-		SFMatrix4 .apply (this, arguments);
+		if (this instanceof VrmlMatrix)
+			SFMatrix4 .call (this, arguments);
+		
+		return SFMatrix4 .call (Object .create (VrmlMatrix .prototype), arguments);
 	}
 
 	VrmlMatrix .prototype = $.extend (Object .create (SFMatrix4 .prototype),
