@@ -73,6 +73,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousemove.X3DFlyViewer",  this .mousemove  .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
+			
+			this .getBrowser () .addCollision (this);
 		},
 		mousedown: function (event)
 		{
@@ -98,7 +100,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
-					this .getBrowser () .addCollision (this);
 
 					if (this .getBrowser () .hasCtrlKey ())
 					{
@@ -132,7 +133,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
-					this .getBrowser () .addCollision (this);
 
 					this .fromVector .set (x, -y, 0);
 					this .toVector   .assign (this .fromVector);
@@ -156,7 +156,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			this .disconnect ();
 			this .getBrowser () .setCursor ("DEFAULT");
-			this .getBrowser () .removeCollision (this);
 		},
 		mousemove: function (event)
 		{
