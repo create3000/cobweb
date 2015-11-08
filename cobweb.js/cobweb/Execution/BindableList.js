@@ -5,6 +5,8 @@ define ([
 ],
 function ($, X3DBaseNode)
 {
+"use strict";
+
 	function equals (lhs, rhs)
 	{
 		if (lhs .length !== rhs .length)

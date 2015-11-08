@@ -3,6 +3,8 @@ define ([
 ],
 function ()
 {
+"use strict";
+
 	/*
 	 *  Id
 	 */

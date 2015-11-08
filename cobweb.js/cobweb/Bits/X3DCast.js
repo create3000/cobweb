@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	return function (type, node)
 	{
 		try

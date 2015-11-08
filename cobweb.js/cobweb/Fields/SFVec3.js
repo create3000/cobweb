@@ -7,6 +7,8 @@ define ([
 ],
 function ($, Vector3, X3DField, X3DConstants)
 {
+"use strict";
+
 	function SFVec3 (v)
 	{
 		if (v .length)

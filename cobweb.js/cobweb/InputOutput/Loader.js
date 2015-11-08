@@ -12,6 +12,8 @@ function ($,
           URI,
           DEBUG)
 {
+"use strict";
+
 	var TIMEOUT = 16;
 
 	function Loader (node, external)

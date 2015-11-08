@@ -16,51 +16,50 @@ function ($,
           X3DProtoDeclarationNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	var fieldDefinitions = [
+		new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+	];
+
+	function X3DProtoDeclaration (executionContext)
 	{
-		var fieldDefinitions = [
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-		];
+		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		function X3DProtoDeclaration (executionContext)
-		{
-			this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
+		X3DProtoDeclarationNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DExecutionContext     .call (this, executionContext .getBrowser (), executionContext);
 
-			X3DProtoDeclarationNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DExecutionContext     .call (this, executionContext .getBrowser (), executionContext);
-
-			this .addType (X3DConstants .X3DProtoDeclaration);
-		}
-
-		X3DProtoDeclaration .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
-			X3DProtoDeclarationNode .prototype,
-		{
-			constructor: X3DProtoDeclaration,
-			getTypeName: function ()
-			{
-				return "PROTO";
-			},
-			/*
-			getComponentName: function ()
-			{
-				return "Cobweb";
-			},
-			getContainerField: function ()
-			{
-				return "protos";
-			},
-			*/
-			isExternProto: function ()
-			{
-				return false;
-			},
-			getWorldURL: function ()
-			{
-				return this .getExecutionContext () .getWorldURL ();
-			},
-		});
-
-		return X3DProtoDeclaration;
+		this .addType (X3DConstants .X3DProtoDeclaration);
 	}
+
+	X3DProtoDeclaration .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
+		X3DProtoDeclarationNode .prototype,
+	{
+		constructor: X3DProtoDeclaration,
+		getTypeName: function ()
+		{
+			return "PROTO";
+		},
+		/*
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "protos";
+		},
+		*/
+		isExternProto: function ()
+		{
+			return false;
+		},
+		getWorldURL: function ()
+		{
+			return this .getExecutionContext () .getWorldURL ();
+		},
+	});
+
+	return X3DProtoDeclaration;
 });
 

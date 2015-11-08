@@ -26,197 +26,145 @@ function ($,
           X3DConstants,
           URI)
 {
-	with (Fields)
+"use strict";
+
+	function X3DExecutionContext (browser, executionContext)
 	{
-		function X3DExecutionContext (browser, executionContext)
+		X3DBaseNode .call (this, browser, executionContext);
+
+		this .addChildren ("rootNodes", new Fields .MFNode ());
+
+		this .url                = new URI (window .location);
+		this .uninitializedNodes = [ ];
+		this .namedNodes         = { };
+		this .protos             = new ProtoDeclarationArray ();
+		this .externprotos       = new ExternProtoDeclarationArray ();
+		this .routes             = new RouteArray ();
+		this .routeIndex         = { };
+
+		this .endUpdate ();
+	}
+
+	X3DExecutionContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	{
+		constructor: X3DExecutionContext,
+		setup: function ()
 		{
-			X3DBaseNode .call (this, browser, executionContext);
+			X3DBaseNode .prototype .setup .call (this);
 
-			this .addChildren ("rootNodes", new MFNode ());
+			for (var i = 0; i < this .uninitializedNodes .length; ++ i)
+				this .uninitializedNodes [i] .setup ();
 
-			this .url                = new URI (window .location);
-			this .uninitializedNodes = [ ];
-			this .namedNodes         = { };
-			this .protos             = new ProtoDeclarationArray ();
-			this .externprotos       = new ExternProtoDeclarationArray ();
-			this .routes             = new RouteArray ();
-			this .routeIndex         = { };
-
-			this .endUpdate ();
-		}
-
-		X3DExecutionContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+			this .uninitializedNodes .length = 0;
+		},
+		isRootContext: function ()
 		{
-			constructor: X3DExecutionContext,
-			setup: function ()
+			return false;
+		},
+		setWorldURL: function (url)
+		{
+			this .url = url;
+		},
+		getWorldURL: function ()
+		{
+			return this .url;
+		},
+		createNode: function (typeName, parser)
+		{
+			var node = new (this .getBrowser () .supportedNodes [typeName]) (this);
+
+			if (parser)
+				return node;
+			
+			node .setup ();
+			return new Fields .SFNode (node);
+		},
+		createProto: function (name, parser)
+		{
+			var executionContext = this;
+
+			for (;;)
 			{
-				X3DBaseNode .prototype .setup .call (this);
+				var proto = executionContext .protos [name];
 
-				for (var i = 0; i < this .uninitializedNodes .length; ++ i)
-					this .uninitializedNodes [i] .setup ();
+				if (proto)
+					return proto .createInstance (parser);
 
-				this .uninitializedNodes .length = 0;
-			},
-			isRootContext: function ()
-			{
-				return false;
-			},
-			setWorldURL: function (url)
-			{
-				this .url = url;
-			},
-			getWorldURL: function ()
-			{
-				return this .url;
-			},
-			createNode: function (typeName, parser)
-			{
-				var node = new (this .getBrowser () .supportedNodes [typeName]) (this);
+				var externproto = executionContext .externprotos [name];
 
-				if (parser)
-					return node;
-				
-				node .setup ();
-				return new SFNode (node);
-			},
-			createProto: function (name, parser)
-			{
-				var executionContext = this;
+				if (externproto)
+					return externproto .createInstance (parser);
 
-				for (;;)
-				{
-					var proto = executionContext .protos [name];
+				if (executionContext .isRootContext ())
+					break;
 
-					if (proto)
-						return proto .createInstance (parser);
+				executionContext = executionContext .getExecutionContext ();
+			}
 
-					var externproto = executionContext .externprotos [name];
+			throw new Error ("Unknown proto or externproto type '" + name + "'.");
+		},
+		addUninitializedNode: function (node)
+		{
+			this .uninitializedNodes .push (node);
+		},
+		addNamedNode: function (name, node)
+		{
+			if (this .namedNodes [name] !== undefined)
+				throw Error ("Couldn't add named node: node name '" + name + "' is already in use.");
 
-					if (externproto)
-						return externproto .createInstance (parser);
+			this .updateNamedNode (name, node);
+		},
+		updateNamedNode: function (name, node)
+		{
+			name = String (name);
+			
+			if (node instanceof X3DBaseNode)
+				node = new Fields .SFNode (node);				
 
-					if (executionContext .isRootContext ())
-						break;
+			if (! (node instanceof Fields .SFNode))
+				throw Error ("Couldn't update named node: node must be of type SFNode.");
 
-					executionContext = executionContext .getExecutionContext ();
-				}
+			if (! node .getValue ())
+				throw Error ("Couldn't update named node: node IS NULL.");
 
-				throw new Error ("Unknown proto or externproto type '" + name + "'.");
-			},
-			addUninitializedNode: function (node)
-			{
-				this .uninitializedNodes .push (node);
-			},
-			addNamedNode: function (name, node)
-			{
-				if (this .namedNodes [name] !== undefined)
-					throw Error ("Couldn't add named node: node name '" + name + "' is already in use.");
+			if (node .getValue () .getExecutionContext () !== this)
+				throw Error ("Couldn't update named node: the node does not belong to this execution context.");
 
-				this .updateNamedNode (name, node);
-			},
-			updateNamedNode: function (name, node)
-			{
-				name = String (name);
-				
-				if (node instanceof X3DBaseNode)
-					node = new SFNode (node);				
+			if (name .length === 0)
+				throw Error ("Couldn't update named node: node name is empty.");
 
-				if (! (node instanceof SFNode))
-					throw Error ("Couldn't update named node: node must be of type SFNode.");
+			// Remove named node.
 
-				if (! node .getValue ())
-					throw Error ("Couldn't update named node: node IS NULL.");
+			this .removeNamedNode (node .getValue () .getName ());
+			this .removeNamedNode (name);
 
-				if (node .getValue () .getExecutionContext () !== this)
-					throw Error ("Couldn't update named node: the node does not belong to this execution context.");
+			// Update named node.
 
-				if (name .length === 0)
-					throw Error ("Couldn't update named node: node name is empty.");
+			node .getValue () .setName (name);
 
-				// Remove named node.
+			this .namedNodes [name] = new Fields .SFNode (node .getValue ());
+		},
+		removeNamedNode: function (name)
+		{
+			delete this .namedNodes [name];
+		},
+		getNamedNode: function (name)
+		{
+			var node = this .namedNodes [name];
 
-				this .removeNamedNode (node .getValue () .getName ());
-				this .removeNamedNode (name);
+			if (node !== undefined)
+				return node;
 
-				// Update named node.
-
-				node .getValue () .setName (name);
-
-				this .namedNodes [name] = new SFNode (node .getValue ());
-			},
-			removeNamedNode: function (name)
-			{
-				delete this .namedNodes [name];
-			},
-			getNamedNode: function (name)
-			{
-				var node = this .namedNodes [name];
-
-				if (node !== undefined)
-					return node;
-
-				throw Error ("Named node '" + name + "' not found.");
-			},
-			setRootNodes: function () { },
-			getRootNodes: function ()
-			{
-				return this .rootNodes_;
-			},
-			addRoute: function (sourceNode, fromField, destinationNode, toField)
-			{
-				try
-				{
-					if (! sourceNode .getValue ())
-						throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
-
-					if (! destinationNode .getValue ())
-						throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
-
-					var
-						sourceField      = sourceNode .getValue () .getField (fromField),
-						destinationField = destinationNode .getValue () .getField (toField);
-
-					if (! sourceField .isOutput ())
-						throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
-
-					if (! destinationField .isInput ())
-						throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
-
-					var
-						id    = sourceField .getId () + "." + destinationField .getId (),
-						route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
-
-					this .routes .getValue () .push (route);
-					this .routeIndex [id] = route;
-
-					return route;
-				}
-				catch (error)
-				{
-					throw new Error ("Bad ROUTE specification: " + error .message); 
-				}
-			},
-			deleteRoute: function (route)
-			{
-				try
-				{
-					var
-						sourceField      = route .sourceField_,
-						destinationField = route .destinationField_,
-						id               = sourceField .getId () + "." + destinationField .getId (),
-						index            = this .routes .getValue () .indexOf (route);
-
-					if (index !== -1)
-						this .routes .getValue () .splice (index, 1);
-
-					delete this .routeIndex [id];
-				}
-				catch (error)
-				{
-					console .log (error);
-				}
-			},
-			getRoute: function (sourceNode, fromField, destinationNode, toField)
+			throw Error ("Named node '" + name + "' not found.");
+		},
+		setRootNodes: function () { },
+		getRootNodes: function ()
+		{
+			return this .rootNodes_;
+		},
+		addRoute: function (sourceNode, fromField, destinationNode, toField)
+		{
+			try
 			{
 				if (! sourceNode .getValue ())
 					throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
@@ -226,53 +174,104 @@ function ($,
 
 				var
 					sourceField      = sourceNode .getValue () .getField (fromField),
-					destinationField = destinationNode .getValue () .getField (toField),
-					id               = sourceField .getId () + "." + destinationField .getId ();
+					destinationField = destinationNode .getValue () .getField (toField);
 
-				return this .routeIndex [id];
-			},
-			changeViewpoint: function (name)
+				if (! sourceField .isOutput ())
+					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
+
+				if (! destinationField .isInput ())
+					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
+
+				var
+					id    = sourceField .getId () + "." + destinationField .getId (),
+					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
+
+				this .routes .getValue () .push (route);
+				this .routeIndex [id] = route;
+
+				return route;
+			}
+			catch (error)
 			{
-				try
-				{
-					var
-						namedNode = this .getNamedNode (name),
-						viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
-
-					if (! viewpoint)
-						throw Error ("Node named '" + name + "' is not a viewpoint node.");
-
-					if (viewpoint .isBound_ .getValue ())
-						viewpoint .transitionStart (null, viewpoint);
-
-					else
-						viewpoint .set_bind_ = true;
-				}
-				catch (error)
-				{
-					if (! this .isRootContext ())
-						this .getExecutionContext () .changeViewpoint (name);
-					else
-						throw error;
-				}
-			},
-		});
-
-		Object .defineProperty (X3DExecutionContext .prototype, "worldURL",
+				throw new Error ("Bad ROUTE specification: " + error .message); 
+			}
+		},
+		deleteRoute: function (route)
 		{
-			get: function () { return this .url .location; },
-			enumerable: true,
-			configurable: false
-		});
+			try
+			{
+				var
+					sourceField      = route .sourceField_,
+					destinationField = route .destinationField_,
+					id               = sourceField .getId () + "." + destinationField .getId (),
+					index            = this .routes .getValue () .indexOf (route);
 
-		Object .defineProperty (X3DExecutionContext .prototype, "rootNodes",
+				if (index !== -1)
+					this .routes .getValue () .splice (index, 1);
+
+				delete this .routeIndex [id];
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
+		},
+		getRoute: function (sourceNode, fromField, destinationNode, toField)
 		{
-			get: function () { return this .getRootNodes (); },
-			set: function (value) { this .setRootNodes (value); },
-			enumerable: true,
-			configurable: false
-		});
+			if (! sourceNode .getValue ())
+				throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
 
-		return X3DExecutionContext;
-	}
+			if (! destinationNode .getValue ())
+				throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
+
+			var
+				sourceField      = sourceNode .getValue () .getField (fromField),
+				destinationField = destinationNode .getValue () .getField (toField),
+				id               = sourceField .getId () + "." + destinationField .getId ();
+
+			return this .routeIndex [id];
+		},
+		changeViewpoint: function (name)
+		{
+			try
+			{
+				var
+					namedNode = this .getNamedNode (name),
+					viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
+
+				if (! viewpoint)
+					throw Error ("Node named '" + name + "' is not a viewpoint node.");
+
+				if (viewpoint .isBound_ .getValue ())
+					viewpoint .transitionStart (null, viewpoint);
+
+				else
+					viewpoint .set_bind_ = true;
+			}
+			catch (error)
+			{
+				if (! this .isRootContext ())
+					this .getExecutionContext () .changeViewpoint (name);
+				else
+					throw error;
+			}
+		},
+	});
+
+	Object .defineProperty (X3DExecutionContext .prototype, "worldURL",
+	{
+		get: function () { return this .url .location; },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExecutionContext .prototype, "rootNodes",
+	{
+		get: function () { return this .getRootNodes (); },
+		set: function (value) { this .setRootNodes (value); },
+		enumerable: true,
+		configurable: false
+	});
+
+	return X3DExecutionContext;
 });

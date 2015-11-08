@@ -6,6 +6,8 @@ define ([
 ],
 function ($, X3DField, X3DConstants)
 {
+"use strict";
+
 	function SFTime (value)
 	{
 		if (this instanceof SFTime)

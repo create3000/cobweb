@@ -7,6 +7,8 @@ define ([
 ],
 function ($, Color3, X3DField, X3DConstants)
 {
+"use strict";
+
 	function SFColor (r, g, b)
 	{
 		if (this instanceof SFColor)

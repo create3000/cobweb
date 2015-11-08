@@ -5,6 +5,8 @@ define ([
 ],
 function ($, X3DBaseNode)
 {
+"use strict";
+
 	function BindableStack (executionContext, layer, bottom)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);

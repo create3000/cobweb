@@ -24,6 +24,8 @@ function ($,
           Matrix4,
           Algorithm)
 {
+"use strict";
+
 	var
 		DEPTH_BUFFER_WIDTH  = 16,
 		DEPTH_BUFFER_HEIGHT = 16,

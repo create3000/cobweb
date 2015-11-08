@@ -7,6 +7,8 @@ define ([
 ],
 function ($, X3DField, ArrayFields, X3DConstants)
 {
+"use strict";
+
 	var MFInt32 = ArrayFields .MFInt32;
 
 	/*

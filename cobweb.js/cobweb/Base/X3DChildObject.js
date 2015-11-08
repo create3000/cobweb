@@ -5,6 +5,8 @@ define ([
 ],
 function ($, X3DObject)
 {
+"use strict";
+
 	function X3DChildObject ()
 	{
 		X3DObject .call (this);

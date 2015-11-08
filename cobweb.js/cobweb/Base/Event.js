@@ -4,6 +4,8 @@ define ([
 ],
 function ($)
 {
+"use strict";
+
 	var Event =
 	{
 	   stack: [ ],

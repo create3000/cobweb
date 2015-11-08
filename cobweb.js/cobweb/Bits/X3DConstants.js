@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	var
 		loadState = 0,
 		fieldType = 0,

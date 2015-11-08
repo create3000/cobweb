@@ -6,6 +6,8 @@ define ([
 ],
 function ($, X3DField, X3DConstants)
 {
+"use strict";
+
 	var
 		unescape = /\\([\\"])/g,
 		escape   = /([\\"])/g;

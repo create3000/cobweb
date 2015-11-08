@@ -8,6 +8,8 @@ function ($,
 	       X3DChildObject,
 	       Event)
 {
+"use strict";
+
 	function X3DEventObject (browser)
 	{
 		X3DChildObject .call (this);

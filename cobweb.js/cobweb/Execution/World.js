@@ -16,6 +16,8 @@ function ($,
           X3DCast,
           X3DConstants)
 {
+"use strict";
+
 	function World (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);

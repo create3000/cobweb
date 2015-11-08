@@ -6,6 +6,8 @@ define ([
 ],
 function ($, X3DField, X3DConstants)
 {
+"use strict";
+
 	function SFBool (value)
 	{
 		if (this instanceof SFBool)

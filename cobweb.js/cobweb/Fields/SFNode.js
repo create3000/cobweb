@@ -6,6 +6,8 @@ define ([
 ],
 function ($, X3DField, X3DConstants)
 {
+"use strict";
+
 	var handler =
 	{
 		get: function (target, key)
@@ -34,7 +36,10 @@ function ($, X3DField, X3DConstants)
 		set: function (target, key, value)
 		{
 			if (key in target)
-				return target [key] = value;
+			{
+				target [key] = value;
+				return true;
+			}
 
 			try
 			{
@@ -49,6 +54,7 @@ function ($, X3DField, X3DConstants)
 			}
 			catch (error)
 			{
+				//console .log (target, key, error);
 				return false;
 			}
 		},

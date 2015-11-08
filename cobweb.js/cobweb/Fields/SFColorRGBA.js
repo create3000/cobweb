@@ -7,6 +7,8 @@ define ([
 ],
 function ($, Color4, X3DField, X3DConstants)
 {
+"use strict";
+
 	function SFColorRGBA (r, g, b, a)
 	{
 		if (this instanceof SFColorRGBA)

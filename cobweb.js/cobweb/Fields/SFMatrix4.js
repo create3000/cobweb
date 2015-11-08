@@ -10,6 +10,8 @@ define ([
 ],
 function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 {
+"use strict";
+
 	var
 		SFVec3d = SFVec3 .SFVec3d,
 		SFVec3f = SFVec3 .SFVec3f;

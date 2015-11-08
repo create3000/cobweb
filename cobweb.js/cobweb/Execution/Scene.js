@@ -4,6 +4,8 @@ define ([
 ],
 function (X3DScene)
 {
+"use strict";
+
 	function Scene (browser)
 	{
 		X3DScene .call (this, browser, this);

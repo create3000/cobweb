@@ -10,6 +10,8 @@ function ($,
 	       X3DConstants,
 	       Event)
 {
+"use strict";
+
 	function X3DField (value)
 	{
 		X3DChildObject .call (this);

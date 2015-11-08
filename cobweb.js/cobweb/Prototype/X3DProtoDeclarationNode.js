@@ -12,6 +12,8 @@ function ($,
           X3DPrototypeInstance,
           X3DConstants)
 {
+"use strict";
+
 	function X3DProtoDeclarationNode (browser, executionContext)
 	{
 		X3DNode .call (this, browser, executionContext);

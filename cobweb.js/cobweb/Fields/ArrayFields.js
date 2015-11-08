@@ -40,6 +40,8 @@ function ($,
           X3DArrayField,
           X3DConstants)
 {
+"use strict";
+
 	var
 		SFMatrix3d = SFMatrix3 .SFMatrix3d,
 		SFMatrix3f = SFMatrix3 .SFMatrix3f,

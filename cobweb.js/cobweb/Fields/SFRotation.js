@@ -8,6 +8,8 @@ define ([
 ],
 function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 {
+"use strict";
+
 	var SFVec3f = SFVec3 .SFVec3f;
 
 	function SFRotation (x, y, z, angle)

@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	function DepthBuffer (browser, width, height)
 	{
 		var gl = browser .getContext ();

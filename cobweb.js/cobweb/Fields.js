@@ -38,6 +38,8 @@ function ($,
           SFVec4,
           ArrayFields)
 {
+"use strict";
+
 	var Fields = $.extend (
 	{
 		SFBool:      SFBool,

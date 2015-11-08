@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	function X3DFieldDefinition (accessType, name, value, userDefined)
 	{
 		this .accessType  = accessType;

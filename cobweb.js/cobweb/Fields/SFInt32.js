@@ -6,6 +6,8 @@ define ([
 ],
 function ($, X3DField, X3DConstants)
 {
+"use strict";
+
 	function SFInt32 (value)
 	{
 		if (this instanceof SFInt32)

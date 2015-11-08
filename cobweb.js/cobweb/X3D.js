@@ -36,6 +36,8 @@ function ($,
           X3DRoute,
           X3DConstants)
 {
+"use strict";
+
 	// Console fallback
 
 	if (! console)        console        = { };

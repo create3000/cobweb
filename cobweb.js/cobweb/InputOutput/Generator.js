@@ -5,6 +5,8 @@ define ([
 ],
 function ($)
 {
+"use strict";
+
 	return {
 		indent: "",
 		indentChar: "  ",

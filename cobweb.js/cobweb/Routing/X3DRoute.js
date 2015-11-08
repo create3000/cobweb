@@ -5,6 +5,8 @@ define ([
 ],
 function ($, X3DBaseNode)
 {
+"use strict";
+
 	function X3DRoute (/* executionContext, */ sourceNode, sourceField, destinationNode, destinationField)
 	{
 		//X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);

@@ -444,6 +444,8 @@ function (Anchor,
           //WindPhysicsModel,
           WorldInfo)
 {
+"use strict";
+
 	return {
 		MetadataBool:                 MetadataBoolean,
 

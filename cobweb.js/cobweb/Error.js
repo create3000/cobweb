@@ -4,6 +4,8 @@ define ([
 ],
 function ($)
 {
+"use strict";
+
 	// Everything went wrong when the Error function is called.
 
 	function Error (error, fallbacks)

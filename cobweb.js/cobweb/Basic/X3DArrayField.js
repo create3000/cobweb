@@ -7,6 +7,8 @@ define ([
 ],
 function ($, X3DField, X3DConstants, Generator)
 {
+"use strict";
+
 	var handler =
 	{
 		get: function (target, key)
@@ -27,7 +29,7 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
-				// if taget not instance of X3DArrayField, then the constuctor is called as function.
+				// if target not instance of X3DArrayField, then the constuctor is called as function.
 				console .log (target, key, error);
 			}
 		},
@@ -53,7 +55,7 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
-				// if taget not instance of X3DArrayField, then the constuctor is called as function.
+				// if target not instance of X3DArrayField, then the constuctor is called as function.
 				console .log (target, key, error);
 				return false;
 			}
