@@ -5,6 +5,8 @@ define ([
 ],
 function (Matrix4, Vector3)
 {
+"use strict";
+
 	var
 	   min = new Vector3 (0, 0, 0),
 	   max = new Vector3 (0, 0, 0),

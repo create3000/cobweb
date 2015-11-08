@@ -2,6 +2,8 @@
 
 define (function (Vector3)
 {
+"use strict";
+
 	var Algorithm =
 	{
 		radians: function (value)

@@ -8,6 +8,8 @@ define ([
 ],
 function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 {
+"use strict";
+
 	var
 		dummyTranslation      = new Vector2 (0, 0),
 		dummyRotation         = new Vector3 (0, 0, 0),

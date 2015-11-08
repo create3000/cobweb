@@ -5,6 +5,8 @@ define ([
 ],
 function ($, Algorithm)
 {
+"use strict";
+
 	var clamp = Algorithm .clamp;
 
 	function Color4 (r, g, b, a)

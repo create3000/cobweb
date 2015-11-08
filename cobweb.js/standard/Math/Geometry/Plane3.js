@@ -4,6 +4,8 @@ define ([
 ],
 function (Vector3)
 {
+"use strict";
+
 	function Plane3 (point, normal)
 	{
 		this .normal             = normal .copy ();

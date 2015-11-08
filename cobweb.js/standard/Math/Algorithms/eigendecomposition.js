@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	// Calculate eigenvalues and eigenvectors.
 	// This is from SGI Inventor Matrix.cpp.
 	return function (matrix)

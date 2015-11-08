@@ -7,6 +7,8 @@ define ([
 ],
 function ($, Quaternion, Vector3)
 {
+"use strict";
+
 	var
 		xAxis = new Vector3 (1, 0, 0),
 		yAxis = new Vector3 (0, 1, 0),

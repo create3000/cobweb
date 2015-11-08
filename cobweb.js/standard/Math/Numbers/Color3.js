@@ -5,6 +5,8 @@ define ([
 ],
 function ($, Algorithm)
 {
+"use strict";
+
 	var clamp = Algorithm .clamp;
 
 	function Color3 (r, g, b)
@@ -205,7 +207,7 @@ function ($, Algorithm)
 
 			var
 				PI2  = Math .PI * 2,
-				step = (PI2 - range) * t;
+				step = (PI2 - range) * t,
 				h    = a [0] < b [0] ? a [0] - step : a [0] + step;
 
 			if (h < 0)

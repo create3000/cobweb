@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	function QuickSort (array, compare)
 	{
 		this .array = array;

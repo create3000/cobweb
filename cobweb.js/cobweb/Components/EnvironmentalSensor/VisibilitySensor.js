@@ -128,11 +128,13 @@ function ($,
 						this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
 					}
 
-					break;
+					return;
 				}
 				case TraverseType .DISPLAY:
+				{
 					this .setTraversed (true);
-					break;
+					return;
+				}
 			}
 		}
 

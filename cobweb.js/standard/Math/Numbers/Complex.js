@@ -4,6 +4,8 @@ define ([
 ],
 function ($)
 {
+"use strict";
+
 	function Complex (real, imag)
 	{
 		this .real = real

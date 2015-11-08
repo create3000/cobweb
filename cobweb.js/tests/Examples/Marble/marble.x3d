@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Tue, 22 Sep 2015 11:26:52 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 30 Sep 2015 12:38:28 GMT'/>
+    <meta name='generator' content='Titania V1.2.0, http://titania.create3000.de'/>
+    <meta name='modified' content='Wed, 04 Nov 2015 14:40:35 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Grid'>
@@ -53,7 +53,7 @@
               </Rectangle2D>
             </Shape>
           </Transform>
-          <Shape DEF='MajorGrid_1'>
+          <Shape DEF='MajorGrid'>
             <Appearance>
               <Material DEF='MajorMaterial'>
                 <IS>
@@ -62,13 +62,13 @@
                 </IS>
               </Material>
             </Appearance>
-            <IndexedLineSet DEF='MajorGrid'
+            <IndexedLineSet DEF='MajorGrid_1'
                 coordIndex='0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7, -1, 8, 9, -1, 10, 11, -1'>
               <Coordinate
                   point='-5 0 -5.25, -5 0 5.25, 0 0 -5.25, 0 0 5.25, 5 0 -5.25, 5 0 5.25, -5.25 0 -5, 5.25 0 -5, -5.25 0 0, 5.25 0 0, -5.25 0 5, 5.25 0 5'/>
             </IndexedLineSet>
           </Shape>
-          <Shape DEF='MinorGrid_1'>
+          <Shape DEF='MinorGrid'>
             <Appearance>
               <Material DEF='MinorMaterial'>
                 <IS>
@@ -77,30 +77,30 @@
                 </IS>
               </Material>
             </Appearance>
-            <IndexedLineSet DEF='MinorGrid'
+            <IndexedLineSet DEF='MinorGrid_1'
                 coordIndex='0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7, -1, 8, 9, -1, 10, 11, -1, 12, 13, -1, 14, 15, -1, 16, 17, -1, 18, 19, -1, 20, 21, -1, 22, 23, -1, 24, 25, -1, 26, 27, -1, 28, 29, -1, 30, 31, -1'>
               <Coordinate
                   point='-4 0 -5, -4 0 5, -3 0 -5, -3 0 5, -2 0 -5, -2 0 5, -1 0 -5, -1 0 5, 1 0 -5, 1 0 5, 2 0 -5, 2 0 5, 3 0 -5, 3 0 5, 4 0 -5, 4 0 5, -5 0 -4, 5 0 -4, -5 0 -3, 5 0 -3, -5 0 -2, 5 0 -2, -5 0 -1, 5 0 -1, -5 0 1, 5 0 1, -5 0 2, 5 0 2, -5 0 3, 5 0 3, -5 0 4, 5 0 4'/>
             </IndexedLineSet>
           </Shape>
-          <Shape DEF='MajorPoints_1'>
+          <Shape DEF='MajorPoints'>
             <Appearance>
               <LineProperties
                   linewidthScaleFactor='6'/>
               <Material USE='MajorMaterial'/>
             </Appearance>
-            <PointSet DEF='MajorPoints'>
+            <PointSet DEF='MajorPoints_1'>
               <Coordinate
                   point='0 -5 0, 0 0 0, 0 5 0'/>
             </PointSet>
           </Shape>
-          <Shape DEF='MinorPoints_1'>
+          <Shape DEF='MinorPoints'>
             <Appearance>
               <LineProperties
                   linewidthScaleFactor='4'/>
               <Material USE='MinorMaterial'/>
             </Appearance>
-            <PointSet DEF='MinorPoints'>
+            <PointSet DEF='MinorPoints_1'>
               <Coordinate
                   point='0 -4 0, 0 -3 0, 0 -2 0, 0 -1 0, 0 1 0, 0 2 0, 0 3 0, 0 4 0'/>
             </PointSet>
@@ -116,16 +116,16 @@
             <Transform USE='Plane'/>
           </field>
           <field accessType='initializeOnly' type='SFNode' name='majorGrid'>
-            <IndexedLineSet USE='MajorGrid'/>
+            <IndexedLineSet USE='MajorGrid_1'/>
           </field>
           <field accessType='initializeOnly' type='SFNode' name='minorGrid'>
-            <IndexedLineSet USE='MinorGrid'/>
+            <IndexedLineSet USE='MinorGrid_1'/>
           </field>
           <field accessType='initializeOnly' type='SFNode' name='majorPoints'>
-            <PointSet USE='MajorPoints'/>
+            <PointSet USE='MajorPoints_1'/>
           </field>
           <field accessType='initializeOnly' type='SFNode' name='minorPoints'>
-            <PointSet USE='MinorPoints'/>
+            <PointSet USE='MinorPoints_1'/>
           </field>
           <IS>
             <connect nodeField='dimension' protoField='dimension'/>
@@ -245,32 +245,302 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
         </Script>
       </ProtoBody>
     </ProtoDeclare>
+    <ProtoDeclare name='NewPrototype'>
+      <ProtoBody>
+        <ProtoDeclare name='Grid'>
+          <ProtoInterface>
+            <field accessType='inputOutput' type='SFVec3f' name='translation'/>
+            <field accessType='inputOutput' type='SFRotation' name='rotation'/>
+            <field accessType='inputOutput' type='SFVec3f' name='scale' value='1 1 1'/>
+            <field accessType='inputOutput' type='MFInt32' name='dimension' value='10, 10, 10'/>
+            <field accessType='inputOutput' type='MFInt32' name='majorLineEvery' value='5, 5, 5'/>
+            <field accessType='inputOutput' type='MFInt32' name='majorLineOffset' value='0, 0, 0'/>
+            <field accessType='inputOutput' type='SFColor' name='color' value='0.5 0.5 0.5'/>
+            <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.61803'/>
+            <field accessType='inputOutput' type='SFColor' name='lineColor' value='1 0.7 0.7'/>
+            <field accessType='inputOutput' type='SFFloat' name='lineTransparency' value='0.8'/>
+            <field accessType='inputOutput' type='SFColor' name='majorLineColor' value='1 0.7 0.7'/>
+            <field accessType='inputOutput' type='SFFloat' name='majorLineTransparency' value='0.6'/>
+            <field accessType='initializeOnly' type='SFBool' name='solid' value='true'/>
+          </ProtoInterface>
+          <ProtoBody>
+            <Transform>
+              <IS>
+                <connect nodeField='translation' protoField='translation'/>
+                <connect nodeField='rotation' protoField='rotation'/>
+                <connect nodeField='scale' protoField='scale'/>
+              </IS>
+              <Transform DEF='Plane_1'
+                  rotation='-3.09087e-08 0.707105 0.707108 3.14159'
+                  scale='10 10 1'>
+                <Shape>
+                  <Appearance>
+                    <Material DEF='Material2_1'
+                        diffuseColor='0 0 0'>
+                      <IS>
+                        <connect nodeField='emissiveColor' protoField='color'/>
+                        <connect nodeField='transparency' protoField='transparency'/>
+                      </IS>
+                    </Material>
+                  </Appearance>
+                  <Rectangle2D
+                      size='1 1'>
+                    <IS>
+                      <connect nodeField='solid' protoField='solid'/>
+                    </IS>
+                  </Rectangle2D>
+                </Shape>
+              </Transform>
+              <Shape DEF='MajorGrid_2'>
+                <Appearance>
+                  <Material DEF='MajorMaterial_1'>
+                    <IS>
+                      <connect nodeField='emissiveColor' protoField='majorLineColor'/>
+                      <connect nodeField='transparency' protoField='majorLineTransparency'/>
+                    </IS>
+                  </Material>
+                </Appearance>
+                <IndexedLineSet DEF='MajorGrid_3'
+                    coordIndex='0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7, -1, 8, 9, -1, 10, 11, -1'>
+                  <Coordinate
+                      point='-5 0 -5.25, -5 0 5.25, 0 0 -5.25, 0 0 5.25, 5 0 -5.25, 5 0 5.25, -5.25 0 -5, 5.25 0 -5, -5.25 0 0, 5.25 0 0, -5.25 0 5, 5.25 0 5'/>
+                </IndexedLineSet>
+              </Shape>
+              <Shape DEF='MinorGrid_2'>
+                <Appearance>
+                  <Material DEF='MinorMaterial_1'>
+                    <IS>
+                      <connect nodeField='emissiveColor' protoField='lineColor'/>
+                      <connect nodeField='transparency' protoField='lineTransparency'/>
+                    </IS>
+                  </Material>
+                </Appearance>
+                <IndexedLineSet DEF='MinorGrid_3'
+                    coordIndex='0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7, -1, 8, 9, -1, 10, 11, -1, 12, 13, -1, 14, 15, -1, 16, 17, -1, 18, 19, -1, 20, 21, -1, 22, 23, -1, 24, 25, -1, 26, 27, -1, 28, 29, -1, 30, 31, -1'>
+                  <Coordinate
+                      point='-4 0 -5, -4 0 5, -3 0 -5, -3 0 5, -2 0 -5, -2 0 5, -1 0 -5, -1 0 5, 1 0 -5, 1 0 5, 2 0 -5, 2 0 5, 3 0 -5, 3 0 5, 4 0 -5, 4 0 5, -5 0 -4, 5 0 -4, -5 0 -3, 5 0 -3, -5 0 -2, 5 0 -2, -5 0 -1, 5 0 -1, -5 0 1, 5 0 1, -5 0 2, 5 0 2, -5 0 3, 5 0 3, -5 0 4, 5 0 4'/>
+                </IndexedLineSet>
+              </Shape>
+              <Shape DEF='MajorPoints_2'>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='6'/>
+                  <Material USE='MajorMaterial_1'/>
+                </Appearance>
+                <PointSet DEF='MajorPoints_3'>
+                  <Coordinate
+                      point='0 -5 0, 0 0 0, 0 5 0'/>
+                </PointSet>
+              </Shape>
+              <Shape DEF='MinorPoints_2'>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='4'/>
+                  <Material USE='MinorMaterial_1'/>
+                </Appearance>
+                <PointSet DEF='MinorPoints_3'>
+                  <Coordinate
+                      point='0 -4 0, 0 -3 0, 0 -2 0, 0 -1 0, 0 1 0, 0 2 0, 0 3 0, 0 4 0'/>
+                </PointSet>
+              </Shape>
+            </Transform>
+            <Script DEF='GridScript_1'
+                directOutput='true'
+                mustEvaluate='true'>
+              <field accessType='inputOutput' type='MFInt32' name='dimension'/>
+              <field accessType='inputOutput' type='MFInt32' name='majorLineEvery'/>
+              <field accessType='inputOutput' type='MFInt32' name='majorLineOffset'/>
+              <field accessType='initializeOnly' type='SFNode' name='plane'>
+                <Transform USE='Plane_1'/>
+              </field>
+              <field accessType='initializeOnly' type='SFNode' name='majorGrid'>
+                <IndexedLineSet USE='MajorGrid_3'/>
+              </field>
+              <field accessType='initializeOnly' type='SFNode' name='minorGrid'>
+                <IndexedLineSet USE='MinorGrid_3'/>
+              </field>
+              <field accessType='initializeOnly' type='SFNode' name='majorPoints'>
+                <PointSet USE='MajorPoints_3'/>
+              </field>
+              <field accessType='initializeOnly' type='SFNode' name='minorPoints'>
+                <PointSet USE='MinorPoints_3'/>
+              </field>
+              <IS>
+                <connect nodeField='dimension' protoField='dimension'/>
+                <connect nodeField='majorLineEvery' protoField='majorLineEvery'/>
+                <connect nodeField='majorLineOffset' protoField='majorLineOffset'/>
+              </IS>
+<![CDATA[javascript:
+
+function initialize ()
+{
+	eventsProcessed ();
+}
+
+function eventsProcessed ()
+{
+	// Plane
+
+	plane .scale = new SFVec3f (dimension [0], dimension [2], 1);
+
+	// Grid
+
+	generateGrid (true, majorGrid);
+	generateGrid (false, minorGrid);
+
+	// Points
+
+	generatePoints (true,  majorPoints .coord .point);
+	generatePoints (false, minorPoints .coord .point);
+}
+
+function generateGrid (major, grid)
+{
+	var point       = grid .coord .point;
+	var coordIndex  = new MFInt32 ();
+	var scaleX1_2   = dimension [0] / 2;
+	var scaleZ1_2   = dimension [2] / 2;
+	var majorAdd    = major / 4;
+	var p           = 0;
+
+	for (var i = 0, size = dimension [0] + 1; i < size; ++ i)
+	{
+		if (major - isMajorLine (i, 0))
+			continue;
+
+		var x = -scaleX1_2 + i;
+
+		point [p]     = new SFVec3f (x, 0, -scaleZ1_2 - majorAdd);
+		point [p + 1] = new SFVec3f (x, 0,  scaleZ1_2 + majorAdd);
+		coordIndex [coordIndex .length] = p;
+		coordIndex [coordIndex .length] = p + 1;
+		coordIndex [coordIndex .length] = -1;
+			
+		p += 2;
+	}
+
+	for (var i = 0, size = dimension [2] + 1; i < size; ++ i)
+	{
+		if (major - isMajorLine (i, 2))
+			continue;
+
+		var z = -scaleZ1_2 + i;
+
+		point [p]     = new SFVec3f (-scaleX1_2 - majorAdd, 0, z);
+		point [p + 1] = new SFVec3f ( scaleX1_2 + majorAdd, 0, z);
+		coordIndex [coordIndex .length] = p;
+		coordIndex [coordIndex .length] = p + 1;
+		coordIndex [coordIndex .length] = -1;
+		
+		p += 2;
+	}
+
+	point .length = p;
+
+	grid .set_coordIndex = coordIndex;
+}
+
+function generatePoints (major, point)
+{
+	var scaleY1_2 = -dimension [1] / 2;
+	var p         = 0;
+
+	for (var i = 0, size = dimension [1] + 1; i < size; ++ i)
+	{
+		if (major - isMajorLine (i, 1))
+			continue;
+
+		point [p] = new SFVec3f (0, scaleY1_2 + i, 0);
+		++ p;
+	}
+
+	point .length = p;
+}
+
+function isMajorLine (i, index)
+{
+	for (var d = index; d < majorLineEvery .length; d += 3)
+	{
+		if (isMajor (i, dimension [index], majorLineEvery [d], majorLineOffset [d]))
+			return true;
+	}
+
+	return false;
+}
+
+function isMajor (i, dimension, majorLineEvery, majorLineOffset)
+{
+	if (majorLineEvery)
+	{
+		var index = Math .floor (i - dimension / 2 - majorLineOffset);
+
+		return !(index % majorLineEvery);
+	}
+
+	return false;
+}
+]]> 
+            </Script>
+          </ProtoBody>
+        </ProtoDeclare>
+      </ProtoBody>
+    </ProtoDeclare>
     <WorldInfo
         title='marble'>
       <MetadataSet
           name='Titania'>
         <MetadataSet containerField='value'
-            name='AngleGrid'>
+            name='AngleGrid'
+            reference='http://titania.create3000.de'>
           <MetadataBoolean containerField='value'
               name='enabled'
+              reference='http://titania.create3000.de'
               value='false'/>
         </MetadataSet>
         <MetadataSet containerField='value'
-            name='Grid'>
+            name='Grid'
+            reference='http://titania.create3000.de'>
           <MetadataBoolean containerField='value'
               name='enabled'
+              reference='http://titania.create3000.de'
               value='true'/>
           <MetadataInteger containerField='value'
               name='majorLineOffset'
+              reference='http://titania.create3000.de'
               value='1, 0, 1'/>
           <MetadataInteger containerField='value'
               name='majorLineEvery'
+              reference='http://titania.create3000.de'
               value='2, 5, 2'/>
+        </MetadataSet>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='-3.07363247871399, 8.03197002410889, 15.9220294952393'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.921656370162964, -0.377252072095871, -0.0907212719321251, 0.497329384088516'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 0'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <Switch DEF='Resources_1'>
-      <Shape DEF='GrayBox_1'>
+    <Switch DEF='Resources'>
+      <Shape DEF='GrayBox'>
         <Appearance>
           <Material
               diffuseColor='0 0 0'
@@ -283,11 +553,11 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
             coordIndex='74, 84, 36, 25, -1, 85, 73, 61, 50, -1, 62, 72, 24, 13, -1, 86, 49, 1, 37, -1, 0, 3, 5, 4, -1, 3, 7, 8, 5, -1, 1, 6, 8, 7, -1, 6, 10, 11, 8, -1, 2, 9, 11, 10, -1, 9, 4, 5, 11, -1, 5, 8, 11, -1, 12, 15, 17, 16, -1, 15, 19, 20, 17, -1, 13, 18, 20, 19, -1, 18, 22, 23, 20, -1, 14, 21, 23, 22, -1, 21, 16, 17, 23, -1, 17, 20, 23, -1, 24, 27, 29, 28, -1, 27, 31, 32, 29, -1, 25, 30, 32, 31, -1, 30, 34, 35, 32, -1, 26, 33, 35, 34, -1, 33, 28, 29, 35, -1, 29, 32, 35, -1, 36, 39, 41, 40, -1, 39, 43, 44, 41, -1, 37, 42, 44, 43, -1, 42, 46, 47, 44, -1, 38, 45, 47, 46, -1, 45, 40, 41, 47, -1, 41, 44, 47, -1, 48, 51, 53, 52, -1, 51, 55, 56, 53, -1, 49, 54, 56, 55, -1, 54, 58, 59, 56, -1, 50, 57, 59, 58, -1, 57, 52, 53, 59, -1, 53, 56, 59, -1, 60, 63, 65, 64, -1, 63, 67, 68, 65, -1, 61, 66, 68, 67, -1, 66, 70, 71, 68, -1, 62, 69, 71, 70, -1, 69, 64, 65, 71, -1, 65, 68, 71, -1, 72, 75, 77, 76, -1, 75, 79, 80, 77, -1, 73, 78, 80, 79, -1, 78, 82, 83, 80, -1, 74, 81, 83, 82, -1, 81, 76, 77, 83, -1, 77, 80, 83, -1, 84, 87, 89, 88, -1, 87, 91, 92, 89, -1, 85, 90, 92, 91, -1, 90, 94, 95, 92, -1, 86, 93, 95, 94, -1, 93, 88, 89, 95, -1, 89, 92, 95, -1, 1, 49, 55, 6, -1, 6, 55, 51, 10, -1, 10, 51, 48, 2, -1, 50, 61, 67, 57, -1, 57, 67, 63, 52, -1, 52, 63, 60, 48, -1, 62, 13, 19, 69, -1, 69, 19, 15, 64, -1, 64, 15, 12, 60, -1, 14, 0, 4, 21, -1, 21, 4, 9, 16, -1, 16, 9, 2, 12, -1, 61, 73, 79, 66, -1, 66, 79, 75, 70, -1, 70, 75, 72, 62, -1, 74, 25, 31, 81, -1, 81, 31, 27, 76, -1, 76, 27, 24, 72, -1, 26, 14, 22, 33, -1, 33, 22, 18, 28, -1, 28, 18, 13, 24, -1, 73, 85, 91, 78, -1, 78, 91, 87, 82, -1, 82, 87, 84, 74, -1, 86, 37, 43, 93, -1, 93, 43, 39, 88, -1, 88, 39, 36, 84, -1, 38, 26, 34, 45, -1, 45, 34, 30, 40, -1, 40, 30, 25, 36, -1, 85, 50, 58, 90, -1, 90, 58, 54, 94, -1, 94, 54, 49, 86, -1, 0, 38, 46, 3, -1, 3, 46, 42, 7, -1, 7, 42, 37, 1, -1, 48, 60, 12, 2, -1'>
           <Color
               color='0.2 0.2 0.2, 0.5 0.5 0.5'/>
-          <Coordinate DEF='coords_ME_Cube_1'
+          <Coordinate DEF='coords_ME_Cube'
               point='-0.699999 -1 0.699996, -0.700001 -0.700004 0.999997, -1 -0.700004 0.699996, -0.7 -0.959924 0.849799, -0.849802 -0.959925 0.699996, -0.843464 -0.920994 0.843459, -0.849804 -0.700004 0.959917, -0.7 -0.849806 0.959917, -0.843463 -0.843468 0.920986, -0.95992 -0.849807 0.699996, -0.959922 -0.700004 0.849799, -0.92099 -0.843467 0.84346, -0.999995 -0.700003 -0.700004, -0.699994 -0.700001 -1, -0.699994 -1 -0.700004, -0.959915 -0.700002 -0.849807, -0.959915 -0.849806 -0.700004, -0.920984 -0.843466 -0.843467, -0.699993 -0.849804 -0.959924, -0.849797 -0.700002 -0.959925, -0.843458 -0.843465 -0.920994, -0.849797 -0.959923 -0.700004, -0.699993 -0.959923 -0.849806, -0.843457 -0.920992 -0.843468, 0.700006 -0.699996 -0.999998, 1.00001 -0.699996 -0.699997, 0.700006 -0.999997 -0.699998, 0.849809 -0.699996 -0.959919, 0.700007 -0.849799 -0.959919, 0.843469 -0.84346 -0.920988, 0.959927 -0.849799 -0.699997, 0.959927 -0.699996 -0.8498, 0.920996 -0.843459 -0.843462, 0.700007 -0.959918 -0.849801, 0.849809 -0.959917 -0.699998, 0.84347 -0.920986 -0.843461, 1 -0.699997 0.700003, 0.699999 -0.699998 1, 0.700001 -0.999998 0.700001, 0.95992 -0.699997 0.849806, 0.959922 -0.8498 0.700002, 0.92099 -0.843462 0.843465, 0.7 -0.849801 0.959923, 0.849802 -0.699998 0.959923, 0.843464 -0.843461 0.920992, 0.849804 -0.959919 0.700002, 0.7 -0.959919 0.849804, 0.843463 -0.920988 0.843466, -1.00001 0.699996 0.699997, -0.700006 0.699996 0.999998, -0.700006 0.999997 0.699998, -0.959927 0.699996 0.8498, -0.959927 0.849799 0.699997, -0.920996 0.84346 0.843461, -0.700007 0.849799 0.959919, -0.849809 0.699996 0.959919, -0.84347 0.843459 0.920988, -0.849809 0.959917 0.699998, -0.700007 0.959918 0.849801, -0.843469 0.920986 0.843462, -1 0.699997 -0.700003, -0.700001 0.999998 -0.700001, -0.699999 0.699998 -1, -0.959922 0.8498 -0.700002, -0.95992 0.699997 -0.849806, -0.92099 0.843461 -0.843466, -0.7 0.959919 -0.849804, -0.849804 0.959919 -0.700002, -0.843464 0.920988 -0.843465, -0.849802 0.699998 -0.959923, -0.7 0.849801 -0.959923, -0.843463 0.843462 -0.920992, 0.700001 0.700004 -0.999997, 0.699999 1 -0.699996, 1 0.700004 -0.699996, 0.7 0.849806 -0.959917, 0.849804 0.700004 -0.959917, 0.843464 0.843467 -0.920986, 0.849802 0.959925 -0.699996, 0.7 0.959924 -0.849799, 0.843463 0.920994 -0.84346, 0.959922 0.700004 -0.849799, 0.95992 0.849807 -0.699996, 0.92099 0.843468 -0.843459, 0.999995 0.700003 0.700004, 0.699994 1 0.700004, 0.699994 0.700001 1, 0.959915 0.849806 0.700004, 0.959915 0.700002 0.849807, 0.920984 0.843465 0.843468, 0.699993 0.959923 0.849806, 0.849797 0.959923 0.700004, 0.843458 0.920992 0.843467, 0.849797 0.700002 0.959925, 0.699993 0.849804 0.959924, 0.843457 0.843466 0.920994'/>
         </IndexedFaceSet>
       </Shape>
-      <Shape DEF='YellowBox_1'>
+      <Shape DEF='YellowBox'>
         <Appearance>
           <Material
               diffuseColor='0 0 0'
@@ -300,11 +570,11 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
             coordIndex='74, 84, 36, 25, -1, 85, 73, 61, 50, -1, 62, 72, 24, 13, -1, 86, 49, 1, 37, -1, 0, 3, 5, 4, -1, 3, 7, 8, 5, -1, 1, 6, 8, 7, -1, 6, 10, 11, 8, -1, 2, 9, 11, 10, -1, 9, 4, 5, 11, -1, 5, 8, 11, -1, 12, 15, 17, 16, -1, 15, 19, 20, 17, -1, 13, 18, 20, 19, -1, 18, 22, 23, 20, -1, 14, 21, 23, 22, -1, 21, 16, 17, 23, -1, 17, 20, 23, -1, 24, 27, 29, 28, -1, 27, 31, 32, 29, -1, 25, 30, 32, 31, -1, 30, 34, 35, 32, -1, 26, 33, 35, 34, -1, 33, 28, 29, 35, -1, 29, 32, 35, -1, 36, 39, 41, 40, -1, 39, 43, 44, 41, -1, 37, 42, 44, 43, -1, 42, 46, 47, 44, -1, 38, 45, 47, 46, -1, 45, 40, 41, 47, -1, 41, 44, 47, -1, 48, 51, 53, 52, -1, 51, 55, 56, 53, -1, 49, 54, 56, 55, -1, 54, 58, 59, 56, -1, 50, 57, 59, 58, -1, 57, 52, 53, 59, -1, 53, 56, 59, -1, 60, 63, 65, 64, -1, 63, 67, 68, 65, -1, 61, 66, 68, 67, -1, 66, 70, 71, 68, -1, 62, 69, 71, 70, -1, 69, 64, 65, 71, -1, 65, 68, 71, -1, 72, 75, 77, 76, -1, 75, 79, 80, 77, -1, 73, 78, 80, 79, -1, 78, 82, 83, 80, -1, 74, 81, 83, 82, -1, 81, 76, 77, 83, -1, 77, 80, 83, -1, 84, 87, 89, 88, -1, 87, 91, 92, 89, -1, 85, 90, 92, 91, -1, 90, 94, 95, 92, -1, 86, 93, 95, 94, -1, 93, 88, 89, 95, -1, 89, 92, 95, -1, 1, 49, 55, 6, -1, 6, 55, 51, 10, -1, 10, 51, 48, 2, -1, 50, 61, 67, 57, -1, 57, 67, 63, 52, -1, 52, 63, 60, 48, -1, 62, 13, 19, 69, -1, 69, 19, 15, 64, -1, 64, 15, 12, 60, -1, 14, 0, 4, 21, -1, 21, 4, 9, 16, -1, 16, 9, 2, 12, -1, 61, 73, 79, 66, -1, 66, 79, 75, 70, -1, 70, 75, 72, 62, -1, 74, 25, 31, 81, -1, 81, 31, 27, 76, -1, 76, 27, 24, 72, -1, 26, 14, 22, 33, -1, 33, 22, 18, 28, -1, 28, 18, 13, 24, -1, 73, 85, 91, 78, -1, 78, 91, 87, 82, -1, 82, 87, 84, 74, -1, 86, 37, 43, 93, -1, 93, 43, 39, 88, -1, 88, 39, 36, 84, -1, 38, 26, 34, 45, -1, 45, 34, 30, 40, -1, 40, 30, 25, 36, -1, 85, 50, 58, 90, -1, 90, 58, 54, 94, -1, 94, 54, 49, 86, -1, 0, 38, 46, 3, -1, 3, 46, 42, 7, -1, 7, 42, 37, 1, -1, 48, 60, 12, 2, -1'>
           <Color
               color='0 0 0, 1 0.917647 0'/>
-          <Coordinate DEF='coords_ME_Cube_2'
+          <Coordinate DEF='coords_ME_Cube_1'
               point='-0.699999 -1 0.699996, -0.700001 -0.700004 0.999997, -1 -0.700004 0.699996, -0.7 -0.959924 0.849799, -0.849802 -0.959925 0.699996, -0.843464 -0.920994 0.843459, -0.849804 -0.700004 0.959917, -0.7 -0.849806 0.959917, -0.843463 -0.843468 0.920986, -0.95992 -0.849807 0.699996, -0.959922 -0.700004 0.849799, -0.92099 -0.843467 0.84346, -0.999995 -0.700003 -0.700004, -0.699994 -0.700001 -1, -0.699994 -1 -0.700004, -0.959915 -0.700002 -0.849807, -0.959915 -0.849806 -0.700004, -0.920984 -0.843466 -0.843467, -0.699993 -0.849804 -0.959924, -0.849797 -0.700002 -0.959925, -0.843458 -0.843465 -0.920994, -0.849797 -0.959923 -0.700004, -0.699993 -0.959923 -0.849806, -0.843457 -0.920992 -0.843468, 0.700006 -0.699996 -0.999998, 1.00001 -0.699996 -0.699997, 0.700006 -0.999997 -0.699998, 0.849809 -0.699996 -0.959919, 0.700007 -0.849799 -0.959919, 0.843469 -0.84346 -0.920988, 0.959927 -0.849799 -0.699997, 0.959927 -0.699996 -0.8498, 0.920996 -0.843459 -0.843462, 0.700007 -0.959918 -0.849801, 0.849809 -0.959917 -0.699998, 0.84347 -0.920986 -0.843461, 1 -0.699997 0.700003, 0.699999 -0.699998 1, 0.700001 -0.999998 0.700001, 0.95992 -0.699997 0.849806, 0.959922 -0.8498 0.700002, 0.92099 -0.843462 0.843465, 0.7 -0.849801 0.959923, 0.849802 -0.699998 0.959923, 0.843464 -0.843461 0.920992, 0.849804 -0.959919 0.700002, 0.7 -0.959919 0.849804, 0.843463 -0.920988 0.843466, -1.00001 0.699996 0.699997, -0.700006 0.699996 0.999998, -0.700006 0.999997 0.699998, -0.959927 0.699996 0.8498, -0.959927 0.849799 0.699997, -0.920996 0.84346 0.843461, -0.700007 0.849799 0.959919, -0.849809 0.699996 0.959919, -0.84347 0.843459 0.920988, -0.849809 0.959917 0.699998, -0.700007 0.959918 0.849801, -0.843469 0.920986 0.843462, -1 0.699997 -0.700003, -0.700001 0.999998 -0.700001, -0.699999 0.699998 -1, -0.959922 0.8498 -0.700002, -0.95992 0.699997 -0.849806, -0.92099 0.843461 -0.843466, -0.7 0.959919 -0.849804, -0.849804 0.959919 -0.700002, -0.843464 0.920988 -0.843465, -0.849802 0.699998 -0.959923, -0.7 0.849801 -0.959923, -0.843463 0.843462 -0.920992, 0.700001 0.700004 -0.999997, 0.699999 1 -0.699996, 1 0.700004 -0.699996, 0.7 0.849806 -0.959917, 0.849804 0.700004 -0.959917, 0.843464 0.843467 -0.920986, 0.849802 0.959925 -0.699996, 0.7 0.959924 -0.849799, 0.843463 0.920994 -0.84346, 0.959922 0.700004 -0.849799, 0.95992 0.849807 -0.699996, 0.92099 0.843468 -0.843459, 0.999995 0.700003 0.700004, 0.699994 1 0.700004, 0.699994 0.700001 1, 0.959915 0.849806 0.700004, 0.959915 0.700002 0.849807, 0.920984 0.843465 0.843468, 0.699993 0.959923 0.849806, 0.849797 0.959923 0.700004, 0.843458 0.920992 0.843467, 0.849797 0.700002 0.959925, 0.699993 0.849804 0.959924, 0.843457 0.843466 0.920994'/>
         </IndexedFaceSet>
       </Shape>
-      <Shape DEF='OrangeBox_1'>
+      <Shape DEF='OrangeBox'>
         <Appearance>
           <Material
               diffuseColor='0 0 0'
@@ -317,11 +587,11 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
             coordIndex='74, 84, 36, 25, -1, 85, 73, 61, 50, -1, 62, 72, 24, 13, -1, 86, 49, 1, 37, -1, 0, 3, 5, 4, -1, 3, 7, 8, 5, -1, 1, 6, 8, 7, -1, 6, 10, 11, 8, -1, 2, 9, 11, 10, -1, 9, 4, 5, 11, -1, 5, 8, 11, -1, 12, 15, 17, 16, -1, 15, 19, 20, 17, -1, 13, 18, 20, 19, -1, 18, 22, 23, 20, -1, 14, 21, 23, 22, -1, 21, 16, 17, 23, -1, 17, 20, 23, -1, 24, 27, 29, 28, -1, 27, 31, 32, 29, -1, 25, 30, 32, 31, -1, 30, 34, 35, 32, -1, 26, 33, 35, 34, -1, 33, 28, 29, 35, -1, 29, 32, 35, -1, 36, 39, 41, 40, -1, 39, 43, 44, 41, -1, 37, 42, 44, 43, -1, 42, 46, 47, 44, -1, 38, 45, 47, 46, -1, 45, 40, 41, 47, -1, 41, 44, 47, -1, 48, 51, 53, 52, -1, 51, 55, 56, 53, -1, 49, 54, 56, 55, -1, 54, 58, 59, 56, -1, 50, 57, 59, 58, -1, 57, 52, 53, 59, -1, 53, 56, 59, -1, 60, 63, 65, 64, -1, 63, 67, 68, 65, -1, 61, 66, 68, 67, -1, 66, 70, 71, 68, -1, 62, 69, 71, 70, -1, 69, 64, 65, 71, -1, 65, 68, 71, -1, 72, 75, 77, 76, -1, 75, 79, 80, 77, -1, 73, 78, 80, 79, -1, 78, 82, 83, 80, -1, 74, 81, 83, 82, -1, 81, 76, 77, 83, -1, 77, 80, 83, -1, 84, 87, 89, 88, -1, 87, 91, 92, 89, -1, 85, 90, 92, 91, -1, 90, 94, 95, 92, -1, 86, 93, 95, 94, -1, 93, 88, 89, 95, -1, 89, 92, 95, -1, 1, 49, 55, 6, -1, 6, 55, 51, 10, -1, 10, 51, 48, 2, -1, 50, 61, 67, 57, -1, 57, 67, 63, 52, -1, 52, 63, 60, 48, -1, 62, 13, 19, 69, -1, 69, 19, 15, 64, -1, 64, 15, 12, 60, -1, 14, 0, 4, 21, -1, 21, 4, 9, 16, -1, 16, 9, 2, 12, -1, 61, 73, 79, 66, -1, 66, 79, 75, 70, -1, 70, 75, 72, 62, -1, 74, 25, 31, 81, -1, 81, 31, 27, 76, -1, 76, 27, 24, 72, -1, 26, 14, 22, 33, -1, 33, 22, 18, 28, -1, 28, 18, 13, 24, -1, 73, 85, 91, 78, -1, 78, 91, 87, 82, -1, 82, 87, 84, 74, -1, 86, 37, 43, 93, -1, 93, 43, 39, 88, -1, 88, 39, 36, 84, -1, 38, 26, 34, 45, -1, 45, 34, 30, 40, -1, 40, 30, 25, 36, -1, 85, 50, 58, 90, -1, 90, 58, 54, 94, -1, 94, 54, 49, 86, -1, 0, 38, 46, 3, -1, 3, 46, 42, 7, -1, 7, 42, 37, 1, -1, 48, 60, 12, 2, -1'>
           <Color
               color='0 0 0, 1 0.333333 0'/>
-          <Coordinate DEF='coords_ME_Cube_3'
+          <Coordinate DEF='coords_ME_Cube_2'
               point='-0.699999 -1 0.699996, -0.700001 -0.700004 0.999997, -1 -0.700004 0.699996, -0.7 -0.959924 0.849799, -0.849802 -0.959925 0.699996, -0.843464 -0.920994 0.843459, -0.849804 -0.700004 0.959917, -0.7 -0.849806 0.959917, -0.843463 -0.843468 0.920986, -0.95992 -0.849807 0.699996, -0.959922 -0.700004 0.849799, -0.92099 -0.843467 0.84346, -0.999995 -0.700003 -0.700004, -0.699994 -0.700001 -1, -0.699994 -1 -0.700004, -0.959915 -0.700002 -0.849807, -0.959915 -0.849806 -0.700004, -0.920984 -0.843466 -0.843467, -0.699993 -0.849804 -0.959924, -0.849797 -0.700002 -0.959925, -0.843458 -0.843465 -0.920994, -0.849797 -0.959923 -0.700004, -0.699993 -0.959923 -0.849806, -0.843457 -0.920992 -0.843468, 0.700006 -0.699996 -0.999998, 1.00001 -0.699996 -0.699997, 0.700006 -0.999997 -0.699998, 0.849809 -0.699996 -0.959919, 0.700007 -0.849799 -0.959919, 0.843469 -0.84346 -0.920988, 0.959927 -0.849799 -0.699997, 0.959927 -0.699996 -0.8498, 0.920996 -0.843459 -0.843462, 0.700007 -0.959918 -0.849801, 0.849809 -0.959917 -0.699998, 0.84347 -0.920986 -0.843461, 1 -0.699997 0.700003, 0.699999 -0.699998 1, 0.700001 -0.999998 0.700001, 0.95992 -0.699997 0.849806, 0.959922 -0.8498 0.700002, 0.92099 -0.843462 0.843465, 0.7 -0.849801 0.959923, 0.849802 -0.699998 0.959923, 0.843464 -0.843461 0.920992, 0.849804 -0.959919 0.700002, 0.7 -0.959919 0.849804, 0.843463 -0.920988 0.843466, -1.00001 0.699996 0.699997, -0.700006 0.699996 0.999998, -0.700006 0.999997 0.699998, -0.959927 0.699996 0.8498, -0.959927 0.849799 0.699997, -0.920996 0.84346 0.843461, -0.700007 0.849799 0.959919, -0.849809 0.699996 0.959919, -0.84347 0.843459 0.920988, -0.849809 0.959917 0.699998, -0.700007 0.959918 0.849801, -0.843469 0.920986 0.843462, -1 0.699997 -0.700003, -0.700001 0.999998 -0.700001, -0.699999 0.699998 -1, -0.959922 0.8498 -0.700002, -0.95992 0.699997 -0.849806, -0.92099 0.843461 -0.843466, -0.7 0.959919 -0.849804, -0.849804 0.959919 -0.700002, -0.843464 0.920988 -0.843465, -0.849802 0.699998 -0.959923, -0.7 0.849801 -0.959923, -0.843463 0.843462 -0.920992, 0.700001 0.700004 -0.999997, 0.699999 1 -0.699996, 1 0.700004 -0.699996, 0.7 0.849806 -0.959917, 0.849804 0.700004 -0.959917, 0.843464 0.843467 -0.920986, 0.849802 0.959925 -0.699996, 0.7 0.959924 -0.849799, 0.843463 0.920994 -0.84346, 0.959922 0.700004 -0.849799, 0.95992 0.849807 -0.699996, 0.92099 0.843468 -0.843459, 0.999995 0.700003 0.700004, 0.699994 1 0.700004, 0.699994 0.700001 1, 0.959915 0.849806 0.700004, 0.959915 0.700002 0.849807, 0.920984 0.843465 0.843468, 0.699993 0.959923 0.849806, 0.849797 0.959923 0.700004, 0.843458 0.920992 0.843467, 0.849797 0.700002 0.959925, 0.699993 0.849804 0.959924, 0.843457 0.843466 0.920994'/>
         </IndexedFaceSet>
       </Shape>
-      <Shape DEF='RedBox_1'>
+      <Shape DEF='RedBox'>
         <Appearance>
           <Material
               diffuseColor='0 0 0'
@@ -334,11 +604,11 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
             coordIndex='74, 84, 36, 25, -1, 85, 73, 61, 50, -1, 62, 72, 24, 13, -1, 86, 49, 1, 37, -1, 0, 3, 5, 4, -1, 3, 7, 8, 5, -1, 1, 6, 8, 7, -1, 6, 10, 11, 8, -1, 2, 9, 11, 10, -1, 9, 4, 5, 11, -1, 5, 8, 11, -1, 12, 15, 17, 16, -1, 15, 19, 20, 17, -1, 13, 18, 20, 19, -1, 18, 22, 23, 20, -1, 14, 21, 23, 22, -1, 21, 16, 17, 23, -1, 17, 20, 23, -1, 24, 27, 29, 28, -1, 27, 31, 32, 29, -1, 25, 30, 32, 31, -1, 30, 34, 35, 32, -1, 26, 33, 35, 34, -1, 33, 28, 29, 35, -1, 29, 32, 35, -1, 36, 39, 41, 40, -1, 39, 43, 44, 41, -1, 37, 42, 44, 43, -1, 42, 46, 47, 44, -1, 38, 45, 47, 46, -1, 45, 40, 41, 47, -1, 41, 44, 47, -1, 48, 51, 53, 52, -1, 51, 55, 56, 53, -1, 49, 54, 56, 55, -1, 54, 58, 59, 56, -1, 50, 57, 59, 58, -1, 57, 52, 53, 59, -1, 53, 56, 59, -1, 60, 63, 65, 64, -1, 63, 67, 68, 65, -1, 61, 66, 68, 67, -1, 66, 70, 71, 68, -1, 62, 69, 71, 70, -1, 69, 64, 65, 71, -1, 65, 68, 71, -1, 72, 75, 77, 76, -1, 75, 79, 80, 77, -1, 73, 78, 80, 79, -1, 78, 82, 83, 80, -1, 74, 81, 83, 82, -1, 81, 76, 77, 83, -1, 77, 80, 83, -1, 84, 87, 89, 88, -1, 87, 91, 92, 89, -1, 85, 90, 92, 91, -1, 90, 94, 95, 92, -1, 86, 93, 95, 94, -1, 93, 88, 89, 95, -1, 89, 92, 95, -1, 1, 49, 55, 6, -1, 6, 55, 51, 10, -1, 10, 51, 48, 2, -1, 50, 61, 67, 57, -1, 57, 67, 63, 52, -1, 52, 63, 60, 48, -1, 62, 13, 19, 69, -1, 69, 19, 15, 64, -1, 64, 15, 12, 60, -1, 14, 0, 4, 21, -1, 21, 4, 9, 16, -1, 16, 9, 2, 12, -1, 61, 73, 79, 66, -1, 66, 79, 75, 70, -1, 70, 75, 72, 62, -1, 74, 25, 31, 81, -1, 81, 31, 27, 76, -1, 76, 27, 24, 72, -1, 26, 14, 22, 33, -1, 33, 22, 18, 28, -1, 28, 18, 13, 24, -1, 73, 85, 91, 78, -1, 78, 91, 87, 82, -1, 82, 87, 84, 74, -1, 86, 37, 43, 93, -1, 93, 43, 39, 88, -1, 88, 39, 36, 84, -1, 38, 26, 34, 45, -1, 45, 34, 30, 40, -1, 40, 30, 25, 36, -1, 85, 50, 58, 90, -1, 90, 58, 54, 94, -1, 94, 54, 49, 86, -1, 0, 38, 46, 3, -1, 3, 46, 42, 7, -1, 7, 42, 37, 1, -1, 48, 60, 12, 2, -1'>
           <Color
               color='0 0 0, 1 0 0'/>
-          <Coordinate DEF='coords_ME_Cube'
+          <Coordinate DEF='coords_ME_Cube_3'
               point='-0.699999 -1 0.699996, -0.700001 -0.700004 0.999997, -1 -0.700004 0.699996, -0.7 -0.959924 0.849799, -0.849802 -0.959925 0.699996, -0.843464 -0.920994 0.843459, -0.849804 -0.700004 0.959917, -0.7 -0.849806 0.959917, -0.843463 -0.843468 0.920986, -0.95992 -0.849807 0.699996, -0.959922 -0.700004 0.849799, -0.92099 -0.843467 0.84346, -0.999995 -0.700003 -0.700004, -0.699994 -0.700001 -1, -0.699994 -1 -0.700004, -0.959915 -0.700002 -0.849807, -0.959915 -0.849806 -0.700004, -0.920984 -0.843466 -0.843467, -0.699993 -0.849804 -0.959924, -0.849797 -0.700002 -0.959925, -0.843458 -0.843465 -0.920994, -0.849797 -0.959923 -0.700004, -0.699993 -0.959923 -0.849806, -0.843457 -0.920992 -0.843468, 0.700006 -0.699996 -0.999998, 1.00001 -0.699996 -0.699997, 0.700006 -0.999997 -0.699998, 0.849809 -0.699996 -0.959919, 0.700007 -0.849799 -0.959919, 0.843469 -0.84346 -0.920988, 0.959927 -0.849799 -0.699997, 0.959927 -0.699996 -0.8498, 0.920996 -0.843459 -0.843462, 0.700007 -0.959918 -0.849801, 0.849809 -0.959917 -0.699998, 0.84347 -0.920986 -0.843461, 1 -0.699997 0.700003, 0.699999 -0.699998 1, 0.700001 -0.999998 0.700001, 0.95992 -0.699997 0.849806, 0.959922 -0.8498 0.700002, 0.92099 -0.843462 0.843465, 0.7 -0.849801 0.959923, 0.849802 -0.699998 0.959923, 0.843464 -0.843461 0.920992, 0.849804 -0.959919 0.700002, 0.7 -0.959919 0.849804, 0.843463 -0.920988 0.843466, -1.00001 0.699996 0.699997, -0.700006 0.699996 0.999998, -0.700006 0.999997 0.699998, -0.959927 0.699996 0.8498, -0.959927 0.849799 0.699997, -0.920996 0.84346 0.843461, -0.700007 0.849799 0.959919, -0.849809 0.699996 0.959919, -0.84347 0.843459 0.920988, -0.849809 0.959917 0.699998, -0.700007 0.959918 0.849801, -0.843469 0.920986 0.843462, -1 0.699997 -0.700003, -0.700001 0.999998 -0.700001, -0.699999 0.699998 -1, -0.959922 0.8498 -0.700002, -0.95992 0.699997 -0.849806, -0.92099 0.843461 -0.843466, -0.7 0.959919 -0.849804, -0.849804 0.959919 -0.700002, -0.843464 0.920988 -0.843465, -0.849802 0.699998 -0.959923, -0.7 0.849801 -0.959923, -0.843463 0.843462 -0.920992, 0.700001 0.700004 -0.999997, 0.699999 1 -0.699996, 1 0.700004 -0.699996, 0.7 0.849806 -0.959917, 0.849804 0.700004 -0.959917, 0.843464 0.843467 -0.920986, 0.849802 0.959925 -0.699996, 0.7 0.959924 -0.849799, 0.843463 0.920994 -0.84346, 0.959922 0.700004 -0.849799, 0.95992 0.849807 -0.699996, 0.92099 0.843468 -0.843459, 0.999995 0.700003 0.700004, 0.699994 1 0.700004, 0.699994 0.700001 1, 0.959915 0.849806 0.700004, 0.959915 0.700002 0.849807, 0.920984 0.843465 0.843468, 0.699993 0.959923 0.849806, 0.849797 0.959923 0.700004, 0.843458 0.920992 0.843467, 0.849797 0.700002 0.959925, 0.699993 0.849804 0.959924, 0.843457 0.843466 0.920994'/>
         </IndexedFaceSet>
       </Shape>
-      <Shape DEF='LilaBox_1'>
+      <Shape DEF='LilaBox'>
         <Appearance>
           <Material
               diffuseColor='0 0 0'
@@ -356,7 +626,7 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
         </IndexedFaceSet>
       </Shape>
     </Switch>
-    <Script DEF='EnterWorldScript_1'>
+    <Script DEF='EnterWorldScript'>
 <![CDATA[javascript:
 
 function initialize ()
@@ -366,25 +636,10 @@ function initialize ()
 ]]> 
     </Script>
     <NavigationInfo/>
-    <Background DEF='Gray_1'
+    <Background DEF='Gray'
         skyColor='0.2 0.2 0.2'/>
     <KeySensor DEF='A'
         enabled='false'/>
-    <Transform DEF='Rectangle2D_1'
-        rotation='1 3.62336e-06 -7.567e-10 4.71239'
-        scaleOrientation='0.999922 0.0107938 0.00620818 0.78524'>
-      <Shape>
-        <Appearance>
-          <Material DEF='Neon22_1'
-              ambientIntensity='0'
-              diffuseColor='0 0 0'
-              specularColor='0.622449 0.622449 0.622449'
-              emissiveColor='0.934028 0.00304288 1'
-              shininess='0.0510204'/>
-        </Appearance>
-        <Rectangle2D/>
-      </Shape>
-    </Transform>
     <Transform DEF='Marble'
         translation='0 1 0'>
       <Transform DEF='SphereTranslation'>
@@ -392,10 +647,11 @@ function initialize ()
             description='Home'
             position='-3.38726 12.9707 12.1553'
             orientation='-0.947272 -0.299523 -0.113853 0.840082'/>
-        <Transform DEF='SphereRotation'>
+        <Transform DEF='SphereRotation'
+            rotation='0.692128 -0.20474 -0.692128 4.66759'>
           <Shape>
             <Appearance>
-              <Material DEF='Metal31_1'
+              <Material DEF='Metal31'
                   ambientIntensity='0.0955322'
                   diffuseColor='0.99772 0.995715 1'
                   specularColor='1 0.701006 1'
@@ -411,25 +667,40 @@ function initialize ()
       <Script DEF='MarbleScript'
           directOutput='true'>
         <field accessType='inputOnly' type='SFInt32' name='set_actionKeyPress'/>
-        <field accessType='inputOutput' type='SFVec2f' name='fieldSize' value='2 2'/>
+        <field accessType='inputOutput' type='SFVec3f' name='fieldSize' value='2 0 2'/>
         <field accessType='inputOutput' type='SFFloat' name='marbleRadius' value='1'/>
+        <field accessType='outputOnly' type='MFInt32' name='position_changed'/>
         <field accessType='initializeOnly' type='SFNode' name='timer'>
           <TimeSensor DEF='_1'
               cycleInterval='0.61803398875'
-              startTime='1443190356.4261'/>
+              startTime='1446646222.59139'/>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='orientationInterpolator'>
           <OrientationInterpolator DEF='_2'
               key='0, 0.25, 0.5, 0.75, 1'
-              keyValue='0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0'/>
+              keyValue='-0.512369 0.561327 -0.649916 4.97744, -0.197408 0.437309 -0.877377 5.16092, 0.202152 0.206444 -0.957348 5.15967, 0.515355 -0.032224 -0.856371 4.97425, 0.692128 -0.20474 -0.692128 4.66759'/>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='positionInterpolator'>
           <PositionInterpolator DEF='_3'
               key='0, 1'
-              keyValue='0 0 0, 0 0 0'/>
+              keyValue='0 0 2, 0 0 0'/>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='rectangle'>
-          <Transform USE='Rectangle2D_1'/>
+          <Transform DEF='MarblePositionRectangle'
+              rotation='1 3.62336e-06 -7.567e-10 4.71239'
+              scaleOrientation='1 2.97421e-06 1.60219e-06 0.785189'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Neon22'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    specularColor='0.622449 0.622449 0.622449'
+                    emissiveColor='0.934028 0.00304288 1'
+                    shininess='0.0510204'/>
+              </Appearance>
+              <Rectangle2D/>
+            </Shape>
+          </Transform>
         </field>
         <field accessType='initializeOnly' type='SFNode' name='grid'>
           <ProtoInstance name='Grid' DEF='_4'>
@@ -460,6 +731,10 @@ function initialize ()
 
 	positionInterpolator    .set_fraction = 1;
 	orientationInterpolator .set_fraction = 1;
+	
+	position_changed = new MFInt32 (grid .dimension [0] / fieldSize [0] / 2,
+	                                0,
+	                                grid .dimension [2] / fieldSize [2] / 2);
 }
 
 function set_actionKeyPress (value, time)
@@ -495,8 +770,10 @@ function roll (direction, rotationAxis, axis, time)
 	translation [axis] = 2 * grid .scale [axis] * direction;
 	translation        = startTranslation .add (translation);
 
-	if (Math .abs (translation [axis]) > grid .dimension [axis] / 2)
+	if (Math .abs (translation [axis]) > grid .dimension [axis] / fieldSize [axis] * grid .scale [axis])
 		return;
+		
+	position_changed [axis] += direction;
 
 	positionInterpolator .keyValue = new MFVec3f (startTranslation, translation);
 	
@@ -525,47 +802,213 @@ function roll (direction, rotationAxis, axis, time)
 ]]> 
       </Script>
     </Transform>
+    <Transform USE='MarblePositionRectangle'/>
     <ProtoInstance USE='_4'/>
-    <Transform
-        translation='1.19209e-07 1 -6.98312e-08'
-        rotation='0 1 0 1.5708'
-        scale='1 0.707107 0.707107'
-        center='4 0 -2'>
-      <Transform DEF='Rectangle2D'
-          translation='4 0 -2'
-          rotation='0.678598 0.281087 -0.678598 3.68962'
-          scaleOrientation='-0.743289 0.203315 0.637326 0.27003'>
-        <Shape>
-          <Appearance>
-            <TwoSidedMaterial
-                separateBackColor='true'
-                ambientIntensity='0'
-                diffuseColor='0 0 0'
-                specularColor='0.622449 0.622449 0.622449'
-                emissiveColor='0.460235 0 1'
-                shininess='0.0510204'
-                backAmbientIntensity='0'
-                backDiffuseColor='0 0 0'
-                backSpecularColor='0.721 0.721 0.721'
-                backEmissiveColor='1 0.0392157 0'
-                backShininess='0.0903955'/>
-          </Appearance>
-          <Rectangle2D
-              solid='false'/>
-        </Shape>
-      </Transform>
-    </Transform>
-    <Transform
-        translation='2 1 0'
-        rotation='0 -1 0 1.57079'
-        scale='1 0.707107 0.707107'
-        center='4 0 -2'>
-      <Transform USE='Rectangle2D'/>
-    </Transform>
-    <ROUTE fromNode='_2' fromField='value_changed' toNode='SphereRotation' toField='set_rotation'/>
-    <ROUTE fromNode='MarbleKeySensor' fromField='actionKeyPress' toNode='MarbleScript' toField='set_actionKeyPress'/>
-    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
+    <Script DEF='ItemsScript'>
+      <field accessType='inputOnly' type='MFInt32' name='set_position'/>
+      <field accessType='inputOutput' type='SFVec3f' name='fieldSize' value='2 0 2'/>
+      <field accessType='initializeOnly' type='SFNode' name='item'>
+        <Transform DEF='Item'>
+          <Transform DEF='_5'
+              rotation='0 -1 0 0.831209'>
+            <Transform DEF='Rectangle2D'
+                translation='0 1 0'
+                rotation='-3.18379e-14 -9.22889e-14 1 2.35619'
+                scale='0.707107 0.707107 1'
+                scaleOrientation='9.90984e-06 3.06161e-06 1 0.392693'>
+              <Group DEF='ItemRotationAnim'>
+                <MetadataSet DEF='Animation'
+                    name='Animation'
+                    reference='http://titania.create3000.de'>
+                  <MetadataInteger DEF='duration' containerField='value'
+                      name='duration'
+                      reference='http://titania.create3000.de'
+                      value='48'/>
+                  <MetadataInteger DEF='framesPerSecond' containerField='value'
+                      name='framesPerSecond'
+                      reference='http://titania.create3000.de'
+                      value='10'/>
+                </MetadataSet>
+                <TimeSensor DEF='_6'
+                    cycleInterval='4.8'
+                    loop='true'/>
+                <OrientationInterpolator DEF='RotationInterpolator'
+                    key='0, 0.0208333, 0.0416667, 0.0625, 0.0833333, 0.104167, 0.125, 0.145833, 0.166667, 0.1875, 0.208333, 0.229167, 0.25, 0.270833, 0.291667, 0.3125, 0.333333, 0.354167, 0.375, 0.395833, 0.416667, 0.4375, 0.458333, 0.479167, 0.5, 0.520833, 0.541667, 0.5625, 0.583333, 0.604167, 0.625, 0.645833, 0.666667, 0.6875, 0.708333, 0.729167, 0.75, 0.770833, 0.791667, 0.8125, 0.833333, 0.854167, 0.875, 0.895833, 0.916667, 0.9375, 0.958333, 0.979167, 1'
+                    keyValue='0 0 1 0, 0 -1 0 0.124026, 0 -1 0 0.250436, 0 -1 0 0.378893, 0 -1 0 0.509054, 0 -1 0 0.640579, 0 -1 0 0.773126, 0 -1 0 0.906355, 0 -1 0 1.03993, 0 -1 0 1.1735, 0 -1 0 1.30672, 0 -1 0 1.43927, 0 -1 0 1.5708, 0 -1 0 1.70107, 0 -1 0 1.83032, 0 -1 0 1.95889, 0 -1 0 2.08712, 0 -1 0 2.21535, 0 -1 0 2.34392, 0 -1 0 2.47317, 0 -1 0 2.60345, 0 -1 0 2.73509, 0 -1 0 2.86843, 0 -1 0 3.00382, 0 1 0 3.14159, 0 1 0 2.99996, 0 1 0 2.85389, 0 1 0 2.70441, 0 1 0 2.55254, 0 1 0 2.39932, 0 1 0 2.24575, 0 1 0 2.09286, 0 1 0 1.94168, 0 1 0 1.79322, 0 1 0 1.64852, 0 1 0 1.50859, 0 1 0 1.37445, 0 1 0 1.24679, 0 1 0 1.12492, 0 1 0 1.00783, 0 1 0 0.894481, 0 1 0 0.783864, 0 1 0 0.674952, 0 1 0 0.566721, 0 1 0 0.458149, 0 1 0 0.348214, 0 1 0 0.235892, 0 1 0 0.120161, 0 0 1 0'>
+                  <MetadataSet DEF='Interpolator'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 12, 24, 36, 48'/>
+                    <MetadataDouble DEF='keyValue' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='0, 0, 1, 0, 0, -1, 0, 1.570796251297, 0, 1, 0, 3.14159274101257, 0, 1, 0, 1.37444686889648, 0, 0, 1, 0'/>
+                    <MetadataString DEF='keyType' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </OrientationInterpolator>
+              </Group>
+              <Shape>
+                <Appearance>
+                  <TwoSidedMaterial
+                      separateBackColor='true'
+                      ambientIntensity='0'
+                      diffuseColor='0 0 0'
+                      specularColor='0.622449 0.622449 0.622449'
+                      emissiveColor='0.460235 0 1'
+                      shininess='0.0510204'
+                      backAmbientIntensity='0'
+                      backDiffuseColor='0 0 0'
+                      backSpecularColor='0.721 0.721 0.721'
+                      backEmissiveColor='1 0.0392157 0'
+                      backShininess='0.0903955'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
+              </Shape>
+            </Transform>
+          </Transform>
+        </Transform>
+      </field>
+      <field accessType='initializeOnly' type='SFNode' name='itemGroup'>
+        <Group DEF='ItemGroup'>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+          <Transform>
+            <Transform USE='Item'/>
+          </Transform>
+        </Group>
+      </field>
+      <field accessType='initializeOnly' type='SFNode' name='grid'>
+        <ProtoInstance USE='_4'/>
+      </field>
+<![CDATA[javascript:
+
+var fillRate = 0.25
+
+function initialize ()
+{
+	set_startTime (0);
+}
+
+function set_position (value)
+{
+	print (value);
+}
+
+function set_startTime ()
+{
+	var itemCount = Math .floor (grid .dimension [0] / fieldSize [0] * grid .dimension [2] / fieldSize [2] * fillRate);
+	
+	itemGroup .children .length = 0;
+	
+	for (var i = 0; i < itemCount; ++i)
+	{
+		var transform = Browser .currentScene .createNode ("Transform");
+		
+		transform .children [0] = item;
+		itemGroup .children [i] = transform;
+	}
+}]]> 
+    </Script>
+    <Group USE='ItemGroup'/>
     <ROUTE fromNode='_1' fromField='fraction_changed' toNode='_3' toField='set_fraction'/>
+    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
+    <ROUTE fromNode='MarbleKeySensor' fromField='actionKeyPress' toNode='MarbleScript' toField='set_actionKeyPress'/>
+    <ROUTE fromNode='_2' fromField='value_changed' toNode='SphereRotation' toField='set_rotation'/>
     <ROUTE fromNode='_3' fromField='value_changed' toNode='SphereTranslation' toField='set_translation'/>
+    <ROUTE fromNode='MarbleScript' fromField='position_changed' toNode='ItemsScript' toField='set_position'/>
+    <ROUTE fromNode='_6' fromField='fraction_changed' toNode='RotationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='RotationInterpolator' fromField='value_changed' toNode='_5' toField='set_rotation'/>
   </Scene>
 </X3D>

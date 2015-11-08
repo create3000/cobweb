@@ -4,6 +4,8 @@ define ([
 ],
 function (Vector3)
 {
+"use strict";
+
 	function Line3 (point, direction)
 	{
 		this .point     = point .copy ();

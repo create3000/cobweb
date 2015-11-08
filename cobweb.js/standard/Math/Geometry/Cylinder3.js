@@ -10,6 +10,8 @@ function (Vector3,
           Matrix4,
           Line3)
 {
+"use strict";
+
 	function Cylinder3 (axis, radius)
 	{
 		this .axis   = axis .copy ();

@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	var handler =
 	{
 		get: function (target, key)

@@ -9,6 +9,8 @@ define ([
 ],
 function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 {
+"use strict";
+
 	var
 		dummyTranslation      = new Vector3 (0, 0, 0),
 		dummyRotation         = new Rotation4 (),

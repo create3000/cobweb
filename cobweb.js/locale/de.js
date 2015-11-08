@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	return {
 		"Cobweb X3D Browser": "Cobweb X3D Browser",
 

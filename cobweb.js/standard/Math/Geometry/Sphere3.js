@@ -4,6 +4,8 @@ define ([
 ],
 function (Vector3)
 {
+"use strict";
+
 	var
 		L  = new Vector3 (0, 0, 0),
 		AB = new Vector3 (0, 0, 0),

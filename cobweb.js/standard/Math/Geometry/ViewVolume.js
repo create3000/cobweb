@@ -10,6 +10,8 @@ define ([
 ],
 function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 {
+"use strict";
+
 	var
 		p1     = new Vector3 (0, 0, 0),
 		p2     = new Vector3 (0, 0, 0),

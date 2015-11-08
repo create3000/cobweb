@@ -13,6 +13,14 @@ function (X3DFlyViewer, _)
 	FlyViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),
 	{
 		constructor: FlyViewer,
+		addCollision: function ()
+		{
+			this .getBrowser () .addCollision (this);
+		},
+		removeCollision: function ()
+		{
+			this .getBrowser () .removeCollision (this);
+		},
 		getTranslationOffset: function (velocity)
 		{
 			return this .getActiveViewpoint () .getUserOrientation () .multVecRot (velocity);

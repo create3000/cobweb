@@ -4,6 +4,8 @@ define ([
 ],
 function (Matrix4)
 {
+"use strict";
+
 	return {
 		frustum: function (l, r, b, t, n, f, matrix)
 		{

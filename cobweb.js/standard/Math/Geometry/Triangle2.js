@@ -1,6 +1,8 @@
 ﻿
 define (function ()
 {
+"use strict";
+
 	return {
 		isPointInTriangle: function (a, b, c, point)
 		{

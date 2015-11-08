@@ -6,6 +6,8 @@ define ([
 ],
 function ($, Vector3, Algorithm)
 {
+"use strict";
+
 	function Quaternion (x, y, z, w)
 	{
 		this .x = x;

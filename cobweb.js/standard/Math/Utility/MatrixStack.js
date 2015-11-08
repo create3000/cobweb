@@ -4,6 +4,8 @@ define ([
 ],
 function ($)
 {
+"use strict";
+
 	function MatrixStack (Type)
 	{
 		return $.extend ([ new Type () ],

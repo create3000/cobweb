@@ -5,6 +5,8 @@ define ([
 ],
 function ($, Algorithm)
 {
+"use strict";
+
 	function Matrix2 ()
 	{
 		if (arguments .length)

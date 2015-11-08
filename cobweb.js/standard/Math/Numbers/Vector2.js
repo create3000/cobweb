@@ -5,6 +5,8 @@ define ([
 ],
 function ($, Algorithm)
 {
+"use strict";
+
 	function Vector2 (x, y)
 	{		
 		this .x = x;

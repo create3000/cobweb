@@ -5,6 +5,8 @@ define ([
 ],
 function (de, fr)
 {
+"use strict";
+
 	var ĺocales =
 	{
 		de: de,
