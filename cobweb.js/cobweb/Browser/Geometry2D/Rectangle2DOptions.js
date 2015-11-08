@@ -16,6 +16,8 @@ function ($,
           Vector2,
           Vector3)
 {
+"use strict";
+	
 	function BoxOptions (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);

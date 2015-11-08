@@ -5,6 +5,8 @@ define ([
 ],
 function (X3DFlyViewer, _)
 {
+"use strict";
+	
 	function FlyViewer (executionContext)
 	{
 		X3DFlyViewer .call (this, executionContext .getBrowser (), executionContext);

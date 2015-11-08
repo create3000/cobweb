@@ -4,6 +4,8 @@ define ([
 ],
 function ($)
 {
+"use strict";
+	
 	function X3DKeyDeviceSensorContext ()
 	{
 		this .keyDeviceSensorNode = null;

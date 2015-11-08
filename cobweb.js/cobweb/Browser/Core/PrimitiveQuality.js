@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+	
 	var i = 0;
 
 	var PrimitiveQuality =

@@ -9,6 +9,8 @@ define ([
 ],
 function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 {
+"use strict";
+	
 	var far = new Vector3 (0, 0, 0);
 
 	function X3DViewer (browser, executionContext)

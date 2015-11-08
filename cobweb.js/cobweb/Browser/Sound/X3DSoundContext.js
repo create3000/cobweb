@@ -6,9 +6,7 @@ define ([
 function (Fields,
           dataStorage)
 {
-	var
-		SFBool = Fields .SFBool,
-		SFFloat = Fields .SFFloat;
+"use strict";
 
 	function X3DSoundContext () { }
 
@@ -16,8 +14,8 @@ function (Fields,
 	{
 		initialize: function ()
 		{
-			this .addChildren ("volume", new SFFloat (1));
-			this .addChildren ("mute",   new SFBool ());
+			this .addChildren ("volume", new Fields .SFFloat (1));
+			this .addChildren ("mute",   new Fields .SFBool ());
 
 			this .volume_ .addInterest (this, "set_volume__");
 			this .mute_   .addInterest (this, "set_mute__");

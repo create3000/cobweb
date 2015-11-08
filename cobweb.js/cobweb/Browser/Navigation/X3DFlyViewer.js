@@ -10,6 +10,8 @@ define ([
 ],
 function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 {
+"use strict";
+	
 	var
 		SPEED_FACTOR           = 0.007,
 		SHIFT_SPEED_FACTOR     = 4 * SPEED_FACTOR,

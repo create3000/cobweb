@@ -6,6 +6,8 @@ define ([
 function ($,
           X3DBaseNode)
 {
+"use strict";
+	
 	function RenderingProperties (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);

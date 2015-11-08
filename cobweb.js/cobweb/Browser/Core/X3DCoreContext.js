@@ -12,6 +12,8 @@ function (BrowserOptions,
           BrowserTimings,
           ContextMenu)
 {
+"use strict";
+	
 	function getContext (canvas)
 	{
 		try

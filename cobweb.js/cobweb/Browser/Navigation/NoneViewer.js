@@ -6,6 +6,8 @@ define ([
 ],
 function ($, X3DViewer, _)
 {
+"use strict";
+	
 	function NoneViewer (executionContext)
 	{
 		X3DViewer .call (this, executionContext .getBrowser (), executionContext);

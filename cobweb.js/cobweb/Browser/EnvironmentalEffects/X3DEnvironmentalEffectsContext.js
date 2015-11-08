@@ -12,6 +12,8 @@ function (ComposedShader,
           vertexShaderText,
           fragmentShaderText)
 {
+"use strict";
+	
 	function X3DEnvironmentalEffectsContext () { }
 
 	X3DEnvironmentalEffectsContext .prototype =

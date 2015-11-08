@@ -2525,7 +2525,6 @@
     <Folder Include="tests\Examples\Compel\anatomy\" />
     <Folder Include="tests\Examples\Compel\jungle\" />
     <Folder Include="tests\Components\Layering\" />
-    <Folder Include="cobweb\Misc\" />
     <Folder Include="standard\Utility\" />
     <Folder Include="tests\Components\Shape\" />
     <Folder Include="tests\Examples\Boxes\" />

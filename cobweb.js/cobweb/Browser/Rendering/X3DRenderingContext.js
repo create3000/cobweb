@@ -32,7 +32,7 @@ function (Fields,
           Matrix4,
           MatrixStack)
 {
-	var MFInt32 = Fields .MFInt32;
+"use strict";
 	
 	function getShader (executionContext, vs, fs)
 	{
@@ -76,7 +76,7 @@ function (Fields,
 	{
 		initialize: function ()
 		{
-			this .addChildren ("viewport", new MFInt32 (0, 0, 100, 100));
+			this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
 
 			// Configure context.
 

@@ -6,6 +6,8 @@ define ([
 function (jquery,
           X3DBaseNode)
 {
+"use strict";
+	
 	function PointingDevice (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);

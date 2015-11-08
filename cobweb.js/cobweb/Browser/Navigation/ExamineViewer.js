@@ -9,6 +9,8 @@ define ([
 ],
 function ($, X3DViewer, Vector3, Rotation4, _)
 {
+"use strict";
+	
 	var
 		MOTION_TIME       = 0.05 * 1000,
 		SPIN_RELEASE_TIME = 0.01 * 1000,

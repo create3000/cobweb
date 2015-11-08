@@ -11,6 +11,8 @@ define ([
 ],
 function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 {
+"use strict";
+	
 	var SCROLL_FACTOR = 0.05;
 
 	function PlaneViewer (executionContext)

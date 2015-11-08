@@ -24,6 +24,8 @@ function ($,
           MergeSort,
           Algorithm)
 {
+"use strict";
+	
 	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
 	function X3DPointingDeviceSensorContext ()

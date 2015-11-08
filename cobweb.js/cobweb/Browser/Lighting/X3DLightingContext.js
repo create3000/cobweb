@@ -4,6 +4,8 @@ define ([
 ],
 function (Viewport)
 {
+"use strict";
+	
 	function X3DLightingContext ()
 	{
 		this .globalLights = [ ]; // Global light array

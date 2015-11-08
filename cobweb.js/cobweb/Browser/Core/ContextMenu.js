@@ -9,6 +9,8 @@ function ($,
           X3DBaseNode,
           _)
 {
+"use strict";
+	
 	function ContextMenu (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);

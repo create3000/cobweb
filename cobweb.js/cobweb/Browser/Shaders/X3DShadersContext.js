@@ -1,6 +1,8 @@
 
 define (function ()
 {
+"use strict";
+
 	function X3DShadersContext () { }
 
 	X3DShadersContext .prototype =

@@ -8,6 +8,8 @@ function ($,
           SFString,
           X3DBaseNode)
 {
+"use strict";
+	
 	$.fn.textWidth = function ()
 	{
 		var html_org = $(this) .html ();

@@ -4,6 +4,8 @@ define ([
 ],
 function (Appearance)
 {
+"use strict";
+
 	function X3DShapeContext ()
 	{
 		this .defaultAppearance = new Appearance (this);

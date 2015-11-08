@@ -50,6 +50,8 @@ function ($,
           World,
           TraverseType)
 {
+"use strict";
+
 	function X3DBrowserContext (xml)
 	{
 		X3DBaseNode                    .call (this, this, this);

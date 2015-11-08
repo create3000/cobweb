@@ -12,6 +12,8 @@ function ($,
           dataStorage,
           _)
 {
+"use strict";
+	
    function f2 (n) { return Math .floor (n * 100) / 100; }
 
 	function BrowserTimings (executionContext)

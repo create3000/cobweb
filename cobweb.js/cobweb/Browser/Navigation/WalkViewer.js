@@ -7,6 +7,8 @@ define ([
 ],
 function (X3DFlyViewer, Vector3, Rotation4, _)
 {
+"use strict";
+	
 	var yAxis = new Vector3 (0, 1, 0);
 	
 	function WalkViewer (executionContext)

@@ -3,6 +3,8 @@ define ([
 ],
 function ()
 {
+"use strict";
+
 	function X3DScriptingContext ()
 	{
 		this .scripts = [ this ];

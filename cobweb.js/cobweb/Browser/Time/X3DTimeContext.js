@@ -4,6 +4,8 @@ define ([
 ],
 function (Vector3)
 {
+"use strict";
+
 	var lastPosition = new Vector3 (0, 0, 0);
 
 	function X3DTimeContext ()

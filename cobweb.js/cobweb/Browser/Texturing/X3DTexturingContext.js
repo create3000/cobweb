@@ -12,6 +12,8 @@ function (TextureProperties,
           Matrix4,
           MatrixStack)
 {
+"use strict";
+
 	function X3DTexturingContext ()
 	{
 		this .textureStages            = 1;

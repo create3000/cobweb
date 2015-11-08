@@ -10,6 +10,8 @@ function (BoxOptions,
           CylinderOptions,
           QuadSphereOptions)
 {
+"use strict";
+	
 	function getOptionNode (name, Type)
 	{
 		if (this [name])

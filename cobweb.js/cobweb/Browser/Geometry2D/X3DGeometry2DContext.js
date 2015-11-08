@@ -4,6 +4,8 @@ define ([
 ],
 function (Rectangle2DOptions)
 {
+"use strict";
+	
 	function getOptionNode (name, Type)
 	{
 		if (this [name])

@@ -4,6 +4,8 @@ define ([
 ],
 function (Viewport)
 {
+"use strict";
+	
 	function X3DLayeringContext ()
 	{
 		this .defaultViewport = new Viewport (this);

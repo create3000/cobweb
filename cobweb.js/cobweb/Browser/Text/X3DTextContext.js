@@ -4,6 +4,8 @@ define ([
 ],
 function (FontStyle)
 {
+"use strict";
+
 	function X3DTextContext ()
 	{
 		this .glyphCache = { }; // [fontName] [primitveQuality] [glyphIndex]

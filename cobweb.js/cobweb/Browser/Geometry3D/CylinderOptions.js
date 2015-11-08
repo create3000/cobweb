@@ -8,33 +8,32 @@ function ($,
           Fields,
           X3DBaseNode)
 {
-	with (Fields)
+"use strict";
+	
+	function CylinderOptions (executionContext)
 	{
-		function CylinderOptions (executionContext)
-		{
-			X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
-				
-			this .addChildren ("uDimension", new SFInt32 (1),
-			                   "vDimension", new SFInt32 (20))
-		}
-
-		CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
-		{
-			constructor: CylinderOptions,
-			getTypeName: function ()
-			{
-				return "CylinderOptions";
-			},
-			getComponentName: function ()
-			{
-				return "Cobweb";
-			},
-			getContainerField: function ()
-			{
-				return "cylinderOptions";
-			},
-		});
-
-		return CylinderOptions;
+		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+			
+		this .addChildren ("uDimension", new Fields .SFInt32 (1),
+		                   "vDimension", new Fields .SFInt32 (20))
 	}
+
+	CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	{
+		constructor: CylinderOptions,
+		getTypeName: function ()
+		{
+			return "CylinderOptions";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "cylinderOptions";
+		},
+	});
+
+	return CylinderOptions;
 });
