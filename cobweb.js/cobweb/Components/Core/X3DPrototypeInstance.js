@@ -91,7 +91,7 @@ function ($,
 								continue;
 
 							// Is set during parse.	
-							if (field .getFieldValue () === true)
+							if (field .getSet () === true)
 								continue;
 
 							// Has IS references.

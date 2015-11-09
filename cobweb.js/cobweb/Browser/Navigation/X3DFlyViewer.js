@@ -57,7 +57,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		this .lineVertices        = new Array (this .lineCount * 4);
 		this .lineArray           = new Float32Array (this .lineVertices);
 
-		this .projectionMatrix      = new Matrix4 ();;
+		this .projectionMatrix      = new Matrix4 ();
 		this .projectionMatrixArray = new Float32Array (this .projectionMatrix);
 		this .modelViewMatrixArray  = new Float32Array (this .projectionMatrix);
 	}
@@ -321,7 +321,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			speedFactor *= dt;
 
 			var
-				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector));
+				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector)),
 				translation = orientation .multVecRot (this .direction .copy () .multiply (speedFactor));
 
 			viewpoint .positionOffset_ = this .getActiveLayer () .constrainTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
@@ -378,7 +378,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var
 				browser  = this .getBrowser (),
 				viewport = browser .getViewport (),
-				width    = viewport [2];
+				width    = viewport [2],
 				height   = viewport [3];
 
 			Camera .ortho (0, width, 0, height, -1, 1, this .projectionMatrix);

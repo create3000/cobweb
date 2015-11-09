@@ -453,9 +453,9 @@ function ($,
 			for (var i = 0; i < arguments .length; ++ i)
 				string += arguments [i];
 
-			//string += "\n";
-
 			console .log (string);
+
+			string += "\n";
 
 			$(".cobweb-console") .append (string);
 		},
@@ -470,7 +470,7 @@ function ($,
 
 	Object .defineProperty (X3DBrowser .prototype, "version",
 	{
-		get: function () { return "1.17"; },
+		get: function () { return "1.18"; },
 		enumerable: true,
 		configurable: false
 	});

@@ -274,7 +274,7 @@ function ($,
 			for (var i = 0; i < viewpoints .length; ++ i)
 			{
 				var
-					viewpoint   = viewpoints [i]
+					viewpoint   = viewpoints [i],
 					description = viewpoint .description_ .getValue ();
 
 				if (description === "")

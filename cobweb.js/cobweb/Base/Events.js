@@ -6,7 +6,7 @@ function ($)
 {
 "use strict";
 
-	var Event =
+	var Events =
 	{
 	   stack: [ ],
 	   create: function (field)
@@ -54,5 +54,5 @@ function ($)
 		},
 	};
 
-	return Event;
+	return Events;
 });

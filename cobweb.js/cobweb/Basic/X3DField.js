@@ -3,12 +3,12 @@ define ([
 	"jquery",
 	"cobweb/Base/X3DChildObject",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/Base/Event",
+	"cobweb/Base/Events",
 ],
 function ($,
 	       X3DChildObject,
 	       X3DConstants,
-	       Event)
+	       Events)
 {
 "use strict";
 
@@ -24,11 +24,11 @@ function ($,
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
-		fieldValue: null,
-		accessType: X3DConstants .initializeOnly,
 		references: { },
 		fieldInterests: { },
 		fieldCallbacks: { },
+		accessType: X3DConstants .initializeOnly,
+		isSet: null,
 		clone: function ()
 		{
 			return this .copy ();
@@ -46,15 +46,6 @@ function ($,
 		{
 			this .value_ = value;
 		},
-		setFieldValue: function (value)
-		{
-			// Boolean indication whether the value is set during parse, or undefined.
-			return this .fieldValue = value;
-		},
-		getFieldValue: function ()
-		{
-			return this .fieldValue;
-		},
 		getValue: function ()
 		{
 			return this .value_;
@@ -67,13 +58,9 @@ function ($,
 		{
 			return this .accessType;
 		},
-		isReadable: function ()
+		isInitializable: function ()
 		{
-			return this .accessType !== X3DConstants .inputOnly;
-		},
-		isWritable: function ()
-		{
-			return this .accessType !== X3DConstants .initializeOnly;
+			return this .accessType & X3DConstants .initializeOnly;
 		},
 		isInput: function ()
 		{
@@ -82,6 +69,23 @@ function ($,
 		isOutput: function ()
 		{
 			return this .accessType & X3DConstants .outputOnly;
+		},
+		isReadable: function ()
+		{
+			return this .accessType !== X3DConstants .inputOnly;
+		},
+		isWritable: function ()
+		{
+			return this .accessType !== X3DConstants .initializeOnly;
+		},
+		setSet: function (value)
+		{
+			// Boolean indication whether the value is set during parse, or undefined.
+			return this .isSet = value;
+		},
+		getSet: function ()
+		{
+			return this .isSet;
 		},
 		hasReferences: function ()
 		{
@@ -191,6 +195,7 @@ function ($,
 			event .sources [this .getId ()] = true;
 
 			this .setTainted (false);
+			this .setSet (true);
 
 			if (event .field !== this)
 				this .set (event .field .getValue ());
@@ -213,11 +218,11 @@ function ($,
 					fieldInterests [key] .addEventObject (this, event);
 				}
 				else
-					fieldInterests [key] .addEventObject (this, Event .copy (event));
+					fieldInterests [key] .addEventObject (this, Events .copy (event));
 			}
 
 			if (first)
-			   Event .push (event);
+			   Events .push (event);
 
 			// Process field callbacks
 

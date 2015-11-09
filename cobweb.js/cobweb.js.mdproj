@@ -1562,7 +1562,6 @@
     <None Include="tests\Examples\ICTS\stage\zoom.gif" />
     <None Include="tests\Examples\ICTS\stage\zoom.wrl" />
     <None Include="tests\Examples\ICTS\stage\zoom.x3d" />
-    <None Include="cobweb\Base\Event.js" />
     <None Include="tests\Examples\ICTS\soccer.x3d" />
     <None Include="tests\Examples\Vattenfall\index.wrl" />
     <None Include="tests\Examples\Vattenfall\index.x3d" />
@@ -2473,6 +2472,7 @@
     <None Include="tests\Examples\VRMLBanner\tonerow3d_16_22.wav" />
     <None Include="tests\Examples\VRMLBanner\vrmlbanner.wrl" />
     <None Include="tests\Examples\VRMLBanner\vrmlbanner.x3d" />
+    <None Include="cobweb\Base\Events.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -299,8 +299,8 @@ function ($,
 
 				if (parent instanceof X3DField)
 				{
-					if (parent .getFieldValue () === false)
-						parent .setFieldValue (true);
+					if (parent .getSet () === false)
+						parent .setSet (true);
 
 					if (parent .getType () === X3DConstants .SFNode)
 						parent .set (node);
@@ -417,7 +417,7 @@ function ($,
 				{
 					this .parser .setInput (value);
 					this .fieldTypes [field .getType ()] .call (this .parser, field);
-					field .setFieldValue (true);
+					field .setSet (true);
 				}
 
 				this .pushParent (field);
@@ -450,10 +450,10 @@ function ($,
 					{
 						this .parser .setInput (value);
 						this .fieldTypes [field .getType ()] .call (this .parser, field);
-						field .setFieldValue (true);
+						field .setSet (true);
 					}
 					else
-						field .setFieldValue (false);
+						field .setSet (false);
 
 					this .pushParent (field);
 					this .statements (element .childNodes);

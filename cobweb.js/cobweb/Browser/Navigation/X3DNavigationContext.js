@@ -59,6 +59,10 @@ function (Fields,
 		{
 			return this .activeLayerNode;
 		},
+		getCurrentViewer: function ()
+		{
+			return this .viewer_ .getValue ();
+		},
 		getCollisions: function ()
 		{
 			return this .collisions;

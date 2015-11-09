@@ -2,14 +2,14 @@
 define ([
 	"jquery",
 	"cobweb/Base/X3DEventObject",
-	"cobweb/Base/Event",
+	"cobweb/Base/Events",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DEventObject,
-          Event,
+          Events,
           X3DFieldDefinition,
           Fields,
           X3DConstants)
@@ -129,7 +129,7 @@ function ($,
 						field1          = this .preDefinedFields [fieldDefinition .name],
 						field2          = copy .getField (fieldDefinition .name);
 						
-					field2 .setFieldValue (field1 .getFieldValue ());
+					field2 .setSet (field1 .getSet ());
 
 					if (field1 .hasReferences ())
 					{
@@ -172,7 +172,7 @@ function ($,
 				                           field1 .getName (),
 				                           field2);
 
-				field2 .setFieldValue (field1 .getFieldValue ());
+				field2 .setSet (field1 .getSet ());
 
 				if (field1 .hasReferences ())
 				{
@@ -327,14 +327,14 @@ function ($,
 		      return;
 
 		   this .isLive () .setValue (true);
-			this .isLive () .processEvent (Event .create (this .isLive ()));
+			this .isLive () .processEvent (Events .create (this .isLive ()));
 		},
 		endUpdate: function ()
 		{
 		   if (this .isLive () .getValue ())
 		   {
 		      this .isLive () .setValue (false);
-				this .isLive () .processEvent (Event .create (this .isLive ()));
+				this .isLive () .processEvent (Events .create (this .isLive ()));
 			}
 		},
 		toString: function ()

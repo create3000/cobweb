@@ -47,6 +47,10 @@ function (jquery,
 					x      = event .pageX - offset .left,
 					y      = browser .getCanvas () .height () - (event .pageY - offset .top);
 
+				browser .getCanvas () .unbind ("mousemove.PointingDevice");
+				$(document) .bind ("mouseup.PointingDevice"   + this .getId (), this .mouseup .bind (this));
+				$(document) .bind ("mousemove.PointingDevice" + this .getId (), this .mousemove .bind (this));
+
 				if (browser .buttonPressEvent (x, y))
 				{
 					event .stopImmediatePropagation (); // Keeps the rest of the handlers from being executed
@@ -70,6 +74,9 @@ function (jquery,
 					offset = browser .getCanvas () .offset (), 
 					x      = event .pageX - offset .left,
 					y      = browser .getCanvas () .height () - (event .pageY - offset .top);
+			
+				$(document) .unbind (".PointingDevice" + this .getId ());
+				browser .getCanvas () .bind ("mousemove.PointingDevice", this .mousemove .bind (this));
 
 				browser .setCursor (this .isOver ? "HAND" : "DEFAULT");
 				browser .finished () .addInterest (this, "onverifymotion", x, y);

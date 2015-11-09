@@ -2,11 +2,11 @@
 define ([
 	"jquery",
 	"cobweb/Base/X3DChildObject",
-	"cobweb/Base/Event",
+	"cobweb/Base/Events",
 ],
 function ($,
 	       X3DChildObject,
-	       Event)
+	       Events)
 {
 "use strict";
 
@@ -35,7 +35,7 @@ function ($,
 
 			field .setTainted (true);
 
-			this .addEventObject (field, Event .create (field));
+			this .addEventObject (field, Events .create (field));
 		},
 		addEventObject: function (field, event)
 		{

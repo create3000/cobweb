@@ -148,6 +148,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 	SFMatrix4d .prototype = $.extend (Object .create (SFMatrix4 .prototype),
 	{
 		constructor: SFMatrix4d,
+		Vector3: SFVec3d,
 		getTypeName: function ()
 		{
 			return "SFMatrix4d";
@@ -176,7 +177,7 @@ function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
 	SFMatrix4f .prototype = $.extend (Object .create (SFMatrix4 .prototype),
 	{
 		constructor: SFMatrix4f,
-		Vector3: SFVec3d,
+		Vector3: SFVec3f,
 		getTypeName: function ()
 		{
 			return "SFMatrix4f";
