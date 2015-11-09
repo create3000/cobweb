@@ -16,48 +16,48 @@ function ($,
           X3DConstants,
           Color3)
 {
-	with (Fields)
+"use strict";
+
+	function Color (executionContext)
 	{
-		function Color (executionContext)
-		{
-			X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .Color);
-		}
-
-		Color .prototype = $.extend (Object .create (X3DColorNode .prototype),
-		{
-			constructor: Color,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "color",    new MFColor ()),
-			]),
-			getTypeName: function ()
-			{
-				return "Color";
-			},
-			getComponentName: function ()
-			{
-				return "Rendering";
-			},
-			getContainerField: function ()
-			{
-				return "color";
-			},
-			isTransparent: function ()
-			{
-				return false;
-			},
-			getColor: function (index)
-			{
-				if (index >= 0 && index < this .color_ .length)
-					return this .color_ [index] .getValue ();
-
-				return new Color3 (1, 1, 1);
-			},
-		});
-
-		return Color;
+		this .addType (X3DConstants .Color);
 	}
+
+	Color .prototype = $.extend (Object .create (X3DColorNode .prototype),
+	{
+		constructor: Color,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "color",    new Fields .MFColor ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Color";
+		},
+		getComponentName: function ()
+		{
+			return "Rendering";
+		},
+		getContainerField: function ()
+		{
+			return "color";
+		},
+		isTransparent: function ()
+		{
+			return false;
+		},
+		getColor: function (index)
+		{
+			if (index >= 0 && index < this .color_ .length)
+				return this .color_ [index] .getValue ();
+
+			return new Color3 (1, 1, 1);
+		},
+	});
+
+	return Color;
 });
+
 

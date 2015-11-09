@@ -16,45 +16,45 @@ function ($,
           X3DGeospatialObject, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function GeoLocation (executionContext)
 	{
-		function GeoLocation (executionContext)
-		{
-			X3DTransformMatrix4DNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformMatrix4DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .GeoLocation);
-		}
-
-		GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),new X3DGeospatialObject (),
-		{
-			constructor: GeoLocation,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",      new MFString ([ "GD", "WE" ])),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords",      new SFVec3d ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",      new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "GeoLocation";
-			},
-			getComponentName: function ()
-			{
-				return "Geospatial";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return GeoLocation;
+		this .addType (X3DConstants .GeoLocation);
 	}
+
+	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),new X3DGeospatialObject (),
+	{
+		constructor: GeoLocation,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",      new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords",      new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoLocation";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoLocation;
 });
+
 

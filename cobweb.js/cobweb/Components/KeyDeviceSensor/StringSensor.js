@@ -14,41 +14,41 @@ function ($,
           X3DKeyDeviceSensorNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function StringSensor (executionContext)
 	{
-		function StringSensor (executionContext)
-		{
-			X3DKeyDeviceSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DKeyDeviceSensorNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .StringSensor);
-		}
-
-		StringSensor .prototype = $.extend (Object .create (X3DKeyDeviceSensorNode .prototype),
-		{
-			constructor: StringSensor,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",         new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "deletionAllowed", new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "enteredText",     new SFString ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "finalText",       new SFString ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",        new SFBool ()),
-			]),
-			getTypeName: function ()
-			{
-				return "StringSensor";
-			},
-			getComponentName: function ()
-			{
-				return "KeyDeviceSensor";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return StringSensor;
+		this .addType (X3DConstants .StringSensor);
 	}
+
+	StringSensor .prototype = $.extend (Object .create (X3DKeyDeviceSensorNode .prototype),
+	{
+		constructor: StringSensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",         new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "deletionAllowed", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "enteredText",     new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "finalText",       new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",        new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "StringSensor";
+		},
+		getComponentName: function ()
+		{
+			return "KeyDeviceSensor";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return StringSensor;
 });
+
 

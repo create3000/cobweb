@@ -14,47 +14,47 @@ function ($,
           X3DComposedGeometryNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function IndexedTriangleStripSet (executionContext)
 	{
-		function IndexedTriangleStripSet (executionContext)
-		{
-			X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .IndexedTriangleStripSet);
-		}
-
-		IndexedTriangleStripSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-		{
-			constructor: IndexedTriangleStripSet,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "index",           new MFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new SFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "IndexedTriangleStripSet";
-			},
-			getComponentName: function ()
-			{
-				return "Rendering";
-			},
-			getContainerField: function ()
-			{
-				return "geometry";
-			},
-		});
-
-		return IndexedTriangleStripSet;
+		this .addType (X3DConstants .IndexedTriangleStripSet);
 	}
+
+	IndexedTriangleStripSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
+	{
+		constructor: IndexedTriangleStripSet,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "index",           new Fields .MFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "IndexedTriangleStripSet";
+		},
+		getComponentName: function ()
+		{
+			return "Rendering";
+		},
+		getContainerField: function ()
+		{
+			return "geometry";
+		},
+	});
+
+	return IndexedTriangleStripSet;
 });
+
 

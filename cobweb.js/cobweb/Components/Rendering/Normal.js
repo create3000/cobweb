@@ -16,44 +16,44 @@ function ($,
           X3DConstants,
           Vector3)
 {
-	with (Fields)
+"use strict";
+
+	function Normal (executionContext)
 	{
-		function Normal (executionContext)
-		{
-			X3DNormalNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNormalNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .Normal);
-		}
-
-		Normal .prototype = $.extend (Object .create (X3DNormalNode .prototype),
-		{
-			constructor: Normal,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "vector",   new MFVec3f ()),
-			]),
-			getTypeName: function ()
-			{
-				return "Normal";
-			},
-			getComponentName: function ()
-			{
-				return "Rendering";
-			},
-			getContainerField: function ()
-			{
-				return "normal";
-			},
-			getVector: function (index)
-			{
-				if (index >= 0 && index < this .vector_ .length)
-					return this .vector_ [index] .getValue ();
-
-				return new Vector3 (0, 0, 0);
-			},
-		});
-
-		return Normal;
+		this .addType (X3DConstants .Normal);
 	}
+
+	Normal .prototype = $.extend (Object .create (X3DNormalNode .prototype),
+	{
+		constructor: Normal,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "vector",   new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Normal";
+		},
+		getComponentName: function ()
+		{
+			return "Rendering";
+		},
+		getContainerField: function ()
+		{
+			return "normal";
+		},
+		getVector: function (index)
+		{
+			if (index >= 0 && index < this .vector_ .length)
+				return this .vector_ [index] .getValue ();
+
+			return new Vector3 (0, 0, 0);
+		},
+	});
+
+	return Normal;
 });
+
 

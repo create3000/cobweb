@@ -8,6 +8,8 @@ function ($,
           X3DParametricGeometryNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DNurbsSurfaceGeometryNode (browser, executionContext)
 	{
 		X3DParametricGeometryNode .call (this, browser, executionContext);
@@ -22,4 +24,5 @@ function ($,
 
 	return X3DNurbsSurfaceGeometryNode;
 });
+
 

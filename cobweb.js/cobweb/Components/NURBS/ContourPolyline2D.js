@@ -14,37 +14,37 @@ function ($,
           X3DNurbsControlCurveNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function ContourPolyline2D (executionContext)
 	{
-		function ContourPolyline2D (executionContext)
-		{
-			X3DNurbsControlCurveNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNurbsControlCurveNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .ContourPolyline2D);
-		}
-
-		ContourPolyline2D .prototype = $.extend (Object .create (X3DNurbsControlCurveNode .prototype),
-		{
-			constructor: ContourPolyline2D,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "controlPoint", new MFVec2d ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ContourPolyline2D";
-			},
-			getComponentName: function ()
-			{
-				return "NURBS";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return ContourPolyline2D;
+		this .addType (X3DConstants .ContourPolyline2D);
 	}
+
+	ContourPolyline2D .prototype = $.extend (Object .create (X3DNurbsControlCurveNode .prototype),
+	{
+		constructor: ContourPolyline2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "controlPoint", new Fields .MFVec2d ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ContourPolyline2D";
+		},
+		getComponentName: function ()
+		{
+			return "NURBS";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return ContourPolyline2D;
 });
+
 

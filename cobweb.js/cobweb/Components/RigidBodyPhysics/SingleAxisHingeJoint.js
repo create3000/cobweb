@@ -14,49 +14,49 @@ function ($,
           X3DRigidJointNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function SingleAxisHingeJoint (executionContext)
 	{
-		function SingleAxisHingeJoint (executionContext)
-		{
-			X3DRigidJointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DRigidJointNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .SingleAxisHingeJoint);
-		}
-
-		SingleAxisHingeJoint .prototype = $.extend (Object .create (X3DRigidJointNode .prototype),
-		{
-			constructor: SingleAxisHingeJoint,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",            new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "body1",               new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "body2",               new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "forceOutput",         new MFString ("NONE")),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "anchorPoint",         new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "axis",                new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "maxAngle",            new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "minAngle",            new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "stopBounce",          new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "stopErrorCorrection", new SFFloat (0.8)),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "angle",               new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "angleRate",           new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "body1AnchorPoint",    new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "body2AnchorPoint",    new SFVec3f ()),
-			]),
-			getTypeName: function ()
-			{
-				return "SingleAxisHingeJoint";
-			},
-			getComponentName: function ()
-			{
-				return "RigidBodyPhysics";
-			},
-			getContainerField: function ()
-			{
-				return "joints";
-			},
-		});
-
-		return SingleAxisHingeJoint;
+		this .addType (X3DConstants .SingleAxisHingeJoint);
 	}
+
+	SingleAxisHingeJoint .prototype = $.extend (Object .create (X3DRigidJointNode .prototype),
+	{
+		constructor: SingleAxisHingeJoint,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",            new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "body1",               new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "body2",               new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "forceOutput",         new Fields .MFString ("NONE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "anchorPoint",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "axis",                new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "maxAngle",            new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "minAngle",            new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "stopBounce",          new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "stopErrorCorrection", new Fields .SFFloat (0.8)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "angle",               new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "angleRate",           new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "body1AnchorPoint",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "body2AnchorPoint",    new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SingleAxisHingeJoint";
+		},
+		getComponentName: function ()
+		{
+			return "RigidBodyPhysics";
+		},
+		getContainerField: function ()
+		{
+			return "joints";
+		},
+	});
+
+	return SingleAxisHingeJoint;
 });
+
 

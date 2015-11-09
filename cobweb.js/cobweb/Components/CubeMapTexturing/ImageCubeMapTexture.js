@@ -16,39 +16,39 @@ function ($,
           X3DUrlObject, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function ImageCubeMapTexture (executionContext)
 	{
-		function ImageCubeMapTexture (executionContext)
-		{
-			X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .ImageCubeMapTexture);
-		}
-
-		ImageCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),new X3DUrlObject (),
-		{
-			constructor: ImageCubeMapTexture,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "url",               new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new SFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ImageCubeMapTexture";
-			},
-			getComponentName: function ()
-			{
-				return "CubeMapTexturing";
-			},
-			getContainerField: function ()
-			{
-				return "texture";
-			},
-		});
-
-		return ImageCubeMapTexture;
+		this .addType (X3DConstants .ImageCubeMapTexture);
 	}
+
+	ImageCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),new X3DUrlObject (),
+	{
+		constructor: ImageCubeMapTexture,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",               new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ImageCubeMapTexture";
+		},
+		getComponentName: function ()
+		{
+			return "CubeMapTexturing";
+		},
+		getContainerField: function ()
+		{
+			return "texture";
+		},
+	});
+
+	return ImageCubeMapTexture;
 });
+
 

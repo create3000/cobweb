@@ -40,101 +40,295 @@ function ($,
           Loader,
           X3DConstants)
 {
-	with (Fields)
+	var
+		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:((?:.|[\r\n])*)$/,
+		fieldDefinitions = [
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
+		];
+
+	function Script (executionContext)
 	{
-		var
-			ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:((?:.|[\r\n])*)$/,
-			fieldDefinitions = [
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new SFBool ()),
-			];
-	
-		function Script (executionContext)
+		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
+
+		X3DScriptNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .Script);
+	}
+
+	Script .prototype = $.extend (Object .create (X3DScriptNode .prototype),
+	{
+		constructor: Script,
+		getTypeName: function ()
 		{
-			this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
-			X3DScriptNode .call (this, executionContext .getBrowser (), executionContext);
-
-			this .addType (X3DConstants .Script);
-		}
-
-		Script .prototype = $.extend (Object .create (X3DScriptNode .prototype),
+			return "Script";
+		},
+		getComponentName: function ()
 		{
-			constructor: Script,
-			getTypeName: function ()
-			{
-				return "Script";
-			},
-			getComponentName: function ()
-			{
-				return "Scripting";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-			initialize: function ()
-			{
-				X3DScriptNode .prototype .initialize .call (this);
+			return "Scripting";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DScriptNode .prototype .initialize .call (this);
 
-				this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest (this, "set_url__");
 
-				this .requestAsyncLoad ();
-			},
-			getExtendedEventHandling: function ()
-			{
-				return false;
-			},
-			hasUserDefinedFields: function ()
-			{
-				return true;
-			},
-			getCDATA: function ()
-			{
-				return this .url_;
-			},
-			requestAsyncLoad: function ()
-			{
-				if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
-					return;
+			this .requestAsyncLoad ();
+		},
+		getExtendedEventHandling: function ()
+		{
+			return false;
+		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
+		getCDATA: function ()
+		{
+			return this .url_;
+		},
+		requestAsyncLoad: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
 
-				//this .getExecutionContext () .getScene () .addLoadCount ();
+			//this .getExecutionContext () .getScene () .addLoadCount ();
 
-				for (var i = 0, length = this .url_ .length; i < length; ++ i)
+			for (var i = 0, length = this .url_ .length; i < length; ++ i)
+			{
+				var
+					URL    = this .url_ [i],
+					result = ECMAScript .exec (URL);
+
+				try
 				{
-					var
-						URL    = this .url_ [i],
-						result = ECMAScript .exec (URL);
-
-					try
+					if (result)
 					{
-						if (result)
+						this .initialize__ (result [1]);
+						break;
+					}
+				}
+				catch (error)
+				{
+					console .error (error .message);
+				}
+			}
+
+			//this .getExecutionContext () .getScene () .removeLoadCount ();
+		},
+		set_url__: function ()
+		{
+			this .setLoadState (X3DConstants .NOT_STATED_STATE);
+
+			this .requestAsyncLoad ();
+		},
+		getContext: function (text)
+		{
+			var
+				callbacks         = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"],
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
+			{
+				var field = userDefinedFields [name];
+
+				switch (field .getAccessType ())
+				{
+					case X3DConstants .inputOnly:
+						callbacks .push (field .getName ());
+						break;
+					case X3DConstants .inputOutput:
+						callbacks .push ("set_" + field .getName ());
+						break;
+				}
+			}
+
+			text += "\n;var " + callbacks .join (",") + ";";
+			text += "\n[" + callbacks .join (",") + "];"
+
+			var
+				global  = this .getGlobal (),
+				result  = evaluate (global, text),
+				context = { };
+
+			for (var i = 0; i < callbacks .length; ++ i)
+			{
+				if (typeof result [i] === "function")
+					context [callbacks [i]] = result [i];
+				else
+					context [callbacks [i]] = null;
+			}
+
+			return context;
+		},
+		getGlobal: function ()
+		{
+			function SFNode (vrmlSyntax)
+			{
+				if (typeof vrmlSyntax === "string")
+				{
+					var scene = browser .createX3DFromString (vrmlSyntax);
+
+					if (scene .getRootNodes () .length && scene .getRootNodes () [0])
+						return Fields .SFNode .call (this, scene .getRootNodes () [0] .getValue ());
+				}
+
+				return Fields .SFNode .call (this);
+			}
+
+			SFNode .prototype = Fields .SFNode .prototype;
+
+			var browser = this .getBrowser ();
+
+			var global =
+			{
+				NULL:  { value: null },
+				FALSE: { value: false },
+				TRUE:  { value: true },
+				print: { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
+				trace: { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
+
+				Browser: { value: this .getBrowser () },
+
+				X3DConstants:                { value: X3DConstants },
+				X3DBrowser:                  { value: X3DBrowser },
+				X3DExecutionContext:         { value: X3DExecutionContext },
+				X3DScene:                    { value: X3DScene },
+				ExternProtoDeclarationArray: { value: ExternProtoDeclarationArray },
+				ProtoDeclarationArray:       { value: ProtoDeclarationArray },
+				X3DExternProtoDeclaration:   { value: X3DExternProtoDeclaration },
+				X3DProtoDeclaration:         { value: X3DProtoDeclaration },
+				RouteArray:                  { value: RouteArray },
+				X3DRoute:                    { value: X3DRoute },
+
+				X3DFieldDefinition:   { value: X3DFieldDefinition },
+				FieldDefinitionArray: { value: FieldDefinitionArray },
+
+				X3DField:      { value: X3DField },
+				X3DArrayField: { value: X3DArrayField },
+
+				SFColor:       { value: Fields .SFColor },
+				SFColorRGBA:   { value: Fields .SFColorRGBA },
+				SFImage:       { value: Fields .SFImage },
+				SFMatrix3d:    { value: Fields .SFMatrix3d },
+				SFMatrix3f:    { value: Fields .SFMatrix3f },
+				SFMatrix4d:    { value: Fields .SFMatrix4d },
+				SFMatrix4f:    { value: Fields .SFMatrix4f },
+				SFNode:        { value: Fields .SFNode },
+				SFRotation:    { value: Fields .SFRotation },
+				SFVec3d:       { value: Fields .SFVec2d },
+				SFVec2f:       { value: Fields .SFVec2f },
+				SFVec2d:       { value: Fields .SFVec3d },
+				SFVec3f:       { value: Fields .SFVec3f },
+				SFVec4d:       { value: Fields .SFVec4d },
+				SFVec4f:       { value: Fields .SFVec4f },
+				VrmlMatrix:    { value: Fields .VrmlMatrix },
+
+				MFBool:        { value: Fields .MFBool },
+				MFColor:       { value: Fields .MFColor },
+				MFColorRGBA:   { value: Fields .MFColorRGBA },
+				MFDouble:      { value: Fields .MFDouble },
+				MFFloat:       { value: Fields .MFFloat },
+				MFImage:       { value: Fields .MFImage },
+				MFInt32:       { value: Fields .MFInt32 },
+				MFMatrix3d:    { value: Fields .MFMatrix3d },
+				MFMatrix3f:    { value: Fields .MFMatrix3f },
+				MFMatrix4d:    { value: Fields .MFMatrix4d },
+				MFMatrix4f:    { value: Fields .MFMatrix4f },
+				MFNode:        { value: Fields .MFNode },
+				MFRotation:    { value: Fields .MFRotation },
+				MFString:      { value: Fields .MFString },
+				MFTime:        { value: Fields .MFTime },
+				MFVec2d:       { value: Fields .MFVec2d },
+				MFVec2f:       { value: Fields .MFVec2f },
+				MFVec3d:       { value: Fields .MFVec3d },
+				MFVec3f:       { value: Fields .MFVec3f },
+				MFVec4d:       { value: Fields .MFVec4d },
+				MFVec4f:       { value: Fields .MFVec4f },
+			};
+
+			var userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
+			{
+				var field = userDefinedFields [name];
+
+				if (field .getAccessType () === X3DConstants .inputOnly)
+					continue;
+
+				if (! (name in global))
+				{
+					global [name] =
+					{
+						get: field .valueOf .bind (field),
+						set: field .setValue .bind (field),
+					};
+				}
+
+				if (field .getAccessType () === X3DConstants .inputOutput)
+				{
+					global [name + "_changed"] =
+					{
+						get: field .valueOf .bind (field),
+						set: field .setValue .bind (field),
+					};
+				}
+			}
+
+			return Object .create (Object .prototype, global);
+		},
+		set_live__: function ()
+		{
+			var userDefinedFields = this .getUserDefinedFields ();
+
+			if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
+			{
+				if ($.isFunction (this .context .prepareEvents))
+					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
+
+				if ($.isFunction (this .context .eventsProcessed))
+					this .addInterest (this, "eventsProcessed__");
+
+				for (var name in userDefinedFields)
+				{
+					var field = userDefinedFields [name];
+					
+					switch (field .getAccessType ())
+					{
+						case X3DConstants .inputOnly:
 						{
-							this .initialize__ (result [1]);
+							var callback = this .context [field .getName ()];
+
+							if ($.isFunction (callback))
+								field .addInterest (this, "set_field__", callback);
+
+							break;
+						}
+						case X3DConstants .inputOutput:
+						{
+							var callback = this .context ["set_" + field .getName ()];
+
+							if ($.isFunction (callback))
+								field .addInterest (this, "set_field__", callback);
+
 							break;
 						}
 					}
-					catch (error)
-					{
-						console .error (error .message);
-					}
 				}
-
-				//this .getExecutionContext () .getScene () .removeLoadCount ();
-			},
-			set_url__: function ()
+			}
+			else
 			{
-				this .setLoadState (X3DConstants .NOT_STATED_STATE);
+				if (this .context .prepareEvents)
+					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents__");
 
-				this .requestAsyncLoad ();
-			},
-			getContext: function (text)
-			{
-				var
-					callbacks         = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"],
-					userDefinedFields = this .getUserDefinedFields ();
+				if (this .context .eventsProcessed)
+					this .removeInterest (this, "eventsProcessed__");
 
 				for (var name in userDefinedFields)
 				{
@@ -143,303 +337,106 @@ function ($,
 					switch (field .getAccessType ())
 					{
 						case X3DConstants .inputOnly:
-							callbacks .push (field .getName ());
-							break;
 						case X3DConstants .inputOutput:
-							callbacks .push ("set_" + field .getName ());
+							field .removeInterest (this, "set_field__");
 							break;
 					}
 				}
+			}
+		},
+		initialize__: function (text)
+		{
+			this .context = this .getContext (text);
 
-				text += "\n;var " + callbacks .join (",") + ";";
-				text += "\n[" + callbacks .join (",") + "];"
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
 
-				var
-					global  = this .getGlobal (),
-					result  = evaluate (global, text),
-					context = { };
+			this .set_live__ ();
 
-				for (var i = 0; i < callbacks .length; ++ i)
-				{
-					if (typeof result [i] === "function")
-						context [callbacks [i]] = result [i];
-					else
-						context [callbacks [i]] = null;
-				}
-
-				return context;
-			},
-			getGlobal: function ()
-			{
-				var browser = this .getBrowser ();
-
-				function SFNode (vrmlSyntax)
-				{
-					if (typeof vrmlSyntax === "string")
-					{
-						var scene = browser .createX3DFromString (vrmlSyntax);
-
-						if (scene .getRootNodes () .length && scene .getRootNodes () [0])
-							return Fields .SFNode .call (this, scene .getRootNodes () [0] .getValue ());
-					}
-
-					return Fields .SFNode .call (this);
-				}
-
-				SFNode .prototype = Fields .SFNode .prototype;
-
-				var global =
-				{
-					NULL:  { value: null },
-					FALSE: { value: false },
-					TRUE:  { value: true },
-					print: { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
-					trace: { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
-
-					Browser: { value: this .getBrowser () },
-
-					X3DConstants:                { value: X3DConstants },
-					X3DBrowser:                  { value: X3DBrowser },
-					X3DExecutionContext:         { value: X3DExecutionContext },
-					X3DScene:                    { value: X3DScene },
-					ExternProtoDeclarationArray: { value: ExternProtoDeclarationArray },
-					ProtoDeclarationArray:       { value: ProtoDeclarationArray },
-					X3DExternProtoDeclaration:   { value: X3DExternProtoDeclaration },
-					X3DProtoDeclaration:         { value: X3DProtoDeclaration },
-					RouteArray:                  { value: RouteArray },
-					X3DRoute:                    { value: X3DRoute },
-
-					X3DFieldDefinition:   { value: X3DFieldDefinition },
-					FieldDefinitionArray: { value: FieldDefinitionArray },
-
-					X3DField:      { value: X3DField },
-					X3DArrayField: { value: X3DArrayField },
-
-					SFColor:       { value: SFColor },
-					SFColorRGBA:   { value: SFColorRGBA },
-					SFImage:       { value: SFImage },
-					SFMatrix3d:    { value: SFMatrix3d },
-					SFMatrix3f:    { value: SFMatrix3f },
-					SFMatrix4d:    { value: SFMatrix4d },
-					SFMatrix4f:    { value: SFMatrix4f },
-					SFNode:        { value: SFNode },
-					SFRotation:    { value: SFRotation },
-					SFVec3d:       { value: SFVec2d },
-					SFVec2f:       { value: SFVec2f },
-					SFVec2d:       { value: SFVec3d },
-					SFVec3f:       { value: SFVec3f },
-					SFVec4d:       { value: SFVec4d },
-					SFVec4f:       { value: SFVec4f },
-					VrmlMatrix:    { value: VrmlMatrix },
-
-					MFBool:        { value: MFBool },
-					MFColor:       { value: MFColor },
-					MFColorRGBA:   { value: MFColorRGBA },
-					MFDouble:      { value: MFDouble },
-					MFFloat:       { value: MFFloat },
-					MFImage:       { value: MFImage },
-					MFInt32:       { value: MFInt32 },
-					MFMatrix3d:    { value: MFMatrix3d },
-					MFMatrix3f:    { value: MFMatrix3f },
-					MFMatrix4d:    { value: MFMatrix4d },
-					MFMatrix4f:    { value: MFMatrix4f },
-					MFNode:        { value: MFNode },
-					MFRotation:    { value: MFRotation },
-					MFString:      { value: MFString },
-					MFTime:        { value: MFTime },
-					MFVec2d:       { value: MFVec2d },
-					MFVec2f:       { value: MFVec2f },
-					MFVec3d:       { value: MFVec3d },
-					MFVec3f:       { value: MFVec3f },
-					MFVec4d:       { value: MFVec4d },
-					MFVec4f:       { value: MFVec4f },
-				};
-
-				var userDefinedFields = this .getUserDefinedFields ();
-
-				for (var name in userDefinedFields)
-				{
-					var field = userDefinedFields [name];
-
-					if (field .getAccessType () === X3DConstants .inputOnly)
-						continue;
-
-					if (! (name in global))
-					{
-						global [name] =
-						{
-							get: field .valueOf .bind (field),
-							set: field .setValue .bind (field),
-						};
-					}
-
-					if (field .getAccessType () === X3DConstants .inputOutput)
-					{
-						global [name + "_changed"] =
-						{
-							get: field .valueOf .bind (field),
-							set: field .setValue .bind (field),
-						};
-					}
-				}
-
-				return Object .create (Object .prototype, global);
-			},
-			set_live__: function ()
-			{
-				var userDefinedFields = this .getUserDefinedFields ();
-
-				if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
-				{
-					if ($.isFunction (this .context .prepareEvents))
-						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
-
-					if ($.isFunction (this .context .eventsProcessed))
-						this .addInterest (this, "eventsProcessed__");
-
-					for (var name in userDefinedFields)
-					{
-						var field = userDefinedFields [name];
-						
-						switch (field .getAccessType ())
-						{
-							case X3DConstants .inputOnly:
-							{
-								var callback = this .context [field .getName ()];
-	
-								if ($.isFunction (callback))
-									field .addInterest (this, "set_field__", callback);
-
-								break;
-							}
-							case X3DConstants .inputOutput:
-							{
-								var callback = this .context ["set_" + field .getName ()];
-	
-								if ($.isFunction (callback))
-									field .addInterest (this, "set_field__", callback);
-
-								break;
-							}
-						}
-					}
-				}
-				else
-				{
-					if (this .context .prepareEvents)
-						this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents__");
-
-					if (this .context .eventsProcessed)
-						this .removeInterest (this, "eventsProcessed__");
-
-					for (var name in userDefinedFields)
-					{
-						var field = userDefinedFields [name];
-
-						switch (field .getAccessType ())
-						{
-							case X3DConstants .inputOnly:
-							case X3DConstants .inputOutput:
-								field .removeInterest (this, "set_field__");
-								break;
-						}
-					}
-				}
-			},
-			initialize__: function (text)
-			{
-				this .context = this .getContext (text);
-
-				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-				this .isLive () .addInterest (this, "set_live__");
-
-				this .set_live__ ();
-
-				if (this .context .initialize)
-				{
-					this .getBrowser () .getScriptStack () .push (this);
-
-					try
-					{
-						this .context .initialize ();
-					}
-					catch (error)
-					{
-						this .setError ("initialize", error);
-					}
-
-					this .getBrowser () .getScriptStack () .pop ();
-				}
-			},
-			prepareEvents__: function ()
+			if (this .context .initialize)
 			{
 				this .getBrowser () .getScriptStack () .push (this);
 
 				try
 				{
-					this .context .prepareEvents ();
+					this .context .initialize ();
 				}
 				catch (error)
 				{
-					this .setError ("prepareEvents", error);
+					this .setError ("initialize", error);
 				}
 
 				this .getBrowser () .getScriptStack () .pop ();
-			},
-			set_field__: function (field, callback)
+			}
+		},
+		prepareEvents__: function ()
+		{
+			this .getBrowser () .getScriptStack () .push (this);
+
+			try
 			{
-				field .setTainted (true);
-				this .getBrowser () .getScriptStack () .push (this);
-
-				try
-				{
-					callback (field .valueOf (), this .getBrowser () .getCurrentTime ());
-				}
-				catch (error)
-				{
-					this .setError (field .getName (), error);
-				}
-
-				this .getBrowser () .getScriptStack () .pop ();
-				field .setTainted (false);
-			},
-			eventsProcessed__: function ()
+				this .context .prepareEvents ();
+			}
+			catch (error)
 			{
-				this .getBrowser () .getScriptStack () .push (this);
+				this .setError ("prepareEvents", error);
+			}
 
-				try
-				{
-					this .context .eventsProcessed ();
-				}
-				catch (error)
-				{
-					this .setError ("eventsProcessed", error);
-				}
+			this .getBrowser () .getScriptStack () .pop ();
+		},
+		set_field__: function (field, callback)
+		{
+			field .setTainted (true);
+			this .getBrowser () .getScriptStack () .push (this);
 
-				this .getBrowser () .getScriptStack () .pop ();
-			},
-			shutdown__: function ()
+			try
 			{
-				this .getBrowser () .getScriptStack () .push (this);
-
-				try
-				{
-					this .context .shutdown ();
-				}
-				catch (error)
-				{
-					this .setError ("shutdown", error);
-				}
-
-				this .getBrowser () .getScriptStack () .pop ();
-			},
-			setError: function (callback, error)
+				callback (field .valueOf (), this .getBrowser () .getCurrentTime ());
+			}
+			catch (error)
 			{
-				console .error ("JavaScript Error from '" + callback + "': ", error);
-			},
-		});
+				this .setError (field .getName (), error);
+			}
 
-		return Script;
-	}
+			this .getBrowser () .getScriptStack () .pop ();
+			field .setTainted (false);
+		},
+		eventsProcessed__: function ()
+		{
+			this .getBrowser () .getScriptStack () .push (this);
+
+			try
+			{
+				this .context .eventsProcessed ();
+			}
+			catch (error)
+			{
+				this .setError ("eventsProcessed", error);
+			}
+
+			this .getBrowser () .getScriptStack () .pop ();
+		},
+		shutdown__: function ()
+		{
+			this .getBrowser () .getScriptStack () .push (this);
+
+			try
+			{
+				this .context .shutdown ();
+			}
+			catch (error)
+			{
+				this .setError ("shutdown", error);
+			}
+
+			this .getBrowser () .getScriptStack () .pop ();
+		},
+		setError: function (callback, error)
+		{
+			console .error ("JavaScript Error from '" + callback + "': ", error);
+		},
+	});
+
+	return Script;
 });
 

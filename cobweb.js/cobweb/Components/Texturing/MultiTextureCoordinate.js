@@ -14,37 +14,37 @@ function ($,
           X3DTextureCoordinateNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function MultiTextureCoordinate (executionContext)
 	{
-		function MultiTextureCoordinate (executionContext)
-		{
-			X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .MultiTextureCoordinate);
-		}
-
-		MultiTextureCoordinate .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
-		{
-			constructor: MultiTextureCoordinate,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "texCoord", new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "MultiTextureCoordinate";
-			},
-			getComponentName: function ()
-			{
-				return "Texturing";
-			},
-			getContainerField: function ()
-			{
-				return "texCoord";
-			},
-		});
-
-		return MultiTextureCoordinate;
+		this .addType (X3DConstants .MultiTextureCoordinate);
 	}
+
+	MultiTextureCoordinate .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
+	{
+		constructor: MultiTextureCoordinate,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "texCoord", new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "MultiTextureCoordinate";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing";
+		},
+		getContainerField: function ()
+		{
+			return "texCoord";
+		},
+	});
+
+	return MultiTextureCoordinate;
 });
+
 

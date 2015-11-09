@@ -14,47 +14,47 @@ function ($,
           X3DChildNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function NurbsSurfaceInterpolator (executionContext)
 	{
-		function NurbsSurfaceInterpolator (executionContext)
-		{
-			X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .NurbsSurfaceInterpolator);
-		}
-
-		NurbsSurfaceInterpolator .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		{
-			constructor: NurbsSurfaceInterpolator,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "set_fraction",     new SFVec2f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "controlPoint",     new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "weight",           new MFDouble ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "position_changed", new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "normal_changed",   new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "uDimension",       new SFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "uKnot",            new MFDouble ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "uOrder",           new SFInt32 (3)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "vDimension",       new SFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "vKnot",            new MFDouble ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "vOrder",           new SFInt32 (3)),
-			]),
-			getTypeName: function ()
-			{
-				return "NurbsSurfaceInterpolator";
-			},
-			getComponentName: function ()
-			{
-				return "NURBS";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return NurbsSurfaceInterpolator;
+		this .addType (X3DConstants .NurbsSurfaceInterpolator);
 	}
+
+	NurbsSurfaceInterpolator .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: NurbsSurfaceInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_fraction",     new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "controlPoint",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "weight",           new Fields .MFDouble ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "position_changed", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "normal_changed",   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "uDimension",       new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "uKnot",            new Fields .MFDouble ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "uOrder",           new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "vDimension",       new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "vKnot",            new Fields .MFDouble ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "vOrder",           new Fields .SFInt32 (3)),
+		]),
+		getTypeName: function ()
+		{
+			return "NurbsSurfaceInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "NURBS";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return NurbsSurfaceInterpolator;
 });
+
 

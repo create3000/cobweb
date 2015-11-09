@@ -14,39 +14,39 @@ function ($,
           X3DTriggerNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function IntegerTrigger (executionContext)
 	{
-		function IntegerTrigger (executionContext)
-		{
-			X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .IntegerTrigger);
-		}
-
-		IntegerTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
-		{
-			constructor: IntegerTrigger,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean",  new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "integerKey",   new SFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerValue", new SFInt32 ()),
-			]),
-			getTypeName: function ()
-			{
-				return "IntegerTrigger";
-			},
-			getComponentName: function ()
-			{
-				return "EventUtilities";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return IntegerTrigger;
+		this .addType (X3DConstants .IntegerTrigger);
 	}
+
+	IntegerTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	{
+		constructor: IntegerTrigger,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "integerKey",   new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerValue", new Fields .SFInt32 ()),
+		]),
+		getTypeName: function ()
+		{
+			return "IntegerTrigger";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return IntegerTrigger;
 });
+
 

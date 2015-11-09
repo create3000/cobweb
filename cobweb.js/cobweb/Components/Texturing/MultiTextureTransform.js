@@ -14,37 +14,37 @@ function ($,
           X3DTextureTransformNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function MultiTextureTransform (executionContext)
 	{
-		function MultiTextureTransform (executionContext)
-		{
-			X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .MultiTextureTransform);
-		}
-
-		MultiTextureTransform .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
-		{
-			constructor: MultiTextureTransform,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "textureTransform", new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "MultiTextureTransform";
-			},
-			getComponentName: function ()
-			{
-				return "Texturing";
-			},
-			getContainerField: function ()
-			{
-				return "textureTransform";
-			},
-		});
-
-		return MultiTextureTransform;
+		this .addType (X3DConstants .MultiTextureTransform);
 	}
+
+	MultiTextureTransform .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
+	{
+		constructor: MultiTextureTransform,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "textureTransform", new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "MultiTextureTransform";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing";
+		},
+		getContainerField: function ()
+		{
+			return "textureTransform";
+		},
+	});
+
+	return MultiTextureTransform;
 });
+
 

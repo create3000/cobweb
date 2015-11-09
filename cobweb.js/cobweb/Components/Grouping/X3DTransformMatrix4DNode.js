@@ -14,6 +14,20 @@ function ($,
           Rotation4,
           Matrix4)
 {
+"use strict";
+
+	function traverse (type)
+	{
+		var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+
+		modelViewMatrix .push ();
+		modelViewMatrix .multLeft (this .matrix);
+		
+		X3DGroupingNode .prototype .traverse .call (this, type);
+
+		modelViewMatrix .pop ();
+	}
+
 	function X3DTransformMatrix4DNode (browser, executionContext)
 	{
 		X3DGroupingNode .call (this, browser, executionContext);
@@ -50,18 +64,7 @@ function ($,
 		},
 	});
 
-	function traverse (type)
-	{
-		var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-
-		modelViewMatrix .push ();
-		modelViewMatrix .multLeft (this .matrix);
-		
-		X3DGroupingNode .prototype .traverse .call (this, type);
-
-		modelViewMatrix .pop ();
-	}
-
 	return X3DTransformMatrix4DNode;
 });
+
 

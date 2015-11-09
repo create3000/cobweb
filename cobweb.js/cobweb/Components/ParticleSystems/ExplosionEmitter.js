@@ -14,41 +14,41 @@ function ($,
           X3DParticleEmitterNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function ExplosionEmitter (executionContext)
 	{
-		function ExplosionEmitter (executionContext)
-		{
-			X3DParticleEmitterNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DParticleEmitterNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .ExplosionEmitter);
-		}
-
-		ExplosionEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
-		{
-			constructor: ExplosionEmitter,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new SFFloat (0.25)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new SFFloat ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ExplosionEmitter";
-			},
-			getComponentName: function ()
-			{
-				return "ParticleSystems";
-			},
-			getContainerField: function ()
-			{
-				return "emitter";
-			},
-		});
-
-		return ExplosionEmitter;
+		this .addType (X3DConstants .ExplosionEmitter);
 	}
+
+	ExplosionEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: ExplosionEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ExplosionEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+	});
+
+	return ExplosionEmitter;
 });
+
 

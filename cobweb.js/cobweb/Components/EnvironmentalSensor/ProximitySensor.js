@@ -24,220 +24,220 @@ function ($,
           Matrix4,
           Box3)
 {
-	with (Fields)
+"use strict";
+
+	var infinity = new Vector3 (-1, -1, -1);
+	
+	function ProximitySensor (executionContext)
 	{
-		var infinity = new Vector3 (-1, -1, -1);
-	
-		function ProximitySensor (executionContext)
+		X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .ProximitySensor);
+
+		this .viewpoint              = null;
+		this .modelViewMatrix        = new Matrix4 ();
+		this .invModelViewMatrix     = new Matrix4 ();
+		this .centerOfRotationMatrix = new Matrix4 ();
+		this .position               = new Vector3 ();
+		this .orientation            = new Rotation4 ();
+		this .centerOfRotation       = new Vector3 ();
+		this .viewer                 = new Vector3 ();
+		this .inside                 = false;
+	}
+
+	ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+	{
+		constructor: ProximitySensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",                 new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",                  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",                     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "center",                   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",                new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",                 new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",                 new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed",      new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "centerOfRotation_changed", new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
 		{
-			X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
-
-			this .addType (X3DConstants .ProximitySensor);
-
-			this .viewpoint              = null;
-			this .modelViewMatrix        = new Matrix4 ();
-			this .invModelViewMatrix     = new Matrix4 ();
-			this .centerOfRotationMatrix = new Matrix4 ();
-			this .position               = new Vector3 ();
-			this .orientation            = new Rotation4 ();
-			this .centerOfRotation       = new Vector3 ();
-			this .viewer                 = new Vector3 ();
-			this .inside                 = false;
-		}
-
-		ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+			return "ProximitySensor";
+		},
+		getComponentName: function ()
 		{
-			constructor: ProximitySensor,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",                 new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",                  new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "size",                     new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "center",                   new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",                new SFTime ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",                 new SFTime ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",                 new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",         new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed",      new SFRotation ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "centerOfRotation_changed", new SFVec3f ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ProximitySensor";
-			},
-			getComponentName: function ()
-			{
-				return "EnvironmentalSensor";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-			initialize: function ()
-			{
-				X3DEnvironmentalSensorNode .prototype .initialize .call (this);
-				
-				this .enabled_ .addInterest (this, "set_enabled___");
-				this .size_    .addInterest (this, "set_extents__");
-				this .center_  .addInterest (this, "set_extents__");
-	
-				this .min = new Vector3 (0, 0, 0);
-				this .max = new Vector3 (0, 0, 0);
-				
-				this .set_enabled___ ();
-				this .set_extents__ ();
-			},
-			set_enabled___: function ()
-			{
-				this .setCameraObject (this .enabled_ .getValue ());
-				
-				if (this .enabled_ .getValue ())
-					this .traverse = traverse;
-				else
-					delete this .traverse;
-			},
-			set_extents__: function ()
-			{
-				var
-					s  = this .size_ .getValue (),
-					c  = this .center_ .getValue (),
-					sx = s .x / 2,
-					sy = s .y / 2,
-					sz = s .z / 2,
-					cx = c .x,
-					cy = c .y,
-					cz = c .z;
-
-				this .min .set (cx - sx, cy - sy, cz - sz);
-				this .max .set (cx + sx, cy + sy, cz + sz);
-			},
-			update: function ()
-			{
-				try
-				{
-					if (this .inside && this .getTraversed ())
-					{
-					   var
-					      modelViewMatrix        = this .modelViewMatrix,
-					      centerOfRotationMatrix = this .centerOfRotationMatrix;
-
-						centerOfRotationMatrix .assign (this .viewpoint .getTransformationMatrix ());
-						centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
-						centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
-
-						modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
-						modelViewMatrix .get (null, this .orientation);
-						modelViewMatrix .inverse ();
-
-						this .position .set (modelViewMatrix [12],
-						                     modelViewMatrix [13],
-						                     modelViewMatrix [14]);
-
-						this .orientation .inverse ();
-
-						this .centerOfRotation .set (centerOfRotationMatrix [12],
-						                             centerOfRotationMatrix [13],
-						                             centerOfRotationMatrix [14]);
-
-						if (this .isActive_ .getValue ())
-						{
-							if (! this .position_changed_ .getValue () .equals (this .position))
-								this .position_changed_ = this .position;
-
-							if (! this .orientation_changed_ .getValue () .equals (this .orientation))
-								this .orientation_changed_ = this .orientation;
-
-							if (! this .centerOfRotation_changed_ .getValue () .equals (this .centerOfRotation))
-								this .centerOfRotation_changed_ = this .centerOfRotation;
-						}
-						else
-						{
-							this .isActive_  = true;
-							this .enterTime_ = this .getBrowser () .getCurrentTime ();
-
-							this .position_changed_         = this .position;
-							this .orientation_changed_      = this .orientation;
-							this .centerOfRotation_changed_ = this .centerOfRotation;
-						}
-
-						this .inside = false;
-					}
-					else
-					{
-						if (this .isActive_ .getValue ())
-						{
-							this .isActive_ = false;
-							this .exitTime_ = this .getBrowser () .getCurrentTime ();
-						}
-					}
-				}
-				catch (error)
-				{
-					//console .log (error .message);
-				}
-
-				this .setTraversed (false);
-			},
-			traverse: function ()
-			{ },
-			intersectsPoint: function (point)
-			{
-				var
-					min = this .min,
-					max = this .max;
-
-				return min .x <= point .x &&
-				       max .x >= point .x &&
-				       min .y <= point .y &&
-				       max .y >= point .y &&
-				       min .z <= point .z &&
-				       max .z >= point .z;
-			},
-		});
+			return "EnvironmentalSensor";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 			
-		function traverse (type)
+			this .enabled_ .addInterest (this, "set_enabled___");
+			this .size_    .addInterest (this, "set_extents__");
+			this .center_  .addInterest (this, "set_extents__");
+	
+			this .min = new Vector3 (0, 0, 0);
+			this .max = new Vector3 (0, 0, 0);
+			
+			this .set_enabled___ ();
+			this .set_extents__ ();
+		},
+		set_enabled___: function ()
+		{
+			this .setCameraObject (this .enabled_ .getValue ());
+			
+			if (this .enabled_ .getValue ())
+				this .traverse = traverse;
+			else
+				delete this .traverse;
+		},
+		set_extents__: function ()
+		{
+			var
+				s  = this .size_ .getValue (),
+				c  = this .center_ .getValue (),
+				sx = s .x / 2,
+				sy = s .y / 2,
+				sz = s .z / 2,
+				cx = c .x,
+				cy = c .y,
+				cz = c .z;
+
+			this .min .set (cx - sx, cy - sy, cz - sz);
+			this .max .set (cx + sx, cy + sy, cz + sz);
+		},
+		update: function ()
 		{
 			try
 			{
-				switch (type)
+				if (this .inside && this .getTraversed ())
 				{
-					case TraverseType .CAMERA:
+				   var
+				      modelViewMatrix        = this .modelViewMatrix,
+				      centerOfRotationMatrix = this .centerOfRotationMatrix;
+
+					centerOfRotationMatrix .assign (this .viewpoint .getTransformationMatrix ());
+					centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
+					centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
+
+					modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
+					modelViewMatrix .get (null, this .orientation);
+					modelViewMatrix .inverse ();
+
+					this .position .set (modelViewMatrix [12],
+					                     modelViewMatrix [13],
+					                     modelViewMatrix [14]);
+
+					this .orientation .inverse ();
+
+					this .centerOfRotation .set (centerOfRotationMatrix [12],
+					                             centerOfRotationMatrix [13],
+					                             centerOfRotationMatrix [14]);
+
+					if (this .isActive_ .getValue ())
 					{
-						this .viewpoint = this .getCurrentViewpoint ();
-						this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-						return;
+						if (! this .position_changed_ .getValue () .equals (this .position))
+							this .position_changed_ = this .position;
+
+						if (! this .orientation_changed_ .getValue () .equals (this .orientation))
+							this .orientation_changed_ = this .orientation;
+
+						if (! this .centerOfRotation_changed_ .getValue () .equals (this .centerOfRotation))
+							this .centerOfRotation_changed_ = this .centerOfRotation;
 					}
-					case TraverseType .DISPLAY:
+					else
 					{
-					   this .setTraversed (true);
+						this .isActive_  = true;
+						this .enterTime_ = this .getBrowser () .getCurrentTime ();
 
-						if (this .inside)
-							return;
+						this .position_changed_         = this .position;
+						this .orientation_changed_      = this .orientation;
+						this .centerOfRotation_changed_ = this .centerOfRotation;
+					}
 
-						if (this .size_ .getValue () .equals (infinity))
-							this .inside = true;
-
-						else
-						{
-						   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
-
-							this .viewer .set (invModelViewMatrix [12],
-					                         invModelViewMatrix [13],
-					                         invModelViewMatrix [14]);
-
-							this .inside = this .intersectsPoint (this .viewer);
-						}
-
-						return;
+					this .inside = false;
+				}
+				else
+				{
+					if (this .isActive_ .getValue ())
+					{
+						this .isActive_ = false;
+						this .exitTime_ = this .getBrowser () .getCurrentTime ();
 					}
 				}
 			}
 			catch (error)
 			{
-				//console .log (error);
+				//console .log (error .message);
+			}
+
+			this .setTraversed (false);
+		},
+		traverse: function ()
+		{ },
+		intersectsPoint: function (point)
+		{
+			var
+				min = this .min,
+				max = this .max;
+
+			return min .x <= point .x &&
+			       max .x >= point .x &&
+			       min .y <= point .y &&
+			       max .y >= point .y &&
+			       min .z <= point .z &&
+			       max .z >= point .z;
+		},
+	});
+		
+	function traverse (type)
+	{
+		try
+		{
+			switch (type)
+			{
+				case TraverseType .CAMERA:
+				{
+					this .viewpoint = this .getCurrentViewpoint ();
+					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					return;
+				}
+				case TraverseType .DISPLAY:
+				{
+				   this .setTraversed (true);
+
+					if (this .inside)
+						return;
+
+					if (this .size_ .getValue () .equals (infinity))
+						this .inside = true;
+
+					else
+					{
+					   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
+
+						this .viewer .set (invModelViewMatrix [12],
+				                         invModelViewMatrix [13],
+				                         invModelViewMatrix [14]);
+
+						this .inside = this .intersectsPoint (this .viewer);
+					}
+
+					return;
+				}
 			}
 		}
-
-		return ProximitySensor;
+		catch (error)
+		{
+			//console .log (error);
+		}
 	}
+
+	return ProximitySensor;
 });
+
 

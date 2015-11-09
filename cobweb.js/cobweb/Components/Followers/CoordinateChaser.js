@@ -14,43 +14,43 @@ function ($,
           X3DChaserNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function CoordinateChaser (executionContext)
 	{
-		function CoordinateChaser (executionContext)
-		{
-			X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .CoordinateChaser);
-		}
-
-		CoordinateChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
-		{
-			constructor: CoordinateChaser,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new MFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new MFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new MFVec3f (0, 0, 0)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new MFVec3f (0, 0, 0)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new SFTime (1)),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new MFVec3f ()),
-			]),
-			getTypeName: function ()
-			{
-				return "CoordinateChaser";
-			},
-			getComponentName: function ()
-			{
-				return "Followers";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return CoordinateChaser;
+		this .addType (X3DConstants .CoordinateChaser);
 	}
+
+	CoordinateChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: CoordinateChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .MFVec3f (0, 0, 0)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .MFVec3f (0, 0, 0)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "CoordinateChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return CoordinateChaser;
 });
+
 

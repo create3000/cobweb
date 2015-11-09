@@ -22,6 +22,8 @@ function ($,
           Algorithm,
           Camera)
 {
+"use strict";
+
 	var
 		SIZE        = 10000,
 		U_DIMENSION = 20;
@@ -587,4 +589,5 @@ function ($,
 
 	return X3DBackgroundNode;
 });
+
 

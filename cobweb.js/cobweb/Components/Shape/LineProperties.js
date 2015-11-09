@@ -14,39 +14,39 @@ function ($,
           X3DAppearanceChildNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function LineProperties (executionContext)
 	{
-		function LineProperties (executionContext)
-		{
-			X3DAppearanceChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DAppearanceChildNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .LineProperties);
-		}
-
-		LineProperties .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
-		{
-			constructor: LineProperties,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",             new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "applied",              new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "linetype",             new SFInt32 (1)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "linewidthScaleFactor", new SFFloat ()),
-			]),
-			getTypeName: function ()
-			{
-				return "LineProperties";
-			},
-			getComponentName: function ()
-			{
-				return "Shape";
-			},
-			getContainerField: function ()
-			{
-				return "lineProperties";
-			},
-		});
-
-		return LineProperties;
+		this .addType (X3DConstants .LineProperties);
 	}
+
+	LineProperties .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
+	{
+		constructor: LineProperties,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",             new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "applied",              new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "linetype",             new Fields .SFInt32 (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "linewidthScaleFactor", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "LineProperties";
+		},
+		getComponentName: function ()
+		{
+			return "Shape";
+		},
+		getContainerField: function ()
+		{
+			return "lineProperties";
+		},
+	});
+
+	return LineProperties;
 });
+
 

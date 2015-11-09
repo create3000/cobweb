@@ -14,6 +14,8 @@ function ($,
           X3DConstants,
           Box3)
 {
+"use strict";
+
 	function remove (array, first, last, range, rfirst, rlast, getId)
 	{
 		if (! getId)
@@ -393,4 +395,5 @@ function ($,
 
 	return X3DGroupingNode;
 });
+
 

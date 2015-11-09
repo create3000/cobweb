@@ -10,6 +10,8 @@ function ($,
           X3DTimeDependentNode,
           X3DConstants)
 {
+"use strict";
+
 	function X3DSoundSourceNode (browser, executionContext)
 	{
 		X3DChildNode         .call (this, browser, executionContext);
@@ -163,3 +165,4 @@ function ($,
 
 	return X3DSoundSourceNode;
 });
+

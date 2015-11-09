@@ -10,6 +10,8 @@ function ($,
           X3DConstants,
           Algorithm)
 {
+"use strict";
+
 	function X3DInterpolatorNode (browser, executionContext)
 	{
 		X3DChildNode .call (this, browser, executionContext);
@@ -24,7 +26,7 @@ function ($,
 		{
 			// If an X3DInterpolatorNode value_changed outputOnly field is read before it receives any inputs,
 			// keyValue[0] is returned if keyValue is not empty. If keyValue is empty (i.e., [ ]), the initial
-			// value for the respective field type is returned (EXAMPLE  (0, 0, 0) for SFVec3f);
+			// value for the respective field type is returned (EXAMPLE  (0, 0, 0) for Fields .SFVec3f);
 
 			this .set_key__ ();
 
@@ -84,4 +86,5 @@ function ($,
 
 	return X3DInterpolatorNode;
 });
+
 

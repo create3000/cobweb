@@ -16,41 +16,41 @@ function ($,
           X3DBoundedObject, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function CADFace (executionContext)
 	{
-		function CADFace (executionContext)
-		{
-			X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .CADFace);
-		}
-
-		CADFace .prototype = $.extend (Object .create (X3DProductStructureChildNode .prototype),new X3DBoundedObject (),
-		{
-			constructor: CADFace,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "name",       new SFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "shape",      new SFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "CADFace";
-			},
-			getComponentName: function ()
-			{
-				return "CADGeometry";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return CADFace;
+		this .addType (X3DConstants .CADFace);
 	}
+
+	CADFace .prototype = $.extend (Object .create (X3DProductStructureChildNode .prototype),new X3DBoundedObject (),
+	{
+		constructor: CADFace,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "name",       new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shape",      new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "CADFace";
+		},
+		getComponentName: function ()
+		{
+			return "CADGeometry";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return CADFace;
 });
+
 

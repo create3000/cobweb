@@ -14,37 +14,37 @@ function ($,
           X3DGeometryNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function Polypoint2D (executionContext)
 	{
-		function Polypoint2D (executionContext)
-		{
-			X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .Polypoint2D);
-		}
-
-		Polypoint2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
-		{
-			constructor: Polypoint2D,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new MFVec2f ()),
-			]),
-			getTypeName: function ()
-			{
-				return "Polypoint2D";
-			},
-			getComponentName: function ()
-			{
-				return "Geometry2D";
-			},
-			getContainerField: function ()
-			{
-				return "geometry";
-			},
-		});
-
-		return Polypoint2D;
+		this .addType (X3DConstants .Polypoint2D);
 	}
+
+	Polypoint2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	{
+		constructor: Polypoint2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Polypoint2D";
+		},
+		getComponentName: function ()
+		{
+			return "Geometry2D";
+		},
+		getContainerField: function ()
+		{
+			return "geometry";
+		},
+	});
+
+	return Polypoint2D;
 });
+
 

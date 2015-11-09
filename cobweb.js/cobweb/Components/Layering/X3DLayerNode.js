@@ -30,6 +30,8 @@ function ($,
           Line3,
           Vector3)
 {
+"use strict";
+
 	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
 	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
@@ -321,4 +323,5 @@ function ($,
 
 	return X3DLayerNode;
 });
+
 

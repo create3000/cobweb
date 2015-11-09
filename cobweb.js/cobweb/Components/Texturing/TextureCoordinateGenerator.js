@@ -14,38 +14,38 @@ function ($,
           X3DTextureCoordinateNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function TextureCoordinateGenerator (executionContext)
 	{
-		function TextureCoordinateGenerator (executionContext)
-		{
-			X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .TextureCoordinateGenerator);
-		}
-
-		TextureCoordinateGenerator .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
-		{
-			constructor: TextureCoordinateGenerator,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "mode",      new SFString ("SPHERE")),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "parameter", new MFFloat ()),
-			]),
-			getTypeName: function ()
-			{
-				return "TextureCoordinateGenerator";
-			},
-			getComponentName: function ()
-			{
-				return "Texturing";
-			},
-			getContainerField: function ()
-			{
-				return "texCoord";
-			},
-		});
-
-		return TextureCoordinateGenerator;
+		this .addType (X3DConstants .TextureCoordinateGenerator);
 	}
+
+	TextureCoordinateGenerator .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
+	{
+		constructor: TextureCoordinateGenerator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "mode",      new Fields .SFString ("SPHERE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "parameter", new Fields .MFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureCoordinateGenerator";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing";
+		},
+		getContainerField: function ()
+		{
+			return "texCoord";
+		},
+	});
+
+	return TextureCoordinateGenerator;
 });
+
 

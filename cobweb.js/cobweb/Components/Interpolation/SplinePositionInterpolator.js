@@ -14,43 +14,43 @@ function ($,
           X3DInterpolatorNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function SplinePositionInterpolator (executionContext)
 	{
-		function SplinePositionInterpolator (executionContext)
-		{
-			X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .SplinePositionInterpolator);
-		}
-
-		SplinePositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
-		{
-			constructor: SplinePositionInterpolator,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",          new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",      new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "closed",            new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "key",               new MFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",          new MFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "keyVelocity",       new MFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "normalizeVelocity", new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed",     new SFVec3f ()),
-			]),
-			getTypeName: function ()
-			{
-				return "SplinePositionInterpolator";
-			},
-			getComponentName: function ()
-			{
-				return "Interpolation";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return SplinePositionInterpolator;
+		this .addType (X3DConstants .SplinePositionInterpolator);
 	}
+
+	SplinePositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+	{
+		constructor: SplinePositionInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",      new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "closed",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",               new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",          new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyVelocity",       new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "normalizeVelocity", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed",     new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SplinePositionInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "Interpolation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return SplinePositionInterpolator;
 });
+
 

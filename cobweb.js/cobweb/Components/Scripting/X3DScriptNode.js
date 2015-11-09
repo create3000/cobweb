@@ -10,6 +10,8 @@ function ($,
           X3DUrlObject, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DScriptNode (browser, executionContext)
 	{
 		X3DChildNode .call (this, browser, executionContext);
@@ -26,4 +28,5 @@ function ($,
 
 	return X3DScriptNode;
 });
+
 

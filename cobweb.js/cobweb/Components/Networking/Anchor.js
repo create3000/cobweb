@@ -22,104 +22,104 @@ function ($,
           X3DConstants,
           Loader)
 {
-	with (Fields)
+"use strict";
+
+	function Anchor (executionContext)
 	{
-		function Anchor (executionContext)
+		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DUrlObject    .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .Anchor);
+	}
+
+	Anchor .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+		X3DUrlObject .prototype,
+	{
+		constructor: Anchor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "description",    new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",            new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "parameter",      new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
 		{
-			X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DUrlObject    .call (this, executionContext .getBrowser (), executionContext);
-
-			this .addType (X3DConstants .Anchor);
-		}
-
-		Anchor .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
-			X3DUrlObject .prototype,
+			return "Anchor";
+		},
+		getComponentName: function ()
 		{
-			constructor: Anchor,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "description",    new SFString ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "url",            new MFString ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "parameter",      new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "Anchor";
-			},
-			getComponentName: function ()
-			{
-				return "Networking";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-			initialize: function ()
-			{
-				X3DGroupingNode .prototype .initialize .call (this);
-				X3DUrlObject    .prototype .initialize .call (this);
+			return "Networking";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DGroupingNode .prototype .initialize .call (this);
+			X3DUrlObject    .prototype .initialize .call (this);
 
-				this .touchSensorNode = new TouchSensor (this .getExecutionContext ());
+			this .touchSensorNode = new TouchSensor (this .getExecutionContext ());
 
-				this .touchSensorNode .touchTime_ .addInterest (this, "requestAsyncLoad");
-				this .description_ .addFieldInterest (this .touchSensorNode .description_);
+			this .touchSensorNode .touchTime_ .addInterest (this, "requestAsyncLoad");
+			this .description_ .addFieldInterest (this .touchSensorNode .description_);
 
-				this .touchSensorNode .description_ = this .description_;
-				this .touchSensorNode .setup ();
-			},
-			requestAsyncLoad: function ()
+			this .touchSensorNode .description_ = this .description_;
+			this .touchSensorNode .setup ();
+		},
+		requestAsyncLoad: function ()
+		{
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
+
+			new Loader (this) .createX3DFromURL (this .url_, /*this .parameter_,*/
+			function (scene)
 			{
-				this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
-
-				new Loader (this) .createX3DFromURL (this .url_, /*this .parameter_,*/
-				function (scene)
+				if (scene)
 				{
-					if (scene)
-					{
-						this .getBrowser () .replaceWorld (scene);
-						this .setLoadState (X3DConstants .COMPLETE_STATE, false);
-					}
-					else
-						this .setLoadState (X3DConstants .FAILED_STATE, false);		
-				}
-				.bind (this),
-				function (fragment)
-				{
-				   try
-				   {
-						this .getExecutionContext () .changeViewpoint (fragment);
-					}
-					catch (error)
-					{ }
-
+					this .getBrowser () .replaceWorld (scene);
 					this .setLoadState (X3DConstants .COMPLETE_STATE, false);
 				}
-				.bind (this));
-			},
-			traverse: function (type)
-			{
-				if (type === TraverseType .POINTER)
-				{
-				   var sensors = { };
-
-					this .getBrowser () .getSensors () .push (sensors);
-					this .touchSensorNode .traverse (sensors);
-
-					X3DGroupingNode .prototype .traverse .call (this, type);
-
-					this .getBrowser () .getSensors () .pop ();
-				}
 				else
-					X3DGroupingNode .prototype .traverse .call (this, type);
-			},
-		});
+					this .setLoadState (X3DConstants .FAILED_STATE, false);		
+			}
+			.bind (this),
+			function (fragment)
+			{
+			   try
+			   {
+					this .getExecutionContext () .changeViewpoint (fragment);
+				}
+				catch (error)
+				{ }
 
-		return Anchor;
-	}
+				this .setLoadState (X3DConstants .COMPLETE_STATE, false);
+			}
+			.bind (this));
+		},
+		traverse: function (type)
+		{
+			if (type === TraverseType .POINTER)
+			{
+			   var sensors = { };
+
+				this .getBrowser () .getSensors () .push (sensors);
+				this .touchSensorNode .traverse (sensors);
+
+				X3DGroupingNode .prototype .traverse .call (this, type);
+
+				this .getBrowser () .getSensors () .pop ();
+			}
+			else
+				X3DGroupingNode .prototype .traverse .call (this, type);
+		},
+	});
+
+	return Anchor;
 });
+
 

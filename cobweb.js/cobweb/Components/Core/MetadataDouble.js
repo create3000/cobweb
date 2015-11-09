@@ -16,41 +16,41 @@ function ($,
           X3DMetadataObject, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function MetadataDouble (executionContext)
 	{
-		function MetadataDouble (executionContext)
-		{
-			X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-			X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
+		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .MetadataDouble);
-		}
-
-		MetadataDouble .prototype = $.extend (Object .create (X3DNode .prototype),
-			X3DMetadataObject .prototype,
-		{
-			constructor: MetadataDouble,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new SFString ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new SFString ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new MFDouble ()),
-			]),
-			getTypeName: function ()
-			{
-				return "MetadataDouble";
-			},
-			getComponentName: function ()
-			{
-				return "Core";
-			},
-			getContainerField: function ()
-			{
-				return "metadata";
-			},
-		});
-
-		return MetadataDouble;
+		this .addType (X3DConstants .MetadataDouble);
 	}
+
+	MetadataDouble .prototype = $.extend (Object .create (X3DNode .prototype),
+		X3DMetadataObject .prototype,
+	{
+		constructor: MetadataDouble,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new Fields .MFDouble ()),
+		]),
+		getTypeName: function ()
+		{
+			return "MetadataDouble";
+		},
+		getComponentName: function ()
+		{
+			return "Core";
+		},
+		getContainerField: function ()
+		{
+			return "metadata";
+		},
+	});
+
+	return MetadataDouble;
 });
+
 

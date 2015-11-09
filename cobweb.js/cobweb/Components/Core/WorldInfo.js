@@ -14,38 +14,38 @@ function ($,
           X3DInfoNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function WorldInfo (executionContext)
 	{
-		function WorldInfo (executionContext)
-		{
-			X3DInfoNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInfoNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .WorldInfo);
-		}
-
-		WorldInfo .prototype = $.extend (Object .create (X3DInfoNode .prototype),
-		{
-			constructor: WorldInfo,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "title",    new SFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "info",     new MFString ()),
-			]),
-			getTypeName: function ()
-			{
-				return "WorldInfo";
-			},
-			getComponentName: function ()
-			{
-				return "Core";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return WorldInfo;
+		this .addType (X3DConstants .WorldInfo);
 	}
+
+	WorldInfo .prototype = $.extend (Object .create (X3DInfoNode .prototype),
+	{
+		constructor: WorldInfo,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "title",    new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "info",     new Fields .MFString ()),
+		]),
+		getTypeName: function ()
+		{
+			return "WorldInfo";
+		},
+		getComponentName: function ()
+		{
+			return "Core";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return WorldInfo;
 });
+
 

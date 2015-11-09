@@ -20,159 +20,159 @@ function ($,
           TraverseType,
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function LayerSet (executionContext)
 	{
-		function LayerSet (executionContext)
+		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .LayerSet);
+
+		this .layerNodes      = [ new Layer (executionContext) ];
+		this .layerNode0      = this .layerNodes [0];
+		this .activeLayerNode = null;
+	}
+
+	LayerSet .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: LayerSet,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "activeLayer", new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "order",       new Fields .MFInt32 (0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "layers",      new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
 		{
-			X3DNode .call (this, executionContext .getBrowser (), executionContext);
-
-			this .addType (X3DConstants .LayerSet);
-
-			this .layerNodes      = [ new Layer (executionContext) ];
-			this .layerNode0      = this .layerNodes [0];
-			this .activeLayerNode = null;
-		}
-
-		LayerSet .prototype = $.extend (Object .create (X3DNode .prototype),
+			return "LayerSet";
+		},
+		getComponentName: function ()
 		{
-			constructor: LayerSet,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "activeLayer", new SFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "order",       new MFInt32 (0)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "layers",      new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "LayerSet";
-			},
-			getComponentName: function ()
-			{
-				return "Layering";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-			initialize: function ()
-			{
-				X3DNode .prototype .initialize .call (this);
+			return "Layering";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DNode .prototype .initialize .call (this);
 
-				this .layerNode0 .setup ();
-				this .layerNode0 .isLayer0 (true);
+			this .layerNode0 .setup ();
+			this .layerNode0 .isLayer0 (true);
 
-				this .activeLayer_ .addInterest (this, "set_activeLayer");
-				this .order_       .addInterest (this, "set_layers");
-				this .layers_      .addInterest (this, "set_layers");
+			this .activeLayer_ .addInterest (this, "set_activeLayer");
+			this .order_       .addInterest (this, "set_layers");
+			this .layers_      .addInterest (this, "set_layers");
 
-				this .set_layers ();
-			},
-			getActiveLayer: function ()
-			{
-				return this .activeLayerNode;
-			},
-			setLayer0: function (value)
-			{
-				this .layerNode0 = value;
+			this .set_layers ();
+		},
+		getActiveLayer: function ()
+		{
+			return this .activeLayerNode;
+		},
+		setLayer0: function (value)
+		{
+			this .layerNode0 = value;
 
-				this .set_layers ();
-			},
-			getLayer0: function ()
+			this .set_layers ();
+		},
+		getLayer0: function ()
+		{
+			return this .layerNode0;
+		},
+		getLayers: function ()
+		{
+			return this .layerNodes;
+		},
+		set_activeLayer: function ()
+		{
+			if (this .activeLayer_ .getValue () === 0)
 			{
-				return this .layerNode0;
-			},
-			getLayers: function ()
+				if (this .activeLayerNode !== this .layerNode0)
+					this .activeLayerNode = this .layerNode0;
+			}
+			else
 			{
-				return this .layerNodes;
-			},
-			set_activeLayer: function ()
-			{
-				if (this .activeLayer_ .getValue () === 0)
+				var index = this .activeLayer_ - 1;
+
+				if (index >= 0 && index < this .layers_ .length)
 				{
-					if (this .activeLayerNode !== this .layerNode0)
-						this .activeLayerNode = this .layerNode0;
+					if (this .activeLayerNode !== this .layers_ [index] .getValue ())
+						this .activeLayerNode = this .layers_ [index] .getValue ();
 				}
 				else
 				{
-					var index = this .activeLayer_ - 1;
+					if (this .activeLayerNode !== null)
+						this .activeLayerNode = null;
+				}
+			}
+		},
+		set_layers: function ()
+		{
+			this .layerNodes .length = 0;
+
+			for (var i = 0; i < this .order_ .length; ++ i)
+			{
+				var index = this .order_ [i];
+
+				if (index === 0)
+					this .layerNodes .push (this .layerNode0);
+					
+				else
+				{
+					-- index;
 
 					if (index >= 0 && index < this .layers_ .length)
 					{
-						if (this .activeLayerNode !== this .layers_ [index] .getValue ())
-							this .activeLayerNode = this .layers_ [index] .getValue ();
-					}
-					else
-					{
-						if (this .activeLayerNode !== null)
-							this .activeLayerNode = null;
+						var layerNode = X3DCast (X3DConstants .X3DLayerNode, this .layers_ [index]);
+
+						if (layerNode)
+							this .layerNodes .push (layerNode);
 					}
 				}
-			},
-			set_layers: function ()
+			}
+
+			this .set_activeLayer ();
+		},
+		bind: function ()
+		{
+			this .layerNode0 .bind ();
+
+			for (var i = 0; i < this .layers_ .length; ++ i)
 			{
-				this .layerNodes .length = 0;
+				var layer     = this .layers_ [i];
+				var layerNode = X3DCast (X3DConstants .X3DLayerNode, layer);
 
-				for (var i = 0; i < this .order_ .length; ++ i)
-				{
-					var index = this .order_ [i];
-
-					if (index === 0)
-						this .layerNodes .push (this .layerNode0);
-						
-					else
-					{
-						-- index;
-
-						if (index >= 0 && index < this .layers_ .length)
-						{
-							var layerNode = X3DCast (X3DConstants .X3DLayerNode, this .layers_ [index]);
-
-							if (layerNode)
-								this .layerNodes .push (layerNode);
-						}
-					}
-				}
-
-				this .set_activeLayer ();
-			},
-			bind: function ()
+				if (layerNode)
+					layerNode .bind ();
+			}
+		},
+		traverse: function (type)
+		{
+			if (type === TraverseType .POINTER)
 			{
-				this .layerNode0 .bind ();
+				var layerNumber = 0;
 
-				for (var i = 0; i < this .layers_ .length; ++ i)
+				for (var i = 0; i < this .layerNodes .length; ++ i)
 				{
-					var layer     = this .layers_ [i];
-					var layerNode = X3DCast (X3DConstants .X3DLayerNode, layer);
+					var layerNode = this .layerNodes [i];
 
-					if (layerNode)
-						layerNode .bind ();
+					this .getBrowser () .setLayerNumber (layerNumber ++);
+					layerNode .traverse (type);
 				}
-			},
-			traverse: function (type)
+			}
+			else
 			{
-				if (type === TraverseType .POINTER)
+				for (var i = 0; i < this .layerNodes .length; ++ i)
 				{
-					var layerNumber = 0;
-
-					for (var i = 0; i < this .layerNodes .length; ++ i)
-					{
-						var layerNode = this .layerNodes [i];
-
-						this .getBrowser () .setLayerNumber (layerNumber ++);
-						layerNode .traverse (type);
-					}
+					this .layerNodes [i] .traverse (type);
 				}
-				else
-				{
-					for (var i = 0; i < this .layerNodes .length; ++ i)
-					{
-						this .layerNodes [i] .traverse (type);
-					}
-				}
-			},
-		});
+			}
+		},
+	});
 
-		return LayerSet;
-	}
+	return LayerSet;
 });
+
 

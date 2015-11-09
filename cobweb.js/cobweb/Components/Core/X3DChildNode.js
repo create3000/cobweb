@@ -10,35 +10,35 @@ function ($,
           X3DNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function X3DChildNode (browser, executionContext)
 	{
-		function X3DChildNode (browser, executionContext)
-		{
-		   if (this .getExecutionContext ())
-		      return;
+	   if (this .getExecutionContext ())
+	      return;
 
-			X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, browser, executionContext);
 
-			this .addType (X3DConstants .X3DChildNode);
+		this .addType (X3DConstants .X3DChildNode);
 
-			this .addChildren ("isCameraObject", new SFBool ());
-		}
-
-		X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
-		{
-			constructor: X3DChildNode,
-			setCameraObject: function (value)
-			{
-				if (value !== this .isCameraObject_ .getValue ())
-					this .isCameraObject_ = value;
-			},
-			getCameraObject: function ()
-			{
-				return this .isCameraObject_ .getValue ();
-			},
-		});
-
-		return X3DChildNode;
+		this .addChildren ("isCameraObject", new Fields .SFBool ());
 	}
+
+	X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: X3DChildNode,
+		setCameraObject: function (value)
+		{
+			if (value !== this .isCameraObject_ .getValue ())
+				this .isCameraObject_ = value;
+		},
+		getCameraObject: function ()
+		{
+			return this .isCameraObject_ .getValue ();
+		},
+	});
+
+	return X3DChildNode;
 });
+
 

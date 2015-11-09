@@ -14,47 +14,47 @@ function ($,
           X3DComposedGeometryNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function TriangleFanSet (executionContext)
 	{
-		function TriangleFanSet (executionContext)
-		{
-			X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .TriangleFanSet);
-		}
-
-		TriangleFanSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-		{
-			constructor: TriangleFanSet,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "fanCount",        new MFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new SFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "TriangleFanSet";
-			},
-			getComponentName: function ()
-			{
-				return "Rendering";
-			},
-			getContainerField: function ()
-			{
-				return "geometry";
-			},
-		});
-
-		return TriangleFanSet;
+		this .addType (X3DConstants .TriangleFanSet);
 	}
+
+	TriangleFanSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
+	{
+		constructor: TriangleFanSet,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "fanCount",        new Fields .MFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TriangleFanSet";
+		},
+		getComponentName: function ()
+		{
+			return "Rendering";
+		},
+		getContainerField: function ()
+		{
+			return "geometry";
+		},
+	});
+
+	return TriangleFanSet;
 });
+
 

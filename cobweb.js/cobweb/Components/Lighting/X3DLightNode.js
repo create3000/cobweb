@@ -10,6 +10,8 @@ function ($,
           TraverseType,
           X3DConstants)
 {
+"use strict";
+
 	function X3DLightNode (browser, executionContext)
 	{
 		X3DChildNode .call (this, browser, executionContext);
@@ -45,4 +47,5 @@ function ($,
 
 	return X3DLightNode;
 });
+
 

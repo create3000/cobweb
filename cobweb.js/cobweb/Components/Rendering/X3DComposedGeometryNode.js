@@ -10,6 +10,8 @@ function ($,
           X3DCast,
           X3DConstants)
 {
+"use strict";
+
 	function X3DComposedGeometryNode (browser, executionContext)
 	{
 		X3DGeometryNode .call (this, browser, executionContext);
@@ -138,4 +140,5 @@ function ($,
 
 	return X3DComposedGeometryNode;
 });
+
 

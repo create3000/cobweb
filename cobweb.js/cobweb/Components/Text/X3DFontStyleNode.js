@@ -12,6 +12,8 @@ function ($,
           X3DConstants,
           opentype)
 {
+"use strict";
+
    /*
     * Font paths for default SERIF, SANS and TYPWRITER families.
     */
@@ -242,4 +244,5 @@ function ($,
 
 	return X3DFontStyleNode;
 });
+
 

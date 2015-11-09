@@ -8,6 +8,8 @@ function ($,
           X3DSensorNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DKeyDeviceSensorNode (browser, executionContext)
 	{
 		X3DSensorNode .call (this, browser, executionContext);
@@ -87,4 +89,5 @@ function ($,
 
 	return X3DKeyDeviceSensorNode;
 });
+
 

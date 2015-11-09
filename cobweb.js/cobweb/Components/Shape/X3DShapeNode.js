@@ -14,6 +14,8 @@ function ($,
           X3DConstants,
           Box3)
 {
+"use strict";
+
 	function X3DShapeNode (browser, executionContext)
 	{
 		X3DChildNode     .call (this, browser, executionContext);
@@ -125,4 +127,5 @@ function ($,
 
 	return X3DShapeNode;
 });
+
 

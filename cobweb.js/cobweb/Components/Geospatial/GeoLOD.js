@@ -18,52 +18,52 @@ function ($,
           X3DGeospatialObject, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function GeoLOD (executionContext)
 	{
-		function GeoLOD (executionContext)
-		{
-			X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
-			X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .GeoLOD);
-		}
-
-		GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),new X3DGeospatialObject (),
-		{
-			constructor: GeoLOD,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",      new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new MFString ([ "GD", "WE" ])),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "rootUrl",       new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "child1Url",     new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "child2Url",     new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "child3Url",     new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "child4Url",     new MFString ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "center",        new SFVec3d ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "range",         new SFFloat (10)),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed", new SFInt32 ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",     new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNode",      new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",      new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",    new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "children",      new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "GeoLOD";
-			},
-			getComponentName: function ()
-			{
-				return "Geospatial";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return GeoLOD;
+		this .addType (X3DConstants .GeoLOD);
 	}
+
+	GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),new X3DGeospatialObject (),
+	{
+		constructor: GeoLOD,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootUrl",       new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child1Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child2Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child3Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child4Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "center",        new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "range",         new Fields .SFFloat (10)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed", new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNode",      new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",      new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "children",      new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoLOD";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoLOD;
 });
+
 

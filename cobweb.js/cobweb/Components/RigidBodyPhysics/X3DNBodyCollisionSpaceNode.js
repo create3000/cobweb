@@ -10,6 +10,8 @@ function ($,
           X3DBoundedObject, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DNBodyCollisionSpaceNode (browser, executionContext)
 	{
 		X3DNode .call (this, browser, executionContext);
@@ -25,4 +27,5 @@ function ($,
 
 	return X3DNBodyCollisionSpaceNode;
 });
+
 

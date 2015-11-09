@@ -14,39 +14,39 @@ function ($,
           X3DEnvironmentTextureNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function GeneratedCubeMapTexture (executionContext)
 	{
-		function GeneratedCubeMapTexture (executionContext)
-		{
-			X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .GeneratedCubeMapTexture);
-		}
-
-		GeneratedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
-		{
-			constructor: GeneratedCubeMapTexture,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "update",            new SFString ("NONE")),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "size",              new SFInt32 (128)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new SFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "GeneratedCubeMapTexture";
-			},
-			getComponentName: function ()
-			{
-				return "CubeMapTexturing";
-			},
-			getContainerField: function ()
-			{
-				return "texture";
-			},
-		});
-
-		return GeneratedCubeMapTexture;
+		this .addType (X3DConstants .GeneratedCubeMapTexture);
 	}
+
+	GeneratedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
+	{
+		constructor: GeneratedCubeMapTexture,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "update",            new Fields .SFString ("NONE")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "size",              new Fields .SFInt32 (128)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeneratedCubeMapTexture";
+		},
+		getComponentName: function ()
+		{
+			return "CubeMapTexturing";
+		},
+		getContainerField: function ()
+		{
+			return "texture";
+		},
+	});
+
+	return GeneratedCubeMapTexture;
 });
+
 

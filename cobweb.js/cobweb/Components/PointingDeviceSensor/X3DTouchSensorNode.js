@@ -8,6 +8,8 @@ function ($,
           X3DPointingDeviceSensorNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DTouchSensorNode (browser, executionContext)
 	{
 		X3DPointingDeviceSensorNode .call (this, browser, executionContext);
@@ -29,4 +31,5 @@ function ($,
 
 	return X3DTouchSensorNode;
 });
+
 

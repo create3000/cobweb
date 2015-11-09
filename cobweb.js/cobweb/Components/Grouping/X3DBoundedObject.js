@@ -12,6 +12,8 @@ function ($,
           Vector3,
           Box3)
 {
+"use strict";
+
 	function X3DBoundedObject (browser, executionContext)
 	{
 		this .addType (X3DConstants .X3DBoundedObject);
@@ -48,4 +50,5 @@ function ($,
 
 	return X3DBoundedObject;
 });
+
 

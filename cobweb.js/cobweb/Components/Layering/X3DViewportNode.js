@@ -8,6 +8,8 @@ function ($,
           X3DGroupingNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DViewportNode (browser, executionContext)
 	{
 		X3DGroupingNode .call (this, browser, executionContext);
@@ -22,4 +24,5 @@ function ($,
 
 	return X3DViewportNode;
 });
+
 

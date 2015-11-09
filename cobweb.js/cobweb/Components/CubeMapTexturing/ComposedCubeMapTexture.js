@@ -14,42 +14,42 @@ function ($,
           X3DEnvironmentTextureNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function ComposedCubeMapTexture (executionContext)
 	{
-		function ComposedCubeMapTexture (executionContext)
-		{
-			X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .ComposedCubeMapTexture);
-		}
-
-		ComposedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
-		{
-			constructor: ComposedCubeMapTexture,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "front",    new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "back",     new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "left",     new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "right",    new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "bottom",   new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "top",      new SFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ComposedCubeMapTexture";
-			},
-			getComponentName: function ()
-			{
-				return "CubeMapTexturing";
-			},
-			getContainerField: function ()
-			{
-				return "texture";
-			},
-		});
-
-		return ComposedCubeMapTexture;
+		this .addType (X3DConstants .ComposedCubeMapTexture);
 	}
+
+	ComposedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
+	{
+		constructor: ComposedCubeMapTexture,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "front",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "back",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "left",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "right",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "bottom",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "top",      new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ComposedCubeMapTexture";
+		},
+		getComponentName: function ()
+		{
+			return "CubeMapTexturing";
+		},
+		getContainerField: function ()
+		{
+			return "texture";
+		},
+	});
+
+	return ComposedCubeMapTexture;
 });
+
 

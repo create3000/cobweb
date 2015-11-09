@@ -8,6 +8,8 @@ function ($,
           X3DGeometricPropertyNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DVertexAttributeNode (browser, executionContext)
 	{
 		X3DGeometricPropertyNode .call (this, browser, executionContext);
@@ -22,4 +24,5 @@ function ($,
 
 	return X3DVertexAttributeNode;
 });
+
 

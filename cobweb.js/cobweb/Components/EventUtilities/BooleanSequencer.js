@@ -14,42 +14,42 @@ function ($,
           X3DSequencerNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function BooleanSequencer (executionContext)
 	{
-		function BooleanSequencer (executionContext)
-		{
-			X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .BooleanSequencer);
-		}
-
-		BooleanSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
-		{
-			constructor: BooleanSequencer,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new MFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new MFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new SFBool ()),
-			]),
-			getTypeName: function ()
-			{
-				return "BooleanSequencer";
-			},
-			getComponentName: function ()
-			{
-				return "EventUtilities";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return BooleanSequencer;
+		this .addType (X3DConstants .BooleanSequencer);
 	}
+
+	BooleanSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
+	{
+		constructor: BooleanSequencer,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanSequencer";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return BooleanSequencer;
 });
+
 

@@ -8,6 +8,8 @@ function ($,
           X3DFollowerNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DDamperNode (browser, executionContext)
 	{
 		X3DFollowerNode .call (this, browser, executionContext);
@@ -22,4 +24,5 @@ function ($,
 
 	return X3DDamperNode;
 });
+
 

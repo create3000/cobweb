@@ -6,6 +6,8 @@ define ([
 function ($,
           X3DConstants)
 {
+"use strict";
+
 	function X3DProgrammableShaderObject (browser, executionContext)
 	{
 		this .addType (X3DConstants .X3DProgrammableShaderObject);
@@ -23,4 +25,5 @@ function ($,
 
 	return X3DProgrammableShaderObject;
 });
+
 

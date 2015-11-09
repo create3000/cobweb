@@ -6,6 +6,8 @@ define ([
 function ($,
           X3DConstants)
 {
+"use strict";
+
 	function X3DViewpointObject (browser, executionContext)
 	{
 		this .addType (X3DConstants .X3DViewpointObject);
@@ -19,4 +21,5 @@ function ($,
 
 	return X3DViewpointObject;
 });
+
 

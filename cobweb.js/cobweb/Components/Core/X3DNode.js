@@ -10,6 +10,8 @@ function ($,
           TraverseType,
           X3DConstants)
 {
+"use strict";
+
 	function X3DNode (browser, executionContext)
 	{
 		X3DBaseNode .call (this, browser, executionContext);
@@ -49,3 +51,4 @@ function ($,
 
 	return X3DNode;
 });
+

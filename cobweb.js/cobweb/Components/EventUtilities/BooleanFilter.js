@@ -14,40 +14,40 @@ function ($,
           X3DChildNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function BooleanFilter (executionContext)
 	{
-		function BooleanFilter (executionContext)
-		{
-			X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .BooleanFilter);
-		}
-
-		BooleanFilter .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		{
-			constructor: BooleanFilter,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "inputTrue",   new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "inputFalse",  new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,  "inputNegate", new SFBool ()),
-			]),
-			getTypeName: function ()
-			{
-				return "BooleanFilter";
-			},
-			getComponentName: function ()
-			{
-				return "EventUtilities";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return BooleanFilter;
+		this .addType (X3DConstants .BooleanFilter);
 	}
+
+	BooleanFilter .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: BooleanFilter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputTrue",   new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputFalse",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputNegate", new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanFilter";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return BooleanFilter;
 });
+
 

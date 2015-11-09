@@ -16,48 +16,48 @@ function ($,
           X3DConstants,
           Color4)
 {
-	with (Fields)
+"use strict";
+
+	function ColorRGBA (executionContext)
 	{
-		function ColorRGBA (executionContext)
-		{
-			X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .ColorRGBA);
-		}
-
-		ColorRGBA .prototype = $.extend (Object .create (X3DColorNode .prototype),
-		{
-			constructor: ColorRGBA,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "color",    new MFColorRGBA ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ColorRGBA";
-			},
-			getComponentName: function ()
-			{
-				return "Rendering";
-			},
-			getContainerField: function ()
-			{
-				return "color";
-			},
-			isTransparent: function ()
-			{
-				return true;
-			},
-			getColor: function (index)
-			{
-				if (index >= 0 && index < this .color_ .length)
-					return this .color_ [index] .getValue ();
-		
-				return new Color4 (1, 1, 1, 1);
-			},
-		});
-
-		return ColorRGBA;
+		this .addType (X3DConstants .ColorRGBA);
 	}
+
+	ColorRGBA .prototype = $.extend (Object .create (X3DColorNode .prototype),
+	{
+		constructor: ColorRGBA,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "color",    new Fields .MFColorRGBA ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ColorRGBA";
+		},
+		getComponentName: function ()
+		{
+			return "Rendering";
+		},
+		getContainerField: function ()
+		{
+			return "color";
+		},
+		isTransparent: function ()
+		{
+			return true;
+		},
+		getColor: function (index)
+		{
+			if (index >= 0 && index < this .color_ .length)
+				return this .color_ [index] .getValue ();
+	
+			return new Color4 (1, 1, 1, 1);
+		},
+	});
+
+	return ColorRGBA;
 });
+
 

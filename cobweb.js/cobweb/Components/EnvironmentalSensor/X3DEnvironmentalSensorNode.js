@@ -10,6 +10,8 @@ function ($,
           X3DConstants,
           Vector3)
 {
+"use strict";
+
 	function X3DEnvironmentalSensorNode (browser, executionContext)
 	{
 		X3DSensorNode .call (this, browser, executionContext);
@@ -72,4 +74,5 @@ function ($,
 
 	return X3DEnvironmentalSensorNode;
 });
+
 

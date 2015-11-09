@@ -14,45 +14,45 @@ function ($,
           X3DDamperNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function ScalarDamper (executionContext)
 	{
-		function ScalarDamper (executionContext)
-		{
-			X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .ScalarDamper);
-		}
-
-		ScalarDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
-		{
-			constructor: ScalarDamper,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new SFFloat ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new SFInt32 (3)),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new SFTime (0.3)),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new SFFloat (-1)),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new SFFloat ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ScalarDamper";
-			},
-			getComponentName: function ()
-			{
-				return "Followers";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return ScalarDamper;
+		this .addType (X3DConstants .ScalarDamper);
 	}
+
+	ScalarDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+	{
+		constructor: ScalarDamper,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ScalarDamper";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return ScalarDamper;
 });
+
 

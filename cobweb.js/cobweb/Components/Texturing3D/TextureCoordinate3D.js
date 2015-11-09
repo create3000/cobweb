@@ -14,37 +14,37 @@ function ($,
           X3DTextureCoordinateNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function TextureCoordinate3D (executionContext)
 	{
-		function TextureCoordinate3D (executionContext)
-		{
-			X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .TextureCoordinate3D);
-		}
-
-		TextureCoordinate3D .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
-		{
-			constructor: TextureCoordinate3D,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new MFVec3f ()),
-			]),
-			getTypeName: function ()
-			{
-				return "TextureCoordinate3D";
-			},
-			getComponentName: function ()
-			{
-				return "Texturing3D";
-			},
-			getContainerField: function ()
-			{
-				return "texCoord";
-			},
-		});
-
-		return TextureCoordinate3D;
+		this .addType (X3DConstants .TextureCoordinate3D);
 	}
+
+	TextureCoordinate3D .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
+	{
+		constructor: TextureCoordinate3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureCoordinate3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "texCoord";
+		},
+	});
+
+	return TextureCoordinate3D;
 });
+
 

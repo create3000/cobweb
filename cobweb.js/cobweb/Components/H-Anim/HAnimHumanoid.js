@@ -16,55 +16,55 @@ function ($,
           X3DBoundedObject, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function HAnimHumanoid (executionContext)
 	{
-		function HAnimHumanoid (executionContext)
-		{
-			X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-			X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .HAnimHumanoid);
-		}
-
-		HAnimHumanoid .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),
-		{
-			constructor: HAnimHumanoid,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",         new SFVec3f (-1, -1, -1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",       new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "center",           new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "info",             new MFString ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "joints",           new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "name",             new SFString ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",         new SFRotation ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "scale",            new SFVec3f (1, 1, 1)),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "scaleOrientation", new SFRotation ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "segments",         new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "sites",            new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "skeleton",         new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "skin",             new MFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "skinCoord",        new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "skinNormal",       new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "translation",      new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "version",          new SFString ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "viewpoints",       new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "HAnimHumanoid";
-			},
-			getComponentName: function ()
-			{
-				return "H-Anim";
-			},
-			getContainerField: function ()
-			{
-				return "children";
-			},
-		});
-
-		return HAnimHumanoid;
+		this .addType (X3DConstants .HAnimHumanoid);
 	}
+
+	HAnimHumanoid .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),
+	{
+		constructor: HAnimHumanoid,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",         new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",       new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "center",           new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "info",             new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "joints",           new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "name",             new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",         new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "scale",            new Fields .SFVec3f (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "scaleOrientation", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "segments",         new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "sites",            new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "skeleton",         new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "skin",             new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "skinCoord",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "skinNormal",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "translation",      new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "version",          new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "viewpoints",       new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "HAnimHumanoid";
+		},
+		getComponentName: function ()
+		{
+			return "H-Anim";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return HAnimHumanoid;
 });
+
 

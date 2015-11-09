@@ -14,39 +14,39 @@ function ($,
           X3DNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function GeoOrigin (executionContext)
 	{
-		function GeoOrigin (executionContext)
-		{
-			X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .GeoOrigin);
-		}
-
-		GeoOrigin .prototype = $.extend (Object .create (X3DNode .prototype),
-		{
-			constructor: GeoOrigin,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new MFString ([ "GD", "WE" ])),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new SFVec3d ()),
-			]),
-			getTypeName: function ()
-			{
-				return "GeoOrigin";
-			},
-			getComponentName: function ()
-			{
-				return "Geospatial";
-			},
-			getContainerField: function ()
-			{
-				return "geoOrigin";
-			},
-		});
-
-		return GeoOrigin;
+		this .addType (X3DConstants .GeoOrigin);
 	}
+
+	GeoOrigin .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: GeoOrigin,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new Fields .SFVec3d ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoOrigin";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "geoOrigin";
+		},
+	});
+
+	return GeoOrigin;
 });
+
 

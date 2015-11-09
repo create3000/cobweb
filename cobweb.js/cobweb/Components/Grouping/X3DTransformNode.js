@@ -8,6 +8,8 @@ function ($,
           X3DTransformMatrix4DNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DTransformNode (browser, executionContext)
 	{
 		X3DTransformMatrix4DNode .call (this, browser, executionContext);
@@ -44,4 +46,5 @@ function ($,
 
 	return X3DTransformNode;
 });
+
 

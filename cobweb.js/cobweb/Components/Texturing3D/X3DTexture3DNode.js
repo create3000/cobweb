@@ -8,6 +8,8 @@ function ($,
           X3DTextureNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DTexture3DNode (browser, executionContext)
 	{
 		X3DTextureNode .call (this, browser, executionContext);
@@ -22,4 +24,5 @@ function ($,
 
 	return X3DTexture3DNode;
 });
+
 

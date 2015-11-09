@@ -8,6 +8,8 @@ function ($,
           X3DAppearanceChildNode, 
           X3DConstants)
 {
+"use strict";
+
 	function X3DShaderNode (browser, executionContext)
 	{
 		X3DAppearanceChildNode .call (this, browser, executionContext);
@@ -22,4 +24,5 @@ function ($,
 
 	return X3DShaderNode;
 });
+
 

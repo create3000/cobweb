@@ -16,82 +16,82 @@ function ($,
           X3DConstants,
           Vector3)
 {
-	with (Fields)
+"use strict";
+
+	function Sphere (executionContext)
 	{
-		function Sphere (executionContext)
-		{
-			X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .Sphere);
-		}
+		this .addType (X3DConstants .Sphere);
+	}
 
-		Sphere .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	Sphere .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	{
+		constructor: Sphere,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "radius",   new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool (true)),
+		]),
+		getTypeName: function ()
 		{
-			constructor: Sphere,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "radius",   new SFFloat (1)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new SFBool (true)),
-			]),
-			getTypeName: function ()
+			return "Sphere";
+		},
+		getComponentName: function ()
+		{
+			return "Geometry3D";
+		},
+		getContainerField: function ()
+		{
+			return "geometry";
+		},
+		set_live__: function ()
+		{
+			X3DGeometryNode .prototype .set_live__ .call (this);
+		   
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+				this .getBrowser () .getSphereOptions () .addInterest (this, "eventsProcessed");
+			else
+				this .getBrowser () .getSphereOptions () .removeInterest (this, "eventsProcessed");
+		},
+		build: function ()
+		{
+			var
+				options = this .getBrowser () .getSphereOptions (),
+				radius  = this .radius_ .getValue ();
+
+			this .setNormals   (options .getGeometry () .getNormals ());
+			this .setTexCoords (options .getGeometry () .getTexCoords ());
+
+			if (radius === 1)
 			{
-				return "Sphere";
-			},
-			getComponentName: function ()
-			{
-				return "Geometry3D";
-			},
-			getContainerField: function ()
-			{
-				return "geometry";
-			},
-			set_live__: function ()
-			{
-				X3DGeometryNode .prototype .set_live__ .call (this);
-			   
-				if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-					this .getBrowser () .getSphereOptions () .addInterest (this, "eventsProcessed");
-				else
-					this .getBrowser () .getSphereOptions () .removeInterest (this, "eventsProcessed");
-			},
-			build: function ()
+				this .setVertices (options .getGeometry () .getVertices ());
+				this .setExtents  (options .getGeometry () .getExtents ());
+			}
+			else
 			{
 				var
-					options = this .getBrowser () .getSphereOptions (),
-					radius  = this .radius_ .getValue ();
+					defaultVertices = options .getGeometry () .getVertices (),
+					vertices        = this .getVertices ();
 
-				this .setNormals   (options .getGeometry () .getNormals ());
-				this .setTexCoords (options .getGeometry () .getTexCoords ());
-
-				if (radius === 1)
+				for (var i = 0; i < defaultVertices .length; i += 4)
 				{
-					this .setVertices (options .getGeometry () .getVertices ());
-					this .setExtents  (options .getGeometry () .getExtents ());
-				}
-				else
-				{
-					var
-						defaultVertices = options .getGeometry () .getVertices (),
-						vertices        = this .getVertices ();
-
-					for (var i = 0; i < defaultVertices .length; i += 4)
-					{
-						vertices .push (radius * defaultVertices [i],
-						                radius * defaultVertices [i + 1],
-						                radius * defaultVertices [i + 2],
-						                1);
-					}
-
-					this .setVertices (vertices);
-					this .setExtents  ([new Vector3 (-radius, -radius, -radius), new Vector3 (radius, radius, radius)]);
+					vertices .push (radius * defaultVertices [i],
+					                radius * defaultVertices [i + 1],
+					                radius * defaultVertices [i + 2],
+					                1);
 				}
 
-				this .setSolid (this .solid_ .getValue ());
-				this .setCurrentTexCoord (null);
-			},
-		});
+				this .setVertices (vertices);
+				this .setExtents  ([new Vector3 (-radius, -radius, -radius), new Vector3 (radius, radius, radius)]);
+			}
 
-		return Sphere;
-	}
+			this .setSolid (this .solid_ .getValue ());
+			this .setCurrentTexCoord (null);
+		},
+	});
+
+	return Sphere;
 });
+
 

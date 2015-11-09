@@ -14,41 +14,41 @@ function ($,
           X3DParticlePhysicsModelNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function WindPhysicsModel (executionContext)
 	{
-		function WindPhysicsModel (executionContext)
-		{
-			X3DParticlePhysicsModelNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DParticlePhysicsModelNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .WindPhysicsModel);
-		}
-
-		WindPhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
-		{
-			constructor: WindPhysicsModel,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",   new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",    new SFBool (true)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "direction",  new SFVec3f ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "speed",      new SFFloat (0.1)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "gustiness",  new SFFloat (0.1)),
-				new X3DFieldDefinition (X3DConstants .inputOutput, "turbulence", new SFFloat ()),
-			]),
-			getTypeName: function ()
-			{
-				return "WindPhysicsModel";
-			},
-			getComponentName: function ()
-			{
-				return "ParticleSystems";
-			},
-			getContainerField: function ()
-			{
-				return "physics";
-			},
-		});
-
-		return WindPhysicsModel;
+		this .addType (X3DConstants .WindPhysicsModel);
 	}
+
+	WindPhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
+	{
+		constructor: WindPhysicsModel,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",    new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "direction",  new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "speed",      new Fields .SFFloat (0.1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "gustiness",  new Fields .SFFloat (0.1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "turbulence", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "WindPhysicsModel";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "physics";
+		},
+	});
+
+	return WindPhysicsModel;
 });
+
 

@@ -16,78 +16,77 @@ function ($,
           X3DConstants,
           Vector3)
 {
+"use strict";
+
    var defaultSize = new Vector3 (2, 2, 2);
-
-	with (Fields)
+	function Box (executionContext)
 	{
-		function Box (executionContext)
-		{
-			X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .Box);
-		}
+		this .addType (X3DConstants .Box);
+	}
 
-		Box .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	Box .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	{
+		constructor: Box,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "size",     new Fields .SFVec3f (2, 2, 2)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool (true)),
+		]),
+		getTypeName: function ()
 		{
-			constructor: Box,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "size",     new SFVec3f (2, 2, 2)),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new SFBool (true)),
-			]),
-			getTypeName: function ()
+			return "Box";
+		},
+		getComponentName: function ()
+		{
+			return "Geometry3D";
+		},
+		getContainerField: function ()
+		{
+			return "geometry";
+		},
+		build: function ()
+		{
+			var
+				options = this .getBrowser () .getBoxOptions (),
+				size    = this .size_ .getValue ();
+
+			this .setNormals   (options .getGeometry () .getNormals ());
+			this .setTexCoords (options .getGeometry () .getTexCoords ());
+
+			if (size .equals (defaultSize))
 			{
-				return "Box";
-			},
-			getComponentName: function ()
-			{
-				return "Geometry3D";
-			},
-			getContainerField: function ()
-			{
-				return "geometry";
-			},
-			build: function ()
+				this .setVertices (options .getGeometry () .getVertices ());
+				this .setExtents  (options .getGeometry () .getExtents ());
+			}
+			else
 			{
 				var
-					options = this .getBrowser () .getBoxOptions (),
-					size    = this .size_ .getValue ();
+					scale           = Vector3 .divide (size, 2),
+					x               = scale .x,
+					y               = scale .y,
+					z               = scale .z,
+					defaultVertices = options .getGeometry () .getVertices (),
+					vertices        = this .getVertices ();
 
-				this .setNormals   (options .getGeometry () .getNormals ());
-				this .setTexCoords (options .getGeometry () .getTexCoords ());
-
-				if (size .equals (defaultSize))
+				for (var i = 0; i < defaultVertices .length; i += 4)
 				{
-					this .setVertices (options .getGeometry () .getVertices ());
-					this .setExtents  (options .getGeometry () .getExtents ());
-				}
-				else
-				{
-					var
-						scale           = Vector3 .divide (size, 2),
-						x               = scale .x,
-						y               = scale .y,
-						z               = scale .z,
-						defaultVertices = options .getGeometry () .getVertices (),
-						vertices        = this .getVertices ();
-
-					for (var i = 0; i < defaultVertices .length; i += 4)
-					{
-						vertices .push (x * defaultVertices [i],
-						                y * defaultVertices [i + 1],
-						                z * defaultVertices [i + 2],
-						                1);
-					}
-
-					this .setVertices (vertices);
-					this .setExtents  ([Vector3 .negate (scale), scale]);	
+					vertices .push (x * defaultVertices [i],
+					                y * defaultVertices [i + 1],
+					                z * defaultVertices [i + 2],
+					                1);
 				}
 
-				this .setSolid (this .solid_ .getValue ());
-				this .setCurrentTexCoord (null);
-			},
-		});
+				this .setVertices (vertices);
+				this .setExtents  ([Vector3 .negate (scale), scale]);	
+			}
 
-		return Box;
-	}
+			this .setSolid (this .solid_ .getValue ());
+			this .setCurrentTexCoord (null);
+		},
+	});
+
+	return Box;
 });
+

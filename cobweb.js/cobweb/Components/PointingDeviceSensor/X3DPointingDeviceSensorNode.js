@@ -12,6 +12,8 @@ function ($,
           Vector4,
           Matrix4)
 {
+"use strict";
+
 	function X3DPointingDeviceSensorNode (browser, executionContext)
 	{
 		X3DSensorNode .call (this, browser, executionContext);
@@ -90,4 +92,5 @@ function ($,
 
 	return X3DPointingDeviceSensorNode;
 });
+
 

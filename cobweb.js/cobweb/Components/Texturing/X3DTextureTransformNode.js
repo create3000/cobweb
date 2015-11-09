@@ -10,6 +10,8 @@ function ($,
           X3DConstants,
           Matrix4)
 {
+"use strict";
+
 	function X3DTextureTransformNode (browser, executionContext)
 	{
 		X3DAppearanceChildNode .call (this, browser, executionContext);
@@ -43,4 +45,5 @@ function ($,
 
 	return X3DTextureTransformNode;
 });
+
 

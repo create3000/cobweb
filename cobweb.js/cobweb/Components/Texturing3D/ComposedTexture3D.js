@@ -14,41 +14,41 @@ function ($,
           X3DTexture3DNode, 
           X3DConstants)
 {
-	with (Fields)
+"use strict";
+
+	function ComposedTexture3D (executionContext)
 	{
-		function ComposedTexture3D (executionContext)
-		{
-			X3DTexture3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture3DNode .call (this, executionContext .getBrowser (), executionContext);
 
-			this .addType (X3DConstants .ComposedTexture3D);
-		}
-
-		ComposedTexture3D .prototype = $.extend (Object .create (X3DTexture3DNode .prototype),
-		{
-			constructor: ComposedTexture3D,
-			fieldDefinitions: new FieldDefinitionArray ([
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatS",           new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatT",           new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatR",           new SFBool ()),
-				new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new SFNode ()),
-				new X3DFieldDefinition (X3DConstants .inputOutput,    "texture",           new MFNode ()),
-			]),
-			getTypeName: function ()
-			{
-				return "ComposedTexture3D";
-			},
-			getComponentName: function ()
-			{
-				return "Texturing3D";
-			},
-			getContainerField: function ()
-			{
-				return "texture";
-			},
-		});
-
-		return ComposedTexture3D;
+		this .addType (X3DConstants .ComposedTexture3D);
 	}
+
+	ComposedTexture3D .prototype = $.extend (Object .create (X3DTexture3DNode .prototype),
+	{
+		constructor: ComposedTexture3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatS",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatT",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "repeatR",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "texture",           new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ComposedTexture3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "texture";
+		},
+	});
+
+	return ComposedTexture3D;
 });
+
 
