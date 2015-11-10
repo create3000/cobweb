@@ -1,6 +1,6 @@
 
 
-define (function (Vector3)
+define (function ()
 {
 "use strict";
 

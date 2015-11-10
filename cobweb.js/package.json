@@ -2,7 +2,7 @@
 	"name": "cobweb",
 	"version": "0.0.1",
 	"description": "Cobwed X3D Browser",
-		"jam": {
+	"jam": {
 		"main": "./cobweb.js"
 	}
 }

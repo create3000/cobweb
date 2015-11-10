@@ -19,7 +19,7 @@ var jam = {
             "name": "text",
             "location": "jam/text",
             "main": "text.js"
-        },
+        }
     ],
     "version": "0.2.17",
     "shim": {}
@@ -47,7 +47,7 @@ if (typeof require !== "undefined" && require.config) {
             "name": "text",
             "location": "jam/text",
             "main": "text.js"
-        },
+        }
     ],
     "shim": {}
 });
@@ -74,7 +74,7 @@ else {
             "name": "text",
             "location": "jam/text",
             "main": "text.js"
-        },
+        }
     ],
     "shim": {}
 };

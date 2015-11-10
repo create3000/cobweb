@@ -5,7 +5,7 @@ define ([
 ],
 function (Matrix3, Vector2)
 {
-"use strict";
+;"use strict";
 
 	var
 		x   = new Vector2 (0, 0),
