@@ -57,16 +57,11 @@ X3D {
 	text-align: center;
 }
 		</style>
+	<script type="text/javascript" src="Bookmarks.js"></script>
 	<script type="text/javascript">
 X3D (function (dom)
 {
-	var Browser = X3D .getBrowser (dom);
-	var scene   = Browser .currentScene;			
-
-	var index = 0;
-	var pages = [ "Page 1", "Page 2", "Page 3" ];
-
-	var urls =
+	var pages =
 	[
 		[
 			{ name: 'Smashing Boxes',     url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Boxes/boxes.x3d" },
@@ -110,64 +105,11 @@ X3D (function (dom)
 		],
 	];
 
-	function toggleBookmarks ()
-	{
-		var bookmarks = $("#bookmarks");
+	var
+		Browser   = X3D .getBrowser (dom),
+		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 0);
 
-		bookmarks .empty ();
-
-		urls [index] .forEach (function (item)
-		{
-			$("<a/>")
-				.attr ("href", "#")
-				.click (function ()
-				{
-					Browser .loadURL (new X3D .MFString (item .url), new X3D .MFString ());
-				})
-				.text (item .name)
-				.appendTo (bookmarks);
-
-			bookmarks .append ("<br/>");
-		});
-			
-		bookmarks .append ("<br/>");
-
-
-		$("<a/>")
-			.attr ("href", "#")
-			.click (randomWorld)
-			.text ("Random World")
-			.appendTo (bookmarks);
-
-		bookmarks .append ("<br/>");
-		bookmarks .append ("<br/>");
-
-		index = (index + 1) % urls .length;
-
-		$("<a/>")
-			.attr ("href", "#")
-			.click (toggleBookmarks)
-			.text (pages [index])
-			.appendTo (bookmarks);
-		
-	}
-
-	function randomWorld ()
-	{
-		function random (max)
-		{
-		   return Math .round (Math .random () * max);
-		}
-
-		var
-			randomPage  = random (urls .length - 1),
-			randomIndex = random (urls [randomPage] .length - 1);
-
-		Browser .loadURL (new X3D .MFString (urls [randomPage] [randomIndex] .url), new X3D .MFString ());
-	}
-
-	randomWorld ();
-	toggleBookmarks ();
+	bookmarks .random ();
 
 	$(".u") .text (Browser .name + " V" + Browser .version);
 },

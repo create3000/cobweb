@@ -2555,6 +2555,7 @@
     <None Include="tests\Examples\Chomp\seaweed.x3d" />
     <None Include="tests\Examples\Chomp\skeleton.x3d" />
     <None Include="tests\Examples\Chomp\tube.x3d" />
+    <None Include="Bookmarks.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
