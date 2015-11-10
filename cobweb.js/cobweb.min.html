@@ -98,6 +98,7 @@ X3D (function (dom)
 		Browser   = X3D .getBrowser (dom),
 		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 0);
 
+	bookmarks .setup ();
 	bookmarks .random ();
 },
 function (elements, error)

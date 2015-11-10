@@ -28,12 +28,14 @@ var Bookmarks = (function ()
 		this .bookmarks       = bookmarks;
 		this .index           = index;
 		this .randomBookmarks = [ ];
-
-		this .toggle ();
 	}
 	
 	Bookmarks .prototype =
 	{
+		setup: function ()
+		{
+			this .toggle ();
+		},
 		loadURL: function (URL)
 		{
 			this .browser .loadURL (new X3D .MFString (URL), new X3D .MFString ());
