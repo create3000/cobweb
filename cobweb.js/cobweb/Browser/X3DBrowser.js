@@ -51,14 +51,15 @@ function ($,
 			if (urlCharacters)
 			{
 			   var
-			      parser = new Parser (scene, "", true),
-			      url = new Fields .MFString ();
+			      parser    = new Parser (scene, "", true),
+			      url       = new Fields .MFString (),
+					parameter = new Fields .MFString ();
 
 				parser .setInput (urlCharacters);
 				parser .mfstringValues (url);
 
 				if (url .length)
-					this .loadURL (url);
+					this .loadURL (url, parameter);
 			}
 
 			this .print ("Welcome to " + this .name + " X3D Browser " + this .version + ":\n" +
@@ -261,6 +262,17 @@ function ($,
 		},
 		loadURL: function (url, parameter)
 		{
+			for (var i = 0, length = parameter .length; i < length; ++ i)
+			{
+				var pair = parameter [i] .split ("=");
+
+				if (pair .length !== 2)
+					continue;
+
+				if (pair [0] === "target" && pair [1] !== "_self")
+					return;
+			}
+
 			var id = this .addLoadCount ();
 
 			new Loader (this .getWorld ()) .createX3DFromURL (url,

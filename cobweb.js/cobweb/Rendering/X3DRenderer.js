@@ -218,7 +218,7 @@ function ($,
 			
 				// Reshape camera
 
-				Camera .ortho (-collisionRadius, collisionRadius, bottom, collisionRadius, zNear, zFar, projectionMatrix);
+				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, zNear, zFar, projectionMatrix);
 
 				// Translate camera to user position and to look in the direction of the translation.
 

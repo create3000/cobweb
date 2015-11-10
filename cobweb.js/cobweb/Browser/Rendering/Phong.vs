@@ -31,7 +31,7 @@ main ()
 		t = x3d_TextureMatrix * x3d_TexCoord;
 
 	C = x3d_Color;
-	v = vec3 (p);
+	v = p .xyz;
 
 	gl_Position = x3d_ProjectionMatrix * p;
 }

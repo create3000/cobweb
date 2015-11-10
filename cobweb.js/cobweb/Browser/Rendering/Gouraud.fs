@@ -25,7 +25,7 @@ uniform int       x3d_GeometryType;
 varying vec4  frontColor; // color
 varying vec4  backColor;  // color
 varying vec4  t;          // texCoord
-varying float dv;         // distance to vertex
+varying vec3  v;          // point on geometry
 
 float
 getFogInterpolant ()
@@ -33,14 +33,16 @@ getFogInterpolant ()
 	if (x3d_FogType == NO_FOG)
 		return 1.0;
 
-	if (dv >= x3d_FogVisibilityRange)
+	float dV = length (v);
+
+	if (dV >= x3d_FogVisibilityRange)
 		return 0.0;
 
 	if (x3d_FogType == LINEAR_FOG)
-		return (x3d_FogVisibilityRange - dv) / x3d_FogVisibilityRange;
+		return (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;
 
 	if (x3d_FogType == EXPONENTIAL_FOG)
-		return exp (-dv / (x3d_FogVisibilityRange - dv));
+		return exp (-dV / (x3d_FogVisibilityRange - dV));
 
 	return 1.0;
 }

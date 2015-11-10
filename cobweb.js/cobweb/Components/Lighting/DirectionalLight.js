@@ -24,36 +24,37 @@ function ($,
 	
 	function DirectionalLightContainer (light)
 	{
-	this .direction = new Vector3 (0, 0, 0);
-
-	this .set (light);
+		this .direction = new Vector3 (0, 0, 0);
+	
+		this .set (light);
 	}
 
 	DirectionalLightContainer .prototype =
 	{
-	   set: function (light)
-	   {
-		this .color            = light .color_ .getValue ();
-		this .intensity        = light .intensity_ .getValue ();
-		this .ambientIntensity = light .ambientIntensity_ .getValue ();
-
-		light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
-      },
-	use: function (gl, shader, i)
-	{
-		gl .uniform1i (shader .lightType [i],             0);
-		gl .uniform1i (shader .lightOn [i],               true);
-		gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-		gl .uniform1f (shader .lightIntensity [i],        this .intensity);        // clamp
-		gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
-		gl .uniform3f (shader .lightAttenuation [i],      1, 0, 0);
-		gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
-	},
-	recycle: function ()
-	{
-	   DirectionalLights .push (this);
-	},
+		set: function (light)
+		{
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .intensity_ .getValue ();
+			this .ambientIntensity = light .ambientIntensity_ .getValue ();
+	
+			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
+		},
+		use: function (gl, shader, i)
+		{
+			gl .uniform1i (shader .lightType [i],             0);
+			gl .uniform1i (shader .lightOn [i],               true);
+			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);        // clamp
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
+			gl .uniform3f (shader .lightAttenuation [i],      1, 0, 0);
+			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+		},
+		recycle: function ()
+		{
+		   DirectionalLights .push (this);
+		},
 	};
+
 	function DirectionalLight (executionContext)
 	{
 		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);

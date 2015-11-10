@@ -24,8 +24,8 @@ function ($,
 	
 	function SpotLightContainer (light)
 	{
-	this .location  = new Vector3 (0, 0, 0);
-	this .direction = new Vector3 (0, 0, 0);
+		this .location  = new Vector3 (0, 0, 0);
+		this .direction = new Vector3 (0, 0, 0);
 
 	   this .set (light);
 	}
@@ -34,38 +34,39 @@ function ($,
 	{
 	   set: function (light)
 	   {
-		var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
-
-		this .color            = light .color_ .getValue ();
-		this .intensity        = light .intensity_ .getValue ();
-		this .ambientIntensity = light .ambientIntensity_ .getValue ();
-		this .attenuation      = light .attenuation_ .getValue ();
-		this .beamWidth        = light .beamWidth_ .getValue ();
-		this .cutOffAngle      = light .cutOffAngle_ .getValue ();
-		this .radius           = light .radius_ .getValue ();
-
-		modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
-		modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
+			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
+	
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .intensity_ .getValue ();
+			this .ambientIntensity = light .ambientIntensity_ .getValue ();
+			this .attenuation      = light .attenuation_ .getValue ();
+			this .beamWidth        = light .beamWidth_ .getValue ();
+			this .cutOffAngle      = light .cutOffAngle_ .getValue ();
+			this .radius           = light .radius_ .getValue ();
+	
+			modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
+			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
 	   },
-	use: function (gl, shader, i)
-	{
-		gl .uniform1i (shader .lightType [i],             2);
-		gl .uniform1i (shader .lightOn [i],               true);
-		gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-		gl .uniform1f (shader .lightIntensity [i],        this .intensity);                                                  // clamp
-		gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);                                           // clamp
-		gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-		gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
-		gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
-		gl .uniform1f (shader .lightBeamWidth [i],        this .beamWidth);                                                  // clamp
-		gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);                                                // clamp
-		gl .uniform1f (shader .lightRadius [i],           this .radius);                                                     // max
-	},
-	recycle: function ()
-	{
-	   SpotLights .push (this);
-	},
+		use: function (gl, shader, i)
+		{
+			gl .uniform1i (shader .lightType [i],             2);
+			gl .uniform1i (shader .lightOn [i],               true);
+			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);                                                  // clamp
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);                                           // clamp
+			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
+			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
+			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform1f (shader .lightBeamWidth [i],        this .beamWidth);                                                  // clamp
+			gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);                                                // clamp
+			gl .uniform1f (shader .lightRadius [i],           this .radius);                                                     // max
+		},
+		recycle: function ()
+		{
+		   SpotLights .push (this);
+		},
 	};
+
 	function SpotLight (executionContext)
 	{
 		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
