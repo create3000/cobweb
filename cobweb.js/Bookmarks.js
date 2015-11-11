@@ -75,7 +75,7 @@ var Bookmarks = (function ()
 			$("<a/>")
 				.attr ("href", "next")
 				.click (this .toggle .bind (this))
-				.text (">> Page " + (this .index + 1))
+				.text (">> Next Page")
 				.appendTo (this .element);
 			
 			return false;
