@@ -2556,6 +2556,9 @@
     <None Include="tests\Examples\Chomp\skeleton.x3d" />
     <None Include="tests\Examples\Chomp\tube.x3d" />
     <None Include="Bookmarks.js" />
+    <None Include="tests\Examples\Misc\shape5_a.x3d" />
+    <None Include="tests\Examples\Misc\starworld.x3d" />
+    <None Include="tests\Examples\Misc\torusbreath2.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -2625,5 +2628,6 @@
     <Folder Include="lib\sprintf.js\" />
     <Folder Include="tests\Examples\VRMLBanner\" />
     <Folder Include="tests\Examples\Chomp\" />
+    <Folder Include="tests\Examples\Misc\" />
   </ItemGroup>
 </Project>
