@@ -169,6 +169,8 @@ function ($,
 		},
 		getGlobal: function ()
 		{
+			var browser = this .getBrowser ();
+
 			function SFNode (vrmlSyntax)
 			{
 				if (typeof vrmlSyntax === "string")
@@ -183,8 +185,6 @@ function ($,
 			}
 
 			SFNode .prototype = Fields .SFNode .prototype;
-
-			var browser = this .getBrowser ();
 
 			var global =
 			{
@@ -220,7 +220,7 @@ function ($,
 				SFMatrix3f:    { value: Fields .SFMatrix3f },
 				SFMatrix4d:    { value: Fields .SFMatrix4d },
 				SFMatrix4f:    { value: Fields .SFMatrix4f },
-				SFNode:        { value: Fields .SFNode },
+				SFNode:        { value: SFNode },
 				SFRotation:    { value: Fields .SFRotation },
 				SFVec3d:       { value: Fields .SFVec2d },
 				SFVec2f:       { value: Fields .SFVec2f },
@@ -433,7 +433,8 @@ function ($,
 		},
 		setError: function (callback, error)
 		{
-			console .error ("JavaScript Error from '" + callback + "': ", error);
+			console .error ("JavaScript Error in Script '" + this .getName () + "', function '" + callback + "'\nworld url is '" + this .getExecutionContext () .getWorldURL () + "':");
+			console .error (error);
 		},
 	});
 

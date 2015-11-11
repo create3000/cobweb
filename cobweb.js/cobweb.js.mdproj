@@ -2559,6 +2559,7 @@
     <None Include="tests\Examples\Misc\shape5_a.x3d" />
     <None Include="tests\Examples\Misc\starworld.x3d" />
     <None Include="tests\Examples\Misc\torusbreath2.x3d" />
+    <None Include="tests\Components\Scripting\SFNode.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
