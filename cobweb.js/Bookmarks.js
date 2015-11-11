@@ -39,6 +39,8 @@ var Bookmarks = (function ()
 		loadURL: function (URL)
 		{
 			this .browser .loadURL (new X3D .MFString (URL), new X3D .MFString ());
+
+			return false;
 		},
 		toggle: function ()
 		{
@@ -47,7 +49,7 @@ var Bookmarks = (function ()
 			this .bookmarks [this .index] .forEach (function (item)
 			{
 				$("<a/>")
-					.attr ("href", "#")
+					.attr ("href", item .url)
 					.click (this .loadURL .bind (this, item .url))
 					.text (item .name)
 					.appendTo (this .element);
@@ -60,7 +62,7 @@ var Bookmarks = (function ()
 	
 	
 			$("<a/>")
-				.attr ("href", "#")
+				.attr ("href", "random")
 				.click (this .random .bind (this))
 				.text ("Random World")
 				.appendTo (this .element);
@@ -71,11 +73,12 @@ var Bookmarks = (function ()
 			this .index = (this .index + 1) % this .bookmarks .length;
 	
 			$("<a/>")
-				.attr ("href", "#")
+				.attr ("href", "next")
 				.click (this .toggle .bind (this))
 				.text ("Page " + (this .index + 1))
 				.appendTo (this .element);
 			
+			return false;
 		},
 		random: function ()
 		{
@@ -93,6 +96,8 @@ var Bookmarks = (function ()
 			}
 	
 			this .browser .loadURL (new X3D .MFString (this .randomBookmarks .pop () .url), new X3D .MFString ());
+
+			return false;
 		},
 	};
 
