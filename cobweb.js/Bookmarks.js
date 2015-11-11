@@ -26,7 +26,7 @@ var Bookmarks = (function ()
 		this .browser         = browser;
 		this .element         = element;
 		this .bookmarks       = bookmarks;
-		this .index           = index;
+		this .index           = index || 0;
 		this .randomBookmarks = [ ];
 	}
 	

@@ -77,7 +77,7 @@ X3D (function (dom)
 			{ name: 'Huey',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/huey.x3d" },
 			{ name: 'Approach',           url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/index.x3d" },
 			{ name: 'Terrain',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Terrain/index.x3d" },
-			{ name: 'Rathaus',            url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Rathaus/stage/index.x3d" },
+			{ name: 'Rathaus',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Rathaus/stage/index.x3d" },
 		],
 		[
 			{ name: 'NIST-Logo',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/NIST-Logo/index.x3d" },
@@ -107,7 +107,7 @@ X3D (function (dom)
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 0);
+		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages);
 
 	bookmarks .setup ();
 	bookmarks .random ();

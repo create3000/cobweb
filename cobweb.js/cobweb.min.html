@@ -49,22 +49,22 @@ X3D (function (dom)
 	var pages =
 	[
 		[
-			{ name: 'Chomp!',             url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Chomp/chomp.x3d" },
-			{ name: 'Smashing Boxes',     url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Boxes/boxes.x3d" },
-			{ name: 'Labyrinth',          url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/labyrinth.x3d" },
-			{ name: 'Soccer',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/soccer.x3d" },
-			{ name: 'Astronomy',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Astronomy/stage/astrnmy.x3d" },
-			{ name: 'Arcadia',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Arcadia/stage/index.x3d" },
-			{ name: 'Pong',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Pong/index.x3d" },
-			{ name: 'Foldup',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/foldup.x3d" },
-			{ name: 'Mediafacade',        url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Vattenfall/index.x3d" },
-			{ name: 'LustForLife',        url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LustForLife/stage/index.x3d" },
-			{ name: 'Cathedral',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/index.x3d" },
-			{ name: 'Huey',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/huey.x3d" },
-			{ name: 'Approach',           url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/index.x3d" },
-			{ name: 'Terrain',            url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Terrain/index.x3d" },
-			{ name: 'Rathaus',            url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Rathaus/stage/index.x3d" },
-			{ name: 'Mushrooms',          url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Mushrooms/index.x3d" },
+			{ name: 'Chomp!',                url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Chomp/chomp.x3d" },
+			{ name: 'Smashing Boxes',        url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Boxes/boxes.x3d" },
+			{ name: 'The Secret Labyrinth',  url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/labyrinth.x3d" },
+			{ name: 'Backyard Soccer',       url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/ICTS/soccer.x3d" },
+			{ name: 'Astronomy',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Astronomy/stage/astrnmy.x3d" },
+			{ name: 'Arcadia',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Arcadia/stage/index.x3d" },
+			{ name: '4 Pong',                url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Pong/index.x3d" },
+			{ name: 'Foldup',                url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/foldup.x3d" },
+			{ name: 'Mediafacade Berlin',    url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Vattenfall/index.x3d" },
+			{ name: 'Lust For Life',         url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/LustForLife/stage/index.x3d" },
+			{ name: 'Lost Cathedral',        url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Cathedral/stage/index.x3d" },
+			{ name: 'Huey Huey',             url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Compel/huey.x3d" },
+			{ name: 'Approach',              url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Approach/stage/index.x3d" },
+			{ name: 'Terrain',               url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Terrain/index.x3d" },
+			{ name: 'Old Leipzig Rathaus',   url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Rathaus/stage/index.x3d" },
+			{ name: 'Magic Mushrooms',       url: "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/Mushrooms/index.x3d" },
 		],
 		[
 			{ name: 'NIST-Logo',          url: "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Examples/NIST-Logo/index.x3d" },
@@ -96,7 +96,7 @@ X3D (function (dom)
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 0);
+		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages);
 
 	bookmarks .setup ();
 	bookmarks .random ();
