@@ -189,34 +189,18 @@ function ($,
 			this .traverse (TraverseType .CAMERA);
 
 			if (this .navigationInfos .get () .length)
-			{
-				var navigationInfo = this .navigationInfos .getBound ();
-				this .navigationInfoStack .forcePush (navigationInfo);
-				navigationInfo .bindToLayer (this);
-			}
+				this .navigationInfoStack .forcePush (this .navigationInfos .getBound ());
 
 			if (this .backgrounds .get () .length)
-			{
-				var background = this .backgrounds .getBound ();
-				this .backgroundStack .forcePush (background);
-				background .bindToLayer (this);
-			}
+				this .backgroundStack .forcePush (this .backgrounds .getBound ());
 
 			if (this .fogs .get () .length)
-			{
-				var fog = this .fogs .getBound ();
-				this .fogStack .forcePush (fog);
-				fog .bindToLayer (this);
-			}
+				this .fogStack .forcePush (this .fogs .getBound ());
 
 			// Bind first viewpoint in viewpoint stack.
 
 			if (this .viewpoints .get () .length)
-			{
-				var viewpoint = this .viewpoints .getBound ();
-				this .viewpointStack .forcePush (viewpoint);
-				viewpoint .bindToLayer (this);
-			}
+				this .viewpointStack .forcePush (this .viewpoints .getBound ());
 		},
 		traverse: function (type)
 		{

@@ -30,7 +30,7 @@ function ($, X3DBaseNode)
 			node .isBound_  = true;
 			node .bindTime_ = this .getBrowser () .getCurrentTime ();
 
-			this .push (node);
+			node .bindToLayer (this .layer);
 		},
 		push: function (node)
 		{
