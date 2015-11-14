@@ -32,6 +32,8 @@ function ($,
 
 		this .addType (X3DConstants .VisibilitySensor);
 
+		this .setCameraObject (true);
+
 		this .visible = false;
 	}
 

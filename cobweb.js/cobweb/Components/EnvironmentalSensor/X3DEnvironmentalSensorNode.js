@@ -18,8 +18,6 @@ function ($,
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 
-		this .setCameraObject (true);
-
 		this .traversed = true;
 	}
 

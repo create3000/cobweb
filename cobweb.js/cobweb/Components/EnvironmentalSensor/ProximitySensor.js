@@ -34,6 +34,8 @@ function ($,
 
 		this .addType (X3DConstants .ProximitySensor);
 
+		this .setCameraObject (true);
+
 		this .viewpoint              = null;
 		this .modelViewMatrix        = new Matrix4 ();
 		this .invModelViewMatrix     = new Matrix4 ();
