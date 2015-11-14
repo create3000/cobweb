@@ -21,18 +21,23 @@ function ($, X3DBaseNode)
 		return true;
 	}
 
-	function BindableList (executionContext, layer)
+	function BindableList (executionContext, layer, defaultNode)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .layer     = layer;
-		this .collected = [ ];
-		this .array     = [ ];
-		this .setup ();
+		this .collected = [ defaultNode ];
+		this .array     = [ defaultNode ];
 	}
 
 	BindableList .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
+		initialize: function ()
+		{
+			X3DBaseNode .prototype .initialize .call (this);
+			
+			this .array [0] .set_bind_ .addInterest (this, "set_bind__", this .array [0]);
+		},
 		get: function ()
 		{
 			return this .array;
@@ -62,7 +67,7 @@ function ($, X3DBaseNode)
 			{
 				// removeInterest
 
-				for (var i = 0; i < this .array .length; ++ i)
+				for (var i = 1; i < this .array .length; ++ i)
 					this .array [i] .set_bind_ .removeInterest (this, "set_bind__", this .array [i]);
 				
 				// Swap arrays.
@@ -74,11 +79,11 @@ function ($, X3DBaseNode)
 
 				// addInterest
 
-				for (var i = 0; i < this .array .length; ++ i)
+				for (var i = 1; i < this .array .length; ++ i)
 					this .array [i] .set_bind_ .addInterest (this, "set_bind__", this .array [i]);
 			}
 
-			this .collected .length = 0;
+			this .collected .length = 1;
 		},
 		set_bind__: function (bind, node)
 		{

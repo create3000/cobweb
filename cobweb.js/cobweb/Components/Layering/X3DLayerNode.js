@@ -41,22 +41,23 @@ function ($,
 
 		this .addType (X3DConstants .X3DLayerNode);
 
-		this .defaultNavigationInfo = new NavigationInfo (executionContext);
+		this .group           = group;
+		this .currentViewport = null;
+
 		this .defaultBackground     = new Background (executionContext);
 		this .defaultFog            = new Fog (executionContext);
+		this .defaultNavigationInfo = new NavigationInfo (executionContext);
 		this .defaultViewpoint      = defaultViewpoint;
-		this .group                 = group;
 
-		this .currentViewport     = null;
-		this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
 		this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
 		this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
+		this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
 		this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
 
-		this .navigationInfos = new BindableList (this .getExecutionContext (), this);
-		this .backgrounds     = new BindableList (this .getExecutionContext (), this);
-		this .fogs            = new BindableList (this .getExecutionContext (), this);
-		this .viewpoints      = new BindableList (this .getExecutionContext (), this);
+		this .backgrounds     = new BindableList (this .getExecutionContext (), this, this .defaultBackground)
+		this .fogs            = new BindableList (this .getExecutionContext (), this, this .defaultFog);
+		this .navigationInfos = new BindableList (this .getExecutionContext (), this, this .defaultNavigationInfo);
+		this .viewpoints      = new BindableList (this .getExecutionContext (), this, this .defaultViewpoint);
 
 		this .defaultBackground .setHidden (true);
 		this .defaultFog        .setHidden (true);
@@ -75,14 +76,24 @@ function ($,
 			X3DNode     .prototype .initialize .call (this);
 			X3DRenderer .prototype .initialize .call (this);
 
+			this .group .children_ = this .children_;
+			this .group .setup ();
+			this .collect = this .group .traverse .bind (this .group);
+
 			this .defaultNavigationInfo .setup ();
 			this .defaultBackground     .setup ();
 			this .defaultFog            .setup ();
 			this .defaultViewpoint      .setup ();
 
-			this .group .children_ = this .children_;
-			this .group .setup ();
-			this .collect = this .group .traverse .bind (this .group);
+			this .backgroundStack     .setup ();
+			this .fogStack            .setup ();
+			this .navigationInfoStack .setup ();
+			this .viewpointStack      .setup ();
+	
+			this .backgrounds     .setup ();
+			this .fogs            .setup ();
+			this .navigationInfos .setup ();
+			this .viewpoints      .setup ();
 
 			this .viewport_       .addInterest (this, "set_viewport__");
 			this .addChildren_    .addFieldInterest (this .group .addChildren_);
@@ -100,10 +111,6 @@ function ($,
 		{
 			return this .currentViewport;
 		},
-		getNavigationInfo: function ()
-		{
-			return this .navigationInfoStack .top ();
-		},
 		getBackground: function ()
 		{
 			return this .backgroundStack .top ();
@@ -112,13 +119,13 @@ function ($,
 		{
 			return this .fogStack .top ();
 		},
+		getNavigationInfo: function ()
+		{
+			return this .navigationInfoStack .top ();
+		},
 		getViewpoint: function ()
 		{
 			return this .viewpointStack .top ();
-		},
-		getNavigationInfos: function ()
-		{
-			return this .navigationInfos;
 		},
 		getBackgrounds: function ()
 		{
@@ -127,6 +134,10 @@ function ($,
 		getFogs: function ()
 		{
 			return this .fogs;
+		},
+		getNavigationInfos: function ()
+		{
+			return this .navigationInfos;
 		},
 		getViewpoints: function ()
 		{
@@ -146,10 +157,6 @@ function ($,
 
 			return userViewpoints;
 		},
-		getNavigationInfoStack: function ()
-		{
-			return this .navigationInfoStack;
-		},
 		getBackgroundStack: function ()
 		{
 			return this .backgroundStack;
@@ -157,6 +164,10 @@ function ($,
 		getFogStack: function ()
 		{
 			return this .fogStack;
+		},
+		getNavigationInfoStack: function ()
+		{
+			return this .navigationInfoStack;
 		},
 		getViewpointStack: function ()
 		{
@@ -262,10 +273,6 @@ function ($,
 		{
 			this .getViewpoint () .reshape ();
 			this .getBrowser () .getModelViewMatrix () .identity ();
-
-			this .defaultNavigationInfo .traverse (TraverseType .CAMERA);
-			this .defaultBackground     .traverse (TraverseType .CAMERA);
-			this .defaultViewpoint      .traverse (TraverseType .CAMERA);
 
 			this .currentViewport .push ();
 			this .collect (TraverseType .CAMERA);
