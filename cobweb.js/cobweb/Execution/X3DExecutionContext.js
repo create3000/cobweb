@@ -79,7 +79,7 @@ function ($,
 			node .setup ();
 			return new Fields .SFNode (node);
 		},
-		createProto: function (name, parser)
+		createProto: function (name)
 		{
 			var executionContext = this;
 
@@ -88,12 +88,12 @@ function ($,
 				var proto = executionContext .protos [name];
 
 				if (proto)
-					return proto .createInstance (parser);
+					return proto .createInstance (this);
 
 				var externproto = executionContext .externprotos [name];
 
 				if (externproto)
-					return externproto .createInstance (parser);
+					return externproto .createInstance (this);
 
 				if (executionContext .isRootContext ())
 					break;

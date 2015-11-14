@@ -28,12 +28,12 @@ function ($,
 		{
 			return true;
 		},
-		createInstance: function (parser)
+		createInstance: function (executionContext)
 		{
-			var instance = new X3DPrototypeInstance (this .getExecutionContext (), this);
+			if (executionContext)
+				return new X3DPrototypeInstance (executionContext, this);
 
-			if (parser)
-			   return instance;
+			var instance = new X3DPrototypeInstance (this .getExecutionContext (), this);
 			
 			instance .setup ();
 

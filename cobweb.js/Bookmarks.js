@@ -36,9 +36,9 @@ var Bookmarks = (function ()
 		{
 			this .toggle ();
 		},
-		loadURL: function (URL)
+		loadURL: function (url)
 		{
-			this .browser .loadURL (new X3D .MFString (URL), new X3D .MFString ());
+			this .browser .loadURL (new X3D .MFString (url), new X3D .MFString ());
 
 			return false;
 		},
@@ -94,9 +94,8 @@ var Bookmarks = (function ()
 	
 				shuffle (this .randomBookmarks);
 			}
-	
-			this .browser .loadURL (new X3D .MFString (this .randomBookmarks .pop () .url), new X3D .MFString ());
 
+			this .loadURL (this .randomBookmarks .pop () .url);
 			return false;
 		},
 	};

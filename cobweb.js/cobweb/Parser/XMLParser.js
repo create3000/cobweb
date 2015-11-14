@@ -189,7 +189,7 @@ function ($,
 
 				if (this .id (name))
 				{
-					var node = this .getExecutionContext () .createProto (name, true);
+					var node = this .getExecutionContext () .createProto (name);
 
 					this .DEF (element, node);
 					this .addNode (element, node);
