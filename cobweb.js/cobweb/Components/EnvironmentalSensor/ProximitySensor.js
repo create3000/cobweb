@@ -78,17 +78,19 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 			
-			this .enabled_ .addInterest (this, "set_enabled___");
+			this .enabled_ .addInterest (this, "set_enabled__");
 			this .size_    .addInterest (this, "set_extents__");
 			this .center_  .addInterest (this, "set_extents__");
+
+			this .traversed_ .addFieldInterest (this .isCameraObject_);
 	
 			this .min = new Vector3 (0, 0, 0);
 			this .max = new Vector3 (0, 0, 0);
 			
-			this .set_enabled___ ();
+			this .set_enabled__ ();
 			this .set_extents__ ();
 		},
-		set_enabled___: function ()
+		set_enabled__: function ()
 		{
 			this .setCameraObject (this .enabled_ .getValue ());
 			

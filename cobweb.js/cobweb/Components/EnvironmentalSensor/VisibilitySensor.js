@@ -32,8 +32,6 @@ function ($,
 
 		this .addType (X3DConstants .VisibilitySensor);
 
-		this .setCameraObject (true);
-
 		this .visible = false;
 	}
 
@@ -68,14 +66,12 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled___");
+			this .enabled_ .addInterest (this, "set_enabled__");
 
-			this .set_enabled___ ();
+			this .set_enabled__ ();
 		},
-		set_enabled___: function ()
+		set_enabled__: function ()
 		{
-			this .setCameraObject (this .enabled_ .getValue ());
-			
 			if (this .enabled_ .getValue ())
 				this .traverse = traverse;
 			else

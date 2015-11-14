@@ -204,10 +204,7 @@ function ($,
 		},
 		loadDocumentError: function (exception)
 		{
-			if (DEBUG)
-				console .log ("In url:", this .URL .toString (), exception);
-			else
-				console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + exception .message + ".");
+			console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + exception .message + ".");
 
 			if (this .url .length)
 				this .loadDocumentAsync (this .url .shift ());

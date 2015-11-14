@@ -1,11 +1,13 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
 	"cobweb/Components/Core/X3DSensorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
 function ($,
+          Fields,
           X3DSensorNode, 
           X3DConstants,
           Vector3)
@@ -18,7 +20,9 @@ function ($,
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 
-		this .traversed = true;
+		this .addChildren ("traversed", new Fields .SFBool (true));
+
+		this .currentTraversed = true;
 	}
 
 	X3DEnvironmentalSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
@@ -28,31 +32,37 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_enabled__");
-			this .isLive () .addInterest (this, "set_enabled__");
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
 
-			this .enabled_        .addInterest (this, "set_enabled__");
-			this .size_           .addInterest (this, "set_enabled__");
-			this .isCameraObject_ .addInterest (this, "set_enabled__");
+			this .enabled_   .addInterest (this, "set_live__");
+			this .size_      .addInterest (this, "set_live__");
+			this .traversed_ .addInterest (this, "set_live__");
 
-			this .set_enabled__ ();
+			this .set_live__ ();
 		},
 		setTraversed: function (value)
 		{
 		   if (value)
-				this .setCameraObject (true);
+			{
+				if (this .traversed_ .getValue () === false)
+					this .traversed_ = true;
+			}
 			else
-				this .setCameraObject (this .traversed);
+			{
+				if (this .currentTraversed !== this .traversed_ .getValue ())
+					this .traversed_ = this .currentTraversed;
+			}
 
-		   this .traversed = value;
+		   this .currentTraversed = value;
 		},
 		getTraversed: function ()
 		{
-		   return this .traversed;
+		   return this .currentTraversed;
 		},
-		set_enabled__: function ()
+		set_live__: function ()
 		{
-			if (this .getCameraObject () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			if (this .traversed_ .getValue () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
 				this .getBrowser () .sensors () .addInterest (this, "update");
 			}
