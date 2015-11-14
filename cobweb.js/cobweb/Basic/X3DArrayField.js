@@ -122,7 +122,7 @@ function ($, X3DField, X3DConstants, Generator)
 		{
 			var
 				array = this .getValue (),
-				field = new (this .valueType_) ();
+				field = new (this .ValueType) ();
 
 			field .setValue (value);
 			field .addParent (this);
@@ -147,7 +147,7 @@ function ($, X3DField, X3DConstants, Generator)
 		{
 			var
 				array = this .getValue (),
-				field = new (this .valueType_) ();
+				field = new (this .ValueType) ();
 
 			field .setValue (value);
 			field .addParent (this);
@@ -174,7 +174,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 			for (var i = first; i < last; ++ i)
 			{
-				var field = new (this .valueType_) ();
+				var field = new (this .ValueType) ();
 
 				field .setValue (array [i]);
 				field .addParent (this);
@@ -213,7 +213,7 @@ function ($, X3DField, X3DConstants, Generator)
 			{
 				for (var i = array .length; i < size; ++ i)
 				{
-					var field = new (this .valueType_) ();
+					var field = new (this .ValueType) ();
 
 					if (value !== undefined)
 						field .setValue (value);
