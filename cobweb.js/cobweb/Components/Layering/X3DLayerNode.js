@@ -281,23 +281,6 @@ function ($,
 		},
 		display: function (type)
 		{
-			var
-				gl       = this .getBrowser () .getContext (),
-				viewport = this .currentViewport .getRectangle ();
-
-			gl .viewport (viewport [0],
-			              viewport [1],
-			              viewport [2],
-			              viewport [3]);
-
-			gl .scissor (viewport [0],
-			             viewport [1],
-			             viewport [2],
-			             viewport [3]);
-
-			gl .clear (gl .DEPTH_BUFFER_BIT);
-
-			this .getBackground ()     .draw (viewport);
 			this .getNavigationInfo () .enable ();
 			this .getViewpoint ()      .reshape ();
 			this .getViewpoint ()      .transform ();

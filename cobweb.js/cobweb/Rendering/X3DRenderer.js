@@ -474,17 +474,33 @@ function ($,
 			var
 				browser           = this .getBrowser (),
 				gl                = browser .getContext (),
+				viewport          = this .currentViewport .getRectangle (),
 				opaqueShapes      = this .opaqueShapes,
 				transparentShapes = this .transparentShapes;
+
+			// Configure viewport and background
+
+			gl .viewport (viewport [0],
+			              viewport [1],
+			              viewport [2],
+			              viewport [3]);
+
+			gl .scissor (viewport [0],
+			             viewport [1],
+			             viewport [2],
+			             viewport [3]);
+
+			this .getBackground () .draw (viewport);
+
+			// Sorted blend
 
 			browser .getPointShader ()   .setGlobalUniforms ();
 			browser .getLineShader ()    .setGlobalUniforms ();
 			browser .getDefaultShader () .setGlobalUniforms ();
 
-			// Sorted blend
-
 			// Render opaque objects first
 
+			gl .clear (gl .DEPTH_BUFFER_BIT);
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);

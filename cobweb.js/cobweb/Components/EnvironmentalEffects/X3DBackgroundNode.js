@@ -101,6 +101,8 @@ function ($,
 		y3 = new Complex (0, 0),
 		y4 = new Complex (0, 0);
 
+	var identity = new Matrix4 ();
+
 	function X3DBackgroundNode (browser, executionContext)
 	{
 		X3DBindableNode .call (this, browser, executionContext);
@@ -108,6 +110,7 @@ function ($,
 		this .addType (X3DConstants .X3DBackgroundNode);
 
 		this .hidden                = false;
+		this .projectionMatrixArray = new Float32Array (16);
 		this .modelViewMatrix       = new Matrix4 ();
 		this .modelViewMatrixArray  = new Float32Array (16);
 		this .colors                = [ ];
@@ -431,19 +434,20 @@ function ($,
 			if (this .hidden)
 				return;
 
-			// Get background scale
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext ();
 
 			if (this .plane && ! this .textures)
 			{
-				var modelViewMatrix = this .modelViewMatrix;
+				this .projectionMatrixArray .set (this .orthoMatrix);
 
-				this .getBrowser () .setProjectionMatrix (this .orthoMatrix);
-
-				modelViewMatrix .identity ();
-				this .modelViewMatrixArray .set (modelViewMatrix);
+				this .modelViewMatrixArray .set (identity);
 			}
 			else
 			{
+				// Get background scale.
+
 				var
 					viewpoint       = this .getCurrentViewpoint (),
 					scale           = viewpoint .getScreenScale (SIZE, viewport),
@@ -452,20 +456,29 @@ function ($,
 
 				scale .multiply (Math .max (viewport [2], viewport [3]));
 
-				viewpoint .reshapeWithLimits (1, Math .max (2, 3 * SIZE * scale .z));
+				// Get projection matrix.
 
-				// Rotate and scale background
+				this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport));	
+
+				// Rotate and scale background.
 
 				modelViewMatrix .get (null, rotation);
 				modelViewMatrix .identity ();
 				modelViewMatrix .scale (scale);
 				modelViewMatrix .rotate (rotation);
 
-				// Draw
-
 				this .modelViewMatrixArray .set (modelViewMatrix);
 			}
 
+			// Setup context.
+	
+			gl .disable (gl .DEPTH_TEST);
+			gl .depthMask (false);
+			gl .enable (gl .CULL_FACE);
+			gl .frontFace (gl .CCW);
+
+			// Draw.
+	
 			this .drawSphere ();
 
 			if (this .textures)
@@ -485,14 +498,11 @@ function ($,
 
 			shader .use ();
 
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
 			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Setup context.
 	
-			gl .disable (gl .DEPTH_TEST);
-			gl .depthMask (false);
-
 			if (transparency)
 				gl .enable (gl .BLEND);
 			else
@@ -510,8 +520,6 @@ function ($,
 
 			// Draw.
 
-			gl .enable (gl .CULL_FACE);
-			gl .frontFace (gl .CCW);
 			gl .drawArrays (gl .TRIANGLES, 0, this .sphereCount);
 
 			// Disable vertex attribute arrays.
@@ -534,15 +542,8 @@ function ($,
 			gl .uniform1i (shader .texturing,     true);
 
 			gl .uniformMatrix4fv (shader .textureMatrix,    false, this .textureMatrixArray);
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
 			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
-
-			// Setup context.
-	
-			gl .disable (gl .DEPTH_TEST);
-			gl .depthMask (false);
-			gl .enable (gl .CULL_FACE);
-			gl .frontFace (gl .CCW);
 
 			// Enable vertex attribute arrays.
 

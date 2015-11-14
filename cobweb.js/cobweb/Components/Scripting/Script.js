@@ -173,28 +173,26 @@ function ($,
 
 			function SFNode (vrmlSyntax)
 			{
-				if (typeof vrmlSyntax === "string")
-				{
-					var scene = browser .createX3DFromString (vrmlSyntax);
+				var scene = browser .createX3DFromString (String (vrmlSyntax));
 
-					if (scene .getRootNodes () .length && scene .getRootNodes () [0])
-						return Fields .SFNode .call (this, scene .getRootNodes () [0] .getValue ());
-				}
+				if (scene .getRootNodes () .length && scene .getRootNodes () [0])
+					return Fields .SFNode .call (this, scene .getRootNodes () [0] .getValue ());
 
-				return Fields .SFNode .call (this);
+				throw Error ("SFNode.new: invalid argument, must be 'string' is 'undefined'.");
 			}
 
-			SFNode .prototype = Fields .SFNode .prototype;
+			SFNode .prototype = Object .create (Fields .SFNode .prototype);
+			SFNode .prototype .constructor = SFNode;
 
 			var global =
 			{
 				NULL:  { value: null },
 				FALSE: { value: false },
 				TRUE:  { value: true },
-				print: { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
-				trace: { value: function () { this .print .apply (this, arguments); } .bind (this .getBrowser ()) },
+				print: { value: function () { this .print .apply (this, arguments); } .bind (browser) },
+				trace: { value: function () { this .print .apply (this, arguments); } .bind (browser) },
 
-				Browser: { value: this .getBrowser () },
+				Browser: { value: browser },
 
 				X3DConstants:                { value: X3DConstants },
 				X3DBrowser:                  { value: X3DBrowser },
