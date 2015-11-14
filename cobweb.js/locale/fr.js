@@ -37,8 +37,8 @@ define (function ()
 		"on": "marche",
 		"off": "arrêt",
 	
-		"Loading %d files": "Télécharger %d fichiers",
 		"Loading %d file": "Télécharger %d fichier",
+		"Loading %d files": "Télécharger %d fichiers",
 		"Loading done": "Téléchargement fini",
 
 		"More Properties": "Plus de propriétés",

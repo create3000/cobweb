@@ -129,10 +129,7 @@ function ($)
 				{
 					var segment = this .value [i];
 				
-					if (segment .length === 0)
-						;
-
-					else if (segment === ".")
+					if (segment === ".")
 						path .value .trailingSeparator = true;
 
 					else if (segment === "..")
@@ -173,6 +170,7 @@ function ($)
 
 	/*
 	 *  URI
+	 *  https://tools.ietf.org/html/rfc3986
 	 */
 
 	var wellKnownPorts =

@@ -37,8 +37,8 @@ define (function ()
 		"on": "an",
 		"off": "aus",
 
-		"Loading %d files": "Lade %d Datei",
-		"Loading %d file": "Lade %d Dateien",
+		"Loading %d file": "Lade %d Datei",
+		"Loading %d files": "Lade %d Dateien",
 		"Loading done": "Fertig mit Laden",
 
 		"More Properties": "Mehr Eigenschaften",

@@ -5,12 +5,41 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sat, 25 Apr 2015 12:38:15 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V0.7.8, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 25 Apr 2015 12:38:15 GMT'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Sat, 14 Nov 2015 11:32:03 GMT'/>
   </head>
   <Scene>
     <WorldInfo
-        info='"Created in CosmoWorlds", "Packaged by CosmoPackage"'/>
+        info='"Created in CosmoWorlds", "Packaged by CosmoPackage"'>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='0, 0, 10'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 1, 0'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 0'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
     <Transform DEF='a1'
         translation='0.0862359 0.114095 -0.299906'
         scale='0.163145 0.0203932 0.0318644'>
