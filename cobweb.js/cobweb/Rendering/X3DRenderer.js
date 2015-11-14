@@ -123,7 +123,7 @@ function ($,
 				context .modelViewMatrix .set (modelViewMatrix);
 				context .shape    = shape;
 				context .scissor .assign (viewVolume .getScissor ());
-				context .distance = distance;
+				context .distance = distance - radius;
 				context .fog      = this .getFog ();
 
 				var

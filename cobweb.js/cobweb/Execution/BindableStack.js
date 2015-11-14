@@ -7,13 +7,12 @@ function ($, X3DBaseNode)
 {
 "use strict";
 
-	function BindableStack (executionContext, layer, bottom)
+	function BindableStack (executionContext, layer, defaultNode)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .layer = layer;
-		this .array = [ bottom ];
-		this .setup ();
+		this .array = [ defaultNode ];
 	}
 
 	BindableStack .prototype = $.extend (Object .create (X3DBaseNode .prototype),
