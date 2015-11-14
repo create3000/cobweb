@@ -107,34 +107,26 @@ function ($,
 		
 	function traverse (type)
 	{
-	   switch (type)
-	   {
-			case TraverseType .CAMERA:
-			{
-				if (this .visible)
-					return;
+	   if (type !== TraverseType .DISPLAY)
+			return;
 
-				if (this .size_ .getValue () .equals (infinity))
-					this .visible = true;
+		this .setTraversed (true);
 
-				else
-				{
-					var
-						viewVolume      = this .getCurrentLayer () .getViewVolume (),
-						modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix),
-						size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
-						center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
+		if (this .visible)
+			return;
 
-					this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
-				}
+		if (this .size_ .getValue () .equals (infinity))
+			this .visible = true;
 
-				return;
-			}
-			case TraverseType .DISPLAY:
-			{
-				this .setTraversed (true);
-				return;
-			}
+		else
+		{
+			var
+				viewVolume      = this .getCurrentLayer () .getViewVolume (),
+				modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix),
+				size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
+				center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
+
+			this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
 		}
 	}
 

@@ -266,6 +266,8 @@ function ($,
 			this .backgrounds     .update ();
 			this .fogs            .update ();
 			this .viewpoints      .update ();
+
+			this .getViewpoint () .update ();
 		},
 		collision: function ()
 		{

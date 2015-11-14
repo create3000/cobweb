@@ -284,10 +284,9 @@ function ($,
 		enable: function ()
 		{
 		},
-		traverse: function (type)
+		traverse: function ()
 		{
-			if (type === TraverseType .CAMERA)
-				this .getCurrentLayer () .getNavigationInfos () .push (this);
+			this .getCurrentLayer () .getNavigationInfos () .push (this);
 		}
 	});
 

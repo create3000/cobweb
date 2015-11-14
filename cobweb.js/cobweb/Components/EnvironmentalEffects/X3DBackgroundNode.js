@@ -111,7 +111,7 @@ function ($,
 
 		this .hidden                = false;
 		this .projectionMatrixArray = new Float32Array (16);
-		this .modelViewMatrix       = new Matrix4 ();
+		this .transformationMatrix  = new Matrix4 ();
 		this .modelViewMatrixArray  = new Float32Array (16);
 		this .colors                = [ ];
 		this .sphere                = [ ];
@@ -413,21 +413,11 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .bottomBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (bottomVertices), gl .STATIC_DRAW);
 		},
-		traverse: function (type)
+		traverse: function ()
 		{
-			switch (type)
-			{
-				case TraverseType .CAMERA:
-				{
-					this .getCurrentLayer () .getBackgrounds () .push (this);
-					break;
-				}
-				case TraverseType .DISPLAY:
-				{
-					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-					break;
-				}
-			}
+			this .getCurrentLayer () .getBackgrounds () .push (this);
+
+			this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 		},
 		draw: function (viewport)
 		{
@@ -452,7 +442,7 @@ function ($,
 					viewpoint       = this .getCurrentViewpoint (),
 					scale           = viewpoint .getScreenScale (SIZE, viewport),
 					rotation        = this .rotation,
-					modelViewMatrix = this .modelViewMatrix;
+					modelViewMatrix = this .transformationMatrix;
 
 				scale .multiply (Math .max (viewport [2], viewport [3]));
 
@@ -462,6 +452,7 @@ function ($,
 
 				// Rotate and scale background.
 
+				modelViewMatrix .multLeft (viewpoint .getInverseCameraSpaceMatrix ());
 				modelViewMatrix .get (null, rotation);
 				modelViewMatrix .identity ();
 				modelViewMatrix .scale (scale);

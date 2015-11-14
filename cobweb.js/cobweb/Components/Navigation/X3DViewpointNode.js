@@ -338,38 +338,34 @@ function ($,
 		{
 			var navigationInfo = this .getCurrentNavigationInfo ();
 	
-			this .reshapeWithLimits (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (this));
-		},
-		reshapeWithLimits: function (zNear, zFar)
-		{
-			this .getBrowser () .setProjectionMatrix (this .getProjectionMatrix (zNear, zFar, this .getCurrentViewport () .getRectangle ()));
+			var projectionMatrix = this .getProjectionMatrix (navigationInfo .getNearPlane (),
+                                                           navigationInfo .getFarPlane (this),
+                                                           this .getCurrentViewport () .getRectangle ());
+
+			this .getBrowser () .setProjectionMatrix (projectionMatrix);
 		},
 		transform: function ()
 		{
 			this .getBrowser () .getModelViewMatrix () .set (this .inverseCameraSpaceMatrix);
 		},
-		traverse: function (type)
+		traverse: function ()
+		{
+			this .getCurrentLayer () .getViewpoints () .push (this);
+
+			this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+		},
+		update: function ()
 		{
 			try
 			{
-				if (type === TraverseType .CAMERA)
-				{
-					this .getCurrentLayer () .getViewpoints () .push (this);
+				this .cameraSpaceMatrix .set (this .getUserPosition (),
+				                              this .getUserOrientation (),
+				                              this .scaleOffset_ .getValue (),
+				                              this .scaleOrientationOffset_ .getValue ());
 
-					this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+				this .cameraSpaceMatrix .multRight (this .transformationMatrix);
 
-					if (this .isBound_ .getValue ())
-					{
-						this .cameraSpaceMatrix .set (this .getUserPosition (),
-						                              this .getUserOrientation (),
-						                              this .scaleOffset_ .getValue (),
-						                              this .scaleOrientationOffset_ .getValue ());
-
-						this .cameraSpaceMatrix .multRight (this .transformationMatrix);
-
-						this .inverseCameraSpaceMatrix .assign (this .cameraSpaceMatrix) .inverse ();
-					}
-				}
+				this .inverseCameraSpaceMatrix .assign (this .cameraSpaceMatrix) .inverse ();
 			}
 			catch (error)
 			{

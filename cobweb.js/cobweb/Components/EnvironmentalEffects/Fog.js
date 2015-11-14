@@ -74,10 +74,9 @@ function ($,
 		{
 			layer .getFogStack () .remove (this);
 		},
-		traverse: function (type)
+		traverse: function ()
 		{
-			if (type === TraverseType .CAMERA)
-				this .getCurrentLayer () .getFogs () .push (this);
+			this .getCurrentLayer () .getFogs () .push (this);
 		},
 	});
 
