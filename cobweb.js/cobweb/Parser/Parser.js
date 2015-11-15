@@ -86,9 +86,9 @@ function ($,
 		double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
 		string: new RegExp ('^"((?:[^\\\\"]|\\\\\\\\|\\\\\\")*)"', 'y'),
 		
-		Inf:         new RegExp ('^[+]?inf', 'y'),
-		NegativeInf: new RegExp ('^-inf', 'y'),
-		NaN:         new RegExp ('^[+-]?nan', 'y'),
+		Inf:         new RegExp ('^[+]?inf', 'yi'),
+		NegativeInf: new RegExp ('^-inf', 'yi'),
+		NaN:         new RegExp ('^[+-]?nan', 'yi'),
 
 		// Misc
 		Break: new RegExp ('\\r?\\n', 'g'),

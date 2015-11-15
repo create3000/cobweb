@@ -150,6 +150,10 @@ function ($, Quaternion, Vector3)
 
 			return this;
 		},
+		setAxis: function (vector)
+		{
+			this .set (vector .x, vector .y, vector .z, this .angle);
+		},
 		getAxis: function ()
 		{
 			if (Math .abs (this .value .w) >= 1)

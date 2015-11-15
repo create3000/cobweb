@@ -58,6 +58,15 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		{
 			this .getValue () .assign (value);
 		},
+		setAxis: function (vector)
+		{
+			this .getValue () .setAxis (vector .getValue ());
+			this .addEvent ();
+		},
+		getAxis: function ()
+		{
+			return new SFVec3f (this .getValue () .getAxis ());
+		},
 		inverse: function ()
 		{
 			return new SFRotation (Rotation4 .inverse (this .getValue ()));
