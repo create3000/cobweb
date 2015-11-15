@@ -121,6 +121,9 @@ function ($,
 		{
 			if (field .getValue () === 0)
 				success (scene);
+
+			if (this .URL .length)
+				console .log ("Done loading scene '" + this .URL + "'");
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint)
 		{
