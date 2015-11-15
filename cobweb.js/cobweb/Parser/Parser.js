@@ -19,7 +19,7 @@ function ($,
 		switch (accessType)
 		{
 			case X3DConstants .inializeOnly:
-				return "inializeOnly";
+				return "initializeOnly";
 			case X3DConstants .inputOnly:
 				return "inputOnly";
 			case X3DConstants .outputOnly:
@@ -69,7 +69,7 @@ function ($,
 
 		Id: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]*)', 'y'),
 
-		initializeOnly: new RegExp ('^initalizeOnly', 'y'),
+		initializeOnly: new RegExp ('^initializeOnly', 'y'),
 		inputOnly:      new RegExp ('^inputOnly', 'y'),
 		outputOnly:     new RegExp ('^outputOnly', 'y'),
 		inputOutput:    new RegExp ('^inputOutput', 'y'),
@@ -1322,6 +1322,8 @@ console .log (error);
 		},
 		fieldValue: function (field)
 		{
+			field .setSet (true);
+
 			return this .fieldTypes [field .getType ()] .call (this, field);
 		},
 		double: function ()

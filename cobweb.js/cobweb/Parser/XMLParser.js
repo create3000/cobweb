@@ -532,7 +532,7 @@ function ($,
 				if (url !== null)
 				{
 					this .parser .setInput (url);
-					Parser .prototype .mfstringValues .call (this .parser, this .url);
+					Parser .prototype .sfstringValues .call (this .parser, this .url);
 				}
 				else
 					this .url .length = 0;

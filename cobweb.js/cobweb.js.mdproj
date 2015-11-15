@@ -2637,6 +2637,8 @@
     <None Include="tests\Examples\TikiWorld\stage\wasserfall.x3d" />
     <None Include="tests\Examples\TikiWorld\stage\wasserkiste.x3d" />
     <None Include="tests\Components\Geometry3D\box.x3dv" />
+    <None Include="tests\Examples\NIST-Logo\index.x3dv" />
+    <None Include="tests\Examples\ICTS\soccer.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
