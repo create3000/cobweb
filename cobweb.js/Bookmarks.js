@@ -36,6 +36,10 @@ var Bookmarks = (function ()
 		{
 			this .toggle ();
 		},
+		setSplit (value)
+		{
+			this .split = value;
+		},
 		loadURL: function (url)
 		{
 			this .browser .loadURL (new X3D .MFString (url), new X3D .MFString ());
@@ -48,12 +52,28 @@ var Bookmarks = (function ()
 	
 			this .bookmarks [this .index] .forEach (function (item)
 			{
-				$("<a/>")
-					.attr ("href", item .url)
-					.click (this .loadURL .bind (this, item .url))
-					.text (item .name)
-					.appendTo (this .element);
-	
+				if (this .split)
+				{
+					for (var i = 0; i < item .url .length; ++ i)
+					{
+						$("<a/>")
+							.attr ("href", item .url [i])
+							.click (this .loadURL .bind (this, item .url [i]))
+							.text (i ? "*" : item .name)
+							.addClass (i ? "bookmark-link" : "bookmark-first-link")
+							.appendTo (this .element);
+					}
+				}
+				else
+				{
+					$("<a/>")
+						.attr ("href", item .url [0])
+						.click (this .loadURL .bind (this, item .url))
+						.text (item .name)
+						.addClass ("bookmark-link")
+						.appendTo (this .element);
+				}
+
 				this .element .append ("<br/>");
 			},
 			this);
