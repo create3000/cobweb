@@ -71,7 +71,12 @@ function ($,
 		},
 		createNode: function (typeName, setup)
 		{
-			var node = new (this .getBrowser () .supportedNodes [typeName]) (this);
+			var constructor = this .getBrowser () .supportedNodes [typeName];
+
+			if (! constructor)
+				throw new Error ("Unknown node type '" + typeName + "'.");
+
+			var node = new constructor (this);
 
 			if (setup === false)
 				return node;

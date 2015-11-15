@@ -2,10 +2,14 @@
 define ([
 	"jquery",
 	"cobweb/Fields",
+	"cobweb/Prototype/X3DExternProtoDeclaration",
+	"cobweb/Prototype/X3DProtoDeclaration",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
+          X3DExternProtoDeclaration,
+          X3DProtoDeclaration,
           X3DConstants)
 {
 "use strict";
@@ -39,19 +43,21 @@ function ($,
 		// Header
 
 		// Keywords
-		COMPONENT: new RegExp ('^COMPONENT', 'y'),
-		DEF:       new RegExp ('^DEF', 'y'),
-		FALSE:     new RegExp ('^FALSE', 'y'),
-		false:     new RegExp ('^false', 'y'),
-		IS:        new RegExp ('^IS', 'y'),
-		META:      new RegExp ('^META', 'y'),
-		NULL:      new RegExp ('^NULL', 'y'),
-		TRUE:      new RegExp ('^TRUE', 'y'),
-		true:      new RegExp ('^true', 'y'),
-		PROFILE:   new RegExp ('^PROFILE', 'y'),
-		ROUTE:     new RegExp ('^ROUTE', 'y'),
-		TO:        new RegExp ('^TO', 'y'),
-		USE:       new RegExp ('^USE', 'y'),
+		COMPONENT:   new RegExp ('^COMPONENT', 'y'),
+		DEF:         new RegExp ('^DEF', 'y'),
+		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
+		FALSE:       new RegExp ('^FALSE', 'y'),
+		false:       new RegExp ('^false', 'y'),
+		IS:          new RegExp ('^IS', 'y'),
+		META:        new RegExp ('^META', 'y'),
+		NULL:        new RegExp ('^NULL', 'y'),
+		TRUE:        new RegExp ('^TRUE', 'y'),
+		true:        new RegExp ('^true', 'y'),
+		PROFILE:     new RegExp ('^PROFILE', 'y'),
+		PROTO:       new RegExp ('^PROTO', 'y'),
+		ROUTE:       new RegExp ('^ROUTE', 'y'),
+		TO:          new RegExp ('^TO', 'y'),
+		USE:         new RegExp ('^USE', 'y'),
 
 		// Terminal symbols
 		OpenBrace:    new RegExp ('^\\{', 'y'),
@@ -229,7 +235,7 @@ function ($,
 				rest     = this .getLine (),
 				line     = this .getLastLine (),
 				lastLine = this .getLastLine (),
-				linePos  = line .length - rest .length;
+				linePos  = line .length - rest .length + 1;
 	
 			if (line .length > 80)
 			{
@@ -242,19 +248,18 @@ function ($,
 
 			var message = "\n"
 				+ "********************************************************************************" + "\n"
-				+ "Parser error at line " + this .lineNumber + ":" + (linePos + 1) + "\n"
+				+ "Parser error at line " + this .lineNumber + ":" + linePos  + "\n"
 				+ "in '" + this .scene .getWorldURL () + "'" + "\n"
 				+ "\n"
 				+ lastLine + "\n"
 				+ line + "\n"
-				+ [ ] .fill (" ", 0, linePos) .join ("") + "^" + "\n"
+				+ Array (linePos) .join (" ") + "^" + "\n"
 				+ string + "\n"
 				+ "********************************************************************************"
 				+ "\n"
 			;
 
 console .log (error);
-console .log (message);
 			return message;
 		},
 		getLine: function ()
@@ -530,10 +535,108 @@ console .log (message);
 		},
 		proto: function ()
 		{
+			this .comments ();
+		
+			if (Grammar .PROTO .parse (this))
+			{
+				if (this .nodeTypeId ())
+				{
+					var nodeTypeId = this .result [1];
+		
+					this .comments ();
+		
+					if (Grammar .OpenBracket .parse (this))
+					{
+						var interfaceDeclarations = this .interfaceDeclarations ();
+		
+						this .comments ();
+		
+						if (Grammar .CloseBracket .parse (this))
+						{
+							this .comments ();
+		
+							if (Grammar .OpenBrace .parse (this))
+							{
+								var proto = new X3DProtoDeclaration (this .getExecutionContext ());
+
+								for (var i = 0, length = interfaceDeclarations .length; i < length; ++ i)
+								{
+									var field = interfaceDeclarations [i];
+
+									proto .addUserDefinedField (field .getAccessType (), field .getName (), field);
+								}
+
+								this .pushExecutionContext (proto);
+		
+								this .protoBody ();
+		
+								this .popExecutionContext ();
+		
+								this .comments ();
+		
+								if (Grammar .CloseBrace .parse (this))
+								{
+									proto .setName (nodeTypeId);
+									proto .setup ();
+
+									this .getExecutionContext () .protos .push (proto);
+									return true;
+								}
+	
+								throw new Error ("Expected a '}' at the end of PROTO body.");
+							}
+
+							throw new Error ("Expected a '{' at the beginning of PROTO body.");
+						}
+
+						throw new Error ("Expected a ']' at the end of PROTO interface declaration.");
+					}
+
+					throw new Error ("Expected a '[' at the beginning of PROTO interface declaration.");
+				}
+
+				throw new Error ("Invalid PROTO definition name.");
+			}
+
 			return false;
 		},
 		protoBody: function ()
 		{
+			this .protoStatements ();
+
+			var rootNodeStatement = this .rootNodeStatement ();
+
+			if (rootNodeStatement !== false)
+				this .addRootNode (rootNodeStatement);
+
+			this .statements ();
+		},
+		rootNodeStatement: function ()
+		{
+			this .comments ();
+		
+			if (Grammar .DEF .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						nodeNameId = this .result [0],
+						baseNode   = this .node (nodeNameId);
+
+					if (baseNode !== false)
+						return baseNode;
+
+					throw new Error ("Expected node type name after DEF.");
+				}
+	
+				throw new Error ("No name given after DEF.");
+			}
+
+			var baseNode = this .node ("");
+
+			if (baseNode !== false)
+				return baseNode;
+
 			return false;
 		},
 		interfaceDeclarations: function ()
@@ -680,19 +783,181 @@ console .log (message);
 		},
 		externproto: function ()
 		{
+			this .comments ();
+		
+			if (Grammar .EXTERNPROTO .parse (this))
+			{
+				if (this .nodeTypeId ())
+				{
+					var nodeTypeId = this .result [1];
+		
+					this .comments ();
+		
+					if (Grammar .OpenBracket .parse (this))
+					{
+						var externInterfaceDeclarations = this .externInterfaceDeclarations ();
+		
+						this .comments ();
+		
+						if (Grammar .CloseBracket .parse (this))
+						{
+							if (this .URLList (this .MFString))
+							{
+								var externproto = new X3DExternProtoDeclaration (this .getExecutionContext ());
+
+								for (var i = 0, length = externInterfaceDeclarations .length; i < length; ++ i)
+								{
+									var field = externInterfaceDeclarations [i];
+
+									externproto .addUserDefinedField (field .getAccessType (), field .getName (), field);
+								}
+		
+								externproto .setName (nodeTypeId);
+								externproto .url_ = this .MFString;
+								externproto .setup ();
+
+								this .getExecutionContext () .externprotos .push (externproto);	
+								return true;
+							}
+		
+							throw new Error ("Expected a URL list after EXTERNPROTO interface declaration '" + nodeTypeId + "'.");
+						}
+		
+						throw new Error ("Expected a ']' at the end of EXTERNPROTO interface declaration.");
+					}
+		
+					throw new Error ("Expected a '[' at the beginning of EXTERNPROTO interface declaration.");
+				}
+		
+				throw new Error ("Invalid EXTERNPROTO definition name.");
+			}
+		
 			return false;
 		},
 		externInterfaceDeclarations: function ()
 		{
-			return false;
+			var
+				externInterfaceDeclarations = [ ],
+				field                       = this .externInterfaceDeclaration ();
+
+			while (field)
+			{
+				externInterfaceDeclarations .push (field);
+				
+				field = this .externInterfaceDeclaration ();
+			}
+
+			return externInterfaceDeclarations;
 		},
 		externInterfaceDeclaration: function ()
 		{
-			return false;
+			this .comments ();
+		
+			if (Grammar .inputOnly .parse (this) || Grammar .eventIn .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .inputOnlyId ())
+					{
+						var
+							fieldId = this .result [1],
+							field = new (this [fieldType] .constructor) ();
+						
+						field .setAccessType (X3DConstants .inputOnly);
+						field .setName (fieldId);
+						return field;
+					}
+		
+					throw new Error ("Expected a name for field.");
+				}
+
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+		
+			if (Grammar .outputOnly .parse (this) || Grammar .eventOut .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .outputOnlyId ())
+					{
+						var
+							fieldId = this .result [1],
+							field = new (this [fieldType] .constructor) ();
+
+						field .setAccessType (X3DConstants .outputOnly);
+						field .setName (fieldId);
+						return field;
+					}
+		
+					throw new Error ("Expected a name for field.");
+				}
+		
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+		
+			if (Grammar .initializeOnly .parse (this) || Grammar .field .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .initializeOnlyId ())
+					{
+						var
+							fieldId = this .result [1],
+							field = new (this [fieldType] .constructor) ();
+		
+						field .setAccessType (X3DConstants .initializeOnly);
+						field .setName (fieldId);
+						return field;
+					}
+		
+					throw new Error ("Expected a name for field.");
+				}
+		
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+			
+			if (Grammar .inputOutput .parse (this) || Grammar .exposedField .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .inputOutputId ())
+					{
+						var
+							fieldId = this .result [1],
+							field   = new (this [fieldType] .constructor) ();
+		
+						field .setAccessType (X3DConstants .inputOutput);
+						field .setName (fieldId);
+						return field;
+					}
+	
+					throw new Error ("Expected a name for field.");
+				}
+	
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+
+			return null;
 		},
-		URLList: function ()
+		URLList: function (field)
 		{
-			return false;
+			return this .mfstringValue (field);
 		},
 		routeStatement: function ()
 		{
@@ -818,12 +1083,6 @@ console .log (message);
 		},
 		scriptBodyElement: function (baseNode)
 		{
-			if (this .protoStatement ())
-				return true;
-		
-			if (this .routeStatement ())
-				return true;
-
 			var
 				lastIndex  = this .lastIndex,
 				lineNumber = this .lineNumber;
@@ -1125,6 +1384,8 @@ console .log (message);
 		},
 		sfboolValue: function (field)
 		{
+			this .comments ();
+
 			if (this .isXML)
 			{
 				if (Grammar .true .parse (this))
@@ -1139,19 +1400,17 @@ console .log (message);
 					return true;
 				}
 			}
-			else
-			{
-				if (Grammar .TRUE .parse (this))
-				{
-					field .set (true);
-					return true;
-				}
 
-				if (Grammar .FALSE .parse (this))
-				{
-					field .set (false);
-					return true;
-				}
+			if (Grammar .TRUE .parse (this))
+			{
+				field .set (true);
+				return true;
+			}
+
+			if (Grammar .FALSE .parse (this))
+			{
+				field .set (false);
+				return true;
 			}
 
 			return false;
