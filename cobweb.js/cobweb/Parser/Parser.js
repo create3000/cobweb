@@ -34,7 +34,7 @@ function ($,
 	{
 		// General
 		Whitespaces: new RegExp ('^([\\x20\\n,\\t\\r]+)', 'y'),
-		Comment:     new RegExp ('^#(.*?)[\\n\\r]', 'y'),
+		Comment:     new RegExp ('^#(.*?)(?=[\\n\\r])', 'y'),
 
 		// Header
 
@@ -85,7 +85,7 @@ function ($,
 		NaN:         new RegExp ('^[+-]?nan', 'y'),
 
 		// Misc
-		Break: new RegExp ('\\n', 'g'),
+		Break: new RegExp ('\\r?\\n', 'g'),
 	};
 
 	function parse (parser)
@@ -222,11 +222,71 @@ function ($,
 		},
 		getError: function (error)
 		{
+
+			var string = error .message;
+
+			var
+				rest     = this .getLine (),
+				line     = this .getLastLine (),
+				lastLine = this .getLastLine (),
+				linePos  = line .length - rest .length;
+	
+			if (line .length > 80)
+			{
+				line    = line .substr (linePos - 40, 80);
+				preLine = "";
+				linePos = 40;
+			}
+	
+			// Format error
+
+			var message = "\n"
+				+ "********************************************************************************" + "\n"
+				+ "Parser error at line " + this .lineNumber + ":" + (linePos + 1) + "\n"
+				+ "in '" + this .scene .getWorldURL () + "'" + "\n"
+				+ "\n"
+				+ lastLine + "\n"
+				+ line + "\n"
+				+ [ ] .fill (" ", 0, linePos) .join ("") + "^" + "\n"
+				+ string + "\n"
+				+ "********************************************************************************"
+				+ "\n"
+			;
+
 console .log (error);
-
-			var message = error .message;
-
+console .log (message);
 			return message;
+		},
+		getLine: function ()
+		{
+			var
+				input     = this .input,
+				lastIndex = this .lastIndex,
+				line      = "";
+
+			while (lastIndex < input .length && input [lastIndex] !== "\n" && input [lastIndex] !== "\r")
+				line += input [lastIndex ++];
+
+			this .lastIndex = lastIndex;
+
+			return line;
+		},
+		getLastLine: function ()
+		{
+			var
+				input     = this .input,
+				lastIndex = this .lastIndex,
+				line      = "";
+
+			if (lastIndex < input .length && (input [lastIndex] !== "\n" || input [lastIndex] !== "\r"))
+				-- lastIndex;
+
+			while (lastIndex >= 0 && input [lastIndex] !== "\n" && input [lastIndex] !== "\r")
+				line = input [lastIndex --] + line;
+
+			this .lastIndex = lastIndex;
+
+			return line;
 		},
 		comments: function ()
 		{
@@ -235,7 +295,10 @@ console .log (error);
 		},
 		comment: function ()
 		{
-			return this .whitespaces ();
+			if (this .whitespaces ())
+				return true;
+
+			return Grammar .Comment .parse (this);
 		},
 		whitespaces: function ()
 		{
@@ -243,13 +306,7 @@ console .log (error);
 			{
 				if (!this .xml)
 					this .lines (this .result [1]);
-				return true;
-			}
-
-			if (Grammar .Comment .parse (this))
-			{
-				if (!this .xml)
-					this .lines (this .result [1]);
+				
 				return true;
 			}
 
@@ -257,7 +314,10 @@ console .log (error);
 		},
 		lines: function (string)
 		{
-			this .lineNumber += string .match (Grammar .Break);
+			var match = string .match (Grammar .Break);
+
+			if (match)
+				this .lineNumber += match .length;
 		},
 		x3dScene: function ()
 		{
@@ -972,7 +1032,7 @@ console .log (error);
 				{
 					if (this .fieldValue (field))
 						return true;
-		
+
 					throw new Error ("Couldn't read value for field '" + fieldId + "'.");
 				}
 		
@@ -1790,7 +1850,7 @@ console .log (error);
 		{
 			var baseNode = this .nodeStatement ();
 
-			if (baseNode)
+			if (baseNode !== false)
 			{
 				field .setValue (baseNode);
 				return true;
@@ -1804,7 +1864,7 @@ console .log (error);
 
 			var node = this .nodeStatement ();
 
-			if (node)
+			if (node !== false)
 			{
 				field .push (node);
 				return true;
@@ -1828,7 +1888,7 @@ console .log (error);
 		{
 			var node = this .nodeStatement ();
 		
-			while (node)
+			while (node !== false)
 			{
 				field .push (node);
 				
