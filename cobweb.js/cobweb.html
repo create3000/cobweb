@@ -149,15 +149,15 @@ X3D (function (dom)
 			{ name: 'PinballTable',          url: [ "https://crossorigin.me/http://www.web3d.org/x3d/content/examples/Basic/StudentProjects/PinballTable.x3d" ] },
 			{ name: 'KelpForestMain',        url: [ "https://crossorigin.me/http://x3dgraphics.com/examples/X3dForWebAuthors/KelpForestExhibit/KelpForestMain.x3d" ] },
 			{ name: 'Tiki World',            url: [ "tests/Examples/TikiWorld/stage/index.x3d" ] },
-			{ name: 'WTC',                   url: [ "https://crossorigin.me/http://home.earthlink.net/~alprojects/wtc/wtc.wrl" ] },
-			{ name: 'Shark',                 url: [ "https://crossorigin.me/http://blogofrog.com/files/vrml/ch47bsim402.wrz" ] },
+			{ name: 'World Trade Center',    url: [ "https://crossorigin.me/http://home.earthlink.net/~alprojects/wtc/wtc.wrl" ] },
+			{ name: 'Shark',                 url: [ "https://crossorigin.me/http://www.ibiblio.org/e-notes/VRML/Anim/Anim.wrl" ] },
 			{ name: 'Helicopter Simulation', url: [ "https://crossorigin.me/http://blogofrog.com/files/vrml/ch47bsim402.wrz" ] },
 		],
 	];
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 0);
+		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 3);
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();

@@ -5,16 +5,20 @@ define ([
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
-	"cobweb/Debug",
+	"lib/blobTransport",
+	"lib/pako/dist/pako_inflate",
 ],
 function ($,
           X3DObject,
           Parser,
           XMLParser,
           URI,
-          DEBUG)
+          blobTransport,
+          pako)
 {
 "use strict";
+
+	blobTransport ($);
 
 	var TIMEOUT = 16;
 
@@ -27,6 +31,7 @@ function ($,
 		this .external         = this .browser .isExternal () || external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
 		this .URL              = new URI ();
+		this .fileReader       = new FileReader ();
 	}
 
 	Loader .prototype = $.extend (Object .create (X3DObject .prototype),
@@ -139,7 +144,7 @@ function ($,
 			if (data === null)
 				callback (null);
 			else
-				this .createX3DFromString (this .URL, data, callback, this .loadDocumentError .bind (this));
+				this .createX3DFromString (this .URL, data, callback);
 		},
 		createX3DFromURLSync: function (url)
 		{
@@ -222,28 +227,56 @@ function ($,
 
 			$.ajax ({
 				url: this .URL,
-				dataType: "text",
+				dataType: "blob",
 				async: true,
 				cache: this .browser .doCaching (),
 				//timeout: 15000,
 				global: false,
 				context: this,
-				success: function (data)
+				success: function (blob)
 				{
-					try
-					{
-						this .callback (data);
-					}
-					catch (exception)
-					{
-						this .loadDocumentError (exception);
-					}
+					this .fileReader .onload = this .readAsText .bind (this, blob);
+
+					this .fileReader .readAsText (blob);
 				},
 				error: function (jqXHR, textStatus, exception)
 				{
 					this .loadDocumentError (exception);
 				},
 			});
+		},
+		readAsText: function (blob)
+		{
+			try
+			{
+				this .callback (this .fileReader .result);
+			}
+			catch (exception)
+			{
+				this .fileReader .onload = this .readAsArrayBuffer .bind (this);
+
+				this .fileReader .readAsArrayBuffer (blob);
+			}
+		},
+		readAsArrayBuffer: function ()
+		{
+			try
+			{
+				try
+				{
+					var string = pako .ungzip (this .fileReader .result, { to: "string" });
+				}
+				catch (exception)
+				{
+					var string = "";
+				}
+
+				this .callback (string);
+			}
+			catch (exception)
+			{
+				this .loadDocumentError (exception);
+			}
 		},
 		loadDocumentError: function (exception)
 		{

@@ -228,7 +228,6 @@ function ($,
 		},
 		getError: function (error)
 		{
-
 			var string = error .message;
 
 			var
@@ -259,7 +258,6 @@ function ($,
 				+ "\n"
 			;
 
-console .log (error);
 			return message;
 		},
 		getLine: function ()
@@ -336,6 +334,9 @@ console .log (error);
 			this .statements ();
 
 			this .popExecutionContext (this .scene);
+
+			if (this .lastIndex < this .input .length)
+				throw new Error ("Unknown statement.");
 		},
 		headerStatement: function ()
 		{
