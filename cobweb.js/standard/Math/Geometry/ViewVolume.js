@@ -136,7 +136,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			matrix .multVecMatrix (vin);
 
 			if (vin .w === 0)
-				throw Error ("Couldn't unproject point: divisor is 0.");
+				throw new Error ("Couldn't unproject point: divisor is 0.");
 
 			var d = 1 / vin .w;
 
@@ -158,7 +158,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			projection .multVecMatrix (modelview .multVecMatrix (vin));
 
 			if (vin .w === 0)
-				throw Error ("Couldn't project point: divisor is 0.");
+				throw new Error ("Couldn't project point: divisor is 0.");
 
 			var d = 1 / (2 * vin .w);
 

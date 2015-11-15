@@ -282,7 +282,7 @@ function ($,
 			if (field)
 				return field;
 
-			throw Error ("Unkown field '" + name + "' in node class " + this .getTypeName () + ".");
+			throw new Error ("Unkown field '" + name + "' in node class " + this .getTypeName () + ".");
 		},
 		getFieldDefinitions: function ()
 		{

@@ -94,6 +94,10 @@ function ($,
 
 			return false;
 		},
+		isReference: function (accessType)
+		{
+			return accessType === this .getAccessType () || accessType === X3DConstants .inputOutput;
+		},
 		addReference: function (reference)
 		{
 			var references = this .getReferences ();

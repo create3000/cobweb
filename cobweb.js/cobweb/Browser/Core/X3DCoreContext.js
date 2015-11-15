@@ -55,6 +55,10 @@ function (BrowserOptions,
 			this .browserTimings      .setup ();
 			this .contextMenu         .setup ();
 		},
+		isStrict: function ()
+		{
+			return true;
+		},
 		getXML: function ()
 		{
 			return this .xml;

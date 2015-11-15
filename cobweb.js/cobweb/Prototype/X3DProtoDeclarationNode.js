@@ -28,13 +28,13 @@ function ($,
 		{
 			return true;
 		},
-		createInstance: function (executionContext)
+		createInstance: function (executionContext, setup)
 		{
-			if (executionContext)
-				return new X3DPrototypeInstance (executionContext, this);
-
-			var instance = new X3DPrototypeInstance (this .getExecutionContext (), this);
+			var instance = new X3DPrototypeInstance (executionContext ? executionContext : Contextthis .getExecutionContext (), this);
 			
+			if (setup === false)
+				return instance;
+
 			instance .setup ();
 
 			return new Fields .SFNode (instance);

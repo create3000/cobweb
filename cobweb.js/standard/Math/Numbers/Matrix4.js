@@ -499,7 +499,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				B = m00 * H + m04 * I + m08 * J + m12 * K;
 
 			if (B === 0)
-				throw Error ("Matrix4 .inverse: determinant is 0.");
+				throw new Error ("Matrix4 .inverse: determinant is 0.");
 
 			B = 1 / B;
 
@@ -840,7 +840,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				B = m00 * H + m04 * I + m08 * J + m12 * K;
 
 			if (B == 0)
-				throw Error ("Matrix4 .inverse: determinant is 0.");
+				throw new Error ("Matrix4 .inverse: determinant is 0.");
 
 			B = 1 / B;
 

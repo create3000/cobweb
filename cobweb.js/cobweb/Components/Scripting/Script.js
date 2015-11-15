@@ -178,7 +178,7 @@ function ($,
 				if (scene .getRootNodes () .length && scene .getRootNodes () [0])
 					return Fields .SFNode .call (this, scene .getRootNodes () [0] .getValue ());
 
-				throw Error ("SFNode.new: invalid argument, must be 'string' is 'undefined'.");
+				throw new Error ("SFNode.new: invalid argument, must be 'string' is 'undefined'.");
 			}
 
 			SFNode .prototype = Object .create (Fields .SFNode .prototype);

@@ -69,17 +69,17 @@ function ($,
 		{
 			return this .url;
 		},
-		createNode: function (typeName, parser)
+		createNode: function (typeName, setup)
 		{
 			var node = new (this .getBrowser () .supportedNodes [typeName]) (this);
 
-			if (parser)
+			if (setup === false)
 				return node;
-			
+
 			node .setup ();
 			return new Fields .SFNode (node);
 		},
-		createProto: function (name)
+		createProto: function (name, setup)
 		{
 			var executionContext = this;
 
@@ -88,12 +88,12 @@ function ($,
 				var proto = executionContext .protos [name];
 
 				if (proto)
-					return proto .createInstance (this);
+					return proto .createInstance (this, setup);
 
 				var externproto = executionContext .externprotos [name];
 
 				if (externproto)
-					return externproto .createInstance (this);
+					return externproto .createInstance (this, setup);
 
 				if (executionContext .isRootContext ())
 					break;
@@ -110,7 +110,7 @@ function ($,
 		addNamedNode: function (name, node)
 		{
 			if (this .namedNodes [name] !== undefined)
-				throw Error ("Couldn't add named node: node name '" + name + "' is already in use.");
+				throw new Error ("Couldn't add named node: node name '" + name + "' is already in use.");
 
 			this .updateNamedNode (name, node);
 		},
@@ -122,16 +122,16 @@ function ($,
 				node = new Fields .SFNode (node);				
 
 			if (! (node instanceof Fields .SFNode))
-				throw Error ("Couldn't update named node: node must be of type SFNode.");
+				throw new Error ("Couldn't update named node: node must be of type SFNode.");
 
 			if (! node .getValue ())
-				throw Error ("Couldn't update named node: node IS NULL.");
+				throw new Error ("Couldn't update named node: node IS NULL.");
 
 			if (node .getValue () .getExecutionContext () !== this)
-				throw Error ("Couldn't update named node: the node does not belong to this execution context.");
+				throw new Error ("Couldn't update named node: the node does not belong to this execution context.");
 
 			if (name .length === 0)
-				throw Error ("Couldn't update named node: node name is empty.");
+				throw new Error ("Couldn't update named node: node name is empty.");
 
 			// Remove named node.
 
@@ -155,7 +155,29 @@ function ($,
 			if (node !== undefined)
 				return node;
 
-			throw Error ("Named node '" + name + "' not found.");
+			throw new Error ("Named node '" + name + "' not found.");
+		},
+		getLocalNode: function (name)
+		{
+			try
+			{
+				return this .getNamedNode (name);
+			}
+			catch (error)
+			{
+				try
+				{
+					return this .getImportedNode (name);
+				}
+				catch (error)
+				{
+					throw new Error ("Unknown named or imported node '" + name + "'.");
+				}
+			}
+		},
+		getImportedNode: function (name)
+		{
+			throw new Error ("Imported node '" + name + "' not found.");
 		},
 		setRootNodes: function () { },
 		getRootNodes: function ()
@@ -240,7 +262,7 @@ function ($,
 					viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
 
 				if (! viewpoint)
-					throw Error ("Node named '" + name + "' is not a viewpoint node.");
+					throw new Error ("Node named '" + name + "' is not a viewpoint node.");
 
 				if (viewpoint .isBound_ .getValue ())
 					viewpoint .transitionStart (null, viewpoint);

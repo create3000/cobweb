@@ -2,12 +2,14 @@
 define ([
 	"jquery",
 	"cobweb/Base/X3DObject",
+	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
 	"cobweb/Debug",
 ],
 function ($,
           X3DObject,
+          Parser,
           XMLParser,
           URI,
           DEBUG)
@@ -46,15 +48,51 @@ function ($,
 				{
 					setTimeout (this .importDocument .bind (this, scene, $.parseXML (string), success, error), TIMEOUT);
 				}
-				catch (exception)
+				catch (exception1)
 				{
-					error (exception);
+					var exception1 = new Error ("Couldn't parse XML");
+
+					try
+					{
+						// If we cannot parse XML we try to parse X3D Classic Encoding.	
+	
+						new Parser (scene, string) .parseIntoScene ();
+
+						if (success)
+							this .setScene (scene, success);
+					}
+					catch (exception2)
+					{
+						if (error)
+							error (exception2);
+						else
+							throw exception2;
+					}
 				}
 			}
 			else
 			{
-				this .importDocument (scene, $.parseXML (string));
-				return scene;
+				try
+				{
+					this .importDocument (scene, $.parseXML (string));
+					return scene;
+				}
+				catch (exception1)
+				{
+					var exception1 = new Error ("Couldn't parse XML");
+
+					try
+					{
+						// If we cannot parse XML we try to parse X3D Classic Encoding.	
+	
+						new Parser (scene, string) .parseIntoScene ();
+						return scene;
+					}
+					catch (exception2)
+					{
+						throw exception2;
+					}
+				}
 			}
 		},
 		importDocument: function (scene, dom, success, error)
@@ -64,10 +102,7 @@ function ($,
 				new XMLParser (scene, dom) .parseIntoScene ();
 
 				if (success)
-				{
-					scene .loadCount_ .addInterest (this, "setLoadCount", scene, success);
-					scene .loadCount_ .addEvent ();
-				}
+					this .setScene (scene, success);
 			}
 			catch (exception)
 			{
@@ -77,7 +112,12 @@ function ($,
 					throw exception;
 			}
 		},
-		setLoadCount: function (field, scene, success)
+		setScene: function (scene, success)
+		{
+			scene .loadCount_ .addInterest (this, "set_loadCount", scene, success);
+			scene .loadCount_ .addEvent ();
+		},
+		set_loadCount: function (field, scene, success)
 		{
 			if (field .getValue () === 0)
 				success (scene);
@@ -144,7 +184,7 @@ function ($,
 			if (success)
 				return scene;
 
-			throw Error ("Couldn't load any url of '" + url .getValue () .join (", ") + "'.");
+			throw new Error ("Couldn't load any url of '" + url .getValue () .join (", ") + "'.");
 		},
 		loadDocument: function (url, callback)
 		{
@@ -204,7 +244,16 @@ function ($,
 		},
 		loadDocumentError: function (exception)
 		{
-			console .warn ("Couldn't load URL '" + this .URL .toString () + "': " + exception .message + ".");
+			// Output exception.
+
+			var message = "Couldn't load URL '" + this .URL .toString () + "'";
+
+			if (exception)
+				message += ": " + exception;
+
+			console .warn (message);
+
+			// Try to load next URL.
 
 			if (this .url .length)
 				this .loadDocumentAsync (this .url .shift ());

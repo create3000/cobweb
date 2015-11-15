@@ -41,6 +41,10 @@ function ($,
 	XMLParser .prototype =
 	{
 		constructor: XMLParser,
+		getBrowser: function ()
+		{
+			return this .scene .getBrowser ();
+		},
 		getExecutionContext: function ()
 		{
 			return this .executionContexts [this .executionContexts .length - 1];
@@ -160,7 +164,7 @@ function ($,
 				if (this .USE (element))
 					return;
 			
-				var node = this .getExecutionContext () .createNode (element .nodeName, true);
+				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
 				this .DEF (element, node);
 				this .addNode (element, node);
@@ -189,7 +193,7 @@ function ($,
 
 				if (this .id (name))
 				{
-					var node = this .getExecutionContext () .createProto (name);
+					var node = this .getExecutionContext () .createProto (name, false);
 
 					this .DEF (element, node);
 					this .addNode (element, node);
@@ -497,20 +501,20 @@ function ($,
 			try
 			{
 				var
-					node       = this .getParent (),
-					proto      = this .getExecutionContext (),
-					nodeField  = node .getField (nodeFieldName),
-					protoField = proto .getField (protoFieldName);
+					node      = this .getParent (),
+					proto     = this .getExecutionContext (),
+					field     = node .getField (nodeFieldName),
+					reference = proto .getField (protoFieldName);
 
-				if (nodeField .getAccessType () === protoField .getAccessType () || nodeField .getAccessType () === X3DConstants .inputOutput)
+				if (field .getType () === reference .getType ())
 				{
-					if (nodeField .getType () === protoField .getType ())
-						nodeField .addReference (protoField);
+					if (reference .isReference (field .getAccessType ()))
+						field .addReference (reference);
 					else
-						throw new Error ("Field types do not match.");
+						throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () . getName () + " are incompatible as an IS mapping.");
 				}
 				else
-					throw new Error ("Field access types do not match.");
+					throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () .getName () + " have different types.");
 			}
 			catch (error)
 			{
@@ -613,8 +617,8 @@ function ($,
 			try
 			{
 				var
-					sourceNode      = this .getExecutionContext () .getNamedNode (fromNode),
-					destinationNode = this .getExecutionContext () .getNamedNode (toNode);
+					sourceNode      = this .getExecutionContext () .getLocalNode (fromNode),
+					destinationNode = this .getExecutionContext () .getLocalNode (toNode);
 
 				this .getExecutionContext () .addRoute (sourceNode, fromField, destinationNode, toField);
 			}
@@ -658,27 +662,27 @@ function ($,
 	XMLParser .prototype .fieldTypes [X3DConstants .SFVec4d]     = Parser .prototype .sfvec4dValue;
 	XMLParser .prototype .fieldTypes [X3DConstants .SFVec4f]     = Parser .prototype .sfvec4fValue;
 
-	XMLParser .prototype .fieldTypes [X3DConstants .MFBool]      = Parser .prototype .mfboolValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFColor]     = Parser .prototype .mfcolorValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFColorRGBA] = Parser .prototype .mfcolorrgbaValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFDouble]    = Parser .prototype .mfdoubleValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFFloat]     = Parser .prototype .mffloatValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFImage]     = Parser .prototype .mfimageValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFInt32]     = Parser .prototype .mfint32Values;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix3d]  = Parser .prototype .mfmatrix3dValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix3f]  = Parser .prototype .mfmatrix3fValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4d]  = Parser .prototype .mfmatrix4dValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4f]  = Parser .prototype .mfmatrix4fValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFBool]      = Parser .prototype .sfboolValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFColor]     = Parser .prototype .sfcolorValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFColorRGBA] = Parser .prototype .sfcolorrgbaValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFDouble]    = Parser .prototype .sfdoubleValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFFloat]     = Parser .prototype .sffloatValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFImage]     = Parser .prototype .sfimageValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFInt32]     = Parser .prototype .sfint32Values;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix3d]  = Parser .prototype .sfmatrix3dValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix3f]  = Parser .prototype .sfmatrix3fValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4d]  = Parser .prototype .sfmatrix4dValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFMatrix4f]  = Parser .prototype .sfmatrix4fValues;
 	XMLParser .prototype .fieldTypes [X3DConstants .MFNode]      = function () { };
-	XMLParser .prototype .fieldTypes [X3DConstants .MFRotation]  = Parser .prototype .mfrotationValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFString]    = Parser .prototype .mfstringValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFTime]      = Parser .prototype .mftimeValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFVec2d]     = Parser .prototype .mfvec2dValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFVec2f]     = Parser .prototype .mfvec2fValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFVec3d]     = Parser .prototype .mfvec3dValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFVec3f]     = Parser .prototype .mfvec3fValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFVec4d]     = Parser .prototype .mfvec4dValues;
-	XMLParser .prototype .fieldTypes [X3DConstants .MFVec4f]     = Parser .prototype .mfvec4fValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFRotation]  = Parser .prototype .sfrotationValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFString]    = Parser .prototype .sfstringValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFTime]      = Parser .prototype .sftimeValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFVec2d]     = Parser .prototype .sfvec2dValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFVec2f]     = Parser .prototype .sfvec2fValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFVec3d]     = Parser .prototype .sfvec3dValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFVec3f]     = Parser .prototype .sfvec3fValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFVec4d]     = Parser .prototype .sfvec4dValues;
+	XMLParser .prototype .fieldTypes [X3DConstants .MFVec4f]     = Parser .prototype .sfvec4fValues;
 
 	return XMLParser;
 });

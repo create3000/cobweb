@@ -56,7 +56,7 @@ function ($,
 					parameter = new Fields .MFString ();
 
 				parser .setInput (urlCharacters);
-				parser .mfstringValues (url);
+				parser .sfstringValues (url);
 
 				if (url .length)
 					this .loadURL (url, parameter);
@@ -198,15 +198,15 @@ function ($,
 		createVrmlFromURL: function (url, node, event)
 		{
 			if (! (node instanceof Fields .SFNode))
-				throw Error ("Browser.createVrmlFromURL: node must be of type SFNode.");
+				throw new Error ("Browser.createVrmlFromURL: node must be of type SFNode.");
 
 			if (! node .getValue ())
-				throw Error ("Browser.createVrmlFromURL: node IS NULL.");
+				throw new Error ("Browser.createVrmlFromURL: node IS NULL.");
 
 			var field = node .getValue () .getField (event);
 
 			if (field .getType () !== X3DConstants .MFNode)
-				throw Error ("Browser.createVrmlFromURL: event named '" + event + "' must be of type MFNode.");
+				throw new Error ("Browser.createVrmlFromURL: event named '" + event + "' must be of type MFNode.");
 
 			var
 				currentScene = this .currentScene,

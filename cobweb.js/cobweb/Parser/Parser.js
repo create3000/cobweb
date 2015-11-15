@@ -2,10 +2,28 @@
 define ([
 	"jquery",
 	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
 ],
-function ($, Fields)
+function ($,
+          Fields,
+          X3DConstants)
 {
 "use strict";
+
+	function accessTypeToString (accessType)
+	{
+		switch (accessType)
+		{
+			case X3DConstants .inializeOnly:
+				return "inializeOnly";
+			case X3DConstants .inputOnly:
+				return "inputOnly";
+			case X3DConstants .outputOnly:
+				return "outputOnly";
+			case X3DConstants .inputOutput:
+				return "inputOutput";
+		}
+	}
 
 	/*
 	 *  Grammar
@@ -16,14 +34,24 @@ function ($, Fields)
 	{
 		// General
 		Whitespaces: new RegExp ('^([\\x20\\n,\\t\\r]+)', 'y'),
+		Comment:     new RegExp ('^#(.*?)[\\n\\r]', 'y'),
 
 		// Header
 
 		// Keywords
-		FALSE: new RegExp ('^FALSE', 'y'),
-		TRUE:  new RegExp ('^TRUE', 'y'),
-		false: new RegExp ('^false', 'y'),
-		true:  new RegExp ('^true', 'y'),
+		COMPONENT: new RegExp ('^COMPONENT', 'y'),
+		DEF:       new RegExp ('^DEF', 'y'),
+		FALSE:     new RegExp ('^FALSE', 'y'),
+		false:     new RegExp ('^false', 'y'),
+		IS:        new RegExp ('^IS', 'y'),
+		META:      new RegExp ('^META', 'y'),
+		NULL:      new RegExp ('^NULL', 'y'),
+		TRUE:      new RegExp ('^TRUE', 'y'),
+		true:      new RegExp ('^true', 'y'),
+		PROFILE:   new RegExp ('^PROFILE', 'y'),
+		ROUTE:     new RegExp ('^ROUTE', 'y'),
+		TO:        new RegExp ('^TO', 'y'),
+		USE:       new RegExp ('^USE', 'y'),
 
 		// Terminal symbols
 		OpenBrace:    new RegExp ('^\\{', 'y'),
@@ -32,6 +60,20 @@ function ($, Fields)
 		CloseBracket: new RegExp ('^\\]', 'y'),
 		Period:       new RegExp ('^\\.', 'y'),
 		Colon:        new RegExp ('^\\:', 'y'),
+
+		Id: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]*)', 'y'),
+
+		initializeOnly: new RegExp ('^initalizeOnly', 'y'),
+		inputOnly:      new RegExp ('^inputOnly', 'y'),
+		outputOnly:     new RegExp ('^outputOnly', 'y'),
+		inputOutput:    new RegExp ('^inputOutput', 'y'),
+
+		field:        new RegExp ('^field', 'y'),
+		eventIn:      new RegExp ('^eventIn', 'y'),
+		eventOut:     new RegExp ('^eventOut', 'y'),
+		exposedField: new RegExp ('^exposedField', 'y'),
+
+		FieldType: new RegExp ('^(MFBool|MFColorRGBA|MFColor|MFDouble|MFFloat|MFImage|MFInt32|MFMatrix3d|MFMatrix3f|MFMatrix4d|MFMatrix4f|MFNode|MFRotation|MFString|MFTime|MFVec2d|MFVec2f|MFVec3d|MFVec3f|MFVec4d|MFVec4f|SFBool|SFColorRGBA|SFColor|SFDouble|SFFloat|SFImage|SFInt32|SFMatrix3d|SFMatrix3f|SFMatrix4d|SFMatrix4f|SFNode|SFRotation|SFString|SFTime|SFVec2d|SFVec2f|SFVec3d|SFVec3f|SFVec4d|SFVec4f)', 'y'),
 
 		// Values
 		int32:  new RegExp ('^((?:0[xX][\\da-fA-F]+)|(?:[+-]?\\d+))', 'y'),
@@ -72,20 +114,119 @@ function ($, Fields)
 	 *  Parser
 	 */
 
-	function Parser (scene, input, xml)
+	function Parser (scene, input, isXML)
 	{
-		this .scene = scene;
-		this .xml   = xml;
+		this .scene             = scene;
+		this .isXML             = isXML;
+		this .executionContexts = [ ];
+
 		this .setInput (input);
 	}
 
 	Parser .prototype =
 	{
+		accessTypes:
+		{
+			field:          X3DConstants .initializeOnly,
+			eventIn:        X3DConstants .inputOnly,
+			eventOut:       X3DConstants .outputOnly,
+			exposedField:   X3DConstants .inputOutput,
+			initializeOnly: X3DConstants .initializeOnly,
+			inputOnly:      X3DConstants .inputOnly,
+			outputOnly:     X3DConstants .outputOnly,
+			inputOutput:    X3DConstants .inputOutput,
+		},
+		SFBool: new Fields .SFBool (),
+		SFColor: new Fields .SFColor (),
+		SFColorRGBA: new Fields .SFColorRGBA (),
+		SFDouble: new Fields .SFDouble (),
+		SFFloat: new Fields .SFFloat (),
+		SFImage: new Fields .SFImage (),
+		SFInt32: new Fields .SFInt32 (),
+		SFMatrix3f: new Fields .SFMatrix3f (),
+		SFMatrix3d: new Fields .SFMatrix3d (),
+		SFMatrix4f: new Fields .SFMatrix4f (),
+		SFMatrix4d: new Fields .SFMatrix4d (),
+		SFNode: new Fields .SFNode (),
+		SFRotation: new Fields .SFRotation (),
+		SFString: new Fields .SFString (),
+		SFTime: new Fields .SFTime (),
+		SFVec2d: new Fields .SFVec2d (),
+		SFVec2f: new Fields .SFVec2f (),
+		SFVec3d: new Fields .SFVec3d (),
+		SFVec3f: new Fields .SFVec3f (),
+		SFVec4d: new Fields .SFVec4d (),
+		SFVec4f: new Fields .SFVec4f (),
+		MFBool: new Fields .MFBool (),
+		MFColor: new Fields .MFColor (),
+		MFColorRGBA: new Fields .MFColorRGBA (),
+		MFDouble: new Fields .MFDouble (),
+		MFFloat: new Fields .MFFloat (),
+		MFImage: new Fields .MFImage (),
+		MFInt32: new Fields .MFInt32 (),
+		MFMatrix3d: new Fields .MFMatrix3d (),
+		MFMatrix3f: new Fields .MFMatrix3f (),
+		MFMatrix4d: new Fields .MFMatrix4d (),
+		MFMatrix4f: new Fields .MFMatrix4f  (),
+		MFNode: new Fields .MFNode (),
+		MFRotation: new Fields .MFRotation (),
+		MFString: new Fields .MFString (),
+		MFTime: new Fields .MFTime (),
+		MFVec2d: new Fields .MFVec2d (),
+		MFVec2f: new Fields .MFVec2f (),
+		MFVec3d: new Fields .MFVec3d (),
+		MFVec3f: new Fields .MFVec3f (),
+		MFVec4d: new Fields .MFVec4d (),
+		MFVec4f: new Fields .MFVec4f (),
 		setInput: function (value)
 		{
 			this .input      = value;
 			this .lineNumber = 1;
 			this .lastIndex  = 0;
+		},
+		getBrowser: function ()
+		{
+			return this .scene .getBrowser ();
+		},
+		getExecutionContext: function ()
+		{
+			return this .executionContexts [this .executionContexts .length - 1];
+		},
+		pushExecutionContext: function (executionContext)
+		{
+			return this .executionContexts .push (executionContext);
+		},
+		popExecutionContext: function ()
+		{
+			this .executionContexts .pop ();
+		},
+		isInsideProtoDefinition: function ()
+		{
+			return this .executionContexts .length > 1;
+		},
+		addRootNode: function (node)
+		{
+			this .getExecutionContext () .rootNodes .push (node);
+		},
+		parseIntoScene: function ()
+		{
+			try
+			{
+				this .x3dScene ();
+				return;
+			}
+			catch (error)
+			{
+				throw new Error (this .getError (error));
+			}
+		},
+		getError: function (error)
+		{
+console .log (error);
+
+			var message = error .message;
+
+			return message;
 		},
 		comments: function ()
 		{
@@ -105,11 +246,764 @@ function ($, Fields)
 				return true;
 			}
 
+			if (Grammar .Comment .parse (this))
+			{
+				if (!this .xml)
+					this .lines (this .result [1]);
+				return true;
+			}
+
 			return false;	
 		},
 		lines: function (string)
 		{
 			this .lineNumber += string .match (Grammar .Break);
+		},
+		x3dScene: function ()
+		{
+			this .pushExecutionContext (this .scene);
+
+			this .headerStatement ();
+			this .profileStatement ();
+			this .componentStatements ();
+			this .unitStatements ();
+			this .metaStatements ();
+			this .statements ();
+
+			this .popExecutionContext (this .scene);
+		},
+		headerStatement: function ()
+		{
+		},
+		profileStatement: function ()
+		{
+			this .comments ();
+
+			if (Grammar .PROFILE .parse (this))
+			{
+				if (this .profileNameId ())
+				{
+					//var profile = this .getBrowser () .getProfile (this .result [1]);
+
+					//this .scene .setProfile (profile);
+					return;
+				}
+
+				throw new Error ("Expected a profile name.");
+			}
+		},
+		componentStatements: function ()
+		{
+			var component = this .componentStatement ();
+
+			while (component)
+			{
+				this .scene .updateComponent (component);
+
+				component = this .componentStatement ();
+			}
+		},
+		componentStatement: function ()
+		{
+			this .comments ();
+
+			if (Grammar .COMPONENT .parse (this))
+			{
+				if (this .componentNameId ())
+				{
+					var componentNameIdCharacters = this .result [1];
+
+					this .comments ();
+		
+					if (Grammar .Colon .parse (this))
+					{
+						if (this .componentSupportLevel ())
+						{
+							var componentSupportLevel = this .value;
+		
+							return this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
+						}
+		
+						throw new Error ("Expected a component support level.");
+					}
+		
+					throw new Error ("Expected a ':' after component name.");
+				}
+		
+				throw new Error ("Expected a component name.");
+			}
+		
+			return null;
+		},
+		componentSupportLevel: function ()
+		{
+			return this .int32 ();
+		},
+		unitStatements: function ()
+		{
+			while (this .unitStatement ())
+				;
+		},
+		unitStatement: function ()
+		{
+			return false;
+		},
+		metaStatements: function ()
+		{
+			while (this .metaStatement ())
+				;
+		},
+		metaStatement: function ()
+		{
+			this .comments ();
+
+			if (Grammar .META .parse (this))
+			{
+				if (this .metakey ())
+				{
+					var metakey = this .value;
+		
+					if (this .metavalue ())
+					{
+						var metavalue = this .value;
+
+						//this .scene .addMetaData (metakey, metavalue);
+						return true;
+					}
+		
+					throw new Error ("Expected metadata value.");
+				}
+		
+				throw new Error ("Expected metadata key.");
+			}
+		
+			return false;
+		},
+		metakey: function ()
+		{
+			return this .string ();
+		},
+		metavalue: function ()
+		{
+			return this .string ();
+		},
+		exportStatement: function ()
+		{
+			return false;
+		},
+		importStatement: function ()
+		{
+			return false;
+		},
+		statements: function ()
+		{
+			while (this .statement ())
+				;
+		},
+		statement: function ()
+		{
+			if (this .protoStatement ())
+				return true;
+		
+			if (this .routeStatement ())
+				return true;
+		
+			if (this .importStatement ())
+				return true;
+		
+			if (this .exportStatement ())
+				return true;
+
+			var node = this .nodeStatement ();
+
+			if (node !== false)
+			{
+				this .addRootNode (node);
+				return true;
+			}
+
+			return false;
+		},
+		nodeStatement: function ()
+		{
+			this .comments ();
+
+			if (Grammar .DEF .parse (this))
+			{
+				if (this .nodeNameId ())
+					return this .node (this .result [1]);
+		
+				throw new Error ("No name given after DEF.");
+			}
+		
+			if (Grammar .USE .parse (this))
+			{
+				if (this .nodeNameId ())
+					return this .getExecutionContext () .getNamedNode (this .result [1]);
+		
+				throw new Error ("No name given after USE.");
+			}
+		
+			if (Grammar .NULL .parse (this))
+				return null;
+
+			return this .node ("");
+		},
+		rootNodeStatement: function ()
+		{
+			return false;
+		},
+		protoStatement: function ()
+		{
+			if (this .proto ())
+				return true;
+		
+			if (this .externproto ())
+				return true;
+		
+			return false;
+		},
+		protoStatements: function ()
+		{
+			while (this .protoStatement ())
+				;
+		},
+		proto: function ()
+		{
+			return false;
+		},
+		protoBody: function ()
+		{
+			return false;
+		},
+		interfaceDeclarations: function ()
+		{
+			var
+				interfaceDeclarations = [ ],
+				field                 = this .interfaceDeclaration ();
+
+			while (field)
+			{
+				interfaceDeclarations .push (field);
+
+				field = this .interfaceDeclaration ();
+			}
+
+			return interfaceDeclarations;
+		},
+		restrictedInterfaceDeclaration: function ()
+		{
+			this .comments ();
+		
+			if (Grammar .inputOnly .parse (this) || Grammar .eventIn .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .inputOnlyId ())
+					{
+						var
+							fieldId = this .result [1],
+							field = new (this [fieldType] .constructor) ();
+						
+						field .setAccessType (X3DConstants .inputOnly);
+						field .setName (fieldId);
+						return field;
+					}
+		
+					throw new Error ("Expected a name for field.");
+				}
+
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+		
+			if (Grammar .outputOnly .parse (this) || Grammar .eventOut .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .outputOnlyId ())
+					{
+						var
+							fieldId = this .result [1],
+							field = new (this [fieldType] .constructor) ();
+
+						field .setAccessType (X3DConstants .outputOnly);
+						field .setName (fieldId);
+						return field;
+					}
+		
+					throw new Error ("Expected a name for field.");
+				}
+		
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+		
+			if (Grammar .initializeOnly .parse (this) || Grammar .field .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .initializeOnlyId ())
+					{
+						var
+							fieldId = this .result [1],
+							field = new (this [fieldType] .constructor) ();
+		
+						if (this .fieldValue (field))
+						{
+							field .setAccessType (X3DConstants .initializeOnly);
+							field .setName (fieldId);
+							return field;
+						}
+		
+						throw new Error ("Couldn't read value for field '" + fieldId + "'.");
+					}
+		
+					throw new Error ("Expected a name for field.");
+				}
+		
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+		
+			return null;
+		},
+		interfaceDeclaration: function ()
+		{
+			var field = this .restrictedInterfaceDeclaration ();
+		
+			if (field)
+				return field;
+
+			this .comments ();
+		
+			if (Grammar .inputOutput .parse (this) || Grammar .exposedField .parse (this))
+			{
+				if (this .fieldType ())
+				{
+					var fieldType = this .result [1];
+		
+					if (this .inputOutputId ())
+					{
+						var
+							fieldId = this .result [1],
+							field   = new (this [fieldType] .constructor) ();
+		
+						if (this .fieldValue (field))
+						{
+							field .setAccessType (X3DConstants .inputOutput);
+							field .setName (fieldId);
+							return field;
+						}
+		
+						throw new Error ("Couldn't read value for field '" + fieldId + "'.");
+					}
+		
+					throw new Error ("Expected a name for field.");
+				}
+	
+				this .Id ()
+		
+				throw new Error ("Unknown event or field type: '" + this .result [1] + "'.");
+			}
+
+			return null;
+		},
+		externproto: function ()
+		{
+			return false;
+		},
+		externInterfaceDeclarations: function ()
+		{
+			return false;
+		},
+		externInterfaceDeclaration: function ()
+		{
+			return false;
+		},
+		URLList: function ()
+		{
+			return false;
+		},
+		routeStatement: function ()
+		{
+			this .comments ();
+		
+			if (Grammar .ROUTE .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						fromNodeId = this .result [1],
+						fromNode   = this .getExecutionContext () .getLocalNode (fromNodeId);
+
+					this .comments ();
+		
+					if (Grammar .Period .parse (this))
+					{
+						if (this .outputOnlyId ())
+						{
+							var eventOutId = this .result [1];
+	
+							this .comments ();
+		
+							if (Grammar .TO .parse (this))
+							{
+								if (this .nodeNameId ())
+								{
+									var
+										toNodeId = this .result [1],
+										toNode   = this .getExecutionContext () .getLocalNode (toNodeId);
+
+									this .comments ();
+
+									if (Grammar .Period .parse (this))
+									{
+										if (this .inputOnlyId ())
+										{
+											var
+												eventInId = this .result [1],
+												route     = this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
+
+											return true;
+										}
+		
+										throw new Error ("Bad ROUTE specification: Expected a field name.");
+									}
+		
+									throw new Error ("Bad ROUTE specification: Expected a '.' after node name.");
+								}
+		
+								throw new Error ("Bad ROUTE specification: Expected a node name.");
+							}
+		
+							throw new Error ("Bad ROUTE specification: Expected a 'TO'.");
+						}
+		
+						throw new Error ("Bad ROUTE specification: Expected a field name.");
+					}
+		
+					throw new Error ("Bad ROUTE specification: Expected a '.' after node name.");
+				}
+		
+				throw new Error ("Bad ROUTE specification: Expected a node name.");
+			}
+		
+			return false;
+		},
+		node: function (nodeNameId)
+		{
+			if (this .nodeTypeId ())
+			{
+				var nodeTypeId = this .result [1];
+		
+				try
+				{
+					var baseNode = this .getExecutionContext () .createNode (nodeTypeId, false);
+				}
+				catch (error1)
+				{
+					try
+					{
+						var baseNode = this .getExecutionContext () .createProto (nodeTypeId, false);
+					}
+					catch (error2)
+					{
+						throw new Error (error1 .message + "\n" + error2 .message);
+					}
+				}
+		
+				if (nodeNameId .length)
+					this .getExecutionContext () .updateNamedNode (nodeNameId, baseNode);
+		
+				this .comments ();
+		
+				if (Grammar .OpenBrace .parse (this))
+				{
+					if (baseNode .hasUserDefinedFields ())
+						this .scriptBody (baseNode);
+		
+					else
+						this .nodeBody (baseNode);
+		
+					this .comments ();
+		
+					if (Grammar .CloseBrace .parse (this))
+					{
+						this .getExecutionContext () .addUninitializedNode (baseNode);
+						return baseNode;
+					}
+		
+					throw new Error ("Expected '}' at the end of node body.");
+				}
+		
+				throw new Error ("Expected '{' at the beginning of node body.");
+			}
+		
+			return false;
+		},
+		scriptBody: function (baseNode)
+		{
+			while (this .scriptBodyElement (baseNode))
+				;
+		},
+		scriptBodyElement: function (baseNode)
+		{
+			if (this .protoStatement ())
+				return true;
+		
+			if (this .routeStatement ())
+				return true;
+
+			var
+				lastIndex  = this .lastIndex,
+				lineNumber = this .lineNumber;
+
+			if (this .Id ())
+			{
+				var accessType = this .accessTypes [this .result [1]];
+		
+				if (accessType)
+				{
+					if (this .fieldType ())
+					{
+						var fieldType = this .result [1];
+		
+						if (this .Id ())
+						{
+							var fieldId = this .result [1];
+
+							this .comments ();
+		
+							if (Grammar .IS .parse (this))
+							{
+								if (this .isInsideProtoDefinition ())
+								{
+									if (this .Id ())
+									{
+										var isId = this .result [1];
+		
+										try
+										{
+											var reference = this .getExecutionContext () .getField (isId);
+										}
+										catch (error)
+										{
+											if (this .getBrowser () .isStrict ())
+												throw new Error ("No such event or field '" + isId + "' inside PROTO " + this .getExecutionContext () .getName () + " interface declaration.");
+											
+											return true;
+										}
+		
+										var supportedField = this [fieldType];
+		
+										if (supportedField .getType () === reference .getType ())
+										{
+											if (reference .isReference (accessType))
+											{
+												try
+												{
+													var field = baseNode .getField (fieldId);
+		
+													if (reference .getType () === field .getType ())
+													{
+														if (accessType === field .getAccessType ())
+															;
+														else if (field .getAccessType () === X3DConstants .inputOutput)
+														{
+															if (accessType !== field .getAccessType ())
+																field = this .createUserDefinedField (baseNode, accessType, fieldId, supportedField);
+														}
+														else
+														{
+															if (this .getBrowser () .isStrict ())
+																throw new Error ("Field '" + fieldId + "' must have access type " + accessTypeToString (field .getAccessType ()) + ".");
+	
+															return true;
+														}
+													}
+													else
+														field = this .createUserDefinedField (baseNode, accessType, fieldId, supportedField);
+												}
+												catch (error)
+												{
+													var field = this .createUserDefinedField (baseNode, accessType, fieldId, supportedField);
+												}
+		
+												field .addReference (reference);
+												return true;
+											}
+		
+											throw new Error ("Field '" + fieldId + "' and '" + reference .getName () + "' in PROTO '" + this .getExecutionContext () .getName () + "' are incompatible as an IS mapping.");
+										}
+		
+										throw new Error ("Field '" + fieldId + "' and '" + reference .getName () + "' in PROTO '" + this .getExecutionContext () .getName () + "' have different types.");
+									}
+		
+									throw new Error ("No name give after IS statement.");
+								}
+		
+								throw new Error ("IS statement outside PROTO definition.");
+							}
+						}
+					}
+				}
+			}
+
+			this .lastIndex  = lastIndex;
+			this .lineNumber = lineNumber;
+
+			var field = this .interfaceDeclaration ();
+		
+			if (field)
+			{
+				try
+				{
+					if (field .getAccessType () === X3DConstants .inputOutput)
+					{
+						var existingField = baseNode .getField (field .getName ());
+		
+						if (existingField .getAccessType () === X3DConstants .inputOutput)
+						{
+							if (field .getType () === existingField .getType ())
+							{
+								existingField .set (field .getValue ());
+								existingField .setSet (true);
+								return true;
+							}
+						}
+					}
+				}
+				catch (error)
+				{ }
+
+				baseNode .addUserDefinedField (field .getAccessType (), field .getName (), field);
+				return true;
+			}
+		
+			return this .nodeBodyElement (baseNode);
+		},
+		createUserDefinedField: function (baseNode, accessType, fieldId, supportedField)
+		{
+			var field = new (supportedField .constructor) ();
+
+			baseNode .addUserDefinedField (accessType, fieldId, field);
+
+			return field;
+		},
+		nodeBody: function (baseNode)
+		{
+			while (this .nodeBodyElement (baseNode))
+				;
+		},
+		nodeBodyElement: function (baseNode)
+		{
+			if (this .protoStatement ())
+				return true;
+		
+			if (this .routeStatement ())
+				return true;
+		
+			if (this .Id ())
+			{
+				var fieldId = this .result [1];
+
+				try
+				{
+					var field = baseNode .getField (fieldId);
+				}
+				catch (error)
+				{
+					throw new Error ("Unknown field '" + fieldId + "' in class '" + baseNode .getTypeName () + "'.");
+				}
+		
+				this .comments ();
+		
+				if (Grammar .IS .parse (this))
+				{
+					if (this .isInsideProtoDefinition ())
+					{
+						if (this .Id ())
+						{
+							var isId = this .result [1];
+		
+							try
+							{
+								var reference = this .getExecutionContext () .getField (isId);
+							}
+							catch (error)
+							{
+								if (this .getBrowser () .isStrict ())
+									throw new Error ("No such event or field '" + isId + "' inside PROTO " + this .getExecutionContext () .getName ());
+		
+								return true;
+							}
+		
+							if (field .getType () === reference .getType ())
+							{
+								if (reference .isReference (field .getAccessType ()))
+								{
+									field .addReference (reference);
+									return true;
+								}
+		
+								throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () . getName () + " are incompatible as an IS mapping.");
+							}
+		
+							throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () .getName () + " have different types.");
+						}
+		
+						throw new Error("No name give after IS statement.");
+					}
+		
+					throw new Error ("IS statement outside PROTO definition.");
+				}
+		
+				if (field .isInitializable ())
+				{
+					if (this .fieldValue (field))
+						return true;
+		
+					throw new Error ("Couldn't read value for field '" + fieldId + "'.");
+				}
+		
+				throw new Error ("Couldn't assign value to " + accessTypeToString (field .getAccessType ()) + " field '" + fieldId + "'.");
+			}
+		
+			return false;
+		},
+		profileNameId: function () { return this .Id (); },
+		componentNameId: function () { return this .Id (); },
+		nodeNameId: function () { return this .Id (); },
+		nodeTypeId: function () { return this .Id (); },
+		initializeOnlyId: function () { return this .Id (); },
+		inputOnlyId: function () { return this .Id (); },
+		outputOnlyId: function () { return this .Id (); },
+		inputOutputId: function () { return this .Id (); },
+		Id: function ()
+		{
+			this .comments ();
+
+			return Grammar .Id .parse (this);
+		},
+		fieldType: function ()
+		{
+			this .comments ();
+
+			return Grammar .FieldType .parse (this);
+		},
+		fieldValue: function (field)
+		{
+			return this .fieldTypes [field .getType ()] .call (this, field);
 		},
 		double: function ()
 		{
@@ -161,7 +1055,7 @@ function ($, Fields)
 			{
 				this .value = Fields .SFString .unescape (this .result [1]);
 
-				if (!this .xml)
+				if (!this .isXML)
 					this .lines (this .value);
 
 				return true;
@@ -171,7 +1065,7 @@ function ($, Fields)
 		},
 		sfboolValue: function (field)
 		{
-			if (this .xml)
+			if (this .isXML)
 			{
 				if (Grammar .true .parse (this))
 				{
@@ -204,9 +1098,29 @@ function ($, Fields)
 		},
 		mfboolValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfboolValue (this .SFBool))
+			{
+				field .push (this .SFBool);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfboolValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfboolValues: function (field)
+		sfboolValues: function (field)
 		{
 			field .length = 0;
 
@@ -245,9 +1159,29 @@ function ($, Fields)
 		},
 		mfcolorValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfcolorValue (this .SFColor))
+			{
+				field .push (this .SFColor);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfcolorValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfcolorValues: function (field)
+		sfcolorValues: function (field)
 		{
 			field .length = 0;
 
@@ -291,9 +1225,29 @@ function ($, Fields)
 		},
 		mfcolorrgbaValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfcolorrgbaValue (this .SFColorRGBA))
+			{
+				field .push (this .SFColorRGBA);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfcolorrgbaValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfcolorrgbaValues: function (field)
+		sfcolorrgbaValues: function (field)
 		{
 			field .length = 0;
 
@@ -320,9 +1274,29 @@ function ($, Fields)
 		},
 		mfdoubleValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfdoubleValue (this .SFDouble))
+			{
+				field .push (this .SFDouble);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfdoubleValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfdoubleValues: function (field)
+		sfdoubleValues: function (field)
 		{
 			field .length = 0;
 
@@ -343,9 +1317,29 @@ function ($, Fields)
 		},
 		mffloatValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sffloatValue (this .SFFloat))
+			{
+				field .push (this .SFFloat);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sffloatValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mffloatValues: function (field)
+		sffloatValues: function (field)
 		{
 			field .length = 0;
 
@@ -398,9 +1392,29 @@ function ($, Fields)
 		},
 		mfimageValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfimageValue (this .SFImage))
+			{
+				field .push (this .SFImage);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfimageValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfimageValues: function (field)
+		sfimageValues: function (field)
 		{
 			field .length = 0;
 
@@ -427,9 +1441,29 @@ function ($, Fields)
 		},
 		mfint32Value: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfint32Value (this .SFInt32))
+			{
+				field .push (this .SFInt32);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfint32Values (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfint32Values: function (field)
+		sfint32Values: function (field)
 		{
 			field .length = 0;
 
@@ -500,9 +1534,29 @@ function ($, Fields)
 		},
 		mfmatrix3dValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfmatrix3dValue (this .SFMatrix3d))
+			{
+				field .push (this .SFMatrix3d);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfmatrix3dValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfmatrix3dValues: function (field)
+		sfmatrix3dValues: function (field)
 		{
 			field .length = 0;
 
@@ -523,9 +1577,29 @@ function ($, Fields)
 		},
 		mfmatrix3fValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfmatrix3fValue (this .SFMatrix3f))
+			{
+				field .push (this .SFMatrix3f);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfmatrix3fValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfmatrix3fValues: function (field)
+		sfmatrix3fValues: function (field)
 		{
 			field .length = 0;
 
@@ -632,9 +1706,29 @@ function ($, Fields)
 		},
 		mfmatrix4dValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfmatrix4dValue (this .SFMatrix4d))
+			{
+				field .push (this .SFMatrix4d);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfmatrix4dValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfmatrix4dValues: function (field)
+		sfmatrix4dValues: function (field)
 		{
 			field .length = 0;
 
@@ -655,9 +1749,29 @@ function ($, Fields)
 		},
 		mfmatrix4fValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfmatrix4fValue (this .SFMatrix4f))
+			{
+				field .push (this .SFMatrix4f);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfmatrix4fValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfmatrix4fValues: function (field)
+		sfmatrix4fValues: function (field)
 		{
 			field .length = 0;
 
@@ -670,6 +1784,55 @@ function ($, Fields)
 				value .addParent (field);
 				array .push (value);
 				value = new Fields .SFMatrix4f ();
+			}
+		},
+		sfnodeValue: function (field)
+		{
+			var baseNode = this .nodeStatement ();
+
+			if (baseNode)
+			{
+				field .setValue (baseNode);
+				return true;
+			}
+
+			return false;
+		},
+		mfnodeValue: function (field)
+		{
+			field .length = 0;
+
+			var node = this .nodeStatement ();
+
+			if (node)
+			{
+				field .push (node);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .nodeStatements (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
+			return false;
+		},
+		nodeStatements (field)
+		{
+			var node = this .nodeStatement ();
+		
+			while (node)
+			{
+				field .push (node);
+				
+				node = this .nodeStatement ();
 			}
 		},
 		sfrotationValue: function (field)
@@ -701,9 +1864,29 @@ function ($, Fields)
 		},
 		mfrotationValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfrotationValue (this .SFRotation))
+			{
+				field .push (this .SFRotation);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfrotationValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfrotationValues: function (field)
+		sfrotationValues: function (field)
 		{
 			field .length = 0;
 
@@ -730,9 +1913,29 @@ function ($, Fields)
 		},
 		mfstringValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfstringValue (this .SFString))
+			{
+				field .push (this .SFString);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfstringValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfstringValues: function (field)
+		sfstringValues: function (field)
 		{
 			field .length = 0;
 
@@ -753,9 +1956,29 @@ function ($, Fields)
 		},
 		mftimeValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sftimeValue (this .SFTime))
+			{
+				field .push (this .SFTime);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sftimeValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mftimeValues: function (field)
+		sftimeValues: function (field)
 		{
 			field .length = 0;
 
@@ -789,9 +2012,29 @@ function ($, Fields)
 		},
 		mfvec2dValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfvec2dValue (this .SFVec2d))
+			{
+				field .push (this .SFVec2d);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfvec2dValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfvec2dValues: function (field)
+		sfvec2dValues: function (field)
 		{
 			field .length = 0;
 
@@ -812,9 +2055,29 @@ function ($, Fields)
 		},
 		mfvec2fValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfvec2fValue (this .SFVec2f))
+			{
+				field .push (this .SFVec2f);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfvec2fValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfvec2fValues: function (field)
+		sfvec2fValues: function (field)
 		{
 			field .length = 0;
 
@@ -853,9 +2116,29 @@ function ($, Fields)
 		},
 		mfvec3dValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfvec3dValue (this .SFVec3d))
+			{
+				field .push (this .SFVec3d);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfvec3dValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfvec3dValues: function (field)
+		sfvec3dValues: function (field)
 		{
 			field .length = 0;
 
@@ -876,9 +2159,29 @@ function ($, Fields)
 		},
 		mfvec3fValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfvec3fValue (this .SFVec3f))
+			{
+				field .push (this .SFVec3f);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfvec3fValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfvec3fValues: function (field)
+		sfvec3fValues: function (field)
 		{
 			field .length = 0;
 
@@ -922,9 +2225,29 @@ function ($, Fields)
 		},
 		mfvec4dValue: function (field)
 		{
+			field .length = 0;
+
+			if (this .sfvec4dValue (this .SFVec4d))
+			{
+				field .push (this .SFVec4d);
+				return true;
+			}			
+
+			if (Grammar .OpenBracket .parse (this))
+			{
+				this .sfvec4dValues (field);
+
+				this .comments ();
+
+				if (Grammar .CloseBracket .parse (this))
+					return true;
+
+				throw new Error ("Expected ']'.");
+			}
+
 			return false;
 		},
-		mfvec4dValues: function (field)
+		sfvec4dValues: function (field)
 		{
 			field .length = 0;
 
@@ -962,12 +2285,12 @@ function ($, Fields)
 				if (Grammar .CloseBracket .parse (this))
 					return true;
 
-				throw Error ("Expected ']'.", this .scene .getWorldURL (), this .lineNumber);
+				throw new Error ("Expected ']'.");
 			}
 
 			return false;
 		},
-		mfvec4fValues: function (field)
+		sfvec4fValues: function (field)
 		{
 			field .length = 0;
 
@@ -983,6 +2306,51 @@ function ($, Fields)
 			}
 		},
 	};
+
+	Parser .prototype .fieldTypes = [ ];
+	Parser .prototype .fieldTypes [X3DConstants .SFBool]      = Parser .prototype .sfboolValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFColor]     = Parser .prototype .sfcolorValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFColorRGBA] = Parser .prototype .sfcolorrgbaValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFDouble]    = Parser .prototype .sfdoubleValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFFloat]     = Parser .prototype .sffloatValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFImage]     = Parser .prototype .sfimageValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFInt32]     = Parser .prototype .sfint32Value;
+	Parser .prototype .fieldTypes [X3DConstants .SFMatrix3f]  = Parser .prototype .sfmatrix4dValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFMatrix3d]  = Parser .prototype .sfmatrix4fValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFMatrix4f]  = Parser .prototype .sfmatrix4dValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFMatrix4d]  = Parser .prototype .sfmatrix4fValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFNode]      = Parser .prototype .sfnodeValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFRotation]  = Parser .prototype .sfrotationValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFString]    = Parser .prototype .sfstringValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFTime]      = Parser .prototype .sftimeValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFVec2d]     = Parser .prototype .sfvec2dValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFVec2f]     = Parser .prototype .sfvec2fValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFVec3d]     = Parser .prototype .sfvec3dValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFVec3f]     = Parser .prototype .sfvec3fValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFVec4d]     = Parser .prototype .sfvec4dValue;
+	Parser .prototype .fieldTypes [X3DConstants .SFVec4f]     = Parser .prototype .sfvec4fValue;
+
+	Parser .prototype .fieldTypes [X3DConstants .MFBool]      = Parser .prototype .mfboolValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFColor]     = Parser .prototype .mfcolorValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFColorRGBA] = Parser .prototype .mfcolorrgbaValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFDouble]    = Parser .prototype .mfdoubleValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFFloat]     = Parser .prototype .mffloatValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFImage]     = Parser .prototype .mfimageValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFInt32]     = Parser .prototype .mfint32Value;
+	Parser .prototype .fieldTypes [X3DConstants .MFMatrix3d]  = Parser .prototype .mfmatrix3dValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFMatrix3f]  = Parser .prototype .mfmatrix3fValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFMatrix4d]  = Parser .prototype .mfmatrix4dValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFMatrix4f]  = Parser .prototype .mfmatrix4fValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFNode]      = Parser .prototype .mfnodeValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFRotation]  = Parser .prototype .mfrotationValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFString]    = Parser .prototype .mfstringValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFTime]      = Parser .prototype .mftimeValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFVec2d]     = Parser .prototype .mfvec2dValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFVec2f]     = Parser .prototype .mfvec2fValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFVec3d]     = Parser .prototype .mfvec3dValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFVec3f]     = Parser .prototype .mfvec3fValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFVec4d]     = Parser .prototype .mfvec4dValue;
+	Parser .prototype .fieldTypes [X3DConstants .MFVec4f]     = Parser .prototype .mfvec4fValue;
 
 	return Parser;
 });
