@@ -5,7 +5,7 @@ define ([
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
-	"lib/blobTransport",
+	"lib/BlobTransport",
 	"lib/pako/dist/pako_inflate",
 ],
 function ($,
@@ -13,12 +13,12 @@ function ($,
           Parser,
           XMLParser,
           URI,
-          blobTransport,
+          BlobTransport,
           pako)
 {
 "use strict";
 
-	blobTransport ($);
+	BlobTransport ($);
 
 	var TIMEOUT = 16;
 

@@ -2713,7 +2713,7 @@
     <None Include="lib\pako\test\fixtures\samples_deflated_raw\sheet2.compressed" />
     <None Include="lib\pako\test\fixtures\samples_deflated_raw\sheet3.compressed" />
     <None Include="lib\pako\test\fixtures\samples_deflated_raw\sheet4.compressed" />
-    <None Include="lib\blobTransport.js" />
+    <None Include="lib\BlobTransport.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
