@@ -53,9 +53,9 @@ function ($,
 				{
 					setTimeout (this .importDocument .bind (this, scene, $.parseXML (string), success, error), TIMEOUT);
 				}
-				catch (exception1)
+				catch (exceptionParseXML)
 				{
-					var exception1 = new Error ("Couldn't parse XML");
+					var exceptionParseXML = new Error ("Couldn't parse XML");
 
 					try
 					{
@@ -66,12 +66,12 @@ function ($,
 						if (success)
 							this .setScene (scene, success);
 					}
-					catch (exception2)
+					catch (exception)
 					{
 						if (error)
-							error (exception2);
+							error (exception);
 						else
-							throw exception2;
+							throw exception;
 					}
 				}
 			}
@@ -253,12 +253,12 @@ function ($,
 			}
 			catch (exception)
 			{
-				this .fileReader .onload = this .readAsArrayBuffer .bind (this);
+				this .fileReader .onload = this .readAsArrayBuffer .bind (this, exception);
 
 				this .fileReader .readAsArrayBuffer (blob);
 			}
 		},
-		readAsArrayBuffer: function ()
+		readAsArrayBuffer: function (exceptionReadAsText)
 		{
 			try
 			{
@@ -268,7 +268,8 @@ function ($,
 				}
 				catch (exception)
 				{
-					var string = "";
+					this .loadDocumentError (exceptionReadAsText);
+					return;
 				}
 
 				this .callback (string);
