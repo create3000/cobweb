@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 31 Aug 2015 16:22:31 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 11 Nov 2015 10:51:15 GMT'/>
+    <meta name='modified' content='Mon, 16 Nov 2015 01:12:47 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -41,6 +41,7 @@
       </MetadataSet>
     </WorldInfo>
     <Script>
+      <field accessType='initializeOnly' type='SFBool' name='references' value='true'/>
       <field accessType='initializeOnly' type='SFNode' name='node'>
         <Transform DEF='_1'/>
       </field>

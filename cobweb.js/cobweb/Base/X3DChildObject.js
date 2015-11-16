@@ -11,7 +11,7 @@ function ($, X3DObject)
 	{
 		X3DObject .call (this);
 
-		this .parents = { };
+		this .parents_ = { };
 	}
 
 	X3DChildObject .prototype = $.extend (Object .create (X3DObject .prototype),
@@ -19,15 +19,15 @@ function ($, X3DObject)
 		constructor: X3DChildObject,
 		addParent: function (parent)
 		{
-			this .parents [parent .getId ()] = parent;
+			this .parents_ [parent .getId ()] = parent;
 		},
 		removeParent: function (parent)
 		{
-			delete this .parents [parent .getId ()];
+			delete this .parents_ [parent .getId ()];
 		},
 		getParents: function ()
 		{
-			return this .parents;
+			return this .parents_;
 		},
 	});
 

@@ -24,11 +24,11 @@ function ($,
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
-		references: { },
-		fieldInterests: { },
-		fieldCallbacks: { },
-		accessType: X3DConstants .initializeOnly,
-		isSet: null,
+		references_: { },
+		fieldInterests_: { },
+		fieldCallbacks_: { },
+		accessType_: X3DConstants .initializeOnly,
+		set_: null,
 		clone: function ()
 		{
 			return this .copy ();
@@ -52,45 +52,45 @@ function ($,
 		},
 		setAccessType: function (value)
 		{
-			this .accessType = value;
+			this .accessType_ = value;
 		},
 		getAccessType: function ()
 		{
-			return this .accessType;
+			return this .accessType_;
 		},
 		isInitializable: function ()
 		{
-			return this .accessType & X3DConstants .initializeOnly;
+			return this .getAccessType () & X3DConstants .initializeOnly;
 		},
 		isInput: function ()
 		{
-			return this .accessType & X3DConstants .inputOnly;
+			return this .getAccessType () & X3DConstants .inputOnly;
 		},
 		isOutput: function ()
 		{
-			return this .accessType & X3DConstants .outputOnly;
+			return this .getAccessType () & X3DConstants .outputOnly;
 		},
 		isReadable: function ()
 		{
-			return this .accessType !== X3DConstants .inputOnly;
+			return this .getAccessType () !== X3DConstants .inputOnly;
 		},
 		isWritable: function ()
 		{
-			return this .accessType !== X3DConstants .initializeOnly;
+			return this .getAccessType () !== X3DConstants .initializeOnly;
 		},
 		setSet: function (value)
 		{
 			// Boolean indication whether the value is set during parse, or undefined.
-			return this .isSet = value;
+			return this .set_ = value;
 		},
 		getSet: function ()
 		{
-			return this .isSet;
+			return this .set_;
 		},
 		hasReferences: function ()
 		{
-			if (this .hasOwnProperty ("references"))
-				return ! $.isEmptyObject (this .references);
+			if (this .hasOwnProperty ("references_"))
+				return ! $.isEmptyObject (this .references_);
 
 			return false;
 		},
@@ -109,7 +109,7 @@ function ($,
 
 			// Create IS relationship
 
-			switch (this .accessType & reference .getAccessType ())
+			switch (this .getAccessType () & reference .getAccessType ())
 			{
 				case X3DConstants .initializeOnly:
 					this .set (reference .getValue ());
@@ -129,20 +129,20 @@ function ($,
 		},
 		getReferences: function ()
 		{
-			if (! this .hasOwnProperty ("references"))
-				this .references = { };
+			if (! this .hasOwnProperty ("references_"))
+				this .references_ = { };
 
-			return this .references;
+			return this .references_;
 		},
 		updateReferences: function ()
 		{
-			if (this .hasOwnProperty ("references"))
+			if (this .hasOwnProperty ("references_"))
 			{
-				for (var id in this .references)
+				for (var id in this .references_)
 				{
-					var reference = this .references [id];
+					var reference = this .references_ [id];
 
-					switch (this .accessType & reference .getAccessType ())
+					switch (this .getAccessType () & reference .getAccessType ())
 					{
 						case X3DConstants .inputOnly:
 						case X3DConstants .outputOnly:
@@ -157,25 +157,25 @@ function ($,
 		},
 		addFieldInterest: function (field)
 		{
-			if (! this .hasOwnProperty ("fieldInterests"))
-				this .fieldInterests = { };
+			if (! this .hasOwnProperty ("fieldInterests_"))
+				this .fieldInterests_ = { };
 
-			this .fieldInterests [field .getId ()] = field;
+			this .fieldInterests_ [field .getId ()] = field;
 		},
 		removeFieldInterest: function (field)
 		{
-			delete this .fieldInterests [field .getId ()];
+			delete this .fieldInterests_ [field .getId ()];
 		},
 		addFieldCallback: function (string, object)
 		{
-			if (! this .hasOwnProperty ("fieldCallbacks"))
-				this .fieldCallbacks = { };
+			if (! this .hasOwnProperty ("fieldCallbacks_"))
+				this .fieldCallbacks_ = { };
 
-			this .fieldCallbacks [string] = object;
+			this .fieldCallbacks_ [string] = object;
 		},
 		removeFieldCallback: function (string)
 		{
-			delete this .fieldCallbacks [string];
+			delete this .fieldCallbacks_ [string];
 		},
 		addEvent: function ()
 		{
@@ -211,7 +211,7 @@ function ($,
 			// Process routes
 
 			var
-				fieldInterests = this .fieldInterests,
+				fieldInterests = this .fieldInterests_,
 				first          = true;
 
 			for (var key in fieldInterests)
@@ -230,7 +230,7 @@ function ($,
 
 			// Process field callbacks
 
-			var fieldCallbacks = this .fieldCallbacks;
+			var fieldCallbacks = this .fieldCallbacks_;
 
 			for (var key in fieldCallbacks)
 				fieldCallbacks [key] (this .valueOf ());

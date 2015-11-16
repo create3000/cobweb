@@ -11,7 +11,7 @@ function ()
 
 	var id = 0;
 	
-	function getId () { return this .id; }
+	function getId () { return this .id_; }
 
 	/*
 	 *  X3DObject
@@ -22,54 +22,54 @@ function ()
 	X3DObject .prototype =
 	{
 		constructor: X3DObject,
-		id: 0,
-		name: "",
-		tainted: false,
-		interests: { },
+		id_: 0,
+		name_: "",
+		tainted_: false,
+		interests_: { },
 		getId: function ()
 		{
 			this .getId = getId;
 
-			return this .id = ++ id;
+			return this .id_ = ++ id;
 		},
 		setName: function (value)
 		{
-			this .name = value;
+			this .name_ = value;
 		},
 		getName: function ()
 		{
-			return this .name;
+			return this .name_;
 		},
 		setTainted: function (value)
 		{
-			this .tainted = value;
+			this .tainted_ = value;
 		},
 		getTainted: function ()
 		{
-			return this .tainted;
+			return this .tainted_;
 		},
 		addInterest: function (object, callback)
 		{
-			if (! this .hasOwnProperty ("interests"))
-				this .interests = { };
+			if (! this .hasOwnProperty ("interests_"))
+				this .interests_ = { };
 
 			var args = Array .prototype .slice .call (arguments, 0);
 	
 			args [1] = this;
 
-			this .interests [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
+			this .interests_ [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
 		},
 		removeInterest: function (object, callback)
 		{
-			delete this .interests [object .getId () + callback];
+			delete this .interests_ [object .getId () + callback];
 		},
 		getInterests: function ()
 		{
-			return this .interests;
+			return this .interests_;
 		},
 		processInterests: function ()
 		{
-			var interests = this .interests;
+			var interests = this .interests_;
 
 			for (var key in interests)
 				interests [key] ();
