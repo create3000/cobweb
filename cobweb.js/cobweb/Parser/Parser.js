@@ -1,5 +1,5 @@
 
-define ([
+define ("cobweb/Parser/Parser", [
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Prototype/X3DExternProtoDeclaration",
