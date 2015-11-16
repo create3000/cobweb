@@ -161,9 +161,9 @@ function ($,
 							scene   = this .createX3DFromString (this .URL, data);
 							success = true;
 						}
-						catch (error)
+						catch (exception)
 						{
-							console .log (error);
+							this .error (exception);
 						}
 					},
 					error: function (jqXHR, textStatus, errorThrown)
@@ -212,8 +212,6 @@ function ($,
 
 			this .URL = this .transform (URL);
 
-			console .log ("Trying to load " + this .URL);
-
 			$.ajax ({
 				url: this .URL,
 				dataType: "binary",
@@ -224,8 +222,6 @@ function ($,
 				context: this,
 				success: function (blob, status)
 				{
-			console .log ("Load " + this .URL);
-
 					this .fileReader .onload = this .readAsText .bind (this, blob);
 
 					this .fileReader .readAsText (blob);
@@ -264,12 +260,7 @@ function ($,
 		{
 			// Output exception.
 
-			var message = "Couldn't load URL " + this .URL;
-
-			if (exception)
-				message += ": " + exception;
-
-			console .warn (message);
+			this .error (exception);
 
 			// Try to load next URL.
 
@@ -278,6 +269,17 @@ function ($,
 
 			else
 				this .callback (null);
+		},
+		error: function (exception)
+		{
+			// Output exception.
+
+			var message = "Couldn't load URL " + this .URL;
+
+			if (exception)
+				message += ": " + exception;
+
+			console .warn (message);
 		},
 		transform: function (URL)
 		{
