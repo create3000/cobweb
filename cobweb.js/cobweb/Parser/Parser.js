@@ -38,26 +38,26 @@ function ($,
 	{
 		// General
 		Whitespaces: new RegExp ('^([\\x20\\n,\\t\\r]+)', 'y'),
-		Comment:     new RegExp ('^#(.*?)(?=[\\n\\r])', 'y'),
+		Comment:     new RegExp ('^#(.*?)(?=[\\n\\r])',   'y'),
 
 		// Header
 
 		// Keywords
-		COMPONENT:   new RegExp ('^COMPONENT', 'y'),
-		DEF:         new RegExp ('^DEF', 'y'),
+		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
+		DEF:         new RegExp ('^DEF',         'y'),
 		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
-		FALSE:       new RegExp ('^FALSE', 'y'),
-		false:       new RegExp ('^false', 'y'),
-		IS:          new RegExp ('^IS', 'y'),
-		META:        new RegExp ('^META', 'y'),
-		NULL:        new RegExp ('^NULL', 'y'),
-		TRUE:        new RegExp ('^TRUE', 'y'),
-		true:        new RegExp ('^true', 'y'),
-		PROFILE:     new RegExp ('^PROFILE', 'y'),
-		PROTO:       new RegExp ('^PROTO', 'y'),
-		ROUTE:       new RegExp ('^ROUTE', 'y'),
-		TO:          new RegExp ('^TO', 'y'),
-		USE:         new RegExp ('^USE', 'y'),
+		FALSE:       new RegExp ('^FALSE',       'y'),
+		false:       new RegExp ('^false',       'y'),
+		IS:          new RegExp ('^IS',          'y'),
+		META:        new RegExp ('^META',        'y'),
+		NULL:        new RegExp ('^NULL',        'y'),
+		TRUE:        new RegExp ('^TRUE',        'y'),
+		true:        new RegExp ('^true',        'y'),
+		PROFILE:     new RegExp ('^PROFILE',     'y'),
+		PROTO:       new RegExp ('^PROTO',       'y'),
+		ROUTE:       new RegExp ('^ROUTE',       'y'),
+		TO:          new RegExp ('^TO',          'y'),
+		USE:         new RegExp ('^USE',         'y'),
 
 		// Terminal symbols
 		OpenBrace:    new RegExp ('^\\{', 'y'),
@@ -70,9 +70,9 @@ function ($,
 		Id: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]*)', 'y'),
 
 		initializeOnly: new RegExp ('^initializeOnly', 'y'),
-		inputOnly:      new RegExp ('^inputOnly', 'y'),
-		outputOnly:     new RegExp ('^outputOnly', 'y'),
-		inputOutput:    new RegExp ('^inputOutput', 'y'),
+		inputOnly:      new RegExp ('^inputOnly',      'y'),
+		outputOnly:     new RegExp ('^outputOnly',     'y'),
+		inputOutput:    new RegExp ('^inputOutput',    'y'),
 
 		field:        new RegExp ('^field', 'y'),
 		eventIn:      new RegExp ('^eventIn', 'y'),
@@ -86,8 +86,8 @@ function ($,
 		double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
 		string: new RegExp ('^"((?:[^\\\\"]|\\\\\\\\|\\\\\\")*)"', 'y'),
 		
-		Inf:         new RegExp ('^[+]?inf', 'yi'),
-		NegativeInf: new RegExp ('^-inf', 'yi'),
+		Inf:         new RegExp ('^[+]?inf',  'yi'),
+		NegativeInf: new RegExp ('^-inf',     'yi'),
 		NaN:         new RegExp ('^[+-]?nan', 'yi'),
 
 		// Misc
@@ -2146,7 +2146,7 @@ function ($,
 
 			return false;
 		},
-		nodeStatements (field)
+		nodeStatements: function (field)
 		{
 			var node = this .nodeStatement ();
 		
