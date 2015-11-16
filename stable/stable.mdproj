@@ -248,6 +248,7 @@
     <None Include="1\1.19\images\WalkViewer.png" />
     <None Include="1\1.19\cobweb.css" />
     <None Include="1\1.19\cobweb.min.js" />
+    <None Include="stable.mdproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />

@@ -23,6 +23,10 @@
     </None>
     <None Include="logo\icon.svg" />
     <None Include="logo\logo.svg" />
+    <None Include="..\.bzrignore">
+      <Link>.bzrignore</Link>
+    </None>
+    <None Include="meta.mdproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="logo\" />
