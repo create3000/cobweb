@@ -431,7 +431,7 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
 			this .vertexCount = count;
-	  		},
+	  	},
 		traverse: function (context)
 		{
 			var

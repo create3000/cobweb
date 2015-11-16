@@ -5,7 +5,7 @@ define ([
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
-	"lib/BlobTransport",
+	"lib/BinaryTransport",
 	"lib/pako/dist/pako_inflate",
 ],
 function ($,
@@ -13,12 +13,12 @@ function ($,
           Parser,
           XMLParser,
           URI,
-          BlobTransport,
+          BinaryTransport,
           pako)
 {
 "use strict";
 
-	BlobTransport ($);
+	BinaryTransport ($);
 
 	var TIMEOUT = 16;
 
@@ -55,24 +55,11 @@ function ($,
 				}
 				catch (exceptionParseXML)
 				{
-					var exceptionParseXML = new Error ("Couldn't parse XML");
+					// If we cannot parse XML we try to parse X3D Classic Encoding.	
 
-					try
-					{
-						// If we cannot parse XML we try to parse X3D Classic Encoding.	
-	
-						new Parser (scene, string) .parseIntoScene ();
+					new Parser (scene, string) .parseIntoScene ();
 
-						if (success)
-							this .setScene (scene, success);
-					}
-					catch (exception)
-					{
-						if (error)
-							error (exception);
-						else
-							throw exception;
-					}
+					this .setScene (scene, success);
 				}
 			}
 			else
@@ -128,7 +115,7 @@ function ($,
 				success (scene);
 
 			if (this .URL .length)
-				console .log ("Done loading scene '" + this .URL + "'");
+				console .log ("Done loading scene " + this .URL);
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint)
 		{
@@ -144,7 +131,7 @@ function ($,
 			if (data === null)
 				callback (null);
 			else
-				this .createX3DFromString (this .URL, data, callback);
+				this .createX3DFromString (this .URL, data, callback, this .loadDocumentError .bind (this));
 		},
 		createX3DFromURLSync: function (url)
 		{
@@ -225,16 +212,20 @@ function ($,
 
 			this .URL = this .transform (URL);
 
+			console .log ("Trying to load " + this .URL);
+
 			$.ajax ({
 				url: this .URL,
-				dataType: "blob",
+				dataType: "binary",
 				async: true,
 				cache: this .browser .doCaching (),
 				//timeout: 15000,
 				global: false,
 				context: this,
-				success: function (blob)
+				success: function (blob, status)
 				{
+			console .log ("Load " + this .URL);
+
 					this .fileReader .onload = this .readAsText .bind (this, blob);
 
 					this .fileReader .readAsText (blob);
@@ -262,28 +253,18 @@ function ($,
 		{
 			try
 			{
-				try
-				{
-					var string = pako .ungzip (this .fileReader .result, { to: "string" });
-				}
-				catch (exception)
-				{
-					this .loadDocumentError (exceptionReadAsText);
-					return;
-				}
-
-				this .callback (string);
+				this .callback (pako .ungzip (this .fileReader .result, { to: "string" }));
 			}
 			catch (exception)
 			{
-				this .loadDocumentError (exception);
+				this .loadDocumentError (exceptionReadAsText);
 			}
 		},
 		loadDocumentError: function (exception)
 		{
 			// Output exception.
 
-			var message = "Couldn't load URL '" + this .URL .toString () + "'";
+			var message = "Couldn't load URL " + this .URL;
 
 			if (exception)
 				message += ": " + exception;
