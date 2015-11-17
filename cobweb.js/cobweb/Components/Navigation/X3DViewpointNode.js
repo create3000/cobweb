@@ -64,6 +64,13 @@ function ($,
 		this .transformationMatrix     = new Matrix4 ();
 		this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,  10, 1);
 		this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
+
+		this .timeSensor                   = new TimeSensor              (browser .getPrivateScene ());
+		this .easeInEaseOut                = new EaseInEaseOut           (browser .getPrivateScene ());
+		this .positionInterpolator         = new PositionInterpolator    (browser .getPrivateScene ());
+		this .orientationInterpolator      = new OrientationInterpolator (browser .getPrivateScene ());
+		this .scaleInterpolator            = new PositionInterpolator    (browser .getPrivateScene ());
+		this .scaleOrientationInterpolator = new OrientationInterpolator (browser .getPrivateScene ());
 	}
 
 	X3DViewpointNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
@@ -81,13 +88,6 @@ function ($,
 			                   "scaleOrientationOffset", new Fields .SFRotation (),
 			                   "centerOfRotationOffset", new Fields .SFVec3f (),
 			                   "fieldOfViewScale",       new Fields .SFFloat (1));
-
-			this .timeSensor                   = new TimeSensor              (this .getBrowser () .getPrivateScene ());
-			this .easeInEaseOut                = new EaseInEaseOut           (this .getBrowser () .getPrivateScene ());
-			this .positionInterpolator         = new PositionInterpolator    (this .getBrowser () .getPrivateScene ());
-			this .orientationInterpolator      = new OrientationInterpolator (this .getBrowser () .getPrivateScene ());
-			this .scaleInterpolator            = new PositionInterpolator    (this .getBrowser () .getPrivateScene ());
-			this .scaleOrientationInterpolator = new OrientationInterpolator (this .getBrowser () .getPrivateScene ());
 		
 			this .timeSensor .stopTime_ = 1;
 			this .timeSensor .setup ();
@@ -120,6 +120,11 @@ function ($,
 
 			this .isBound_ .addInterest (this, "set_bind__");
 		},
+		getEaseInEaseOut: function ()
+		{
+			return this .easeInEaseOut;
+		},
+		setInterpolators: function () { },
 		bindToLayer: function (layer)
 		{
 			X3DBindableNode .prototype .bindToLayer .call (this, layer);
@@ -259,6 +264,8 @@ function ($,
 					this .orientationOffset_      = relativeOrientation;
 					this .scaleOffset_            = relativeScale;
 					this .scaleOrientationOffset_ = relativeScaleOrientation;
+
+					this .setInterpolators (fromViewpoint);
 				}
 				else
 				{
@@ -268,6 +275,8 @@ function ($,
 					this .orientationOffset_      = relativeOrientation;
 					this .scaleOffset_            = relativeScale;
 					this .scaleOrientationOffset_ = relativeScaleOrientation;
+
+					this .setInterpolators (fromViewpoint);
 				}
 			}
 			catch (error)

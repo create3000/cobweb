@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Navigation/X3DViewpointNode",
+	"cobweb/Components/Interpolation/ScalarInterpolator",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Numbers/Vector3",
@@ -14,7 +15,8 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DViewpointNode, 
+          X3DViewpointNode,
+          ScalarInterpolator,
           X3DConstants,
           Camera,
           Vector3,
@@ -29,6 +31,8 @@ function ($,
 		this .addType (X3DConstants .Viewpoint);
 
 		this .projectionMatrix = new Matrix4 ();
+
+		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
 	}
 
 	Viewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -58,6 +62,25 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DViewpointNode .prototype .initialize .call (this);
+
+			this .getEaseInEaseOut () .modifiedFraction_changed_ .addFieldInterest (this .fieldOfViewInterpolator .set_fraction_);
+
+			this .fieldOfViewInterpolator .value_changed_ .addFieldInterest (this .fieldOfViewScale_);
+		},
+		setInterpolators: function (fromViewpoint)
+		{
+			if (fromViewpoint .getType () .indexOf (X3DConstants .Viewpoint) < 0)
+				return;
+
+			var scale = scale = fromViewpoint .getFieldOfView () / this .getFieldOfView ();
+
+			this .fieldOfViewInterpolator .keyValue_ = [ scale, this .fieldOfViewScale_ .getValue () ];
+
+			this .fieldOfViewScale_ = scale;
 		},
 		getFieldOfView: function ()
 		{
