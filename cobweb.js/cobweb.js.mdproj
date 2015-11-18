@@ -1021,6 +1021,7 @@
     <None Include="locale\de.po" />
     <None Include="locale\fr.mo" />
     <None Include="locale\fr.po" />
+    <None Include="cobweb\Browser\Geometry2D\Arc2DOptions.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

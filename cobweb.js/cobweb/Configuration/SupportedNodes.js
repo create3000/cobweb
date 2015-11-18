@@ -2,7 +2,7 @@
 define ([
 	"cobweb/Components/Networking/Anchor", // VRML
 	"cobweb/Components/Shape/Appearance", // VRML
-	//"cobweb/Components/Geometry2D/Arc2D",
+	"cobweb/Components/Geometry2D/Arc2D",
 	//"cobweb/Components/Geometry2D/ArcClose2D",
 	"cobweb/Components/Sound/AudioClip",
 	"cobweb/Components/EnvironmentalEffects/Background", // VRML
@@ -224,7 +224,7 @@ define ([
 ],
 function (Anchor,
           Appearance,
-          //Arc2D,
+          Arc2D,
           //ArcClose2D,
           AudioClip,
           Background,
@@ -451,7 +451,7 @@ function (Anchor,
 
 		Anchor:                       Anchor,
 		Appearance:                   Appearance,
-		//Arc2D:                        Arc2D,
+		Arc2D:                        Arc2D,
 		//ArcClose2D:                   ArcClose2D,
 		AudioClip:                    AudioClip,
 		Background:                   Background,

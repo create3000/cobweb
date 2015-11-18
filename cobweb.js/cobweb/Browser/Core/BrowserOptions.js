@@ -116,6 +116,7 @@ function ($,
 			dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
 			var
+				arc2D    = this .getBrowser () .getArc2DOptions (),
 				cone     = this .getBrowser () .getConeOptions (),
 				cylinder = this .getBrowser () .getCylinderOptions (),
 				sphere   = this .getBrowser () .getSphereOptions ();
@@ -123,16 +124,23 @@ function ($,
 			switch (primitiveQuality .getValue ())
 			{
 				case "LOW":
+				{
 					this .primitiveQuality = PrimitiveQuality .LOW;
 				
+					arc2D .minAngle_ = Math .PI / 10;
+
 					cone     .vDimension_ = 16;
 					cylinder .vDimension_ = 16;
 
 					sphere .uDimension_ = 24;
 					sphere .vDimension_ = 12;
 					break;
+				}
 				case "HIGH":
+				{
 					this .primitiveQuality = PrimitiveQuality .HIGH;
+
+					arc2D .minAngle_ = Math .PI / 40;
 
 					cone     .vDimension_ = 32;
 					cylinder .vDimension_ = 32;
@@ -140,8 +148,12 @@ function ($,
 					sphere .uDimension_ = 40;
 					sphere .vDimension_ = 20;
 					break;
+				}
 				default:
+				{
 					this .primitiveQuality = PrimitiveQuality .MEDIUM;
+
+					arc2D .minAngle_ = Math .PI / 20;
 
 					cone     .vDimension_ = 20;
 					cylinder .vDimension_ = 20;
@@ -149,6 +161,7 @@ function ($,
 					sphere .uDimension_ = 32;
 					sphere .vDimension_ = 16;
 					break;
+				}
 			}
 		},
 		set_textureQuality__: function (textureQuality)

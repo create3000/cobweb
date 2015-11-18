@@ -18,17 +18,17 @@ function ($,
 {
 "use strict";
 	
-	function BoxOptions (executionContext)
+	function Rectangle2DOptions (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 	}
 
-	BoxOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	Rectangle2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
-		constructor: BoxOptions,
+		constructor: Rectangle2DOptions,
 		getTypeName: function ()
 		{
-			return "BoxOptions";
+			return "Rectangle2DOptions";
 		},
 		getComponentName: function ()
 		{
@@ -36,7 +36,7 @@ function ($,
 		},
 		getContainerField: function ()
 		{
-			return "boxOptions";
+			return "rectangle2DOptions";
 		},
 		initialize: function ()
 		{
@@ -80,5 +80,5 @@ function ($,
 		},
 	});
 
-	return BoxOptions;
+	return Rectangle2DOptions;
 });

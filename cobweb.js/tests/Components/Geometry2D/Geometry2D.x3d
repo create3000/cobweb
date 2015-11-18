@@ -3,36 +3,160 @@
 <X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
   <head>
     <meta name='comment' content='World of Titania'/>
-    <meta name='created' content='Fri, 25 Sep 2015 08:19:46 GMT'/>
+    <meta name='created' content='Wed, 18 Nov 2015 05:00:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.1.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 25 Sep 2015 08:22:55 GMT'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Wed, 18 Nov 2015 05:21:28 GMT'/>
   </head>
   <Scene>
-    <Background DEF='Gray_1'
+    <WorldInfo
+        title='Geometry2D'>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='4.5, 0, 14.5520505905151'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 1, 0'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='4.5, 0, 0'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Background
         skyColor='0.2 0.2 0.2'/>
-    <Viewpoint DEF='_1'
-        position='0.164316 1.32822 10'
-        centerOfRotation='0.164316 1.32822 0'/>
-    <Transform DEF='Rectangle2D_1'>
+    <Viewpoint
+        description='Home'
+        position='4.5 0 12'
+        centerOfRotation='4.5 0 0'/>
+    <Transform>
       <Shape>
-        <Appearance>
+        <Appearance DEF='Grey'>
           <Material/>
         </Appearance>
-        <Rectangle2D/>
-      </Shape>
-    </Transform>
-    <Transform DEF='Rectangle2D'
-        translation='0 3 0'>
-      <Shape>
-        <Appearance>
-          <Material/>
-          <ImageTexture
-              url='"../images/test.png"'/>
-        </Appearance>
-        <Rectangle2D
+        <ArcClose2D DEF='ArcClose2D'
             solid='false'/>
       </Shape>
+    </Transform>
+    <Transform
+        translation='3 0 0'>
+      <Shape>
+        <Appearance USE='Grey'/>
+        <Disk2D DEF='Disk2D'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 0 0'>
+      <Shape>
+        <Appearance USE='Grey'/>
+        <Rectangle2D DEF='Rectangle2D'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='9 0 0'>
+      <Shape>
+        <Appearance USE='Grey'/>
+        <TriangleSet2D DEF='TriangleSet2D'
+            vertices='-1 -1, 1 -1, 0 1'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='0 3 0'>
+      <Shape>
+        <Appearance DEF='Image'>
+          <Material/>
+          <ImageTexture
+              url='"../images/image.png"'/>
+        </Appearance>
+        <ArcClose2D USE='ArcClose2D'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3 3 0'>
+      <Shape>
+        <Appearance USE='Image'/>
+        <Disk2D USE='Disk2D'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='6 3 0'>
+      <Shape>
+        <Appearance USE='Image'/>
+        <Rectangle2D USE='Rectangle2D'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='_1'
+        translation='9 3 0'>
+      <Shape>
+        <Appearance USE='Image'/>
+        <TriangleSet2D USE='TriangleSet2D'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='3.2175 -3.13396 0'>
+      <Transform>
+        <Shape>
+          <Appearance>
+            <Material
+                emissiveColor='1 0 0'/>
+          </Appearance>
+          <Arc2D/>
+        </Shape>
+      </Transform>
+      <Transform>
+        <Shape>
+          <Appearance>
+            <Material
+                emissiveColor='1 0 0'/>
+          </Appearance>
+          <Arc2D
+              startAngle='2'
+              endAngle='6'/>
+        </Shape>
+      </Transform>
+      <Transform
+          translation='-2.5 0 0'>
+        <Shape>
+          <Appearance>
+            <Material
+                emissiveColor='1 0 0'/>
+          </Appearance>
+          <Arc2D
+              endAngle='0'/>
+        </Shape>
+      </Transform>
+      <Transform
+          translation='2.5 0 0'>
+        <Shape>
+          <Appearance>
+            <Material
+                emissiveColor='1 0 0'/>
+          </Appearance>
+          <Arc2D
+              startAngle='6'
+              endAngle='2'/>
+        </Shape>
+      </Transform>
     </Transform>
   </Scene>
 </X3D>

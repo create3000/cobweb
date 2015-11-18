@@ -81,7 +81,7 @@ function ($,
 				}
 
 				this .setVertices (vertices);
-				this .setExtents  ([new Vector3 (-x, -y, 1), new Vector3 (x, y, 1)]);	
+				this .setExtents  ([new Vector3 (-x, -y, 0), new Vector3 (x, y, 0)]);	
 			}
 
 			this .setSolid (this .solid_ .getValue ());
