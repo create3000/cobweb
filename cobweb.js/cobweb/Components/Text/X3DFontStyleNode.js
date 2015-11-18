@@ -20,7 +20,9 @@ function ($,
 
 	var FontDirectories = [
 		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
+		"http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 		"https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+		"http://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 		"https://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 	];
 

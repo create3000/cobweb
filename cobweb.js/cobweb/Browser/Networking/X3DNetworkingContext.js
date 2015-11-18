@@ -58,7 +58,7 @@ function (Fields,
 			
 			var loadCount = this .loadCount_ = this .loadCount_ .getValue () + 1;
 
-			this .getNotification () .string_ = sprintf .sprintf (_.count (loadCount, "Loading %d file", "Loading %d files"), loadCount);
+			this .getNotification () .string_ = sprintf .sprintf (loadCount == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), loadCount);
 			this .setCursor ("DEFAULT");
 
 			return id;
@@ -73,7 +73,7 @@ function (Fields,
 			var loadCount = this .loadCount_ = this .loadCount_ .getValue () - 1;
 
 			if (loadCount)
-				this .getNotification () .string_ = sprintf .sprintf (_.count (loadCount, "Loading %d file", "Loading %d files"), loadCount);
+				this .getNotification () .string_ = sprintf .sprintf (loadCount == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), loadCount);
 			else
 			{
 				this .getNotification () .string_ = _("Loading done");

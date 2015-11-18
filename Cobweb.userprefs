@@ -1,15 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="5" Column="5" />
-      <File FileName="cobweb.js/cobweb/InputOutput/Loader.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Parser/Parser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb.min.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/lib/BinaryTransport.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/jam/jquery/dist/jquery.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="25" Column="25" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

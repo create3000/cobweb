@@ -666,11 +666,9 @@
     <None Include="tests\Components\Layering\Rotor.x3d" />
     <None Include="lib\dataStorage.js" />
     <None Include="tests\Components\Lighting\LocalLight.x3d" />
-    <None Include="locale\de.js" />
     <None Include="cobweb\Browser\Geometry2D\X3DGeometry2DContext.js" />
     <None Include="cobweb\Browser\Geometry2D\Rectangle2DOptions.js" />
     <None Include="tests\Components\Geometry2D\Geometry2D.x3d" />
-    <None Include="locale\fr.js" />
     <None Include="lib\sprintf.js\LICENSE" />
     <None Include="lib\sprintf.js\README.md" />
     <None Include="lib\sprintf.js\bower.json" />
@@ -1019,6 +1017,10 @@
     <None Include="tests\Components\Geometry3D\Beethoven.x3dv" />
     <None Include="tests\Components\Lighting\PointLight.x3dv" />
     <None Include="lib\BinaryTransport.js" />
+    <None Include="locale\de.mo" />
+    <None Include="locale\de.po" />
+    <None Include="locale\fr.mo" />
+    <None Include="locale\fr.po" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
