@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 18 Nov 2015 05:00:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 18 Nov 2015 10:29:28 GMT'/>
+    <meta name='modified' content='Wed, 18 Nov 2015 16:37:20 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -28,7 +28,7 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='4.52555751800537, 0.0475811995565891, 14.5519514083862'/>
+              value='4.29110765457153, -1.41300964355469, 17.3683433532715'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
@@ -36,7 +36,7 @@
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='4.5, 0, 0'/>
+              value='4.26061296463013, -1.46978271007538, 0.0052243429236114'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -44,8 +44,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='4.5 0 12'
-        centerOfRotation='4.5 0 0'/>
+        position='4.29111 -1.41301 17.3683'
+        orientation='-0.862887 0.46306 -0.202491 0.00378221'
+        centerOfRotation='4.26061 -1.46978 0.00522434'/>
     <Transform>
       <Shape>
         <Appearance DEF='Grey'>
@@ -181,7 +182,7 @@
             solid='false'/>
       </Shape>
     </Transform>
-    <Transform
+    <Transform DEF='_2'
         translation='0 3 0'>
       <Shape>
         <Appearance DEF='Grey_3'>
@@ -192,6 +193,27 @@
             startAngle='2.09'
             endAngle='5.8808'
             solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='-0.198184 -5.88639 0'>
+      <Shape>
+        <Appearance DEF='Grey_4'>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <Circle2D/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='2.70609 -5.88639 0'>
+      <Shape>
+        <Appearance DEF='Grey_5'>
+          <Material
+              emissiveColor='1 0 0'/>
+        </Appearance>
+        <Circle2D
+            radius='1.29'/>
       </Shape>
     </Transform>
   </Scene>

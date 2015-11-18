@@ -118,6 +118,7 @@ function ($,
 			var
 				arc2D      = this .getBrowser () .getArc2DOptions (),
 				arcClose2D = this .getBrowser () .getArcClose2DOptions (),
+				circle2D   = this .getBrowser () .getCircle2DOptions (),
 				cone       = this .getBrowser () .getConeOptions (),
 				cylinder   = this .getBrowser () .getCylinderOptions (),
 				sphere     = this .getBrowser () .getSphereOptions ();
@@ -130,6 +131,7 @@ function ($,
 				
 					arc2D .minAngle_      = Math .PI / 10;
 					arcClose2D .minAngle_ = Math .PI / 10;
+					circle2D .segments_   = 20;
 
 					cone     .vDimension_ = 16;
 					cylinder .vDimension_ = 16;
@@ -144,6 +146,7 @@ function ($,
 
 					arc2D .minAngle_      = Math .PI / 40;
 					arcClose2D .minAngle_ = Math .PI / 40;
+					circle2D .segments_   = 80;
 
 					cone     .vDimension_ = 32;
 					cylinder .vDimension_ = 32;
@@ -158,6 +161,7 @@ function ($,
 
 					arc2D .minAngle_      = Math .PI / 20;
 					arcClose2D .minAngle_ = Math .PI / 20;
+					circle2D .segments_   = 40;
 
 					cone     .vDimension_ = 20;
 					cylinder .vDimension_ = 20;

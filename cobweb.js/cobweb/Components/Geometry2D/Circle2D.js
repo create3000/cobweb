@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGeometryNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 "use strict";
 
@@ -41,6 +43,55 @@ function ($,
 		getContainerField: function ()
 		{
 			return "geometry";
+		},
+		set_live__: function ()
+		{
+			X3DGeometryNode .prototype .set_live__ .call (this);
+
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+				this .getBrowser () .getCircle2DOptions () .addInterest (this, "eventsProcessed");
+			else
+				this .getBrowser () .getCircle2DOptions () .removeInterest (this, "eventsProcessed");
+		},
+		isLineGeometry: function ()
+		{
+			return true;
+		},
+		build: function ()
+		{
+			var
+				gl         = this .getBrowser () .getContext (),
+				options    = this .getBrowser () .getCircle2DOptions (),
+				radius     = this .radius_ .getValue ();
+
+			var
+				points   = options .getVertices (),
+				vertices = this .getVertices ();
+
+			for (var i = 0, length = points .length; i < length; i += 4)
+				vertices .push (points [i] * radius, points [i + 1] * radius, 0, 1);
+
+			this .setExtents  ([new Vector3 (-radius, -radius, 0), new Vector3 (radius, radius, 0)]);
+		},
+		traverse: function (context)
+		{
+			var
+				browser = this .getBrowser (),
+				shader  = browser .getShader ();
+
+			if (shader === browser .getDefaultShader ())
+			{
+				browser .setTexture (null);
+				browser .setShader (shader = browser .getLineShader ());
+			}
+
+			var primitiveMode = shader .primitiveMode;
+
+			shader .primitiveMode = browser .getContext () .LINE_LOOP;
+
+			X3DGeometryNode .prototype .traverse .call (this, context);
+
+			shader .primitiveMode = primitiveMode;
 		},
 	});
 

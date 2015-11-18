@@ -1023,6 +1023,7 @@
     <None Include="locale\fr.po" />
     <None Include="cobweb\Browser\Geometry2D\Arc2DOptions.js" />
     <None Include="cobweb\Browser\Geometry2D\ArcClose2DOptions.js" />
+    <None Include="cobweb\Browser\Geometry2D\Circle2DOptions.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
