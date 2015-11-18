@@ -34,7 +34,10 @@ function (de, fr)
 			locale  = locales [lang] = { };
 
 		for (var i = 0, length = matches .length; i < length; ++ i)
-			locale [matches [i] [1]] = matches [i] [2];
+		{
+			if (matches [i] [2] .length)
+				locale [matches [i] [1]] = matches [i] [2];
+		}
 	}
 
 	function gettext (string)
