@@ -116,10 +116,11 @@ function ($,
 			dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
 			var
-				arc2D    = this .getBrowser () .getArc2DOptions (),
-				cone     = this .getBrowser () .getConeOptions (),
-				cylinder = this .getBrowser () .getCylinderOptions (),
-				sphere   = this .getBrowser () .getSphereOptions ();
+				arc2D      = this .getBrowser () .getArc2DOptions (),
+				arcClose2D = this .getBrowser () .getArcClose2DOptions (),
+				cone       = this .getBrowser () .getConeOptions (),
+				cylinder   = this .getBrowser () .getCylinderOptions (),
+				sphere     = this .getBrowser () .getSphereOptions ();
 
 			switch (primitiveQuality .getValue ())
 			{
@@ -127,7 +128,8 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .LOW;
 				
-					arc2D .minAngle_ = Math .PI / 10;
+					arc2D .minAngle_      = Math .PI / 10;
+					arcClose2D .minAngle_ = Math .PI / 10;
 
 					cone     .vDimension_ = 16;
 					cylinder .vDimension_ = 16;
@@ -140,7 +142,8 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .HIGH;
 
-					arc2D .minAngle_ = Math .PI / 40;
+					arc2D .minAngle_      = Math .PI / 40;
+					arcClose2D .minAngle_ = Math .PI / 40;
 
 					cone     .vDimension_ = 32;
 					cylinder .vDimension_ = 32;
@@ -153,7 +156,8 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .MEDIUM;
 
-					arc2D .minAngle_ = Math .PI / 20;
+					arc2D .minAngle_      = Math .PI / 20;
+					arcClose2D .minAngle_ = Math .PI / 20;
 
 					cone     .vDimension_ = 20;
 					cylinder .vDimension_ = 20;

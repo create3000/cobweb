@@ -78,7 +78,6 @@ function ($,
 					                1);
 				}
 
-				this .setVertices (vertices);
 				this .setExtents  ([Vector3 .negate (scale), scale]);	
 			}
 

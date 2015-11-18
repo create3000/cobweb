@@ -113,7 +113,6 @@ function ($,
 				vertices .push (point .real, point .imag, 0, 1);
 			}
 
-			this .setVertices (vertices);
 			this .setExtents  ([new Vector3 (-radius, -radius, 0), new Vector3 (radius, radius, 0)]);	
 	
 			this .setSolid (false);

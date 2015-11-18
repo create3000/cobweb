@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 18 Nov 2015 05:00:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 18 Nov 2015 05:21:28 GMT'/>
+    <meta name='modified' content='Wed, 18 Nov 2015 10:29:28 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -28,11 +28,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='4.5, 0, 14.5520505905151'/>
+              value='4.52555751800537, 0.0475811995565891, 14.5519514083862'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='-0.862886607646942, 0.463059633970261, -0.202490732073784, 0.00378221087157726'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -52,6 +52,19 @@
           <Material/>
         </Appearance>
         <ArcClose2D DEF='ArcClose2D'
+            closureType='CHORD'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform>
+      <Shape>
+        <Appearance DEF='Grey_1'>
+          <Material/>
+        </Appearance>
+        <ArcClose2D DEF='ArcClose2D_1'
+            startAngle='2.09'
+            endAngle='5.8808'
+            radius='1.2'
             solid='false'/>
       </Shape>
     </Transform>
@@ -85,7 +98,7 @@
       <Shape>
         <Appearance DEF='Image'>
           <Material/>
-          <ImageTexture
+          <ImageTexture DEF='_1'
               url='"../images/image.png"'/>
         </Appearance>
         <ArcClose2D USE='ArcClose2D'/>
@@ -105,7 +118,7 @@
         <Rectangle2D USE='Rectangle2D'/>
       </Shape>
     </Transform>
-    <Transform DEF='_1'
+    <Transform
         translation='9 3 0'>
       <Shape>
         <Appearance USE='Image'/>
@@ -157,6 +170,29 @@
               endAngle='2'/>
         </Shape>
       </Transform>
+    </Transform>
+    <Transform>
+      <Shape>
+        <Appearance DEF='Grey_2'>
+          <Material/>
+        </Appearance>
+        <ArcClose2D DEF='ArcClose2D_2'
+            closureType='CHORD'
+            solid='false'/>
+      </Shape>
+    </Transform>
+    <Transform
+        translation='0 3 0'>
+      <Shape>
+        <Appearance DEF='Grey_3'>
+          <Material/>
+          <ImageTexture USE='_1'/>
+        </Appearance>
+        <ArcClose2D DEF='ArcClose2D_3'
+            startAngle='2.09'
+            endAngle='5.8808'
+            solid='false'/>
+      </Shape>
     </Transform>
   </Scene>
 </X3D>

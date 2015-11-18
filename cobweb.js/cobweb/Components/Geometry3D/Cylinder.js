@@ -223,7 +223,6 @@ function ($,
 			this .setSolid (this .solid_ .getValue ());
 			this .setCurrentTexCoord (null);
 			this .setNormals (normals);
-			this .setVertices (vertices);
 			this .setExtents (this .createExtents ());
 		},
 		createExtents: function ()

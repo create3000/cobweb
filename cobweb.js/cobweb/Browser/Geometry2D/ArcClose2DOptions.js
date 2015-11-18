@@ -10,19 +10,19 @@ function ($,
 {
 "use strict";
 	
-	function ArcClose2DOptions (executionContext)
+	function Arc2DOptions (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}
 
-	ArcClose2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	Arc2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
-		constructor: ArcClose2DOptions,
+		constructor: Arc2DOptions,
 		getTypeName: function ()
 		{
-			return "ArcClose2DOptions";
+			return "Arc2DOptions";
 		},
 		getComponentName: function ()
 		{
@@ -30,9 +30,9 @@ function ($,
 		},
 		getContainerField: function ()
 		{
-			return "arcClose2DOptions";
+			return "arc2DOptions";
 		},
 	});
 
-	return ArcClose2DOptions;
+	return Arc2DOptions;
 });

@@ -82,7 +82,6 @@ function ($,
 					                1);
 				}
 
-				this .setVertices (vertices);
 				this .setExtents  ([new Vector3 (-radius, -radius, -radius), new Vector3 (radius, radius, radius)]);
 			}
 

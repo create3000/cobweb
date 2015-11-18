@@ -1,9 +1,11 @@
 
 define ([
 	"cobweb/Browser/Geometry2D/Arc2DOptions",
+	"cobweb/Browser/Geometry2D/ArcClose2DOptions",
 	"cobweb/Browser/Geometry2D/Rectangle2DOptions",
 ],
 function (Arc2DOptions,
+          ArcClose2DOptions,          
           Rectangle2DOptions)
 {
 "use strict";
@@ -29,6 +31,10 @@ function (Arc2DOptions,
 		getArc2DOptions: function ()
 		{
 			return getOptionNode .call (this, "arc2DOptions", Arc2DOptions);
+		},
+		getArcClose2DOptions: function ()
+		{
+			return getOptionNode .call (this, "arcClose2DOptions", ArcClose2DOptions);
 		},
 		getRectangle2DOptions: function ()
 		{

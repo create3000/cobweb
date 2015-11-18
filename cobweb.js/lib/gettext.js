@@ -50,6 +50,7 @@ function (de, fr)
 
 	var locales =
 	{
+		en: "C",
 		de: de,
 		fr: fr,
 	};

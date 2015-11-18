@@ -80,7 +80,6 @@ function ($,
 					                1);
 				}
 
-				this .setVertices (vertices);
 				this .setExtents  ([new Vector3 (-x, -y, 0), new Vector3 (x, y, 0)]);	
 			}
 
