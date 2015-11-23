@@ -123,6 +123,14 @@ function ($,
 		{
 			return [this .min, this .max];
 		},
+		getMin: function ()
+		{
+			return this .min;
+		},
+		getMax: function ()
+		{
+			return this .max;
+		},
 		getMatrix: function ()
 		{
 			return Matrix4 .Identity;

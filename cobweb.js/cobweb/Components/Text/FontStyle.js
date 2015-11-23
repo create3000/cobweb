@@ -749,54 +749,51 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		removeCollinearPoints: function (contour)
+		removeCollinearPoints: function (polygon)
 		{
 			function isCollinear (a, b, c)
 			{
 				return Math .abs ((a.y - b.y) * (a.x - c.x) - (a.y - c.y) * (a.x - b.x)) < 1e-8;
 			}
 
-		   var k = 0;
-
-		   for (var i = 0; i < contour .length; ++ i)
+		   for (var i = 0, k = 0; i < polygon .length; ++ i)
 		   {
 		      var
-		         i0 = (i - 1 + contour .length) % contour .length,
-		         i1 = (i + 1) % contour .length;
+		         i0 = (i - 1 + polygon .length) % polygon .length,
+		         i1 = (i + 1) % polygon .length;
 
-		      if (isCollinear (contour [i0], contour [i], contour [i1]))
+		      if (isCollinear (polygon [i0], polygon [i], polygon [i1]))
 					continue;
 
-				contour [k ++] = contour [i];
+				polygon [k ++] = polygon [i];
 		   }
 
-		   contour .length = k;
+		   polygon .length = k;
 		},
-		triangulate: function (contour, holes, vertices)
+		triangulate: function (polygon, holes, triangles)
 		{
 		   try
 		   {
 				// Triangulate polygon.
 
-
 				var
-					context = new poly2tri .SweepContext (contour) .addHoles (holes),
+					context = new poly2tri .SweepContext (polygon) .addHoles (holes),
 					ts      = context .triangulate () .getTriangles ();
 
 				for (var i = 0; i < ts .length; ++ i)
 				{
-					vertices .push (ts [i] .getPoint (0));
-					vertices .push (ts [i] .getPoint (1));
-					vertices .push (ts [i] .getPoint (2));
+					triangles .push (ts [i] .getPoint (0));
+					triangles .push (ts [i] .getPoint (1));
+					triangles .push (ts [i] .getPoint (2));
 				}
 			}
 			catch (error)
 			{
 				//console .warn (error);
-				this .earcutTriangulate (contour, holes, vertices);
+				this .earcutTriangulate (polygon, holes, triangles);
 			}
 		},
-		earcutTriangulate: function (contour, holes, vertices)
+		earcutTriangulate: function (polygon, holes, triangles)
 		{
 		   try
 		   {
@@ -806,8 +803,8 @@ function ($,
 					coords       = [ ],
 					holesIndices = [ ];
 
-				for (var p = 0; p < contour .length; ++ p)
-				   coords .push (contour [p] .x, contour [p] .y);
+				for (var p = 0; p < polygon .length; ++ p)
+				   coords .push (polygon [p] .x, polygon [p] .y);
 
 				for (var h = 0; h < holes .length; ++ h)
 				{
@@ -817,14 +814,14 @@ function ($,
 					{
 					   holesIndices .push (coords .length / 2);
 				      coords .push (hole [p] .x, hole [p] .y);
-				      contour .push (hole);
+				      polygon .push (hole);
 				   }
 				}
 
 				var t = earcut (coords, holesIndices);
 
 				for (var i = 0; i < t .length; ++ i)
-					vertices .push (contour [t [i]]);
+					triangles .push (polygon [t [i]]);
 			}
 			catch (error)
 			{

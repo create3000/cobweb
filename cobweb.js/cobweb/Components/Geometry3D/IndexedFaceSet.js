@@ -10,7 +10,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
-	"lib/poly2tri.js/dist/poly2tri.js",
+	"standard/Math/Geometry/Triangle3",
 ],
 function ($,
           Fields,
@@ -20,9 +20,11 @@ function ($,
           X3DConstants,
           Vector3,
           Matrix4,
-          poly2tri)
+          Triangle3)
 {
 "use strict";
+
+	var Polygon = [ ];
 
 	function IndexedFaceSet (executionContext)
 	{
@@ -128,40 +130,38 @@ function ($,
 
 			for (var p = 0, pl = polygons .length; p < pl; ++ p)
 			{
-				var triangles = polygons [p] .triangles;
+				var
+					polygon   = polygons [p],
+					vertices  = polygon .vertices,
+					triangles = polygon .triangles;
 
-				for (var t = 0, tl = triangles .length; t < tl; ++ t)
+				for (var v = 0, tl = triangles .length; v < tl; ++ v)
 				{
-					var triangle = triangles [t];
+					var
+						i     = vertices [triangles [v]],
+						index = coordIndex [i] .getValue ();
 
-					for (var v = 0; v < 3; ++ v)
+					if (colorNode)
 					{
-						var
-							i     = triangle [v],
-							index = coordIndex [i] .getValue ();
-
-						if (colorNode)
-						{
-							if (colorPerVertex)
-								this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
-							else
-								this .addColor (colorNode .getColor (this .getColorIndex (face)));
-						}
-
-						if (texCoordNode)
-							texCoordNode .addTexCoord (textCoords, this .getTexCoordPerVertexIndex (i));
-
-						if (normalNode)
-						{
-							if (normalPerVertex)
-								this .addNormal (normalNode .getVector (this .getNormalPerVertexIndex (i)));
-
-							else
-								this .addNormal (normalNode .getVector (this .getNormalIndex (face)));
-						}
-
-						this .addVertex (coordNode .getPoint (index));
+						if (colorPerVertex)
+							this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
+						else
+							this .addColor (colorNode .getColor (this .getColorIndex (face)));
 					}
+
+					if (texCoordNode)
+						texCoordNode .addTexCoord (textCoords, this .getTexCoordPerVertexIndex (i));
+
+					if (normalNode)
+					{
+						if (normalPerVertex)
+							this .addNormal (normalNode .getVector (this .getNormalPerVertexIndex (i)));
+
+						else
+							this .addNormal (normalNode .getVector (this .getNormalIndex (face)));
+					}
+
+					this .addVertex (coordNode .getPoint (index));
 				}
 
 				++ face;
@@ -231,8 +231,7 @@ function ($,
 								case 3:
 								{
 									// Add polygon with one triangle.
-				
-									polygons [polygons .length - 1] .triangles .push (vertices);
+									polygons [polygons .length - 1] .triangles .push (0, 1, 2);
 									polygons .push ({ vertices: [ ], triangles: [ ] });
 									break;
 								}
@@ -267,8 +266,6 @@ function ($,
 		},
 		triangulatePolygon: function (polygon)
 		{
-			try
-			{
 				// Transform vertices to 2D space.
 
 				var
@@ -277,51 +274,21 @@ function ($,
 					coordIndex = this .coordIndex_ .getValue (),
 					coord      = this .getCoord ();
 
-				var
-					p0 = coord .getPoint (coordIndex [vertices [0]] .getValue ()),
-					p1 = coord .getPoint (coordIndex [vertices [1]] .getValue ());
-
-				var
-					zAxis = this .getPolygonNormal (vertices, coordIndex, coord),
-					xAxis = Vector3 .subtract (p1, p0),
-					yAxis = Vector3 .cross (zAxis, xAxis);
-
-				xAxis .normalize ();
-				yAxis .normalize ();
-
-				var matrix = new Matrix4 (xAxis .x, xAxis .y, xAxis .z, 0,
-				                          yAxis .x, yAxis .y, yAxis .z, 0,
-				                          zAxis .x, zAxis .y, zAxis .z, 0,
-				                          p0 .x, p0 .y, p0 .z, 1);
-
-				matrix .inverse ();
-
-				var contour = [ ];
+				Polygon .length = 0;
 
 				for (var i = 0, length = vertices .length; i < length; ++ i)
 				{
-					var
-						index   = vertices [i],
-						vertex2 = matrix .multVecMatrix (coord .getPoint (coordIndex [index] .getValue ()) .copy ());
+					var vertex = coord .getPoint (coordIndex [vertices [i]] .getValue ()) .copy ();
 
-					vertex2 .index = index;
-					contour .push (vertex2);
+					vertex .index = i;
+
+					Polygon .push (vertex);
 				}
 
-				// Triangulate polygon.
+				Triangle3 .triangulatePolygon (Polygon, triangles);
 
-				var
-					context = new poly2tri .SweepContext (contour),
-					ts      = context .triangulate () .getTriangles ();
-
-				for (var i = 0, length = ts .length; i < length; ++ i)
-					triangles .push ([ ts [i] .getPoint (0) .index, ts [i] .getPoint (1) .index, ts [i] .getPoint (2) .index ]);
-			}
-			catch (error)
-			{
-				//console .warn (error);
-				this .triangulateConvexPolygon (polygon);
-			}
+				for (var i = 0, length = triangles .length; i < length; ++ i)
+					triangles [i] = triangles [i] .index;
 		},
 		triangulateConvexPolygon: function (polygon)
 		{
@@ -331,24 +298,27 @@ function ($,
 
 			// Fallback: Very simple triangulation for convex polygons.
 			for (var i = 1, length = vertices .length - 1; i < length; ++ i)
-				triangles .push ([ vertices [0], vertices [i], vertices [i + 1] ]);
+				triangles .push (0, i, i + 1);
 		},
 		buildNormals: function (polygons)
 		{
-			var normals = this .createNormals (polygons);
+			var
+				first   = 0,
+				normals = this .createNormals (polygons);
 
 			for (var p = 0, pl = polygons .length; p < pl; ++ p)
 			{
-				var triangles = polygons [p] .triangles;
-			
-				for (var t = 0, tl = triangles .length; t < tl; ++ t)
+				var
+					polygon   = polygons [p],
+					vertices  = polygon .vertices,
+					triangles = polygon .triangles;
+
+				for (var v = 0, tl = triangles .length; v < tl; ++ v)
 				{
-					var triangle = triangles [t];
-				
-					this .addNormal (normals [triangle [0]]);
-					this .addNormal (normals [triangle [1]]);
-					this .addNormal (normals [triangle [2]]);
+					this .addNormal (normals [first + triangles [v]]);
 				}
+
+				first += vertices .length;
 			}
 		},
 		createNormals: function (polygons)
@@ -408,7 +378,7 @@ function ($,
 
 				// Add this normal for each vertex and for -1.
 
-				for (var i = 0, nl = length + 1; i < nl; ++ i)
+				for (var i = 0, nl = length; i < nl; ++ i)
 					normals .push (normal);
 			}
 

@@ -214,10 +214,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				positionOffset = viewpoint .getUserOrientation () .multVecRot (new Vector3 (0, 0, step .abs ()));
 
 			if (direction < 0)
-				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .subtract (positionOffset));		
+				viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .subtract (positionOffset);		
 			
 			else if (direction > 0)
-				viewpoint .positionOffset_ .setValue (viewpoint .positionOffset_ .getValue () .add (positionOffset));
+				viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .add (positionOffset);
 		},
 		getPositionOffset: function ()
 		{

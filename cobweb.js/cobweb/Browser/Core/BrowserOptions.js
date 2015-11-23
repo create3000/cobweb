@@ -68,12 +68,27 @@ function ($,
 			this .PrimitiveQuality_          .addInterest (this, "set_primitiveQuality__");
 			this .TextureQuality_            .addInterest (this, "set_textureQuality__");
 			this .Shading_                   .addInterest (this, "set_shading__");
-			this .getBrowser () .shutdown () .addInterest (this, "set_shutdown__");
+			this .getBrowser () .shutdown () .addInterest (this, "configure");
 
 			this .configure ();
 		},
 		configure: function ()
 		{
+			var fieldDefinitions = this .getFieldDefinitions ();
+
+			for (var i = 0; i < fieldDefinitions .length; ++ i)
+			{
+				var
+					fieldDefinition = fieldDefinitions [i],
+					field           = this .getField (fieldDefinition .name);
+
+				if (dataStorage ["BrowserOptions." + fieldDefinition .name] !== undefined)
+					continue;
+
+				if (! field .equals (fieldDefinition .value))
+					field .setValue (fieldDefinition .value);
+			}
+
 			var
 				rubberband       = dataStorage ["BrowserOptions.Rubberband"],
 				primitiveQuality = dataStorage ["BrowserOptions.PrimitiveQuality"],
@@ -91,22 +106,6 @@ function ($,
 		{
 			return this .textureQuality;
 		},
-		set_shutdown__: function ()
-		{
-			var fieldDefinitions = this .getFieldDefinitions ();
-
-			for (var i = 0; i < fieldDefinitions .length; ++ i)
-			{
-				var
-					fieldDefinition = fieldDefinitions [i],
-					field           = this .getField (fieldDefinition .name);
-
-				if (! field .equals (fieldDefinition .value))
-					field .setValue (fieldDefinition .value);
-			}
-
-			this .configure ();
-		},
 		set_rubberband__: function (rubberband)
 		{
 			dataStorage ["BrowserOptions.Rubberband"] = rubberband .getValue ();
@@ -116,12 +115,13 @@ function ($,
 			dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
 			var
-				arc2D      = this .getBrowser () .getArc2DOptions (),
-				arcClose2D = this .getBrowser () .getArcClose2DOptions (),
-				circle2D   = this .getBrowser () .getCircle2DOptions (),
-				cone       = this .getBrowser () .getConeOptions (),
-				cylinder   = this .getBrowser () .getCylinderOptions (),
-				sphere     = this .getBrowser () .getSphereOptions ();
+				arc      = this .getBrowser () .getArc2DOptions (),
+				arcClose = this .getBrowser () .getArcClose2DOptions (),
+				circle   = this .getBrowser () .getCircle2DOptions (),
+				disk     = this .getBrowser () .getDisk2DOptions (),
+				cone     = this .getBrowser () .getConeOptions (),
+				cylinder = this .getBrowser () .getCylinderOptions (),
+				sphere   = this .getBrowser () .getSphereOptions ();
 
 			switch (primitiveQuality .getValue ())
 			{
@@ -129,9 +129,10 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .LOW;
 				
-					arc2D .minAngle_      = Math .PI / 10;
-					arcClose2D .minAngle_ = Math .PI / 10;
-					circle2D .segments_   = 20;
+					arc .minAngle_      = Math .PI / 10;
+					arcClose .minAngle_ = Math .PI / 10;
+					circle .segments_   = 20;
+					disk .segments_     = 20;
 
 					cone     .vDimension_ = 16;
 					cylinder .vDimension_ = 16;
@@ -144,9 +145,10 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .HIGH;
 
-					arc2D .minAngle_      = Math .PI / 40;
-					arcClose2D .minAngle_ = Math .PI / 40;
-					circle2D .segments_   = 80;
+					arc .minAngle_      = Math .PI / 40;
+					arcClose .minAngle_ = Math .PI / 40;
+					circle .segments_   = 80;
+					disk .segments_     = 80;
 
 					cone     .vDimension_ = 32;
 					cylinder .vDimension_ = 32;
@@ -159,9 +161,10 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .MEDIUM;
 
-					arc2D .minAngle_      = Math .PI / 20;
-					arcClose2D .minAngle_ = Math .PI / 20;
-					circle2D .segments_   = 40;
+					arc .minAngle_      = Math .PI / 20;
+					arcClose .minAngle_ = Math .PI / 20;
+					circle .segments_   = 40;
+					disk .segments_     = 40;
 
 					cone     .vDimension_ = 20;
 					cylinder .vDimension_ = 20;

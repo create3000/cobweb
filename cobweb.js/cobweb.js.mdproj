@@ -1024,6 +1024,8 @@
     <None Include="cobweb\Browser\Geometry2D\Arc2DOptions.js" />
     <None Include="cobweb\Browser\Geometry2D\ArcClose2DOptions.js" />
     <None Include="cobweb\Browser\Geometry2D\Circle2DOptions.js" />
+    <None Include="cobweb\Browser\Geometry2D\Disk2DOptions.js" />
+    <None Include="tests\Components\Geometry3D\Extrusion\gears42P.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

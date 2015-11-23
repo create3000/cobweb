@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 18 Nov 2015 05:00:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 18 Nov 2015 16:37:20 GMT'/>
+    <meta name='modified' content='Sun, 22 Nov 2015 06:19:45 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -74,6 +74,8 @@
       <Shape>
         <Appearance USE='Grey'/>
         <Disk2D DEF='Disk2D'
+            innerRadius='0.54'
+            outerRadius='1.26'
             solid='false'/>
       </Shape>
     </Transform>
@@ -105,7 +107,7 @@
         <ArcClose2D USE='ArcClose2D'/>
       </Shape>
     </Transform>
-    <Transform
+    <Transform DEF='_2'
         translation='3 3 0'>
       <Shape>
         <Appearance USE='Image'/>
@@ -182,7 +184,7 @@
             solid='false'/>
       </Shape>
     </Transform>
-    <Transform DEF='_2'
+    <Transform
         translation='0 3 0'>
       <Shape>
         <Appearance DEF='Grey_3'>
