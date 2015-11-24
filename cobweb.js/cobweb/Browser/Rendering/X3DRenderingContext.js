@@ -86,7 +86,7 @@ function (Fields,
 			gl .cullFace (gl .BACK);
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthFunc (gl .LEQUAL);
-			gl .clearDepth (1.0);
+			gl .clearDepth (1);
 
 			gl .blendFuncSeparate (gl .SRC_ALPHA, gl .ONE_MINUS_SRC_ALPHA, gl .ONE, gl .ONE_MINUS_SRC_ALPHA);
 			gl .enable (gl .BLEND);

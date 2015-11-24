@@ -18,8 +18,8 @@ function (Vector3,
 	function isCollinear (a, b, c)
 	{
 		var
-			ab = A .assign (a) .subtract (b),
-			cb = C .assign (c) .subtract (b);
+			ab = A .assign (a) .subtract (b) .normalize (),
+			cb = C .assign (c) .subtract (b) .normalize ();
 
 		if (ab .abs () == 0)
 			return true;

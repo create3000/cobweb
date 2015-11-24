@@ -181,6 +181,8 @@ function ($,
 		},
 		traverse: function (time)
 		{
+			var gl = this .getContext ();
+
 			var t0 = performance .now ();
 			this .systemTime = t0 - this .systemStartTime;
 			this .advanceTime (time);
@@ -200,9 +202,12 @@ function ($,
 			this .sensors_ .processInterests ();
 			this .processEvents ();
 
+			// XXX: The depth buffer must be cleared here, although it is cleared in each layer, otherwise there is a
+			// XXX: phantom image in the depth buffer at least in Firefox.
+
 			var t3 = performance .now ();
-			this .context .clearColor (0, 0, 0, 0);
-			this .context .clear (this .context .COLOR_BUFFER_BIT);
+			gl .clearColor (0, 0, 0, 0);
+			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);
 			this .world .traverse (TraverseType .DISPLAY);
 			this .displayTime = performance .now () - t3;
 
