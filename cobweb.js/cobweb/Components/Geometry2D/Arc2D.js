@@ -92,7 +92,7 @@ function ($,
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
 				difference = this .getAngle (),
-				segments   = Math .ceil (difference / options .minAngle_ .getValue ()),
+				segments   = Math .ceil (difference / minAngle),
 				angle      = difference / segments,
 				vertices   = this .getVertices ();
 

@@ -24,7 +24,7 @@ function ($,
 
 		this .circleVertices = [ ];
 		this .diskTexCoords  = [ ];
-		this .diskNormals    = [ ];
+		this .diskNormals    = 0;
 		this .diskVertices   = [ ];
 		this .extents        = [new Vector3 (-1, -1, 0), new Vector3 (1, 1, 0)];
 	}
@@ -78,8 +78,9 @@ function ($,
 		
 			this .circleVertices .length = 0;
 			this .diskTexCoords  .length = 0;
-			this .diskNormals    .length = 0;
 			this .diskVertices   .length = 0;
+
+			this .diskNormals = segments * 3;
 
 			for (var n = 0; n < segments; ++ n)
 			{
@@ -100,10 +101,6 @@ function ($,
 				this .diskTexCoords .push (0.5, 0.5, 0, 1);
 				this .diskTexCoords .push (texCoord1 .real, texCoord1 .imag, 0, 1);
 				this .diskTexCoords .push (texCoord2 .real, texCoord2 .imag, 0, 1);
-
-				this .diskNormals .push (0, 0, 1);
-				this .diskNormals .push (0, 0, 1);
-				this .diskNormals .push (0, 0, 1);
 
 				this .diskVertices .push (0, 0, 0, 1);
 				this .diskVertices .push (point1 .real, point1 .imag, 0, 1);

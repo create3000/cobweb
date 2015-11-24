@@ -93,7 +93,7 @@ function ($,
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
 				difference = this .getAngle (),
-				segments   = Math .ceil (difference / options .minAngle_ .getValue ()),
+				segments   = Math .ceil (difference / minAngle),
 				angle      = difference / segments,
 				texCoords  = [ ],
 				normals    = this .getNormals (),
@@ -103,7 +103,7 @@ function ($,
 
 			this .getTexCoords () .push (texCoords);
 
-			for (var n = 0; n < segments; ++ n)
+			for (var n = 0, length = segments + 1; n < length; ++ n)
 			{
 				var theta = startAngle + angle * n;
 
@@ -117,7 +117,7 @@ function ($,
 					t0 = texCoord [0],
 					p0 = points [0];
 
-				for (var i = 1, length = segments - 1; i < length; ++ i)
+				for (var i = 1; i < segments; ++ i)
 				{
 					var
 						t1 = texCoord [i],
@@ -125,22 +125,22 @@ function ($,
 						p1 = points [i],
 						p2 = points [i + 1];
 
-					texCoords .push (t0 .real, t0 .imag, 0, 1);
-					texCoords .push (t1 .real, t1 .imag, 0, 1);
-					texCoords .push (t2 .real, t2 .imag, 0, 1);
+					texCoords .push (t0 .real, t0 .imag, 0, 1,
+					                 t1 .real, t1 .imag, 0, 1,
+					                 t2 .real, t2 .imag, 0, 1);
 
-					normals .push (0, 0, 1);
-					normals .push (0, 0, 1);
-					normals .push (0, 0, 1);
+					normals .push (0, 0, 1,
+					               0, 0, 1,
+					               0, 0, 1);
 
-					vertices .push (p0 .real, p0 .imag, 0, 1);
-					vertices .push (p1 .real, p1 .imag, 0, 1);
-					vertices .push (p2 .real, p2 .imag, 0, 1);
+					vertices .push (p0 .real, p0 .imag, 0, 1,
+					                p1 .real, p1 .imag, 0, 1,
+					                p2 .real, p2 .imag, 0, 1);
 				}
 			}
 			else
 			{
-				for (var i = 0, length = segments - 1; i < length; ++ i)
+				for (var i = 0; i < segments; ++ i)
 				{
 					var
 						t1 = texCoord [i],
@@ -148,17 +148,15 @@ function ($,
 						p1 = points [i],
 						p2 = points [i + 1];
 
-					texCoords .push (0.5, 0.5, 0, 1);
-					texCoords .push (t1 .real, t1 .imag, 0, 1);
-					texCoords .push (t2 .real, t2 .imag, 0, 1);
+					texCoords .push (0.5, 0.5, 0, 1,
+					                 t1 .real, t1 .imag, 0, 1,
+					                 t2 .real, t2 .imag, 0, 1);
 
-					normals .push (0, 0, 1);
-					normals .push (0, 0, 1);
-					normals .push (0, 0, 1);
+					normals .push (0, 0, 1,  0, 0, 1,  0, 0, 1);
 
-					vertices .push (0, 0, 0, 1);
-					vertices .push (p1 .real, p1 .imag, 0, 1);
-					vertices .push (p2 .real, p2 .imag, 0, 1);
+					vertices .push (0, 0, 0, 1,
+					                p1 .real, p1 .imag, 0, 1,
+					                p2 .real, p2 .imag, 0, 1);
 				}
 			}
 

@@ -75,17 +75,19 @@ function ($,
 
 				var radius = Math .abs (outerRadius);
 	
+				var
+					vertices1 = options .getCircleVertices (),
+					vertices2 = this .getVertices ();
+
 				if (radius === 1)
 				{
-					this .setVertices (options .getCircleVertices ());
+					for (var i = 0, length = vertices1 .length; i < length; i += 4)
+						vertices2 .push (vertices1 [i], vertices1 [i + 1], 0, 1);
+
 					this .setExtents  (options .getExtents ());
 				}
 				else
 				{
-					var
-						vertices1 = options .getCircleVertices (),
-						vertices2 = this .getVertices ();
-		
 					for (var i = 0, length = vertices1 .length; i < length; i += 4)
 						vertices2 .push (vertices1 [i] * radius, vertices1 [i + 1] * radius, 0, 1);
 		
@@ -101,17 +103,19 @@ function ($,
 			{
 				// Disk
 
-				var radius = Math .abs (Math .max (innerRadius, outerRadius));
+				var
+					radius    = Math .abs (Math .max (innerRadius, outerRadius)),
+					normals   = this .getNormals (),
+					vertices1 = options .getDiskVertices (),
+					vertices2 = this .getVertices ();
 
 				this .getTexCoords () .push (options .getDiskTexCoords ());
-				this .setNormals (options .getDiskNormals ());
 
+				for (var i = 0, length = options .getDiskNormals (); i < length; ++ i)
+					normals .push (0, 0, 1);
+	
 				if (radius === 1)
 				{
-					var
-						vertices1 = options .getDiskVertices (),
-						vertices2 = this .getVertices ();
-		
 					for (var i = 0, length = vertices1 .length; i < length; i += 4)
 						vertices2 .push (vertices1 [i], vertices1 [i + 1], 0, 1);
 
@@ -119,10 +123,6 @@ function ($,
 				}
 				else
 				{
-					var
-						vertices1 = options .getDiskVertices (),
-						vertices2 = this .getVertices ();
-
 					for (var i = 0, length = vertices1 .length; i < length; i += 4)
 						vertices2 .push (vertices1 [i] * radius, vertices1 [i + 1] * radius, 0, 1);
 
