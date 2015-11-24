@@ -207,7 +207,7 @@ function ($,
 
 			var t3 = performance .now ();
 			gl .clearColor (0, 0, 0, 0);
-			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);
+			gl .clear (gl .COLOR_BUFFER_BIT);
 			this .world .traverse (TraverseType .DISPLAY);
 			this .displayTime = performance .now () - t3;
 

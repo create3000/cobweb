@@ -77,7 +77,7 @@ function ($,
 	
 				if (radius === 1)
 				{
-					this .setVertices (options .getDiskVertices ());
+					this .setVertices (options .getCircleVertices ());
 					this .setExtents  (options .getExtents ());
 				}
 				else

@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Sep 2015 19:55:26 GMT'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Tue, 24 Nov 2015 17:28:50 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/Torus.x3d"'>
@@ -33,39 +33,71 @@
       <MetadataSet
           name='Titania'>
         <MetadataSet containerField='value'
-            name='AngleGrid'>
+            name='AngleGrid'
+            reference='http://titania.create3000.de'>
           <MetadataBoolean containerField='value'
               name='enabled'
+              reference='http://titania.create3000.de'
               value='false'/>
         </MetadataSet>
         <MetadataSet containerField='value'
-            name='Grid'>
+            name='Grid'
+            reference='http://titania.create3000.de'>
           <MetadataBoolean containerField='value'
               name='enabled'
+              reference='http://titania.create3000.de'
               value='true'/>
           <MetadataFloat containerField='value'
               name='rotation'
+              reference='http://titania.create3000.de'
               value='1, 0, 0, 1.5708'/>
           <MetadataInteger containerField='value'
               name='dimension'
+              reference='http://titania.create3000.de'
               value='60, 10, 32'/>
           <MetadataInteger containerField='value'
               name='majorLineEvery'
+              reference='http://titania.create3000.de'
               value='3, 3, 3'/>
           <MetadataFloat containerField='value'
               name='translation'
+              reference='http://titania.create3000.de'
               value='7, 0, 0'/>
+        </MetadataSet>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='2.72958898544312, -6.77375841140747, 12.9794855117798'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='0.0534719154238701, -0.980729758739471, -0.187909230589867, 0.268143087625504'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='8.54669189453125, -6.60424852371216, -8.60627746582031'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <Background DEF='Gray_1'
+    <Background DEF='Gray'
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='-5.87413 4.16723 9.77653'
-        orientation='-0.6247 0.769548 0.132461 0.494351'
-        centerOfRotation='-10.0501 0.539258 -0.596923'/>
-    <Transform DEF='Box_1'
+        position='2.72959 -6.77376 12.9795'
+        orientation='0.0534719 -0.98073 -0.187909 0.268143'
+        centerOfRotation='8.54669 -6.60425 -8.60628'/>
+    <Transform DEF='Box'
         translation='-18 12 4.40964e-05'>
       <Shape>
         <Appearance>
@@ -78,7 +110,7 @@
         <Box/>
       </Shape>
     </Transform>
-    <Transform DEF='Box'
+    <Transform DEF='Box_1'
         translation='-15 12 4.40964e-05'>
       <Shape>
         <Appearance>
@@ -89,7 +121,7 @@
             size='3 2 1'/>
       </Shape>
     </Transform>
-    <Transform DEF='Sphere_1'
+    <Transform DEF='Sphere'
         translation='-12 12 4.40964e-05'>
       <Shape>
         <Appearance>
@@ -99,7 +131,7 @@
         <Sphere/>
       </Shape>
     </Transform>
-    <Transform DEF='Sphere'
+    <Transform DEF='Sphere_1'
         translation='-9 12 4.40964e-05'>
       <Shape>
         <Appearance>
@@ -110,7 +142,7 @@
             radius='0.5'/>
       </Shape>
     </Transform>
-    <Transform DEF='Cylinder_1'
+    <Transform DEF='Cylinder'
         translation='-18 9.00002 3.30724e-05'>
       <Shape>
         <Appearance>
@@ -120,7 +152,7 @@
         <Cylinder/>
       </Shape>
     </Transform>
-    <Transform DEF='Cylinder'
+    <Transform DEF='Cylinder_1'
         translation='-15.2188 9.00002 3.30724e-05'>
       <Shape>
         <Appearance>
@@ -134,7 +166,7 @@
             radius='0.5'/>
       </Shape>
     </Transform>
-    <Transform DEF='Torus_1'
+    <Transform DEF='Torus'
         translation='-18 -2.99998 -1.1024e-05'>
       <Shape>
         <Appearance>
@@ -147,7 +179,7 @@
         </ProtoInstance>
       </Shape>
     </Transform>
-    <Transform DEF='Octahedron_1'
+    <Transform DEF='Octahedron'
         translation='-15 -2.99998 -1.1024e-05'>
       <Shape>
         <Appearance>
@@ -159,7 +191,7 @@
         </ProtoInstance>
       </Shape>
     </Transform>
-    <Transform DEF='Cone_1'
+    <Transform DEF='Cone'
         translation='-18 6.00001 2.20482e-05'>
       <Shape>
         <Appearance>
@@ -170,7 +202,7 @@
             bottomRadius='1.5'/>
       </Shape>
     </Transform>
-    <Transform DEF='Cone'
+    <Transform DEF='Cone_1'
         translation='-15 6.00001 2.20482e-05'>
       <Shape>
         <Appearance>
@@ -229,7 +261,7 @@
             solid='false'/>
       </Shape>
     </Transform>
-    <Transform DEF='ElevationGrid_1'
+    <Transform DEF='ElevationGrid'
         translation='-19 3.00002 1.10241e-05'>
       <Shape>
         <Appearance>
@@ -241,7 +273,7 @@
             zDimension='4'/>
       </Shape>
     </Transform>
-    <Transform DEF='ElevationGrid'
+    <Transform DEF='ElevationGrid_1'
         translation='-12 2 7.3494e-06'
         scale='0.358296 0.358296 0.358296'>
       <Shape>
@@ -274,7 +306,7 @@
             spine='0 0 0, 0 0.4 0, 0 0.8 0, 0 1.2 0, 0 1.6 0, 0 2 0, 0 2.4 0, 0 2.8 0, 0 3.2 0, 0 3.6 0, 0 4 0'/>
       </Shape>
     </Transform>
-    <Transform DEF='Edge_1'
+    <Transform DEF='Edge'
         translation='-14 1.34501e-05 1'
         scale='0.319951 0.319951 0.319951'>
       <Shape>
@@ -306,7 +338,7 @@
             spine='0 0 0, 0 0.4 0, 0 0.8 0, 0 1.2 0, 0 1.6 0, 0 2 0, 0 2.4 0, 0 2.8 0, 0 3.2 0, 0 3.6 0, 0 4 0'/>
       </Shape>
     </Transform>
-    <Transform DEF='Torus'
+    <Transform DEF='Torus_1'
         translation='-9 1.34501e-05 -5.16422e-11'>
       <Shape>
         <Appearance>
@@ -314,7 +346,7 @@
               transparency='0.375'/>
           <ImageTexture USE='_1'/>
         </Appearance>
-        <Extrusion DEF='Geometry_1'
+        <Extrusion DEF='Geometry'
             creaseAngle='3.14159'
             crossSection='0 0.5, 0.293893 0.404509, 0.475528 0.154509, 0.475528 -0.154509, 0.293893 -0.404509, 6.12323e-17 -0.5, -0.293893 -0.404509, -0.475528 -0.154509, -0.475528 0.154509, -0.293893 0.404509, 0 0.5'
             spine='0 0 0.5, 0.293893 0 0.404509, 0.475528 0 0.154509, 0.475528 0 -0.154509, 0.293893 0 -0.404509, 6.12323e-17 0 -0.5, -0.293893 0 -0.404509, -0.475528 0 -0.154509, -0.475528 0 0.154509, -0.293893 0 0.404509, 0 0 0.5'/>
@@ -502,7 +534,7 @@
             solid='false'/>
       </Shape>
     </Transform>
-    <Transform
+    <Transform DEF='_5'
         translation='3 -6.00001 -2.20483e-05'>
       <Shape>
         <Appearance>
@@ -700,7 +732,7 @@
         </LineSet>
       </Shape>
     </Transform>
-    <Transform DEF='QuadSphere_1'
+    <Transform DEF='QuadSphere'
         translation='-12 -3 -1.10241e-05'>
       <Shape>
         <Appearance>

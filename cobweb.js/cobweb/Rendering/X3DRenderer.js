@@ -500,10 +500,11 @@ function ($,
 
 			// Render opaque objects first
 
-			gl .clear (gl .DEPTH_BUFFER_BIT);
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
+
+			gl .clear (gl .DEPTH_BUFFER_BIT);
 
 			for (var i = 0, length = this .numOpaqueShapes; i < length; ++ i)
 			{
