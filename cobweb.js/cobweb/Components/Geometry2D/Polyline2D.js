@@ -6,15 +6,19 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGeometryNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 "use strict";
+
+	var vector = new Vector3 (0, 0, 0);
 
 	function Polyline2D (executionContext)
 	{
@@ -41,6 +45,45 @@ function ($,
 		getContainerField: function ()
 		{
 			return "geometry";
+		},
+		isLineGeometry: function ()
+		{
+			return true;
+		},
+		build: function ()
+		{
+			var
+				lineSegments = this .lineSegments_ .getValue (),
+				vertices     = this .getVertices ();
+
+			for (var i = 0, length = lineSegments .length; i < length; ++ i)
+			{
+				var vertex = lineSegments [i];
+
+				this .addVertex (vector .set (vertex .x, vertex .y, 0));
+			}
+
+			this .setSolid (false);
+		},
+		traverse: function (context)
+		{
+			var
+				browser = this .getBrowser (),
+				shader  = browser .getShader ();
+
+			if (shader === browser .getDefaultShader ())
+			{
+				browser .setTexture (null);
+				browser .setShader (shader = browser .getLineShader ());
+			}
+
+			var primitiveMode = shader .primitiveMode;
+
+			shader .primitiveMode = browser .getContext () .LINE_STRIP;
+
+			X3DGeometryNode .prototype .traverse .call (this, context);
+
+			shader .primitiveMode = primitiveMode;
 		},
 	});
 

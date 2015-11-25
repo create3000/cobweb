@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 24 Nov 2015 17:28:50 GMT'/>
+    <meta name='modified' content='Wed, 25 Nov 2015 18:01:18 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/Torus.x3d"'>
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='2.72958898544312, -6.77375841140747, 12.9794855117798'/>
+              value='0.572535037994385, 3.66304016113281, 10.1737174987793'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.0534719154238701, -0.980729758739471, -0.187909230589867, 0.268143087625504'/>
+              value='0.0359344072639942, -0.998051464557648, -0.0510106757283211, 0.352122902870178'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='8.54669189453125, -6.60424852371216, -8.60627746582031'/>
+              value='7.45914173126221, 3.84845733642578, -8.60204887390137'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -94,9 +94,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='2.72959 -6.77376 12.9795'
-        orientation='0.0534719 -0.98073 -0.187909 0.268143'
-        centerOfRotation='8.54669 -6.60425 -8.60628'/>
+        position='0.572535 3.66304 10.1737'
+        orientation='0.0359344 -0.998051 -0.0510107 0.352123'
+        centerOfRotation='7.45914 3.84846 -8.60205'/>
     <Transform DEF='Box'
         translation='-18 12 4.40964e-05'>
       <Shape>
@@ -534,7 +534,7 @@
             solid='false'/>
       </Shape>
     </Transform>
-    <Transform DEF='_5'
+    <Transform
         translation='3 -6.00001 -2.20483e-05'>
       <Shape>
         <Appearance>
