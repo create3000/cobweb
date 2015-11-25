@@ -170,9 +170,9 @@ function ($,
 			this .setSolid (this .solid_ .getValue ());
 			this .setCurrentTexCoord (null);
 			this .setNormals (normals);
-			this .setExtents (this .createExtents ());
+			this .setExtents ();
 		},
-		createExtents: function ()
+		setExtents: function ()
 		{
 			var
 				bottomRadius = this .bottomRadius_ .getValue (),
@@ -180,13 +180,22 @@ function ($,
 				y2           = -y1;
 
 			if (! this .side_ .getValue () && ! this .bottom_ .getValue ())
-				return [new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)];
+			{
+				this .getMin () .set (0, 0, 0);
+				this .getMax () .set (0, 0, 0);
+			}
 
 			else if (! this .side_ .getValue ())
-				return [new Vector3 (-bottomRadius, y2, -bottomRadius), new Vector3 (bottomRadius, y2, bottomRadius)];
+			{
+				this .getMin () .set (-bottomRadius, y2, -bottomRadius);
+				this .getMax () .set ( bottomRadius, y2,  bottomRadius);
+			}
 
 			else
-				return [new Vector3 (-bottomRadius, y2, -bottomRadius), new Vector3 (bottomRadius, y1, bottomRadius)];
+			{
+				this .getMin () .set (-bottomRadius, y2, -bottomRadius);
+				this .getMax () .set ( bottomRadius, y1, bottomRadius);
+			}
 		},
 	});
 

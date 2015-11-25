@@ -223,9 +223,9 @@ function ($,
 			this .setSolid (this .solid_ .getValue ());
 			this .setCurrentTexCoord (null);
 			this .setNormals (normals);
-			this .setExtents (this .createExtents ());
+			this .setExtents ();
 		},
-		createExtents: function ()
+		setExtents: function ()
 		{
 			var
 				radius = this .radius_ .getValue (),
@@ -233,16 +233,28 @@ function ($,
 				y2     = -y1;
 
 			if (! this .top_ .getValue () && ! this .side_ .getValue () && ! this .bottom_ .getValue ())
-				return [new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)];
+			{
+				this .getMin () .set (0, 0, 0);
+				this .getMax () .set (0, 0, 0);
+			}
 
-			if (! this .top_ .getValue () && ! this .side_ .getValue ())
-				return [new Vector3 (-radius, y2, -radius), new Vector3 (radius, y2, radius)];
+			else if (! this .top_ .getValue () && ! this .side_ .getValue ())
+			{
+				this .getMin () .set (-radius, y2, -radius);
+				this .getMax () .set ( radius, y2,  radius);
+			}
 
-			if (! this .bottom_ .getValue () && ! this .side_ .getValue ())
-				return [new Vector3 (-radius, y1, -radius), new Vector3 (radius, y1, radius)];
+			else if (! this .bottom_ .getValue () && ! this .side_ .getValue ())
+			{
+				this .getMin () .set (-radius, y1, -radius);
+				this .getMax () .set ( radius, y1,  radius);
+			}
 
 			else
-				return [new Vector3 (-radius, y2, -radius), new Vector3 (radius, y1, radius)];
+			{
+				this .getMin () .set (-radius, y2, -radius);
+				this .getMax () .set ( radius, y1,  radius);
+			}
 		},
 	});
 

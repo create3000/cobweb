@@ -82,7 +82,8 @@ function ($,
 					                1);
 				}
 
-				this .setExtents  ([new Vector3 (-radius, -radius, -radius), new Vector3 (radius, radius, radius)]);
+				this .getMin () .set (-radius, -radius, -radius);
+				this .getMax () .set ( radius,  radius,  radius);
 			}
 
 			this .setSolid (this .solid_ .getValue ());

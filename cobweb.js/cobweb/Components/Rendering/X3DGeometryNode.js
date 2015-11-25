@@ -88,6 +88,9 @@ function ($,
 			this .vertices    = [ ];
 			this .vertexCount = 0;
 
+			this .normals  .default = true;
+			this .vertices .default = true;
+
 			this .primitiveMode   = gl .TRIANGLES;
 			this .frontFace       = gl .CCW;
 			this .colorBuffer     = gl .createBuffer ();
@@ -406,9 +409,13 @@ function ($,
 			this .flatShading = undefined;
 			this .colors      .length = 0;
 			this .texCoords   .length = 0;
-			this .normals     .length = 0;
 			this .flatNormals .length = 0;
-			this .vertices    .length = 0;
+
+			if (this .normals .default)
+				this .normals .length = 0;
+
+			if (this .vertices .default)
+				this .vertices .length = 0;
 		},
 		transfer: function ()
 		{

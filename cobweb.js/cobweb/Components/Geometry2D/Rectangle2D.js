@@ -80,7 +80,8 @@ function ($,
 					                1);
 				}
 
-				this .setExtents  ([new Vector3 (-x, -y, 0), new Vector3 (x, y, 0)]);	
+				this .getMin () .set (-x, -y, 0);
+				this .getMax () .set ( x,  y, 0);
 			}
 
 			this .setSolid (this .solid_ .getValue ());

@@ -73,27 +73,21 @@ function ($,
 			{
 				// Circle
 
-				var radius = Math .abs (outerRadius);
-	
 				var
-					vertices1 = options .getCircleVertices (),
-					vertices2 = this .getVertices ();
+					radius          = Math .abs (outerRadius),
+					defaultVertices = options .getCircleVertices (),
+					vertices        = this .getVertices ();
 
 				if (radius === 1)
-				{
-					for (var i = 0, length = vertices1 .length; i < length; i += 4)
-						vertices2 .push (vertices1 [i], vertices1 [i + 1], 0, 1);
-
-					this .setExtents  (options .getExtents ());
-				}
+					this .setVertices (defaultVertices);
 				else
 				{
-					for (var i = 0, length = vertices1 .length; i < length; i += 4)
-						vertices2 .push (vertices1 [i] * radius, vertices1 [i + 1] * radius, 0, 1);
-		
-					this .getMin () .set (-radius, -radius, 0);
-					this .getMax () .set ( radius,  radius, 0);
+					for (var i = 0, length = defaultVertices .length; i < length; i += 4)
+						vertices .push (defaultVertices [i] * radius, defaultVertices [i + 1] * radius, 0, 1);
 				}
+	
+				this .getMin () .set (-radius, -radius, 0);
+				this .getMax () .set ( radius,  radius, 0);
 
 				this .lineGeometry = true;
 				return;
@@ -104,31 +98,24 @@ function ($,
 				// Disk
 
 				var
-					radius    = Math .abs (Math .max (innerRadius, outerRadius)),
-					normals   = this .getNormals (),
-					vertices1 = options .getDiskVertices (),
-					vertices2 = this .getVertices ();
+					radius          = Math .abs (Math .max (innerRadius, outerRadius)),
+					normals         = this .getNormals (),
+					defaultVertices = options .getDiskVertices (),
+					vertices        = this .getVertices ();
 
 				this .getTexCoords () .push (options .getDiskTexCoords ());
-
-				for (var i = 0, length = options .getDiskNormals (); i < length; ++ i)
-					normals .push (0, 0, 1);
+				this .setNormals (options .getDiskNormals ());
 	
 				if (radius === 1)
-				{
-					for (var i = 0, length = vertices1 .length; i < length; i += 4)
-						vertices2 .push (vertices1 [i], vertices1 [i + 1], 0, 1);
-
-					this .setExtents  (options .getExtents ());
-				}
+					this .setVertices (defaultVertices);
 				else
 				{
-					for (var i = 0, length = vertices1 .length; i < length; i += 4)
-						vertices2 .push (vertices1 [i] * radius, vertices1 [i + 1] * radius, 0, 1);
-
-					this .getMin () .set (-radius, -radius, 0);
-					this .getMax () .set ( radius,  radius, 0);
+					for (var i = 0, length = defaultVertices .length; i < length; i += 4)
+						vertices .push (defaultVertices [i] * radius, defaultVertices [i + 1] * radius, 0, 1);
 				}
+
+				this .getMin () .set (-radius, -radius, 0);
+				this .getMax () .set ( radius,  radius, 0);
 		
 				this .setSolid (this .solid_ .getValue ());
 				this .setCurrentTexCoord (null);

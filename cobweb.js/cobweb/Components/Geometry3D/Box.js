@@ -78,7 +78,8 @@ function ($,
 					                1);
 				}
 
-				this .setExtents  ([Vector3 .negate (scale), scale]);	
+				this .getMin () .set (-scale, -scale, -scale);
+				this .getMax () .set ( scale,  scale,  scale);
 			}
 
 			this .setSolid (this .solid_ .getValue ());

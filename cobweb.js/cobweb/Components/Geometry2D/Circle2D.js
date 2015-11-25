@@ -60,33 +60,22 @@ function ($,
 		build: function ()
 		{
 			var
-				gl         = this .getBrowser () .getContext (),
-				options    = this .getBrowser () .getCircle2DOptions (),
-				radius     = this .radius_ .getValue ();
+				gl              = this .getBrowser () .getContext (),
+				options         = this .getBrowser () .getCircle2DOptions (),
+				radius          = this .radius_ .getValue (),
+				defaultVertices = options .getVertices (),
+				vertices        = this .getVertices ();
 
-				if (radius === 1)
-				{
-					var
-						vertices1 = options .getVertices (),
-						vertices2 = this .getVertices ();
-		
-					for (var i = 0, length = vertices1 .length; i < length; i += 4)
-						vertices2 .push (vertices1 [i], vertices1 [i + 1], 0, 1);
+			if (radius === 1)
+				this .setVertices (defaultVertices);
+			else
+			{
+				for (var i = 0, length = defaultVertices .length; i < length; i += 4)
+					vertices .push (defaultVertices [i] * radius, defaultVertices [i + 1] * radius, 0, 1);
+			}
 
-					this .setExtents  (options .getExtents ());
-				}
-				else
-				{
-					var
-						vertices1 = options .getVertices (),
-						vertices2 = this .getVertices ();
-		
-					for (var i = 0, length = vertices1 .length; i < length; i += 4)
-						vertices2 .push (vertices1 [i] * radius, vertices1 [i + 1] * radius, 0, 1);
-
-					this .getMin () .set (-radius, -radius, 0);
-					this .getMax () .set ( radius,  radius, 0);
-				}
+			this .getMin () .set (-radius, -radius, 0);
+			this .getMax () .set ( radius,  radius, 0);
 		},
 		traverse: function (context)
 		{
