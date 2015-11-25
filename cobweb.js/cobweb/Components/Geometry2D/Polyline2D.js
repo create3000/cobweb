@@ -52,9 +52,7 @@ function ($,
 		},
 		build: function ()
 		{
-			var
-				lineSegments = this .lineSegments_ .getValue (),
-				vertices     = this .getVertices ();
+			var lineSegments = this .lineSegments_ .getValue ();
 
 			for (var i = 0, length = lineSegments .length; i < length; ++ i)
 			{

@@ -6,15 +6,19 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGeometryNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 "use strict";
+
+	var vector = new Vector3 (0, 0, 0);
 
 	function Polypoint2D (executionContext)
 	{
@@ -41,6 +45,35 @@ function ($,
 		getContainerField: function ()
 		{
 			return "geometry";
+		},
+		isLineGeometry: function ()
+		{
+			return true;
+		},
+		build: function ()
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var vertex = point [i];
+
+				this .addVertex (vector .set (vertex .x, vertex .y, 0));
+			}
+
+			this .setSolid (false);
+		},
+		traverse: function (context)
+		{
+			var browser = this .getBrowser ();
+
+			if (browser .getShader () === browser .getDefaultShader ())
+			{
+				browser .setTexture (null);
+				browser .setShader (browser .getPointShader ());
+			}
+
+			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});
 
