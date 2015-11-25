@@ -33,6 +33,7 @@ function ($,
 		this .projectionMatrix = new Matrix4 ();
 
 		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
+		this .fieldOfViewInterpolator .setName ("Default");
 	}
 
 	Viewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -67,20 +68,26 @@ function ($,
 		{
 			X3DViewpointNode .prototype .initialize .call (this);
 
-			this .getEaseInEaseOut () .modifiedFraction_changed_ .addFieldInterest (this .fieldOfViewInterpolator .set_fraction_);
+			this .fieldOfViewInterpolator .key_ = [ 0, 1 ];
+			this .fieldOfViewInterpolator .setup ();
 
+			this .getEaseInEaseOut () .modifiedFraction_changed_ .addFieldInterest (this .fieldOfViewInterpolator .set_fraction_);
 			this .fieldOfViewInterpolator .value_changed_ .addFieldInterest (this .fieldOfViewScale_);
 		},
 		setInterpolators: function (fromViewpoint)
 		{
 			if (fromViewpoint .getType () .indexOf (X3DConstants .Viewpoint) < 0)
-				return;
-
-			var scale = scale = fromViewpoint .getFieldOfView () / this .getFieldOfView ();
-
-			this .fieldOfViewInterpolator .keyValue_ = [ scale, this .fieldOfViewScale_ .getValue () ];
-
-			this .fieldOfViewScale_ = scale;
+			{
+				this .fieldOfViewInterpolator .keyValue_ = [ this .fieldOfViewScale_ .getValue (), this .fieldOfViewScale_ .getValue () ];
+			}
+			else
+			{
+				var scale = fromViewpoint .getFieldOfView () / this .fieldOfView_ .getValue ();
+	
+				this .fieldOfViewInterpolator .keyValue_ = [ scale, this .fieldOfViewScale_ .getValue () ];
+	
+				this .fieldOfViewScale_ = scale;
+			}
 		},
 		getFieldOfView: function ()
 		{

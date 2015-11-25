@@ -188,19 +188,12 @@ function ($,
 		{
 			this .traverse (TraverseType .CAMERA);
 
-			if (this .navigationInfos .get () .length)
-				this .navigationInfoStack .forcePush (this .navigationInfos .getBound ());
+			// Bind first viewpoint in viewpoint list.
 
-			if (this .backgrounds .get () .length)
-				this .backgroundStack .forcePush (this .backgrounds .getBound ());
-
-			if (this .fogs .get () .length)
-				this .fogStack .forcePush (this .fogs .getBound ());
-
-			// Bind first viewpoint in viewpoint stack.
-
-			if (this .viewpoints .get () .length)
-				this .viewpointStack .forcePush (this .viewpoints .getBound ());
+			this .navigationInfoStack .forcePush (this .navigationInfos .getBound ());
+			this .backgroundStack     .forcePush (this .backgrounds     .getBound ());
+			this .fogStack            .forcePush (this .fogs            .getBound ());
+			this .viewpointStack      .forcePush (this .viewpoints      .getBound ());
 		},
 		traverse: function (type)
 		{

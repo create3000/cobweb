@@ -24,7 +24,9 @@ function ($,
 {
 "use strict";
 
-	var Polygon = [ ];
+	var
+		Triangle = [0, 1, 2],
+		Polygon  = [ ];
 
 	function IndexedFaceSet (executionContext)
 	{
@@ -194,15 +196,11 @@ function ($,
 					this .coordIndex_ .push (-1);
 
 				// Construct triangle array and determine the number of used points.
-				var i = 0;
+				var vertices = [ ];
 
-				polygons .push ({ vertices: [ ], triangles: [ ] });
-
-				for (var c = 0; c < coordLength; ++ c)
+				for (var i = 0; i < coordLength; ++ i)
 				{
-					var
-						index    = coordIndex [c] .getValue (),
-						vertices = polygons [polygons .length - 1] .vertices;
+					var index = coordIndex [i] .getValue ();
 	
 					if (index > -1)
 					{
@@ -231,64 +229,65 @@ function ($,
 								case 3:
 								{
 									// Add polygon with one triangle.
-									polygons [polygons .length - 1] .triangles .push (0, 1, 2);
-									polygons .push ({ vertices: [ ], triangles: [ ] });
+									polygons .push ({ vertices: vertices, triangles: Triangle });
+									vertices = [ ];
 									break;
 								}
 								default:
 								{
 									// Triangulate polygons.
-									
-									if (convex)
-										this .triangulateConvexPolygon (polygons [polygons .length - 1]);
-									else
-										this .triangulatePolygon (polygons [polygons .length - 1]);
+									var
+										triangles = [ ],
+										polygon   = { vertices: vertices, triangles: triangles };
 
-									if (polygons [polygons .length - 1] .triangles .length)
-										polygons .push ({ vertices: [ ], triangles: [ ] });
+									if (convex)
+										this .triangulateConvexPolygon (polygon);
 									else
+										this .triangulatePolygon (polygon);
+
+									if (triangles .length < 3)
 										vertices .length = 0;
+									else
+									{
+										polygons .push (polygon);
+										vertices = [ ];
+									}
 
 									break;
 								}
 							}
 						}
 					}
-
-					++ i;
 				}
-
-				if (polygons [polygons .length - 1] .triangles .length === 0)
-					polygons .pop ();
 			}
 
 			return polygons;
 		},
 		triangulatePolygon: function (polygon)
 		{
-				// Transform vertices to 2D space.
+			// Transform vertices to 2D space.
 
-				var
-					vertices   = polygon .vertices,
-					triangles  = polygon .triangles,
-					coordIndex = this .coordIndex_ .getValue (),
-					coord      = this .getCoord ();
+			var
+				vertices   = polygon .vertices,
+				triangles  = polygon .triangles,
+				coordIndex = this .coordIndex_ .getValue (),
+				coord      = this .getCoord ();
 
-				Polygon .length = 0;
+			for (var i = 0, length = vertices .length; i < length; ++ i)
+			{
+				var vertex = coord .getPoint (coordIndex [vertices [i]] .getValue ()) .copy ();
 
-				for (var i = 0, length = vertices .length; i < length; ++ i)
-				{
-					var vertex = coord .getPoint (coordIndex [vertices [i]] .getValue ()) .copy ();
+				vertex .index = i;
 
-					vertex .index = i;
+				Polygon .push (vertex);
+			}
 
-					Polygon .push (vertex);
-				}
+			Polygon .length = length;
 
-				Triangle3 .triangulatePolygon (Polygon, triangles);
+			Triangle3 .triangulatePolygon (Polygon, triangles);
 
-				for (var i = 0, length = triangles .length; i < length; ++ i)
-					triangles [i] = triangles [i] .index;
+			for (var i = 0, length = triangles .length; i < length; ++ i)
+				triangles [i] = triangles [i] .index;
 		},
 		triangulateConvexPolygon: function (polygon)
 		{

@@ -89,7 +89,7 @@ function ($,
 		this .hidden                = false;
 		this .visible               = [ ];
 		this .pointingDeviceSensors = [ ];
-		this .maybeCameraObject     = [ ];
+		this .maybeCameraObjects    = [ ];
 		this .cameraObjects         = [ ];
 		this .clipPlanes            = [ ];
 		this .localFogs             = [ ];
@@ -252,14 +252,14 @@ function ($,
 								}
 								case X3DConstants .X3DBindableNode:
 								{
-									this .maybeCameraObject .push (innerNode);
+									this .maybeCameraObjects .push (innerNode);
 									break;				
 								}
 								case X3DConstants .X3DChildNode:
 								{
 									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
 
-									this .maybeCameraObject .push (innerNode);
+									this .maybeCameraObjects .push (innerNode);
 									this .childNodes .push (innerNode);
 									break;
 								}
@@ -297,7 +297,7 @@ function ($,
 				this .childNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
 			
 			this .pointingDeviceSensors .length = 0;
-			this .maybeCameraObject     .length = 0;
+			this .maybeCameraObjects    .length = 0;
 			this .cameraObjects         .length = 0;
 			this .clipPlanes            .length = 0;
 			this .localFogs             .length = 0;
@@ -308,9 +308,9 @@ function ($,
 		{
 			this .cameraObjects .length = 0;
 
-			for (var i = 0, length = this .maybeCameraObject .length; i < length; ++ i)
+			for (var i = 0, length = this .maybeCameraObjects .length; i < length; ++ i)
 			{
-				var childNode = this .maybeCameraObject [i];
+				var childNode = this .maybeCameraObjects [i];
 
 				if (childNode .getCameraObject ())
 					this .cameraObjects .push (childNode);
