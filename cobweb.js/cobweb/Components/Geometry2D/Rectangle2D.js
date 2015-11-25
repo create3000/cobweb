@@ -52,16 +52,19 @@ function ($,
 		build: function ()
 		{
 			var
-				options = this .getBrowser () .getRectangle2DOptions (),
-				size    = this .size_ .getValue ();
+				options  = this .getBrowser () .getRectangle2DOptions (),
+				geometry = options .getGeometry (),
+				size     = this .size_ .getValue ();
 
-			this .setTexCoords (options .getGeometry () .getTexCoords ());
-			this .setNormals   (options .getGeometry () .getNormals ());
+			this .setTexCoords (geometry .getTexCoords ());
+			this .setNormals   (geometry .getNormals ());
 
 			if (size .equals (defaultSize))
 			{
-				this .setVertices (options .getGeometry () .getVertices ());
-				this .setExtents  (options .getGeometry () .getExtents ());
+				this .setVertices (geometry .getVertices ());
+
+				this .getMin () .assign (geometry .getMin ());
+				this .getMax () .assign (geometry .getMax ());
 			}
 			else
 			{
@@ -69,7 +72,7 @@ function ($,
 					scale           = Vector3 .divide (size, 2),
 					x               = scale .x,
 					y               = scale .y,
-					defaultVertices = options .getGeometry () .getVertices (),
+					defaultVertices = geometry .getVertices (),
 					vertices        = this .getVertices ();
 
 				for (var i = 0; i < defaultVertices .length; i += 4)

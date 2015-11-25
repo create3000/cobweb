@@ -57,21 +57,24 @@ function ($,
 		build: function ()
 		{
 			var
-				options = this .getBrowser () .getSphereOptions (),
-				radius  = this .radius_ .getValue ();
+				options  = this .getBrowser () .getSphereOptions (),
+				geometry = options .getGeometry (),
+				radius   = this .radius_ .getValue ();
 
-			this .setNormals   (options .getGeometry () .getNormals ());
-			this .setTexCoords (options .getGeometry () .getTexCoords ());
+			this .setNormals   (geometry .getNormals ());
+			this .setTexCoords (geometry .getTexCoords ());
 
 			if (radius === 1)
 			{
-				this .setVertices (options .getGeometry () .getVertices ());
-				this .setExtents  (options .getGeometry () .getExtents ());
+				this .setVertices (geometry .getVertices ());
+	
+				this .getMin () .assign (geometry .getMin ());
+				this .getMax () .assign (geometry .getMax ());
 			}
 			else
 			{
 				var
-					defaultVertices = options .getGeometry () .getVertices (),
+					defaultVertices = geometry .getVertices (),
 					vertices        = this .getVertices ();
 
 				for (var i = 0; i < defaultVertices .length; i += 4)

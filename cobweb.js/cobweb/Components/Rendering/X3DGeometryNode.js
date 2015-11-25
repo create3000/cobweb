@@ -88,9 +88,6 @@ function ($,
 			this .vertices    = [ ];
 			this .vertexCount = 0;
 
-			this .normals  .default = true;
-			this .vertices .default = true;
-
 			this .primitiveMode   = gl .TRIANGLES;
 			this .frontFace       = gl .CCW;
 			this .colorBuffer     = gl .createBuffer ();
@@ -116,15 +113,6 @@ function ($,
 		getBBox: function ()
 		{
 			return this .bbox;
-		},
-		setExtents: function (extents)
-		{
-			this .min .assign (extents [0]);
-			this .max .assign (extents [1]);
-		},
-		getExtents: function ()
-		{
-			return [this .min, this .max];
 		},
 		getMin: function ()
 		{
@@ -156,7 +144,12 @@ function ($,
 		},
 		setColors: function (value)
 		{
-			this .colors = value;
+			var colors = this .colors;
+
+			for (var i = 0, length = value .length; i < length; ++ i)
+				colors [i] = value [i];
+
+			colors .length = length;
 		},
 		getColors: function ()
 		{
@@ -164,7 +157,12 @@ function ($,
 		},
 		setTexCoords: function (value)
 		{
-			this .texCoords = value;
+			var texCoords = this .texCoords;
+
+			for (var i = 0, length = value .length; i < length; ++ i)
+				texCoords [i] = value [i];
+
+			texCoords .length = length;
 		},
 		getTexCoords: function ()
 		{
@@ -180,7 +178,12 @@ function ($,
 		},
 		setNormals: function (value)
 		{
-			this .normals = value;
+			var normals = this .normals;
+
+			for (var i = 0, length = value .length; i < length; ++ i)
+				normals [i] = value [i];
+
+			normals .length = length;
 		},
 		getNormals: function ()
 		{
@@ -195,7 +198,12 @@ function ($,
 		},
 		setVertices: function (value)
 		{
-			this .vertices = value;
+			var vertices = this .vertices;
+
+			for (var i = 0, length = value .length; i < length; ++ i)
+				vertices [i] = value [i];
+
+			vertices .length = length;
 		},
 		getVertices: function ()
 		{
@@ -409,13 +417,9 @@ function ($,
 			this .flatShading = undefined;
 			this .colors      .length = 0;
 			this .texCoords   .length = 0;
+			this .normals     .length = 0;
 			this .flatNormals .length = 0;
-
-			if (this .normals .default)
-				this .normals .length = 0;
-
-			if (this .vertices .default)
-				this .vertices .length = 0;
+			this .vertices    .length = 0;
 		},
 		transfer: function ()
 		{

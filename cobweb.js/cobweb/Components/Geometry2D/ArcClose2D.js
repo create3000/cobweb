@@ -160,7 +160,8 @@ function ($,
 				}
 			}
 
-			this .setExtents  ([new Vector3 (-radius, -radius, 0), new Vector3 (radius, radius, 0)]);	
+			this .getMin () .set (-radius, -radius, 0);
+			this .getMax () .set ( radius,  radius, 0);	
 	
 			this .setSolid (this .solid_ .getValue ());
 			this .setCurrentTexCoord (null);

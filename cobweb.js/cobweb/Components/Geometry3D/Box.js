@@ -49,16 +49,19 @@ function ($,
 		build: function ()
 		{
 			var
-				options = this .getBrowser () .getBoxOptions (),
-				size    = this .size_ .getValue ();
+				options  = this .getBrowser () .getBoxOptions (),
+				geometry = options .getGeometry (),
+				size     = this .size_ .getValue ();
 
-			this .setNormals   (options .getGeometry () .getNormals ());
-			this .setTexCoords (options .getGeometry () .getTexCoords ());
+			this .setNormals   (geometry .getNormals ());
+			this .setTexCoords (geometry .getTexCoords ());
 
 			if (size .equals (defaultSize))
 			{
-				this .setVertices (options .getGeometry () .getVertices ());
-				this .setExtents  (options .getGeometry () .getExtents ());
+				this .setVertices (geometry .getVertices ());
+
+				this .getMin () .assign (geometry .getMin ());
+				this .getMax () .assign (geometry .getMax ());
 			}
 			else
 			{
@@ -67,7 +70,7 @@ function ($,
 					x               = scale .x,
 					y               = scale .y,
 					z               = scale .z,
-					defaultVertices = options .getGeometry () .getVertices (),
+					defaultVertices = geometry .getVertices (),
 					vertices        = this .getVertices ();
 
 				for (var i = 0; i < defaultVertices .length; i += 4)

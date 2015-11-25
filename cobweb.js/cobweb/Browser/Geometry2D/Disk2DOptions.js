@@ -26,7 +26,6 @@ function ($,
 		this .diskTexCoords  = [ ];
 		this .diskNormals    = [ ];
 		this .diskVertices   = [ ];
-		this .extents        = [new Vector3 (-1, -1, 0), new Vector3 (1, 1, 0)];
 	}
 
 	Disk2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -65,10 +64,6 @@ function ($,
 		getDiskVertices: function ()
 		{
 			return this .diskVertices;
-		},
-		getExtents: function ()
-		{
-			return this .extents;
 		},
 		build: function ()
 		{

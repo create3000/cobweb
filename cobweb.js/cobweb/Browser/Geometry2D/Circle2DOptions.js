@@ -21,7 +21,6 @@ function ($,
 		this .addChildren ("segments", new Fields .SFInt32 (40))
 
 		this .vertices = [ ];
-		this .extents  = [new Vector3 (-1, -1, 0), new Vector3 (1, 1, 0)];
 	}
 
 	Circle2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -48,10 +47,6 @@ function ($,
 		getVertices: function ()
 		{
 			return this .vertices;
-		},
-		getExtents: function ()
-		{
-			return this .extents;
 		},
 		build: function ()
 		{
