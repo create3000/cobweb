@@ -144,6 +144,8 @@ function (Vector3,
 			// Determine polygon normal.
 			// We use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal here:
 
+			normal .set (0, 0, 0);
+
 			var next = vertices [0];
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
