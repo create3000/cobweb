@@ -11,24 +11,13 @@ function (Vector3,
 "use strict";
 
 	var
-	   A = new Vector3 (0, 0, 0),
-	   B = new Vector3 (0, 0, 0),
-	   C = new Vector3 (0, 0, 0);
-
-	function isCollinear (a, b, c)
-	{
-		var
-			ab = A .assign (a) .subtract (b) .normalize (),
-			cb = C .assign (c) .subtract (b) .normalize ();
-
-		if (ab .abs () == 0)
-			return true;
-
-		if (cb .abs () == 0)
-			return true;
-
-		return Math .abs (ab .dot (cb)) >= 1;
-	}
+		A      = new Vector3 (0, 0, 0),
+		B      = new Vector3 (0, 0, 0),
+		C      = new Vector3 (0, 0, 0),
+		xAxis  = new Vector3 (0, 0, 0),
+		yAxis  = new Vector3 (0, 0, 0),
+		zAxis  = new Vector3 (0, 0, 0),
+		matrix = new Matrix4 ();
 
 	return {
 	   area: function (a, b, c)
@@ -69,19 +58,33 @@ function (Vector3,
 		},
 		removeCollinearPoints: function (polygon)
 		{
-			for (var i = 0, k = 0, length = polygon .length; i < length; ++ i)
+			for (var i = 0, k = 0, length = polygon .length, l1 = length - 1; i < length; ++ i)
 			{
 				var
-					i0 = (i - 1 + length) % length,
+					i0 = (i + l1) % length,
 					i1 = (i + 1) % length;
 
-				if (isCollinear (polygon [i0], polygon [i], polygon [i1]))
+				if (this .isCollinear (polygon [i0], polygon [i], polygon [i1]))
 					continue;
 
 				polygon [k ++] = polygon [i];
 		   }
 
 			polygon .length = k;
+		},
+		isCollinear: function (a, b, c)
+		{
+			var
+				ab = A .assign (a) .subtract (b) .normalize (),
+				cb = C .assign (c) .subtract (b) .normalize ();
+	
+			if (ab .abs () == 0)
+				return true;
+	
+			if (cb .abs () == 0)
+				return true;
+	
+			return Math .abs (ab .dot (cb)) >= 1;
 		},
 		triangulatePolygon: function (vertices, triangles)
 		{
@@ -97,33 +100,31 @@ function (Vector3,
 					p0 = vertices [0],
 					p1 = vertices [1];
 
-				var
-					zAxis = this .getPolygonNormal (vertices),
-					xAxis = Vector3 .subtract (p1, p0),
-					yAxis = Vector3 .cross (zAxis, xAxis);
+				this .getPolygonNormal (vertices, zAxis);
+
+				xAxis .assign (p1) .subtract (p0);
+				yAxis .assign (zAxis) .cross (xAxis);
 
 				xAxis .normalize ();
 				yAxis .normalize ();
-
-				var matrix = new Matrix4 (xAxis .x, xAxis .y, xAxis .z, 0,
-				                          yAxis .x, yAxis .y, yAxis .z, 0,
-				                          zAxis .x, zAxis .y, zAxis .z, 0,
-				                          p0 .x, p0 .y, p0 .z, 1);
+				
+				matrix .set (xAxis .x, xAxis .y, xAxis .z, 0,
+				             yAxis .x, yAxis .y, yAxis .z, 0,
+				             zAxis .x, zAxis .y, zAxis .z, 0,
+				             p0 .x, p0 .y, p0 .z, 1);
 
 				matrix .inverse ();
 
-				var contour = [ ];
-
-				for (var i = 0; i < vertices .length; ++ i)
-					contour .push (matrix .multVecMatrix (vertices [i]));
+				for (var i = 0, length = vertices .length; i < length; ++ i)
+					matrix .multVecMatrix (vertices [i]);
 
 				// Triangulate polygon.
 
 				var
-					context = new poly2tri .SweepContext (contour),
+					context = new poly2tri .SweepContext (vertices),
 					ts      = context .triangulate () .getTriangles ();
 
-				for (var i = 0; i < ts .length; ++ i)
+				for (var i = 0, length = ts .length; i < length; ++ i)
 					triangles .push (ts [i] .getPoint (0), ts [i] .getPoint (1), ts [i] .getPoint (2));
 			}
 			catch (error)
@@ -138,14 +139,12 @@ function (Vector3,
 			for (var i = 1, length = vertices .length - 1; i < length; ++ i)
 				triangles .push (vertices [0], vertices [i], vertices [i + 1]);
 		},
-		getPolygonNormal: function (vertices)
+		getPolygonNormal: function (vertices, normal)
 		{
 			// Determine polygon normal.
 			// We use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal here:
 
-			var
-				normal = new Vector3 (0, 0, 0),
-				next   = vertices [0];
+			var next = vertices [0];
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
 			{
