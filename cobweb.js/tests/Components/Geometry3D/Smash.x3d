@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 25 Nov 2015 18:01:18 GMT'/>
+    <meta name='modified' content='Wed, 25 Nov 2015 18:25:54 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/Torus.x3d"'>
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0.572535037994385, 3.66304016113281, 10.1737174987793'/>
+              value='1.89076137542725, -9.49355792999268, 4.80138969421387'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.0359344072639942, -0.998051464557648, -0.0510106757283211, 0.352122902870178'/>
+              value='0.162928029894829, -0.978392660617828, -0.127288475632668, 0.397884547710419'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='7.45914173126221, 3.84845733642578, -8.60204887390137'/>
+              value='3.45847511291504, -9.27508544921875, 0.999966621398926'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -94,9 +94,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='0.572535 3.66304 10.1737'
-        orientation='0.0359344 -0.998051 -0.0510107 0.352123'
-        centerOfRotation='7.45914 3.84846 -8.60205'/>
+        position='1.89076 -9.49356 4.80139'
+        orientation='0.162928 -0.978393 -0.127288 0.397885'
+        centerOfRotation='3.45848 -9.27509 0.999967'/>
     <Transform DEF='Box'
         translation='-18 12 4.40964e-05'>
       <Shape>
