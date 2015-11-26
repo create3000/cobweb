@@ -15,8 +15,6 @@ function ($,
 	function X3DScene (browser, executionContext)
 	{
 		X3DExecutionContext .call (this, browser, executionContext);
-		
-		this .addChildren ("loadCount", new Fields .SFInt32 ());
 
 		this .getRootNodes () .setAccessType (X3DConstants .inputOutput);
 	}
@@ -31,14 +29,6 @@ function ($,
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
-		},
-		addLoadCount: function ()
-		{
-			this .loadCount_ = this .loadCount_ .getValue () + 1;
-		},
-		removeLoadCount: function ()
-		{
-			this .loadCount_ = this .loadCount_ .getValue () - 1;
 		},
 	});
 

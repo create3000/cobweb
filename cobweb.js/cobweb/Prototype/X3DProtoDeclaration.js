@@ -30,6 +30,8 @@ function ($,
 		X3DExecutionContext     .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclaration);
+
+		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
 	X3DProtoDeclaration .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -40,7 +42,6 @@ function ($,
 		{
 			return "PROTO";
 		},
-		/*
 		getComponentName: function ()
 		{
 			return "Cobweb";
@@ -49,7 +50,12 @@ function ($,
 		{
 			return "protos";
 		},
-		*/
+		initialize: function ()
+		{
+			X3DProtoDeclarationNode .prototype .initialize .call (this);
+
+			this .loadState_ = X3DConstants .COMPLETE_STATE;
+		},
 		isExternProto: function ()
 		{
 			return false;
@@ -57,6 +63,14 @@ function ($,
 		getWorldURL: function ()
 		{
 			return this .getExecutionContext () .getWorldURL ();
+		},
+		getProtoDeclaration: function ()
+		{
+			return this;
+		},
+		checkLoadState: function ()
+		{
+			return this .loadState_ .getValue ();
 		},
 	});
 

@@ -29,11 +29,15 @@ function ($,
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);
 
-		if (protoNode .isExternProto ())
-			protoNode .requestAsyncLoad (this .construct .bind (this));
+		protoNode .addInstance (this);
 
+		if (protoNode .isExternProto ())
+		{
+			if (protoNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				this .construct ();
+		}
 		else
-			this .construct (protoNode);
+			this .construct ();
 	}
 
 	X3DPrototypeInstance .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -56,14 +60,16 @@ function ($,
 		{
 			return "children";
 		},
-		construct: function (proto)
+		construct: function ()
 		{
-			this .proto = proto;
+			var proto = this .protoNode .getProtoDeclaration ();
 
 			if (proto)
 			{
 				// If there is a proto the externproto is completely loaded.
 			
+				this .metadata_ = proto .metadata_;
+
 				if (this .protoNode .isExternProto ())
 				{
 					var fieldDefinitions = proto .getFieldDefinitions ();
@@ -91,7 +97,7 @@ function ($,
 								continue;
 
 							// Is set during parse.	
-							if (field .getSet () === true)
+							if (field .getSet ())
 								continue;
 
 							// Has IS references.
@@ -111,30 +117,10 @@ function ($,
 				// Assign metadata.
 
 				this .setWorldURL (proto .getWorldURL ());
-				this .metadata_ = proto .metadata_;
 
-				// Assign extern protos.
-				
-				for (var i = 0, length = proto .externprotos .length; i < length; ++ i)
-					this .externprotos .push (proto .externprotos [i]);
-
-				// Assign protos.
-
-				for (var i = 0, length = proto .protos .length; i < length; ++ i)
-					this .protos .push (proto .protos [i]);
-
-				// Copy root nodes.
-
-				var
-					rootNodes1 = proto .getRootNodes () .getValue (),
-					rootNodes2 = this  .getRootNodes () .getValue ();
-
-				for (var i = 0, length = rootNodes1 .length; i < length; ++ i)
-				{
-					var value = rootNodes1 [i] .copy (this);
-					value .addParent (this .getRootNodes ());
-					rootNodes2 .push (value);
-				}
+				this .importExternProtos (proto);
+				this .importProtos (proto);
+				this .copyRootNodes (proto);
 			}
 		},
 		setup: function ()
@@ -144,44 +130,33 @@ function ($,
 		},
 		initialize: function ()
 		{
-			if (this .proto)
+			try
 			{
-				// Copy imported nodes.
-
-				// ...
-
-				// Copy routes.
-
-				var routes = this .proto .routes;
-
-				for (var i = 0, length = routes .length; i < length; ++ i)
+				if (this .protoNode .isExternProto ())
+					this .construct ();
+	
+				if (this .protoNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
 				{
-					try
-					{
-						var route = routes [i];
-
-						// new Route ... addUninitializedNode ...
-						this .addRoute (this .getNamedNode (route .sourceNode .getNodeName ()),
-						                route .sourceField,
-						                this .getNamedNode (route .destinationNode .getNodeName ()),
-						                route .destinationField);
-					}
-					catch (error)
-					{
-						console .log (error .message);
-					}
+					var proto = this .protoNode .getProtoDeclaration ();
+		
+					//this .copyImportedNodes (proto);
+					this .copyRoutes (proto);
 				}
+				
+				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest (this, "set_live__");
+	
+				this .set_live__ ();
+	
+				// Now initialize bases.
+	
+				X3DExecutionContext .prototype .initialize .call (this);
+				X3DNode             .prototype .initialize .call (this);
 			}
-			
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .set_live__ ();
-
-			// Now initialize bases.
-
-			X3DExecutionContext .prototype .initialize .call (this);
-			X3DNode             .prototype .initialize .call (this);
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 		getExtendedEventHandling: function ()
 		{
@@ -213,6 +188,53 @@ function ($,
 				this .beginUpdate ();
 			else
 				this .endUpdate ();
+		},
+		importExternProtos: function (executionContext)
+		{
+			for (var i = 0, length = executionContext .externprotos .length; i < length; ++ i)
+				this .externprotos .push (executionContext .externprotos [i]);
+		},
+		importProtos: function (executionContext)
+		{
+			for (var i = 0, length = executionContext .protos .length; i < length; ++ i)
+				this .protos .push (executionContext .protos [i]);
+		},
+		copyRootNodes: function (executionContext)
+		{
+			var
+				rootNodes1 = executionContext .getRootNodes () .getValue (),
+				rootNodes2 = this  .getRootNodes () .getValue ();
+
+			for (var i = 0, length = rootNodes1 .length; i < length; ++ i)
+			{
+				var value = rootNodes1 [i] .copy (this);
+				value .addParent (this .getRootNodes ());
+				rootNodes2 .push (value);
+			}
+		},
+		copyRoutes: function (executionContext)
+		{
+			// Copy routes.
+
+			var routes = executionContext .routes;
+
+			for (var i = 0, length = routes .length; i < length; ++ i)
+			{
+				try
+				{
+					var route = routes [i];
+
+					// new Route ... addUninitializedNode ...
+					this .addRoute (this .getNamedNode (route .sourceNode .getNodeName ()),
+					                route .sourceField,
+					                this .getNamedNode (route .destinationNode .getNodeName ()),
+					                route .destinationField);
+				}
+				catch (error)
+				{
+					console .log (error .message);
+				}
+			}
 		},
 	});
 

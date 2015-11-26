@@ -23,6 +23,8 @@ function ($,
 		X3DTexture2DNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .PixelTexture);
+
+		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
 	PixelTexture .prototype = $.extend (Object .create (X3DTexture2DNode .prototype),
@@ -50,8 +52,6 @@ function ($,
 		initialize: function ()
 		{
 			X3DTexture2DNode .prototype .initialize .call (this);
-
-			this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 
 			this .image_ .addInterest (this, "set_image__");
 

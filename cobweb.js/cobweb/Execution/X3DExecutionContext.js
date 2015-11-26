@@ -32,7 +32,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, browser, executionContext);
 
-		this .addChildren ("rootNodes", new Fields .MFNode ());
+		this .addChildren ("rootNodes",             new Fields .MFNode ());
+		this .addChildren ("externProtosLoadCount", new Fields .SFInt32 ());
 
 		this .url                = new URI (window .location);
 		this .uninitializedNodes = [ ];
@@ -281,6 +282,36 @@ function ($,
 					this .getExecutionContext () .changeViewpoint (name);
 				else
 					throw error;
+			}
+		},
+		addExternProtoLoadCount: function (node)
+		{
+			this .externProtosLoadCount_ = this .externProtosLoadCount_ .getValue () + 1;
+		},
+		removeExternProtoLoadCount: function (node)
+		{
+			this .externProtosLoadCount_ = this .externProtosLoadCount_ .getValue () - 1;
+		},
+		requestAsyncLoadOfExternProtos: function ()
+		{
+			this .externProtosLoadCount_ .setTainted (false);
+			this .externProtosLoadCount_ .addEvent ();
+
+			for (var i = 0, length = this .externprotos .length; i < length; ++ i)
+			{
+				var externproto = this .externprotos [i];
+
+				if (externproto .getInstances () .length === 0)
+				   continue;
+		
+				externproto .requestAsyncLoad ();
+			}
+		
+			for (var i = 0, length = this .protos .length; i < length; ++ i)
+			{
+				var proto = this .protos [i];
+
+			   proto .requestAsyncLoadOfExternProtos ();
 			}
 		},
 	});

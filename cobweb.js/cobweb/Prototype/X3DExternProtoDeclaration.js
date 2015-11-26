@@ -44,7 +44,6 @@ function ($,
 		{
 			return "EXTERNPROTO";
 		},
-		/*
 		getComponentName: function ()
 		{
 			return "Cobweb";
@@ -53,71 +52,95 @@ function ($,
 		{
 			return "externprotos";
 		},
-		*/
 		initialize: function ()
 		{
 			X3DProtoDeclarationNode .prototype .initialize .call (this);
 			X3DUrlObject            .prototype .initialize .call (this);
+				
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+		},
+		set_live__: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var value = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+				
+				if (value)
+					this .scene .beginUpdate ();
+				else
+					this .scene .endUpdate ();
+			}
 		},
 		isExternProto: function ()
 		{
 			return true;
 		},
-		requestAsyncLoad: function (callback)
+		setProtoDeclaration: function (value)
 		{
-			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .FAILED_STATE)
-			{
-				callback (this .getProto ());
+			this .proto = value;
+		},
+		getProtoDeclaration: function ()
+		{
+			return this .proto;
+		},
+		requestAsyncLoad: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
 				return;
-			}
 
-			this .callbacks .push (callback);
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			if (! this .inlineNode)
+			this .getScene () .addExternProtoLoadCount (this);
+
+			var Loader = require ("cobweb/InputOutput/Loader");
+
+			new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+		},
+		setSceneAsync: function (value)
+		{
+			this .getScene () .removeExternProtoLoadCount (this);
+		
+			if (value)
 			{
-				var Inline = require ("cobweb/Components/Networking/Inline");
-
-				this .inlineNode       = new Inline (this .getExecutionContext ());
-				this .inlineNode .url_ = this .url_;
-				this .inlineNode .loadState_ .addInterest (this, "set_loadState__");
-				this .inlineNode .setup ();
-				
-				this .getExecutionContext () .getScene () .addLoadCount (this);
+				this .setScene (value);
+			}
+			else
+			{
+				this .setLoadState (X3DConstants .FAILED_STATE);
+		
+				this .scene = this .getBrowser () .getPrivateScene ();
+		
+				this .setProtoDeclaration (null);
 			}
 		},
-		set_loadState__: function (field)
+		setScene: function (value)
 		{
-			var loadState = field .getValue ();
-
-			switch (loadState)
+			this .scene = value;
+		
+			try
 			{
-				case X3DConstants .NOT_STARTED_STATE:
-				case X3DConstants .IN_PROGRESS_STATE:
-					this .setLoadState (loadState);
-					break;
-				case X3DConstants .COMPLETE_STATE:
-				case X3DConstants .FAILED_STATE:
-				{
-					this .setLoadState (loadState);
-					this .getExecutionContext () .getScene () .removeLoadCount (this);
-
-					var proto = this .getProto ();
-
-					for (var i = 0; i < this .callbacks .length; ++ i)
-						this .callbacks [i] (proto);
-
-					this .callbacks .length = 0;
-					break;
-				}
+				this .setLoadState (X3DConstants .COMPLETE_STATE);
+		
+				this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+				//this .scene .setExecutionContext (this .getExecutionContext ());
+		
+				this .scene .setup ();
+		
+				var protoName = this .scene .getWorldURL () .fragment || this .getName ();
+		
+				this .setProtoDeclaration (this .scene .protos [protoName]);
 			}
-		},
-		getProto: function ()
-		{
-			var
-				name  = this .inlineNode .getScene () .getWorldURL () .fragment || this .getName (),
-				proto = this .inlineNode .getScene () .protos [name];
+			catch (error)
+			{
+			   console .log (error);
 
-			return proto || null;
+				this .setLoadState (X3DConstants .FAILED_STATE);
+		
+				this .scene = this .getBrowser () .getPrivateScene ();
+
+				this .setProtoDeclaration (null);
+			}
 		},
 	});
 

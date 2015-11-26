@@ -19,6 +19,8 @@ function ($,
 		X3DNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclarationNode);
+
+		this .instances = { };
 	}
 
 	X3DProtoDeclarationNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -30,7 +32,7 @@ function ($,
 		},
 		createInstance: function (executionContext, setup)
 		{
-			var instance = new X3DPrototypeInstance (executionContext ? executionContext : Contextthis .getExecutionContext (), this);
+			var instance = new X3DPrototypeInstance (executionContext ? executionContext : this .getExecutionContext (), this);
 			
 			if (setup === false)
 				return instance;
@@ -38,6 +40,18 @@ function ($,
 			instance .setup ();
 
 			return new Fields .SFNode (instance);
+		},
+		addInstance: function (instance)
+		{
+			this .instances [instance .getId ()] = instance;
+		},
+		removeInstance: function (instance)
+		{
+			delete this .instances [instance .getId ()];
+		},
+		getInstances: function ()
+		{
+			return this .instances;
 		},
 	});
 

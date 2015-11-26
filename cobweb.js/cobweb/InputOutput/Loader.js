@@ -106,13 +106,15 @@ function ($,
 		},
 		setScene: function (scene, success)
 		{
-			scene .loadCount_ .addInterest (this, "set_loadCount", scene, success);
-			scene .loadCount_ .addEvent ();
+			scene .externProtosLoadCount_ .addInterest (this, "set_externProtosLoadCount", scene, success);
+			scene .requestAsyncLoadOfExternProtos ();
 		},
-		set_loadCount: function (field, scene, success)
+		set_externProtosLoadCount: function (field, scene, success)
 		{
-			if (field .getValue () === 0)
-				success (scene);
+			if (field .getValue ())
+				return;
+
+			success (scene);
 
 			if (this .URL .length)
 				console .log ("Done loading scene " + this .URL);

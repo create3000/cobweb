@@ -237,11 +237,7 @@ function ($,
 		createX3DFromURL: function (url, event, node)
 		{
 			if (arguments .length === 3)
-			{
-				//createX3DFromURL(MFString, String, Object)
-				//??? what is String and what is Object ???
-				return null;
-			}
+				return this .createVrmlFromURL (url, event, node);
 
 			var
 				currentScene = this .currentScene,

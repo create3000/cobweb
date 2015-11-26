@@ -65,5 +65,12 @@ function ($)
 		},
 	});
 
+	Object .defineProperty (ExternProtoDeclarationArray .prototype, "length",
+	{
+		get: function () { return this .array .length; },
+		enumerable: false,
+		configurable: false
+	});
+
 	return ExternProtoDeclarationArray;
 });
