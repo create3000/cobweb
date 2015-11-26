@@ -102,5 +102,3 @@ function ($,
 
 	return Rectangle2D;
 });
-
-

@@ -279,7 +279,7 @@ function ($,
 
 				vertex .index = i;
 
-				Polygon .push (vertex);
+				Polygon [i] = vertex;
 			}
 
 			Polygon .length = length;
