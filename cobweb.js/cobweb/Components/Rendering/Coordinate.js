@@ -50,6 +50,10 @@ function ($,
 		{
 			return this .point_ .length == 0;
 		},
+		getSize: function ()
+		{
+			return this .point_ .length;
+		},
 		getPoint: function (index)
 		{
 			// The index cannot be less than 0.

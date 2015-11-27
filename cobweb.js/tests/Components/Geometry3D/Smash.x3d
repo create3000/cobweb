@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 25 Nov 2015 18:25:54 GMT'/>
+    <meta name='modified' content='Fri, 27 Nov 2015 11:22:57 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/Torus.x3d"'>
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='1.89076137542725, -9.49355792999268, 4.80138969421387'/>
+              value='24.2219944000244, -14.6109504699707, 29.1629028320312'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.162928029894829, -0.978392660617828, -0.127288475632668, 0.397884547710419'/>
+              value='0.775350332260132, 0.580043196678162, 0.249763399362564, 0.59692770242691'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='3.45847511291504, -9.27508544921875, 0.999966621398926'/>
+              value='12.3800764083862, -1.08239364624023, 1.56552720069885'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -94,9 +94,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='1.89076 -9.49356 4.80139'
-        orientation='0.162928 -0.978393 -0.127288 0.397885'
-        centerOfRotation='3.45848 -9.27509 0.999967'/>
+        position='24.222 -14.611 29.1629'
+        orientation='0.77535 0.580043 0.249763 0.596928'
+        centerOfRotation='12.3801 -1.08239 1.56553'/>
     <Transform DEF='Box'
         translation='-18 12 4.40964e-05'>
       <Shape>

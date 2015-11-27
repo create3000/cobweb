@@ -1026,6 +1026,7 @@
     <None Include="cobweb\Browser\Geometry2D\Circle2DOptions.js" />
     <None Include="cobweb\Browser\Geometry2D\Disk2DOptions.js" />
     <None Include="tests\Components\Geometry3D\Extrusion\gears42P.x3d" />
+    <None Include="tests\Components\Shape\CopperGold.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

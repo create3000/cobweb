@@ -375,7 +375,7 @@ function ($,
 				if (cw)
 					normal .negate ();
 
-				// Add this normal for each vertex and for -1.
+				// Add this normal for each vertex.
 
 				for (var i = 0, nl = length; i < nl; ++ i)
 					normals .push (normal);

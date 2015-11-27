@@ -52,6 +52,14 @@ function ($,
 		{
 			return "geometry";
 		},
+		getIndex: function (i)
+		{
+			return this .index_ [i];
+		},
+		build: function ()
+		{
+			X3DComposedGeometryNode .prototype .build .call (this, 4, this .index_ .length);
+		},
 	});
 
 	return IndexedQuadSet;

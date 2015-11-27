@@ -51,6 +51,15 @@ function ($,
 		{
 			return "geometry";
 		},
+		build: function ()
+		{
+			if (this .getCoord ())
+				X3DComposedGeometryNode .prototype .build .call (this, 4, this .getCoord () .getSize ());
+		},
+		createNormals: function (vertexCount, size)
+		{
+			return this .createFaceNormals (vertexCount, size);
+		},
 	});
 
 	return QuadSet;

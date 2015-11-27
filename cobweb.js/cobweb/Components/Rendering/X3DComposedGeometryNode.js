@@ -4,11 +4,13 @@ define ([
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DGeometryNode,
           X3DCast,
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 "use strict";
 
@@ -135,6 +137,141 @@ function ($,
 
 			if (this .coordNode)
 				this .coordNode .addInterest (this, "addNodeEvent");
+		},
+		getIndex: function (index)
+		{
+			return index;
+		},
+		build: function (vertexCount, size)
+		{
+			if (! this .coordNode || this .coordNode .isEmpty ())
+				return;
+		
+			// Set size to a multiple of vertexCount.
+		
+			size -= size % vertexCount;
+		
+			var
+				colorPerVertex  = this .colorPerVertex_ .getValue (),
+				normalPerVertex = this .normalPerVertex_ .getValue (),
+				colorNode       = this .getColor (),
+				texCoordNode    = this .getTexCoord (),
+				normalNode      = this .getNormal (),
+				coordNode       = this .getCoord (),
+				textCoords      = this .getTexCoords (),
+				triangle        = [ ];
+
+			if (texCoordNode)
+				texCoordNode .init (textCoords);
+		
+			// Fill GeometryNode
+		
+			for (var i = 0, face = 0; i < size; ++ face, i += vertexCount)
+			{
+				triangle [0] = i;
+
+				for (var t = 1, c = vertexCount - 1; t < c; ++ t)
+				{
+					triangle [1] = i + t;
+					triangle [2] = i + t + 1;
+
+					for (var v = 0; v < 3; ++ v)
+					{
+						var index = this .getIndex (triangle [v]);
+			
+						if (colorNode)
+						{
+							if (colorPerVertex)
+								this .addColor (colorNode .getColor (index));
+							else
+								this .addColor (colorNode .getColor (face));
+						}
+	
+						if (texCoordNode)
+							texCoordNode .addTexCoord (textCoords, index);
+			
+						if (normalNode)
+						{
+							if (normalPerVertex)
+								this .addNormal (normalNode .getVector (index));
+	
+							else
+								this .addNormal (normalNode .getVector (face));
+						}
+	
+						this .addVertex (coordNode .getPoint (index));
+					}
+				}
+			}
+		
+			// Autogenerate normal if not specified.
+
+			if (! this .getNormal ())
+				this .buildNormals (vertexCount, size);
+
+			this .setSolid (this .solid_ .getValue ());
+			this .setCCW (this .ccw_ .getValue ());
+			this .setCurrentTexCoord (this .getTexCoord ());
+		},
+		buildNormals: function (vertexCount, size)
+		{
+			var normals = this .createNormals (vertexCount, size);
+
+			for (var i = 0; i < size; i += vertexCount)
+			{
+				for (var t = 1, c = vertexCount - 1; t < c; ++ t)
+				{
+					this .addNormal (normals [i]);
+					this .addNormal (normals [i + t]);
+					this .addNormal (normals [i + t + 1]);
+				}
+			}
+		},
+		createNormals: function (vertexCount, size)
+		{
+			var normals = this .createFaceNormals (vertexCount, size);
+		
+			if (this .normalPerVertex_ .getValue ())
+			{
+				var normalIndex = [ ];
+		
+				for (var i = 0; i < size; ++ i)
+				{
+					var index = this .getIndex (i);
+
+					if (! normalIndex [index])
+						normalIndex [index] = [ ];
+
+					normalIndex [index] .push (i);
+				}
+
+				return this .refineNormals (normalIndex, normals, Math .PI);
+			}
+		
+			return normals;
+		},
+		createFaceNormals: function (vertexCount, size)
+		{
+			var normals = [ ];
+
+			for (var index = 0; index < size; index += vertexCount)
+			{
+				var normal = new Vector3 (0, 0, 0);
+
+				for (var i = 1, l = vertexCount - 1; i < l; ++ i)
+				{
+					normal .add (this .coordNode .getNormal (this .getIndex (index),
+					                                         this .getIndex (index + i),
+					                                         this .getIndex (index + i + 1)));
+				}
+
+				normal .normalize ();
+
+				for (var i = 0; i < vertexCount; ++ i)
+					normals .push (normal);
+			}
+
+			return normals;
 		},
 	});
 
