@@ -153,7 +153,8 @@ function ($,
 
 			// Set size to a multiple of verticesPerPolygon.
 
-			polygonsSize -= polygonsSize % verticesPerPolygon;
+			polygonsSize  -= polygonsSize % verticesPerPolygon;
+			trianglesSize -= trianglesSize % verticesPerFace;
 
 			var
 				colorPerVertex  = this .colorPerVertex_ .getValue (),

@@ -52,6 +52,14 @@ function ($,
 		{
 			return "geometry";
 		},
+		getPolygonIndex: function (i)
+		{
+			return this .index_ [i];
+		},
+		build: function ()
+		{
+			X3DComposedGeometryNode .prototype .build .call (this, 3, this .index_ .length, 3, this .index_ .length);
+		},
 	});
 
 	return IndexedTriangleSet;

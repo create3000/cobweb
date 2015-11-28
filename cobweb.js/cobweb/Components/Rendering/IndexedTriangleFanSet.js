@@ -22,7 +22,7 @@ function ($,
 
 		this .addType (X3DConstants .IndexedTriangleFanSet);
 
-		this .coordIndex = [ ];
+		this .triangleIndex = [ ];
 	}
 
 	IndexedTriangleFanSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
@@ -68,9 +68,9 @@ function ($,
 
 			var
 				index      = this .index_ .getValue (),
-				coordIndex = this .coordIndex;
+				triangleIndex = this .triangleIndex;
 		
-			coordIndex .length = 0;
+			triangleIndex .length = 0;
 		
 			for (var i = 0, length = index .length; i < length; ++ i)
 			{
@@ -82,7 +82,7 @@ function ($,
 
 					if (second < 0)
 						continue;
-		
+	
 					for (++ i; i < length; ++ i)
 					{
 						var third = index [i] .getValue ();
@@ -90,7 +90,7 @@ function ($,
 						if (third < 0)
 							break;
 
-						coordIndex .push (first, second, third);
+						triangleIndex .push (first, second, third);
 
 						second = third;
 					}
@@ -99,11 +99,11 @@ function ($,
 		},
 		getPolygonIndex: function (index)
 		{
-			return this .coordIndex [index];
+			return this .triangleIndex [index];
 		},
 		build: function ()
 		{
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .coordIndex .length, 3, this .coordIndex .length);
+			X3DComposedGeometryNode .prototype .build .call (this, 3, this .triangleIndex .length, 3, this .triangleIndex .length);
 		},
 	});
 
