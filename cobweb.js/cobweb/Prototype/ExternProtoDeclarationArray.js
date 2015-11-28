@@ -29,8 +29,9 @@ function ($)
 
 				for (var i = 0; i < target .array .length; ++ i)
 				{
-					var proto = target .array [i];
-					target .index [proto .getName ()] = proto;
+					var externproto = target .array [i];
+
+					target .index [externproto .getName ()] = externproto;
 				}
 
 				return true;
@@ -51,14 +52,15 @@ function ($)
 	$.extend (ExternProtoDeclarationArray .prototype,
 	{
 		constructor: ExternProtoDeclarationArray,
-		push: function (value)
+		push: function (externproto)
 		{
 			var X3DExternProtoDeclaration = require ("cobweb/Prototype/X3DExternProtoDeclaration");
 
-			if (value instanceof X3DExternProtoDeclaration)
+			if (externproto instanceof X3DExternProtoDeclaration)
 			{
-				this .index [value .getName ()] = value;
-				return this .array .push (value);
+				this .index [externproto .getName ()] = externproto;
+
+				return this .array .push (externproto);
 			}
 
 			return this .array .length;

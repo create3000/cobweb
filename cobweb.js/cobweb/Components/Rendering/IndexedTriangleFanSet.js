@@ -21,6 +21,8 @@ function ($,
 		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleFanSet);
+
+		this .coordIndex = [ ];
 	}
 
 	IndexedTriangleFanSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
@@ -51,6 +53,57 @@ function ($,
 		getContainerField: function ()
 		{
 			return "geometry";
+		},
+		initialize ()
+		{
+			X3DComposedGeometryNode .prototype .initialize .call (this);
+		
+			this .index_ .addInterest (this, "set_index__");
+		
+			this .set_index__ ();
+		},
+		set_index__: function ()
+		{
+			// Build coordIndex
+
+			var
+				index      = this .index_ .getValue (),
+				coordIndex = this .coordIndex;
+		
+			coordIndex .length = 0;
+		
+			for (var i = 0, length = index .length; i < length; ++ i)
+			{
+				var first = index [i] .getValue ();
+		
+				if (++ i < length)
+				{
+					var second = index [i] .getValue ();
+
+					if (second < 0)
+						continue;
+		
+					for (++ i; i < length; ++ i)
+					{
+						var third = index [i] .getValue ();
+
+						if (third < 0)
+							break;
+
+						coordIndex .push (first, second, third);
+
+						second = third;
+					}
+				}
+			}
+		},
+		getIndex: function (index)
+		{
+			return this .coordIndex [index];
+		},
+		build: function ()
+		{
+			X3DComposedGeometryNode .prototype .build .call (this, 3, this .coordIndex .length);
 		},
 	});
 
