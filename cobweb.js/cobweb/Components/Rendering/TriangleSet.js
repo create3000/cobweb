@@ -51,6 +51,17 @@ function ($,
 		{
 			return "geometry";
 		},
+		build: function ()
+		{
+			if (! this .getCoord ())
+				return;
+
+			X3DComposedGeometryNode .prototype .build .call (this, 3, this .getCoord () .getSize (), 3, this .getCoord () .getSize ());
+		},
+		createNormals: function (verticesPerPolygon, polygonsSize)
+		{
+			return this .createFaceNormals (verticesPerPolygon, polygonsSize);
+		},
 	});
 
 	return TriangleSet;
