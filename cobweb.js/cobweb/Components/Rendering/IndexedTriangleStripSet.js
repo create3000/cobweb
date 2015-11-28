@@ -21,6 +21,8 @@ function ($,
 		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleStripSet);
+
+		this .triangleIndex = [ ];
 	}
 
 	IndexedTriangleStripSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
@@ -51,6 +53,68 @@ function ($,
 		getContainerField: function ()
 		{
 			return "geometry";
+		},
+		initialize ()
+		{
+			X3DComposedGeometryNode .prototype .initialize .call (this);
+		
+			this .index_ .addInterest (this, "set_index__");
+		
+			this .set_index__ ();
+		},
+		set_index__: function ()
+		{
+			// Build coordIndex
+
+			var
+				index         = this .index_ .getValue (),
+				triangleIndex = this .triangleIndex;
+		
+			triangleIndex .length = 0;
+		
+			// Build coordIndex
+		
+			for (var i = 0, length = index .length; i < length; ++ i)
+			{
+				var first = index [i] .getValue ();
+
+				if (first < 0)
+					continue;
+		
+				if (++ i < length)
+				{
+					var second = index [i] .getValue ();
+
+					if (second < 0)
+						continue;
+		
+					++ i;
+		
+					for (var face = 0; i < length; ++ i, ++ face)
+					{
+						var third = index [i] .getValue ();
+
+						if (third < 0)
+							break;
+
+						triangleIndex .push (first, second, third);
+		
+						if (face & 1)
+							second = third;
+		
+						else
+							first = third;
+					}
+				}
+			}
+		},
+		getPolygonIndex: function (index)
+		{
+			return this .triangleIndex [index];
+		},
+		build: function ()
+		{
+			X3DComposedGeometryNode .prototype .build .call (this, 3, this .triangleIndex .length, 3, this .triangleIndex .length);
 		},
 	});
 

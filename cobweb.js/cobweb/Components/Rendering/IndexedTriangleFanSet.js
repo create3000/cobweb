@@ -67,7 +67,7 @@ function ($,
 			// Build coordIndex
 
 			var
-				index      = this .index_ .getValue (),
+				index         = this .index_ .getValue (),
 				triangleIndex = this .triangleIndex;
 		
 			triangleIndex .length = 0;
