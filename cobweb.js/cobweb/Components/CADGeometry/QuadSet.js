@@ -21,6 +21,8 @@ function ($,
 		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .QuadSet);
+
+		this .triangleIndex = [ ];
 	}
 
 	QuadSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
@@ -51,14 +53,38 @@ function ($,
 		{
 			return "geometry";
 		},
+		getTriangleIndex: function (i)
+		{
+			return this .triangleIndex [i];
+		},
 		build: function ()
 		{
-			if (this .getCoord ())
-				X3DComposedGeometryNode .prototype .build .call (this, 4, this .getCoord () .getSize ());
+			if (! this .getCoord ())
+				return;
+
+			var
+				length        = this .getCoord () .getSize (),
+				triangleIndex = this .triangleIndex;
+
+			length -= length % 4;
+			triangleIndex .length = 0;
+
+			for (var i = 0; i < length; i += 4)
+			{
+				var
+					i0 = i,
+					i1 = i + 1,
+					i2 = i + 2,
+					i3 = i + 3;
+
+				triangleIndex .push (i0, i1, i2,  i0, i2, i3);
+			}
+
+			X3DComposedGeometryNode .prototype .build .call (this, 4, length, 6, triangleIndex .length);
 		},
-		createNormals: function (vertexCount, size)
+		createNormals: function (verticesPerPolygon, polygonsSize)
 		{
-			return this .createFaceNormals (vertexCount, size);
+			return this .createFaceNormals (verticesPerPolygon, polygonsSize);
 		},
 	});
 

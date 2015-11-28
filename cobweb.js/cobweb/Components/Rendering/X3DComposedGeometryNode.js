@@ -138,19 +138,23 @@ function ($,
 			if (this .coordNode)
 				this .coordNode .addInterest (this, "addNodeEvent");
 		},
-		getIndex: function (index)
+		getPolygonIndex: function (index)
 		{
 			return index;
 		},
-		build: function (vertexCount, size)
+		getTriangleIndex: function (index)
+		{
+			return index;
+		},
+		build: function (verticesPerPolygon, polygonsSize, verticesPerFace, trianglesSize)
 		{
 			if (! this .coordNode || this .coordNode .isEmpty ())
 				return;
-		
-			// Set size to a multiple of vertexCount.
-		
-			size -= size % vertexCount;
-		
+
+			// Set size to a multiple of verticesPerPolygon.
+
+			polygonsSize -= polygonsSize % verticesPerPolygon;
+
 			var
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
@@ -159,85 +163,69 @@ function ($,
 				normalNode      = this .getNormal (),
 				coordNode       = this .getCoord (),
 				textCoords      = this .getTexCoords (),
-				triangle        = [ ];
+				face            = 0;
 
 			if (texCoordNode)
 				texCoordNode .init (textCoords);
 		
 			// Fill GeometryNode
 		
-			for (var i = 0, face = 0; i < size; ++ face, i += vertexCount)
+			for (var i = 0; i < trianglesSize; ++ i)
 			{
-				triangle [0] = i;
+				face = Math .floor (i / verticesPerFace);
 
-				for (var t = 1, c = vertexCount - 1; t < c; ++ t)
+				var index = this .getPolygonIndex (this .getTriangleIndex (i));
+
+				if (colorNode)
 				{
-					triangle [1] = i + t;
-					triangle [2] = i + t + 1;
-
-					for (var v = 0; v < 3; ++ v)
-					{
-						var index = this .getIndex (triangle [v]);
-			
-						if (colorNode)
-						{
-							if (colorPerVertex)
-								this .addColor (colorNode .getColor (index));
-							else
-								this .addColor (colorNode .getColor (face));
-						}
-	
-						if (texCoordNode)
-							texCoordNode .addTexCoord (textCoords, index);
-			
-						if (normalNode)
-						{
-							if (normalPerVertex)
-								this .addNormal (normalNode .getVector (index));
-	
-							else
-								this .addNormal (normalNode .getVector (face));
-						}
-	
-						this .addVertex (coordNode .getPoint (index));
-					}
+					if (colorPerVertex)
+						this .addColor (colorNode .getColor (index));
+					else
+						this .addColor (colorNode .getColor (face));
 				}
+
+				if (texCoordNode)
+					texCoordNode .addTexCoord (textCoords, index);
+	
+				if (normalNode)
+				{
+					if (normalPerVertex)
+						this .addNormal (normalNode .getVector (index));
+
+					else
+						this .addNormal (normalNode .getVector (face));
+				}
+
+				this .addVertex (coordNode .getPoint (index));
 			}
 		
 			// Autogenerate normal if not specified.
 
 			if (! this .getNormal ())
-				this .buildNormals (vertexCount, size);
+				this .buildNormals (verticesPerPolygon, polygonsSize, trianglesSize);
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
 			this .setCurrentTexCoord (this .getTexCoord ());
 		},
-		buildNormals: function (vertexCount, size)
+		buildNormals: function (verticesPerPolygon, polygonsSize, trianglesSize)
 		{
-			var normals = this .createNormals (vertexCount, size);
+			var normals = this .createNormals (verticesPerPolygon, polygonsSize);
 
-			for (var i = 0; i < size; i += vertexCount)
-			{
-				for (var t = 1, c = vertexCount - 1; t < c; ++ t)
-				{
-					this .addNormal (normals [i]);
-					this .addNormal (normals [i + t]);
-					this .addNormal (normals [i + t + 1]);
-				}
-			}
+			for (var i = 0; i < trianglesSize; ++ i)
+				this .addNormal (normals [this .getTriangleIndex (i)]);
 		},
-		createNormals: function (vertexCount, size)
+		createNormals: function (verticesPerPolygon, polygonsSize)
 		{
-			var normals = this .createFaceNormals (vertexCount, size);
+			var normals = this .createFaceNormals (verticesPerPolygon, polygonsSize);
 		
 			if (this .normalPerVertex_ .getValue ())
 			{
 				var normalIndex = [ ];
 		
-				for (var i = 0; i < size; ++ i)
+				for (var i = 0; i < polygonsSize; ++ i)
 				{
-					var index = this .getIndex (i);
+					var index = this .getPolygonIndex (i);
 
 					if (! normalIndex [index])
 						normalIndex [index] = [ ];
@@ -250,28 +238,47 @@ function ($,
 		
 			return normals;
 		},
-		createFaceNormals: function (vertexCount, size)
+		createFaceNormals: function (verticesPerPolygon, polygonsSize)
 		{
-			var normals = [ ];
+			var
+				cw      = ! this .ccw_ .getValue (),
+				coord   = this .coordNode,
+				normals = [ ];
 
-			for (var index = 0; index < size; index += vertexCount)
+			for (var i = 0; i < polygonsSize; i += verticesPerPolygon)
 			{
-				var normal = new Vector3 (0, 0, 0);
+				var normal = this .getPolygonNormal (verticesPerPolygon, coord);
 
-				for (var i = 1, l = vertexCount - 1; i < l; ++ i)
-				{
-					normal .add (this .coordNode .getNormal (this .getIndex (index),
-					                                         this .getIndex (index + i),
-					                                         this .getIndex (index + i + 1)));
-				}
+				if (cw)
+					normal .negate ();
 
-				normal .normalize ();
-
-				for (var i = 0; i < vertexCount; ++ i)
+				for (var n = 0; n < verticesPerPolygon; ++ n)
 					normals .push (normal);
 			}
 
 			return normals;
+		},
+		getPolygonNormal: function (verticesPerPolygon, coord)
+		{
+			// Determine polygon normal.
+			// We use Newell's method https://www.opengl.org/wiki/Calculating_a_Surface_Normal here:
+
+			var
+				normal = new Vector3 (0, 0, 0),
+				next   = coord .getPoint (this .getPolygonIndex (0));
+
+			for (var i = 0; i < verticesPerPolygon; ++ i)
+			{
+				var
+					current = next,
+					next    = coord .getPoint (this .getPolygonIndex ((i + 1) % verticesPerPolygon));
+
+				normal .x += (current .y - next .y) * (current .z + next .z);
+				normal .y += (current .z - next .z) * (current .x + next .x);
+				normal .z += (current .x - next .x) * (current .y + next .y);
+			}
+
+			return normal .normalize ();
 		},
 	});
 

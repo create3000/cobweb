@@ -21,6 +21,8 @@ function ($,
 		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .IndexedQuadSet);
+
+		this .triangleIndex = [ ];
 	}
 
 	IndexedQuadSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
@@ -52,13 +54,46 @@ function ($,
 		{
 			return "geometry";
 		},
-		getIndex: function (i)
+		initialize ()
+		{
+			X3DComposedGeometryNode .prototype .initialize .call (this);
+		
+			this .index_ .addInterest (this, "set_index__");
+		
+			this .set_index__ ();
+		},
+		set_index__: function ()
+		{
+			var
+				index         = this .index_ .getValue (),
+				length        = index .length,
+				triangleIndex = this .triangleIndex;
+
+			length -= length % 4;
+			triangleIndex .length = 0;
+
+			for (var i = 0; i < length; i += 4)
+			{
+				var
+					i0 = i,
+					i1 = i + 1,
+					i2 = i + 2,
+					i3 = i + 3;
+
+				triangleIndex .push (i0, i1, i2,  i0, i2, i3);
+			}
+		},
+		getTriangleIndex: function (i)
+		{
+			return this .triangleIndex [i];
+		},
+		getPolygonIndex: function (i)
 		{
 			return this .index_ [i];
 		},
 		build: function ()
 		{
-			X3DComposedGeometryNode .prototype .build .call (this, 4, this .index_ .length);
+			X3DComposedGeometryNode .prototype .build .call (this, 4, this .index_ .length, 6, this .triangleIndex .length);
 		},
 	});
 

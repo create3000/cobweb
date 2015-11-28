@@ -97,13 +97,13 @@ function ($,
 				}
 			}
 		},
-		getIndex: function (index)
+		getPolygonIndex: function (index)
 		{
 			return this .coordIndex [index];
 		},
 		build: function ()
 		{
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .coordIndex .length);
+			X3DComposedGeometryNode .prototype .build .call (this, 3, this .coordIndex .length, 3, this .coordIndex .length);
 		},
 	});
 
