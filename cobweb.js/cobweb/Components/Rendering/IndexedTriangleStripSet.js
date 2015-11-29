@@ -54,7 +54,7 @@ function ($,
 		{
 			return "geometry";
 		},
-		initialize ()
+		initialize: function ()
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
