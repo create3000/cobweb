@@ -3,6 +3,9 @@ define ([
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
+	"cobweb/Configuration/ComponentInfo",
+	"cobweb/Configuration/SupportedProfiles",
+	"cobweb/Configuration/SupportedComponents",
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
@@ -13,6 +16,9 @@ define ([
 function ($,
           Fields,
           X3DBrowserContext,
+          ComponentInfo,
+          SupportedProfiles,
+          SupportedComponents,
           SupportedNodes,
           Scene,
           Loader,
@@ -26,12 +32,12 @@ function ($,
 	{
 		X3DBrowserContext .call (this, xml);
 
-		this .currentSpeed        = 0;
-		this .currentFrameRate    = 0;
-		this .description_        = "";
-		this .supportedNodes      = SupportedNodes;
-		this .supportedComponents = undefined;
-		this .supportedProfiles   = undefined;
+		this .currentSpeed         = 0;
+		this .currentFrameRate     = 0;
+		this .description_         = "";
+		this .supportedNodes       = SupportedNodes;
+		this .supportedComponents  = SupportedComponents;
+		this .supportedProfiles    = SupportedProfiles;
 	};
 
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
@@ -99,6 +105,27 @@ function ($,
 		getWorldURL: function ()
 		{
 			return this .currentScene .worldURL;
+		},
+		getProfile: function (name)
+		{
+			var profile = this .supportedProfiles [name];
+
+			if (profile && profile .name === name)
+				return profile;
+
+			throw Error ("Profile '" + name + "' is not supported.");
+		},
+		getComponent: function (name, level)
+		{
+			var component = this .supportedComponents [name];
+
+			if (component && component .name === name)
+			{
+				if (level <= component .level)
+					return new ComponentInfo (name, level, component .title, this .browser .getProviderUrl ());
+			}
+
+			throw Error ("Component '" + name + "' at level '" + level + "' is not supported.");
 		},
 		createScene: function ()
 		{

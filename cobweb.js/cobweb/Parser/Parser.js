@@ -41,6 +41,7 @@ function ($,
 		Comment:     new RegExp ('^#(.*?)(?=[\\n\\r])',   'y'),
 
 		// Header
+		Header:	    new RegExp ("^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\\n\\r]"),
 
 		// Keywords
 		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
@@ -57,6 +58,7 @@ function ($,
 		PROTO:       new RegExp ('^PROTO',       'y'),
 		ROUTE:       new RegExp ('^ROUTE',       'y'),
 		TO:          new RegExp ('^TO',          'y'),
+		UNIT:        new RegExp ('^UNIT',        'y'),
 		USE:         new RegExp ('^USE',         'y'),
 
 		// Terminal symbols
@@ -68,6 +70,7 @@ function ($,
 		Colon:        new RegExp ('^\\:', 'y'),
 
 		Id: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]*)', 'y'),
+		ComponentNameId: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]*)', 'y'),
 
 		initializeOnly: new RegExp ('^initializeOnly', 'y'),
 		inputOnly:      new RegExp ('^inputOnly',      'y'),
@@ -340,6 +343,16 @@ function ($,
 		},
 		headerStatement: function ()
 		{
+			var result = Grammar .Header .exec (this .input);
+
+			if (result)
+			{
+				this .scene .specificationVersion = result [2];
+				this .scene .encoding             = "VRML";
+				return true;
+			}
+
+			return false;
 		},
 		profileStatement: function ()
 		{
@@ -349,9 +362,9 @@ function ($,
 			{
 				if (this .profileNameId ())
 				{
-					//var profile = this .getBrowser () .getProfile (this .result [1]);
+					var profile = this .getBrowser () .getProfile (this .result [1]);
 
-					//this .scene .setProfile (profile);
+					this .scene .setProfile (profile);
 					return;
 				}
 
@@ -364,7 +377,7 @@ function ($,
 
 			while (component)
 			{
-				this .scene .updateComponent (component);
+				this .scene .addComponent (component);
 
 				component = this .componentStatement ();
 			}
@@ -386,7 +399,7 @@ function ($,
 						if (this .componentSupportLevel ())
 						{
 							var componentSupportLevel = this .value;
-		
+
 							return this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
 						}
 		
@@ -412,7 +425,47 @@ function ($,
 		},
 		unitStatement: function ()
 		{
+			this .comments ();
+		
+			if (Grammar .UNIT .parse (this))
+			{
+				if (this .categoryNameId ())
+				{
+					var categoryNameId = this .result [1];
+		
+					if (this .unitNameId ())
+					{
+						var unitNameId = this .result [1];
+		
+						if (this .unitConversionFactor ())
+						{
+							var unitConversionFactor = this .value;
+
+						   try
+						   {
+								this .scene .updateUnit (categoryNameId, unitNameId, unitConversionFactor);
+								return true;
+							}
+							catch (error)
+							{
+							   console .log (error .message);
+							}
+						}
+		
+						throw new Error ("Expected unit conversion factor.");
+					}
+		
+					throw new Error ("Expected unit name identificator.");
+				}
+		
+				throw new Error ("Expected category name identificator after UNIT statement.");
+			}
+		
 			return false;
+		},
+		unitConversionFactor: function ()
+		{
+			return this .double ();
 		},
 		metaStatements: function ()
 		{
@@ -433,7 +486,7 @@ function ($,
 					{
 						var metavalue = this .value;
 
-						//this .scene .addMetaData (metakey, metavalue);
+						this .scene .setMetaData (metakey, metavalue);
 						return true;
 					}
 		
@@ -1302,7 +1355,14 @@ function ($,
 			return false;
 		},
 		profileNameId: function () { return this .Id (); },
-		componentNameId: function () { return this .Id (); },
+		componentNameId: function ()
+		{
+			this .comments ();
+
+			return Grammar .ComponentNameId .parse (this);
+		},
+		categoryNameId: function () { return this .Id (); },
+		unitNameId: function () { return this .Id (); },
 		nodeNameId: function () { return this .Id (); },
 		nodeTypeId: function () { return this .Id (); },
 		initializeOnlyId: function () { return this .Id (); },

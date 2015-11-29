@@ -1027,6 +1027,15 @@
     <None Include="cobweb\Browser\Geometry2D\Disk2DOptions.js" />
     <None Include="tests\Components\Geometry3D\Extrusion\gears42P.x3d" />
     <None Include="tests\Components\Shape\CopperGold.x3d" />
+    <None Include="cobweb\Configuration\ComponentInfo.js" />
+    <None Include="cobweb\Configuration\ProfileInfo.js" />
+    <None Include="cobweb\Configuration\ProfileInfoArray.js" />
+    <None Include="cobweb\Configuration\ComponentInfoArray.js" />
+    <None Include="cobweb\Configuration\SupportedComponents.js" />
+    <None Include="cobweb\Browser\Networking\ProviderUrl.js" />
+    <None Include="cobweb\Configuration\SupportedProfiles.js" />
+    <None Include="cobweb\Configuration\UnitInfo.js" />
+    <None Include="cobweb\Configuration\UnitInfoArray.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

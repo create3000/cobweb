@@ -32,6 +32,7 @@ function ($, X3DBaseNode)
 
 	BindableList .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
+		constructor: BindableList,
 		initialize: function ()
 		{
 			X3DBaseNode .prototype .initialize .call (this);

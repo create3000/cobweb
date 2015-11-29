@@ -1,11 +1,13 @@
 
 define ([
 	"cobweb/Fields",
+	"cobweb/Browser/Networking/ProviderUrl",
 	"standard/Networking/URI",
 	"lib/sprintf.js/src/sprintf",
 	"lib/gettext",
 ],
 function (Fields,
+          ProviderUrl,
           URI,
           sprintf,
           _)
@@ -33,6 +35,10 @@ function (Fields,
 			this .privateScene = this .createScene ();
 			this .privateScene .setup ();
 			this .privateScene .beginUpdate ();
+		},
+		getProviderUrl: function ()
+		{
+			return ProviderUrl;
 		},
 		doCaching: function ()
 		{

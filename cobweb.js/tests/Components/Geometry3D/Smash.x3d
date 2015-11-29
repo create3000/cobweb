@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 27 Nov 2015 11:22:57 GMT'/>
+    <meta name='modified' content='Sun, 29 Nov 2015 08:54:03 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/Torus.x3d"'>
@@ -46,7 +46,7 @@
           <MetadataBoolean containerField='value'
               name='enabled'
               reference='http://titania.create3000.de'
-              value='true'/>
+              value='false'/>
           <MetadataFloat containerField='value'
               name='rotation'
               reference='http://titania.create3000.de'
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='24.2219944000244, -14.6109504699707, 29.1629028320312'/>
+              value='23.4631843566895, 12.4680690765381, 4.79007720947266'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.775350332260132, 0.580043196678162, 0.249763399362564, 0.59692770242691'/>
+              value='0.0414920449256897, 0.969236433506012, 0.242609098553658, 0.642332434654236'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='12.3800764083862, -1.08239364624023, 1.56552720069885'/>
+              value='19.3132495880127, 12.3113098144531, -0.996564507484436'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -741,6 +741,12 @@
         </Appearance>
         <ProtoInstance name='QuadSphere' containerField='geometry'/>
       </Shape>
+    </Transform>
+    <Transform
+        translation='20 11 1.00004'
+        scale='0.500003 0.500003 0.500003'>
+      <Inline
+          url='"https://crossorigin.me/http://www.web3d.org/x3d/content/examples/Basic/CAD/IndexedQuadSetExample.x3dv"'/>
     </Transform>
   </Scene>
 </X3D>

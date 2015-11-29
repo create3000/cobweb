@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Configuration/ComponentInfoArray",
 	"cobweb/Prototype/ExternProtoDeclarationArray",
 	"cobweb/Prototype/ProtoDeclarationArray",
 	"cobweb/Routing/RouteArray",
@@ -18,6 +19,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DBaseNode,
+          ComponentInfoArray,
           ExternProtoDeclarationArray,
           ProtoDeclarationArray,
           RouteArray,
@@ -32,16 +34,20 @@ function ($,
 	{
 		X3DBaseNode .call (this, browser, executionContext);
 
-		this .addChildren ("rootNodes",             new Fields .MFNode ());
-		this .addChildren ("externProtosLoadCount", new Fields .SFInt32 ());
+		this .addChildren ("rootNodes",             new Fields .MFNode (),
+                         "externProtosLoadCount", new Fields .SFInt32 ());
 
-		this .url                = new URI (window .location);
-		this .uninitializedNodes = [ ];
-		this .namedNodes         = { };
-		this .protos             = new ProtoDeclarationArray ();
-		this .externprotos       = new ExternProtoDeclarationArray ();
-		this .routes             = new RouteArray ();
-		this .routeIndex         = { };
+		this .specificationVersion = "3.3";
+		this .encoding             = "SCRIPTED";
+		this .profile              = null;
+		this .components           = new ComponentInfoArray ();
+		this .url                  = new URI (window .location);
+		this .uninitializedNodes   = [ ];
+		this .namedNodes           = { };
+		this .protos               = new ProtoDeclarationArray ();
+		this .externprotos         = new ExternProtoDeclarationArray ();
+		this .routes               = new RouteArray ();
+		this .routeIndex           = { };
 
 		this .endUpdate ();
 	}
@@ -69,6 +75,15 @@ function ($,
 		getWorldURL: function ()
 		{
 			return this .url;
+		},
+		setProfile: function (profile)
+		{
+			this .profile = profile;
+		},
+		addComponent: function (component)
+		{
+			this .components .array [component .name] = component;
+			this .components .array .push (component);
 		},
 		createNode: function (typeName, setup)
 		{

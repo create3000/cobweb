@@ -17,6 +17,7 @@ function ($, X3DBaseNode)
 
 	BindableStack .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
+		constructor: BindableStack,
 		get: function ()
 		{
 			return this .array;

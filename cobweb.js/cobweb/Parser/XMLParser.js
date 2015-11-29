@@ -30,6 +30,7 @@ function ($,
 
 	function XMLParser (scene, xml)
 	{
+		this .scene             = scene;
 		this .xml               = xml;
 		this .executionContexts = [ scene ];
 		this .protoDeclarations = [ ];
@@ -77,23 +78,23 @@ function ($,
 			{
 				case "#document":
 				{
-					var x3d = $(this .xml) .children ("X3D");
+					var X3D = $(this .xml) .children ("X3D");
 
-					if (x3d .length)
+					if (X3D .length)
 					{
-						for (var i = 0; i < x3d .length; ++ i)
-							this .x3d (x3d [i]);
+						for (var i = 0; i < X3D .length; ++ i)
+							this .X3D (X3D [i]);
 					}
 					else
-						this .scene (this .xml);
+						this .Scene (this .xml);
 
 					break;
 				}
 				case "X3D":
-					this .x3d (this .xml);
+					this .X3D (this .xml);
 					break;
 				case "Scene":
-					this .scene (this .xml);
+					this .Scene (this .xml);
 					break;
 				default:
 					this .statement (this .xml);
@@ -102,9 +103,20 @@ function ($,
 
 			//console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
 		},
-		x3d: function (x3d)
+		X3D: function (element)
 		{
-			var childNodes = x3d .childNodes;
+			this .profile (element);
+
+			var specificationVersion = element .getAttribute ("version");
+
+			if (specificationVersion)
+				this .scene .specificationVersion = specificationVersion;
+
+			this .scene .encoding = "XML";
+
+			// Process child nodes
+
+			var childNodes = element .childNodes;
 	
 			for (var i = 0; i < childNodes .length; ++ i)
 			{
@@ -112,13 +124,97 @@ function ($,
 			
 				switch (element .nodeName)
 				{
+					case "head":
+						this .head (element);
+						continue;
 					case "Scene":
-						this .scene (element);
+						this .Scene (element);
 						continue;
 				}
 			}
 		},
-		scene: function (element)
+		profile: function (element)
+		{
+			try
+			{
+				var
+					profileNameId = element .getAttribute ("profile"),
+					profile       = this .getBrowser () .getProfile (profileNameId);
+
+				this .scene .setProfile (profile);
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
+		},
+		head: function (element)
+		{
+			var childNodes = element .childNodes;
+	
+			for (var i = 0; i < childNodes .length; ++ i)
+			{
+				var element = childNodes [i];
+			
+				switch (element .nodeName)
+				{
+					case "component":
+						this .component (element);
+						continue;
+					case "unit":
+						this .unit (element);
+						continue;
+					case "meta":
+						this .meta (element);
+						continue;
+				}
+			}
+		},
+		component: function (element)
+		{
+			try
+			{
+				var componentNameIdCharacters = element .getAttribute ("name");
+	
+				if (! componentNameIdCharacters)
+					return;
+				
+				var
+					componentSupportLevel = parseInt (element .getAttribute ("level")),
+					component             = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
+	
+				this .scene .addComponent (component);
+			}
+			catch (error)
+			{
+				console .log (error .message);
+			}
+		},
+		unit: function (element)
+		{
+			var category = element .getAttribute ("category");
+
+			if (! category)
+				return;
+			
+			var
+				name             = element .getAttribute ("name"),
+				conversionFactor = parseFloat (element .getAttribute ("conversionFactor"));
+
+			this .scene .updateUnit (category, name, conversionFactor);
+		},
+		meta: function (element)
+		{
+			var metakey = element .getAttribute ("name");
+
+			if (! metakey)
+				return;
+			
+			var metavalue = element .getAttribute ("content");
+
+			this .scene .setMetaData (metakey, metavalue);
+		},
+		Scene: function (element)
 		{
 			this .statements (element .childNodes);
 		},
@@ -137,19 +233,19 @@ function ($,
 					return;
 				
 				case "ExternProtoDeclare":
-					this .externProtoDeclare (child);
+					this .ExternProtoDeclare (child);
 					return;
 
 				case "ProtoDeclare":
-					this .protoDeclare (child);
+					this .ProtoDeclare (child);
 					return;
 
 				case "ProtoInstance":
-					this .protoInstance (child);
+					this .ProtoInstance (child);
 					return;
 
 				case "ROUTE":
-					this .route (child);
+					this .ROUTE (child);
 					return;
 
 				default:
@@ -182,7 +278,7 @@ function ($,
 				console .warn ("XML Parser Error: Unknown node type '" + element .nodeName + "'.");
 			}
 		},
-		protoInstance: function (element)
+		ProtoInstance: function (element)
 		{
 			try
 			{
@@ -240,19 +336,19 @@ function ($,
 					return;
 						
 				case "ExternProtoDeclare":
-					this .externProtoDeclare (child);
+					this .ExternProtoDeclare (child);
 					return;
 
 				case "ProtoDeclare":
-					this .protoDeclare (child);
+					this .ProtoDeclare (child);
 					return;
 
 				case "ProtoInstance":
-					this .protoInstance (child);
+					this .ProtoInstance (child);
 					return;
 
 				case "ROUTE":
-					this .route (child);
+					this .ROUTE (child);
 					return;
 
 				default:
@@ -481,7 +577,6 @@ function ($,
 
 					switch (child .nodeName)
 					{
-						case "CONNECT":
 						case "connect":
 							this .connect (child);
 							continue;
@@ -521,7 +616,7 @@ function ($,
 				console .warn ("Couldn't create IS reference: " + error .message);
 			}
 		},
-		externProtoDeclare: function (element)
+		ExternProtoDeclare: function (element)
 		{
 			var name = element .getAttribute ("name");
 
@@ -540,7 +635,7 @@ function ($,
 				var externproto = new X3DExternProtoDeclaration (this .getExecutionContext ());
 							
 				this .pushParent (externproto);
-				this .protoInterface (element); // parse fields
+				this .ProtoInterface (element); // parse fields
 				this .popParent ();
 
 				externproto .setName (name);
@@ -550,7 +645,7 @@ function ($,
 				this .getExecutionContext () .externprotos .push (externproto);	
 			}
 		},
-		protoDeclare: function (element)
+		ProtoDeclare: function (element)
 		{
 			var name = element .getAttribute ("name");
 
@@ -568,12 +663,12 @@ function ($,
 					{
 						case "ProtoInterface":
 							this .pushParent (proto);
-							this .protoInterface (child);
+							this .ProtoInterface (child);
 							this .popParent ();
 							continue;
 						case "ProtoBody":
 							this .pushExecutionContext (proto);
-							this .protoBody (child);
+							this .ProtoBody (child);
 							this .popExecutionContext ();
 							continue;
 					}
@@ -585,7 +680,7 @@ function ($,
 				this .getExecutionContext () .protos .push (proto);
 			}
 		},
-		protoInterface: function (element)
+		ProtoInterface: function (element)
 		{
 			var childNodes = element .childNodes;
 
@@ -602,11 +697,11 @@ function ($,
 				}
 			}
 		},
-		protoBody: function (element)
+		ProtoBody: function (element)
 		{
 			this .statements (element .childNodes);
 		},
-		route: function (element)
+		ROUTE: function (element)
 		{
 			var
 				fromNode  = element .getAttribute ("fromNode"),
