@@ -108,18 +108,18 @@ function ($,
 		},
 		getProfile: function (name)
 		{
-			var profile = this .supportedProfiles [name];
+			var profile = this .supportedProfiles .get (name);
 
-			if (profile && profile .name === name)
+			if (profile)
 				return profile;
 
 			throw Error ("Profile '" + name + "' is not supported.");
 		},
 		getComponent: function (name, level)
 		{
-			var component = this .supportedComponents [name];
+			var component = this .supportedComponents .get (name);
 
-			if (component && component .name === name)
+			if (component)
 			{
 				if (level <= component .level)
 					return new ComponentInfo (name, level, component .title, this .browser .getProviderUrl ());

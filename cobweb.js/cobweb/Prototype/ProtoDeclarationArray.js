@@ -1,77 +1,20 @@
 
 define ([
 	"jquery",
+	"cobweb/Configuration/X3DInfoArray",
 ],
-function ($)
+function ($, X3DInfoArray)
 {
 "use strict";
 
-	var handler =
+	function ProtoDeclarationArray (array)
 	{
-		get: function (target, key)
-		{
-			if (key in target)
-				return target [key];
-
-			if (parseInt (key) == key)
-				return target .array [key];
-
-			return target .index [key];
-		},
-		set: function (target, key, value)
-		{
-			var X3DProtoDeclaration = require ("cobweb/Prototype/X3DProtoDeclaration");
-		
-			if (value instanceof X3DProtoDeclaration)
-			{
-				target .array [key] = value;
-				target .index       = { };
-
-				for (var i = 0; i < target .array .length; ++ i)
-				{
-					var proto = target .array [i];
-
-					target .index [proto .getName ()] = proto;
-				}
-
-				return true;
-			}
-
-			return false;
-		},
-	};
-
-	function ProtoDeclarationArray ()
-	{
-		this .array = [ ];
-		this .index = { };
-
-		return new Proxy (this, handler);
+		return X3DInfoArray .call (this);
 	}
 
-	$.extend (ProtoDeclarationArray .prototype,
+	ProtoDeclarationArray .prototype = $.extend (Object .create (X3DInfoArray .prototype),
 	{
 		constructor: ProtoDeclarationArray,
-		push: function (proto)
-		{
-			var X3DProtoDeclaration = require ("cobweb/Prototype/X3DProtoDeclaration");
-
-			if (proto instanceof X3DProtoDeclaration)
-			{
-				this .index [proto .getName ()] = proto;
-
-				return this .array .push (proto);
-			}
-
-			return this .array .length;
-		},
-	});
-
-	Object .defineProperty (ProtoDeclarationArray .prototype, "length",
-	{
-		get: function () { return this .array .length; },
-		enumerable: false,
-		configurable: false
 	});
 
 	return ProtoDeclarationArray;

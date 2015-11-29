@@ -191,13 +191,17 @@ function ($,
 		},
 		importExternProtos: function (executionContext)
 		{
-			for (var i = 0, length = executionContext .externprotos .length; i < length; ++ i)
-				this .externprotos .push (executionContext .externprotos [i]);
+			var externprotos = executionContext .externprotos;
+
+			for (var i = 0, length = externprotos .length; i < length; ++ i)
+				this .externprotos .add (externprotos [i] .getName (), externprotos [i]);
 		},
 		importProtos: function (executionContext)
 		{
-			for (var i = 0, length = executionContext .protos .length; i < length; ++ i)
-				this .protos .push (executionContext .protos [i]);
+			var protos = executionContext .protos;
+
+			for (var i = 0, length = protos .length; i < length; ++ i)
+				this .protos .add (protos [i] .getName (), protos [i]);
 		},
 		copyRootNodes: function (executionContext)
 		{

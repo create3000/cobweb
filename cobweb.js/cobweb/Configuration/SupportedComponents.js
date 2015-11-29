@@ -11,10 +11,7 @@ function ($, ComponentInfo, ComponentInfoArray, ProviderUrl)
 
 	function add (title, name, level)
 	{
-		var component = new ComponentInfo (name, level, title, ProviderUrl);
-
-		supportedComponents .array [name] = component;
-		supportedComponents .array .push (component);
+		supportedComponents .add (name, new ComponentInfo (name, level, title, ProviderUrl));
 	}
 
 	var supportedComponents = new ComponentInfoArray ();

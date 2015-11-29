@@ -633,7 +633,7 @@ function ($,
 									proto .setName (nodeTypeId);
 									proto .setup ();
 
-									this .getExecutionContext () .protos .push (proto);
+									this .getExecutionContext () .prots .add (nodeTypeId, proto);
 									return true;
 								}
 	
@@ -870,7 +870,7 @@ function ($,
 								externproto .url_ = this .MFString;
 								externproto .setup ();
 
-								this .getExecutionContext () .externprotos .push (externproto);	
+								this .getExecutionContext () .externprotos .add (nodeTypeId, externproto);	
 								return true;
 							}
 		

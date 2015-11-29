@@ -82,8 +82,7 @@ function ($,
 		},
 		addComponent: function (component)
 		{
-			this .components .array [component .name] = component;
-			this .components .array .push (component);
+			this .components .add (component .name, component);
 		},
 		createNode: function (typeName, setup)
 		{

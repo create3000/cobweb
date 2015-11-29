@@ -1036,6 +1036,7 @@
     <None Include="cobweb\Configuration\SupportedProfiles.js" />
     <None Include="cobweb\Configuration\UnitInfo.js" />
     <None Include="cobweb\Configuration\UnitInfoArray.js" />
+    <None Include="cobweb\Configuration\X3DInfoArray.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -22,15 +22,12 @@ function ($,
 
 		this .getRootNodes () .setAccessType (X3DConstants .inputOutput);
 
-		this .unitIndex = {
-			//none:   new Unit ("none",   "none",     1),
-			angle:  new UnitInfo ("angle",  "radian",   1),
-			force:  new UnitInfo ("force",  "newton",   1),
-			length: new UnitInfo ("length", "metre",    1),
-			mass:   new UnitInfo ("mass",   "kilogram", 1),
-		};
+		this .units = new UnitInfoArray ();
 
-		this .units = new UnitInfoArray (this .unitIndex);
+		this .units .add ("angle",  new UnitInfo ("angle",  "radian",   1));
+		this .units .add ("force",  new UnitInfo ("force",  "newton",   1));
+		this .units .add ("length", new UnitInfo ("length", "metre",    1));
+		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
 
 		this .metaData = { };
 	}
@@ -44,7 +41,7 @@ function ($,
 		},
 		updateUnit: function (category, name, conversionFactor)
 		{
-			var unit = this .unitIndex [category];
+			var unit = this .units .get (category);
 
 			if (! unit)
 				return;

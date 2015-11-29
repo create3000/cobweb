@@ -1,47 +1,20 @@
 
 define ([
 	"jquery",
+	"cobweb/Configuration/X3DInfoArray",
 ],
-function ($)
+function ($, X3DInfoArray)
 {
 "use strict";
 
-	var handler =
+	function ProfileInfoArray ()
 	{
-		get: function (target, key)
-		{
-			if (key in target)
-				return target [key];
-
-			return target .array [key];
-		},
-		set: function (target, key, value)
-		{
-			return false;
-		},
-	};
-
-	function ProfileInfoArray (array)
-	{
-		this .array = array || [ ];
-
-		return new Proxy (this, handler);
+		return X3DInfoArray .call (this);
 	}
 
-	$.extend (ProfileInfoArray .prototype,
+	ProfileInfoArray .prototype = $.extend (Object .create (X3DInfoArray .prototype),
 	{
 		constructor: ProfileInfoArray,
-		getValue: function ()
-		{
-			return this .array;
-		},
-	});
-
-	Object .defineProperty (ProfileInfoArray .prototype, "length",
-	{
-		get: function () { return this .array .length; },
-		enumerable: false,
-		configurable: false
 	});
 
 	return ProfileInfoArray;

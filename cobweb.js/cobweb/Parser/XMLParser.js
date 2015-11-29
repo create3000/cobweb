@@ -642,7 +642,7 @@ function ($,
 				externproto .url_ = this .url;
 				externproto .setup ();
 
-				this .getExecutionContext () .externprotos .push (externproto);	
+				this .getExecutionContext () .externprotos .add (name, externproto);	
 			}
 		},
 		ProtoDeclare: function (element)
@@ -677,7 +677,7 @@ function ($,
 				proto .setName (name);
 				proto .setup ();
 
-				this .getExecutionContext () .protos .push (proto);
+				this .getExecutionContext () .protos .add (name, proto);
 			}
 		},
 		ProtoInterface: function (element)

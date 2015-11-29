@@ -18,10 +18,7 @@ function ($,
 
 	function add (title, name, components)
 	{
-		var profile = new ProfileInfo (name, title, ProviderUrl, new ComponentInfoArray (components));
-
-		supportedProfiles .array [name] = profile;
-		supportedProfiles .array .push (profile);
+		supportedProfiles .add (name, new ProfileInfo (name, title, ProviderUrl, new ComponentInfoArray (components)));
 	}
 
 	var supportedProfiles = new ProfileInfoArray ();
