@@ -99,10 +99,10 @@ function ($,
 			if (difference < (Math .PI * 2))
 			{
 				++ segments;
-				this .primitiveMode = gl .LINE_STRIP;
+				this .setPrimitiveMode (gl .LINE_STRIP);
 			}
 			else
-				this .primitiveMode = gl .LINE_LOOP;
+				this .setPrimitiveMode (gl .LINE_LOOP);
 
 			for (var n = 0; n < segments; ++ n)
 			{
@@ -131,13 +131,7 @@ function ($,
 				browser .setShader (shader = browser .getLineShader ());
 			}
 
-			var primitiveMode = shader .primitiveMode;
-
-			shader .primitiveMode = this .primitiveMode;
-
 			X3DGeometryNode .prototype .traverse .call (this, context);
-
-			shader .primitiveMode = primitiveMode;
 		},
 	});
 

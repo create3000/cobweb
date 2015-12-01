@@ -258,6 +258,7 @@ function ($,
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
+			gl .disable (gl .CULL_FACE);
 
 			for (var i = 0, length = this .numCollisionShapes; i < length; ++ i)
 			{

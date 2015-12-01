@@ -27,7 +27,7 @@ function ($,
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
-				}
+	}
 
 	IndexedLineSet .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 	{

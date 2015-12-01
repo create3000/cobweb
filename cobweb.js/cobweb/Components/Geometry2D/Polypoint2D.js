@@ -46,6 +46,12 @@ function ($,
 		{
 			return "geometry";
 		},
+		initialize: function ()
+		{
+			X3DGeometryNode .prototype .initialize .call (this);
+
+			this .setPrimitiveMode (this .getBrowser () .getContext () .POINTS);
+		},
 		isLineGeometry: function ()
 		{
 			return true;

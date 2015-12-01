@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 29 Nov 2015 08:54:03 GMT'/>
+    <meta name='modified' content='Tue, 01 Dec 2015 15:33:08 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"http://titania.create3000.de/Library/Prototypes/0.1/Geometry3D/Torus.x3d"'>
@@ -46,7 +46,7 @@
           <MetadataBoolean containerField='value'
               name='enabled'
               reference='http://titania.create3000.de'
-              value='false'/>
+              value='true'/>
           <MetadataFloat containerField='value'
               name='rotation'
               reference='http://titania.create3000.de'
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='23.4631843566895, 12.4680690765381, 4.79007720947266'/>
+              value='28.5675926208496, 7.52231216430664, 21.6956577301025'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.0414920449256897, 0.969236433506012, 0.242609098553658, 0.642332434654236'/>
+              value='-0.00847001560032368, 0.999438345432281, -0.0324238277971745, 0.525720775127411'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='19.3132495880127, 12.3113098144531, -0.996564507484436'/>
+              value='16.6098175048828, 7.52525043487549, 1.07187843322754'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -746,7 +746,12 @@
         translation='20 11 1.00004'
         scale='0.500003 0.500003 0.500003'>
       <Inline
-          url='"https://crossorigin.me/http://www.web3d.org/x3d/content/examples/Basic/CAD/IndexedQuadSetExample.x3dv"'/>
+          url='"https://crossorigin.me/http://www.web3d.org/x3d/content/examples/Basic/CAD/IndexedQuadSetExample.x3dv", "https://crossorigin.me/http://www.web3d.org/x3d/content/examples/Basic/CAD/IndexedQuadSetExample.x3d"'/>
+    </Transform>
+    <Transform
+        translation='29 8 2.93976e-05'>
+      <Inline
+          url='"https://crossorigin.me/http://x3dgraphics.com/examples/X3dForWebAuthors/Chapter06-GeometryPointsLinesPolygons/LineSetComparison.x3dv"'/>
     </Transform>
   </Scene>
 </X3D>

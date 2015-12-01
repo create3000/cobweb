@@ -46,6 +46,12 @@ function ($,
 		{
 			return "geometry";
 		},
+		initialize: function ()
+		{
+			X3DGeometryNode .prototype .initialize .call (this);
+
+			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_STRIP);
+		},
 		isLineGeometry: function ()
 		{
 			return true;
@@ -75,13 +81,7 @@ function ($,
 				browser .setShader (shader = browser .getLineShader ());
 			}
 
-			var primitiveMode = shader .primitiveMode;
-
-			shader .primitiveMode = browser .getContext () .LINE_STRIP;
-
 			X3DGeometryNode .prototype .traverse .call (this, context);
-
-			shader .primitiveMode = primitiveMode;
 		},
 	});
 

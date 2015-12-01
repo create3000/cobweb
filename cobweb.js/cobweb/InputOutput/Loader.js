@@ -73,17 +73,10 @@ function ($,
 				{
 					var exception1 = new Error ("Couldn't parse XML");
 
-					try
-					{
-						// If we cannot parse XML we try to parse X3D Classic Encoding.	
-	
-						new Parser (scene, string) .parseIntoScene ();
-						return scene;
-					}
-					catch (exception2)
-					{
-						throw exception2;
-					}
+					// If we cannot parse XML we try to parse X3D Classic Encoding.	
+
+					new Parser (scene, string) .parseIntoScene ();
+					return scene;
 				}
 			}
 		},

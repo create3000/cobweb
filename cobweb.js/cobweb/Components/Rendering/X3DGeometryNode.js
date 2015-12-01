@@ -130,6 +130,10 @@ function ($,
 		{
 			this .primitiveMode = value;
 		},
+		getPrimitiveMode: function ()
+		{
+			return this .primitiveMode;
+		},
 		setSolid: function (value)
 		{
 			this .solid = value;
@@ -494,16 +498,13 @@ function ($,
 
 			// Draw depending on wireframe, solid and transparent.
 
-			if (shader .wireframe || this .isLineGeometry ())
-			{
-				if (this .isLineGeometry ())
-					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+			if (this .isLineGeometry ())
+				gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
 
-				else
-				{
-					for (var i = 0; i < this .vertexCount; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
-				}
+			else if (shader .wireframe)
+			{
+				for (var i = 0; i < this .vertexCount; i += 3)
+					gl .drawArrays (shader .primitiveMode, i, 3);
 			}
 			else
 			{
@@ -549,16 +550,7 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
 
-			// Draw depending on wireframe, solid and transparent.
-
-			if (this .isLineGeometry ())
-				gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
-
-			else
-			{
-				gl .disable (gl .CULL_FACE);
-				gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
-			}
+			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 
 			gl .disableVertexAttribArray (shader .vertex);
 		},

@@ -241,9 +241,9 @@ function ($,
 	
 			if (line .length > 80)
 			{
-				line    = line .substr (linePos - 40, 80);
-				preLine = "";
-				linePos = 40;
+				line     = line .substr (linePos - 40, 80);
+				lastLine = "";
+				linePos  = 40;
 			}
 	
 			// Format error
@@ -633,7 +633,7 @@ function ($,
 									proto .setName (nodeTypeId);
 									proto .setup ();
 
-									this .getExecutionContext () .prots .add (nodeTypeId, proto);
+									this .getExecutionContext () .protos .add (nodeTypeId, proto);
 									return true;
 								}
 	
