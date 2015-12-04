@@ -554,18 +554,14 @@ function ($,
 
 			gl .disableVertexAttribArray (shader .vertex);
 		},
-		intersectsLine: function (line, intersections)
+		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{
 			try
 			{
 				var intersected = false;
 
-				this .transformLine (line); // Transform line with matrix from screen nodes.
-
 				if (this .intersectsBBox (line))
 				{
-					//var modelViewMatrix = Matrix4 .multRight (this .getMatrix (), this .getBrowser () .getModelViewMatrix () .get ()) // This matrix is for clipping only.
-
 					var
 						texCoords = this .texCoords [0],
 						normals   = this .normals,
@@ -595,11 +591,11 @@ function ($,
 							// Determine vectors for X3DPointingDeviceSensors.
 
 							var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
-						                            t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
-						                            t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+							                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+							                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
 
-							//if (this .isClipped (point, modelViewMatrix))
-							//	continue;
+							if (this .isClipped (point, invModelViewMatrix))
+								continue;
 
 							var texCoord = new Vector2 (t * texCoords [i4 + 0] + u * texCoords [i4 + 4] + v * texCoords [i4 + 8],
 							                            t * texCoords [i4 + 1] + u * texCoords [i4 + 5] + v * texCoords [i4 + 9]);
@@ -620,7 +616,7 @@ function ($,
 			}
 			catch (error)
 			{
-				//console .log (error);
+				console .log (error);
 				return false;
 			}
 		},
@@ -674,9 +670,22 @@ function ($,
 
 			return false;
 		},
-		transformLine: function (line)
+		transformMatrix: function (matrix)
 		{
-			//line .multLineMatrix (Matrix4 .inverse (this .getMatrix ()));
+			// Apply sceen nodes transformation in place here.
+			return matrix;
+		},
+		isClipped: function (point, invModelViewMatrix)
+		{
+			var clipPlanes = this .getCurrentLayer () .getClipPlanes ();
+
+			for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+			{
+				if (clipPlanes [i] .isClipped (point, invModelViewMatrix))
+					return true;
+			}
+
+			return false;
 		},
 		intersectsSphere: function (sphere)
 		{

@@ -49,6 +49,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",   new Fields .SFNode ()),
 		]),
+		modelViewMatrix: new Matrix4 (),
 		invModelViewMatrix: new Matrix4 (),
 		hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 		intersections: intersections,
@@ -92,18 +93,20 @@ function ($,
 		{
 			try
 			{
-				if (this .getGeometry () .isLineGeometry ())
+				var geometry = this .getGeometry ();
+
+				if (geometry .isLineGeometry ())
 					return;
 
 				var
 					browser            = this .getBrowser (),
-					modelViewMatrix    = browser .getModelViewMatrix () .get (),
+					modelViewMatrix    = geometry .transformMatrix (this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ())),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
 				this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
 
-				if (this .getGeometry () .intersectsLine (this .hitRay, intersections))
+				if (geometry .intersectsLine (this .hitRay, intersections, invModelViewMatrix))
 				{
 					// Finally we have intersections and must now find the closest hit in front of the camera.
 

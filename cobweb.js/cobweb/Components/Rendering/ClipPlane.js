@@ -24,8 +24,9 @@ function ($,
 
 	var
 		vector     = new Vector3 (0, 0, 0),
+		plane      = new Plane3 (vector, vector),
 		ClipPlanes = ObjectCache (ClipPlaneContainer);
-	
+
 	function ClipPlaneContainer (clipPlane)
 	{
 		this .plane = new Plane3 (vector, vector);
@@ -36,6 +37,19 @@ function ($,
 	ClipPlaneContainer .prototype =
 	{
 		constructor: ClipPlaneContainer,
+		isClipped: function (point, invModelViewMatrix)
+		{
+			try
+			{
+				var distance = plane .assign (this .plane) .multRight (invModelViewMatrix) .getDistance (point);
+
+				return distance < 0;
+			}
+			catch (error)
+			{
+				return false;
+			}
+		},
 		set: function (clipPlane)
 		{
 			var

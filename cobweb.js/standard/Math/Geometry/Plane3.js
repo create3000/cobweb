@@ -42,6 +42,7 @@ function (Vector3,
 			return this;
 		},
 		multRight: function (matrix)
+		//throw
 		{
 			// Taken from Inventor:
 		
@@ -63,8 +64,11 @@ function (Vector3,
 			// just a dot product.
 			this .normal .assign (normal);
 			this .distanceFromOrigin = normal .dot (point);
+
+			return this;
 		},
 		multLeft: function (matrix)
+		//throw
 		{
 			// Taken from Inventor:
 		
@@ -86,8 +90,10 @@ function (Vector3,
 			// just a dot product.
 			this .normal .assign (normal);
 			this .distanceFromOrigin = normal .dot (point);
+
+			return this;
 		},
-		distance: function (point)
+		getDistance: function (point)
 		{
 			return point .dot (this .normal) - this .distanceFromOrigin;
 		},

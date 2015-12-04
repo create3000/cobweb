@@ -85,6 +85,8 @@ clip ()
 void
 main ()
 {
+	clip ();
+
 	float f0 = getFogInterpolant ();
 
 	vec4 finalColor = gl_FrontFacing ? frontColor : backColor;
@@ -110,6 +112,4 @@ main ()
 
 	gl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);
 	gl_FragColor .a   = finalColor .a;
-
-	clip ();
 }
