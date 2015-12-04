@@ -32,6 +32,7 @@ function ($,
 
 	SpotLightContainer .prototype =
 	{
+		constructor: SpotLightContainer,
 	   set: function (light)
 	   {
 			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();

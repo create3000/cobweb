@@ -6,15 +6,61 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DChildNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          Plane3,
+          ObjectCache)
 {
 "use strict";
+
+	var
+		vector     = new Vector3 (0, 0, 0),
+		ClipPlanes = ObjectCache (ClipPlaneContainer);
+	
+	function ClipPlaneContainer (clipPlane)
+	{
+		this .plane = new Plane3 (vector, vector);
+
+		this .set (clipPlane);
+	}
+
+	ClipPlaneContainer .prototype =
+	{
+		constructor: ClipPlaneContainer,
+		set: function (clipPlane)
+		{
+			var
+				plane  = this .plane,
+				plane_ = clipPlane .plane_ .getValue ();
+
+			plane .normal .assign (plane_);
+			plane .distanceFromOrigin = -plane_ .w;
+
+			plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
+		},
+		use: function (gl, shader, i)
+		{
+			var
+				plane  = this .plane,
+				normal = plane .normal;
+
+			gl .uniform1i (shader .clipPlaneEnabled [i], true);
+			gl .uniform4f (shader .clipPlaneVector [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+		},
+		recycle: function ()
+		{
+		   ClipPlanes .push (this);
+		},
+	};
 
 	function ClipPlane (executionContext)
 	{
@@ -45,11 +91,13 @@ function ($,
 		},
 		push: function ()
 		{
-			// Used in X3DGroupingNode.
+			if (this .enabled_ .getValue ())
+				this .getCurrentLayer () .getClipPlanes () .push (ClipPlanes .pop (this));
 		},
 		pop: function ()
 		{
-			// Used in X3DGroupingNode.
+			if (this .enabled_ .getValue ())
+				this .getBrowser () .getClipPlanes () .push (this .getCurrentLayer () .getClipPlanes () .pop ());
 		},
 	});
 

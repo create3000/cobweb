@@ -161,12 +161,13 @@ X3D (function (dom)
 			{ name: 'Billboard',            url: [ "tests/Components/Navigation/Billboard.x3d" ] },
 			{ name: 'VisibilitySensor',     url: [ "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d" ] },
 			{ name: 'SFNode',               url: [ "tests/Components/Scripting/SFNode.x3d" ] },
+			{ name: 'ClipPlane',            url: [ "tests/Components/Rendering/ClipPlane.x3d" ] },
 		],
 	];
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 2);
+		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 4);
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();
@@ -184,6 +185,7 @@ function (elements, error)
 	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D cache="false" url='
+			"tests/Components/Rendering/ClipPlane.x3d"
 			"tests/Components/Geometry3D/Smash.x3d",
 			"tests/Components/Shape/CopperGold.x3d"
 			"../../Library/Examples/Mikroben/index.wrl"

@@ -59,15 +59,15 @@ function ($, Vector4, X3DField, X3DConstants)
 		},
 		dot: function (vector)
 		{
-			return new (this .constructor) (this .getValue () .dot (vector .getValue ()));
+			return this .getValue () .dot (vector .getValue ());
 		},
 		normalize: function (vector)
 		{
 			return new (this .constructor) (Vector4 .normalize (this .getValue ()));
 		},
-		length: function (vector)
+		length: function ()
 		{
-			return new (this .constructor) (this .getValue () .abs ());
+			return this .getValue () .abs ();
 		},
 		toString: function ()
 		{

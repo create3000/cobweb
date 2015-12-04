@@ -31,6 +31,7 @@ function ($,
 
 	DirectionalLightContainer .prototype =
 	{
+		constructor: DirectionalLightContainer,
 		set: function (light)
 		{
 			this .color            = light .color_ .getValue ();

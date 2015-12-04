@@ -1,10 +1,17 @@
 
 define ([
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
-function (Vector3)
+function (Vector3,
+          Matrix4)
 {
 "use strict";
+
+	var
+		normal    = new Vector3 (0, 0, 0),
+		point     = new Vector3 (0, 0, 0),
+		invMatrix = new Matrix4 ();
 
 	function Plane3 (point, normal)
 	{
@@ -15,10 +22,70 @@ function (Vector3)
 	Plane3 .prototype =
 	{
 		constructor: Plane3,
+		copy: function ()
+		{
+			var copy = Object .create (Plane3 .prototype);
+			copy .normal             = this .normal .copy ();
+			copy .distanceFromOrigin = this .distanceFromOrigin;
+			return copy;
+		},
+		assign: function (plane)
+		{
+			this .normal .assign (plane .normal);
+			this .distanceFromOrigin = plane .distanceFromOrigin;
+			return this;
+		},
 		set: function (point, normal)
 		{
 			this .normal .assign (normal);
 			this .distanceFromOrigin = normal .dot (point);	   
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			// Taken from Inventor:
+		
+			// Find the point on the plane along the normal from the origin
+			point .assign (this .normal) .multiply (this .distanceFromOrigin);
+		
+			// Transform the plane normal by the matrix
+			// to get the new normal. Use the inverse transpose
+			// of the matrix so that normals are not scaled incorrectly.
+			// n' = n * !~m = ~m * n
+			invMatrix .assign (matrix) .inverse ();
+			invMatrix .multMatrixDir (normal .assign (this .normal)) .normalize ();
+		
+			// Transform the point by the matrix
+			matrix .multVecMatrix (point);
+		
+			// The new distance is the projected distance of the vector to the
+			// transformed point onto the (unit) transformed normal. This is
+			// just a dot product.
+			this .normal .assign (normal);
+			this .distanceFromOrigin = normal .dot (point);
+		},
+		multLeft: function (matrix)
+		{
+			// Taken from Inventor:
+		
+			// Find the point on the plane along the normal from the origin
+			point .assign (this .normal) .multiply (this .distanceFromOrigin);
+		
+			// Transform the plane normal by the matrix
+			// to get the new normal. Use the inverse transpose
+			// of the matrix so that normals are not scaled incorrectly.
+			// n' = !~m * n = n * ~m
+			invMatrix .assign (matrix) .inverse ();
+			invMatrix .multDirMatrix (normal .assign (this .normal)) .normalize ();
+		
+			// Transform the point by the matrix
+			matrix .multḾatrixVec (point);
+		
+			// The new distance is the projected distance of the vector to the
+			// transformed point onto the (unit) transformed normal. This is
+			// just a dot product.
+			this .normal .assign (normal);
+			this .distanceFromOrigin = normal .dot (point);
 		},
 		distance: function (point)
 		{

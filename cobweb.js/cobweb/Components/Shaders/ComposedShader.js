@@ -20,7 +20,9 @@ function ($,
 {
 "use strict";
 
-	var MAX_LIGHTS = 8;
+	var
+		MAX_CLIP_PLANES = 6,
+		MAX_LIGHTS      = 8;
 
 	function ComposedShader (executionContext)
 	{
@@ -28,6 +30,20 @@ function ($,
 		X3DProgrammableShaderObject .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .ComposedShader);
+
+		this .clipPlaneEnabled      = [ ];
+		this .clipPlaneVector       = [ ];
+		this .lightType             = [ ];
+		this .lightOn               = [ ];
+		this .lightColor            = [ ];
+		this .lightIntensity        = [ ];
+		this .lightAmbientIntensity = [ ];
+		this .lightAttenuation      = [ ];
+		this .lightLocation         = [ ];
+		this .lightDirection        = [ ];
+		this .lightBeamWidth        = [ ];
+		this .lightCutOffAngle      = [ ];
+		this .lightRadius           = [ ];
 	}
 
 	ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
@@ -42,10 +58,13 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
 		]),
+		maxClipPlanes: MAX_CLIP_PLANES,
 		maxLights: MAX_LIGHTS,
 		settings: {
 			shader: null,
+			clipPlanes: MAX_CLIP_PLANES,
 			lights: MAX_LIGHTS,
+			globalLights: 0,
 		},
 		wireframe: false,
 		getTypeName: function ()
@@ -107,24 +126,20 @@ function ($,
 
 			gl .useProgram (program);
 
+			this .numClipPlanes = gl .getUniformLocation (program, "x3d_NumClipPlanes");
+
+			for (var i = 0; i < this .maxClipPlanes; ++ i)
+			{
+				this .clipPlaneEnabled [i] = gl .getUniformLocation (program, "x3d_ClipPlaneEnabled[" + i + "]");
+				this .clipPlaneVector [i]  = gl .getUniformLocation (program, "x3d_ClipPlaneVector[" + i + "]");
+			}
+
 			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
 			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
 			this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
 
 			this .lighting      = gl .getUniformLocation (program, "x3d_Lighting");
 			this .colorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
-
-			this .lightType             = [ ];
-			this .lightOn               = [ ];
-			this .lightColor            = [ ];
-			this .lightIntensity        = [ ];
-			this .lightAmbientIntensity = [ ];
-			this .lightAttenuation      = [ ];
-			this .lightLocation         = [ ];
-			this .lightDirection        = [ ];
-			this .lightBeamWidth        = [ ];
-			this .lightCutOffAngle      = [ ];
-			this .lightRadius           = [ ];
 
 			for (var i = 0; i < this .maxLights; ++ i)
 			{
@@ -179,11 +194,14 @@ function ($,
 			var
 				browser      = this .getBrowser (),
 				gl           = browser .getContext (),
-				globalLights = browser .getGlobalLights ();
+				globalLights = browser .getGlobalLights (),
+				settings     = this .settings;
+
+			settings .globalLights = Math .min (this .maxLights, globalLights .length);
 
 			gl .useProgram (this .program);
 
-			for (var i = 0; i < globalLights .length; ++ i)
+			for (var i = 0, length = settings .globalLights; i < length; ++ i)
 				globalLights [i] .use (gl, this, i);
 
 			this .settings .shader = null;
@@ -197,7 +215,8 @@ function ($,
 				material        = browser .getMaterial (),
 				texture         = browser .getTexture (),
 				modelViewMatrix = context .modelViewMatrix,
-				customShader    = (this !== browser .getDefaultShader ());
+				customShader    = (this !== browser .getDefaultShader ()),
+				clipPlanes      = context .clipPlanes;
 
 			if (settings .shader !== this)
 			{
@@ -205,6 +224,18 @@ function ($,
 				gl .useProgram (this .program);
 				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 			}
+
+			// Clip planes
+
+			for (var i = 0, length = Math .min (this .maxClipPlanes, clipPlanes .length); i < length; ++ i)
+				clipPlanes [i] .use (gl, this, i);
+
+			for (var length = settings .clipPlanes; i < length; ++ i)
+				gl .uniform1i (this .clipPlaneEnabled [i], false);
+
+			settings .clipPlanes = clipPlanes .length;
+
+			// Fog & Material
 
 			context .fog .use (gl, this);
 			gl .uniform1i (this .colorMaterial, context .colorMaterial);
@@ -216,20 +247,19 @@ function ($,
 				var
 					globalLights = browser .getGlobalLights (),
 					localLights  = context .localLights,
-					lights       = Math .min (this .maxLights, globalLights .length + localLights .length),
-					lightOn      = this .lightOn;
+					lights       = Math .min (this .maxLights, globalLights .length + localLights .length);
 
 				if (customShader)
 				{
-					for (var i = 0; i < globalLights .length; ++ i)
+					for (var i = 0, length = settings .globalLights; i < length; ++ i)
 						globalLights [i] .use (gl, this, i);
 				}
 
-				for (var i = globalLights .length, l = 0; i < lights; ++ i, ++ l)
+				for (var i = settings .globalLights, l = 0; i < lights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
 				for (var length = settings .lights; i < length; ++ i)
-					gl .uniform1i (lightOn [i], false);
+					gl .uniform1i (this .lightOn [i], false);
 
 				settings .lights = lights;
 

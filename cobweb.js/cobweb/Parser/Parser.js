@@ -2596,7 +2596,7 @@ function ($,
 						{
 							var w = this .value;
 
-							field .getValue () .set (x, y, z);
+							field .getValue () .set (x, y, z, w);
 							return true;
 						}
 					}

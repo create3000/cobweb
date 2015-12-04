@@ -70,6 +70,7 @@ function (Fields,
 		this .projectionMatrix      = new Matrix4 ();
 		this .projectionMatrixArray = new Float32Array (16);
 		this .modelViewMatrix       = new MatrixStack (Matrix4);
+		this .clipPlanes            = [ ];
 	}
 
 	X3DRenderingContext .prototype =
@@ -253,6 +254,10 @@ function (Fields,
 				this .depthShader = getShader (this, depthVS, depthFS);
 			
 			return this .depthShader;
+		},
+		getClipPlanes: function ()
+		{
+			return this .clipPlanes;
 		},
 		reshape: function ()
 		{

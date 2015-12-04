@@ -1,10 +1,17 @@
 // -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
 precision mediump float;
 
+#define MAX_CLIP_PLANES 6
+
+
 #define NO_FOG           0
 #define LINEAR_FOG       1
 #define EXPONENTIAL_FOG  2
 #define EXPONENTIAL2_FOG 3
+
+// 30
+uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
+uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
 
 // 5
 uniform int   x3d_FogType;
@@ -61,6 +68,21 @@ getTextureColor ()
 }
 
 void
+clip ()
+{
+	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
+	{
+		if (x3d_ClipPlaneEnabled [i])
+		{
+			if (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)
+			{
+				discard;
+			}
+		}
+	}
+}
+
+void
 main ()
 {
 	float f0 = getFogInterpolant ();
@@ -88,4 +110,6 @@ main ()
 
 	gl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);
 	gl_FragColor .a   = finalColor .a;
+
+	clip ();
 }

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Wed, 02 Dec 2015 02:03:04 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Thu, 03 Dec 2015 16:15:22 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo
+        title='ClipPlane'>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='18.6304893493652, 6.322434425354, 13.2549772262573'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.335941076278687, 0.928578853607178, 0.157749399542809, 0.874382138252258'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='4.5, 0, 0'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Background DEF='Gray'
+        skyColor='0.2 0.2 0.2'/>
+    <Viewpoint
+        description='Home'
+        position='14.8254 9.61127 14.7066'
+        orientation='-0.622537 0.765307 0.163563 0.775565'
+        centerOfRotation='4.5 0 0'/>
+    <Transform DEF='ClippedObjects'>
+      <Transform DEF='Box'>
+        <Shape>
+          <Appearance>
+            <TwoSidedMaterial
+                separateBackColor='true'
+                diffuseColor='0.8 0 0'
+                backDiffuseColor='0 0.739946 0.76185'/>
+          </Appearance>
+          <Box
+              solid='false'/>
+        </Shape>
+      </Transform>
+      <Transform DEF='Cylinder'
+          translation='3 0 0'>
+        <Shape>
+          <Appearance>
+            <TwoSidedMaterial
+                separateBackColor='true'
+                diffuseColor='0 0.8 0'
+                backDiffuseColor='0.766216 0 0.704745'/>
+          </Appearance>
+          <Cylinder
+              solid='false'/>
+        </Shape>
+      </Transform>
+      <Transform DEF='Cone'
+          translation='6 0 0'>
+        <Shape>
+          <Appearance>
+            <TwoSidedMaterial
+                separateBackColor='true'
+                diffuseColor='0 0 0.8'
+                backDiffuseColor='0.80648 0.796122 0'/>
+          </Appearance>
+          <Cone
+              solid='false'/>
+        </Shape>
+      </Transform>
+      <Transform DEF='Sphere'
+          translation='9 0 0'>
+        <Shape>
+          <Appearance>
+            <TwoSidedMaterial
+                separateBackColor='true'
+                diffuseColor='0.8 0.8 0'
+                backDiffuseColor='0 0.0531929 0.742009'/>
+          </Appearance>
+          <Sphere
+              solid='false'/>
+        </Shape>
+      </Transform>
+      <ClipPlane DEF='ClipPlane'
+          plane='0 0 -1 -0.0753588'/>
+      <TouchSensor
+          description='Clipped objects'/>
+    </Transform>
+    <Transform DEF='VisibleClipPlane'>
+      <PlaneSensor DEF='PlaneSensor'
+          axisRotation='0 1 0 1.5708'
+          offset='4.50002 0 -0.0753588'
+          maxPosition='-1 0'/>
+      <Transform DEF='Rectangle2D'
+          translation='4.50002 0 -0.0753588'
+          scale='8 2.5 1'>
+        <Shape>
+          <Appearance>
+            <LineProperties
+                linewidthScaleFactor='3'/>
+            <Material
+                transparency='0.5'/>
+          </Appearance>
+          <Rectangle2D
+              solid='false'/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <Script DEF='ClipPlaneScript'>
+      <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+      <field accessType='outputOnly' type='SFVec4f' name='plane_changed'/>
+<![CDATA[vrmlscript:
+function set_translation (value)
+{
+	var distanceFromOrigin = new SFVec3f (0, 0, -1) .dot (value);
+
+	plane_changed = new SFVec4f (0, 0, -1, -distanceFromOrigin);
+
+	print (plane_changed);
+}
+]]> 
+    </Script>
+    <ROUTE fromNode='PlaneSensor' fromField='translation_changed' toNode='Rectangle2D' toField='set_translation'/>
+    <ROUTE fromNode='PlaneSensor' fromField='translation_changed' toNode='ClipPlaneScript' toField='set_translation'/>
+    <ROUTE fromNode='ClipPlaneScript' fromField='plane_changed' toNode='ClipPlane' toField='set_plane'/>
+  </Scene>
+</X3D>

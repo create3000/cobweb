@@ -31,6 +31,7 @@ function ($,
 
 	PointLightContainer .prototype =
 	{
+		constructor: PointLightContainer,
 	   set: function (light)
 	   {
 			this .color            = light .color_ .getValue ();

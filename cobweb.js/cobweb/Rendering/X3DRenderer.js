@@ -44,6 +44,7 @@ function ($,
 	function X3DRenderer (browser, executionContext)
 	{
 		this .viewVolumes          = [ ];
+		this .clipPlanes           = [ ];
 		this .localLights          = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
@@ -85,6 +86,10 @@ function ($,
 		{
 			return this .viewVolumes [this .viewVolumes .length - 1];
 		},
+		getClipPlanes: function ()
+		{
+			return this .clipPlanes;
+		},
 		getLocalLights: function ()
 		{
 			return this .localLights;
@@ -104,7 +109,7 @@ function ($,
 				if (shape .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), localLights: [ ], geometryType: 3, });
+						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], geometryType: 3, });
 
 					var context = this .transparentShapes [this .numTransparentShapes];
 
@@ -113,7 +118,7 @@ function ($,
 				else
 				{
 					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push ({ transparent: false, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), localLights: [ ], geometryType: 3, });
+						this .opaqueShapes .push ({ transparent: false, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], geometryType: 3, });
 
 					var context = this .opaqueShapes [this .numOpaqueShapes];
 
@@ -127,7 +132,16 @@ function ($,
 				context .fog      = this .getFog ();
 
 				var
-				   sourceLights = this .localLights,
+				   sourcePlanes = this .getClipPlanes (),
+				   destPlanes   = context .clipPlanes;
+
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				   destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
+
+				var
+				   sourceLights = this .getLocalLights (),
 				   destLights   = context .localLights;
 
 				for (var i = 0, length = sourceLights .length; i < length; ++ i)
@@ -544,6 +558,15 @@ function ($,
 
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
+
+			// Recycle local lights.
+
+			var clipPlanes = this .getBrowser () .getClipPlanes ();
+
+			for (var i = 0; i < clipPlanes .length; ++ i)
+			   clipPlanes [i] .recycle ();
+
+			clipPlanes .length = 0;
 
 			// Recycle global lights.
 
