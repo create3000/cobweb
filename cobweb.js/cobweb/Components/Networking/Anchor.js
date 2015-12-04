@@ -30,6 +30,8 @@ function ($,
 		X3DUrlObject    .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Anchor);
+
+		this .touchSensorNode = new TouchSensor (executionContext);
 	}
 
 	Anchor .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
@@ -63,8 +65,6 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 			X3DUrlObject    .prototype .initialize .call (this);
-
-			this .touchSensorNode = new TouchSensor (this .getExecutionContext ());
 
 			this .touchSensorNode .touchTime_ .addInterest (this, "requestAsyncLoad");
 			this .description_ .addFieldInterest (this .touchSensorNode .description_);

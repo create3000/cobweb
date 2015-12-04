@@ -81,8 +81,8 @@ function ($,
 					                1);
 				}
 
-				this .getMin () .set (-scale, -scale, -scale);
-				this .getMax () .set ( scale,  scale,  scale);
+				this .getMin () .set (-x, -y, -z);
+				this .getMax () .set ( x,  y,  z);
 			}
 
 			this .setSolid (this .solid_ .getValue ());
