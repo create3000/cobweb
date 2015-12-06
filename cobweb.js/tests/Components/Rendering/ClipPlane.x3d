@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 02 Dec 2015 02:03:04 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 04 Dec 2015 16:27:57 GMT'/>
+    <meta name='modified' content='Sun, 06 Dec 2015 18:25:44 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -28,11 +28,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='3.85618257522583, 12.126127243042, -1.48941230773926'/>
+              value='5.08688020706177, 0.152582168579102, -12.0671396255493'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.121002897620201, 0.747908174991608, 0.652680277824402, 2.83710265159607'/>
+              value='-0.0966700464487076, 0.995314419269562, -0.00205132272094488, 2.96994614601135'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -147,7 +147,7 @@
     <Transform DEF='VisibleClipPlane'>
       <PlaneSensor DEF='PlaneSensor'
           axisRotation='0 1 0 1.5708'
-          offset='4.50002 0 0.155128'
+          offset='3 0 0.155128'
           maxPosition='-1 0'/>
       <Transform DEF='Rectangle2D'
           translation='3 0 0.155128'
@@ -164,19 +164,9 @@
         </Shape>
       </Transform>
     </Transform>
-    <Script DEF='ClipPlaneScript'>
+    <Script DEF='ClipPlaneScript' url='"clipPlane.js"'>
       <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
       <field accessType='outputOnly' type='SFVec4f' name='plane_changed'/>
-<![CDATA[vrmlscript:
-function set_translation (value)
-{
-	var distanceFromOrigin = new SFVec3f (0, 0, -1) .dot (value);
-
-	plane_changed = new SFVec4f (0, 0, -1, -distanceFromOrigin);
-
-	print (plane_changed);
-}
-]]> 
     </Script>
     <ROUTE fromNode='PlaneSensor' fromField='translation_changed' toNode='Rectangle2D' toField='set_translation'/>
     <ROUTE fromNode='PlaneSensor' fromField='translation_changed' toNode='ClipPlaneScript' toField='set_translation'/>

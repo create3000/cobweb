@@ -22,6 +22,8 @@ function ($,
 
 	var TIMEOUT = 16;
 
+	var ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:((?:.|[\r\n])*)$/;
+
 	function Loader (node, external)
 	{
 		X3DObject .call (this);
@@ -176,6 +178,12 @@ function ($,
 
 			throw new Error ("Couldn't load any url of '" + url .getValue () .join (", ") + "'.");
 		},
+		loadScript: function (url, callback)
+		{
+			this .script = true;
+
+			this .loadDocument (url, callback);
+		},
 		loadDocument: function (url, callback)
 		{
 			this .url      = url .copy ();
@@ -203,6 +211,21 @@ function ($,
 			catch (exception)
 			{
 				return this .loadDocumentError (exception);
+			}
+
+			if (this .script)
+			{
+				try
+				{
+					var result = ECMAScript .exec (URL);
+	
+					if (result)
+						return this .callback (result [1]);
+				}
+				catch (exception)
+				{
+					this .loadDocumentError (exception);
+				}
 			}
 
 			this .URL = this .transform (URL);

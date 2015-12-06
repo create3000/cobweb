@@ -40,14 +40,12 @@ function ($,
           Loader,
           X3DConstants)
 {
-	var
-		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:((?:.|[\r\n])*)$/,
-		fieldDefinitions = [
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
-		];
+	var fieldDefinitions = [
+		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
+		new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
+		new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
+		new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
+	];
 
 	function Script (executionContext)
 	{
@@ -98,29 +96,27 @@ function ($,
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
 				return;
 
-			//this .getExecutionContext () .getScene () .addLoadCount ();
+			//this .getExecutionContext () .getScene () .addLoadCount (); // XXX: should I do this? Only addExternProtoLoadCount is available
 
-			for (var i = 0, length = this .url_ .length; i < length; ++ i)
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			new Loader (this) .loadScript (this .url_,
+			function (data)
 			{
-				var
-					URL    = this .url_ [i],
-					result = ECMAScript .exec (URL);
+				//this .getExecutionContext () .getScene () .removeLoadCount (); // XXX
 
-				try
+				if (data === null)
 				{
-					if (result)
-					{
-						this .initialize__ (result [1]);
-						break;
-					}
+					// No URL could be loaded.
+					this .setLoadState (X3DConstants .FAILED_STATE);
 				}
-				catch (error)
+				else
 				{
-					console .error (error .message);
+					this .setLoadState (X3DConstants .COMPLETE_STATE);
+					this .initialize__ (data);
 				}
 			}
-
-			//this .getExecutionContext () .getScene () .removeLoadCount ();
+			.bind (this));
 		},
 		set_url__: function ()
 		{
