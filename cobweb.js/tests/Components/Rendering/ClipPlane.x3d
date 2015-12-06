@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 02 Dec 2015 02:03:04 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 04 Dec 2015 13:34:29 GMT'/>
+    <meta name='modified' content='Fri, 04 Dec 2015 16:27:57 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -28,15 +28,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='8.84474754333496, 10.9120979309082, 0.0364628434181213'/>
+              value='3.85618257522583, 12.126127243042, -1.48941230773926'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.0474732220172882, 0.73756992816925, 0.673600018024445, 2.72388911247253'/>
+              value='-0.121002897620201, 0.747908174991608, 0.652680277824402, 2.83710265159607'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='6.00539922714233, -0.662092626094818, 0.580058097839355'/>
+              value='3, 0, 0'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -44,10 +44,50 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='8.84475 10.9121 0.0364628'
-        orientation='-0.0474732 0.73757 0.6736 2.72389'
-        centerOfRotation='6.0054 -0.662093 0.580058'/>
+        position='3.85618 12.1261 -1.48941'
+        orientation='-0.121003 0.747908 0.65268 2.8371'
+        centerOfRotation='3 0 0'/>
     <Transform DEF='ClippedObjects'>
+      <Transform DEF='Lines'
+          translation='-3 0 0'>
+        <Transform>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='3'/>
+              <Material
+                  emissiveColor='1 0 0'
+                  transparency='0.5'/>
+            </Appearance>
+            <IndexedLineSet
+                coordIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'>
+              <Coordinate
+                  point='-1 1 1, -1 -1 1, 1 -1 1, 1 1 1, -1 1 -1, -1 -1 -1, 1 -1 -1, 1 1 -1'/>
+            </IndexedLineSet>
+          </Shape>
+        </Transform>
+        <Transform
+            rotation='0.267261 0.534522 0.801784 4'
+            scaleOrientation='-0.491051 0.513758 0.703506 0.668035'>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='3'/>
+              <Material
+                  emissiveColor='1 0 0'
+                  transparency='0.5'/>
+            </Appearance>
+            <IndexedLineSet
+                colorIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'
+                coordIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'>
+              <Color
+                  color='1 0 0, 0 1 0, 0 0 1, 0 0 0, 1 1 0, 1 0 1, 0 1 1, 1 1 1'/>
+              <Coordinate
+                  point='-1 1 1, -1 -1 1, 1 -1 1, 1 1 1, -1 1 -1, -1 -1 -1, 1 -1 -1, 1 1 -1'/>
+            </IndexedLineSet>
+          </Shape>
+        </Transform>
+      </Transform>
       <Transform DEF='Box'>
         <Shape>
           <Appearance>
@@ -110,8 +150,8 @@
           offset='4.50002 0 0.155128'
           maxPosition='-1 0'/>
       <Transform DEF='Rectangle2D'
-          translation='4.50002 0 0.155128'
-          scale='8 2.5 1'>
+          translation='3 0 0.155128'
+          scale='9 2.5 1'>
         <Shape>
           <Appearance>
             <LineProperties

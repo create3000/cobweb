@@ -145,6 +145,14 @@ function ($,
 			this .getAppearance () .traverse ();
 			this .getGeometry ()   .traverse (context);
 		},
+		collision: function (shader)
+		{
+			this .getGeometry () .collision (shader);
+		},
+		intersectsSphere: function (sphere)
+		{
+			this .getGeometry () .intersectsSphere (sphere);
+		},
 	});
 
 	return Shape;

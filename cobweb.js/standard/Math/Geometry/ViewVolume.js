@@ -94,22 +94,22 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		{
 			var planes = this .planes;
 		
-			if (planes [0] .getDistance (center) + radius < 0)
+			if (planes [0] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [1] .getDistance (center) + radius < 0)
+			if (planes [1] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [2] .getDistance (center) + radius < 0)
+			if (planes [2] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [3] .getDistance (center) + radius < 0)
+			if (planes [3] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [4] .getDistance (center) + radius < 0)
+			if (planes [4] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [5] .getDistance (center) + radius < 0)
+			if (planes [5] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
 			return true;

@@ -41,7 +41,7 @@ function ($,
 		{
 			try
 			{
-				var distance = plane .assign (this .plane) .multRight (invModelViewMatrix) .getDistance (point);
+				var distance = plane .assign (this .plane) .multRight (invModelViewMatrix) .getDistanceToPoint (point);
 
 				return distance < 0;
 			}

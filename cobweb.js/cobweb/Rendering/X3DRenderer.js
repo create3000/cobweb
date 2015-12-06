@@ -164,8 +164,8 @@ function ($,
 				++ this .numCollisionShapes;
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .geometry = shape .getGeometry ();
-				context .scissor  = viewVolume .getScissor ();
+				context .shape   = shape;
+				context .scissor = viewVolume .getScissor ();
 
 				var
 					sourceCollisions = this .getBrowser () .getCollisions (),
@@ -287,7 +287,7 @@ function ($,
 
 				gl .uniformMatrix4fv (shader .modelViewMatrix, false, context .modelViewMatrix);
 
-				context .geometry .collision (shader);
+				context .shape .collision (shader);
 			}
 
 			var
@@ -350,7 +350,7 @@ function ($,
 
 					   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
 
-						if (context .geometry .intersectsSphere (this .collisionSphere))
+						if (context .shape .intersectsSphere (this .collisionSphere))
 						{
 						   for (var c = 0; c < collisions .length; ++ c)
 								activeCollisions [collisions [c] .getId ()] = collisions [c];
