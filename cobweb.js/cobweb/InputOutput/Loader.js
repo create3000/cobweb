@@ -228,6 +228,8 @@ function ($,
 				}
 			}
 
+			// Test for data URL here.
+
 			this .URL = this .transform (URL);
 
 			$.ajax ({

@@ -151,7 +151,7 @@ function ($,
 		},
 		intersectsSphere: function (sphere)
 		{
-			this .getGeometry () .intersectsSphere (sphere);
+			return this .getGeometry () .intersectsSphere (sphere);
 		},
 	});
 
