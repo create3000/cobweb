@@ -58,15 +58,12 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
 		]),
-		maxClipPlanes: MAX_CLIP_PLANES,
-		maxLights: MAX_LIGHTS,
-		settings: {
-			shader: null,
-			clipPlanes: MAX_CLIP_PLANES,
-			lights: MAX_LIGHTS,
-			globalLights: 0,
-		},
 		wireframe: false,
+		maxClipPlanes: MAX_CLIP_PLANES,
+		clipPlanes: MAX_CLIP_PLANES,
+		maxLights: MAX_LIGHTS,
+		lights: MAX_LIGHTS,
+		globalLights: 0,
 		getTypeName: function ()
 		{
 			return "ComposedShader";
@@ -194,22 +191,20 @@ function ($,
 			var
 				browser      = this .getBrowser (),
 				gl           = browser .getContext (),
-				globalLights = browser .getGlobalLights (),
-				settings     = this .settings;
-
-			settings .globalLights = Math .min (this .maxLights, globalLights .length);
+				globalLights = browser .getGlobalLights ();
 
 			gl .useProgram (this .program);
 
-			for (var i = 0, length = settings .globalLights; i < length; ++ i)
-				globalLights [i] .use (gl, this, i);
+			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 
-			this .settings .shader = null;
+			this .globalLights = Math .min (this .maxLights, globalLights .length);
+
+			for (var i = 0, length = this .globalLights; i < length; ++ i)
+				globalLights [i] .use (gl, this, i);
 		},
 		setLocalUniforms: function (context)
 		{
 			var
-				settings        = this .settings,
 				browser         = this .getBrowser (),
 				gl              = browser .getContext (),
 				material        = browser .getMaterial (),
@@ -218,22 +213,17 @@ function ($,
 				customShader    = (this !== browser .getDefaultShader ()),
 				clipPlanes      = context .clipPlanes;
 
-			if (settings .shader !== this)
-			{
-				settings .shader = this;
-				gl .useProgram (this .program);
-				gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
-			}
+			gl .useProgram (this .program);
 
 			// Clip planes
 
 			for (var i = 0, length = Math .min (this .maxClipPlanes, clipPlanes .length); i < length; ++ i)
 				clipPlanes [i] .use (gl, this, i);
 
-			for (var length = settings .clipPlanes; i < length; ++ i)
+			for (var length = this .clipPlanes; i < length; ++ i)
 				gl .uniform1i (this .clipPlaneEnabled [i], false);
 
-			settings .clipPlanes = clipPlanes .length;
+			this .clipPlanes = clipPlanes .length;
 
 			// Fog & Material
 
@@ -251,17 +241,17 @@ function ($,
 
 				if (customShader)
 				{
-					for (var i = 0, length = settings .globalLights; i < length; ++ i)
+					for (var i = 0, length = this .globalLights; i < length; ++ i)
 						globalLights [i] .use (gl, this, i);
 				}
 
-				for (var i = settings .globalLights, l = 0; i < lights; ++ i, ++ l)
+				for (var i = this .globalLights, l = 0; i < lights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
-				for (var length = settings .lights; i < length; ++ i)
+				for (var length = this .lights; i < length; ++ i)
 					gl .uniform1i (this .lightOn [i], false);
 
-				settings .lights = lights;
+				this .lights = lights;
 
 				// Material
 
