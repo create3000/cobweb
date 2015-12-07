@@ -24,7 +24,7 @@ function ($,
 
 	var ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/;
 
-	var dataURL = /^data\:(.*?)(?:;(.*?))?(;base64)?,([^]*)$/;
+	var dataURL = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/;
 
 	function Loader (node, external)
 	{

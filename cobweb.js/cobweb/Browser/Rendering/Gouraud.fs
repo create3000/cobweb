@@ -4,15 +4,14 @@ precision mediump float;
 
 #define MAX_CLIP_PLANES 6
 
+// 30
+uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
+uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
 
 #define NO_FOG           0
 #define LINEAR_FOG       1
 #define EXPONENTIAL_FOG  2
 #define EXPONENTIAL2_FOG 3
-
-// 30
-uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
-uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
 
 // 5
 uniform int   x3d_FogType;
@@ -34,6 +33,21 @@ varying vec4  frontColor; // color
 varying vec4  backColor;  // color
 varying vec4  t;          // texCoord
 varying vec3  v;          // point on geometry
+
+void
+clip ()
+{
+	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
+	{
+		if (x3d_ClipPlaneEnabled [i])
+		{
+			if (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)
+			{
+				discard;
+			}
+		}
+	}
+}
 
 float
 getFogInterpolant ()
@@ -66,21 +80,6 @@ getTextureColor ()
 		return texture2D (x3d_Texture, vec2 (t .s, t .t));
 	
 	return texture2D (x3d_Texture, vec2 (1.0 - t .s, t .t));
-}
-
-void
-clip ()
-{
-	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
-	{
-		if (x3d_ClipPlaneEnabled [i])
-		{
-			if (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)
-			{
-				discard;
-			}
-		}
-	}
 }
 
 void
