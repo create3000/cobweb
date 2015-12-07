@@ -64,8 +64,9 @@ function ($,
 		}
 		catch (error)
 		{
-		   this .distance = 0;
-		   this .navigate = function () { };
+			console .error (error);
+
+		   this .getDepth = function () { return 0; };
 		}
 	}
 

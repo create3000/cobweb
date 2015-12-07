@@ -24,6 +24,8 @@ function ($,
 
 	var ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:((?:.|[\r\n])*)$/;
 
+	var dataURL = /^data\:(.*?)(?:;(.*?))?(;base64)?,(.*)$/;
+
 	function Loader (node, external)
 	{
 		X3DObject .call (this);
@@ -229,6 +231,31 @@ function ($,
 			}
 
 			// Test for data URL here.
+
+			try
+			{
+				var result = dataURL .exec (URL);
+
+				if (result)
+				{
+					var mimeType = result [1];
+
+					// ??? If called from loadURL and mime type is text/html do a window.open or window.location=URL and return; ???
+
+					var data = result [4];
+
+					if (result [3] === ";base64")
+						data = atob (data);
+					else
+						data = unescape (data);
+
+					return this .callback (data);
+				}
+			}
+			catch (exception)
+			{
+				this .loadDocumentError (exception);
+			}
 
 			this .URL = this .transform (URL);
 
