@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -13,7 +14,8 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DNode, 
-          X3DUrlObject, 
+          X3DUrlObject,
+          Loader,
           X3DConstants)
 {
 "use strict";
@@ -100,24 +102,31 @@ function ($,
 			
 			this .valid = false;
 
-			var gl = this .getBrowser () .getContext ();
-
-			for (var i = 0; i < this .url_. length; ++ i)
+			new Loader (this) .loadDocument (this .url_,
+			function (data)
 			{
-				var string = this .url_ [i] .replace (/^data\:.*?,/, "");
+				if (data === null)
+				{
+					// No URL could be loaded.
+					this .setLoadState (X3DConstants .FAILED_STATE);
+				}
+				else
+				{
+					var gl = this .getBrowser () .getContext ();
 
-				gl .shaderSource (this .shader, string);
-				gl .compileShader (this .shader);
+					gl .shaderSource (this .shader, data);
+					gl .compileShader (this .shader);
+	
+					this .valid = gl .getShaderParameter (this .shader, gl .COMPILE_STATUS);
+	
+					if (! this .valid)
+						throw new Error (this .getTypeName () + " '" + this .getName () + "': " + gl .getShaderInfoLog (this .shader));
 
-				this .valid = gl .getShaderParameter (this .shader, gl .COMPILE_STATUS);
-
-				if (this .valid)
-					break;
-
-				this .getBrowser () .print (this .getTypeName () + " '" + this .getName () + "': " + gl .getShaderInfoLog (this .shader));
+					this .setLoadState (X3DConstants .COMPLETE_STATE);
+				}
 			}
+			.bind (this));
 
-			this .setLoadState (this .valid ? X3DConstants .COMPLETE_STATE : X3DConstants .FAILED_STATE);
 		},
 	});
 

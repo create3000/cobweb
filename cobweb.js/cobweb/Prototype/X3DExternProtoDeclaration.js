@@ -127,7 +127,7 @@ function ($,
 		
 				this .scene .setup ();
 		
-				var protoName = this .scene .getWorldURL () .fragment || this .getName ();
+				var protoName = this .scene .getURL () .fragment || this .getName ();
 		
 				this .setProtoDeclaration (this .scene .protos [protoName]);
 			}

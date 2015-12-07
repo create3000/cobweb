@@ -45,12 +45,12 @@ function ($,
 		constructor: X3DBrowser,
 		initialize: function ()
 		{
-			X3DBrowserContext .prototype .initialize .call (this);
-
 			// Create an empty scene if any thing goes wrong in loadURL.
 			var scene = this .createScene ();
 
 			this .replaceWorld (scene);
+
+			X3DBrowserContext .prototype .initialize .call (this);
 
 			var urlCharacters = this .getXML () [0] .getAttribute ("url");
 
@@ -208,7 +208,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getWorldURL (), x3dSyntax);
+				scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
 
 			if (! external)
 			{

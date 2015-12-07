@@ -14,7 +14,11 @@ function (ComposedShader,
 {
 "use strict";
 	
-	function X3DEnvironmentalEffectsContext () { }
+	function X3DEnvironmentalEffectsContext ()
+	{
+		this .backgroundSphereShader      = new ComposedShader (this);
+		this .backgroundTextureProperties = new TextureProperties (this);
+	}
 
 	X3DEnvironmentalEffectsContext .prototype =
 	{
@@ -32,13 +36,11 @@ function (ComposedShader,
 			fragmentShader .url_ .push (fragmentShaderText);
 			fragmentShader .setup ();
 
-			this .backgroundSphereShader = new ComposedShader (this);
 			this .backgroundSphereShader .language_ = "GLSL";
 			this .backgroundSphereShader .parts_ .push (vertexShader);
 			this .backgroundSphereShader .parts_ .push (fragmentShader);
 			this .backgroundSphereShader .setup ();
 
-			this .backgroundTextureProperties = new TextureProperties (this);
 			this .backgroundTextureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
 			this .backgroundTextureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";
 			this .backgroundTextureProperties .boundaryModeR_       = "CLAMP_TO_EDGE";

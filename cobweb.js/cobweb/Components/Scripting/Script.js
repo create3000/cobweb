@@ -437,7 +437,7 @@ function ($,
 		},
 		setError: function (callback, error)
 		{
-			console .error ("JavaScript Error in Script '" + this .getName () + "', function '" + callback + "'\nworld url is '" + this .getExecutionContext () .getWorldURL () + "':");
+			console .error ("JavaScript Error in Script '" + this .getName () + "', function '" + callback + "'\nworld url is '" + this .getExecutionContext () .getURL () + "':");
 			console .error (error);
 		},
 	});

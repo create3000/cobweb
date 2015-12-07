@@ -116,7 +116,7 @@ function ($,
 
 				// Assign metadata.
 
-				this .setWorldURL (proto .getWorldURL ());
+				this .setURL (proto .getURL ());
 
 				this .importExternProtos (proto);
 				this .importProtos (proto);

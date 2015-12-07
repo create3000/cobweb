@@ -31,6 +31,8 @@ function ($,
 		X3DViewportNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Viewport);
+
+		this .rectangle = new Vector4 (0, 0, 0, 0);
 	}
 
 	Viewport .prototype = $.extend (Object .create (X3DViewportNode .prototype),
@@ -66,8 +68,6 @@ function ($,
 			
 			this .getBrowser () .getViewport () .addInterest (this, "set_rectangle__");
 			this .clipBoundary_                 .addInterest (this, "set_rectangle__");
-
-			this .rectangle = new Vector4 (0, 0, 0, 0);
 
 			this .set_live__ ();
 		},

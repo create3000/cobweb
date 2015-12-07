@@ -65,8 +65,10 @@ function (Fields,
 		return shader;
 	}
 
-	function X3DRenderingContext (x3d)
+	function X3DRenderingContext ()
 	{
+		this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
+
 		this .projectionMatrix      = new Matrix4 ();
 		this .projectionMatrixArray = new Float32Array (16);
 		this .modelViewMatrix       = new MatrixStack (Matrix4);
@@ -77,8 +79,6 @@ function (Fields,
 	{
 		initialize: function ()
 		{
-			this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
-
 			// Configure context.
 
 			var gl = this .getContext ();

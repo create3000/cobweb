@@ -22,9 +22,9 @@ function ($,
 
 	var TIMEOUT = 16;
 
-	var ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:((?:.|[\r\n])*)$/;
+	var ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/;
 
-	var dataURL = /^data\:(.*?)(?:;(.*?))?(;base64)?,(.*)$/;
+	var dataURL = /^data\:(.*?)(?:;(.*?))?(;base64)?,([^]*)$/;
 
 	function Loader (node, external)
 	{
@@ -49,7 +49,7 @@ function ($,
 		{
 			var scene = this .browser .createScene ();
 
-			scene .setWorldURL (this .browser .getLocation () .transform (worldURL));
+			scene .setURL (this .browser .getLocation () .transform (worldURL));
 
 			if (success)
 			{
@@ -344,7 +344,7 @@ function ($,
 					return this .browser .getLocation ();
 			}
 
-			return this .executionContext .getWorldURL ();
+			return this .executionContext .getURL ();
 		},
 	});
 

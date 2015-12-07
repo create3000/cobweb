@@ -29,26 +29,26 @@ function (BrowserOptions,
 	function X3DCoreContext (xml)
 	{
 		this .xml = xml;
+
+		// Get canvas & context.
+
+		var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .xml);
+		var canvas  = $("<div/>") .addClass ("cobweb-surface") .prependTo (browser);
+
+		this .canvas  = $("<canvas/>") .prependTo (canvas);
+		this .context = getContext (this .canvas [0]);
+
+		this .browserOptions      = new BrowserOptions (this);
+		this .renderingProperties = new RenderingProperties (this);
+		this .notification        = new Notification (this);
+		this .browserTimings      = new BrowserTimings (this);
+		this .contextMenu         = new ContextMenu (this);
 	}
 
 	X3DCoreContext .prototype =
 	{
 		initialize: function ()
 		{
-			// Get canvas & context.
-
-			var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .xml);
-			var canvas  = $("<div/>") .addClass ("cobweb-surface") .prependTo (browser);
-
-			this .canvas  = $("<canvas/>") .prependTo (canvas);
-			this .context = getContext (this .canvas [0]);
-
-			this .browserOptions      = new BrowserOptions (this);
-			this .renderingProperties = new RenderingProperties (this);
-			this .notification        = new Notification (this);
-			this .browserTimings      = new BrowserTimings (this);
-			this .contextMenu         = new ContextMenu (this);
-
 			this .browserOptions      .setup ()
 			this .renderingProperties .setup ();
 			this .notification        .setup ();

@@ -4,6 +4,8 @@ define ([
 	"cobweb/Fields/SFTime",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Browser/Core/X3DCoreContext",
+	"cobweb/Routing/X3DRoutingContext",
+	"cobweb/Browser/Scripting/X3DScriptingContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
 	"cobweb/Browser/Rendering/X3DRenderingContext",
 	"cobweb/Browser/Geometry2D/X3DGeometry2DContext",
@@ -14,14 +16,12 @@ define ([
 	"cobweb/Browser/Layering/X3DLayeringContext",
 	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Lighting/X3DLightingContext",
-	"cobweb/Browser/Scripting/X3DScriptingContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
 	"cobweb/Browser/Shape/X3DShapeContext",
 	"cobweb/Browser/Sound/X3DSoundContext",
 	"cobweb/Browser/Text/X3DTextContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
 	"cobweb/Browser/Time/X3DTimeContext",
-	"cobweb/Routing/X3DRoutingContext",
 	"cobweb/Execution/World",
 	"cobweb/Bits/TraverseType",
 ],
@@ -29,6 +29,8 @@ function ($,
           SFTime,
           X3DBaseNode,
           X3DCoreContext,
+          X3DRoutingContext,
+          X3DScriptingContext,
           X3DNetworkingContext,
           X3DRenderingContext,
           X3DGeometry2DContext,
@@ -39,14 +41,12 @@ function ($,
           X3DLayeringContext,
           X3DEnvironmentalEffectsContext,
           X3DLightingContext,
-          X3DScriptingContext,
           X3DShadersContext,
           X3DShapeContext,
           X3DSoundContext,
           X3DTextContext,
           X3DTexturingContext,
           X3DTimeContext,
-          X3DRoutingContext,
           World,
           TraverseType)
 {
@@ -55,7 +55,9 @@ function ($,
 	function X3DBrowserContext (xml)
 	{
 		X3DBaseNode                    .call (this, this, this);
+		X3DRoutingContext              .call (this);
 		X3DCoreContext                 .call (this, xml);
+		X3DScriptingContext            .call (this);
 		X3DNetworkingContext           .call (this);
 		X3DRenderingContext            .call (this);
 		X3DGeometry2DContext           .call (this);
@@ -66,14 +68,18 @@ function ($,
 		X3DLayeringContext             .call (this);
 		X3DEnvironmentalEffectsContext .call (this);
 		X3DLightingContext             .call (this);
-		X3DScriptingContext            .call (this);
 		X3DShadersContext              .call (this);
 		X3DShapeContext                .call (this);
 		X3DSoundContext                .call (this);
 		X3DTextContext                 .call (this);
 		X3DTexturingContext            .call (this);
 		X3DTimeContext                 .call (this);
-		X3DRoutingContext              .call (this);
+
+		this .addChildren ("initialized",   new SFTime (),
+		                   "shutdown",      new SFTime (),
+		                   "prepareEvents", new SFTime (),
+		                   "sensors",       new SFTime (),
+		                   "finished",      new SFTime ());
 
 		this .changedTime     = 0;
 		this .renderCallback  = this .traverse .bind (this);
@@ -110,12 +116,6 @@ function ($,
 		constructor: X3DBrowserContext,
 		initialize: function ()
 		{
-			this .addChildren ("initialized",   new SFTime (),
-			                   "shutdown",      new SFTime (),
-			                   "prepareEvents", new SFTime (),
-			                   "sensors",       new SFTime (),
-			                   "finished",      new SFTime ());
-
 			X3DBaseNode                    .prototype .initialize .call (this);
 			X3DCoreContext                 .prototype .initialize .call (this);
 			X3DNetworkingContext           .prototype .initialize .call (this);
@@ -156,6 +156,10 @@ function ($,
 		finished: function ()
 		{
 			return this .finished_;
+		},
+		getURL: function ()
+		{
+			return this .getExecutionContext () .getURL ();
 		},
 		getWorld: function ()
 		{

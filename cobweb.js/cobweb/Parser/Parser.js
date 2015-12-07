@@ -251,7 +251,7 @@ function ($,
 			var message = "\n"
 				+ "********************************************************************************" + "\n"
 				+ "Parser error at line " + this .lineNumber + ":" + linePos  + "\n"
-				+ "in '" + this .scene .getWorldURL () + "'" + "\n"
+				+ "in '" + this .scene .getURL () + "'" + "\n"
 				+ "\n"
 				+ lastLine + "\n"
 				+ line + "\n"

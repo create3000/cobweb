@@ -101,7 +101,7 @@ function ($,
 					break;
 			}
 
-			//console .log ("'" + this .getExecutionContext () .getWorldURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
+			//console .log ("'" + this .getExecutionContext () .getURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
 		},
 		X3D: function (element)
 		{

@@ -8,15 +8,16 @@ function (Fields,
 {
 "use strict";
 
-	function X3DSoundContext () { }
+	function X3DSoundContext ()
+	{
+		this .addChildren ("volume", new Fields .SFFloat (1));
+		this .addChildren ("mute",   new Fields .SFBool ());
+	}
 
 	X3DSoundContext .prototype =
 	{
 		initialize: function ()
 		{
-			this .addChildren ("volume", new Fields .SFFloat (1));
-			this .addChildren ("mute",   new Fields .SFBool ());
-
 			this .volume_ .addInterest (this, "set_volume__");
 			this .mute_   .addInterest (this, "set_mute__");
 

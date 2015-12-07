@@ -100,7 +100,7 @@ function ($,
 			// Get URL.
 
 			this .URL = new URI (this .urlStack .shift ());
-			this .URL = this .getExecutionContext () .getWorldURL () .transform (this .URL);
+			this .URL = this .getExecutionContext () .getURL () .transform (this .URL);
 			// In Firefox we don't need getRelativePath if file scheme, do we in Chrome???
 
 			this .image .attr ("src", this .URL);

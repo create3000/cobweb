@@ -30,6 +30,19 @@ function ($,
 
 	function X3DPointingDeviceSensorContext ()
 	{
+		this .pointingDevice = new PointingDevice (this);
+
+		this .pointer        = new Vector2 (0, 0);
+		this .hits           = [ ];
+		this .enabledSensors = [{ }];
+		this .selectedLayer  = null;
+		this .overSensors    = { };
+		this .activeSensors  = { };
+
+		this .hitPointSorter = new MergeSort (this .hits, function (lhs, rhs) { return lhs .intersection .point .z < rhs .intersection .point .z; });
+		this .layerSorter    = new MergeSort (this .hits, function (lhs, rhs) { return lhs .layerNumber < rhs .layerNumber; });
+
+		this .pickingTime = 0;
 	}
 
 	X3DPointingDeviceSensorContext .prototype =
@@ -38,21 +51,8 @@ function ($,
 		{
 			this .getCanvas () .attr ("tabindex", 8803068);
 			this .setCursor ("DEFAULT");
-			
-			this .pointingDevice = new PointingDevice (this);
+
 			this .pointingDevice .setup ();
-
-			this .pointer        = new Vector2 (0, 0);
-			this .hits           = [ ];
-			this .enabledSensors = [{ }];
-			this .selectedLayer  = null;
-			this .overSensors    = { };
-			this .activeSensors  = { };
-
-			this .hitPointSorter = new MergeSort (this .hits, function (lhs, rhs) { return lhs .intersection .point .z < rhs .intersection .point .z; });
-			this .layerSorter    = new MergeSort (this .hits, function (lhs, rhs) { return lhs .layerNumber < rhs .layerNumber; });
-
-			this .pickingTime = 0;
 		},
 		setCursor: function (value)
 		{

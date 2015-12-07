@@ -16,23 +16,25 @@ function (Fields,
 	
 	var loadCountId = 0;
 
-	function X3DNetworkingContext () { }
+	function X3DNetworkingContext ()
+	{
+		this .cache = this .getXML () [0] .getAttribute ("cache") != "false";
+
+		this .addChildren ("loadCount", new Fields .SFInt32 ());
+		this .loadingObjects = { };
+
+		this .location     = new URI (this .getXML () [0] .baseURI);
+		this .defaultScene = this .createScene ();
+		this .privateScene = this .createScene ();
+	}
 
 	X3DNetworkingContext .prototype =
 	{
 		initialize: function ()
 		{
-		   this .cache = this .getXML () [0] .getAttribute ("cache") != "false";
-
-			this .addChildren ("loadCount", new Fields .SFInt32 ());
-			this .loadingObjects = { };
-
-			this .location     = new URI (this .getXML () [0] .baseURI);
-			this .defaultScene = this .createScene ();
 			this .defaultScene .setup ();
 			this .defaultScene .beginUpdate ();
 
-			this .privateScene = this .createScene ();
 			this .privateScene .setup ();
 			this .privateScene .beginUpdate ();
 		},

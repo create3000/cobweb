@@ -106,7 +106,7 @@ function ($,
 
 			try
 			{
-				var fragment = this .getExecutionContext () .getWorldURL () .fragment;
+				var fragment = this .getExecutionContext () .getURL () .fragment;
 
 				if (fragment .length)
 					this .getExecutionContext () .changeViewpoint (fragment);

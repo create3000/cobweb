@@ -11,6 +11,10 @@ function (jquery,
 	function PointingDevice (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .cursor     = "DEFAULT";
+		this .isOver     = false;
+		this .motionTime = 0;
 	}
 
 	PointingDevice .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -18,10 +22,6 @@ function (jquery,
 		constructor: PointingDevice,
 		initialize: function ()
 		{
-			this .cursor     = "DEFAULT";
-			this .isOver     = false;
-			this .motionTime = 0;
-
 			var browser = this .getBrowser ();
 
 			browser .getCanvas () .bind ("mousedown.PointingDevice", this .mousedown  .bind (this));

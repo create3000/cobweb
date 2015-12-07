@@ -60,9 +60,9 @@ function ($,
 		{
 			return false;
 		},
-		getWorldURL: function ()
+		getURL: function ()
 		{
-			return this .getExecutionContext () .getWorldURL ();
+			return this .getExecutionContext () .getURL ();
 		},
 		getProtoDeclaration: function ()
 		{

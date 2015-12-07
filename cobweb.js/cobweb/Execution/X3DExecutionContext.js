@@ -68,11 +68,15 @@ function ($,
 		{
 			return false;
 		},
-		setWorldURL: function (url)
+		getWorldURL: function ()
+		{
+			return this .getURL () .location;
+		},
+		setURL: function (url)
 		{
 			this .url = url;
 		},
-		getWorldURL: function ()
+		getURL: function ()
 		{
 			return this .url;
 		},
@@ -332,7 +336,7 @@ function ($,
 
 	Object .defineProperty (X3DExecutionContext .prototype, "worldURL",
 	{
-		get: function () { return this .url .location; },
+		get: function () { return this .getWorldURL (); },
 		enumerable: true,
 		configurable: false
 	});
