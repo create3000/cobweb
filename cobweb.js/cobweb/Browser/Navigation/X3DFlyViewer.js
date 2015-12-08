@@ -406,9 +406,17 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			shader .use ();
 
+			for (var i = 0, length = shader .clipPlanes; i < length; ++ i)
+				gl .uniform1i (shader .clipPlaneEnabled [i], false);
+
+			shader .clipPlanes = 0;
+
 			gl .uniform1i (shader .fogType,       0);
 			gl .uniform1i (shader .colorMaterial, false);
 			gl .uniform1i (shader .lighting,      true);
+
+			// XXX: Disable clip planes or maybe use background shader or custom shader.
+			// XXX: Either disable lights or use color.
 
 			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
 			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
