@@ -217,6 +217,11 @@ function ($,
 		{
 			this .getExecutionContext () .rootNodes .push (node);
 		},
+		exception: function (string)
+		{
+			if (this .getBrowser () .isStrict ())
+				throw new Error (string);
+		},
 		parseIntoScene: function ()
 		{
 			try
@@ -1049,11 +1054,20 @@ function ($,
 									{
 										if (this .inputOnlyId ())
 										{
-											var
-												eventInId = this .result [1],
-												route     = this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
+											try
+											{
+												var
+													eventInId = this .result [1],
+													route     = this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
+	
+												return true;
+											}
+											catch (error)
+											{
+												this .exception (error .message);
 
-											return true;
+												return true;
+											}
 										}
 		
 										throw new Error ("Bad ROUTE specification: Expected a field name.");
@@ -1171,8 +1185,7 @@ function ($,
 										}
 										catch (error)
 										{
-											if (this .getBrowser () .isStrict ())
-												throw new Error ("No such event or field '" + isId + "' inside PROTO " + this .getExecutionContext () .getName () + " interface declaration.");
+											this .exception ("No such event or field '" + isId + "' inside PROTO " + this .getExecutionContext () .getName () + " interface declaration.");
 											
 											return true;
 										}
@@ -1198,8 +1211,7 @@ function ($,
 														}
 														else
 														{
-															if (this .getBrowser () .isStrict ())
-																throw new Error ("Field '" + fieldId + "' must have access type " + accessTypeToString (field .getAccessType ()) + ".");
+															this .exception ("Field '" + fieldId + "' must have access type " + accessTypeToString (field .getAccessType ()) + ".");
 	
 															return true;
 														}
@@ -1315,8 +1327,7 @@ function ($,
 							}
 							catch (error)
 							{
-								if (this .getBrowser () .isStrict ())
-									throw new Error ("No such event or field '" + isId + "' inside PROTO " + this .getExecutionContext () .getName ());
+								this .exception ("No such event or field '" + isId + "' inside PROTO " + this .getExecutionContext () .getName ());
 		
 								return true;
 							}

@@ -194,7 +194,6 @@ function ($,
 				globalLights = browser .getGlobalLights ();
 
 			gl .useProgram (this .program);
-
 			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 
 			this .globalLights = Math .min (this .maxLights, globalLights .length);

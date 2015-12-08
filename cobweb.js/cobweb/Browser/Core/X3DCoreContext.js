@@ -57,7 +57,7 @@ function (BrowserOptions,
 		},
 		isStrict: function ()
 		{
-			return true;
+			return false;
 		},
 		getXML: function ()
 		{
