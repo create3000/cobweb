@@ -221,6 +221,8 @@ function ($,
 		{
 			if (this .getBrowser () .isStrict ())
 				throw new Error (string);
+
+			this .getBrowser () .println (string);
 		},
 		parseIntoScene: function ()
 		{
