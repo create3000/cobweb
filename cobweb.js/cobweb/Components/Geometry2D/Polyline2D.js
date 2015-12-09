@@ -71,16 +71,11 @@ function ($,
 		},
 		traverse: function (context)
 		{
-			var
-				browser = this .getBrowser (),
-				shader  = browser .getShader ();
+			var browser = this .getBrowser ();
 
-			if (shader === browser .getDefaultShader ())
-			{
-				browser .setTexture (null);
-				browser .setShader (shader = browser .getLineShader ());
-			}
-
+			if (browser .getShader () === browser .getDefaultShader ())
+				browser .setShader (browser .getLineShader ());
+	
 			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});

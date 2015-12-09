@@ -29,10 +29,10 @@ uniform bool      x3d_Texturing;  // true if a X3DTexture2DNode is attached, oth
 uniform sampler2D x3d_Texture;
 uniform int       x3d_GeometryType;
 
-varying vec4  frontColor; // color
-varying vec4  backColor;  // color
-varying vec4  t;          // texCoord
-varying vec3  v;          // point on geometry
+varying vec4 frontColor; // color
+varying vec4 backColor;  // color
+varying vec4 t;          // texCoord
+varying vec3 v;          // point on geometry
 
 void
 clip ()
@@ -46,6 +46,8 @@ clip ()
 				discard;
 			}
 		}
+		else
+			break;
 	}
 }
 

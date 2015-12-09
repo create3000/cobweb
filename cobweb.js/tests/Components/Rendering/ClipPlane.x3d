@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 02 Dec 2015 02:03:04 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 09 Dec 2015 12:59:30 GMT'/>
+    <meta name='modified' content='Wed, 09 Dec 2015 19:25:23 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -28,15 +28,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='8.32267475128174, 6.54544401168823, -8.87907409667969'/>
+              value='17.4298477172852, -0.180304527282715, -0.345007300376892'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.157071560621262, 0.953845918178558, 0.255942285060883, 2.5789737701416'/>
+              value='-0.00731232203543186, 0.999914586544037, 0.0108287157490849, 1.88984405994415'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='3, 0, 0'/>
+              value='5.8020396232605, -0.43957656621933, 3.49491214752197'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -54,9 +54,9 @@
     </Transform>
     <Viewpoint
         description='Home'
-        position='3.85618 12.1261 -1.48941'
-        orientation='-0.121003 0.747908 0.65268 2.8371'
-        centerOfRotation='3 0 0'/>
+        position='17.4298 -0.180305 -0.345007'
+        orientation='-0.00731232 0.999915 0.0108287 1.88984'
+        centerOfRotation='5.80204 -0.439577 3.49491'/>
     <Transform DEF='ClippedObjects'>
       <Transform DEF='Lines'
           translation='-3 0 0'>
@@ -150,17 +150,17 @@
         </Shape>
       </Transform>
       <ClipPlane DEF='ClipPlane_1'
-          plane='0 0 -1 1.15903'/>
+          plane='0 0 -1 -0.770769'/>
       <TouchSensor
           description='Clipped objects'/>
     </Transform>
     <Transform DEF='VisibleClipPlane'>
       <PlaneSensor DEF='PlaneSensor'
           axisRotation='0 1 0 1.5708'
-          offset='3 0 1.15903'
+          offset='3 0 -0.770769'
           maxPosition='-1 0'/>
       <Transform DEF='Rectangle2D'
-          translation='3 0 1.15903'
+          translation='3 0 -0.770769'
           scale='9 2.5 1'>
         <Shape>
           <Appearance>

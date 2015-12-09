@@ -58,6 +58,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
 		]),
+		custom: true,
 		wireframe: false,
 		maxClipPlanes: MAX_CLIP_PLANES,
 		clipPlanes: MAX_CLIP_PLANES,
@@ -83,6 +84,14 @@ function ($,
 
 			this .normalMatrixArray = new Float32Array (9);
 			this .relink ();
+		},
+		setCustom: function (value)
+		{
+			this .custom = value;
+		},
+		getCustom: function (value)
+		{
+			return this .custom;
 		},
 		relink: function ()
 		{
@@ -206,10 +215,11 @@ function ($,
 			var
 				browser         = this .getBrowser (),
 				gl              = browser .getContext (),
-				material        = browser .getMaterial (),
-				texture         = browser .getTexture (),
+				appearance      = browser .getAppearance (),
+				lineProperties  = appearance .getLineProperties (),
+				material        = appearance .getMaterial (),
+				texture         = appearance .getTexture (),
 				modelViewMatrix = context .modelViewMatrix,
-				customShader    = (this !== browser .getDefaultShader ()),
 				clipPlanes      = context .clipPlanes;
 
 			gl .useProgram (this .program);
@@ -224,9 +234,23 @@ function ($,
 
 			this .clipPlanes = clipPlanes .length;
 
-			// Fog & Material
+			// Fog
 
 			context .fog .use (gl, this);
+
+			// LineProperties
+
+			if (lineProperties && lineProperties .applied_ .getValue ())
+			{
+				gl .lineWidth (lineProperties .linewidthScaleFactor_ .getValue ());
+			}
+			else
+			{
+				gl .lineWidth (1);
+			}
+
+			// Material
+
 			gl .uniform1i (this .colorMaterial, context .colorMaterial);
 
 			if (material)
@@ -238,7 +262,7 @@ function ($,
 					localLights  = context .localLights,
 					lights       = Math .min (this .maxLights, globalLights .length + localLights .length);
 
-				if (customShader)
+				if (this .custom)
 				{
 					for (var i = 0, length = this .globalLights; i < length; ++ i)
 						globalLights [i] .use (gl, this, i);
@@ -287,7 +311,7 @@ function ($,
 			{
 				gl .uniform1i (this .lighting, false);
 
-				if (customShader)
+				if (this .custom)
 				{
 					// Set normal matrix.
 					var normalMatrix = this .normalMatrixArray;

@@ -233,10 +233,7 @@ function ($,
 			var browser = this .getBrowser ();
 
 			if (browser .getShader () === browser .getDefaultShader ())
-			{
-				browser .setTexture (null);
 				browser .setShader (browser .getLineShader ());
-			}
 
 			X3DGeometryNode .prototype .traverse .call (this, context);
 		},

@@ -17,7 +17,6 @@ function (TextureProperties,
 	function X3DTexturingContext ()
 	{
 		this .textureStages            = 1;
-		this .texture                  = null;
 		this .textureTransform         = [ ];
 		this .defaultTextureProperties = new TextureProperties (this);
 		this .defaultTextureTransform  = new TextureTransform (this);
@@ -29,7 +28,7 @@ function (TextureProperties,
 		initialize: function ()
 		{
 			var gl = this .getBrowser () .getContext ();
-			
+
 			// BrowserOptions
 			{
 				this .defaultTextureProperties .magnificationFilter_ .setValue ("NICEST");
@@ -61,14 +60,6 @@ function (TextureProperties,
 		getMaxCombinedTextureUnits: function ()
 		{
 			return this .maxCombinedTextureUnits;
-		},
-		setTexture: function (value)
-		{
-			this .texture = value;
-		},
-		getTexture: function ()
-		{
-			return this .texture;
 		},
 		getTextureTransform: function ()
 		{

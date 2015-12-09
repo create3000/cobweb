@@ -24,22 +24,7 @@ function (ComposedShader,
 	{
 		initialize: function ()
 		{
-			// Create default shader.
-
-			var vertexShader = new ShaderPart (this);
-			vertexShader .type_ = "VERTEX";
-			vertexShader .url_ .push (vertexShaderText);
-			vertexShader .setup ();
-
-			var fragmentShader = new ShaderPart (this);
-			fragmentShader .type_ = "FRAGMENT";
-			fragmentShader .url_ .push (fragmentShaderText);
-			fragmentShader .setup ();
-
-			this .backgroundSphereShader .language_ = "GLSL";
-			this .backgroundSphereShader .parts_ .push (vertexShader);
-			this .backgroundSphereShader .parts_ .push (fragmentShader);
-			this .backgroundSphereShader .setup ();
+			this .backgroundSphereShader = this .createShader (this, vertexShaderText, fragmentShaderText);
 
 			this .backgroundTextureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
 			this .backgroundTextureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";

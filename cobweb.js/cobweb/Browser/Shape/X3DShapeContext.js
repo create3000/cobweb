@@ -9,6 +9,7 @@ function (Appearance)
 	function X3DShapeContext ()
 	{
 		this .defaultAppearance = new Appearance (this);
+		this .appearance        = null;
 	}
 
 	X3DShapeContext .prototype =
@@ -21,13 +22,13 @@ function (Appearance)
 		{
 			return this .defaultAppearance;
 		},
-		setMaterial: function (value)
+		setAppearance: function (value)
 		{
-			this .material = value;
+			this .appearance = value;
 		},
-		getMaterial: function ()
+		getAppearance: function ()
 		{
-			return this .material;
+			return this .appearance;
 		},
 	};
 

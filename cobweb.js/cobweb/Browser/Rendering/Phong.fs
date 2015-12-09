@@ -77,6 +77,8 @@ clip ()
 				discard;
 			}
 		}
+		else
+			break;
 	}
 }
 

@@ -34,6 +34,8 @@ clip ()
 				discard;
 			}
 		}
+		else
+			break;
 	}
 }
 

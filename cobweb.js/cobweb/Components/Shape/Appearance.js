@@ -53,15 +53,33 @@ function ($,
 		{
 			X3DAppearanceNode .prototype .initialize .call (this);
 
+			this .lineProperties_   .addInterest (this, "set_lineProperties__");
 			this .material_         .addInterest (this, "set_material__");
 			this .texture_          .addInterest (this, "set_texture__");
 			this .textureTransform_ .addInterest (this, "set_textureTransform__");
 			this .shaders_          .addInterest (this, "set_shaders__");
 
+			this .set_lineProperties__ ();
 			this .set_material__ ();
 			this .set_texture__ ();
 			this .set_textureTransform__ ();
 			this .set_shaders__ ();
+		},
+		getLineProperties: function ()
+		{
+			return this .linePropertiesNode;
+		},
+		getMaterial: function ()
+		{
+			return this .materialNode;
+		},
+		getTexture: function ()
+		{
+			return this .textureNode;
+		},
+		set_lineProperties__: function ()
+		{
+			this .linePropertiesNode = X3DCast (X3DConstants .LineProperties, this .lineProperties_);
 		},
 		set_material__: function ()
 		{
@@ -101,8 +119,6 @@ function ($,
 		},
 		set_transparent__: function ()
 		{
-		   
-
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
 			                     (this .textureNode && this .textureNode .transparent_ .getValue ());
 		},
@@ -110,8 +126,7 @@ function ($,
 		{
 			var browser = this .getBrowser ();
 
-			browser .setMaterial (this .materialNode);
-			browser .setTexture (this .textureNode);
+			browser .setAppearance (this);
 			browser .setShader (browser .getDefaultShader ());
 
 			this .textureTransformNode .traverse ();

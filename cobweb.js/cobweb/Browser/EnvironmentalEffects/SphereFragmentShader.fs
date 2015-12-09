@@ -23,6 +23,8 @@ clip ()
 				discard;
 			}
 		}
+		else
+			break;
 	}
 }
 

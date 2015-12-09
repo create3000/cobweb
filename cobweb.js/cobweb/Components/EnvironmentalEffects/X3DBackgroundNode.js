@@ -123,7 +123,6 @@ function ($,
 	{
 		constructor: X3DBackgroundNode,
 		rotation: new Rotation4 (),
-		orthoMatrix: Camera .ortho (-1, 1, -1, 1, -1, 1, new Matrix4 ()),
 		textureMatrixArray: new Float32Array (new Matrix4 ()),
 		rectangleCount: 6,
 		initialize: function ()

@@ -34,33 +34,14 @@ function (Fields,
 {
 "use strict";
 	
-	function getShader (executionContext, vs, fs)
-	{
-		var vertexShader = new ShaderPart (executionContext);
-		vertexShader .type_ = "VERTEX";
-		vertexShader .url_ .push (vs);
-		vertexShader .setup ();
-
-		var fragmentShader = new ShaderPart (executionContext);
-		fragmentShader .type_ = "FRAGMENT";
-		fragmentShader .url_ .push (fs);
-		fragmentShader .setup ();
-
-		var shader = new ComposedShader (executionContext);
-		shader .language_ = "GLSL";
-		shader .parts_ .push (vertexShader);
-		shader .parts_ .push (fragmentShader);
-		shader .setup ();
-
-		return shader;
-	}
-
 	function getPointShader (executionContext, lineShader)
 	{
 		var shader = new ComposedShader (executionContext);
 		shader .language_ = "GLSL";
 		shader .parts_ = lineShader .parts_;
 		shader .setup ();
+
+		shader .setCustom (false);
 
 		return shader;
 	}
@@ -98,7 +79,7 @@ function (Fields,
 
 			this .reshape ();
 
-			this .lineShader  = getShader (this, wireframeVS, wireframeFS);
+			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
 			this .pointShader = getPointShader (this, this .lineShader);
 
 			this .setDefaultShader (this .getXML () [0] .getAttribute ("shading"));
@@ -149,6 +130,28 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
+		createShader: function (executionContext, vs, fs)
+		{
+			var vertexShader = new ShaderPart (executionContext);
+			vertexShader .type_ = "VERTEX";
+			vertexShader .url_ .push (vs);
+			vertexShader .setup ();
+	
+			var fragmentShader = new ShaderPart (executionContext);
+			fragmentShader .type_ = "FRAGMENT";
+			fragmentShader .url_ .push (fs);
+			fragmentShader .setup ();
+	
+			var shader = new ComposedShader (executionContext);
+			shader .language_ = "GLSL";
+			shader .parts_ .push (vertexShader);
+			shader .parts_ .push (fragmentShader);
+			shader .setup ();
+	
+			shader .setCustom (false);
+	
+			return shader;
+		},
 		setDefaultShader: function (type)
 		{
 			var gl = this .context;
@@ -158,7 +161,7 @@ function (Fields,
 				case "POINTSET":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -174,7 +177,7 @@ function (Fields,
 				case "WIREFRAME":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -190,7 +193,7 @@ function (Fields,
 				case "PHONG":
 				{
 					if (! this .phongShader)
-						this .phongShader = getShader (this, phongVS, phongFS);
+						this .phongShader = this .createShader (this, phongVS, phongFS);
 
 					this .defaultShader = this .phongShader;
 
@@ -208,7 +211,7 @@ function (Fields,
 					// case "GOURAUD":
 
 					if (! this .gouraudShader)
-						this .gouraudShader = getShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -251,7 +254,7 @@ function (Fields,
 		getDepthShader: function ()
 		{
 			if (! this .depthShader)
-				this .depthShader = getShader (this, depthVS, depthFS);
+				this .depthShader = this .createShader (this, depthVS, depthFS);
 			
 			return this .depthShader;
 		},

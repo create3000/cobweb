@@ -132,6 +132,8 @@ function ($,
 				context .distance = distance - radius;
 				context .fog      = this .getFog ();
 
+				// Clip planes
+
 				var
 					sourcePlanes = this .getClipPlanes (),
 					destPlanes   = context .clipPlanes;
@@ -140,6 +142,8 @@ function ($,
 					destPlanes [i] = sourcePlanes [i];
 				
 				destPlanes .length = sourcePlanes .length;
+
+				// Local lights
 
 				var
 					sourceLights = this .getLocalLights (),
@@ -158,7 +162,7 @@ function ($,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
 				if (this .numCollisionShapes === this .collisionShapes .length)
-					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ] });
+					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
 
 				var context = this .collisionShapes [this .numCollisionShapes];
 
@@ -168,6 +172,8 @@ function ($,
 				context .shape   = shape;
 				context .scissor = viewVolume .getScissor ();
 
+				// Collisions
+
 				var
 					sourceCollisions = this .getBrowser () .getCollisions (),
 					destCollisions   = context .collisions;
@@ -176,6 +182,17 @@ function ($,
 				   destCollisions [i] = sourceCollisions [i];
 				
 				destCollisions .length = sourceCollisions .length;
+
+				// Clip planes
+
+				var
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
+
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+					destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
 		},
 		constrainTranslation: function (translation)
 		{
@@ -275,19 +292,34 @@ function ($,
 			gl .disable (gl .BLEND);
 			gl .disable (gl .CULL_FACE);
 
-			for (var i = 0, length = this .numCollisionShapes; i < length; ++ i)
+			for (var s = 0, ls = this .numCollisionShapes; s < ls; ++ s)
 			{
 				var
-					context = collisionShapes [i],
-					scissor = context .scissor;
+					context    = collisionShapes [s],
+					scissor    = context .scissor,
+					clipPlanes = context .clipPlanes;
 
 				gl .scissor (scissor .x,
 				             scissor .y,
 				             scissor .z,
 				             scissor .w);
 
+				// Clip planes
+
+				for (var c = 0, cl = Math .min (shader .maxClipPlanes, clipPlanes .length); c < cl; ++ c)
+					clipPlanes [c] .use (gl, shader, c);
+	
+				for (var cl = shader .clipPlanes; c < cl; ++ c)
+					gl .uniform1i (shader .clipPlaneEnabled [c], false);
+	
+				shader .clipPlanes = clipPlanes .length;
+	
+				// modelViewMatrix
+	
 				gl .uniformMatrix4fv (shader .modelViewMatrix, false, context .modelViewMatrix);
 
+				// Draw
+	
 				context .shape .collision (shader);
 			}
 
