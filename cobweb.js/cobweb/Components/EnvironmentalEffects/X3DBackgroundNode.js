@@ -113,10 +113,10 @@ function ($,
 		this .projectionMatrixArray = new Float32Array (16);
 		this .transformationMatrix  = new Matrix4 ();
 		this .modelViewMatrixArray  = new Float32Array (16);
+		this .clipPlanes            = [ ];
 		this .colors                = [ ];
 		this .sphere                = [ ];
 		this .textures              = 0;
-		this .plane                 = false;
 	}
 
 	X3DBackgroundNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
@@ -243,15 +243,26 @@ function ($,
 
 			if (this .groundColor_ .length === 0 && this .skyColor_ .length == 1)
 			{
+				var s = SIZE;
+
 				// Build cube
 
-				this .plane = true;
+				this .sphere .vertices = 36;
+
+				this .sphere .push ( s,  s, -s, 1, -s,  s, -s, 1, -s, -s, -s, 1, // Back
+				                     s,  s, -s, 1, -s, -s, -s, 1,  s, -s, -s, 1,
+				                    -s,  s,  s, 1,  s,  s,  s, 1, -s, -s,  s, 1, // Front
+				                    -s, -s,  s, 1,  s,  s,  s, 1,  s, -s,  s, 1,
+				                    -s,  s, -s, 1, -s,  s,  s, 1, -s, -s,  s, 1, // Left	
+				                    -s,  s, -s, 1, -s, -s,  s, 1, -s, -s, -s, 1,
+				                    	s,  s,  s, 1,  s,  s, -s, 1,  s, -s,  s, 1, // Right		
+				                     s, -s,  s, 1,  s,  s, -s, 1,  s, -s, -s, 1,
+				                    	s,  s,  s, 1, -s,  s,  s, 1, -s,  s, -s, 1, // Top		
+				                     s,  s,  s, 1, -s,  s, -s, 1,  s,  s, -s, 1,
+				                    -s, -s,  s, 1,  s, -s,  s, 1, -s, -s, -s, 1, // Bottom	
+				                    -s, -s, -s, 1,  s, -s,  s, 1,  s, -s, -s, 1);
 
 				var c = this .skyColor_ [0];
-
-				this .sphere .push (1, 1, 0, 1, -1,  1,  0, 1, -1, -1, 0, 1);
-				this .sphere .push (1, 1, 0, 1, -1, -1,  0, 1,  1, -1, 0, 1);
-				this .sphere .vertices = 6;
 
 				for (var i = 0, vertices = this .sphere .vertices; i < vertices; ++ i)
 					this .colors .push (c .r, c .g, c .b, alpha);
@@ -260,8 +271,6 @@ function ($,
 			{
 				// Build sphere
 
-				this .plane = false;
-			
 				var radius = Math .sqrt (2 * Math .pow (SIZE, 2));
 			
 				if (this .skyColor_ .length > this .skyAngle_ .length)
@@ -413,11 +422,30 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .bottomBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (bottomVertices), gl .STATIC_DRAW);
 		},
-		traverse: function ()
+		traverse: function (type)
 		{
-			this .getCurrentLayer () .getBackgrounds () .push (this);
-
-			this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			switch (type)
+			{
+				case TraverseType .CAMERA:
+				{
+					this .getCurrentLayer () .getBackgrounds () .push (this);
+		
+					this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					break;
+				}
+				case TraverseType .DISPLAY:
+				{
+					var
+						sourcePlanes = this .getCurrentLayer () .getClipPlanes (),
+						destPlanes   = this .clipPlanes;
+	
+					for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+						destPlanes [i] = sourcePlanes [i];
+					
+					destPlanes .length = sourcePlanes .length;
+					break;
+				}
+			}
 		},
 		draw: function (viewport)
 		{
@@ -428,39 +456,6 @@ function ($,
 				browser = this .getBrowser (),
 				gl      = browser .getContext ();
 
-			if (this .plane && ! this .textures)
-			{
-				this .projectionMatrixArray .set (this .orthoMatrix);
-
-				this .modelViewMatrixArray .set (identity);
-			}
-			else
-			{
-				// Get background scale.
-
-				var
-					viewpoint       = this .getCurrentViewpoint (),
-					scale           = viewpoint .getScreenScale (SIZE, viewport),
-					rotation        = this .rotation,
-					modelViewMatrix = this .transformationMatrix;
-
-				scale .multiply (Math .max (viewport [2], viewport [3]));
-
-				// Get projection matrix.
-
-				this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport));	
-
-				// Rotate and scale background.
-
-				modelViewMatrix .multLeft (viewpoint .getInverseCameraSpaceMatrix ());
-				modelViewMatrix .get (null, rotation);
-				modelViewMatrix .identity ();
-				modelViewMatrix .scale (scale);
-				modelViewMatrix .rotate (rotation);
-
-				this .modelViewMatrixArray .set (modelViewMatrix);
-			}
-
 			// Setup context.
 	
 			gl .disable (gl .DEPTH_TEST);
@@ -468,8 +463,32 @@ function ($,
 			gl .enable (gl .CULL_FACE);
 			gl .frontFace (gl .CCW);
 
+			// Get background scale.
+
+			var
+				viewpoint       = this .getCurrentViewpoint (),
+				scale           = viewpoint .getScreenScale (SIZE, viewport),
+				rotation        = this .rotation,
+				modelViewMatrix = this .transformationMatrix;
+
+			scale .multiply (Math .max (viewport [2], viewport [3]));
+
+			// Get projection matrix.
+
+			this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport));	
+
+			// Rotate and scale background.
+
+			modelViewMatrix .multLeft (viewpoint .getInverseCameraSpaceMatrix ());
+			modelViewMatrix .get (null, rotation);
+			modelViewMatrix .identity ();
+			modelViewMatrix .scale (scale);
+			modelViewMatrix .rotate (rotation);
+
+			this .modelViewMatrixArray .set (modelViewMatrix);
+		
 			// Draw.
-	
+
 			this .drawSphere ();
 
 			if (this .textures)
@@ -483,11 +502,24 @@ function ($,
 				return;
 	
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getBackgroundSphereShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shader     = browser .getBackgroundSphereShader (),
+				clipPlanes = this .clipPlanes;
 
 			shader .use ();
+
+			// Clip planes
+
+			for (var i = 0, length = Math .min (shader .maxClipPlanes, clipPlanes .length); i < length; ++ i)
+				clipPlanes [i] .use (gl, shader, i);
+
+			for (var length = shader .clipPlanes; i < length; ++ i)
+				gl .uniform1i (shader .clipPlaneEnabled [i], false);
+
+			shader .clipPlanes = clipPlanes .length;
+
+			// Uniforms
 
 			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
 			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
@@ -521,11 +553,24 @@ function ($,
 		drawCube: function ()
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getGouraudShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shader     = browser .getGouraudShader (),
+				clipPlanes = this .clipPlanes;
 
 			shader .use ();
+
+			// Clip planes
+
+			for (var i = 0, length = Math .min (shader .maxClipPlanes, clipPlanes .length); i < length; ++ i)
+				clipPlanes [i] .use (gl, shader, i);
+
+			for (var length = shader .clipPlanes; i < length; ++ i)
+				gl .uniform1i (shader .clipPlaneEnabled [i], false);
+
+			shader .clipPlanes = clipPlanes .length;
+
+			// Uniforms
 
 			gl .uniform1i (shader .fogType,       0);
 			gl .uniform1i (shader .colorMaterial, false);

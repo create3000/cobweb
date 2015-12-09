@@ -319,6 +319,8 @@ function ($,
 		},
 		error: function (exception)
 		{
+			console .log (exception);
+			
 			// Output exception.
 
 			var message = "Couldn't load URL " + this .URL;

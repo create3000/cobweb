@@ -11,10 +11,6 @@ function ($)
 		this .category         = category;
 		this .name             = name;
 		this .conversionFactor = conversionFactor;
-
-		Object .preventExtensions (this);
-		Object .freeze (this);
-		Object .seal (this);
 	}
 
 	$.extend (UnitInfo .prototype,

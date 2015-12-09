@@ -133,20 +133,20 @@ function ($,
 				context .fog      = this .getFog ();
 
 				var
-				   sourcePlanes = this .getClipPlanes (),
-				   destPlanes   = context .clipPlanes;
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
 
 				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-				   destPlanes [i] = sourcePlanes [i];
+					destPlanes [i] = sourcePlanes [i];
 				
 				destPlanes .length = sourcePlanes .length;
 
 				var
-				   sourceLights = this .getLocalLights (),
-				   destLights   = context .localLights;
+					sourceLights = this .getLocalLights (),
+					destLights   = context .localLights;
 
 				for (var i = 0, length = sourceLights .length; i < length; ++ i)
-				   destLights [i] = sourceLights [i];
+					destLights [i] = sourceLights [i];
 				
 				destLights .length = sourceLights .length;
 			}

@@ -255,6 +255,7 @@ function ($,
 									this .maybeCameraObjects .push (innerNode);
 									break;				
 								}
+								case X3DConstants .X3DBackgroundNode:
 								case X3DConstants .X3DChildNode:
 								{
 									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
