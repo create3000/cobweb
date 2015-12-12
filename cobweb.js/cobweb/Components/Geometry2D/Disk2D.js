@@ -186,11 +186,17 @@ function ($,
 			}
 			else
 			{
-				context .geometryType = 2;
+				var
+					browser = this .getBrowser (),
+					gl      = browser .getContext (),
+					shader  = browser .getShader ();
+	
+				shader .use ();
+				gl .uniform1i (shader .geometryType, 2);
 	
 				X3DGeometryNode .prototype .traverse .call (this, context);
 	
-				context .geometryType = 3;
+				gl .uniform1i (shader .geometryType, 3);
 			}
 		},
 	});

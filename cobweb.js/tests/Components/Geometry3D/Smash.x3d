@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 07 Dec 2015 07:27:41 GMT'/>
+    <meta name='modified' content='Wed, 09 Dec 2015 21:02:48 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d"'>
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-10.8415756225586, -10.3268032073975, 32.7324295043945'/>
+              value='8.09334564208984, 4.01765441894531, 24.0830268859863'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.889605283737183, -0.44940784573555, -0.0814556926488876, 0.349903345108032'/>
+              value='0.371721059083939, 0.922493100166321, 0.104066960513592, 0.22433066368103'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='-4.55046463012695, 1.69322597980499, -4.58129692077637'/>
+              value='3, 5.99998998641968, 2.20537185668945e-05'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -426,14 +426,14 @@
             endAngle='6'/>
       </Shape>
     </Transform>
-    <Transform
+    <Transform DEF='_5'
         translation='3 5.99999 2.20482e-05'>
       <Shape>
         <Appearance>
           <LineProperties USE='_4'/>
           <Material
+              diffuseColor='0 0 0'
               emissiveColor='1 0 0'/>
-          <ImageTexture USE='_1'/>
         </Appearance>
         <Polypoint2D
             point='0 0, 1 0, 0 1, -1 0, 0 -1'/>
@@ -479,7 +479,7 @@
         translation='3 -3 0.999989'>
       <Shape>
         <Appearance>
-          <Material DEF='_5'/>
+          <Material DEF='_6'/>
           <ImageTexture USE='_1'/>
         </Appearance>
         <ArcClose2D
@@ -491,7 +491,7 @@
         translation='6 -3 0.999989'>
       <Shape>
         <Appearance>
-          <Material USE='_5'/>
+          <Material USE='_6'/>
           <ImageTexture USE='_1'/>
         </Appearance>
         <ArcClose2D
@@ -502,7 +502,7 @@
         translation='6 -3 0.999989'>
       <Shape>
         <Appearance>
-          <Material USE='_5'/>
+          <Material USE='_6'/>
           <ImageTexture USE='_1'/>
         </Appearance>
         <ArcClose2D
@@ -515,7 +515,7 @@
         translation='9 -3 0.999989'>
       <Shape>
         <Appearance>
-          <Material USE='_5'/>
+          <Material USE='_6'/>
           <ImageTexture USE='_1'/>
         </Appearance>
         <ArcClose2D
@@ -527,7 +527,7 @@
         translation='9 -3 0.999989'>
       <Shape>
         <Appearance>
-          <Material USE='_5'/>
+          <Material USE='_6'/>
           <ImageTexture USE='_1'/>
         </Appearance>
         <ArcClose2D

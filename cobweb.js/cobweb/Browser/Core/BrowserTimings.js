@@ -127,7 +127,7 @@ function ($,
 			if (this .type === "MORE")
 			{
 				var 
-					systemTime        = browser .systemTime - browser .pickingTime,
+					systemTime        = browser .systemTime,
 					navigationTime    = activeLayer && browser .getCollisionCount () ? activeLayer .collisionTime : 0,
 					collisionTime     = browser .collisionTime + navigationTime,
 					routingTime       = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime + navigationTime),

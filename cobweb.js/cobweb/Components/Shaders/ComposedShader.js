@@ -58,13 +58,19 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
 		]),
+		global: {
+			shader: null,
+		},
+		normalMatrixArray: new Float32Array (9),
+		maxClipPlanes: MAX_CLIP_PLANES,
+		numClipPlanes: MAX_CLIP_PLANES,
+		fog: null,
+		lineProperties: null,
+		maxLights: MAX_LIGHTS,
+		numLights: MAX_LIGHTS,
+		globalLights: 0,
 		custom: true,
 		wireframe: false,
-		maxClipPlanes: MAX_CLIP_PLANES,
-		clipPlanes: MAX_CLIP_PLANES,
-		maxLights: MAX_LIGHTS,
-		lights: MAX_LIGHTS,
-		globalLights: 0,
 		getTypeName: function ()
 		{
 			return "ComposedShader";
@@ -82,7 +88,6 @@ function ($,
 			X3DShaderNode               .prototype .initialize .call (this);
 			X3DProgrammableShaderObject .prototype .initialize .call (this);
 
-			this .normalMatrixArray = new Float32Array (9);
 			this .relink ();
 		},
 		setCustom: function (value)
@@ -132,7 +137,7 @@ function ($,
 
 			gl .useProgram (program);
 
-			this .numClipPlanes = gl .getUniformLocation (program, "x3d_NumClipPlanes");
+			this .points = gl .getUniformLocation (program, "X3D_Points");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
 			{
@@ -143,6 +148,8 @@ function ($,
 			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
 			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
 			this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
+
+			this .linewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
 
 			this .lighting      = gl .getUniformLocation (program, "x3d_Lighting");
 			this .colorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
@@ -194,6 +201,7 @@ function ($,
 
 			// Set texture to active texture unit 0.
 			gl .uniform1i (this .texture, 0);
+			gl .uniform1i (this .geometryType, 3);
 		},
 		setGlobalUniforms: function ()
 		{
@@ -222,32 +230,51 @@ function ($,
 				modelViewMatrix = context .modelViewMatrix,
 				clipPlanes      = context .clipPlanes;
 
-			gl .useProgram (this .program);
+			if (this !== this .global .shader)
+			{
+				this .global .shader = this;
+				gl .useProgram (this .program);
+			}
 
 			// Clip planes
 
-			for (var i = 0, length = Math .min (this .maxClipPlanes, clipPlanes .length); i < length; ++ i)
+			for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
 				clipPlanes [i] .use (gl, this, i);
 
-			for (var length = this .clipPlanes; i < length; ++ i)
+			if (i < this .numClipPlanes)
 				gl .uniform1i (this .clipPlaneEnabled [i], false);
 
-			this .clipPlanes = clipPlanes .length;
+			this .numClipPlanes = i;
 
 			// Fog
 
-			context .fog .use (gl, this);
+			if (context .fog !== this .fog)
+			{
+				this .fog = context .fog;
+				context .fog .use (gl, this);
+			}
 
 			// LineProperties
 
-			if (lineProperties && lineProperties .applied_ .getValue ())
+			if (lineProperties !== this .lineProperties)
 			{
-				gl .lineWidth (lineProperties .linewidthScaleFactor_ .getValue ());
+				this .lineProperties = lineProperties;
+
+				if (lineProperties && lineProperties .applied_ .getValue ())
+				{
+					var linewidthScaleFactor = lineProperties .linewidthScaleFactor_ .getValue ();
+	
+					gl .lineWidth (linewidthScaleFactor);
+					gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);
+				}
+				else
+				{
+					gl .lineWidth (1);
+					gl .uniform1f (this .linewidthScaleFactor, 1);
+				}
 			}
 			else
-			{
 				gl .lineWidth (1);
-			}
 
 			// Material
 
@@ -260,7 +287,7 @@ function ($,
 				var
 					globalLights = browser .getGlobalLights (),
 					localLights  = context .localLights,
-					lights       = Math .min (this .maxLights, globalLights .length + localLights .length);
+					numLights    = Math .min (this .maxLights, globalLights .length + localLights .length);
 
 				if (this .custom)
 				{
@@ -268,13 +295,13 @@ function ($,
 						globalLights [i] .use (gl, this, i);
 				}
 
-				for (var i = this .globalLights, l = 0; i < lights; ++ i, ++ l)
+				for (var i = this .globalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
-				for (var length = this .lights; i < length; ++ i)
+				if (i < this .numLights)
 					gl .uniform1i (this .lightOn [i], false);
 
-				this .lights = lights;
+				this .numLights = i;
 
 				// Material
 
@@ -325,10 +352,11 @@ function ($,
 
 			if (texture)
 			{
+				appearance .getTextureTransform () .traverse ();
 				texture .traverse ();
+
 				gl .uniform1i (this .texturing, true);
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
-				gl .uniform1i (this .geometryType, context .geometryType);
 				// Active texture 0 is set on initialization.
 			}
 			else
@@ -342,9 +370,10 @@ function ($,
 			var gl = this .getBrowser () .getContext ();
 
 			gl .useProgram (this .program);
+
+			this .global .shader = this;
 		},
 	});
 
 	return ComposedShader;
 });
-

@@ -77,6 +77,10 @@ function ($,
 		{
 			return this .textureNode;
 		},
+		getTextureTransform: function ()
+		{
+			return this .textureTransformNode;
+		},
 		set_lineProperties__: function ()
 		{
 			this .linePropertiesNode = X3DCast (X3DConstants .LineProperties, this .lineProperties_);
@@ -128,8 +132,6 @@ function ($,
 
 			browser .setAppearance (this);
 			browser .setShader (browser .getDefaultShader ());
-
-			this .textureTransformNode .traverse ();
 		},
 	});
 

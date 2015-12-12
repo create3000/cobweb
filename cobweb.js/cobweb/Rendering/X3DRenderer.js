@@ -306,14 +306,14 @@ function ($,
 
 				// Clip planes
 
-				for (var c = 0, cl = Math .min (shader .maxClipPlanes, clipPlanes .length); c < cl; ++ c)
+				for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
 					clipPlanes [c] .use (gl, shader, c);
-	
-				for (var cl = shader .clipPlanes; c < cl; ++ c)
+
+				if (c < shader .numClipPlanes)
 					gl .uniform1i (shader .clipPlaneEnabled [c], false);
-	
-				shader .clipPlanes = clipPlanes .length;
-	
+				
+				shader .numClipPlanes = c;
+
 				// modelViewMatrix
 	
 				gl .uniformMatrix4fv (shader .modelViewMatrix, false, context .modelViewMatrix);
@@ -596,7 +596,7 @@ function ($,
 
 			var clipPlanes = this .getBrowser () .getClipPlanes ();
 
-			for (var i = 0; i < clipPlanes .length; ++ i)
+			for (var i = 0, length = clipPlanes .length; i < length; ++ i)
 			   clipPlanes [i] .recycle ();
 
 			clipPlanes .length = 0;
@@ -605,7 +605,7 @@ function ($,
 
 			var lights = this .getBrowser () .getGlobalLights ();
 
-			for (var i = 0; i < lights .length; ++ i)
+			for (var i = 0, length = lights .length; i < length; ++ i)
 			   lights [i] .recycle ();
 
 			lights .length = 0;
@@ -614,7 +614,7 @@ function ($,
 
 			var lights = this .getBrowser () .getLocalLights ();
 
-			for (var i = 0; i < lights .length; ++ i)
+			for (var i = 0, length = lights .length; i < length; ++ i)
 			   lights [i] .recycle ();
 
 			lights .length = 0;

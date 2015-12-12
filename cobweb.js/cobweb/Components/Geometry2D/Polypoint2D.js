@@ -71,12 +71,20 @@ function ($,
 		},
 		traverse: function (context)
 		{
-			var browser = this .getBrowser ();
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getShader ();
 
-			if (browser .getShader () === browser .getDefaultShader ())
-				browser .setShader (browser .getPointShader ());
+			if (shader === browser .getDefaultShader ())
+				browser .setShader (shader = browser .getPointShader ());
+	
+			shader .use ();
+			gl .uniform1i (shader .points, true);
 
 			X3DGeometryNode .prototype .traverse .call (this, context);
+
+			gl .uniform1i (shader .points, false);
 		},
 	});
 
