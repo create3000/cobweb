@@ -294,7 +294,6 @@ function ($,
 				xMax += glyph .advanceWidth + kerning;
 				yMin  = Math .min (yMin, glyphMin .y);
 				yMax  = Math .max (yMax, glyphMax .y);
-			
 			}
 
 			if (glyphs .length)
@@ -311,7 +310,7 @@ function ($,
 
 			min .set (xMin, yMin);
 			max .set (xMax / font .unitsPerEm, yMax);
-				
+
 			switch (fontStyle .getMajorAlignment ())
 			{
 				case X3DFontStyleNode .Alignment .BEGIN:
@@ -814,7 +813,7 @@ function ($,
 					{
 					   holesIndices .push (coords .length / 2);
 				      coords .push (hole [p] .x, hole [p] .y);
-				      polygon .push (hole);
+				      polygon .push (hole [p]);
 				   }
 				}
 
