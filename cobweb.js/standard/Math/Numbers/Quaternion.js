@@ -8,6 +8,8 @@ function ($, Vector3, Algorithm)
 {
 "use strict";
 
+	var result = new Vector3 (0, 0, 0);
+
 	function Quaternion (x, y, z, w)
 	{
 		this .x = x;
@@ -321,7 +323,7 @@ function ($, Vector3, Algorithm)
 	{
 		get: function ()
 		{
-			return new Vector3 (this .x,
+			return result .set (this .x,
 			                    this .y,
 			                    this .z);
 		},

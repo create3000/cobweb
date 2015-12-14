@@ -4,16 +4,24 @@ define ([
 	"jquery",
 	"standard/Math/Numbers/Quaternion",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
 ],
-function ($, Quaternion, Vector3)
+function ($,
+          Quaternion,
+          Vector3,
+          Vector4)
 {
 "use strict";
 
 	var
-		xAxis = new Vector3 (1, 0, 0),
-		yAxis = new Vector3 (0, 1, 0),
-		from  = new Vector3 (0, 0, 0),
-		to    = new Vector3 (0, 0, 0);
+		xAxis    = new Vector3 (1, 0, 0),
+		yAxis    = new Vector3 (0, 1, 0),
+		from     = new Vector3 (0, 0, 0),
+		to       = new Vector3 (0, 0, 0),
+		cv       = new Vector3 (0, 0, 0),
+		t        = new Vector3 (0, 0, 0),
+		standard = new Vector4 (0, 0, 1, 0),
+		result   = new Vector3 (0, 0, 0, 0);
 
 	function Rotation4 (x, y, z, angle)
 	{
@@ -31,15 +39,19 @@ function ($, Quaternion, Vector3)
 			}
 			case 2:
 			{
+				var
+					arg0 = arguments [0],
+					arg1 = arguments [1];
+
 				this .value = new Quaternion (0, 0, 0, 1);
 
-				if (arguments [1] instanceof Vector3)
-				   return this .setFromToVec (arguments [0], arguments [1]);
-				
-				this .set (arguments [0] .x,
-				           arguments [0] .y,
-				           arguments [0] .z,
-				           arguments [1]);
+				if (arg1 instanceof Vector3)
+				   return this .setFromToVec (arg0, arg1);
+
+				this .set (arg0 .x,
+				           arg0 .y,
+				           arg0 .z,
+				           arg1);
 			
 			   return;
 			}
@@ -90,15 +102,17 @@ function ($, Quaternion, Vector3)
 		},
 		get: function ()
 		{
-			if (Math .abs (this .value .w) >= 1)
-				return [0, 0, 1, 0];
+			var value = this .value;
 
-			var vector = this .value .imag .normalize ();
+			if (Math .abs (value .w) >= 1)
+				return standard;
 
-			return [ vector .x,
-				      vector .y,
-				      vector .z,
-				      2 * Math .acos (this .value .w) ];
+			var vector = value .imag .normalize ();
+
+			return result .set (vector .x,
+				                 vector .y,
+				                 vector .z,
+				                 2 * Math .acos (value .w));
 		},
 		setFromToVec: function (fromVec, toVec)
 		{
@@ -109,7 +123,7 @@ function ($, Quaternion, Vector3)
 
 			var
 				cos_angle = from .dot (to),
-				crossvec  = Vector3 .cross (from, to) .normalize (),
+				crossvec  = cv .assign (from) .cross (to) .normalize (),
 				crosslen  = crossvec .abs ();
 
 			if (crosslen === 0)
@@ -124,11 +138,11 @@ function ($, Quaternion, Vector3)
 				else
 				{
 					// Try crossing with x axis.
-					var t = Vector3 .cross (from, xAxis);
+					t  .assign (from) .cross (xAxis);
 
 					// If not ok, cross with y axis.
 					if (t .norm () === 0)
-						t = Vector3 .cross (from , yAxis);
+						t  .assign (from) .cross (yAxis);
 
 					t .normalize ();
 
@@ -196,10 +210,10 @@ function ($, Quaternion, Vector3)
 		toString: function ()
 		{
 			var r = this .get ();
-			return r [0] + " " +
-			       r [1] + " " +
-			       r [2] + " " +
-			       r [3];
+			return r .x + " " +
+			       r .y + " " +
+			       r .z + " " +
+			       r .w;
 		}
 	};
 

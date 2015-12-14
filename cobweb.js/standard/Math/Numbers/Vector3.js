@@ -153,7 +153,7 @@ function ($, Algorithm)
 		},
 		min: function (vector)
 		{
-			for (var i = 0; i < arguments .length; ++ i)
+			for (var i = 0, length = arguments .length; i < length; ++ i)
 			{
 				var vector = arguments [i];
 
@@ -166,7 +166,7 @@ function ($, Algorithm)
 		},
 		max: function (vector)
 		{
-			for (var i = 0; i < arguments .length; ++ i)
+			for (var i = 0, length = arguments .length; i < length; ++ i)
 			{
 				var vector = arguments [i];
 
@@ -320,11 +320,12 @@ function ($, Algorithm)
 		min: function (lhs, rhs)
 		{
 			var
-				x = arguments [0] .x,
-				y = arguments [0] .y,
-				z = arguments [0] .z;
+				vector = arguments [0],
+				x = vector .x,
+				y = vector .y,
+				z = vector .z;
 
-			for (var i = 1; i < arguments .length; ++ i)
+			for (var i = 1, length = arguments .length; i < length; ++ i)
 			{
 				var vector = arguments [i];
 
@@ -338,11 +339,12 @@ function ($, Algorithm)
 		max: function (lhs, rhs)
 		{
 			var
-				x = arguments [0] .x,
-				y = arguments [0] .y,
-				z = arguments [0] .z;
+				vector = arguments [0],
+				x      = vector .x,
+				y      = vector .y,
+				z      = vector .z;
 
-			for (var i = 1; i < arguments .length; ++ i)
+			for (var i = 1, length = arguments .length; i < length; ++ i)
 			{
 				var vector = arguments [i];
 

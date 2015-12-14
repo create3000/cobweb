@@ -17,6 +17,12 @@ function (Matrix4, Vector3)
 	   p1  = new Vector3 (0, 0, 0),
 	   p4  = new Vector3 (0, 0, 0);
 
+	var
+		lhs_min = new Vector3 (0, 0, 0),
+		lhs_max = new Vector3 (0, 0, 0),
+		rhs_min = new Vector3 (0, 0, 0),
+		rhs_max = new Vector3 (0, 0, 0);
+
 	function Box3 (size, center)
 	{
 		switch (arguments .length)
@@ -142,12 +148,6 @@ function (Matrix4, Vector3)
 
 			if (box .isEmpty ())
 				return this;
-
-			var
-				lhs_min = new Vector3 (0, 0, 0),
-				lhs_max = new Vector3 (0, 0, 0),
-				rhs_min = new Vector3 (0, 0, 0),
-				rhs_max = new Vector3 (0, 0, 0);
 
 			this .getExtents (lhs_min, lhs_max);
 			box  .getExtents (rhs_min, rhs_max);

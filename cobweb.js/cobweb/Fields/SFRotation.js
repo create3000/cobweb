@@ -65,7 +65,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		},
 		getAxis: function ()
 		{
-			return new SFVec3f (this .getValue () .getAxis ());
+			return new SFVec3f (this .getValue () .getAxis () .copy ());
 		},
 		inverse: function ()
 		{
