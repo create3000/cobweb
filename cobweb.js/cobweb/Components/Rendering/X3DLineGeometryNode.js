@@ -46,7 +46,7 @@ function ($,
 			// Setup shader.
 
 			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context); // setWireframeLocalUniforms (set only emissiveColor from Material)
+			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
