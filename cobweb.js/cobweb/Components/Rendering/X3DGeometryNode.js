@@ -184,9 +184,10 @@ function ($,
 		{
 			var normals = this .normals;
 
-			value .forEach (function (v, i) { normals [i] = v; });
+			for (var i = 0, length = value .length; i < length; ++ i)
+				normals [i] = value [i];
 
-			normals .length = value .length;
+			normals .length = length;
 		},
 		getNormals: function ()
 		{
@@ -203,9 +204,10 @@ function ($,
 		{
 			var vertices = this .vertices;
 
-			value .forEach (function (v, i) { vertices [i] = v; });
+			for (var i = 0, length = value .length; i < length; ++ i)
+				vertices [i] = value [i];
 
-			vertices .length = value .length;
+			vertices .length = length;
 		},
 		getVertices: function ()
 		{
