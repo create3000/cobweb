@@ -2,6 +2,10 @@ data:text/plain;charset=utf-8,
 // -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
 precision mediump float;
 
+// 2
+uniform bool  X3D_Points;
+uniform float x3d_LinewidthScaleFactor;
+
 #define MAX_CLIP_PLANES 6
 
 // 30
@@ -37,6 +41,14 @@ varying vec3 v;          // point on geometry
 void
 clip ()
 {
+	if (X3D_Points && x3d_LinewidthScaleFactor >= 2.0)
+	{
+		float dist = distance (vec2 (0.5, 0.5), gl_PointCoord);
+	
+		if (dist > 0.5)
+			discard;
+	}
+
 	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
 	{
 		if (x3d_ClipPlaneEnabled [i])

@@ -501,8 +501,26 @@ function ($,
 
 			if (shader .wireframe)
 			{
-				for (var i = 0; i < this .vertexCount; i += 3)
-					gl .drawArrays (shader .primitiveMode, i, 3);
+				if (context .transparent)
+				{
+					gl .enable (gl .CULL_FACE);
+					gl .cullFace (gl .FRONT);
+
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+
+					gl .cullFace (gl .BACK);
+
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+				}
+				else
+				{
+					gl .disable (gl .CULL_FACE);
+
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+				}
 			}
 			else
 			{
@@ -513,7 +531,6 @@ function ($,
 				if (context .transparent && ! this .solid)
 				{
 					gl .enable (gl .CULL_FACE);
-
 					gl .cullFace (gl .FRONT);
 					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
 

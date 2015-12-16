@@ -23,6 +23,8 @@ varying vec3 v;  // point on geometry
 void
 main ()
 {
+	gl_PointSize = x3d_LinewidthScaleFactor;
+
 	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
 
 	if (x3d_Lighting)

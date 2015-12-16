@@ -8,9 +8,10 @@ uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
 
-// 2
-uniform bool x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
-uniform bool x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
+// 3
+uniform float x3d_LinewidthScaleFactor;
+uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
+uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
 
 #define MAX_LIGHTS        8
 #define DIRECTIONAL_LIGHT 0
@@ -151,6 +152,8 @@ getMaterial (vec3 N,
 void
 main ()
 {
+	gl_PointSize = x3d_LinewidthScaleFactor;
+
 	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
 
 	if (x3d_Texturing)

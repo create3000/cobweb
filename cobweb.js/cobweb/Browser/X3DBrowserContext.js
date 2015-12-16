@@ -7,6 +7,7 @@ define ([
 	"cobweb/Routing/X3DRoutingContext",
 	"cobweb/Browser/Scripting/X3DScriptingContext",
 	"cobweb/Browser/Networking/X3DNetworkingContext",
+	"cobweb/Browser/Shape/X3DShapeContext",
 	"cobweb/Browser/Rendering/X3DRenderingContext",
 	"cobweb/Browser/Geometry2D/X3DGeometry2DContext",
 	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
@@ -17,7 +18,6 @@ define ([
 	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Lighting/X3DLightingContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
-	"cobweb/Browser/Shape/X3DShapeContext",
 	"cobweb/Browser/Sound/X3DSoundContext",
 	"cobweb/Browser/Text/X3DTextContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
@@ -32,6 +32,7 @@ function ($,
           X3DRoutingContext,
           X3DScriptingContext,
           X3DNetworkingContext,
+          X3DShapeContext,
           X3DRenderingContext,
           X3DGeometry2DContext,
           X3DGeometry3DContext,
@@ -42,7 +43,6 @@ function ($,
           X3DEnvironmentalEffectsContext,
           X3DLightingContext,
           X3DShadersContext,
-          X3DShapeContext,
           X3DSoundContext,
           X3DTextContext,
           X3DTexturingContext,
@@ -59,6 +59,7 @@ function ($,
 		X3DCoreContext                 .call (this, xml);
 		X3DScriptingContext            .call (this);
 		X3DNetworkingContext           .call (this);
+		X3DShapeContext                .call (this);
 		X3DRenderingContext            .call (this);
 		X3DGeometry2DContext           .call (this);
 		X3DGeometry3DContext           .call (this);
@@ -69,7 +70,6 @@ function ($,
 		X3DEnvironmentalEffectsContext .call (this);
 		X3DLightingContext             .call (this);
 		X3DShadersContext              .call (this);
-		X3DShapeContext                .call (this);
 		X3DSoundContext                .call (this);
 		X3DTextContext                 .call (this);
 		X3DTexturingContext            .call (this);
@@ -93,8 +93,11 @@ function ($,
 	};
 
 	X3DBrowserContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+		X3DRoutingContext .prototype,
 		X3DCoreContext .prototype,
+		X3DScriptingContext .prototype,
 		X3DNetworkingContext .prototype,
+		X3DShapeContext .prototype,
 		X3DRenderingContext .prototype,
 		X3DGeometry2DContext .prototype,
 		X3DGeometry3DContext .prototype,
@@ -104,21 +107,21 @@ function ($,
 		X3DLayeringContext .prototype,
 		X3DEnvironmentalEffectsContext .prototype,
 		X3DLightingContext .prototype,
-		X3DScriptingContext .prototype,
 		X3DShadersContext .prototype,
-		X3DShapeContext .prototype,
 		X3DSoundContext .prototype,
 		X3DTextContext .prototype,
 		X3DTexturingContext .prototype,
 		X3DTimeContext .prototype,
-		X3DRoutingContext .prototype,
 	{
 		constructor: X3DBrowserContext,
 		initialize: function ()
 		{
 			X3DBaseNode                    .prototype .initialize .call (this);
+			X3DRoutingContext              .prototype .initialize .call (this);
 			X3DCoreContext                 .prototype .initialize .call (this);
+			X3DScriptingContext            .prototype .initialize .call (this);
 			X3DNetworkingContext           .prototype .initialize .call (this);
+			X3DShapeContext                .prototype .initialize .call (this);
 			X3DRenderingContext            .prototype .initialize .call (this);
 			X3DGeometry2DContext           .prototype .initialize .call (this);
 			X3DGeometry3DContext           .prototype .initialize .call (this);
@@ -128,14 +131,11 @@ function ($,
 			X3DLayeringContext             .prototype .initialize .call (this);
 			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
 			X3DLightingContext             .prototype .initialize .call (this);
-			X3DScriptingContext            .prototype .initialize .call (this);
 			X3DShadersContext              .prototype .initialize .call (this);
-			X3DShapeContext                .prototype .initialize .call (this);
 			X3DSoundContext                .prototype .initialize .call (this);
 			X3DTextContext                 .prototype .initialize .call (this);
 			X3DTexturingContext            .prototype .initialize .call (this);
 			X3DTimeContext                 .prototype .initialize .call (this);
-			X3DRoutingContext              .prototype .initialize .call (this);
 		},
 		initialized: function ()
 		{

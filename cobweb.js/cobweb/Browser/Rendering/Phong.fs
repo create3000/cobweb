@@ -4,6 +4,10 @@ precision mediump float;
 
 #define MAX_CLIP_PLANES 6
 
+// 2
+uniform bool  X3D_Points;
+uniform float x3d_LinewidthScaleFactor;
+
 // 30
 uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
 uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
@@ -17,8 +21,9 @@ uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
 
-uniform bool x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
-uniform bool x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
+uniform float x3d_LinewidthScaleFactor;
+uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
+uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
 
 #define MAX_LIGHTS        8
 #define DIRECTIONAL_LIGHT 0
@@ -68,6 +73,14 @@ varying vec3 v;  // point on geometry
 void
 clip ()
 {
+	if (X3D_Points && x3d_LinewidthScaleFactor >= 2.0)
+	{
+		float dist = distance (vec2 (0.5, 0.5), gl_PointCoord);
+	
+		if (dist > 0.5)
+			discard;
+	}
+
 	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
 	{
 		if (x3d_ClipPlaneEnabled [i])

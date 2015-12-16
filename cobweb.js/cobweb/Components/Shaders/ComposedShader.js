@@ -65,7 +65,6 @@ function ($,
 		maxClipPlanes: MAX_CLIP_PLANES,
 		numClipPlanes: MAX_CLIP_PLANES,
 		fog: null,
-		lineProperties: null,
 		maxLights: MAX_LIGHTS,
 		numLights: MAX_LIGHTS,
 		globalLights: 0,
@@ -202,6 +201,7 @@ function ($,
 			// Set texture to active texture unit 0.
 			gl .uniform1i (this .texture, 0);
 			gl .uniform1i (this .geometryType, 3);
+			gl .uniform1f (this .linewidthScaleFactor, 1);
 		},
 		setGlobalUniforms: function ()
 		{
@@ -256,9 +256,9 @@ function ($,
 
 			// LineProperties
 
-			if (lineProperties !== this .lineProperties)
+			if (lineProperties !== browser .getLineProperties ())
 			{
-				this .lineProperties = lineProperties;
+				browser .setLineProperties (lineProperties);
 
 				if (lineProperties && lineProperties .applied_ .getValue ())
 				{

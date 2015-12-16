@@ -174,7 +174,14 @@ function (Fields,
 					
 					this .pointShader   .wireframe = true;
 					this .lineShader    .wireframe = true;
-					this .defaultShader .wireframe = true;					
+					this .defaultShader .wireframe = true;
+
+					this .lineShader .use ();
+					gl .uniform1i (this .lineShader .points, true);
+
+					this .defaultShader .use ();
+					gl .uniform1i (this .defaultShader .points, true);
+
 					break;
 				}
 				case "WIREFRAME":
@@ -191,6 +198,13 @@ function (Fields,
 					this .pointShader   .wireframe = true;
 					this .lineShader    .wireframe = true;
 					this .defaultShader .wireframe = true;					
+
+					this .lineShader .use ();
+					gl .uniform1i (this .lineShader .points, false);
+
+					this .defaultShader .use ();
+					gl .uniform1i (this .defaultShader .points, false);
+
 					break;
 				}
 				case "PHONG":
@@ -207,6 +221,13 @@ function (Fields,
 					this .pointShader   .wireframe = true;
 					this .lineShader    .wireframe = true;
 					this .defaultShader .wireframe = false;					
+
+					this .lineShader .use ();
+					gl .uniform1i (this .lineShader .points, false);
+
+					this .defaultShader .use ();
+					gl .uniform1i (this .defaultShader .points, false);
+
 					break;
 				}
 				default:
@@ -225,6 +246,13 @@ function (Fields,
 					this .pointShader   .wireframe = true;
 					this .lineShader    .wireframe = true;
 					this .defaultShader .wireframe = false;					
+
+					this .lineShader .use ();
+					gl .uniform1i (this .lineShader .points, false);
+
+					this .defaultShader .use ();
+					gl .uniform1i (this .defaultShader .points, false);
+
 					break;
 				}
 			}

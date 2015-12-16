@@ -10,6 +10,7 @@ function (Appearance)
 	{
 		this .defaultAppearance = new Appearance (this);
 		this .appearance        = null;
+		this .lineProperties    = null;
 	}
 
 	X3DShapeContext .prototype =
@@ -29,6 +30,14 @@ function (Appearance)
 		getAppearance: function ()
 		{
 			return this .appearance;
+		},
+		setLineProperties: function (value)
+		{
+			this .lineProperties = value;
+		},
+		getLineProperties: function ()
+		{
+			return this .lineProperties;
 		},
 	};
 
