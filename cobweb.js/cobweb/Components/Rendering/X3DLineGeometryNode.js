@@ -61,7 +61,7 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
 
-			// Draw depending on wireframe, solid and transparent.
+			// Wireframes are always solid so only one drawing call is needed.
 
 			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
 

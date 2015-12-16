@@ -501,26 +501,10 @@ function ($,
 
 			if (shader .wireframe)
 			{
-				if (context .transparent)
-				{
-					gl .enable (gl .CULL_FACE);
-					gl .cullFace (gl .FRONT);
+				// Wireframes are always solid so only one drawing call is needed.
 
-					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
-
-					gl .cullFace (gl .BACK);
-
-					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
-				}
-				else
-				{
-					gl .disable (gl .CULL_FACE);
-
-					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
-				}
+				for (var i = 0, length = this .vertexCount; i < length; i += 3)
+					gl .drawArrays (shader .primitiveMode, i, 3);
 			}
 			else
 			{
