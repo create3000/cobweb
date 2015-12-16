@@ -4,7 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -12,7 +12,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGeometryNode, 
+          X3DLineGeometryNode, 
           X3DConstants,
           Vector3)
 {
@@ -20,12 +20,12 @@ function ($,
 
 	function Circle2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Circle2D);
 	}
 
-	Circle2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	Circle2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
 	{
 		constructor: Circle2D,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -46,22 +46,18 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DGeometryNode .prototype .initialize .call (this);
+			X3DLineGeometryNode .prototype .initialize .call (this);
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_LOOP);
 		},
 		set_live__: function ()
 		{
-			X3DGeometryNode .prototype .set_live__ .call (this);
+			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
 				this .getBrowser () .getCircle2DOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getCircle2DOptions () .removeInterest (this, "eventsProcessed");
-		},
-		isLineGeometry: function ()
-		{
-			return true;
 		},
 		build: function ()
 		{
@@ -82,15 +78,6 @@ function ($,
 
 			this .getMin () .set (-radius, -radius, 0);
 			this .getMax () .set ( radius,  radius, 0);
-		},
-		traverse: function (context)
-		{
-			var browser = this .getBrowser ();
-
-			if (browser .getShader () === browser .getDefaultShader ())
-				browser .setShader (browser .getLineShader ());
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});
 

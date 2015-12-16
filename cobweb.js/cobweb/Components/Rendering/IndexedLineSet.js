@@ -4,7 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
@@ -12,7 +12,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGeometryNode, 
+          X3DLineGeometryNode, 
           X3DCast,
           X3DConstants)
 {
@@ -20,7 +20,7 @@ function ($,
 
 	function IndexedLineSet (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .IndexedLineSet);
 
@@ -29,7 +29,7 @@ function ($,
 		this .coordNode    = null;
 	}
 
-	IndexedLineSet .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	IndexedLineSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
 	{
 		constructor: IndexedLineSet,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -56,7 +56,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DGeometryNode .prototype .initialize .call (this);
+			X3DLineGeometryNode .prototype .initialize .call (this);
 
 			this .attrib_ .addInterest (this, "set_attrib__");
 			this .color_  .addInterest (this, "set_color__");
@@ -67,10 +67,6 @@ function ($,
 			this .set_attrib__ ();
 			this .set_color__ ();
 			this .set_coord__ ();
-		},
-		isLineGeometry: function ()
-		{
-			return true;
 		},
 		set_attrib__: function ()
 		{
@@ -227,15 +223,6 @@ function ($,
 
 			this .setSolid (false);
 			//this .setAttribs (this .attribNodes, attribArrays);
-		},
-		traverse: function (context)
-		{
-			var browser = this .getBrowser ();
-
-			if (browser .getShader () === browser .getDefaultShader ())
-				browser .setShader (browser .getLineShader ());
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});
 

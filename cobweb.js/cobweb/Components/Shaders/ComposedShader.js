@@ -263,7 +263,7 @@ function ($,
 				if (lineProperties && lineProperties .applied_ .getValue ())
 				{
 					var linewidthScaleFactor = lineProperties .linewidthScaleFactor_ .getValue ();
-	
+
 					gl .lineWidth (linewidthScaleFactor);
 					gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);
 				}
@@ -273,8 +273,6 @@ function ($,
 					gl .uniform1f (this .linewidthScaleFactor, 1);
 				}
 			}
-			else
-				gl .lineWidth (1);
 
 			// Material
 

@@ -575,10 +575,6 @@ function ($,
 
 			return this .node ("");
 		},
-		rootNodeStatement: function ()
-		{
-			return false;
-		},
 		protoStatement: function ()
 		{
 			if (this .proto ())

@@ -4,7 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color4",
@@ -13,7 +13,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGeometryNode,
+          X3DLineGeometryNode,
           X3DCast,
           X3DConstants,
           Color4)
@@ -22,7 +22,7 @@ function ($,
 
 	function PointSet (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .PointSet);
 
@@ -31,7 +31,7 @@ function ($,
 		this .coordNode    = null;
 	}
 
-	PointSet .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	PointSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
 	{
 		constructor: PointSet,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -55,21 +55,20 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DGeometryNode .prototype .initialize .call (this);
+			X3DLineGeometryNode .prototype .initialize .call (this);
 
 			this .attrib_ .addInterest (this, "set_attrib__");
 			this .color_  .addInterest (this, "set_color__");
 			this .coord_  .addInterest (this, "set_coord__");
 
-			this .setPrimitiveMode (this .getBrowser () .getContext () .POINTS);
+			var browser = this .getBrowser ();
+
+			this .setShader (browser .getPointShader ());
+			this .setPrimitiveMode (browser .getContext () .POINTS);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
 			this .set_coord__ ();
-		},
-		isLineGeometry: function ()
-		{
-			return true;
 		},
 		set_attrib__: function ()
 		{
@@ -153,26 +152,7 @@ function ($,
 			this .setSolid (false);
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},
-		traverse: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			if (shader === browser .getDefaultShader ())
-				browser .setShader (shader = browser .getPointShader ());
-	
-			shader .use ();
-			gl .uniform1i (shader .points, true);
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
-
-			gl .uniform1i (shader .points, false);
-		},
 	});
 
 	return PointSet;
 });
-
-

@@ -329,6 +329,7 @@ define (function ()
 		X3DLayerNode:                 nodeType ++,
 		X3DLayoutNode:                nodeType ++,
 		X3DLightNode:                 nodeType ++,
+		X3DLineGeometryNode:          nodeType ++,
 		X3DMaterialNode:              nodeType ++,
 		X3DMetadataObject:            nodeType ++,
 		X3DNBodyCollidableNode:       nodeType ++,

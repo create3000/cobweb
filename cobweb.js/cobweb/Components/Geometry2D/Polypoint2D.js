@@ -4,7 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -12,7 +12,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGeometryNode, 
+          X3DLineGeometryNode, 
           X3DConstants,
           Vector3)
 {
@@ -22,12 +22,12 @@ function ($,
 
 	function Polypoint2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Polypoint2D);
 	}
 
-	Polypoint2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	Polypoint2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
 	{
 		constructor: Polypoint2D,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -48,13 +48,12 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DGeometryNode .prototype .initialize .call (this);
+			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .setPrimitiveMode (this .getBrowser () .getContext () .POINTS);
-		},
-		isLineGeometry: function ()
-		{
-			return true;
+			var browser = this .getBrowser ();
+
+			this .setShader (browser .getPointShader ());
+			this .setPrimitiveMode (browser .getContext () .POINTS);
 		},
 		build: function ()
 		{
@@ -68,23 +67,6 @@ function ($,
 			}
 
 			this .setSolid (false);
-		},
-		traverse: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			if (shader === browser .getDefaultShader ())
-				browser .setShader (shader = browser .getPointShader ());
-	
-			shader .use ();
-			gl .uniform1i (shader .points, true);
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
-
-			gl .uniform1i (shader .points, false);
 		},
 	});
 

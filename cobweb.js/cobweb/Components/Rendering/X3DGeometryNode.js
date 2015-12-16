@@ -466,6 +466,7 @@ function ($,
 				return;
 
 			// Setup shader.
+
 			context .colorMaterial = this .colors .length;
 			shader .setLocalUniforms (context);
 
@@ -498,10 +499,7 @@ function ($,
 
 			// Draw depending on wireframe, solid and transparent.
 
-			if (this .isLineGeometry ())
-				gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
-
-			else if (shader .wireframe)
+			if (shader .wireframe)
 			{
 				for (var i = 0; i < this .vertexCount; i += 3)
 					gl .drawArrays (shader .primitiveMode, i, 3);

@@ -401,8 +401,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			this .transfer (fromPoint, toPoint);
 
 			var
-				gl     = browser .getContext (),
-				shader = browser .getLineShader ();
+				gl        = browser .getContext (),
+				shader    = browser .getLineShader (),
+				lineWidth = gl .getParameter (gl .LINE_WIDTH);
 
 			shader .use ();
 
@@ -434,6 +435,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 			gl .disableVertexAttribArray (shader .vertex);
 			gl .enable (gl .DEPTH_TEST);
+
+			gl .lineWidth (lineWidth);
 		},
 		transfer: function (fromPoint, toPoint)
 		{

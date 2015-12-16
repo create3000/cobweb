@@ -1039,6 +1039,7 @@
     <None Include="cobweb\Configuration\X3DInfoArray.js" />
     <None Include="tests\Components\Rendering\ClipPlane.x3d" />
     <None Include="tests\Components\Rendering\clipPlane.js" />
+    <None Include="cobweb\Components\Rendering\X3DLineGeometryNode.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

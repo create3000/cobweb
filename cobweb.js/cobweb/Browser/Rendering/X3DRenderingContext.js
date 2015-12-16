@@ -34,7 +34,7 @@ function (Fields,
 {
 "use strict";
 	
-	function getPointShader (executionContext, lineShader)
+	function getPointShader (executionContext, lineShader, gl)
 	{
 		var shader = new ComposedShader (executionContext);
 		shader .language_ = "GLSL";
@@ -42,6 +42,9 @@ function (Fields,
 		shader .setup ();
 
 		shader .setCustom (false);
+
+		shader .use ();
+		gl .uniform1i (shader .points, true);
 
 		return shader;
 	}
@@ -80,7 +83,7 @@ function (Fields,
 			this .reshape ();
 
 			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
-			this .pointShader = getPointShader (this, this .lineShader);
+			this .pointShader = getPointShader (this, this .lineShader, gl);
 
 			this .setDefaultShader (this .getXML () [0] .getAttribute ("shading"));
 			this .setShader (this .getDefaultShader ());

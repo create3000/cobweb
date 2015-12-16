@@ -4,7 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -12,7 +12,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGeometryNode, 
+          X3DLineGeometryNode, 
           X3DConstants,
           Vector3)
 {
@@ -22,12 +22,12 @@ function ($,
 
 	function Polyline2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Polyline2D);
 	}
 
-	Polyline2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	Polyline2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
 	{
 		constructor: Polyline2D,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -48,13 +48,9 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DGeometryNode .prototype .initialize .call (this);
+			X3DLineGeometryNode .prototype .initialize .call (this);
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_STRIP);
-		},
-		isLineGeometry: function ()
-		{
-			return true;
 		},
 		build: function ()
 		{
@@ -68,15 +64,6 @@ function ($,
 			}
 
 			this .setSolid (false);
-		},
-		traverse: function (context)
-		{
-			var browser = this .getBrowser ();
-
-			if (browser .getShader () === browser .getDefaultShader ())
-				browser .setShader (browser .getLineShader ());
-	
-			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});
 

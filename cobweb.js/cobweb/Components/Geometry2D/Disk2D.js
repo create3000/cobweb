@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -12,7 +13,8 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGeometryNode, 
+          X3DGeometryNode,
+          X3DLineGeometryNode,
           X3DConstants,
           Vector3)
 {
@@ -20,7 +22,7 @@ function ($,
 
 	function Disk2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Disk2D);
 
@@ -28,6 +30,7 @@ function ($,
 	}
 
 	Disk2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+		//X3DLineGeometryNode .prototype, // Considered X3DLineGeometryNode.
 	{
 		constructor: Disk2D,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -177,12 +180,7 @@ function ($,
 		{
 			if (this .isLineGeometry ())
 			{
-				var browser = this .getBrowser ();
-	
-				if (browser .getShader () === browser .getDefaultShader ())
-					browser .setShader (browser .getLineShader ());
-	
-				X3DGeometryNode .prototype .traverse .call (this, context);
+				X3DLineGeometryNode .prototype .traverse .call (this, context);
 			}
 			else
 			{

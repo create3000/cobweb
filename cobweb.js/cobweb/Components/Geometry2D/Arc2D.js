@@ -4,7 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Complex",
 	"standard/Math/Numbers/Vector3",
@@ -14,7 +14,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DGeometryNode, 
+          X3DLineGeometryNode, 
           X3DConstants,
           Complex,
           Vector3,
@@ -24,12 +24,12 @@ function ($,
 
 	function Arc2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Arc2D);
 	}
 
-	Arc2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	Arc2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
 	{
 		constructor: Arc2D,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -52,16 +52,12 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			X3DGeometryNode .prototype .set_live__ .call (this);
+			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
 				this .getBrowser () .getArc2DOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getArc2DOptions () .removeInterest (this, "eventsProcessed");
-		},
-		isLineGeometry: function ()
-		{
-			return true;
 		},
 		getAngle: function ()
 		{
@@ -118,15 +114,6 @@ function ($,
 	
 			this .setSolid (false);
 			this .setCurrentTexCoord (null);
-		},
-		traverse: function (context)
-		{
-			var browser = this .getBrowser ();
-
-			if (browser .getShader () === browser .getDefaultShader ())
-				browser .setShader (browser .getLineShader ());
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});
 
