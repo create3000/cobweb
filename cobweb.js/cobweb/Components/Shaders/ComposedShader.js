@@ -363,13 +363,11 @@ function ($,
 			// Set model view matrix
 			gl .uniformMatrix4fv (this .modelViewMatrix, false, modelViewMatrix);
 		},
-		use: function (context)
+		use: function ()
 		{
-			var gl = this .getBrowser () .getContext ();
-
-			gl .useProgram (this .program);
-
 			this .global .shader = this;
+
+			this .getBrowser () .getContext () .useProgram (this .program);
 		},
 	});
 

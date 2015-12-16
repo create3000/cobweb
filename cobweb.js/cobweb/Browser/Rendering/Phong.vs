@@ -7,8 +7,9 @@ uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
 
-uniform bool x3d_Lighting; // true if a X3DMaterialNode is attached, otherwise false
-uniform bool x3d_Texturing; // true if a X3DTexture2DNode is attached, otherwise false
+uniform float x3d_LinewidthScaleFactor;
+uniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false
+uniform bool  x3d_Texturing; // true if a X3DTexture2DNode is attached, otherwise false
 
 attribute vec4 x3d_Color;
 attribute vec4 x3d_TexCoord;

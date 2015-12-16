@@ -4,13 +4,12 @@ precision mediump float;
 
 #define MAX_CLIP_PLANES 6
 
-// 2
 uniform bool  X3D_Points;
-uniform float x3d_LinewidthScaleFactor;
+// 1
 
-// 30
 uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
 uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
+// 30
 
 #define NO_FOG           0
 #define LINEAR_FOG       1
@@ -20,10 +19,12 @@ uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
+// 5
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
+// 3
 
 #define MAX_LIGHTS        8
 #define DIRECTIONAL_LIGHT 0
