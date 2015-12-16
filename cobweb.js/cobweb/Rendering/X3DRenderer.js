@@ -309,10 +309,8 @@ function ($,
 				for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
 					clipPlanes [c] .use (gl, shader, c);
 
-				if (c < shader .numClipPlanes)
+				if (c < shader .maxClipPlanes)
 					gl .uniform1i (shader .clipPlaneEnabled [c], false);
-				
-				shader .numClipPlanes = c;
 
 				// modelViewMatrix
 	

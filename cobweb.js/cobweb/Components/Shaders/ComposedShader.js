@@ -62,10 +62,8 @@ function ($,
 		]),
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
-		numClipPlanes: MAX_CLIP_PLANES,
 		fog: null,
 		maxLights: MAX_LIGHTS,
-		numLights: MAX_LIGHTS,
 		globalLights: 0,
 		custom: true,
 		wireframe: false,
@@ -245,13 +243,9 @@ function ($,
 				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
 					clipPlanes [i] .use (gl, this, i);
 	
-				if (i < this .numClipPlanes)
+				if (i < this .maxClipPlanes)
 					gl .uniform1i (this .clipPlaneEnabled [i], false);
-	
-				this .numClipPlanes = i;
 			}
-			else
-				this .numClipPlanes = 0;
 
 			// Fog
 
@@ -303,10 +297,8 @@ function ($,
 				for (var i = this .globalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
-				if (i < this .numLights)
+				if (i < this .maxLights)
 					gl .uniform1i (this .lightOn [i], false);
-
-				this .numLights = i;
 
 				// Material
 

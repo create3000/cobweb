@@ -513,10 +513,8 @@ function ($,
 			for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
 				clipPlanes [i] .use (gl, shader, i);
 
-			if (i < shader .numClipPlanes)
+			if (i < shader .maxClipPlanes)
 				gl .uniform1i (shader .clipPlaneEnabled [i], false);
-
-			shader .numClipPlanes = i;
 
 			// Uniforms
 
@@ -564,10 +562,8 @@ function ($,
 			for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
 				clipPlanes [i] .use (gl, shader, i);
 
-			if (i < shader .numClipPlanes)
+			if (i < shader .maxClipPlanes)
 				gl .uniform1i (shader .clipPlaneEnabled [i], false);
-
-			shader .numClipPlanes = i;
 
 			// Uniforms
 
