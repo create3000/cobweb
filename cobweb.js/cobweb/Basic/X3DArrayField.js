@@ -66,14 +66,7 @@ function ($, X3DField, X3DConstants, Generator)
 		},
 		enumerate: function (target)
 		{
-			var
-				array = target .getValue (),
-				keys  = [ ];
-
-			for (var i = 0, length = array .length; i < length; ++ i)
-				keys .push (i);
-
-			return keys [Symbol.iterator] ();
+			return Object .keys (target .getValue ()) [Symbol.iterator] ();
 		},
 	};
 
