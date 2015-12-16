@@ -44,7 +44,8 @@ function (Fields,
 		shader .setCustom (false);
 
 		shader .use ();
-		gl .uniform1i (shader .points, true);
+		gl .uniform1i (shader .dimension, 0);
+		gl .uniform1i (shader .points,    true);
 
 		return shader;
 	}
@@ -87,6 +88,9 @@ function (Fields,
 
 			this .setDefaultShader (this .getXML () [0] .getAttribute ("shading"));
 			this .setShader (this .getDefaultShader ());
+
+			this .lineShader .use ();
+			gl .uniform1i (this .lineShader .dimension, 1);
 		},
 		getVendor: function ()
 		{

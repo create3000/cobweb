@@ -25,8 +25,10 @@ function ($,
 "use strict";
 
 	var
-		Triangle = [0, 1, 2],
-		Polygon  = [ ];
+		Triangle    = [0, 1, 2],
+		Polygon     = [ ],
+		normals     = [ ],
+		normalIndex = [ ];
 
 	function IndexedFaceSet (executionContext)
 	{
@@ -324,11 +326,12 @@ function ($,
 		{
 			var
 				cw          = ! this .ccw_ .getValue (),
-				normals     = [ ],
-				normalIndex = [ ],
 				coordIndex  = this .coordIndex_ .getValue (),
 				coord       = this .getCoord (),
 				normal      = null;
+
+			normals     .length = 0;
+			normalIndex .length = 0;
 
 			for (var p = 0, pl = polygons .length; p < pl; ++ p)
 			{

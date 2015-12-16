@@ -3,8 +3,11 @@ data:text/plain;charset=utf-8,
 
 precision mediump float;
 
-uniform bool  X3D_Points;
-uniform float x3d_LinewidthScaleFactor;
+#define GEOMETRY_2D 2
+#define GEOMETRY_3D 3
+
+uniform bool X3D_Points;
+uniform int  X3D_Dimension;
 // 2
 
 #define MAX_CLIP_PLANES 6
@@ -23,17 +26,14 @@ uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
 // 5
 
+uniform float x3d_LinewidthScaleFactor;
 uniform bool x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false
 uniform bool x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false
-// 2
-
-#define GEOMETRY_2D 2
-#define GEOMETRY_3D 3
+// 3
 
 uniform bool      x3d_Texturing;  // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D x3d_Texture;
-uniform int       x3d_GeometryType;
-// 3
+// 2
 
 varying vec4 frontColor; // color
 varying vec4 backColor;  // color
@@ -89,7 +89,7 @@ getFogInterpolant ()
 vec4
 getTextureColor ()
 {
-	if (x3d_GeometryType == GEOMETRY_3D)
+	if (X3D_Dimension == GEOMETRY_3D)
 		return texture2D (x3d_Texture, vec2 (t .s, t .t));
 	
 	// GEOMETRY_2D

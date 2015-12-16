@@ -5,6 +5,7 @@ precision mediump float;
 
 #define MAX_CLIP_PLANES 6
 
+uniform int   X3D_Dimension;
 uniform bool  X3D_Points;
 // 1
 
@@ -65,7 +66,6 @@ uniform float x3d_BackTransparency;
 
 uniform bool      x3d_Texturing; // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D x3d_Texture;
-uniform int       x3d_GeometryType;
 
 varying vec4 C;  // color
 varying vec4 t;  // texCoord
@@ -120,7 +120,7 @@ getFogInterpolant ()
 vec4
 getTextureColor ()
 {
-	if (x3d_GeometryType == GEOMETRY_3D)
+	if (X3D_Dimension == GEOMETRY_3D)
 		return texture2D (x3d_Texture, vec2 (t .s, t .t));
 	
 	// GEOMETRY_2D
