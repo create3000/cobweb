@@ -137,7 +137,7 @@ function ($,
 			gl .useProgram (program);
 
 			this .points       = gl .getUniformLocation (program, "X3D_Points");
-			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
+			this .geometryType = gl .getUniformLocation (program, "X3D_Dimension");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
 			{
@@ -229,8 +229,7 @@ function ($,
 				material        = appearance .getMaterial (),
 				texture         = appearance .getTexture (),
 				modelViewMatrix = context .modelViewMatrix,
-				clipPlanes      = context .clipPlanes,
-				custom          = this .custom;
+				clipPlanes      = context .clipPlanes;
 
 			if (this !== shader)
 			{
@@ -289,7 +288,7 @@ function ($,
 					localLights  = context .localLights,
 					numLights    = Math .min (this .maxLights, globalLights .length + localLights .length);
 
-				if (custom)
+				if (this .custom)
 				{
 					for (var i = 0, length = this .globalLights; i < length; ++ i)
 						globalLights [i] .use (gl, this, i);
@@ -338,7 +337,7 @@ function ($,
 			{
 				gl .uniform1i (this .lighting, false);
 
-				if (custom)
+				if (this .custom)
 				{
 					// Set normal matrix.
 					var normalMatrix = this .normalMatrixArray;
@@ -363,7 +362,7 @@ function ($,
 			{
 				gl .uniform1i (this .texturing, false);
 
-				if (custom)
+				if (this .custom)
 				{
 					appearance .getTextureTransform () .traverse ();
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
