@@ -18,15 +18,23 @@ function ($,
 {
 "use strict";
 
+	function traverse (type)
+	{
+		this .shapeNode .traverse (type);
+	}
+
 	function CADFace (executionContext)
 	{
 		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DBoundedObject             .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .CADFace);
+
+		this .shapeNode = null;
 	}
 
-	CADFace .prototype = $.extend (Object .create (X3DProductStructureChildNode .prototype),new X3DBoundedObject (),
+	CADFace .prototype = $.extend (Object .create (X3DProductStructureChildNode .prototype),
+		X3DBoundedObject .prototype,
 	{
 		constructor: CADFace,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -47,6 +55,24 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DProductStructureChildNode .prototype .initialize .call (this);
+			X3DBoundedObject             .prototype .initialize .call (this);
+
+			this .shape_ .addInterest (this, "set_shape__");
+
+			this .set_shape__ ();
+		},
+		set_shape__: function ()
+		{
+			this .shapeNode = this .shape_ .getValue ();
+
+			if (this .shapeNode)
+				this .traverse = traverse;
+			else
+				delete this .traverse;
 		},
 	});
 

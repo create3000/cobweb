@@ -14,8 +14,8 @@ function ($,
 
 	function X3DChildNode (browser, executionContext)
 	{
-	   if (this .getExecutionContext ())
-	      return;
+		if (this .getExecutionContext ())
+			return;
 
 		X3DNode .call (this, browser, executionContext);
 

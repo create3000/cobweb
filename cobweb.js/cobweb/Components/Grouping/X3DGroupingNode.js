@@ -1,6 +1,7 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Bits/TraverseType",
@@ -8,6 +9,7 @@ define ([
 	"standard/Math/Geometry/Box3",
 ],
 function ($,
+	       Fields,
           X3DChildNode, 
           X3DBoundedObject, 
           TraverseType,
@@ -79,6 +81,8 @@ function ($,
 	function getId (value) { return value ? value .getId () : -1; };
 	function getNodeId (value) { return value ? value .getValue () .getId () : -1; }
 
+	var visible = new Fields .MFBool ();
+
 	function X3DGroupingNode (browser, executionContext)
 	{
 		X3DChildNode     .call (this, browser, executionContext);
@@ -87,7 +91,7 @@ function ($,
 		this .addType (X3DConstants .X3DGroupingNode);
 	               
 		this .hidden                = false;
-		this .visible               = [ ];
+		this .visible               = visible;
 		this .pointingDeviceSensors = [ ];
 		this .maybeCameraObjects    = [ ];
 		this .cameraObjects         = [ ];
@@ -214,19 +218,21 @@ function ($,
 			if (this .hidden)
 				return;
 
+			var numVisible = this .visible .length;
+
 			for (var i = 0, length = children .length; i < length; ++ i)
 			{
 				var child = children [i];
-			
-				if (child && (i >= this .visible .length || this .visible [i] .getValue ()))
+
+				if (child && (i >= numVisible || this .visible [i]))
 				{
 					try
 					{
 						var
 							innerNode = child .getValue () .getInnerNode (),
-							type      = Array .prototype .slice .call (innerNode .getType (), 0) .reverse ();
+							type      = innerNode .getType ();
 
-						for (var t = 0; t < type .length; ++ t)
+						for (var t = type .length - 1; t >= 0; -- t)
 						{
 							switch (type [t])
 							{

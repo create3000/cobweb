@@ -20,13 +20,14 @@ function ($,
 
 	function CADAssembly (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode              .call (this, executionContext .getBrowser (), executionContext);
 		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .CADAssembly);
 	}
 
-	CADAssembly .prototype = $.extend (Object .create (X3DGroupingNode .prototype),new X3DProductStructureChildNode (),
+	CADAssembly .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+		//X3DProductStructureChildNode .prototype,
 	{
 		constructor: CADAssembly,
 		fieldDefinitions: new FieldDefinitionArray ([

@@ -20,13 +20,14 @@ function ($,
 
 	function CADPart (executionContext)
 	{
-		X3DTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformNode             .call (this, executionContext .getBrowser (), executionContext);
 		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .CADPart);
 	}
 
-	CADPart .prototype = $.extend (Object .create (X3DTransformNode .prototype),new X3DProductStructureChildNode (),
+	CADPart .prototype = $.extend (Object .create (X3DTransformNode .prototype),
+		//X3DProductStructureChildNode .prototype,
 	{
 		constructor: CADPart,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -54,6 +55,10 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTransformNode .prototype .initialize .call (this);
 		},
 	});
 

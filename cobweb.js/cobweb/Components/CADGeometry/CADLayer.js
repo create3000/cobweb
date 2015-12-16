@@ -48,6 +48,14 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DGroupingNode .prototype .initialize .call (this);
+
+			this .visible_ .addInterest (this, "setVisible", this .visible_);
+
+			this .setVisible (this .visible_);
+		},
 	});
 
 	return CADLayer;
