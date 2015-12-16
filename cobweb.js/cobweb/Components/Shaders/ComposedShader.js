@@ -235,17 +235,23 @@ function ($,
 			{
 				shader = this;
 				gl .useProgram (this .program);
+				browser .setLineProperties (undefined);
 			}
 
 			// Clip planes
 
-			for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-				clipPlanes [i] .use (gl, this, i);
-
-			if (i < this .numClipPlanes)
-				gl .uniform1i (this .clipPlaneEnabled [i], false);
-
-			this .numClipPlanes = i;
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .use (gl, this, i);
+	
+				if (i < this .numClipPlanes)
+					gl .uniform1i (this .clipPlaneEnabled [i], false);
+	
+				this .numClipPlanes = i;
+			}
+			else
+				this .numClipPlanes = 0;
 
 			// Fog
 

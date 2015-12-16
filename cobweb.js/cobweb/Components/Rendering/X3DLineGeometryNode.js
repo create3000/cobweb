@@ -37,11 +37,11 @@ function ($,
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
 
-			if (shader .vertex < 0)
-				return;
-
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
+
+			if (shader .vertex < 0)
+				return;
 
 			// Setup shader.
 

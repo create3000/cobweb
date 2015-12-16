@@ -28,9 +28,11 @@ define (function ()
 		for (i = 0; i < ORDER; ++i)
 		{
 			vectors [i] = new Array (ORDER);
+
 			a [i] = new Array (ORDER);
 			b [i] = values [i] = matrix .get1 (i, i);
 			z [i] = 0;
+
 			for (j = 0; j < ORDER; ++j)
 			{
 				vectors [i] [j] = (i === j) ? 1 : 0;
@@ -43,6 +45,7 @@ define (function ()
 		for (i = 0; i < 50; ++i)
 		{
 			sm = 0;
+
 			for (p = 0; p < ORDER - 1; ++p)
 				for (q = p+1; q < ORDER; ++q)
 					sm += Math .abs (a [p] [q]);
@@ -60,10 +63,9 @@ define (function ()
 				{
 					g = 100 * Math .abs (a [p] [q]);
 
-					if (
-						i > 3
-						&& (Math .abs (values [p]) + g === Math .abs (values [p]))
-						&& (Math .abs (values [q]) + g === Math .abs (values [q]))
+					if (i > 3
+						 && (Math .abs (values [p]) + g === Math .abs (values [p]))
+						 && (Math .abs (values [q]) + g === Math .abs (values [q]))
 					)
 					{
 						a [p] [q] = 0;
@@ -78,20 +80,21 @@ define (function ()
 						else
 						{
 							theta = 0.5 * h / a [p] [q];
-							t = 1 / (Math .abs (theta) + Math .sqrt (1 + theta * theta));
+							t     = 1 / (Math .abs (theta) + Math .sqrt (1 + theta * theta));
+
 							if (theta < 0)  t = -t;
 						}
 						// End of computing tangent of rotation angle
 
-						c   = 1 / Math .sqrt (1 + t*t);
-						s   = t * c;
-						tau = s / (1 + c);
-						h   = t * a [p] [q];
-						z [p] -= h;
-						z [q] += h;
+						c           = 1 / Math .sqrt (1 + t*t);
+						s           = t * c;
+						tau         = s / (1 + c);
+						h           = t * a [p] [q];
+						z [p]      -= h;
+						z [q]      += h;
 						values [p] -= h;
 						values [q] += h;
-						a [p] [q] = 0;
+						a [p] [q]   = 0;
 
 						for (j = 0; j < p; ++j)
 						{
