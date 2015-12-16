@@ -184,10 +184,9 @@ function ($,
 		{
 			var normals = this .normals;
 
-			for (var i = 0, length = value .length; i < length; ++ i)
-				normals [i] = value [i];
+			value .forEach (function (v, i) { normals [i] = v; });
 
-			normals .length = length;
+			normals .length = value .length;
 		},
 		getNormals: function ()
 		{
@@ -204,10 +203,9 @@ function ($,
 		{
 			var vertices = this .vertices;
 
-			for (var i = 0, length = value .length; i < length; ++ i)
-				vertices [i] = value [i];
+			value .forEach (function (v, i) { vertices [i] = v; });
 
-			vertices .length = length;
+			vertices .length = value .length;
 		},
 		getVertices: function ()
 		{
@@ -228,7 +226,7 @@ function ($,
 
 			this .texCoords .push (texCoords);
 
-			for (var i = 0, length = this .vertices .length; i < length; i += 4)
+			for (var i = 0, length = vertices .length; i < length; i += 4)
 			{
 				texCoords .push ((vertices [i + Sindex] - S) / Ssize,
 				                 (vertices [i + Tindex] - T) / Ssize,
@@ -403,6 +401,10 @@ function ($,
 
 			if (! this .isLineGeometry ())
 			{
+				var
+					min = this .min,
+					max = this .max;
+
 				for (var i = 0; i < 5; ++ i)
 					this .planes [i] .set (i % 2 ? this .min : this .max, boxNormals [i]);
 
@@ -625,45 +627,52 @@ function ($,
 				planes       = this .planes,
 				min          = this .min,
 				max          = this .max,
+				minX         = min .x,
+				maxX         = max .x,
+				maxZ         = max .x,
+				minY         = min .y,
+				maxY         = max .y,
+				minZ         = min .z,
+				maxZ         = max .z,
 				intersection = this .intersection;
 
 		   // front
 			if (planes [0] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= min .x && intersection .x <= max .x &&
-				    intersection .y >= min .y && intersection .y <= max .y)
+				if (intersection .x >= 	minX && intersection .x <= maxX &&
+				    intersection .y >= 	minY && intersection .y <=	maxY)
 					return true;
 			}
 
 			// back
 			if (planes [1] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= min .x && intersection .x <= max .x &&
-				    intersection .y >= min .y && intersection .y <= max .y)
+				if (intersection .x >= 	minX && intersection .x <= maxX &&
+				    intersection .y >= 	minY && intersection .y <=	maxY)
 					return true;
 			}
 
 			// top
 			if (planes [2] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= min .x && intersection .x <= max .x &&
-				    intersection .z >= min .z && intersection .z <= max .z)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
 					return true;
 			}
 
 			// bottom
 			if (planes [3] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= min .x && intersection .x <= max .x &&
-				    intersection .z >= min .z && intersection .z <= max .z)
+				if (intersection .x >= 	minX && intersection .x <= maxX &&
+				    intersection .z >= 	minZ && intersection .z <= maxZ)
 					return true;
 			}
 
 			// right
 			if (planes [4] .intersectsLine (line, intersection))
 			{
-				if (intersection .y >= min .y && intersection .y <= max .y &&
-				    intersection .z >= min .z && intersection .z <= max .z)
+				if (intersection .y >= 	minY && intersection .y <=	maxY &&
+				    intersection .z >= 	minZ && intersection .z <= maxZ)
 					return true;
 			}
 
@@ -676,15 +685,10 @@ function ($,
 		},
 		isClipped: function (point, invModelViewMatrix)
 		{
-			var clipPlanes = this .getCurrentLayer () .getClipPlanes ();
-
-			for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+			return ! this .getCurrentLayer () .getClipPlanes () .every (function (clipPlane)
 			{
-				if (clipPlanes [i] .isClipped (point, invModelViewMatrix))
-					return true;
-			}
-
-			return false;
+				return ! clipPlane .isClipped (point, invModelViewMatrix);
+			});
 		},
 		intersectsSphere: function (sphere)
 		{
