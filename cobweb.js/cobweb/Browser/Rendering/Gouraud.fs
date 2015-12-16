@@ -1,30 +1,31 @@
 data:text/plain;charset=utf-8,
 // -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+
 precision mediump float;
 
-// 2
 uniform bool  X3D_Points;
 uniform float x3d_LinewidthScaleFactor;
+// 2
 
 #define MAX_CLIP_PLANES 6
 
-// 30
 uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
 uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
+// 30
 
 #define NO_FOG           0
 #define LINEAR_FOG       1
 #define EXPONENTIAL_FOG  2
 #define EXPONENTIAL2_FOG 3
 
-// 5
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
+// 5
 
-// 2
 uniform bool x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false
 uniform bool x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false
+// 2
 
 #define GEOMETRY_2D 2
 #define GEOMETRY_3D 3
@@ -32,11 +33,13 @@ uniform bool x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwi
 uniform bool      x3d_Texturing;  // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D x3d_Texture;
 uniform int       x3d_GeometryType;
+// 3
 
 varying vec4 frontColor; // color
 varying vec4 backColor;  // color
 varying vec4 t;          // texCoord
 varying vec3 v;          // point on geometry
+// 15, max 16
 
 void
 clip ()

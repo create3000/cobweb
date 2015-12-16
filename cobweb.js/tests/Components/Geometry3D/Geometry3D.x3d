@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 26 Mar 2015 02:16:06 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 12 Oct 2015 16:02:54 GMT'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Wed, 16 Dec 2015 07:26:36 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -32,7 +32,7 @@
           <MetadataDouble containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.784070789813995, -0.33437192440033, -0.522903859615326, 0.843905866146088'/>
+              value='0.784070789813995, -0.334371954202652, -0.522903859615326, 0.843905866146088'/>
           <MetadataDouble containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -121,75 +121,75 @@
               </MetadataSet>
             </OrientationInterpolator>
           </Group>
-          <Transform DEF='Box_1'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+          <Transform DEF='Box'
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
-              <Appearance DEF='Grey_1'>
-                <Material DEF='Rococo2_1'
+              <Appearance DEF='Grey'>
+                <Material DEF='Rococo2'
                     ambientIntensity='0.216064'
                     diffuseColor='0.864256 0.833788 0.330482'
                     specularColor='0.0955906 0.0940254 0.0681705'
                     shininess='0.078125'/>
               </Appearance>
-              <Box DEF='Box'
+              <Box DEF='Box_1'
                   size='1 1 1'/>
             </Shape>
           </Transform>
-          <Transform DEF='Sphere_1'
+          <Transform DEF='Sphere'
               translation='3 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
-              <Appearance DEF='Grey_2'>
-                <Material DEF='Rococo7_1'
+              <Appearance DEF='Grey_1'>
+                <Material DEF='Rococo7'
                     ambientIntensity='0.187004'
                     diffuseColor='0.748016 0.467103 0.261641'
                     specularColor='0.251984 0.251984 0.251984'
                     shininess='0.872727'/>
               </Appearance>
-              <Sphere DEF='Sphere'/>
+              <Sphere DEF='Sphere_1'/>
             </Shape>
           </Transform>
-          <Transform DEF='Cylinder_1'
+          <Transform DEF='Cylinder'
               translation='6 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
-              <Appearance DEF='Grey_3'>
-                <Material DEF='Rococo13_1'
+              <Appearance DEF='Grey_2'>
+                <Material DEF='Rococo13'
                     ambientIntensity='0.187004'
                     diffuseColor='0.748016 0.272334 0.406842'
                     specularColor='0.251984 0.251984 0.251984'
                     shininess='0.6'/>
               </Appearance>
-              <Cylinder DEF='Cylinder'/>
+              <Cylinder DEF='Cylinder_1'/>
             </Shape>
           </Transform>
-          <Transform DEF='Cone_1'
+          <Transform DEF='Cone'
               translation='9 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
-              <Appearance DEF='Grey_4'>
-                <Material DEF='Rococo18_1'
+              <Appearance DEF='Grey_3'>
+                <Material DEF='Rococo18'
                     ambientIntensity='0.181818'
                     diffuseColor='0.630959 0.368649 0.745454'
                     specularColor='0.278788 0.278788 0.278788'
                     shininess='0.0909091'/>
               </Appearance>
-              <Cone DEF='Cone'/>
+              <Cone DEF='Cone_1'/>
             </Shape>
           </Transform>
-          <Transform DEF='Extrusion_1'
+          <Transform DEF='Extrusion'
               translation='12 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'
               scale='0.5 0.5 0.5'>
             <Shape>
-              <Appearance DEF='Grey_5'>
-                <Material DEF='Rococo19_1'
+              <Appearance DEF='Grey_4'>
+                <Material DEF='Rococo19'
                     ambientIntensity='0.187004'
                     diffuseColor='0.412056 0.422504 0.748016'
                     specularColor='0.290909 0.290909 0.290909'
                     shininess='0.787879'/>
               </Appearance>
-              <Extrusion DEF='Extrusion'
+              <Extrusion DEF='Extrusion_1'
                   beginCap='false'
                   endCap='false'
                   ccw='false'
@@ -200,21 +200,21 @@
                   spine='1 0 0, 0.92388 0.382683 0, 0.707107 0.707106 0, 0.382684 0.923879 0, 0 1 0, -0.382682 0.92388 0, -0.707105 0.707108 0, -0.923879 0.382685 0, -1 0 0, -0.923881 -0.382681 0, -0.707109 -0.707105 0, -0.382687 -0.923878 0, 0 -1 0, 0.38268 -0.923881 0, 0.707104 -0.70711 0, 0.923878 -0.382688 0, 1 0 0'/>
             </Shape>
           </Transform>
-          <Transform DEF='ElevationGrid_1'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'
+          <Transform DEF='ElevationGrid'
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'
               center='15 5.96046e-08 -3.69549e-06'>
-            <Transform DEF='ElevationGrid_2'
+            <Transform DEF='ElevationGrid_1'
                 translation='14 1 0'
                 rotation='1 0 0 1.5708'>
               <Shape>
-                <Appearance DEF='Grey_6'>
-                  <Material DEF='Rococo25_1'
+                <Appearance DEF='Grey_5'>
+                  <Material DEF='Rococo25'
                       ambientIntensity='0.187004'
                       diffuseColor='0.261641 0.748016 0.725916'
                       specularColor='0.490909 0.490909 0.490909'
                       shininess='0.593939'/>
                 </Appearance>
-                <ElevationGrid DEF='ElevationGrid'
+                <ElevationGrid DEF='ElevationGrid_2'
                     xDimension='3'
                     zDimension='3'
                     solid='false'
@@ -223,18 +223,18 @@
               </Shape>
             </Transform>
           </Transform>
-          <Transform DEF='IndexedFaceSet_1'
+          <Transform DEF='IndexedFaceSet'
               translation='18 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
-              <Appearance DEF='Grey'>
-                <Material DEF='Rococo29_1'
+              <Appearance DEF='Grey_6'>
+                <Material DEF='Rococo29'
                     ambientIntensity='0.187004'
                     diffuseColor='0.360748 0.748016 0.394778'
                     specularColor='0.345455 0.345455 0.345455'
                     shininess='0.612121'/>
               </Appearance>
-              <IndexedFaceSet DEF='IndexedFaceSet'
+              <IndexedFaceSet DEF='IndexedFaceSet_1'
                   solid='false'
                   coordIndex='0, 1, 2, -1'>
                 <Coordinate
@@ -244,73 +244,72 @@
           </Transform>
           <Transform DEF='Box_2'
               translation='0 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
               <Appearance DEF='Image'>
                 <Material/>
                 <ImageTexture
                     url='"../images/test.png"'/>
               </Appearance>
-              <Box USE='Box'/>
+              <Box USE='Box_1'/>
             </Shape>
           </Transform>
           <Transform DEF='Sphere_2'
               translation='3 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
               <Appearance USE='Image'/>
-              <Sphere USE='Sphere'/>
+              <Sphere USE='Sphere_1'/>
             </Shape>
           </Transform>
           <Transform DEF='Cylinder_2'
               translation='6 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
               <Appearance USE='Image'/>
-              <Cylinder USE='Cylinder'/>
+              <Cylinder USE='Cylinder_1'/>
             </Shape>
           </Transform>
           <Transform DEF='Cone_2'
               translation='9 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
               <Appearance USE='Image'/>
-              <Cone USE='Cone'/>
+              <Cone USE='Cone_1'/>
             </Shape>
           </Transform>
           <Transform DEF='Extrusion_2'
               translation='12 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'
               scale='0.5 0.5 0.5'>
             <Shape>
               <Appearance USE='Image'/>
-              <Extrusion USE='Extrusion'/>
+              <Extrusion USE='Extrusion_1'/>
             </Shape>
           </Transform>
           <Transform DEF='ElevationGrid_3'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'
               center='15 3 -3.69549e-06'>
             <Transform DEF='ElevationGrid_4'
                 translation='14 4 0'
                 rotation='1 0 0 1.5708'>
               <Shape>
                 <Appearance USE='Image'/>
-                <ElevationGrid USE='ElevationGrid'/>
+                <ElevationGrid USE='ElevationGrid_2'/>
               </Shape>
             </Transform>
           </Transform>
           <Transform DEF='IndexedFaceSet_2'
               translation='18 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.539011'>
+              rotation='-1.10398e-09 -3.62591e-06 1 2.47254'>
             <Shape>
               <Appearance USE='Image'/>
-              <IndexedFaceSet USE='IndexedFaceSet'/>
+              <IndexedFaceSet USE='IndexedFaceSet_1'/>
             </Shape>
           </Transform>
         </Transform>
       </Layer>
-      <Layer DEF='HUD'
-          isPickable='false'>
+      <Layer DEF='HUD'>
         <MetadataSet DEF='Titania_2'
             name='Titania'
             reference='http://titania.create3000.de'>
@@ -373,12 +372,12 @@
             </Text>
           </Shape>
         </Transform>
-        <Transform DEF='Text_1'
+        <Transform DEF='Text'
             translation='1.6905 -0.857496 -1'
             scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
             <Appearance>
-              <Material DEF='Artdeco31_1'
+              <Material DEF='Artdeco31'
                   ambientIntensity='0'
                   diffuseColor='0 0 0'
                   shininess='0'/>
@@ -394,7 +393,7 @@
             </Text>
           </Shape>
         </Transform>
-        <Transform DEF='Text'
+        <Transform DEF='Text_1'
             translation='1.6905 -0.955496 -1'
             scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
@@ -543,19 +542,19 @@ function set_phong ()
       </Layer>
     </LayerSet>
     <ROUTE fromNode='_1' fromField='fraction_changed' toNode='BoxRotationInterpolator' toField='set_fraction'/>
-    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Box_1' toField='set_rotation'/>
+    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Box' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='IndexedFaceSet_2' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Extrusion_2' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Cone_2' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Cylinder_2' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Sphere_2' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Box_2' toField='set_rotation'/>
-    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='IndexedFaceSet_1' toField='set_rotation'/>
-    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Extrusion_1' toField='set_rotation'/>
-    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Cone_1' toField='set_rotation'/>
-    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Cylinder_1' toField='set_rotation'/>
-    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Sphere_1' toField='set_rotation'/>
-    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='ElevationGrid_1' toField='set_rotation'/>
+    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='IndexedFaceSet' toField='set_rotation'/>
+    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Extrusion' toField='set_rotation'/>
+    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Cone' toField='set_rotation'/>
+    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Cylinder' toField='set_rotation'/>
+    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Sphere' toField='set_rotation'/>
+    <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='ElevationGrid' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='ElevationGrid_3' toField='set_rotation'/>
     <ROUTE fromNode='_7' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
     <ROUTE fromNode='_6' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
