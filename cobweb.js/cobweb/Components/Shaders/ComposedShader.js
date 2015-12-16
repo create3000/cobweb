@@ -24,6 +24,8 @@ function ($,
 		MAX_CLIP_PLANES = 6,
 		MAX_LIGHTS      = 8;
 
+	var shader = null;
+
 	function ComposedShader (executionContext)
 	{
 		X3DShaderNode               .call (this, executionContext .getBrowser (), executionContext);
@@ -58,9 +60,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
 		]),
-		global: {
-			shader: null,
-		},
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
 		numClipPlanes: MAX_CLIP_PLANES,
@@ -134,9 +133,11 @@ function ($,
 				gl      = this .getBrowser () .getContext (),
 				program = this .program;
 
+			shader = this;
 			gl .useProgram (program);
 
-			this .points = gl .getUniformLocation (program, "X3D_Points");
+			this .points       = gl .getUniformLocation (program, "X3D_Points");
+			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
 			{
@@ -186,7 +187,6 @@ function ($,
 
 			this .texturing    = gl .getUniformLocation (program, "x3d_Texturing");
 			this .texture      = gl .getUniformLocation (program, "x3d_Texture");
-			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			this .textureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 			this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
@@ -198,10 +198,10 @@ function ($,
 			this .normal   = gl .getAttribLocation (program, "x3d_Normal");
 			this .vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
 
-			// Set texture to active texture unit 0.
-			gl .uniform1i (this .texture, 0);
 			gl .uniform1i (this .geometryType, 3);
 			gl .uniform1f (this .linewidthScaleFactor, 1);
+			gl .uniform1i (this .texture, 0);
+			// Set texture to active texture unit 0.
 		},
 		setGlobalUniforms: function ()
 		{
@@ -210,6 +210,7 @@ function ($,
 				gl           = browser .getContext (),
 				globalLights = browser .getGlobalLights ();
 
+			shader = this;
 			gl .useProgram (this .program);
 			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 
@@ -228,11 +229,12 @@ function ($,
 				material        = appearance .getMaterial (),
 				texture         = appearance .getTexture (),
 				modelViewMatrix = context .modelViewMatrix,
-				clipPlanes      = context .clipPlanes;
+				clipPlanes      = context .clipPlanes,
+				custom          = this .custom;
 
-			if (this !== this .global .shader)
+			if (this !== shader)
 			{
-				this .global .shader = this;
+				shader = this;
 				gl .useProgram (this .program);
 			}
 
@@ -287,7 +289,7 @@ function ($,
 					localLights  = context .localLights,
 					numLights    = Math .min (this .maxLights, globalLights .length + localLights .length);
 
-				if (this .custom)
+				if (custom)
 				{
 					for (var i = 0, length = this .globalLights; i < length; ++ i)
 						globalLights [i] .use (gl, this, i);
@@ -336,7 +338,7 @@ function ($,
 			{
 				gl .uniform1i (this .lighting, false);
 
-				if (this .custom)
+				if (custom)
 				{
 					// Set normal matrix.
 					var normalMatrix = this .normalMatrixArray;
@@ -358,14 +360,26 @@ function ($,
 				// Active texture 0 is set on initialization.
 			}
 			else
+			{
 				gl .uniform1i (this .texturing, false);
+
+				if (custom)
+				{
+					appearance .getTextureTransform () .traverse ();
+					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
+					// Active texture 0 is set on initialization.
+				}
+			}
 
 			// Set model view matrix
 			gl .uniformMatrix4fv (this .modelViewMatrix, false, modelViewMatrix);
 		},
 		use: function ()
 		{
-			this .global .shader = this;
+			if (this === shader)
+				return;
+
+			shader = this;
 
 			this .getBrowser () .getContext () .useProgram (this .program);
 		},

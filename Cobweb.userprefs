@@ -1,12 +1,23 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/EnvironmentalEffects/X3DBackgroundNode.js">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="8" Column="8" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/ClipPlane.js" Line="5" Column="5" />
-      <File FileName="cobweb.js/cobweb/Components/EnvironmentalEffects/X3DBackgroundNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="92" Column="92" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/LineProperties.js" Line="3" Column="3" />
+      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DLineGeometryNode.js" Line="58" Column="58" />
+      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="8" Column="8" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="126" Column="126" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="42" Column="42" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Gouraud.vs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Gouraud.fs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Phong.vs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Phong.fs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Wireframe.vs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Wireframe.fs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Depth.vs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Depth.fs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/EnvironmentalEffects/SphereVertexShader.vs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/EnvironmentalEffects/SphereFragmentShader.fs" Line="13" Column="13" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
