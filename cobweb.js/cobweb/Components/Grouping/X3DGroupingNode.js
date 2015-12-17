@@ -91,7 +91,6 @@ function ($,
 		this .addType (X3DConstants .X3DGroupingNode);
 	               
 		this .hidden                = false;
-		this .visible               = visible;
 		this .pointingDeviceSensors = [ ];
 		this .maybeCameraObjects    = [ ];
 		this .cameraObjects         = [ ];
@@ -132,11 +131,9 @@ function ($,
 				this .set_children__ ();
 			}
 		},
-		setVisible: function (value)
+		getVisible: function ()
 		{
-			this .visible = value;
-
-			this .set_children__ ();
+			return visible;
 		},
 		getChild: function (index)
 		{
@@ -218,13 +215,15 @@ function ($,
 			if (this .hidden)
 				return;
 
-			var numVisible = this .visible .length;
+			var
+				visible    = this .getVisible (),
+				numVisible = visible .length;
 
 			for (var i = 0, length = children .length; i < length; ++ i)
 			{
 				var child = children [i];
 
-				if (child && (i >= numVisible || this .visible [i]))
+				if (child && (i >= numVisible || visible [i]))
 				{
 					try
 					{

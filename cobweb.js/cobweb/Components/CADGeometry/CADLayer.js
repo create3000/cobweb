@@ -52,9 +52,11 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 
-			this .visible_ .addInterest (this, "setVisible", this .visible_);
-
-			this .setVisible (this .visible_);
+			this .visible_ .addInterest (this, "set_children__");
+		},
+		getVisible: function ()
+		{
+			return this .visible_;
 		},
 	});
 
