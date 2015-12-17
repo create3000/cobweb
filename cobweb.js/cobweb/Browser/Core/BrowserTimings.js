@@ -49,7 +49,7 @@ function ($,
 			this .startTime     = 0;
 			this .frames        = 0;
 
-			this .element = $("<div>") .addClass ("cobweb-browser-timing") .appendTo (this .getBrowser () .getXML () .find (".cobweb-surface"));
+			this .element = $("<div>") .addClass ("cobweb-browser-timing") .appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"));
 			this .table   = $("<table>") .appendTo (this .element);
 			this .header  = $("<thead>") .append ($("<tr>") .append ($("<th colspan=2>"))) .appendTo (this .table);
 			this .body    = $("<tbody>") .appendTo (this .table);

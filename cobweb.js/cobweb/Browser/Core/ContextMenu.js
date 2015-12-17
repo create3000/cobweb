@@ -4,6 +4,7 @@ define ([
 	"cobweb/Basic/X3DBaseNode",
 	"lib/gettext",
 	"lib/jquery-contextMenu/dist/jquery.contextMenu",
+	"lib/jquery.fullscreen-min",
 ],
 function ($,
           X3DBaseNode,
@@ -48,7 +49,7 @@ function ($,
 				activeLayer      = this .getBrowser () .getActiveLayer (),
 				currentViewpoint = activeLayer ? activeLayer .getViewpoint () : null,
 				currentViewer    = this .getBrowser () .viewer_ .getValue (),
-				lookat           = this .getLookAtViewer ();
+				fullscreen       = this .getBrowser () .getElement () .fullScreen ();
 
 			var menu = {
 				className: 'cobweb-menu-title',
@@ -63,6 +64,7 @@ function ($,
 						   if (! viewpoint)
 						      return;
 
+							$(".context-menu-list") .fadeOut (500);
 							this .getBrowser () .bindViewpoint (viewpoint);
 							this .getBrowser () .getCanvas () .focus ();
 						}
@@ -74,6 +76,7 @@ function ($,
 						className: "context-menu-icon cobweb-icon-" + currentViewer .toLowerCase () + "-viewer",
 						callback: function (viewer)
 						{
+							$(".context-menu-list") .fadeOut (500);
 							this .getBrowser () .viewer_ = viewer;
 							this .getBrowser () .getNotification () .string_ = _(this .getViewerName (viewer));
 							this .getBrowser () .getCanvas () .focus ();
@@ -83,10 +86,6 @@ function ($,
 					"available-viewer": {
 						name: _("Available Viewers"),
 						items: this .getAvailableViewers (),
-					},
-					"lookat": {
-						name: _("Look At"),
-						className: "context-menu-icon cobweb-icon-zoom-in",
 					},
 					"separator2": "--------",
 					//"view": {
@@ -236,6 +235,15 @@ function ($,
 							.bind (this),
 						},
 					},
+					"fullscreen": {
+						name: fullscreen ? _("Leave Fullscreen") : _("Fullscreen"),
+						className: "context-menu-icon " + (fullscreen ? "cobweb-icon-leave-fullscreen" : "cobweb-icon-fullscreen"),
+						callback: function ()
+						{
+						   this .getBrowser () .getElement () .toggleFullScreen ();
+						}
+						.bind (this),
+					},
 					"separator3": "--------",
 					"about": {
 						name: _("About Cobweb"),
@@ -253,9 +261,6 @@ function ($,
 				delete menu .items .separator0;
 				delete menu .items .viewpoints;
 			}
-
-			if (! lookat)
-			   delete menu .items .lookat;
 
 			return menu;
 		},
@@ -284,6 +289,7 @@ function ($,
 					name: description,
 					callback: function (viewpoint)
 					{
+						$(".context-menu-list") .fadeOut (500);
 						this .getBrowser () .bindViewpoint (viewpoint);
 						this .getBrowser () .getCanvas () .focus ();
 					}
@@ -309,14 +315,12 @@ function ($,
 			{
 				var viewer = availableViewers [i];
 
-				if (viewer === "LOOKAT")
-					continue;
-			   
 				menu [viewer] = {
 					name: _(this .getViewerName (viewer)),
 					className: "context-menu-icon cobweb-icon-" + viewer .toLowerCase () + "-viewer",
 					callback: function (viewer)
 					{
+						$(".context-menu-list") .fadeOut (500);
 						this .getBrowser () .viewer_ = viewer;
 						this .getBrowser () .getNotification () .string_ = _(this .getViewerName (viewer));
 						this .getBrowser () .getCanvas () .focus ();
@@ -330,18 +334,6 @@ function ($,
 
 		   return menu;
 		},
-		getLookAtViewer: function ()
-		{
-			var availableViewers = this .getBrowser () .availableViewers_;
-
-			for (var i = 0; i < availableViewers .length; ++ i)
-			{
-				if (availableViewers [i] === "LOOKAT")
-					return true;
-			}
-
-		   return false;
-		},
 		getViewerName: function (viewer)
 		{
 			switch (viewer)
@@ -354,6 +346,8 @@ function ($,
 					return _("Fly Viewer");
 				case "PLANE":
 					return _("Plane Viewer");
+				case "LOOKAT":
+					return _("Look At Viewer");
 				case "NONE":
 					return _("None Viewer");
 			}

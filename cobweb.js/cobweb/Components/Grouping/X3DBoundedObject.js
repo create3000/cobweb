@@ -32,7 +32,7 @@ function ($,
 
 		// Add bounding boxes
 
-		for (var i = 0; i < nodes .length; ++ i)
+		for (var i = 0, length = nodes .length; i < length; ++ i)
 		{
 			var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
 

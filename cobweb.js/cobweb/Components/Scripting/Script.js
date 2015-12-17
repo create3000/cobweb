@@ -108,14 +108,13 @@ function ($,
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
 				return;
 
-			//this .getExecutionContext () .getScene () .addLoadCount (); // XXX: should I do this? Only addExternProtoLoadCount is available
-
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+			this .getScene () .addLoadCount (this);
 
 			new Loader (this) .loadScript (this .url_,
 			function (data)
 			{
-				//this .getExecutionContext () .getScene () .removeLoadCount (); // XXX
+				this .getScene () .removeLoadCount (this);
 
 				if (data === null)
 				{

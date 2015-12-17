@@ -52,11 +52,11 @@ function ($,
 {
 "use strict";
 
-	function X3DBrowserContext (xml)
+	function X3DBrowserContext (element)
 	{
 		X3DBaseNode                    .call (this, this, this);
 		X3DRoutingContext              .call (this);
-		X3DCoreContext                 .call (this, xml);
+		X3DCoreContext                 .call (this, element);
 		X3DScriptingContext            .call (this);
 		X3DNetworkingContext           .call (this);
 		X3DShapeContext                .call (this);

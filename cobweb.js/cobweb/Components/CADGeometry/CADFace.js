@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
 	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Geometry/Box3",
@@ -15,14 +16,12 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DProductStructureChildNode, 
-          X3DBoundedObject, 
+          X3DBoundedObject,
+          X3DCast,
           X3DConstants,
-          Vector3,
           Box3)
 {
 "use strict";
-
-	var infinity3d = new Vector3 (-1, -1, -1);
 
 	function traverse (type)
 	{
@@ -73,7 +72,7 @@ function ($,
 		},
 		getBBox: function ()
 		{
-			if (this .bboxSize_ .getValue () .equals (infinity3d))
+			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .shape_);
 		

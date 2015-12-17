@@ -8,6 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
 		<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/stable/1/1.19/cobweb.css"/>
 		<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/stable/1/1.19/cobweb.min.js"></script>
+		<script type="text/javascript" src="https://cdn.rawgit.com/kayahr/jquery-fullscreen-plugin/master/jquery.fullscreen-min.js"></script>
 		<style>
 html, body {
 	margin: 0px;
@@ -19,17 +20,58 @@ html, body {
 }
 
 body {
-	background: #414141;
+	background: black;
 	color: white;
 }
 
-#bookmarks {
+.examples {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 30px;
+	left: 0px;
+}
+
+.location-bar {
+	position: absolute;
+	right: 0px;
+	bottom: 5px;
+	left: 0px;
+	height: 30px;
+}
+
+.location {
+	position: absolute;
+	right: 150px;
+	bottom: 0px;
+	left: 0px;
+}
+
+.location input {
+	width: 100%;
+}
+
+.submit-url {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	width: 145px;
+}
+
+.submit-url input {
+	width: 100%;
+}
+
+.bookmarks {
+	box-sizing: border-box;
+	background: #414141;
 	overflow: hidden;
 	padding: 5px;
 	width: 110px;
 	float: left;
 	font-size: 12px;
 	text-align: right;
+	height: 100%;
 }
 
 X3D {
@@ -40,6 +82,26 @@ X3D {
 	display: block;
 	margin: 300px 0 0 0;
 	text-align: center;
+}
+
+input {
+	background: #414141;
+	color: white;
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	height: 20px;
+	vertical-align: bottom;
+	font-size: 12px;
+}
+
+input[type="text"] {
+	padding: 0px 4px;
+	box-sizing: border-box;
+}
+
+input[type="button"]:hover {
+	background: #717171;
 }
 		</style>
 	<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/cobweb.js/Bookmarks.js"></script>
@@ -115,7 +177,7 @@ X3D (function (dom)
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages);
+		bookmarks = new Bookmarks (Browser, $(".bookmarks"), pages);
 
 	bookmarks .setup ();
 	bookmarks .random ();
@@ -125,18 +187,35 @@ function (elements, error)
 	console .error ("Please forgive me, your browser may not support all features required by Cobweb!");
 	console .error (error);
 });
+
+function loadURL ()
+{
+	var Browser = X3D .getBrowser ($("X3D"));
+
+	Browser .loadURL (new X3D .MFString ("https://crossorigin.me/" + $(".location input") .val ()), new X3D .MFString ());
+}
 	</script>
 </head>
 <body>
-	<div id="bookmarks"></div>
-	<X3D>
-		<p>Sorry,<br>
-			it wasn't me!<br>
-			<br>
-			Your browser may not support all features required by Cobweb! You can use Firefox, <br>
-			because this is currently the choice of the choice. We will continuously keep you informed <br>
-			on technical developments and as soon as Cobweb is running in other browser too.
-		</p>
-	</X3D>
+	<div class="examples">
+		<div class="bookmarks"></div>
+		<X3D>
+			<p>Sorry,<br>
+				it wasn't me!<br>
+				<br>
+				Your browser may not support all features required by Cobweb! You can use Firefox, <br>
+				because this is currently the choice of the choice. We will continuously keep you informed <br>
+				on technical developments and as soon as Cobweb is running in other browser too.
+			</p>
+		</X3D>
+	</div>
+	<div class="location-bar">
+		<div class="location">
+			<input type="text" value="http://www.web3d.org/x3d-resources/content/examples/Basic/ChemicalMarkupLanguage/VitaminK.x3d"/>
+		</div>
+		<div class="submit-url">
+			<input type="button" onclick="loadURL ()" value="Load URL"/>
+		</div>
+	</div>
 </body>
 </html>

@@ -118,7 +118,7 @@ function ($,
 		getBBox: function ()
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
-				return X3DBoundedObject .getBBox (this .children_);
+				return X3DBoundedObject .getBBox (this .children_ .getValue ());
 
 			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},

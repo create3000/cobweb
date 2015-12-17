@@ -18,12 +18,12 @@ function (Fields,
 
 	function X3DNetworkingContext ()
 	{
-		this .cache = this .getXML () [0] .getAttribute ("cache") != "false";
+		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
 
 		this .addChildren ("loadCount", new Fields .SFInt32 ());
 		this .loadingObjects = { };
 
-		this .location     = new URI (this .getXML () [0] .baseURI);
+		this .location     = new URI (this .getElement () [0] .baseURI);
 		this .defaultScene = this .createScene ();
 		this .privateScene = this .createScene ();
 	}

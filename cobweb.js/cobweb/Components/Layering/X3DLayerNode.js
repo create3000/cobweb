@@ -177,6 +177,10 @@ function ($,
 		{
 			return this .hitRay;
 		},
+		getBBox: function ()
+		{
+			return this .group .getBBox ();
+		},
 		set_viewport__: function ()
 		{
 			this .currentViewport = X3DCast (X3DConstants .X3DViewportNode, this .viewport_);

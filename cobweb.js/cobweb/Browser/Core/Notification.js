@@ -36,7 +36,7 @@ function ($,
 
 			this .element = $("<div/>")
 				.addClass ("cobweb-notification")
-				.appendTo (this .getBrowser () .getXML () .find (".cobweb-surface"))
+				.appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"))
 				.animate ({ width: 0 });
 
 			this .string_ .addInterest (this, "set_string__");

@@ -86,7 +86,7 @@ function (Fields,
 			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
 			this .pointShader = getPointShader (this, this .lineShader, gl);
 
-			this .setDefaultShader (this .getXML () [0] .getAttribute ("shading"));
+			this .setDefaultShader (this .getElement () [0] .getAttribute ("shading"));
 			this .setShader (this .getDefaultShader ());
 
 			this .lineShader .use ();

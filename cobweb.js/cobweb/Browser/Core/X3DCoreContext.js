@@ -26,13 +26,13 @@ function (BrowserOptions,
 		}
 	}
 
-	function X3DCoreContext (xml)
+	function X3DCoreContext (element)
 	{
-		this .xml = xml;
+		this .element = element;
 
 		// Get canvas & context.
 
-		var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .xml);
+		var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .element);
 		var canvas  = $("<div/>") .addClass ("cobweb-surface") .prependTo (browser);
 
 		this .canvas  = $("<canvas/>") .prependTo (canvas);
@@ -59,9 +59,9 @@ function (BrowserOptions,
 		{
 			return false;
 		},
-		getXML: function ()
+		getElement: function ()
 		{
-			return this .xml;
+			return this .element;
 		},
 		getCanvas: function ()
 		{

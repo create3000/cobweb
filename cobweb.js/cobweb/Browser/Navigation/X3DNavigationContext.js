@@ -6,6 +6,7 @@ define ([
 	"cobweb/Browser/Navigation/FlyViewer",
 	"cobweb/Browser/Navigation/PlaneViewer",
 	"cobweb/Browser/Navigation/NoneViewer",
+	"cobweb/Browser/Navigation/LookAtViewer",
 	"cobweb/Components/Lighting/DirectionalLight",
 ],
 function (Fields,
@@ -14,6 +15,7 @@ function (Fields,
           FlyViewer,
           PlaneViewer,
           NoneViewer,
+          LookAtViewer,
           DirectionalLight)
 {
 "use strict";
@@ -159,6 +161,9 @@ function (Fields,
 					break;
 				case "NONE":
 					this .viewerNode = new NoneViewer (this);
+					break;
+				case "LOOKAT":
+					this .viewerNode = new LookAtViewer (this);
 					break;
 				default:
 					this .viewerNode = new ExamineViewer (this);

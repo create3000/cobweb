@@ -287,6 +287,10 @@ x3d .cobweb-browser-timing button:hover {
 	background: url("images/FlyViewer.png");
 }
 
+.cobweb-icon-lookat-viewer {
+	background: url("images/gtk-zoom-in.png");
+}
+
 .cobweb-icon-plane-viewer {
 	background: url("images/PlaneViewer.png");
 }
@@ -309,6 +313,14 @@ x3d .cobweb-browser-timing button:hover {
 
 .cobweb-icon-texture-quality {
 	background: url("images/TextureQuality.png");
+}
+
+.cobweb-icon-fullscreen {
+	background: url("images/gtk-fullscreen.png");
+}
+
+.cobweb-icon-leave-fullscreen {
+	background: url("images/gtk-leave-fullscreen.png");
 }
 
 .cobweb-icon-help-about {

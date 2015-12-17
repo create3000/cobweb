@@ -96,12 +96,10 @@ function ($,
 			
 				switch (string)
 				{
-					case "LOOKAT":
-						// Continue with next type.
-						continue;
 					case "EXAMINE":
 					case "WALK":
 					case "FLY":
+					case "LOOKAT":
 					case "PLANE":
 					case "NONE":
 						this .viewer_ = string;
@@ -145,14 +143,14 @@ function ($,
 						case "FLY":
 							flyViewer = true;
 							continue;
+						case "LOOKAT":
+							lookAt = true;
+							continue;
 						case "PLANE":
 							planeViewer = true;
 							continue;
 						case "NONE":
 							noneViewer = true;
-							continue;
-						case "LOOKAT":
-							lookAt = true;
 							continue;
 					}
 
@@ -185,19 +183,11 @@ function ($,
 				if (planeViewer)
 					this .availableViewers_ .push ("PLANE");
 
+				if (lookAt)
+					this .availableViewers_ .push ("LOOKAT");
+
 				if (noneViewer)
 					this .availableViewers_ .push ("NONE");
-
-				if (lookAt)
-				{
-					if (! this .availableViewers_ .length)
-					{
-						this .viewer_ = "NONE";
-						this .availableViewers_ .push ("NONE");
-					}
-
-					this .availableViewers_ .push ("LOOKAT");
-				}
 			}
 		},
 		set_headlight__: function ()

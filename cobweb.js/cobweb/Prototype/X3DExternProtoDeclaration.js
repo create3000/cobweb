@@ -90,8 +90,7 @@ function ($,
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-
-			this .getScene () .addExternProtoLoadCount (this);
+			this .getScene () .addLoadCount (this);
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
@@ -99,7 +98,7 @@ function ($,
 		},
 		setSceneAsync: function (value)
 		{
-			this .getScene () .removeExternProtoLoadCount (this);
+			this .getScene () .removeLoadCount (this);
 		
 			if (value)
 			{

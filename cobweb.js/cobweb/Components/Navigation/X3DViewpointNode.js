@@ -203,17 +203,19 @@ function ($,
 						break;
 					}
 				}
+		
 
 				if (this .jump_ .getValue ())
 				{
 					if (! this .retainUserOffsets_ .getValue ())
 						this .resetUserOffsets ();
+	
+					for (var id in this .getLayers ())
+						this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
 
 					if (layer)
 					{
 						var navigationInfo = layer .getNavigationInfo ();
-
-						navigationInfo .transitionStart_ = true;
 
 						var
 							transitionType = navigationInfo .getTransitionType (),
@@ -321,6 +323,56 @@ function ($,
 			rotation .setFromToVec (vector, normal);
 
 			return orientation .multRight (rotation);
+		},
+		lookAtPoint: function (point, factor, straighten)
+		{
+			if (! this .getBrowser () .getActiveLayer ())
+				return;
+
+			try
+			{
+				this .getCameraSpaceMatrix () .multVecMatrix (point);
+
+				Matrix4 .inverse (this .getTransformationMatrix ()) .multVecMatrix (point);
+
+				var minDistance = this .getBrowser () .getActiveLayer () .getNavigationInfo () .getNearPlane () * 2;
+		
+				this .lookAt (point, minDistance, factor, straighten);
+			}
+			catch (error)
+			{
+				console .error (error);
+			}
+		},
+		lookAt: function (point, distance, factor, straighten)
+		{
+			var offset = point .copy () .add (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, distance))) .subtract (this .getPosition ());
+
+			for (var id in this .getLayers ())
+				this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
+		
+			this .timeSensor .cycleInterval_ = 0.2;
+			this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
+			this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
+			this .timeSensor .isActive_ .addInterest (this, "set_active__");
+	
+			this .easeInEaseOut .easeInEaseOut_ = [ new Vector2 (0, 1), new Vector2 (1, 0) ];
+
+			var
+				translation = Vector3 .lerp (this .positionOffset_ .getValue (), offset, factor),
+				direction   = Vector3 .add (this .getPosition (), translation) .subtract (point),
+				rotation    = Rotation4 .multRight (this .orientationOffset_ .getValue (), new Rotation4 (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, 1)), direction));
+		
+			if (straighten)
+				rotation = Rotation4 .inverse (this .getOrientation ()) .multRight (this .straightenHorizon (Rotation4 .multRight (this .getOrientation (), rotation)));
+		
+			this .positionInterpolator         .keyValue_ = [ this .positionOffset_ .getValue (),         translation ];
+			this .orientationInterpolator      .keyValue_ = [ this .orientationOffset_ .getValue (),      rotation ];
+			this .scaleInterpolator            .keyValue_ = [ this .scaleOffset_ .getValue (),            this .scaleOffset_ .getValue () ];
+			this .scaleOrientationInterpolator .keyValue_ = [ this .scaleOrientationOffset_ .getValue (), this .scaleOrientationOffset_ .getValue () ];
+		
+			this .centerOfRotationOffset_ = Vector3 .subtract (point, this .getCenterOfRotation ());
+			this .set_bind_               = true;
 		},
 		set_active__: function (active)
 		{

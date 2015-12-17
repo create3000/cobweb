@@ -34,8 +34,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, browser, executionContext);
 
-		this .addChildren ("rootNodes",             new Fields .MFNode (),
-                         "externProtosLoadCount", new Fields .SFInt32 ());
+		this .addChildren ("rootNodes", new Fields .MFNode (),
+                         "loadCount", new Fields .SFInt32 ());
 
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
@@ -302,18 +302,18 @@ function ($,
 					throw error;
 			}
 		},
-		addExternProtoLoadCount: function (node)
+		addLoadCount: function (node)
 		{
-			this .externProtosLoadCount_ = this .externProtosLoadCount_ .getValue () + 1;
+			this .loadCount_ = this .loadCount_ .getValue () + 1;
 		},
-		removeExternProtoLoadCount: function (node)
+		removeLoadCount: function (node)
 		{
-			this .externProtosLoadCount_ = this .externProtosLoadCount_ .getValue () - 1;
+			this .loadCount_ = this .loadCount_ .getValue () - 1;
 		},
 		requestAsyncLoadOfExternProtos: function ()
 		{
-			this .externProtosLoadCount_ .setTainted (false);
-			this .externProtosLoadCount_ .addEvent ();
+			this .loadCount_ .setTainted (false);
+			this .loadCount_ .addEvent ();
 
 			for (var i = 0, length = this .externprotos .length; i < length; ++ i)
 			{

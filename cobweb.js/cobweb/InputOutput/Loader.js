@@ -103,10 +103,10 @@ function ($,
 		},
 		setScene: function (scene, success)
 		{
-			scene .externProtosLoadCount_ .addInterest (this, "set_externProtosLoadCount", scene, success);
+			scene .loadCount_ .addInterest (this, "set_loadCount__", scene, success);
 			scene .requestAsyncLoadOfExternProtos ();
 		},
-		set_externProtosLoadCount: function (field, scene, success)
+		set_loadCount__: function (field, scene, success)
 		{
 			if (field .getValue ())
 				return;

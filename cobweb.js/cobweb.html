@@ -38,7 +38,7 @@ body {
 	font-size: 12px;
 }
 
-.u {
+.version {
 	margin-left: 40px;
 	margin-right: 20px;
 	font-family: Ubuntu;
@@ -178,13 +178,20 @@ X3D (function (dom)
 	bookmarks .setSplit (true);
 	bookmarks .setup ();
 
-	$(".u") .text (Browser .name + " V" + Browser .version);
+	$(".version") .text (Browser .name + " V" + Browser .version);
 },
 function (elements, error)
 {
 	console .error ("Please forgive me, your browser may not support all features required by Cobweb!");
 	console .error (error);
 });
+
+function loadURL ()
+{
+	var Browser = X3D .getBrowser ($("X3D"));
+
+	Browser .loadURL (new X3D .MFString ("https://crossorigin.me/" + $(".load-url input") .val ()), new X3D .MFString ());
+}
 	</script>
 </head>
 <body>
@@ -207,7 +214,10 @@ function (elements, error)
 				on technical developments and as soon as Cobweb is running in other browser too.
 			</p>
 		</X3D>
-		<p class="u"></p>
+		<table class="load-url" cellpadding="4" style="margin:0; width:100%">
+			<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
+		</table>
+		<p class="version"></p>
 		<p class="-cobweb-console"></p>
 	</div>
 </body>

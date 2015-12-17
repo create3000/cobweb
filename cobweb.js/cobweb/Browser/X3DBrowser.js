@@ -28,9 +28,9 @@ function ($,
 {
 "use strict";
 
-	function X3DBrowser (xml)
+	function X3DBrowser (element)
 	{
-		X3DBrowserContext .call (this, xml);
+		X3DBrowserContext .call (this, element);
 
 		this .currentSpeed         = 0;
 		this .currentFrameRate     = 0;
@@ -52,7 +52,7 @@ function ($,
 
 			X3DBrowserContext .prototype .initialize .call (this);
 
-			var urlCharacters = this .getXML () [0] .getAttribute ("url");
+			var urlCharacters = this .getElement () [0] .getAttribute ("url");
 
 			if (urlCharacters)
 			{
@@ -231,6 +231,9 @@ function ($,
 				throw new Error ("Browser.createVrmlFromURL: node IS NULL.");
 
 			var field = node .getValue () .getField (event);
+
+			if (! field .isInput ())
+				throw new Error ("Browser.createVrmlFromURL: event named '" + event + "' must be a input field.");
 
 			if (field .getType () !== X3DConstants .MFNode)
 				throw new Error ("Browser.createVrmlFromURL: event named '" + event + "' must be of type MFNode.");

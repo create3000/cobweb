@@ -58,7 +58,7 @@ function ($,
 		{
 			this .cursorType = value;
 
-			var div = this .getBrowser () .getXML () .find (".cobweb-surface");
+			var div = this .getBrowser () .getElement () .find (".cobweb-surface");
 
 			switch (value)
 			{
@@ -132,6 +132,14 @@ function ($,
 				layerNumber:     this .layerNumber,
 			});
 		},
+		getHits: function ()
+		{
+			return this .hits;
+		},
+		getNearestHit: function ()
+		{
+			return this .hits [this .hits .length - 1];
+		},
 		buttonPressEvent: function (x, y)
 		{
 			this .touch (x, y);
@@ -139,7 +147,7 @@ function ($,
 			if (this .hits .length === 0)
 				return false;
 
-			var nearestHit = this .hits [this .hits .length - 1];
+			var nearestHit = this .getNearestHit ();
 
 			this .selectedLayer = nearestHit .layer;
 			this .activeSensors = nearestHit .sensors;
