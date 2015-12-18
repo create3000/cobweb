@@ -188,17 +188,11 @@ function ($,
 		},
 		loadDocument: function (url, callback)
 		{
-			this .url      = [ ];
+			this .url      = url .copy ();
 			this .callback = callback;
 
 			if (url .length === 0)
 				return this .loadDocumentError (new Error ("No URL given."));
-
-			for (var i = 0, length = url .length; i < length; ++ i)
-			{
-				this .url .push (url [i]);
-				this .url .push (fallback + url [i]);
-			}
 
 			this .loadDocumentAsync (this .url .shift ());
 		},
@@ -212,8 +206,6 @@ function ($,
 
 					if (uri .filename .toString () .length === 0 && uri .filename .query .length === 0)
 					{
-						this .url .shift (); // remove fallback
-
 						return this .bindViewpoint (uri .fragment);
 					}
 				}
@@ -230,11 +222,7 @@ function ($,
 					var result = ECMAScript .exec (URL);
 	
 					if (result)
-					{
-						this .url .shift (); // remove fallback
-
 						return this .callback (result [1]);
-					}
 				}
 				catch (exception)
 				{
@@ -250,8 +238,6 @@ function ($,
 
 				if (result)
 				{
-					this .url .shift (); // remove fallback
-
 					var mimeType = result [1];
 
 					// ??? If called from loadURL and mime type is text/html do a window.open or window.location=URL and return; ???
@@ -344,16 +330,14 @@ function ($,
 
 			console .warn (message);
 		},
-		transform: function (URL)
+		transform: function (sURL)
 		{
-			URL = this .getReferer () .transform (new URI (URL));
+			var URL = this .getReferer () .transform (new URI (sURL));
 
 			if (URL .isLocal ())
-			{
-				this .url .shift (); // remove fallback
-
 				URL = this .browser .getLocation () .getRelativePath (URL);
-			}
+			else
+				this .url .push (fallback + sURL);
 
 			return URL;
 		},
