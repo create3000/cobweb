@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 16 Dec 2015 04:08:10 GMT'/>
+    <meta name='modified' content='Fri, 18 Dec 2015 10:34:46 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d"'>
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='26.7435264587402, -18.4969291687012, 30.2673110961914'/>
+              value='-15.7903728485107, -8.12159156799316, 2.38747119903564'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.775350332260132, 0.580043256282806, 0.249763086438179, 0.596928060054779'/>
+              value='-0.784170389175415, 0.586519300937653, 0.202662199735641, 1.10513174533844'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='13.6690902709961, -3.56012392044067, -0.202345371246338'/>
+              value='-18, -12.0000009536743, -4.40963704022579e-05'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -888,7 +888,7 @@
         </Shape>
       </Transform>
     </Transform>
-    <Transform DEF='_6'
+    <Transform
         translation='28 12 4.40964e-05'>
       <Shape>
         <Appearance>
@@ -906,5 +906,21 @@
         </LineSet>
       </Shape>
     </Transform>
+    <Transform DEF='Torus_3'
+        translation='-18 -12 -4.40964e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <ProtoInstance name='Torus' containerField='geometry'>
+          <fieldValue name='minorRadius' value='0.5'/>
+        </ProtoInstance>
+      </Shape>
+    </Transform>
+    <Viewpoint DEF='_6'
+        description='Torus'
+        position='-15.7904 -8.12159 2.38747'
+        orientation='-0.78417 0.586519 0.202662 1.10513'
+        centerOfRotation='-18 -12 -4.40964e-05'/>
   </Scene>
 </X3D>

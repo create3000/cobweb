@@ -28,14 +28,7 @@ function ($)
 		},
 		enumerate: function (target)
 		{
-			var
-				array = target .array,
-				keys  = [ ];
-
-			for (var i = 0, length = array .length; i < length; ++ i)
-				keys .push (i);
-
-			return keys [Symbol.iterator] ();
+			return Object .keys (target .array) [Symbol.iterator] ();
 		},
 	};
 

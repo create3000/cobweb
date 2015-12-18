@@ -273,7 +273,7 @@ function ($,
 			   normals     = [ ],
 				points      = this .createPoints ();
 
-			for (var p = 0; p < points .length; ++ p)
+			for (var p = 0, length = points .length; p < length; ++ p)
 				normalIndex [p] = [ ];
 
 			// Build body.
