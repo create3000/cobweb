@@ -224,8 +224,13 @@ function ($,
 			if (! (this .minPosition_ .y > this .maxPosition_ .y))
 				translation .y = Algorithm .clamp (translation .y, this .minPosition_ .y, this .maxPosition_ .y);
 
-			this .trackPoint_changed_  = trackPoint;
-			this .translation_changed_ = axisRotation .multVecRot (translation);
+			axisRotation .multVecRot (translation);
+
+			if (! this .trackPoint_changed_ .getValue () .equals (trackPoint))
+				this .trackPoint_changed_ = trackPoint;
+
+			if (! this .translation_changed_ .getValue () .equals (translation))
+				this .translation_changed_ = translation;
 		},
 	});
 
