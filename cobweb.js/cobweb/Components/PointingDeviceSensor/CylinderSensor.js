@@ -234,7 +234,12 @@ function ($,
 						min   = Algorithm .interval (this .minAngle_ .getValue (), -Math .PI, Math .PI),
 						max   = Algorithm .interval (this .maxAngle_ .getValue (), -Math .PI, Math .PI);
 
-					if (angle > min && angle < max)
+					if (angle < min)
+						rotation .setAxisAngle (this .cylinder .axis .direction, min);
+					else if (angle > max)
+						rotation .setAxisAngle (this .cylinder .axis .direction, max);
+			
+					if (! this .rotation_changed_ .getValue () .equals (rotation))
 						this .rotation_changed_ = rotation;
 				}
 			}

@@ -114,6 +114,10 @@ function ($,
 				                 vector .z,
 				                 2 * Math .acos (value .w));
 		},
+		setAxisAngle: function (axis, angle)
+		{
+			this .set (axis .x, axis .y, axis .z, angle);
+		},
 		setFromToVec: function (fromVec, toVec)
 		{
 			// https://bitbucket.org/Coin3D/coin/src/abc9f50968c9/src/base/SbRotation.cpp
