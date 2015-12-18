@@ -34,6 +34,7 @@ function ($,
 		this .browser          = node .getBrowser ();
 		this .external         = this .browser .isExternal () || external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
+		this .url              = [ ];
 		this .URL              = new URI ();
 		this .fileReader       = new FileReader ();
 	}
