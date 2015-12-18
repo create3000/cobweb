@@ -306,11 +306,16 @@ function ($,
 
 				// Clip planes
 
-				for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
-					clipPlanes [c] .use (gl, shader, c);
-
-				if (c < shader .maxClipPlanes)
-					gl .uniform1i (shader .clipPlaneEnabled [c], false);
+				if (clipPlanes .length)
+				{
+					for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
+						clipPlanes [c] .use (gl, shader, c);
+	
+					if (c < shader .maxClipPlanes)
+						gl .uniform1i (shader .clipPlaneEnabled [c], false);
+				}
+				else
+					gl .uniform1i (shader .clipPlaneEnabled [0], false);
 
 				// modelViewMatrix
 	

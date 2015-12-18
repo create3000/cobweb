@@ -510,11 +510,16 @@ function ($,
 
 			// Clip planes
 
-			for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-				clipPlanes [i] .use (gl, shader, i);
-
-			if (i < shader .maxClipPlanes)
-				gl .uniform1i (shader .clipPlaneEnabled [i], false);
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .use (gl, shader, i);
+	
+				if (i < shader .maxClipPlanes)
+					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+			}
+			else
+				gl .uniform1i (shader .clipPlaneEnabled [0], false);
 
 			// Uniforms
 
@@ -559,11 +564,16 @@ function ($,
 
 			// Clip planes
 
-			for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-				clipPlanes [i] .use (gl, shader, i);
-
-			if (i < shader .maxClipPlanes)
-				gl .uniform1i (shader .clipPlaneEnabled [i], false);
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .use (gl, shader, i);
+	
+				if (i < shader .maxClipPlanes)
+					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+			}
+			else
+				gl .uniform1i (shader .clipPlaneEnabled [0], false);
 
 			// Uniforms
 

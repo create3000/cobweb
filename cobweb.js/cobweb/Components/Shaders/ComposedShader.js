@@ -246,6 +246,8 @@ function ($,
 				if (i < this .maxClipPlanes)
 					gl .uniform1i (this .clipPlaneEnabled [i], false);
 			}
+			else
+				gl .uniform1i (this .clipPlaneEnabled [0], false);
 
 			// Fog
 
