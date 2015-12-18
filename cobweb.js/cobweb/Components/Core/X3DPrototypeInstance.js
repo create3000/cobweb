@@ -138,9 +138,12 @@ function ($,
 				if (this .protoNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
 				{
 					var proto = this .protoNode .getProtoDeclaration ();
-		
-					//this .copyImportedNodes (proto);
-					this .copyRoutes (proto);
+
+					if (proto)
+					{
+						//this .copyImportedNodes (proto);
+						this .copyRoutes (proto);
+					}
 				}
 				
 				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
