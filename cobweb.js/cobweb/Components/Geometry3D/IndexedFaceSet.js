@@ -195,7 +195,11 @@ function ($,
 			{
 				// Add -1 (polygon end marker) to coordIndex if not present.
 				if (this .coordIndex_ [coordLength - 1] > -1)
+				{
 					this .coordIndex_ .push (-1);
+
+					++ coordLength;
+				}
 
 				// Construct triangle array and determine the number of used points.
 				var vertices = [ ];

@@ -21,7 +21,7 @@ function ($,
 	BinaryTransport ($);
 
 	var
-		TIMEOUT    = 16,
+		TIMEOUT    = 17,
 		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
 		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
 		fallback   = "https://crossorigin.me/";
@@ -212,6 +212,8 @@ function ($,
 
 					if (uri .filename .toString () .length === 0 && uri .filename .query .length === 0)
 					{
+						this .url .shift (); // remove fallback
+
 						return this .bindViewpoint (uri .fragment);
 					}
 				}
@@ -228,7 +230,11 @@ function ($,
 					var result = ECMAScript .exec (URL);
 	
 					if (result)
+					{
+						this .url .shift (); // remove fallback
+
 						return this .callback (result [1]);
+					}
 				}
 				catch (exception)
 				{
@@ -244,6 +250,8 @@ function ($,
 
 				if (result)
 				{
+					this .url .shift (); // remove fallback
+
 					var mimeType = result [1];
 
 					// ??? If called from loadURL and mime type is text/html do a window.open or window.location=URL and return; ???
@@ -340,7 +348,12 @@ function ($,
 		{
 			URL = this .getReferer () .transform (new URI (URL));
 
-			URL = URL .isLocal () ? this .browser .getLocation () .getRelativePath (URL) : URL;
+			if (URL .isLocal ())
+			{
+				this .url .shift (); // remove fallback
+
+				URL = this .browser .getLocation () .getRelativePath (URL);
+			}
 
 			return URL;
 		},
