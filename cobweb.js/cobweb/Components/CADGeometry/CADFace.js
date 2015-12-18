@@ -86,7 +86,31 @@ function ($,
 		},
 		set_shape__: function ()
 		{
-			this .shapeNode = this .shape_ .getValue ();
+			if (this .shapeNode)
+				this .shapeNode .isCameraObject_ .removeFieldInterest (this .isCameraObject_);
+
+			var
+				node = this .shape_ .getValue () .getInnerNode (),
+				type = node .getType ();
+
+			this .shapeNode = null;
+
+			for (var t = type .length - 1; t >= 0; -- t)
+			{
+				switch (type [t])
+				{
+					case X3DConstants .LOD:
+					case X3DConstants .Transform:
+					case X3DConstants .X3DShapeNode:
+					{
+						node .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+						this .shapeNode = node;
+						break;
+					}
+					default:
+						continue;
+				}
+			}
 
 			if (this .shapeNode)
 				this .traverse = traverse;
