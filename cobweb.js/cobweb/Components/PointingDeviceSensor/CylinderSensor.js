@@ -235,7 +235,7 @@ function ($,
 						max   = Algorithm .interval (this .maxAngle_ .getValue (), -Math .PI, Math .PI);
 
 					if (angle > min && angle < max)
-						this .rotation_change_ = rotation;
+						this .rotation_changed_ = rotation;
 				}
 			}
 			catch (error)
