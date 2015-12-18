@@ -101,7 +101,7 @@ function ($,
 				{
 					var matrices = this .getMatrices () [hit .layer .getId ()];
 
-					this .modelViewMatrix .assign (matrices .modelViewMatrix);
+					this .modelViewMatrix    .assign (matrices .modelViewMatrix);
 					this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
 
 					var

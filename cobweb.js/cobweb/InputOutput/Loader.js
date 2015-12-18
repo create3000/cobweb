@@ -20,11 +20,11 @@ function ($,
 
 	BinaryTransport ($);
 
-	var TIMEOUT = 16;
-
-	var ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/;
-
-	var dataURL = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/;
+	var
+		TIMEOUT    = 16,
+		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
+		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
+		fallback   = "https://crossorigin.me/";
 
 	function Loader (node, external)
 	{
@@ -188,11 +188,17 @@ function ($,
 		},
 		loadDocument: function (url, callback)
 		{
-			this .url      = url .copy ();
+			this .url      = [ ];
 			this .callback = callback;
 
 			if (url .length === 0)
 				return this .loadDocumentError (new Error ("No URL given."));
+
+			for (var i = 0, length = url .length; i < length; ++ i)
+			{
+				this .url .push (url [i]);
+				this .url .push (fallback + url [i]);
+			}
 
 			this .loadDocumentAsync (this .url .shift ());
 		},
