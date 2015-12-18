@@ -20,12 +20,14 @@ function ($, X3DField, X3DConstants, Generator)
 
 				// value
 				
-				var array = target .getValue ();
+				var
+					array = target .getValue (),
+					index = parseInt (key);
 
-				if (key >= array .length)
-					target .resize (key + 1);
+				if (index >= array .length)
+					target .resize (index + 1);
 
-				return array [key] .valueOf ();
+				return array [index] .valueOf ();
 			}
 			catch (error)
 			{

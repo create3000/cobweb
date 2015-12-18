@@ -189,8 +189,8 @@ function ($,
 			// SCP for the last point
 			if (closedSpine)
 			{
-				// The SCP for the first and last points is the same.
-				rotations .push (rotations [0]);
+				// The SCPs for the first and last points are the same.
+				rotations .push (rotations [0] .copy ());
 			}
 			else
 			{
