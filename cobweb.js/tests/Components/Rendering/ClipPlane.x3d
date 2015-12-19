@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 02 Dec 2015 02:03:04 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 18 Dec 2015 11:37:47 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 06:23:24 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -28,149 +28,247 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='15.1484851837158, 3.11375188827515, 7.89583301544189'/>
+              value='15.1485004425049, 3.11374998092651, 7.89583015441895'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.341611593961716, 0.934306144714355, 0.101851053535938, 0.904249250888824'/>
+              value='-0.341611981391907, 0.934305906295776, 0.101850986480713, 0.904248952865601'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='6.06030416488647, -0.728840529918671, 0.0712134838104248'/>
+              value='6.06029987335205, -0.728841006755829, 0.071213498711586'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <Background DEF='Gray'
-        skyColor='0.2 0.2 0.2'/>
-    <Viewpoint DEF='_1'
-        description='Home'
-        position='15.1485 3.11375 7.89583'
-        orientation='-0.341612 0.934306 0.101851 0.904249'
-        centerOfRotation='6.0603 -0.728841 0.0712135'/>
-    <Transform DEF='ClippedObjects'>
-      <Transform DEF='Lines'
-          translation='-3 0 0'>
-        <Transform>
-          <Shape>
-            <Appearance>
-              <LineProperties
-                  linewidthScaleFactor='3'/>
-              <Material
-                  emissiveColor='1 0 0'
-                  transparency='0.5'/>
-            </Appearance>
-            <IndexedLineSet
-                coordIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'>
-              <Coordinate
-                  point='-1 1 1, -1 -1 1, 1 -1 1, 1 1 1, -1 1 -1, -1 -1 -1, 1 -1 -1, 1 1 -1'/>
-            </IndexedLineSet>
-          </Shape>
+    <LayerSet
+        activeLayer='1'
+        order='1, 2'>
+      <Layer>
+        <Background DEF='Gray'
+            skyColor='0.2 0.2 0.2'/>
+        <Viewpoint
+            description='Home'
+            position='15.1485 3.11375 7.89583'
+            orientation='-0.341612 0.934306 0.101851 0.904249'
+            centerOfRotation='6.0603 -0.728841 0.0712135'/>
+        <Transform DEF='ClippedObjects'>
+          <Transform DEF='Lines'
+              translation='-3 0 0'>
+            <Transform>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='3'/>
+                  <Material
+                      emissiveColor='1 0 0'
+                      transparency='0.5'/>
+                </Appearance>
+                <IndexedLineSet
+                    coordIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'>
+                  <Coordinate
+                      point='-1 1 1, -1 -1 1, 1 -1 1, 1 1 1, -1 1 -1, -1 -1 -1, 1 -1 -1, 1 1 -1'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform
+                rotation='0.267261 0.534522 0.801784 4'
+                scaleOrientation='-0.491051 0.513758 0.703506 0.668035'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='3'/>
+                  <Material
+                      emissiveColor='1 0 0'
+                      transparency='0.5'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'
+                    coordIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'>
+                  <Color
+                      color='1 0 0, 0 1 0, 0 0 1, 0 0 0, 1 1 0, 1 0 1, 0 1 1, 1 1 1'/>
+                  <Coordinate
+                      point='-1 1 1, -1 -1 1, 1 -1 1, 1 1 1, -1 1 -1, -1 -1 -1, 1 -1 -1, 1 1 -1'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+          </Transform>
+          <Transform DEF='Box'>
+            <Shape>
+              <Appearance>
+                <TwoSidedMaterial
+                    separateBackColor='true'
+                    diffuseColor='0.8 0 0'
+                    backDiffuseColor='0 0.739946 0.76185'/>
+              </Appearance>
+              <Box
+                  solid='false'/>
+            </Shape>
+          </Transform>
+          <Transform DEF='Cylinder'
+              translation='3 0 0'>
+            <Shape>
+              <Appearance>
+                <TwoSidedMaterial
+                    separateBackColor='true'
+                    diffuseColor='0 0.8 0'
+                    backDiffuseColor='0.766216 0 0.704745'/>
+              </Appearance>
+              <Cylinder
+                  solid='false'/>
+            </Shape>
+          </Transform>
+          <Transform DEF='Cone'
+              translation='6 0 0'>
+            <Shape>
+              <Appearance>
+                <TwoSidedMaterial
+                    separateBackColor='true'
+                    diffuseColor='0 0 0.8'
+                    backDiffuseColor='0.80648 0.796122 0'/>
+              </Appearance>
+              <Cone
+                  solid='false'/>
+            </Shape>
+          </Transform>
+          <Transform DEF='Sphere'
+              translation='9 0 0'>
+            <Shape>
+              <Appearance>
+                <TwoSidedMaterial
+                    separateBackColor='true'
+                    diffuseColor='0.8 0.8 0'
+                    backDiffuseColor='0 0.0531929 0.742009'/>
+              </Appearance>
+              <Sphere
+                  solid='false'/>
+            </Shape>
+          </Transform>
+          <ClipPlane DEF='ClipPlane'
+              plane='0 0 -1 -0.0984689'/>
+          <TouchSensor
+              description='Clipped objects'/>
         </Transform>
-        <Transform
-            rotation='0.267261 0.534522 0.801784 4'
-            scaleOrientation='-0.491051 0.513758 0.703506 0.668035'>
-          <Shape>
-            <Appearance>
-              <LineProperties
-                  linewidthScaleFactor='3'/>
-              <Material
-                  emissiveColor='1 0 0'
-                  transparency='0.5'/>
-            </Appearance>
-            <IndexedLineSet
-                colorIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'
-                coordIndex='0, 1, 2, 3, 0, -1, 4, 5, 6, 7, 4, -1, 0, 4, -1, 3, 7, -1, 1, 5, -1, 2, 6, -1'>
-              <Color
-                  color='1 0 0, 0 1 0, 0 0 1, 0 0 0, 1 1 0, 1 0 1, 0 1 1, 1 1 1'/>
-              <Coordinate
-                  point='-1 1 1, -1 -1 1, 1 -1 1, 1 1 1, -1 1 -1, -1 -1 -1, 1 -1 -1, 1 1 -1'/>
-            </IndexedLineSet>
-          </Shape>
+        <Transform DEF='VisibleClipPlane'>
+          <PlaneSensor DEF='PlaneSensor'
+              axisRotation='0 1 0 1.5708'
+              offset='3 0 -0.0984689'
+              maxPosition='-1 0'/>
+          <Transform DEF='Rectangle2D'
+              translation='3 0 -0.0984689'
+              scale='9 2.5 1'>
+            <Shape>
+              <Appearance>
+                <LineProperties
+                    linewidthScaleFactor='3'/>
+                <Material
+                    transparency='0.5'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+          </Transform>
         </Transform>
-      </Transform>
-      <Transform DEF='Box'>
-        <Shape>
-          <Appearance>
-            <TwoSidedMaterial
-                separateBackColor='true'
-                diffuseColor='0.8 0 0'
-                backDiffuseColor='0 0.739946 0.76185'/>
-          </Appearance>
-          <Box
-              solid='false'/>
-        </Shape>
-      </Transform>
-      <Transform DEF='Cylinder'
-          translation='3 0 0'>
-        <Shape>
-          <Appearance>
-            <TwoSidedMaterial
-                separateBackColor='true'
-                diffuseColor='0 0.8 0'
-                backDiffuseColor='0.766216 0 0.704745'/>
-          </Appearance>
-          <Cylinder
-              solid='false'/>
-        </Shape>
-      </Transform>
-      <Transform DEF='Cone'
-          translation='6 0 0'>
-        <Shape>
-          <Appearance>
-            <TwoSidedMaterial
-                separateBackColor='true'
-                diffuseColor='0 0 0.8'
-                backDiffuseColor='0.80648 0.796122 0'/>
-          </Appearance>
-          <Cone
-              solid='false'/>
-        </Shape>
-      </Transform>
-      <Transform DEF='Sphere'
-          translation='9 0 0'>
-        <Shape>
-          <Appearance>
-            <TwoSidedMaterial
-                separateBackColor='true'
-                diffuseColor='0.8 0.8 0'
-                backDiffuseColor='0 0.0531929 0.742009'/>
-          </Appearance>
-          <Sphere
-              solid='false'/>
-        </Shape>
-      </Transform>
-      <ClipPlane DEF='ClipPlane'
-          plane='0 0 -1 -0.118112'/>
-      <TouchSensor
-          description='Clipped objects'/>
-    </Transform>
-    <Transform DEF='VisibleClipPlane'>
-      <PlaneSensor DEF='PlaneSensor'
-          axisRotation='0 1 0 1.5708'
-          offset='3 0 -0.118112'
-          maxPosition='-1 0'/>
-      <Transform DEF='Rectangle2D'
-          translation='3 0 -0.118112'
-          scale='9 2.5 1'>
-        <Shape>
-          <Appearance>
-            <LineProperties
-                linewidthScaleFactor='3'/>
-            <Material
-                transparency='0.5'/>
-          </Appearance>
-          <Rectangle2D
-              solid='false'/>
-        </Shape>
-      </Transform>
-    </Transform>
-    <Script DEF='ClipPlaneScript'>
-      <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
-      <field accessType='outputOnly' type='SFVec4f' name='plane_changed'/>
+        <Script DEF='ClipPlaneScript'>
+          <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+          <field accessType='outputOnly' type='SFVec4f' name='plane_changed'/>
 <![CDATA[clipPlane.js]]> 
-    </Script>
+        </Script>
+        <Script DEF='TestScript'>
+          <field accessType='inputOnly' type='SFVec4f' name='set_plane'/>
+          <field accessType='outputOnly' type='MFString' name='string_changed'/>
+<![CDATA[ecmascript:
+
+function set_plane (value)
+{
+	string_changed = new MFString ("plane " + value);
+}]]> 
+        </Script>
+      </Layer>
+      <Layer DEF='HUD'>
+        <MetadataSet DEF='Titania_1'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='Grid' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='true'/>
+            <MetadataFloat containerField='value'
+                name='rotation'
+                reference='http://titania.create3000.de'
+                value='1, 0, 0, 1.5708'/>
+            <MetadataFloat containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='0.049, 0.049, 0.049'/>
+            <MetadataInteger containerField='value'
+                name='dimension'
+                reference='http://titania.create3000.de'
+                value='73, 10, 41'/>
+            <MetadataInteger containerField='value'
+                name='majorLineEvery'
+                reference='http://titania.create3000.de'
+                value='5, 5, 5, 5, 0, 5'/>
+            <MetadataInteger containerField='value'
+                name='majorLineOffset'
+                reference='http://titania.create3000.de'
+                value='0, 0, -5, -1, 0, -6'/>
+            <MetadataFloat containerField='value'
+                name='lineColor'
+                reference='http://titania.create3000.de'
+                value='1, 0.7, 0.7, 0.0588235'/>
+          </MetadataSet>
+          <MetadataSet DEF='AngleGrid' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+        </MetadataSet>
+        <OrthoViewpoint/>
+        <Transform DEF='Geometry3D'
+            translation='-1.6905 0.955504 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Text
+                string='"ClipPlane"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  size='1.61'
+                  justify='"BEGIN", "BEGIN"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='Text'
+            translation='1.6905 -0.955496 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Text DEF='_1'
+                string='"plane 0 0 -1 -0.0984689"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  justify='"END"'/>
+            </Text>
+          </Shape>
+        </Transform>
+      </Layer>
+    </LayerSet>
     <ROUTE fromNode='PlaneSensor' fromField='translation_changed' toNode='Rectangle2D' toField='set_translation'/>
     <ROUTE fromNode='PlaneSensor' fromField='translation_changed' toNode='ClipPlaneScript' toField='set_translation'/>
     <ROUTE fromNode='ClipPlaneScript' fromField='plane_changed' toNode='ClipPlane' toField='set_plane'/>
+    <ROUTE fromNode='ClipPlaneScript' fromField='plane_changed' toNode='TestScript' toField='set_plane'/>
+    <ROUTE fromNode='TestScript' fromField='string_changed' toNode='_1' toField='set_string'/>
   </Scene>
 </X3D>
