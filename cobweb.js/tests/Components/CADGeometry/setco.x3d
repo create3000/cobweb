@@ -9,7 +9,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
     <meta name='identifier' content='http://spri.kshell.com/xt/shape/psghtq40qqvj/shape_2336333638.x3d'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 13:57:46 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 14:36:14 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -23,7 +23,7 @@
           <MetadataString DEF='type' containerField='value'
               name='type'
               reference='http://titania.create3000.de'
-              value='"EXAMINE"'/>
+              value='"NONE"'/>
         </MetadataSet>
         <MetadataSet DEF='Viewpoint' containerField='value'
             name='Viewpoint'
@@ -31,15 +31,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='28.9666004180908, 50.8497009277344, 24.2611999511719'/>
+              value='0, 0, 10'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.837913155555725, 0.538534104824066, 0.0887832120060921, 1.11954998970032'/>
+              value='0, 0, 1, 0'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, -0.255075991153717, -4.56500005722046'/>
+              value='0, 0, 0'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -83,25 +83,21 @@
             skyColor='0.2 0.2 0.2'/>
         <DirectionalLight
             direction='-0.35355 -0.35355 -0.86603'/>
-        <Viewpoint
-            description='Oblique view'
+        <Viewpoint DEF='Oblique'
             position='28.9666 50.8497 24.2612'
             orientation='-0.837913 0.538534 0.0887832 1.11955'
             centerOfRotation='0 -0.255076 -4.565'
             fieldOfView='0.16628'/>
-        <Viewpoint
-            description='Top'
+        <Viewpoint DEF='Top'
             position='0 -0.255076 29.7563'
             centerOfRotation='0 -0.255076 -4.565'
             fieldOfView='0.16628'/>
-        <Viewpoint
-            description='Bottom'
+        <Viewpoint DEF='Bottom'
             position='0 -0.242955 -34.3245'
             orientation='-1 0 0 3.14119'
             centerOfRotation='0 -0.255076 -4.565'
             fieldOfView='0.16628'/>
-        <Viewpoint
-            description='Right side'
+        <Viewpoint DEF='Right'
             position='73.956 -0.271937 -4.54813'
             orientation='0.577279 0.577286 0.577485 2.09381'
             centerOfRotation='0 -0.255076 -4.565'
@@ -4812,7 +4808,7 @@
         </MetadataSet>
         <OrthoViewpoint/>
         <Transform DEF='Header'
-            translation='-1.6905 0.955504 -1'
+            translation='-1.6905 0.857504 -1'
             scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
             <Appearance>
@@ -4824,7 +4820,7 @@
               <FontStyle
                   family='"Ubuntu", "SANS"'
                   size='1.61'
-                  justify='"BEGIN", "BEGIN"'/>
+                  justify='"BEGIN", "FIRST"'/>
             </Text>
           </Shape>
         </Transform>
@@ -4997,6 +4993,175 @@ function set_phong ()
             <TouchSensor DEF='_6'/>
           </Transform>
         </Group>
+        <Transform DEF='Header_2'
+            translation='1.6905 0.857504 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material DEF='Artdeco31_1'
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  shininess='0'/>
+            </Appearance>
+            <Text
+                string='"Viewpoint"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  style='BOLD'
+                  size='0.68'
+                  justify='"END"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Anchor
+            url='"#Oblique"'>
+          <Transform DEF='Text_1'
+              translation='1.6905 0.759504 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Oblique View"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='InvisiblePlane'
+              translation='1.48177 0.781966 2.87349e-06'
+              scale='0.245 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+        </Anchor>
+        <Anchor
+            url='"#Top"'>
+          <Transform DEF='Text_2'
+              translation='1.6905 0.661504 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Top"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='InvisiblePlane_1'
+              translation='1.48177 0.68352 2.51173e-06'
+              scale='0.245 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+        </Anchor>
+        <Anchor
+            url='"#Bottom"'>
+          <Transform DEF='Text_3'
+              translation='1.6905 0.563504 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Bottom"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='InvisiblePlane_2'
+              translation='1.48177 0.582484 2.14045e-06'
+              scale='0.245 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+        </Anchor>
+        <Anchor
+            url='"#Right"'>
+          <Transform DEF='Text_4'
+              translation='1.6905 0.465504 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Right Side"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='InvisiblePlane_3'
+              translation='1.48177 0.489219 1.79773e-06'
+              scale='0.245 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+        </Anchor>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='_5' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
