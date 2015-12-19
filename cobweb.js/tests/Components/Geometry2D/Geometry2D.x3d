@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 18 Nov 2015 05:00:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 12:39:26 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 12:50:41 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -28,15 +28,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0.0264067649841309, -0.693148374557495, 17.978199005127'/>
+              value='0.0131181795150042, -0.957872569561005, 18.0397644042969'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.702512145042419, 0.686803877353668, -0.186486795544624, 0.00463224388659'/>
+              value='-0.750440299510956, 0.637897253036499, -0.172992184758186, 0.0049795126542449'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='4.27956008911133, -2.18963003158569, 0.00753613980486989'/>
+              value='-0.0443000793457031, -1.0149998664856, -9.06456261873245e-06'/>
         </MetadataSet>
         <MetadataSet DEF='AngleGrid' containerField='value'
             name='AngleGrid'
@@ -104,9 +104,9 @@
             skyColor='0.2 0.2 0.2'/>
         <Viewpoint
             description='Initial View'
-            position='0 -0.694 17.972'
-            orientation='-0.862887 0.46306 -0.202491 0.00378221'
-            centerOfRotation='4.27956 -2.18963 0.00753614'/>
+            position='0.0131182 -0.957873 18.0398'
+            orientation='-0.75044 0.637897 -0.172992 0.00497951'
+            centerOfRotation='-0.0443001 -1.015 -9.06456e-06'/>
         <Transform>
           <Transform
               translation='0.999976 -0.000498056 0'
@@ -365,7 +365,7 @@
               </Appearance>
               <PointSet>
                 <Coordinate DEF='_9'
-                    point='-0.977903 0.20906 0, -0.20906 -0.977903 0, 0.977903 -0.20906 0, 0.20906 0.977903 0'/>
+                    point='0.61034 0.792139 0, -0.792139 0.61034 0, -0.61034 -0.792139 0, 0.792139 -0.61034 0'/>
               </PointSet>
             </Shape>
           </Transform>
