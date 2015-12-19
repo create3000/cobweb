@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 18 Nov 2015 05:00:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 12:50:41 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 13:48:30 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -32,7 +32,7 @@
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.750440299510956, 0.637897253036499, -0.172992184758186, 0.0049795126542449'/>
+              value='-0.750440359115601, 0.637897312641144, -0.172992199659348, 0.0049795126542449'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -85,7 +85,7 @@
             <MetadataBoolean containerField='value'
                 name='enabled'
                 reference='http://titania.create3000.de'
-                value='false'/>
+                value='true'/>
             <MetadataFloat containerField='value'
                 name='rotation'
                 reference='http://titania.create3000.de'
@@ -365,11 +365,39 @@
               </Appearance>
               <PointSet>
                 <Coordinate DEF='_9'
-                    point='0.61034 0.792139 0, -0.792139 0.61034 0, -0.61034 -0.792139 0, 0.792139 -0.61034 0'/>
+                    point='0.257807 -0.966197 0, 0.966197 0.257807 0, -0.257807 0.966197 0, -0.966197 -0.257807 0'/>
               </PointSet>
             </Shape>
           </Transform>
         </Transform>
+        <Transform
+            translation='2 -6 -2.20094e-05'>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='8.69'/>
+              <Material
+                  emissiveColor='0.794118 0.539253 0.311916'/>
+            </Appearance>
+            <Polypoint2D DEF='_10'
+                point='-0.429107 0.635729, -0.912246 0.413981, 0.426243 0.306804, 0.84027 -0.732038, 0.567069 -0.525986'/>
+          </Shape>
+        </Transform>
+        <Script DEF='NewScript'>
+          <field accessType='initializeOnly' type='SFNode' name='polypoint'>
+            <Polypoint2D USE='_10'/>
+          </field>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	for (var i = 0; i < 5; ++ i)
+	{
+		polypoint .point [i] .x = Math .random () * 2 - 1;
+		polypoint .point [i] .y = Math .random () * 2 - 1;
+	}
+}]]> 
+        </Script>
       </Layer>
       <Layer DEF='HUD'>
         <MetadataSet DEF='Titania_2'
@@ -516,26 +544,8 @@ function set_phong ()
               scale='0.139972 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material DEF='_10'
+                <Material DEF='_11'
                     transparency='1'/>
-              </Appearance>
-              <IndexedFaceSet
-                  texCoordIndex='0, 1, 2, 3, -1'
-                  coordIndex='0, 1, 2, 3, -1'>
-                <TextureCoordinate
-                    point='0 0, 1 0, 1 1, 0 1'/>
-                <Coordinate
-                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-              </IndexedFaceSet>
-            </Shape>
-            <TouchSensor DEF='_11'/>
-          </Transform>
-          <Transform DEF='Wireframe'
-              translation='0.77569 -0.916146 0'
-              scale='0.177062 0.040588 0.040588'>
-            <Shape>
-              <Appearance>
-                <Material USE='_10'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -548,12 +558,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_12'/>
           </Transform>
-          <Transform DEF='Flat'
-              translation='1.04432 -0.916146 0'
-              scale='0.0743511 0.040588 0.040588'>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_10'/>
+                <Material USE='_11'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -566,12 +576,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_13'/>
           </Transform>
-          <Transform DEF='Gouraud'
-              translation='1.27986 -0.916146 0'
-              scale='0.142825 0.040588 0.040588'>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_10'/>
+                <Material USE='_11'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -584,12 +594,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_14'/>
           </Transform>
-          <Transform DEF='Phong'
-              translation='1.55457 -0.916146 0'
-              scale='0.111441 0.040588 0.040588'>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_10'/>
+                <Material USE='_11'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -602,14 +612,32 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_15'/>
           </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_11'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_16'/>
+          </Transform>
         </Group>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_15' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
-    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
-    <ROUTE fromNode='_13' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
-    <ROUTE fromNode='_12' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
-    <ROUTE fromNode='_11' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
+    <ROUTE fromNode='_16' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
+    <ROUTE fromNode='_15' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
+    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
+    <ROUTE fromNode='_13' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
+    <ROUTE fromNode='_12' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
     <ROUTE fromNode='_7' fromField='fraction_changed' toNode='_8' toField='set_fraction'/>
     <ROUTE fromNode='_8' fromField='value_changed' toNode='_9' toField='set_point'/>
   </Scene>

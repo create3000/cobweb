@@ -1046,6 +1046,7 @@
     <None Include="images\gtk-leave-fullscreen.png" />
     <None Include="tests\Components\Rendering\bubbles.x3d" />
     <None Include="tests\Components\Text\scrolling-text.x3d" />
+    <None Include="tests\Components\CADGeometry\setco.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1088,5 +1089,6 @@
     <Folder Include="tests\Components\Geometry2D\" />
     <Folder Include="lib\sprintf.js\" />
     <Folder Include="lib\pako\" />
+    <Folder Include="tests\Components\CADGeometry\" />
   </ItemGroup>
 </Project>
