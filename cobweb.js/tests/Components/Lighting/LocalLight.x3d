@@ -6,7 +6,7 @@
     <meta name='created' content='Tue, 22 Sep 2015 03:19:15 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 08:20:27 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 08:51:22 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -32,7 +32,7 @@
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.873252868652344, 0.462253898382187, 0.154112920165062, 0.974525034427643'/>
+              value='-0.873252868652344, 0.462253898382187, 0.154112860560417, 0.974525034427643'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -118,14 +118,54 @@
                         value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
                   </MetadataSet>
                 </ColorInterpolator>
+                <ScalarInterpolator DEF='BeamWidthInterpolator'
+                    key='0, 0.00833333, 0.0166667, 0.025, 0.0333333, 0.0416667, 0.05, 0.0583333, 0.0666667, 0.075, 0.0833333, 0.0916667, 0.1, 0.108333, 0.116667, 0.125, 0.133333, 0.141667, 0.15, 0.158333, 0.166667, 0.175, 0.183333, 0.191667, 0.2, 0.208333, 0.216667, 0.225, 0.233333, 0.241667, 0.25, 0.258333, 0.266667, 0.275, 0.283333, 0.291667, 0.3, 0.308333, 0.316667, 0.325, 0.333333, 0.341667, 0.35, 0.358333, 0.366667, 0.375, 0.383333, 0.391667, 0.4, 0.408333, 0.416667, 0.425, 0.433333, 0.441667, 0.45, 0.458333, 0.466667, 0.475, 0.483333, 0.491667, 0.5, 0.508333, 0.516667, 0.525, 0.533333, 0.541667, 0.55, 0.558333, 0.566667, 0.575, 0.583333, 0.591667, 0.6, 0.608333, 0.616667, 0.625, 0.633333, 0.641667, 0.65, 0.658333, 0.666667, 0.675, 0.683333, 0.691667, 0.7, 0.708333, 0.716667, 0.725, 0.733333, 0.741667, 0.75, 0.758333, 0.766667, 0.775, 0.783333, 0.791667, 0.8, 0.808333, 0.816667, 0.825, 0.833333, 0.841667, 0.85, 0.858333, 0.866667, 0.875, 0.883333, 0.891667, 0.9, 0.908333, 0.916667, 0.925, 0.933333, 0.941667, 0.95, 0.958333, 0.966667, 0.975, 0.983333, 0.991667, 1'
+                    keyValue='0.5, 0.499596, 0.498403, 0.496448, 0.493757, 0.490359, 0.48628, 0.481548, 0.47619, 0.470232, 0.463704, 0.45663, 0.44904, 0.44096, 0.432416, 0.423438, 0.41405, 0.404282, 0.39416, 0.383711, 0.372963, 0.361942, 0.350677, 0.339194, 0.32752, 0.315683, 0.30371, 0.291627, 0.279464, 0.267245, 0.255, 0.242755, 0.230536, 0.218372, 0.20629, 0.194317, 0.18248, 0.170806, 0.159323, 0.148058, 0.137037, 0.126289, 0.11584, 0.105718, 0.0959496, 0.0865625, 0.0775837, 0.0690405, 0.06096, 0.0533695, 0.0462963, 0.0397675, 0.0338104, 0.0284521, 0.02372, 0.0196412, 0.016243, 0.0135525, 0.011597, 0.0104038, 0.01, 0.0104038, 0.011597, 0.0135525, 0.016243, 0.0196412, 0.02372, 0.0284521, 0.0338104, 0.0397675, 0.0462963, 0.0533695, 0.06096, 0.0690405, 0.0775837, 0.0865625, 0.0959496, 0.105718, 0.11584, 0.126289, 0.137037, 0.148058, 0.159323, 0.170806, 0.18248, 0.194317, 0.20629, 0.218372, 0.230536, 0.242755, 0.255, 0.267245, 0.279464, 0.291627, 0.30371, 0.315683, 0.32752, 0.339194, 0.350677, 0.361942, 0.372963, 0.383711, 0.39416, 0.404282, 0.41405, 0.423438, 0.432416, 0.44096, 0.44904, 0.45663, 0.463704, 0.470232, 0.47619, 0.481548, 0.48628, 0.490359, 0.493757, 0.496448, 0.498403, 0.499596, 0.5'>
+                  <MetadataSet DEF='Interpolator'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 60, 120'/>
+                    <MetadataDouble DEF='keyValue' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='0.5, 0.00999999977648258, 0.5'/>
+                    <MetadataString DEF='keyType' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </ScalarInterpolator>
+                <ScalarInterpolator DEF='CutOffAngleInterpolator'
+                    key='0, 0.00833333, 0.0166667, 0.025, 0.0333333, 0.0416667, 0.05, 0.0583333, 0.0666667, 0.075, 0.0833333, 0.0916667, 0.1, 0.108333, 0.116667, 0.125, 0.133333, 0.141667, 0.15, 0.158333, 0.166667, 0.175, 0.183333, 0.191667, 0.2, 0.208333, 0.216667, 0.225, 0.233333, 0.241667, 0.25, 0.258333, 0.266667, 0.275, 0.283333, 0.291667, 0.3, 0.308333, 0.316667, 0.325, 0.333333, 0.341667, 0.35, 0.358333, 0.366667, 0.375, 0.383333, 0.391667, 0.4, 0.408333, 0.416667, 0.425, 0.433333, 0.441667, 0.45, 0.458333, 0.466667, 0.475, 0.483333, 0.491667, 0.5, 0.508333, 0.516667, 0.525, 0.533333, 0.541667, 0.55, 0.558333, 0.566667, 0.575, 0.583333, 0.591667, 0.6, 0.608333, 0.616667, 0.625, 0.633333, 0.641667, 0.65, 0.658333, 0.666667, 0.675, 0.683333, 0.691667, 0.7, 0.708333, 0.716667, 0.725, 0.733333, 0.741667, 0.75, 0.758333, 0.766667, 0.775, 0.783333, 0.791667, 0.8, 0.808333, 0.816667, 0.825, 0.833333, 0.841667, 0.85, 0.858333, 0.866667, 0.875, 0.883333, 0.891667, 0.9, 0.908333, 0.916667, 0.925, 0.933333, 0.941667, 0.95, 0.958333, 0.966667, 0.975, 0.983333, 0.991667, 1'
+                    keyValue='1.5708, 1.56967, 1.56633, 1.56086, 1.55333, 1.54382, 1.53241, 1.51918, 1.50419, 1.48752, 1.46926, 1.44947, 1.42823, 1.40563, 1.38173, 1.35661, 1.33035, 1.30302, 1.2747, 1.24547, 1.2154, 1.18457, 1.15306, 1.12093, 1.08828, 1.05516, 1.02167, 0.987865, 0.953836, 0.919655, 0.885398, 0.851141, 0.81696, 0.782931, 0.749131, 0.715635, 0.68252, 0.649862, 0.617737, 0.586222, 0.555392, 0.525323, 0.496092, 0.467775, 0.440448, 0.414187, 0.389068, 0.365168, 0.342563, 0.321328, 0.30154, 0.283276, 0.266611, 0.251621, 0.238382, 0.226972, 0.217465, 0.209938, 0.204468, 0.20113, 0.2, 0.20113, 0.204468, 0.209938, 0.217465, 0.226972, 0.238382, 0.251621, 0.266611, 0.283276, 0.30154, 0.321328, 0.342563, 0.365168, 0.389068, 0.414187, 0.440448, 0.467775, 0.496092, 0.525323, 0.555392, 0.586222, 0.617737, 0.649862, 0.68252, 0.715635, 0.749131, 0.782931, 0.81696, 0.851141, 0.885398, 0.919655, 0.953836, 0.987865, 1.02167, 1.05516, 1.08828, 1.12093, 1.15306, 1.18457, 1.2154, 1.24547, 1.2747, 1.30302, 1.33035, 1.35661, 1.38173, 1.40563, 1.42823, 1.44947, 1.46926, 1.48752, 1.50419, 1.51918, 1.53241, 1.54382, 1.55333, 1.56086, 1.56633, 1.56967, 1.5708'>
+                  <MetadataSet DEF='Interpolator_1'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key_1' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 60, 120'/>
+                    <MetadataDouble DEF='keyValue_1' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='1.57079601287842, 0.200000002980232, 1.57079601287842'/>
+                    <MetadataString DEF='keyType_1' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </ScalarInterpolator>
               </Group>
               <SpotLight DEF='_3'
                   global='false'
-                  color='0.227014 1 0'
+                  color='1 0 0.00705528'
                   intensity='0.485207'
-                  direction='-0.21661 0.429485 -0.8731'
-                  beamWidth='0.07'
-                  cutOffAngle='0.850796'/>
+                  direction='-0.475709 -0.436148 -0.763856'
+                  beamWidth='0.5'
+                  cutOffAngle='1.5708'/>
               <Transform DEF='ElevationGrid'
                   translation='-10 9.99203 -10.008'
                   rotation='1 1.00032e-09 3.08126e-10 1.57'
@@ -150,7 +190,7 @@
                       <Material DEF='_4'
                           ambientIntensity='0'
                           diffuseColor='0 0 0'
-                          emissiveColor='0.227014 1 0'
+                          emissiveColor='1 0 0.00705528'
                           shininess='0'/>
                     </Appearance>
                     <Cone/>
@@ -193,6 +233,50 @@ function set_direction (value)
         </Transform>
       </Layer>
       <Layer>
+        <MetadataSet DEF='Titania_1'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='Grid' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='true'/>
+            <MetadataFloat containerField='value'
+                name='rotation'
+                reference='http://titania.create3000.de'
+                value='1, 0, 0, 1.5708'/>
+            <MetadataFloat containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='0.049, 0.049, 0.049'/>
+            <MetadataInteger containerField='value'
+                name='dimension'
+                reference='http://titania.create3000.de'
+                value='73, 10, 41'/>
+            <MetadataInteger containerField='value'
+                name='majorLineEvery'
+                reference='http://titania.create3000.de'
+                value='5, 5, 5, 5, 0, 5'/>
+            <MetadataInteger containerField='value'
+                name='majorLineOffset'
+                reference='http://titania.create3000.de'
+                value='0, 0, -5, -1, 0, -6'/>
+            <MetadataFloat containerField='value'
+                name='lineColor'
+                reference='http://titania.create3000.de'
+                value='1, 0.7, 0.7, 0.0588235'/>
+          </MetadataSet>
+          <MetadataSet DEF='AngleGrid' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+        </MetadataSet>
         <OrthoViewpoint/>
         <Transform DEF='Geometry3D'
             translation='-1.6905 0.955504 -1'
@@ -211,80 +295,233 @@ function set_direction (value)
             </Text>
           </Shape>
         </Transform>
-        <Transform DEF='Text'
-            translation='1.6905 -0.857496 -1'
-            scale='0.0672307 0.0672307 0.0672307'>
-          <Shape>
-            <Appearance>
-              <Material DEF='Artdeco31'
-                  ambientIntensity='0'
-                  diffuseColor='0 0 0'
-                  shininess='0'/>
-            </Appearance>
-            <Text
-                string='"SpotLight"'
-                solid='true'>
-              <FontStyle
-                  family='"Ubuntu", "SANS"'
-                  style='BOLD'
-                  size='0.68'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
+        <Transform DEF='LightMenu'>
+          <Transform DEF='Text'
+              translation='1.6905 -0.661496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Artdeco31'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    shininess='0'/>
+              </Appearance>
+              <Text
+                  string='"SpotLight"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    style='BOLD'
+                    size='0.68'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='GlobalButton'
+              translation='1.51582 -0.734328 -2.69843e-06'
+              scale='0.227685 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_5'/>
+          </Transform>
+          <Transform DEF='Text_1'
+              translation='1.6905 -0.759496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text DEF='_6'
+                  string='"global false"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
         </Transform>
-        <Transform DEF='GlobalButton'
-            translation='1.51582 -0.925088 0'
-            scale='0.227685 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material
-                  transparency='1'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_5'/>
-        </Transform>
-        <Transform DEF='Text_1'
-            translation='1.6905 -0.955496 -1'
-            scale='0.0672307 0.0672307 0.0672307'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Text DEF='_6'
-                string='"Global: false"'
-                solid='true'>
-              <FontStyle
-                  family='"Ubuntu", "SANS"'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <Transform DEF='Rectangle2D'
-            translation='6.38615 -3.66011 0'
-            scale='0.950816 0.373413 1'>
-          <Shape>
-            <Appearance>
-              <Material
-                  transparency='1'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-        </Transform>
+        <Group DEF='ShadingMenu'>
+          <Script DEF='ShadingScript'>
+            <field accessType='inputOnly' type='SFTime' name='set_pointset'/>
+            <field accessType='inputOnly' type='SFTime' name='set_wireframe'/>
+            <field accessType='inputOnly' type='SFTime' name='set_flat'/>
+            <field accessType='inputOnly' type='SFTime' name='set_gouraud'/>
+            <field accessType='inputOnly' type='SFTime' name='set_phong'/>
+<![CDATA[javascript:
+
+function set_pointset ()
+{
+	Browser .setBrowserOption ("Shading", "POINTSET");
+	Browser .setDescription ("Shading: Pointset");
+}
+
+function set_wireframe ()
+{
+	Browser .setBrowserOption ("Shading", "WIREFRAME");
+	Browser .setDescription ("Shading: Wirefrane");
+}
+
+function set_flat ()
+{
+	Browser .setBrowserOption ("Shading", "FLAT");
+	Browser .setDescription ("Shading: Flat");
+}
+
+function set_gouraud ()
+{
+	Browser .setBrowserOption ("Shading", "GOURAUD");
+	Browser .setDescription ("Shading: Gouraud");
+}
+
+function set_phong ()
+{
+	Browser .setBrowserOption ("Shading", "PHONG");
+	Browser .setDescription ("Shading: Phong");
+}
+]]> 
+          </Script>
+          <Transform DEF='Text_2'
+              translation='1.6905 -0.857496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Artdeco31_1'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    shininess='0'/>
+              </Appearance>
+              <Text
+                  string='"Shading"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    style='BOLD'
+                    size='0.68'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Text_3'
+              translation='1.6905 -0.955496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Pointset'
+              translation='0.436176 -0.916146 0'
+              scale='0.139972 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material DEF='_7'
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_8'/>
+          </Transform>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_7'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_9'/>
+          </Transform>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_7'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_10'/>
+          </Transform>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_7'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_11'/>
+          </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_7'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_12'/>
+          </Transform>
+        </Group>
         <Script DEF='ToggleScript'>
           <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
           <field accessType='outputOnly' type='MFString' name='string_changed'/>
@@ -295,8 +532,6 @@ function set_direction (value)
 
 function initialize ()
 {
-	Browser .setBrowserOption ("Shading", "PHONG");
-
 	eventsProcessed ();
 }
 
@@ -321,5 +556,14 @@ function eventsProcessed ()
     <ROUTE fromNode='RotationScript' fromField='rotation_changed' toNode='Cone' toField='set_rotation'/>
     <ROUTE fromNode='_3' fromField='direction_changed' toNode='RotationScript' toField='set_direction'/>
     <ROUTE fromNode='_3' fromField='color_changed' toNode='_4' toField='set_emissiveColor'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='BeamWidthInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='BeamWidthInterpolator' fromField='value_changed' toNode='_3' toField='set_beamWidth'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='CutOffAngleInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='CutOffAngleInterpolator' fromField='value_changed' toNode='_3' toField='set_cutOffAngle'/>
+    <ROUTE fromNode='_10' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
+    <ROUTE fromNode='_9' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
+    <ROUTE fromNode='_8' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
+    <ROUTE fromNode='_12' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
+    <ROUTE fromNode='_11' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
   </Scene>
 </X3D>

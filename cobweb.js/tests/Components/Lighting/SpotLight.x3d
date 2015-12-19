@@ -7,7 +7,7 @@
     <meta name='created' content='Mon, 09 Mar 2015 08:07:10 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 06:09:06 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 08:46:24 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -33,7 +33,7 @@
           <MetadataDouble containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.793151140213013, -0.575941026210785, -0.197998061776161, 0.75200080871582'/>
+              value='-0.793151140213013, -0.57594108581543, -0.197998076677322, 0.75200080871582'/>
           <MetadataDouble containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -180,11 +180,11 @@ function initialize ()
               translation='0.494062 0 0.0566859'>
             <SpotLight DEF='Red'
                 color='1 0 0'
-                direction='-0.102602 -0.94384 -0.310868'
+                direction='-0.135457 -0.944269 -0.299319'
                 beamWidth='0.415398'
                 cutOffAngle='0.790796'/>
             <Transform DEF='_2'
-                rotation='0.994143 -0.10807 0 1.88723'>
+                rotation='0.989867 -0.141998 0 1.87484'>
               <Transform DEF='Cone'
                   rotation='-1 -3.62332e-06 8.16272e-11 1.5708'
                   scaleOrientation='0.999998 0.000615448 0.00199359 0.785378'>
@@ -214,11 +214,11 @@ function set_direction (value)
               translation='-0.277487 0 0.746283'>
             <SpotLight DEF='Green'
                 color='0 1 0'
-                direction='-0.402287 -0.881792 0.10013'
+                direction='-0.421927 -0.907465 0.0504414'
                 beamWidth='0.415398'
                 cutOffAngle='0.790796'/>
             <Transform DEF='_5'
-                rotation='0.909793 -0.415062 0 1.46785'>
+                rotation='0.906778 -0.421608 0 1.52044'>
               <Transform DEF='Cone_1'
                   rotation='1 3.62332e-06 -8.16269e-11 4.71239'
                   scaleOrientation='1 1.59105e-06 4.89423e-06 0.785377'>
@@ -246,11 +246,12 @@ function set_direction (value)
               translation='-0.405881 0 -0.362334'>
             <SpotLight DEF='Blue'
                 color='0 0 1'
-                direction='0.63889 -0.728373 0.0945529'
+                direction='0.679566 -0.727912 0.110948'
                 beamWidth='0.415398'
                 cutOffAngle='0.790796'/>
             <Transform DEF='_7'
-                rotation='0.751776 0.659418 -0 1.47351'>
+                rotation='0.730964 0.682416 -0 1.45984'
+                scaleOrientation='0.901299 0.105534 0.420147 0.854599'>
               <Transform DEF='Cone_2'
                   rotation='-1 -3.62332e-06 8.16272e-11 1.5708'
                   scaleOrientation='1 1.61481e-06 4.85264e-06 0.785375'>
@@ -355,140 +356,13 @@ function set_direction (value)
             </Text>
           </Shape>
         </Transform>
-        <Transform DEF='Text'
-            translation='1.6905 -0.857496 -1'
-            scale='0.0672307 0.0672307 0.0672307'>
-          <Shape>
-            <Appearance>
-              <Material DEF='Artdeco31'
-                  ambientIntensity='0'
-                  diffuseColor='0 0 0'
-                  shininess='0'/>
-            </Appearance>
-            <Text
-                string='"Shading"'
-                solid='true'>
-              <FontStyle
-                  family='"Ubuntu", "SANS"'
-                  style='BOLD'
-                  size='0.68'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <Transform DEF='Text_1'
-            translation='1.6905 -0.955496 -1'
-            scale='0.0672307 0.0672307 0.0672307'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Text
-                string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
-                solid='true'>
-              <FontStyle
-                  family='"Ubuntu", "SANS"'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <Transform DEF='Pointset'
-            translation='0.436176 -0.916146 0'
-            scale='0.139972 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material DEF='_9'
-                  transparency='1'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_10'/>
-        </Transform>
-        <Transform DEF='Wireframe'
-            translation='0.77569 -0.916146 0'
-            scale='0.177062 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_9'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_11'/>
-        </Transform>
-        <Transform DEF='Flat'
-            translation='1.04432 -0.916146 0'
-            scale='0.0743511 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_9'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_12'/>
-        </Transform>
-        <Transform DEF='Gouraud'
-            translation='1.27986 -0.916146 0'
-            scale='0.142825 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_9'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_13'/>
-        </Transform>
-        <Transform DEF='Phong'
-            translation='1.55457 -0.916146 0'
-            scale='0.111441 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_9'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_14'/>
-        </Transform>
-        <Script DEF='ShadingScript'>
-          <field accessType='inputOnly' type='SFTime' name='set_pointset'/>
-          <field accessType='inputOnly' type='SFTime' name='set_wireframe'/>
-          <field accessType='inputOnly' type='SFTime' name='set_flat'/>
-          <field accessType='inputOnly' type='SFTime' name='set_gouraud'/>
-          <field accessType='inputOnly' type='SFTime' name='set_phong'/>
+        <Group DEF='ShadingMenu'>
+          <Script DEF='ShadingScript'>
+            <field accessType='inputOnly' type='SFTime' name='set_pointset'/>
+            <field accessType='inputOnly' type='SFTime' name='set_wireframe'/>
+            <field accessType='inputOnly' type='SFTime' name='set_flat'/>
+            <field accessType='inputOnly' type='SFTime' name='set_gouraud'/>
+            <field accessType='inputOnly' type='SFTime' name='set_phong'/>
 <![CDATA[javascript:
 
 function set_pointset ()
@@ -521,7 +395,136 @@ function set_phong ()
 	Browser .setDescription ("Shading: Phong");
 }
 ]]> 
-        </Script>
+          </Script>
+          <Transform DEF='Text'
+              translation='1.6905 -0.857496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Artdeco31'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    shininess='0'/>
+              </Appearance>
+              <Text
+                  string='"Shading"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    style='BOLD'
+                    size='0.68'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Text_1'
+              translation='1.6905 -0.955496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Pointset'
+              translation='0.436176 -0.916146 0'
+              scale='0.139972 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material DEF='_9'
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_10'/>
+          </Transform>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_9'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_11'/>
+          </Transform>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_9'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_12'/>
+          </Transform>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_9'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_13'/>
+          </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_9'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_14'/>
+          </Transform>
+        </Group>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='_1' fromField='fraction_changed' toNode='DirectionInterpolator' toField='set_fraction'/>

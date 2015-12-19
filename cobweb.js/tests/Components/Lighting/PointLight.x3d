@@ -6,7 +6,7 @@
     <meta name='created' content='Sun, 08 Mar 2015 05:54:30 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 05:52:37 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 08:45:52 GMT'/>
     <meta name='title' content='Beethoven'/>
   </head>
   <Scene>
@@ -33,7 +33,7 @@
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.111305989325047, -0.981465756893158, -0.155999973416328, 0.489277720451355'/>
+              value='0.111306004226208, -0.981465756893158, -0.155999973416328, 0.489277720451355'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -184,7 +184,7 @@
                 </PositionInterpolator>
               </Group>
               <Transform DEF='RedLight'
-                  translation='2.08042 -0.718101 1.15922'>
+                  translation='-2.25417 -2.95291 -1.06233'>
                 <PointLight DEF='_3'
                     color='1 0 0'
                     attenuation='0.07 0.16 0.88'/>
@@ -200,7 +200,7 @@
                 </Transform>
               </Transform>
               <Transform DEF='GreenLight'
-                  translation='-1.29128 1.92632 1.62269'>
+                  translation='1.60104 0.211378 -1.34678'>
                 <PointLight DEF='_6'
                     color='0 1 0'
                     attenuation='0.07 0.16 0.88'/>
@@ -216,7 +216,7 @@
                 </Transform>
               </Transform>
               <Transform DEF='BlueLight'
-                  translation='1.30814 -1.79165 -1.12067'>
+                  translation='-2.29826 -0.478294 0.859708'>
                 <PointLight DEF='_8'
                     color='0 0 1'
                     attenuation='0.07 0.16 0.88'/>
@@ -232,7 +232,7 @@
                 </Transform>
               </Transform>
               <Transform DEF='PinkLight'
-                  translation='-0.00299095 0.252772 -1.6157'>
+                  translation='2.15212 -1.64602 1.10116'>
                 <PointLight DEF='_10'
                     color='1 0 1'
                     attenuation='0.07 0.16 0.88'/>
@@ -304,7 +304,7 @@
                 value='false'/>
           </MetadataSet>
         </MetadataSet>
-        <OrthoViewpoint/>
+        <OrthoViewpoint DEF='_12'/>
         <Transform DEF='Geometry3D'
             translation='-1.6905 0.955504 -1'
             scale='0.0672307 0.0672307 0.0672307'>
@@ -322,140 +322,13 @@
             </Text>
           </Shape>
         </Transform>
-        <Transform DEF='Text'
-            translation='1.6905 -0.857496 -1'
-            scale='0.0672307 0.0672307 0.0672307'>
-          <Shape>
-            <Appearance>
-              <Material DEF='Artdeco31'
-                  ambientIntensity='0'
-                  diffuseColor='0 0 0'
-                  shininess='0'/>
-            </Appearance>
-            <Text
-                string='"Shading"'
-                solid='true'>
-              <FontStyle
-                  family='"Ubuntu", "SANS"'
-                  style='BOLD'
-                  size='0.68'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <Transform DEF='Text_1'
-            translation='1.6905 -0.955496 -1'
-            scale='0.0672307 0.0672307 0.0672307'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Text
-                string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
-                solid='true'>
-              <FontStyle
-                  family='"Ubuntu", "SANS"'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
-        </Transform>
-        <Transform DEF='Pointset'
-            translation='0.436176 -0.916146 0'
-            scale='0.139972 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material DEF='_12'
-                  transparency='1'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_13'/>
-        </Transform>
-        <Transform DEF='Wireframe'
-            translation='0.77569 -0.916146 0'
-            scale='0.177062 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_12'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_14'/>
-        </Transform>
-        <Transform DEF='Flat'
-            translation='1.04432 -0.916146 0'
-            scale='0.0743511 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_12'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_15'/>
-        </Transform>
-        <Transform DEF='Gouraud'
-            translation='1.27986 -0.916146 0'
-            scale='0.142825 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_12'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_16'/>
-        </Transform>
-        <Transform DEF='Phong'
-            translation='1.55457 -0.916146 0'
-            scale='0.111441 0.040588 0.040588'>
-          <Shape>
-            <Appearance>
-              <Material USE='_12'/>
-            </Appearance>
-            <IndexedFaceSet
-                texCoordIndex='0, 1, 2, 3, -1'
-                coordIndex='0, 1, 2, 3, -1'>
-              <TextureCoordinate
-                  point='0 0, 1 0, 1 1, 0 1'/>
-              <Coordinate
-                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-            </IndexedFaceSet>
-          </Shape>
-          <TouchSensor DEF='_17'/>
-        </Transform>
-        <Script DEF='ShadingScript'>
-          <field accessType='inputOnly' type='SFTime' name='set_pointset'/>
-          <field accessType='inputOnly' type='SFTime' name='set_wireframe'/>
-          <field accessType='inputOnly' type='SFTime' name='set_flat'/>
-          <field accessType='inputOnly' type='SFTime' name='set_gouraud'/>
-          <field accessType='inputOnly' type='SFTime' name='set_phong'/>
+        <Group DEF='ShadingMenu'>
+          <Script DEF='ShadingScript'>
+            <field accessType='inputOnly' type='SFTime' name='set_pointset'/>
+            <field accessType='inputOnly' type='SFTime' name='set_wireframe'/>
+            <field accessType='inputOnly' type='SFTime' name='set_flat'/>
+            <field accessType='inputOnly' type='SFTime' name='set_gouraud'/>
+            <field accessType='inputOnly' type='SFTime' name='set_phong'/>
 <![CDATA[javascript:
 
 function set_pointset ()
@@ -488,7 +361,136 @@ function set_phong ()
 	Browser .setDescription ("Shading: Phong");
 }
 ]]> 
-        </Script>
+          </Script>
+          <Transform DEF='Text'
+              translation='1.6905 -0.857496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Artdeco31'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    shininess='0'/>
+              </Appearance>
+              <Text
+                  string='"Shading"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    style='BOLD'
+                    size='0.68'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Text_1'
+              translation='1.6905 -0.955496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Pointset'
+              translation='0.436176 -0.916146 0'
+              scale='0.139972 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material DEF='_13'
+                    transparency='1'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_14'/>
+          </Transform>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_13'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_15'/>
+          </Transform>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_13'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_16'/>
+          </Transform>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_13'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_17'/>
+          </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_13'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_18'/>
+          </Transform>
+        </Group>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='_2' fromField='fraction_changed' toNode='RedLightTranslationInterpolator' toField='set_fraction'/>
@@ -499,11 +501,11 @@ function set_phong ()
     <ROUTE fromNode='BlueLightTranslationInterpolator' fromField='value_changed' toNode='BlueLight' toField='set_translation'/>
     <ROUTE fromNode='_2' fromField='fraction_changed' toNode='PinkLightTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='PinkLightTranslationInterpolator' fromField='value_changed' toNode='PinkLight' toField='set_translation'/>
-    <ROUTE fromNode='_17' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
-    <ROUTE fromNode='_16' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
-    <ROUTE fromNode='_15' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
-    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
-    <ROUTE fromNode='_13' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
+    <ROUTE fromNode='_18' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
+    <ROUTE fromNode='_17' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
+    <ROUTE fromNode='_16' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
+    <ROUTE fromNode='_15' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
+    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
     <ROUTE fromNode='_3' fromField='color_changed' toNode='_4' toField='set_emissiveColor'/>
     <ROUTE fromNode='_10' fromField='color_changed' toNode='_11' toField='set_emissiveColor'/>
     <ROUTE fromNode='_8' fromField='color_changed' toNode='_9' toField='set_emissiveColor'/>
