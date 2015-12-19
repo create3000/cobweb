@@ -9,7 +9,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
     <meta name='identifier' content='http://spri.kshell.com/xt/shape/psghtq40qqvj/shape_2336333638.x3d'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 14:36:14 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 14:45:58 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -5004,7 +5004,7 @@ function set_phong ()
                   shininess='0'/>
             </Appearance>
             <Text
-                string='"Viewpoint"'
+                string='"Viewpoints"'
                 solid='true'>
               <FontStyle
                   family='"Ubuntu", "SANS"'

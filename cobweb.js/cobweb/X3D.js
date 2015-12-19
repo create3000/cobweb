@@ -121,6 +121,7 @@ function ($,
 	$.extend (X3D,
 		Fields,
 	{
+		require:                     require,
 		getBrowser:                  getBrowser,
 		createBrowser:               createBrowser,
 		X3DConstants:                X3DConstants,

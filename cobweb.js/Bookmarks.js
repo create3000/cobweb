@@ -21,8 +21,10 @@ var Bookmarks = (function ()
 		return array;
 	}
 	
-	function Bookmarks (browser, element, bookmarks, index)
+	function Bookmarks (browser, element, bookmarks)
 	{
+		var index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
+
 		this .browser         = browser;
 		this .element         = element;
 		this .bookmarks       = bookmarks;
@@ -51,6 +53,8 @@ var Bookmarks = (function ()
 			this .element .empty ();
 	
 			this .index = (this .index + this .bookmarks .length + n) % this .bookmarks .length;
+
+			X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"] = this .index;
 
 			this .bookmarks [this .index] .forEach (function (item)
 			{
