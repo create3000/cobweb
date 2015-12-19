@@ -121,6 +121,7 @@ X3D (function (dom)
 			{ name: 'CADGeometry',           url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADGeometry.wrl" ] },
 			{ name: 'CADLayer',              url: [ "https://rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
 			{ name: 'CAD',                   url: [ "http://spri.kshell.com/xt/shape/psghtq40qqvj/shape_2336333638.x3d" ] },
+			{ name: 'Smarty Bubbles',        url: [ "tests/Components/Rendering/bubbles.x3d" ] },
 		],
 		[
 			{ name: 'ColorMaterial',        url: [ "tests/Components/Texturing/ColorMaterial.x3d" ] },
@@ -173,7 +174,7 @@ X3D (function (dom)
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 3);
+		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages, 2);
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();

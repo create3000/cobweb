@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Sat, 19 Dec 2015 09:16:40 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 10:20:24 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='4.67802000045776, 5.38116979598999, 14.5215997695923'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 1, 0'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='4.67802000045776, 5.38116979598999, -9.53673975345737e-07'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <LayerSet
+        activeLayer='1'
+        order='1, 2'>
+      <Layer>
+        <Background DEF='Gray'
+            skyColor='0.2 0.2 0.2'/>
+        <Viewpoint
+            position='4.67802 5.38117 14.5216'
+            centerOfRotation='4.67802 5.38117 -9.53674e-07'/>
+        <Transform DEF='PointSet'
+            translation='-5.56507 -0.0667507 0'
+            scale='20.2666 11.168 10.218'>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='20'/>
+              <Material
+                  emissiveColor='1 0 0'/>
+            </Appearance>
+            <PointSet>
+              <ColorRGBA DEF='_1'
+                  color='0.103721 0.29979 0.111911 0.759079, 0.225635 0.928992 0.895235 0.815646, 0.799831 0.946337 0.635617 0.588123, 0.534536 0.232893 0.124176 0.376984, 0.728698 0.465879 0.598491 0.564595, 0.399737 0.621295 0.518587 0.636772, 0.617341 0.913765 0.863279 0.214844, 0.321889 0.8198 0.966859 0.25891, 0.68386 0.0671072 0.697788 0.907352, 0.652625 0.485012 0.946106 0.0813396, 0.107028 0.406195 0.0726142 0.998639, 0.539857 0.718815 0.825249 0.955828, 0.738885 0.606953 0.0663486 0.24593, 0.774286 0.0348045 0.591966 0.265148, 0.176141 0.169938 0.3894 0.729994, 0.704411 0.778935 0.978411 0.535967, 0.656891 0.232558 0.0251275 0.625756, 0.568221 0.471602 0.57385 0.762465, 0.541564 0.359361 0.966571 0.349339, 0.922633 0.911462 0.469039 0.774823, 0.301492 0.888648 0.749021 0.508413, 0.280088 0.431591 0.669861 0.627796, 0.973871 0.403009 0.951743 0.0187694, 0.78465 0.321796 0.108169 0.113501, 0.810507 0.137803 0.417668 0.718255, 0.235346 0.0637254 0.516342 0.712884, 0.6571 0.231326 0.887851 0.823173, 0.0593586 0.621805 0.780232 0.319963, 0.342879 0.060944 0.91791 0.772301, 0.621515 0.729678 0.202184 0.692066, 0.603625 0.353295 0.161096 0.149566, 0.678675 0.279675 0.65752 0.0177436, 0.539741 0.881551 0.835481 0.198432, 0.584008 0.193936 0.165869 0.0970209, 0.480661 0.840037 0.458336 0.491159, 0.929432 0.798236 0.0220338 0.107939, 0.679229 0.400269 0.899126 0.545195, 0.436246 0.901619 0.406619 0.962075, 0.29235 0.51181 0.467531 0.512433, 0.719716 0.192542 0.0344531 0.0588625, 0.645714 0.476829 0.0570504 0.486627, 0.0549613 0.533033 0.861471 0.235316, 0.213772 0.333714 0.660712 0.701068, 0.175981 0.198415 0.102499 0.456689, 0.522136 0.200557 0.364234 0.336471, 0.00853184 0.864188 0.870283 0.468299, 0.077767 0.516609 0.551753 0.311071, 0.756851 0.281932 0.818703 0.204102, 0.919902 0.56989 0.882106 0.662537, 0.870528 0.951131 0.532801 0.962438, 0.439883 0.0307286 0.801645 0.842058, 0.34716 0.846171 0.671194 0.217947, 0.084204 0.116376 0.964432 0.551593, 0.230579 0.791708 0.457738 0.696747, 0.680894 0.0378672 0.611439 0.0810167, 0.423242 0.257213 0.0140021 0.746691, 0.825646 0.149839 0.355759 0.721679, 0.534518 0.25971 0.704652 0.831024, 0.86585 0.767438 0.414932 0.531043, 0.364565 0.216593 0.461487 0.372108, 0.547538 0.827064 0.93522 0.583047, 0.427491 0.808158 0.766779 0.0172191, 0.226819 0.312832 0.556515 0.201462, 0.297037 0.328415 0.00872679 0.724011, 0.0904823 0.964454 0.279615 0.299742, 0.264767 0.706018 0.624372 0.833597, 0.734926 0.558062 0.422252 0.156644, 0.932476 0.158352 0.356026 0.671122, 0.347499 0.204494 0.332314 0.643344, 0.145538 0.577795 0.888671 0.353395, 0.526478 0.930754 0.684597 0.228952, 0.14198 0.338858 0.444095 0.994751, 0.129947 0.0693433 0.316749 0.580127, 0.604681 0.916542 0.304895 0.349285, 0.545372 0.0252829 0.998294 0.604778, 0.631703 0.970972 0.882598 0.726221, 0.919007 0.982748 0.637623 0.557906, 0.0288359 0.736287 0.892391 0.0211405, 0.024595 0.219318 0.0502026 0.070634, 0.225032 0.0770728 0.272072 0.0755295, 0.62186 0.509471 0.53584 0.444386, 0.0198772 0.0925901 0.993344 0.358542, 0.648371 0.202014 0.313369 0.950254, 0.87381 0.0275806 0.917494 0.439139, 0.596255 0.107294 0.0969673 0.25218, 0.229366 0.308096 0.867 0.576189, 0.293147 0.241418 0.517216 0.253085, 0.303559 0.603572 0.199455 0.0508357, 0.281264 0.792395 0.691544 0.205619, 0.276603 0.471367 0.760492 0.789528, 0.376703 0.07771 0.706496 0.635055, 0.82715 0.275189 0.366994 0.565444, 0.884346 0.764126 0.248085 0.00626453, 0.848394 0.757017 0.961949 0.126045, 0.206664 0.651938 0.216951 0.631774, 0.601984 0.703269 0.079809 0.364454, 0.936608 0.393329 0.430698 0.545397, 0.764981 0.0674406 0.836809 0.99117, 0.854507 0.963109 0.602449 0.653576, 0.36817 0.0611337 0.228225 0.672605'/>
+              <Coordinate DEF='_2'
+                  point='0.738999 0.441683 0, 0.162368 0.367886 0, 0.488677 0.000340151 0, 0.0789102 0.919307 0, 0.547255 0.15089 0, 0.178524 0.257971 0, 0.877485 0.0664661 0, 0.156987 0.192941 0, 0.231119 0.826756 0, 0.917396 0.751601 0, 0.458633 0.929456 0, 0.155702 0 0, 0.883684 0.697464 0, 0.301576 0.116544 0, 0.710246 0.000426224 0, 0.140691 0.7316 0, 0.38652 0.0134413 0, 0.0276622 0.0139479 0, 0.789452 0.148612 0, 0.64739 0.397039 0, 0.847885 0.119435 0, 0.915653 0.145538 0, 0.786467 0.78081 0, 0.236561 0.0640422 0, 0.119543 0.0220365 0, 0.426935 0.974919 0, 0.821705 0.916037 0, 0.670842 0.279399 0, 0.678303 0.0562273 0, 0.273759 0.708581 0, 0.394024 0.125528 0, 0.827525 0.140967 0, 0.00795917 0.546627 0, 0.788121 0.0168541 0, 0.708161 0.882646 0, 0.652939 0.30249 0, 0.859291 0.0175219 0, 0.251242 0.0618138 0, 0.986808 0.626264 0, 0.799063 0.869788 0, 0.717021 0.215552 0, 0.558701 0.00177324 0, 0.448541 0.00432836 0, 0.419069 0.149097 0, 0.735553 0.118094 0, 0.987572 0.481338 0, 0.711564 0.000751358 0, 0.904214 0.429438 0, 0.477648 0.0473483 0, 0.927056 0.0943704 0, 0.40485 0.102458 0, 0.122881 0.199597 0, 0.298322 0.282752 0, 0.402479 0.253971 0, 0.912783 0.0832968 0, 0.0355396 0.187997 0, 0.976384 0.00292002 0, 0.0416477 0.0115454 0, 0.533721 0 0, 0.806999 0.674143 0, 0.697445 0.167201 0, 0.615856 0.650191 0, 0.399703 0.000431435 0, 0.235012 0.053256 0, 0.576986 0.17179 0, 0.794152 0.0918128 0, 0.603899 0.0157688 0, 0.283278 0.00701622 0, 0.165453 0.882568 0, 0.396477 0.77535 0, 0.442698 0.112811 0, 0.4418 0.547206 0, 0.297158 0.0131355 0, 0.23723 0.477761 0, 0.745665 0.474583 0, 0.789272 0.443856 0, 0.923481 0.345209 0, 0.535428 0.00710417 0, 0.330808 0.625007 0, 0.630496 0.0826039 0, 0.95491 0.0889653 0, 0.523379 0.835327 0, 0.323984 0.108366 0, 0.988636 0.433652 0, 0.222496 0.115803 0, 0.361784 0.436987 0, 0.349984 0.755962 0, 0.833484 0.126438 0, 0.847617 0.413071 0, 0.969856 0.0287804 0, 0.126909 0.31656 0, 0.929813 0.0164323 0, 0.852524 0.297976 0, 0.240964 0.929581 0, 0.577652 0.42753 0, 0.498287 0.488584 0, 0.957407 0.699103 0, 0.495576 0.0357601 0, 0.733194 0.958138 0, 0.00278179 0.0211362 0'/>
+            </PointSet>
+          </Shape>
+        </Transform>
+        <TimeSensor DEF='_3'
+            loop='true'/>
+        <Script DEF='BubblesScript'>
+          <field accessType='inputOnly' type='SFTime' name='set_time'/>
+          <field accessType='inputOutput' type='SFInt32' name='numParticles' value='100'/>
+          <field accessType='initializeOnly' type='SFNode' name='color'>
+            <ColorRGBA USE='_1'/>
+          </field>
+          <field accessType='initializeOnly' type='SFNode' name='coord'>
+            <Coordinate USE='_2'/>
+          </field>
+<![CDATA[ecmascript:
+
+var velocity     = new MFFloat ();
+var acceleration = new MFFloat ();
+
+function initialize ()
+{
+	set_numParticles ();
+}
+
+function set_numParticles ()
+{
+	velocity     .length = numParticles;
+	acceleration .length = numParticles;
+	color .color .length = numParticles;
+	coord .point .length = numParticles;
+
+	for (var i = 0; i < numParticles; ++ i)
+		set_particle (i);
+}
+
+function set_particle (i)
+{
+	velocity [i]     = 0;
+	acceleration [i] = Math .random ();
+
+	color .color [i] = new SFColorRGBA (Math .random (),
+	                                    Math .random (),
+	                                    Math .random (),
+	                                    Math .random ());
+	                                    
+	coord .point [i] .x = Math .random ();
+	coord .point [i] .y = 0;
+}
+
+function set_time ()
+{
+	var dt = 1 / Browser .currentFrameRate;
+	
+	for (var i = 0; i < numParticles; ++ i)
+	{
+		var dv = acceleration [i] * dt;
+	
+		velocity [i] += dv;
+	
+		coord .point [i] .y += velocity [i] * dt;
+		
+		if (coord .point [i] .y > 1)
+			set_particle (i);
+	}
+}]]> 
+        </Script>
+      </Layer>
+      <Layer>
+        <MetadataSet DEF='Titania_1'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='Grid' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='true'/>
+            <MetadataFloat containerField='value'
+                name='rotation'
+                reference='http://titania.create3000.de'
+                value='1, 0, 0, 1.5708'/>
+            <MetadataFloat containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='0.049, 0.049, 0.049'/>
+            <MetadataInteger containerField='value'
+                name='dimension'
+                reference='http://titania.create3000.de'
+                value='73, 10, 41'/>
+            <MetadataInteger containerField='value'
+                name='majorLineEvery'
+                reference='http://titania.create3000.de'
+                value='5, 5, 5, 5, 0, 5'/>
+            <MetadataInteger containerField='value'
+                name='majorLineOffset'
+                reference='http://titania.create3000.de'
+                value='0, 0, -5, -1, 0, -6'/>
+            <MetadataFloat containerField='value'
+                name='lineColor'
+                reference='http://titania.create3000.de'
+                value='1, 0.7, 0.7, 0.0588235'/>
+          </MetadataSet>
+          <MetadataSet DEF='AngleGrid' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+        </MetadataSet>
+        <OrthoViewpoint/>
+        <Transform DEF='Header'
+            translation='-1.6905 0.955504 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Text
+                string='"Smarty Bubbles"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  size='1.61'
+                  justify='"BEGIN", "BEGIN"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Group DEF='BubblesMenu'>
+          <Transform DEF='Header_1'
+              translation='1.6905 -0.857496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Artdeco31'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    shininess='0'/>
+              </Appearance>
+              <Text
+                  string='"Bubbles"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    style='BOLD'
+                    size='0.68'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='numParticlesText'
+              translation='1.6905 -0.955496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text DEF='_4'
+                  string='"numParticles 100"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.0688396 -0.929197 0'>
+            <Transform DEF='IndexedLineSet'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_1'
+                      emissiveColor='0.721 0.721 0.721'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D'
+                  translation='0.185044 0 0'
+                  scale='0.0267372 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material/>
+                  </Appearance>
+                  <Rectangle2D/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_5'
+                  offset='0.185044 0 0'
+                  maxPosition='1 0'/>
+            </Transform>
+          </Transform>
+        </Group>
+        <Script DEF='numParticlesScript'>
+          <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+          <field accessType='outputOnly' type='SFInt32' name='numParticles_changed'/>
+          <field accessType='outputOnly' type='MFString' name='string_changed'/>
+          <field accessType='initializeOnly' type='SFInt32' name='numParticles' value='100'/>
+<![CDATA[ecmascript:
+
+var minParticles = 10;
+var maxParticles = 500;
+
+function initialized ()
+{
+	set_numParticles (numParticles);
+}
+
+function set_translation (value)
+{
+	numParticles = minParticles + (value .x * (maxParticles - minParticles));
+
+	set_numParticles (numParticles);
+}
+
+function set_numParticles (value)
+{
+	numParticles_changed = value;
+	string_changed       = new MFString ("numParticles " + value);
+}]]> 
+        </Script>
+      </Layer>
+    </LayerSet>
+    <ROUTE fromNode='_3' fromField='time' toNode='BubblesScript' toField='set_time'/>
+    <ROUTE fromNode='_5' fromField='translation_changed' toNode='Rectangle2D' toField='set_translation'/>
+    <ROUTE fromNode='numParticlesScript' fromField='numParticles_changed' toNode='BubblesScript' toField='set_numParticles'/>
+    <ROUTE fromNode='_5' fromField='translation_changed' toNode='numParticlesScript' toField='set_translation'/>
+    <ROUTE fromNode='numParticlesScript' fromField='string_changed' toNode='_4' toField='set_string'/>
+  </Scene>
+</X3D>

@@ -1044,6 +1044,7 @@
     <None Include="lib\jquery.fullscreen-min.js" />
     <None Include="images\gtk-fullscreen.png" />
     <None Include="images\gtk-leave-fullscreen.png" />
+    <None Include="tests\Components\Rendering\bubbles.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
