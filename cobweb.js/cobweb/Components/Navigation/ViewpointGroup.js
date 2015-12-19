@@ -80,6 +80,10 @@ function ($,
 			this .set_displayed__ ();
 			this .set_children__ ();
 		},
+		getCameraObject: function ()
+		{
+		   return true;
+		},
 		isActive: function ()
 		{
 		   return this .proximitySensor .isActive_ .getValue ();
