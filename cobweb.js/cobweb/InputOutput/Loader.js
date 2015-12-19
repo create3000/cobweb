@@ -24,7 +24,8 @@ function ($,
 		TIMEOUT    = 17,
 		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
 		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
-		fallback   = "https://crossorigin.me/";
+		fallback   = "https://crossorigin.me/",
+		fallbackRx = new RegExp ("^" + fallback);
 
 	function Loader (node, external)
 	{
@@ -338,7 +339,10 @@ function ($,
 			if (URL .isLocal ())
 				URL = this .browser .getLocation () .getRelativePath (URL);
 			else
-				this .url .push (fallback + sURL);
+			{
+				if (! sURL .match (fallbackRx))
+					this .url .push (fallback + sURL);
+			}
 
 			return URL;
 		},
