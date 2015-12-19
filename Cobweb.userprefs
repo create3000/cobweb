@@ -2,18 +2,15 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="25" Column="25" />
       <File FileName="cobweb.js/cobweb/Browser/Navigation/LookAtViewer.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Core/ContextMenu.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geometry3D/IndexedFaceSet.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/InputOutput/Loader.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/CADGeometry/CADFace.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DGroupingNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Networking/Inline.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Navigation/X3DViewpointNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/BindableList.js" Line="26" Column="26" />
-      <File FileName="cobweb.js/cobweb/Execution/BindableStack.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Gouraud.vs" Line="6" Column="6" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Phong.fs" Line="14" Column="14" />
+      <File FileName="cobweb.js/cobweb/Components/Interpolation/ColorInterpolator.js" Line="5" Column="5" />
+      <File FileName="cobweb.js/cobweb/Components/Lighting/SpotLight.js" Line="2" Column="2" />
+      <File FileName="cobweb.js/cobweb.min.html" Line="24" Column="24" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

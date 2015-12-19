@@ -1045,6 +1045,7 @@
     <None Include="images\gtk-fullscreen.png" />
     <None Include="images\gtk-leave-fullscreen.png" />
     <None Include="tests\Components\Rendering\bubbles.x3d" />
+    <None Include="tests\Components\Text\scrolling-text.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
