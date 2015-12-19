@@ -105,7 +105,7 @@ var Bookmarks = (function ()
 				.text ("◂ ◂")
 				.appendTo (this .element);
 
-			this .element .append (document .createTextNode (" " + (this .index + 1) + " "));
+			this .element .append (document .createTextNode (" Page " + (this .index + 1) + " "));
 	
 			$("<a/>")
 				.attr ("href", "next")
