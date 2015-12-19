@@ -6,7 +6,7 @@
     <meta name='created' content='Sat, 19 Dec 2015 11:18:24 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 11:45:22 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 11:50:47 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -77,11 +77,12 @@
         </MetadataSet>
         <Background DEF='Gray'
             skyColor='0.2 0.2 0.2'/>
-        <Viewpoint/>
+        <Viewpoint
+            description='Initial View'/>
         <Transform DEF='ScrollingText'
             translation='-0.771853 0 0'>
           <Transform DEF='Text'
-              translation='-6.18513 9.43139 0'>
+              translation='-6.18513 2.12163 0'>
             <Group DEF='Animation'>
               <MetadataSet DEF='Animation_1'
                   name='Animation'
@@ -97,9 +98,7 @@
               </MetadataSet>
               <TimeSensor DEF='_1'
                   cycleInterval='120'
-                  loop='true'
-                  startTime='1450525218.07881'
-                  stopTime='1450525218.0788'/>
+                  loop='true'/>
               <PositionInterpolator DEF='TextTranslationInterpolator'
                   key='0, 1'
                   keyValue='-6.18513 -3.82943 0, -6.18513 20.8337 0'>
