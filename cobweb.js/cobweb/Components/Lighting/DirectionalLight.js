@@ -34,8 +34,8 @@ function ($,
 		constructor: DirectionalLightContainer,
 		set: function (light)
 		{
-			this .color            = light .color_ .getValue ();
-			this .intensity        = light .intensity_ .getValue ();
+			this .color            = light .color_            .getValue ();
+			this .intensity        = light .intensity_        .getValue ();
 			this .ambientIntensity = light .ambientIntensity_ .getValue ();
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      

@@ -37,13 +37,13 @@ function ($,
 	   {
 			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
 	
-			this .color            = light .color_ .getValue ();
-			this .intensity        = light .intensity_ .getValue ();
+			this .color            = light .color_            .getValue ();
+			this .intensity        = light .intensity_        .getValue ();
 			this .ambientIntensity = light .ambientIntensity_ .getValue ();
-			this .attenuation      = light .attenuation_ .getValue ();
-			this .beamWidth        = light .beamWidth_ .getValue ();
-			this .cutOffAngle      = light .cutOffAngle_ .getValue ();
-			this .radius           = light .radius_ .getValue ();
+			this .attenuation      = light .attenuation_      .getValue ();
+			this .beamWidth        = light .beamWidth_        .getValue ();
+			this .cutOffAngle      = light .cutOffAngle_      .getValue ();
+			this .radius           = light .radius_           .getValue ();
 	
 			modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();

@@ -34,11 +34,11 @@ function ($,
 		constructor: PointLightContainer,
 	   set: function (light)
 	   {
-			this .color            = light .color_ .getValue ();
-			this .intensity        = light .intensity_ .getValue ();
+			this .color            = light .color_            .getValue ();
+			this .intensity        = light .intensity_        .getValue ();
 			this .ambientIntensity = light .ambientIntensity_ .getValue ();
-			this .attenuation      = light .attenuation_ .getValue ();
-			this .radius           = light .radius_ .getValue ();
+			this .attenuation      = light .attenuation_      .getValue ();
+			this .radius           = light .radius_           .getValue ();
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 	   },

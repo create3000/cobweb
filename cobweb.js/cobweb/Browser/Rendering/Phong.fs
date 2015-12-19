@@ -215,7 +215,7 @@ main ()
 	
 					if (t == SPOT_LIGHT)
 					{
-						float spotAngle   = acos (dot (-L, d));
+						float spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));
 						float cutOffAngle = x3d_LightCutOffAngle [i];
 						float beamWidth   = x3d_LightBeamWidth [i];
 						
