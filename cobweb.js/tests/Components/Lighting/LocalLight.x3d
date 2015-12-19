@@ -5,14 +5,47 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Tue, 22 Sep 2015 03:19:15 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.1.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Sep 2015 05:45:16 GMT'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 06:40:52 GMT'/>
   </head>
   <Scene>
+    <WorldInfo
+        title='LocalLight'>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='38.5307998657227, 38.1931991577148, 54.2624015808105'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.873252868652344, 0.462253898382187, 0.154112935066223, 0.974525034427643'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='20, 0, 20'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
     <LayerSet
         activeLayer='1'
         order='1, 2'>
       <Layer>
+        <Background DEF='Gray'
+            skyColor='0.2 0.2 0.2'/>
         <NavigationInfo
             type='"EXAMINE"'
             headlight='false'/>
@@ -37,9 +70,11 @@
                     name='Animation'>
                   <MetadataInteger containerField='value'
                       name='duration'
+                      reference='http://titania.create3000.de'
                       value='120'/>
                   <MetadataInteger containerField='value'
                       name='framesPerSecond'
+                      reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
                 <TimeSensor DEF='_2'
@@ -52,12 +87,15 @@
                       name='Interpolator'>
                     <MetadataInteger containerField='value'
                         name='key'
+                        reference='http://titania.create3000.de'
                         value='0, 30, 60, 90, 120'/>
                     <MetadataDouble containerField='value'
                         name='keyValue'
+                        reference='http://titania.create3000.de'
                         value='-0.475708842277527, -0.436148166656494, -0.763855934143066, -0.323749333620071, 0.370557337999344, -0.870559394359589, 0.406216442584991, 0.365678489208221, -0.837417185306549, 0.430656850337982, -0.421214938163757, -0.798193275928497, -0.475708842277527, -0.436148166656494, -0.763855934143066'/>
                     <MetadataString containerField='value'
                         name='keyType'
+                        reference='http://titania.create3000.de'
                         value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
                   </MetadataSet>
                 </PositionInterpolator>
@@ -68,36 +106,38 @@
                       name='Interpolator'>
                     <MetadataInteger containerField='value'
                         name='key'
+                        reference='http://titania.create3000.de'
                         value='0, 30, 60, 90, 120'/>
                     <MetadataDouble containerField='value'
                         name='keyValue'
+                        reference='http://titania.create3000.de'
                         value='1, 0, 0, 0.5, 1, 0, 0, 0.997210741043091, 1, 0.494911581277847, 0, 1, 1, 0, 0.00705553032457829'/>
                     <MetadataString containerField='value'
                         name='keyType'
+                        reference='http://titania.create3000.de'
                         value='"SPLINE", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
                   </MetadataSet>
                 </ColorInterpolator>
               </Group>
               <SpotLight DEF='_3'
                   global='false'
-                  color='1 0 0'
+                  color='1 0 0.598154'
                   intensity='0.485207'
-                  direction='-0.475709 -0.436148 -0.763856'
+                  direction='-0.150884 -0.525979 -0.766977'
                   beamWidth='0.07'
                   cutOffAngle='0.850796'/>
-              <Transform DEF='Sphere_1'
+              <Transform DEF='Sphere'
                   rotation='1 -9.23607e-09 1.05527e-08 1.57'
                   scale='0.370046 0.370046 0.370046'>
                 <Shape>
                   <Appearance>
                     <Material DEF='_4'
-                        emissiveColor='1 0 0'/>
+                        emissiveColor='1 0 0.598154'/>
                   </Appearance>
                   <Sphere/>
                 </Shape>
-                <TouchSensor DEF='_5'/>
               </Transform>
-              <Transform DEF='ElevationGrid_1'
+              <Transform DEF='ElevationGrid'
                   translation='-10 9.99203 -10.008'
                   rotation='1 1.00032e-09 3.08126e-10 1.57'
                   scaleOrientation='0.991101 0.11355 0.0694675 0.181206'>
@@ -111,7 +151,7 @@
                 </Shape>
               </Transform>
             </Transform>
-            <Transform DEF='Box_1'
+            <Transform DEF='Box'
                 translation='4.28962 1.06325 4.82481'>
               <Shape>
                 <Appearance>
@@ -136,12 +176,33 @@
         </Transform>
       </Layer>
       <Layer>
-        <Transform DEF='Text_1'
-            translation='7.173 -3.53232 0'>
+        <OrthoViewpoint/>
+        <Transform DEF='Geometry3D'
+            translation='-1.6905 0.955504 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
             <Appearance>
-              <Material
-                  diffuseColor='0 0 0'/>
+              <Material/>
+            </Appearance>
+            <Text
+                string='"Local Light"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  size='1.61'
+                  justify='"BEGIN", "BEGIN"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='Text'
+            translation='1.6905 -0.857496 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material DEF='Artdeco31'
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  shininess='0'/>
             </Appearance>
             <Text
                 string='"SpotLight"'
@@ -149,14 +210,33 @@
               <FontStyle
                   family='"Ubuntu", "SANS"'
                   style='BOLD'
-                  size='0.2'
-                  spacing='1.2'
-                  justify='"END", "END"'/>
+                  size='0.68'
+                  justify='"END"'/>
             </Text>
           </Shape>
         </Transform>
-        <Transform DEF='Text'
-            translation='7.173 -3.92046 0'>
+        <Transform DEF='GlobalButton'
+            translation='1.51582 -0.925088 0'
+            scale='0.227685 0.040588 0.040588'>
+          <Shape>
+            <Appearance>
+              <Material
+                  transparency='1'/>
+            </Appearance>
+            <IndexedFaceSet
+                texCoordIndex='0, 1, 2, 3, -1'
+                coordIndex='0, 1, 2, 3, -1'>
+              <TextureCoordinate
+                  point='0 0, 1 0, 1 1, 0 1'/>
+              <Coordinate
+                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+            </IndexedFaceSet>
+          </Shape>
+          <TouchSensor DEF='_5'/>
+        </Transform>
+        <Transform DEF='Text_1'
+            translation='1.6905 -0.955496 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
             <Appearance>
               <Material/>
@@ -166,13 +246,11 @@
                 solid='true'>
               <FontStyle
                   family='"Ubuntu", "SANS"'
-                  size='0.3'
-                  spacing='1.2'
-                  justify='"END", "END"'/>
+                  justify='"END"'/>
             </Text>
           </Shape>
         </Transform>
-        <Transform DEF='Rectangle2D_1'
+        <Transform DEF='Rectangle2D'
             translation='6.38615 -3.66011 0'
             scale='0.950816 0.373413 1'>
           <Shape>
@@ -190,8 +268,7 @@
             </IndexedFaceSet>
           </Shape>
         </Transform>
-        <TouchSensor USE='_5'/>
-        <Script DEF='_7'>
+        <Script DEF='ToggleScript'>
           <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
           <field accessType='outputOnly' type='MFString' name='string_changed'/>
           <field accessType='initializeOnly' type='SFNode' name='light'>
@@ -201,6 +278,8 @@
 
 function initialize ()
 {
+	Browser .setBrowserOption ("Shading", "PHONG");
+
 	eventsProcessed ();
 }
 
@@ -221,7 +300,7 @@ function eventsProcessed ()
     <ROUTE fromNode='_2' fromField='fraction_changed' toNode='ColorInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='ColorInterpolator' fromField='value_changed' toNode='_3' toField='set_color'/>
     <ROUTE fromNode='_3' fromField='color_changed' toNode='_4' toField='set_emissiveColor'/>
-    <ROUTE fromNode='_7' fromField='string_changed' toNode='_6' toField='set_string'/>
-    <ROUTE fromNode='_5' fromField='touchTime' toNode='_7' toField='set_touchTime'/>
+    <ROUTE fromNode='ToggleScript' fromField='string_changed' toNode='_6' toField='set_string'/>
+    <ROUTE fromNode='_5' fromField='touchTime' toNode='ToggleScript' toField='set_touchTime'/>
   </Scene>
 </X3D>
