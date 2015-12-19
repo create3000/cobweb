@@ -60,6 +60,7 @@ var Bookmarks = (function ()
 					{
 						$("<a/>")
 							.attr ("href", item .url [i])
+							.attr ("title", item .url [i])
 							.click (this .loadURL .bind (this, item .url [i]))
 							.text (i ? "*" : item .name)
 							.addClass (i ? "bookmark-link" : "bookmark-first-link")
@@ -70,6 +71,7 @@ var Bookmarks = (function ()
 				{
 					$("<a/>")
 						.attr ("href", item .url [0])
+						.attr ("title", item .url [0])
 						.click (this .loadURL .bind (this, item .url))
 						.text (item .name)
 						.addClass ("bookmark-link")
@@ -81,10 +83,10 @@ var Bookmarks = (function ()
 			this);
 				
 			this .element .append ("<br/>");
-	
-	
+
 			$("<a/>")
 				.attr ("href", "random")
+				.attr ("title", "Random World")
 				.click (this .random .bind (this))
 				.text ("Random World")
 				.appendTo (this .element);
@@ -94,6 +96,7 @@ var Bookmarks = (function ()
 	
 			$("<a/>")
 				.attr ("href", "previous")
+				.attr ("title", "Previous Page")
 				.click (this .next .bind (this, -1))
 				.text ("◂ ◂")
 				.appendTo (this .element);
@@ -102,6 +105,7 @@ var Bookmarks = (function ()
 	
 			$("<a/>")
 				.attr ("href", "next")
+				.attr ("title", "Next Page")
 				.click (this .next .bind (this, 1))
 				.text ("▸ ▸")
 				.appendTo (this .element);
