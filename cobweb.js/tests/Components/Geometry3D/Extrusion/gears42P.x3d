@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='description' content='4 helical  gears extrusions, 42 pitch'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 15:50:44 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 16:58:04 GMT'/>
     <meta name='title' content='helical_gear_extr.logo'/>
   </head>
   <Scene>
@@ -35,7 +35,7 @@
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.952874660491943, -0.269492894411087, 0.13929595053196, 2.44849991798401'/>
+              value='0.952874720096588, -0.269492924213409, 0.139295980334282, 2.44849991798401'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -83,16 +83,11 @@
             skyColor='0.2 0.2 0.2'/>
         <NavigationInfo
             transitionType='"TELEPORT"'/>
-        <Group>
+        <ViewpointGroup>
           <Viewpoint DEF='Oblique'
               position='1.17725 -2.07927 -2.26311'
               orientation='0.952875 -0.269493 0.139296 2.4485'
               centerOfRotation='0.984379 -0.000704288 -0.000716984'/>
-          <Viewpoint DEF='Right'
-              position='10.4129 -0.00246054 0.00482225'
-              orientation='0.577279 0.577288 0.577484 2.09381'
-              centerOfRotation='1.00997 -0.000475109 -0.000515461'
-              fieldOfView='0.16628'/>
           <Viewpoint DEF='Top'
               position='1.01092 0.000537694 17.4359'
               centerOfRotation='1.01092 0.000537694 0.000499249'
@@ -102,7 +97,12 @@
               orientation='-1 0 0 3.14119'
               centerOfRotation='0.995535 9.5129e-05 0.00014925'
               fieldOfView='0.16628'/>
-        </Group>
+          <Viewpoint DEF='Right'
+              position='10.4129 -0.00246054 0.00482225'
+              orientation='0.577279 0.577288 0.577484 2.09381'
+              centerOfRotation='1.00997 -0.000475109 -0.000515461'
+              fieldOfView='0.16628'/>
+        </ViewpointGroup>
         <Transform>
           <Transform DEF='obj'
               translation='2 0 0'

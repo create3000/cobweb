@@ -9,6 +9,7 @@ define ([
 	"cobweb/Components/EnvironmentalSensor/ProximitySensor",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -18,7 +19,8 @@ function ($,
           X3DViewpointObject,
           ProximitySensor,
           X3DCast,
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 "use strict";
 
@@ -90,12 +92,19 @@ function ($,
 		},
 		set_displayed__: function ()
 		{
-			var enabled = this .displayed_ .getValue () && ! this .size_ .getValue () .equals (Vector3 .Zero);
+			var
+				proxy     = ! this .size_ .getValue () .equals (Vector3 .Zero),
+				displayed = this .displayed_ .getValue ();
 
-			this .proximitySensor .enabled_ = enabled;
+			this .proximitySensor .enabled_ = displayed && proxy;
 
-			if (enabled)
-			   this .traverse = traverse;
+			if (displayed)
+			{
+				if (proxy)
+					this .traverse = traverseWithProximitySensor;
+				else
+					this .traverse = traverse;
+			}
 			else
 				delete this .traverse;
 		},
@@ -114,23 +123,21 @@ function ($,
 		traverse: function () { },
 	});
 
-	function traverse (type)
+	function traverseWithProximitySensor (type)
 	{
-		if (this .size_ .getValue () .equals (Vector3 .Zero))
+		this .proximitySensor .traverse (type);
+
+		if (this .proximitySensor .isActive_ .getValue ())
 		{
-			for (var i = 0; i < this .viewpointObjects .length; ++ i)
+			for (var i = 0, length = this .viewpointObjects .length; i < length; ++ i)
 				this .viewpointObjects [i] .traverse (type);
 		}
-		else
-		{
-			this .proximitySensor .traverse (type);
+	}
 
-			if (this .proximitySensor .isActive_ .getValue ())
-			{
-				for (var i = 0; i < this .viewpointObjects .length; ++ i)
-					this .viewpointObjects [i] .traverse (type);
-			}
-		}
+	function traverse (type)
+	{
+		for (var i = 0, length = this .viewpointObjects .length; i < length; ++ i)
+			this .viewpointObjects [i] .traverse (type);
 	}
 
 	return ViewpointGroup;

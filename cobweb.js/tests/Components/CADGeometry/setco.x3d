@@ -9,7 +9,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
     <meta name='identifier' content='http://spri.kshell.com/xt/shape/psghtq40qqvj/shape_2336333638.x3d'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 16:02:36 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 16:58:01 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -83,25 +83,6 @@
             skyColor='0.2 0.2 0.2'/>
         <DirectionalLight
             direction='-0.35355 -0.35355 -0.86603'/>
-        <Viewpoint DEF='Oblique'
-            position='28.9666 50.8497 24.2612'
-            orientation='-0.837913 0.538534 0.0887832 1.11955'
-            centerOfRotation='0 -0.255076 -4.565'
-            fieldOfView='0.16628'/>
-        <Viewpoint DEF='Top'
-            position='0 -0.255076 29.7563'
-            centerOfRotation='0 -0.255076 -4.565'
-            fieldOfView='0.16628'/>
-        <Viewpoint DEF='Bottom'
-            position='0 -0.242955 -34.3245'
-            orientation='-1 0 0 3.14119'
-            centerOfRotation='0 -0.255076 -4.565'
-            fieldOfView='0.16628'/>
-        <Viewpoint DEF='Right'
-            position='73.956 -0.271937 -4.54813'
-            orientation='0.577279 0.577286 0.577485 2.09381'
-            centerOfRotation='0 -0.255076 -4.565'
-            fieldOfView='0.16628'/>
         <CADAssembly
             name='SETCO-B035-B-2-8-015'
             bboxSize='3.75 3.73985 11.13'
@@ -4760,6 +4741,27 @@
         </CADAssembly>
         <NavigationInfo
             transitionType='"TELEPORT"'/>
+        <ViewpointGroup>
+          <Viewpoint DEF='Oblique'
+              position='28.9666 50.8497 24.2612'
+              orientation='-0.837913 0.538534 0.0887832 1.11955'
+              centerOfRotation='0 -0.255076 -4.565'
+              fieldOfView='0.16628'/>
+          <Viewpoint DEF='Top'
+              position='0 -0.255076 29.7563'
+              centerOfRotation='0 -0.255076 -4.565'
+              fieldOfView='0.16628'/>
+          <Viewpoint DEF='Bottom'
+              position='0 -0.242955 -34.3245'
+              orientation='-1 0 0 3.14119'
+              centerOfRotation='0 -0.255076 -4.565'
+              fieldOfView='0.16628'/>
+          <Viewpoint DEF='Right'
+              position='73.956 -0.271937 -4.54813'
+              orientation='0.577279 0.577286 0.577485 2.09381'
+              centerOfRotation='0 -0.255076 -4.565'
+              fieldOfView='0.16628'/>
+        </ViewpointGroup>
       </Layer>
       <Layer DEF='HUD'>
         <MetadataSet DEF='Titania_2'

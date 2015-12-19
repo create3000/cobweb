@@ -255,7 +255,6 @@ function ($,
 									this .lights .push (innerNode);
 									break;
 								}
-								case X3DConstants .ViewpointGroup:
 								case X3DConstants .X3DBindableNode:
 								{
 									this .maybeCameraObjects .push (innerNode);
