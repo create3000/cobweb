@@ -34,7 +34,7 @@ var Bookmarks = (function ()
 	{
 		setup: function ()
 		{
-			this .toggle ();
+			this .next (0);
 		},
 		setSplit (value)
 		{
@@ -46,10 +46,12 @@ var Bookmarks = (function ()
 
 			return false;
 		},
-		toggle: function ()
+		next: function (n)
 		{
 			this .element .empty ();
 	
+			this .index = (this .index + this .bookmarks .length + n) % this .bookmarks .length;
+
 			this .bookmarks [this .index] .forEach (function (item)
 			{
 				if (this .split)
@@ -90,12 +92,18 @@ var Bookmarks = (function ()
 			this .element .append ("<br/>");
 			this .element .append ("<br/>");
 	
-			this .index = (this .index + 1) % this .bookmarks .length;
+			$("<a/>")
+				.attr ("href", "previous")
+				.click (this .next .bind (this, -1))
+				.text ("◂ ◂")
+				.appendTo (this .element);
+
+			this .element .append (document .createTextNode (" " + (this .index + 1) + " "));
 	
 			$("<a/>")
 				.attr ("href", "next")
-				.click (this .toggle .bind (this))
-				.text ("▸ ▸ Next Page")
+				.click (this .next .bind (this, 1))
+				.text ("▸ ▸")
 				.appendTo (this .element);
 			
 			return false;
