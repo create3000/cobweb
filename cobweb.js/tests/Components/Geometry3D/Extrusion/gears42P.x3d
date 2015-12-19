@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='description' content='4 helical  gears extrusions, 42 pitch'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 15:34:34 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 15:50:44 GMT'/>
     <meta name='title' content='helical_gear_extr.logo'/>
   </head>
   <Scene>
@@ -108,7 +108,7 @@
               translation='2 0 0'
               rotation='-1 -0 -0 1.57'>
             <Transform DEF='obj_1'
-                rotation='0 1 0 2.494'>
+                rotation='0 1 0 5.64473'>
               <Transform DEF='obj_2'
                   rotation='0 1 0 0.0897052'>
                 <Shape DEF='obj_9_shp'>
@@ -135,7 +135,7 @@
               translation='1.25 0 0'
               rotation='-1 -0 -0 1.57'>
             <Transform DEF='obj_4'
-                rotation='0 -1 0 4.988'>
+                rotation='0 -1 0 5.00628'>
               <Transform DEF='obj_5'
                   rotation='0 1 0 0.164504'>
                 <Shape DEF='obj_6_shp'>
@@ -160,7 +160,7 @@
           </Transform>
           <Transform DEF='obj_6'
               translation='0.75 0 0'
-              rotation='0 -1 0 4.988'>
+              rotation='0 -1 0 5.00628'>
             <Transform DEF='obj_7'
                 rotation='0 1 0 0.164504'>
               <Shape DEF='obj_3_shp'>
@@ -184,7 +184,7 @@
             </Transform>
           </Transform>
           <Transform DEF='obj_8'
-              rotation='0 1 0 2.494'>
+              rotation='0 1 0 5.64473'>
             <Transform DEF='obj_9'
                 rotation='0 1 0 0.0149066'>
               <Shape DEF='obj_1_shp'>
@@ -286,7 +286,7 @@
               <Material/>
             </Appearance>
             <Text
-                string='"Extrusion"'
+                string='"Gears4P Extrusion"'
                 solid='true'>
               <FontStyle
                   family='"Ubuntu", "SANS"'

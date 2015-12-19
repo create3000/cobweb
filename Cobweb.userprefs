@@ -2,15 +2,17 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="25" Column="25" />
+      <File FileName="cobweb.js/cobweb.html" Line="17" Column="17" />
       <File FileName="cobweb.js/cobweb/Browser/Navigation/LookAtViewer.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Core/ContextMenu.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Rendering/Gouraud.vs" Line="6" Column="6" />
-      <File FileName="cobweb.js/cobweb/Browser/Rendering/Phong.fs" Line="14" Column="14" />
-      <File FileName="cobweb.js/cobweb/Components/Interpolation/ColorInterpolator.js" Line="5" Column="5" />
-      <File FileName="cobweb.js/cobweb/Components/Lighting/SpotLight.js" Line="2" Column="2" />
-      <File FileName="cobweb.js/cobweb.min.html" Line="24" Column="24" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Gouraud.vs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/Phong.fs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Interpolation/ColorInterpolator.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Lighting/SpotLight.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.min.html" Line="35" Column="35" />
+      <File FileName="cobweb.js/Bookmarks.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserOptions.js" Line="28" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
