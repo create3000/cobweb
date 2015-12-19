@@ -9,7 +9,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
     <meta name='identifier' content='http://spri.kshell.com/xt/shape/psghtq40qqvj/shape_2336333638.x3d'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 14:45:58 GMT'/>
+    <meta name='modified' content='Sat, 19 Dec 2015 15:55:48 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -4815,7 +4815,7 @@
               <Material/>
             </Appearance>
             <Text
-                string='" CADGeometry"'
+                string='" Setco CADGeometry"'
                 solid='true'>
               <FontStyle
                   family='"Ubuntu", "SANS"'
