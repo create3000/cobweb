@@ -54,6 +54,7 @@ function ($,
 
 			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
+			this .setSolid (false);
 		},
 		build: function ()
 		{
@@ -65,8 +66,6 @@ function ($,
 
 				this .addVertex (vector .set (vertex .x, vertex .y, 0));
 			}
-
-			this .setSolid (false);
 		},
 	});
 

@@ -76,17 +76,19 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .min         = new Vector3 (0, 0, 0);
-			this .max         = new Vector3 (0, 0, 0);
-			this .bbox        = new Box3 (this .min, this .max, true);
-			this .solid       = true;
-			this .flatShading = undefined;
-			this .colors      = [ ];
-			this .texCoords   = [ ];
-			this .normals     = [ ];
-			this .flatNormals = [ ];
-			this .vertices    = [ ];
-			this .vertexCount = 0;
+			this .min              = new Vector3 (0, 0, 0);
+			this .max              = new Vector3 (0, 0, 0);
+			this .bbox             = new Box3 (this .min, this .max, true);
+			this .solid            = true;
+			this .flatShading      = undefined;
+			this .colors           = [ ];
+			this .texCoords        = [ ];
+			this .defaultTexCoords = [ ];
+			this .texCoordParams   = { min: new Vector3 (0, 0, 0) };
+			this .normals          = [ ];
+			this .flatNormals      = [ ];
+			this .vertices         = [ ];
+			this .vertexCount      = 0;
 
 			this .primitiveMode   = gl .TRIANGLES;
 			this .frontFace       = gl .CCW;
@@ -223,9 +225,10 @@ function ($,
 				Ssize     = p .Ssize,
 				S         = min [Sindex],
 				T         = min [Tindex],
-				texCoords = [ ],
+				texCoords = this .defaultTexCoords,
 				vertices  = this .vertices;
 
+			texCoords .length = 0;
 			this .texCoords .push (texCoords);
 
 			for (var i = 0, length = vertices .length; i < length; i += 4)
@@ -235,18 +238,20 @@ function ($,
 				                 0,
 				                 1);
 			}
+
+console .log ("Geometry", texCoords .length);
 		},
 		getTexCoordParams: function ()
 		{
 			var
-				p     = { },
+				p     = this .texCoordParams,
 				bbox  = this .getBBox (),
 				size  = bbox .size,
 				Xsize = size .x,
 				Ysize = size .y,
 				Zsize = size .z;
 
-			p .min = bbox .center .subtract (size .divide (2));
+			p .min .assign (bbox .center) .subtract (size .divide (2));
 
 			if ((Xsize >= Ysize) && (Xsize >= Zsize))
 			{

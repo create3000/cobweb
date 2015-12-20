@@ -8,7 +8,7 @@ function (FontStyle)
 
 	function X3DTextContext ()
 	{
-		this .glyphCache = { }; // [fontName] [primitveQuality] [glyphIndex]
+		this .fontGeometryCache = { }; // [fontName] [primitveQuality] [glyphIndex]
 	}
 
 	X3DTextContext .prototype =
@@ -27,13 +27,13 @@ function (FontStyle)
 
 			return this .defaultFontStyle;
 		},
-		getGlyphCache: function ()
+		getFontGeometryCache: function ()
 		{
-		   return this .glyphCache;
+		   return this .fontGeometryCache;
 		},
 		set_shutdown_TextContext: function ()
 		{
-		   this .glyphCache = { };
+		   this .fontGeometryCache = { };
 		},
 	};
 

@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 18 Dec 2015 10:34:46 GMT'/>
+    <meta name='modified' content='Sun, 20 Dec 2015 14:48:03 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d"'>
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-15.7903728485107, -8.12159156799316, 2.38747119903564'/>
+              value='30.3127365112305, 4.62810134887695, 13.6535873413086'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.784170389175415, 0.586519300937653, 0.202662199735641, 1.10513174533844'/>
+              value='0, 0, 1, 0'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='-18, -12.0000009536743, -4.40963704022579e-05'/>
+              value='30.3127365112305, 4.62810134887695, 2.57228821283206e-05'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -917,10 +917,80 @@
         </ProtoInstance>
       </Shape>
     </Transform>
-    <Viewpoint DEF='_6'
+    <Viewpoint
         description='Torus'
         position='-15.7904 -8.12159 2.38747'
         orientation='-0.78417 0.586519 0.202662 1.10513'
         centerOfRotation='-18 -12 -4.40964e-05'/>
+    <Transform DEF='Text'
+        translation='24 7 2.57229e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <Text
+            string='"3D Text", "2D Text", ""'
+            solid='true'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Text_1'
+        translation='24 5 1.83735e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture
+              url='"../images/image.png"'/>
+        </Appearance>
+        <Text
+            string='"3D Text", "2D Text", ""'
+            solid='true'/>
+      </Shape>
+    </Transform>
+    <Viewpoint DEF='_6'
+        description='Text'
+        position='30.3127 4.6281 13.6536'
+        centerOfRotation='30.3127 4.6281 2.57229e-05'/>
+    <Transform DEF='Text_2'
+        translation='218.363 54 0.000198434'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture
+              url='"../images/image.png"'/>
+        </Appearance>
+        <Text
+            string='"3D Text", "2D Text", ""'
+            solid='true'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Text_3'
+        translation='29 7 2.57229e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <Text
+            string='"3D Text", "2D Text", ""'
+            solid='true'>
+          <FontStyle DEF='_7'
+              size='2'/>
+        </Text>
+      </Shape>
+    </Transform>
+    <Transform DEF='Text_4'
+        translation='29 3 1.10241e-05'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture
+              url='"../images/image.png"'/>
+        </Appearance>
+        <Text
+            string='"3D Text", "2D Text", ""'
+            solid='true'>
+          <FontStyle USE='_7'/>
+        </Text>
+      </Shape>
+    </Transform>
   </Scene>
 </X3D>

@@ -65,6 +65,7 @@ function ($,
 
 			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
+			this .setSolid (false);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
@@ -149,7 +150,6 @@ function ($,
 			for (var i = 0, length = this .coordNode .point_ .length; i < length; ++ i)
 				this .addVertex (this .coordNode .getPoint (i));
 
-			this .setSolid (false);
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});

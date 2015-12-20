@@ -61,6 +61,7 @@ function ($,
 			this .coord_  .addInterest (this, "set_coord__");
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINES);
+			this .setSolid (false);
 			
 			this .set_attrib__ ();
 			this .set_color__ ();
@@ -158,7 +159,6 @@ function ($,
 					index += count;
 			}
 
-			this .setSolid (false);
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});
