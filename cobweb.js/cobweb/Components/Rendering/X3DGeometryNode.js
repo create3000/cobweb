@@ -238,8 +238,6 @@ function ($,
 				                 0,
 				                 1);
 			}
-
-console .log ("Geometry", texCoords .length);
 		},
 		getTexCoordParams: function ()
 		{

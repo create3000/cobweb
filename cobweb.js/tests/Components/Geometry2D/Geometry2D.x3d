@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 18 Nov 2015 05:00:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 13:48:30 GMT'/>
+    <meta name='modified' content='Sun, 20 Dec 2015 17:40:42 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -346,7 +346,6 @@
         </Transform>
         <Transform
             translation='5 -5 -1.83347e-05'
-            rotation='0 0 0 0.000690534'
             scale='0.376156 0.376156 0.376156'>
           <TimeSensor DEF='_7'
               cycleInterval='10'
@@ -365,7 +364,7 @@
               </Appearance>
               <PointSet>
                 <Coordinate DEF='_9'
-                    point='0.257807 -0.966197 0, 0.966197 0.257807 0, -0.257807 0.966197 0, -0.966197 -0.257807 0'/>
+                    point='0.114223 -0.993455 0, 0.993455 0.114223 0, -0.114223 0.993455 0, -0.993455 -0.114223 0'/>
               </PointSet>
             </Shape>
           </Transform>
@@ -380,10 +379,10 @@
                   emissiveColor='0.794118 0.539253 0.311916'/>
             </Appearance>
             <Polypoint2D DEF='_10'
-                point='-0.429107 0.635729, -0.912246 0.413981, 0.426243 0.306804, 0.84027 -0.732038, 0.567069 -0.525986'/>
+                point='0.92772 -0.71352, -0.611828 -0.308988, -0.933355 0.982025, -0.973387 0.906332, -0.0100862 -0.628192'/>
           </Shape>
         </Transform>
-        <Script DEF='NewScript'>
+        <Script DEF='Polypoint2DScript'>
           <field accessType='initializeOnly' type='SFNode' name='polypoint'>
             <Polypoint2D USE='_10'/>
           </field>

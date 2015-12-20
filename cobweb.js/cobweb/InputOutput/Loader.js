@@ -113,6 +113,8 @@ function ($,
 			if (field .getValue ())
 				return;
 
+			scene .loadCount_ .removeInterest (this, "set_loadCount__");
+
 			success (scene);
 
 			if (this .URL .length)

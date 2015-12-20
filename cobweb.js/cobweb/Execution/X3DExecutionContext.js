@@ -59,10 +59,12 @@ function ($,
 		{
 			X3DBaseNode .prototype .setup .call (this);
 
-			for (var i = 0; i < this .uninitializedNodes .length; ++ i)
-				this .uninitializedNodes [i] .setup ();
+			var uninitializedNodes = this .uninitializedNodes;
 
-			this .uninitializedNodes .length = 0;
+			for (var i = 0, length = uninitializedNodes .length; i < length; ++ i)
+				uninitializedNodes [i] .setup ();
+
+			uninitializedNodes .length = 0;
 		},
 		isRootContext: function ()
 		{
