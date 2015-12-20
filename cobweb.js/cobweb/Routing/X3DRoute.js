@@ -22,6 +22,10 @@ function ($, X3DBaseNode)
 
 	X3DRoute .prototype =
 	{
+		disconnect: function ()
+		{
+			this .sourceField_ .removeFieldInterest (this .destinationField_);
+		},
 		toString: function ()
 		{
 			return Object .prototype .toString (this);

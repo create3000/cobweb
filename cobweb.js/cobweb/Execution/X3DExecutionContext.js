@@ -254,6 +254,8 @@ function ($,
 					id               = sourceField .getId () + "." + destinationField .getId (),
 					index            = this .routes .getValue () .indexOf (route);
 
+				route .disconnect ();
+
 				if (index !== -1)
 					this .routes .getValue () .splice (index, 1);
 
