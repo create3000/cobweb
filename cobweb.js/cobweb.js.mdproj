@@ -1048,6 +1048,11 @@
     <None Include="tests\Components\Text\scrolling-text.x3d" />
     <None Include="tests\Components\CADGeometry\setco.x3d" />
     <None Include="tests\Components\Geometry3D\Extrusion\gears42P.O.x3d" />
+    <None Include="tests\Components\Lighting\lights\CharlotteSansBoldPlain.otf" />
+    <None Include="tests\Components\Lighting\lights\CharlotteSansBookPlain.otf" />
+    <None Include="tests\Components\Lighting\lights\Zeichnung.svg" />
+    <None Include="tests\Components\Lighting\lights\lights.png" />
+    <None Include="tests\Components\Lighting\lights\lights.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1091,5 +1096,6 @@
     <Folder Include="lib\sprintf.js\" />
     <Folder Include="lib\pako\" />
     <Folder Include="tests\Components\CADGeometry\" />
+    <Folder Include="tests\Components\Lighting\lights\" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Sun, 20 Dec 2015 16:23:08 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Sun, 20 Dec 2015 20:54:30 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"NONE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='0, 0, 10'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 1, 0'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 0'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <LayerSet
+        activeLayer='-1'
+        order='0, 1, 2'>
+      <Layer DEF='X3DLights'>
+        <Script DEF='EnterWorldScript'>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	Browser .setBrowserOption ("Shading",          "PHONG");
+	Browser .setBrowserOption ("PrimitiveQuality", "HIGH");
+}
+]]> 
+        </Script>
+        <NavigationInfo
+            type='"NONE"'
+            headlight='false'/>
+        <OrthoViewpoint/>
+        <Transform DEF='BlackRectangle2D'>
+          <Shape>
+            <Appearance>
+              <Material DEF='Metal27'
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  specularColor='0.780612 0.774022 0.752349'
+                  shininess='0.102041'/>
+            </Appearance>
+            <Rectangle2D DEF='_1'
+                size='20 20'/>
+          </Shape>
+        </Transform>
+        <Transform DEF='TouchPlane'>
+          <Transform DEF='Rectangle2D'
+              translation='0 0 0.15'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Metal27_1'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    shininess='0'
+                    transparency='1'/>
+              </Appearance>
+              <Rectangle2D USE='_1'/>
+            </Shape>
+          </Transform>
+          <TouchSensor DEF='LightsTouch'/>
+        </Transform>
+        <Transform DEF='Lights'
+            translation='0 0 0.15'>
+          <Group DEF='ColorAnimation'>
+            <MetadataSet DEF='Animation'
+                name='Animation'
+                reference='http://titania.create3000.de'>
+              <MetadataInteger DEF='duration' containerField='value'
+                  name='duration'
+                  reference='http://titania.create3000.de'
+                  value='300'/>
+              <MetadataInteger DEF='framesPerSecond' containerField='value'
+                  name='framesPerSecond'
+                  reference='http://titania.create3000.de'
+                  value='10'/>
+            </MetadataSet>
+            <TimeSensor DEF='_2'
+                cycleInterval='30'
+                loop='true'/>
+            <ColorInterpolator DEF='Light1ColorInterpolator'
+                key='0, 0.25, 0.5, 0.75, 1'
+                keyValue='1 0 0, 0.5 1 0, 0 1 1, 0.5 0 1, 1 0 0'>
+              <MetadataSet DEF='Interpolator'
+                  name='Interpolator'
+                  reference='http://titania.create3000.de'>
+                <MetadataInteger DEF='key' containerField='value'
+                    name='key'
+                    reference='http://titania.create3000.de'
+                    value='0, 75, 150, 225, 300'/>
+                <MetadataDouble DEF='keyValue' containerField='value'
+                    name='keyValue'
+                    reference='http://titania.create3000.de'
+                    value='1, 0, 0, 0.5, 1, 0, 0, 1, 1, 0.5, 0, 1, 1, 0, 0'/>
+                <MetadataString DEF='keyType' containerField='value'
+                    name='keyType'
+                    reference='http://titania.create3000.de'
+                    value='"LINEAR", "LINEAR", "LINEAR", "LINEAR", "LINEAR"'/>
+              </MetadataSet>
+            </ColorInterpolator>
+          </Group>
+          <PointLight DEF='Light1'
+              color='0.549502 1 0'
+              intensity='0.485815'
+              location='-1 0 0'/>
+          <PointLight DEF='Light2'
+              color='0.549502 1 0'
+              intensity='0.380469'
+              location='-0.714286 0 0'/>
+          <PointLight DEF='Light3'
+              color='0.549502 1 0'
+              intensity='0.960251'
+              location='-0.428571 0 0'/>
+          <PointLight DEF='Light4'
+              color='0.549502 1 0'
+              intensity='0.816945'
+              location='-0.142857 0 0'/>
+          <PointLight DEF='Light5'
+              color='0.549502 1 0'
+              intensity='0.0584624'
+              location='0.142857 0 0'/>
+          <PointLight DEF='Light6'
+              color='0.549502 1 0'
+              intensity='0.744044'
+              location='0.428571 0 0'/>
+          <PointLight DEF='Light7'
+              color='0.549502 1 0'
+              intensity='0.98627'
+              location='0.714286 0 0'/>
+          <PointLight DEF='Light8'
+              color='0.549502 1 0'
+              intensity='0.485815'
+              location='1 0 0'/>
+        </Transform>
+        <TimeSensor DEF='LightsTimer'
+            loop='true'/>
+        <Script DEF='LightsScript'>
+          <field accessType='inputOnly' type='SFBool' name='set_active'/>
+          <field accessType='inputOnly' type='SFVec3f' name='set_hitPoint'/>
+          <field accessType='inputOnly' type='SFTime' name='set_time'/>
+          <field accessType='inputOutput' type='SFTime' name='cycleInterval' value='2'/>
+<![CDATA[ecmascript:
+
+var
+	light      = 0,
+	lights     = [ ],
+	timeSensor = null,
+	startTime  = 0;
+
+function initialize ()
+{
+	for (var i = 1; i <= 8; ++ i)
+		lights .push (Browser .currentScene .getNamedNode ("Light" + i));
+
+	for (var i = 0; i < 8; ++ i)
+		lights [i] .location = new SFVec3f (i / 3.5 - 1, 0, 0);
+}
+
+function set_active (value)
+{
+	var
+		touchSensor = Browser .currentScene .getNamedNode ("LightsTouch"),
+		self        = Browser .currentScene .getNamedNode ("LightsScript");
+	
+	if (touchSensor .isActive)
+		Browser .addRoute (touchSensor, "hitPoint_changed", self, "set_hitPoint");
+	else
+		Browser .deleteRoute (touchSensor, "hitPoint_changed", self, "set_hitPoint");
+}
+
+function set_hitPoint (value, time)
+{
+	if (time - startTime > 0.1)
+	{
+		lights [light] .location = value;
+	
+		startTime = time;
+
+		light = (light + 1) % 8;
+	}
+}
+
+function set_time (value)
+{
+	set_time2 (value);
+}
+
+function set_time1 (time)
+{
+	time /= cycleInterval;
+
+	for (var i = 0; i < 8; ++ i)
+		lights [i] .intensity = get_intensity (time);
+}
+
+function set_time2 (time)
+{
+	var factor = cycleInterval / 7;
+
+	time /= cycleInterval;
+
+	for (var i = 0; i < 8; ++ i)
+		lights [i] .intensity = get_intensity (time - factor * i);
+}
+
+function get_intensity (value)
+{
+	return Math .sin ((value - Math .floor (value)) * Math .PI);
+}]]> 
+        </Script>
+      </Layer>
+      <Layer DEF='Text'>
+        <NavigationInfo
+            type='"NONE"'
+            headlight='false'/>
+        <OrthoViewpoint/>
+        <Transform DEF='lights'
+            translation='0 0.248408 0'
+            scale='0.524931 0.170407 2.699'>
+          <Shape>
+            <Appearance>
+              <ImageTexture
+                  url='"lights.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/lights/lights.png"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D
+                solid='false'/>
+          </Shape>
+        </Transform>
+        <Transform DEF='Text_1'
+            translation='0 -0.0191083 0'>
+          <Shape>
+            <Appearance>
+              <Material
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  emissiveColor='1 1 1'
+                  shininess='0'/>
+            </Appearance>
+            <Text
+                string='"An Interactive X3D Expirience"'
+                solid='true'>
+              <FontStyle DEF='_3'
+                  family='"CharlotteSansBoldPlain.otf", "SERIF"'
+                  size='0.08'
+                  justify='"MIDDLE", "MIDDLE"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='Disk2D'
+            translation='-0.15 -0.259941 0'>
+          <Shape DEF='_4'>
+            <Appearance>
+              <Material
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  emissiveColor='0.382 0.382 0.382'
+                  shininess='0'/>
+            </Appearance>
+            <Disk2D
+                outerRadius='0.14'/>
+          </Shape>
+          <Transform DEF='Text_2'>
+            <Shape>
+              <Appearance>
+                <Material DEF='_5'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    shininess='0'/>
+              </Appearance>
+              <Text
+                  string='"JOIN"'
+                  solid='true'>
+                <FontStyle USE='_3'/>
+              </Text>
+            </Shape>
+          </Transform>
+        </Transform>
+        <Transform DEF='Disk2D_1'
+            translation='0.15 -0.259941 0'>
+          <Shape USE='_4'/>
+          <Transform DEF='Text_3'>
+            <Shape>
+              <Appearance>
+                <Material USE='_5'/>
+              </Appearance>
+              <Text
+                  string='"US"'
+                  solid='true'>
+                <FontStyle USE='_3'/>
+              </Text>
+            </Shape>
+          </Transform>
+        </Transform>
+        <Transform DEF='Text_4'
+            translation='0 -0.617834 0'>
+          <Shape>
+            <Appearance>
+              <Material
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  emissiveColor='1 1 1'
+                  shininess='0'/>
+            </Appearance>
+            <Text
+                string='"Click and move your mouse to place", "the lights on the screen."'
+                solid='true'>
+              <FontStyle
+                  family='"CharlotteSansBookPlain.otf", "SERIF"'
+                  size='0.08'
+                  justify='"MIDDLE", "MIDDLE"'/>
+            </Text>
+          </Shape>
+        </Transform>
+      </Layer>
+    </LayerSet>
+    <ROUTE fromNode='LightsTouch' fromField='isActive' toNode='LightsScript' toField='set_active'/>
+    <ROUTE fromNode='LightsTimer' fromField='time' toNode='LightsScript' toField='set_time'/>
+    <ROUTE fromNode='Light1' fromField='color_changed' toNode='Light2' toField='set_color'/>
+    <ROUTE fromNode='Light1' fromField='color_changed' toNode='Light3' toField='set_color'/>
+    <ROUTE fromNode='Light1' fromField='color_changed' toNode='Light4' toField='set_color'/>
+    <ROUTE fromNode='Light1' fromField='color_changed' toNode='Light5' toField='set_color'/>
+    <ROUTE fromNode='Light1' fromField='color_changed' toNode='Light6' toField='set_color'/>
+    <ROUTE fromNode='Light1' fromField='color_changed' toNode='Light7' toField='set_color'/>
+    <ROUTE fromNode='Light1' fromField='color_changed' toNode='Light8' toField='set_color'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='Light1ColorInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='Light1ColorInterpolator' fromField='value_changed' toNode='Light1' toField='set_color'/>
+  </Scene>
+</X3D>
