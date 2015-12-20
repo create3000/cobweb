@@ -6,7 +6,7 @@
     <meta name='created' content='Sun, 20 Dec 2015 16:23:08 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 20 Dec 2015 20:54:30 GMT'/>
+    <meta name='modified' content='Sun, 20 Dec 2015 21:11:09 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -126,36 +126,36 @@ function initialize ()
             </ColorInterpolator>
           </Group>
           <PointLight DEF='Light1'
-              color='0.549502 1 0'
-              intensity='0.485815'
+              color='0 0.733859 1'
+              intensity='0.807937'
               location='-1 0 0'/>
           <PointLight DEF='Light2'
-              color='0.549502 1 0'
-              intensity='0.380469'
+              color='0 0.733859 1'
+              intensity='0.964449'
               location='-0.714286 0 0'/>
           <PointLight DEF='Light3'
-              color='0.549502 1 0'
-              intensity='0.960251'
+              color='0 0.733859 1'
+              intensity='0.394712'
               location='-0.428571 0 0'/>
           <PointLight DEF='Light4'
-              color='0.549502 1 0'
-              intensity='0.816945'
+              color='0 0.733859 1'
+              intensity='0.472252'
               location='-0.142857 0 0'/>
           <PointLight DEF='Light5'
-              color='0.549502 1 0'
-              intensity='0.0584624'
+              color='0 0.733859 1'
+              intensity='0.9836'
               location='0.142857 0 0'/>
           <PointLight DEF='Light6'
-              color='0.549502 1 0'
-              intensity='0.744044'
+              color='0 0.733859 1'
+              intensity='0.754277'
               location='0.428571 0 0'/>
           <PointLight DEF='Light7'
-              color='0.549502 1 0'
-              intensity='0.98627'
+              color='0 0.733859 1'
+              intensity='0.0430318'
               location='0.714286 0 0'/>
           <PointLight DEF='Light8'
-              color='0.549502 1 0'
-              intensity='0.485815'
+              color='0 0.733859 1'
+              intensity='0.807937'
               location='1 0 0'/>
         </Transform>
         <TimeSensor DEF='LightsTimer'
@@ -246,7 +246,7 @@ function get_intensity (value)
           <Shape>
             <Appearance>
               <ImageTexture
-                  url='"lights.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/lights/lights.png"'
+                  url='"lights.png", "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/lights/lights.png"'
                   repeatS='false'
                   repeatT='false'/>
             </Appearance>
@@ -265,7 +265,7 @@ function get_intensity (value)
                   shininess='0'/>
             </Appearance>
             <Text
-                string='"An Interactive X3D Expirience"'
+                string='"An Interactive X3D Experience"'
                 solid='true'>
               <FontStyle DEF='_3'
                   family='"CharlotteSansBoldPlain.otf", "SERIF"'
