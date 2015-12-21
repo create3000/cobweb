@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 21 Dec 2015 03:16:01 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 21 Dec 2015 05:31:21 GMT'/>
+    <meta name='modified' content='Mon, 21 Dec 2015 05:46:01 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -42,18 +42,27 @@
     <LayerSet
         order='0, 1, 2'>
       <Layer>
+        <Script DEF='EnterWorldScript'>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	Browser .setBrowserOption ("PrimitiveQuality", "HIGH");
+}
+]]> 
+        </Script>
         <OrthoViewpoint/>
         <Group DEF='Circles'>
           <Transform
-              translation='1.43619 -0.0580595 0'
-              rotation='0 0 1 0.590033'
-              scale='0.106594 0.106594 1'>
+              translation='1.60886 0.0744915 0'
+              rotation='-0 -0 -1 4.16288'
+              scale='0.199626 0.199626 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.261738'/>
+                    transparency='0.167182'/>
                 <ImageTexture DEF='_1'
                     url='"red.png", "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Texturing/circles/red.png"'
                     repeatS='false'
@@ -63,30 +72,15 @@
             </Shape>
           </Transform>
           <Transform
-              translation='0.932711 0.160076 0'
-              rotation='0 0 1 1.23425'
-              scale='0.158262 0.158262 1'>
+              translation='1.21197 0.0892171 0'
+              rotation='-0 -0 -1 2.4169'
+              scale='0.114141 0.114141 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.274555'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.82087 0.909882 0'
-              rotation='0 0 1 2.07635'
-              scale='0.161167 0.161167 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.291308'/>
+                    transparency='0.201917'/>
                 <ImageTexture DEF='_2'
                     url='"green.png", "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Texturing/circles/green.png"'
                     repeatS='false'
@@ -96,15 +90,75 @@
             </Shape>
           </Transform>
           <Transform
-              translation='0.311971 0.483832 0'
-              rotation='0 0 1 2.61624'
-              scale='0.0710548 0.0710548 1'>
+              translation='-1.37545 -0.592063 0'
+              rotation='-0 -0 -1 2.05769'
+              scale='0.151077 0.151077 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.302048'/>
+                    transparency='0.209063'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.887841 0.354593 0'
+              rotation='-0 -0 -1 1.70378'
+              scale='0.0576418 0.0576418 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.216104'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.328606 0.461491 0'
+              rotation='-0 -0 -1 0.543649'
+              scale='0.147496 0.147496 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.239184'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.855349 0.543082 0'
+              rotation='0 0 1 0.202829'
+              scale='0.129083 0.129083 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.254035'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.603821 -0.575878 0'
+              rotation='0 0 1 0.202829'
+              scale='0.159475 0.159475 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.254035'/>
                 <ImageTexture DEF='_3'
                     url='"blue.png", "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Texturing/circles/blue.png"'
                     repeatS='false'
@@ -114,1066 +168,1021 @@
             </Shape>
           </Transform>
           <Transform
-              translation='-0.441783 -0.924469 0'
-              rotation='0 0 1 3.14652'
-              scale='0.0934028 0.0934028 1'>
+              translation='-1.45118 -0.322411 0'
+              rotation='0 0 1 1.57934'
+              scale='0.167961 0.167961 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.312598'/>
+                    transparency='0.28142'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.44985 0.538365 0'
+              rotation='0 0 1 1.72834'
+              scale='0.13578 0.13578 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.284384'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.195545 0.436435 0'
-              rotation='0 0 1 4.08208'
-              scale='0.157873 0.157873 1'>
+              translation='-1.9965 -0.934529 0'
+              rotation='0 0 1 2.78766'
+              scale='0.155654 0.155654 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.33121'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.766874 0.0348526 0'
-              rotation='0 0 1 4.28933'
-              scale='0.100837 0.100837 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.335333'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.9489 -0.749858 0'
-              rotation='0 0 1 5.43561'
-              scale='0.0978123 0.0978123 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.358138'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.114085 -0.00495519 0'
-              rotation='0 0 1 6.01271'
-              scale='0.0742589 0.0742589 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.369619'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='1.41266 0.693104 0'
-              rotation='-0 -0 -1 5.66918'
-              scale='0.0696287 0.0696287 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.387215'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.1902 0.908247 0'
-              rotation='-0 -0 -1 5.34093'
-              scale='0.0518136 0.0518136 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.393746'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.423739 0.0423537 0'
-              rotation='-0 -0 -1 3.87841'
-              scale='0.0634749 0.0634749 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.422842'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='1.70635 0.321443 0'
-              rotation='-0 -0 -1 3.87841'
-              scale='0.106416 0.106416 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.422842'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.51362 0.849911 0'
-              rotation='-0 -0 -1 3.04297'
-              scale='0.0531723 0.0531723 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.439462'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.0958324 -0.829403 0'
-              rotation='-0 -0 -1 3.04297'
-              scale='0.109289 0.109289 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.439462'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.701142 -0.711923 0'
-              rotation='-0 -0 -1 1.55907'
-              scale='0.11306 0.11306 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.468983'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.110535 -0.10833 0'
-              rotation='-0 -0 -1 1.55907'
-              scale='0.064883 0.064883 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.468983'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.740501 -0.128907 0'
-              rotation='-0 -0 -1 0.0764795'
-              scale='0.072703 0.072703 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.498478'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.267929 0.544683 0'
-              rotation='0 0 1 0.386216'
-              scale='0.187462 0.187462 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.507684'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.0610451 0.655516 0'
-              rotation='0 0 1 1.18624'
-              scale='0.0798333 0.0798333 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.5236'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.327192 0.356624 0'
-              rotation='0 0 1 1.69039'
-              scale='0.126192 0.126192 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.533629'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.289761 -0.657172 0'
-              rotation='0 0 1 2.80905'
-              scale='0.118182 0.118182 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.555884'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.554284 0.325005 0'
-              rotation='0 0 1 2.80905'
-              scale='0.0774231 0.0774231 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.555884'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.82185 -0.174893 0'
-              rotation='0 0 1 3.40859'
-              scale='0.0531304 0.0531304 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.567812'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.68588 -0.828101 0'
-              rotation='0 0 1 4.14828'
-              scale='0.196579 0.196579 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.582527'/>
+                    transparency='0.305459'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.60993 -0.93326 0'
-              rotation='0 0 1 4.86935'
-              scale='0.100351 0.100351 1'>
+              translation='-0.505134 -0.528686 0'
+              rotation='0 0 1 3.49857'
+              scale='0.180974 0.180974 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.596873'/>
+                    transparency='0.319602'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.43916 0.0689959 0'
+              rotation='0 0 1 4.7235'
+              scale='0.0848577 0.0848577 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.343971'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.0621887 0.0834345 0'
+              rotation='0 0 1 4.7235'
+              scale='0.17752 0.17752 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.343971'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-1.80845 -0.69523 0'
-              rotation='0 0 1 5.86219'
-              scale='0.181059 0.181059 1'>
+              translation='-0.808279 -0.387222 0'
+              rotation='0 0 1 5.75178'
+              scale='0.171357 0.171357 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.616624'/>
+                    transparency='0.364428'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.29356 -0.12237 0'
+              rotation='0 0 1 5.75178'
+              scale='0.120856 0.120856 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.364428'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.321135 -0.665877 0'
+              rotation='-0 -0 -1 5.98423'
+              scale='0.193322 0.193322 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.380947'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-0.503385 0.137006 0'
-              rotation='-0 -0 -1 6.14576'
-              scale='0.0690138 0.0690138 1'>
+              translation='0.554481 -0.304882 0'
+              rotation='-0 -0 -1 5.98423'
+              scale='0.0881837 0.0881837 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.627734'/>
+                    transparency='0.380947'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.43319 -0.295406 0'
+              rotation='-0 -0 -1 4.15862'
+              scale='0.0522602 0.0522602 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.417267'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.838074 -0.597334 0'
+              rotation='-0 -0 -1 3.70593'
+              scale='0.0853568 0.0853568 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.426273'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.589101 0.569431 0'
-              rotation='-0 -0 -1 5.31763'
-              scale='0.114885 0.114885 1'>
+              translation='0.857279 -0.796435 0'
+              rotation='-0 -0 -1 2.41779'
+              scale='0.0617916 0.0617916 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.644209'/>
+                    transparency='0.4519'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-1.37141 -0.902009 0'
-              rotation='-0 -0 -1 5.31763'
-              scale='0.144816 0.144816 1'>
+              translation='-1.49615 0.933958 0'
+              rotation='-0 -0 -1 2.26048'
+              scale='0.0690795 0.0690795 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.644209'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='1.85587 -0.767501 0'
-              rotation='-0 -0 -1 4.1127'
-              scale='0.128257 0.128257 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.66818'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.323311 0.523282 0'
-              rotation='-0 -0 -1 3.69025'
-              scale='0.0795907 0.0795907 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.676585'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.988855 -0.248131 0'
-              rotation='-0 -0 -1 2.78866'
-              scale='0.160705 0.160705 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.694521'/>
+                    transparency='0.455029'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.00422 -0.515692 0'
-              rotation='-0 -0 -1 2.02999'
-              scale='0.0729205 0.0729205 1'>
+              translation='0.765668 0.345032 0'
+              rotation='-0 -0 -1 1.21926'
+              scale='0.0960293 0.0960293 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.709615'/>
+                    transparency='0.475744'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.79969 -0.0336482 0'
+              rotation='-0 -0 -1 1.21926'
+              scale='0.121192 0.121192 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.475744'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-0.275185 0.730592 0'
-              rotation='-0 -0 -1 1.93785'
-              scale='0.166286 0.166286 1'>
+              translation='1.27822 -0.40446 0'
+              rotation='-0 -0 -1 0.326159'
+              scale='0.152911 0.152911 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.711448'/>
+                    transparency='0.493511'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.657134 -0.754676 0'
-              rotation='-0 -0 -1 0.695114'
-              scale='0.0715069 0.0715069 1'>
+              translation='-1.94762 -0.664687 0'
+              rotation='0 0 1 0.121825'
+              scale='0.14151 0.14151 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.736171'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.25484 -0.827736 0'
-              rotation='0 0 1 0.0273265'
-              scale='0.150455 0.150455 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.750544'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.116861 -0.164611 0'
-              rotation='0 0 1 0.301475'
-              scale='0.171297 0.171297 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.755998'/>
+                    transparency='0.502424'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-0.946786 0.898063 0'
-              rotation='0 0 1 1.32303'
-              scale='0.0894265 0.0894265 1'>
+              translation='1.54244 -0.192162 0'
+              rotation='0 0 1 0.518857'
+              scale='0.125702 0.125702 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.776321'/>
+                    transparency='0.510322'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.57435 -0.0964295 0'
-              rotation='0 0 1 2.13957'
-              scale='0.0851526 0.0851526 1'>
+              translation='-1.31301 -0.452589 0'
+              rotation='0 0 1 1.99714'
+              scale='0.09869 0.09869 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.792565'/>
+                    transparency='0.539732'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.47403 0.669445 0'
+              rotation='0 0 1 2.95713'
+              scale='0.0850645 0.0850645 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.55883'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.301016 0.0882606 0'
+              rotation='0 0 1 3.15637'
+              scale='0.0885238 0.0885238 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.562794'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-0.275971 -0.000960019 0'
-              rotation='0 0 1 2.2941'
-              scale='0.128103 0.128103 1'>
+              translation='-0.179905 -0.292487 0'
+              rotation='0 0 1 3.15637'
+              scale='0.114582 0.114582 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.79564'/>
+                    transparency='0.562794'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-0.576847 0.802254 0'
-              rotation='0 0 1 3.70089'
-              scale='0.145336 0.145336 1'>
+              translation='1.58899 0.724439 0'
+              rotation='0 0 1 4.7362'
+              scale='0.122351 0.122351 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.823627'/>
+                    transparency='0.594224'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-1.72913 0.189081 0'
-              rotation='0 0 1 4.17266'
-              scale='0.10999 0.10999 1'>
+              translation='-0.398135 -0.723388 0'
+              rotation='0 0 1 5.31748'
+              scale='0.107152 0.107152 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.833012'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.66734 -0.207671 0'
-              rotation='0 0 1 4.66372'
-              scale='0.153858 0.153858 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.842782'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.693852 -0.989313 0'
-              rotation='0 0 1 5.5652'
-              scale='0.0618803 0.0618803 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.860716'/>
+                    transparency='0.605788'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-1.60547 -0.451615 0'
-              rotation='0 0 1 6.23903'
-              scale='0.0913426 0.0913426 1'>
+              translation='0.0786932 -0.776054 0'
+              rotation='0 0 1 5.58058'
+              scale='0.134033 0.134033 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.874122'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.368465 -0.485993 0'
-              rotation='-0 -0 -1 5.68772'
-              scale='0.130997 0.130997 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.886846'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.86708 0.624097 0'
-              rotation='-0 -0 -1 5.50541'
-              scale='0.180372 0.180372 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.890473'/>
+                    transparency='0.611022'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.14805 -0.985104 0'
-              rotation='-0 -0 -1 4.23381'
-              scale='0.153693 0.153693 1'>
+              translation='1.77826 0.856779 0'
+              rotation='-0 -0 -1 5.64318'
+              scale='0.0872302 0.0872302 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.915771'/>
+                    transparency='0.637732'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.56242 0.391392 0'
+              rotation='-0 -0 -1 5.64318'
+              scale='0.155592 0.155592 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.637732'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.261911 -0.551541 0'
-              rotation='-0 -0 -1 3.75153'
-              scale='0.170537 0.170537 1'>
+              translation='-0.849207 0.483435 0'
+              rotation='-0 -0 -1 4.96778'
+              scale='0.0895927 0.0895927 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.925366'/>
+                    transparency='0.651169'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.513878 -0.0755331 0'
-              rotation='-0 -0 -1 2.84175'
-              scale='0.119111 0.119111 1'>
+              translation='1.07328 0.850987 0'
+              rotation='-0 -0 -1 4.22376'
+              scale='0.166935 0.166935 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.943465'/>
+                    transparency='0.665971'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.88468 -0.353019 0'
+              rotation='-0 -0 -1 4.22376'
+              scale='0.113041 0.113041 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.665971'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.567852 0.545783 0'
+              rotation='-0 -0 -1 2.79567'
+              scale='0.177177 0.177177 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.694382'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.56209 -0.353872 0'
+              rotation='-0 -0 -1 1.3858'
+              scale='0.114763 0.114763 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.72243'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.34148 -0.593267 0'
+              rotation='-0 -0 -1 1.3858'
+              scale='0.187618 0.187618 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.72243'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.70334 0.823091 0'
-              rotation='-0 -0 -1 2.4705'
-              scale='0.195423 0.195423 1'>
+              translation='0.422524 0.612805 0'
+              rotation='-0 -0 -1 0.131034'
+              scale='0.185352 0.185352 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.950851'/>
+                    transparency='0.747393'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.872384 0.524376 0'
-              rotation='-0 -0 -1 1.95981'
-              scale='0.112218 0.112218 1'>
+              translation='1.48191 -0.764426 0'
+              rotation='0 0 1 0.166099'
+              scale='0.069784 0.069784 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.961011'/>
+                    transparency='0.753304'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-1.4976 0.168262 0'
-              rotation='-0 -0 -1 1.36539'
-              scale='0.0895634 0.0895634 1'>
+              translation='-1.70858 0.263597 0'
+              rotation='0 0 1 1.29518'
+              scale='0.117208 0.117208 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.972836'/>
+                    transparency='0.775767'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.51451 -0.96622 0'
-              rotation='-0 -0 -1 0.421397'
-              scale='0.197196 0.197196 1'>
+              translation='-0.101202 -0.47585 0'
+              rotation='0 0 1 1.42337'
+              scale='0.106414 0.106414 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.991617'/>
+                    transparency='0.778317'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.9466 0.983446 0'
-              rotation='0 0 1 0.0931128'
-              scale='0.189004 0.189004 1'>
+              translation='-1.60933 -0.0404439 0'
+              rotation='0 0 1 2.60571'
+              scale='0.181551 0.181551 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.00185243'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.277409 0.273756 0'
-              rotation='0 0 1 0.801847'
-              scale='0.1538 0.1538 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.0159522'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.3025 0.492169 0'
-              rotation='0 0 1 1.59813'
-              scale='0.0526027 0.0526027 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.0317939'/>
+                    transparency='0.801839'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-1.40961 0.711536 0'
-              rotation='0 0 1 1.59813'
-              scale='0.051531 0.051531 1'>
+              translation='0.677488 -0.529178 0'
+              rotation='0 0 1 2.93472'
+              scale='0.101703 0.101703 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.0317939'/>
+                    transparency='0.808384'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-0.567262 0.288938 0'
-              rotation='0 0 1 3.3563'
-              scale='0.0921408 0.0921408 1'>
+              translation='-1.77483 0.344024 0'
+              rotation='0 0 1 3.08052'
+              scale='0.142512 0.142512 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.0667714'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.701679 0.728868 0'
-              rotation='0 0 1 3.3563'
-              scale='0.140649 0.140649 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.0667714'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='1.13114 -0.294295 0'
-              rotation='0 0 1 3.3563'
-              scale='0.149125 0.149125 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.0667714'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.68712 -0.182701 0'
-              rotation='0 0 1 5.16253'
-              scale='0.126174 0.126174 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.102705'/>
+                    transparency='0.811285'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='1.03335 0.92045 0'
-              rotation='0 0 1 5.82951'
-              scale='0.0859341 0.0859341 1'>
+              translation='1.51028 0.298944 0'
+              rotation='0 0 1 4.43242'
+              scale='0.168666 0.168666 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.115975'/>
+                    transparency='0.83818'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.89981 -0.42654 0'
+              rotation='0 0 1 4.43242'
+              scale='0.133117 0.133117 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.83818'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.350237 0.0131056 0'
-              rotation='0 0 1 6.13886'
-              scale='0.11346 0.11346 1'>
+              translation='-0.309733 -0.93322 0'
+              rotation='0 0 1 5.83048'
+              scale='0.0846425 0.0846425 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.122129'/>
+                    transparency='0.865994'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.425395 0.968657 0'
+              rotation='-0 -0 -1 6.12715'
+              scale='0.0718042 0.0718042 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.878104'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.41615 -0.607615 0'
+              rotation='-0 -0 -1 5.4795'
+              scale='0.138304 0.138304 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.890989'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.10907 0.595548 0'
+              rotation='-0 -0 -1 5.02611'
+              scale='0.1903 0.1903 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.900009'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.54998 0.820987 0'
+              rotation='-0 -0 -1 5.02611'
+              scale='0.0870705 0.0870705 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.900009'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.244863 -0.990274 0'
-              rotation='-0 -0 -1 5.49247'
-              scale='0.10575 0.10575 1'>
+              translation='-0.547296 0.165918 0'
+              rotation='-0 -0 -1 4.16366'
+              scale='0.139498 0.139498 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.140731'/>
+                    transparency='0.917167'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.609584 0.858411 0'
-              rotation='-0 -0 -1 4.57047'
-              scale='0.11326 0.11326 1'>
+              translation='0.515331 0.751245 0'
+              rotation='-0 -0 -1 3.45556'
+              scale='0.154162 0.154162 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.159073'/>
+                    transparency='0.931254'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.379072 0.618186 0'
+              rotation='-0 -0 -1 2.73426'
+              scale='0.176492 0.176492 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.945604'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.86965 0.609794 0'
+              rotation='-0 -0 -1 2.73426'
+              scale='0.198227 0.198227 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.945604'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.357608 -0.971754 0'
+              rotation='-0 -0 -1 0.429762'
+              scale='0.097551 0.097551 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.99145'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.0657458 0.230199 0'
+              rotation='-0 -0 -1 0.429762'
+              scale='0.188065 0.188065 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.99145'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.44948 0.0895678 0'
+              rotation='-0 -0 -1 0.429762'
+              scale='0.149357 0.149357 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.99145'/>
+                <ImageTexture USE='_1'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.0021802 -0.307667 0'
+              rotation='0 0 1 0.966104'
+              scale='0.138593 0.138593 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.01922'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.27191 0.916299 0'
+              rotation='0 0 1 1.98352'
+              scale='0.117054 0.117054 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.0394609'/>
                 <ImageTexture USE='_3'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.0651513 -0.738764 0'
-              rotation='-0 -0 -1 4.00449'
-              scale='0.104109 0.104109 1'>
+              translation='0.319964 -0.0171609 0'
+              rotation='0 0 1 1.98352'
+              scale='0.0953125 0.0953125 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.170333'/>
+                    transparency='0.0394609'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.99139 -0.32111 0'
+              rotation='0 0 1 1.98352'
+              scale='0.090025 0.090025 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.0394609'/>
                 <ImageTexture USE='_1'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-1.5189 0.835201 0'
-              rotation='-0 -0 -1 3.67381'
-              scale='0.087285 0.087285 1'>
+              translation='-1.02902 0.32411 0'
+              rotation='0 0 1 3.96269'
+              scale='0.0570483 0.0570483 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.176912'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-1.66002 0.550763 0'
-              rotation='-0 -0 -1 2.65602'
-              scale='0.180781 0.180781 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.19716'/>
-                <ImageTexture USE='_1'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='-0.151897 -0.282662 0'
-              rotation='-0 -0 -1 2.65602'
-              scale='0.160175 0.160175 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.19716'/>
+                    transparency='0.0788352'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='-0.840491 0.775423 0'
-              rotation='-0 -0 -1 1.34928'
-              scale='0.161602 0.161602 1'>
+              translation='-1.34593 0.778649 0'
+              rotation='0 0 1 4.46707'
+              scale='0.184075 0.184075 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.223157'/>
+                    transparency='0.0888696'/>
                 <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
           </Transform>
           <Transform
-              translation='0.574015 0.17186 0'
-              rotation='-0 -0 -1 0.896425'
-              scale='0.128673 0.128673 1'>
+              translation='1.2796 0.149671 0'
+              rotation='0 0 1 5.05715'
+              scale='0.11396 0.11396 1'>
             <Shape>
               <Appearance>
                 <Material
                     diffuseColor='0 0 0'
                     emissiveColor='1 1 1'
-                    transparency='0.232166'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='0.428738 -0.605347 0'
-              rotation='-0 -0 -1 0.896425'
-              scale='0.170243 0.170243 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.232166'/>
-                <ImageTexture USE='_2'/>
-              </Appearance>
-              <Disk2D/>
-            </Shape>
-          </Transform>
-          <Transform
-              translation='1.32946 0.429841 0'
-              rotation='0 0 1 0.590033'
-              scale='0.11609 0.11609 1'>
-            <Shape>
-              <Appearance>
-                <Material
-                    diffuseColor='0 0 0'
-                    emissiveColor='1 1 1'
-                    transparency='0.261738'/>
+                    transparency='0.100609'/>
                 <ImageTexture USE='_3'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.12642 0.45936 0'
+              rotation='0 0 1 5.86852'
+              scale='0.147155 0.147155 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.116751'/>
+                <ImageTexture USE='_3'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.76737 -0.123834 0'
+              rotation='0 0 1 5.86852'
+              scale='0.195202 0.195202 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.116751'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-0.682578 0.0413031 0'
+              rotation='-0 -0 -1 5.44959'
+              scale='0.135016 0.135016 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.141584'/>
+                <ImageTexture USE='_3'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='1.32353 0.673486 0'
+              rotation='-0 -0 -1 4.49898'
+              scale='0.080118 0.080118 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.160496'/>
+                <ImageTexture USE='_3'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='0.851991 -0.0832872 0'
+              rotation='-0 -0 -1 4.49898'
+              scale='0.0709628 0.0709628 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.160496'/>
+                <ImageTexture USE='_2'/>
+              </Appearance>
+              <Disk2D/>
+            </Shape>
+          </Transform>
+          <Transform
+              translation='-1.40455 -0.199526 0'
+              rotation='-0 -0 -1 4.16288'
+              scale='0.150128 0.150128 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    transparency='0.167182'/>
+                <ImageTexture USE='_2'/>
               </Appearance>
               <Disk2D/>
             </Shape>
@@ -1197,8 +1206,8 @@
           <field accessType='inputOnly' type='SFVec3f' name='set_hitPoint'/>
           <field accessType='inputOnly' type='SFTime' name='set_time'/>
           <field accessType='initializeOnly' type='MFNode' name='textures'>
-            <ImageTexture USE='_1'/>
             <ImageTexture USE='_2'/>
+            <ImageTexture USE='_1'/>
             <ImageTexture USE='_3'/>
           </field>
 <![CDATA[ecmascript:
