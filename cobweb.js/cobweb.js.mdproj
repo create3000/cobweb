@@ -1053,6 +1053,11 @@
     <None Include="tests\Components\Lighting\lights\Zeichnung.svg" />
     <None Include="tests\Components\Lighting\lights\lights.png" />
     <None Include="tests\Components\Lighting\lights\lights.x3d" />
+    <None Include="tests\Components\Texturing\circles\blue.png" />
+    <None Include="tests\Components\Texturing\circles\circles.png" />
+    <None Include="tests\Components\Texturing\circles\green.png" />
+    <None Include="tests\Components\Texturing\circles\red.png" />
+    <None Include="tests\Components\Texturing\circles\circles.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1097,5 +1102,6 @@
     <Folder Include="lib\pako\" />
     <Folder Include="tests\Components\CADGeometry\" />
     <Folder Include="tests\Components\Lighting\lights\" />
+    <Folder Include="tests\Components\Texturing\circles\" />
   </ItemGroup>
 </Project>

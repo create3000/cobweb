@@ -110,6 +110,32 @@
          stdDeviation="5.3268781"
          id="feGaussianBlur4436" />
     </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4434-4"
+       x="-0.047625363"
+       width="1.0952507"
+       y="-0.1474804"
+       height="1.2949609">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="5.3268781"
+         id="feGaussianBlur4436-6" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4430-5"
+       x="-0.047625363"
+       width="1.0952507"
+       y="-0.1474804"
+       height="1.2949609">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="5.3268781"
+         id="feGaussianBlur4432-8" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -122,7 +148,7 @@
      inkscape:cx="445.25985"
      inkscape:cy="-107.53865"
      inkscape:document-units="px"
-     inkscape:current-layer="g4413"
+     inkscape:current-layer="g4413-8"
      showgrid="false"
      units="px"
      inkscape:snap-page="true"
@@ -149,7 +175,7 @@
        style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:16;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4155-1-6"
        width="393.85715"
-       height="255.99998"
+       height="377"
        x="325.40283"
        y="1059.7607"
        inkscape:export-xdpi="45.000004"
@@ -157,7 +183,8 @@
     <g
        id="g4413"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
+       inkscape:export-ydpi="90"
+       transform="translate(1,2)">
       <text
          sodipodi:linespacing="100%"
          id="text4225-1-6-0"
@@ -220,7 +247,8 @@
        x="0"
        y="796.36218"
        inkscape:export-xdpi="45.000004"
-       inkscape:export-ydpi="45.000004" />
+       inkscape:export-ydpi="45.000004"
+       inkscape:export-filename="/home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Texturing/lights2/blue.png" />
     <rect
        style="opacity:1;fill:url(#linearGradient4163-1);fill-opacity:1;stroke:none;stroke-width:16;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4155-9"
@@ -229,7 +257,8 @@
        x="272.23611"
        y="796.86725"
        inkscape:export-xdpi="45.000004"
-       inkscape:export-ydpi="45.000004" />
+       inkscape:export-ydpi="45.000004"
+       inkscape:export-filename="/home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Texturing/lights2/green.png" />
     <rect
        style="opacity:1;fill:url(#linearGradient4163-8);fill-opacity:1;stroke:none;stroke-width:16;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4155-1"
@@ -238,6 +267,66 @@
        x="4.5456862"
        y="1084.7607"
        inkscape:export-xdpi="45.000004"
-       inkscape:export-ydpi="45.000004" />
+       inkscape:export-ydpi="45.000004"
+       inkscape:export-filename="/home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Texturing/lights2/red.png" />
+    <g
+       id="g4413-8"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="translate(3.9999959,136)">
+      <text
+         sodipodi:linespacing="100%"
+         id="text4225-1-6-1-4"
+         y="1147.3622"
+         x="524.68323"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans, Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#feaf00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4430-5)"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#feaf00;fill-opacity:1"
+           y="1147.3622"
+           x="524.68323"
+           id="tspan4227-5-7-7-5"
+           sodipodi:role="line">Cobweb X3D Browser</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:90px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#feaf00;fill-opacity:1"
+           id="tspan4229-5-3-9-8"
+           y="1218.7383"
+           x="524.68323"
+           sodipodi:role="line">CIRCLES</tspan></text>
+      <text
+         sodipodi:linespacing="100%"
+         id="text4225-1-6-0-8"
+         y="1147.3622"
+         x="524.68323"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans, Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#feaf00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4434-4)"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#feaf00;fill-opacity:1"
+           y="1147.3622"
+           x="524.68323"
+           id="tspan4227-5-7-5-1"
+           sodipodi:role="line">Cobweb X3D Browser</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:90px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#feaf00;fill-opacity:1"
+           id="tspan4229-5-3-7-8"
+           y="1218.7383"
+           x="524.68323"
+           sodipodi:role="line">CIRCLES</tspan></text>
+      <text
+         sodipodi:linespacing="100%"
+         id="text4225-5"
+         y="1147.3622"
+         x="524.68323"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans, Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1"
+           y="1147.3622"
+           x="524.68323"
+           id="tspan4227-8"
+           sodipodi:role="line">Cobweb X3D Browser</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:90px;line-height:100%;font-family:'Charlotte Sans';-inkscape-font-specification:'Charlotte Sans';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1"
+           id="tspan4229-7"
+           y="1218.7383"
+           x="524.68323"
+           sodipodi:role="line">CIRCLES</tspan></text>
+    </g>
   </g>
 </svg>
