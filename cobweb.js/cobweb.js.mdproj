@@ -1058,6 +1058,7 @@
     <None Include="tests\Components\Texturing\circles\green.png" />
     <None Include="tests\Components\Texturing\circles\red.png" />
     <None Include="tests\Components\Texturing\circles\circles.x3d" />
+    <None Include="tests\Components\PROTO\Noise\noise.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1103,5 +1104,6 @@
     <Folder Include="tests\Components\CADGeometry\" />
     <Folder Include="tests\Components\Lighting\lights\" />
     <Folder Include="tests\Components\Texturing\circles\" />
+    <Folder Include="tests\Components\PROTO\Noise\" />
   </ItemGroup>
 </Project>
