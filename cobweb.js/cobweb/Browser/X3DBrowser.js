@@ -163,9 +163,6 @@ function ($,
 
 			this .description = "";
 			this .setBrowserLoading (true);
-			this .getLoadingElement () .css ("display", "block");
-			this .getCanvas () .css ("display", "none");
-			this .resetLoadCount ();
 			this .loadCount_ .addFieldCallback ("bindWorld" + id, this .bindWorld .bind (this, id));
 
 			// isLive
@@ -188,14 +185,12 @@ function ($,
 			if (value)
 				return;
 
-			this .setBrowserLoading (false);
 			this .loadCount_ .removeFieldCallback ("bindWorld" + id);
 
 			setTimeout (function ()
 			{
 				this .getWorld () .bind ();
-				this .getCanvas () .fadeIn (2000);
-				this .getLoadingElement () .fadeOut (2000);
+				this .setBrowserLoading (false);
 			}
 			.bind (this), 0);
 		},
@@ -304,8 +299,6 @@ function ($,
 			}
 
 			this .setBrowserLoading (true);
-			this .getLoadingElement () .css ("display", "block");
-			this .getCanvas () .css ("display", "none");
 
 			var id = this .addLoadCount ();
 

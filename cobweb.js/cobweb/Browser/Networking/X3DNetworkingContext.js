@@ -62,6 +62,18 @@ function (Fields,
 		setBrowserLoading: function (value)
 		{
 			this .browserLoading = value;
+
+			if (value)
+			{
+				this .resetLoadCount ();
+				this .getCanvas () .css ("display", "none");
+				this .getLoadingElement () .css ("display", "block");
+			}
+			else
+			{
+				this .getLoadingElement () .fadeOut (2000);
+				this .getCanvas () .fadeIn (2000);
+			}
 		},
 		addLoadCount: function ()
 		{
