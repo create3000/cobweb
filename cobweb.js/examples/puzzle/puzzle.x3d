@@ -6,13 +6,18 @@
     <meta name='created' content='Mon, 21 Dec 2015 20:19:56 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Dec 2015 09:02:32 GMT'/>
+    <meta name='modified' content='Tue, 22 Dec 2015 10:02:15 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv"'>
       <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
       <field accessType='inputOutput' type='MFInt32' name='keyValue'/>
       <field accessType='outputOnly' type='MFInt32' name='value_changed'/>
+    </ExternProtoDeclare>
+    <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
+      <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
+      <field accessType='inputOutput' type='SFNode' name='keyValue'/>
+      <field accessType='outputOnly' type='SFNode' name='value_changed'/>
     </ExternProtoDeclare>
     <WorldInfo>
       <MetadataSet DEF='Titania'
@@ -60,11 +65,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-1.62233185768127, 5.22133874893188, 8.42172908782959'/>
+              value='0, 0, 10'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.844623446464539, -0.098553478717804, 0.526211440563202, 0.681052207946777'/>
+              value='0, 0, 1, 0'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -131,7 +136,7 @@
         </MetadataSet>
         <Viewport
             clipBoundary='0.4, 1, 0, 1'/>
-        <OrthoViewpoint
+        <OrthoViewpoint DEF='_1'
             fieldOfView='-1.2, -1.2, 1.2, 1.2'/>
         <Transform DEF='Rectangle2D_1'
             scale='1.04 1.04 1.04'>
@@ -152,8 +157,8 @@
               translation='-0.8 0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture DEF='_1'
+              <Appearance DEF='_2'>
+                <ImageTexture DEF='_3'
                     url='"city.jpg"'
                     repeatS='false'
                     repeatT='false'/>
@@ -161,9 +166,9 @@
                     translation='0 4'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D DEF='_2'/>
+              <Rectangle2D DEF='_4'/>
             </Shape>
-            <Shape DEF='_3'>
+            <Shape DEF='_5'>
               <Appearance>
                 <LineProperties
                     linewidthScaleFactor='2'/>
@@ -173,350 +178,350 @@
               <Polyline2D
                   lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
             </Shape>
-            <TouchSensor DEF='_4'/>
+            <TouchSensor DEF='_6'/>
           </Transform>
           <Transform DEF='Polyline2D_1'
               translation='-0.4 0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_7'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='1 4'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_5'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_8'/>
           </Transform>
           <Transform DEF='Polyline2D_2'
               translation='0 0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_9'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='2 4'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_6'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_10'/>
           </Transform>
           <Transform DEF='Polyline2D_3'
               translation='0.4 0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_11'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='3 4'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_7'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_12'/>
           </Transform>
           <Transform DEF='Polyline2D_4'
               translation='0.8 0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_13'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='4 4'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_8'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_14'/>
           </Transform>
           <Transform DEF='Polyline2D_5'
               translation='-0.8 0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_15'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='0 3'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_9'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_16'/>
           </Transform>
           <Transform DEF='Polyline2D_6'
               translation='-0.4 0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_17'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='1 3'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_10'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_18'/>
           </Transform>
           <Transform DEF='Polyline2D_7'
               translation='0 0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_19'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='2 3'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_11'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_20'/>
           </Transform>
           <Transform DEF='Polyline2D_8'
               translation='0.4 0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_21'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='3 3'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_12'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_22'/>
           </Transform>
           <Transform DEF='Polyline2D_9'
               translation='0.8 0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_23'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='4 3'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_13'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_24'/>
           </Transform>
           <Transform DEF='Polyline2D_10'
               translation='-0.8 0 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_25'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='0 2'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_14'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_26'/>
           </Transform>
           <Transform DEF='Polyline2D_11'
               translation='-0.4 0 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_27'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='1 2'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_15'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_28'/>
           </Transform>
           <Transform DEF='Polyline2D_12'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_29'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='2 2'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_16'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_30'/>
           </Transform>
           <Transform DEF='Polyline2D_13'
               translation='0.4 0 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_31'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='3 2'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_17'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_32'/>
           </Transform>
           <Transform DEF='Polyline2D_14'
               translation='0.8 0 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_33'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='4 2'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_18'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_34'/>
           </Transform>
           <Transform DEF='Polyline2D_15'
               translation='-0.8 -0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_35'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='0 1'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_19'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_36'/>
           </Transform>
           <Transform DEF='Polyline2D_16'
               translation='-0.4 -0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_37'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='1 1'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_20'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_38'/>
           </Transform>
           <Transform DEF='Polyline2D_17'
               translation='0 -0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_39'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='2 1'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_21'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_40'/>
           </Transform>
           <Transform DEF='Polyline2D_18'
               translation='0.4 -0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_41'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='3 1'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_22'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_42'/>
           </Transform>
           <Transform DEF='Polyline2D_19'
               translation='0.8 -0.4 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_43'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='4 1'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_23'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_44'/>
           </Transform>
           <Transform DEF='Polyline2D_20'
               translation='-0.8 -0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_45'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_24'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_46'/>
           </Transform>
           <Transform DEF='Polyline2D_21'
               translation='-0.4 -0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_47'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='1 0'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_25'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_48'/>
           </Transform>
           <Transform DEF='Polyline2D_22'
               translation='0 -0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_49'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='2 0'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_26'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_50'/>
           </Transform>
           <Transform DEF='Polyline2D_23'
               translation='0.4 -0.8 0'
               scale='0.18 0.18 1'>
             <Shape>
-              <Appearance>
-                <ImageTexture USE='_1'/>
+              <Appearance DEF='_51'>
+                <ImageTexture USE='_3'/>
                 <TextureTransform
                     translation='3 0'
                     scale='0.2 0.2'/>
               </Appearance>
-              <Rectangle2D USE='_2'/>
+              <Rectangle2D USE='_4'/>
             </Shape>
-            <Shape USE='_3'/>
-            <TouchSensor DEF='_27'/>
+            <Shape USE='_5'/>
+            <TouchSensor DEF='_52'/>
           </Transform>
         </Transform>
         <Script DEF='MixScript'>
@@ -550,12 +555,12 @@
           <field accessType='inputOutput' type='SFInt32' name='yDimension' value='5'/>
           <field accessType='inputOutput' type='SFVec2f' name='size' value='0.2 0.2'/>
           <field accessType='inputOutput' type='SFTime' name='velocity' value='3'/>
-          <field accessType='inputOutput' type='SFTime' name='solveTime' value='1450774572.34138'/>
-          <field accessType='inputOutput' type='SFTime' name='startTime' value='1450774137.36473'/>
+          <field accessType='inputOutput' type='SFTime' name='solveTime' value='1450776485.91701'/>
+          <field accessType='inputOutput' type='SFTime' name='startTime' value='1450776465.57346'/>
           <field accessType='inputOnly' type='SFTime' name='set_time'/>
           <field accessType='initializeOnly' type='MFInt32' name='matrix' value='0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, -1'/>
           <field accessType='initializeOnly' type='SFNode' name='timer'>
-            <TimeSensor DEF='_28'
+            <TimeSensor DEF='_53'
                 enabled='false'
                 loop='true'/>
           </field>
@@ -697,7 +702,6 @@ function set_touchTime23 ()
 
 function set_touchTime (index)
 {
-print (index);
 	var coords = { };
 
 	for (var y = 0; y < yDimension; ++ y)
@@ -710,7 +714,6 @@ print (index);
 			{
 				coords .x = x;
 				coords .y = y;
-				print ("bah");
 			}
 		}
 	}
@@ -789,7 +792,7 @@ function set_time (value)
 	{
 		var
 			dt = 1 / Browser .currentFrameRate,
-			dv = velocity * dt;
+			dv = velocity * dt / (touched ? 4 : 1);
 			
 		if (move .x !== undefined)
 		{
@@ -917,6 +920,7 @@ function random (min, max)
 	return Math .floor (Math .random () * (max - min)) + min;
 }]]> 
         </Script>
+        <ProtoInstance name='SFNode' DEF='Image'/>
       </Layer>
       <Layer>
         <MetadataSet DEF='Titania_2'
@@ -944,22 +948,20 @@ function random (min, max)
             <MetadataInteger DEF='dimension_2' containerField='value'
                 name='dimension'
                 reference='http://titania.create3000.de'
-                value='46, 10, 39'/>
+                value='100, 10, 94'/>
             <MetadataFloat DEF='scale_2' containerField='value'
                 name='scale'
                 reference='http://titania.create3000.de'
                 value='0.05, 0.05, 0.05'/>
           </MetadataSet>
         </MetadataSet>
-        <Viewport
-            clipBoundary='0, 0.6, 0, 1'/>
-        <OrthoViewpoint/>
+        <OrthoViewpoint USE='_1'/>
         <Transform DEF='HeaderText'
-            translation='-0.9 0.825 -2.82385e-08'>
-          <TouchSensor DEF='_29'/>
+            translation='-1.75 1 3.6747e-06'>
+          <TouchSensor DEF='_54'/>
           <Shape>
             <Appearance>
-              <Material DEF='_30'
+              <Material DEF='_55'
                   emissiveColor='1 1 1'/>
             </Appearance>
             <Text
@@ -967,13 +969,13 @@ function random (min, max)
                 solid='true'>
               <FontStyle
                   family='"AlienEncountersItalic.otf", "SANS"'
-                  size='0.19'
+                  size='0.2'
                   justify='"BEGIN", "BEGIN"'/>
             </Text>
           </Shape>
           <Transform DEF='Rectangle2D_2'
-              translation='0.374301 -0.15 -1'
-              scale='0.425699 0.207674 0.215347'>
+              translation='0.426688 -0.176446 -1'
+              scale='0.425699 0.178837 0.215347'>
             <Shape>
               <Appearance>
                 <Material
@@ -984,23 +986,23 @@ function random (min, max)
           </Transform>
         </Transform>
         <Transform DEF='MixPuzzleText'
-            translation='-0.9 0.225 -7.70142e-09'>
+            translation='-1.75 0.5 1.83735e-06'>
           <Shape>
             <Appearance>
-              <Material USE='_30'/>
+              <Material USE='_55'/>
             </Appearance>
-            <Text DEF='_31'
+            <Text DEF='_56'
                 string='"Mix Puzzle"'
                 solid='true'>
               <FontStyle
                   family='"AlienEncountersSolid.otf", "SANS"'
-                  size='0.1'/>
+                  size='0.12'/>
             </Text>
           </Shape>
-          <TouchSensor DEF='_32'/>
+          <TouchSensor DEF='_57'/>
           <Transform DEF='Rectangle2D_3'
-              translation='0.3 0.05 -1'
-              scale='0.4 0.05 0.161657'>
+              translation='0.325 0.0500037 -1'
+              scale='0.325 0.05 0.161657'>
             <Shape>
               <Appearance>
                 <Material
@@ -1013,7 +1015,7 @@ function random (min, max)
             <field accessType='inputOnly' type='SFBool' name='set_active'/>
             <field accessType='outputOnly' type='MFString' name='string_changed'/>
             <field accessType='initializeOnly' type='SFNode' name='touchSensor'>
-              <TouchSensor USE='_32'/>
+              <TouchSensor USE='_57'/>
             </field>
             <field accessType='inputOutput' type='SFTime' name='solveTime'/>
 <![CDATA[ecmascript:
@@ -1031,36 +1033,324 @@ function set_active (value)
 }]]> 
           </Script>
         </Transform>
+        <Transform DEF='ImagesText'
+            translation='-1.75 0.25 9.18674e-07'>
+          <Shape>
+            <Appearance>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Text
+                string='"Images"'
+                solid='true'>
+              <FontStyle
+                  family='"AlienEncountersSolid.otf", "SANS"'
+                  size='0.12'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='City'
+            translation='-1.55 0 0'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture
+                  url='"city.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_58'/>
+          <ProtoInstance name='SFNode' DEF='_59'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_3' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
+        <Transform DEF='Mountain'
+            translation='-1.15 0 0'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture DEF='_60'
+                  url='"montain.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_61'/>
+          <ProtoInstance name='SFNode' DEF='_62'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_60' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
+        <Transform DEF='Plants'
+            translation='-0.75 0 0'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture DEF='_63'
+                  url='"plants.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_64'/>
+          <ProtoInstance name='SFNode' DEF='_65'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_63' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
+        <Transform DEF='Flowers'
+            translation='-1.55 -0.4 -1.46988e-06'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture DEF='_66'
+                  url='"flowers.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_67'/>
+          <ProtoInstance name='SFNode' DEF='_68'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_66' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
+        <Transform DEF='Abstract'
+            translation='-1.15 -0.4 -1.46988e-06'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture DEF='_69'
+                  url='"abstract.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_70'/>
+          <ProtoInstance name='SFNode' DEF='_71'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_69' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
+        <Transform DEF='LineArt'
+            translation='-0.75 -0.4 -1.46988e-06'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture DEF='_72'
+                  url='"lines-art.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_73'/>
+          <ProtoInstance name='SFNode' DEF='_74'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_72' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
+        <Transform DEF='Ball'
+            translation='-1.55 -0.8 -2.93976e-06'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture DEF='_75'
+                  url='"ball.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_76'/>
+          <ProtoInstance name='SFNode' DEF='_77'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_75' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
+        <Transform DEF='Book'
+            translation='-1.15 -0.8 -2.93976e-06'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <ImageTexture DEF='_78'
+                  url='"book.jpg"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_79'/>
+          <ProtoInstance name='SFNode' DEF='_80'>
+            <fieldValue name='keyValue'>
+              <ImageTexture USE='_78' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_28' fromField='time' toNode='MixScript' toField='set_time'/>
-    <ROUTE fromNode='_32' fromField='touchTime' toNode='MixScript' toField='set_startTime'/>
-    <ROUTE fromNode='MixTextScript' fromField='string_changed' toNode='_31' toField='set_string'/>
-    <ROUTE fromNode='_28' fromField='isActive' toNode='MixTextScript' toField='set_active'/>
-    <ROUTE fromNode='_29' fromField='touchTime' toNode='MixScript' toField='set_solveTime'/>
-    <ROUTE fromNode='_27' fromField='touchTime' toNode='MixScript' toField='set_touchTime23'/>
-    <ROUTE fromNode='_26' fromField='touchTime' toNode='MixScript' toField='set_touchTime22'/>
-    <ROUTE fromNode='_25' fromField='touchTime' toNode='MixScript' toField='set_touchTime21'/>
-    <ROUTE fromNode='_24' fromField='touchTime' toNode='MixScript' toField='set_touchTime20'/>
-    <ROUTE fromNode='_23' fromField='touchTime' toNode='MixScript' toField='set_touchTime19'/>
-    <ROUTE fromNode='_22' fromField='touchTime' toNode='MixScript' toField='set_touchTime18'/>
-    <ROUTE fromNode='_21' fromField='touchTime' toNode='MixScript' toField='set_touchTime17'/>
-    <ROUTE fromNode='_20' fromField='touchTime' toNode='MixScript' toField='set_touchTime16'/>
-    <ROUTE fromNode='_19' fromField='touchTime' toNode='MixScript' toField='set_touchTime15'/>
-    <ROUTE fromNode='_18' fromField='touchTime' toNode='MixScript' toField='set_touchTime14'/>
-    <ROUTE fromNode='_17' fromField='touchTime' toNode='MixScript' toField='set_touchTime13'/>
-    <ROUTE fromNode='_16' fromField='touchTime' toNode='MixScript' toField='set_touchTime12'/>
-    <ROUTE fromNode='_15' fromField='touchTime' toNode='MixScript' toField='set_touchTime11'/>
-    <ROUTE fromNode='_14' fromField='touchTime' toNode='MixScript' toField='set_touchTime10'/>
-    <ROUTE fromNode='_13' fromField='touchTime' toNode='MixScript' toField='set_touchTime9'/>
-    <ROUTE fromNode='_12' fromField='touchTime' toNode='MixScript' toField='set_touchTime8'/>
-    <ROUTE fromNode='_11' fromField='touchTime' toNode='MixScript' toField='set_touchTime7'/>
-    <ROUTE fromNode='_10' fromField='touchTime' toNode='MixScript' toField='set_touchTime6'/>
-    <ROUTE fromNode='_9' fromField='touchTime' toNode='MixScript' toField='set_touchTime5'/>
-    <ROUTE fromNode='_8' fromField='touchTime' toNode='MixScript' toField='set_touchTime4'/>
-    <ROUTE fromNode='_7' fromField='touchTime' toNode='MixScript' toField='set_touchTime3'/>
-    <ROUTE fromNode='_6' fromField='touchTime' toNode='MixScript' toField='set_touchTime2'/>
-    <ROUTE fromNode='_5' fromField='touchTime' toNode='MixScript' toField='set_touchTime1'/>
-    <ROUTE fromNode='_4' fromField='touchTime' toNode='MixScript' toField='set_touchTime0'/>
+    <ROUTE fromNode='_53' fromField='time' toNode='MixScript' toField='set_time'/>
+    <ROUTE fromNode='_57' fromField='touchTime' toNode='MixScript' toField='set_startTime'/>
+    <ROUTE fromNode='MixTextScript' fromField='string_changed' toNode='_56' toField='set_string'/>
+    <ROUTE fromNode='_53' fromField='isActive' toNode='MixTextScript' toField='set_active'/>
+    <ROUTE fromNode='_54' fromField='touchTime' toNode='MixScript' toField='set_solveTime'/>
+    <ROUTE fromNode='_52' fromField='touchTime' toNode='MixScript' toField='set_touchTime23'/>
+    <ROUTE fromNode='_50' fromField='touchTime' toNode='MixScript' toField='set_touchTime22'/>
+    <ROUTE fromNode='_48' fromField='touchTime' toNode='MixScript' toField='set_touchTime21'/>
+    <ROUTE fromNode='_46' fromField='touchTime' toNode='MixScript' toField='set_touchTime20'/>
+    <ROUTE fromNode='_44' fromField='touchTime' toNode='MixScript' toField='set_touchTime19'/>
+    <ROUTE fromNode='_42' fromField='touchTime' toNode='MixScript' toField='set_touchTime18'/>
+    <ROUTE fromNode='_40' fromField='touchTime' toNode='MixScript' toField='set_touchTime17'/>
+    <ROUTE fromNode='_38' fromField='touchTime' toNode='MixScript' toField='set_touchTime16'/>
+    <ROUTE fromNode='_36' fromField='touchTime' toNode='MixScript' toField='set_touchTime15'/>
+    <ROUTE fromNode='_34' fromField='touchTime' toNode='MixScript' toField='set_touchTime14'/>
+    <ROUTE fromNode='_32' fromField='touchTime' toNode='MixScript' toField='set_touchTime13'/>
+    <ROUTE fromNode='_30' fromField='touchTime' toNode='MixScript' toField='set_touchTime12'/>
+    <ROUTE fromNode='_28' fromField='touchTime' toNode='MixScript' toField='set_touchTime11'/>
+    <ROUTE fromNode='_26' fromField='touchTime' toNode='MixScript' toField='set_touchTime10'/>
+    <ROUTE fromNode='_24' fromField='touchTime' toNode='MixScript' toField='set_touchTime9'/>
+    <ROUTE fromNode='_22' fromField='touchTime' toNode='MixScript' toField='set_touchTime8'/>
+    <ROUTE fromNode='_20' fromField='touchTime' toNode='MixScript' toField='set_touchTime7'/>
+    <ROUTE fromNode='_18' fromField='touchTime' toNode='MixScript' toField='set_touchTime6'/>
+    <ROUTE fromNode='_16' fromField='touchTime' toNode='MixScript' toField='set_touchTime5'/>
+    <ROUTE fromNode='_14' fromField='touchTime' toNode='MixScript' toField='set_touchTime4'/>
+    <ROUTE fromNode='_12' fromField='touchTime' toNode='MixScript' toField='set_touchTime3'/>
+    <ROUTE fromNode='_10' fromField='touchTime' toNode='MixScript' toField='set_touchTime2'/>
+    <ROUTE fromNode='_8' fromField='touchTime' toNode='MixScript' toField='set_touchTime1'/>
+    <ROUTE fromNode='_6' fromField='touchTime' toNode='MixScript' toField='set_touchTime0'/>
+    <ROUTE fromNode='_59' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_2' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_51' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_49' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_47' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_45' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_43' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_41' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_39' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_37' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_35' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_33' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_31' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_29' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_27' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_25' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_23' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_21' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_19' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_17' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_15' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_13' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_11' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_9' toField='set_texture'/>
+    <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_7' toField='set_texture'/>
+    <ROUTE fromNode='_58' fromField='touchTime' toNode='_59' toField='set_triggerTime'/>
+    <ROUTE fromNode='_61' fromField='touchTime' toNode='_62' toField='set_triggerTime'/>
+    <ROUTE fromNode='_62' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_64' fromField='touchTime' toNode='_65' toField='set_triggerTime'/>
+    <ROUTE fromNode='_65' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_67' fromField='touchTime' toNode='_68' toField='set_triggerTime'/>
+    <ROUTE fromNode='_68' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_70' fromField='touchTime' toNode='_71' toField='set_triggerTime'/>
+    <ROUTE fromNode='_71' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_73' fromField='touchTime' toNode='_74' toField='set_triggerTime'/>
+    <ROUTE fromNode='_74' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_76' fromField='touchTime' toNode='_77' toField='set_triggerTime'/>
+    <ROUTE fromNode='_77' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_79' fromField='touchTime' toNode='_80' toField='set_triggerTime'/>
+    <ROUTE fromNode='_80' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
   </Scene>
 </X3D>

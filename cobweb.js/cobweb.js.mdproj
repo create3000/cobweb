@@ -1060,6 +1060,17 @@
     <None Include="tests\Components\Texturing\circles\circles.x3d" />
     <None Include="tests\Components\PROTO\Noise\noise.x3d" />
     <None Include="examples\puzzle\puzzle.x3d" />
+    <None Include="examples\puzzle\AlienEncountersItalic.otf" />
+    <None Include="examples\puzzle\AlienEncountersSolid.otf" />
+    <None Include="examples\puzzle\Zeichnung-1.svg" />
+    <None Include="examples\puzzle\abstract.jpg" />
+    <None Include="examples\puzzle\ball.jpg" />
+    <None Include="examples\puzzle\book.jpg" />
+    <None Include="examples\puzzle\city.jpg" />
+    <None Include="examples\puzzle\flowers.jpg" />
+    <None Include="examples\puzzle\lines-art.jpg" />
+    <None Include="examples\puzzle\montain.jpg" />
+    <None Include="examples\puzzle\plants.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1106,5 +1117,6 @@
     <Folder Include="tests\Components\Lighting\lights\" />
     <Folder Include="tests\Components\Texturing\circles\" />
     <Folder Include="tests\Components\PROTO\Noise\" />
+    <Folder Include="examples\puzzle\" />
   </ItemGroup>
 </Project>
