@@ -60,23 +60,24 @@ function ($,
 
 		   this .media = value;
 
-		   if (this .media)
+		   if (value)
 		   {
-		      this .media [0] .volume = 0;
-		      this .duration_changed_ = this .media [0] .duration;
+				var media = value [0];
+
+		      media .volume           = 0;
+		      this .duration_changed_ = media .duration;
 
 			   if (this .isActive_ .getValue ())
 			   {
-					this .media [0] .currentTime = this .getElapsedTime () % this .media [0] .duration;
+					if (this .loop_ .getValue ())
+						media .currentTime = this .getElapsedTime () % media .duration;
+					else
+						media .currentTime = this .getElapsedTime ();
 
 					if (! this .isPaused_ .getValue ())
 					{							
 						if (this .speed_ .getValue ())
-						{
-							//this .media .bind ("ended", this .set_ended .bind (this));
-							this .media [0] .currentTime = this .getElapsedTime ();
-							this .media [0] .play ();
-						}
+							media .play ();
 					}
 				}
 			}
@@ -106,7 +107,6 @@ function ($,
 		   {
 				if (this .speed_ .getValue ())
 				{
-					//this .media .bind ("ended", this .set_ended .bind (this));
 				   this .media [0] .currentTime = 0;
 					this .media [0] .play ();
 				}
@@ -125,10 +125,7 @@ function ($,
 		   if (this .media)
 		   {
 				if (this .speed_ .getValue ())
-				{
-					//this .media .bind ("ended", this .set_ended .bind (this));
 					this .media [0] .play ();
-				}
 			}
 		},
 		set_stop: function ()
