@@ -148,7 +148,7 @@
      inkscape:cx="445.25985"
      inkscape:cy="-107.53865"
      inkscape:document-units="px"
-     inkscape:current-layer="g4413-8"
+     inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:snap-page="true"
@@ -273,7 +273,8 @@
        id="g4413-8"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90"
-       transform="translate(3.9999959,136)">
+       transform="translate(3.9999959,136)"
+       inkscape:export-filename="/home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Texturing/lights2/circles.png">
       <text
          sodipodi:linespacing="100%"
          id="text4225-1-6-1-4"

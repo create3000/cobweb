@@ -1059,6 +1059,7 @@
     <None Include="tests\Components\Texturing\circles\red.png" />
     <None Include="tests\Components\Texturing\circles\circles.x3d" />
     <None Include="tests\Components\PROTO\Noise\noise.x3d" />
+    <None Include="examples\puzzle\puzzle.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
