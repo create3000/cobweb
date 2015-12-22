@@ -2,6 +2,7 @@
 @charset "utf-8";
 
 @import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic,700italic);
+@import url(spinner.css);
 
 x3d {
 	position: relative;
@@ -10,7 +11,7 @@ x3d {
 	padding: 0px;
 	border: 0px;
 	overflow: hidden;
-	background: url(images/logo.png) center center no-repeat #414141;
+	background: #414141;
 }
 
 x3d > * {
@@ -32,13 +33,16 @@ x3d.cobweb-fallback > * {
 }
 
 x3d .cobweb-browser {
+	z-index: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	display: block;
-	position: relative;
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-	width: 100%;
-	height: 100%;
 }
 
 x3d .cobweb-surface {

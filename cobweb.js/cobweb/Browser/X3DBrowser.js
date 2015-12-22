@@ -153,8 +153,6 @@ function ($,
 				
 			// Replace world.
 
-			this .getCanvas () .stop (true, true) .fadeOut (0);
-			this .description = "";
 
 			if (! scene)
 				scene = this .createScene ();
@@ -163,6 +161,10 @@ function ($,
 
 			var id = performance .now ();
 
+			this .description = "";
+			this .setBrowserLoading (true);
+			this .getLoadingElement () .css ("display", "block");
+			this .getCanvas () .css ("display", "none");
 			this .resetLoadCount ();
 			this .loadCount_ .addFieldCallback ("bindWorld" + id, this .bindWorld .bind (this, id));
 
@@ -186,12 +188,14 @@ function ($,
 			if (value)
 				return;
 
+			this .setBrowserLoading (false);
 			this .loadCount_ .removeFieldCallback ("bindWorld" + id);
 
 			setTimeout (function ()
 			{
 				this .getWorld () .bind ();
 				this .getCanvas () .fadeIn (2000);
+				this .getLoadingElement () .fadeOut (2000);
 			}
 			.bind (this), 0);
 		},
@@ -298,6 +302,10 @@ function ($,
 				if (pair [0] === "target" && pair [1] !== "_self")
 					return;
 			}
+
+			this .setBrowserLoading (true);
+			this .getLoadingElement () .css ("display", "block");
+			this .getCanvas () .css ("display", "none");
 
 			var id = this .addLoadCount ();
 

@@ -33,8 +33,16 @@ function (BrowserOptions,
 		// Get canvas & context.
 
 		var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .element);
-		var canvas  = $("<div/>") .addClass ("cobweb-surface") .prependTo (browser);
+		var loading = $("<div/>") .addClass ("cobweb-loading") .appendTo (browser);
+		var spinner = $("<div/>") .addClass ("cobweb-spinner") .appendTo (loading);
+		var canvas  = $("<div/>") .addClass ("cobweb-surface") .appendTo (browser);
 
+		$("<div/>") .addClass ("cobweb-spinner-one") .appendTo (spinner);
+		$("<div/>") .addClass ("cobweb-spinner-two") .appendTo (spinner);
+		$("<div/>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
+		$("<div/>") .addClass ("cobweb-spinner-text") .text ("Lade 123 Dateien") .appendTo (spinner);
+
+		this .loading = loading;
 		this .canvas  = $("<canvas/>") .prependTo (canvas);
 		this .context = getContext (this .canvas [0]);
 
@@ -62,6 +70,10 @@ function (BrowserOptions,
 		getElement: function ()
 		{
 			return this .element;
+		},
+		getLoadingElement: function ()
+		{
+			return this .loading;
 		},
 		getCanvas: function ()
 		{

@@ -1073,6 +1073,7 @@
     <None Include="examples\puzzle\plants.jpg" />
     <None Include="examples\puzzle\campfire.512.avi" />
     <None Include="examples\puzzle\campfire.512.mp4" />
+    <None Include="spinner.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

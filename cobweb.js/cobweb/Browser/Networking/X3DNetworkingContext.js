@@ -23,9 +23,10 @@ function (Fields,
 		this .addChildren ("loadCount", new Fields .SFInt32 ());
 		this .loadingObjects = { };
 
-		this .location     = new URI (this .getElement () [0] .baseURI);
-		this .defaultScene = this .createScene ();
-		this .privateScene = this .createScene ();
+		this .location       = new URI (this .getElement () [0] .baseURI);
+		this .defaultScene   = this .createScene ();
+		this .privateScene   = this .createScene ();
+		this .browserLoading = false;
 	}
 
 	X3DNetworkingContext .prototype =
@@ -58,15 +59,17 @@ function (Fields,
 		{
 			return this .privateScene;
 		},
+		setBrowserLoading: function (value)
+		{
+			this .browserLoading = value;
+		},
 		addLoadCount: function ()
 		{
 		   var id = loadCountId ++;
 
 		   this .loadingObjects [id] = true;
 			
-			var loadCount = this .loadCount_ = this .loadCount_ .getValue () + 1;
-
-			this .getNotification () .string_ = sprintf .sprintf (loadCount == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), loadCount);
+			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () + 1);
 			this .setCursor ("DEFAULT");
 
 			return id;
@@ -78,15 +81,22 @@ function (Fields,
 		   
 			delete this .loadingObjects [id];
 
-			var loadCount = this .loadCount_ = this .loadCount_ .getValue () - 1;
-
-			if (loadCount)
-				this .getNotification () .string_ = sprintf .sprintf (loadCount == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), loadCount);
+			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () - 1);
+		},
+		setLoadCount: function (value)
+		{
+			if (value)
+				var string = sprintf .sprintf (value == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), value);
 			else
 			{
-				this .getNotification () .string_ = _("Loading done");
+				var string = _("Loading done");
 				this .setCursor ("DEFAULT");
 			}
+
+			if (! this .browserLoading)
+				this .getNotification () .string_ = string;
+
+			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
 		},
 		resetLoadCount: function ()
 		{
