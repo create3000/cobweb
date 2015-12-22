@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 21 Dec 2015 20:19:56 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Dec 2015 11:31:49 GMT'/>
+    <meta name='modified' content='Tue, 22 Dec 2015 12:02:40 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv"'>
@@ -923,7 +923,11 @@ function random (min, max)
 	return Math .floor (Math .random () * (max - min)) + min;
 }]]> 
         </Script>
-        <ProtoInstance name='SFNode' DEF='Image'/>
+        <ProtoInstance name='SFNode' DEF='Image'>
+          <fieldValue name='keyValue'>
+            <ImageTexture USE='_3' containerField='children'/>
+          </fieldValue>
+        </ProtoInstance>
       </Layer>
       <Layer>
         <MetadataSet DEF='Titania_2'
@@ -1290,7 +1294,8 @@ function set_active (value)
           <Shape>
             <Appearance>
               <MovieTexture DEF='_81'
-                  url='"http://titania.create3000.de/fileadmin/cobweb/videos/campfire.512.mp4"'/>
+                  url='"http://titania.create3000.de/fileadmin/cobweb/videos/campfire.512.mp4"'
+                  loop='true'/>
             </Appearance>
             <Rectangle2D/>
           </Shape>
