@@ -1071,6 +1071,8 @@
     <None Include="examples\puzzle\lines-art.jpg" />
     <None Include="examples\puzzle\montain.jpg" />
     <None Include="examples\puzzle\plants.jpg" />
+    <None Include="examples\puzzle\campfire.512.avi" />
+    <None Include="examples\puzzle\campfire.512.mp4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
