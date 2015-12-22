@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 21 Dec 2015 20:19:56 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Dec 2015 10:14:00 GMT'/>
+    <meta name='modified' content='Tue, 22 Dec 2015 11:31:49 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv"'>
@@ -1284,6 +1284,33 @@ function set_active (value)
             </fieldValue>
           </ProtoInstance>
         </Transform>
+        <Transform DEF='CampFire'
+            translation='-0.75 -0.8 -2.93976e-06'
+            scale='0.18 0.18 1'>
+          <Shape>
+            <Appearance>
+              <MovieTexture DEF='_81'
+                  url='"http://titania.create3000.de/fileadmin/cobweb/videos/campfire.512.mp4"'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+          <Shape>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='2'/>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Polyline2D
+                lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
+          </Shape>
+          <TouchSensor DEF='_82'/>
+          <ProtoInstance name='SFNode' DEF='_83'>
+            <fieldValue name='keyValue'>
+              <MovieTexture USE='_81' containerField='children'/>
+            </fieldValue>
+          </ProtoInstance>
+        </Transform>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='_53' fromField='time' toNode='MixScript' toField='set_time'/>
@@ -1355,5 +1382,7 @@ function set_active (value)
     <ROUTE fromNode='_77' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
     <ROUTE fromNode='_79' fromField='touchTime' toNode='_80' toField='set_triggerTime'/>
     <ROUTE fromNode='_80' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_82' fromField='touchTime' toNode='_83' toField='set_triggerTime'/>
+    <ROUTE fromNode='_83' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
   </Scene>
 </X3D>
