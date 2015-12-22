@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 21 Dec 2015 20:19:56 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Dec 2015 07:18:55 GMT'/>
+    <meta name='modified' content='Tue, 22 Dec 2015 09:02:32 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv"'>
@@ -60,11 +60,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0, 0, 10'/>
+              value='-1.62233185768127, 5.22133874893188, 8.42172908782959'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='-0.844623446464539, -0.098553478717804, 0.526211440563202, 0.681052207946777'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -74,7 +74,8 @@
     </WorldInfo>
     <LayerSet
         order='0, 1, 2, 3'>
-      <Layer DEF='Background'>
+      <Layer DEF='Background'
+          isPickable='false'>
         <Transform DEF='Rectangle2D'
             scale='2.5 1.20541 1.20541'>
           <Shape>
@@ -172,6 +173,7 @@
               <Polyline2D
                   lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
             </Shape>
+            <TouchSensor DEF='_4'/>
           </Transform>
           <Transform DEF='Polyline2D_1'
               translation='-0.4 0.8 0'
@@ -186,6 +188,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_5'/>
           </Transform>
           <Transform DEF='Polyline2D_2'
               translation='0 0.8 0'
@@ -200,6 +203,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_6'/>
           </Transform>
           <Transform DEF='Polyline2D_3'
               translation='0.4 0.8 0'
@@ -214,6 +218,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_7'/>
           </Transform>
           <Transform DEF='Polyline2D_4'
               translation='0.8 0.8 0'
@@ -228,6 +233,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_8'/>
           </Transform>
           <Transform DEF='Polyline2D_5'
               translation='-0.8 0.4 0'
@@ -242,6 +248,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_9'/>
           </Transform>
           <Transform DEF='Polyline2D_6'
               translation='-0.4 0.4 0'
@@ -256,6 +263,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_10'/>
           </Transform>
           <Transform DEF='Polyline2D_7'
               translation='0 0.4 0'
@@ -270,6 +278,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_11'/>
           </Transform>
           <Transform DEF='Polyline2D_8'
               translation='0.4 0.4 0'
@@ -284,6 +293,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_12'/>
           </Transform>
           <Transform DEF='Polyline2D_9'
               translation='0.8 0.4 0'
@@ -298,6 +308,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_13'/>
           </Transform>
           <Transform DEF='Polyline2D_10'
               translation='-0.8 0 0'
@@ -312,6 +323,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_14'/>
           </Transform>
           <Transform DEF='Polyline2D_11'
               translation='-0.4 0 0'
@@ -326,6 +338,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_15'/>
           </Transform>
           <Transform DEF='Polyline2D_12'
               scale='0.18 0.18 1'>
@@ -339,6 +352,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_16'/>
           </Transform>
           <Transform DEF='Polyline2D_13'
               translation='0.4 0 0'
@@ -353,6 +367,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_17'/>
           </Transform>
           <Transform DEF='Polyline2D_14'
               translation='0.8 0 0'
@@ -367,6 +382,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_18'/>
           </Transform>
           <Transform DEF='Polyline2D_15'
               translation='-0.8 -0.4 0'
@@ -381,6 +397,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_19'/>
           </Transform>
           <Transform DEF='Polyline2D_16'
               translation='-0.4 -0.4 0'
@@ -395,6 +412,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_20'/>
           </Transform>
           <Transform DEF='Polyline2D_17'
               translation='0 -0.4 0'
@@ -409,6 +427,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_21'/>
           </Transform>
           <Transform DEF='Polyline2D_18'
               translation='0.4 -0.4 0'
@@ -423,6 +442,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_22'/>
           </Transform>
           <Transform DEF='Polyline2D_19'
               translation='0.8 -0.4 0'
@@ -437,6 +457,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_23'/>
           </Transform>
           <Transform DEF='Polyline2D_20'
               translation='-0.8 -0.8 0'
@@ -450,6 +471,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_24'/>
           </Transform>
           <Transform DEF='Polyline2D_21'
               translation='-0.4 -0.8 0'
@@ -464,6 +486,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_25'/>
           </Transform>
           <Transform DEF='Polyline2D_22'
               translation='0 -0.8 0'
@@ -478,6 +501,7 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_26'/>
           </Transform>
           <Transform DEF='Polyline2D_23'
               translation='0.4 -0.8 0'
@@ -492,93 +516,251 @@
               <Rectangle2D USE='_2'/>
             </Shape>
             <Shape USE='_3'/>
+            <TouchSensor DEF='_27'/>
           </Transform>
-          <!-- NULL -->
         </Transform>
-        <Script DEF='InitScript'>
-          <field accessType='inputOutput' type='SFInt32' name='xDimension' value='5'/>
-          <field accessType='inputOutput' type='SFInt32' name='yDimension' value='5'/>
-          <field accessType='inputOutput' type='SFVec2f' name='size' value='0.2 0.2'/>
-          <field accessType='inputOutput' type='SFTime' name='startTime' value='1450768706.31681'/>
-          <field accessType='initializeOnly' type='SFNode' name='matrix'>
-            <ProtoInstance name='MFInt32' DEF='_4'>
-              <fieldValue name='keyValue' value='0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, -1'/>
-            </ProtoInstance>
-          </field>
-          <field accessType='inputOutput' type='SFNode' name='pieces'>
-            <Transform USE='Pieces'/>
-          </field>
-<![CDATA[ecmascript:
-
-function initialize ()
-{
-	eventsProcessed ();
-}
-
-function eventsProcessed ()
-{
-	var dimension = xDimension * yDimension;
-
-	matrix .keyValue .length = dimension;
-	
-	for (var i = 0, length = dimension - 1; i < length; ++ i)
-		matrix .keyValue [i] = i;
-		
-	matrix .keyValue [length] = -1;
-	
-	for (var y = 0; y < yDimension; ++ y)
-	{
-		for (var x = 0; x < xDimension; ++ x)
-		{
-			var piece = pieces .children [x + y * xDimension];
-			
-			if (piece)
-			{
-				piece .translation = new SFVec3f ( x * size .x * 2 - size .x * xDimension + size .x,
-				                                  -y * size .y * 2 + size .y * yDimension - size .y,
-				                                  0);
-			}
-		}
-	}
-}]]> 
-        </Script>
         <Script DEF='MixScript'>
-          <field accessType='inputOnly' type='SFBool' name='set_active'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime0'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime1'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime2'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime3'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime4'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime5'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime6'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime7'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime8'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime9'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime10'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime11'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime12'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime13'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime14'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime15'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime16'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime17'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime18'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime19'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime20'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime21'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime22'/>
+          <field accessType='inputOnly' type='SFTime' name='set_touchTime23'/>
           <field accessType='inputOutput' type='SFTime' name='cycleInterval' value='10'/>
           <field accessType='inputOutput' type='SFTime' name='duration' value='17'/>
           <field accessType='inputOutput' type='SFInt32' name='xDimension' value='5'/>
           <field accessType='inputOutput' type='SFInt32' name='yDimension' value='5'/>
           <field accessType='inputOutput' type='SFVec2f' name='size' value='0.2 0.2'/>
           <field accessType='inputOutput' type='SFTime' name='velocity' value='3'/>
-          <field accessType='inputOutput' type='SFTime' name='startTime' value='1450768707.61154'/>
+          <field accessType='inputOutput' type='SFTime' name='solveTime' value='1450774572.34138'/>
+          <field accessType='inputOutput' type='SFTime' name='startTime' value='1450774137.36473'/>
           <field accessType='inputOnly' type='SFTime' name='set_time'/>
-          <field accessType='inputOutput' type='SFNode' name='matrix'>
-            <ProtoInstance name='MFInt32' USE='_4'/>
-          </field>
+          <field accessType='initializeOnly' type='MFInt32' name='matrix' value='0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, -1'/>
           <field accessType='initializeOnly' type='SFNode' name='timer'>
-            <TimeSensor DEF='_5'
+            <TimeSensor DEF='_28'
                 enabled='false'
                 loop='true'/>
           </field>
-          <field accessType='inputOutput' type='SFNode' name='pieces'>
+          <field accessType='initializeOnly' type='SFNode' name='pieces'>
             <Transform USE='Pieces'/>
           </field>
 <![CDATA[ecmascript:
 
 var
-	emptyPiece,
-	move = { },
-	moving;
+	emptyPiece = { x: 4, y: 4 },
+	move       = { },
+	moving     = false,
+	touched    = false;
 
 function initialize ()
 {
+	set_solveTime ();
+}
+
+function set_touchTime0 ()
+{
+	set_touchTime (0);
+}
+
+function set_touchTime1 ()
+{
+	set_touchTime (1);
+}
+
+function set_touchTime2 ()
+{
+	set_touchTime (2);
+}
+
+function set_touchTime3 ()
+{
+	set_touchTime (3);
+}
+
+function set_touchTime4 ()
+{
+	set_touchTime (4);
+}
+
+function set_touchTime5 ()
+{
+	set_touchTime (5);
+}
+
+function set_touchTime6 ()
+{
+	set_touchTime (6);
+}
+
+function set_touchTime7 ()
+{
+	set_touchTime (7);
+}
+
+function set_touchTime8 ()
+{
+	set_touchTime (8);
+}
+
+function set_touchTime9 ()
+{
+	set_touchTime (9);
+}
+
+function set_touchTime10 ()
+{
+	set_touchTime (10);
+}
+
+function set_touchTime11 ()
+{
+	set_touchTime (11);
+}
+
+function set_touchTime12 ()
+{
+	set_touchTime (12);
+}
+
+function set_touchTime13 ()
+{
+	set_touchTime (13);
+}
+
+function set_touchTime14 ()
+{
+	set_touchTime (14);
+}
+
+function set_touchTime15 ()
+{
+	set_touchTime (15);
+}
+
+function set_touchTime16 ()
+{
+	set_touchTime (16);
+}
+
+function set_touchTime17 ()
+{
+	set_touchTime (17);
+}
+
+function set_touchTime18 ()
+{
+	set_touchTime (18);
+}
+
+function set_touchTime19 ()
+{
+	set_touchTime (19);
+}
+
+function set_touchTime20 ()
+{
+	set_touchTime (20);
+}
+
+function set_touchTime21 ()
+{
+	set_touchTime (21);
+}
+
+function set_touchTime22 ()
+{
+	set_touchTime (22);
+}
+
+function set_touchTime23 ()
+{
+	set_touchTime (23);
+}
+
+function set_touchTime (index)
+{
+print (index);
+	var coords = { };
+
+	for (var y = 0; y < yDimension; ++ y)
+	{
+		for (var x = 0; x < xDimension; ++ x)
+		{
+			var i = matrix [x + y * xDimension];
+
+			if (i === index)
+			{
+				coords .x = x;
+				coords .y = y;
+				print ("bah");
+			}
+		}
+	}
+	
+	if (coords .x !== emptyPiece .x && coords .y !== emptyPiece .y)
+		return;
+		
+	if (coords .y === emptyPiece .y)
+	{
+		if (coords .x < emptyPiece .x)
+			move = { x: coords .x, l: emptyPiece .x, d: 1, t: 0 }
+		else
+			move = { x: emptyPiece .x + 1, l: coords .x + 1, d: -1, t: 0 };	
+	}
+	else
+	{
+		if (coords .y < emptyPiece .y)
+			move = { y: coords .y, l: emptyPiece .y, d: -1, t: 0 }
+		else
+			move = { y: emptyPiece .y + 1, l: coords .y + 1, d: 1, t: 0 };
+	}
+	
+	touched        = true;
+	moving         = true;
+	timer .enabled = true;
+}
+
+function set_solveTime ()
+{
+	timer .enabled = false;
+	
 	emptyPiece = { x: 4, y: 4 };
 	
-	timer .enabled = false;
+	var dimension = xDimension * yDimension;
+
+	matrix .length = dimension;
+	
+	for (var i = 0, length = dimension - 1; i < length; ++ i)
+		matrix [i] = i;
+		
+	matrix [length] = -1;
+
+	set_translation ();
 }
 
 function set_startTime ()
 {
+	if (timer .enabled)
+		return;
+
 	timer .enabled = true;
 	
 	var dimension = xDimension * yDimension;
@@ -589,7 +771,7 @@ function set_startTime ()
 		{
 			var i = x + y * xDimension;
 		
-			if (matrix .keyValue [i] !== -1)
+			if (matrix [i] !== -1)
 				continue;
 
 			emptyPiece .x = x;
@@ -613,18 +795,22 @@ function set_time (value)
 		{
 			for (var x = move .x; x < move .l; ++ x)
 			{
-				var i = x + emptyPiece .y * xDimension;
+				var
+					i     = x + emptyPiece .y * xDimension,
+					piece = pieces .children [matrix [i]];
 				
-				pieces .children [matrix .keyValue [i]] .translation .x += dv * move .d;
+				piece .translation .x += dv * move .d;
 			}
 		}
 		else
 		{
 			for (var y = move .y; y < move .l; ++ y)
 			{
-				var i = emptyPiece .x + y * yDimension;
+				var
+					i     = emptyPiece .x + y * yDimension,
+					piece = pieces .children [matrix [i]];
 				
-				pieces .children [matrix .keyValue [i]] .translation .y += dv * move .d;
+				piece .translation .y += dv * move .d;
 			}
 		}
 
@@ -636,6 +822,9 @@ function set_time (value)
 				timer .enabled = false;
 
 			moving = false;
+			
+			if (touched)
+				touched = timer .enabled = false;
 
 			if (move .x !== undefined)
 			{
@@ -650,11 +839,11 @@ function set_time (value)
 						f = x + emptyPiece .y * xDimension,
 						t = x - step + emptyPiece .y * xDimension;
 					
-					matrix .keyValue [t] = matrix .keyValue [f];
+					matrix [t] = matrix [f];
 				}
 				
 				emptyPiece .x = x - step;
-				matrix .keyValue [emptyPiece .x + emptyPiece .y * xDimension] = -1;
+				matrix [emptyPiece .x + emptyPiece .y * xDimension] = -1;
 			}
 			else
 			{
@@ -669,20 +858,18 @@ function set_time (value)
 						f = emptyPiece .x + y * xDimension,
 						t = emptyPiece .x + (y - step) * xDimension;
 					
-					matrix .keyValue [t] = matrix .keyValue [f];
+					matrix [t] = matrix [f];
 				}
 				
 				emptyPiece .y = y - step;
-				matrix .keyValue [emptyPiece .x + emptyPiece .y * yDimension] = -1;
+				matrix [emptyPiece .x + emptyPiece .y * yDimension] = -1;
 			}
 
 			set_translation ();
 		}
 	}
 	else
-	{
-		var lastMove = move;
-	
+	{	
 		if (move .x === undefined)
 		{
 			if (Math .random () < 0.5 && emptyPiece .x > 0 || emptyPiece .x === xDimension - 1)
@@ -710,19 +897,21 @@ function set_translation ()
 	{
 		for (var x = 0; x < xDimension; ++ x)
 		{
-			var index = matrix .keyValue [x + y * xDimension];
+			var index = matrix [x + y * xDimension];
 			
 			if (index === -1)
 				continue;
 
-			var piece = pieces .children [index];
+			var piece= pieces .children [index];
+			
 			
 			piece .translation = new SFVec3f ( x * size .x * 2 - size .x * xDimension + size .x,
 			                                  -y * size .y * 2 + size .y * yDimension - size .y,
-			                                  0);
+			                                   0);
 		}
 	}
 }
+
 function random (min, max)
 {
 	return Math .floor (Math .random () * (max - min)) + min;
@@ -765,12 +954,12 @@ function random (min, max)
         <Viewport
             clipBoundary='0, 0.6, 0, 1'/>
         <OrthoViewpoint/>
-        <Transform DEF='Text'
+        <Transform DEF='HeaderText'
             translation='-0.9 0.825 -2.82385e-08'>
-          <TouchSensor DEF='_6'/>
+          <TouchSensor DEF='_29'/>
           <Shape>
             <Appearance>
-              <Material DEF='_7'
+              <Material DEF='_30'
                   emissiveColor='1 1 1'/>
             </Appearance>
             <Text
@@ -782,14 +971,25 @@ function random (min, max)
                   justify='"BEGIN", "BEGIN"'/>
             </Text>
           </Shape>
+          <Transform DEF='Rectangle2D_2'
+              translation='0.374301 -0.15 -1'
+              scale='0.425699 0.207674 0.215347'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <Rectangle2D/>
+            </Shape>
+          </Transform>
         </Transform>
         <Transform DEF='MixPuzzleText'
             translation='-0.9 0.225 -7.70142e-09'>
           <Shape>
             <Appearance>
-              <Material USE='_7'/>
+              <Material USE='_30'/>
             </Appearance>
-            <Text DEF='_8'
+            <Text DEF='_31'
                 string='"Mix Puzzle"'
                 solid='true'>
               <FontStyle
@@ -797,8 +997,8 @@ function random (min, max)
                   size='0.1'/>
             </Text>
           </Shape>
-          <TouchSensor DEF='_9'/>
-          <Transform DEF='Rectangle2D_2'
+          <TouchSensor DEF='_32'/>
+          <Transform DEF='Rectangle2D_3'
               translation='0.3 0.05 -1'
               scale='0.4 0.05 0.161657'>
             <Shape>
@@ -813,8 +1013,9 @@ function random (min, max)
             <field accessType='inputOnly' type='SFBool' name='set_active'/>
             <field accessType='outputOnly' type='MFString' name='string_changed'/>
             <field accessType='initializeOnly' type='SFNode' name='touchSensor'>
-              <TouchSensor USE='_9'/>
+              <TouchSensor USE='_32'/>
             </field>
+            <field accessType='inputOutput' type='SFTime' name='solveTime'/>
 <![CDATA[ecmascript:
 
 function initialize ()
@@ -832,11 +1033,34 @@ function set_active (value)
         </Transform>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_5' fromField='isActive' toNode='MixScript' toField='set_active'/>
-    <ROUTE fromNode='_5' fromField='time' toNode='MixScript' toField='set_time'/>
-    <ROUTE fromNode='_9' fromField='touchTime' toNode='MixScript' toField='set_startTime'/>
-    <ROUTE fromNode='MixTextScript' fromField='string_changed' toNode='_8' toField='set_string'/>
-    <ROUTE fromNode='_5' fromField='isActive' toNode='MixTextScript' toField='set_active'/>
-    <ROUTE fromNode='_6' fromField='touchTime' toNode='InitScript' toField='set_startTime'/>
+    <ROUTE fromNode='_28' fromField='time' toNode='MixScript' toField='set_time'/>
+    <ROUTE fromNode='_32' fromField='touchTime' toNode='MixScript' toField='set_startTime'/>
+    <ROUTE fromNode='MixTextScript' fromField='string_changed' toNode='_31' toField='set_string'/>
+    <ROUTE fromNode='_28' fromField='isActive' toNode='MixTextScript' toField='set_active'/>
+    <ROUTE fromNode='_29' fromField='touchTime' toNode='MixScript' toField='set_solveTime'/>
+    <ROUTE fromNode='_27' fromField='touchTime' toNode='MixScript' toField='set_touchTime23'/>
+    <ROUTE fromNode='_26' fromField='touchTime' toNode='MixScript' toField='set_touchTime22'/>
+    <ROUTE fromNode='_25' fromField='touchTime' toNode='MixScript' toField='set_touchTime21'/>
+    <ROUTE fromNode='_24' fromField='touchTime' toNode='MixScript' toField='set_touchTime20'/>
+    <ROUTE fromNode='_23' fromField='touchTime' toNode='MixScript' toField='set_touchTime19'/>
+    <ROUTE fromNode='_22' fromField='touchTime' toNode='MixScript' toField='set_touchTime18'/>
+    <ROUTE fromNode='_21' fromField='touchTime' toNode='MixScript' toField='set_touchTime17'/>
+    <ROUTE fromNode='_20' fromField='touchTime' toNode='MixScript' toField='set_touchTime16'/>
+    <ROUTE fromNode='_19' fromField='touchTime' toNode='MixScript' toField='set_touchTime15'/>
+    <ROUTE fromNode='_18' fromField='touchTime' toNode='MixScript' toField='set_touchTime14'/>
+    <ROUTE fromNode='_17' fromField='touchTime' toNode='MixScript' toField='set_touchTime13'/>
+    <ROUTE fromNode='_16' fromField='touchTime' toNode='MixScript' toField='set_touchTime12'/>
+    <ROUTE fromNode='_15' fromField='touchTime' toNode='MixScript' toField='set_touchTime11'/>
+    <ROUTE fromNode='_14' fromField='touchTime' toNode='MixScript' toField='set_touchTime10'/>
+    <ROUTE fromNode='_13' fromField='touchTime' toNode='MixScript' toField='set_touchTime9'/>
+    <ROUTE fromNode='_12' fromField='touchTime' toNode='MixScript' toField='set_touchTime8'/>
+    <ROUTE fromNode='_11' fromField='touchTime' toNode='MixScript' toField='set_touchTime7'/>
+    <ROUTE fromNode='_10' fromField='touchTime' toNode='MixScript' toField='set_touchTime6'/>
+    <ROUTE fromNode='_9' fromField='touchTime' toNode='MixScript' toField='set_touchTime5'/>
+    <ROUTE fromNode='_8' fromField='touchTime' toNode='MixScript' toField='set_touchTime4'/>
+    <ROUTE fromNode='_7' fromField='touchTime' toNode='MixScript' toField='set_touchTime3'/>
+    <ROUTE fromNode='_6' fromField='touchTime' toNode='MixScript' toField='set_touchTime2'/>
+    <ROUTE fromNode='_5' fromField='touchTime' toNode='MixScript' toField='set_touchTime1'/>
+    <ROUTE fromNode='_4' fromField='touchTime' toNode='MixScript' toField='set_touchTime0'/>
   </Scene>
 </X3D>
