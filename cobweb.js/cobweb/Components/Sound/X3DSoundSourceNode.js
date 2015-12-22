@@ -73,7 +73,7 @@ function ($,
 					{							
 						if (this .speed_ .getValue ())
 						{
-							this .media .bind ("ended", this .set_ended .bind (this));
+							//this .media .bind ("ended", this .set_ended .bind (this));
 							this .media [0] .currentTime = this .getElapsedTime ();
 							this .media [0] .play ();
 						}
@@ -106,7 +106,7 @@ function ($,
 		   {
 				if (this .speed_ .getValue ())
 				{
-					this .media .bind ("ended", this .set_ended .bind (this));
+					//this .media .bind ("ended", this .set_ended .bind (this));
 				   this .media [0] .currentTime = 0;
 					this .media [0] .play ();
 				}
@@ -126,7 +126,7 @@ function ($,
 		   {
 				if (this .speed_ .getValue ())
 				{
-					this .media .bind ("ended", this .set_ended .bind (this));
+					//this .media .bind ("ended", this .set_ended .bind (this));
 					this .media [0] .play ();
 				}
 			}
@@ -143,10 +143,15 @@ function ($,
 		{
 		   if (this .media)
 		   {
+				var media = this .media [0];
+
+				if (media .currentTime < media .duration)
+					return;
+
 				if (this .loop_ .getValue ())
 				{
 					if (this .speed_ .getValue ())
-						this .media [0] .play ();
+						media .play ();
 
 					// The event order below is very important.
 
@@ -159,6 +164,8 @@ function ($,
 		},
 		prepareEvents: function ()
 		{
+			this .set_ended ();
+
 			this .elapsedTime_ = this .getElapsedTime ();
 		},
 	});
