@@ -66,13 +66,13 @@ function (Fields,
 			if (value)
 			{
 				this .resetLoadCount ();
-				this .getCanvas () .stop (true, true) .fadeOut (0);
-				this .getLoadingElement () .stop (true, true) .fadeIn (0);
+				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
 			}
 			else
 			{
 				this .getLoadingElement () .stop (true, true) .fadeOut (11000);
-				this .getCanvas () .stop (true, true) .fadeIn (2000);
+				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
 			}
 		},
 		addLoadCount: function ()

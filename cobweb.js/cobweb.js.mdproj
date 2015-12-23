@@ -1074,6 +1074,7 @@
     <None Include="examples\puzzle\campfire.512.mp4" />
     <None Include="spinner.css" />
     <None Include="cobweb\Browser\Networking\urls.js" />
+    <None Include="tests\Components\Scripting\load-viewpoints.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

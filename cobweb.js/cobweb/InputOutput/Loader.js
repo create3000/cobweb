@@ -125,7 +125,7 @@ function ($,
 			this .bindViewpoint = bindViewpoint;
 
 			if (callback)
-				return setTimeout (this .loadDocument .bind (this, url, this .createX3DFromURLAsync .bind (this, callback)), TIMEOUT);
+				return this .loadDocument (url, this .createX3DFromURLAsync .bind (this, callback));
 
 			return this .createX3DFromURLSync (url);
 		},

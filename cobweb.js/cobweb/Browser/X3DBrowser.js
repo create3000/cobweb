@@ -313,13 +313,14 @@ function ($,
 					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
 				this .removeLoadCount (id);
+				// Don't set browser loading to false.
 			}
 			.bind (this),
 			function (fragment)
 			{
 				this .currentScene .changeViewpoint (fragment);
-				this .setBrowserLoading (false);
 				this .removeLoadCount (id);
+				this .setBrowserLoading (false);
 			}
 			.bind (this));
 		},
