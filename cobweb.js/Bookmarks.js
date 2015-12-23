@@ -21,13 +21,18 @@ var Bookmarks = (function ()
 		return array;
 	}
 	
-	function Bookmarks (browser, element, bookmarks)
+	function Bookmarks (browser, element, bookmarks, filesPerPage)
 	{
-		var index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
+		var
+			pages = [ ],
+			index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
+
+		while (bookmarks .length)
+			pages .push (bookmarks .splice (0, filesPerPage || 20));
 
 		this .browser         = browser;
 		this .element         = element;
-		this .bookmarks       = bookmarks;
+		this .bookmarks       = pages;
 		this .index           = index || 0;
 		this .randomBookmarks = [ ];
 	}
