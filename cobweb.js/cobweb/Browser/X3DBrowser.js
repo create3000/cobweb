@@ -317,13 +317,7 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
-			   try
-			   {
-					this .currentScene .changeViewpoint (fragment);
-				}
-				catch (error)
-				{ }
-
+				this .currentScene .changeViewpoint (fragment);
 				this .setBrowserLoading (false);
 				this .removeLoadCount (id);
 			}
