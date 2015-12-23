@@ -3,15 +3,15 @@ define ([
 	"jquery",
 	"cobweb/Configuration/ComponentInfo",
 	"cobweb/Configuration/ComponentInfoArray",
-	"cobweb/Browser/Networking/ProviderUrl",
+	"cobweb/Browser/Networking/urls",
 ],
-function ($, ComponentInfo, ComponentInfoArray, ProviderUrl)
+function ($, ComponentInfo, ComponentInfoArray, urls)
 {
 "use strict";
 
 	function add (title, name, level)
 	{
-		supportedComponents .add (name, new ComponentInfo (name, level, title, ProviderUrl));
+		supportedComponents .add (name, new ComponentInfo (name, level, title, urls .provider));
 	}
 
 	var supportedComponents = new ComponentInfoArray ();

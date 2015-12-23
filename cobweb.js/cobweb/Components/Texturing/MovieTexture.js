@@ -8,6 +8,7 @@ define ([
 	"cobweb/Components/Sound/X3DSoundSourceNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
 ],
 function ($,
@@ -18,6 +19,7 @@ function ($,
           X3DSoundSourceNode, 
           X3DUrlObject, 
           X3DConstants,
+          urls,
           URI)
 {
 "use strict";
@@ -128,7 +130,15 @@ function ($,
 		},
 		setError: function ()
 		{
-			console .warn ("Error loading movie:", this .URL .toString ());
+			var sURL = this .URL .toString ();
+
+			if (! this .URL .isLocal ())
+			{
+				if (! sURL .match (urls .fallbackRx))
+					this .urlStack .unshift (urls .fallback + sURL);
+			}
+
+			console .warn ("Error loading movie:", sURL);
 			this .loadNext ();
 		},
 		setVideo: function ()

@@ -1,13 +1,13 @@
 
 define ([
 	"cobweb/Fields",
-	"cobweb/Browser/Networking/ProviderUrl",
+	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
 	"lib/sprintf.js/src/sprintf",
 	"lib/gettext",
 ],
 function (Fields,
-          ProviderUrl,
+          urls,
           URI,
           sprintf,
           _)
@@ -41,7 +41,7 @@ function (Fields,
 		},
 		getProviderUrl: function ()
 		{
-			return ProviderUrl;
+			return urls .provider;
 		},
 		doCaching: function ()
 		{

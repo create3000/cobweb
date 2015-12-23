@@ -2,6 +2,7 @@
 define ([
 	"jquery",
 	"cobweb/Base/X3DObject",
+	"cobweb/Browser/Networking/urls",
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
@@ -10,6 +11,7 @@ define ([
 ],
 function ($,
           X3DObject,
+          urls,
           Parser,
           XMLParser,
           URI,
@@ -23,9 +25,7 @@ function ($,
 	var
 		TIMEOUT    = 17,
 		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
-		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
-		fallback   = "https://crossorigin.me/",
-		fallbackRx = new RegExp ("^" + fallback);
+		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/;
 
 	function Loader (node, external)
 	{
@@ -342,8 +342,8 @@ function ($,
 				URL = this .browser .getLocation () .getRelativePath (URL);
 			else
 			{
-				if (! sURL .match (fallbackRx))
-					this .url .push (fallback + sURL);
+				if (! sURL .match (urls .fallbackRx))
+					this .url .unshift (urls .fallback + sURL);
 			}
 
 			return URL;

@@ -5,20 +5,20 @@ define ([
 	"cobweb/Configuration/ProfileInfoArray",
 	"cobweb/Configuration/ComponentInfoArray",
 	"cobweb/Configuration/SupportedComponents",
-	"cobweb/Browser/Networking/ProviderUrl",
+	"cobweb/Browser/Networking/urls",
 ],
 function ($,
           ProfileInfo,
           ProfileInfoArray,
           ComponentInfoArray,
           SupportedComponents,
-          ProviderUrl)
+          urls)
 {
 "use strict";
 
 	function add (title, name, components)
 	{
-		supportedProfiles .add (name, new ProfileInfo (name, title, ProviderUrl, new ComponentInfoArray (components)));
+		supportedProfiles .add (name, new ProfileInfo (name, title, urls .povider, new ComponentInfoArray (components)));
 	}
 
 	var supportedProfiles = new ProfileInfoArray ();

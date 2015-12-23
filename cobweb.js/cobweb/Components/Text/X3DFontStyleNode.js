@@ -231,13 +231,22 @@ function ($,
 		{
 		   return this .font;
 		},
-		setError: function (error)
+		setError: function ()
 		{
-			console .warn ('Font error: ' + error + ' in url "' + this .family [this .familyIndex] + '"');
+			var
+				family = this .family [this .familyIndex],
+				URL   = new URI (family);
 
 			this .font = null;
 			this .familyIndex ++;
 
+			if (! URL .isLocal ())
+			{
+				if (! family .toString () .match (urls .fallbackRx))
+					this .family .splice (this .familyIndex, 0, urls .fallback + family);
+			}
+
+			console .warn ("Error loading font '" + family + "':", error);
 			this .loadFont ();
 		},
 	});

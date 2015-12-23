@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Texturing/X3DTexture2DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
 	"standard/Math/Algorithm",
 ],
@@ -17,6 +18,7 @@ function ($,
           X3DTexture2DNode, 
           X3DUrlObject, 
           X3DConstants,
+          urls,
           URI,
           Algorithm)
 {
@@ -107,7 +109,15 @@ function ($,
 		},
 		setError: function ()
 		{
-			console .warn ("Error loading image:", this .URL .toString ());
+			var sURL = this .URL .toString ();
+
+			if (! this .URL .isLocal ())
+			{
+				if (! sURL .match (urls .fallbackRx))
+					this .urlStack .unshift (urls .fallback + sURL);
+			}
+
+			console .warn ("Error loading image:", sURL);
 			this .loadNext ();
 		},
 		setImage: function ()
