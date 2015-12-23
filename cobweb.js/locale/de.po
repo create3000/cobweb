@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cobweb\n"
-"POT-Creation-Date: 2015-12-17 23:42+0100\n"
-"PO-Revision-Date: 2015-12-17 23:42+0100\n"
+"POT-Creation-Date: 2015-12-23 04:56+0100\n"
+"PO-Revision-Date: 2015-12-23 04:57+0100\n"
 "Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -197,21 +197,23 @@ msgstr "Auf Objekte zielen"
 msgid "None Viewer"
 msgstr "Kein Betrachter"
 
-#: Browser/Networking/X3DNetworkingContext.js:69
-#: Browser/Networking/X3DNetworkingContext.js:84
+#: Browser/Networking/X3DNetworkingContext.js:101
 #, javascript-format
 msgid "Loading %d file"
 msgstr "Lade %d Datei"
 
-#: Browser/Networking/X3DNetworkingContext.js:69
-#: Browser/Networking/X3DNetworkingContext.js:84
+#: Browser/Networking/X3DNetworkingContext.js:101
 #, javascript-format
 msgid "Loading %d files"
 msgstr "Lade %d Dateien"
 
-#: Browser/Networking/X3DNetworkingContext.js:87
+#: Browser/Networking/X3DNetworkingContext.js:104
 msgid "Loading done"
 msgstr "Fertig mit Laden"
+
+#: Browser/X3DBrowser.js:313
+msgid "Failed loading world."
+msgstr "Laden der Dateien fehlgeschlagen."
 
 #~ msgid "Look At"
 #~ msgstr "Auf Objekte zielen"

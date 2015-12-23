@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cobweb\n"
-"POT-Creation-Date: 2015-12-17 23:42+0100\n"
-"PO-Revision-Date: 2015-12-17 23:51+0100\n"
+"POT-Creation-Date: 2015-12-23 04:58+0100\n"
+"PO-Revision-Date: 2015-12-23 04:59+0100\n"
 "Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -198,21 +198,23 @@ msgstr "Regarder un objet de près"
 msgid "None Viewer"
 msgstr "Pas de visionneur"
 
-#: Browser/Networking/X3DNetworkingContext.js:69
-#: Browser/Networking/X3DNetworkingContext.js:84
+#: Browser/Networking/X3DNetworkingContext.js:101
 #, javascript-format
 msgid "Loading %d file"
 msgstr "Télécharger %d fichier"
 
-#: Browser/Networking/X3DNetworkingContext.js:69
-#: Browser/Networking/X3DNetworkingContext.js:84
+#: Browser/Networking/X3DNetworkingContext.js:101
 #, javascript-format
 msgid "Loading %d files"
 msgstr "Télécharger %d fichiers"
 
-#: Browser/Networking/X3DNetworkingContext.js:87
+#: Browser/Networking/X3DNetworkingContext.js:104
 msgid "Loading done"
 msgstr "Téléchargement fini"
+
+#: Browser/X3DBrowser.js:313
+msgid "Failed loading world."
+msgstr "Le chargement des fichiers ayant échoué."
 
 #~ msgid "Look At"
 #~ msgstr "Regarder un objet de près"

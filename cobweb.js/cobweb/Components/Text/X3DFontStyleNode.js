@@ -4,12 +4,16 @@ define ([
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
 	"lib/opentype.js/dist/opentype.js",
 ],
 function ($,
           X3DNode, 
           Loader,
           X3DConstants,
+          urls,
+          URI,
           opentype)
 {
 "use strict";
@@ -231,7 +235,7 @@ function ($,
 		{
 		   return this .font;
 		},
-		setError: function ()
+		setError: function (error)
 		{
 			var
 				family = this .family [this .familyIndex],

@@ -12,6 +12,7 @@ define ([
 	"cobweb/Parser/XMLParser",
 	"cobweb/Parser/Parser",
 	"cobweb/Bits/X3DConstants",
+	"lib/gettext",
 ],
 function ($,
           Fields,
@@ -24,7 +25,8 @@ function ($,
           Loader,
           XMLParser,
           Parser,
-          X3DConstants)
+          X3DConstants,
+          _)
 {
 "use strict";
 
@@ -307,6 +309,8 @@ function ($,
 			{
 				if (scene)
 					this .replaceWorld (scene);
+				else
+					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
 				this .removeLoadCount (id);
 			}
@@ -320,6 +324,7 @@ function ($,
 				catch (error)
 				{ }
 
+				this .setBrowserLoading (false);
 				this .removeLoadCount (id);
 			}
 			.bind (this));
