@@ -84,7 +84,16 @@ function ($,
 			X3DShaderNode               .prototype .initialize .call (this);
 			X3DProgrammableShaderObject .prototype .initialize .call (this);
 
+			var gl = this .getBrowser () .getContext ();
+
+			this .primitiveMode = gl .TRIANGLES;
+			this .textureTarget = gl .TEXTURE_2D;
+
 			this .relink ();
+		},
+		getProgram: function ()
+		{
+			return this .program;
 		},
 		setCustom: function (value)
 		{
@@ -112,7 +121,10 @@ function ($,
 			this .isValid_ = gl .getProgramParameter (program, gl .LINK_STATUS);
 
 			if (this .isValid_ .getValue ())
+			{
 				this .getDefaultUniforms ();
+				this .setFields ();
+			}
 			else
 				this .getBrowser () .print ("Could not initialise shaders!");
 		},
@@ -143,7 +155,7 @@ function ($,
 				this .clipPlaneVector [i]  = gl .getUniformLocation (program, "x3d_ClipPlaneVector[" + i + "]");
 			}
 
-			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
+			this .fogType            = gl .getUniformLocation (program, "x3d_Fog");
 			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
 			this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
 
@@ -154,8 +166,7 @@ function ($,
 
 			for (var i = 0; i < this .maxLights; ++ i)
 			{
-				this .lightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
-				this .lightOn [i]               = gl .getUniformLocation (program, "x3d_LightOn[" + i + "]");
+				this .lightType [i]             = gl .getUniformLocation (program, "x3d_Light[" + i + "]");
 				this .lightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
 				this .lightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
 				this .lightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
@@ -183,8 +194,9 @@ function ($,
 			this .backShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
 			this .backTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
 
-			this .texturing    = gl .getUniformLocation (program, "x3d_Texturing");
-			this .texture      = gl .getUniformLocation (program, "x3d_Texture");
+			this .textureType    = gl .getUniformLocation (program, "x3d_Texturing");
+			this .texture        = gl .getUniformLocation (program, "x3d_Texture");
+			this .cubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTextureTexture");
 
 			this .textureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 			this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
@@ -198,8 +210,8 @@ function ($,
 
 			gl .uniform1i (this .geometryType, 3);
 			gl .uniform1f (this .linewidthScaleFactor, 1);
-			gl .uniform1i (this .texture, 0);
-			// Set texture to active texture unit 0.
+			gl .uniform1i (this .texture, 0);        // Set texture to active texture unit 0.
+			gl .uniform1i (this .cubeMapTexture, 0); // Set cube map texture to active texture unit 1.
 		},
 		setGlobalUniforms: function ()
 		{
@@ -286,21 +298,14 @@ function ($,
 				// Lights
 
 				var
-					globalLights = browser .getGlobalLights (),
-					localLights  = context .localLights,
-					numLights    = Math .min (this .maxLights, globalLights .length + localLights .length);
-
-				if (this .custom)
-				{
-					for (var i = 0, length = this .globalLights; i < length; ++ i)
-						globalLights [i] .use (gl, this, i);
-				}
+					localLights = context .localLights,
+					numLights   = Math .min (this .maxLights, this .globalLights + localLights .length);
 
 				for (var i = this .globalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
 				if (i < this .maxLights)
-					gl .uniform1i (this .lightOn [i], false);
+					gl .uniform1i (this .lightType [i], 0);
 
 				// Material
 
@@ -352,25 +357,23 @@ function ($,
 			if (texture)
 			{
 				appearance .getTextureTransform () .traverse ();
-				texture .traverse ();
-
-				gl .uniform1i (this .texturing, true);
+	
+				gl .activeTexture (gl .TEXTURE0);
+				gl .bindTexture (this .textureTarget = texture .getTarget (), texture .getTexture ());
+				gl .uniform1i (this .textureType, texture .getTextureType ());
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
-				// Active texture 0 is set on initialization.
 			}
 			else
 			{
-				gl .uniform1i (this .texturing, false);
+				gl .uniform1i (this .textureType, 0);
 
 				if (this .custom)
 				{
 					appearance .getTextureTransform () .traverse ();
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
-					// Active texture 0 is set on initialization.
 				}
 			}
 
-			// Set model view matrix
 			gl .uniformMatrix4fv (this .modelViewMatrix, false, modelViewMatrix);
 		},
 		use: function ()

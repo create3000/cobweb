@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <unit category='angle' name='degree' conversionFactor='0.0174532925199433'/>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Thu, 24 Dec 2015 19:18:00 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='68.8916320800781, 46.8920593261719, 120.146202087402'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='0.761609017848969, -0.627576470375061, -0.161553204059601, 5.63130474090576'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='28.8466510772705, -7.4961109161377, 30'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Transform DEF='Water2'>
+      <TimeSensor DEF='Timer'
+          cycleInterval='31104000'
+          loop='true'/>
+      <ScalarInterpolator DEF='ElapsedTime'
+          key='0, 1'
+          keyValue='0, 3.1104e+07'/>
+      <ProximitySensor DEF='_1'
+          size='1000 1000 1000'/>
+      <Shape>
+        <Appearance>
+          <ComposedShader DEF='CobwebWaterShader'
+              language='GLSL'>
+            <field accessType='inputOnly' type='SFFloat' name='set_time'/>
+            <field accessType='inputOutput' type='SFVec3f' name='position' value='68.8916 46.8921 120.146'/>
+            <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.23, 0.17, 0.1, 0.1, 0.1, 0, 0, 0, 0'/>
+            <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.01, 0.97, 0.43, 0.37, 0.29, 0, 0, 0, 0'/>
+            <field accessType='inputOutput' type='MFVec2f' name='direction' value='4 -4, 4 -3, 4 -2, 4 -1, 4 -0, 0 0, 0 0, 0 0, 0 0'/>
+            <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.5'/>
+            <field accessType='inputOutput' type='SFNode' name='texture'>
+              <ComposedCubeMapTexture>
+                <ImageTexture containerField='front'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg"'/>
+                <ImageTexture containerField='back'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg"'/>
+                <ImageTexture containerField='left'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg"'/>
+                <ImageTexture containerField='right'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg"'/>
+                <ImageTexture containerField='top'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg"'/>
+                <ImageTexture containerField='bottom'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg"'/>
+              </ComposedCubeMapTexture>
+            </field>
+            <ShaderPart DEF='CobwebWaterVertex'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform mat3 x3d_NormalMatrix;
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+attribute vec4 x3d_Vertex;
+
+#define WAVE_MAX 8
+
+uniform float set_time;
+uniform vec3  position;
+uniform float amplitude [WAVE_MAX];
+uniform float frequency [WAVE_MAX];
+uniform vec2  direction [WAVE_MAX];
+
+varying vec3 texCoord;
+
+float
+getHeight (int i, vec2 vertex)
+{
+	if (amplitude [i] == 0.0)
+		return 0.0;
+
+	float theta = -dot (vertex, normalize (direction [i]));
+
+	return amplitude [i] * sin (theta * frequency [i] + set_time);
+}
+
+float
+getWaveHeight (vec2 vertex)
+{
+	float height = 0.0;
+
+	for (int i = 0; i < WAVE_MAX; ++ i)
+		height += getHeight (i, vertex);
+
+	return height;
+}
+
+vec2
+getNormal (int i, vec2 vertex)
+{
+	if (amplitude [i] == 0.0)
+		return vec2 (0.0, 0.0);
+
+	vec2  dir   = normalize (direction [i]);
+	float theta = -dot (dir, vertex);
+	vec2  A     = dir * frequency [i];
+
+	return A * amplitude [i] * cos (theta * frequency [i] + set_time);
+}
+
+vec3
+getWaveNormal (vec2 vertex)
+{
+	vec2 dt = vec2 (0.0, 0.0);
+
+	for (int i = 0; i < WAVE_MAX; ++ i)
+		dt += getNormal (i, vertex);
+
+	return normalize (vec3 (dt .x, dt .y, 1.0));
+}
+
+void
+main ()
+{
+	vec4 vertex = x3d_Vertex;
+	vertex.y    = getWaveHeight (vec2 (vertex .x, vertex .z));
+	//vec3 translation = position - vertex .xyz / vertex .w;
+	//vec3 worldNormal = getWaveNormal (vec2 (vertex .x, vertex .z));
+	//texCoord = reflect (translation, worldNormal);
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * vertex;
+}
+]]> 
+            </ShaderPart>
+            <ShaderPart DEF='CobwebWaterFragment'
+                type='FRAGMENT'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform float       transparency;
+uniform samplerCube texture;
+
+varying vec3 texCoord;
+
+void
+main ()
+{
+	//vec3 color   = vec3 (textureCube (texture, texCoord));
+	//gl_FragColor = vec4 (color, 1.0 - transparency);
+	
+	gl_FragColor = vec4 (1.0, 1.0, 1.0, 1.0 - transparency);
+}
+]]> 
+            </ShaderPart>
+          </ComposedShader>
+        </Appearance>
+        <ElevationGrid
+            xDimension='60'
+            zDimension='60'/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Box'
+        translation='30 -10 30'
+        scale='30 15 30'>
+      <Shape>
+        <Appearance>
+          <Material/>
+          <ImageTexture
+              url='"tiles.jpg"'/>
+        </Appearance>
+        <IndexedFaceSet
+            solid='false'
+            ccw='false'
+            texCoordIndex='0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 7, 6, 5, 4, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1'
+            coordIndex='0, 1, 2, 3, -1, 5, 4, 7, 6, -1, 4, 5, 1, 0, -1, 4, 0, 3, 7, -1, 1, 5, 6, 2, -1'>
+          <TextureCoordinate
+              point='0 0, 1 0, 0.999869 0.499728, -0.000131071 0.499728, -4.94719e-06 0.99993, 0.999995 0.99993, 1 0, 0 0'/>
+          <Coordinate
+              point='-1 -1 1, 1 -1 1, 1 1 1, -1 1 1, -1 -1 -1, 1 -1 -1, 1 1 -1, -1 1 -1'/>
+        </IndexedFaceSet>
+      </Shape>
+    </Transform>
+    <Viewpoint
+        description='Perspective'
+        position='68.8916 46.8921 120.146'
+        orientation='-0.761609 0.627577 0.161553 0.65188'
+        centerOfRotation='28.8467 -7.49611 30'/>
+    <Viewpoint
+        description='Front'
+        position='31.7947 54.1093 117.689'
+        orientation='0.99961 -0.0279344 0.000151179 5.6517'
+        centerOfRotation='30 -10 30'/>
+    <Viewpoint
+        description='Top'
+        position='30 98.6396 30'
+        orientation='-1 0 0 1.5708'
+        centerOfRotation='30 -10 30'/>
+    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='ElapsedTime' toField='set_fraction'/>
+    <ROUTE fromNode='ElapsedTime' fromField='value_changed' toNode='CobwebWaterShader' toField='set_time'/>
+    <ROUTE fromNode='_1' fromField='position_changed' toNode='CobwebWaterShader' toField='set_position'/>
+  </Scene>
+</X3D>

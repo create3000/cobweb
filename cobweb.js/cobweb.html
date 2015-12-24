@@ -171,6 +171,10 @@ X3D (function (dom)
 		{ name: 'ClipPlane',            url: [ "tests/Components/Rendering/ClipPlane.x3d", "http://www.web3d.org/x3d/content/examples/Basic/CAD/ClipPlaneExample.x3d" ] },
 		{ name: 'Galaxies3d',           url: [ "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d_uc.wrl", "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d.wrl" ] },
 		{ name: 'Rosalila',             url: [ "http://chichcalan.com/rosalila/rosalila.wrl" ] },
+
+		{ name: 'Ubuntu',               url: [ "tests/Components/Texturing/ubuntu.x3d" ] },
+		{ name: 'ComposedCubeMap',      url: [ "tests/Components/ComposedCubeMapTexture/ComposedCubeMapTexture.x3d" ] },
+		{ name: 'Water',                url: [ "tests/Components/Shaders/water.x3d" ] },
 	];
 
 	var
@@ -200,6 +204,7 @@ function loadURL ()
 	<div id="x3d-page">
 		<div id="bookmarks"></div>
 		<X3D cache="false" url='
+			"tests/Components/ComposedCubeMapTexture/ComposedCubeMapTexture.x3d"
 			"examples/puzzle/puzzle.x3d"
 			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl"
 			"http://www.web3d.org/x3d/content/examples/Vrml2.0Sourcebook/Chapter27-SensingVisibilityProximityCollision/../Chapter25-LevelOfDetail/Figure25.11DungeonDoor.x3d"

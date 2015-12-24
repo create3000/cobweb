@@ -527,7 +527,8 @@ function ($,
 				gl                = browser .getContext (),
 				viewport          = this .currentViewport .getRectangle (),
 				opaqueShapes      = this .opaqueShapes,
-				transparentShapes = this .transparentShapes;
+				transparentShapes = this .transparentShapes,
+				shaders           = browser .getShaders ();
 
 			// Configure viewport and background
 
@@ -548,6 +549,9 @@ function ($,
 			browser .getPointShader ()   .setGlobalUniforms ();
 			browser .getLineShader ()    .setGlobalUniforms ();
 			browser .getDefaultShader () .setGlobalUniforms ();
+
+			for (var id in shaders)
+				shaders [id] .setGlobalUniforms ();
 
 			// Render opaque objects first
 

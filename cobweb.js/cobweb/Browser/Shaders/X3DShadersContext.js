@@ -3,7 +3,10 @@ define (function ()
 {
 "use strict";
 
-	function X3DShadersContext () { }
+	function X3DShadersContext ()
+	{
+		this .shaders = { };
+	}
 
 	X3DShadersContext .prototype =
 	{
@@ -23,6 +26,18 @@ define (function ()
 		getMaxVertexAttribs: function ()
 		{
 			return this .getContext () .getParameter (this .getContext () .MAX_VERTEX_ATTRIBS);
+		},
+		addShader: function (shader)
+		{
+			this .shaders [shader .getId ()] = shader;
+		},
+		removeShader: function (shader)
+		{
+			delete this .shaders [shader .getId ()];
+		},
+		getShaders: function ()
+		{
+			return this .shaders;
 		},
 	};
 

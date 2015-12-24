@@ -529,6 +529,8 @@ function ($,
 			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
 			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
 			gl .disableVertexAttribArray (shader .vertex);
+
+			gl .bindTexture (shader .textureTarget, null);
 		},
 		collision: function (shader)
 		{

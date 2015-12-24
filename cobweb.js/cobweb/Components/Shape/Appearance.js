@@ -23,6 +23,13 @@ function ($,
 		X3DAppearanceNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Appearance);
+
+		this .linePropertiesNode   = null;
+		this .materialNode         = null;
+		this .textureNode          = null;
+		this .textureTransformNode = null;
+		this .shaderNodes          = [ ];
+		this .shaderNode           = null;
 	}
 
 	Appearance .prototype = $.extend (Object .create (X3DAppearanceNode .prototype),
@@ -52,6 +59,9 @@ function ($,
 		initialize: function ()
 		{
 			X3DAppearanceNode .prototype .initialize .call (this);
+
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
 
 			this .lineProperties_   .addInterest (this, "set_lineProperties__");
 			this .material_         .addInterest (this, "set_material__");
@@ -84,6 +94,19 @@ function ($,
 		set_lineProperties__: function ()
 		{
 			this .linePropertiesNode = X3DCast (X3DConstants .LineProperties, this .lineProperties_);
+		},
+		set_live__: function ()
+		{
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			{
+				if (this .shaderNode)
+					this .getBrowser () .addShader (this .shaderNode);
+			}
+			else
+			{
+				if (this .shaderNode)
+				this .getBrowser () .removeShader (this .shaderNode);
+			}
 		},
 		set_material__: function ()
 		{
@@ -120,18 +143,66 @@ function ($,
 		},
 		set_shaders__: function ()
 		{
+			var
+				shaders     = this .shaders_ .getValue (),
+				shaderNodes = this .shaderNodes;
+
+			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
+				shaderNodes [i] .isValid_ .removeInterest (this, "set_shader__");
+		
+			shaderNodes .length = 0;
+		
+			for (var i = 0, length = shaders .length; i < length; ++ i)
+			{
+				var shaderNode = X3DCast (X3DConstants .X3DShaderNode, shaders [i]);
+		
+				if (shaderNode)
+				{
+					shaderNodes .push (shaderNode);
+					shaderNode .isValid_ .addInterest (this, "set_shader__");
+				}
+			}
+
+			this .set_shader__ ();
+		},
+		set_shader__ ()
+		{
+			var shaderNodes = this .shaderNodes;
+
+			if (this .shaderNode)
+				this .getBrowser () .removeShader (this .shaderNode);
+
+			this .shaderNode = null;
+
+			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
+			{
+				if (shaderNodes [i] .isValid_ .getValue ());
+				{
+					this .shaderNode = shaderNodes [i];
+					break;
+				}
+			}
+
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			{
+				if (this .shaderNode)
+					this .getBrowser () .addShader (this .shaderNode);
+			}
+
+			this .set_transparent__ ();
 		},
 		set_transparent__: function ()
 		{
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
-			                     (this .textureNode && this .textureNode .transparent_ .getValue ());
+			                     (this .textureNode && this .textureNode .transparent_ .getValue ()) ||
+                              this .shaderNode;
 		},
 		traverse: function ()
 		{
 			var browser = this .getBrowser ();
 
 			browser .setAppearance (this);
-			browser .setShader (browser .getDefaultShader ());
+			browser .setShader (this .shaderNode || browser .getDefaultShader ());
 		},
 	});
 

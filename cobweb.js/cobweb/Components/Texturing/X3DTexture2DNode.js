@@ -1,11 +1,13 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
 	"cobweb/Components/Texturing/X3DTextureNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
+          Fields,
           X3DTextureNode,
           X3DCast,
           X3DConstants)
@@ -17,9 +19,13 @@ function ($,
 		X3DTextureNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DTexture2DNode);
-			
+
+		this .addChildren ("texture_changed", new Fields .SFTime ());
+
 		this .width  = 0;
 		this .height = 0;
+		this .flipY  = false;
+		this .data   = null;
 	}
 
 	X3DTexture2DNode .prototype = $.extend (Object .create (X3DTextureNode .prototype),
@@ -29,6 +35,8 @@ function ($,
 		{
 			X3DTextureNode .prototype .initialize .call (this);
 			
+			this .target = this .getBrowser () .getContext () .TEXTURE_2D;
+
 			this .repeatS_           .addInterest (this, "updateTextureProperties");
 			this .repeatT_           .addInterest (this, "updateTextureProperties");
 			this .textureProperties_ .addInterest (this, "set_textureProperties__");
@@ -49,6 +57,14 @@ function ($,
 
 			this .updateTextureProperties ();
 		},
+		getTarget: function ()
+		{
+			return this .target;
+		},
+		getTextureType: function ()
+		{
+			return 2;
+		},
 		getWidth: function ()
 		{
 			return this .width;
@@ -57,11 +73,21 @@ function ($,
 		{
 			return this .height;
 		},
+		getFlipY: function ()
+		{
+			return this .flipY;
+		},
+		getData: function ()
+		{
+			return this .data;
+		},
 		setTexture: function (width, height, transparent, data, flipY)
 		{
 			this .transparent_ = transparent;
 			this .width        = width;
 			this .height       = height;
+			this .flipY        = flipY;
+			this .data         = data;
 
 			var gl = this .getBrowser () .getContext ();
 
@@ -73,19 +99,23 @@ function ($,
 
 			this .updateTextureProperties ();
 
-			this .getBrowser () .addBrowserEvent ();
+			this .texture_changed_ .addEvent ();
 		},
-		updateTexture: function (object)
+		updateTexture: function (data)
 		{
+			this .data = data;
+
 			var gl = this .getBrowser () .getContext ();
 
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, object);
+			gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
 
 			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
 				gl .generateMipmap (gl .TEXTURE_2D);
 
 			gl .bindTexture (gl .TEXTURE_2D, null);
+
+			this .texture_changed_ .addEvent ();
 		},
 		updateTextureProperties: function ()
 		{
@@ -126,7 +156,7 @@ function ($,
 						index       = (inputW + Math.floor (x / scaleX)) * 4,
 						indexScaled = (outputW + x) * 4;
 
-					output [indexScaled ]    = input [index];
+					output [indexScaled]     = input [index];
 					output [indexScaled + 1] = input [index + 1];
 					output [indexScaled + 2] = input [index + 2];
 					output [indexScaled + 3] = input [index + 3];
@@ -134,13 +164,6 @@ function ($,
 			}
 
 			return output;
-		},
-		traverse: function ()
-		{
-			var gl = this .getBrowser () .getContext ();
-
-			gl .activeTexture (gl .TEXTURE0);
-			gl .bindTexture (gl .TEXTURE_2D, this .texture);
 		},
 	});
 

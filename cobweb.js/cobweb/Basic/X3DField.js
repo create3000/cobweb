@@ -29,6 +29,7 @@ function ($,
 		fieldCallbacks_: { },
 		accessType_: X3DConstants .initializeOnly,
 		set_: null,
+		uniformLocation_: null,
 		clone: function ()
 		{
 			return this .copy ();

@@ -44,8 +44,7 @@ function ($,
 	   },
 		use: function (gl, shader, i)
 		{
-			gl .uniform1i (shader .lightType [i],             1);
-			gl .uniform1i (shader .lightOn [i],               true);
+			gl .uniform1i (shader .lightType [i],             2);
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
 			gl .uniform1f (shader .lightIntensity [i],        this .intensity); // clamp
 			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp

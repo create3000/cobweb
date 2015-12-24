@@ -210,13 +210,15 @@ function ($,
 
 					if (uri .filename .toString () .length === 0 && uri .filename .query .length === 0)
 					{
-						return this .bindViewpoint (uri .fragment);
+						this .bindViewpoint (uri .fragment);
+						return;
 					}
 				}
 			}
 			catch (exception)
 			{
-				return this .loadDocumentError (exception);
+				this .loadDocumentError (exception);
+				return;
 			}
 
 			if (this .script)
@@ -226,11 +228,15 @@ function ($,
 					var result = ECMAScript .exec (URL);
 	
 					if (result)
-						return this .callback (result [1]);
+					{
+						this .callback (result [1]);
+						return;
+					}
 				}
 				catch (exception)
 				{
 					this .loadDocumentError (exception);
+					return;
 				}
 			}
 
@@ -253,12 +259,14 @@ function ($,
 					else
 						data = unescape (data);
 
-					return this .callback (data);
+					this .callback (data);
+					return;
 				}
 			}
 			catch (exception)
 			{
 				this .loadDocumentError (exception);
+				return;
 			}
 
 			this .URL = this .transform (URL);
@@ -323,16 +331,8 @@ function ($,
 		},
 		error: function (exception)
 		{
-			console .log (exception);
-			
-			// Output exception.
-
-			var message = "Couldn't load URL " + this .URL;
-
-			if (exception)
-				message += ": " + exception;
-
-			console .warn (message);
+			console .warn ("Couldn't load URL " + this .URL);
+			console .warn (exception);
 		},
 		transform: function (sURL)
 		{

@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 21 Dec 2015 20:19:56 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 22 Dec 2015 13:57:48 GMT'/>
+    <meta name='modified' content='Thu, 24 Dec 2015 04:00:28 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFInt32' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFInt32.x3dv"'>
@@ -968,8 +968,8 @@ function random (min, max)
           <TouchSensor DEF='_54'/>
           <Shape>
             <Appearance>
-              <Material DEF='_55'
-                  emissiveColor='1 1 1'/>
+              <Material
+                  diffuseColor='0 0 0'/>
             </Appearance>
             <Text
                 string='"Sliding", "Puzzle"'
@@ -996,9 +996,11 @@ function random (min, max)
             translation='-1.75 0.5 1.83735e-06'>
           <Shape>
             <Appearance>
-              <Material USE='_55'/>
+              <Material
+                  diffuseColor='0 0 0'
+                  emissiveColor='1 1 1'/>
             </Appearance>
-            <Text DEF='_56'
+            <Text DEF='_55'
                 string='"Mix Puzzle"'
                 solid='true'>
               <FontStyle
@@ -1006,7 +1008,7 @@ function random (min, max)
                   size='0.12'/>
             </Text>
           </Shape>
-          <TouchSensor DEF='_57'/>
+          <TouchSensor DEF='_56'/>
           <Transform DEF='Rectangle2D_3'
               translation='0.325 0.0500037 -1'
               scale='0.325 0.05 0.161657'>
@@ -1022,7 +1024,7 @@ function random (min, max)
             <field accessType='inputOnly' type='SFBool' name='set_active'/>
             <field accessType='outputOnly' type='MFString' name='string_changed'/>
             <field accessType='initializeOnly' type='SFNode' name='touchSensor'>
-              <TouchSensor USE='_57'/>
+              <TouchSensor USE='_56'/>
             </field>
             <field accessType='inputOutput' type='SFTime' name='solveTime'/>
 <![CDATA[ecmascript:
@@ -1078,8 +1080,8 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_58'/>
-          <ProtoInstance name='SFNode' DEF='_59'>
+          <TouchSensor DEF='_57'/>
+          <ProtoInstance name='SFNode' DEF='_58'>
             <fieldValue name='keyValue'>
               <ImageTexture USE='_3' containerField='children'/>
             </fieldValue>
@@ -1090,7 +1092,7 @@ function set_active (value)
             scale='0.18 0.18 1'>
           <Shape>
             <Appearance>
-              <ImageTexture DEF='_60'
+              <ImageTexture DEF='_59'
                   url='"montain.jpg"'
                   repeatS='false'
                   repeatT='false'/>
@@ -1107,10 +1109,10 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_61'/>
-          <ProtoInstance name='SFNode' DEF='_62'>
+          <TouchSensor DEF='_60'/>
+          <ProtoInstance name='SFNode' DEF='_61'>
             <fieldValue name='keyValue'>
-              <ImageTexture USE='_60' containerField='children'/>
+              <ImageTexture USE='_59' containerField='children'/>
             </fieldValue>
           </ProtoInstance>
         </Transform>
@@ -1119,7 +1121,7 @@ function set_active (value)
             scale='0.18 0.18 1'>
           <Shape>
             <Appearance>
-              <ImageTexture DEF='_63'
+              <ImageTexture DEF='_62'
                   url='"plants.jpg"'
                   repeatS='false'
                   repeatT='false'/>
@@ -1136,10 +1138,10 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_64'/>
-          <ProtoInstance name='SFNode' DEF='_65'>
+          <TouchSensor DEF='_63'/>
+          <ProtoInstance name='SFNode' DEF='_64'>
             <fieldValue name='keyValue'>
-              <ImageTexture USE='_63' containerField='children'/>
+              <ImageTexture USE='_62' containerField='children'/>
             </fieldValue>
           </ProtoInstance>
         </Transform>
@@ -1148,7 +1150,7 @@ function set_active (value)
             scale='0.18 0.18 1'>
           <Shape>
             <Appearance>
-              <ImageTexture DEF='_66'
+              <ImageTexture DEF='_65'
                   url='"flowers.jpg"'
                   repeatS='false'
                   repeatT='false'/>
@@ -1165,10 +1167,10 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_67'/>
-          <ProtoInstance name='SFNode' DEF='_68'>
+          <TouchSensor DEF='_66'/>
+          <ProtoInstance name='SFNode' DEF='_67'>
             <fieldValue name='keyValue'>
-              <ImageTexture USE='_66' containerField='children'/>
+              <ImageTexture USE='_65' containerField='children'/>
             </fieldValue>
           </ProtoInstance>
         </Transform>
@@ -1177,7 +1179,7 @@ function set_active (value)
             scale='0.18 0.18 1'>
           <Shape>
             <Appearance>
-              <ImageTexture DEF='_69'
+              <ImageTexture DEF='_68'
                   url='"abstract.jpg"'
                   repeatS='false'
                   repeatT='false'/>
@@ -1194,10 +1196,10 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_70'/>
-          <ProtoInstance name='SFNode' DEF='_71'>
+          <TouchSensor DEF='_69'/>
+          <ProtoInstance name='SFNode' DEF='_70'>
             <fieldValue name='keyValue'>
-              <ImageTexture USE='_69' containerField='children'/>
+              <ImageTexture USE='_68' containerField='children'/>
             </fieldValue>
           </ProtoInstance>
         </Transform>
@@ -1206,7 +1208,7 @@ function set_active (value)
             scale='0.18 0.18 1'>
           <Shape>
             <Appearance>
-              <ImageTexture DEF='_72'
+              <ImageTexture DEF='_71'
                   url='"lines-art.jpg"'
                   repeatS='false'
                   repeatT='false'/>
@@ -1223,10 +1225,10 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_73'/>
-          <ProtoInstance name='SFNode' DEF='_74'>
+          <TouchSensor DEF='_72'/>
+          <ProtoInstance name='SFNode' DEF='_73'>
             <fieldValue name='keyValue'>
-              <ImageTexture USE='_72' containerField='children'/>
+              <ImageTexture USE='_71' containerField='children'/>
             </fieldValue>
           </ProtoInstance>
         </Transform>
@@ -1235,7 +1237,7 @@ function set_active (value)
             scale='0.18 0.18 1'>
           <Shape>
             <Appearance>
-              <ImageTexture DEF='_75'
+              <ImageTexture DEF='_74'
                   url='"ball.jpg"'
                   repeatS='false'
                   repeatT='false'/>
@@ -1252,10 +1254,10 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_76'/>
-          <ProtoInstance name='SFNode' DEF='_77'>
+          <TouchSensor DEF='_75'/>
+          <ProtoInstance name='SFNode' DEF='_76'>
             <fieldValue name='keyValue'>
-              <ImageTexture USE='_75' containerField='children'/>
+              <ImageTexture USE='_74' containerField='children'/>
             </fieldValue>
           </ProtoInstance>
         </Transform>
@@ -1264,7 +1266,7 @@ function set_active (value)
             scale='0.18 0.18 1'>
           <Shape>
             <Appearance>
-              <ImageTexture DEF='_78'
+              <ImageTexture DEF='_77'
                   url='"book.jpg"'
                   repeatS='false'
                   repeatT='false'/>
@@ -1281,10 +1283,10 @@ function set_active (value)
             <Polyline2D
                 lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
           </Shape>
-          <TouchSensor DEF='_79'/>
-          <ProtoInstance name='SFNode' DEF='_80'>
+          <TouchSensor DEF='_78'/>
+          <ProtoInstance name='SFNode' DEF='_79'>
             <fieldValue name='keyValue'>
-              <ImageTexture USE='_78' containerField='children'/>
+              <ImageTexture USE='_77' containerField='children'/>
             </fieldValue>
           </ProtoInstance>
         </Transform>
@@ -1294,7 +1296,7 @@ function set_active (value)
               scale='0.18 0.18 1'>
             <Shape>
               <Appearance>
-                <MovieTexture DEF='_81'
+                <MovieTexture DEF='_80'
                     url='"campfire.512.avi", "http://titania.create3000.de/fileadmin/cobweb/videos/campfire.512.mp4", "campfire.512.mp4"'
                     loop='true'/>
               </Appearance>
@@ -1310,23 +1312,23 @@ function set_active (value)
               <Polyline2D
                   lineSegments='1 1, -1 1, -1 -1, 1 -1, 1 1'/>
             </Shape>
-            <TouchSensor DEF='_82'/>
-            <ProtoInstance name='SFNode' DEF='_83'>
+            <TouchSensor DEF='_81'/>
+            <ProtoInstance name='SFNode' DEF='_82'>
               <fieldValue name='keyValue'>
-                <MovieTexture USE='_81' containerField='children'/>
+                <MovieTexture USE='_80' containerField='children'/>
               </fieldValue>
             </ProtoInstance>
           </Transform>
           <Sound
               location='0 0 10'>
-            <MovieTexture USE='_81' containerField='source'/>
+            <MovieTexture USE='_80' containerField='source'/>
           </Sound>
         </Group>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='_53' fromField='time' toNode='MixScript' toField='set_time'/>
-    <ROUTE fromNode='_57' fromField='touchTime' toNode='MixScript' toField='set_startTime'/>
-    <ROUTE fromNode='MixTextScript' fromField='string_changed' toNode='_56' toField='set_string'/>
+    <ROUTE fromNode='_56' fromField='touchTime' toNode='MixScript' toField='set_startTime'/>
+    <ROUTE fromNode='MixTextScript' fromField='string_changed' toNode='_55' toField='set_string'/>
     <ROUTE fromNode='_53' fromField='isActive' toNode='MixTextScript' toField='set_active'/>
     <ROUTE fromNode='_54' fromField='touchTime' toNode='MixScript' toField='set_solveTime'/>
     <ROUTE fromNode='_52' fromField='touchTime' toNode='MixScript' toField='set_touchTime23'/>
@@ -1353,7 +1355,7 @@ function set_active (value)
     <ROUTE fromNode='_10' fromField='touchTime' toNode='MixScript' toField='set_touchTime2'/>
     <ROUTE fromNode='_8' fromField='touchTime' toNode='MixScript' toField='set_touchTime1'/>
     <ROUTE fromNode='_6' fromField='touchTime' toNode='MixScript' toField='set_touchTime0'/>
-    <ROUTE fromNode='_59' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_58' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
     <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_2' toField='set_texture'/>
     <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_51' toField='set_texture'/>
     <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_49' toField='set_texture'/>
@@ -1378,22 +1380,22 @@ function set_active (value)
     <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_11' toField='set_texture'/>
     <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_9' toField='set_texture'/>
     <ROUTE fromNode='Image' fromField='keyValue_changed' toNode='_7' toField='set_texture'/>
-    <ROUTE fromNode='_58' fromField='touchTime' toNode='_59' toField='set_triggerTime'/>
-    <ROUTE fromNode='_61' fromField='touchTime' toNode='_62' toField='set_triggerTime'/>
-    <ROUTE fromNode='_62' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
-    <ROUTE fromNode='_64' fromField='touchTime' toNode='_65' toField='set_triggerTime'/>
-    <ROUTE fromNode='_65' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
-    <ROUTE fromNode='_67' fromField='touchTime' toNode='_68' toField='set_triggerTime'/>
-    <ROUTE fromNode='_68' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
-    <ROUTE fromNode='_70' fromField='touchTime' toNode='_71' toField='set_triggerTime'/>
-    <ROUTE fromNode='_71' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
-    <ROUTE fromNode='_73' fromField='touchTime' toNode='_74' toField='set_triggerTime'/>
-    <ROUTE fromNode='_74' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
-    <ROUTE fromNode='_76' fromField='touchTime' toNode='_77' toField='set_triggerTime'/>
-    <ROUTE fromNode='_77' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
-    <ROUTE fromNode='_79' fromField='touchTime' toNode='_80' toField='set_triggerTime'/>
-    <ROUTE fromNode='_80' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
-    <ROUTE fromNode='_82' fromField='touchTime' toNode='_83' toField='set_triggerTime'/>
-    <ROUTE fromNode='_83' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_57' fromField='touchTime' toNode='_58' toField='set_triggerTime'/>
+    <ROUTE fromNode='_60' fromField='touchTime' toNode='_61' toField='set_triggerTime'/>
+    <ROUTE fromNode='_61' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_63' fromField='touchTime' toNode='_64' toField='set_triggerTime'/>
+    <ROUTE fromNode='_64' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_66' fromField='touchTime' toNode='_67' toField='set_triggerTime'/>
+    <ROUTE fromNode='_67' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_69' fromField='touchTime' toNode='_70' toField='set_triggerTime'/>
+    <ROUTE fromNode='_70' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_72' fromField='touchTime' toNode='_73' toField='set_triggerTime'/>
+    <ROUTE fromNode='_73' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_75' fromField='touchTime' toNode='_76' toField='set_triggerTime'/>
+    <ROUTE fromNode='_76' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_78' fromField='touchTime' toNode='_79' toField='set_triggerTime'/>
+    <ROUTE fromNode='_79' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
+    <ROUTE fromNode='_81' fromField='touchTime' toNode='_82' toField='set_triggerTime'/>
+    <ROUTE fromNode='_82' fromField='value_changed' toNode='Image' toField='set_keyValue'/>
   </Scene>
 </X3D>
