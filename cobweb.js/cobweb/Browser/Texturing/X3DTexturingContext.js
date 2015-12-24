@@ -16,6 +16,8 @@ function (TextureProperties,
 
 	function X3DTexturingContext ()
 	{
+		this .textureUnits             = [ ];
+		this .combinedTextureUnits     = [ ];
 		this .textureStages            = 1;
 		this .textureTransform         = [ ];
 		this .defaultTextureProperties = new TextureProperties (this);
@@ -41,6 +43,16 @@ function (TextureProperties,
 			this .maxTextureUnits         = gl .getParameter (gl .MAX_TEXTURE_IMAGE_UNITS);
 			this .maxCombinedTextureUnits = gl .getParameter (gl .MAX_COMBINED_TEXTURE_IMAGE_UNITS);
 
+			var
+				textureUnits         = this .textureUnits,
+				combinedTextureUnits = this .combinedTextureUnits;
+
+			for (var i = this .maxTextureUnits - 1; i >= 0; -- i)
+				textureUnits .push (i);
+
+			for (var i = this .maxTextureUnits, length = this .maxCombinedTextureUnits; i < length; ++ i)
+				combinedTextureUnits .push (i);
+
 			this .defaultTextureProperties .setup ();
 			this .defaultTextureTransform  .setup ();
 			this .defaultTextureCoordinate .setup ();
@@ -60,6 +72,14 @@ function (TextureProperties,
 		getMaxCombinedTextureUnits: function ()
 		{
 			return this .maxCombinedTextureUnits;
+		},
+		getTextureUnits: function ()
+		{
+			return this .textureUnits;
+		},
+		getCombinedTextureUnits: function ()
+		{
+			return this .combinedTextureUnits;
 		},
 		getTextureTransform: function ()
 		{

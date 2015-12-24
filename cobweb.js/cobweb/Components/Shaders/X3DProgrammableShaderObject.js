@@ -1,9 +1,11 @@
 
 define ([
 	"jquery",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
+          X3DCast,
           X3DConstants)
 {
 "use strict";
@@ -21,7 +23,36 @@ function ($,
 		matrix4d: new Float32Array (16),
 		matrix4f: new Float32Array (16),
 		array: [ ],
-		initialize: function () { },
+		initialize: function ()
+		{
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
+			//Must not call set_live__.
+		},
+		set_live__: function ()
+		{
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			{
+				this .setFields ();
+			}
+			else
+			{
+			var
+					gl                = this .getBrowser () .getContext (),
+					program           = this .getProgram (),
+					userDefinedFields = this .getUserDefinedFields ();
+
+				for (var name in userDefinedFields)
+				{
+					var field = userDefinedFields [name];
+	
+					switch (field .getType ())
+					{
+					}
+				}
+			}
+		},
 		hasUserDefinedFields: function ()
 		{
 			return true;
@@ -118,6 +149,38 @@ function ($,
 				}
 				case X3DConstants .SFNode:
 				{
+					var location = field .uniformLocation_;
+
+					if (location)
+					{
+						var textureUnit = gl .getUniform (program, location);
+			
+						if (! textureUnit)
+						{
+							if (this .getBrowser () .getCombinedTextureUnits () .length)
+							{
+								textureUnit = this .getBrowser () .getCombinedTextureUnits () .pop ();
+								gl .uniform1i (location, textureUnit);
+							}
+							else
+							{
+								this .getBrowser () .println ("Warning: Not enough combined texture units for uniform variable '", field .getName (), "' available.");
+								return;
+							}
+						}
+
+						gl .activeTexture (gl .TEXTURE0 + textureUnit);
+			
+						var texture = X3DCast (X3DConstants .X3DTextureNode, field);
+
+						if (texture)
+							gl .bindTexture (texture .getTarget (), texture .getTexture ());
+						else
+							gl .bindTexture (gl .TEXTURE_2D, 0);
+
+						gl .activeTexture (gl .TEXTURE0);
+					}
+
 					return;
 				}
 				case X3DConstants .SFRotation:

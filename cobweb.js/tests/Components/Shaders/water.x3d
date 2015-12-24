@@ -7,7 +7,7 @@
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 24 Dec 2015 19:18:00 GMT'/>
+    <meta name='modified' content='Thu, 24 Dec 2015 20:11:47 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -28,15 +28,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='68.8916320800781, 46.8920593261719, 120.146202087402'/>
+              value='48.3184280395508, 42.9350051879883, 48.8578872680664'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.761609017848969, -0.627576470375061, -0.161553204059601, 5.63130474090576'/>
+              value='0.938254356384277, -0.0497897267341614, -0.342344552278519, 5.36016178131104'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='28.8466510772705, -7.4961109161377, 30'/>
+              value='52.1399993896484, 10.0311069488525, 20.5329742431641'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -54,7 +54,7 @@
           <ComposedShader DEF='CobwebWaterShader'
               language='GLSL'>
             <field accessType='inputOnly' type='SFFloat' name='set_time'/>
-            <field accessType='inputOutput' type='SFVec3f' name='position' value='68.8916 46.8921 120.146'/>
+            <field accessType='inputOutput' type='SFVec3f' name='position' value='48.3184 42.935 48.8579'/>
             <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.23, 0.17, 0.1, 0.1, 0.1, 0, 0, 0, 0'/>
             <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.01, 0.97, 0.43, 0.37, 0.29, 0, 0, 0, 0'/>
             <field accessType='inputOutput' type='MFVec2f' name='direction' value='4 -4, 4 -3, 4 -2, 4 -1, 4 -0, 0 0, 0 0, 0 0, 0 0'/>
@@ -146,11 +146,12 @@ void
 main ()
 {
 	vec4 vertex = x3d_Vertex;
-	vertex.y    = getWaveHeight (vec2 (vertex .x, vertex .z));
-	//vec3 translation = position - vertex .xyz / vertex .w;
-	//vec3 worldNormal = getWaveNormal (vec2 (vertex .x, vertex .z));
-	//texCoord = reflect (translation, worldNormal);
+	vertex .y    = getWaveHeight (vec2 (vertex .x, vertex .z));
 	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * vertex;
+
+	vec3 translation = position - vertex .xyz / vertex .w;
+	vec3 worldNormal = getWaveNormal (vec2 (vertex .x, vertex .z));
+	texCoord = reflect (translation, worldNormal);
 }
 ]]> 
             </ShaderPart>
@@ -168,18 +169,16 @@ varying vec3 texCoord;
 void
 main ()
 {
-	//vec3 color   = vec3 (textureCube (texture, texCoord));
-	//gl_FragColor = vec4 (color, 1.0 - transparency);
-	
-	gl_FragColor = vec4 (1.0, 1.0, 1.0, 1.0 - transparency);
+	vec3 color   = vec3 (textureCube (texture, texCoord));
+	gl_FragColor = vec4 (color, 1.0 - transparency);
 }
 ]]> 
             </ShaderPart>
           </ComposedShader>
         </Appearance>
         <ElevationGrid
-            xDimension='60'
-            zDimension='60'/>
+            xDimension='61'
+            zDimension='61'/>
       </Shape>
     </Transform>
     <Transform DEF='Box'
