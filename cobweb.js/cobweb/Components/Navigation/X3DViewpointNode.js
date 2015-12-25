@@ -3,7 +3,6 @@ define ([
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DBindableNode",
-	"cobweb/Components/Navigation/X3DViewpointObject",
 	"cobweb/Components/Time/TimeSensor",
 	"cobweb/Components/Interpolation/EaseInEaseOut",
 	"cobweb/Components/Interpolation/PositionInterpolator",
@@ -17,8 +16,7 @@ define ([
 ],
 function ($,
           Fields,
-          X3DBindableNode, 
-          X3DViewpointObject,
+          X3DBindableNode,
           TimeSensor,
           EaseInEaseOut,
           PositionInterpolator,
@@ -53,8 +51,7 @@ function ($,
 
 	function X3DViewpointNode (browser, executionContext)
 	{
-		X3DBindableNode    .call (this, browser, executionContext);
-		X3DViewpointObject .call (this, browser, executionContext);
+		X3DBindableNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DViewpointNode);
 
@@ -74,13 +71,11 @@ function ($,
 	}
 
 	X3DViewpointNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
-		X3DViewpointObject .prototype,
 	{
 		constructor: X3DViewpointNode,
 		initialize: function ()
 		{
-			X3DBindableNode    .prototype .initialize .call (this);
-			X3DViewpointObject .prototype .initialize .call (this);
+			X3DBindableNode .prototype .initialize .call (this);
 
 			this .addChildren ("positionOffset",         new Fields .SFVec3f (),
 			                   "orientationOffset",      new Fields .SFRotation (),
@@ -409,7 +404,7 @@ function ($,
 		{
 			this .getBrowser () .getModelViewMatrix () .set (this .inverseCameraSpaceMatrix);
 		},
-		traverse: function ()
+		traverse: function (type)
 		{
 			this .getCurrentLayer () .getViewpoints () .push (this);
 

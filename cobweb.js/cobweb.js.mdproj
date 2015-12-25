@@ -182,7 +182,6 @@
     <None Include="cobweb\Components\Navigation\Viewpoint.js" />
     <None Include="cobweb\Components\Navigation\ViewpointGroup.js" />
     <None Include="cobweb\Components\Navigation\X3DViewpointNode.js" />
-    <None Include="cobweb\Components\Navigation\X3DViewpointObject.js" />
     <None Include="cobweb\Components\Networking\Anchor.js" />
     <None Include="cobweb\Components\Networking\Inline.js" />
     <None Include="cobweb\Components\Networking\LoadSensor.js" />

@@ -5,9 +5,8 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Navigation/X3DViewpointObject",
 	"cobweb/Components/EnvironmentalSensor/ProximitySensor",
-	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -15,10 +14,9 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DChildNode, 
-          X3DViewpointObject,
+          X3DChildNode,
           ProximitySensor,
-          X3DCast,
+          TraverseType,
           X3DConstants,
           Vector3)
 {
@@ -26,17 +24,16 @@ function ($,
 
 	function ViewpointGroup (executionContext)
 	{
-		X3DChildNode       .call (this, executionContext .getBrowser (), executionContext);
-		X3DViewpointObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .ViewpointGroup);
 	   
 		this .proximitySensor  = new ProximitySensor (executionContext);
-		this .viewpointObjects = [ ];
+		this .cameraObjects    = [ ];
+		this .viewpointGroups  = [ ];
 	}
 
 	ViewpointGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		X3DViewpointObject .prototype,
 	{
 		constructor: ViewpointGroup,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -62,15 +59,12 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DChildNode       .prototype .initialize .call (this);
-			X3DViewpointObject .prototype .initialize .call (this);
+			X3DChildNode .prototype .initialize .call (this);
 		   
 			this .proximitySensor .setup ();
 
 			this .size_   .addFieldInterest (this .proximitySensor .size_);
 			this .center_ .addFieldInterest (this .proximitySensor .center_);
-
-			this .proximitySensor .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
 			this .proximitySensor .size_   = this .size_;
 			this .proximitySensor .center_ = this .center_;
@@ -81,10 +75,6 @@ function ($,
 
 			this .set_displayed__ ();
 			this .set_children__ ();
-		},
-		getCameraObject: function ()
-		{
-		   return true;
 		},
 		isActive: function ()
 		{
@@ -98,26 +88,58 @@ function ($,
 
 			this .proximitySensor .enabled_ = displayed && proxy;
 
-			if (displayed)
+			if (displayed && proxy)
 			{
-				if (proxy)
-					this .traverse = traverseWithProximitySensor;
-				else
-					this .traverse = traverse;
+				this .proximitySensor .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+				this .setCameraObject (this .proximitySensor .getCameraObject ());
+				this .traverse = traverseWithProximitySensor;
 			}
 			else
-				delete this .traverse;
+			{
+				this .proximitySensor .isCameraObject_ .removeFieldInterest (this .isCameraObject_);
+				this .setCameraObject (displayed);
+
+				if (displayed)
+					this .traverse = traverse;
+				else
+					delete this .traverse;
+			}
 		},
 		set_children__: function ()
 		{
-			this .viewpointObjects .length = 0;
+			this .cameraObjects   .length = 0;
+			this .viewpointGroups .length = 0;
 
-			for (var i = 0, length = this .children_ .length; i < length; ++ i)
+			var children = this .children_;
+
+			for (var i = 0, length = children .length; i < length; ++ i)
 			{
-				var viewpointObject = X3DCast (X3DConstants .X3DViewpointObject, this .children_ [i]);
+				try
+				{
+					var
+						innerNode = children [i] .getValue () .getInnerNode (),
+						type      = innerNode .getType ();
 
-				if (viewpointObject)
-					this .viewpointObjects .push (viewpointObject);
+					for (var t = type .length - 1; t >= 0; -- t)
+					{
+						switch (type [t])
+						{
+							case X3DConstants .X3DViewpointNode:
+							{
+								this .cameraObjects .push (innerNode);
+								break;
+							}
+							case X3DConstants .ViewpointGroup:
+							{
+								this .cameraObjects   .push (innerNode);
+								this .viewpointGroups .push (innerNode);
+								break;
+							}
+						}
+					}
+				}
+				catch (error)
+				{ }
 			}
 		},
 		traverse: function () { },
@@ -125,19 +147,54 @@ function ($,
 
 	function traverseWithProximitySensor (type)
 	{
-		this .proximitySensor .traverse (type);
-
-		if (this .proximitySensor .isActive_ .getValue ())
+		switch (type)
 		{
-			for (var i = 0, length = this .viewpointObjects .length; i < length; ++ i)
-				this .viewpointObjects [i] .traverse (type);
+			case TraverseType .CAMERA:
+			{
+				this .proximitySensor .traverse (type);
+		
+				if (this .proximitySensor .isActive_ .getValue ())
+				{
+					for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
+						this .cameraObjects [i] .traverse (type);
+				}
+
+				return;
+			}
+			case TraverseType .DISPLAY:
+			{
+				this .proximitySensor .traverse (type);
+		
+				if (this .proximitySensor .isActive_ .getValue ())
+				{
+					for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
+						this .viewpointGroups [i] .traverse (type);
+				}
+
+				return;
+			}
 		}
 	}
 
 	function traverse (type)
 	{
-		for (var i = 0, length = this .viewpointObjects .length; i < length; ++ i)
-			this .viewpointObjects [i] .traverse (type);
+		switch (type)
+		{
+			case TraverseType .CAMERA:
+			{
+				for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
+					this .cameraObjects [i] .traverse (type);
+
+				return;
+			}
+			case TraverseType .DISPLAY:
+			{
+				for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
+					this .viewpointGroups [i] .traverse (type);
+
+				return;
+			}
+		}
 	}
 
 	return ViewpointGroup;

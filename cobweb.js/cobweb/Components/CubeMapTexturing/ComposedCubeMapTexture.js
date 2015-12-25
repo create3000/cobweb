@@ -108,12 +108,9 @@ function ($,
 		},
 		set_textureQuality__: function ()
 		{
-			var
-				browser           = this .getBrowser (),
-				gl                = browser .getContext (),
-				textureProperties = browser .getDefaultTextureProperties ();
+			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
 
-			this .updateTextureProperties (gl .TEXTURE_CUBE_MAP, false, textureProperties, 128, 128, false, false, false);
+			this .updateTextureProperties (this .target, false, textureProperties, 128, 128, false, false, false);
 		},
 		set_texture__: function (node, index)
 		{
@@ -145,17 +142,17 @@ function ($,
 
 				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
 				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
+				gl .bindTexture (this .target, this .getTexture ());
 				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
+				gl .bindTexture (this .target, null);
 
 				this .set_textureQuality__ ();
 			}
 			else
 			{
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
+				gl .bindTexture (this .target, this .getTexture ());
 				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, new Uint8Array ([ 255, 255, 255, 255 ]));
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
+				gl .bindTexture (this .target, null);
 			}
 		},
 		set_transparent__: function ()

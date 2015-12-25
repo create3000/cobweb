@@ -369,7 +369,6 @@ define (function ()
 		X3DUrlObject:                 nodeType ++,
 		X3DVertexAttributeNode:       nodeType ++,
 		X3DViewpointNode:             nodeType ++,
-		X3DViewpointObject:           nodeType ++,
 		X3DViewportNode:              nodeType ++,
 
 		X3DProtoDeclarationNode:      nodeType ++,
