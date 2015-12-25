@@ -68,15 +68,8 @@ function ($,
 				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
 			];
 
-			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-
-			gl .texParameteri (gl .TEXTURE_CUBE_MAP, gl .TEXTURE_WRAP_S,     gl .REPEAT);
-			gl .texParameteri (gl .TEXTURE_CUBE_MAP, gl .TEXTURE_WRAP_T,     gl .REPEAT);
-			//gl .texParameteri (gl .TEXTURE_CUBE_MAP, gl .TEXTURE_WRAP_R,     gl .REPEAT);
-			gl .texParameteri (gl .TEXTURE_CUBE_MAP, gl .TEXTURE_MIN_FILTER, gl .NEAREST);
-			gl .texParameteri (gl .TEXTURE_CUBE_MAP, gl .TEXTURE_MAG_FILTER, gl .NEAREST);
-	
-			gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
 
 			this .front_  .addInterest (this, "set_texture__", 0);
 			this .back_   .addInterest (this, "set_texture__", 1);
@@ -91,6 +84,8 @@ function ($,
 			this .set_texture__ (this .right_,  3);
 			this .set_texture__ (this .top_,    4);
 			this .set_texture__ (this .bottom_, 5);
+
+			this .set_live__ ();
 		},
 		getTarget: function ()
 		{
@@ -99,6 +94,26 @@ function ($,
 		getTextureType: function ()
 		{
 			return 4;
+		},
+		set_live__: function ()
+		{
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			{
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
+	
+				this .set_textureQuality__ ();
+			}
+			else
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
+		},
+		set_textureQuality__: function ()
+		{
+			var
+				browser           = this .getBrowser (),
+				gl                = browser .getContext (),
+				textureProperties = browser .getDefaultTextureProperties ();
+
+			this .updateTextureProperties (gl .TEXTURE_CUBE_MAP, false, textureProperties, 128, 128, false, false, false);
 		},
 		set_texture__: function (node, index)
 		{
@@ -133,6 +148,8 @@ function ($,
 				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
 				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
 				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
+
+				this .set_textureQuality__ ();
 			}
 			else
 			{

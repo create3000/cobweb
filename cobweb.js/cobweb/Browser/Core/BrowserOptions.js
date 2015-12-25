@@ -179,17 +179,49 @@ function ($,
 		{
 			dataStorage ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
 
+			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
+
 			switch (textureQuality .getValue ())
 			{
 				case "LOW":
+				{
 					this .textureQuality = TextureQuality .LOW;
+
+					textureProperties .magnificationFilter_ = "AVG_PIXEL";
+					textureProperties .minificationFilter_  = "AVG_PIXEL";
+					textureProperties .textureCompression_  = "FASTEST";
+					textureProperties .generateMipMaps_     = true;
+
+					//glHint (GL_GENERATE_MIPMAP_HINT,        GL_FASTEST);
+					//glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 					break;
+				}
 				case "HIGH":
+				{
 					this .textureQuality = TextureQuality .HIGH;
+
+					textureProperties .magnificationFilter_ = "NICEST";
+					textureProperties .minificationFilter_  = "NICEST";
+					textureProperties .textureCompression_  = "NICEST";
+					textureProperties .generateMipMaps_     = true;
+			
+					//glHint (GL_GENERATE_MIPMAP_HINT,        GL_NICEST);
+					//glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 					break;
+				}
 				default:
+				{
 					this .textureQuality = TextureQuality .MEDIUM;
+
+					textureProperties .magnificationFilter_ = "NICEST";
+					textureProperties .minificationFilter_  = "AVG_PIXEL_AVG_MIPMAP";
+					textureProperties .textureCompression_  = "NICEST";
+					textureProperties .generateMipMaps_     = true;
+
+					//glHint (GL_GENERATE_MIPMAP_HINT,        GL_FASTEST);
+					//glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 					break;
+				}
 			}
 		},
 		set_shading__: function (shading)

@@ -59,7 +59,7 @@ function ($,
 			else
 			{
 				if (textureProperties .generateMipMaps_ .getValue ())
-					gl .generateMipmap (gl .TEXTURE_2D);
+					gl .generateMipmap (target);
 
 				gl .texParameteri (target, gl .TEXTURE_MIN_FILTER, gl [textureProperties .getMinificationFilter ()]);
 				gl .texParameteri (target, gl .TEXTURE_MAG_FILTER, gl [textureProperties .getMagnificationFilter ()]);
@@ -87,7 +87,7 @@ function ($,
 				
 				if (ext)
 				{
-					gl .texParameterf (gl .TEXTURE_2D, ext .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
+					gl .texParameterf (target, ext .TEXTURE_MAX_ANISOTROPY_EXT, textureProperties .anisotropicDegree_ .getValue ());
 					break;
 				}
 			}

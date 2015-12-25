@@ -194,8 +194,7 @@ function ($,
 		set_transparent__: function ()
 		{
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
-			                     (this .textureNode && this .textureNode .transparent_ .getValue ()) ||
-                              this .shaderNode;
+			                     (this .textureNode && this .textureNode .transparent_ .getValue ());
 		},
 		traverse: function ()
 		{
