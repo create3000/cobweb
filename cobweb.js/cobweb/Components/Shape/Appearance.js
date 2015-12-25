@@ -176,7 +176,7 @@ function ($,
 
 			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
 			{
-				if (shaderNodes [i] .isValid_ .getValue ());
+				if (shaderNodes [i] .isValid_ .getValue ())
 				{
 					this .shaderNode = shaderNodes [i];
 					break;

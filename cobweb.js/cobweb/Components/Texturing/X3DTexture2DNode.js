@@ -20,8 +20,6 @@ function ($,
 
 		this .addType (X3DConstants .X3DTexture2DNode);
 
-		this .addChildren ("texture_changed", new Fields .SFTime ());
-
 		this .width  = 0;
 		this .height = 0;
 		this .flipY  = false;
@@ -98,8 +96,6 @@ function ($,
 			gl .bindTexture (gl .TEXTURE_2D, null);
 
 			this .updateTextureProperties ();
-
-			this .texture_changed_ .addEvent ();
 		},
 		updateTexture: function (data)
 		{
@@ -114,8 +110,6 @@ function ($,
 				gl .generateMipmap (gl .TEXTURE_2D);
 
 			gl .bindTexture (gl .TEXTURE_2D, null);
-
-			this .texture_changed_ .addEvent ();
 		},
 		updateTextureProperties: function ()
 		{

@@ -60,7 +60,7 @@ function ($,
 			this .target = gl .TEXTURE_CUBE_MAP;
 
 			this .targets = [
-				gl .TEXTURE_CUBE_MAP_POSITIVE_Z, // Front, front and back are swaped, otherwise background images cannot be used!
+				gl .TEXTURE_CUBE_MAP_POSITIVE_Z, // Front
 				gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, // Back
 				gl .TEXTURE_CUBE_MAP_NEGATIVE_X, // Left
 				gl .TEXTURE_CUBE_MAP_POSITIVE_X, // Right
@@ -103,12 +103,12 @@ function ($,
 		set_texture__: function (node, index)
 		{
 			if (this .textures [index])
-				this .textures [index] .texture_changed_ .removeInterest (this, "setTexture");
+				this .textures [index] .loadState_ .removeInterest (this, "setTexture");
 
 			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
 
 			if (texture)
-				texture .texture_changed_ .addInterest (this, "setTexture", index, texture);
+				texture .loadState_ .addInterest (this, "setTexture", index, texture);
 
 			this .setTexture (null, index, texture);
 		},
@@ -118,28 +118,17 @@ function ($,
 				gl     = this .getBrowser () .getContext (),
 				target = this .targets [index];
 
-			if (texture)
+			this .set_transparent__ ();
+
+			if (texture && texture .checkLoadState () == X3DConstants .COMPLETE_STATE)
 			{
-				var transparent = false;
-
-				for (var i = 0; i < 6; ++ i)
-				{
-					var tex = this .textures [i];
-
-					if (tex)
-						transparent |= tex .transparent_ .getValue ();
-				}
-
-				if (transparent !== this .transparent_ .getValue ())
-					this .transparent_ = transparent;
-
 				var
 					gl     = this .getBrowser () .getContext (),
 					width  = texture .getWidth (),
 					height = texture .getHeight (),
 					data   = texture .getData ();
 
-				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, texture .getFlipY ());
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
 				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
 				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
 				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
@@ -151,6 +140,26 @@ function ($,
 				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, new Uint8Array ([ 255, 255, 255, 255 ]));
 				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
 			}
+		},
+		set_transparent__: function ()
+		{
+			var
+				textures    = this .textures,
+				transparent = false;
+
+			for (var i = 0; i < 6; ++ i)
+			{
+				var texture = textures [i];
+
+				if (texture && texture .transparent_ .getValue ())
+				{
+					transparent = true;
+					break;
+				}
+			}
+
+			if (transparent !== this .transparent_ .getValue ())
+				this .transparent_ = transparent;
 		},
 	});
 

@@ -107,26 +107,46 @@ function ($,
 		{
 			var
 				gl      = this .getBrowser () .getContext (),
-				program = gl .createProgram ();
+				program = gl .createProgram (),
+				parts   = this .parts_ .getValue (),
+				valid   = Boolean (parts .length);
+			
+			if (this .isValid_ .getValue ())
+				this .removeShaderFields ();
 
 			this .program = program;
 
-			for (var i = 0, length = this .parts_ .length; i < length; ++ i)
-				gl .attachShader (program, this .parts_ [i] .getValue () .getShader ());
-	
-			this .bindAttribLocations (gl, program);
+			for (var i = 0, length = parts .length; i < length; ++ i)
+			{
+				var shader = parts [i] .getValue ();
 
-			gl .linkProgram (program);
+				if (shader .isValid ())
+					gl .attachShader (program, shader .getShader ());
+				else
+				{
+					valid = false;
+					break;
+				}
+			}
 
-			this .isValid_ = gl .getProgramParameter (program, gl .LINK_STATUS);
+			if (valid)
+			{
+				this .bindAttribLocations (gl, program);
+				gl .linkProgram (program);
+			}
 
-			if (this .isValid_ .getValue ())
+			valid &= gl .getProgramParameter (program, gl .LINK_STATUS);
+
+			if (valid != this .isValid_ .getValue ())
+				this .isValid_ = valid;
+
+			if (valid)
 			{
 				this .getDefaultUniforms ();
-				this .setFields ();
+				this .addShaderFields ();
 			}
 			else
-				this .getBrowser () .print ("Could not initialise shaders!");
+				console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
 		},
 		bindAttribLocations: function (gl, program)
 		{

@@ -33,15 +33,47 @@ function ($,
 		set_live__: function ()
 		{
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-			{
-				this .setFields ();
-			}
+				this .addShaderFields ();
 			else
+				this .removeShaderFields ();
+		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
+		addShaderFields: function ()
+		{
+			if (this .isValid_ .getValue ())
 			{
-			var
+				var
 					gl                = this .getBrowser () .getContext (),
 					program           = this .getProgram (),
 					userDefinedFields = this .getUserDefinedFields ();
+	
+				this .use ();
+	
+				for (var name in userDefinedFields)
+				{
+					var field = userDefinedFields [name];
+	
+					field .uniformLocation_ = gl .getUniformLocation (program, name);
+	
+					field .addInterest (this, "set_field__");
+			
+					this .set_field__ (field);
+				}
+			}
+		},
+		removeShaderFields: function ()
+		{
+			if (this .isValid_ .getValue ())
+			{
+				var
+					gl                = this .getBrowser () .getContext (),
+					program           = this .getProgram (),
+					userDefinedFields = this .getUserDefinedFields ();
+
+				this .use ();
 
 				for (var name in userDefinedFields)
 				{
@@ -49,32 +81,31 @@ function ($,
 	
 					switch (field .getType ())
 					{
-					}
-				}
-			}
-		},
-		hasUserDefinedFields: function ()
-		{
-			return true;
-		},
-		setFields: function ()
-		{
-			var
-				gl                = this .getBrowser () .getContext (),
-				program           = this .getProgram (),
-				userDefinedFields = this .getUserDefinedFields ();
-
-			this .use ();
-
-			for (var name in userDefinedFields)
-			{
-				var field = userDefinedFields [name];
-
-				field .uniformLocation_ = gl .getUniformLocation (program, name);
-
-				field .addInterest (this, "set_field__");
+						case X3DConstants .SFNode:
+						{
+							var uniformLocation = field .uniformLocation_;
 		
-				this .set_field__ (field);
+							if (uniformLocation)
+							{
+								var textureUnit = gl .getUniform (program, uniformLocation);
+					
+								if (textureUnit)
+									this .getBrowser () .getCombinedTextureUnits () .push (textureUnit);
+	
+								gl .uniform1i (uniformLocation, 0);
+								gl .activeTexture (gl .TEXTURE0 + textureUnit);
+								gl .bindTexture (gl .TEXTURE_2D, null);
+								gl .activeTexture (gl .TEXTURE0);
+							}
+		
+							break;
+						}
+						default:
+							continue;
+					}
+	
+					break;
+				}
 			}
 		},
 		set_field__: function (field)
@@ -149,18 +180,18 @@ function ($,
 				}
 				case X3DConstants .SFNode:
 				{
-					var location = field .uniformLocation_;
+					var uniformLocation = field .uniformLocation_;
 
-					if (location)
+					if (uniformLocation)
 					{
-						var textureUnit = gl .getUniform (program, location);
+						var textureUnit = gl .getUniform (program, uniformLocation);
 			
 						if (! textureUnit)
 						{
 							if (this .getBrowser () .getCombinedTextureUnits () .length)
 							{
 								textureUnit = this .getBrowser () .getCombinedTextureUnits () .pop ();
-								gl .uniform1i (location, textureUnit);
+								gl .uniform1i (uniformLocation, textureUnit);
 							}
 							else
 							{
@@ -176,7 +207,7 @@ function ($,
 						if (texture)
 							gl .bindTexture (texture .getTarget (), texture .getTexture ());
 						else
-							gl .bindTexture (gl .TEXTURE_2D, 0);
+							gl .bindTexture (gl .TEXTURE_2D, null);
 
 						gl .activeTexture (gl .TEXTURE0);
 					}

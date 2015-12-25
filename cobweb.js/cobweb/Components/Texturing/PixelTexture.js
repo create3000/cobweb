@@ -7,6 +7,8 @@ define ([
 	"cobweb/Components/Texturing/X3DTexture2DNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Algorithm",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -61,7 +63,7 @@ function ($,
 		{
 			return this .loadState_ .getValue ();
 		},
-		getData: function (data, comp, array)
+		convert: function (data, comp, array)
 		{
 			switch (comp)
 			{
@@ -139,13 +141,13 @@ function ($,
 				{
 					data = new Uint8Array (width * height * 4);
 
-					this .getData (data, comp, array);
+					this .convert (data, comp, array);
 				}
 				else if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && !  this .textureProperties_ .getValue ())
 				{
 					data = new Uint8Array (width * height * 4);
 
-					this .getData (data, comp, array);
+					this .convert (data, comp, array);
 
 					var
 						inputWidth  = width,
@@ -168,7 +170,7 @@ function ($,
 					canvas1 .width  = width;
 					canvas1 .height = height;
 
-					this .getData (imageData .data, comp, array);
+					this .convert (imageData .data, comp, array);
 					cx1 .putImageData (imageData, 0, 0);
 
 					width  = Algorithm .nextPowerOfTwo (width);
