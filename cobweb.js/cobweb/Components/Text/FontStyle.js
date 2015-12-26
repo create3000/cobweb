@@ -280,7 +280,7 @@ function ($,
 				glypes         = this .glyphs [lineNumber];
 
 			if (! fontGlyphCache)
-				fontGlyphCache = glyphCache [font .fontName] = { };
+				fontGlyphCache = glyphCache [font .fontName] = [ ];
 
 			if (! glypes)
 				glypes = this .glyphs [lineNumber] = [ ];
@@ -295,16 +295,18 @@ function ($,
 			for (var c = first, g = 0; c !== last; c += step, ++ g)
 			{
 				var
-					character = line [c],
+					charCode = line .charCodeAt (c),
 					glyph     = null;
 				
-				if (glyph = fontGlyphCache [character])
+				if (glyph = fontGlyphCache [charCode])
 					;
 				else
 				{
-					glyph = font .stringToGlyphs (character) [0];
+					glyph = font .stringToGlyphs (line [c]) [0];
 
-					fontGlyphCache [character] = glyph;
+					fontGlyphCache [charCode] = glyph;
+
+					glyph .extents = { };
 				}
 
 				glypes [g] = glyph;
@@ -488,6 +490,15 @@ function ($,
 		},
 		getGlyphExtents: function (glyph, primitiveQuality, min, max)
 		{
+			var extents = glyph .extents [primitiveQuality];
+
+			if (extents)
+			{
+				min .assign (extents .min);
+				max .assign (extents .max);
+				return;
+			}
+
 			var vertices = this .getGlyphGeometry (glyph, primitiveQuality);
 
 			if (vertices .length)
@@ -510,6 +521,11 @@ function ($,
 				min .set (0, 0, 0);
 				max .set (0, 0, 0);			   
 			}
+
+			var extents = glyph .extents [primitiveQuality] = { };
+
+			extents .min = min .copy ();
+			extents .max = max .copy ();
 		},
 		getGlyphGeometry: function (glyph, primitiveQuality)
 		{

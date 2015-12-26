@@ -33,7 +33,7 @@ function ($)
 
 	function fallback (elements)
 	{
-		elements .addClass ("cobweb-fallback");
+		elements .children () .addClass ("cobweb-fallback");
 	}
 
 	Error .fallback = fallback;

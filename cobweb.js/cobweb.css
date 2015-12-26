@@ -13,16 +13,8 @@ X3D {
 	overflow: hidden;
 }
 
-X3D > * {
+X3D > *:not(.cobweb-fallback) {
 	display: none;
-}
-
-X3D .cobweb-fallback {
-	background: url(images/logo.bw.png) center center no-repeat #101010;
-}
-
-X3D .cobweb-fallback > * {
-	display: initial;
 }
 
 .cobweb-console {
