@@ -165,7 +165,7 @@ function ($,
 
 			this .set_shader__ ();
 		},
-		set_shader__ ()
+		set_shader__: function ()
 		{
 			var shaderNodes = this .shaderNodes;
 
