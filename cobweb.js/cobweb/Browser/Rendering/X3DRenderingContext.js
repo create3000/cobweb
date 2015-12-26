@@ -185,22 +185,6 @@ function (Fields,
 
 					this .defaultShader .use ();
 					gl .uniform1i (this .defaultShader .points, true);
-
-					// Configure custom shaders
-
-					var shaders = this .getShaders ();
-
-					for (var id in shaders)
-					{
-						var shader = shaders [id];
-
-						shader .primitiveMode = gl .POINTS;
-						shader .wireframe     = true;
-
-						shader .use ();
-						gl .uniform1i (shader .points, true);
-					}
-
 					break;
 				}
 				case "WIREFRAME":
@@ -223,22 +207,6 @@ function (Fields,
 
 					this .defaultShader .use ();
 					gl .uniform1i (this .defaultShader .points, false);
-
-					// Configure custom shaders
-
-					var shaders = this .getShaders ();
-
-					for (var id in shaders)
-					{
-						var shader = shaders [id];
-
-						shader .primitiveMode = gl .LINE_LOOP;
-						shader .wireframe     = true;
-
-						shader .use ();
-						gl .uniform1i (shader .points, false);
-					}
-
 					break;
 				}
 				case "PHONG":
@@ -261,22 +229,6 @@ function (Fields,
 
 					this .defaultShader .use ();
 					gl .uniform1i (this .defaultShader .points, false);
-
-					// Configure custom shaders
-
-					var shaders = this .getShaders ();
-
-					for (var id in shaders)
-					{
-						var shader = shaders [id];
-
-						shader .primitiveMode = gl .TRIANGLES;
-						shader .wireframe     = false;
-
-						shader .use ();
-						gl .uniform1i (shader .points, false);
-					}
-
 					break;
 				}
 				default:
@@ -301,22 +253,58 @@ function (Fields,
 
 					this .defaultShader .use ();
 					gl .uniform1i (this .defaultShader .points, false);
+					break;
+				}
+			}
 
-					// Configure custom shaders
+			// Configure custom shaders
 
-					var shaders = this .getShaders ();
+			var shaders = this .getShaders ();
 
-					for (var id in shaders)
-					{
-						var shader = shaders [id];
+			for (var id in shaders)
+				this .setCustomShader (shaders [id], type);
 
-						shader .primitiveMode = gl .TRIANGLES;
-						shader .wireframe     = false;
+		},
+		setCustomShader: function (shader, type)
+		{
+			var gl = this .context;
 
-						shader .use ();
-						gl .uniform1i (shader .points, false);
-					}
+			switch (type)
+			{
+				case "POINTSET":
+				{
+					shader .primitiveMode = gl .POINTS;
+					shader .wireframe     = true;
 
+					shader .use ();
+					gl .uniform1i (shader .points, true);
+					break;
+				}
+				case "WIREFRAME":
+				{
+					shader .primitiveMode = gl .LINE_LOOP;
+					shader .wireframe     = true;
+
+					shader .use ();
+					gl .uniform1i (shader .points, false);
+					break;
+				}
+				case "PHONG":
+				{
+					shader .primitiveMode = gl .TRIANGLES;
+					shader .wireframe     = false;
+
+					shader .use ();
+					gl .uniform1i (shader .points, false);
+					break;
+				}
+				default:
+				{
+					shader .primitiveMode = gl .TRIANGLES;
+					shader .wireframe     = false;
+
+					shader .use ();
+					gl .uniform1i (shader .points, false);
 					break;
 				}
 			}

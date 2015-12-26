@@ -148,7 +148,6 @@ function ($,
 
 			if (this .getWorld ())
 			{
-				this .isLive () .removeFieldInterest (this .getExecutionContext () .isLive ());
 				this .getExecutionContext () .endUpdate ();
 				this .shutdown () .processInterests ();
 			}
@@ -167,16 +166,7 @@ function ($,
 			this .setBrowserLoading (true);
 			this .loadCount_ .addFieldCallback ("bindWorld" + id, this .bindWorld .bind (this, id));
 
-			// isLive
-
-			this .isLive () .addFieldInterest (scene .isLive ());
-
-			if (this .isLive () .getValue ())
-				scene .beginUpdate ();
-			else
-				scene .endUpdate ();
-
-			//
+			scene .beginUpdate ();
 
 			this .setExecutionContext (scene);
 

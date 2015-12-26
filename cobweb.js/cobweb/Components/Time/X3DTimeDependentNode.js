@@ -59,6 +59,10 @@ function ($,
 
 			this .initialized_ = this .getBrowser () .getCurrentTime ();
 		},
+		getDisabled: function ()
+		{
+			return this .disabled;
+		},
 		getElapsedTime: function ()
 		{
 			return this .getBrowser () .getCurrentTime () - this .start - this .pauseInterval;
@@ -70,6 +74,15 @@ function ($,
 		set_live__: function ()
 		{
 			if (this .getLive ())
+				this .getBrowser () .isLive () .addInterest (this, "set_browser_live__");
+			else
+				this .getBrowser () .isLive () .removeInterest (this, "set_browser_live__");
+
+			this .set_browser_live__ ();
+		},
+		set_browser_live__: function ()
+		{
+			if (this .getLive () && this .getBrowser () .isLive ().getValue ())
 			{
 				if (this .disabled)
 				{
@@ -222,7 +235,7 @@ function ($,
 		},
 		real_pause: function ()
 		{
-			this .pause = this .getBrowser () .getCurrentTime ();
+			this .pause = performance .now ();
 
 			this .set_pause ();
 
@@ -243,7 +256,7 @@ function ($,
 		},
 		real_resume: function ()
 		{
-			var interval = this .getBrowser () .getCurrentTime () - this .pause;
+			var interval = (performance .now () - this .pause) / 1000;
 
 			this .pauseInterval += interval;
 

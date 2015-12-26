@@ -33,11 +33,11 @@ function ($,
 			X3DTimeDependentNode .prototype .initialize .call (this);
 
 		},
-		set_live__: function ()
+		set_browser_live__: function ()
 		{
-		   X3DTimeDependentNode .prototype .set_live__ .call (this);
+		   X3DTimeDependentNode .prototype .set_browser_live__ .call (this);
 
-			if (this .disabled)
+			if (this .getDisabled ())
 			{
 			   this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
 			   this .getBrowser () .mute_   .removeInterest (this, "set_volume__");

@@ -106,6 +106,10 @@ function ($,
 		{
 			return this .textureQuality;
 		},
+		getShading: function ()
+		{
+			return this .Shading_ .getValue ();
+		},
 		set_rubberband__: function (rubberband)
 		{
 			dataStorage ["BrowserOptions.Rubberband"] = rubberband .getValue ();

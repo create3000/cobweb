@@ -30,6 +30,7 @@ define (function ()
 		addShader: function (shader)
 		{
 			this .shaders [shader .getId ()] = shader;
+			this .setCustomShader (shader, this .getBrowserOptions () .getShading ());
 		},
 		removeShader: function (shader)
 		{
