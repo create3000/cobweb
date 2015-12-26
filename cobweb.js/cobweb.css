@@ -1,38 +1,36 @@
 /* CSS StyleSheet */
 @charset "utf-8";
 
-@import url(https://fonts.googleapis.com/css?family=Cuprum:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic);
 @import url(spinner.css);
 
-x3d {
+X3D {
 	position: relative;
 	display: block;
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
 	overflow: hidden;
-	background: rgb(65,65,65);
 }
 
-x3d > * {
+X3D > * {
 	display: none;
 }
 
-x3d.cobweb-fallback {
+X3D .cobweb-fallback {
 	background: url(images/logo.bw.png) center center no-repeat #101010;
 }
 
-x3d.cobweb-fallback > * {
+X3D .cobweb-fallback > * {
 	display: initial;
 }
 
 .cobweb-console {
 	font-family: monospace;
-	font-size: 10pt;
 	white-space: pre;
 }
 
-x3d .cobweb-browser {
+X3D .cobweb-browser {
 	z-index: 0;
 	position: absolute;
 	top: 0;
@@ -45,7 +43,7 @@ x3d .cobweb-browser {
 	border: 0px;
 }
 
-x3d .cobweb-surface {
+X3D .cobweb-surface {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
@@ -53,7 +51,8 @@ x3d .cobweb-surface {
 	margin-right: 0px;
 }
 
-x3d canvas {
+X3D canvas {
+	display: block;
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
@@ -61,23 +60,23 @@ x3d canvas {
 	height: 100%;
 }
 
-x3d .cobweb-notification {
+X3D .cobweb-notification {
 	display: none;
 	position: absolute;
 	top: 20px;
 	right: -4px;
-	padding: 5px 29px 5px 25px;
+	padding: 4px 29px 5px 25px;
 	background: url(images/icon.bw.png) no-repeat 5px 5px rgba(0,0,0,0.61803);
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;
-	font-family: Cuprum, sans-serif;
+	font-family: PT Sans, sans-serif;
 	font-size: 10pt;
 	white-space: pre;
 	pointer-events: none;
 }
 
-x3d .cobweb-browser-timing {
+X3D .cobweb-browser-timing {
 	display: none;
 	position: absolute;
 	bottom: -4px;
@@ -87,20 +86,20 @@ x3d .cobweb-browser-timing {
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;
-	font-family: Cuprum, sans-serif;
-	font-size: 8pt;
+	font-family: PT Sans, sans-serif;
+	font-size: 9pt;
 	line-height: 1.1;
 	white-space: pre;
 	pointer-events: none;
 }
 
-x3d .cobweb-browser-timing table,
-x3d .cobweb-browser-timing thead,
-x3d .cobweb-browser-timing tbody,
-x3d .cobweb-browser-timing tfoot,
-x3d .cobweb-browser-timing tr,
-x3d .cobweb-browser-timing th,
-x3d .cobweb-browser-timing td {
+X3D .cobweb-browser-timing table,
+X3D .cobweb-browser-timing thead,
+X3D .cobweb-browser-timing tbody,
+X3D .cobweb-browser-timing tfoot,
+X3D .cobweb-browser-timing tr,
+X3D .cobweb-browser-timing th,
+X3D .cobweb-browser-timing td {
 	outline: 0;
 	margin: 0;
 	border: 0;
@@ -115,66 +114,53 @@ x3d .cobweb-browser-timing td {
 	text-align: left;
 }
 
-x3d .cobweb-browser-timing tr,
-x3d .cobweb-browser-timing th,
-x3d .cobweb-browser-timing td {
+X3D .cobweb-browser-timing tr,
+X3D .cobweb-browser-timing th,
+X3D .cobweb-browser-timing td {
 	border-collapse: separate;
 }
 
-x3d .cobweb-browser-timing thead th {
+X3D .cobweb-browser-timing thead th {
 	padding-bottom: 5px;
 }
 
-x3d .cobweb-browser-timing thead th {
+X3D .cobweb-browser-timing thead th {
 	font-weight: bold;
 }
 
-x3d .cobweb-browser-timing td:first-child {
+X3D .cobweb-browser-timing td:first-child {
 	padding-right: 10px;
 }
 
-x3d .cobweb-browser-timing tr.cobweb-more td {
+X3D .cobweb-browser-timing tr.cobweb-more td {
 	padding-bottom: 5px;
 }
 
-x3d .cobweb-browser-timing td {
+X3D .cobweb-browser-timing td {
 	padding-bottom: 2px;
 }
 
-x3d .cobweb-browser-timing tfoot td {
+X3D .cobweb-browser-timing tfoot td {
 	padding-top: 4px;
 }
 
-x3d .cobweb-browser-timing button {
+X3D .cobweb-browser-timing button {
 	border: 0;
 	padding: 0;
 	background: rgba(0,0,0,0.5);
 	color: white;
-	font-size: 8pt;
+	font-size: 9pt;
 	line-height: 1.1;
-	font-family: Cuprum, sans-serif;
+	font-family: PT Sans, sans-serif;
 	font-style: italic;
 	pointer-events: all;
 	cursor: default;
 }
 
-x3d .cobweb-browser-timing button:hover {
+X3D .cobweb-browser-timing button:hover {
 	cursor: pointer;
 }
 
-/* menu title */
-.cobweb-menu-title:before {
-    content: "Cobweb X3D Browser";
-    display: block;
-    padding: 4px 32px 4px 8px;
-    font-weight: bold;
-}
-
-.context-menu-selected {
-	font-weight: bold;
-	font-style: italic;
-}
- 
 /*!
  * jQuery contextMenu - Plugin for simple contextMenu handling
  *
@@ -191,13 +177,27 @@ x3d .cobweb-browser-timing button:hover {
  * Date: 2015-09-20T18:47:54.927Z
  */
 
-.context-menu-list {
+/* menu title */
+.cobweb-menu.cobweb-menu-title:before {
+    content: "Cobweb X3D Browser";
+    display: block;
+    padding: 4px 32px 4px 8px;
+    font-weight: bold;
+}
+
+.cobweb-menu .context-menu-selected {
+	font-weight: bold;
+	font-style: italic;
+}
+
+.cobweb-menu.context-menu-list,
+.cobweb-menu .context-menu-list {
 	position: absolute;
 	display: inline-block;
 	min-width: 120px;
 	padding: 0;
 	margin: 0;
-	font-family: Cuprum, sans-serif;
+	font-family: PT Sans, sans-serif;
 	font-size: 10pt;
 	line-height: 1.2;
 	list-style-type: none;
@@ -208,9 +208,9 @@ x3d .cobweb-browser-timing button:hover {
 	        box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
 }
 
-.context-menu-item {
+.cobweb-menu .context-menu-item {
 	position: relative;
-	background: #222;
+	background-color: #222;
 	border-top: 1px solid #222;
 	border-bottom: 1px solid #222;
 	padding: 3px 24px 3px 24px;
@@ -220,36 +220,36 @@ x3d .cobweb-browser-timing button:hover {
 	        user-select: none;
 }
 
-.context-menu-separator {
+.cobweb-menu .context-menu-separator {
 	padding-bottom: 0;
 	border-bottom: 1px solid #111;
 }
 
-.context-menu-item > label > input,
-.context-menu-item > label > textarea {
+.cobweb-menu .context-menu-item > label > input,
+.cobweb-menu .context-menu-item > label > textarea {
 	-webkit-user-select: text;
 	   -moz-user-select: text;
 	    -ms-user-select: text;
  	       user-select: text;
 }
 
-.context-menu-item.hover {
+.cobweb-menu .context-menu-item.hover {
 	cursor: pointer;
 	background-color: #444;
 	border-top: 1px solid #eee;
 	border-bottom: 1px solid #eee;
 }
 
-.context-menu-item.disabled {
+.cobweb-menu .context-menu-item.disabled {
 	color: #666;
 }
 
-.context-menu-input.hover,
-.context-menu-item.disabled.hover {
+.cobweb-menu .context-menu-input.hover,
+.cobweb-menu .context-menu-item.disabled.hover {
 	cursor: default;
 }
 
-.context-menu-submenu:after {
+.cobweb-menu .context-menu-submenu:after {
 	content: "";
 	position: absolute;
 	display: block;
@@ -271,10 +271,61 @@ x3d .cobweb-browser-timing button:hover {
    .context-menu-item.icon:before {}
  */
 
-.context-menu-item.context-menu-icon {
+.cobweb-menu .context-menu-item.context-menu-icon {
 	background-repeat: no-repeat;
 	background-position: 3px 2px;
 }
+
+/* vertically align inside labels */
+.cobweb-menu .context-menu-input > label > * {
+	vertical-align: top;
+}
+
+/* position checkboxes and radios as icons */
+.cobweb-menu .context-menu-input > label > input[type="checkbox"],
+.cobweb-menu .context-menu-input > label > input[type="radio"] {
+	display: inline;
+	margin: 0;
+	margin-left: -20px;
+	margin-right: 3px;
+	padding: 0;
+}
+
+.cobweb-menu .context-menu-input > label > span {
+	margin-left: 4px;
+}
+
+.cobweb-menu .context-menu-input > label,
+.cobweb-menu .context-menu-input > label > input[type="text"],
+.cobweb-menu .context-menu-input > label > textarea,
+.cobweb-menu .context-menu-input > label > select {
+	display: block;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+.cobweb-menu .context-menu-input > label > textarea {
+	height: 100px;
+}
+
+.cobweb-menu .context-menu-item > .context-menu-list {
+	top: 5px;
+	/* re-positioned by js */
+	right: -5px;
+	display: none;
+}
+
+.cobweb-menu .context-menu-item.visible > .context-menu-list {
+	display: block;
+}
+
+.cobweb-menu .context-menu-accesskey {
+	text-decoration: underline;
+}
+
+/* Icons */
 
 .cobweb-icon-viewpoint {
 	background: url("images/Viewpoint.png");
@@ -330,53 +381,4 @@ x3d .cobweb-browser-timing button:hover {
 
 .cobweb-icon-help-about {
 	background: url("images/help-about.png");
-}
-
-/* vertically align inside labels */
-.context-menu-input > label > * {
-	vertical-align: top;
-}
-
-/* position checkboxes and radios as icons */
-.context-menu-input > label > input[type="checkbox"],
-.context-menu-input > label > input[type="radio"] {
-	display: inline;
-	margin: 0;
-	margin-left: -20px;
-	margin-right: 3px;
-	padding: 0;
-}
-
-.context-menu-input > label > span {
-	margin-left: 4px;
-}
-
-.context-menu-input > label,
-.context-menu-input > label > input[type="text"],
-.context-menu-input > label > textarea,
-.context-menu-input > label > select {
-	display: block;
-	width: 100%;
-	-webkit-box-sizing: border-box;
-	   -moz-box-sizing: border-box;
-	        box-sizing: border-box;
-}
-
-.context-menu-input > label > textarea {
-	height: 100px;
-}
-
-.context-menu-item > .context-menu-list {
-	top: 5px;
-	/* re-positioned by js */
-	right: -5px;
-	display: none;
-}
-
-.context-menu-item.visible > .context-menu-list {
-	display: block;
-}
-
-.context-menu-accesskey {
-	text-decoration: underline;
 }

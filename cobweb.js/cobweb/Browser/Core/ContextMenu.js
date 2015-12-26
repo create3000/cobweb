@@ -52,7 +52,7 @@ function ($,
 				fullscreen       = this .getBrowser () .getElement () .fullScreen ();
 
 			var menu = {
-				className: 'cobweb-menu-title',
+				className: 'cobweb-menu cobweb-menu-title',
 				items: {
 					"separator0": "--------",
 					"viewpoints": {

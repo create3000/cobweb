@@ -71,7 +71,7 @@ function (Fields,
 			}
 			else
 			{
-				this .getLoadingElement () .stop (true, true) .fadeOut (11000);
+				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
 				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
 			}
 		},

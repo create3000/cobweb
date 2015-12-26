@@ -24,13 +24,12 @@ body {
 	padding: 10px;
 }
 
-#x3d-page {
-	background: #414141;
+.test {
 	height: 100%;
 	box-shadow: 0px 2px 12px 1px rgba(0, 0, 0, 0.75);
 }
 
-#bookmarks {
+.examples {
 	overflow: hidden;
 	padding: 5px;
 	width: 110px;
@@ -174,12 +173,13 @@ X3D (function (dom)
 
 		{ name: 'Ubuntu',               url: [ "tests/Components/Texturing/ubuntu.x3d" ] },
 		{ name: 'ComposedCubeMap',      url: [ "tests/Components/ComposedCubeMapTexture/ComposedCubeMapTexture.x3d" ] },
+		{ name: 'Shader Fields',        url: [ "tests/Components/Shaders/Fields.x3d" ] },
 		{ name: 'Water Quality',        url: [ "tests/Components/Shaders/water.x3d" ] },
 	];
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $("#bookmarks"), pages);
+		bookmarks = new Bookmarks (Browser, $(".examples"), pages);
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();
@@ -201,10 +201,10 @@ function loadURL ()
 	</script>
 </head>
 <body>
-	<div id="x3d-page">
-		<div id="bookmarks"></div>
+	<div class="test">
+		<div class="examples"></div>
 		<X3D cache="false" url='
-			"tests/Components/ComposedCubeMapTexture/ComposedCubeMapTexture.x3d"
+			"tests/Components/Shaders/Fields.x3d"
 			"examples/puzzle/puzzle.x3d"
 			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl"
 			"http://www.web3d.org/x3d/content/examples/Vrml2.0Sourcebook/Chapter27-SensingVisibilityProximityCollision/../Chapter25-LevelOfDetail/Figure25.11DungeonDoor.x3d"
