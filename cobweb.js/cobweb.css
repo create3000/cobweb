@@ -1,7 +1,7 @@
 /* CSS StyleSheet */
 @charset "utf-8";
 
-@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Cuprum:400,400italic,700,700italic);
 @import url(spinner.css);
 
 x3d {
@@ -11,7 +11,7 @@ x3d {
 	padding: 0px;
 	border: 0px;
 	overflow: hidden;
-	background: #414141;
+	background: rgb(65,65,65);
 }
 
 x3d > * {
@@ -28,7 +28,7 @@ x3d.cobweb-fallback > * {
 
 .cobweb-console {
 	font-family: monospace;
-	font-size: 10px;
+	font-size: 10pt;
 	white-space: pre;
 }
 
@@ -67,12 +67,12 @@ x3d .cobweb-notification {
 	top: 20px;
 	right: -4px;
 	padding: 5px 29px 5px 25px;
-	background: url(images/icon.bw.png) no-repeat 5px 5px rgba(0,0,0,0.5);
+	background: url(images/icon.bw.png) no-repeat 5px 5px rgba(0,0,0,0.61803);
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;
-	font-family: Ubuntu, sans-serif;
-	font-size: 11px;
+	font-family: Cuprum, sans-serif;
+	font-size: 10pt;
 	white-space: pre;
 	pointer-events: none;
 }
@@ -83,12 +83,12 @@ x3d .cobweb-browser-timing {
 	bottom: -4px;
 	left: -4px;
 	padding: 10px 15px 14px 14px;
-	background: rgba(0,0,0,0.5);
+	background: rgba(0,0,0,0.61803);
 	border: 1px solid white;
 	border-radius: 5px;
 	color: white;
-	font-family: Ubuntu, sans-serif;
-	font-size: 10px;
+	font-family: Cuprum, sans-serif;
+	font-size: 8pt;
 	line-height: 1.1;
 	white-space: pre;
 	pointer-events: none;
@@ -150,9 +150,9 @@ x3d .cobweb-browser-timing button {
 	padding: 0;
 	background: rgba(0,0,0,0.5);
 	color: white;
-	font-size: 10px;
+	font-size: 8pt;
 	line-height: 1.1;
-	font-family: Ubuntu, sans-serif;
+	font-family: Cuprum, sans-serif;
 	font-style: italic;
 	pointer-events: all;
 	cursor: default;
@@ -172,6 +172,7 @@ x3d .cobweb-browser-timing button:hover {
 
 .context-menu-selected {
 	font-weight: bold;
+	font-style: italic;
 }
  
 /*!
@@ -196,8 +197,8 @@ x3d .cobweb-browser-timing button:hover {
 	min-width: 120px;
 	padding: 0;
 	margin: 0;
-	font-family: Ubuntu, sans-serif;
-	font-size: 11px;
+	font-family: Cuprum, sans-serif;
+	font-size: 10pt;
 	line-height: 1.2;
 	list-style-type: none;
 	background: #222;
@@ -342,6 +343,7 @@ x3d .cobweb-browser-timing button:hover {
 	display: inline;
 	margin: 0;
 	margin-left: -20px;
+	margin-right: 3px;
 	padding: 0;
 }
 

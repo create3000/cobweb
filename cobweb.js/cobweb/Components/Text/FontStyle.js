@@ -101,6 +101,10 @@ function ($,
 		{
 			return this .bearing;
 		},
+		getBBox: function ()
+		{
+			return this .bbox;
+		},
 		update: function ()
 		{
 			var
@@ -368,8 +372,8 @@ function ($,
 	 */
 	
 	var
-		normal = new Vector3 (0, 0, 1),
-		vertex = new Vector3 (0, 0, 0);
+		min = new Vector3 (0, 0, 0),
+		max = new Vector3 (0, 0, 0);
 
 	function PolygonText (text, fontStyle)
 	{
@@ -383,7 +387,12 @@ function ($,
 		constructor: PolygonText,
 		build: function ()
 		{
-			var fontStyle = this .getFontStyle ();
+			var
+				fontStyle      = this .getFontStyle (),
+				glyphs         = this .getGlyphs (),
+				minorAlignment = this .getMinorAlignment (),
+				translations   = this .getTranslations (),
+				charSpacings   = this .getCharSpacings ();
 	
 			if (! fontStyle .getFont ())
 				return;
@@ -391,12 +400,16 @@ function ($,
 			this .texCoords .length = 0;
 			this .getText () .getTexCoords () .push (this .texCoords);
 
+			this .getBBox () .getExtents (min, max);
+			this .getText () .getMin () .assign (min);
+			this .getText () .getMax () .assign (max);
+
 			if (fontStyle .horizontal_ .getValue ())
 			{
 				var size  = fontStyle .getScale ();
 
-				for (var i = 0; i < this .getGlyphs () .length; ++ i)
-					this .render (this .getGlyphs () [i], this .getMinorAlignment (), size, this .getTranslations () [i], this .getCharSpacings () [i]);
+				for (var i = 0, length = glyphs .length; i < length; ++ i)
+					this .render (glyphs [i], minorAlignment, size, translations [i], charSpacings [i]);
 			}
 			else
 			{
@@ -442,22 +455,25 @@ function ($,
 				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
 				fontSize         = size / FONT_SIZE,
 				sizeUnitsPerEm   = size / font .unitsPerEm,
-				texCoords        = this .texCoords;
+				texCoords        = this .texCoords,
+				normals          = text .getNormals (),
+				vertices         = text .getVertices ();
 
 			for (var g = 0, gl = glyphs .length; g < gl; ++ g)
 			{
 				var
-					glyph    = glyphs [g],
-					vertices = this .getGlyphGeometry (glyph, primitiveQuality);
+					glyph         = glyphs [g],
+					glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
 				
-				for (var v = 0, vl = vertices .length; v < vl; ++ v)
+				for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
 				{
-					text .addNormal (normal);
-					text .addVertex (vertex .set (vertices [v] .x * fontSize + minorAlignment .x + g * charSpacing + translation .x + offset,
-					                              vertices [v] .y * fontSize + minorAlignment .y + translation .y,
-					                              0));
+					var
+						x = glyphVertices [v] .x * fontSize + minorAlignment .x + g * charSpacing + translation .x + offset,
+						y = glyphVertices [v] .y * fontSize + minorAlignment .y + translation .y;
 
-					texCoords .push (vertex .x / fontSize, vertex .y / fontSize, 0, 1);
+					normals   .push (0, 0, 1);
+					vertices  .push (x, y, 0, 1);
+					texCoords .push (x / fontSize, y / fontSize, 0, 1);
 				}
 
 				// Calculate offset.

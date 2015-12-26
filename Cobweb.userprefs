@@ -1,22 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.css">
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture.js" Line="5" Column="5" />
+      <File FileName="cobweb.js/cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture.js" Line="33" Column="33" />
       <File FileName="cobweb.js/cobweb/Components/Texturing/X3DTexture2DNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Texturing/X3DTextureNode.js" Line="30" Column="30" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/X3DTextureNode.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Rendering/Gouraud.fs" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Rendering/Gouraud.vs" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Shaders/X3DProgrammableShaderObject.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Shape/Appearance.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Texturing/PixelTexture.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Texturing/ImageTexture.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserOptions.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Texturing/X3DTexturingContext.js" Line="41" Column="41" />
-      <File FileName="cobweb.js/cobweb/Components/Texturing/TextureProperties.js" Line="11" Column="11" />
+      <File FileName="cobweb.js/cobweb/Components/Navigation/ViewpointGroup.js" Line="32" Column="32" />
+      <File FileName="cobweb.js/cobweb.css" Line="6" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

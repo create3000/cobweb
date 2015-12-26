@@ -18,9 +18,7 @@ function ($,
 	X3DProgrammableShaderObject .prototype =
 	{
 		constructor: X3DProgrammableShaderObject,
-		matrix3d: new Float32Array (9),
 		matrix3f: new Float32Array (9),
-		matrix4d: new Float32Array (16),
 		matrix4f: new Float32Array (16),
 		array: [ ],
 		initialize: function ()
@@ -119,6 +117,7 @@ function ($,
 			switch (field .getType ())
 			{
 				case X3DConstants .SFBool:
+				case X3DConstants .SFInt32:
 				{
 					gl .uniform1i (field .uniformLocation_, field .getValue ());
 					return;
@@ -132,22 +131,14 @@ function ($,
 				case X3DConstants .SFColorRGBA:
 				{
 					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .r, value .g, value .b, value .a);
+					gl .uniform4f (field .uniformLocation_, value .r, value .g, value .b, value .a);
 					return;
 				}
 				case X3DConstants .SFDouble:
-				{
-					gl .uniform1f (field .uniformLocation_, field .getValue ());
-					return;
-				}
 				case X3DConstants .SFFloat:
+				case X3DConstants .SFTime:
 				{
 					gl .uniform1f (field .uniformLocation_, field .getValue ());
-					return;
-				}
-				case X3DConstants .SFInt32:
-				{
-					gl .uniform1i (field .uniformLocation_, field .getValue ());
 					return;
 				}
 				case X3DConstants .SFImage:
@@ -155,11 +146,6 @@ function ($,
 					return;
 				}
 				case X3DConstants .SFMatrix3d:
-				{
-					this .matrix3d .set (field .getValue ());
-					gl .uniformMatrix3fv (field .uniformLocation_, false, this .matrix3d);
-					return;
-				}
 				case X3DConstants .SFMatrix3f:
 				{
 					this .matrix3f .set (field .getValue ());
@@ -167,11 +153,6 @@ function ($,
 					return;
 				}
 				case X3DConstants .SFMatrix4d:
-				{
-					this .matrix4d .set (field .getValue ());
-					gl .uniformMatrix4fv (field .uniformLocation_, false, this .matrix4d);
-					return;
-				}
 				case X3DConstants .SFMatrix4f:
 				{
 					this .matrix4f .set (field .getValue ());
@@ -224,17 +205,7 @@ function ($,
 				{
 					return;
 				}
-				case X3DConstants .SFTime:
-				{
-					gl .uniform1f (field .uniformLocation_, field .getValue ());
-					return;
-				}
 				case X3DConstants .SFVec2d:
-				{
-					var value = field .getValue ();
-					gl .uniform2f (field .uniformLocation_, value .x, value .y);
-					return;
-				}
 				case X3DConstants .SFVec2f:
 				{
 					var value = field .getValue ();
@@ -242,11 +213,6 @@ function ($,
 					return;
 				}
 				case X3DConstants .SFVec3d:
-				{
-					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .x, value .y, value .z);
-					return;
-				}
 				case X3DConstants .SFVec3f:
 				{
 					var value = field .getValue ();
@@ -254,18 +220,64 @@ function ($,
 					return;
 				}
 				case X3DConstants .SFVec4d:
-				{
-					var value = field .getValue ();
-					gl .uniform4f (field .uniformLocation_, value .x, value .y, value .z, value .w);
-					return;
-				}
 				case X3DConstants .SFVec4f:
 				{
 					var value = field .getValue ();
 					gl .uniform4f (field .uniformLocation_, value .x, value .y, value .z, value .w);
 					return;
 				}
+				case X3DConstants .MFBool:
+				case X3DConstants .MFInt32:
+				{
+					var
+						value = field .getValue (),
+						array = this .array;
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+						array [i] = value [i] .getValue ();
+
+					array .length = length;						
+
+					gl .uniform1iv (field .uniformLocation_, new Int32Array (array));
+					return;
+				}
+				case X3DConstants .MFColor:
+				{
+					var
+						name  = field .getName (),
+						value = field .getValue ();
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							color    = value [i] .getValue (),
+							location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+						gl .uniform3f (location, color .r, color .g, color .b);
+					}
+
+					return;
+				}
+				case X3DConstants .MFColorRGBA:
+				{
+					var
+						name  = field .getName (),
+						value = field .getValue ();
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							color    = value [i] .getValue (),
+							location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+						gl .uniform4f (location, color .r, color .g, color .b, color .a);
+					}
+
+					return;
+				}
 				case X3DConstants .MFFloat:
+				case X3DConstants .MFDouble:
+				case X3DConstants .MFTime:
 				{
 					var
 						value = field .getValue (),
@@ -279,6 +291,70 @@ function ($,
 					gl .uniform1fv (field .uniformLocation_, new Float32Array (array));
 					return;
 				}
+				case X3DConstants .MFImage:
+				{
+					return;
+				}
+				case X3DConstants .MFMatrix3d:
+				case X3DConstants .MFMatrix3f:
+				{
+					var
+						name  = field .getName (),
+						value = field .getValue ();
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+					{
+						var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+						this .matrix3f .set (value [i] .getValue ());
+						gl .uniformMatrix3fv (location, false, this .matrix3f);
+					}
+
+					return;
+				}
+				case X3DConstants .MFMatrix4d:
+				case X3DConstants .MFMatrix4f:
+				{
+					var
+						name  = field .getName (),
+						value = field .getValue ();
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+					{
+						var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+						this .matrix4f .set (value [i] .getValue ());
+						gl .uniformMatrix4fv (location, false, this .matrix4f);
+					}
+
+					return;
+				}
+				case X3DConstants .MFNode:
+				{
+					return;
+				}
+				case X3DConstants .MFRotation:
+				{
+					var
+						name  = field .getName (),
+						value = field .getValue ();
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							quat   = value [i] .getValue () .quat,
+							location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
+					}
+
+					return;
+				}
+				case X3DConstants .MFString:
+				{
+					return;
+				}
+				case X3DConstants .MFVec2d:
 				case X3DConstants .MFVec2f:
 				{
 					var
@@ -292,6 +368,42 @@ function ($,
 							location = gl .getUniformLocation (program, name + "[" + i + "]");
 
 						gl .uniform2f (location, vector .x, vector .y);
+					}
+
+					return;
+				}
+				case X3DConstants .MFVec3d:
+				case X3DConstants .MFVec3f:
+				{
+					var
+						name  = field .getName (),
+						value = field .getValue ();
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							vector   = value [i] .getValue (),
+							location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+						gl .uniform3f (location, vector .x, vector .y, vector .z);
+					}
+
+					return;
+				}
+				case X3DConstants .MFVec4d:
+				case X3DConstants .MFVec4f:
+				{
+					var
+						name  = field .getName (),
+						value = field .getValue ();
+
+					for (var i = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							vector   = value [i] .getValue (),
+							location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+						gl .uniform4f (location, vector .x, vector .y, vector .z, vector .w);
 					}
 
 					return;
