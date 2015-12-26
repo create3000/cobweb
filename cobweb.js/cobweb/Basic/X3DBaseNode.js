@@ -31,8 +31,10 @@ function ($,
 		
 		this .addChildren ("isLive", new Fields .SFBool (true));
 
-		for (var i = 0; i < this .fieldDefinitions .length; ++ i)
-			this .addField (this .fieldDefinitions [i]);
+		var fieldDefinitions = this .fieldDefinitions;
+
+		for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+			this .addField (fieldDefinitions [i]);
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
@@ -84,9 +86,11 @@ function ($,
 
 			this .$initialized = true;
 
-			for (var i = 0; i < this .fieldDefinitions .length; ++ i)
+			var fieldDefinitions = this .fieldDefinitions;
+
+			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
-				var field = this .fields [this .fieldDefinitions [i] .name];
+				var field = this .fields [fieldDefinitions [i] .name];
 				field .updateReferences ();
 				field .setTainted (false);
 			}
@@ -303,7 +307,8 @@ function ($,
 			field .setAccessType (accessType);
 
 			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field, true));
-			this .fields [name] = field;
+
+			this .fields [name]            = field;
 			this .userDefinedFields [name] = field;
 
 			if (field .getAccessType () === X3DConstants .inputOutput)
