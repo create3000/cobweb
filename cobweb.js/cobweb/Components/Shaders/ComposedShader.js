@@ -63,6 +63,7 @@ function ($,
 		X3DProgrammableShaderObject .prototype,
 	{
 		constructor: ComposedShader,
+		shading: "GOURAUD",
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
 		fog: null,
@@ -106,6 +107,56 @@ function ($,
 		{
 			return this .custom;
 		},
+		getShading: function ()
+		{
+			return this .shading;
+		},
+		setShading: function (shading)
+		{
+			var gl = this .getBrowser () .getContext ();
+
+			this .shading = shading;
+
+			switch (shading)
+			{
+				case "POINTSET":
+				{
+					this .primitiveMode = gl .POINTS;
+					this .wireframe     = true;
+	
+					this .use ();
+					gl .uniform1i (this .points, true);
+					break;
+				}
+				case "WIREFRAME":
+				{
+					this .primitiveMode = gl .LINE_LOOP;
+					this .wireframe     = true;
+	
+					this .use ();
+					gl .uniform1i (this .points, false);
+					break;
+				}
+				case "PHONG":
+				{
+					this .primitiveMode = gl .TRIANGLES;
+					this .wireframe     = false;
+	
+					this .use ();
+					gl .uniform1i (this .points, false);
+					break;
+				}
+				default:
+				{
+					this .primitiveMode = gl .TRIANGLES;
+					this .wireframe     = false;
+	
+					this .use ();
+					gl .uniform1i (this .points, false);
+					break;
+				}
+			}
+		},
 		relink: function ()
 		{
 			var
@@ -121,10 +172,10 @@ function ($,
 
 			for (var i = 0, length = parts .length; i < length; ++ i)
 			{
-				var shader = parts [i] .getValue ();
+				var part = parts [i] .getValue ();
 
-				if (shader .isValid ())
-					gl .attachShader (program, shader .getShader ());
+				if (part .isValid ())
+					gl .attachShader (program, part .getShader ());
 				else
 				{
 					valid = false;

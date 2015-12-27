@@ -144,6 +144,8 @@ function ($,
 				for (var name in userDefinedFields)
 				{
 					var field = userDefinedFields [name];
+
+					field .removeInterest (this, "set_field__");
 	
 					switch (field .getType ())
 					{

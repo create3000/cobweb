@@ -172,19 +172,16 @@ function (Fields,
 
 					this .defaultShader = this .gouraudShader;
 
-					this .pointShader   .primitiveMode = gl .POINTS;
-					this .lineShader    .primitiveMode = gl .POINTS;
-					this .defaultShader .primitiveMode = gl .POINTS;
+					this .pointShader .primitiveMode = gl .POINTS;
+					this .lineShader  .primitiveMode = gl .POINTS;
 					
-					this .pointShader   .wireframe = true;
-					this .lineShader    .wireframe = true;
-					this .defaultShader .wireframe = true;
+					this .pointShader .wireframe = true;
+					this .lineShader  .wireframe = true;
 
 					this .lineShader .use ();
 					gl .uniform1i (this .lineShader .points, true);
 
-					this .defaultShader .use ();
-					gl .uniform1i (this .defaultShader .points, true);
+					this .defaultShader .setShading (type);
 					break;
 				}
 				case "WIREFRAME":
@@ -194,19 +191,16 @@ function (Fields,
 
 					this .defaultShader = this .gouraudShader;
 
-					this .pointShader   .primitiveMode = gl .POINTS;
-					this .lineShader    .primitiveMode = gl .LINES;
-					this .defaultShader .primitiveMode = gl .LINE_LOOP;
+					this .pointShader .primitiveMode = gl .POINTS;
+					this .lineShader  .primitiveMode = gl .LINES;
 					
-					this .pointShader   .wireframe = true;
-					this .lineShader    .wireframe = true;
-					this .defaultShader .wireframe = true;					
+					this .pointShader .wireframe = true;
+					this .lineShader  .wireframe = true;
 
 					this .lineShader .use ();
 					gl .uniform1i (this .lineShader .points, false);
 
-					this .defaultShader .use ();
-					gl .uniform1i (this .defaultShader .points, false);
+					this .defaultShader .setShading (type);
 					break;
 				}
 				case "PHONG":
@@ -216,19 +210,16 @@ function (Fields,
 
 					this .defaultShader = this .phongShader;
 
-					this .pointShader   .primitiveMode = gl .POINTS;
-					this .lineShader    .primitiveMode = gl .LINES;
-					this .defaultShader .primitiveMode = gl .TRIANGLES;
+					this .pointShader .primitiveMode = gl .POINTS;
+					this .lineShader  .primitiveMode = gl .LINES;
 
-					this .pointShader   .wireframe = true;
-					this .lineShader    .wireframe = true;
-					this .defaultShader .wireframe = false;					
+					this .pointShader .wireframe = true;
+					this .lineShader  .wireframe = true;
 
 					this .lineShader .use ();
 					gl .uniform1i (this .lineShader .points, false);
 
-					this .defaultShader .use ();
-					gl .uniform1i (this .defaultShader .points, false);
+					this .defaultShader .setShading (type);
 					break;
 				}
 				default:
@@ -240,19 +231,16 @@ function (Fields,
 
 					this .defaultShader = this .gouraudShader;
 
-					this .pointShader   .primitiveMode = gl .POINTS;
-					this .lineShader    .primitiveMode = gl .LINES;
-					this .defaultShader .primitiveMode = gl .TRIANGLES;
+					this .pointShader .primitiveMode = gl .POINTS;
+					this .lineShader  .primitiveMode = gl .LINES;
 
-					this .pointShader   .wireframe = true;
-					this .lineShader    .wireframe = true;
-					this .defaultShader .wireframe = false;					
+					this .pointShader .wireframe = true;
+					this .lineShader  .wireframe = true;
 
 					this .lineShader .use ();
 					gl .uniform1i (this .lineShader .points, false);
 
-					this .defaultShader .use ();
-					gl .uniform1i (this .defaultShader .points, false);
+					this .defaultShader .setShading (type);
 					break;
 				}
 			}
@@ -262,52 +250,7 @@ function (Fields,
 			var shaders = this .getShaders ();
 
 			for (var id in shaders)
-				this .setCustomShader (shaders [id], type);
-
-		},
-		setCustomShader: function (shader, type)
-		{
-			var gl = this .context;
-
-			switch (type)
-			{
-				case "POINTSET":
-				{
-					shader .primitiveMode = gl .POINTS;
-					shader .wireframe     = true;
-
-					shader .use ();
-					gl .uniform1i (shader .points, true);
-					break;
-				}
-				case "WIREFRAME":
-				{
-					shader .primitiveMode = gl .LINE_LOOP;
-					shader .wireframe     = true;
-
-					shader .use ();
-					gl .uniform1i (shader .points, false);
-					break;
-				}
-				case "PHONG":
-				{
-					shader .primitiveMode = gl .TRIANGLES;
-					shader .wireframe     = false;
-
-					shader .use ();
-					gl .uniform1i (shader .points, false);
-					break;
-				}
-				default:
-				{
-					shader .primitiveMode = gl .TRIANGLES;
-					shader .wireframe     = false;
-
-					shader .use ();
-					gl .uniform1i (shader .points, false);
-					break;
-				}
-			}
+				shaders [id] .setShading (type);
 		},
 		getDefaultShader: function ()
 		{
