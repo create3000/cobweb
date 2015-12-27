@@ -1078,6 +1078,7 @@
     <None Include="tests\Components\images\ubuntu.png" />
     <None Include="tests\Components\Shaders\tiles.jpg" />
     <None Include="tests\Components\Shaders\water.x3d" />
+    <None Include="tests\Components\Shaders\Fields.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

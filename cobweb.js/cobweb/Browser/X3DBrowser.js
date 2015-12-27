@@ -166,7 +166,10 @@ function ($,
 			this .setBrowserLoading (true);
 			this .loadCount_ .addFieldCallback ("bindWorld" + id, this .bindWorld .bind (this, id));
 
-			scene .beginUpdate ();
+			if (this .isLive () .getValue ())
+				scene .beginUpdate ();
+			else
+				scene .endUpdate ();
 
 			this .setExecutionContext (scene);
 
@@ -463,6 +466,17 @@ function ($,
 			{
 				console .log (error);
 			}
+		},
+		beginUpdate: function ()
+		{
+			X3DBrowserContext .prototype .beginUpdate .call (this);
+			this .getExecutionContext () .beginUpdate ();
+		},
+		endUpdate: function ()
+		{
+			X3DBrowserContext .prototype .endUpdate .call (this);
+			// DEBUG
+			//this .getExecutionContext () .endUpdate ();
 		},
 		print: function ()
 		{

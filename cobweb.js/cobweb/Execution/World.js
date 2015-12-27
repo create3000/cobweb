@@ -47,7 +47,7 @@ function ($,
 			this .getExecutionContext () .getRootNodes () .addInterest (this, "set_rootNodes");
 			this .getExecutionContext () .setup ();
 
-			this .set_rootNodes (); // This can happen twice when rootNodes is tainted
+			this .set_rootNodes ();
 
 			this .layer0 .isLayer0 (true);
 			this .layer0 .setup ();

@@ -183,17 +183,6 @@ function ($,
 
 			requestAnimationFrame (this .renderCallback);
 		},
-// DEBUG
-//		beginUpdate: function ()
-//		{
-//			X3DBaseNode .prototype .beginUpdate .call (this);
-//			this .getExecutionContext () .beginUpdate ();
-//		},
-//		endUpdate: function ()
-//		{
-//			X3DBaseNode .prototype .endUpdate .call (this);
-//			this .getExecutionContext () .endUpdate ();
-//		},
 		traverse: function (time)
 		{
 			var gl = this .getContext ();
