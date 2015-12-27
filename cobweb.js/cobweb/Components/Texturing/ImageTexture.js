@@ -122,6 +122,8 @@ function ($,
 		},
 		setImage: function ()
 		{
+			console .info ("Done loading image:", this .URL .toString ());
+
 			try
 			{
 				var

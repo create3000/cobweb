@@ -22,9 +22,6 @@ function ($,
 	X3DProgrammableShaderObject .prototype =
 	{
 		constructor: X3DProgrammableShaderObject,
-		matrix3f: new Float32Array (9),
-		matrix4f: new Float32Array (16),
-		array: [ ],
 		initialize: function ()
 		{
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");

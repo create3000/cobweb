@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Shaders/X3DShaderNode",
 	"cobweb/Components/Shaders/X3DProgrammableShaderObject",
+	"cobweb/Components/Networking/LoadSensor",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix3",
 ],
@@ -15,6 +16,7 @@ function ($,
           FieldDefinitionArray,
           X3DShaderNode, 
           X3DProgrammableShaderObject, 
+          LoadSensor,
           X3DConstants,
           Matrix3)
 {
@@ -44,6 +46,7 @@ function ($,
 
 		this .addType (X3DConstants .ComposedShader);
 
+		this .loadSensor            = new LoadSensor (executionContext);
 		this .clipPlaneEnabled      = [ ];
 		this .clipPlaneVector       = [ ];
 		this .lightType             = [ ];
@@ -63,7 +66,6 @@ function ($,
 		X3DProgrammableShaderObject .prototype,
 	{
 		constructor: ComposedShader,
-		shading: "GOURAUD",
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
 		fog: null,
@@ -93,7 +95,12 @@ function ($,
 			this .primitiveMode = gl .TRIANGLES;
 			this .textureTarget = gl .TEXTURE_2D;
 
-			this .relink ();
+			this .activate_ .addInterest (this, "set_activate__");
+			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
+
+			this .loadSensor .loadTime_ .addInterest (this, "set_loadTime__");
+			this .loadSensor .watchList_ = this .parts_;
+			this .loadSensor .setup ();
 		},
 		getProgram: function ()
 		{
@@ -107,57 +114,12 @@ function ($,
 		{
 			return this .custom;
 		},
-		getShading: function ()
+		set_activate__: function ()
 		{
-			return this .shading;
+			if (this .activate_ .getValue ())
+				this .set_loadTime__ ();
 		},
-		setShading: function (shading)
-		{
-			var gl = this .getBrowser () .getContext ();
-
-			this .shading = shading;
-
-			switch (shading)
-			{
-				case "POINTSET":
-				{
-					this .primitiveMode = gl .POINTS;
-					this .wireframe     = true;
-	
-					this .use ();
-					gl .uniform1i (this .points, true);
-					break;
-				}
-				case "WIREFRAME":
-				{
-					this .primitiveMode = gl .LINE_LOOP;
-					this .wireframe     = true;
-	
-					this .use ();
-					gl .uniform1i (this .points, false);
-					break;
-				}
-				case "PHONG":
-				{
-					this .primitiveMode = gl .TRIANGLES;
-					this .wireframe     = false;
-	
-					this .use ();
-					gl .uniform1i (this .points, false);
-					break;
-				}
-				default:
-				{
-					this .primitiveMode = gl .TRIANGLES;
-					this .wireframe     = false;
-	
-					this .use ();
-					gl .uniform1i (this .points, false);
-					break;
-				}
-			}
-		},
-		relink: function ()
+		set_loadTime__: function ()
 		{
 			var
 				gl      = this .getBrowser () .getContext (),

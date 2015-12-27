@@ -143,6 +143,8 @@ function ($,
 		},
 		setVideo: function ()
 		{
+			console .info ("Done loading movie:", this .URL .toString ());
+
 		   var video = this .video [0];
 	
 			try

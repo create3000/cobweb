@@ -118,7 +118,7 @@ function ($,
 			success (scene);
 
 			if (this .URL .length)
-				console .log ("Done loading scene " + this .URL);
+				console .info ("Done loading scene " + this .URL);
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint)
 		{

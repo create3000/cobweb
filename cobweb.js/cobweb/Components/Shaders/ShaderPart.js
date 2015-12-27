@@ -103,7 +103,7 @@ function ($,
 			this .valid = false;
 
 			new Loader (this) .loadDocument (this .url_,
-			function (data)
+			function (data, URL)
 			{
 				if (data === null)
 				{

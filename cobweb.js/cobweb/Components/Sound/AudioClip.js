@@ -133,6 +133,7 @@ function ($,
 		setAudio: function ()
 		{
 		   // Everything is fine.
+			console .info ("Done loading audio:", this .URL .toString ());
 			
 			this .audio .unbind ("canplaythrough");
 			this .setMedia (this .audio);
