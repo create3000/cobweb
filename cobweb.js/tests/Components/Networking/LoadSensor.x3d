@@ -6,7 +6,7 @@
     <meta name='created' content='Sun, 27 Dec 2015 07:44:48 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 27 Dec 2015 10:20:53 GMT'/>
+    <meta name='modified' content='Sun, 27 Dec 2015 12:08:09 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -67,7 +67,7 @@ void main (void)
 <![CDATA[vrmlscript:]]> 
       </Script>
       <Inline containerField='watchList'
-          url='"http://download.thinkbroadband.com/20MB.zip"'/>
+          url='""'/>
     </LoadSensor>
     <Script DEF='_2'>
       <field accessType='inputOnly' type='SFBool' name='set_active'/>

@@ -202,6 +202,12 @@ function ($,
 		},
 		loadDocumentAsync: function (URL)
 		{
+			if (URL .length == 0)
+			{
+				this .loadDocumentError (new Error ("URL is empty."));
+				return;
+			}
+
 			try
 			{
 				if (this .bindViewpoint)
@@ -331,8 +337,7 @@ function ($,
 		},
 		error: function (exception)
 		{
-			console .warn ("Couldn't load URL " + this .URL);
-			console .warn (exception);
+			console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
 		},
 		transform: function (sURL)
 		{
