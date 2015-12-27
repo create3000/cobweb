@@ -128,16 +128,11 @@ function ($,
 				var loaded = complete == urlObjects .length;
 
 				this .clearTimeout ();
-		
-				if (this .isActive_ .getValue ())
-					this .isActive_ = false;
 
-				if (loaded !== this .isLoaded_ .getValue ())
-					this .isLoaded_ = loaded;
+				this .isActive_ = false;
+				this .isLoaded_ = loaded;
+				this .progress_ = progress;
 
-				if (progress !== this .progress_.getValue ())
-					this .progress_ = progress;
-		
 				if (loaded)
 					this .loadTime_ = this .getBrowser () .getCurrentTime ();
 			}
@@ -145,17 +140,15 @@ function ($,
 			{
 				if (this .isActive_ .getValue ())
 				{
-					if (progress !== this .progress_.getValue ())
-						this .progress_ = progress;
+					this .progress_ = progress;
 				}
 				else
 				{
 					this .isActive_ = true;
 
-					if (progress !== this .progress_.getValue ())
-						this .progress_ = progress;
+					this .progress_ = progress;
 		
-					this .set_timeOut ();
+					this .set_timeOut__ ();
 				}
 			}
 		},

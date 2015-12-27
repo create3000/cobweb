@@ -6,7 +6,7 @@
     <meta name='created' content='Sun, 27 Dec 2015 07:44:48 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 27 Dec 2015 12:08:09 GMT'/>
+    <meta name='modified' content='Sun, 27 Dec 2015 12:41:22 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -129,8 +129,7 @@ function set_loadTime (value, time)
         </Shape>
       </Transform>
     </Anchor>
-    <LoadSensor DEF='_5'
-        enabled='false'>
+    <LoadSensor DEF='_5'>
       <Anchor USE='_4' containerField='watchList'/>
     </LoadSensor>
     <Viewpoint DEF='Viewpoint_1'/>

@@ -39,14 +39,8 @@ function (Fields,
 		var shader = new ComposedShader (executionContext);
 		shader .language_ = "GLSL";
 		shader .parts_ = lineShader .parts_;
-		shader .setup ();
-
 		shader .setCustom (false);
-
-		shader .use ();
-		gl .uniform1i (shader .dimension, 0);
-		gl .uniform1i (shader .points,    true);
-
+		shader .setup ();
 		return shader;
 	}
 
@@ -86,7 +80,11 @@ function (Fields,
 			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
 			this .pointShader = getPointShader (this, this .lineShader, gl);
 
-			this .setDefaultShader (this .getElement () [0] .getAttribute ("shading"));
+			this .pointShader .setPoints (true);
+			this .pointShader .setGeometryType (0);
+			this .lineShader  .setGeometryType (1);
+
+			this .setShading ("GOURAUD");
 			this .setShader (this .getDefaultShader ());
 
 			this .lineShader .use ();
@@ -153,13 +151,12 @@ function (Fields,
 			shader .language_ = "GLSL";
 			shader .parts_ .push (vertexShader);
 			shader .parts_ .push (fragmentShader);
-			shader .setup ();
-	
 			shader .setCustom (false);
+			shader .setup ();
 	
 			return shader;
 		},
-		setDefaultShader: function (type)
+		setShading: function (type)
 		{
 			var gl = this .context;
 
@@ -178,9 +175,7 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .use ();
-					gl .uniform1i (this .lineShader .points, true);
-
+					this .lineShader .setPoints (true);
 					this .defaultShader .setShading (type);
 					break;
 				}
@@ -197,9 +192,7 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .use ();
-					gl .uniform1i (this .lineShader .points, false);
-
+					this .lineShader .setPoints (false);
 					this .defaultShader .setShading (type);
 					break;
 				}
@@ -216,9 +209,7 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .use ();
-					gl .uniform1i (this .lineShader .points, false);
-
+					this .lineShader .setPoints (false);
 					this .defaultShader .setShading (type);
 					break;
 				}
@@ -237,9 +228,7 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .use ();
-					gl .uniform1i (this .lineShader .points, false);
-
+					this .lineShader .setPoints (false);
 					this .defaultShader .setShading (type);
 					break;
 				}

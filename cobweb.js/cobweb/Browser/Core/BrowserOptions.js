@@ -230,7 +230,7 @@ function ($,
 		},
 		set_shading__: function (shading)
 		{
-			this .getBrowser () .setDefaultShader (shading .getValue ());
+			this .getBrowser () .setShading (shading .getValue ());
 		},
 	});
 

@@ -20,10 +20,39 @@ function ($,
 	X3DShaderNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
 	{
 		constructor: X3DShaderNode,
+		pointsValue: false,
+		geometryTypeValue: 3,
+		custom: true,
 		shading: "GOURAUD",
-		getShading: function ()
+		setCustom: function (value)
 		{
-			return this .shading;
+			this .custom = value;
+		},
+		getCustom: function ()
+		{
+			return this .custom;
+		},
+		setPoints: function (value)
+		{
+			this .pointsValue = value;
+
+			this .use ();
+			this .getBrowser () .getContext () .uniform1i (this .points, value);
+		},
+		getPoints: function ()
+		{
+			return this .pointsValue;
+		},
+		setGeometryType: function (value)
+		{
+			this .geometryTypeValue = value;
+
+			this .use ();
+			this .getBrowser () .getContext () .uniform1i (this .geometryType, value);
+		},
+		getGeometryType: function ()
+		{
+			return this .geometryTypeValue;
 		},
 		setShading: function (shading)
 		{
@@ -38,8 +67,7 @@ function ($,
 					this .primitiveMode = gl .POINTS;
 					this .wireframe     = true;
 	
-					this .use ();
-					gl .uniform1i (this .points, true);
+					this .setPoints (true);
 					break;
 				}
 				case "WIREFRAME":
@@ -47,8 +75,7 @@ function ($,
 					this .primitiveMode = gl .LINE_LOOP;
 					this .wireframe     = true;
 	
-					this .use ();
-					gl .uniform1i (this .points, false);
+					this .setPoints (false);
 					break;
 				}
 				case "PHONG":
@@ -56,20 +83,22 @@ function ($,
 					this .primitiveMode = gl .TRIANGLES;
 					this .wireframe     = false;
 	
-					this .use ();
-					gl .uniform1i (this .points, false);
+					this .setPoints (false);
 					break;
 				}
 				default:
 				{
 					this .primitiveMode = gl .TRIANGLES;
 					this .wireframe     = false;
-	
-					this .use ();
-					gl .uniform1i (this .points, false);
+
+					this .setPoints (false);
 					break;
 				}
 			}
+		},
+		getShading: function ()
+		{
+			return this .shading;
 		},
 	});
 

@@ -7,7 +7,7 @@ precision mediump float;
 #define GEOMETRY_3D 3
 
 uniform bool X3D_Points;
-uniform int  X3D_Dimension;
+uniform int  X3D_GeometryType;
 // 2
 
 #define MAX_CLIP_PLANES 6
@@ -96,7 +96,7 @@ getTextureColor ()
 {
 	if (x3d_Texturing == TEXTURE_2D)
 	{
-		if (X3D_Dimension == GEOMETRY_3D || gl_FrontFacing)
+		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
 			return texture2D (x3d_Texture, vec2 (t));
 		
 		// If dimension is GEOMETRY_2D the texCoords must be flipped.
@@ -105,7 +105,7 @@ getTextureColor ()
 
 	if (x3d_Texturing == TEXTURE_CUBE)
 	{
-		if (X3D_Dimension == GEOMETRY_3D || gl_FrontFacing)
+		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
 			return textureCube (x3d_CubeMapTexture, vec3 (t));
 		
 		// If dimension is GEOMETRY_2D the texCoords must be flipped.

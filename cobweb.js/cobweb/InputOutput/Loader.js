@@ -348,7 +348,7 @@ function ($,
 			else
 			{
 				if (! sURL .match (urls .fallbackRx))
-					this .url .unshift (urls .fallback + sURL);
+					this .url .unshift (urls .fallback + URL);
 			}
 
 			return URL;

@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Shaders/X3DShaderNode",
 	"cobweb/Components/Shaders/X3DProgrammableShaderObject",
 	"cobweb/Components/Networking/LoadSensor",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix3",
 ],
@@ -17,6 +18,7 @@ function ($,
           X3DShaderNode, 
           X3DProgrammableShaderObject, 
           LoadSensor,
+          X3DCast,
           X3DConstants,
           Matrix3)
 {
@@ -70,8 +72,7 @@ function ($,
 		maxClipPlanes: MAX_CLIP_PLANES,
 		fog: null,
 		maxLights: MAX_LIGHTS,
-		globalLights: 0,
-		custom: true,
+		numGlobalLights: 0,
 		wireframe: false,
 		getTypeName: function ()
 		{
@@ -98,7 +99,7 @@ function ($,
 			this .activate_ .addInterest (this, "set_activate__");
 			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
 
-			this .loadSensor .loadTime_ .addInterest (this, "set_loadTime__");
+			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
 			this .loadSensor .watchList_ = this .parts_;
 			this .loadSensor .setup ();
 		},
@@ -106,63 +107,62 @@ function ($,
 		{
 			return this .program;
 		},
-		setCustom: function (value)
-		{
-			this .custom = value;
-		},
-		getCustom: function (value)
-		{
-			return this .custom;
-		},
 		set_activate__: function ()
 		{
 			if (this .activate_ .getValue ())
-				this .set_loadTime__ ();
+				this .set_loaded__ ();
 		},
-		set_loadTime__: function ()
+		set_loaded__: function ()
 		{
-			var
-				gl      = this .getBrowser () .getContext (),
-				program = gl .createProgram (),
-				parts   = this .parts_ .getValue (),
-				valid   = Boolean (parts .length);
-			
-			if (this .isValid_ .getValue ())
-				this .removeShaderFields ();
-
-			this .program = program;
-
-			for (var i = 0, length = parts .length; i < length; ++ i)
+			if (this .loadSensor .isLoaded_ .getValue ())
 			{
-				var part = parts [i] .getValue ();
-
-				if (part .isValid ())
-					gl .attachShader (program, part .getShader ());
-				else
+				var
+					gl      = this .getBrowser () .getContext (),
+					program = gl .createProgram (),
+					parts   = this .parts_ .getValue (),
+					valid   = 0;
+				
+				if (this .isValid_ .getValue ())
+					this .removeShaderFields ();
+	
+				this .program = program;
+	
+				for (var i = 0, length = parts .length; i < length; ++ i)
 				{
-					valid = false;
-					break;
+					var partNode = X3DCast (X3DConstants .ShaderPart, parts [i]);
+
+					if (partNode)
+					{
+						valid += partNode .isValid ();
+						gl .attachShader (program, partNode .getShader ());
+					}
 				}
-			}
+	
+				if (valid)
+				{
+					this .bindAttribLocations (gl, program);
 
-			if (valid)
-			{
-				this .bindAttribLocations (gl, program);
-				gl .linkProgram (program);
-			}
+					gl .linkProgram (program);
 
-			valid &= gl .getProgramParameter (program, gl .LINK_STATUS);
-
-			if (valid != this .isValid_ .getValue ())
-				this .isValid_ = valid;
-
-			if (valid)
-			{
-				this .getDefaultUniforms ();
-				this .addShaderFields ();
+					valid = valid && gl .getProgramParameter (program, gl .LINK_STATUS);
+				}
+	
+				if (valid != this .isValid_ .getValue ())
+					this .isValid_ = valid;
+	
+				if (valid)
+				{
+					this .getDefaultUniforms ();
+					this .addShaderFields ();
+				}
+				else
+					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
 			}
 			else
-				console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
+			{
+				if (this .isValid_ .getValue ())
+					this .isValid_ = false;
+			}
 		},
 		bindAttribLocations: function (gl, program)
 		{
@@ -183,7 +183,7 @@ function ($,
 			gl .useProgram (program);
 
 			this .points       = gl .getUniformLocation (program, "X3D_Points");
-			this .geometryType = gl .getUniformLocation (program, "X3D_Dimension");
+			this .geometryType = gl .getUniformLocation (program, "X3D_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
 			{
@@ -244,10 +244,11 @@ function ($,
 			this .normal   = gl .getAttribLocation (program, "x3d_Normal");
 			this .vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
 
-			gl .uniform1i (this .geometryType, 3);
+			gl .uniform1i (this .points,               this .getPoints ());
+			gl .uniform1i (this .geometryType,         this .getGeometryType ());
 			gl .uniform1f (this .linewidthScaleFactor, 1);
-			gl .uniform1i (this .texture, 0);        // Set texture to active texture unit 0.
-			gl .uniform1i (this .cubeMapTexture, 0); // Set cube map texture to active texture unit 1.
+			gl .uniform1i (this .texture,              0);        // Set texture to active texture unit 0.
+			gl .uniform1i (this .cubeMapTexture,       0); // Set cube map texture to active texture unit 1.
 		},
 		setGlobalUniforms: function ()
 		{
@@ -260,9 +261,9 @@ function ($,
 			gl .useProgram (this .program);
 			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 
-			this .globalLights = Math .min (this .maxLights, globalLights .length);
+			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
 
-			for (var i = 0, length = this .globalLights; i < length; ++ i)
+			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
 				globalLights [i] .use (gl, this, i);
 		},
 		setLocalUniforms: function (context)
@@ -335,9 +336,9 @@ function ($,
 
 				var
 					localLights = context .localLights,
-					numLights   = Math .min (this .maxLights, this .globalLights + localLights .length);
+					numLights   = Math .min (this .maxLights, this .numGlobalLights + localLights .length);
 
-				for (var i = this .globalLights, l = 0; i < numLights; ++ i, ++ l)
+				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
 				if (i < this .maxLights)
@@ -378,7 +379,7 @@ function ($,
 			{
 				gl .uniform1i (this .lighting, false);
 
-				if (this .custom)
+				if (this .getCustom ())
 				{
 					// Set normal matrix.
 					var normalMatrix = this .normalMatrixArray;
@@ -403,7 +404,7 @@ function ($,
 			{
 				gl .uniform1i (this .textureType, 0);
 
-				if (this .custom)
+				if (this .getCustom ())
 				{
 					appearance .getTextureTransform () .traverse ();
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
