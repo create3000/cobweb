@@ -121,25 +121,39 @@ function ($,
 				failed   += urlObject .checkLoadState () == X3DConstants .FAILED_STATE;
 			}
 
+			var progress = complete / urlObjects .length;
+
 			if (this .aborted || failed || complete == urlObjects .length)
 			{
+				var loaded = complete == urlObjects .length;
+
 				this .clearTimeout ();
 		
-				this .isActive_ = false;
-				this .isLoaded_ = complete == urlObjects .length;
-				this .progress_ = complete / urlObjects .length;
+				if (this .isActive_ .getValue ())
+					this .isActive_ = false;
+
+				if (loaded !== this .isLoaded_ .getValue ())
+					this .isLoaded_ = loaded;
+
+				if (progress !== this .progress_.getValue ())
+					this .progress_ = progress;
 		
-				if (this .isLoaded_ .getValue ())
+				if (loaded)
 					this .loadTime_ = this .getBrowser () .getCurrentTime ();
 			}
 			else
 			{
 				if (this .isActive_ .getValue ())
-					this .progress_ = complete / urlObjects .length;
+				{
+					if (progress !== this .progress_.getValue ())
+						this .progress_ = progress;
+				}
 				else
 				{
 					this .isActive_ = true;
-					this .progress_ = complete / urlObjects .length;
+
+					if (progress !== this .progress_.getValue ())
+						this .progress_ = progress;
 		
 					this .set_timeOut ();
 				}
