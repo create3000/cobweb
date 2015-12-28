@@ -20,8 +20,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		PAN_SPEED_FACTOR       = SPEED_FACTOR,
 		PAN_SHIFT_SPEED_FACTOR = 1.4 * PAN_SPEED_FACTOR,
 		ROLL_ANGLE             = Math .PI / 32,
-		ROLL_TIME              = 0.2,
-		FRAME_RATE             = 60;
+		ROLL_TIME              = 0.2;
 
 	var
 		yAxis = new Vector3 (0, 1, 0),

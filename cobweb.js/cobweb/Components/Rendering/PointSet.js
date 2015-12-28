@@ -128,8 +128,6 @@ function ($,
 			if (! this .coordNode || this .coordNode .isEmpty ())
 				return;
 
-			var attribArrays   = [ ];
-			
 			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 			//{
 			//	attribArrays [a] .reserve (coordNode -> getSize ());

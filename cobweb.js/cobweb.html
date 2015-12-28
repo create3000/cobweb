@@ -6,9 +6,11 @@
 	<meta http-equiv="Expires" content="0"/>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
+	<!-- COBWEB START -->
 	<link rel="stylesheet" type="text/css" href="cobweb.css"/>
 	<script src="jam/require.js"></script>
 	<script type="text/javascript" src="cobweb.js"></script>
+	<!-- COBWEB END -->
 	<style>
 html, body {
 	margin: 0px;
@@ -54,6 +56,10 @@ X3D {
 	display: block;
 	margin: 300px 0 0 0;
 	text-align: center;
+}
+
+.toggle {
+	float: right;
 }
 	</style>
 	<script type="text/javascript" src="Bookmarks.js"></script>
@@ -116,6 +122,7 @@ X3D (function (dom)
 		{ name: 'Discovery One',               url: [ "http://alprojectsvr.bluemoonpics.com/2001/xd1w/xd1w.wrl" ] },
 		{ name: 'SSF Interior',                url: [ "http://alprojectsvr.bluemoonpics.com/2001/ss5int/ss5int.wrl" ] },
 		{ name: 'Discovery One Centrifuge',    url: [ "http://alprojectsvr.bluemoonpics.com/2001/centrifuge/centrifuge.wrl" ] },
+		{ name: 'Sphere Walk Top',             url: [ "http://alprojectsvr.bluemoonpics.com/sphere%20walk%20top.wrl" ] },
 		{ name: 'Helicopter Simulation',       url: [ "http://blogofrog.com/files/vrml/ch47bsim402.wrz" ] },
 		{ name: 'Crazy Spiral',                url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
 		{ name: '1728',                        url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Geometry3D/1728.x3dv" ] },
@@ -209,7 +216,6 @@ function loadURL ()
 	<div class="tests">
 		<div class="examples"></div>
 		<X3D cache="false" url='
-			"tests/Components/Shaders/water.x3d"
 			"tests/Components/Networking/LoadSensor.x3d"
 			"examples/puzzle/puzzle.x3d"
 			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl"
@@ -233,6 +239,7 @@ function loadURL ()
 		<table class="load-url" cellpadding="4" style="margin:0; width:100%">
 			<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
 		</table>
+		<div class="toggle"><a href="cobweb.min.html">cobweb.min.html</a></div>
 		<p class="version"></p>
 		<p class="-cobweb-console"></p>
 	</div>

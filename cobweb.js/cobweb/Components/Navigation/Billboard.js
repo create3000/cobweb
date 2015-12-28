@@ -24,7 +24,6 @@ function ($,
 
 	var
 	   inverseModelViewMatrix = new Matrix4 (),
-		xAxis                  = new Vector3 (1, 0, 0),
 		yAxis                  = new Vector3 (0, 1, 0),
 		zAxis                  = new Vector3 (0, 0, 1),
 		viewerYAxis            = new Vector3 (0, 0, 0),

@@ -153,9 +153,7 @@ function ($,
 						}
 						case X3DConstants .MFNode:
 						{
-							var
-								name  = field .getName (),
-								value = field .getValue ();
+							var name = field .getName ();
 
 							for (var i = 0; ; ++ i)
 							{
@@ -414,7 +412,6 @@ function ($,
 				case X3DConstants .MFNode:
 				{
 					var
-						name      = field .getName (),
 						value     = field .getValue (),
 						locations = field .uniformLocation_ .locations;
 

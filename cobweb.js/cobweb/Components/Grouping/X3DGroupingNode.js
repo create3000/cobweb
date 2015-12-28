@@ -78,7 +78,7 @@ function ($,
 
 	//
 
-	function getId (value) { return value ? value .getId () : -1; };
+	//function getId (value) { return value ? value .getId () : -1; };
 	function getNodeId (value) { return value ? value .getValue () .getId () : -1; }
 
 	var visible = new Fields .MFBool ();

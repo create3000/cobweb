@@ -108,9 +108,7 @@ function ($,
 				vDimension = this .vDimension_ .getValue () + 1,
 				point      = this .geometry .texCoord_ .getValue () .point_;
 
-				var
-					poleOffset = -0.5 / (uDimension - 1),
-					i          = 0;
+				var poleOffset = -0.5 / (uDimension - 1);
 
 				// North pole
 				

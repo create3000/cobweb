@@ -397,7 +397,7 @@ function ($,
 					max = this .max;
 
 				for (var i = 0; i < 5; ++ i)
-					this .planes [i] .set (i % 2 ? this .min : this .max, boxNormals [i]);
+					this .planes [i] .set (i % 2 ? min : max, boxNormals [i]);
 
 				if (this .texCoords .length === 0)
 					this .buildTexCoords ();

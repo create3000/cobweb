@@ -234,7 +234,7 @@ function ($,
 
 			for (var z = 0; z < zSize; ++ z)
 			{
-				for (var x = 0; x < zSize; ++ x)
+				for (var x = 0; x < xSize; ++ x)
 				{
 					var
 						i1 =       z * xDimension + x,

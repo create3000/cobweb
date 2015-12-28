@@ -1,12 +1,14 @@
 
 define ([
 	"cobweb/Fields",
+	"cobweb/Components/Networking/LoadSensor",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
 	"lib/sprintf.js/src/sprintf",
 	"lib/gettext",
 ],
 function (Fields,
+          LoadSensor,
           urls,
           URI,
           sprintf,
@@ -21,8 +23,9 @@ function (Fields,
 		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
 
 		this .addChildren ("loadCount", new Fields .SFInt32 ());
-		this .loadingObjects = { };
 
+		this .loadSensor     = new LoadSensor (this);
+		this .loadingObjects = { };
 		this .location       = new URI (this .getElement () [0] .baseURI);
 		this .defaultScene   = this .createScene ();
 		this .privateScene   = this .createScene ();
@@ -33,6 +36,8 @@ function (Fields,
 	{
 		initialize: function ()
 		{
+			this .loadSensor .setup ();
+
 			this .defaultScene .setup ();
 			this .defaultScene .beginUpdate ();
 
@@ -58,6 +63,10 @@ function (Fields,
 		getPrivateScene: function ()
 		{
 			return this .privateScene;
+		},
+		getLoadSensor: function ()
+		{
+			return this .loadSensor;
 		},
 		setBrowserLoading: function (value)
 		{
@@ -99,6 +108,7 @@ function (Fields,
 		{
 			if (value)
 				var string = sprintf .sprintf (value == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), value);
+			
 			else
 			{
 				var string = _("Loading done");

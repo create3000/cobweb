@@ -1054,10 +1054,9 @@ function ($,
 										{
 											try
 											{
-												var
-													eventInId = this .result [1],
-													route     = this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
-	
+												var eventInId = this .result [1];
+
+												this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
 												return true;
 											}
 											catch (error)

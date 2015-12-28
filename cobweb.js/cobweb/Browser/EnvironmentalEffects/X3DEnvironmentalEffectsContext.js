@@ -16,7 +16,6 @@ function (ComposedShader,
 	
 	function X3DEnvironmentalEffectsContext ()
 	{
-		this .backgroundSphereShader      = new ComposedShader (this);
 		this .backgroundTextureProperties = new TextureProperties (this);
 	}
 

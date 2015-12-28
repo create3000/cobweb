@@ -86,7 +86,6 @@ function ($,
 		build: function ()
 		{
 			var
-				gl         = this .getBrowser () .getContext (),
 				options    = this .getBrowser () .getArcClose2DOptions (),
 				chord      = this .closureType_ .getValue () === "CHORD",
 				minAngle   = options .minAngle_ .getValue (),

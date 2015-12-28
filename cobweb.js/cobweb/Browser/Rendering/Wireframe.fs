@@ -19,7 +19,7 @@ uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
 #define EXPONENTIAL2_FOG 3
 
 // 5
-uniform int   x3d_Fog;
+uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
 
@@ -55,7 +55,7 @@ clip ()
 float
 getFogInterpolant ()
 {
-	if (x3d_Fog == NO_FOG)
+	if (x3d_FogType == NO_FOG)
 		return 1.0;
 
 	float dV = length (v);
@@ -63,10 +63,10 @@ getFogInterpolant ()
 	if (dV >= x3d_FogVisibilityRange)
 		return 0.0;
 
-	if (x3d_Fog == LINEAR_FOG)
+	if (x3d_FogType == LINEAR_FOG)
 		return (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;
 
-	if (x3d_Fog == EXPONENTIAL_FOG)
+	if (x3d_FogType == EXPONENTIAL_FOG)
 		return exp (-dV / (x3d_FogVisibilityRange - dV));
 
 	return 1.0;

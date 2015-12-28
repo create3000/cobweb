@@ -34,7 +34,7 @@ function (Fields,
 {
 "use strict";
 	
-	function getPointShader (executionContext, lineShader, gl)
+	function createPointShader (executionContext, lineShader, gl)
 	{
 		var shader = new ComposedShader (executionContext);
 		shader .language_ = "GLSL";
@@ -77,8 +77,9 @@ function (Fields,
 
 			this .reshape ();
 
+			this .depthShader = this .createShader (this, depthVS, depthFS);
 			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
-			this .pointShader = getPointShader (this, this .lineShader, gl);
+			this .pointShader = createPointShader (this, this .lineShader, gl);
 
 			this .pointShader .setPoints (true);
 			this .pointShader .setGeometryType (0);
@@ -153,7 +154,10 @@ function (Fields,
 			shader .parts_ .push (fragmentShader);
 			shader .setCustom (false);
 			shader .setup ();
-	
+
+			this .getLoadSensor () .watchList_ .push (vertexShader);
+			this .getLoadSensor () .watchList_ .push (fragmentShader);
+
 			return shader;
 		},
 		setShading: function (type)
@@ -268,9 +272,6 @@ function (Fields,
 		},
 		getDepthShader: function ()
 		{
-			if (! this .depthShader)
-				this .depthShader = this .createShader (this, depthVS, depthFS);
-			
 			return this .depthShader;
 		},
 		getClipPlanes: function ()

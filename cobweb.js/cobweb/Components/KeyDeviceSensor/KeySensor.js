@@ -37,12 +37,7 @@ function ($,
 		KEY_UP    = 17,
 		KEY_DOWN  = 18,
 		KEY_LEFT  = 19,
-		KEY_RIGHT = 20,
-
-		Control_R = 1,
-		Control_L = 2,
-		Shift_R   = 1,
-		Shift_L   = 2;
+		KEY_RIGHT = 20;
 
 	function KeySensor (executionContext)
 	{

@@ -44,6 +44,22 @@ function ($,
 		{
 			return "lineProperties";
 		},
+		initialize: function ()
+		{
+			X3DAppearanceChildNode .prototype .initialize .call (this);
+
+			this .linewidthScaleFactor_ .addInterest (this, "set_linewidthScaleFactor__");
+
+			this .set_linewidthScaleFactor__ ();
+		},
+		getLinewidthScaleFactor: function ()
+		{
+			return this .linewidthScaleFactor;
+		},
+		set_linewidthScaleFactor__: function ()
+		{
+			this .linewidthScaleFactor = Math .max (1, this .linewidthScaleFactor_ .getValue ());
+		},
 	});
 
 	return LineProperties;

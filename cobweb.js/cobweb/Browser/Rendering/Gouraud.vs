@@ -20,7 +20,7 @@ uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwis
 #define POINT_LIGHT       2
 #define SPOT_LIGHT        3
 
-uniform int   x3d_Light [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
+uniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
 uniform bool  x3d_LightOn [MAX_LIGHTS];
 uniform vec3  x3d_LightColor [MAX_LIGHTS];
 uniform float x3d_LightIntensity [MAX_LIGHTS];
@@ -52,7 +52,7 @@ uniform float x3d_BackShininess;
 uniform float x3d_BackTransparency;
 // 12
 
-//uniform int x3d_Texturing; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE
+//uniform int x3d_TextureType; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE
 // 2
 
 attribute vec4 x3d_Color;
@@ -100,7 +100,7 @@ getMaterial (vec3 N,
 
 	for (int i = 0; i < MAX_LIGHTS; ++ i)
 	{
-		int t = x3d_Light [i];
+		int t = x3d_LightType [i];
 
 		if (t != NO_LIGHT)
 		{
@@ -159,7 +159,7 @@ main ()
 
 	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
 
-	//if (x3d_Texturing != 0)
+	//if (x3d_TextureType != 0)
 		t = x3d_TextureMatrix * x3d_TexCoord;
 
 	v = p .xyz;

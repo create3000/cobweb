@@ -77,7 +77,7 @@ function ($,
 				}
 				catch (exception1)
 				{
-					var exception1 = new Error ("Couldn't parse XML");
+					//var exception1 = new Error ("Couldn't parse XML");
 
 					// If we cannot parse XML we try to parse X3D Classic Encoding.	
 
@@ -254,7 +254,7 @@ function ($,
 
 				if (result)
 				{
-					var mimeType = result [1];
+					//var mimeType = result [1];
 
 					// ??? If called from loadURL and mime type is text/html do a window.open or window.location=URL and return; ???
 
@@ -293,7 +293,7 @@ function ($,
 				},
 				error: function (jqXHR, textStatus, exception)
 				{
-					this .loadDocumentError (exception);
+					this .loadDocumentError (new Error (exception));
 				},
 			});
 		},

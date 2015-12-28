@@ -50,25 +50,11 @@ function ($,
 			// Create an empty scene if any thing goes wrong in loadURL.
 			var scene = this .createScene ();
 
-			this .replaceWorld (scene);
+			this .replaceWorld (this .createScene ());
 
 			X3DBrowserContext .prototype .initialize .call (this);
 
-			var urlCharacters = this .getElement () [0] .getAttribute ("url");
-
-			if (urlCharacters)
-			{
-			   var
-			      parser    = new Parser (scene, "", true),
-			      url       = new Fields .MFString (),
-					parameter = new Fields .MFString ();
-
-				parser .setInput (urlCharacters);
-				parser .sfstringValues (url);
-
-				if (url .length)
-					this .loadURL (url, parameter);
-			}
+			this .getLoadSensor () .loadTime_ .addInterest (this, "realize");
 
 			this .print ("Welcome to " + this .name + " X3D Browser " + this .version + ":\n" +
 			                "        Current Graphics Renderer\n" +
@@ -83,6 +69,26 @@ function ($,
 			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n" +
 			                "                Antialiased: " + this .getAntialiased () + "\n" +
 			                "                Color depth: " + this .getColorDepth () + " bits\n");
+		},
+		realize: function ()
+		{
+			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
+
+			var urlCharacters = this .getElement () [0] .getAttribute ("url");
+
+			if (urlCharacters)
+			{
+			   var
+			      parser    = new Parser (this .getExecutionContext (), "", true),
+			      url       = new Fields .MFString (),
+					parameter = new Fields .MFString ();
+
+				parser .setInput (urlCharacters);
+				parser .sfstringValues (url);
+
+				if (url .length)
+					this .loadURL (url, parameter);
+			}
 		},
 		getName: function ()
 		{
@@ -160,11 +166,11 @@ function ($,
 			
 			// bindWorld
 
-			var id = performance .now ();
-
+			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
+			this .loadId      = performance .now ();
 			this .description = "";
 			this .setBrowserLoading (true);
-			this .loadCount_ .addFieldCallback ("bindWorld" + id, this .bindWorld .bind (this, id));
+			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
 
 			if (this .isLive () .getValue ())
 				scene .beginUpdate ();
@@ -175,12 +181,12 @@ function ($,
 
 			this .initialized () .setValue (this .getCurrentTime ());
 		},
-		bindWorld: function (id, value)
+		bindWorld: function (value)
 		{
 			if (value)
 				return;
 
-			this .loadCount_ .removeFieldCallback ("bindWorld" + id);
+			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
 
 			setTimeout (function ()
 			{

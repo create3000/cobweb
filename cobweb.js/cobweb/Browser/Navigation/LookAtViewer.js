@@ -10,8 +10,6 @@ define ([
 function ($, X3DViewer, Vector3, Rotation4, _)
 {
 "use strict";
-	
-	var test = 0;
 
 	function LookAtViewer (executionContext)
 	{

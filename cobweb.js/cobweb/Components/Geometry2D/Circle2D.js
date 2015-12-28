@@ -62,7 +62,6 @@ function ($,
 		build: function ()
 		{
 			var
-				gl              = this .getBrowser () .getContext (),
 				options         = this .getBrowser () .getCircle2DOptions (),
 				radius          = this .radius_ .getValue (),
 				defaultVertices = options .getVertices (),

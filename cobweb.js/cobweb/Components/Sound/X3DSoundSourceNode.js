@@ -64,7 +64,7 @@ function ($,
 		   {
 				var media = value [0];
 
-		      media .volume           = 0;
+		      this .setVolume (0);
 		      this .duration_changed_ = media .duration;
 
 			   if (this .isActive_ .getValue ())

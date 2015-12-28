@@ -191,7 +191,7 @@ function ($,
 				this .clipPlaneVector [i]  = gl .getUniformLocation (program, "x3d_ClipPlaneVector[" + i + "]");
 			}
 
-			this .fogType            = gl .getUniformLocation (program, "x3d_Fog");
+			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
 			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
 			this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
 
@@ -202,7 +202,7 @@ function ($,
 
 			for (var i = 0; i < this .maxLights; ++ i)
 			{
-				this .lightType [i]             = gl .getUniformLocation (program, "x3d_Light[" + i + "]");
+				this .lightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
 				this .lightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
 				this .lightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
 				this .lightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
@@ -230,7 +230,7 @@ function ($,
 			this .backShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
 			this .backTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
 
-			this .textureType    = gl .getUniformLocation (program, "x3d_Texturing");
+			this .textureType    = gl .getUniformLocation (program, "x3d_TextureType");
 			this .texture        = gl .getUniformLocation (program, "x3d_Texture");
 			this .cubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTextureTexture");
 
@@ -314,7 +314,7 @@ function ($,
 
 				if (lineProperties && lineProperties .applied_ .getValue ())
 				{
-					var linewidthScaleFactor = lineProperties .linewidthScaleFactor_ .getValue ();
+					var linewidthScaleFactor = lineProperties .getLinewidthScaleFactor ();
 
 					gl .lineWidth (linewidthScaleFactor);
 					gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);

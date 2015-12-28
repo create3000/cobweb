@@ -32,10 +32,8 @@ function ($,
 		projectionMatrix    = new Matrix4 (),
 		modelViewMatrix     = new Matrix4 (),
 		localOrientation    = new Rotation4 (0, 0, 1, 0),
-		positionOffset      = new Vector3 (0, 0, 0),
 		yAxis               = new Vector3 (0, 1, 0),
 		zAxis               = new Vector3 (0, 0, 1),
-		upVector            = new Vector3 (0, 1, 0),
 		vector              = new Vector3 (0, 0, 0),
 		rotation            = new Rotation4 (0, 0, 1, 0);
 

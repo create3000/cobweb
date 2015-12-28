@@ -72,8 +72,6 @@ function ($,
 		},
 		parseIntoScene: function ()
 		{
-			var t0 = performance .now ();
-
 			switch (this .xml .nodeName)
 			{
 				case "#document":
@@ -100,8 +98,6 @@ function ($,
 					this .statement (this .xml);
 					break;
 			}
-
-			//console .log ("'" + this .getExecutionContext () .getURL () .toString () + "' parsed in " + (performance .now () - t0) .toFixed (2) + " ms.");
 		},
 		X3D: function (element)
 		{
@@ -139,7 +135,7 @@ function ($,
 			{
 				var
 					profileNameId = element .getAttribute ("profile"),
-					profile       = this .getBrowser () .getProfile (profileNameId);
+					profile       = this .getBrowser () .getProfile (profileNameId || "Full");
 
 				this .scene .setProfile (profile);
 			}

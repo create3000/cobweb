@@ -73,7 +73,6 @@ function ($,
 		build: function ()
 		{
 			var
-				gl          = this .getBrowser () .getContext (),
 				options     = this .getBrowser () .getDisk2DOptions (),
 				innerRadius = this .innerRadius_ .getValue (),
 				outerRadius = this .outerRadius_ .getValue ();

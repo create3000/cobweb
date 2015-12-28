@@ -21,7 +21,7 @@ uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
 #define EXPONENTIAL_FOG  2
 #define EXPONENTIAL2_FOG 3
 
-uniform int   x3d_Fog;
+uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
 // 5
@@ -37,7 +37,7 @@ uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwis
 #define POINT_LIGHT       2
 #define SPOT_LIGHT        3
 
-uniform int   x3d_Light [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
+uniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
 uniform bool  x3d_LightOn [MAX_LIGHTS];
 uniform vec3  x3d_LightColor [MAX_LIGHTS];
 uniform float x3d_LightIntensity [MAX_LIGHTS];
@@ -69,7 +69,7 @@ uniform float x3d_BackTransparency;
 #define TEXTURE_2D   2
 #define TEXTURE_CUBE 4
 
-uniform int         x3d_Texturing; // true if a X3DTexture2DNode is attached, otherwise false
+uniform int         x3d_TextureType; // true if a X3DTexture2DNode is attached, otherwise false
 uniform sampler2D   x3d_Texture;
 uniform samplerCube x3d_CubeMapTexture;
 
@@ -106,7 +106,7 @@ clip ()
 float
 getFogInterpolant ()
 {
-	if (x3d_Fog == NO_FOG)
+	if (x3d_FogType == NO_FOG)
 		return 1.0;
 
 	float dV = length (v);
@@ -114,10 +114,10 @@ getFogInterpolant ()
 	if (dV >= x3d_FogVisibilityRange)
 		return 0.0;
 
-	if (x3d_Fog == LINEAR_FOG)
+	if (x3d_FogType == LINEAR_FOG)
 		return (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;
 
-	if (x3d_Fog == EXPONENTIAL_FOG)
+	if (x3d_FogType == EXPONENTIAL_FOG)
 		return exp (-dV / (x3d_FogVisibilityRange - dV));
 
 	return 1.0;
@@ -126,7 +126,7 @@ getFogInterpolant ()
 vec4
 getTextureColor ()
 {
-	if (x3d_Texturing == TEXTURE_2D)
+	if (x3d_TextureType == TEXTURE_2D)
 	{
 		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
 			return texture2D (x3d_Texture, vec2 (t));
@@ -135,7 +135,7 @@ getTextureColor ()
 		return texture2D (x3d_Texture, vec2 (1.0 - t .s, t .t));
 	}
 
-	if (x3d_Texturing == TEXTURE_CUBE)
+	if (x3d_TextureType == TEXTURE_CUBE)
 	{
 		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
 			return textureCube (x3d_CubeMapTexture, vec3 (t));
@@ -176,7 +176,7 @@ main ()
 
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_Texturing != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -190,7 +190,7 @@ main ()
 		}
 		else
 		{
-			if (x3d_Texturing != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -209,7 +209,7 @@ main ()
 
 		for (int i = 0; i < MAX_LIGHTS; ++ i)
 		{
-			int t = x3d_Light [i];
+			int t = x3d_LightType [i];
 
 			if (t != NO_LIGHT)
 			{
@@ -264,7 +264,7 @@ main ()
 	
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_Texturing != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -275,7 +275,7 @@ main ()
 		}
 		else
 		{
-			if (x3d_Texturing != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 				finalColor = getTextureColor ();
 		}
 

@@ -31,10 +31,8 @@ function ($,
 "use strict";
 
 	var
-		invTransformationMatrix = new Matrix4 (),
-		upVector                = new Vector3 (0, 1, 0),
-		yAxis                   = new Vector3 (0, 1, 0),
-		zAxis                   = new Vector3 (0, 0, 1);
+		yAxis = new Vector3 (0, 1, 0),
+		zAxis = new Vector3 (0, 0, 1);
 
 	var
 		relativePosition         = new Vector3 (0, 0, 0),

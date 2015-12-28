@@ -101,8 +101,6 @@ function ($,
 		y3 = new Complex (0, 0),
 		y4 = new Complex (0, 0);
 
-	var identity = new Matrix4 ();
-
 	function X3DBackgroundNode (browser, executionContext)
 	{
 		X3DBindableNode .call (this, browser, executionContext);
@@ -581,6 +579,7 @@ function ($,
 			gl .uniform1i (shader .colorMaterial, false);
 			gl .uniform1i (shader .lighting,      false);
 			gl .uniform1i (shader .texturing,     true);
+			gl .uniform1i (shader .textureType,   2);
 
 			gl .uniformMatrix4fv (shader .textureMatrix,    false, this .textureMatrixArray);
 			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
@@ -596,12 +595,14 @@ function ($,
 
 			// Draw.
 
+			gl .activeTexture (gl .TEXTURE0);
 			this .drawRectangle (gl, shader, this .frontTexture,  this .frontBuffer);
 			this .drawRectangle (gl, shader, this .backTexture,   this .backBuffer);
 			this .drawRectangle (gl, shader, this .leftTexture,   this .leftBuffer);
 			this .drawRectangle (gl, shader, this .rightTexture,  this .rightBuffer);
 			this .drawRectangle (gl, shader, this .topTexture,    this .topBuffer);
 			this .drawRectangle (gl, shader, this .bottomTexture, this .bottomBuffer);
+			gl .bindTexture (gl .TEXTURE_2D, null);
 
 			// Disable vertex attribute arrays.
 
@@ -612,7 +613,7 @@ function ($,
 		{
 			if (texture && texture .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				texture .traverse ();
+				gl .bindTexture (gl .TEXTURE_2D, texture .getTexture ());
 
 				if (texture .transparent_ .getValue ())
 					gl .enable (gl .BLEND);

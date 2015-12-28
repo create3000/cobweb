@@ -748,11 +748,10 @@ function ($,
 			// From Wikipedia:
 
 			var
-				minX        = Number .POSITIVE_INFINITY,
-				minIndex    = 0,
-				orientation = 0;
+				minX     = Number .POSITIVE_INFINITY,
+				minIndex = 0;
 
-			for (var i = 0; i < curve .length; ++ i)
+			for (var i = 0, length = curve .length; i < length; ++ i)
 			{
 				if (curve [i] .x < minX)
 				{
@@ -762,9 +761,9 @@ function ($,
 			}
 
 			var
-				a = curve [(minIndex + curve .length - 1) % curve .length],
+				a = curve [(minIndex + length - 1) % length],
 				b = curve [minIndex],
-				c = curve [(minIndex + 2) % curve .length];
+				c = curve [(minIndex + 2) % length];
 
 		   return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
 		},
