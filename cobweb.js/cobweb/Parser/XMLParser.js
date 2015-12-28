@@ -275,7 +275,7 @@ function ($,
 				//if (element .nodeName === "VisibilitySensor")
 				//	console .warn (error);
 
-				console .warn ("XML Parser Error: Unknown node type '" + element .nodeName + "'.");
+				console .warn ("XML Parser Error: " + error .message);
 			}
 		},
 		ProtoInstance: function (element)

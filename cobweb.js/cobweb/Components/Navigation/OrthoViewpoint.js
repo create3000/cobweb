@@ -100,12 +100,12 @@ function ($,
 
 			if (aspect > sizeX / sizeY)
 			{
-				var s = this .getSizeY () / height;
+				var s = sizeY / height;
 
 				return screenScale .set (s, s, s);
 			}
 
-			var s = this .getSizeX () / width;
+			var s = sizeX / width;
 
 			return screenScale .set (s, s, s);
 		},
@@ -119,9 +119,9 @@ function ($,
 				aspect = width / height;
 
 			if (aspect > sizeX / sizeY)
-				return viewportSize .set (this .getSizeY () * aspect, this .getSizeY ());
+				return viewportSize .set (sizeY * aspect, sizeY);
 
-			return viewportSize .set (this .getSizeX (), this .getSizeX () / aspect);
+			return viewportSize .set (sizeX, sizeX / aspect);
 		},
 		getLookAtDistance: function (bbox)
 		{
@@ -132,20 +132,22 @@ function ($,
 			var
 				width  = viewport [2],
 				height = viewport [3],
-				aspect = width / height;
+				aspect = width / height,
+				sizeX  = this .getSizeX (),
+				sizeY  = this .getSizeY ();
 
-			if (aspect > this .getSizeX () / this .getSizeY ())
+			if (aspect > sizeX / sizeY)
 			{
 				var
 					center  = (this .getMinimumX () + this .getMaximumX ()) / 2,
-					size1_2 = (this .getSizeY () * aspect) / 2;
+					size1_2 = (sizeY * aspect) / 2;
 
 				return Camera .ortho (center - size1_2, center + size1_2, this .getMinimumY (), this .getMaximumY (), zNear, zFar, this .projectionMatrix);
 			}
 
 			var
 				center  = (this .getMinimumY () + this .getMaximumY ()) / 2,
-				size1_2 = (this .getSizeX () / aspect) / 2;
+				size1_2 = (sizeX / aspect) / 2;
 
 			return Camera .ortho (this .getMinimumX (), this .getMaximumX (), center - size1_2, center + size1_2, zNear, zFar, this .projectionMatrix);
 		},

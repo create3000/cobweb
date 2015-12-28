@@ -154,7 +154,7 @@ function ($,
 			{
 				var layerNumber = 0;
 
-				for (var i = 0; i < this .layerNodes .length; ++ i)
+				for (var i = 0, length = this .layerNodes .length; i < length; ++ i)
 				{
 					var layerNode = this .layerNodes [i];
 
@@ -164,7 +164,7 @@ function ($,
 			}
 			else
 			{
-				for (var i = 0; i < this .layerNodes .length; ++ i)
+				for (var i = 0, length = this .layerNodes .length; i < length; ++ i)
 				{
 					this .layerNodes [i] .traverse (type);
 				}

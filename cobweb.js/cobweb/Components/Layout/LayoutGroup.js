@@ -65,11 +65,11 @@ function ($,
 			this .set_viewport__ ();
 			this .set_layout__ ();
 		},
-		set_viewport: function ()
+		set_viewport__: function ()
 		{
 			this .viewportNode = X3DCast (X3DConstants .X3DViewportNode, this .viewport_);
 		},
-		set_layout: function ()
+		set_layout__: function ()
 		{
 			this .layoutNode = X3DCast (X3DConstants .X3DLayoutNode, this .layout_);
 		},
@@ -94,13 +94,13 @@ function ($,
 						modelViewMatrix .set (this .layoutNode .transform (type));
 						browser .getLayouts () .push (this .layoutNode);
 
-						X3DGroupingNode .prototype .traverse .call (type);
+						X3DGroupingNode .prototype .traverse .call (this, type);
 
 						browser .getLayouts () .pop ();
 						modelViewMatrix .pop ();
 					}
 					else
-						X3DGroupingNode .prototype .traverse .call (type);
+						X3DGroupingNode .prototype .traverse .call (this, type);
 		
 					if (this .viewportNode)
 						this .viewportNode .pop ();

@@ -447,8 +447,9 @@ function (Anchor,
 "use strict";
 
 	return {
+		// 3.1
 		MetadataBool:                 MetadataBoolean,
-
+		// 3.3
 		Anchor:                       Anchor,
 		Appearance:                   Appearance,
 		Arc2D:                        Arc2D,
