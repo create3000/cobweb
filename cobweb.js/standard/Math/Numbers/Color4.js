@@ -144,69 +144,48 @@ function ($, Algorithm)
 		},
 	};
 
-	Object .defineProperty (Color4 .prototype, "r",
-	{
+	var r = {
 		get: function () { return this .r_; },
 		set: function (value) { this .r_ = clamp (value, 0, 1); },
 		enumerable: true,
 		configurable: false
-	});
-
-	Object .defineProperty (Color4 .prototype, "0",
-	{
-		get: function () { return this .r_; },
-		set: function (value) { this .r_ = clamp (value, 0, 1); },
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Color4 .prototype, "g",
-	{
+	};
+	
+	var g = {
 		get: function () { return this .g_; },
 		set: function (value) { this .g_ = clamp (value, 0, 1); },
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Color4 .prototype, "1",
-	{
-		get: function () { return this .g_; },
-		set: function (value) { this .g_ = clamp (value, 0, 1); },
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Color4 .prototype, "b",
-	{
+	var b = {
 		get: function () { return this .b_; },
 		set: function (value) { this .b_ = clamp (value, 0, 1); },
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Color4 .prototype, "2",
-	{
-		get: function () { return this .b_; },
-		set: function (value) { this .b_ = clamp (value, 0, 1); },
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Color4 .prototype, "a",
-	{
+	var a = {
 		get: function () { return this .a_; },
 		set: function (value) { this .a_ = clamp (value, 0, 1); },
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Color4 .prototype, "3",
-	{
-		get: function () { return this .a_; },
-		set: function (value) { this .a_ = clamp (value, 0, 1); },
-		enumerable: false,
-		configurable: false
-	});
+	Object .defineProperty (Color4 .prototype, "r", r);
+	Object .defineProperty (Color4 .prototype, "g", g);
+	Object .defineProperty (Color4 .prototype, "b", b);
+	Object .defineProperty (Color4 .prototype, "a", a);
+
+	r .enumerable = false;
+	g .enumerable = false;
+	b .enumerable = false;
+	a .enumerable = false;
+
+	Object .defineProperty (Color4 .prototype, "0", r);
+	Object .defineProperty (Color4 .prototype, "1", g);
+	Object .defineProperty (Color4 .prototype, "2", b);
+	Object .defineProperty (Color4 .prototype, "3", a);
 
 	Color4 .HSVA = function (h, s, v, a)
 	{

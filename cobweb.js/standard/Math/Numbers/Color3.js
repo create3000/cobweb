@@ -137,53 +137,38 @@ function ($, Algorithm)
 		},
 	};
 
-	Object .defineProperty (Color3 .prototype, "r",
-	{
+	var r = {
 		get: function () { return this .r_; },
 		set: function (value) { this .r_ = clamp (value, 0, 1); },
 		enumerable: true,
 		configurable: false
-	});
-
-	Object .defineProperty (Color3 .prototype, "0",
-	{
-		get: function () { return this .r_; },
-		set: function (value) { this .r_ = clamp (value, 0, 1); },
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Color3 .prototype, "g",
-	{
+	};
+	
+	var g = {
 		get: function () { return this .g_; },
 		set: function (value) { this .g_ = clamp (value, 0, 1); },
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Color3 .prototype, "1",
-	{
-		get: function () { return this .g_; },
-		set: function (value) { this .g_ = clamp (value, 0, 1); },
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Color3 .prototype, "b",
-	{
+	var b = {
 		get: function () { return this .b_; },
 		set: function (value) { this .b_ = clamp (value, 0, 1); },
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Color3 .prototype, "2",
-	{
-		get: function () { return this .b_; },
-		set: function (value) { this .b_ = clamp (value, 0, 1); },
-		enumerable: false,
-		configurable: false
-	});
+	Object .defineProperty (Color3 .prototype, "r", r);
+	Object .defineProperty (Color3 .prototype, "g", g);
+	Object .defineProperty (Color3 .prototype, "b", b);
+
+	r .enumerable = false;
+	g .enumerable = false;
+	b .enumerable = false;
+
+	Object .defineProperty (Color3 .prototype, "0", r);
+	Object .defineProperty (Color3 .prototype, "1", g);
+	Object .defineProperty (Color3 .prototype, "2", b);
 
 	$.extend (Color3,
 	{

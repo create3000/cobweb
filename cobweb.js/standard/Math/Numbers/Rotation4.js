@@ -5,11 +5,13 @@ define ([
 	"standard/Math/Numbers/Quaternion",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Quaternion,
           Vector3,
-          Vector4)
+          Vector4,
+          Algorithm)
 {
 "use strict";
 
@@ -20,7 +22,8 @@ function ($,
 		to       = new Vector3 (0, 0, 0),
 		cv       = new Vector3 (0, 0, 0),
 		t        = new Vector3 (0, 0, 0),
-		standard = new Vector4 (0, 0, 1, 0),
+		zAxis    = new Vector3 (0, 0, 1),
+		identity = new Vector4 (0, 0, 1, 0),
 		result   = new Vector3 (0, 0, 0, 0);
 
 	function Rotation4 (x, y, z, angle)
@@ -91,8 +94,9 @@ function ($,
 
 			// Calculate quaternion
 
-			var halfTheta = angle / 2;
-			scale = Math .sin (halfTheta) / scale;
+			var
+				halfTheta = Algorithm .interval (angle / 2, 0, Math .PI),
+				scale     = Math .sin (halfTheta) / scale;
 
 			this .value .set (x * scale,
 			                  y * scale,
@@ -105,14 +109,14 @@ function ($,
 			var value = this .value;
 
 			if (Math .abs (value .w) >= 1)
-				return standard;
+				return identity;
 
 			var vector = value .imag .normalize ();
 
 			return result .set (vector .x,
-				                 vector .y,
-				                 vector .z,
-				                 2 * Math .acos (value .w));
+			                    vector .y,
+			                    vector .z,
+			                    2 * Math .acos (value .w));
 		},
 		setAxisAngle: function (axis, angle)
 		{
@@ -175,7 +179,7 @@ function ($,
 		getAxis: function ()
 		{
 			if (Math .abs (this .value .w) >= 1)
-				return new Vector3 (0, 0, 1);
+				return zAxis;
 
 			return this .value .imag .normalize ();
 		},
@@ -221,8 +225,7 @@ function ($,
 		}
 	};
 
-	Object .defineProperty (Rotation4 .prototype, "x",
-	{
+	var x = {
 		get: function ()
 		{
 			return this .getAxis () .x;
@@ -232,27 +235,11 @@ function ($,
 			var r = this .get ();
 			this .set (value, r [1], r [2], r [3]);
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Rotation4 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getAxis () .x;
-		},
-		set: function (value)
-		{
-			var r = this .get ();
-			this .set (value, r [1], r [2], r [3]);
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Rotation4 .prototype, "y",
-	{
+	var y = {
 		get: function ()
 		{
 			return this .getAxis () .y;
@@ -262,27 +249,11 @@ function ($,
 			var r = this .get ();
 			this .set (r [0], value, r [2], r [3]);
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Rotation4 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getAxis () .y;
-		},
-		set: function (value)
-		{
-			var r = this .get ();
-			this .set (r [0], value, r [2], r [3]);
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Rotation4 .prototype, "z",
-	{
+	var z = {
 		get: function ()
 		{
 			return this .getAxis () .z;
@@ -292,27 +263,11 @@ function ($,
 			var r = this .get ();
 			this .set (r [0], r [1], value, r [3]);
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Rotation4 .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getAxis () .z;
-		},
-		set: function (value)
-		{
-			var r = this .get ();
-			this .set (r [0], r [1], value, r [3]);
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (Rotation4 .prototype, "angle",
-	{
+	var angle = {
 		get: function ()
 		{
 			if (Math .abs (this .value .w) >= 1)
@@ -325,27 +280,24 @@ function ($,
 			var v = this .getAxis ();
 			this .set (v .x, v .y, v .z, value);
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (Rotation4 .prototype, "3",
-	{
-		get: function ()
-		{
-			if (Math .abs (this .value .w) >= 1)
-				return 0;
+	Object .defineProperty (Rotation4 .prototype, "x", x);
+	Object .defineProperty (Rotation4 .prototype, "y", y);
+	Object .defineProperty (Rotation4 .prototype, "z", z);
+	Object .defineProperty (Rotation4 .prototype, "angle", angle);
 
-			return 2 * Math .acos (this .value .w);
-		},
-		set: function (value)
-		{
-			var v = this .getAxis ();
-			this .set (v .x, v .y, v .z, value);
-		},
-		enumerable: false,
-		configurable: false
-	});
+	x .enumerable = false;
+	y .enumerable = false;
+	z .enumerable = false;
+	angle .enumerable = false;
+
+	Object .defineProperty (Rotation4 .prototype, "0", x);
+	Object .defineProperty (Rotation4 .prototype, "1", y);
+	Object .defineProperty (Rotation4 .prototype, "2", z);
+	Object .defineProperty (Rotation4 .prototype, "3", angle);
 
 	$.extend (Rotation4,
 	{

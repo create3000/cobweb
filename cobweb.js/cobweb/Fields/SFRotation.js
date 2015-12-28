@@ -100,7 +100,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .x = value;
 			this .addEvent ();
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
 	});
 
@@ -115,7 +115,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .x = value;
 			this .addEvent ();
 		},
-		enumerable: true,
+		enumerable: false,
 		configurable: false
 	});
 
@@ -130,7 +130,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .y = value;
 			this .addEvent ();
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
 	});
 
@@ -145,7 +145,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .y = value;
 			this .addEvent ();
 		},
-		enumerable: true,
+		enumerable: false,
 		configurable: false
 	});
 
@@ -160,7 +160,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .z = value;
 			this .addEvent ();
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
 	});
 
@@ -175,7 +175,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .z = value;
 			this .addEvent ();
 		},
-		enumerable: true,
+		enumerable: false,
 		configurable: false
 	});
 
@@ -190,7 +190,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .angle = value;
 			this .addEvent ();
 		},
-		enumerable: false,
+		enumerable: true,
 		configurable: false
 	});
 
@@ -205,7 +205,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 			this .getValue () .angle = value;
 			this .addEvent ();
 		},
-		enumerable: true,
+		enumerable: false,
 		configurable: false
 	});
 
