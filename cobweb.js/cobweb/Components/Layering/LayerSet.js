@@ -110,6 +110,8 @@ function ($,
 		},
 		set_layers: function ()
 		{
+			var layers = this .layers_ .getValue ();
+
 			this .layerNodes .length = 0;
 
 			for (var i = 0; i < this .order_ .length; ++ i)
@@ -123,9 +125,9 @@ function ($,
 				{
 					-- index;
 
-					if (index >= 0 && index < this .layers_ .length)
+					if (index >= 0 && index < layers .length)
 					{
-						var layerNode = X3DCast (X3DConstants .X3DLayerNode, this .layers_ [index]);
+						var layerNode = X3DCast (X3DConstants .X3DLayerNode, layers [index]);
 
 						if (layerNode)
 							this .layerNodes .push (layerNode);
@@ -137,12 +139,13 @@ function ($,
 		},
 		bind: function ()
 		{
+			var layers = this .layers_ .getValue ();
+
 			this .layerNode0 .bind ();
 
-			for (var i = 0; i < this .layers_ .length; ++ i)
+			for (var i = 0, length = layers .length; i < length; ++ i)
 			{
-				var layer     = this .layers_ [i];
-				var layerNode = X3DCast (X3DConstants .X3DLayerNode, layer);
+				var layerNode = X3DCast (X3DConstants .X3DLayerNode, layers [i]);
 
 				if (layerNode)
 					layerNode .bind ();
@@ -150,23 +153,21 @@ function ($,
 		},
 		traverse: function (type)
 		{
+			var layerNodes = this .layerNodes;
+
 			if (type === TraverseType .POINTER)
 			{
-				var layerNumber = 0;
-
-				for (var i = 0, length = this .layerNodes .length; i < length; ++ i)
+				for (var i = 0, length = layerNodes .length; i < length; ++ i)
 				{
-					var layerNode = this .layerNodes [i];
-
-					this .getBrowser () .setLayerNumber (layerNumber ++);
-					layerNode .traverse (type);
+					this .getBrowser () .setLayerNumber (i);
+					layerNodes [i] .traverse (type);
 				}
 			}
 			else
 			{
-				for (var i = 0, length = this .layerNodes .length; i < length; ++ i)
+				for (var i = 0, length = layerNodes .length; i < length; ++ i)
 				{
-					this .layerNodes [i] .traverse (type);
+					layerNodes [i] .traverse (type);
 				}
 			}
 		},

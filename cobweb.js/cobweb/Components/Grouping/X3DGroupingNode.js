@@ -330,73 +330,90 @@ function ($,
 			{
 				case TraverseType .POINTER:
 				{
-					if (this .pointingDeviceSensors .length)
+					var
+						pointingDeviceSensors = this .pointingDeviceSensors,
+						clipPlanes            = this .clipPlanes,
+						childNodes            = this .childNodes;
+
+					if (pointingDeviceSensors .length)
 					{
 						var sensors = { };
 						
 						this .getBrowser () .getSensors () .push (sensors);
 					
-						for (var i = 0, length = this .pointingDeviceSensors .length; i < length; ++ i)
-							this .pointingDeviceSensors [i] .traverse (sensors);
+						for (var i = 0, length = pointingDeviceSensors .length; i < length; ++ i)
+							pointingDeviceSensors [i] .traverse (sensors);
 					}
 
-					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
-						this .clipPlanes [i] .push ();
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .push ();
 
-					for (var i = 0, length = this .childNodes .length; i < length; ++ i)
-						this .childNodes [i] .traverse (type);
+					for (var i = 0, length = childNodes .length; i < length; ++ i)
+						childNodes [i] .traverse (type);
 
-					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
-						this .clipPlanes [i] .pop ();
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .pop ();
 
-					if (this .pointingDeviceSensors .length)
+					if (pointingDeviceSensors .length)
 						this .getBrowser () .getSensors () .pop ();
 
 					return;
 				}
 				case TraverseType .CAMERA:
 				{
-					for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
-						this .cameraObjects [i] .traverse (type);
+					var cameraObjects = this .cameraObjects;
+
+					for (var i = 0, length = cameraObjects .length; i < length; ++ i)
+						cameraObjects [i] .traverse (type);
 
 					return;
 				}
 				case TraverseType .COLLISION:
 				{					
-					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
-						this .clipPlanes [i] .push ();
+					var
+						clipPlanes = this .clipPlanes,
+						childNodes = this .childNodes;
 
-					for (var i = 0, length = this .childNodes .length; i < length; ++ i)
-						this .childNodes [i] .traverse (type);
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .push ();
 
-					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
-						this .clipPlanes [i] .pop ();
+					for (var i = 0, length = childNodes .length; i < length; ++ i)
+						childNodes [i] .traverse (type);
+
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .pop ();
 					
 					return;
 				}
 				case TraverseType .DISPLAY:
 				{
-					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
-						this .clipPlanes [i] .push ();
+					var
+						clipPlanes = this .clipPlanes,
+						localFogs  = this .localFogs,
+						lights     = this .lights,
+						childNodes = this .childNodes;
 
-					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
-						this .localFogs [i] .push ();
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .push ();
 
-					for (var i = 0, length = this .lights .length; i < length; ++ i)
-						this .lights [i] .push ();
+					for (var i = 0, length = localFogs .length; i < length; ++ i)
+						localFogs [i] .push ();
 
-					for (var i = 0, length = this .childNodes .length; i < length; ++ i)
-						this .childNodes [i] .traverse (type);
+					for (var i = 0, length = lights .length; i < length; ++ i)
+						lights [i] .push ();
+
+					for (var i = 0, length = childNodes .length; i < length; ++ i)
+						childNodes [i] .traverse (type);
 					
-					for (var i = 0, length = this .lights .length; i < length; ++ i)
-						this .lights [i] .pop ();
+					for (var i = 0, length = lights .length; i < length; ++ i)
+						lights [i] .pop ();
 
-					for (var i = 0, length = this .localFogs .length; i < length; ++ i)
-						this .localFogs [i] .pop ();
+					for (var i = 0, length = localFogs .length; i < length; ++ i)
+						localFogs [i] .pop ();
 
-					for (var i = 0, length = this .clipPlanes .length; i < length; ++ i)
-						this .clipPlanes [i] .pop ();
-					
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .pop ();
+
 					return;
 				}
 			}

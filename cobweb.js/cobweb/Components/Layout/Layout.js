@@ -579,9 +579,9 @@ function ($,
 		
 				// Calculate scale for scaleMode STRETCH
 		
-				if (this .getScaleModeX () == STRETCH)
+				if (this .getScaleModeX () === STRETCH)
 				{
-					if (this .getScaleModeY () == STRETCH)
+					if (this .getScaleModeY () === STRETCH)
 					{
 						if (rectangleSize .x > rectangleSize .y)
 						{
@@ -607,9 +607,6 @@ function ($,
 				matrix .set (currentTranslation, currentRotation);
 				matrix .translate (translation .add (offset));
 				matrix .scale (scale);
-
-				//__LOG__ << this << " : " << rectangleSize << std::endl;
-				//__LOG__ << this << " : " << scale << std::endl;
 			}
 			else
 				matrix .identity ();

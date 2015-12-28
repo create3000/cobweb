@@ -65,37 +65,60 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DViewpointNode .prototype .initialize .call (this);
+
+			this .fieldOfView_      .addInterest (this, "set_fieldOfView___");
+			this .fieldOfViewScale_ .addInterest (this, "set_fieldOfView___");
+
+			this .set_fieldOfView___ ();
+		},
+		set_fieldOfView___: function ()
+		{
+			var
+				length           = this .fieldOfView_ .length,
+				fieldOfViewScale = this .fieldOfViewScale_ .getValue ();
+
+			this .minimumX = (length > 0 ? this .fieldOfView_ [0] : -1) * fieldOfViewScale;
+			this .minimumY = (length > 1 ? this .fieldOfView_ [1] : -1) * fieldOfViewScale;
+			this .maximumX = (length > 2 ? this .fieldOfView_ [2] :  1) * fieldOfViewScale;
+			this .maximumY = (length > 3 ? this .fieldOfView_ [3] :  1) * fieldOfViewScale;
+
+			this .sizeX = this .maximumX - this .minimumX;
+			this .sizeY = this .maximumY - this .minimumY;
+		},
 		getMinimumX: function ()
 		{
-			return (this .fieldOfView_ .length > 0 ? this .fieldOfView_ [0] : -1.0) * this .fieldOfViewScale_ .getValue ();
+			return this .minimumX;
 		},
 		getMinimumY: function ()
 		{
-			return (this .fieldOfView_ .length > 1 ? this .fieldOfView_ [1] : -1.0) * this .fieldOfViewScale_ .getValue ();
+			return this .minimumY;
 		},
 		getMaximumX: function ()
 		{
-			return (this .fieldOfView_ .length > 2 ? this .fieldOfView_ [2] : 1.0) * this .fieldOfViewScale_ .getValue ();
+			return this .maximumX;
 		},
 		getMaximumY: function ()
 		{
-			return (this .fieldOfView_ .length > 3 ? this .fieldOfView_ [3] : 1.0) * this .fieldOfViewScale_ .getValue ();
+			return this .maximumY;
 		},
 		getSizeX: function ()
 		{
-			return this .getMaximumX () - this .getMinimumX ();
+			return this .sizeX;
 		},
 		getSizeY: function ()
 		{
-			return this .getMaximumY () - this .getMinimumY ();
+			return this .sizeY;
 		},
 		getScreenScale: function (distance, viewport)
 		{
 			var
 				width  = viewport [2],
 				height = viewport [3],
-				sizeX  = this .getSizeX (),
-				sizeY  = this .getSizeY (),
+				sizeX  = this .sizeX,
+				sizeY  = this .sizeY,
 				aspect = width / height;
 
 			if (aspect > sizeX / sizeY)
@@ -114,8 +137,8 @@ function ($,
 			var
 				width  = viewport [2],
 				height = viewport [3],
-				sizeX  = this .getSizeX (),
-				sizeY  = this .getSizeY (),
+				sizeX  = this .sizeX,
+				sizeY  = this .sizeY,
 				aspect = width / height;
 
 			if (aspect > sizeX / sizeY)
@@ -133,23 +156,23 @@ function ($,
 				width  = viewport [2],
 				height = viewport [3],
 				aspect = width / height,
-				sizeX  = this .getSizeX (),
-				sizeY  = this .getSizeY ();
+				sizeX  = this .sizeX,
+				sizeY  = this .sizeY;
 
 			if (aspect > sizeX / sizeY)
 			{
 				var
-					center  = (this .getMinimumX () + this .getMaximumX ()) / 2,
+					center  = (this .minimumX + this .maximumX) / 2,
 					size1_2 = (sizeY * aspect) / 2;
 
-				return Camera .ortho (center - size1_2, center + size1_2, this .getMinimumY (), this .getMaximumY (), zNear, zFar, this .projectionMatrix);
+				return Camera .ortho (center - size1_2, center + size1_2, this .minimumY, this .maximumY, zNear, zFar, this .projectionMatrix);
 			}
 
 			var
-				center  = (this .getMinimumY () + this .getMaximumY ()) / 2,
+				center  = (this .minimumY + this .maximumY) / 2,
 				size1_2 = (sizeX / aspect) / 2;
 
-			return Camera .ortho (this .getMinimumX (), this .getMaximumX (), center - size1_2, center + size1_2, zNear, zFar, this .projectionMatrix);
+			return Camera .ortho (this .minimumX, this .maximumX, center - size1_2, center + size1_2, zNear, zFar, this .projectionMatrix);
 		},
 	});
 
