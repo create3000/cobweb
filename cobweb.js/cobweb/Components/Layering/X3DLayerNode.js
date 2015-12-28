@@ -34,14 +34,14 @@ function ($,
 
 	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
-	function X3DLayerNode (browser, executionContext, defaultViewpoint, group)
+	function X3DLayerNode (browser, executionContext, defaultViewpoint, groupNode)
 	{
 		X3DNode     .call (this, browser, executionContext);
 		X3DRenderer .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
-		this .group           = group;
+		this .groupNode       = groupNode;
 		this .currentViewport = null;
 
 		this .defaultBackground     = new Background (executionContext);
@@ -76,9 +76,9 @@ function ($,
 			X3DNode     .prototype .initialize .call (this);
 			X3DRenderer .prototype .initialize .call (this);
 
-			this .group .children_ = this .children_;
-			this .group .setup ();
-			this .collect = this .group .traverse .bind (this .group);
+			this .groupNode .children_ = this .children_;
+			this .groupNode .setup ();
+			this .collect = this .groupNode .traverse .bind (this .groupNode);
 
 			this .defaultNavigationInfo .setup ();
 			this .defaultBackground     .setup ();
@@ -96,9 +96,9 @@ function ($,
 			this .viewpoints      .setup ();
 
 			this .viewport_       .addInterest (this, "set_viewport__");
-			this .addChildren_    .addFieldInterest (this .group .addChildren_);
-			this .removeChildren_ .addFieldInterest (this .group .removeChildren_);
-			this .children_       .addFieldInterest (this .group .children_);
+			this .addChildren_    .addFieldInterest (this .groupNode .addChildren_);
+			this .removeChildren_ .addFieldInterest (this .groupNode .removeChildren_);
+			this .children_       .addFieldInterest (this .groupNode .children_);
 
 			this .set_viewport__ ();
 		},
@@ -106,6 +106,10 @@ function ($,
 		{
 			this .layer0 = value;
 			this .defaultBackground .setHidden (! value);
+		},
+		getGroup: function ()
+		{
+			return this .groupNode;
 		},
 		getViewport: function ()
 		{
@@ -179,7 +183,7 @@ function ($,
 		},
 		getBBox: function ()
 		{
-			return this .group .getBBox ();
+			return this .groupNode .getBBox ();
 		},
 		set_viewport__: function ()
 		{

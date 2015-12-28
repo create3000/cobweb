@@ -15,6 +15,7 @@ define ([
 	"cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext",
 	"cobweb/Browser/Navigation/X3DNavigationContext",
 	"cobweb/Browser/Layering/X3DLayeringContext",
+	"cobweb/Browser/Layout/X3DLayoutContext",
 	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
 	"cobweb/Browser/Lighting/X3DLightingContext",
 	"cobweb/Browser/Shaders/X3DShadersContext",
@@ -40,6 +41,7 @@ function ($,
           X3DKeyDeviceSensorContext,
           X3DNavigationContext,
           X3DLayeringContext,
+          X3DLayoutContext,
           X3DEnvironmentalEffectsContext,
           X3DLightingContext,
           X3DShadersContext,
@@ -67,6 +69,7 @@ function ($,
 		X3DKeyDeviceSensorContext      .call (this);
 		X3DNavigationContext           .call (this);
 		X3DLayeringContext             .call (this);
+		X3DLayoutContext               .call (this);
 		X3DEnvironmentalEffectsContext .call (this);
 		X3DLightingContext             .call (this);
 		X3DShadersContext              .call (this);
@@ -105,6 +108,7 @@ function ($,
 		X3DKeyDeviceSensorContext .prototype,
 		X3DNavigationContext .prototype,
 		X3DLayeringContext .prototype,
+		X3DLayoutContext .prototype,
 		X3DEnvironmentalEffectsContext .prototype,
 		X3DLightingContext .prototype,
 		X3DShadersContext .prototype,
@@ -129,6 +133,7 @@ function ($,
 			X3DKeyDeviceSensorContext      .prototype .initialize .call (this);
 			X3DNavigationContext           .prototype .initialize .call (this);
 			X3DLayeringContext             .prototype .initialize .call (this);
+			X3DLayoutContext               .prototype .initialize .call (this);
 			X3DEnvironmentalEffectsContext .prototype .initialize .call (this);
 			X3DLightingContext             .prototype .initialize .call (this);
 			X3DShadersContext              .prototype .initialize .call (this);

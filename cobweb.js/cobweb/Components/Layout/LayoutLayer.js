@@ -5,20 +5,28 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Layering/X3DLayerNode",
+	"cobweb/Components/Layout/LayoutGroup",
+	"cobweb/Components/Navigation/OrthoViewpoint",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DLayerNode, 
+          X3DLayerNode,
+          LayoutGroup,
+          OrthoViewpoint,
           X3DConstants)
 {
 "use strict";
 
 	function LayoutLayer (executionContext)
 	{
-		X3DLayerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLayerNode .call (this,
+		                    executionContext .getBrowser (),
+		                    executionContext,
+		                    new OrthoViewpoint (executionContext),
+		                    new LayoutGroup (executionContext));
 
 		this .addType (X3DConstants .LayoutLayer);
 	}
@@ -46,6 +54,14 @@ function ($,
 		getContainerField: function ()
 		{
 			return "layers";
+		},
+		initialize: function ()
+		{
+			this .layout_ .addFieldInterest (this .getGroup () .layout_);
+
+			this .getGroup () .layout_ = this .layout_;
+
+			X3DLayerNode .prototype .initialize .call (this);
 		},
 	});
 

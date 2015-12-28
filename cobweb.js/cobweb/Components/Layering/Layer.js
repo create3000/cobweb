@@ -22,7 +22,11 @@ function ($,
 
 	function Layer (executionContext)
 	{
-		X3DLayerNode .call (this, executionContext .getBrowser (), executionContext, new Viewpoint (executionContext), new Group (executionContext));
+		X3DLayerNode .call (this,
+		                    executionContext .getBrowser (),
+		                    executionContext,
+		                    new Viewpoint (executionContext),
+		                    new Group (executionContext));
 
 		this .addType (X3DConstants .Layer);
 	}

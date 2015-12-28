@@ -1080,6 +1080,7 @@
     <None Include="tests\Components\Shaders\water.x3d" />
     <None Include="tests\Components\Shaders\Fields.x3d" />
     <None Include="tests\Components\Networking\LoadSensor.x3d" />
+    <None Include="cobweb\Browser\Layout\X3DLayoutContext.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1130,5 +1131,6 @@
     <Folder Include="tests\Components\ComposedCubeMapTexture\" />
     <Folder Include="tests\Components\Shaders\" />
     <Folder Include="tests\Components\Networking\" />
+    <Folder Include="cobweb\Browser\Layout\" />
   </ItemGroup>
 </Project>

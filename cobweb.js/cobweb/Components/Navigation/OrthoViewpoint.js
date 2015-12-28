@@ -24,6 +24,10 @@ function ($,
 {
 "use strict";
 
+	var
+		screenScale  = new Vector3 (0, 0, 0),
+		viewportSize = new Vector2 (0, 0);
+
 	function OrthoViewpoint (executionContext)
 	{
 		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
@@ -98,12 +102,12 @@ function ($,
 			{
 				var s = this .getSizeY () / height;
 
-				return new Vector3 (s, s, s);
+				return screenScale .set (s, s, s);
 			}
 
 			var s = this .getSizeX () / width;
 
-			return new Vector3 (s, s, s);
+			return screenScale .set (s, s, s);
 		},
 		getViewportSize: function (viewport)
 		{
@@ -115,9 +119,9 @@ function ($,
 				aspect = width / height;
 
 			if (aspect > sizeX / sizeY)
-				return new Vector2 (this .getSizeY () * aspect, this .getSizeY ());
+				return viewportSize .set (this .getSizeY () * aspect, this .getSizeY ());
 
-			return new Vector2 (this .getSizeX (), this .getSizeX () / aspect);
+			return viewportSize .set (this .getSizeX (), this .getSizeX () / aspect);
 		},
 		getLookAtDistance: function (bbox)
 		{

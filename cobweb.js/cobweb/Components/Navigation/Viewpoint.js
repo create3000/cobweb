@@ -24,6 +24,8 @@ function ($,
 {
 "use strict";
 
+	var screenScale = new Vector3 (0, 0, 0);
+
 	function Viewpoint (executionContext)
 	{
 		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
@@ -108,7 +110,7 @@ function ($,
 			else
 				size /= width;
 
-			return new Vector3 (size, size, size);
+			return screenScale .set (size, size, size);
 		},
 		getLookAtDistance: function (bbox)
 		{

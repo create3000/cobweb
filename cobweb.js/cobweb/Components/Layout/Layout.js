@@ -6,13 +6,17 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Layout/X3DLayoutNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLayoutNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector2,
+          Matrix4)
 {
 "use strict";
 

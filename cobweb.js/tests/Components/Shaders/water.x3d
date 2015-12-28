@@ -7,7 +7,7 @@
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 26 Dec 2015 23:35:09 GMT'/>
+    <meta name='modified' content='Sun, 27 Dec 2015 21:05:02 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
@@ -26,7 +26,7 @@
           <MetadataString DEF='type' containerField='value'
               name='type'
               reference='http://titania.create3000.de'
-              value='"EXAMINE"'/>
+              value='"NONE"'/>
         </MetadataSet>
         <MetadataSet DEF='Viewpoint' containerField='value'
             name='Viewpoint'
@@ -34,15 +34,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='68.8916015625, 46.8921012878418, 120.146003723145'/>
+              value='0, 0, 10'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.761608779430389, 0.62757682800293, 0.161552950739861, 0.651880085468292'/>
+              value='0, 0, 1, 0'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='28.846700668335, -7.49610996246338, 30'/>
+              value='0, 0, 0'/>
         </MetadataSet>
         <MetadataSet DEF='AngleGrid' containerField='value'
             name='AngleGrid'
@@ -75,8 +75,31 @@
       </MetadataSet>
     </WorldInfo>
     <LayerSet
-        activeLayer='1'
-        order='0, 1, 2'>
+        activeLayer='2'
+        order='1, 2, 3'>
+      <Layer
+          isPickable='false'>
+        <OrthoViewpoint DEF='_1'/>
+        <Transform DEF='Rectangle2D'
+            scale='6.90196 1 1'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <IndexedFaceSet
+                colorIndex='0, 0, 1, 1, -1'
+                texCoordIndex='0, 1, 2, 3, -1'
+                coordIndex='0, 1, 2, 3, -1'>
+              <Color
+                  color='0 0 0, 0.2 0.2 0.2'/>
+              <TextureCoordinate
+                  point='0 0, 1 0, 1 1, 0 1'/>
+              <Coordinate
+                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+            </IndexedFaceSet>
+          </Shape>
+        </Transform>
+      </Layer>
       <Layer>
         <MetadataSet DEF='Titania_1'
             name='Titania'
@@ -128,7 +151,7 @@
               translation='30 -10 30'
               scale='30 15 30'>
             <Shape>
-              <Appearance DEF='_1'>
+              <Appearance DEF='_2'>
                 <Material/>
                 <ImageTexture
                     url='"tiles.jpg"'/>
@@ -149,7 +172,7 @@
               translation='30 -11.25 30'
               scale='32.5 16.25 32.5'>
             <Shape>
-              <Appearance USE='_1'/>
+              <Appearance USE='_2'/>
               <IndexedFaceSet
                   solid='false'
                   ccw='false'
@@ -162,30 +185,13 @@
               </IndexedFaceSet>
             </Shape>
           </Transform>
-          <Transform DEF='Rectangle2D'
+          <Transform DEF='Rectangle2D_1'
               translation='30.0042 5.00002 61.25'
               rotation='-0.577352 0.577346 0.577353 2.09439'
               scale='1.25 30.0042 1.25'
               scaleOrientation='1.37574e-06 -1 5.70146e-07 0.785052'>
             <Shape>
-              <Appearance USE='_1'/>
-              <IndexedFaceSet
-                  texCoordIndex='0, 1, 2, 3, -1'
-                  coordIndex='0, 1, 2, 3, -1'>
-                <TextureCoordinate
-                    point='0 0, 0.0419023 2.36034e-05, 0.0419097 0.999995, 7.40585e-06 0.999975'/>
-                <Coordinate
-                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-              </IndexedFaceSet>
-            </Shape>
-          </Transform>
-          <Transform DEF='Rectangle2D_1'
-              translation='30 5 -1.25'
-              rotation='-0.577352 0.577346 0.577353 2.09439'
-              scale='1.25 30.0042 1.25'
-              scaleOrientation='3.78908e-07 1 6.79482e-07 0.553375'>
-            <Shape>
-              <Appearance USE='_1'/>
+              <Appearance USE='_2'/>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
                   coordIndex='0, 1, 2, 3, -1'>
@@ -197,11 +203,28 @@
             </Shape>
           </Transform>
           <Transform DEF='Rectangle2D_2'
+              translation='30 5 -1.25'
+              rotation='-0.577352 0.577346 0.577353 2.09439'
+              scale='1.25 30.0042 1.25'
+              scaleOrientation='3.78908e-07 1 6.79482e-07 0.553375'>
+            <Shape>
+              <Appearance USE='_2'/>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 0.0419023 2.36034e-05, 0.0419097 0.999995, 7.40585e-06 0.999975'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_3'
               translation='61.25 5 30'
               rotation='1 3.8063e-06 2.27045e-07 4.71239'
               scale='1.25 32.5084 1.25'>
             <Shape>
-              <Appearance USE='_1'/>
+              <Appearance USE='_2'/>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
                   coordIndex='0, 1, 2, 3, -1'>
@@ -212,12 +235,12 @@
               </IndexedFaceSet>
             </Shape>
           </Transform>
-          <Transform DEF='Rectangle2D_3'
+          <Transform DEF='Rectangle2D_4'
               translation='-1.24988 5 30.008'
               rotation='1 3.8063e-06 2.27045e-07 4.71239'
               scale='1.25 32.5084 1.25'>
             <Shape>
-              <Appearance USE='_1'/>
+              <Appearance USE='_2'/>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
                   coordIndex='0, 1, 2, 3, -1'>
@@ -236,11 +259,11 @@
           <ScalarInterpolator DEF='ElapsedTime'
               key='0, 1'
               keyValue='0, 3.1104e+07'/>
-          <ProximitySensor DEF='_2'
+          <ProximitySensor DEF='_3'
               size='1000 1000 1000'/>
           <Shape>
             <Appearance>
-              <Material DEF='_3'
+              <Material DEF='_4'
                   ambientIntensity='0'
                   diffuseColor='0 0 0'
                   shininess='0'
@@ -256,8 +279,8 @@
                 <field accessType='inputOutput' type='MFVec2f' name='direction' value='2 -2, 2 -1, 2 -0, 2 1, 2 2'/>
                 <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.202381'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
-                  <ComposedCubeMapTexture DEF='_4'>
-                    <ImageTexture DEF='_5' containerField='front'
+                  <ComposedCubeMapTexture DEF='_5'>
+                    <ImageTexture DEF='_6' containerField='front'
                         url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg"'/>
                     <ImageTexture containerField='back'
                         url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg"'/>
@@ -387,7 +410,7 @@ main ()
                 <field accessType='inputOutput' type='MFFloat' name='frequency' value='3.21653, 2.86406, 1.25756, 1.08237, 0.848653, 0, 0, 0'/>
                 <field accessType='inputOutput' type='MFVec2f' name='direction' value='2 -2, 2 -1, 2 -0, 2 1, 2 2'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
-                  <ComposedCubeMapTexture USE='_4'/>
+                  <ComposedCubeMapTexture USE='_5'/>
                 </field>
                 <field accessType='inputOutput' type='MFFloat' name='speed' value='2.18808, 2.18808, 2.18808, 2.18808, 2.18808'/>
                 <ShaderPart DEF='CobwebWaterVertex'>
@@ -520,7 +543,7 @@ main ()
             <Sphere/>
           </Shape>
         </Transform>
-        <DirectionalLight DEF='_6'
+        <DirectionalLight
             intensity='0.320482'
             ambientIntensity='0.563855'
             direction='0.682878 -0.704064 0.194862'/>
@@ -598,7 +621,7 @@ main ()
               scale='0.1 0.10535 0.10535'>
             <Shape>
               <Appearance>
-                <ImageTexture USE='_5'/>
+                <ImageTexture USE='_6'/>
               </Appearance>
               <Rectangle2D/>
             </Shape>
@@ -606,7 +629,7 @@ main ()
                 description='Cloudy Sky'/>
             <ProtoInstance name='SFNode' DEF='_12'>
               <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture USE='_4' containerField='children'/>
+                <ComposedCubeMapTexture USE='_5' containerField='children'/>
               </fieldValue>
             </ProtoInstance>
           </Transform>
@@ -988,7 +1011,7 @@ main ()
               </Shape>
             </Transform>
             <Transform>
-              <Transform DEF='Rectangle2D_4'
+              <Transform DEF='Rectangle2D_5'
                   translation='0.193416 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
@@ -1082,7 +1105,7 @@ function set_value (value)
 ]]> 
               </Script>
             </Group>
-            <Transform DEF='Rectangle2D_5'
+            <Transform DEF='Rectangle2D_6'
                 translation='-0.075 0 0'
                 scale='0.025 0.0247567 0.0247567'>
               <Shape>
@@ -1153,7 +1176,7 @@ function set_touchTime (value, time)
               </Shape>
             </Transform>
             <Transform>
-              <Transform DEF='Rectangle2D_6'
+              <Transform DEF='Rectangle2D_7'
                   translation='0.292367 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
@@ -1247,7 +1270,7 @@ function set_value (value)
 ]]> 
               </Script>
             </Group>
-            <Transform DEF='Rectangle2D_7'
+            <Transform DEF='Rectangle2D_8'
                 translation='-0.075 0 0'
                 scale='0.025 0.0247567 0.0247567'>
               <Shape>
@@ -1318,7 +1341,7 @@ function set_touchTime (value, time)
               </Shape>
             </Transform>
             <Transform>
-              <Transform DEF='Rectangle2D_8'
+              <Transform DEF='Rectangle2D_9'
                   translation='0.109404 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
@@ -1412,7 +1435,7 @@ function set_value (value)
 ]]> 
               </Script>
             </Group>
-            <Transform DEF='Rectangle2D_9'
+            <Transform DEF='Rectangle2D_10'
                 translation='-0.075 0 0'
                 scale='0.025 0.0247567 0.0247567'>
               <Shape>
@@ -1447,12 +1470,34 @@ function set_touchTime (value, time)
             </Transform>
           </Transform>
         </Group>
+        <Transform DEF='Header_2'
+            translation='1.675 -0.649996 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material DEF='Artdeco31_4'
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  emissiveColor='1 1 1'
+                  shininess='0'/>
+            </Appearance>
+            <Text
+                string='"Water"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  style='BOLD'
+                  size='0.68'
+                  justify='"END"'/>
+            </Text>
+          </Shape>
+        </Transform>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='ElapsedTime' toField='set_fraction'/>
     <ROUTE fromNode='ElapsedTime' fromField='value_changed' toNode='CobwebWaterShader' toField='set_time'/>
-    <ROUTE fromNode='_2' fromField='position_changed' toNode='CobwebWaterShader' toField='set_position'/>
-    <ROUTE fromNode='_2' fromField='position_changed' toNode='TitaniaWaterShader' toField='set_position'/>
+    <ROUTE fromNode='_3' fromField='position_changed' toNode='CobwebWaterShader' toField='set_position'/>
+    <ROUTE fromNode='_3' fromField='position_changed' toNode='TitaniaWaterShader' toField='set_position'/>
     <ROUTE fromNode='ElapsedTime' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_time'/>
     <ROUTE fromNode='_18' fromField='touchTime' toNode='_19' toField='set_triggerTime'/>
     <ROUTE fromNode='_14' fromField='touchTime' toNode='_15' toField='set_triggerTime'/>
@@ -1467,34 +1512,34 @@ function set_touchTime (value, time)
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='AmplitudeScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_38' toField='set_offset'/>
     <ROUTE fromNode='_39' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
-    <ROUTE fromNode='_38' fromField='translation_changed' toNode='Rectangle2D_4' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D_4' toField='set_translation'/>
+    <ROUTE fromNode='_38' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D_5' toField='set_translation'/>
     <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_41' toField='set_string'/>
     <ROUTE fromNode='_40' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
     <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_amplitude'/>
     <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_amplitude'/>
     <ROUTE fromNode='_42' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
-    <ROUTE fromNode='_42' fromField='translation_changed' toNode='Rectangle2D_6' toField='set_translation'/>
+    <ROUTE fromNode='_42' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
     <ROUTE fromNode='_43' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='FequencyScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_42' toField='set_offset'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='Rectangle2D_6' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='Rectangle2D_7' toField='set_translation'/>
     <ROUTE fromNode='_44' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
     <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_45' toField='set_string'/>
     <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_frequency'/>
     <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_frequency'/>
     <ROUTE fromNode='_46' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
-    <ROUTE fromNode='_46' fromField='translation_changed' toNode='Rectangle2D_8' toField='set_translation'/>
+    <ROUTE fromNode='_46' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
     <ROUTE fromNode='_47' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='SpeedScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_46' toField='set_offset'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='Rectangle2D_8' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='Rectangle2D_9' toField='set_translation'/>
     <ROUTE fromNode='_48' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
     <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_37' toField='set_string'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_speed'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_speed'/>
     <ROUTE fromNode='TitaniaWaterShader' fromField='direction_changed' toNode='CobwebWaterShader' toField='set_direction'/>
-    <ROUTE fromNode='_3' fromField='transparency_changed' toNode='TitaniaWaterShader' toField='set_transparency'/>
+    <ROUTE fromNode='_4' fromField='transparency_changed' toNode='TitaniaWaterShader' toField='set_transparency'/>
     <ROUTE fromNode='_22' fromField='touchTime' toNode='_23' toField='set_triggerTime'/>
     <ROUTE fromNode='_23' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_23' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
