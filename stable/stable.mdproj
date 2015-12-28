@@ -272,6 +272,27 @@
     <None Include="latest\images\gtk-leave-fullscreen.png" />
     <None Include="1\1.20\spinner.css" />
     <None Include="latest\spinner.css" />
+    <None Include="1\1.21\images\ExamineViewer.png" />
+    <None Include="1\1.21\images\FlyViewer.png" />
+    <None Include="1\1.21\images\gtk-fullscreen.png" />
+    <None Include="1\1.21\images\gtk-leave-fullscreen.png" />
+    <None Include="1\1.21\images\gtk-zoom-fit.png" />
+    <None Include="1\1.21\images\gtk-zoom-in.png" />
+    <None Include="1\1.21\images\help-about.png" />
+    <None Include="1\1.21\images\icon.bw.png" />
+    <None Include="1\1.21\images\icon.png" />
+    <None Include="1\1.21\images\logo.bw.png" />
+    <None Include="1\1.21\images\logo.png" />
+    <None Include="1\1.21\images\NoneViewer.png" />
+    <None Include="1\1.21\images\PlaneViewer.png" />
+    <None Include="1\1.21\images\PrimitiveQuality.png" />
+    <None Include="1\1.21\images\TextureQuality.png" />
+    <None Include="1\1.21\images\Viewpoint.png" />
+    <None Include="1\1.21\images\WalkViewer.png" />
+    <None Include="1\1.21\cobweb.min.js" />
+    <None Include="1\1.21\cobweb.full.js" />
+    <None Include="1\1.21\cobweb.css" />
+    <None Include="1\1.21\spinner.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
@@ -290,5 +311,6 @@
     <Folder Include="1\1.18\" />
     <Folder Include="1\1.19\" />
     <Folder Include="1\1.20\" />
+    <Folder Include="1\1.21\" />
   </ItemGroup>
 </Project>
