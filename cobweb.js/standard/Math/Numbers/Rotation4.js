@@ -18,11 +18,11 @@ function ($,
 	var
 		xAxis    = new Vector3 (1, 0, 0),
 		yAxis    = new Vector3 (0, 1, 0),
+		zAxis    = new Vector3 (0, 0, 1),
 		from     = new Vector3 (0, 0, 0),
 		to       = new Vector3 (0, 0, 0),
 		cv       = new Vector3 (0, 0, 0),
 		t        = new Vector3 (0, 0, 0),
-		zAxis    = new Vector3 (0, 0, 1),
 		identity = new Vector4 (0, 0, 1, 0),
 		result   = new Vector3 (0, 0, 0, 0);
 
@@ -130,7 +130,7 @@ function ($,
 			to   .assign (toVec)   .normalize ();
 
 			var
-				cos_angle = from .dot (to),
+				cos_angle = Algorithm .clamp (from .dot (to), -1, 1),
 				crossvec  = cv .assign (from) .cross (to) .normalize (),
 				crosslen  = crossvec .abs ();
 
@@ -167,7 +167,7 @@ function ($,
 				this .value .set (crossvec .x,
 				                  crossvec .y,
 				                  crossvec .z,
-				                  Math .sqrt (Math .abs (1 + cos_angle) / 2));
+				                  Math .sqrt ((1 + cos_angle) / 2));
 			}
 
 			return this;
