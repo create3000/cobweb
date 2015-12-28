@@ -7,7 +7,7 @@
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 28 Dec 2015 06:45:37 GMT'/>
+    <meta name='modified' content='Mon, 28 Dec 2015 23:01:38 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
@@ -1270,23 +1270,24 @@ function set_value (value)
 ]]> 
               </Script>
             </Group>
-            <Transform DEF='Rectangle2D_8'
-                translation='-0.075 0 0'
-                scale='0.025 0.0247567 0.0247567'>
-              <Shape>
-                <Appearance>
-                  <Material
-                      emissiveColor='1 1 1'/>
-                </Appearance>
-                <Rectangle2D/>
-              </Shape>
-              <TouchSensor DEF='_43'
-                  description='Toggle Animation'/>
-              <Script DEF='ToggleFequencyAnim'>
-                <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
-                <field accessType='initializeOnly' type='SFNode' name='timer'>
-                  <TimeSensor USE='_42'/>
-                </field>
+            <Switch>
+              <Transform DEF='Rectangle2D_8'
+                  translation='-0.075 0 0'
+                  scale='0.025 0.0247567 0.0247567'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Rectangle2D/>
+                </Shape>
+                <TouchSensor DEF='_43'
+                    description='Toggle Animation'/>
+                <Script DEF='ToggleFequencyAnim'>
+                  <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
+                  <field accessType='initializeOnly' type='SFNode' name='timer'>
+                    <TimeSensor USE='_42'/>
+                  </field>
 <![CDATA[ecmascript:
 
 function set_touchTime (value, time)
@@ -1301,8 +1302,9 @@ function set_touchTime (value, time)
 	else
 		timer .startTime = time;
 }]]> 
-              </Script>
-            </Transform>
+                </Script>
+              </Transform>
+            </Switch>
           </Transform>
           <Transform DEF='FequencyText_1'
               translation='1.675 -0.849996 0'
@@ -1435,23 +1437,24 @@ function set_value (value)
 ]]> 
               </Script>
             </Group>
-            <Transform DEF='Rectangle2D_10'
-                translation='-0.075 0 0'
-                scale='0.025 0.0247567 0.0247567'>
-              <Shape>
-                <Appearance>
-                  <Material
-                      emissiveColor='1 1 1'/>
-                </Appearance>
-                <Rectangle2D/>
-              </Shape>
-              <TouchSensor DEF='_47'
-                  description='Toggle Animation'/>
-              <Script DEF='ToggleSpeedAnim'>
-                <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
-                <field accessType='initializeOnly' type='SFNode' name='timer'>
-                  <TimeSensor USE='_46'/>
-                </field>
+            <Switch>
+              <Transform DEF='Rectangle2D_10'
+                  translation='-0.075 0 0'
+                  scale='0.025 0.0247567 0.0247567'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Rectangle2D/>
+                </Shape>
+                <TouchSensor DEF='_47'
+                    description='Toggle Animation'/>
+                <Script DEF='ToggleSpeedAnim'>
+                  <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
+                  <field accessType='initializeOnly' type='SFNode' name='timer'>
+                    <TimeSensor USE='_46'/>
+                  </field>
 <![CDATA[ecmascript:
 
 function set_touchTime (value, time)
@@ -1466,8 +1469,9 @@ function set_touchTime (value, time)
 	else
 		timer .startTime = time;
 }]]> 
-              </Script>
-            </Transform>
+                </Script>
+              </Transform>
+            </Switch>
           </Transform>
         </Group>
         <Transform DEF='Header_2'
