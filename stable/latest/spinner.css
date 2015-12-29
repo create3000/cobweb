@@ -1,5 +1,5 @@
 
-.cobweb-loading {
+X3D .cobweb-loading {
 	display: none;
 	z-index: -100;
 	position: absolute;
@@ -7,9 +7,13 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
+	background: rgb(65,65,65);
+	background: -moz-radial-gradient(center, ellipse cover, rgb(130,130,130) 0%, rgb(65,65,65) 100%);
+	background: -webkit-radial-gradient(center, ellipse cover, rgb(130,130,130) 0%,rgb(65,65,65) 100%);
+	background: radial-gradient(ellipse at center, rgb(130,130,130) 0%,rgb(65,65,65) 100%);
 }
 
-.cobweb-spinner {
+X3D .cobweb-spinner {
 	position: relative;
 	top: calc(50% - 70px);
 	left: calc(50% - 64px);
@@ -23,7 +27,7 @@
 	perspective: 780px;
 }
 
-.cobweb-spinner > * {
+X3D .cobweb-spinner > * {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -39,7 +43,7 @@
 		-moz-border-radius: 50%;	
 }
 
-.cobweb-spinner-one {
+X3D .cobweb-spinner-one {
 	left: 0%;
 	top: 0%;
 	animation: cobweb-spinner-rotate-one 1.15s linear infinite;
@@ -47,10 +51,10 @@
 		-ms-animation: cobweb-spinner-rotate-one 1.15s linear infinite;
 		-webkit-animation: cobweb-spinner-rotate-one 1.15s linear infinite;
 		-moz-animation: cobweb-spinner-rotate-one 1.15s linear infinite;
-	border-bottom: 10px solid #FBDB50;
+	border-bottom: 10px solid #ffe32d;
 }
 
-.cobweb-spinner-two {
+X3D .cobweb-spinner-two {
 	right: 0%;
 	top: 0%;
 	animation: cobweb-spinner-rotate-two 1.15s linear infinite;
@@ -58,10 +62,10 @@
 		-ms-animation: cobweb-spinner-rotate-two 1.15s linear infinite;
 		-webkit-animation: cobweb-spinner-rotate-two 1.15s linear infinite;
 		-moz-animation: cobweb-spinner-rotate-two 1.15s linear infinite;
-	border-right: 10px solid #FF9844;
+	border-right: 10px solid #ff9f2e;
 }
 
-.cobweb-spinner-three {
+X3D .cobweb-spinner-three {
 	right: 0%;
 	bottom: 0%;
 	animation: cobweb-spinner-rotate-three 1.15s linear infinite;
@@ -69,17 +73,19 @@
 		-ms-animation: cobweb-spinner-rotate-three 1.15s linear infinite;
 		-webkit-animation: cobweb-spinner-rotate-three 1.15s linear infinite;
 		-moz-animation: cobweb-spinner-rotate-three 1.15s linear infinite;
-	border-top: 10px solid #E70029;
+	border-top: 10px solid #d71f1f;
 }
 
-.cobweb-spinner-text {
+X3D .cobweb-spinner-text {
 	position: relative;
 	top: 58px;
+	left: -30px;
+	width: 188px;
 	color: white;
-	font-size: 10pt;
+	font-size: 11pt;
 	text-align: center;
-	text-shadow: 0px 1px 0px black;
-	font-family: Ubuntu, sans-serif;
+	text-shadow: 1px 1px 0px black;
+	font-family: PT Sans, sans-serif;
 }
 
 @keyframes cobweb-spinner-rotate-one {

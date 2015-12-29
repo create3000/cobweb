@@ -51,7 +51,7 @@ X3D .cobweb-spinner-one {
 		-ms-animation: cobweb-spinner-rotate-one 1.15s linear infinite;
 		-webkit-animation: cobweb-spinner-rotate-one 1.15s linear infinite;
 		-moz-animation: cobweb-spinner-rotate-one 1.15s linear infinite;
-	border-bottom: 10px solid #FBDB50;
+	border-bottom: 10px solid #ffe32d;
 }
 
 X3D .cobweb-spinner-two {
@@ -62,7 +62,7 @@ X3D .cobweb-spinner-two {
 		-ms-animation: cobweb-spinner-rotate-two 1.15s linear infinite;
 		-webkit-animation: cobweb-spinner-rotate-two 1.15s linear infinite;
 		-moz-animation: cobweb-spinner-rotate-two 1.15s linear infinite;
-	border-right: 10px solid #FF9844;
+	border-right: 10px solid #ff9f2e;
 }
 
 X3D .cobweb-spinner-three {
@@ -73,12 +73,14 @@ X3D .cobweb-spinner-three {
 		-ms-animation: cobweb-spinner-rotate-three 1.15s linear infinite;
 		-webkit-animation: cobweb-spinner-rotate-three 1.15s linear infinite;
 		-moz-animation: cobweb-spinner-rotate-three 1.15s linear infinite;
-	border-top: 10px solid #E70029;
+	border-top: 10px solid #d71f1f;
 }
 
 X3D .cobweb-spinner-text {
 	position: relative;
 	top: 58px;
+	left: -30px;
+	width: 188px;
 	color: white;
 	font-size: 11pt;
 	text-align: center;

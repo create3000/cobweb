@@ -293,6 +293,7 @@
     <None Include="1\1.21\cobweb.full.js" />
     <None Include="1\1.21\cobweb.css" />
     <None Include="1\1.21\spinner.css" />
+    <None Include="latest\cobweb.full.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
