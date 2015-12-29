@@ -1082,6 +1082,7 @@
     <None Include="cobweb.full.js" />
     <None Include="cobweb.release.html" />
     <None Include="cobweb.min.html" />
+    <None Include="browser.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

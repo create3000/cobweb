@@ -7,7 +7,7 @@
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Mon, 28 Dec 2015 23:01:38 GMT'/>
+    <meta name='modified' content='Tue, 29 Dec 2015 09:09:02 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
@@ -90,7 +90,7 @@
                 texCoordIndex='0, 1, 2, 3, -1'
                 coordIndex='0, 1, 2, 3, -1'>
               <Color
-                  color='0 0 0, 0.2 0.2 0.2'/>
+                  color='0 0 0, 0.3 0.3 0.3'/>
               <TextureCoordinate
                   point='0 0, 1 0, 1 1, 0 1'/>
               <Coordinate

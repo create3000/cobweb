@@ -165,7 +165,6 @@ function ($,
 				scene = this .createScene ();
 			
 			// bindWorld
-
 			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
 			this .loadId      = performance .now ();
 			this .description = "";
@@ -188,12 +187,8 @@ function ($,
 
 			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
 
-			setTimeout (function ()
-			{
-				this .getWorld () .bind ();
-				this .setBrowserLoading (false);
-			}
-			.bind (this), 0);
+			this .getWorld () .bind ();
+			this .setBrowserLoading (false);
 		},
 		createVrmlFromString: function (vrmlSyntax)
 		{

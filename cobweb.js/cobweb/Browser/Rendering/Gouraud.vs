@@ -52,9 +52,6 @@ uniform float x3d_BackShininess;
 uniform float x3d_BackTransparency;
 // 12
 
-//uniform int x3d_TextureType; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE
-// 2
-
 attribute vec4 x3d_Color;
 attribute vec4 x3d_TexCoord;
 attribute vec3 x3d_Normal;
@@ -159,9 +156,7 @@ main ()
 
 	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
 
-	//if (x3d_TextureType != 0)
-		t = x3d_TextureMatrix * x3d_TexCoord;
-
+	t = x3d_TextureMatrix * x3d_TexCoord;
 	v = p .xyz;
 
 	gl_Position = x3d_ProjectionMatrix * p;

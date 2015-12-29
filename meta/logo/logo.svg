@@ -267,9 +267,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.41259766"
-     inkscape:cx="612.23414"
-     inkscape:cy="634.85618"
+     inkscape:zoom="0.58350121"
+     inkscape:cx="474.39458"
+     inkscape:cy="560.40418"
      inkscape:document-units="px"
      inkscape:current-layer="g5156"
      showgrid="false"
@@ -284,7 +284,7 @@
      inkscape:object-nodes="false"
      inkscape:snap-nodes="true"
      inkscape:snap-bbox="true"
-     inkscape:snap-page="true"
+     inkscape:snap-page="false"
      showborder="true"
      inkscape:bbox-nodes="true">
     <sodipodi:guide
@@ -349,7 +349,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -391,7 +391,8 @@
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Logo Circles">
+     inkscape:label="Logo Circles"
+     style="display:inline">
     <g
        id="g5156"
        transform="matrix(1.9783889,0,0,1.9783889,-667.61026,-395.59779)">

@@ -8,11 +8,10 @@ uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
 
-#define NO_TEXTURE 0
+#define MAX_TEXTURES 1
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false
-//uniform int   x3d_TextureType; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE
 
 attribute vec4 x3d_Color;
 attribute vec4 x3d_TexCoord;
@@ -34,9 +33,7 @@ main ()
 	if (x3d_Lighting)
 		vN = normalize (x3d_NormalMatrix * x3d_Normal);
 
-	//if (x3d_TextureType != NO_TEXTURE)
-		t = x3d_TextureMatrix * x3d_TexCoord;
-
+	t = x3d_TextureMatrix * x3d_TexCoord;
 	C = x3d_Color;
 	v = p .xyz;
 

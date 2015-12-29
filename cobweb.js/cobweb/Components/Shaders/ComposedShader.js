@@ -26,7 +26,8 @@ function ($,
 
 	var
 		MAX_CLIP_PLANES = 6,
-		MAX_LIGHTS      = 8;
+		MAX_LIGHTS      = 8,
+		MAX_TEXTURES    = 1;
 
 	var shader = null;
 
@@ -68,12 +69,15 @@ function ($,
 		X3DProgrammableShaderObject .prototype,
 	{
 		constructor: ComposedShader,
+		wireframe: false,
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
 		fog: null,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
-		wireframe: false,
+		textureTypeArray: new Int32Array (MAX_TEXTURES),
+		textureArray: new Int32Array (MAX_TEXTURES),
+		cubeMapTextureArray: new Int32Array (MAX_TEXTURES),
 		getTypeName: function ()
 		{
 			return "ComposedShader";
@@ -244,11 +248,12 @@ function ($,
 			this .normal   = gl .getAttribLocation (program, "x3d_Normal");
 			this .vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
 
-			gl .uniform1i (this .points,               this .getPoints ());
-			gl .uniform1i (this .geometryType,         this .getGeometryType ());
-			gl .uniform1f (this .linewidthScaleFactor, 1);
-			gl .uniform1i (this .texture,              0);        // Set texture to active texture unit 0.
-			gl .uniform1i (this .cubeMapTexture,       0); // Set cube map texture to active texture unit 1.
+			gl .uniform1i  (this .points,               this .getPoints ());
+			gl .uniform1i  (this .geometryType,         this .getGeometryType ());
+			gl .uniform1f  (this .linewidthScaleFactor, 1);
+			gl .uniform1iv (this .textureType,          this .textureTypeArray);    // Set texture to active texture unit 0.
+			gl .uniform1iv (this .texture,              this .textureArray);        // Set texture to active texture unit 0.
+			gl .uniform1iv (this .cubeMapTexture,       this .cubeMapTextureArray); // Set cube map texture to active texture unit 1.
 		},
 		setGlobalUniforms: function ()
 		{
@@ -395,9 +400,11 @@ function ($,
 			{
 				appearance .getTextureTransform () .traverse ();
 	
+				this .textureTypeArray [0] = texture .getTextureType ();
+
 				gl .activeTexture (gl .TEXTURE0);
 				gl .bindTexture (this .textureTarget = texture .getTarget (), texture .getTexture ());
-				gl .uniform1i (this .textureType, texture .getTextureType ());
+				gl .uniform1iv (this .textureType, this .textureTypeArray);
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 			}
 			else
