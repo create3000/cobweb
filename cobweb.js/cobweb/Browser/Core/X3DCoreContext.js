@@ -16,14 +16,12 @@ function (BrowserOptions,
 	
 	function getContext (canvas)
 	{
-		try
-		{
-			return canvas .getContext ("webgl") || canvas .getContext ("experimental-webgl");
-		}
-		catch (error)
-		{
-			return null;
-		}
+		var context = canvas .getContext ("webgl") || canvas .getContext ("experimental-webgl");
+
+		if (context)
+			return context;
+
+		throw new Error ("Couldn't create WebGL context.");
 	}
 
 	function X3DCoreContext (element)
@@ -40,7 +38,7 @@ function (BrowserOptions,
 		$("<div/>") .addClass ("cobweb-spinner-one") .appendTo (spinner);
 		$("<div/>") .addClass ("cobweb-spinner-two") .appendTo (spinner);
 		$("<div/>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-text") .text ("Lade 123 Dateien") .appendTo (spinner);
+		$("<div/>") .addClass ("cobweb-spinner-text") .text ("Lade 0 Dateien") .appendTo (spinner);
 
 		this .loading = loading;
 		this .canvas  = $("<canvas/>") .prependTo (canvas);
