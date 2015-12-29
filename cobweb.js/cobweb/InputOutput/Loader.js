@@ -214,7 +214,7 @@ function ($,
 				{
 					var uri = new URI (URL);
 
-					if (uri .filename .toString () .length === 0 && uri .filename .query .length === 0)
+					if (uri .filename .toString () .length === 0 && uri .query .length === 0)
 					{
 						this .bindViewpoint (uri .fragment);
 						return;

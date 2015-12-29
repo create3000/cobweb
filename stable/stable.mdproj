@@ -294,6 +294,8 @@
     <None Include="1\1.21\cobweb.css" />
     <None Include="1\1.21\spinner.css" />
     <None Include="latest\cobweb.full.js" />
+    <None Include="1\1.21\browser.html" />
+    <None Include="latest\browser.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />

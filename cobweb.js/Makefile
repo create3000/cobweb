@@ -11,6 +11,9 @@ all:
 	ls -la cobweb.min.js
 	echo
 
+version: all
+	perl version.pl
+
 clean:
 	rm cobweb.min.html
 	rm cobweb.full.js

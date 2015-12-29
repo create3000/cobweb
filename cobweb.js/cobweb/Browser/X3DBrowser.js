@@ -3,6 +3,7 @@ define ([
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
+	"cobweb/Browser/Version",
 	"cobweb/Configuration/ComponentInfo",
 	"cobweb/Configuration/SupportedProfiles",
 	"cobweb/Configuration/SupportedComponents",
@@ -17,6 +18,7 @@ define ([
 function ($,
           Fields,
           X3DBrowserContext,
+          Version,
           ComponentInfo,
           SupportedProfiles,
           SupportedComponents,
@@ -514,7 +516,7 @@ function ($,
 
 	Object .defineProperty (X3DBrowser .prototype, "version",
 	{
-		get: function () { return "1.21"; },
+		get: function () { return Version; },
 		enumerable: true,
 		configurable: false
 	});

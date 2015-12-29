@@ -26791,7 +26791,7 @@ function ($,
 					viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
 
 				if (! viewpoint)
-					throw new Error ("Node named '" + name + "' is not a viewpoint node.");
+					throw 1;
 
 				if (viewpoint .isBound_ .getValue ())
 					viewpoint .transitionStart (null, viewpoint);
@@ -26804,7 +26804,7 @@ function ($,
 				if (! this .isRootContext ())
 					this .getExecutionContext () .changeViewpoint (name);
 				else
-					throw error;
+					throw new Error ("Viewpoint named '" + name + "' not found.");
 			}
 		},
 		addLoadCount: function (node)
@@ -30402,7 +30402,7 @@ function ($,
 			{
 				if (this .USE (element))
 					return;
-			
+
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
 				this .DEF (element, node);
@@ -34285,7 +34285,7 @@ function ($,
 				{
 					var uri = new URI (URL);
 
-					if (uri .filename .toString () .length === 0 && uri .filename .query .length === 0)
+					if (uri .filename .toString () .length === 0 && uri .query .length === 0)
 					{
 						this .bindViewpoint (uri .fragment);
 						return;
@@ -59027,6 +59027,12 @@ function ($,
 });
 
 
+define ('cobweb/Browser/Version',[],function ()
+{
+	return "1.21";
+});
+
+
 define ('cobweb/Configuration/ComponentInfo',[
 	"jquery",
 ],
@@ -72341,6 +72347,7 @@ define ('cobweb/Browser/X3DBrowser',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
+	"cobweb/Browser/Version",
 	"cobweb/Configuration/ComponentInfo",
 	"cobweb/Configuration/SupportedProfiles",
 	"cobweb/Configuration/SupportedComponents",
@@ -72355,6 +72362,7 @@ define ('cobweb/Browser/X3DBrowser',[
 function ($,
           Fields,
           X3DBrowserContext,
+          Version,
           ComponentInfo,
           SupportedProfiles,
           SupportedComponents,
@@ -72852,7 +72860,7 @@ function ($,
 
 	Object .defineProperty (X3DBrowser .prototype, "version",
 	{
-		get: function () { return "1.21"; },
+		get: function () { return Version; },
 		enumerable: true,
 		configurable: false
 	});

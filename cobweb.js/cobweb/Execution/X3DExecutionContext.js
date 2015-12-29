@@ -290,7 +290,7 @@ function ($,
 					viewpoint = X3DCast (X3DConstants .X3DViewpointNode, namedNode);
 
 				if (! viewpoint)
-					throw new Error ("Node named '" + name + "' is not a viewpoint node.");
+					throw 1;
 
 				if (viewpoint .isBound_ .getValue ())
 					viewpoint .transitionStart (null, viewpoint);
@@ -303,7 +303,7 @@ function ($,
 				if (! this .isRootContext ())
 					this .getExecutionContext () .changeViewpoint (name);
 				else
-					throw error;
+					throw new Error ("Viewpoint named '" + name + "' not found.");
 			}
 		},
 		addLoadCount: function (node)

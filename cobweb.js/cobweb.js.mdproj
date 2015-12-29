@@ -1083,6 +1083,9 @@
     <None Include="cobweb.release.html" />
     <None Include="cobweb.min.html" />
     <None Include="browser.html" />
+    <None Include="tests\Components\Layout\info.x3d" />
+    <None Include="cobweb\Browser\Version.js" />
+    <None Include="version.pl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1134,5 +1137,6 @@
     <Folder Include="tests\Components\Shaders\" />
     <Folder Include="tests\Components\Networking\" />
     <Folder Include="cobweb\Browser\Layout\" />
+    <Folder Include="tests\Components\Layout\" />
   </ItemGroup>
 </Project>
