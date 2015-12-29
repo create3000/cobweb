@@ -290,12 +290,12 @@
     <None Include="1\1.21\images\Viewpoint.png" />
     <None Include="1\1.21\images\WalkViewer.png" />
     <None Include="1\1.21\cobweb.min.js" />
-    <None Include="1\1.21\cobweb.full.js" />
     <None Include="1\1.21\cobweb.css" />
     <None Include="1\1.21\spinner.css" />
-    <None Include="latest\cobweb.full.js" />
     <None Include="1\1.21\browser.html" />
     <None Include="latest\browser.html" />
+    <None Include="1\1.21\cobweb.js" />
+    <None Include="latest\cobweb.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />

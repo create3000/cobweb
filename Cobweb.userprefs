@@ -3,6 +3,7 @@
   <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/version.pl" Line="9" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

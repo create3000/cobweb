@@ -23,7 +23,7 @@ sub cp {
 
 	system "cp", "-v", "cobweb.css",     $VERSION_DIR;
 	system "cp", "-v", "spinner.css",    $VERSION_DIR;
-	system "cp", "-v", "cobweb.full.js", $VERSION_DIR;
+	system "cp", "-v", "cobweb.full.js", "$VERSION_DIR/cobweb.js";
 	system "cp", "-v", "cobweb.min.js",  $VERSION_DIR;
 	system "cp", "-v", "-r", "images",   $VERSION_DIR;
 	system "cp", "-v", "browser.html",   $VERSION_DIR;
