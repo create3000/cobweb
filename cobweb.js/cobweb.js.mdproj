@@ -1074,8 +1074,6 @@
     <None Include="tests\Components\Scripting\load-viewpoints.x3d" />
     <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapTexture.x3d" />
     <None Include="tests\Components\images\ubuntu.png" />
-    <None Include="tests\Components\Shaders\tiles.jpg" />
-    <None Include="tests\Components\Shaders\water.x3d" />
     <None Include="tests\Components\Shaders\Fields.x3d" />
     <None Include="tests\Components\Networking\LoadSensor.x3d" />
     <None Include="cobweb\Browser\Layout\X3DLayoutContext.js" />
@@ -1086,6 +1084,8 @@
     <None Include="tests\Components\Layout\info.x3d" />
     <None Include="cobweb\Browser\Version.js" />
     <None Include="version.pl" />
+    <None Include="examples\water\tiles.jpg" />
+    <None Include="examples\water\water.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1138,5 +1138,6 @@
     <Folder Include="tests\Components\Networking\" />
     <Folder Include="cobweb\Browser\Layout\" />
     <Folder Include="tests\Components\Layout\" />
+    <Folder Include="examples\water\" />
   </ItemGroup>
 </Project>
