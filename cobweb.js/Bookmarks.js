@@ -3,6 +3,8 @@ var Bookmarks = (function ()
 {
 "use strict";
 
+	var mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+
 	function shuffle (array)
 	{
 		var i = array .length;
@@ -26,6 +28,9 @@ var Bookmarks = (function ()
 		var
 			pages = [ ],
 			index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
+
+		if (mobile)
+			boorkmarks = bookmarks .filter (function (bookmark) { return bookmark .mobile; });
 
 		while (bookmarks .length)
 			pages .push (bookmarks .splice (0, filesPerPage || 20));
