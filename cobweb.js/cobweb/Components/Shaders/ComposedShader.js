@@ -400,11 +400,9 @@ function ($,
 			{
 				appearance .getTextureTransform () .traverse ();
 	
-				this .textureTypeArray [0] = texture .getTextureType ();
-
 				gl .activeTexture (gl .TEXTURE0);
 				gl .bindTexture (this .textureTarget = texture .getTarget (), texture .getTexture ());
-				gl .uniform1iv (this .textureType, this .textureTypeArray);
+				gl .uniform1i (this .textureType, texture .getTextureType ());
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 			}
 			else

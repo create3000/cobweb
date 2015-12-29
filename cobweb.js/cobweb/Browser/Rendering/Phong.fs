@@ -65,14 +65,13 @@ uniform vec3  x3d_BackEmissiveColor;
 uniform float x3d_BackShininess;
 uniform float x3d_BackTransparency;
 
-#define MAX_TEXTURES 1
 #define NO_TEXTURE   0
 #define TEXTURE_2D   2
 #define TEXTURE_CUBE 4
 
-uniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false
-uniform sampler2D   x3d_Texture [MAX_TEXTURES];
-uniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];
+uniform int         x3d_TextureType; // true if a X3DTexture2DNode is attached, otherwise false
+uniform sampler2D   x3d_Texture;
+uniform samplerCube x3d_CubeMapTexture;
 
 varying vec4 C;  // color
 varying vec4 t;  // texCoord
@@ -127,22 +126,22 @@ getFogInterpolant ()
 vec4
 getTextureColor ()
 {
-	if (x3d_TextureType [0] == TEXTURE_2D)
+	if (x3d_TextureType == TEXTURE_2D)
 	{
 		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
-			return texture2D (x3d_Texture [0], vec2 (t));
+			return texture2D (x3d_Texture, vec2 (t));
 		
 		// If dimension is GEOMETRY_2D the texCoords must be flipped.
-		return texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));
+		return texture2D (x3d_Texture, vec2 (1.0 - t .s, t .t));
 	}
 
-	if (x3d_TextureType [0] == TEXTURE_CUBE)
+	if (x3d_TextureType == TEXTURE_CUBE)
 	{
 		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
-			return textureCube (x3d_CubeMapTexture [0], vec3 (t));
+			return textureCube (x3d_CubeMapTexture, vec3 (t));
 		
 		// If dimension is GEOMETRY_2D the texCoords must be flipped.
-		return textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));
+		return textureCube (x3d_CubeMapTexture, vec3 (1.0 - t .s, t .t, t .z));
 	}
 
 	return vec4 (1.0, 1.0, 1.0, 1.0);
@@ -177,7 +176,7 @@ main ()
 
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_TextureType [0] != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -191,7 +190,7 @@ main ()
 		}
 		else
 		{
-			if (x3d_TextureType [0] != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -265,7 +264,7 @@ main ()
 	
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_TextureType [0] != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -276,7 +275,7 @@ main ()
 		}
 		else
 		{
-			if (x3d_TextureType [0] != NO_TEXTURE)
+			if (x3d_TextureType != NO_TEXTURE)
 				finalColor = getTextureColor ();
 		}
 
