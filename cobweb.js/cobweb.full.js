@@ -73043,6 +73043,9 @@ function ($,
 		X3D .fallbacks .push (fallback);
 	}
 
+	X3D .callbacks = [ ];
+	X3D .fallbacks = [ ];
+
 	function fallback (error)
 	{
 		require (["cobweb/Error"],
@@ -73057,9 +73060,7 @@ function ($,
 	// Temporary X3D before page load.
 	if (window .X3D === undefined)
 	{
-		X3D .callbacks = [ ];
-		X3D .fallbacks = [ ];
-		window .X3D    = X3D;
+		window .X3D = X3D;
 
 		if (window .Proxy === undefined)
 		   return fallback ("Proxy is not defined");

@@ -30,10 +30,12 @@ var Bookmarks = (function ()
 			index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
 
 		if (mobile)
-			boorkmarks = bookmarks .filter (function (bookmark) { return bookmark .mobile; });
+			bookmarks = bookmarks .filter (function (bookmark) { return bookmark .mobile; });
 
 		while (bookmarks .length)
 			pages .push (bookmarks .splice (0, filesPerPage || 20));
+
+		index = Math .min (index, pages .length - 1);
 
 		this .browser         = browser;
 		this .element         = element;
