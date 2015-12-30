@@ -7,7 +7,7 @@
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 30 Dec 2015 21:49:42 GMT'/>
+    <meta name='modified' content='Wed, 30 Dec 2015 21:55:07 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
@@ -1474,7 +1474,7 @@ function set_touchTime (value, time)
                     emissiveColor='1 1 1'/>
               </Appearance>
               <Text
-                  string='"directions"'
+                  string='"direction"'
                   solid='true'>
                 <FontStyle
                     family='"Ubuntu", "SANS"'
@@ -1483,7 +1483,7 @@ function set_touchTime (value, time)
             </Shape>
           </Transform>
           <Transform DEF='Rectangle2D_11'
-              translation='1.25016 -0.825 -3.02553e-06'
+              translation='1.3 -0.825 -3.03163e-06'
               scale='0.025 0.0247567 0.0247567'>
             <Shape>
               <Appearance>
