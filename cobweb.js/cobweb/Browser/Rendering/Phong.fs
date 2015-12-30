@@ -6,8 +6,8 @@ precision mediump float;
 #define GEOMETRY_2D 2
 #define GEOMETRY_3D 3
 
-uniform int   X3D_GeometryType;
-uniform bool  X3D_Points;
+uniform int   x3d_GeometryType;
+uniform bool  x3d_Points;
 // 1
 
 #define MAX_CLIP_PLANES 6
@@ -65,13 +65,14 @@ uniform vec3  x3d_BackEmissiveColor;
 uniform float x3d_BackShininess;
 uniform float x3d_BackTransparency;
 
+#define MAX_TEXTURES 1
 #define NO_TEXTURE   0
 #define TEXTURE_2D   2
 #define TEXTURE_CUBE 4
 
-uniform int         x3d_TextureType; // true if a X3DTexture2DNode is attached, otherwise false
-uniform sampler2D   x3d_Texture;
-uniform samplerCube x3d_CubeMapTexture;
+uniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false
+uniform sampler2D   x3d_Texture [MAX_TEXTURES];
+uniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];
 
 varying vec4 C;  // color
 varying vec4 t;  // texCoord
@@ -81,14 +82,14 @@ varying vec3 v;  // point on geometry
 void
 clip ()
 {
-	if (X3D_Points && x3d_LinewidthScaleFactor >= 2.0)
+/* 	if (x3d_Points && x3d_LinewidthScaleFactor >= 2.0)
 	{
 		float dist = distance (vec2 (0.5, 0.5), gl_PointCoord);
 	
 		if (dist > 0.5)
 			discard;
 	}
-
+ */
 	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
 	{
 		if (x3d_ClipPlaneEnabled [i])
@@ -126,22 +127,22 @@ getFogInterpolant ()
 vec4
 getTextureColor ()
 {
-	if (x3d_TextureType == TEXTURE_2D)
+	if (x3d_TextureType [0] == TEXTURE_2D)
 	{
-		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
-			return texture2D (x3d_Texture, vec2 (t));
+		if (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)
+			return texture2D (x3d_Texture [0], vec2 (t));
 		
 		// If dimension is GEOMETRY_2D the texCoords must be flipped.
-		return texture2D (x3d_Texture, vec2 (1.0 - t .s, t .t));
+		return texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));
 	}
 
-	if (x3d_TextureType == TEXTURE_CUBE)
+	if (x3d_TextureType [0] == TEXTURE_CUBE)
 	{
-		if (X3D_GeometryType == GEOMETRY_3D || gl_FrontFacing)
-			return textureCube (x3d_CubeMapTexture, vec3 (t));
+		if (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)
+			return textureCube (x3d_CubeMapTexture [0], vec3 (t));
 		
 		// If dimension is GEOMETRY_2D the texCoords must be flipped.
-		return textureCube (x3d_CubeMapTexture, vec3 (1.0 - t .s, t .t, t .z));
+		return textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));
 	}
 
 	return vec4 (1.0, 1.0, 1.0, 1.0);
@@ -176,7 +177,7 @@ main ()
 
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_TextureType != NO_TEXTURE)
+			if (x3d_TextureType [0] != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -190,7 +191,7 @@ main ()
 		}
 		else
 		{
-			if (x3d_TextureType != NO_TEXTURE)
+			if (x3d_TextureType [0] != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -264,7 +265,7 @@ main ()
 	
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_TextureType != NO_TEXTURE)
+			if (x3d_TextureType [0] != NO_TEXTURE)
 			{
 				vec4 T = getTextureColor ();
 
@@ -275,7 +276,7 @@ main ()
 		}
 		else
 		{
-			if (x3d_TextureType != NO_TEXTURE)
+			if (x3d_TextureType [0] != NO_TEXTURE)
 				finalColor = getTextureColor ();
 		}
 

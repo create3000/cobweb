@@ -595,14 +595,12 @@ function ($,
 
 			// Draw.
 
-			gl .activeTexture (gl .TEXTURE0);
 			this .drawRectangle (gl, shader, this .frontTexture,  this .frontBuffer);
 			this .drawRectangle (gl, shader, this .backTexture,   this .backBuffer);
 			this .drawRectangle (gl, shader, this .leftTexture,   this .leftBuffer);
 			this .drawRectangle (gl, shader, this .rightTexture,  this .rightBuffer);
 			this .drawRectangle (gl, shader, this .topTexture,    this .topBuffer);
 			this .drawRectangle (gl, shader, this .bottomTexture, this .bottomBuffer);
-			gl .bindTexture (gl .TEXTURE_2D, null);
 
 			// Disable vertex attribute arrays.
 
@@ -613,7 +611,7 @@ function ($,
 		{
 			if (texture && texture .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				gl .bindTexture (gl .TEXTURE_2D, texture .getTexture ());
+				texture .traverse (gl, shader, 0);
 
 				if (texture .transparent_ .getValue ())
 					gl .enable (gl .BLEND);

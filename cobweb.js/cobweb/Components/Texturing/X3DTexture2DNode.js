@@ -33,7 +33,9 @@ function ($,
 		{
 			X3DTextureNode .prototype .initialize .call (this);
 			
-			this .target = this .getBrowser () .getContext () .TEXTURE_2D;
+			var gl = this .getBrowser () .getContext ();
+			
+			this .target = gl .TEXTURE_2D;
 
 			this .repeatS_           .addInterest (this, "updateTextureProperties");
 			this .repeatT_           .addInterest (this, "updateTextureProperties");
@@ -158,6 +160,13 @@ function ($,
 			}
 
 			return output;
+		},
+		traverse: function (gl, shader, i)
+		{
+			shader .textureTypeArray [i] = 2;
+			gl .activeTexture (gl .TEXTURE0);
+			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+			gl .uniform1iv (shader .textureType, shader .textureTypeArray);
 		},
 	});
 

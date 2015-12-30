@@ -142,9 +142,9 @@ function ($,
 
 				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
 				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-				gl .bindTexture (this .target, this .getTexture ());
+				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
 				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .bindTexture (this .target, null);
+				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
 
 				this .set_textureQuality__ ();
 			}
@@ -174,6 +174,13 @@ function ($,
 
 			if (transparent !== this .transparent_ .getValue ())
 				this .transparent_ = transparent;
+		},
+		traverse: function (gl, shader, i)
+		{
+			shader .textureTypeArray [i] = 4;
+			gl .activeTexture (gl .TEXTURE1);
+			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
+			gl .uniform1iv (shader .textureType, shader .textureTypeArray);
 		},
 	});
 

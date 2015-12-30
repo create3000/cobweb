@@ -97,13 +97,13 @@ getMaterial (vec3 N,
 
 	for (int i = 0; i < MAX_LIGHTS; ++ i)
 	{
-		int t = x3d_LightType [i];
+		int lightType = x3d_LightType [i];
 
-		if (t != NO_LIGHT)
+		if (lightType != NO_LIGHT)
 		{
 			vec3  vL = x3d_LightLocation [i] - v;
 			float dL = length (vL);
-			bool  di = t == DIRECTIONAL_LIGHT;
+			bool  di = lightType == DIRECTIONAL_LIGHT;
 
 			if (di || dL <= x3d_LightRadius [i])
 			{
@@ -119,7 +119,7 @@ getMaterial (vec3 N,
 				float attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
 				float spot        = 1.0;
 	
-				if (t == SPOT_LIGHT)
+				if (lightType == SPOT_LIGHT)
 				{
 					float spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));
 					float cutOffAngle = x3d_LightCutOffAngle [i];

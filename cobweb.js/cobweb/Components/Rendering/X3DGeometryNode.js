@@ -436,7 +436,7 @@ function ($,
 
 			this .texCoordBuffers .length = this .texCoords .length;
 			
-			for (var i = 0; i < this .texCoords .length; ++ i)
+			for (var i = 0, length = this .texCoords .length; i < length; ++ i)
 			{
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [i]);
 				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .texCoords [i]), gl .STATIC_DRAW);
@@ -529,8 +529,6 @@ function ($,
 			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
 			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
 			gl .disableVertexAttribArray (shader .vertex);
-
-			gl .bindTexture (shader .textureTarget, null);
 		},
 		collision: function (shader)
 		{

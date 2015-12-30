@@ -76,8 +76,6 @@ function ($,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
 		textureTypeArray: new Int32Array (MAX_TEXTURES),
-		textureArray: new Int32Array (MAX_TEXTURES),
-		cubeMapTextureArray: new Int32Array (MAX_TEXTURES),
 		getTypeName: function ()
 		{
 			return "ComposedShader";
@@ -98,7 +96,6 @@ function ($,
 			var gl = this .getBrowser () .getContext ();
 
 			this .primitiveMode = gl .TRIANGLES;
-			this .textureTarget = gl .TEXTURE_2D;
 
 			this .activate_ .addInterest (this, "set_activate__");
 			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
@@ -186,8 +183,8 @@ function ($,
 			shader = this;
 			gl .useProgram (program);
 
-			this .points       = gl .getUniformLocation (program, "X3D_Points");
-			this .geometryType = gl .getUniformLocation (program, "X3D_GeometryType");
+			this .points       = gl .getUniformLocation (program, "x3d_Points");
+			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
 			{
@@ -236,7 +233,7 @@ function ($,
 
 			this .textureType    = gl .getUniformLocation (program, "x3d_TextureType");
 			this .texture        = gl .getUniformLocation (program, "x3d_Texture");
-			this .cubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTextureTexture");
+			this .cubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
 
 			this .textureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 			this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
@@ -251,9 +248,9 @@ function ($,
 			gl .uniform1i  (this .points,               this .getPoints ());
 			gl .uniform1i  (this .geometryType,         this .getGeometryType ());
 			gl .uniform1f  (this .linewidthScaleFactor, 1);
-			gl .uniform1iv (this .textureType,          this .textureTypeArray);    // Set texture to active texture unit 0.
-			gl .uniform1iv (this .texture,              this .textureArray);        // Set texture to active texture unit 0.
-			gl .uniform1iv (this .cubeMapTexture,       this .cubeMapTextureArray); // Set cube map texture to active texture unit 1.
+			gl .uniform1iv (this .textureType,          new Int32Array ([0]));
+			gl .uniform1iv (this .texture,              new Int32Array ([0])); // Set texture to active texture unit 0.
+			gl .uniform1iv (this .cubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
 		},
 		setGlobalUniforms: function ()
 		{
@@ -398,16 +395,15 @@ function ($,
 
 			if (texture)
 			{
+				texture .traverse (gl, this, 0)
 				appearance .getTextureTransform () .traverse ();
-	
-				gl .activeTexture (gl .TEXTURE0);
-				gl .bindTexture (this .textureTarget = texture .getTarget (), texture .getTexture ());
-				gl .uniform1i (this .textureType, texture .getTextureType ());
+
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 			}
 			else
 			{
-				gl .uniform1i (this .textureType, 0);
+				this .textureTypeArray [0] = 0;
+				gl .uniform1iv (this .textureType, this .textureTypeArray);
 
 				if (this .getCustom ())
 				{
