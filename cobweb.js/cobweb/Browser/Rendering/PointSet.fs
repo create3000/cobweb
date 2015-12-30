@@ -29,6 +29,14 @@ varying vec3 v; // point on geometry
 void
 clip ()
 {
+ 	if (x3d_LinewidthScaleFactor >= 2.0)
+	{
+		float dist = distance (vec2 (0.5, 0.5), gl_PointCoord);
+	
+		if (dist > 0.5)
+			discard;
+	}
+
 	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
 	{
 		if (x3d_ClipPlaneEnabled [i])

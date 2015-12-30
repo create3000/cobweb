@@ -61,10 +61,6 @@ function ($,
 		{
 			return this .target;
 		},
-		getTextureType: function ()
-		{
-			return 2;
-		},
 		getWidth: function ()
 		{
 			return this .width;

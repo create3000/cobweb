@@ -183,7 +183,6 @@ function ($,
 			shader = this;
 			gl .useProgram (program);
 
-			this .points       = gl .getUniformLocation (program, "x3d_Points");
 			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
@@ -245,7 +244,6 @@ function ($,
 			this .normal   = gl .getAttribLocation (program, "x3d_Normal");
 			this .vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
 
-			gl .uniform1i  (this .points,               this .getPoints ());
 			gl .uniform1i  (this .geometryType,         this .getGeometryType ());
 			gl .uniform1f  (this .linewidthScaleFactor, 1);
 			gl .uniform1iv (this .textureType,          new Int32Array ([0]));

@@ -91,10 +91,6 @@ function ($,
 		{
 			return this .target;
 		},
-		getTextureType: function ()
-		{
-			return 4;
-		},
 		set_live__: function ()
 		{
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())

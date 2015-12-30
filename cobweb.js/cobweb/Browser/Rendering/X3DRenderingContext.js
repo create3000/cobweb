@@ -5,6 +5,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
+	"text!cobweb/Browser/Rendering/PointSet.fs",
 	"text!cobweb/Browser/Rendering/Wireframe.vs",
 	"text!cobweb/Browser/Rendering/Wireframe.fs",
 	"text!cobweb/Browser/Rendering/Gouraud.vs",
@@ -20,6 +21,7 @@ define ([
 function (Fields,
           ComposedShader,
           ShaderPart,
+          pointSetFS,
           wireframeVS,
           wireframeFS,
           gouraudVS,
@@ -78,10 +80,9 @@ function (Fields,
 			this .reshape ();
 
 			this .depthShader = this .createShader (this, depthVS, depthFS);
+			this .pointShader = this .createShader (this, wireframeVS, pointSetFS);
 			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
-			this .pointShader = createPointShader (this, this .lineShader, gl);
 
-			this .pointShader .setPoints (true);
 			this .pointShader .setGeometryType (0);
 			this .lineShader  .setGeometryType (1);
 
@@ -179,7 +180,6 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .setPoints (true);
 					this .defaultShader .setShading (type);
 					break;
 				}
@@ -196,7 +196,6 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .setPoints (false);
 					this .defaultShader .setShading (type);
 					break;
 				}
@@ -213,7 +212,6 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .setPoints (false);
 					this .defaultShader .setShading (type);
 					break;
 				}
@@ -232,7 +230,6 @@ function (Fields,
 					this .pointShader .wireframe = true;
 					this .lineShader  .wireframe = true;
 
-					this .lineShader .setPoints (false);
 					this .defaultShader .setShading (type);
 					break;
 				}

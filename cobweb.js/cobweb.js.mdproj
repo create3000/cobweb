@@ -1086,6 +1086,7 @@
     <None Include="version.pl" />
     <None Include="examples\water\tiles.jpg" />
     <None Include="examples\water\water.x3d" />
+    <None Include="cobweb\Browser\Rendering\PointSet.fs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -32,17 +32,6 @@ function ($,
 		{
 			return this .custom;
 		},
-		setPoints: function (value)
-		{
-			this .pointsValue = value;
-
-			this .use ();
-			this .getBrowser () .getContext () .uniform1i (this .points, value);
-		},
-		getPoints: function ()
-		{
-			return this .pointsValue;
-		},
 		setGeometryType: function (value)
 		{
 			this .geometryTypeValue = value;
@@ -66,32 +55,24 @@ function ($,
 				{
 					this .primitiveMode = gl .POINTS;
 					this .wireframe     = true;
-	
-					this .setPoints (true);
 					break;
 				}
 				case "WIREFRAME":
 				{
 					this .primitiveMode = gl .LINE_LOOP;
 					this .wireframe     = true;
-	
-					this .setPoints (false);
 					break;
 				}
 				case "PHONG":
 				{
 					this .primitiveMode = gl .TRIANGLES;
 					this .wireframe     = false;
-	
-					this .setPoints (false);
 					break;
 				}
 				default:
 				{
 					this .primitiveMode = gl .TRIANGLES;
 					this .wireframe     = false;
-
-					this .setPoints (false);
 					break;
 				}
 			}
