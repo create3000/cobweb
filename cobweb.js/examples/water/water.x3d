@@ -7,7 +7,7 @@
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 30 Dec 2015 21:24:46 GMT'/>
+    <meta name='modified' content='Wed, 30 Dec 2015 21:32:09 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
@@ -274,9 +274,9 @@
                 <field accessType='inputOutput' type='SFVec3f' name='position' value='68.8916 46.8921 120.146'/>
                 <field accessType='inputOutput' type='SFInt32' name='numWaves' value='5'/>
                 <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.222428, 0.164404, 0.096708, 0.096708, 0.096708'/>
-                <field accessType='inputOutput' type='MFFloat' name='frequency' value='3.21653, 2.86406, 1.25756, 1.08237, 0.848653, 0, 0, 0'/>
+                <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.6395, 1.45984, 0.64099, 0.551695, 0.432567'/>
                 <field accessType='inputOutput' type='MFFloat' name='speed' value='2.18808, 2.18808, 2.18808, 2.18808, 2.18808'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='2 -2, 2 -1, 2 -0, 2 1, 2 2'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.988329 0.715616, 0.410019 0.685582, 0.247175 0.568028, 0.250573 0.118961, 0.878621 0.667819'/>
                 <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.199398'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture DEF='_4'>
@@ -407,8 +407,8 @@ main ()
                 <field accessType='inputOnly' type='SFFloat' name='set_time'/>
                 <field accessType='inputOutput' type='SFVec3f' name='position' value='68.8916 46.8921 120.146'/>
                 <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.222428, 0.164404, 0.096708, 0.096708, 0.096708'/>
-                <field accessType='inputOutput' type='MFFloat' name='frequency' value='3.21653, 2.86406, 1.25756, 1.08237, 0.848653, 0, 0, 0'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='2 -2, 2 -1, 2 -0, 2 1, 2 2'/>
+                <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.6395, 1.45984, 0.64099, 0.551695, 0.432567'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.988329 0.715616, 0.410019 0.685582, 0.247175 0.568028, 0.250573 0.118961, 0.878621 0.667819'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture USE='_4'/>
                 </field>
@@ -1184,7 +1184,7 @@ function set_touchTime (value, time)
             </Transform>
             <Transform>
               <Transform DEF='Rectangle2D_7'
-                  translation='0.292367 0 0'
+                  translation='0.149022 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
                   <Appearance>
@@ -1195,7 +1195,7 @@ function set_touchTime (value, time)
                 </Shape>
               </Transform>
               <PlaneSensor DEF='_40'
-                  offset='0.292367 0 0'
+                  offset='0.149022 0 0'
                   maxPosition='1 0'/>
             </Transform>
             <Group>
@@ -1248,7 +1248,7 @@ function set_touchTime (value, time)
                 <field accessType='inputOutput' type='MFFloat' name='keyValue' value='1.10017, 0.97961, 0.43013, 0.37021, 0.29027'/>
                 <field accessType='outputOnly' type='MFFloat' name='value_changed'/>
                 <field accessType='outputOnly' type='MFString' name='string_changed'/>
-                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='2.92'/>
+                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='1.49'/>
 <![CDATA[ecmascript:
 
 function initialized ()
@@ -1322,7 +1322,7 @@ function set_touchTime (value, time)
                     emissiveColor='1 1 1'/>
               </Appearance>
               <Text DEF='_43'
-                  string='"frequency 2.92"'
+                  string='"frequency 1.49"'
                   solid='true'>
                 <FontStyle
                     family='"Ubuntu", "SANS"'
@@ -1662,6 +1662,19 @@ function set_touchTime (value, time)
             </Switch>
           </Transform>
         </Group>
+        <Script DEF='DirectionsScript'>
+          <field accessType='outputOnly' type='MFVec2f' name='directions_changed'/>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	for (var i = 0; i < 5; ++ i)
+	{
+		directions_changed [i] .x = Math .random ();
+		directions_changed [i] .y = Math .random ();
+	}
+}]]> 
+        </Script>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='ElapsedTime' toField='set_fraction'/>
@@ -1708,7 +1721,6 @@ function set_touchTime (value, time)
     <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_44' toField='set_string'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_speed'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_speed'/>
-    <ROUTE fromNode='TitaniaWaterShader' fromField='direction_changed' toNode='CobwebWaterShader' toField='set_direction'/>
     <ROUTE fromNode='_21' fromField='touchTime' toNode='_22' toField='set_triggerTime'/>
     <ROUTE fromNode='_22' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_22' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
@@ -1734,5 +1746,7 @@ function set_touchTime (value, time)
     <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_48' toField='set_string'/>
     <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_transparency'/>
     <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='_3' toField='set_transparency'/>
+    <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='TitaniaWaterShader' toField='set_direction'/>
+    <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='CobwebWaterShader' toField='set_direction'/>
   </Scene>
 </X3D>
