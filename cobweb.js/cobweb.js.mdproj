@@ -1088,6 +1088,8 @@
     <None Include="examples\water\water.x3d" />
     <None Include="cobweb\Browser\Rendering\PointSet.fs" />
     <None Include="examples\alprojectsvr\wtc.x3d" />
+    <None Include="examples\alprojectsvr\d1.x3d" />
+    <None Include="examples\alprojectsvr\ssf.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

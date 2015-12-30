@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 30 Dec 2015 17:20:25 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 30 Dec 2015 18:24:59 GMT'/>
+    <meta name='modified' content='Wed, 30 Dec 2015 18:24:42 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -44,7 +44,7 @@
         order='1, 2'>
       <Layer>
         <Inline
-            url='"http://alprojectsvr.bluemoonpics.com/wtc/wtc.wrl"'/>
+            url='"http://alprojectsvr.bluemoonpics.com/2001/ss5w/ss5w.wrl"'/>
       </Layer>
       <Layer>
         <MetadataSet DEF='Titania_1'
@@ -89,10 +89,11 @@
             <Shape>
               <Appearance>
                 <Material
-                    diffuseColor='0 0 0'/>
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'/>
               </Appearance>
               <Text
-                  string='"World Trade Center", "© AlprojectsVR 1999-2016"'
+                  string='"2001 · Space Station Five", "© AlprojectsVR 1999-2016"'
                   solid='true'>
                 <FontStyle
                     family='"SANS"'
