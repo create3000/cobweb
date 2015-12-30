@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Wed, 30 Dec 2015 17:20:25 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
+    <meta name='modified' content='Wed, 30 Dec 2015 18:10:42 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='0, 0, 10'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 1, 0'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 0'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <LayerSet
+        activeLayer='1'
+        order='1, 2'>
+      <Layer>
+        <Inline
+            url='"http://alprojectsvr.bluemoonpics.com/wtc/wtc.wrl"'/>
+      </Layer>
+      <Layer>
+        <MetadataSet DEF='Titania_1'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='AngleGrid' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+          <MetadataSet DEF='Grid' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_1' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='true'/>
+            <MetadataFloat DEF='rotation' containerField='value'
+                name='rotation'
+                reference='http://titania.create3000.de'
+                value='1, 0, 0, 1.5708'/>
+            <MetadataFloat DEF='scale' containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='0.05, 0.05, 0.05'/>
+            <MetadataInteger DEF='dimension' containerField='value'
+                name='dimension'
+                reference='http://titania.create3000.de'
+                value='80, 10, 40'/>
+          </MetadataSet>
+        </MetadataSet>
+        <OrthoViewpoint DEF='_1'/>
+        <Anchor
+            description='http://alprojectsvr.bluemoonpics.com'
+            url='"http://alprojectsvr.bluemoonpics.com"'>
+          <Transform DEF='Text'
+              translation='1.63396 -0.95 3.25171e-08'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'/>
+              </Appearance>
+              <Text
+                  string='"World Trade Center", "© AlprojectsVR 1999-2016"'
+                  solid='true'>
+                <FontStyle
+                    family='"SANS"'
+                    size='0.08'
+                    spacing='1.2'
+                    justify='"END", "END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D'
+              translation='1.12602 -0.872184 -1'
+              scale='0.575 0.126706 0.25'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <Rectangle2D/>
+            </Shape>
+          </Transform>
+        </Anchor>
+      </Layer>
+    </LayerSet>
+  </Scene>
+</X3D>

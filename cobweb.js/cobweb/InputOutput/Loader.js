@@ -120,9 +120,10 @@ function ($,
 			if (this .URL .length)
 				console .info ("Done loading scene " + this .URL);
 		},
-		createX3DFromURL: function (url, callback, bindViewpoint)
+		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
 		{
 			this .bindViewpoint = bindViewpoint;
+			this .foreign       = foreign;
 
 			if (callback)
 				return this .loadDocument (url, this .createX3DFromURLAsync .bind (this, callback));
@@ -285,8 +286,14 @@ function ($,
 				//timeout: 15000,
 				global: false,
 				context: this,
-				success: function (blob, status)
+				success: function (blob, status, xhr)
 				{
+					if (this .foreign)
+					{
+						if (xhr .getResponseHeader ("Content-Type") === "text/html")
+							this .foreign (this .URL);
+					}
+
 					this .fileReader .onload = this .readAsText .bind (this, blob);
 
 					this .fileReader .readAsText (blob);

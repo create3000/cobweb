@@ -34162,9 +34162,10 @@ function ($,
 			if (this .URL .length)
 				console .info ("Done loading scene " + this .URL);
 		},
-		createX3DFromURL: function (url, callback, bindViewpoint)
+		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
 		{
 			this .bindViewpoint = bindViewpoint;
+			this .foreign       = foreign;
 
 			if (callback)
 				return this .loadDocument (url, this .createX3DFromURLAsync .bind (this, callback));
@@ -34327,8 +34328,14 @@ function ($,
 				//timeout: 15000,
 				global: false,
 				context: this,
-				success: function (blob, status)
+				success: function (blob, status, xhr)
 				{
+					if (this .foreign)
+					{
+						if (xhr .getResponseHeader ("Content-Type") === "text/html")
+							this .foreign (this .URL);
+					}
+
 					this .fileReader .onload = this .readAsText .bind (this, blob);
 
 					this .fileReader .readAsText (blob);
@@ -59617,6 +59624,19 @@ function ($,
 		{
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
 
+			var target;
+
+			for (var i = 0, length = this .parameter_ .length; i < length; ++ i)
+			{
+				var pair = this .parameter_ [i] .split ("=");
+
+				if (pair .length !== 2)
+					continue;
+
+				if (pair [0] === "target")
+					target = pair [1];
+			}
+
 			new Loader (this) .createX3DFromURL (this .url_, /*this .parameter_,*/
 			function (scene)
 			{
@@ -59637,6 +59657,16 @@ function ($,
 				}
 				catch (error)
 				{ }
+
+				this .setLoadState (X3DConstants .COMPLETE_STATE, false);
+			}
+			.bind (this),
+			function (url)
+			{
+				if (target)
+					window .open (url, target);
+				else
+					location = url;
 
 				this .setLoadState (X3DConstants .COMPLETE_STATE, false);
 			}
@@ -72603,6 +72633,8 @@ function ($,
 		},
 		loadURL: function (url, parameter)
 		{
+			var target;
+
 			for (var i = 0, length = parameter .length; i < length; ++ i)
 			{
 				var pair = parameter [i] .split ("=");
@@ -72610,8 +72642,8 @@ function ($,
 				if (pair .length !== 2)
 					continue;
 
-				if (pair [0] === "target" && pair [1] !== "_self")
-					return;
+				if (pair [0] === "target")
+					target = pair [1];
 			}
 
 			this .setBrowserLoading (true);
@@ -72633,6 +72665,17 @@ function ($,
 			function (fragment)
 			{
 				this .currentScene .changeViewpoint (fragment);
+				this .removeLoadCount (id);
+				this .setBrowserLoading (false);
+			}
+			.bind (this),
+			function (url)
+			{
+				if (target)
+					window .open (url, target);
+				else
+					location = url;
+
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
 			}

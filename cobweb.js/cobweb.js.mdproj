@@ -1087,6 +1087,7 @@
     <None Include="examples\water\tiles.jpg" />
     <None Include="examples\water\water.x3d" />
     <None Include="cobweb\Browser\Rendering\PointSet.fs" />
+    <None Include="examples\alprojectsvr\wtc.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1140,5 +1141,6 @@
     <Folder Include="cobweb\Browser\Layout\" />
     <Folder Include="tests\Components\Layout\" />
     <Folder Include="examples\water\" />
+    <Folder Include="examples\alprojectsvr\" />
   </ItemGroup>
 </Project>

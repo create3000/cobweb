@@ -285,6 +285,8 @@ function ($,
 		},
 		loadURL: function (url, parameter)
 		{
+			var target;
+
 			for (var i = 0, length = parameter .length; i < length; ++ i)
 			{
 				var pair = parameter [i] .split ("=");
@@ -292,8 +294,8 @@ function ($,
 				if (pair .length !== 2)
 					continue;
 
-				if (pair [0] === "target" && pair [1] !== "_self")
-					return;
+				if (pair [0] === "target")
+					target = pair [1];
 			}
 
 			this .setBrowserLoading (true);
@@ -315,6 +317,17 @@ function ($,
 			function (fragment)
 			{
 				this .currentScene .changeViewpoint (fragment);
+				this .removeLoadCount (id);
+				this .setBrowserLoading (false);
+			}
+			.bind (this),
+			function (url)
+			{
+				if (target)
+					window .open (url, target);
+				else
+					location = url;
+
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
 			}
