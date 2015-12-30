@@ -32,5 +32,7 @@ sub cp {
 	system "perl", "-pi", "-e", 's|cobweb\.js|cobweb.min.js|sg', "$VERSION_DIR/browser.html";
 }
 
+exit unless -d $VERSION_DIR;
+
 cp $VERSION_DIR;
 cp $LATEST;

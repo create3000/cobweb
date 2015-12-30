@@ -187,6 +187,7 @@ X3D .cobweb-browser-timing button:hover {
 	position: absolute;
 	display: inline-block;
 	min-width: 120px;
+	width: unset !important;
 	padding: 0;
 	margin: 0;
 	font-family: PT Sans, sans-serif;
