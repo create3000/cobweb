@@ -190,6 +190,7 @@ X3D .cobweb-browser-timing button:hover {
 	width: unset !important;
 	padding: 0;
 	margin: 0;
+	white-space: pre;
 	font-family: PT Sans, sans-serif;
 	font-size: 10pt;
 	line-height: 1.2;
