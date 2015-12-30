@@ -357,7 +357,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Logo Triangles"
-     style="display:inline;opacity:1"
+     style="display:none;opacity:1"
      sodipodi:insensitive="true">
     <g
        id="g4066"
@@ -392,7 +392,7 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Logo Circles"
-     style="display:none">
+     style="display:inline">
     <g
        id="g5156"
        transform="matrix(1.9783889,0,0,1.9783889,-667.61026,-395.59779)">
