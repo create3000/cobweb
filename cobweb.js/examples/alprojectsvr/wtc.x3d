@@ -6,7 +6,7 @@
     <meta name='created' content='Wed, 30 Dec 2015 17:20:25 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 30 Dec 2015 18:24:59 GMT'/>
+    <meta name='modified' content='Wed, 30 Dec 2015 18:28:37 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -83,7 +83,7 @@
         <Anchor
             description='http://alprojectsvr.bluemoonpics.com'
             url='"http://alprojectsvr.bluemoonpics.com"'
-            parameter='"target=_parent"'>
+            parameter='"target=_top"'>
           <Transform DEF='Text'
               translation='1.63396 -0.95 3.25171e-08'>
             <Shape>
