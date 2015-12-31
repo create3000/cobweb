@@ -3,10 +3,12 @@ define ([
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode, 
-          X3DConstants)
+          X3DConstants,
+          Algorithm)
 {
 "use strict";
 
@@ -68,7 +70,7 @@ function ($,
 		{
 			if (this .previous_ .getValue ())
 			{
-				if (this .index === 0)
+				if (this .index <= 0)
 					this .index = this .getSize () - 1;
 
 				else
@@ -82,7 +84,7 @@ function ($,
 		{
 			if (this .next_ .getValue ())
 			{
-				if (this .index === this .getSize () - 1)
+				if (this .index >= this .getSize () - 1)
 					this .index = 0;
 		
 				else
