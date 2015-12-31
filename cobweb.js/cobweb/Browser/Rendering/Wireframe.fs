@@ -3,43 +3,38 @@ data:text/plain;charset=utf-8,
 
 precision mediump float;
 
-// 2
 uniform float x3d_LinewidthScaleFactor;
+// 2
 
 #define MAX_CLIP_PLANES 6
 
-// 30
-uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
-uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
+uniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];
+// 24
 
 #define NO_FOG           0
 #define LINEAR_FOG       1
 #define EXPONENTIAL_FOG  2
 #define EXPONENTIAL2_FOG 3
 
-// 5
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
-
 // 5
+
 varying vec4 C; // color
 varying vec3 v; // point on geometry
+// 5
 
 void
 clip ()
 {
 	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
 	{
-		if (x3d_ClipPlaneEnabled [i])
-		{
-			if (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)
-			{
-				discard;
-			}
-		}
-		else
+		if (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))
 			break;
+
+		if (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)
+			discard;
 	}
 }
 

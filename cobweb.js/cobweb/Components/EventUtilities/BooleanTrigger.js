@@ -43,6 +43,16 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+
+			this .set_triggerTime_ .addInterest (this, "set_triggerTime__");
+		},
+		set_triggerTime__: function ()
+		{
+			this .triggerTrue_ = true;
+		},
 	});
 
 	return BooleanTrigger;

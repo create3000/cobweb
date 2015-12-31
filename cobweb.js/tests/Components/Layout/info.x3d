@@ -11,7 +11,7 @@
     <meta name='title' content='about:info'/>
   </head>
   <Scene>
-    <ExternProtoDeclare name='Rotor' url='"../../../../../Titania/Titania/share/titania/pages/about/library/Rotor.x3dv"'>
+    <ExternProtoDeclare name='Rotor' url='"library/Rotor.x3dv"'>
       <field accessType='inputOutput' type='SFBool' name='enabled'/>
       <field accessType='inputOutput' type='SFTime' name='cycleInterval'/>
       <field accessType='inputOutput' type='SFVec3f' name='axis'/>
@@ -145,7 +145,7 @@
                 <Transform DEF='Logo'
                     center='5.6 -5.9 0'>
                   <Inline
-                      url='"../../../../../Titania/Titania/share/titania/pages/about/library/logo.x3dv"'/>
+                      url='"library/logo.x3dv"'/>
                 </Transform>
               </Transform>
               <Transform DEF='Titania_1'

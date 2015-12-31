@@ -43,6 +43,17 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			if (this .set_boolean_ .getValue ())
+				this .toggle_ = ! this .toggle_ .getValue ();
+		},
 	});
 
 	return BooleanToggle;

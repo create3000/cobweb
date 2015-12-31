@@ -50,8 +50,7 @@ function ($,
 		this .addType (X3DConstants .ComposedShader);
 
 		this .loadSensor            = new LoadSensor (executionContext);
-		this .clipPlaneEnabled      = [ ];
-		this .clipPlaneVector       = [ ];
+		this .clipPlane             = [ ];
 		this .lightType             = [ ];
 		this .lightOn               = [ ];
 		this .lightColor            = [ ];
@@ -72,7 +71,8 @@ function ($,
 		wireframe: false,
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
-		fog: null,
+		noClipPlane: new Float32Array (4),
+		fogNode: null,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
 		textureTypeArray: new Int32Array (MAX_TEXTURES),
@@ -186,10 +186,7 @@ function ($,
 			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
-			{
-				this .clipPlaneEnabled [i] = gl .getUniformLocation (program, "x3d_ClipPlaneEnabled[" + i + "]");
-				this .clipPlaneVector [i]  = gl .getUniformLocation (program, "x3d_ClipPlaneVector[" + i + "]");
-			}
+				this .clipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
 
 			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
 			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
@@ -293,17 +290,19 @@ function ($,
 					clipPlanes [i] .use (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
-					gl .uniform1i (this .clipPlaneEnabled [i], false);
+					gl .uniform4fv (this .clipPlane [i], this .noClipPlane);
 			}
 			else
-				gl .uniform1i (this .clipPlaneEnabled [0], false);
-
-			// Fog
-
-			if (context .fog !== this .fog)
 			{
-				this .fog = context .fog;
-				context .fog .use (gl, this);
+				gl .uniform4fv (this .clipPlane [0], this .noClipPlane);
+			}
+
+			// Fog, there is always one
+
+			if (context .fogNode !== this .fogNode)
+			{
+				this .fogNode = context .fogNode;
+				context .fogNode .use (gl, this);
 			}
 
 			// LineProperties

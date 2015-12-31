@@ -16,8 +16,6 @@ my $MAJOR       = int ($VERSION);
 my $VERSION_DIR = "../stable/$MAJOR/$VERSION";
 my $LATEST      = "../stable/latest";
 
-say "Making version '$VERSION' now.";
-
 sub cp {
 	my $VERSION_DIR = shift;
 
@@ -33,6 +31,8 @@ sub cp {
 }
 
 exit unless -d $VERSION_DIR;
+
+say "Making version '$VERSION' now.";
 
 cp $VERSION_DIR;
 cp $LATEST;

@@ -514,10 +514,10 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform1i (shader .clipPlaneEnabled [0], false);
+				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
@@ -568,10 +568,10 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform1i (shader .clipPlaneEnabled [0], false);
+				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 

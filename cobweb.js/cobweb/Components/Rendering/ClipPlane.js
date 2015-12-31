@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
 	"standard/Math/Geometry/Plane3",
 	"standard/Utility/ObjectCache",
 ],
@@ -17,6 +18,7 @@ function ($,
           X3DChildNode, 
           X3DConstants,
           Vector3,
+          Vector4,
           Plane3,
           ObjectCache)
 {
@@ -54,7 +56,7 @@ function ($,
 		{
 			var
 				plane  = this .plane,
-				plane_ = clipPlane .plane_ .getValue ();
+				plane_ = clipPlane .plane;
 
 			plane .normal .assign (plane_);
 			plane .distanceFromOrigin = -plane_ .w;
@@ -67,8 +69,7 @@ function ($,
 				plane  = this .plane,
 				normal = plane .normal;
 
-			gl .uniform1i (shader .clipPlaneEnabled [i], true);
-			gl .uniform4f (shader .clipPlaneVector [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+			gl .uniform4f (shader .clipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
 		recycle: function ()
 		{
@@ -81,6 +82,9 @@ function ($,
 		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .ClipPlane);
+
+		this .enabled = false;
+		this .plane   = new Vector4 (0, 0, 0, 0);
 	}
 
 	ClipPlane .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -103,14 +107,29 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .enabled_ .addInterest (this, "set_enabled__");
+			this .plane_   .addInterest (this, "set_enabled__");
+
+			this .set_enabled__ ();
+		},
+		set_enabled__: function ()
+		{
+			this .plane .assign (this .plane_ .getValue ());
+
+			this .enabled = this .enabled_ .getValue () && ! this .plane .equals (Vector4 .Zero);
+		},
 		push: function ()
 		{
-			if (this .enabled_ .getValue ())
+			if (this .enabled)
 				this .getCurrentLayer () .getClipPlanes () .push (ClipPlanes .pop (this));
 		},
 		pop: function ()
 		{
-			if (this .enabled_ .getValue ())
+			if (this .enabled)
 				this .getBrowser () .getClipPlanes () .push (this .getCurrentLayer () .getClipPlanes () .pop ());
 		},
 	});

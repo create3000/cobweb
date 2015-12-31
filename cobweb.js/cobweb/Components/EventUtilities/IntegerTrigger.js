@@ -44,6 +44,16 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			this .triggerValue_ = this .integerKey_;
+		},
 	});
 
 	return IntegerTrigger;

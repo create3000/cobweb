@@ -93,19 +93,19 @@ function ($,
 		{
 			return this .localLights;
 		},
-		addShape: function (shape)
+		addShape: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shape .getBBoxSize ())),
-				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shape .getBBoxCenter ())),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
+				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
 				radius          = bboxSize .abs () / 2,
 				distance        = bboxCenter .z,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
 			if (viewVolume .intersectsSphere (radius, bboxCenter))
 			{
-				if (shape .isTransparent ())
+				if (shapeNode .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
 						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], });
@@ -125,10 +125,10 @@ function ($,
 				}
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shape    = shape;
+				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
-				context .distance = distance - radius;
-				context .fog      = this .getFog ();
+				context .distance  = distance - radius;
+				context .fogNode   = this .getFog ();
 
 				// Clip planes
 
@@ -153,7 +153,7 @@ function ($,
 				destLights .length = sourceLights .length;
 			}
 		},
-		addCollision: function (shape)
+		addCollision: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
@@ -167,8 +167,8 @@ function ($,
 				++ this .numCollisionShapes;
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shape   = shape;
-				context .scissor = viewVolume .getScissor ();
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
 
 				// Collisions
 
@@ -310,10 +310,10 @@ function ($,
 						clipPlanes [c] .use (gl, shader, c);
 	
 					if (c < shader .maxClipPlanes)
-						gl .uniform1i (shader .clipPlaneEnabled [c], false);
+						gl .uniform4fv (shader .clipPlane [c], shader .noClipPlane);
 				}
 				else
-					gl .uniform1i (shader .clipPlaneEnabled [0], false);
+					gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 				// modelViewMatrix
 	
@@ -321,7 +321,7 @@ function ($,
 
 				// Draw
 	
-				context .shape .collision (shader);
+				context .shapeNode .collision (shader);
 			}
 
 			var
@@ -384,7 +384,7 @@ function ($,
 
 					   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
 
-						if (context .shape .intersectsSphere (this .collisionSphere))
+						if (context .shapeNode .intersectsSphere (this .collisionSphere))
 						{
 						   for (var c = 0; c < collisions .length; ++ c)
 								activeCollisions [collisions [c] .getId ()] = collisions [c];
@@ -570,7 +570,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shape .draw (context);
+				context .shapeNode .draw (context);
 			}
 
 			// Render transparent objects
@@ -591,7 +591,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shape .draw (context);
+				context .shapeNode .draw (context);
 			}
 
 			gl .depthMask (true);

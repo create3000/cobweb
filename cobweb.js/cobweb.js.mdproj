@@ -1090,6 +1090,10 @@
     <None Include="examples\alprojectsvr\wtc.x3d" />
     <None Include="examples\alprojectsvr\d1.x3d" />
     <None Include="examples\alprojectsvr\ssf.x3d" />
+    <None Include="tests\Components\Layout\library\Colors.x3dv" />
+    <None Include="tests\Components\Layout\library\Rotor.x3dv" />
+    <None Include="tests\Components\Layout\library\logo.x3dv" />
+    <None Include="tests\Components\Layout\library\red.orange.yellow.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1144,5 +1148,6 @@
     <Folder Include="tests\Components\Layout\" />
     <Folder Include="examples\water\" />
     <Folder Include="examples\alprojectsvr\" />
+    <Folder Include="tests\Components\Layout\library\" />
   </ItemGroup>
 </Project>

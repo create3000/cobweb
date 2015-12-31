@@ -11,9 +11,8 @@ uniform int x3d_GeometryType;
 
 #define MAX_CLIP_PLANES 6
 
-uniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];
-uniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];
-// 30
+uniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];
+// 24
 
 #define NO_FOG           0
 #define LINEAR_FOG       1
@@ -83,15 +82,11 @@ clip ()
 {
 	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
 	{
-		if (x3d_ClipPlaneEnabled [i])
-		{
-			if (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)
-			{
-				discard;
-			}
-		}
-		else
+		if (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))
 			break;
+
+		if (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)
+			discard;
 	}
 }
 

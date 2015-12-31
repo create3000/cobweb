@@ -47,6 +47,20 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DSequencerNode .prototype .initialize .call (this);
+
+			this .keyValue_ .addInterest (this, "set_index__");
+		},
+		getSize: function ()
+		{
+			return this .keyValue_ .length;
+		},
+		sequence: function (index)
+		{
+			this .value_changed_ = this .keyValue_ [index];
+		},
 	});
 
 	return BooleanSequencer;

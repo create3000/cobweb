@@ -25793,8 +25793,7 @@ function ($,
 		this .addType (X3DConstants .ComposedShader);
 
 		this .loadSensor            = new LoadSensor (executionContext);
-		this .clipPlaneEnabled      = [ ];
-		this .clipPlaneVector       = [ ];
+		this .clipPlane             = [ ];
 		this .lightType             = [ ];
 		this .lightOn               = [ ];
 		this .lightColor            = [ ];
@@ -25815,7 +25814,8 @@ function ($,
 		wireframe: false,
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
-		fog: null,
+		noClipPlane: new Float32Array (4),
+		fogNode: null,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
 		textureTypeArray: new Int32Array (MAX_TEXTURES),
@@ -25929,10 +25929,7 @@ function ($,
 			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
-			{
-				this .clipPlaneEnabled [i] = gl .getUniformLocation (program, "x3d_ClipPlaneEnabled[" + i + "]");
-				this .clipPlaneVector [i]  = gl .getUniformLocation (program, "x3d_ClipPlaneVector[" + i + "]");
-			}
+				this .clipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
 
 			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
 			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
@@ -26036,17 +26033,19 @@ function ($,
 					clipPlanes [i] .use (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
-					gl .uniform1i (this .clipPlaneEnabled [i], false);
+					gl .uniform4fv (this .clipPlane [i], this .noClipPlane);
 			}
 			else
-				gl .uniform1i (this .clipPlaneEnabled [0], false);
-
-			// Fog
-
-			if (context .fog !== this .fog)
 			{
-				this .fog = context .fog;
-				context .fog .use (gl, this);
+				gl .uniform4fv (this .clipPlane [0], this .noClipPlane);
+			}
+
+			// Fog, there is always one
+
+			if (context .fogNode !== this .fogNode)
+			{
+				this .fogNode = context .fogNode;
+				context .fogNode .use (gl, this);
 			}
 
 			// LineProperties
@@ -34552,23 +34551,23 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Rendering/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n// 2\nuniform float x3d_LinewidthScaleFactor;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\n// 5\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\n// 5\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Rendering/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
 define('text!cobweb/Browser/Rendering/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n// 2\nuniform float x3d_LinewidthScaleFactor;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\n// 5\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\n// 5\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Rendering/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
 define('text!cobweb/Browser/Rendering/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 4 * 16\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n// 19 * MAX_LIGHTS\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterial (vec3 N,\n             vec3 v,\n             float x3d_AmbientIntensity,\n             vec3  x3d_DiffuseColor,\n             vec3  x3d_SpecularColor,\n             vec3  x3d_EmissiveColor,\n             float x3d_Shininess,\n             float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != NO_LIGHT)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == DIRECTIONAL_LIGHT;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == SPOT_LIGHT)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterial (N, v,\n\t\t                          ambientIntensity,\n\t\t                          diffuseColor,\n\t\t                          specularColor,\n\t\t                          emissiveColor,\n\t\t                          shininess,\n\t\t                          transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\t\t\t\n\t\tbackColor = getMaterial (-N, v,\n\t\t                         ambientIntensity,\n\t\t                         diffuseColor,\n\t\t                         specularColor,\n\t\t                         emissiveColor,\n\t\t                         shininess,\n\t\t                         transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n// 30\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
+define('text!cobweb/Browser/Rendering/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
 
 define('text!cobweb/Browser/Rendering/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n#define MAX_TEXTURES 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n// 30\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
+define('text!cobweb/Browser/Rendering/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
 
 define('text!cobweb/Browser/Rendering/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nvec3\npack (float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
+define('text!cobweb/Browser/Rendering/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
 
 
 define ('standard/Math/Utility/MatrixStack',[
@@ -44473,7 +44472,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			shader .use ();
 
-			gl .uniform1i (shader .clipPlaneEnabled [0], false);
+			gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			gl .uniform1i (shader .fogType,       0);
 			gl .uniform1i (shader .colorMaterial, false);
@@ -46493,7 +46492,7 @@ function ($,
 
 define('text!cobweb/Browser/EnvironmentalEffects/SphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
 
-define('text!cobweb/Browser/EnvironmentalEffects/SphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
+define('text!cobweb/Browser/EnvironmentalEffects/SphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
 
 
 define ('cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext',[
@@ -55619,19 +55618,19 @@ function ($,
 		{
 			return this .localLights;
 		},
-		addShape: function (shape)
+		addShape: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shape .getBBoxSize ())),
-				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shape .getBBoxCenter ())),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
+				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
 				radius          = bboxSize .abs () / 2,
 				distance        = bboxCenter .z,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
 			if (viewVolume .intersectsSphere (radius, bboxCenter))
 			{
-				if (shape .isTransparent ())
+				if (shapeNode .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
 						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], });
@@ -55651,10 +55650,10 @@ function ($,
 				}
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shape    = shape;
+				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
-				context .distance = distance - radius;
-				context .fog      = this .getFog ();
+				context .distance  = distance - radius;
+				context .fogNode   = this .getFog ();
 
 				// Clip planes
 
@@ -55679,7 +55678,7 @@ function ($,
 				destLights .length = sourceLights .length;
 			}
 		},
-		addCollision: function (shape)
+		addCollision: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
@@ -55693,8 +55692,8 @@ function ($,
 				++ this .numCollisionShapes;
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shape   = shape;
-				context .scissor = viewVolume .getScissor ();
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
 
 				// Collisions
 
@@ -55836,10 +55835,10 @@ function ($,
 						clipPlanes [c] .use (gl, shader, c);
 	
 					if (c < shader .maxClipPlanes)
-						gl .uniform1i (shader .clipPlaneEnabled [c], false);
+						gl .uniform4fv (shader .clipPlane [c], shader .noClipPlane);
 				}
 				else
-					gl .uniform1i (shader .clipPlaneEnabled [0], false);
+					gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 				// modelViewMatrix
 	
@@ -55847,7 +55846,7 @@ function ($,
 
 				// Draw
 	
-				context .shape .collision (shader);
+				context .shapeNode .collision (shader);
 			}
 
 			var
@@ -55910,7 +55909,7 @@ function ($,
 
 					   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
 
-						if (context .shape .intersectsSphere (this .collisionSphere))
+						if (context .shapeNode .intersectsSphere (this .collisionSphere))
 						{
 						   for (var c = 0; c < collisions .length; ++ c)
 								activeCollisions [collisions [c] .getId ()] = collisions [c];
@@ -56096,7 +56095,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shape .draw (context);
+				context .shapeNode .draw (context);
 			}
 
 			// Render transparent objects
@@ -56117,7 +56116,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shape .draw (context);
+				context .shapeNode .draw (context);
 			}
 
 			gl .depthMask (true);
@@ -57345,10 +57344,10 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform1i (shader .clipPlaneEnabled [0], false);
+				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
@@ -57399,10 +57398,10 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform1i (shader .clipPlaneEnabled [0], false);
+				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
@@ -59007,7 +59006,7 @@ function ($,
 
 define ('cobweb/Browser/Version',[],function ()
 {
-	return "1.21";
+	return "1.22a";
 });
 
 
@@ -60529,6 +60528,407 @@ function ($,
 
 
 
+define ('cobweb/Components/EventUtilities/BooleanFilter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function BooleanFilter (executionContext)
+	{
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .BooleanFilter);
+	}
+
+	BooleanFilter .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: BooleanFilter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputTrue",   new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputFalse",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputNegate", new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanFilter";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			var value = this .set_boolean_ .getValue ();
+
+			if (value)
+				this .inputTrue_ = true;
+		
+			else
+				this .inputFalse_ = true;
+		
+			this .inputNegate_ = ! value;
+		},
+	});
+
+	return BooleanFilter;
+});
+
+
+
+
+define ('cobweb/Components/EventUtilities/X3DSequencerNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DSequencerNode (browser, executionContext)
+	{
+		X3DChildNode .call (this, browser, executionContext);
+
+		this .addType (X3DConstants .X3DSequencerNode);
+
+		this .index = -1;
+	}
+
+	X3DSequencerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DSequencerNode,
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+		
+			this .set_fraction_ .addInterest (this, "set_fraction__");
+			this .previous_     .addInterest (this, "set_previous__");
+			this .next_         .addInterest (this, "set_next__");
+			this .key_          .addInterest (this, "set_index__");
+		},
+		set_fraction__: function ()
+		{
+			var
+				fraction = this .set_fraction_ .getValue (),
+				key      = this .key_,
+				length   = key .length;
+
+			if (length === 0)
+				return;
+		
+			var i = 0;
+		
+			if (length === 1 || fraction <= key [0])
+				i = 0;
+		
+			else if (fraction >= key [length - 1])
+				i = this .getSize () - 1;
+		
+			else
+			{
+				var index = Algorithm .upperBound (key, 0, length, fraction, Algorithm .less);
+
+				i = index - 1;
+			}
+		
+			if (i !== this .index)
+			{
+				if (i < this .getSize ())
+				{
+					this .sequence (this .index = i);
+				}
+			}
+		},
+		set_previous__: function ()
+		{
+			if (this .previous_ .getValue ())
+			{
+				if (this .index === 0)
+					this .index = this .getSize () - 1;
+
+				else
+					-- this .index;
+
+				if (this .index < this .getSize ())
+					this .sequence (this .index);
+			}
+		},
+		set_next__: function ()
+		{
+			if (this .next_ .getValue ())
+			{
+				if (this .index === this .getSize () - 1)
+					this .index = 0;
+		
+				else
+					++ this .index;
+		
+				if (this .index < this .getSize ())
+					this .sequence (this .index);
+			}
+		},
+		set_index__: function ()
+		{
+			this .index = -1;
+		},
+	});
+
+	return X3DSequencerNode;
+});
+
+
+
+
+define ('cobweb/Components/EventUtilities/BooleanSequencer',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DSequencerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DSequencerNode, 
+          X3DConstants)
+{
+
+
+	function BooleanSequencer (executionContext)
+	{
+		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .BooleanSequencer);
+	}
+
+	BooleanSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
+	{
+		constructor: BooleanSequencer,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanSequencer";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DSequencerNode .prototype .initialize .call (this);
+
+			this .keyValue_ .addInterest (this, "set_index__");
+		},
+		getSize: function ()
+		{
+			return this .keyValue_ .length;
+		},
+		sequence: function (index)
+		{
+			this .value_changed_ = this .keyValue_ [index];
+		},
+	});
+
+	return BooleanSequencer;
+});
+
+
+
+
+define ('cobweb/Components/EventUtilities/BooleanToggle',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function BooleanToggle (executionContext)
+	{
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .BooleanToggle);
+	}
+
+	BooleanToggle .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: BooleanToggle,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "toggle",      new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanToggle";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			if (this .set_boolean_ .getValue ())
+				this .toggle_ = ! this .toggle_ .getValue ();
+		},
+	});
+
+	return BooleanToggle;
+});
+
+
+
+
+define ('cobweb/Components/EventUtilities/X3DTriggerNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DTriggerNode (browser, executionContext)
+	{
+		X3DChildNode .call (this, browser, executionContext);
+
+		this .addType (X3DConstants .X3DTriggerNode);
+	}
+
+	X3DTriggerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DTriggerNode,
+	});
+
+	return X3DTriggerNode;
+});
+
+
+
+
+define ('cobweb/Components/EventUtilities/BooleanTrigger',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTriggerNode, 
+          X3DConstants)
+{
+
+
+	function BooleanTrigger (executionContext)
+	{
+		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .BooleanTrigger);
+	}
+
+	BooleanTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	{
+		constructor: BooleanTrigger,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_triggerTime", new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerTrue",     new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanTrigger";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+
+			this .set_triggerTime_ .addInterest (this, "set_triggerTime__");
+		},
+		set_triggerTime__: function ()
+		{
+			this .triggerTrue_ = true;
+		},
+	});
+
+	return BooleanTrigger;
+});
+
+
+
+
 define ('cobweb/Components/Geometry3D/Box',[
 	"jquery",
 	"cobweb/Fields",
@@ -61198,6 +61598,7 @@ define ('cobweb/Components/Rendering/ClipPlane',[
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
 	"standard/Math/Geometry/Plane3",
 	"standard/Utility/ObjectCache",
 ],
@@ -61208,6 +61609,7 @@ function ($,
           X3DChildNode, 
           X3DConstants,
           Vector3,
+          Vector4,
           Plane3,
           ObjectCache)
 {
@@ -61245,7 +61647,7 @@ function ($,
 		{
 			var
 				plane  = this .plane,
-				plane_ = clipPlane .plane_ .getValue ();
+				plane_ = clipPlane .plane;
 
 			plane .normal .assign (plane_);
 			plane .distanceFromOrigin = -plane_ .w;
@@ -61258,8 +61660,7 @@ function ($,
 				plane  = this .plane,
 				normal = plane .normal;
 
-			gl .uniform1i (shader .clipPlaneEnabled [i], true);
-			gl .uniform4f (shader .clipPlaneVector [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+			gl .uniform4f (shader .clipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
 		recycle: function ()
 		{
@@ -61272,6 +61673,9 @@ function ($,
 		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .ClipPlane);
+
+		this .enabled = false;
+		this .plane   = new Vector4 (0, 0, 0, 0);
 	}
 
 	ClipPlane .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -61294,14 +61698,29 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .enabled_ .addInterest (this, "set_enabled__");
+			this .plane_   .addInterest (this, "set_enabled__");
+
+			this .set_enabled__ ();
+		},
+		set_enabled__: function ()
+		{
+			this .plane .assign (this .plane_ .getValue ());
+
+			this .enabled = this .enabled_ .getValue () && ! this .plane .equals (Vector4 .Zero);
+		},
 		push: function ()
 		{
-			if (this .enabled_ .getValue ())
+			if (this .enabled)
 				this .getCurrentLayer () .getClipPlanes () .push (ClipPlanes .pop (this));
 		},
 		pop: function ()
 		{
-			if (this .enabled_ .getValue ())
+			if (this .enabled)
 				this .getBrowser () .getClipPlanes () .push (this .getCurrentLayer () .getClipPlanes () .pop ());
 		},
 	});
@@ -64828,6 +65247,139 @@ function ($,
 
 	return Inline;
 });
+
+
+
+define ('cobweb/Components/EventUtilities/IntegerSequencer',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DSequencerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DSequencerNode, 
+          X3DConstants)
+{
+
+
+	function IntegerSequencer (executionContext)
+	{
+		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .IntegerSequencer);
+	}
+
+	IntegerSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
+	{
+		constructor: IntegerSequencer,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFInt32 ()),
+		]),
+		getTypeName: function ()
+		{
+			return "IntegerSequencer";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DSequencerNode .prototype .initialize .call (this);
+
+			this .keyValue_ .addInterest (this, "set_index__");
+		},
+		getSize: function ()
+		{
+			return this .keyValue_ .length;
+		},
+		sequence: function (index)
+		{
+			this .value_changed_ = this .keyValue_ [index];
+		},
+	});
+
+	return IntegerSequencer;
+});
+
+
+
+
+define ('cobweb/Components/EventUtilities/IntegerTrigger',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTriggerNode, 
+          X3DConstants)
+{
+
+
+	function IntegerTrigger (executionContext)
+	{
+		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .IntegerTrigger);
+	}
+
+	IntegerTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	{
+		constructor: IntegerTrigger,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "integerKey",   new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerValue", new Fields .SFInt32 ()),
+		]),
+		getTypeName: function ()
+		{
+			return "IntegerTrigger";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			this .triggerValue_ = this .integerKey_;
+		},
+	});
+
+	return IntegerTrigger;
+});
+
 
 
 
@@ -70611,6 +71163,68 @@ function ($,
 
 
 
+define ('cobweb/Components/EventUtilities/TimeTrigger',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTriggerNode, 
+          X3DConstants)
+{
+
+
+	function TimeTrigger (executionContext)
+	{
+		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .TimeTrigger);
+	}
+
+	TimeTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	{
+		constructor: TimeTrigger,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerTime", new Fields .SFTime ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TimeTrigger";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+		
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			this .triggerTime_ = this .getBrowser () .getCurrentTime ();
+		},
+	});
+
+	return TimeTrigger;
+});
+
+
+
+
 define ('cobweb/Components/Grouping/Transform',[
 	"jquery",
 	"cobweb/Fields",
@@ -71655,10 +72269,10 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/EnvironmentalEffects/Background", // VRML
 	//"cobweb/Components/RigidBodyPhysics/BallJoint",
 	"cobweb/Components/Navigation/Billboard", // VRML
-	//"cobweb/Components/EventUtilities/BooleanFilter",
-	//"cobweb/Components/EventUtilities/BooleanSequencer",
-	//"cobweb/Components/EventUtilities/BooleanToggle",
-	//"cobweb/Components/EventUtilities/BooleanTrigger",
+	"cobweb/Components/EventUtilities/BooleanFilter",
+	"cobweb/Components/EventUtilities/BooleanSequencer",
+	"cobweb/Components/EventUtilities/BooleanToggle",
+	"cobweb/Components/EventUtilities/BooleanTrigger",
 	//"cobweb/Components/ParticleSystems/BoundedPhysicsModel",
 	"cobweb/Components/Geometry3D/Box", // VRML
 	"cobweb/Components/CADGeometry/CADAssembly",
@@ -71738,8 +72352,8 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Rendering/IndexedTriangleSet",
 	"cobweb/Components/Rendering/IndexedTriangleStripSet",
 	"cobweb/Components/Networking/Inline", // VRML
-	//"cobweb/Components/EventUtilities/IntegerSequencer",
-	//"cobweb/Components/EventUtilities/IntegerTrigger",
+	"cobweb/Components/EventUtilities/IntegerSequencer",
+	"cobweb/Components/EventUtilities/IntegerTrigger",
 	"cobweb/Components/KeyDeviceSensor/KeySensor",
 	"cobweb/Components/Navigation/LOD", // VRML
 	"cobweb/Components/Layering/Layer",
@@ -71848,7 +72462,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Texturing3D/TextureTransform3D",
 	//"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
 	"cobweb/Components/Time/TimeSensor", // VRML
-	//"cobweb/Components/EventUtilities/TimeTrigger",
+	"cobweb/Components/EventUtilities/TimeTrigger",
 	//"cobweb/Components/Titania/TouchGroup",
 	"cobweb/Components/PointingDeviceSensor/TouchSensor", // VRML
 	"cobweb/Components/Grouping/Transform", // VRML
@@ -71877,10 +72491,10 @@ function (Anchor,
           Background,
           //BallJoint,
           Billboard,
-          //BooleanFilter,
-          //BooleanSequencer,
-          //BooleanToggle,
-          //BooleanTrigger,
+          BooleanFilter,
+          BooleanSequencer,
+          BooleanToggle,
+          BooleanTrigger,
           //BoundedPhysicsModel,
           Box,
           CADAssembly,
@@ -71960,8 +72574,8 @@ function (Anchor,
           IndexedTriangleSet,
           IndexedTriangleStripSet,
           Inline,
-          //IntegerSequencer,
-          //IntegerTrigger,
+          IntegerSequencer,
+          IntegerTrigger,
           KeySensor,
           LOD,
           Layer,
@@ -72070,7 +72684,7 @@ function (Anchor,
           //TextureTransform3D,
           //TextureTransformMatrix3D,
           TimeSensor,
-          //TimeTrigger,
+          TimeTrigger,
           //TouchGroup,
           TouchSensor,
           Transform,
@@ -72105,10 +72719,10 @@ function (Anchor,
 		Background:                   Background,
 		//BallJoint:                    BallJoint,
 		Billboard:                    Billboard,
-		//BooleanFilter:                BooleanFilter,
-		//BooleanSequencer:             BooleanSequencer,
-		//BooleanToggle:                BooleanToggle,
-		//BooleanTrigger:               BooleanTrigger,
+		BooleanFilter:                BooleanFilter,
+		BooleanSequencer:             BooleanSequencer,
+		BooleanToggle:                BooleanToggle,
+		BooleanTrigger:               BooleanTrigger,
 		//BoundedPhysicsModel:          BoundedPhysicsModel,
 		Box:                          Box,
 		CADAssembly:                  CADAssembly,
@@ -72188,8 +72802,8 @@ function (Anchor,
 		IndexedTriangleSet:           IndexedTriangleSet,
 		IndexedTriangleStripSet:      IndexedTriangleStripSet,
 		Inline:                       Inline,
-		//IntegerSequencer:             IntegerSequencer,
-		//IntegerTrigger:               IntegerTrigger,
+		IntegerSequencer:             IntegerSequencer,
+		IntegerTrigger:               IntegerTrigger,
 		KeySensor:                    KeySensor,
 		LOD:                          LOD,
 		Layer:                        Layer,
@@ -72298,7 +72912,7 @@ function (Anchor,
 		//TextureTransform3D:           TextureTransform3D,
 		//TextureTransformMatrix3D:     TextureTransformMatrix3D,
 		TimeSensor:                   TimeSensor,
-		//TimeTrigger:                  TimeTrigger,
+		TimeTrigger:                  TimeTrigger,
 		//TouchGroup:                   TouchGroup,
 		TouchSensor:                  TouchSensor,
 		Transform:                    Transform,

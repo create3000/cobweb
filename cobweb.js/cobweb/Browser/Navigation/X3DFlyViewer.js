@@ -406,7 +406,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			shader .use ();
 
-			gl .uniform1i (shader .clipPlaneEnabled [0], false);
+			gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			gl .uniform1i (shader .fogType,       0);
 			gl .uniform1i (shader .colorMaterial, false);
