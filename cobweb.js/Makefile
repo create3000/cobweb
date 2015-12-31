@@ -29,3 +29,5 @@ clean:
 	rm cobweb.min.html
 	rm cobweb.full.js
 	rm cobweb.min.js
+	rm cobweb.VRML.full.js
+	rm cobweb.VRML.min.js

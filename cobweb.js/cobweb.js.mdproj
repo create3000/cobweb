@@ -1097,7 +1097,6 @@
     <None Include="cobweb.js.mdproj" />
     <None Include="cobweb.VRML.full.js" />
     <None Include="cobweb.VRML.min.js" />
-    <None Include="VERSION_DIR" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
