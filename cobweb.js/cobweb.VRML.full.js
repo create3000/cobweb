@@ -59695,395 +59695,6 @@ function ($,
 
 
 
-define ('cobweb/Components/Rendering/X3DLineGeometryNode',[
-	"jquery",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DGeometryNode,
-          X3DConstants)
-{
-
-
-	function X3DLineGeometryNode (browser, executionContext)
-	{
-		X3DGeometryNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DLineGeometryNode);
-
-		this .shader = browser .getLineShader ();
-	}
-
-	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
-	{
-		constructor: X3DLineGeometryNode,
-		isLineGeometry: function ()
-		{
-			return true;
-		},
-		setShader: function (value)
-		{
-			this .shader = value;
-		},
-		traverse: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			if (shader === browser .getDefaultShader ())
-				shader = this .shader;
-
-			if (shader .vertex < 0)
-				return;
-
-			// Setup shader.
-
-			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context);
-
-			// Setup vertex attributes.
-
-			if (this .colors .length && shader .color >= 0)
-			{
-				gl .enableVertexAttribArray (shader .color);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
-			}
-
-			gl .enableVertexAttribArray (shader .vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
-
-			// Wireframes are always solid so only one drawing call is needed.
-
-			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
-
-			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
-		},
-	});
-
-	return X3DLineGeometryNode;
-});
-
-
-
-
-define ('cobweb/Components/Geometry2D/Arc2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Complex",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithm",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DLineGeometryNode, 
-          X3DConstants,
-          Complex,
-          Vector3,
-          Algorithm)
-{
-
-
-	function Arc2D (executionContext)
-	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Arc2D);
-	}
-
-	Arc2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
-	{
-		constructor: Arc2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "startAngle", new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "endAngle",   new Fields .SFFloat (1.5708)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "radius",     new Fields .SFFloat (1)),
-		]),
-		getTypeName: function ()
-		{
-			return "Arc2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		set_live__: function ()
-		{
-			X3DLineGeometryNode .prototype .set_live__ .call (this);
-
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				this .getBrowser () .getArc2DOptions () .addInterest (this, "eventsProcessed");
-			else
-				this .getBrowser () .getArc2DOptions () .removeInterest (this, "eventsProcessed");
-		},
-		getAngle: function ()
-		{
-			var
-				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
-				end   = Algorithm .interval (this .endAngle_   .getValue (), 0, Math .PI * 2);
-		
-			if (start === end)
-				return Math .PI * 2;
-		
-			var difference = Math .abs (end - start);
-		
-			if (start > end)
-				return (Math .PI * 2) - difference;
-		
-			if (! isNaN (difference))
-				return difference;
-			
-			// We must test for NAN, as NAN to int is undefined.
-			return 0;
-		},
-		build: function ()
-		{
-			var
-				gl         = this .getBrowser () .getContext (),
-				options    = this .getBrowser () .getArc2DOptions (),
-				minAngle   = options .minAngle_ .getValue (),
-				startAngle = this .startAngle_ .getValue  (),
-				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
-				vertices   = this .getVertices ();
-
-			if (difference < (Math .PI * 2))
-			{
-				++ segments;
-				this .setPrimitiveMode (gl .LINE_STRIP);
-			}
-			else
-				this .setPrimitiveMode (gl .LINE_LOOP);
-
-			for (var n = 0; n < segments; ++ n)
-			{
-				var
-					theta = startAngle + angle * n,
-					point = Complex .Polar (radius, theta);
-		
-				vertices .push (point .real, point .imag, 0, 1);
-			}
-
-			this .getMin () .set (-radius, -radius, 0);
-			this .getMax () .set ( radius,  radius, 0);	
-	
-			this .setSolid (false);
-			this .setCurrentTexCoord (null);
-		},
-	});
-
-	return Arc2D;
-});
-
-
-
-
-define ('cobweb/Components/Geometry2D/ArcClose2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Complex",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithm",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DGeometryNode, 
-          X3DConstants,
-          Complex,
-          Vector3,
-          Algorithm)
-{
-
-
-	var half = new Complex (0.5, 0.5);
-
-	function ArcClose2D (executionContext)
-	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .ArcClose2D);
-	}
-
-	ArcClose2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
-	{
-		constructor: ArcClose2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "closureType", new Fields .SFString ("PIE")),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "startAngle",  new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "endAngle",    new Fields .SFFloat (1.5708)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "radius",      new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",       new Fields .SFBool (true)),
-		]),
-		getTypeName: function ()
-		{
-			return "ArcClose2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		set_live__: function ()
-		{
-			X3DGeometryNode .prototype .set_live__ .call (this);
-
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				this .getBrowser () .getArcClose2DOptions () .addInterest (this, "eventsProcessed");
-			else
-				this .getBrowser () .getArcClose2DOptions () .removeInterest (this, "eventsProcessed");
-		},
-		getAngle: function ()
-		{
-			var
-				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
-				end   = Algorithm .interval (this .endAngle_   .getValue (), 0, Math .PI * 2);
-		
-			if (start === end)
-				return Math .PI * 2;
-		
-			var difference = Math .abs (end - start);
-		
-			if (start > end)
-				return (Math .PI * 2) - difference;
-		
-			if (! isNaN (difference))
-				return difference;
-			
-			// We must test for NAN, as NAN to int is undefined.
-			return 0;
-		},
-		build: function ()
-		{
-			var
-				options    = this .getBrowser () .getArcClose2DOptions (),
-				chord      = this .closureType_ .getValue () === "CHORD",
-				minAngle   = options .minAngle_ .getValue (),
-				startAngle = this .startAngle_ .getValue  (),
-				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
-				texCoords  = [ ],
-				normals    = this .getNormals (),
-				vertices   = this .getVertices (),
-				texCoord   = [ ],
-				points     = [ ];
-
-			this .getTexCoords () .push (texCoords);
-
-			for (var n = 0, length = segments + 1; n < length; ++ n)
-			{
-				var theta = startAngle + angle * n;
-
-				texCoord .push (Complex .Polar (0.5, theta) .add (half));
-				points   .push (Complex .Polar (radius, theta));
-			}
-
-			if (chord)
-			{
-				var
-					t0 = texCoord [0],
-					p0 = points [0];
-
-				for (var i = 1; i < segments; ++ i)
-				{
-					var
-						t1 = texCoord [i],
-						t2 = texCoord [i + 1],
-						p1 = points [i],
-						p2 = points [i + 1];
-
-					texCoords .push (t0 .real, t0 .imag, 0, 1,
-					                 t1 .real, t1 .imag, 0, 1,
-					                 t2 .real, t2 .imag, 0, 1);
-
-					normals .push (0, 0, 1,
-					               0, 0, 1,
-					               0, 0, 1);
-
-					vertices .push (p0 .real, p0 .imag, 0, 1,
-					                p1 .real, p1 .imag, 0, 1,
-					                p2 .real, p2 .imag, 0, 1);
-				}
-			}
-			else
-			{
-				for (var i = 0; i < segments; ++ i)
-				{
-					var
-						t1 = texCoord [i],
-						t2 = texCoord [i + 1],
-						p1 = points [i],
-						p2 = points [i + 1];
-
-					texCoords .push (0.5, 0.5, 0, 1,
-					                 t1 .real, t1 .imag, 0, 1,
-					                 t2 .real, t2 .imag, 0, 1);
-
-					normals .push (0, 0, 1,  0, 0, 1,  0, 0, 1);
-
-					vertices .push (0, 0, 0, 1,
-					                p1 .real, p1 .imag, 0, 1,
-					                p2 .real, p2 .imag, 0, 1);
-				}
-			}
-
-			this .getMin () .set (-radius, -radius, 0);
-			this .getMax () .set ( radius,  radius, 0);	
-	
-			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
-		},
-		traverse: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
-		},
-	});
-
-	return ArcClose2D;
-});
-
-
-
-
 define ('cobweb/Components/Sound/X3DSoundSourceNode',[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
@@ -60528,409 +60139,6 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/BooleanFilter',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DChildNode, 
-          X3DConstants)
-{
-
-
-	function BooleanFilter (executionContext)
-	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .BooleanFilter);
-	}
-
-	BooleanFilter .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: BooleanFilter,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputTrue",   new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputFalse",  new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputNegate", new Fields .SFBool ()),
-		]),
-		getTypeName: function ()
-		{
-			return "BooleanFilter";
-		},
-		getComponentName: function ()
-		{
-			return "EventUtilities";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DChildNode .prototype .initialize .call (this);
-
-			this .set_boolean_ .addInterest (this, "set_boolean__");
-		},
-		set_boolean__: function ()
-		{
-			var value = this .set_boolean_ .getValue ();
-
-			if (value)
-				this .inputTrue_ = true;
-		
-			else
-				this .inputFalse_ = true;
-		
-			this .inputNegate_ = ! value;
-		},
-	});
-
-	return BooleanFilter;
-});
-
-
-
-
-define ('cobweb/Components/EventUtilities/X3DSequencerNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
-],
-function ($,
-          X3DChildNode, 
-          X3DConstants,
-          Algorithm)
-{
-
-
-	function X3DSequencerNode (browser, executionContext)
-	{
-		X3DChildNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DSequencerNode);
-
-		this .index = -1;
-	}
-
-	X3DSequencerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: X3DSequencerNode,
-		initialize: function ()
-		{
-			X3DChildNode .prototype .initialize .call (this);
-		
-			this .set_fraction_ .addInterest (this, "set_fraction__");
-			this .previous_     .addInterest (this, "set_previous__");
-			this .next_         .addInterest (this, "set_next__");
-			this .key_          .addInterest (this, "set_index__");
-		},
-		set_fraction__: function ()
-		{
-			var
-				fraction = this .set_fraction_ .getValue (),
-				key      = this .key_,
-				length   = key .length;
-
-			if (length === 0)
-				return;
-		
-			var i = 0;
-		
-			if (length === 1 || fraction <= key [0])
-				i = 0;
-		
-			else if (fraction >= key [length - 1])
-				i = this .getSize () - 1;
-		
-			else
-			{
-				var index = Algorithm .upperBound (key, 0, length, fraction, Algorithm .less);
-
-				i = index - 1;
-			}
-		
-			if (i !== this .index)
-			{
-				if (i < this .getSize ())
-				{
-					this .sequence (this .index = i);
-				}
-			}
-		},
-		set_previous__: function ()
-		{
-			if (this .previous_ .getValue ())
-			{
-				if (this .index <= 0)
-					this .index = this .getSize () - 1;
-
-				else
-					-- this .index;
-
-				if (this .index < this .getSize ())
-					this .sequence (this .index);
-			}
-		},
-		set_next__: function ()
-		{
-			if (this .next_ .getValue ())
-			{
-				if (this .index >= this .getSize () - 1)
-					this .index = 0;
-		
-				else
-					++ this .index;
-		
-				if (this .index < this .getSize ())
-					this .sequence (this .index);
-			}
-		},
-		set_index__: function ()
-		{
-			this .index = -1;
-		},
-	});
-
-	return X3DSequencerNode;
-});
-
-
-
-
-define ('cobweb/Components/EventUtilities/BooleanSequencer',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EventUtilities/X3DSequencerNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DSequencerNode, 
-          X3DConstants)
-{
-
-
-	function BooleanSequencer (executionContext)
-	{
-		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .BooleanSequencer);
-	}
-
-	BooleanSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
-	{
-		constructor: BooleanSequencer,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFBool ()),
-		]),
-		getTypeName: function ()
-		{
-			return "BooleanSequencer";
-		},
-		getComponentName: function ()
-		{
-			return "EventUtilities";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DSequencerNode .prototype .initialize .call (this);
-
-			this .keyValue_ .addInterest (this, "set_index__");
-		},
-		getSize: function ()
-		{
-			return this .keyValue_ .length;
-		},
-		sequence: function (index)
-		{
-			this .value_changed_ = this .keyValue_ [index];
-		},
-	});
-
-	return BooleanSequencer;
-});
-
-
-
-
-define ('cobweb/Components/EventUtilities/BooleanToggle',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DChildNode, 
-          X3DConstants)
-{
-
-
-	function BooleanToggle (executionContext)
-	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .BooleanToggle);
-	}
-
-	BooleanToggle .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: BooleanToggle,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "toggle",      new Fields .SFBool ()),
-		]),
-		getTypeName: function ()
-		{
-			return "BooleanToggle";
-		},
-		getComponentName: function ()
-		{
-			return "EventUtilities";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DChildNode .prototype .initialize .call (this);
-
-			this .set_boolean_ .addInterest (this, "set_boolean__");
-		},
-		set_boolean__: function ()
-		{
-			if (this .set_boolean_ .getValue ())
-				this .toggle_ = ! this .toggle_ .getValue ();
-		},
-	});
-
-	return BooleanToggle;
-});
-
-
-
-
-define ('cobweb/Components/EventUtilities/X3DTriggerNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DChildNode, 
-          X3DConstants)
-{
-
-
-	function X3DTriggerNode (browser, executionContext)
-	{
-		X3DChildNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DTriggerNode);
-	}
-
-	X3DTriggerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: X3DTriggerNode,
-	});
-
-	return X3DTriggerNode;
-});
-
-
-
-
-define ('cobweb/Components/EventUtilities/BooleanTrigger',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EventUtilities/X3DTriggerNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DTriggerNode, 
-          X3DConstants)
-{
-
-
-	function BooleanTrigger (executionContext)
-	{
-		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .BooleanTrigger);
-	}
-
-	BooleanTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
-	{
-		constructor: BooleanTrigger,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_triggerTime", new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerTrue",     new Fields .SFBool ()),
-		]),
-		getTypeName: function ()
-		{
-			return "BooleanTrigger";
-		},
-		getComponentName: function ()
-		{
-			return "EventUtilities";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DTriggerNode .prototype .initialize .call (this);
-
-			this .set_triggerTime_ .addInterest (this, "set_triggerTime__");
-		},
-		set_triggerTime__: function ()
-		{
-			this .triggerTrue_ = true;
-		},
-	});
-
-	return BooleanTrigger;
-});
-
-
-
-
 define ('cobweb/Components/Geometry3D/Box',[
 	"jquery",
 	"cobweb/Fields",
@@ -61024,712 +60232,6 @@ function ($,
 
 	return Box;
 });
-
-
-
-define ('cobweb/Components/CADGeometry/X3DProductStructureChildNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DChildNode, 
-          X3DConstants)
-{
-
-
-	function X3DProductStructureChildNode (browser, executionContext)
-	{
-		X3DChildNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DProductStructureChildNode);
-	}
-
-	X3DProductStructureChildNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: X3DProductStructureChildNode,
-	});
-
-	return X3DProductStructureChildNode;
-});
-
-
-
-
-define ('cobweb/Components/CADGeometry/CADAssembly',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DGroupingNode, 
-          X3DProductStructureChildNode, 
-          X3DConstants)
-{
-
-
-	function CADAssembly (executionContext)
-	{
-		X3DGroupingNode              .call (this, executionContext .getBrowser (), executionContext);
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .CADAssembly);
-	}
-
-	CADAssembly .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
-		//X3DProductStructureChildNode .prototype,
-	{
-		constructor: CADAssembly,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "name",           new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "CADAssembly";
-		},
-		getComponentName: function ()
-		{
-			return "CADGeometry";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-	});
-
-	return CADAssembly;
-});
-
-
-
-
-define ('cobweb/Components/CADGeometry/CADFace',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
-	"cobweb/Components/Grouping/X3DBoundedObject",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Geometry/Box3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DProductStructureChildNode, 
-          X3DBoundedObject,
-          X3DCast,
-          X3DConstants,
-          Box3)
-{
-
-
-	function traverse (type)
-	{
-		this .shapeNode .traverse (type);
-	}
-
-	function CADFace (executionContext)
-	{
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject             .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .CADFace);
-
-		this .shapeNode = null;
-	}
-
-	CADFace .prototype = $.extend (Object .create (X3DProductStructureChildNode .prototype),
-		X3DBoundedObject .prototype,
-	{
-		constructor: CADFace,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "name",       new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "shape",      new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "CADFace";
-		},
-		getComponentName: function ()
-		{
-			return "CADGeometry";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DProductStructureChildNode .prototype .initialize .call (this);
-			X3DBoundedObject             .prototype .initialize .call (this);
-
-			this .shape_ .addInterest (this, "set_shape__");
-
-			this .set_shape__ ();
-		},
-		getBBox: function ()
-		{
-			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
-			{
-				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .shape_);
-		
-				if (boundedObject)
-					return boundedObject .getBBox ();
-		
-				return new Box3 ();
-			}
-		
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
-		},
-		set_shape__: function ()
-		{
-			if (this .shapeNode)
-				this .shapeNode .isCameraObject_ .removeFieldInterest (this .isCameraObject_);
-
-			this .shapeNode = null;
-
-			try
-			{
-				var
-					node = this .shape_ .getValue () .getInnerNode (),
-					type = node .getType ();
-	
-				for (var t = type .length - 1; t >= 0; -- t)
-				{
-					switch (type [t])
-					{
-						case X3DConstants .LOD:
-						case X3DConstants .Transform:
-						case X3DConstants .X3DShapeNode:
-						{
-							node .isCameraObject_ .addFieldInterest (this .isCameraObject_);
-							this .shapeNode = node;
-							break;
-						}
-						default:
-							continue;
-					}
-				}
-			}
-			catch (error)
-			{ }
-
-			if (this .shapeNode)
-				this .traverse = traverse;
-			else
-				delete this .traverse;
-		},
-	});
-
-	return CADFace;
-});
-
-
-
-
-define ('cobweb/Components/CADGeometry/CADLayer',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DGroupingNode, 
-          X3DConstants)
-{
-
-
-	function CADLayer (executionContext)
-	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .CADLayer);
-	}
-
-	CADLayer .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
-	{
-		constructor: CADLayer,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "name",           new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "visible",        new Fields .MFBool ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "CADLayer";
-		},
-		getComponentName: function ()
-		{
-			return "CADGeometry";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DGroupingNode .prototype .initialize .call (this);
-
-			this .visible_ .addInterest (this, "set_children__");
-		},
-		getVisible: function ()
-		{
-			return this .visible_;
-		},
-	});
-
-	return CADLayer;
-});
-
-
-
-
-define ('cobweb/Components/Grouping/X3DTransformMatrix4DNode',[
-	"jquery",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
-],
-function ($,
-          X3DGroupingNode,
-          X3DConstants,
-          Vector3,
-          Rotation4,
-          Matrix4)
-{
-
-
-	function traverse (type)
-	{
-		var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-
-		modelViewMatrix .push ();
-		modelViewMatrix .multLeft (this .matrix);
-		
-		X3DGroupingNode .prototype .traverse .call (this, type);
-
-		modelViewMatrix .pop ();
-	}
-
-	function X3DTransformMatrix4DNode (browser, executionContext)
-	{
-		X3DGroupingNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DTransformMatrix4DNode);
-
-		this .matrix = new Matrix4 ();
-	}
-
-	X3DTransformMatrix4DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
-	{
-		constructor: X3DTransformMatrix4DNode,
-		getBBox: function ()
-		{
-			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
-
-			if (this .traverse === traverse)
-				return bbox .multRight (this .matrix);
-
-			return bbox;
-		},
-		setTransform: function (t, r, s, so, c)
-		{
-			if (t .equals (Vector3 .Zero) && r .equals (Rotation4 .Identity) && s .equals (Vector3 .One))
-			{
-				this .matrix .identity ();
-				this .traverse = X3DGroupingNode .prototype .traverse;
-			}
-			else
-			{
-			   this .matrix .set (t, r, s, so, c);
-				this .traverse = traverse;
-			}
-		},
-	});
-
-	return X3DTransformMatrix4DNode;
-});
-
-
-
-
-define ('cobweb/Components/Grouping/X3DTransformNode',[
-	"jquery",
-	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DTransformMatrix4DNode, 
-          X3DConstants)
-{
-
-
-	function X3DTransformNode (browser, executionContext)
-	{
-		X3DTransformMatrix4DNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DTransformNode);
-	}
-
-	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
-	{
-		constructor: X3DTransformNode,
-		initialize: function ()
-		{
-			X3DTransformMatrix4DNode .prototype .initialize .call (this);
-			
-			this .addInterest (this, "eventsProcessed");
-
-			this .eventsProcessed ();
-		},
-		eventsProcessed: function ()
-		{
-			X3DTransformMatrix4DNode .prototype .eventsProcessed .call (this);
-			
-			this .setHidden (this .scale_ .x === 0 ||
-			                 this .scale_ .y === 0 ||
-			                 this .scale_ .z === 0);
-
-			this .setTransform (this .translation_      .getValue (),
-			                    this .rotation_         .getValue (),
-			                    this .scale_            .getValue (),
-			                    this .scaleOrientation_ .getValue (),
-			                    this .center_           .getValue ());
-		},
-	});
-
-	return X3DTransformNode;
-});
-
-
-
-
-define ('cobweb/Components/CADGeometry/CADPart',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DTransformNode",
-	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DTransformNode, 
-          X3DProductStructureChildNode, 
-          X3DConstants)
-{
-
-
-	function CADPart (executionContext)
-	{
-		X3DTransformNode             .call (this, executionContext .getBrowser (), executionContext);
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .CADPart);
-	}
-
-	CADPart .prototype = $.extend (Object .create (X3DTransformNode .prototype),
-		//X3DProductStructureChildNode .prototype,
-	{
-		constructor: CADPart,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "name",             new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "translation",      new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",         new Fields .SFRotation ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "scale",            new Fields .SFVec3f (1, 1, 1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "scaleOrientation", new Fields .SFRotation ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "center",           new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",         new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",       new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",      new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren",   new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",         new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "CADPart";
-		},
-		getComponentName: function ()
-		{
-			return "CADGeometry";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DTransformNode .prototype .initialize .call (this);
-		},
-	});
-
-	return CADPart;
-});
-
-
-
-
-define ('cobweb/Components/Geometry2D/Circle2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DLineGeometryNode, 
-          X3DConstants,
-          Vector3)
-{
-
-
-	function Circle2D (executionContext)
-	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Circle2D);
-	}
-
-	Circle2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
-	{
-		constructor: Circle2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "radius",   new Fields .SFFloat (1)),
-		]),
-		getTypeName: function ()
-		{
-			return "Circle2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DLineGeometryNode .prototype .initialize .call (this);
-
-			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_LOOP);
-		},
-		set_live__: function ()
-		{
-			X3DLineGeometryNode .prototype .set_live__ .call (this);
-
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				this .getBrowser () .getCircle2DOptions () .addInterest (this, "eventsProcessed");
-			else
-				this .getBrowser () .getCircle2DOptions () .removeInterest (this, "eventsProcessed");
-		},
-		build: function ()
-		{
-			var
-				options         = this .getBrowser () .getCircle2DOptions (),
-				radius          = this .radius_ .getValue (),
-				defaultVertices = options .getVertices (),
-				vertices        = this .getVertices ();
-
-			if (radius === 1)
-				this .setVertices (defaultVertices);
-			else
-			{
-				for (var i = 0, length = defaultVertices .length; i < length; i += 4)
-					vertices .push (defaultVertices [i] * radius, defaultVertices [i + 1] * radius, 0, 1);
-			}
-
-			this .getMin () .set (-radius, -radius, 0);
-			this .getMax () .set ( radius,  radius, 0);
-		},
-	});
-
-	return Circle2D;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/ClipPlane',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Vector4",
-	"standard/Math/Geometry/Plane3",
-	"standard/Utility/ObjectCache",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DChildNode, 
-          X3DConstants,
-          Vector3,
-          Vector4,
-          Plane3,
-          ObjectCache)
-{
-
-
-	var
-		vector     = new Vector3 (0, 0, 0),
-		plane      = new Plane3 (vector, vector),
-		ClipPlanes = ObjectCache (ClipPlaneContainer);
-
-	function ClipPlaneContainer (clipPlane)
-	{
-		this .plane = new Plane3 (vector, vector);
-
-		this .set (clipPlane);
-	}
-
-	ClipPlaneContainer .prototype =
-	{
-		constructor: ClipPlaneContainer,
-		isClipped: function (point, invModelViewMatrix)
-		{
-			try
-			{
-				var distance = plane .assign (this .plane) .multRight (invModelViewMatrix) .getDistanceToPoint (point);
-
-				return distance < 0;
-			}
-			catch (error)
-			{
-				return false;
-			}
-		},
-		set: function (clipPlane)
-		{
-			var
-				plane  = this .plane,
-				plane_ = clipPlane .plane;
-
-			plane .normal .assign (plane_);
-			plane .distanceFromOrigin = -plane_ .w;
-
-			plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
-		},
-		use: function (gl, shader, i)
-		{
-			var
-				plane  = this .plane,
-				normal = plane .normal;
-
-			gl .uniform4f (shader .clipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
-		},
-		recycle: function ()
-		{
-		   ClipPlanes .push (this);
-		},
-	};
-
-	function ClipPlane (executionContext)
-	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .ClipPlane);
-
-		this .enabled = false;
-		this .plane   = new Vector4 (0, 0, 0, 0);
-	}
-
-	ClipPlane .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: ClipPlane,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "plane",    new Fields .SFVec4f (0, 1, 0, 0)),
-		]),
-		getTypeName: function ()
-		{
-			return "ClipPlane";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DChildNode .prototype .initialize .call (this);
-
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .plane_   .addInterest (this, "set_enabled__");
-
-			this .set_enabled__ ();
-		},
-		set_enabled__: function ()
-		{
-			this .plane .assign (this .plane_ .getValue ());
-
-			this .enabled = this .enabled_ .getValue () && ! this .plane .equals (Vector4 .Zero);
-		},
-		push: function ()
-		{
-			if (this .enabled)
-				this .getCurrentLayer () .getClipPlanes () .push (ClipPlanes .pop (this));
-		},
-		pop: function ()
-		{
-			if (this .enabled)
-				this .getBrowser () .getClipPlanes () .push (this .getCurrentLayer () .getClipPlanes () .pop ());
-		},
-	});
-
-	return ClipPlane;
-});
-
 
 
 
@@ -62042,286 +60544,6 @@ function ($,
 
 
 
-define ('cobweb/Components/Rendering/ColorRGBA',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DColorNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Color4",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DColorNode, 
-          X3DConstants,
-          Color4)
-{
-
-
-	function ColorRGBA (executionContext)
-	{
-		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .ColorRGBA);
-	}
-
-	ColorRGBA .prototype = $.extend (Object .create (X3DColorNode .prototype),
-	{
-		constructor: ColorRGBA,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "color",    new Fields .MFColorRGBA ()),
-		]),
-		getTypeName: function ()
-		{
-			return "ColorRGBA";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "color";
-		},
-		isTransparent: function ()
-		{
-			return true;
-		},
-		getColor: function (index)
-		{
-			if (index >= 0 && index < this .color_ .length)
-				return this .color_ [index] .getValue ();
-	
-			return new Color4 (1, 1, 1, 1);
-		},
-	});
-
-	return ColorRGBA;
-});
-
-
-
-
-define ('cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode',[
-	"jquery",
-	"cobweb/Components/Texturing/X3DTextureNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DTextureNode, 
-          X3DConstants)
-{
-
-
-	function X3DEnvironmentTextureNode (browser, executionContext)
-	{
-		X3DTextureNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DEnvironmentTextureNode);
-	}
-
-	X3DEnvironmentTextureNode .prototype = $.extend (Object .create (X3DTextureNode .prototype),
-	{
-		constructor: X3DEnvironmentTextureNode,
-	});
-
-	return X3DEnvironmentTextureNode;
-});
-
-
-
-
-define ('cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DEnvironmentTextureNode,
-          X3DCast,
-          X3DConstants)
-{
-
-
-	function ComposedCubeMapTexture (executionContext)
-	{
-		X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .ComposedCubeMapTexture);
-
-		this .textures = [null, null, null, null, null, null];
-	}
-
-	ComposedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
-	{
-		constructor: ComposedCubeMapTexture,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "front",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "back",     new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "left",     new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "right",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "bottom",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "top",      new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "ComposedCubeMapTexture";
-		},
-		getComponentName: function ()
-		{
-			return "CubeMapTexturing";
-		},
-		getContainerField: function ()
-		{
-			return "texture";
-		},
-		initialize: function ()
-		{
-			X3DEnvironmentTextureNode .prototype .initialize .call (this);
-
-			var gl = this .getBrowser () .getContext ();
-
-			this .target = gl .TEXTURE_CUBE_MAP;
-
-			this .targets = [
-				gl .TEXTURE_CUBE_MAP_POSITIVE_Z, // Front
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, // Back
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_X, // Left
-				gl .TEXTURE_CUBE_MAP_POSITIVE_X, // Right
-				gl .TEXTURE_CUBE_MAP_POSITIVE_Y, // Top
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
-			];
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .front_  .addInterest (this, "set_texture__", 0);
-			this .back_   .addInterest (this, "set_texture__", 1);
-			this .left_   .addInterest (this, "set_texture__", 2);
-			this .right_  .addInterest (this, "set_texture__", 3);
-			this .top_    .addInterest (this, "set_texture__", 5);
-			this .bottom_ .addInterest (this, "set_texture__", 4);
-
-			this .set_texture__ (this .front_,  0);
-			this .set_texture__ (this .back_,   1);
-			this .set_texture__ (this .left_,   2);
-			this .set_texture__ (this .right_,  3);
-			this .set_texture__ (this .top_,    4);
-			this .set_texture__ (this .bottom_, 5);
-
-			this .set_live__ ();
-		},
-		getTarget: function ()
-		{
-			return this .target;
-		},
-		set_live__: function ()
-		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-			{
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
-	
-				this .set_textureQuality__ ();
-			}
-			else
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
-		},
-		set_textureQuality__: function ()
-		{
-			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
-
-			this .updateTextureProperties (this .target, false, textureProperties, 128, 128, false, false, false);
-		},
-		set_texture__: function (node, index)
-		{
-			if (this .textures [index])
-				this .textures [index] .loadState_ .removeInterest (this, "setTexture");
-
-			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
-
-			if (texture)
-				texture .loadState_ .addInterest (this, "setTexture", index, texture);
-
-			this .setTexture (null, index, texture);
-		},
-		setTexture: function (output, index, texture)
-		{
-			var
-				gl     = this .getBrowser () .getContext (),
-				target = this .targets [index];
-
-			this .set_transparent__ ();
-
-			if (texture && texture .checkLoadState () == X3DConstants .COMPLETE_STATE)
-			{
-				var
-					gl     = this .getBrowser () .getContext (),
-					width  = texture .getWidth (),
-					height = texture .getHeight (),
-					data   = texture .getData ();
-
-				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
-				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
-
-				this .set_textureQuality__ ();
-			}
-			else
-			{
-				gl .bindTexture (this .target, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, new Uint8Array ([ 255, 255, 255, 255 ]));
-				gl .bindTexture (this .target, null);
-			}
-		},
-		set_transparent__: function ()
-		{
-			var
-				textures    = this .textures,
-				transparent = false;
-
-			for (var i = 0; i < 6; ++ i)
-			{
-				var texture = textures [i];
-
-				if (texture && texture .transparent_ .getValue ())
-				{
-					transparent = true;
-					break;
-				}
-			}
-
-			if (transparent !== this .transparent_ .getValue ())
-				this .transparent_ = transparent;
-		},
-		traverse: function (gl, shader, i)
-		{
-			shader .textureTypeArray [i] = 4;
-			gl .activeTexture (gl .TEXTURE1);
-			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-			gl .uniform1iv (shader .textureType, shader .textureTypeArray);
-		},
-	});
-
-	return ComposedCubeMapTexture;
-});
-
-
-
-
 define ('cobweb/Components/Geometry3D/Cone',[
 	"jquery",
 	"cobweb/Fields",
@@ -62602,85 +60824,6 @@ function ($,
 	});
 
 	return CoordinateInterpolator;
-});
-
-
-
-
-define ('cobweb/Components/Interpolation/CoordinateInterpolator2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Interpolation/X3DInterpolatorNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DInterpolatorNode, 
-          X3DConstants,
-          Vector2)
-{
-
-
-	function CoordinateInterpolator2D (executionContext)
-	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .CoordinateInterpolator2D);
-	}
-
-	CoordinateInterpolator2D .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
-	{
-		constructor: CoordinateInterpolator2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFVec2f ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .MFVec2f ()),
-		]),
-		keyValue: new Vector2 (0, 0),
-		getTypeName: function ()
-		{
-			return "CoordinateInterpolator2D";
-		},
-		getComponentName: function ()
-		{
-			return "Interpolation";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		set_keyValue__: function () { },
-		interpolate: function (index0, index1, weight)
-		{
-			var
-				keyValue      = this .keyValue_ .getValue (),
-				value_changed = this .value_changed_ .getValue (),
-				size          = this .key_ .length > 1 ? Math .floor (this .keyValue_ .length / this .key_ .length) : 0;
-
-			index0 *= size;
-			index1  = index0 + size;
-
-			this .value_changed_ .length = size;
-
-			for (var i = 0; i < size; ++ i)
-			{
-				value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-				                                       .lerp (keyValue [index1 + i] .getValue (),
-				                                              weight));
-			}
-
-			this .value_changed_ .addEvent ();
-		},
-	});
-
-	return CoordinateInterpolator2D;
 });
 
 
@@ -63361,211 +61504,6 @@ function ($,
 	});
 
 	return CylinderSensor;
-});
-
-
-
-
-define ('cobweb/Components/Geometry2D/Disk2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DGeometryNode,
-          X3DLineGeometryNode,
-          X3DConstants,
-          Vector3)
-{
-
-
-	function Disk2D (executionContext)
-	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Disk2D);
-
-		this .lineGeometry = false;
-	}
-
-	Disk2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
-		//X3DLineGeometryNode .prototype, // Considered X3DLineGeometryNode.
-	{
-		constructor: Disk2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "innerRadius", new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "outerRadius", new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",       new Fields .SFBool (true)),
-		]),
-		getTypeName: function ()
-		{
-			return "Disk2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DGeometryNode .prototype .initialize .call (this);
-
-			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_LOOP);
-		},
-		set_live__: function ()
-		{
-			X3DGeometryNode .prototype .set_live__ .call (this);
-
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				this .getBrowser () .getDisk2DOptions () .addInterest (this, "eventsProcessed");
-			else
-				this .getBrowser () .getDisk2DOptions () .removeInterest (this, "eventsProcessed");
-		},
-		isLineGeometry: function ()
-		{
-			return this .lineGeometry;
-		},
-		build: function ()
-		{
-			var
-				options     = this .getBrowser () .getDisk2DOptions (),
-				innerRadius = this .innerRadius_ .getValue (),
-				outerRadius = this .outerRadius_ .getValue ();
-
-			if (innerRadius === outerRadius)
-			{
-				// Circle
-
-				var
-					radius          = Math .abs (outerRadius),
-					defaultVertices = options .getCircleVertices (),
-					vertices        = this .getVertices ();
-
-				if (radius === 1)
-					this .setVertices (defaultVertices);
-				else
-				{
-					for (var i = 0, length = defaultVertices .length; i < length; i += 4)
-						vertices .push (defaultVertices [i] * radius, defaultVertices [i + 1] * radius, 0, 1);
-				}
-	
-				this .getMin () .set (-radius, -radius, 0);
-				this .getMax () .set ( radius,  radius, 0);
-
-				this .lineGeometry = true;
-				return;
-			}
-
-			if (innerRadius === 0 || outerRadius === 0)
-			{
-				// Disk
-
-				var
-					radius          = Math .abs (Math .max (innerRadius, outerRadius)),
-					normals         = this .getNormals (),
-					defaultVertices = options .getDiskVertices (),
-					vertices        = this .getVertices ();
-
-				this .getTexCoords () .push (options .getDiskTexCoords ());
-				this .setNormals (options .getDiskNormals ());
-	
-				if (radius === 1)
-					this .setVertices (defaultVertices);
-				else
-				{
-					for (var i = 0, length = defaultVertices .length; i < length; i += 4)
-						vertices .push (defaultVertices [i] * radius, defaultVertices [i + 1] * radius, 0, 1);
-				}
-
-				this .getMin () .set (-radius, -radius, 0);
-				this .getMax () .set ( radius,  radius, 0);
-		
-				this .setSolid (this .solid_ .getValue ());
-				this .setCurrentTexCoord (null);
-
-				this .lineGeometry = false;
-				return;
-			}
-
-			var
-				maxRadius  = Math .abs (Math .max (innerRadius, outerRadius)),
-				minRadius  = Math .abs (Math .min (innerRadius, outerRadius)),
-				scale      = minRadius / maxRadius,
-				offset     = (1 - scale) / 2,
-				texCoords1 = options .getDiskTexCoords (),
-				texCoords2 = [ ],
-				normals    = this .getNormals (),
-				vertices1  = options .getDiskVertices (),
-				vertices2  = this .getVertices ();
-
-			this .getTexCoords () .push (texCoords2);
-
-			for (var i = 0, length = vertices1 .length; i < length; i += 12)
-			{
-				texCoords2 .push (texCoords1 [i + 4] * scale + offset, texCoords1 [i + 5] * scale + offset, 0, 1,
-				                  texCoords1 [i + 4], texCoords1 [i + 5], 0, 1,
-				                  texCoords1 [i + 8], texCoords1 [i + 9], 0, 1,
-
-				                  texCoords1 [i + 4] * scale + offset, texCoords1 [i + 5] * scale + offset, 0, 1,
-				                  texCoords1 [i + 8], texCoords1 [i + 9], 0, 1,
-				                  texCoords1 [i + 8] * scale + offset, texCoords1 [i + 9] * scale + offset, 0, 1);
-
-				normals .push (0, 0, 1,  0, 0, 1,  0, 0, 1,
-                           0, 0, 1,  0, 0, 1,  0, 0, 1);
-
-				vertices2 .push (vertices1 [i + 4] * minRadius, vertices1 [i + 5] * minRadius, 0, 1,
-				                 vertices1 [i + 4] * maxRadius, vertices1 [i + 5] * maxRadius, 0, 1,
-				                 vertices1 [i + 8] * maxRadius, vertices1 [i + 9] * maxRadius, 0, 1,
-
-				                 vertices1 [i + 4] * minRadius, vertices1 [i + 5] * minRadius, 0, 1,
-				                 vertices1 [i + 8] * maxRadius, vertices1 [i + 9] * maxRadius, 0, 1,
-				                 vertices1 [i + 8] * minRadius, vertices1 [i + 9] * minRadius, 0, 1);
-			}
-
-			this .getMin () .set (-maxRadius, -maxRadius, 0);
-			this .getMax () .set ( maxRadius,  maxRadius, 0);
-	
-			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
-
-			this .lineGeometry = false;
-		},
-		traverse: function (context)
-		{
-			if (this .isLineGeometry ())
-			{
-				X3DLineGeometryNode .prototype .traverse .call (this, context);
-			}
-			else
-			{
-				var
-					browser = this .getBrowser (),
-					gl      = browser .getContext (),
-					shader  = browser .getShader ();
-	
-				shader .use ();
-				gl .uniform1i (shader .geometryType, 2);
-	
-				X3DGeometryNode .prototype .traverse .call (this, context);
-	
-				gl .uniform1i (shader .geometryType, 3);
-			}
-		},
-	});
-
-	return Disk2D;
 });
 
 
@@ -64421,6 +62359,83 @@ function ($,
 
 
 
+define ('cobweb/Components/Rendering/X3DLineGeometryNode',[
+	"jquery",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DGeometryNode,
+          X3DConstants)
+{
+
+
+	function X3DLineGeometryNode (browser, executionContext)
+	{
+		X3DGeometryNode .call (this, browser, executionContext);
+
+		this .addType (X3DConstants .X3DLineGeometryNode);
+
+		this .shader = browser .getLineShader ();
+	}
+
+	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+	{
+		constructor: X3DLineGeometryNode,
+		isLineGeometry: function ()
+		{
+			return true;
+		},
+		setShader: function (value)
+		{
+			this .shader = value;
+		},
+		traverse: function (context)
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getShader ();
+
+			if (shader === browser .getDefaultShader ())
+				shader = this .shader;
+
+			if (shader .vertex < 0)
+				return;
+
+			// Setup shader.
+
+			context .colorMaterial = this .colors .length;
+			shader .setLocalUniforms (context);
+
+			// Setup vertex attributes.
+
+			if (this .colors .length && shader .color >= 0)
+			{
+				gl .enableVertexAttribArray (shader .color);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			gl .enableVertexAttribArray (shader .vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+			// Wireframes are always solid so only one drawing call is needed.
+
+			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
+
+			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
+			gl .disableVertexAttribArray (shader .vertex);
+		},
+	});
+
+	return X3DLineGeometryNode;
+});
+
+
+
+
 define ('cobweb/Components/Rendering/IndexedLineSet',[
 	"jquery",
 	"cobweb/Fields",
@@ -64653,418 +62668,6 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/IndexedQuadSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function IndexedQuadSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .IndexedQuadSet);
-
-		this .triangleIndex = [ ];
-	}
-
-	IndexedQuadSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: IndexedQuadSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "index",           new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "IndexedQuadSet";
-		},
-		getComponentName: function ()
-		{
-			return "CADGeometry";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DComposedGeometryNode .prototype .initialize .call (this);
-		
-			this .index_ .addInterest (this, "set_index__");
-		
-			this .set_index__ ();
-		},
-		set_index__: function ()
-		{
-			var
-				index         = this .index_ .getValue (),
-				length        = index .length,
-				triangleIndex = this .triangleIndex;
-
-			length -= length % 4;
-			triangleIndex .length = 0;
-
-			for (var i = 0; i < length; i += 4)
-			{
-				var
-					i0 = i,
-					i1 = i + 1,
-					i2 = i + 2,
-					i3 = i + 3;
-
-				triangleIndex .push (i0, i1, i2,  i0, i2, i3);
-			}
-		},
-		getTriangleIndex: function (i)
-		{
-			return this .triangleIndex [i];
-		},
-		getPolygonIndex: function (i)
-		{
-			return this .index_ [i];
-		},
-		build: function ()
-		{
-			X3DComposedGeometryNode .prototype .build .call (this, 4, this .index_ .length, 6, this .triangleIndex .length);
-		},
-	});
-
-	return IndexedQuadSet;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/IndexedTriangleFanSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function IndexedTriangleFanSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .IndexedTriangleFanSet);
-
-		this .triangleIndex = [ ];
-	}
-
-	IndexedTriangleFanSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: IndexedTriangleFanSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "index",           new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "IndexedTriangleFanSet";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DComposedGeometryNode .prototype .initialize .call (this);
-		
-			this .index_ .addInterest (this, "set_index__");
-		
-			this .set_index__ ();
-		},
-		set_index__: function ()
-		{
-			// Build coordIndex
-
-			var
-				index         = this .index_ .getValue (),
-				triangleIndex = this .triangleIndex;
-		
-			triangleIndex .length = 0;
-		
-			for (var i = 0, length = index .length; i < length; ++ i)
-			{
-				var first = index [i] .getValue ();
-		
-				if (++ i < length)
-				{
-					var second = index [i] .getValue ();
-
-					if (second < 0)
-						continue;
-	
-					for (++ i; i < length; ++ i)
-					{
-						var third = index [i] .getValue ();
-
-						if (third < 0)
-							break;
-
-						triangleIndex .push (first, second, third);
-
-						second = third;
-					}
-				}
-			}
-		},
-		getPolygonIndex: function (index)
-		{
-			return this .triangleIndex [index];
-		},
-		build: function ()
-		{
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .triangleIndex .length, 3, this .triangleIndex .length);
-		},
-	});
-
-	return IndexedTriangleFanSet;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/IndexedTriangleSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function IndexedTriangleSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .IndexedTriangleSet);
-	}
-
-	IndexedTriangleSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: IndexedTriangleSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "index",           new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "IndexedTriangleSet";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		getPolygonIndex: function (i)
-		{
-			return this .index_ [i];
-		},
-		build: function ()
-		{
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .index_ .length, 3, this .index_ .length);
-		},
-	});
-
-	return IndexedTriangleSet;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/IndexedTriangleStripSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function IndexedTriangleStripSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .IndexedTriangleStripSet);
-
-		this .triangleIndex = [ ];
-	}
-
-	IndexedTriangleStripSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: IndexedTriangleStripSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "index",           new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "IndexedTriangleStripSet";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DComposedGeometryNode .prototype .initialize .call (this);
-		
-			this .index_ .addInterest (this, "set_index__");
-		
-			this .set_index__ ();
-		},
-		set_index__: function ()
-		{
-			// Build coordIndex
-
-			var
-				index         = this .index_ .getValue (),
-				triangleIndex = this .triangleIndex;
-		
-			triangleIndex .length = 0;
-		
-			// Build coordIndex
-		
-			for (var i = 0, length = index .length; i < length; ++ i)
-			{
-				var first = index [i] .getValue ();
-
-				if (first < 0)
-					continue;
-		
-				if (++ i < length)
-				{
-					var second = index [i] .getValue ();
-
-					if (second < 0)
-						continue;
-		
-					++ i;
-		
-					for (var face = 0; i < length; ++ i, ++ face)
-					{
-						var third = index [i] .getValue ();
-
-						if (third < 0)
-							break;
-
-						triangleIndex .push (first, second, third);
-		
-						if (face & 1)
-							second = third;
-		
-						else
-							first = third;
-					}
-				}
-			}
-		},
-		getPolygonIndex: function (index)
-		{
-			return this .triangleIndex [index];
-		},
-		build: function ()
-		{
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .triangleIndex .length, 3, this .triangleIndex .length);
-		},
-	});
-
-	return IndexedTriangleStripSet;
-});
-
-
-
-
 define ('cobweb/Components/Networking/Inline',[
 	"jquery",
 	"cobweb/Fields",
@@ -65252,500 +62855,6 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/IntegerSequencer',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EventUtilities/X3DSequencerNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DSequencerNode, 
-          X3DConstants)
-{
-
-
-	function IntegerSequencer (executionContext)
-	{
-		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .IntegerSequencer);
-	}
-
-	IntegerSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
-	{
-		constructor: IntegerSequencer,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFInt32 ()),
-		]),
-		getTypeName: function ()
-		{
-			return "IntegerSequencer";
-		},
-		getComponentName: function ()
-		{
-			return "EventUtilities";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DSequencerNode .prototype .initialize .call (this);
-
-			this .keyValue_ .addInterest (this, "set_index__");
-		},
-		getSize: function ()
-		{
-			return this .keyValue_ .length;
-		},
-		sequence: function (index)
-		{
-			this .value_changed_ = this .keyValue_ [index];
-		},
-	});
-
-	return IntegerSequencer;
-});
-
-
-
-
-define ('cobweb/Components/EventUtilities/IntegerTrigger',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EventUtilities/X3DTriggerNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DTriggerNode, 
-          X3DConstants)
-{
-
-
-	function IntegerTrigger (executionContext)
-	{
-		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .IntegerTrigger);
-	}
-
-	IntegerTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
-	{
-		constructor: IntegerTrigger,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean",  new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "integerKey",   new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerValue", new Fields .SFInt32 ()),
-		]),
-		getTypeName: function ()
-		{
-			return "IntegerTrigger";
-		},
-		getComponentName: function ()
-		{
-			return "EventUtilities";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DTriggerNode .prototype .initialize .call (this);
-
-			this .set_boolean_ .addInterest (this, "set_boolean__");
-		},
-		set_boolean__: function ()
-		{
-			this .triggerValue_ = this .integerKey_;
-		},
-	});
-
-	return IntegerTrigger;
-});
-
-
-
-
-define ('cobweb/Components/KeyDeviceSensor/X3DKeyDeviceSensorNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DSensorNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DSensorNode, 
-          X3DConstants)
-{
-
-
-	function X3DKeyDeviceSensorNode (browser, executionContext)
-	{
-		X3DSensorNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DKeyDeviceSensorNode);
-	}
-
-	X3DKeyDeviceSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
-	{
-		constructor: X3DKeyDeviceSensorNode,
-		initialize: function ()
-		{
-			X3DSensorNode .prototype .initialize .call (this);
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive ()                         .addInterest (this, "set_live__");
-
-			this .set_live__ ();
-		},
-		set_live__: function ()
-		{
-			if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
-			{
-				this .enabled_ .addInterest (this, "set_enabled__");
-
-				if (this .enabled_ .getValue ())
-					this .enable ();
-			}
-			else
-			{
-				this .enabled_ .removeInterest (this, "set_enabled__");
-
-				if (this .enabled_ .getValue ())
-					this .disable ();
-			}
-		},
-		set_enabled__: function ()
-		{
-			if (this .enabled_ .getValue ())
-				this .enable ();
-
-			else
-				this .disable ();
-		},
-		enable: function ()
-		{
-			if (this .isActive_ .getValue ())
-				return;
-
-			var keyDeviceSensorNode = this .getBrowser () .getKeyDeviceSensorNode ();
-
-			if (keyDeviceSensorNode)
-			{
-				keyDeviceSensorNode .enabled_  = false;
-				keyDeviceSensorNode .isActive_ = false;
-			}
-
-			this .getBrowser () .setKeyDeviceSensorNode (this);
-
-			this .isActive_ = true;
-		},
-		disable: function ()
-		{
-			if (! this .isActive_ .getValue ())
-				return;
-
-			this .getBrowser () .setKeyDeviceSensorNode (null);
-
-			this .release ();
-
-			this .isActive_ = false;
-		},
-		keydown: function () { },
-		keyup: function () { },
-		release: function () { },
-	});
-
-	return X3DKeyDeviceSensorNode;
-});
-
-
-
-
-define ('cobweb/Components/KeyDeviceSensor/KeySensor',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/KeyDeviceSensor/X3DKeyDeviceSensorNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DKeyDeviceSensorNode, 
-          X3DConstants)
-{
-
-
-	   var
-		KEY_F1  = 1,
-		KEY_F2  = 2,
-		KEY_F3  = 3,
-		KEY_F4  = 4,
-		KEY_F5  = 5,
-		KEY_F6  = 6,
-		KEY_F7  = 7,
-		KEY_F8  = 8,
-		KEY_F9  = 9,
-		KEY_F10 = 10,
-		KEY_F11 = 11,
-		KEY_F12 = 12,
-
-		KEY_HOME  = 13,
-		KEY_END   = 14,
-		KEY_PGUP  = 15,
-		KEY_PGDN  = 16,
-		KEY_UP    = 17,
-		KEY_DOWN  = 18,
-		KEY_LEFT  = 19,
-		KEY_RIGHT = 20;
-
-	function KeySensor (executionContext)
-	{
-		X3DKeyDeviceSensorNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .KeySensor);
-	}
-
-	KeySensor .prototype = $.extend (Object .create (X3DKeyDeviceSensorNode .prototype),
-	{
-		constructor: KeySensor,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",          new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "controlKey",       new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "shiftKey",         new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "altKey",           new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "actionKeyPress",   new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "actionKeyRelease", new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "keyPress",         new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "keyRelease",       new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",         new Fields .SFBool ()),
-		]),
-		getTypeName: function ()
-		{
-			return "KeySensor";
-		},
-		getComponentName: function ()
-		{
-			return "KeyDeviceSensor";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		keydown: function (event)
-		{
-			switch (event .which)
-			{
-				case 16: // Shift
-					this .shiftKey_ = true;
-					break;
-				case 17: // Ctrl
-					this .controlKey_ = true;
-					break;
-				case 18: // Alt
-					this .altKey_ = true;
-					break;
-				//////////////////////////////////
-				case 112:
-					this .actionKeyPress_ = KEY_F1;
-					break;
-				case 113:
-					this .actionKeyPress_ = KEY_F2;
-					break;
-				case 114:
-					this .actionKeyPress_ = KEY_F3;
-					break;
-				case 115:
-					this .actionKeyPress_ = KEY_F4;
-					break;
-				case 116:
-					this .actionKeyPress_ = KEY_F5;
-					break;
-				case 117:
-					this .actionKeyPress_ = KEY_F6;
-					break;
-				case 118:
-					this .actionKeyPress_ = KEY_F7;
-					break;
-				case 119:
-					this .actionKeyPress_ = KEY_F8;
-					break;
-				case 120:
-					this .actionKeyPress_ = KEY_F9;
-					break;
-				case 121:
-					this .actionKeyPress_ = KEY_F10;
-					break;
-				case 122:
-					this .actionKeyPress_ = KEY_F11;
-					break;
-				case 123:
-					this .actionKeyPress_ = KEY_F12;
-					break;
-				////////////////////////////////////
-				case 36:
-					this .actionKeyPress_ = KEY_HOME;
-					break;
-				case 35:
-					this .actionKeyPress_ = KEY_END;
-					break;
-				case 33:
-					this .actionKeyPress_ = KEY_PGUP;
-					break;
-				case 34:
-					this .actionKeyPress_ = KEY_PGDN;
-					break;
-				case 38:
-					this .actionKeyPress_ = KEY_UP;
-					break;
-				case 40:
-					this .actionKeyPress_ = KEY_DOWN;
-					break;
-				case 37:
-					this .actionKeyPress_ = KEY_LEFT;
-					break;
-				case 39:
-					this .actionKeyPress_ = KEY_RIGHT;
-					break;
-				////////////////////////////////////
-				default:
-				{
-				   if (event .charCode)
-				      this .keyPress_ = event .key;
-				   break;
-				}
-			}
-		},
-		keyup: function (event)
-		{
-			switch (event .which)
-			{
-				case 16: // Shift
-				{
-					this .shiftKey_ = false;
-					break;
-				}
-				case 17: // Ctrl
-				{
-					this .controlKey_ = false;
-					break;
-				}
-				case 18: // Alt
-				{
-					this .altKey_ = false;
-					break;
-				}
-				//////////////////////////////////
-				case 112:
-					this .actionKeyRelease_ = KEY_F1;
-					break;
-				case 113:
-					this .actionKeyRelease_ = KEY_F2;
-					break;
-				case 114:
-					this .actionKeyRelease_ = KEY_F3;
-					break;
-				case 115:
-					this .actionKeyRelease_ = KEY_F4;
-					break;
-				case 116:
-					this .actionKeyRelease_ = KEY_F5;
-					break;
-				case 117:
-					this .actionKeyRelease_ = KEY_F6;
-					break;
-				case 118:
-					this .actionKeyRelease_ = KEY_F7;
-					break;
-				case 119:
-					this .actionKeyRelease_ = KEY_F8;
-					break;
-				case 120:
-					this .actionKeyRelease_ = KEY_F9;
-					break;
-				case 121:
-					this .actionKeyRelease_ = KEY_F10;
-					break;
-				case 122:
-					this .actionKeyRelease_ = KEY_F11;
-					break;
-				case 123:
-					this .actionKeyRelease_ = KEY_F12;
-					break;
-				////////////////////////////////////
-				case 36:
-					this .actionKeyRelease_ = KEY_HOME;
-					break;
-				case 35:
-					this .actionKeyRelease_ = KEY_END;
-					break;
-				case 33:
-					this .actionKeyRelease_ = KEY_PGUP;
-					break;
-				case 34:
-					this .actionKeyRelease_ = KEY_PGDN;
-					break;
-				case 38:
-					this .actionKeyRelease_ = KEY_UP;
-					break;
-				case 40:
-					this .actionKeyRelease_ = KEY_DOWN;
-					break;
-				case 37:
-					this .actionKeyRelease_ = KEY_LEFT;
-					break;
-				case 39:
-					this .actionKeyRelease_ = KEY_RIGHT;
-					break;
-				////////////////////////////////////
-				default:
-				{
-				   if (event .charCode)
-				      this .keyRelease_ = event .key;
-				   break;
-				}
-			}
-		},
-		release: function ()
-		{
-			if (this .shiftKey_ .getValue ())
-				this .shiftKey_ = false;
-
-			if (this .controlKey_ .getValue ())
-				this .controlKey_ = false;
-
-			if (this .altKey_ .getValue ())
-				this .altKey_ = false;
-		},
-	});
-
-	return KeySensor;
-});
-
-
-
-
 define ('cobweb/Components/Navigation/LOD',[
 	"jquery",
 	"cobweb/Fields",
@@ -65915,1086 +63024,6 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/X3DLayoutNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DChildNode,
-          X3DConstants)
-{
-
-
-	function X3DLayoutNode (browser, executionContext)
-	{
-		X3DChildNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DLayoutNode);
-	}
-
-	X3DLayoutNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: X3DLayoutNode,
-	});
-
-	return X3DLayoutNode;
-});
-
-
-
-
-define ("cobweb/Components/Layout/Layout", [
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Layout/X3DLayoutNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DLayoutNode, 
-          X3DCast,
-          X3DConstants,
-          Vector2,
-          Vector3,
-          Rotation4,
-          Matrix4)
-{
-
-
-	var
-		i        = 0,
-		LEFT     = i++,
-		CENTER   = i++,
-		RIGHT    = i++,
-		BOTTOM   = i++,
-		TOP      = i++,
-		WORLD    = i++,
-		FRACTION = i++,
-		PIXEL    = i++,
-		NONE     = i++,
-		STRETCH  = i++;
-
-	function Layout (executionContext)
-	{
-		X3DLayoutNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Layout);
-
-		this .alignX          = CENTER;
-		this .alignY          = CENTER;
-		this .offsetUnitX     = WORLD;
-		this .offsetUnitY     = WORLD;
-		this .offsetX         = 0;
-		this .offsetY         = 0;
-		this .sizeUnitX       = WORLD;
-		this .sizeUnitY       = WORLD;
-		this .sizeX           = 1;
-		this .sizeY           = 1;
-		this .scaleModeX      = NONE;
-		this .scaleModeY      = NONE;
-		this .parent          = null;
-		this .rectangleCenter = new Vector2 (0, 0);
-		this .rectangleSize   = new Vector2 (0, 0);
-		this .matrix          = new Matrix4 ();
-	}
-
-	Layout .prototype = $.extend (Object .create (X3DLayoutNode .prototype),
-	{
-		constructor: Layout,
-		viewportPixel: new Vector2 (0, 0),
-		pixelSize: new Vector2 (0, 0),
-		translation: new Vector3 (0, 0, 0),
-		offset: new Vector3 (0, 0, 0),
-		scale: new Vector3 (1, 1, 1),
-		currentTranslation: new Vector3 (0, 0, 0),
-		currentRotation: new Rotation4 (0, 0, 1, 0),
-		currentScale: new Vector3 (0, 0, 0),
-		modelViewMatrix: new Matrix4 (),
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "align",       new Fields .MFString ([ "CENTER", "CENTER" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offsetUnits", new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",      new Fields .MFFloat ([ 0, 0 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "sizeUnits",   new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "size",        new Fields .MFFloat ([ 1, 1 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "scaleMode",   new Fields .MFString ([ "NONE", "NONE" ])),
-		]),
-		getTypeName: function ()
-		{
-			return "Layout";
-		},
-		getComponentName: function ()
-		{
-			return "Layout";
-		},
-		getContainerField: function ()
-		{
-			return "layout";
-		},
-		initialize: function ()
-		{
-			X3DLayoutNode .prototype .initialize .call (this);
-
-			this .align_       .addInterest (this, "set_align__");
-			this .offsetUnits_ .addInterest (this, "set_offsetUnits__");
-			this .offset_      .addInterest (this, "set_offset__");
-			this .sizeUnits_   .addInterest (this, "set_sizeUnits__");
-			this .size_        .addInterest (this, "set_size__");
-			this .scaleMode_   .addInterest (this, "set_scaleMode__");
-
-			this .set_align__ ();
-			this .set_offsetUnits__ ();
-			this .set_offset__ ();
-			this .set_sizeUnits__ ();
-			this .set_size__ ();
-			this .set_scaleMode__ ();
-		},
-		set_align__: function ()
-		{
-			// X
-
-			if (this .align_ .length > 0)
-			{
-				if (this .align_ [0] === "LEFT")
-					this .alignX = LEFT;
-
-				else if (this .align_ [0] === "RIGHT")
-					this .alignX = RIGHT;
-
-				else
-					this .alignX = CENTER;
-			}
-			else
-				this .alignX = CENTER;
-
-			// Y
-
-			if (this .align_ .length > 1)
-			{
-				if (this .align_ [1] === "BOTTOM")
-					this .alignY = BOTTOM;
-
-				else if (this .align_ [1] === "TOP")
-					this .alignY = TOP;
-
-				else
-					this .alignY = CENTER;
-			}
-			else
-				this .alignY = CENTER;
-		},
-		set_offsetUnits__: function ()
-		{
-			if (this .offsetUnits_ .length > 0)
-			{
-				// X
-		
-				if (this .offsetUnits_ [0] === "FRACTION")
-					this .offsetUnitX = FRACTION;
-		
-				else if (this .offsetUnits_ [0] === "PIXEL")
-					this .offsetUnitX = PIXEL;
-		
-				else
-					this .offsetUnitX = WORLD;
-		
-				// Y
-		
-				if (this .offsetUnits_ .length > 1)
-				{
-					if (this .offsetUnits_ [1] === "FRACTION")
-						this .offsetUnitY = FRACTION;
-		
-					else if (this .offsetUnits_ [1] === "PIXEL")
-						this .offsetUnitY = PIXEL;
-		
-					else
-						this .offsetUnitY = WORLD;
-				}
-				else
-					this .offsetUnitY = this .offsetUnitX;
-			}
-			else
-			{
-				this .offsetUnitX = WORLD;
-				this .offsetUnitY = WORLD;
-			}
-		},
-		set_offset__: function ()
-		{
-			if (this .offset_ .length > 0)
-			{
-				// X
-
-				this .offsetX = this .offset_ [0];
-
-				// Y
-		
-				if (this .offset_ .length > 1)
-					this .offsetY = this .offset_ [1];
-
-				else
-					this .offsetY = offsetX;
-			}
-			else
-			{
-				this .offsetX = 0;
-				this .offsetY = 0;
-			}
-		},
-		set_sizeUnits__: function ()
-		{
-			if (this .sizeUnits_ .length > 0)
-			{
-				// X
-		
-				if (this .sizeUnits_ [0] === "FRACTION")
-					this .sizeUnitX = FRACTION;
-		
-				else if (this .sizeUnits_ [0] === "PIXEL")
-					this .sizeUnitX = PIXEL;
-		
-				else
-					this .sizeUnitX = WORLD;
-		
-				// Y
-		
-				if (this .sizeUnits_ .length > 1)
-				{
-					if (this .sizeUnits_ [1] === "FRACTION")
-						this .sizeUnitY = FRACTION;
-		
-					else if (this .sizeUnits_ [1] === "PIXEL")
-						this .sizeUnitY = PIXEL;
-		
-					else
-						this .sizeUnitY = WORLD;
-				}
-				else
-					this .sizeUnitY = this .sizeUnitX;
-			}
-			else
-			{
-				this .sizeUnitX = WORLD;
-				this .sizeUnitY = WORLD;
-			}
-		},
-		set_size__: function ()
-		{
-			if (this .size_ .length > 0)
-			{
-				// X
-		
-				this .sizeX = this .size_ [0];
-		
-				// Y
-		
-				if (this .size_ .length > 1)
-					this .sizeY = this .size_ [1];
-		
-				else
-					this .sizeY = this .sizeX;
-			}
-			else
-			{
-				this .sizeX = 0;
-				this .sizeY = 0;
-			}
-		},
-		set_scaleMode__: function ()
-		{
-			if (this .scaleMode_ .length > 0)
-			{
-				// X
-		
-				if (this .scaleMode_ [0] === "FRACTION")
-					this .scaleModeX = FRACTION;
-		
-				else if (this .scaleMode_ [0] === "PIXEL")
-					this .scaleModeX = PIXEL;
-		
-				else if (this .scaleMode_ [0] === "STRETCH")
-					this .scaleModeX = STRETCH;
-		
-				else
-					this .scaleModeX = NONE;
-		
-				// Y
-		
-				if (this .scaleMode_ .length > 1)
-				{
-					if (this .scaleMode_ [1] === "FRACTION")
-						this .scaleModeY = FRACTION;
-		
-					else if (this .scaleMode_ [1] === "PIXEL")
-						this .scaleModeY = PIXEL;
-		
-					else if (this .scaleMode_ [1] === "STRETCH")
-						this .scaleModeY = STRETCH;
-		
-					else
-						this .scaleModeY = NONE;
-				}
-				else
-					this .scaleModeY = this .scaleModeX;
-			}
-			else
-			{
-				this .scaleModeX = NONE;
-				this .scaleModeY = NONE;
-			}
-		},
-		getRectangleCenter: function ()
-		{
-			return this .rectangleCenter;
-		},
-		getRectangleSize: function ()
-		{
-			return this .rectangleSize;
-		},
-		getAlignX: function ()
-		{
-			return this .alignX;
-		},
-		getAlignY: function ()
-		{
-			return this .alignY;
-		},
-		getOffsetUnitX: function ()
-		{
-			if (this .offsetUnitX === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getOffsetUnitX ();
-		
-				else
-					return FRACTION;
-			}
-
-			return this .offsetUnitX;
-		},
-		getOffsetUnitY: function ()
-		{
-			if (this .offsetUnitY === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getOffsetUnitY ();
-		
-				else
-					return FRACTION;
-			}
-		
-			return this .offsetUnitY;
-		},
-		getSizeUnitX: function ()
-		{
-			if (this .sizeUnitX === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getSizeUnitX ();
-		
-				else
-					return FRACTION;
-			}
-		
-			return this .sizeUnitX;
-		},
-		getOffsetX: function ()
-		{
-			return this .offsetX;
-		},
-		getOffsetY: function ()
-		{
-			return this .offsetY;
-		},
-		getSizeUnitY: function ()
-		{
-			if (this .sizeUnitX === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getSizeUnitX ();
-		
-				else
-					return FRACTION;
-			}
-		
-			return this .sizeUnitX;
-		},
-		getSizeUnitY: function ()
-		{
-			if (this .sizeUnitY === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getSizeUnitY ();
-		
-				else
-					return FRACTION;
-			}
-		
-			return this .sizeUnitY;
-		},
-		getSizeX: function ()
-		{
-			return this .sizeX;
-		},
-		getSizeY: function ()
-		{
-			return this .sizeY;
-		},
-		getScaleModeX: function ()
-		{
-			if (this .parent)
-				return this .scaleModeX;
-		
-			if (this .scaleModeX === NONE)
-				return FRACTION;
-		
-			return this .scaleModeX;
-		},
-		getScaleModeY: function ()
-		{
-			if (this .parent)
-				return this .scaleModeY;
-
-			if (this .scaleModeY === NONE)
-				return FRACTION;
-		
-			return this .scaleModeY;
-		},
-		transform: function (type)
-		{
-			var
-				matrix    = this .matrix,
-				viewpoint = X3DCast (X3DConstants .OrthoViewpoint, this .getCurrentViewpoint ());
-
-			// OrthoViewpoint
-
-			if (viewpoint)
-			{
-				var parent = this .parent = this .getBrowser () .getParentLayout ();
-
-				// Calculate rectangleSize
-
-				var
-					viewport            = this .getCurrentLayer () .getViewVolume () .getScissor (), // in pixel
-					viewportMeter       = viewpoint .getViewportSize (viewport),                     // in meter
-					viewportPixel       = this .viewportPixel,                                       // in pixel
-					pixelSize           = this .pixelSize,                                           // size of one pixel in meter
-					parentRectangleSize = parent ? parent .getRectangleSize () : viewportMeter,      // in meter
-					rectangleSize       = this .rectangleSize,
-					rectangleCenter     = this .rectangleCenter;
-
-				viewportPixel .set (viewport [2], viewport [3]);                                 // in pixel
-				pixelSize     .assign (viewportMeter) .divVec (viewportPixel);                   // size of one pixel in meter
-
-				switch (this .getSizeUnitX ())
-				{
-					case FRACTION:
-						rectangleSize .x = this .sizeX * parentRectangleSize .x;
-						break;
-					case PIXEL:
-						rectangleSize .x = this .sizeX * pixelSize .x;
-						break;
-					default:
-						break;
-				}
-		
-				switch (this .getSizeUnitY ())
-				{
-					case FRACTION:
-						rectangleSize .y = this .sizeY * parentRectangleSize .y;
-						break;
-					case PIXEL:
-						rectangleSize .y = this .sizeY * pixelSize .y;
-						break;
-					default:
-						break;
-				}
-		
-				// Calculate translation
-		
-				var translation = this .translation .set (0, 0, 0);
-		
-				switch (this .getAlignX ())
-				{
-					case LEFT:
-						translation .x = -(parentRectangleSize .x - rectangleSize .x) / 2;
-						break;
-					case CENTER:
-		
-						if (this .getSizeUnitX () === PIXEL && viewportPixel .x & 1)
-							translation .x = -pixelSize .x / 2;
-		
-						break;
-					case RIGHT:
-						translation .x = (parentRectangleSize .x - rectangleSize .x) / 2;
-						break;
-				}
-		
-				switch (this .getAlignY ())
-				{
-					case BOTTOM:
-						translation .y = -(parentRectangleSize .y - rectangleSize .y) / 2;
-						break;
-					case CENTER:
-		
-						if (this .getSizeUnitX === PIXEL && viewportPixel .y & 1)
-							translation .y = -pixelSize .y / 2;
-		
-						break;
-					case TOP:
-						translation .y = (parentRectangleSize .y - rectangleSize .y) / 2;
-						break;
-				}
-		
-				// Calculate offset
-		
-				var offset = this .offset .set (0, 0, 0);
-
-				switch (this .getOffsetUnitX ())
-				{
-					case FRACTION:
-						offset .x = this .offsetX * parentRectangleSize .x;
-						break;
-					case PIXEL:
-						offset .x = this .offsetX * viewportMeter .x / viewportPixel .x;
-						break;
-				}
-		
-				switch (this .getOffsetUnitY ())
-				{
-					case FRACTION:
-						offset .y = this .offsetY * parentRectangleSize .y;
-						break;
-					case PIXEL:
-						offset .y = this .offsetY * viewportMeter .y / viewportPixel .y;
-						break;
-				}
-		
-				// Calculate scale
-		
-				var
-					scale              = this .scale .set (1, 1, 1),
-					currentTranslation = this .currentTranslation,
-					currentRotation    = this .currentRotation,
-					currentScale       = this .currentScale;
-
-				var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
-				modelViewMatrix .get (currentTranslation, currentRotation, currentScale);
-		
-				switch (this .getScaleModeX ())
-				{
-					case NONE:
-						scale .x = currentScale .x;
-						break;
-					case FRACTION:
-						scale .x = rectangleSize .x;
-						break;
-					case STRETCH:
-						break;
-					case PIXEL:
-						scale .x = viewportMeter .x / viewportPixel .x;
-						break;
-				}
-		
-				switch (this .getScaleModeY ())
-				{
-					case NONE:
-						scale .y = currentScale .y;
-						break;
-					case FRACTION:
-						scale .y = rectangleSize .y;
-						break;
-					case STRETCH:
-						break;
-					case PIXEL:
-						scale .y = viewportMeter .y / viewportPixel .y;
-						break;
-				}
-		
-				// Calculate scale for scaleMode STRETCH
-		
-				if (this .getScaleModeX () === STRETCH)
-				{
-					if (this .getScaleModeY () === STRETCH)
-					{
-						if (rectangleSize .x > rectangleSize .y)
-						{
-							scale .x = rectangleSize .x;
-							scale .y = scale .x;
-						}
-						else
-						{
-							scale .y = rectangleSize .y;
-							scale .x = scale .y;
-						}
-					}
-					else
-						scale .x = scale .y;
-				}
-				else if (this .getScaleModeY () === STRETCH)
-					scale .y = scale .x;
-		
-				// Transform
-
-				rectangleCenter .assign (translation) .add (offset);
-
-				matrix .set (currentTranslation, currentRotation);
-				matrix .translate (translation .add (offset));
-				matrix .scale (scale);
-			}
-			else
-				matrix .identity ();
-
-			return matrix;
-		},
-	});
-
-	return Layout;
-});
-
-
-
-
-define ('cobweb/Components/Layout/LayoutGroup',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DGroupingNode,
-          X3DCast,
-          TraverseType,
-          X3DConstants)
-{
-
-
-	function LayoutGroup (executionContext)
-	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .LayoutGroup);
-
-		this .viewportNode = null;
-		this .layoutNode   = null;
-	}
-
-	LayoutGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
-	{
-		constructor: LayoutGroup,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "layout",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "viewport",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "LayoutGroup";
-		},
-		getComponentName: function ()
-		{
-			return "Layout";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DGroupingNode .prototype .initialize .call (this);
-
-			this .viewport_ .addInterest (this, "set_viewport__");
-			this .layout_   .addInterest (this, "set_layout__");
-		
-			this .set_viewport__ ();
-			this .set_layout__ ();
-		},
-		set_viewport__: function ()
-		{
-			this .viewportNode = X3DCast (X3DConstants .X3DViewportNode, this .viewport_);
-		},
-		set_layout__: function ()
-		{
-			this .layoutNode = X3DCast (X3DConstants .X3DLayoutNode, this .layout_);
-		},
-		traverse: function (type)
-		{
-			switch (type)
-			{
-				case TraverseType .POINTER:
-				case TraverseType .CAMERA:
-				case TraverseType .DISPLAY:
-				{
-					if (this .viewportNode)
-						this .viewportNode .push ();
-
-					if (this .layoutNode)
-					{
-						var
-							browser         = this .getBrowser (),
-							modelViewMatrix = browser .getModelViewMatrix ();
-
-						modelViewMatrix .push ();
-						modelViewMatrix .set (this .layoutNode .transform (type));
-						browser .getLayouts () .push (this .layoutNode);
-
-						X3DGroupingNode .prototype .traverse .call (this, type);
-
-						browser .getLayouts () .pop ();
-						modelViewMatrix .pop ();
-					}
-					else
-						X3DGroupingNode .prototype .traverse .call (this, type);
-		
-					if (this .viewportNode)
-						this .viewportNode .pop ();
-		
-					break;
-				}
-			}
-		},
-	});
-
-	return LayoutGroup;
-});
-
-
-
-
-define ('cobweb/Components/Layout/LayoutLayer',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Layering/X3DLayerNode",
-	"cobweb/Components/Layout/LayoutGroup",
-	"cobweb/Components/Navigation/OrthoViewpoint",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DLayerNode,
-          LayoutGroup,
-          OrthoViewpoint,
-          X3DConstants)
-{
-
-
-	function LayoutLayer (executionContext)
-	{
-		X3DLayerNode .call (this,
-		                    executionContext .getBrowser (),
-		                    executionContext,
-		                    new OrthoViewpoint (executionContext),
-		                    new LayoutGroup (executionContext));
-
-		this .addType (X3DConstants .LayoutLayer);
-	}
-
-	LayoutLayer .prototype = $.extend (Object .create (X3DLayerNode .prototype),
-	{
-		constructor: LayoutLayer,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "isPickable",     new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "layout",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "viewport",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "addChildren",    new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "removeChildren", new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "children",       new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "LayoutLayer";
-		},
-		getComponentName: function ()
-		{
-			return "Layout";
-		},
-		getContainerField: function ()
-		{
-			return "layers";
-		},
-		initialize: function ()
-		{
-			this .layout_ .addFieldInterest (this .getGroup () .layout_);
-
-			this .getGroup () .layout_ = this .layout_;
-
-			X3DLayerNode .prototype .initialize .call (this);
-		},
-	});
-
-	return LayoutLayer;
-});
-
-
-
-
-define ('cobweb/Components/Shape/LineProperties',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Shape/X3DAppearanceChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DAppearanceChildNode, 
-          X3DConstants)
-{
-
-
-	function LineProperties (executionContext)
-	{
-		X3DAppearanceChildNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .LineProperties);
-	}
-
-	LineProperties .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
-	{
-		constructor: LineProperties,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",             new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "applied",              new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "linetype",             new Fields .SFInt32 (1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "linewidthScaleFactor", new Fields .SFFloat ()),
-		]),
-		getTypeName: function ()
-		{
-			return "LineProperties";
-		},
-		getComponentName: function ()
-		{
-			return "Shape";
-		},
-		getContainerField: function ()
-		{
-			return "lineProperties";
-		},
-		initialize: function ()
-		{
-			X3DAppearanceChildNode .prototype .initialize .call (this);
-
-			this .linewidthScaleFactor_ .addInterest (this, "set_linewidthScaleFactor__");
-
-			this .set_linewidthScaleFactor__ ();
-		},
-		getLinewidthScaleFactor: function ()
-		{
-			return this .linewidthScaleFactor;
-		},
-		set_linewidthScaleFactor__: function ()
-		{
-			this .linewidthScaleFactor = Math .max (1, this .linewidthScaleFactor_ .getValue ());
-		},
-	});
-
-	return LineProperties;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/LineSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DLineGeometryNode,
-          X3DCast,
-          X3DConstants)
-{
-
-
-	function LineSet (executionContext)
-	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .LineSet);
-
-		this .attribNodes  = [ ];
-		this .colorNode    = null;
-		this .coordNode    = null;
-	}
-
-	LineSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
-	{
-		constructor: LineSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "vertexCount", new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "attrib",      new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "fogCoord",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "color",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "coord",       new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "LineSet";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DLineGeometryNode .prototype .initialize .call (this);
-
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
-
-			this .setPrimitiveMode (this .getBrowser () .getContext () .LINES);
-			this .setSolid (false);
-			
-			this .set_attrib__ ();
-			this .set_color__ ();
-			this .set_coord__ ();
-		},
-		set_attrib__: function ()
-		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
-
-			this .attribNodes .length = 0;
-
-			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
-			{
-				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
-
-				if (attribNode)
-					this .attribNodes .push (attribNode);
-			}
-
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
-		},
-		set_color__: function ()
-		{
-			if (this .colorNode)
-			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
-			}
-
-			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
-
-			if (this .colorNode)
-			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
-
-				this .set_transparent__ ();
-			}
-			else
-				this .transparent_ = false;
-		},
-		set_transparent__: function ()
-		{
-			this .transparent_ = this .colorNode .isTransparent ();
-		},
-		set_coord__: function ()
-		{
-			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
-
-			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
-
-			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
-		},
-		build: function ()
-		{
-			if (! this .coordNode || this .coordNode .isEmpty ())
-				return;
-
-			// Fill GeometryNode
-
-			var
-				vertexCount = this .vertexCount_ .getValue (),
-				size        = this .coordNode .getSize (),
-				index       = 0;
-
-			for (var c = 0, length = vertexCount .length; c < length; ++ c)
-			{
-				var count = vertexCount [c] .getValue ();
-
-				if (index + count > size)
-					break;
-
-				if (count > 1)
-				{
-					count = 2 * count - 2;
-
-					for (var i = 0; i < count; ++ i, index += i & 1)
-					{
-						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-						//	attribNodes [a] -> addValue (attribArrays [a], index);
-
-						if (this .colorNode)
-							this .addColor (this .colorNode .getColor (index));
-
-						this .addVertex (this .coordNode .getPoint (index));
-					}
-
-					++ index;
-				}
-				else
-					index += count;
-			}
-
-			//this .setAttribs (this .attribNodes, attribArrays);
-		},
-	});
-
-	return LineSet;
-});
-
-
-
-
 define ('cobweb/Components/Shape/X3DMaterialNode',[
 	"jquery",
 	"cobweb/Components/Shape/X3DAppearanceChildNode",
@@ -67134,374 +63163,6 @@ function ($,
 	});
 
 	return Material;
-});
-
-
-
-
-define ('cobweb/Components/Core/X3DMetadataObject',[
-	"jquery",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DConstants)
-{
-
-
-	function X3DMetadataObject (browser, executionContext)
-	{
-		this .addType (X3DConstants .X3DMetadataObject);
-	}
-
-	X3DMetadataObject .prototype =
-	{
-		constructor: X3DMetadataObject,
-		initialize: function () { },
-	};
-
-	return X3DMetadataObject;
-});
-
-
-
-
-define ('cobweb/Components/Core/MetadataBoolean',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Components/Core/X3DMetadataObject",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DNode, 
-          X3DMetadataObject, 
-          X3DConstants)
-{
-
-
-	function MetadataBoolean (executionContext)
-	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .MetadataBoolean);
-	}
-
-	MetadataBoolean .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DMetadataObject .prototype,
-	{
-		constructor: MetadataBoolean,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new Fields .MFBool ()),
-		]),
-		getTypeName: function ()
-		{
-			return "MetadataBoolean";
-		},
-		getComponentName: function ()
-		{
-			return "Core";
-		},
-		getContainerField: function ()
-		{
-			return "metadata";
-		},
-	});
-
-	return MetadataBoolean;
-});
-
-
-
-
-define ('cobweb/Components/Core/MetadataDouble',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Components/Core/X3DMetadataObject",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DNode, 
-          X3DMetadataObject, 
-          X3DConstants)
-{
-
-
-	function MetadataDouble (executionContext)
-	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .MetadataDouble);
-	}
-
-	MetadataDouble .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DMetadataObject .prototype,
-	{
-		constructor: MetadataDouble,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new Fields .MFDouble ()),
-		]),
-		getTypeName: function ()
-		{
-			return "MetadataDouble";
-		},
-		getComponentName: function ()
-		{
-			return "Core";
-		},
-		getContainerField: function ()
-		{
-			return "metadata";
-		},
-	});
-
-	return MetadataDouble;
-});
-
-
-
-
-define ('cobweb/Components/Core/MetadataFloat',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Components/Core/X3DMetadataObject",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DNode, 
-          X3DMetadataObject, 
-          X3DConstants)
-{
-
-
-	function MetadataFloat (executionContext)
-	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .MetadataFloat);
-	}
-
-	MetadataFloat .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DMetadataObject .prototype,
-	{
-		constructor: MetadataFloat,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new Fields .MFFloat ()),
-		]),
-		getTypeName: function ()
-		{
-			return "MetadataFloat";
-		},
-		getComponentName: function ()
-		{
-			return "Core";
-		},
-		getContainerField: function ()
-		{
-			return "metadata";
-		},
-	});
-
-	return MetadataFloat;
-});
-
-
-
-
-define ('cobweb/Components/Core/MetadataInteger',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Components/Core/X3DMetadataObject",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DNode, 
-          X3DMetadataObject, 
-          X3DConstants)
-{
-
-
-	function MetadataInteger (executionContext)
-	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .MetadataInteger);
-	}
-
-	MetadataInteger .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DMetadataObject .prototype,
-	{
-		constructor: MetadataInteger,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new Fields .MFInt32 ()),
-		]),
-		getTypeName: function ()
-		{
-			return "MetadataInteger";
-		},
-		getComponentName: function ()
-		{
-			return "Core";
-		},
-		getContainerField: function ()
-		{
-			return "metadata";
-		},
-	});
-
-	return MetadataInteger;
-});
-
-
-
-
-define ('cobweb/Components/Core/MetadataSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Components/Core/X3DMetadataObject",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DNode, 
-          X3DMetadataObject, 
-          X3DConstants)
-{
-
-
-	function MetadataSet (executionContext)
-	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .MetadataSet);
-	}
-
-	MetadataSet .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DMetadataObject .prototype,
-	{
-		constructor: MetadataSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "MetadataSet";
-		},
-		getComponentName: function ()
-		{
-			return "Core";
-		},
-		getContainerField: function ()
-		{
-			return "metadata";
-		},
-	});
-
-	return MetadataSet;
-});
-
-
-
-
-define ('cobweb/Components/Core/MetadataString',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Components/Core/X3DMetadataObject",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DNode, 
-          X3DMetadataObject, 
-          X3DConstants)
-{
-
-
-	function MetadataString (executionContext)
-	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .MetadataString);
-	}
-
-	MetadataString .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DMetadataObject .prototype,
-	{
-		constructor: MetadataString,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "name",      new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "reference", new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "value",     new Fields .MFString ()),
-		]),
-		getTypeName: function ()
-		{
-			return "MetadataString";
-		},
-		getComponentName: function ()
-		{
-			return "Core";
-		},
-		getContainerField: function ()
-		{
-			return "metadata";
-		},
-	});
-
-	return MetadataString;
 });
 
 
@@ -68588,232 +64249,6 @@ function ($,
 });
 
 
-define ('cobweb/Components/Geometry2D/Polyline2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DLineGeometryNode, 
-          X3DConstants,
-          Vector3)
-{
-
-
-	var vector = new Vector3 (0, 0, 0);
-
-	function Polyline2D (executionContext)
-	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Polyline2D);
-	}
-
-	Polyline2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
-	{
-		constructor: Polyline2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "lineSegments", new Fields .MFVec2f ()),
-		]),
-		getTypeName: function ()
-		{
-			return "Polyline2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DLineGeometryNode .prototype .initialize .call (this);
-
-			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_STRIP);
-		},
-		build: function ()
-		{
-			var lineSegments = this .lineSegments_ .getValue ();
-
-			for (var i = 0, length = lineSegments .length; i < length; ++ i)
-			{
-				var vertex = lineSegments [i];
-
-				this .addVertex (vector .set (vertex .x, vertex .y, 0));
-			}
-
-			this .setSolid (false);
-		},
-	});
-
-	return Polyline2D;
-});
-
-
-
-
-define ('cobweb/Components/Geometry2D/Polypoint2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DLineGeometryNode, 
-          X3DConstants,
-          Vector3)
-{
-
-
-	var vector = new Vector3 (0, 0, 0);
-
-	function Polypoint2D (executionContext)
-	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Polypoint2D);
-	}
-
-	Polypoint2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
-	{
-		constructor: Polypoint2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec2f ()),
-		]),
-		getTypeName: function ()
-		{
-			return "Polypoint2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DLineGeometryNode .prototype .initialize .call (this);
-
-			var browser = this .getBrowser ();
-
-			this .setShader (browser .getPointShader ());
-			this .setPrimitiveMode (browser .getContext () .POINTS);
-			this .setSolid (false);
-		},
-		build: function ()
-		{
-			var point = this .point_ .getValue ();
-
-			for (var i = 0, length = point .length; i < length; ++ i)
-			{
-				var vertex = point [i];
-
-				this .addVertex (vector .set (vertex .x, vertex .y, 0));
-			}
-		},
-	});
-
-	return Polypoint2D;
-});
-
-
-
-
-define ('cobweb/Components/Interpolation/PositionInterpolator2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Interpolation/X3DInterpolatorNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DInterpolatorNode, 
-          X3DConstants,
-          Vector2)
-{
-
-
-	function PositionInterpolator2D (executionContext)
-	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .PositionInterpolator2D);
-	}
-
-	PositionInterpolator2D .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
-	{
-		constructor: PositionInterpolator2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFVec2f ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFVec2f ()),
-		]),
-		keyValue: new Vector2 (0, 0),
-		getTypeName: function ()
-		{
-			return "PositionInterpolator2D";
-		},
-		getComponentName: function ()
-		{
-			return "Interpolation";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DInterpolatorNode .prototype .initialize .call (this);
-
-			this .keyValue_ .addInterest (this, "set_keyValue__");
-		},
-		set_keyValue__: function ()
-		{
-			var
-				key      = this .key_,
-				keyValue = this .keyValue_;
-
-			if (keyValue .length < key .length)
-				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFVec2f ());
-		},
-		interpolate: function (index0, index1, weight)
-		{
-			this .value_changed_ = this .keyValue .assign (this .keyValue_ [index0] .getValue ()) .lerp (this .keyValue_ [index1] .getValue (), weight);
-		},
-	});
-
-	return PositionInterpolator2D;
-});
-
-
-
-
 define ('cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode',[
 	"jquery",
 	"cobweb/Fields",
@@ -69147,212 +64582,6 @@ function ($,
 });
 
 
-
-
-define ('cobweb/Components/CADGeometry/QuadSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function QuadSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .QuadSet);
-
-		this .triangleIndex = [ ];
-	}
-
-	QuadSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: QuadSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "QuadSet";
-		},
-		getComponentName: function ()
-		{
-			return "CADGeometry";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		getTriangleIndex: function (i)
-		{
-			return this .triangleIndex [i];
-		},
-		build: function ()
-		{
-			if (! this .getCoord ())
-				return;
-
-			var
-				length        = this .getCoord () .getSize (),
-				triangleIndex = this .triangleIndex;
-
-			length -= length % 4;
-			triangleIndex .length = 0;
-
-			for (var i = 0; i < length; i += 4)
-			{
-				var
-					i0 = i,
-					i1 = i + 1,
-					i2 = i + 2,
-					i3 = i + 3;
-
-				triangleIndex .push (i0, i1, i2,  i0, i2, i3);
-			}
-
-			X3DComposedGeometryNode .prototype .build .call (this, 4, length, 6, triangleIndex .length);
-		},
-		createNormals: function (verticesPerPolygon, polygonsSize)
-		{
-			return this .createFaceNormals (verticesPerPolygon, polygonsSize);
-		},
-	});
-
-	return QuadSet;
-});
-
-
-
-
-define ('cobweb/Components/Geometry2D/Rectangle2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DGeometryNode, 
-          X3DConstants,
-          Vector2,
-          Vector3)
-{
-
-
-      var defaultSize = new Vector2 (2, 2);
-
-	function Rectangle2D (executionContext)
-	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Rectangle2D);
-	}
-
-	Rectangle2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
-	{
-		constructor: Rectangle2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "size",     new Fields .SFVec2f (2, 2)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool (true)),
-		]),
-		getTypeName: function ()
-		{
-			return "Rectangle2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		build: function ()
-		{
-			var
-				options  = this .getBrowser () .getRectangle2DOptions (),
-				geometry = options .getGeometry (),
-				size     = this .size_ .getValue ();
-
-			this .setTexCoords (geometry .getTexCoords ());
-			this .setNormals   (geometry .getNormals ());
-
-			if (size .equals (defaultSize))
-			{
-				this .setVertices (geometry .getVertices ());
-
-				this .getMin () .assign (geometry .getMin ());
-				this .getMax () .assign (geometry .getMax ());
-			}
-			else
-			{
-				var
-					scale           = Vector3 .divide (size, 2),
-					x               = scale .x,
-					y               = scale .y,
-					defaultVertices = geometry .getVertices (),
-					vertices        = this .getVertices ();
-
-				for (var i = 0; i < defaultVertices .length; i += 4)
-				{
-					vertices .push (x * defaultVertices [i],
-					                y * defaultVertices [i + 1],
-					                defaultVertices [i + 2],
-					                1);
-				}
-
-				this .getMin () .set (-x, -y, 0);
-				this .getMax () .set ( x,  y, 0);
-			}
-
-			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
-		},
-		traverse: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
-		},
-	});
-
-	return Rectangle2D;
-});
 
 
 define ('cobweb/Configuration/UnitInfo',[
@@ -70885,78 +66114,6 @@ function ($,
 
 
 
-define ('cobweb/Components/Grouping/StaticGroup',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Grouping/X3DBoundedObject",
-	"cobweb/Components/Grouping/Group",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DChildNode, 
-          X3DBoundedObject, 
-          Group,
-          X3DConstants)
-{
-
-
-	function StaticGroup (executionContext)
-	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .StaticGroup);
-	}
-
-	StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		X3DBoundedObject .prototype,
-	{
-		constructor: StaticGroup,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "children",   new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "StaticGroup";
-		},
-		getComponentName: function ()
-		{
-			return "Grouping";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-		   X3DChildNode .prototype .initialize .call (this);
-		   X3DBoundedObject .prototype .initialize .call (this);
-
-		   this .group = new Group (this .getExecutionContext ());
-
-		   this .children_ .addFieldInterest (this .group .children_);
-		   this .group .children_ = this .children_;
-			this .group .setup ();
-
-			this .traverse = this .group .traverse .bind (this .group);
-		},
-	});
-
-	return StaticGroup;
-});
-
-
-
-
 define ('cobweb/Components/Grouping/Switch',[
 	"jquery",
 	"cobweb/Fields",
@@ -71165,63 +66322,123 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/TimeTrigger',[
+define ('cobweb/Components/Grouping/X3DTransformMatrix4DNode',[
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+],
+function ($,
+          X3DGroupingNode,
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4)
+{
+
+
+	function traverse (type)
+	{
+		var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+
+		modelViewMatrix .push ();
+		modelViewMatrix .multLeft (this .matrix);
+		
+		X3DGroupingNode .prototype .traverse .call (this, type);
+
+		modelViewMatrix .pop ();
+	}
+
+	function X3DTransformMatrix4DNode (browser, executionContext)
+	{
+		X3DGroupingNode .call (this, browser, executionContext);
+
+		this .addType (X3DConstants .X3DTransformMatrix4DNode);
+
+		this .matrix = new Matrix4 ();
+	}
+
+	X3DTransformMatrix4DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+	{
+		constructor: X3DTransformMatrix4DNode,
+		getBBox: function ()
+		{
+			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
+
+			if (this .traverse === traverse)
+				return bbox .multRight (this .matrix);
+
+			return bbox;
+		},
+		setTransform: function (t, r, s, so, c)
+		{
+			if (t .equals (Vector3 .Zero) && r .equals (Rotation4 .Identity) && s .equals (Vector3 .One))
+			{
+				this .matrix .identity ();
+				this .traverse = X3DGroupingNode .prototype .traverse;
+			}
+			else
+			{
+			   this .matrix .set (t, r, s, so, c);
+				this .traverse = traverse;
+			}
+		},
+	});
+
+	return X3DTransformMatrix4DNode;
+});
+
+
+
+
+define ('cobweb/Components/Grouping/X3DTransformNode',[
+	"jquery",
+	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DTriggerNode, 
+          X3DTransformMatrix4DNode, 
           X3DConstants)
 {
 
 
-	function TimeTrigger (executionContext)
+	function X3DTransformNode (browser, executionContext)
 	{
-		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformMatrix4DNode .call (this, browser, executionContext);
 
-		this .addType (X3DConstants .TimeTrigger);
+		this .addType (X3DConstants .X3DTransformNode);
 	}
 
-	TimeTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
 	{
-		constructor: TimeTrigger,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerTime", new Fields .SFTime ()),
-		]),
-		getTypeName: function ()
-		{
-			return "TimeTrigger";
-		},
-		getComponentName: function ()
-		{
-			return "EventUtilities";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
+		constructor: X3DTransformNode,
 		initialize: function ()
 		{
-			X3DTriggerNode .prototype .initialize .call (this);
-		
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			X3DTransformMatrix4DNode .prototype .initialize .call (this);
+			
+			this .addInterest (this, "eventsProcessed");
+
+			this .eventsProcessed ();
 		},
-		set_boolean__: function ()
+		eventsProcessed: function ()
 		{
-			this .triggerTime_ = this .getBrowser () .getCurrentTime ();
+			X3DTransformMatrix4DNode .prototype .eventsProcessed .call (this);
+			
+			this .setHidden (this .scale_ .x === 0 ||
+			                 this .scale_ .y === 0 ||
+			                 this .scale_ .z === 0);
+
+			this .setTransform (this .translation_      .getValue (),
+			                    this .rotation_         .getValue (),
+			                    this .scale_            .getValue (),
+			                    this .scaleOrientation_ .getValue (),
+			                    this .center_           .getValue ());
 		},
 	});
 
-	return TimeTrigger;
+	return X3DTransformNode;
 });
 
 
@@ -71282,765 +66499,6 @@ function ($,
 	});
 
 	return Transform;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/TriangleFanSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function TriangleFanSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .TriangleFanSet);
-
-		this .triangleIndex = [ ];
-	}
-
-	TriangleFanSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: TriangleFanSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fanCount",        new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "TriangleFanSet";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DComposedGeometryNode .prototype .initialize .call (this);
-		
-			this .fanCount_ .addInterest (this, "set_fanCount__");
-		
-			this .set_fanCount__ ();
-		},
-		set_fanCount__: function ()
-		{
-			// Build coordIndex
-
-			var
-				fanCount      = this .fanCount_ .getValue (),
-				triangleIndex = this .triangleIndex;
-		
-			triangleIndex .length = 0;
-
-			for (var f = 0, fans = fanCount .length, index = 0; f < fans; ++ f)
-			{
-				var vertexCount = fanCount [f] .getValue ()
-
-				for (var i = 1, count = vertexCount - 1; i < count; ++ i)
-				{
-					triangleIndex .push (index, index + i, index + i + 1);
-				}
-		
-				index += vertexCount;
-			}
-		},
-		getPolygonIndex: function (index)
-		{
-			return this .triangleIndex [index];
-		},
-		build: function ()
-		{
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .triangleIndex .length, 3, this .triangleIndex .length);
-		},
-	});
-
-	return TriangleFanSet;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/TriangleSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function TriangleSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .TriangleSet);
-	}
-
-	TriangleSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: TriangleSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "TriangleSet";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		build: function ()
-		{
-			if (! this .getCoord ())
-				return;
-
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .getCoord () .getSize (), 3, this .getCoord () .getSize ());
-		},
-		createNormals: function (verticesPerPolygon, polygonsSize)
-		{
-			return this .createFaceNormals (verticesPerPolygon, polygonsSize);
-		},
-	});
-
-	return TriangleSet;
-});
-
-
-
-
-define ('cobweb/Components/Geometry2D/TriangleSet2D',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DGeometryNode, 
-          X3DConstants,
-          Vector3)
-{
-
-
-	var
-		normal = new Vector3 (0, 0, 1),
-		vector = new Vector3 (0, 0, 0);
-
-	function TriangleSet2D (executionContext)
-	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .TriangleSet2D);
-	}
-
-	TriangleSet2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
-	{
-		constructor: TriangleSet2D,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "vertices", new Fields .MFVec2f ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool (true)),
-		]),
-		getTypeName: function ()
-		{
-			return "TriangleSet2D";
-		},
-		getComponentName: function ()
-		{
-			return "Geometry2D";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		build: function ()
-		{
-			var vertices = this .vertices_ .getValue ();
-
-			for (var i = 0, length = vertices .length; i < length; ++ i)
-			{
-				var vertex = vertices [i];
-
-				this .addNormal (normal);
-				this .addVertex (vector .set (vertex .x, vertex .y, 0));
-			}
-
-			this .setSolid (this .solid_ .getValue ());
-		},
-		buildTexCoords: function ()
-		{
-			var
-				p         = this .getTexCoordParams (),
-				min       = p .min,
-				Ssize     = p .Ssize,
-				texCoords = [ ],
-				vertices  = this .vertices;
-
-			this .texCoords .push (texCoords);
-
-			for (var i = 0, length = this .vertices .length; i < length; i += 4)
-			{
-				texCoords .push ((vertices [i]     - min [0]) / Ssize,
-				                 (vertices [i + 1] - min [1]) / Ssize,
-				                 0,
-				                 1);
-			}
-		},
-		traverse: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .traverse .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
-		},
-	});
-
-	return TriangleSet2D;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/TriangleStripSet',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DComposedGeometryNode, 
-          X3DConstants)
-{
-
-
-	function TriangleStripSet (executionContext)
-	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .TriangleStripSet);
-
-		this .triangleIndex = [ ];
-	}
-
-	TriangleStripSet .prototype = $.extend (Object .create (X3DComposedGeometryNode .prototype),
-	{
-		constructor: TriangleStripSet,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "stripCount",      new Fields .MFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "attrib",          new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fogCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",           new Fields .SFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "TriangleStripSet";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "geometry";
-		},
-		initialize: function ()
-		{
-			X3DComposedGeometryNode .prototype .initialize .call (this);
-		
-			this .stripCount_ .addInterest (this, "set_stripCount__");
-		
-			this .set_stripCount__ ();
-		},
-		set_stripCount__: function ()
-		{
-			// Build coordIndex
-
-			var
-				stripCount    = this .stripCount_ .getValue (),
-				triangleIndex = this .triangleIndex;
-
-			triangleIndex .length = 0;
-
-			for (var s = 0, strips = stripCount .length, index = 0; s < strips; ++ s)
-			{
-				var vertexCount = stripCount [s] .getValue ()
-
-				for (var i = 0, count = vertexCount - 2; i < count; ++ i)
-				{
-					var is_odd = i & 1;
-
-					triangleIndex .push (index + (is_odd ? i + 1 : i),
-					                     index + (is_odd ? i : i + 1),
-					                     index + (i + 2));
-				}
-
-				index += vertexCount;
-			}
-		},
-		getPolygonIndex: function (index)
-		{
-			return this .triangleIndex [index];
-		},
-		build: function ()
-		{
-			X3DComposedGeometryNode .prototype .build .call (this, 3, this .triangleIndex .length, 3, this .triangleIndex .length);
-		},
-	});
-
-	return TriangleStripSet;
-});
-
-
-
-
-define ('cobweb/Components/Shape/TwoSidedMaterial',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Shape/X3DMaterialNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DMaterialNode, 
-          X3DConstants,
-          Algorithm)
-{
-
-
-	function TwoSidedMaterial (executionContext)
-	{
-		X3DMaterialNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .TwoSidedMaterial);
-			
-		this .diffuseColor  = new Float32Array (3);
-		this .specularColor = new Float32Array (3);
-		this .emissiveColor = new Float32Array (3);
-			
-		this .backDiffuseColor  = new Float32Array (3);
-		this .backSpecularColor = new Float32Array (3);
-		this .backEmissiveColor = new Float32Array (3);
-	}
-
-	TwoSidedMaterial .prototype = $.extend (Object .create (X3DMaterialNode .prototype),
-	{
-		constructor: TwoSidedMaterial,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",             new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "separateBackColor",    new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity",     new Fields .SFFloat (0.2)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "diffuseColor",         new Fields .SFColor (0.8, 0.8, 0.8)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "specularColor",        new Fields .SFColor ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "emissiveColor",        new Fields .SFColor ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "shininess",            new Fields .SFFloat (0.2)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "transparency",         new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "backAmbientIntensity", new Fields .SFFloat (0.2)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "backDiffuseColor",     new Fields .SFColor (0.8, 0.8, 0.8)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "backSpecularColor",    new Fields .SFColor ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "backEmissiveColor",    new Fields .SFColor ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "backShininess",        new Fields .SFFloat (0.2)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "backTransparency",     new Fields .SFFloat ()),
-		]),
-		getTypeName: function ()
-		{
-			return "TwoSidedMaterial";
-		},
-		getComponentName: function ()
-		{
-			return "Shape";
-		},
-		getContainerField: function ()
-		{
-			return "material";
-		},
-		initialize: function ()
-		{
-			X3DMaterialNode . prototype .initialize .call (this);
-			
-			this .addChildren ("transparent", new Fields .SFBool ());
-
-			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
-			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
-			this .specularColor_    .addInterest (this, "set_specularColor__");
-			this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
-			this .shininess_        .addInterest (this, "set_shininess__");
-			this .transparency_     .addInterest (this, "set_transparency__");
-	
-			this .backAmbientIntensity_ .addInterest (this, "set_backAmbientIntensity__");
-			this .backDiffuseColor_     .addInterest (this, "set_backDiffuseColor__");
-			this .backSpecularColor_    .addInterest (this, "set_backSpecularColor__");
-			this .backEmissiveColor_    .addInterest (this, "set_backEmissiveColor__");
-			this .backShininess_        .addInterest (this, "set_backShininess__");
-			this .backTransparency_     .addInterest (this, "set_backTransparency__");
-	
-			this .set_ambientIntensity__ ();
-			this .set_diffuseColor__ ();
-			this .set_specularColor__ ();
-			this .set_emissiveColor__ ();
-			this .set_shininess__ ();
-			this .set_transparency__ ();
-
-			this .set_backAmbientIntensity__ ();
-			this .set_backDiffuseColor__ ();
-			this .set_backSpecularColor__ ();
-			this .set_backEmissiveColor__ ();
-			this .set_backShininess__ ();
-			this .set_backTransparency__ ();
-		},
-		getSeparateBackColor: function ()
-		{
-		   return this .separateBackColor_ .getValue ();
-		},
-		set_ambientIntensity__: function ()
-		{
-			this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
-		},
-		set_diffuseColor__: function ()
-		{
-			this .diffuseColor .set (this .diffuseColor_ .getValue ());
-		},
-		set_specularColor__: function ()
-		{
-			this .specularColor .set (this .specularColor_ .getValue ());
-		},
-		set_emissiveColor__: function ()
-		{
-			this .emissiveColor .set (this .emissiveColor_ .getValue ());
-		},
-		set_shininess__: function ()
-		{
-			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1) * 128;
-		},
-		set_transparency__: function ()
-		{
-			this .transparency = Algorithm .clamp (this .transparency_ .getValue (), 0, 1);
-
-			this .set_transparent__ ();
-		},
-		/*
-		 * Back Material
-		 */
-		set_backAmbientIntensity__: function ()
-		{
-			this .backAmbientIntensity = Math .max (this .backAmbientIntensity_ .getValue (), 0);
-		},
-		set_backDiffuseColor__: function ()
-		{
-			this .backDiffuseColor .set (this .backDiffuseColor_ .getValue ());
-		},
-		set_backSpecularColor__: function ()
-		{
-			this .backSpecularColor .set (this .backSpecularColor_ .getValue ());
-		},
-		set_backEmissiveColor__: function ()
-		{
-			this .backEmissiveColor .set (this .backEmissiveColor_ .getValue ());
-		},
-		set_backShininess__: function ()
-		{
-			this .backShininess = Algorithm .clamp (this .backShininess_ .getValue (), 0, 1) * 128;
-		},
-		set_backTransparency__: function ()
-		{
-			this .backTransparency = Algorithm .clamp (this .backTransparency_ .getValue (), 0, 1);
-
-			this .set_transparent__ ();
-		},
-		set_transparent__: function ()
-		{
-			var transparent = this .transparency_ .getValue () || this .backTransparency_ .getValue ();
-
-			if (transparent != this .transparent_ .getValue ())
-				this .transparent_ = transparent;
-		},
-	});
-
-	return TwoSidedMaterial;
-});
-
-
-
-
-define ('cobweb/Components/Navigation/ViewpointGroup',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/EnvironmentalSensor/ProximitySensor",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DChildNode,
-          ProximitySensor,
-          TraverseType,
-          X3DConstants,
-          Vector3)
-{
-
-
-	function ViewpointGroup (executionContext)
-	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .ViewpointGroup);
-	   
-		this .proximitySensor  = new ProximitySensor (executionContext);
-		this .cameraObjects    = [ ];
-		this .viewpointGroups  = [ ];
-	}
-
-	ViewpointGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: ViewpointGroup,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "displayed",         new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "description",       new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "retainUserOffsets", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "size",              new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "center",            new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "children",          new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "ViewpointGroup";
-		},
-		getComponentName: function ()
-		{
-			return "Navigation";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DChildNode .prototype .initialize .call (this);
-		   
-			this .proximitySensor .setup ();
-
-			this .size_   .addFieldInterest (this .proximitySensor .size_);
-			this .center_ .addFieldInterest (this .proximitySensor .center_);
-
-			this .proximitySensor .size_   = this .size_;
-			this .proximitySensor .center_ = this .center_;
-
-			this .displayed_ .addInterest (this, "set_displayed__");
-			this .size_      .addInterest (this, "set_displayed__");
-			this .children_  .addInterest (this, "set_children__");
-
-			this .set_displayed__ ();
-			this .set_children__ ();
-		},
-		isActive: function ()
-		{
-		   return this .proximitySensor .isActive_ .getValue ();
-		},
-		set_displayed__: function ()
-		{
-			var
-				proxy     = ! this .size_ .getValue () .equals (Vector3 .Zero),
-				displayed = this .displayed_ .getValue ();
-
-			this .proximitySensor .enabled_ = displayed && proxy;
-
-			if (displayed && proxy)
-			{
-				this .proximitySensor .isCameraObject_ .addFieldInterest (this .isCameraObject_);
-				this .setCameraObject (this .proximitySensor .getCameraObject ());
-				this .traverse = traverseWithProximitySensor;
-			}
-			else
-			{
-				this .proximitySensor .isCameraObject_ .removeFieldInterest (this .isCameraObject_);
-				this .setCameraObject (displayed);
-
-				if (displayed)
-					this .traverse = traverse;
-				else
-					delete this .traverse;
-			}
-		},
-		set_children__: function ()
-		{
-			this .cameraObjects   .length = 0;
-			this .viewpointGroups .length = 0;
-
-			var children = this .children_;
-
-			for (var i = 0, length = children .length; i < length; ++ i)
-			{
-				try
-				{
-					var
-						innerNode = children [i] .getValue () .getInnerNode (),
-						type      = innerNode .getType ();
-
-					for (var t = type .length - 1; t >= 0; -- t)
-					{
-						switch (type [t])
-						{
-							case X3DConstants .X3DViewpointNode:
-							{
-								this .cameraObjects .push (innerNode);
-								break;
-							}
-							case X3DConstants .ViewpointGroup:
-							{
-								this .cameraObjects   .push (innerNode);
-								this .viewpointGroups .push (innerNode);
-								break;
-							}
-						}
-					}
-				}
-				catch (error)
-				{ }
-			}
-		},
-		traverse: function () { },
-	});
-
-	function traverseWithProximitySensor (type)
-	{
-		switch (type)
-		{
-			case TraverseType .CAMERA:
-			{
-				this .proximitySensor .traverse (type);
-		
-				if (this .proximitySensor .isActive_ .getValue ())
-				{
-					for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
-						this .cameraObjects [i] .traverse (type);
-				}
-
-				return;
-			}
-			case TraverseType .DISPLAY:
-			{
-				this .proximitySensor .traverse (type);
-		
-				if (this .proximitySensor .isActive_ .getValue ())
-				{
-					for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
-						this .viewpointGroups [i] .traverse (type);
-				}
-
-				return;
-			}
-		}
-	}
-
-	function traverse (type)
-	{
-		switch (type)
-		{
-			case TraverseType .CAMERA:
-			{
-				for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
-					this .cameraObjects [i] .traverse (type);
-
-				return;
-			}
-			case TraverseType .DISPLAY:
-			{
-				for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
-					this .viewpointGroups [i] .traverse (type);
-
-				return;
-			}
-		}
-	}
-
-	return ViewpointGroup;
 });
 
 
@@ -72265,24 +66723,24 @@ function ($,
 define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Networking/Anchor", // VRML
 	"cobweb/Components/Shape/Appearance", // VRML
-	"cobweb/Components/Geometry2D/Arc2D",
-	"cobweb/Components/Geometry2D/ArcClose2D",
+	//"cobweb/Components/Geometry2D/Arc2D",
+	//"cobweb/Components/Geometry2D/ArcClose2D",
 	"cobweb/Components/Sound/AudioClip",
 	"cobweb/Components/EnvironmentalEffects/Background", // VRML
 	//"cobweb/Components/RigidBodyPhysics/BallJoint",
 	"cobweb/Components/Navigation/Billboard", // VRML
-	"cobweb/Components/EventUtilities/BooleanFilter",
-	"cobweb/Components/EventUtilities/BooleanSequencer",
-	"cobweb/Components/EventUtilities/BooleanToggle",
-	"cobweb/Components/EventUtilities/BooleanTrigger",
+	//"cobweb/Components/EventUtilities/BooleanFilter",
+	//"cobweb/Components/EventUtilities/BooleanSequencer",
+	//"cobweb/Components/EventUtilities/BooleanToggle",
+	//"cobweb/Components/EventUtilities/BooleanTrigger",
 	//"cobweb/Components/ParticleSystems/BoundedPhysicsModel",
 	"cobweb/Components/Geometry3D/Box", // VRML
-	"cobweb/Components/CADGeometry/CADAssembly",
-	"cobweb/Components/CADGeometry/CADFace",
-	"cobweb/Components/CADGeometry/CADLayer",
-	"cobweb/Components/CADGeometry/CADPart",
-	"cobweb/Components/Geometry2D/Circle2D",
-	"cobweb/Components/Rendering/ClipPlane",
+	//"cobweb/Components/CADGeometry/CADAssembly",
+	//"cobweb/Components/CADGeometry/CADFace",
+	//"cobweb/Components/CADGeometry/CADLayer",
+	//"cobweb/Components/CADGeometry/CADPart",
+	//"cobweb/Components/Geometry2D/Circle2D",
+	//"cobweb/Components/Rendering/ClipPlane",
 	//"cobweb/Components/RigidBodyPhysics/CollidableOffset",
 	//"cobweb/Components/RigidBodyPhysics/CollidableShape",
 	"cobweb/Components/Navigation/Collision", // VRML
@@ -72293,9 +66751,9 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Followers/ColorChaser",
 	//"cobweb/Components/Followers/ColorDamper",
 	"cobweb/Components/Interpolation/ColorInterpolator", // VRML
-	"cobweb/Components/Rendering/ColorRGBA",
-	"cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
-	"cobweb/Components/Shaders/ComposedShader",
+	//"cobweb/Components/Rendering/ColorRGBA",
+	//"cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
+	//"cobweb/Components/Shaders/ComposedShader",
 	//"cobweb/Components/Texturing3D/ComposedTexture3D",
 	"cobweb/Components/Geometry3D/Cone", // VRML
 	//"cobweb/Components/ParticleSystems/ConeEmitter",
@@ -72307,15 +66765,15 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Followers/CoordinateDamper",
 	//"cobweb/Components/NURBS/CoordinateDouble",
 	"cobweb/Components/Interpolation/CoordinateInterpolator", // VRML
-	"cobweb/Components/Interpolation/CoordinateInterpolator2D",
+	//"cobweb/Components/Interpolation/CoordinateInterpolator2D",
 	"cobweb/Components/Geometry3D/Cylinder", // VRML
 	"cobweb/Components/PointingDeviceSensor/CylinderSensor", // VRML
 	//"cobweb/Components/DIS/DISEntityManager",
 	//"cobweb/Components/DIS/DISEntityTypeMapping",
 	"cobweb/Components/Lighting/DirectionalLight", // VRML
-	"cobweb/Components/Geometry2D/Disk2D",
+	//"cobweb/Components/Geometry2D/Disk2D",
 	//"cobweb/Components/RigidBodyPhysics/DoubleAxisHingeJoint",
-	"cobweb/Components/Interpolation/EaseInEaseOut",
+	//"cobweb/Components/Interpolation/EaseInEaseOut",
 	"cobweb/Components/Geometry3D/ElevationGrid", // VRML
 	//"cobweb/Components/DIS/EspduTransform",
 	//"cobweb/Components/ParticleSystems/ExplosionEmitter",
@@ -72349,34 +66807,34 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Texturing3D/ImageTexture3D",
 	"cobweb/Components/Geometry3D/IndexedFaceSet", // VRML
 	"cobweb/Components/Rendering/IndexedLineSet", // VRML
-	"cobweb/Components/CADGeometry/IndexedQuadSet",
-	"cobweb/Components/Rendering/IndexedTriangleFanSet",
-	"cobweb/Components/Rendering/IndexedTriangleSet",
-	"cobweb/Components/Rendering/IndexedTriangleStripSet",
+	//"cobweb/Components/CADGeometry/IndexedQuadSet",
+	//"cobweb/Components/Rendering/IndexedTriangleFanSet",
+	//"cobweb/Components/Rendering/IndexedTriangleSet",
+	//"cobweb/Components/Rendering/IndexedTriangleStripSet",
 	"cobweb/Components/Networking/Inline", // VRML
-	"cobweb/Components/EventUtilities/IntegerSequencer",
-	"cobweb/Components/EventUtilities/IntegerTrigger",
-	"cobweb/Components/KeyDeviceSensor/KeySensor",
+	//"cobweb/Components/EventUtilities/IntegerSequencer",
+	//"cobweb/Components/EventUtilities/IntegerTrigger",
+	//"cobweb/Components/KeyDeviceSensor/KeySensor",
 	"cobweb/Components/Navigation/LOD", // VRML
-	"cobweb/Components/Layering/Layer",
-	"cobweb/Components/Layering/LayerSet",
-	"cobweb/Components/Layout/Layout",
-	"cobweb/Components/Layout/LayoutGroup",
-	"cobweb/Components/Layout/LayoutLayer",
+	//"cobweb/Components/Layering/Layer",
+	//"cobweb/Components/Layering/LayerSet",
+	//"cobweb/Components/Layout/Layout",
+	//"cobweb/Components/Layout/LayoutGroup",
+	//"cobweb/Components/Layout/LayoutLayer",
 	//"cobweb/Components/Picking/LinePickSensor",
-	"cobweb/Components/Shape/LineProperties",
-	"cobweb/Components/Rendering/LineSet",
-	"cobweb/Components/Networking/LoadSensor",
+	//"cobweb/Components/Shape/LineProperties",
+	//"cobweb/Components/Rendering/LineSet",
+	//"cobweb/Components/Networking/LoadSensor",
 	//"cobweb/Components/EnvironmentalEffects/LocalFog",
 	"cobweb/Components/Shape/Material", // VRML
 	//"cobweb/Components/Shaders/Matrix3VertexAttribute",
 	//"cobweb/Components/Shaders/Matrix4VertexAttribute",
-	"cobweb/Components/Core/MetadataBoolean",
-	"cobweb/Components/Core/MetadataDouble",
-	"cobweb/Components/Core/MetadataFloat",
-	"cobweb/Components/Core/MetadataInteger",
-	"cobweb/Components/Core/MetadataSet",
-	"cobweb/Components/Core/MetadataString",
+	//"cobweb/Components/Core/MetadataBoolean",
+	//"cobweb/Components/Core/MetadataDouble",
+	//"cobweb/Components/Core/MetadataFloat",
+	//"cobweb/Components/Core/MetadataInteger",
+	//"cobweb/Components/Core/MetadataSet",
+	//"cobweb/Components/Core/MetadataString",
 	//"cobweb/Components/RigidBodyPhysics/MotorJoint",
 	"cobweb/Components/Texturing/MovieTexture", // VRML
 	//"cobweb/Components/Texturing/MultiTexture",
@@ -72399,7 +66857,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Followers/OrientationChaser",
 	//"cobweb/Components/Followers/OrientationDamper",
 	"cobweb/Components/Interpolation/OrientationInterpolator", // VRML
-	"cobweb/Components/Navigation/OrthoViewpoint",
+	//"cobweb/Components/Navigation/OrthoViewpoint",
 	//"cobweb/Components/Shaders/PackagedShader",
 	//"cobweb/Components/ParticleSystems/ParticleSystem",
 	//"cobweb/Components/Picking/PickableGroup",
@@ -72410,21 +66868,21 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Lighting/PointLight", // VRML
 	//"cobweb/Components/Picking/PointPickSensor",
 	"cobweb/Components/Rendering/PointSet", // VRML
-	"cobweb/Components/Geometry2D/Polyline2D",
+	//"cobweb/Components/Geometry2D/Polyline2D",
 	//"cobweb/Components/ParticleSystems/PolylineEmitter",
-	"cobweb/Components/Geometry2D/Polypoint2D",
+	//"cobweb/Components/Geometry2D/Polypoint2D",
 	//"cobweb/Components/Followers/PositionChaser",
 	//"cobweb/Components/Followers/PositionChaser2D",
 	//"cobweb/Components/Followers/PositionDamper",
 	//"cobweb/Components/Followers/PositionDamper2D",
 	"cobweb/Components/Interpolation/PositionInterpolator", // VRML
-	"cobweb/Components/Interpolation/PositionInterpolator2D",
+	//"cobweb/Components/Interpolation/PositionInterpolator2D",
 	//"cobweb/Components/Picking/PrimitivePickSensor",
 	//"cobweb/Components/Shaders/ProgramShader",
 	"cobweb/Components/EnvironmentalSensor/ProximitySensor", // VRML
-	"cobweb/Components/CADGeometry/QuadSet",
+	//"cobweb/Components/CADGeometry/QuadSet",
 	//"cobweb/Components/DIS/ReceiverPdu",
-	"cobweb/Components/Geometry2D/Rectangle2D",
+	//"cobweb/Components/Geometry2D/Rectangle2D",
 	//"cobweb/Components/RigidBodyPhysics/RigidBody",
 	//"cobweb/Components/RigidBodyPhysics/RigidBodyCollection",
 	//"cobweb/Components/Followers/ScalarChaser",
@@ -72433,7 +66891,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Layout/ScreenFontStyle",
 	//"cobweb/Components/Layout/ScreenGroup",
 	"cobweb/Components/Scripting/Script", // VRML
-	"cobweb/Components/Shaders/ShaderPart",
+	//"cobweb/Components/Shaders/ShaderPart",
 	//"cobweb/Components/Shaders/ShaderProgram",
 	"cobweb/Components/Shape/Shape", // VRML
 	//"cobweb/Components/DIS/SignalPdu",
@@ -72447,7 +66905,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Interpolation/SplineScalarInterpolator",
 	"cobweb/Components/Lighting/SpotLight", // VRML
 	//"cobweb/Components/Interpolation/SquadOrientationInterpolator",
-	"cobweb/Components/Grouping/StaticGroup",
+	//"cobweb/Components/Grouping/StaticGroup",
 	//"cobweb/Components/KeyDeviceSensor/StringSensor",
 	//"cobweb/Components/ParticleSystems/SurfaceEmitter",
 	"cobweb/Components/Grouping/Switch", // VRML
@@ -72459,26 +66917,26 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Texturing3D/TextureCoordinate3D",
 	//"cobweb/Components/Texturing3D/TextureCoordinate4D",
 	//"cobweb/Components/Texturing/TextureCoordinateGenerator",
-	"cobweb/Components/Texturing/TextureProperties",
+	//"cobweb/Components/Texturing/TextureProperties",
 	"cobweb/Components/Texturing/TextureTransform", // VRML
 	//"cobweb/Components/Texturing3D/TextureTransform3D",
 	//"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
 	"cobweb/Components/Time/TimeSensor", // VRML
-	"cobweb/Components/EventUtilities/TimeTrigger",
+	//"cobweb/Components/EventUtilities/TimeTrigger",
 	//"cobweb/Components/Titania/TouchGroup",
 	"cobweb/Components/PointingDeviceSensor/TouchSensor", // VRML
 	"cobweb/Components/Grouping/Transform", // VRML
 	//"cobweb/Components/EnvironmentalSensor/TransformSensor",
 	//"cobweb/Components/DIS/TransmitterPdu",
-	"cobweb/Components/Rendering/TriangleFanSet",
-	"cobweb/Components/Rendering/TriangleSet",
-	"cobweb/Components/Geometry2D/TriangleSet2D",
-	"cobweb/Components/Rendering/TriangleStripSet",
-	"cobweb/Components/Shape/TwoSidedMaterial",
+	//"cobweb/Components/Rendering/TriangleFanSet",
+	//"cobweb/Components/Rendering/TriangleSet",
+	//"cobweb/Components/Geometry2D/TriangleSet2D",
+	//"cobweb/Components/Rendering/TriangleStripSet",
+	//"cobweb/Components/Shape/TwoSidedMaterial",
 	//"cobweb/Components/RigidBodyPhysics/UniversalJoint",
 	"cobweb/Components/Navigation/Viewpoint", // VRML
-	"cobweb/Components/Navigation/ViewpointGroup",
-	"cobweb/Components/Layering/Viewport",
+	//"cobweb/Components/Navigation/ViewpointGroup",
+	//"cobweb/Components/Layering/Viewport",
 	"cobweb/Components/EnvironmentalSensor/VisibilitySensor", // VRML
 	//"cobweb/Components/ParticleSystems/VolumeEmitter",
 	//"cobweb/Components/Picking/VolumePickSensor",
@@ -72487,24 +66945,24 @@ define ('cobweb/Configuration/SupportedNodes',[
 ],
 function (Anchor,
           Appearance,
-          Arc2D,
-          ArcClose2D,
+          //Arc2D,
+          //ArcClose2D,
           AudioClip,
           Background,
           //BallJoint,
           Billboard,
-          BooleanFilter,
-          BooleanSequencer,
-          BooleanToggle,
-          BooleanTrigger,
+          //BooleanFilter,
+          //BooleanSequencer,
+          //BooleanToggle,
+          //BooleanTrigger,
           //BoundedPhysicsModel,
           Box,
-          CADAssembly,
-          CADFace,
-          CADLayer,
-          CADPart,
-          Circle2D,
-          ClipPlane,
+          //CADAssembly,
+          //CADFace,
+          //CADLayer,
+          //CADPart,
+          //Circle2D,
+          //ClipPlane,
           //CollidableOffset,
           //CollidableShape,
           Collision,
@@ -72515,9 +66973,9 @@ function (Anchor,
           //ColorChaser,
           //ColorDamper,
           ColorInterpolator,
-          ColorRGBA,
-          ComposedCubeMapTexture,
-          ComposedShader,
+          //ColorRGBA,
+          //ComposedCubeMapTexture,
+          //ComposedShader,
           //ComposedTexture3D,
           Cone,
           //ConeEmitter,
@@ -72529,15 +66987,15 @@ function (Anchor,
           //CoordinateDamper,
           //CoordinateDouble,
           CoordinateInterpolator,
-          CoordinateInterpolator2D,
+          //CoordinateInterpolator2D,
           Cylinder,
           CylinderSensor,
           //DISEntityManager,
           //DISEntityTypeMapping,
           DirectionalLight,
-          Disk2D,
+          //Disk2D,
           //DoubleAxisHingeJoint,
-          EaseInEaseOut,
+          //EaseInEaseOut,
           ElevationGrid,
           //EspduTransform,
           //ExplosionEmitter,
@@ -72571,34 +67029,34 @@ function (Anchor,
           //ImageTexture3D,
           IndexedFaceSet,
           IndexedLineSet,
-          IndexedQuadSet,
-          IndexedTriangleFanSet,
-          IndexedTriangleSet,
-          IndexedTriangleStripSet,
+          //IndexedQuadSet,
+          //IndexedTriangleFanSet,
+          //IndexedTriangleSet,
+          //IndexedTriangleStripSet,
           Inline,
-          IntegerSequencer,
-          IntegerTrigger,
-          KeySensor,
+          //IntegerSequencer,
+          //IntegerTrigger,
+          //KeySensor,
           LOD,
-          Layer,
-          LayerSet,
-          Layout,
-          LayoutGroup,
-          LayoutLayer,
+          //Layer,
+          //LayerSet,
+          //Layout,
+          //LayoutGroup,
+          //LayoutLayer,
           //LinePickSensor,
-          LineProperties,
-          LineSet,
-          LoadSensor,
+          //LineProperties,
+          //LineSet,
+          //LoadSensor,
           //LocalFog,
           Material,
           //Matrix3VertexAttribute,
           //Matrix4VertexAttribute,
-          MetadataBoolean,
-          MetadataDouble,
-          MetadataFloat,
-          MetadataInteger,
-          MetadataSet,
-          MetadataString,
+          //MetadataBoolean,
+          //MetadataDouble,
+          //MetadataFloat,
+          //MetadataInteger,
+          //MetadataSet,
+          //MetadataString,
           //MotorJoint,
           MovieTexture,
           //MultiTexture,
@@ -72621,7 +67079,7 @@ function (Anchor,
           //OrientationChaser,
           //OrientationDamper,
           OrientationInterpolator,
-          OrthoViewpoint,
+          //OrthoViewpoint,
           //PackagedShader,
           //ParticleSystem,
           //PickableGroup,
@@ -72632,21 +67090,21 @@ function (Anchor,
           PointLight,
           //PointPickSensor,
           PointSet,
-          Polyline2D,
+          //Polyline2D,
           //PolylineEmitter,
-          Polypoint2D,
+          //Polypoint2D,
           //PositionChaser,
           //PositionChaser2D,
           //PositionDamper,
           //PositionDamper2D,
           PositionInterpolator,
-          PositionInterpolator2D,
+          //PositionInterpolator2D,
           //PrimitivePickSensor,
           //ProgramShader,
           ProximitySensor,
-          QuadSet,
+          //QuadSet,
           //ReceiverPdu,
-          Rectangle2D,
+          //Rectangle2D,
           //RigidBody,
           //RigidBodyCollection,
           //ScalarChaser,
@@ -72655,7 +67113,7 @@ function (Anchor,
           //ScreenFontStyle,
           //ScreenGroup,
           Script,
-          ShaderPart,
+          //ShaderPart,
           //ShaderProgram,
           Shape,
           //SignalPdu,
@@ -72669,7 +67127,7 @@ function (Anchor,
           //SplineScalarInterpolator,
           SpotLight,
           //SquadOrientationInterpolator,
-          StaticGroup,
+          //StaticGroup,
           //StringSensor,
           //SurfaceEmitter,
           Switch,
@@ -72681,26 +67139,26 @@ function (Anchor,
           //TextureCoordinate3D,
           //TextureCoordinate4D,
           //TextureCoordinateGenerator,
-          TextureProperties,
+          //TextureProperties,
           TextureTransform,
           //TextureTransform3D,
           //TextureTransformMatrix3D,
           TimeSensor,
-          TimeTrigger,
+          //TimeTrigger,
           //TouchGroup,
           TouchSensor,
           Transform,
           //TransformSensor,
           //TransmitterPdu,
-          TriangleFanSet,
-          TriangleSet,
-          TriangleSet2D,
-          TriangleStripSet,
-          TwoSidedMaterial,
+          //TriangleFanSet,
+          //TriangleSet,
+          //TriangleSet2D,
+          //TriangleStripSet,
+          //TwoSidedMaterial,
           //UniversalJoint,
           Viewpoint,
-          ViewpointGroup,
-          Viewport,
+          //ViewpointGroup,
+          //Viewport,
           VisibilitySensor,
           //VolumeEmitter,
           //VolumePickSensor,
@@ -72709,30 +67167,31 @@ function (Anchor,
 {
 
 
+console .log (WorldInfo);
+
 	return {
-		// 3.1
-		MetadataBool:                 MetadataBoolean,
-		// 3.3
+		//MetadataBool:                 MetadataBoolean,
+
 		Anchor:                       Anchor,
 		Appearance:                   Appearance,
-		Arc2D:                        Arc2D,
-		ArcClose2D:                   ArcClose2D,
+		//Arc2D:                        Arc2D,
+		//ArcClose2D:                   ArcClose2D,
 		AudioClip:                    AudioClip,
 		Background:                   Background,
 		//BallJoint:                    BallJoint,
 		Billboard:                    Billboard,
-		BooleanFilter:                BooleanFilter,
-		BooleanSequencer:             BooleanSequencer,
-		BooleanToggle:                BooleanToggle,
-		BooleanTrigger:               BooleanTrigger,
+		//BooleanFilter:                BooleanFilter,
+		//BooleanSequencer:             BooleanSequencer,
+		//BooleanToggle:                BooleanToggle,
+		//BooleanTrigger:               BooleanTrigger,
 		//BoundedPhysicsModel:          BoundedPhysicsModel,
 		Box:                          Box,
-		CADAssembly:                  CADAssembly,
-		CADFace:                      CADFace,
-		CADLayer:                     CADLayer,
-		CADPart:                      CADPart,
-		Circle2D:                     Circle2D,
-		ClipPlane:                    ClipPlane,
+		//CADAssembly:                  CADAssembly,
+		//CADFace:                      CADFace,
+		//CADLayer:                     CADLayer,
+		//CADPart:                      CADPart,
+		//Circle2D:                     Circle2D,
+		//ClipPlane:                    ClipPlane,
 		//CollidableOffset:             CollidableOffset,
 		//CollidableShape:              CollidableShape,
 		Collision:                    Collision,
@@ -72743,9 +67202,9 @@ function (Anchor,
 		//ColorChaser:                  ColorChaser,
 		//ColorDamper:                  ColorDamper,
 		ColorInterpolator:            ColorInterpolator,
-		ColorRGBA:                    ColorRGBA,
-		ComposedCubeMapTexture:       ComposedCubeMapTexture,
-		ComposedShader:               ComposedShader,
+		//ColorRGBA:                    ColorRGBA,
+		//ComposedCubeMapTexture:       ComposedCubeMapTexture,
+		//ComposedShader:               ComposedShader,
 		//ComposedTexture3D:            ComposedTexture3D,
 		Cone:                         Cone,
 		//ConeEmitter:                  ConeEmitter,
@@ -72757,15 +67216,15 @@ function (Anchor,
 		//CoordinateDamper:             CoordinateDamper,
 		//CoordinateDouble:             CoordinateDouble,
 		CoordinateInterpolator:       CoordinateInterpolator,
-		CoordinateInterpolator2D:     CoordinateInterpolator2D,
+		//CoordinateInterpolator2D:     CoordinateInterpolator2D,
 		Cylinder:                     Cylinder,
 		CylinderSensor:               CylinderSensor,
 		//DISEntityManager:             DISEntityManager,
 		//DISEntityTypeMapping:         DISEntityTypeMapping,
 		DirectionalLight:             DirectionalLight,
-		Disk2D:                       Disk2D,
+		//Disk2D:                       Disk2D,
 		//DoubleAxisHingeJoint:         DoubleAxisHingeJoint,
-		EaseInEaseOut:                EaseInEaseOut,
+		//EaseInEaseOut:                EaseInEaseOut,
 		ElevationGrid:                ElevationGrid,
 		//EspduTransform:               EspduTransform,
 		//ExplosionEmitter:             ExplosionEmitter,
@@ -72799,34 +67258,34 @@ function (Anchor,
 		//ImageTexture3D:               ImageTexture3D,
 		IndexedFaceSet:               IndexedFaceSet,
 		IndexedLineSet:               IndexedLineSet,
-		IndexedQuadSet:               IndexedQuadSet,
-		IndexedTriangleFanSet:        IndexedTriangleFanSet,
-		IndexedTriangleSet:           IndexedTriangleSet,
-		IndexedTriangleStripSet:      IndexedTriangleStripSet,
+		//IndexedQuadSet:               IndexedQuadSet,
+		//IndexedTriangleFanSet:        IndexedTriangleFanSet,
+		//IndexedTriangleSet:           IndexedTriangleSet,
+		//IndexedTriangleStripSet:      IndexedTriangleStripSet,
 		Inline:                       Inline,
-		IntegerSequencer:             IntegerSequencer,
-		IntegerTrigger:               IntegerTrigger,
-		KeySensor:                    KeySensor,
+		//IntegerSequencer:             IntegerSequencer,
+		//IntegerTrigger:               IntegerTrigger,
+		//KeySensor:                    KeySensor,
 		LOD:                          LOD,
-		Layer:                        Layer,
-		LayerSet:                     LayerSet,
-		Layout:                       Layout,
-		LayoutGroup:                  LayoutGroup,
-		LayoutLayer:                  LayoutLayer,
+		//Layer:                        Layer,
+		//LayerSet:                     LayerSet,
+		//Layout:                       Layout,
+		//LayoutGroup:                  LayoutGroup,
+		//LayoutLayer:                  LayoutLayer,
 		//LinePickSensor:               LinePickSensor,
-		LineProperties:               LineProperties,
-		LineSet:                      LineSet,
-		LoadSensor:                   LoadSensor,
+		//LineProperties:               LineProperties,
+		//LineSet:                      LineSet,
+		//LoadSensor:                   LoadSensor,
 		//LocalFog:                     LocalFog,
 		Material:                     Material,
 		//Matrix3VertexAttribute:       Matrix3VertexAttribute,
 		//Matrix4VertexAttribute:       Matrix4VertexAttribute,
-		MetadataBoolean:              MetadataBoolean,
-		MetadataDouble:               MetadataDouble,
-		MetadataFloat:                MetadataFloat,
-		MetadataInteger:              MetadataInteger,
-		MetadataSet:                  MetadataSet,
-		MetadataString:               MetadataString,
+		//MetadataBoolean:              MetadataBoolean,
+		//MetadataDouble:               MetadataDouble,
+		//MetadataFloat:                MetadataFloat,
+		//MetadataInteger:              MetadataInteger,
+		//MetadataSet:                  MetadataSet,
+		//MetadataString:               MetadataString,
 		//MotorJoint:                   MotorJoint,
 		MovieTexture:                 MovieTexture,
 		//MultiTexture:                 MultiTexture,
@@ -72849,7 +67308,7 @@ function (Anchor,
 		//OrientationChaser:            OrientationChaser,
 		//OrientationDamper:            OrientationDamper,
 		OrientationInterpolator:      OrientationInterpolator,
-		OrthoViewpoint:               OrthoViewpoint,
+		//OrthoViewpoint:               OrthoViewpoint,
 		//PackagedShader:               PackagedShader,
 		//ParticleSystem:               ParticleSystem,
 		//PickableGroup:                PickableGroup,
@@ -72860,21 +67319,21 @@ function (Anchor,
 		PointLight:                   PointLight,
 		//PointPickSensor:              PointPickSensor,
 		PointSet:                     PointSet,
-		Polyline2D:                   Polyline2D,
+		//Polyline2D:                   Polyline2D,
 		//PolylineEmitter:              PolylineEmitter,
-		Polypoint2D:                  Polypoint2D,
+		//Polypoint2D:                  Polypoint2D,
 		//PositionChaser:               PositionChaser,
 		//PositionChaser2D:             PositionChaser2D,
 		//PositionDamper:               PositionDamper,
 		//PositionDamper2D:             PositionDamper2D,
 		PositionInterpolator:         PositionInterpolator,
-		PositionInterpolator2D:       PositionInterpolator2D,
+		//PositionInterpolator2D:       PositionInterpolator2D,
 		//PrimitivePickSensor:          PrimitivePickSensor,
 		//ProgramShader:                ProgramShader,
 		ProximitySensor:              ProximitySensor,
-		QuadSet:                      QuadSet,
+		//QuadSet:                      QuadSet,
 		//ReceiverPdu:                  ReceiverPdu,
-		Rectangle2D:                  Rectangle2D,
+		//Rectangle2D:                  Rectangle2D,
 		//RigidBody:                    RigidBody,
 		//RigidBodyCollection:          RigidBodyCollection,
 		//ScalarChaser:                 ScalarChaser,
@@ -72883,7 +67342,7 @@ function (Anchor,
 		//ScreenFontStyle:              ScreenFontStyle,
 		//ScreenGroup:                  ScreenGroup,
 		Script:                       Script,
-		ShaderPart:                   ShaderPart,
+		//ShaderPart:                   ShaderPart,
 		//ShaderProgram:                ShaderProgram,
 		Shape:                        Shape,
 		//SignalPdu:                    SignalPdu,
@@ -72897,7 +67356,7 @@ function (Anchor,
 		//SplineScalarInterpolator:     SplineScalarInterpolator,
 		SpotLight:                    SpotLight,
 		//SquadOrientationInterpolator: SquadOrientationInterpolator,
-		StaticGroup:                  StaticGroup,
+		//StaticGroup:                  StaticGroup,
 		//StringSensor:                 StringSensor,
 		//SurfaceEmitter:               SurfaceEmitter,
 		Switch:                       Switch,
@@ -72909,26 +67368,26 @@ function (Anchor,
 		//TextureCoordinate3D:          TextureCoordinate3D,
 		//TextureCoordinate4D:          TextureCoordinate4D,
 		//TextureCoordinateGenerator:   TextureCoordinateGenerator,
-		TextureProperties:            TextureProperties,
+		//TextureProperties:            TextureProperties,
 		TextureTransform:             TextureTransform,
 		//TextureTransform3D:           TextureTransform3D,
 		//TextureTransformMatrix3D:     TextureTransformMatrix3D,
 		TimeSensor:                   TimeSensor,
-		TimeTrigger:                  TimeTrigger,
+		//TimeTrigger:                  TimeTrigger,
 		//TouchGroup:                   TouchGroup,
 		TouchSensor:                  TouchSensor,
 		Transform:                    Transform,
 		//TransformSensor:              TransformSensor,
 		//TransmitterPdu:               TransmitterPdu,
-		TriangleFanSet:               TriangleFanSet,
-		TriangleSet:                  TriangleSet,
-		TriangleSet2D:                TriangleSet2D,
-		TriangleStripSet:             TriangleStripSet,
-		TwoSidedMaterial:             TwoSidedMaterial,
+		//TriangleFanSet:               TriangleFanSet,
+		//TriangleSet:                  TriangleSet,
+		//TriangleSet2D:                TriangleSet2D,
+		//TriangleStripSet:             TriangleStripSet,
+		//TwoSidedMaterial:             TwoSidedMaterial,
 		//UniversalJoint:               UniversalJoint,
 		Viewpoint:                    Viewpoint,
-		ViewpointGroup:               ViewpointGroup,
-		Viewport:                     Viewport,
+		//ViewpointGroup:               ViewpointGroup,
+		//Viewport:                     Viewport,
 		VisibilitySensor:             VisibilitySensor,
 		//VolumeEmitter:                VolumeEmitter,
 		//VolumePickSensor:             VolumePickSensor,

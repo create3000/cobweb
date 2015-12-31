@@ -1094,6 +1094,10 @@
     <None Include="tests\Components\Layout\library\Rotor.x3dv" />
     <None Include="tests\Components\Layout\library\logo.x3dv" />
     <None Include="tests\Components\Layout\library\red.orange.yellow.x3dv" />
+    <None Include="cobweb.js.mdproj" />
+    <None Include="cobweb.VRML.full.js" />
+    <None Include="cobweb.VRML.min.js" />
+    <None Include="VERSION_DIR" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -8,7 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
 	<!-- COBWEB START -->
 	<link rel="stylesheet" type="text/css" href="cobweb.css"/>
-	<script type="text/javascript" src="cobweb.min.js"></script>
+	<script type="text/javascript" src="cobweb.VRML.full.js"></script>
 	<!-- COBWEB END -->
 	<style>
 html, body {
@@ -68,7 +68,7 @@ X3D (function (dom)
 	var pages =
 	[
 		{ name: 'Appartment',            url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.x3d",         "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.wrl" ] },
-		{ name: 'Approach',              mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.wrl" ] },
+		{ name: 'Approach',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.wrl" ] },
 		{ name: 'Arcadia',               url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.x3d",      "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.wrl" ] },
 		{ name: 'Astronomy',             url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Astronomy/stage/astrnmy.x3d",  "https://cdn.rawgit.com/create3000/Library/master/Examples/Astronomy/stage/astrnmy.wrl" ] },
 		{ name: 'BIC Man',               url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/index.x3d",                "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/index.wrl" ] },
@@ -187,7 +187,18 @@ X3D (function (dom)
 		{ name: 'Water Quality',        url: [ "examples/water/water.x3d" ] },
 		{ name: 'LoadSensor',           url: [ "tests/Components/Networking/LoadSensor.x3d" ] },
 		{ name: 'Layout Info',          url: [ "tests/Components/Layout/info.x3d" ] },
+
+		{ name: 'BooleanFilter',     url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/BooleanFilter.wrl" ] },
+		{ name: 'BooleanSequencer',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/BooleanSequencer.wrl" ] },
+		{ name: 'BooleanToggle',     url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/BooleanToggle.wrl" ] },
+		{ name: 'BooleanTrigger',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/BooleanTrigger.wrl" ] },
+		{ name: 'IntegerSequencer',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/IntegerSequencer.wrl" ] },
+		{ name: 'IntegerTrigger',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/IntegerTrigger.wrl" ] },
+		{ name: 'TimeTrigger',       url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/TimeTrigger.wrl" ] },
 	];
+
+	for (var i = 0, length = pages .length; i < length; ++ i)
+		pages [i] .mobile = true;
 
 	var
 		Browser   = X3D .getBrowser (dom),
