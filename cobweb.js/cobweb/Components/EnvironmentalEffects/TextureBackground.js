@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/EnvironmentalEffects/X3DBackgroundNode",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -12,6 +13,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DBackgroundNode, 
+          X3DCast,
           X3DConstants)
 {
 "use strict";
@@ -54,6 +56,48 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DBackgroundNode .prototype .initialize .call (this);
+
+			this .frontTexture_  .addInterest (this, "set_frontTexture__");
+			this .backTexture_   .addInterest (this, "set_backTexture__");
+			this .leftTexture_   .addInterest (this, "set_leftTexture__");
+			this .rightTexture_  .addInterest (this, "set_rightTexture__");
+			this .topTexture_    .addInterest (this, "set_topTexture__");
+			this .bottomTexture_ .addInterest (this, "set_bottomTexture__");
+
+			this .set_frontTexture__  (this .frontTexture_);
+			this .set_backTexture__   (this .backTexture_);
+			this .set_leftTexture__   (this .leftTexture_);
+			this .set_rightTexture__  (this .rightTexture_);
+			this .set_topTexture__    (this .topTexture_);
+			this .set_bottomTexture__ (this .bottomTexture_);
+		},
+		set_frontTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_frontTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .frontTexture_));
+		},
+		set_backTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_backTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .backTexture_));
+		},
+		set_leftTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_leftTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .leftTexture_));
+		},
+		set_rightTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_rightTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .rightTexture_));
+		},
+		set_topTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_topTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .topTexture_));
+		},
+		set_bottomTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_bottomTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .bottomTexture_));
 		},
 	});
 

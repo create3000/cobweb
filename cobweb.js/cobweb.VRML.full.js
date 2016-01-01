@@ -12130,6 +12130,10 @@ define ('standard/Math/Algorithm',[],function ()
 
 	var Algorithm =
 	{
+		signum: function (value)
+		{
+			return (0 < value) - (value < 0);
+		},
 		radians: function (value)
 		{
 			return value * (Math .PI / 180);
@@ -34064,9 +34068,15 @@ function ($,
 	BinaryTransport ($);
 
 	var
-		TIMEOUT    = 17,
-		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
-		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/;
+		TIMEOUT       = 17,
+		ECMAScript    = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
+		dataURL       = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
+		contentTypeRx = /^(?:(.*?);(.*?)$)/;
+
+	var foreign = {
+		"text/html":             true,
+		"application/xhtml+xml": true,
+	};
 
 	function Loader (node, external)
 	{
@@ -34331,7 +34341,9 @@ function ($,
 				{
 					if (this .foreign)
 					{
-						if (xhr .getResponseHeader ("Content-Type") === "text/html")
+						//console .log (this .getContentType (xhr));
+
+						if (foreign [this .getContentType (xhr)])
 							this .foreign (this .URL);
 					}
 
@@ -34410,6 +34422,17 @@ function ($,
 			}
 
 			return this .executionContext .getURL ();
+		},
+		getContentType: function (xhr)
+		{
+			var
+				contentType = xhr .getResponseHeader ("Content-Type"),
+				result      = contentTypeRx .exec (contentType);
+
+			if (result)
+				return result [1];
+
+			return "";
 		},
 	});
 
@@ -55569,6 +55592,7 @@ function ($,
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
 		this .localLights          = [ ];
+		this .localFogs            = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -55618,6 +55642,10 @@ function ($,
 		{
 			return this .localLights;
 		},
+		getLocalFogs: function ()
+		{
+			return this .localFogs;
+		},
 		addShape: function (shapeNode)
 		{
 			var
@@ -55653,7 +55681,7 @@ function ($,
 				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
 				context .distance  = distance - radius;
-				context .fogNode   = this .getFog ();
+				context .fogNode   = this .localFogs .length ? this .localFogs [this .localFogs .length - 1]: this .getFog ();
 
 				// Clip planes
 

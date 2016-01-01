@@ -12130,6 +12130,10 @@ define ('standard/Math/Algorithm',[],function ()
 
 	var Algorithm =
 	{
+		signum: function (value)
+		{
+			return (0 < value) - (value < 0);
+		},
 		radians: function (value)
 		{
 			return value * (Math .PI / 180);
@@ -34064,9 +34068,15 @@ function ($,
 	BinaryTransport ($);
 
 	var
-		TIMEOUT    = 17,
-		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
-		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/;
+		TIMEOUT       = 17,
+		ECMAScript    = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
+		dataURL       = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
+		contentTypeRx = /^(?:(.*?);(.*?)$)/;
+
+	var foreign = {
+		"text/html":             true,
+		"application/xhtml+xml": true,
+	};
 
 	function Loader (node, external)
 	{
@@ -34331,7 +34341,9 @@ function ($,
 				{
 					if (this .foreign)
 					{
-						if (xhr .getResponseHeader ("Content-Type") === "text/html")
+						//console .log (this .getContentType (xhr));
+
+						if (foreign [this .getContentType (xhr)])
 							this .foreign (this .URL);
 					}
 
@@ -34410,6 +34422,17 @@ function ($,
 			}
 
 			return this .executionContext .getURL ();
+		},
+		getContentType: function (xhr)
+		{
+			var
+				contentType = xhr .getResponseHeader ("Content-Type"),
+				result      = contentTypeRx .exec (contentType);
+
+			if (result)
+				return result [1];
+
+			return "";
 		},
 	});
 
@@ -55569,6 +55592,7 @@ function ($,
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
 		this .localLights          = [ ];
+		this .localFogs            = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -55618,6 +55642,10 @@ function ($,
 		{
 			return this .localLights;
 		},
+		getLocalFogs: function ()
+		{
+			return this .localFogs;
+		},
 		addShape: function (shapeNode)
 		{
 			var
@@ -55653,7 +55681,7 @@ function ($,
 				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
 				context .distance  = distance - radius;
-				context .fogNode   = this .getFog ();
+				context .fogNode   = this .localFogs .length ? this .localFogs [this .localFogs .length - 1]: this .getFog ();
 
 				// Clip planes
 
@@ -66995,6 +67023,79 @@ function ($,
 
 
 
+define ('cobweb/Components/EnvironmentalEffects/LocalFog',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/EnvironmentalEffects/X3DFogObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DFogObject, 
+          X3DConstants)
+{
+
+
+	function LocalFog (executionContext)
+	{
+		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DFogObject .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .LocalFog);
+	}
+
+	LocalFog .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DFogObject .prototype,
+	{
+		constructor: LocalFog,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",         new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "fogType",         new Fields .SFString ("LINEAR")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "color",           new Fields .SFColor (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "visibilityRange", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "LocalFog";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalEffects";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+			X3DFogObject .prototype .initialize .call (this);
+		},
+		push: function ()
+		{
+			if (this .enabled_ .getValue ())
+				this .getCurrentLayer () .getLocalFogs () .push (this);
+		},
+		pop: function ()
+		{
+			if (this .enabled_ .getValue ())
+				this .getCurrentLayer () .getLocalFogs () .pop ();
+		},
+	});
+
+	return LocalFog;
+});
+
+
+
+
 define ('cobweb/Components/Shape/X3DMaterialNode',[
 	"jquery",
 	"cobweb/Components/Shape/X3DAppearanceChildNode",
@@ -69355,6 +69456,122 @@ function ($,
 });
 
 
+define ('cobweb/Components/Layout/ScreenGroup',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DGroupingNode, 
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4,
+          Algorithm)
+{
+
+
+		var
+			translation = new Vector3 (0, 0, 0),
+			rotation    = new Rotation4 (0, 0, 1, 0),
+			scale       = new Vector3 (1, 1, 1);
+
+	function ScreenGroup (executionContext)
+	{
+		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .ScreenGroup);
+
+		this .screenMatrix       = new Matrix4 ();
+		this .modelViewMatrix    = new Matrix4 ();
+		this .invModelViewMatrix = new Matrix4 ();
+	}
+
+	ScreenGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+	{
+		constructor: ScreenGroup,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ScreenGroup";
+		},
+		getComponentName: function ()
+		{
+			return "Layout";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getBBox: function ()
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .getMatrix ());
+		},
+		getMatrix: function ()
+		{
+			try
+			{
+				this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
+				this .matrix .assign (this .screenMatrix) .multRight (this .invModelViewMatrix);
+			}
+			catch (error)
+			{ }
+
+			return this .matrix;
+		},
+		scale: function (type)
+		{
+			this .getModelViewMatrix (type, this .modelViewMatrix);
+			this .modelViewMatrix .get (translation, rotation, scale);
+		
+			var
+				viewport    = this .getCurrentLayer () .getViewVolume () .getViewport (),
+				distance    = this .modelViewMatrix .origin .abs (),
+				screenScale = this .getCurrentViewpoint () .getScreenScale (distance, viewport);
+		
+			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+		                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+		                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+
+			this .getBrowser () .getModelViewMatrix () .set (this .screenMatrix);
+		},
+		traverse: function (type)
+		{
+			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+	
+			modelViewMatrix .push ();
+		
+			this .scale (type);
+		
+			X3DGroupingNode .prototype .traverse .call (this, type);
+		
+			modelViewMatrix .pop ();
+		},
+	});
+
+	return ScreenGroup;
+});
+
+
+
+
 define ('cobweb/Configuration/UnitInfo',[
 	"jquery",
 ],
@@ -71165,6 +71382,114 @@ function ($,
 
 
 
+define ('cobweb/Components/EnvironmentalEffects/TextureBackground',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalEffects/X3DBackgroundNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DBackgroundNode, 
+          X3DCast,
+          X3DConstants)
+{
+
+
+	function TextureBackground (executionContext)
+	{
+		X3DBackgroundNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .TextureBackground);
+	}
+
+	TextureBackground .prototype = $.extend (Object .create (X3DBackgroundNode .prototype),
+	{
+		constructor: TextureBackground,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_bind",      new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "skyAngle",      new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "skyColor",      new Fields .MFColor (0, 0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "groundAngle",   new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "groundColor",   new Fields .MFColor ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "transparency",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",       new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "bindTime",      new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "frontTexture",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "backTexture",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "leftTexture",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "rightTexture",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "topTexture",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "bottomTexture", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureBackground";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalEffects";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DBackgroundNode .prototype .initialize .call (this);
+
+			this .frontTexture_  .addInterest (this, "set_frontTexture__");
+			this .backTexture_   .addInterest (this, "set_backTexture__");
+			this .leftTexture_   .addInterest (this, "set_leftTexture__");
+			this .rightTexture_  .addInterest (this, "set_rightTexture__");
+			this .topTexture_    .addInterest (this, "set_topTexture__");
+			this .bottomTexture_ .addInterest (this, "set_bottomTexture__");
+
+			this .set_frontTexture__  (this .frontTexture_);
+			this .set_backTexture__   (this .backTexture_);
+			this .set_leftTexture__   (this .leftTexture_);
+			this .set_rightTexture__  (this .rightTexture_);
+			this .set_topTexture__    (this .topTexture_);
+			this .set_bottomTexture__ (this .bottomTexture_);
+		},
+		set_frontTexture: function ()
+		{
+			X3DBackgroundNode .prototype .set_frontTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .frontTexture_));
+		},
+		set_backTexture: function ()
+		{
+			X3DBackgroundNode .prototype .set_backTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .backTexture_));
+		},
+		set_leftTexture: function ()
+		{
+			X3DBackgroundNode .prototype .set_leftTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .leftTexture_));
+		},
+		set_rightTexture: function ()
+		{
+			X3DBackgroundNode .prototype .set_rightTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .rightTexture_));
+		},
+		set_topTexture: function ()
+		{
+			X3DBackgroundNode .prototype .set_topTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .topTexture_));
+		},
+		set_bottomTexture: function ()
+		{
+			X3DBackgroundNode .prototype .set_bottomTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .bottomTexture_));
+		},
+	});
+
+	return TextureBackground;
+});
+
+
+
+
 define ('cobweb/Components/EventUtilities/TimeTrigger',[
 	"jquery",
 	"cobweb/Fields",
@@ -72367,7 +72692,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Shape/LineProperties",
 	"cobweb/Components/Rendering/LineSet",
 	"cobweb/Components/Networking/LoadSensor",
-	//"cobweb/Components/EnvironmentalEffects/LocalFog",
+	"cobweb/Components/EnvironmentalEffects/LocalFog",
 	"cobweb/Components/Shape/Material", // VRML
 	//"cobweb/Components/Shaders/Matrix3VertexAttribute",
 	//"cobweb/Components/Shaders/Matrix4VertexAttribute",
@@ -72431,7 +72756,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Followers/ScalarDamper",
 	"cobweb/Components/Interpolation/ScalarInterpolator", // VRML
 	//"cobweb/Components/Layout/ScreenFontStyle",
-	//"cobweb/Components/Layout/ScreenGroup",
+	"cobweb/Components/Layout/ScreenGroup",
 	"cobweb/Components/Scripting/Script", // VRML
 	"cobweb/Components/Shaders/ShaderPart",
 	//"cobweb/Components/Shaders/ShaderProgram",
@@ -72454,7 +72779,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Followers/TexCoordChaser2D",
 	//"cobweb/Components/Followers/TexCoordDamper2D",
 	"cobweb/Components/Text/Text", // VRML
-	//"cobweb/Components/EnvironmentalEffects/TextureBackground",
+	"cobweb/Components/EnvironmentalEffects/TextureBackground",
 	"cobweb/Components/Texturing/TextureCoordinate", // VRML
 	//"cobweb/Components/Texturing3D/TextureCoordinate3D",
 	//"cobweb/Components/Texturing3D/TextureCoordinate4D",
@@ -72589,7 +72914,7 @@ function (Anchor,
           LineProperties,
           LineSet,
           LoadSensor,
-          //LocalFog,
+          LocalFog,
           Material,
           //Matrix3VertexAttribute,
           //Matrix4VertexAttribute,
@@ -72653,7 +72978,7 @@ function (Anchor,
           //ScalarDamper,
           ScalarInterpolator,
           //ScreenFontStyle,
-          //ScreenGroup,
+          ScreenGroup,
           Script,
           ShaderPart,
           //ShaderProgram,
@@ -72676,7 +73001,7 @@ function (Anchor,
           //TexCoordChaser2D,
           //TexCoordDamper2D,
           Text,
-          //TextureBackground,
+          TextureBackground,
           TextureCoordinate,
           //TextureCoordinate3D,
           //TextureCoordinate4D,
@@ -72817,7 +73142,7 @@ function (Anchor,
 		LineProperties:               LineProperties,
 		LineSet:                      LineSet,
 		LoadSensor:                   LoadSensor,
-		//LocalFog:                     LocalFog,
+		LocalFog:                     LocalFog,
 		Material:                     Material,
 		//Matrix3VertexAttribute:       Matrix3VertexAttribute,
 		//Matrix4VertexAttribute:       Matrix4VertexAttribute,
@@ -72881,7 +73206,7 @@ function (Anchor,
 		//ScalarDamper:                 ScalarDamper,
 		ScalarInterpolator:           ScalarInterpolator,
 		//ScreenFontStyle:              ScreenFontStyle,
-		//ScreenGroup:                  ScreenGroup,
+		ScreenGroup:                  ScreenGroup,
 		Script:                       Script,
 		ShaderPart:                   ShaderPart,
 		//ShaderProgram:                ShaderProgram,
@@ -72904,7 +73229,7 @@ function (Anchor,
 		//TexCoordChaser2D:             TexCoordChaser2D,
 		//TexCoordDamper2D:             TexCoordDamper2D,
 		Text:                         Text,
-		//TextureBackground:            TextureBackground,
+		TextureBackground:            TextureBackground,
 		TextureCoordinate:            TextureCoordinate,
 		//TextureCoordinate3D:          TextureCoordinate3D,
 		//TextureCoordinate4D:          TextureCoordinate4D,

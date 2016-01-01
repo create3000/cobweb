@@ -44,6 +44,7 @@ function ($,
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
 		this .localLights          = [ ];
+		this .localFogs            = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -93,6 +94,22 @@ function ($,
 		{
 			return this .localLights;
 		},
+		setGlobalFog: function (fog)
+		{
+			this .localFog = this .localFogs [0] = fog;
+		},
+		pushLocalFog: function (fog)
+		{
+			this .localFogs .push (fog);
+
+			this .localFog = fog;
+		},
+		popLocalFog: function ()
+		{
+			this .localFogs .pop ();
+
+			this .localFog = this .localFogs [this .localFogs .length - 1];
+		},
 		addShape: function (shapeNode)
 		{
 			var
@@ -128,7 +145,7 @@ function ($,
 				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
 				context .distance  = distance - radius;
-				context .fogNode   = this .getFog ();
+				context .fogNode   = this .localFog;
 
 				// Clip planes
 
@@ -355,7 +372,8 @@ function ($,
 				{
 					this .numOpaqueShapes      = 0;
 					this .numTransparentShapes = 0;
-
+	
+					this .setGlobalFog (this .getFog ());
 					this .collect (type);
 					this .draw ();
 					break;

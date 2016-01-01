@@ -26,7 +26,8 @@ function ($,
 		this .addType (X3DConstants .LocalFog);
 	}
 
-	LocalFog .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DFogObject (),
+	LocalFog .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DFogObject .prototype,
 	{
 		constructor: LocalFog,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -48,13 +49,20 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+			X3DFogObject .prototype .initialize .call (this);
+		},
 		push: function ()
 		{
-			// Used in X3DGroupingNode.
+			if (this .enabled_ .getValue ())
+				this .getCurrentLayer () .pushLocalFog (this);
 		},
 		pop: function ()
 		{
-			// Used in X3DGroupingNode.
+			if (this .enabled_ .getValue ())
+				this .getCurrentLayer () .popLocalFog ();
 		},
 	});
 
