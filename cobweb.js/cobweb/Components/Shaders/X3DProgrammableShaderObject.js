@@ -65,6 +65,11 @@ function ($,
 
 						switch (field .getType ())
 						{
+							case X3DConstants .SFImage:
+							{
+								location .array = new Int32Array (3 + field .array .length);
+								break;
+							}
 							case X3DConstants .MFBool:
 							case X3DConstants .MFInt32:
 							{
@@ -76,6 +81,10 @@ function ($,
 							case X3DConstants .MFTime:
 							{
 								location .array = new Float32Array (this .getLocationLength (gl, program, field));
+								break;
+							}
+							case X3DConstants .MFImage:
+							{
 								break;
 							}
 							case X3DConstants .MFMatrix3d:
@@ -92,10 +101,17 @@ function ($,
 							}
 							case X3DConstants .MFNode:
 							{
-								var locations = location .locations = new Array (this .getLocationLength (gl, program, field));
+								var array = field .uniformLocation_ = [ ];
 
-								for (var i = 0, length = locations .length; i < length; ++ i)
-									locations [i] = name + "[" + i + "]";
+								for (var i = 0; ; ++ i)
+								{
+									var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+									if (location)
+										array [i] = location;
+									else
+										break;
+								}
 
 								break;
 							}
@@ -212,6 +228,23 @@ function ($,
 				}
 				case X3DConstants .SFImage:
 				{
+					var
+						location = field .uniformLocation_,
+						array    = location .array,
+						pixels   = field .array .getValue (),
+						length   = 3 + pixels .length;
+
+					if (length !== array .length)
+						array = location .array = new Int32Array (length);
+
+					array [0] = field .width;
+					array [1] = field .height;
+					array [2] = field .comp;
+
+					for (var i = 3, p = 0, length = pixels .length; p < length; ++ i, ++ p)
+						array [i] = pixels [p] .getValue ();
+
+					gl .uniform1iv (location, array);
 					return;
 				}
 				case X3DConstants .SFMatrix3d:
@@ -413,13 +446,13 @@ function ($,
 				{
 					var
 						value     = field .getValue (),
-						locations = field .uniformLocation_ .locations;
+						locations = field .uniformLocation_;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
-						this .setNode (gl, program, gl .getUniformLocation (program, locations [i]), value [i]);
+						this .setNode (gl, program, locations [i], value [i]);
 
 					for (var length = locations .length; i < length; ++ i)
-						this .setNode (gl, program, gl .getUniformLocation (program, locations [i]), NULL);
+						this .setNode (gl, program, locations [i], NULL);
 
 					return;
 				}
@@ -532,7 +565,7 @@ function ($,
 					}
 					else
 					{
-						this .getBrowser () .println ("Warning: Not enough combined texture units for uniform variable '", field .getName (), "' available.");
+						console .warn ("Not enough combined texture units for uniform variable '", field .getName (), "' available.");
 						return;
 					}
 				}

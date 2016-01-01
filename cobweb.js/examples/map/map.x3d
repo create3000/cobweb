@@ -2,11 +2,12 @@
 <!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
 <X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
   <head>
+    <unit category='angle' name='degree' conversionFactor='0.0174532925199433'/>
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 01 Jan 2016 09:29:28 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 01 Jan 2016 12:10:36 GMT'/>
+    <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
+    <meta name='modified' content='Fri, 01 Jan 2016 19:40:22 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -27,11 +28,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='279.296020507812, 564.162048339844, 1342.32592773438'/>
+              value='651.268005371094, 520.301025390625, 823.075012207031'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.850547850131989, 0.501328408718109, -0.158865362405777, 0.376630485057831'/>
+              value='-0.488288938999176, 0.867660880088806, 0.093479685485363, 0.751430869102478'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -92,7 +93,7 @@
           </MetadataSet>
         </MetadataSet>
         <Viewpoint
-            description='Animation'
+            description='Viewpoint'
             position='651.268 520.301 823.075'
             orientation='-0.488289 0.867661 0.0934797 0.751431'
             centerOfRotation='0 121.5 0'/>
@@ -114,7 +115,7 @@
             translation='0 100 0'>
           <ScreenGroup>
             <Transform DEF='Text'
-                rotation='-0.850548 0.501328 -0.158865 0.37663'>
+                rotation='-0.488289 0.867661 0.0934797 0.751431'>
               <Shape>
                 <Appearance>
                   <Material/>
@@ -134,7 +135,7 @@
             translation='0 150 -400'>
           <ScreenGroup>
             <Transform DEF='Text_1'
-                rotation='-0.850548 0.501328 -0.158865 0.37663'>
+                rotation='-0.488289 0.867661 0.0934797 0.751431'>
               <Shape>
                 <Appearance>
                   <Material/>
@@ -154,7 +155,7 @@
             translation='400 150 0'>
           <ScreenGroup>
             <Transform DEF='Text_2'
-                rotation='-0.850548 0.501328 -0.158865 0.37663'>
+                rotation='-0.488289 0.867661 0.0934797 0.751431'>
               <Shape>
                 <Appearance>
                   <Material/>
@@ -174,7 +175,7 @@
             translation='0 150 400'>
           <ScreenGroup>
             <Transform DEF='Text_3'
-                rotation='-0.850548 0.501328 -0.158865 0.37663'>
+                rotation='-0.488289 0.867661 0.0934797 0.751431'>
               <Shape>
                 <Appearance>
                   <Material/>
@@ -194,7 +195,7 @@
             translation='-400 150 0'>
           <ScreenGroup>
             <Transform DEF='Text_4'
-                rotation='-0.850548 0.501328 -0.158865 0.37663'>
+                rotation='-0.488289 0.867661 0.0934797 0.751431'>
               <Shape>
                 <Appearance>
                   <Material/>
@@ -212,6 +213,18 @@
         </Transform>
         <ProximitySensor DEF='_1'
             size='-1 -1 -1'/>
+        <OrthoViewpoint DEF='_2'
+            description='OthoViewpoint'
+            position='0 1753.27 0'
+            orientation='1 0 0 4.71239'
+            centerOfRotation='0 121.5 0'
+            fieldOfView='-500, -500, 500, 500'/>
+        <Viewpoint DEF='_3'
+            description='Wide-angle'
+            position='651.268 520.301 823.075'
+            orientation='-0.488289 0.867661 0.0934797 0.751431'
+            centerOfRotation='0 121.5 0'
+            fieldOfView='2.15888'/>
       </Layer>
       <Layer/>
     </LayerSet>

@@ -112,7 +112,7 @@ function ($,
 		{
 			return this .sizeY;
 		},
-		getScreenScale: function (distance, viewport)
+		getScreenScale: function (dummy, viewport)
 		{
 			var
 				width  = viewport [2],
