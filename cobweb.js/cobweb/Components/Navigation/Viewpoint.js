@@ -24,7 +24,9 @@ function ($,
 {
 "use strict";
 
-	var screenScale = new Vector3 (0, 0, 0);
+	var
+		zAxis       = new Vector3 (0, 0, 1),
+		screenScale = new Vector3 (0, 0, 0);
 
 	function Viewpoint (executionContext)
 	{
@@ -97,16 +99,17 @@ function ($,
 
 			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
 		},
-		getScreenScale: function (distance, viewport)
+		getScreenScale: function (point, viewport)
 		{
 			var
 				width  = viewport [2],
 				height = viewport [3],
-				size   = distance * Math .tan (this .getFieldOfView () / 2) * 2;
+				size   = Math .tan (this .getFieldOfView () / 2) * 2 * point .abs (); // Assume we are on sphere.
+
+			size *= Math .abs (point .normalize () .dot (zAxis));
 
 			if (width > height)
 				size /= height;
-
 			else
 				size /= width;
 

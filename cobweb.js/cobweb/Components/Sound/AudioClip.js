@@ -127,13 +127,16 @@ function ($,
 					this .urlStack .unshift (urls .fallback + sURL);
 			}
 
-			console .warn ("Error loading audio:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading audio:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setAudio: function ()
 		{
 		   // Everything is fine.
-			console .info ("Done loading audio:", this .URL .toString ());
+			if (this .URL .scheme !== "data")
+				console .info ("Done loading audio:", this .URL .toString ());
 			
 			this .audio .unbind ("canplaythrough");
 			this .setMedia (this .audio);

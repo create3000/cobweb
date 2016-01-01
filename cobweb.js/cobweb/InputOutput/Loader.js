@@ -123,7 +123,7 @@ function ($,
 
 			success (scene);
 
-			if (this .URL .length)
+			if (this .URL .length && this .URL .scheme !== "data")
 				console .info ("Done loading scene " + this .URL);
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
@@ -352,7 +352,8 @@ function ($,
 		},
 		error: function (exception)
 		{
-			console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
+			if (this .URL .scheme !== "data")
+				console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
 		},
 		transform: function (sURL)
 		{

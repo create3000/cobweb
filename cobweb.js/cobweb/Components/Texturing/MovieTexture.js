@@ -138,12 +138,15 @@ function ($,
 					this .urlStack .unshift (urls .fallback + sURL);
 			}
 
-			console .warn ("Error loading movie:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading movie:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setVideo: function ()
 		{
-			console .info ("Done loading movie:", this .URL .toString ());
+			if (this .URL .scheme !== "data")
+				console .info ("Done loading movie:", this .URL .toString ());
 
 		   var video = this .video [0];
 	

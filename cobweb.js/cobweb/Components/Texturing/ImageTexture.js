@@ -117,12 +117,15 @@ function ($,
 					this .urlStack .unshift (urls .fallback + sURL);
 			}
 
-			console .warn ("Error loading image:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading image:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setImage: function ()
 		{
-			console .info ("Done loading image:", this .URL .toString ());
+			if (this .URL .scheme !== "data")
+				console .info ("Done loading image:", this .URL .toString ());
 
 			try
 			{

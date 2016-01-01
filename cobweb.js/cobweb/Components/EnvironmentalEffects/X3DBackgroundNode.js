@@ -26,7 +26,8 @@ function ($,
 
 	var
 		SIZE        = 10000,
-		U_DIMENSION = 20;
+		U_DIMENSION = 20,
+		point       = new Vector3 (0, 0, -SIZE);
 	
 	var s = Math .sqrt (Math .pow (2 * SIZE, 2) / 2) / 2;
 
@@ -464,7 +465,7 @@ function ($,
 
 			var
 				viewpoint       = this .getCurrentViewpoint (),
-				scale           = viewpoint .getScreenScale (SIZE, viewport),
+				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
 				modelViewMatrix = this .transformationMatrix;
 
