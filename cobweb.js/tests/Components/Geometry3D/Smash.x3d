@@ -6,7 +6,7 @@
     <meta name='created' content='Mon, 06 Oct 2014 01:06:09 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 20 Dec 2015 14:48:03 GMT'/>
+    <meta name='modified' content='Fri, 01 Jan 2016 10:15:37 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Torus' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/Torus.x3d"'>
@@ -78,15 +78,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='30.3127365112305, 4.62810134887695, 13.6535873413086'/>
+              value='-5.24197196960449, 5.47676658630371, 5.62150955200195'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='-0.862858235836029, 0.491776287555695, 0.116754911839962, 0.801039636135101'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='30.3127365112305, 4.62810134887695, 2.57228821283206e-05'/>
+              value='-7.95276260375977, 0.12195897102356, -0.263254970312119'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -946,7 +946,7 @@
             solid='true'/>
       </Shape>
     </Transform>
-    <Viewpoint DEF='_6'
+    <Viewpoint
         description='Text'
         position='30.3127 4.6281 13.6536'
         centerOfRotation='30.3127 4.6281 2.57229e-05'/>
@@ -972,7 +972,7 @@
         <Text
             string='"3D Text", "2D Text", ""'
             solid='true'>
-          <FontStyle DEF='_7'
+          <FontStyle DEF='_6'
               size='2'/>
         </Text>
       </Shape>
@@ -988,8 +988,24 @@
         <Text
             string='"3D Text", "2D Text", ""'
             solid='true'>
-          <FontStyle USE='_7'/>
+          <FontStyle USE='_6'/>
         </Text>
+      </Shape>
+    </Transform>
+    <Transform DEF='_7'
+        translation='-8 2 7.3494e-06'
+        scale='0.00380651 0.00380651 0.00217176'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <ElevationGrid
+            xDimension='16'
+            zDimension='8'
+            xSpacing='66.6667'
+            zSpacing='142.857'
+            creaseAngle='3.14159'
+            height='106, 114, 115, 112, 123, 107, 98, 102, 109, 98, 79, 78, 89, 125, 138, 157, 126, 115, 116, 128, 118, 112, 103, 83, 96, 106, 92, 89, 113, 157, 170, 197, 109, 104, 118, 104, 104, 99, 88, 80, 70, 76, 67, 79, 89, 121, 151, 152, 118, 125, 111, 87, 81, 76, 58, 59, 55, 78, 77, 79, 105, 102, 128, 153, 149, 141, 128, 111, 86, 92, 68, 69, 68, 96, 99, 110, 123, 115, 139, 144, 142, 144, 139, 121, 117, 97, 97, 89, 82, 103, 106, 107, 120, 119, 131, 136, 146, 128, 114, 112, 108, 93, 96, 115, 119, 107, 130, 126, 141, 138, 141, 137, 100, 97, 79, 74, 73, 87, 97, 116, 105, 96, 110, 109, 100, 114, 124, 131'/>
       </Shape>
     </Transform>
   </Scene>

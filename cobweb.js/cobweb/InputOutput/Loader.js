@@ -23,9 +23,15 @@ function ($,
 	BinaryTransport ($);
 
 	var
-		TIMEOUT    = 17,
-		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
-		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/;
+		TIMEOUT       = 17,
+		ECMAScript    = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
+		dataURL       = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
+		contentTypeRx = /^(?:(.*?);(.*?)$)/;
+
+	var foreign = {
+		"text/html":             true,
+		"application/xhtml+xml": true,
+	};
 
 	function Loader (node, external)
 	{
@@ -290,7 +296,9 @@ function ($,
 				{
 					if (this .foreign)
 					{
-						if (xhr .getResponseHeader ("Content-Type") === "text/html")
+						//console .log (this .getContentType (xhr));
+
+						if (foreign [this .getContentType (xhr)])
 							this .foreign (this .URL);
 					}
 
@@ -369,6 +377,17 @@ function ($,
 			}
 
 			return this .executionContext .getURL ();
+		},
+		getContentType: function (xhr)
+		{
+			var
+				contentType = xhr .getResponseHeader ("Content-Type"),
+				result      = contentTypeRx .exec (contentType);
+
+			if (result)
+				return result [1];
+
+			return "";
 		},
 	});
 

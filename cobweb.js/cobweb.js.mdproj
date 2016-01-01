@@ -1097,6 +1097,7 @@
     <None Include="cobweb.js.mdproj" />
     <None Include="cobweb.VRML.full.js" />
     <None Include="cobweb.VRML.min.js" />
+    <None Include="examples\map\map.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1152,5 +1153,6 @@
     <Folder Include="examples\water\" />
     <Folder Include="examples\alprojectsvr\" />
     <Folder Include="tests\Components\Layout\library\" />
+    <Folder Include="examples\map\" />
   </ItemGroup>
 </Project>

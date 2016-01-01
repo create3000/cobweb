@@ -9,7 +9,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
     <meta name='identifier' content='http://spri.kshell.com/xt/shape/psghtq40qqvj/shape_2336333638.x3d'/>
-    <meta name='modified' content='Fri, 25 Dec 2015 14:40:47 GMT'/>
+    <meta name='modified' content='Thu, 31 Dec 2015 16:47:54 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -23,7 +23,7 @@
           <MetadataString DEF='type' containerField='value'
               name='type'
               reference='http://titania.create3000.de'
-              value='"NONE"'/>
+              value='"EXAMINE"'/>
         </MetadataSet>
         <MetadataSet DEF='Viewpoint' containerField='value'
             name='Viewpoint'
@@ -31,11 +31,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0, 0, 10'/>
+              value='0.00652447296306491, -0.00227019074372947, 9.99999713897705'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='0.189542636275291, 0.545598924160004, -0.816330432891846, 0.00119603995699435'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -5166,6 +5166,38 @@ function set_phong ()
             </Transform>
           </Anchor>
         </Group>
+        <Anchor
+            description='http://spri.kshell.com'
+            url='"http://spri.kshell.com"'
+            parameter='"target=_top"'>
+          <Transform DEF='Text_5'
+              translation='-1.6905 -0.955496 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <Text
+                  string='"Thanks to http://spri.kshell.com", ""'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"FIRST"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D'
+              translation='-1.2166 -0.933804 -1'
+              scale='0.518874 0.049 0.0735'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <Rectangle2D/>
+            </Shape>
+          </Transform>
+        </Anchor>
       </Layer>
     </LayerSet>
     <ROUTE fromNode='_5' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
