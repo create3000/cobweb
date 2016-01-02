@@ -48,18 +48,13 @@ function ($,
 			{
 				var point = this .point_ [index];
 
-				texCoords .push (point .x);
-				texCoords .push (point .y);
-				texCoords .push (point .z);
-				texCoords .push (point .w);
+				texCoords .push (point .x,
+				                 point .y,
+				                 point .z,
+				                 point .w);
 			}
 			else
-			{
-				texCoords .push (0);
-				texCoords .push (0);
-				texCoords .push (0);
-				texCoords .push (1);
-			}
+				texCoords .push (0, 0, 0, 1);
 		},
 	});
 
