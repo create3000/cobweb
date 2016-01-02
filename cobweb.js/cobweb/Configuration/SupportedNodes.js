@@ -179,7 +179,7 @@ define ([
 	"cobweb/Components/Sound/Sound", // VRML
 	"cobweb/Components/Geometry3D/Sphere", // VRML
 	"cobweb/Components/PointingDeviceSensor/SphereSensor", // VRML
-	//"cobweb/Components/Interpolation/SplinePositionInterpolator",
+	"cobweb/Components/Interpolation/SplinePositionInterpolator",
 	//"cobweb/Components/Interpolation/SplinePositionInterpolator2D",
 	//"cobweb/Components/Interpolation/SplineScalarInterpolator",
 	"cobweb/Components/Lighting/SpotLight", // VRML
@@ -401,7 +401,7 @@ function (Anchor,
           Sound,
           Sphere,
           SphereSensor,
-          //SplinePositionInterpolator,
+          SplinePositionInterpolator,
           //SplinePositionInterpolator2D,
           //SplineScalarInterpolator,
           SpotLight,
@@ -629,7 +629,7 @@ function (Anchor,
 		Sound:                        Sound,
 		Sphere:                       Sphere,
 		SphereSensor:                 SphereSensor,
-		//SplinePositionInterpolator:   SplinePositionInterpolator,
+		SplinePositionInterpolator:   SplinePositionInterpolator,
 		//SplinePositionInterpolator2D: SplinePositionInterpolator2D,
 		//SplineScalarInterpolator:     SplineScalarInterpolator,
 		SpotLight:                    SpotLight,
