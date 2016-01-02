@@ -5,13 +5,15 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator2",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DInterpolatorNode, 
+          X3DInterpolatorNode,
+          CatmullRomSplineInterpolator2,
           X3DConstants)
 {
 "use strict";
@@ -21,6 +23,8 @@ function ($,
 		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .SplinePositionInterpolator2D);
+
+		this .spline = new CatmullRomSplineInterpolator2 ();
 	}
 
 	SplinePositionInterpolator2D .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
@@ -47,6 +51,42 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+		
+			this .keyValue_    .addInterest (this, "set_keyValue__");
+			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFVec2f ());
+		
+			this .set_keyVelocity__ ();
+		},
+		set_keyVelocity__: function ()
+		{
+			if (this .keyVelocity_ .length)
+			{
+				if (this .keyVelocity_ .length < this .key_ .length)
+					this .keyVelocity_ .resize (this .key_ .length, new Fields .SFVec2f ());
+			}
+
+			this .spline .generate (this .closed_            .getValue (),
+			                        this .key_               .getValue (),
+			                        this .keyValue_          .getValue (),
+			                        this .keyVelocity_       .getValue (),
+			                        this .normalizeVelocity_ .getValue ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			this .value_changed_ = this .spline .interpolate (index0, index1, weight, this .keyValue_ .getValue ());
 		},
 	});
 

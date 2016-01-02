@@ -8,7 +8,7 @@ function (Fields)
 	
 	var p = (1 + Math .sqrt (5)) / 2; // Golden ratio
 
-	IcoSphere = function (type, order, radius)
+	function IcoSphere (type, order, radius)
 	{
 		this .type   = type;
 		this .order  = order;

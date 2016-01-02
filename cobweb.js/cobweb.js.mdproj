@@ -1100,6 +1100,10 @@
     <None Include="cobweb\Browser\Shaders\Wireframe.vs" />
     <None Include="cobweb\Browser\Shaders\BackgroundSphereFragmentShader.fs" />
     <None Include="cobweb\Browser\Shaders\BackgroundSphereVertexShader.vs" />
+    <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator.js" />
+    <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator3.js" />
+    <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator2.js" />
+    <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator1.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1156,5 +1160,6 @@
     <Folder Include="examples\alprojectsvr\" />
     <Folder Include="tests\Components\Layout\library\" />
     <Folder Include="examples\map\" />
+    <Folder Include="cobweb\Browser\Interpolation\" />
   </ItemGroup>
 </Project>
