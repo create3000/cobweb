@@ -15934,7 +15934,7 @@ function ($, Vector3, Algorithm)
 		pow: function (exponent)
 		{
 			if (exponent instanceof Quaternion)
-				return this .exp (exponent * this .log ());
+				return this .assign (e .assign (exponent) .multRight (this .log ()) .exp ());
 
 			if (this .isReal ())
 				return this .set (0, 0, 0, Math .pow (this .w, exponent));
@@ -15995,7 +15995,15 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (dest, t)
 		{
-			return Algorithm .slerp (this, tmp .assign (dest), t);
+			return Algorithm .slerp (this, t1 .assign (dest), t);
+		},
+		squad: function (a, b, destination, t)
+		{
+			// We must use shortest path slerp to prevent flipping.  Also see spline.
+
+			return Algorithm .slerp (Algorithm .slerp (this, t1 .assign (destination), t),
+                                  Algorithm .slerp (t2 .assign (a), t3 .assign (b), t),
+                                  2 * t * (1 - t));
 		},
 		toString: function ()
 		{
@@ -16219,18 +16227,17 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (source, dest, t)
 		{
-			return Algorithm .slerp (source .copy (), tmp .assign (dest), t);
+			return Algorithm .slerp (source .copy (), t2 .assign (dest), t);
 		},
-		/*
-
-		!!! Algorithm .slerp is in place.
-
 		squad: function (source, a, b, destination, t)
 		{
 			// We must use shortest path slerp to prevent flipping.  Also see spline.
 
-			return Algorithm .slerp (Algorithm .slerp (source, destination, t), Algorithm .slerp (a, b, t), 2 * t * (1 - t));
+			return Algorithm .slerp (Algorithm .slerp (source .copy (), t1 .assign (destination), t),
+                                  Algorithm .slerp (t2 .assign (a), t3 .assign (b), t),
+                                  2 * t * (1 - t));
 		},
+		/*
 		bezier: function (q0, a, b, q1, t)
 		{
 			var q11 = Algorithm .slerp (q0,  a, t);
@@ -16239,30 +16246,43 @@ function ($, Vector3, Algorithm)
 
 			return Algorithm .slerp (Algorithm .slerp (q11, q12, t), Algorithm .slerp (q12, q13, t), t);
 		},
-		spline: function (q0, q1, q2)
+		*/
+		spline: function (Q0, Q1, Q2)
 		{
+			q0 .assign (Q0);
+			q1 .assign (Q1);
+			q2 .assign (Q2);
+
 			// If the dot product is smaller than 0 we must negate the quaternion to prevent flipping. If we negate all
 			// the terms we get a different quaternion but it represents the same rotation.
 
 			if (q0 .dot (q1) < 0)
-				q0 = Quaternion .negate (q0);
+				q0 .negate ();
 
 			if (q2 .dot (q1) < 0)
-				q2 = Quaternion .negate (q2);
+				q2 .negate ();
 
-			var q1_i = Quaternion .inverse (q1);
+			q1_i .assign (q1) .inverse ();
 
 			// The result must be normalized as it will be used in slerp and we can only slerp normalized vectors.
 
-			return Quaternion .multiply (q1,
-				Quaternion .multiply (q1_i, q0) .log () .add (Quaternion .multiply (q1_i, q2) .log ()) .divide (-4) .exp ()
+			return q1 .multRight (
+				t1 .assign (q1_i) .multRight (q0) .log () .add (t2 .assign (q1_i) .multRight (q2) .log ()) .divide (-4) .exp ()
 			)
-			.normalize ();
+			.normalize () .copy ();
 		},
-		*/
 	});
 
-	var tmp = new Quaternion (0, 0, 0, 1);
+	var
+		t1 = new Quaternion (0, 0, 0, 1),
+		t2 = new Quaternion (0, 0, 0, 1),
+		t3 = new Quaternion (0, 0, 0, 1);
+	
+	var
+		q0   = new Quaternion (0, 0, 0, 1),
+		q1   = new Quaternion (0, 0, 0, 1),
+		q2   = new Quaternion (0, 0, 0, 1),
+		q1_i = new Quaternion (0, 0, 0, 1);
 
 	return Quaternion;
 });
@@ -16484,6 +16504,11 @@ function ($,
 			this .value .slerp (dest .value, t);
 			return this;
 		},
+		squad: function (a ,b, dest, t)
+		{
+			this .value .squad (a .value, b .value, dest .value, t);
+			return this;
+		},
 		toString: function ()
 		{
 			var r = this .get ();
@@ -16607,7 +16632,7 @@ function ($,
 			copy .value = Quaternion .bezier (source .value, a, b, destination .value, t);
 			return copy;
 		},
-		spline: function (q0, a1, q2)
+		spline: function (q0, q1, q2)
 		{
 			var copy = Object .create (this .prototype);
 			copy .value = Quaternion .spline (q0 .value, q1 .value, q2 .value);
@@ -71075,7 +71100,7 @@ define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator',[
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 ],
-function (          Vector4,
+function (Vector4,
           Matrix4)
 {
 
@@ -71097,7 +71122,8 @@ function (          Vector4,
 		this .T1 = [ ];
 	}
 
-	CatmullRomSplineInterpolator .prototype = {
+	CatmullRomSplineInterpolator .prototype =
+	{
 		constructor: CatmullRomSplineInterpolator,
 		generate: function (closed, key, keyValue, keyVelocity, normalizeVelocity)
 		{
@@ -71210,71 +71236,85 @@ function (          Vector4,
 
 
 
-define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator3',[
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate',[
 	"jquery",
-	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator",
-	"standard/Math/Numbers/Vector3",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator"
 ],
 function ($,
-          CatmullRomSplineInterpolator,
+          CatmullRomSplineInterpolator)
+{
+
+
+	return function (Type)
+	{
+		var
+			c0 = new Type (0, 0, 0, 0),
+			c1 = new Type (0, 0, 0, 0),
+			c2 = new Type (0, 0, 0, 0),
+			c3 = new Type (0, 0, 0, 0);
+	
+		function CatmullRomSplineInterpolatorInstance ()
+		{
+			this .T0 = [ ];
+			this .T1 = [ ];
+		}
+	
+		CatmullRomSplineInterpolatorInstance .prototype = $.extend (Object .create (CatmullRomSplineInterpolator .prototype),
+		{
+			constructor: CatmullRomSplineInterpolatorInstance,
+			create: function ()
+			{
+				return new Type (0, 0, 0, 0);
+			},
+			copy: function (value)
+			{
+				return value .copy ();
+			},
+			subtract: function (lhs, rhs)
+			{
+				return Type .subtract (lhs, rhs);
+			},
+			multiply: function (lhs, rhs)
+			{
+				return Type .multiply (lhs, rhs);
+			},
+			divide: function (lhs, rhs)
+			{
+				return Type .divide (lhs, rhs);
+			},
+			abs: function (value)
+			{
+				return value .abs ();
+			},
+			dot: function (SH, C0, C1, C2, C3)
+			{
+				c0 .assign (C0) .multiply (SH [0]);
+				c1 .assign (C1) .multiply (SH [1]);
+				c2 .assign (C2) .multiply (SH [2]);
+				c3 .assign (C3) .multiply (SH [3]);
+	
+				return c0 .add (c1) .add (c2) .add (c3);
+			},
+		});
+	
+		return CatmullRomSplineInterpolatorInstance;
+	};
+});
+
+
+
+
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator3',[
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate",
+	"standard/Math/Numbers/Vector3",
+],
+function (CatmullRomSplineInterpolatorTemplate,
           Vector3)
 {
 
 
-	var
-		c0 = new Vector3 (0, 0, 0),
-		c1 = new Vector3 (0, 0, 0),
-		c2 = new Vector3 (0, 0, 0),
-		c3 = new Vector3 (0, 0, 0);
-
-	function CatmullRomSplineInterpolator3 ()
-	{
-		this .T0 = [ ];
-		this .T1 = [ ];
-	}
-
-	CatmullRomSplineInterpolator3 .prototype = $.extend (Object .create (CatmullRomSplineInterpolator .prototype),
-	{
-		constructor: CatmullRomSplineInterpolator3,
-		create: function ()
-		{
-			return new Vector3 (0, 0, 0);
-		},
-		copy: function (value)
-		{
-			return value .copy ();
-		},
-		subtract: function (lhs, rhs)
-		{
-			return Vector3 .subtract (lhs, rhs);
-		},
-		multiply: function (lhs, rhs)
-		{
-			return Vector3 .multiply (lhs, rhs);
-		},
-		divide: function (lhs, rhs)
-		{
-			return Vector3 .divide (lhs, rhs);
-		},
-		abs: function (value)
-		{
-			return value .abs ();
-		},
-		dot: function (SH, C0, C1, C2, C3)
-		{
-			c0 .assign (C0) .multiply (SH [0]);
-			c1 .assign (C1) .multiply (SH [1]);
-			c2 .assign (C2) .multiply (SH [2]);
-			c3 .assign (C3) .multiply (SH [3]);
-
-			return c0 .add (c1) .add (c2) .add (c3);
-		},
-	});
-
-	return CatmullRomSplineInterpolator3;
+	return CatmullRomSplineInterpolatorTemplate (Vector3);
 });
-
-
 
 
 define ('cobweb/Components/Interpolation/SplinePositionInterpolator',[
@@ -71375,70 +71415,16 @@ function ($,
 
 
 define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator2',[
-	"jquery",
-	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate",
 	"standard/Math/Numbers/Vector2",
 ],
-function ($,
-          CatmullRomSplineInterpolator,
+function (CatmullRomSplineInterpolatorTemplate,
           Vector2)
 {
 
 
-	var
-		c0 = new Vector2 (0, 0),
-		c1 = new Vector2 (0, 0),
-		c2 = new Vector2 (0, 0),
-		c3 = new Vector2 (0, 0);
-
-	function CatmullRomSplineInterpolator2 ()
-	{
-		this .T0 = [ ];
-		this .T1 = [ ];
-	}
-
-	CatmullRomSplineInterpolator2 .prototype = $.extend (Object .create (CatmullRomSplineInterpolator .prototype),
-	{
-		constructor: CatmullRomSplineInterpolator2,
-		create: function ()
-		{
-			return new Vector2 (0, 0);
-		},
-		copy: function (value)
-		{
-			return value .copy ();
-		},
-		subtract: function (lhs, rhs)
-		{
-			return Vector2 .subtract (lhs, rhs);
-		},
-		multiply: function (lhs, rhs)
-		{
-			return Vector2 .multiply (lhs, rhs);
-		},
-		divide: function (lhs, rhs)
-		{
-			return Vector2 .divide (lhs, rhs);
-		},
-		abs: function (value)
-		{
-			return value .abs ();
-		},
-		dot: function (SH, C0, C1, C2, C3)
-		{
-			c0 .assign (C0) .multiply (SH [0]);
-			c1 .assign (C1) .multiply (SH [1]);
-			c2 .assign (C2) .multiply (SH [2]);
-			c3 .assign (C3) .multiply (SH [3]);
-
-			return c0 .add (c1) .add (c2) .add (c3);
-		},
-	});
-
-	return CatmullRomSplineInterpolator2;
+	return CatmullRomSplineInterpolatorTemplate (Vector2);
 });
-
-
 
 
 define ('cobweb/Components/Interpolation/SplinePositionInterpolator2D',[
@@ -71800,6 +71786,168 @@ function ($,
 	});
 
 	return SpotLight;
+});
+
+
+
+
+define ('cobweb/Browser/Interpolation/SquatInterpolator',[
+	"standard/Math/Numbers/Rotation4",
+],
+function (Rotation4)
+{
+
+
+	var result = new Rotation4 (0, 0, 1, 0);
+
+	function SquatInterpolator ()
+	{
+		this .s = [ ];
+	}
+
+	SquatInterpolator .prototype =
+	{
+		constructor: SquatInterpolator,
+		generate: function (closed, key, keyValue)
+		{
+			var s = this .s;
+
+			s .length = 0;
+
+			if (key .length > 1)
+			{
+				if (closed)
+				{
+					s .push (Rotation4 .spline (keyValue [key .length - 2] .getValue (),
+					                            keyValue [0] .getValue (),
+					                            keyValue [1] .getValue ()));
+				}
+				else
+				{
+					s .push (keyValue [0] .getValue ());
+				}
+		
+				for (var i = 1, length = key .length - 1; i < length; ++ i)
+				{
+					s .push (Rotation4 .spline (keyValue [i - 1] .getValue (),
+					                            keyValue [i]     .getValue (),
+					                            keyValue [i + 1] .getValue ()));
+				}
+		
+				if (closed)
+				{
+					s .push (Rotation4 .spline (keyValue [key .length - 2] .getValue (),
+					                            keyValue [key .length - 1] .getValue (),
+					                            keyValue [1] .getValue ()));
+				}
+				else
+				{
+					s .push (keyValue [key .length - 1] .getValue ());
+				}
+			}
+			else if (key .length > 0)
+				s .push (keyValue [0] .getValue () .copy ());
+
+console .log (s);
+		},
+		interpolate: function (index0, index1, weight, keyValue)
+		{
+			return result .assign (keyValue [index0] .getValue ()) .squad (this .s [index0],
+			                                                               this .s [index1],
+			                                                               keyValue [index1] .getValue (), weight);
+		},
+	};
+
+	return SquatInterpolator;
+});
+
+
+
+
+define ('cobweb/Components/Interpolation/SquadOrientationInterpolator',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/SquatInterpolator",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInterpolatorNode,
+          SquatInterpolator,
+          X3DConstants)
+{
+
+
+	function SquadOrientationInterpolator (executionContext)
+	{
+		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .SquadOrientationInterpolator);
+
+		this .squad = new SquatInterpolator ();
+	}
+
+	SquadOrientationInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+	{
+		constructor: SquadOrientationInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "closed",        new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFRotation ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFRotation ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SquadOrientationInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "Interpolation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+		
+			this .keyValue_    .addInterest (this, "set_keyValue__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFRotation ());
+
+			this .squad .generate (this .closed_   .getValue (),
+			                       this .key_      .getValue (),
+			                       this .keyValue_ .getValue ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			try
+			{
+				this .value_changed_ = this .squad .interpolate (index0, index1, weight, this .keyValue_ .getValue ());
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
+		},
+	});
+
+	return SquadOrientationInterpolator;
 });
 
 
@@ -73765,7 +73913,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Interpolation/SplinePositionInterpolator2D",
 	"cobweb/Components/Interpolation/SplineScalarInterpolator",
 	"cobweb/Components/Lighting/SpotLight", // VRML
-	//"cobweb/Components/Interpolation/SquadOrientationInterpolator",
+	"cobweb/Components/Interpolation/SquadOrientationInterpolator",
 	"cobweb/Components/Grouping/StaticGroup",
 	//"cobweb/Components/KeyDeviceSensor/StringSensor",
 	//"cobweb/Components/ParticleSystems/SurfaceEmitter",
@@ -73987,7 +74135,7 @@ function (Anchor,
           SplinePositionInterpolator2D,
           SplineScalarInterpolator,
           SpotLight,
-          //SquadOrientationInterpolator,
+          SquadOrientationInterpolator,
           StaticGroup,
           //StringSensor,
           //SurfaceEmitter,
@@ -74215,7 +74363,7 @@ function (Anchor,
 		SplinePositionInterpolator2D: SplinePositionInterpolator2D,
 		SplineScalarInterpolator:     SplineScalarInterpolator,
 		SpotLight:                    SpotLight,
-		//SquadOrientationInterpolator: SquadOrientationInterpolator,
+		SquadOrientationInterpolator: SquadOrientationInterpolator,
 		StaticGroup:                  StaticGroup,
 		//StringSensor:                 StringSensor,
 		//SurfaceEmitter:               SurfaceEmitter,
@@ -74332,9 +74480,6 @@ function ($,
 		constructor: X3DBrowser,
 		initialize: function ()
 		{
-			// Create an empty scene if any thing goes wrong in loadURL.
-			var scene = this .createScene ();
-
 			this .replaceWorld (this .createScene ());
 
 			X3DBrowserContext .prototype .initialize .call (this);

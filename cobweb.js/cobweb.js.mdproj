@@ -1084,8 +1084,6 @@
     <None Include="tests\Components\Layout\library\logo.x3dv" />
     <None Include="tests\Components\Layout\library\red.orange.yellow.x3dv" />
     <None Include="cobweb.js.mdproj" />
-    <None Include="cobweb.VRML.full.js" />
-    <None Include="cobweb.VRML.min.js" />
     <None Include="examples\map\map.x3d" />
     <None Include="tests\Components\Layout\ScreenGroup.x3d" />
     <None Include="tests\Components\Shaders\images.x3d" />
@@ -1104,6 +1102,8 @@
     <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator3.js" />
     <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator2.js" />
     <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator1.js" />
+    <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolatorTemplate.js" />
+    <None Include="cobweb\Browser\Interpolation\SquatInterpolator.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

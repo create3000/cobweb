@@ -3,7 +3,7 @@ define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 ],
-function (          Vector4,
+function (Vector4,
           Matrix4)
 {
 "use strict";
@@ -25,7 +25,8 @@ function (          Vector4,
 		this .T1 = [ ];
 	}
 
-	CatmullRomSplineInterpolator .prototype = {
+	CatmullRomSplineInterpolator .prototype =
+	{
 		constructor: CatmullRomSplineInterpolator,
 		generate: function (closed, key, keyValue, keyVelocity, normalizeVelocity)
 		{

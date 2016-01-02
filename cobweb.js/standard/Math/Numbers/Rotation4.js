@@ -215,6 +215,11 @@ function ($,
 			this .value .slerp (dest .value, t);
 			return this;
 		},
+		squad: function (a ,b, dest, t)
+		{
+			this .value .squad (a .value, b .value, dest .value, t);
+			return this;
+		},
 		toString: function ()
 		{
 			var r = this .get ();
@@ -338,7 +343,7 @@ function ($,
 			copy .value = Quaternion .bezier (source .value, a, b, destination .value, t);
 			return copy;
 		},
-		spline: function (q0, a1, q2)
+		spline: function (q0, q1, q2)
 		{
 			var copy = Object .create (this .prototype);
 			copy .value = Quaternion .spline (q0 .value, q1 .value, q2 .value);

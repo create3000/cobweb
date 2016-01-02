@@ -49,9 +49,6 @@ function ($,
 		constructor: X3DBrowser,
 		initialize: function ()
 		{
-			// Create an empty scene if any thing goes wrong in loadURL.
-			var scene = this .createScene ();
-
 			this .replaceWorld (this .createScene ());
 
 			X3DBrowserContext .prototype .initialize .call (this);

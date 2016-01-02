@@ -208,7 +208,7 @@ function ($, Vector3, Algorithm)
 		pow: function (exponent)
 		{
 			if (exponent instanceof Quaternion)
-				return this .exp (exponent * this .log ());
+				return this .assign (e .assign (exponent) .multRight (this .log ()) .exp ());
 
 			if (this .isReal ())
 				return this .set (0, 0, 0, Math .pow (this .w, exponent));
@@ -269,7 +269,15 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (dest, t)
 		{
-			return Algorithm .slerp (this, tmp .assign (dest), t);
+			return Algorithm .slerp (this, t1 .assign (dest), t);
+		},
+		squad: function (a, b, destination, t)
+		{
+			// We must use shortest path slerp to prevent flipping.  Also see spline.
+
+			return Algorithm .slerp (Algorithm .slerp (this, t1 .assign (destination), t),
+                                  Algorithm .slerp (t2 .assign (a), t3 .assign (b), t),
+                                  2 * t * (1 - t));
 		},
 		toString: function ()
 		{
@@ -493,18 +501,17 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (source, dest, t)
 		{
-			return Algorithm .slerp (source .copy (), tmp .assign (dest), t);
+			return Algorithm .slerp (source .copy (), t2 .assign (dest), t);
 		},
-		/*
-
-		!!! Algorithm .slerp is in place.
-
 		squad: function (source, a, b, destination, t)
 		{
 			// We must use shortest path slerp to prevent flipping.  Also see spline.
 
-			return Algorithm .slerp (Algorithm .slerp (source, destination, t), Algorithm .slerp (a, b, t), 2 * t * (1 - t));
+			return Algorithm .slerp (Algorithm .slerp (source .copy (), t1 .assign (destination), t),
+                                  Algorithm .slerp (t2 .assign (a), t3 .assign (b), t),
+                                  2 * t * (1 - t));
 		},
+		/*
 		bezier: function (q0, a, b, q1, t)
 		{
 			var q11 = Algorithm .slerp (q0,  a, t);
@@ -513,30 +520,43 @@ function ($, Vector3, Algorithm)
 
 			return Algorithm .slerp (Algorithm .slerp (q11, q12, t), Algorithm .slerp (q12, q13, t), t);
 		},
-		spline: function (q0, q1, q2)
+		*/
+		spline: function (Q0, Q1, Q2)
 		{
+			q0 .assign (Q0);
+			q1 .assign (Q1);
+			q2 .assign (Q2);
+
 			// If the dot product is smaller than 0 we must negate the quaternion to prevent flipping. If we negate all
 			// the terms we get a different quaternion but it represents the same rotation.
 
 			if (q0 .dot (q1) < 0)
-				q0 = Quaternion .negate (q0);
+				q0 .negate ();
 
 			if (q2 .dot (q1) < 0)
-				q2 = Quaternion .negate (q2);
+				q2 .negate ();
 
-			var q1_i = Quaternion .inverse (q1);
+			q1_i .assign (q1) .inverse ();
 
 			// The result must be normalized as it will be used in slerp and we can only slerp normalized vectors.
 
-			return Quaternion .multiply (q1,
-				Quaternion .multiply (q1_i, q0) .log () .add (Quaternion .multiply (q1_i, q2) .log ()) .divide (-4) .exp ()
+			return q1 .multRight (
+				t1 .assign (q1_i) .multRight (q0) .log () .add (t2 .assign (q1_i) .multRight (q2) .log ()) .divide (-4) .exp ()
 			)
-			.normalize ();
+			.normalize () .copy ();
 		},
-		*/
 	});
 
-	var tmp = new Quaternion (0, 0, 0, 1);
+	var
+		t1 = new Quaternion (0, 0, 0, 1),
+		t2 = new Quaternion (0, 0, 0, 1),
+		t3 = new Quaternion (0, 0, 0, 1);
+	
+	var
+		q0   = new Quaternion (0, 0, 0, 1),
+		q1   = new Quaternion (0, 0, 0, 1),
+		q2   = new Quaternion (0, 0, 0, 1),
+		q1_i = new Quaternion (0, 0, 0, 1);
 
 	return Quaternion;
 });
