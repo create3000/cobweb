@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 01 Jan 2016 20:19:39 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 01 Jan 2016 21:11:43 GMT'/>
+    <meta name='modified' content='Sat, 02 Jan 2016 02:42:33 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -59,10 +59,10 @@
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <Viewpoint DEF='_1'
+    <Viewpoint
         position='0 0 12.1851'/>
     <Transform DEF='Rectangle2D'
-        translation='-2 0 0'>
+        translation='-5 0 0'>
       <Shape>
         <Appearance>
           <ComposedShader>
@@ -99,18 +99,6 @@ uniform int image [18];
 
 varying vec4 texCoord;
 
-float
-round (float value)
-{
-	return floor (value + 0.5);
-}
-
-vec3
-round (vec3 value)
-{
-	return floor (value + 0.5);
-}
-
 void
 main ()
 {
@@ -118,6 +106,175 @@ main ()
 	
 
 	gl_FragColor = vec4 (pixel, 1.0, 1.0, 1.0);
+}]]> 
+            </ShaderPart>
+          </ComposedShader>
+        </Appearance>
+        <Rectangle2D/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Rectangle2D_1'
+        translation='-2 0 0'>
+      <Shape>
+        <Appearance>
+          <ComposedShader>
+            <field accessType='inputOutput' type='SFNode' name='texture'>
+              <ImageTexture DEF='_1'
+                  url='"../images/ubuntu.png", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/ubuntu.png"'
+                  repeatS='false'
+                  repeatT='false'/>
+            </field>
+            <ShaderPart DEF='TextureVertexShader'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+attribute vec4 x3d_TexCoord;
+attribute vec4 x3d_Vertex;
+
+varying vec4 texCoord;
+
+void
+main ()
+{
+	texCoord = x3d_TexCoord;
+
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
+}
+]]> 
+            </ShaderPart>
+            <ShaderPart DEF='TextureFragmentShader'
+                type='FRAGMENT'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform sampler2D texture;
+
+varying vec4 texCoord;
+
+void
+main ()
+{
+	gl_FragColor =  texture2D (texture, vec2 (texCoord));
+}]]> 
+            </ShaderPart>
+          </ComposedShader>
+        </Appearance>
+        <Rectangle2D/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Rectangle2D_2'
+        translation='2 0 0'>
+      <Shape>
+        <Appearance>
+          <ComposedShader>
+            <field accessType='inputOutput' type='MFNode' name='texture'>
+              <ImageTexture USE='_1'/>
+            </field>
+            <ShaderPart DEF='TexturesVertexShader'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+attribute vec4 x3d_TexCoord;
+attribute vec4 x3d_Vertex;
+
+varying vec4 texCoord;
+
+void
+main ()
+{
+	texCoord = x3d_TexCoord;
+
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
+}
+]]> 
+            </ShaderPart>
+            <ShaderPart DEF='TexturesFragmentShader'
+                type='FRAGMENT'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform sampler2D texture [1];
+
+varying vec4 texCoord;
+
+void
+main ()
+{
+	gl_FragColor =  texture2D (texture [0], vec2 (texCoord));
+}]]> 
+            </ShaderPart>
+          </ComposedShader>
+        </Appearance>
+        <Rectangle2D/>
+      </Shape>
+    </Transform>
+    <Transform DEF='Rectangle2D_3'
+        translation='5 0 0'>
+      <Shape>
+        <Appearance>
+          <ComposedShader>
+            <field accessType='inputOutput' type='SFNode' name='texture'>
+              <ComposedCubeMapTexture>
+                <ImageTexture containerField='front'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg"'/>
+                <ImageTexture containerField='back'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg"'/>
+                <ImageTexture containerField='left'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg"'/>
+                <ImageTexture containerField='right'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg"'/>
+                <ImageTexture containerField='top'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg"'/>
+                <ImageTexture containerField='bottom'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg"'/>
+              </ComposedCubeMapTexture>
+            </field>
+            <ShaderPart DEF='CubeVertexShader'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+attribute vec4 x3d_TexCoord;
+attribute vec4 x3d_Vertex;
+
+varying vec4 texCoord;
+
+void
+main ()
+{
+	texCoord = x3d_TexCoord;
+
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
+}
+]]> 
+            </ShaderPart>
+            <ShaderPart DEF='CubeFragmentShader'
+                type='FRAGMENT'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform samplerCube texture;
+
+varying vec4 texCoord;
+
+void
+main ()
+{
+	gl_FragColor =  textureCube (texture, vec3 (texCoord));
 }]]> 
             </ShaderPart>
           </ComposedShader>

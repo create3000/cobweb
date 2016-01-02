@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sat, 26 Dec 2015 20:37:24 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sun, 27 Dec 2015 05:28:36 GMT'/>
+    <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
+    <meta name='modified' content='Sat, 02 Jan 2016 03:04:18 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -49,7 +49,7 @@
             <field accessType='initializeOnly' type='SFColorRGBA' name='sfcolorrgba'/>
             <field accessType='initializeOnly' type='SFDouble' name='sfdouble'/>
             <field accessType='initializeOnly' type='SFFloat' name='sffloat'/>
-            <field accessType='initializeOnly' type='SFImage' name='sfimage'/>
+            <field accessType='initializeOnly' type='SFImage' name='sfimage' value='3 5 2 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0xffff'/>
             <field accessType='initializeOnly' type='SFInt32' name='sfint32'/>
             <field accessType='initializeOnly' type='SFMatrix3d' name='sfmatrix3d'/>
             <field accessType='initializeOnly' type='SFMatrix3f' name='sfmatrix3f'/>
@@ -73,7 +73,7 @@
             <field accessType='initializeOnly' type='MFColorRGBA' name='mfcolorrgba'/>
             <field accessType='initializeOnly' type='MFDouble' name='mfdouble'/>
             <field accessType='initializeOnly' type='MFFloat' name='mffloat'/>
-            <field accessType='initializeOnly' type='MFImage' name='mfimage'/>
+            <field accessType='initializeOnly' type='MFImage' name='mfimage' value='3 5 2 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0xffff'/>
             <field accessType='initializeOnly' type='MFInt32' name='mfint32'/>
             <field accessType='initializeOnly' type='MFMatrix3d' name='mfmatrix3d'/>
             <field accessType='initializeOnly' type='MFMatrix3f' name='mfmatrix3f'/>

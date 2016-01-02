@@ -409,17 +409,11 @@
     <None Include="tests\Components\images\logo.96.png" />
     <None Include="tests\Components\Texturing\ColorMaterial.x3d" />
     <None Include="cobweb\Browser\EnvironmentalEffects\X3DEnvironmentalEffectsContext.js" />
-    <None Include="cobweb\Browser\EnvironmentalEffects\SphereFragmentShader.fs" />
-    <None Include="cobweb\Browser\EnvironmentalEffects\SphereVertexShader.vs" />
     <None Include="cobweb\Execution\BindableStack.js" />
     <None Include="cobweb\Execution\BindableList.js" />
     <None Include="cobweb\Bits\X3DCast.js" />
     <None Include="cobweb\Routing\X3DRoute.js" />
     <None Include="cobweb\Browser\Lighting\X3DLightingContext.js" />
-    <None Include="cobweb\Browser\Rendering\Gouraud.fs" />
-    <None Include="cobweb\Browser\Rendering\Gouraud.vs" />
-    <None Include="cobweb\Browser\Rendering\Phong.fs" />
-    <None Include="cobweb\Browser\Rendering\Phong.vs" />
     <None Include="tests\Components\Geometry3D\Beethoven.x3d" />
     <None Include="tests\Components\Lighting\PointLight.x3d" />
     <None Include="cobweb\InputOutput\Loader.js" />
@@ -432,8 +426,6 @@
     <None Include="cobweb\Browser\Core\RenderingProperties.js" />
     <None Include="cobweb\Browser\Core\BrowserOptions.js" />
     <None Include="tests\Components\Rendering\IndexedLineSet.x3d" />
-    <None Include="cobweb\Browser\Rendering\Wireframe.vs" />
-    <None Include="cobweb\Browser\Rendering\Wireframe.fs" />
     <None Include="tests\Components\Rendering\world.x3d" />
     <None Include="cobweb\Browser\Core\Notification.js" />
     <None Include="images\logo.bw.png" />
@@ -518,8 +510,6 @@
     <None Include="tests\Components\Scripting\ColorSpheres.x3d" />
     <None Include="tests\Components\Geometry3D\box.x3d" />
     <None Include="tests\Components\Shape\Connectors.x3d" />
-    <None Include="cobweb\Browser\Rendering\Depth.fs" />
-    <None Include="cobweb\Browser\Rendering\Depth.vs" />
     <None Include="cobweb\Rendering\DepthBuffer.js" />
     <None Include="cobweb\Browser\Sound\X3DSoundContext.js" />
     <None Include="tests\Components\Text\Poetica-ChanceryI.otf" />
@@ -1086,7 +1076,6 @@
     <None Include="version.pl" />
     <None Include="examples\water\tiles.jpg" />
     <None Include="examples\water\water.x3d" />
-    <None Include="cobweb\Browser\Rendering\PointSet.fs" />
     <None Include="examples\alprojectsvr\wtc.x3d" />
     <None Include="examples\alprojectsvr\d1.x3d" />
     <None Include="examples\alprojectsvr\ssf.x3d" />
@@ -1100,6 +1089,17 @@
     <None Include="examples\map\map.x3d" />
     <None Include="tests\Components\Layout\ScreenGroup.x3d" />
     <None Include="tests\Components\Shaders\images.x3d" />
+    <None Include="cobweb\Browser\Shaders\Depth.fs" />
+    <None Include="cobweb\Browser\Shaders\Depth.vs" />
+    <None Include="cobweb\Browser\Shaders\Gouraud.fs" />
+    <None Include="cobweb\Browser\Shaders\Gouraud.vs" />
+    <None Include="cobweb\Browser\Shaders\Phong.fs" />
+    <None Include="cobweb\Browser\Shaders\Phong.vs" />
+    <None Include="cobweb\Browser\Shaders\PointSet.fs" />
+    <None Include="cobweb\Browser\Shaders\Wireframe.fs" />
+    <None Include="cobweb\Browser\Shaders\Wireframe.vs" />
+    <None Include="cobweb\Browser\Shaders\BackgroundSphereFragmentShader.fs" />
+    <None Include="cobweb\Browser\Shaders\BackgroundSphereVertexShader.vs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

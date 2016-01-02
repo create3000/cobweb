@@ -85,6 +85,7 @@ function ($,
 							}
 							case X3DConstants .MFImage:
 							{
+								location .array = new Int32Array (this .getImagesLength (field));
 								break;
 							}
 							case X3DConstants .MFMatrix3d:
@@ -241,8 +242,8 @@ function ($,
 					array [1] = field .height;
 					array [2] = field .comp;
 
-					for (var i = 3, p = 0, length = pixels .length; p < length; ++ i, ++ p)
-						array [i] = pixels [p] .getValue ();
+					for (var a = 3, p = 0, length = pixels .length; p < length; ++ p)
+						array [a ++] = pixels [p] .getValue ();
 
 					gl .uniform1iv (location, array);
 					return;
@@ -377,6 +378,30 @@ function ($,
 				}
 				case X3DConstants .MFImage:
 				{
+					var
+						value    = field .getValue (),
+						location = field .uniformLocation_,
+						array    = location .array,
+						length   = this .getImagesLength (field);
+
+					if (length !== array .length)
+						array = location .array = new Int32Array (length);
+
+					for (var i = 0, a = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							value  = field [i],
+							pixels = value .array;
+
+						array [a ++] = value .width;
+						array [a ++] = value .height;
+						array [a ++] = value .comp;
+
+						for (var p = 0, length = pixels .length; p < length; ++ p)
+							array [a ++] = pixels [p] .getValue ();
+					}
+
+					gl .uniform1iv (location, array);
 					return;
 				}
 				case X3DConstants .MFMatrix3d:
@@ -596,6 +621,17 @@ function ($,
 				gl .bindTexture (gl .TEXTURE_2D, null);
 				gl .activeTexture (gl .TEXTURE0);
 			}
+		},
+		getImagesLength: function (field)
+		{
+			var
+				images = field .getValue (),
+				length = 3 * images .length;
+
+			for (var i = 0, l = images .length; i < l; ++ i)
+				length += images [i] .array .length;
+
+			return length;
 		},
 		getLocationLength: function (gl, program, field)
 		{
