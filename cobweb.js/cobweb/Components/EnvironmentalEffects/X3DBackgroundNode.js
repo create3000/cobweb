@@ -27,8 +27,8 @@ function ($,
 	var
 		SIZE        = 10000,
 		U_DIMENSION = 20,
-		point       = new Vector3 (0, 0, -SIZE);
-	
+		point       = new Vector3 (0, 0, SIZE);
+
 	var s = Math .sqrt (Math .pow (2 * SIZE, 2) / 2) / 2;
 
 	var texCoords = [

@@ -27,7 +27,6 @@ function ($,
 		yAxis                  = new Vector3 (0, 1, 0),
 		zAxis                  = new Vector3 (0, 0, 1),
 		viewerYAxis            = new Vector3 (0, 0, 0),
-		billboardToViewer      = new Vector3 (0, 0, 0),
 		x                      = new Vector3 (0, 0, 0),
 		y                      = new Vector3 (0, 0, 0),
 		N1                     = new Vector3 (0, 0, 0),
@@ -72,7 +71,8 @@ function ($,
 			try
 			{
 				this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
-				billboardToViewer .set (inverseModelViewMatrix [12], inverseModelViewMatrix [13], inverseModelViewMatrix [14]) .normalize (); // Normalized to get work with Geo
+
+				var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
 
 				if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 				{

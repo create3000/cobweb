@@ -37,7 +37,7 @@ function (Vector3)
 				var cameraSpaceMatrix = this .getActiveLayer () .getViewpoint () .getCameraSpaceMatrix ();
 
 				lastPosition .assign (this .currentPosition);
-				this .currentPosition .set (cameraSpaceMatrix [12], cameraSpaceMatrix [13], cameraSpaceMatrix [14]);
+				this .currentPosition .assign (cameraSpaceMatrix .origin);
 
 				this .currentSpeed = lastPosition .subtract (this .currentPosition) .abs () * this .currentFrameRate;
 			}
