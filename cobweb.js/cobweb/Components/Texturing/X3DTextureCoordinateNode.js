@@ -20,6 +20,14 @@ function ($,
 	X3DTextureCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DTextureCoordinateNode,
+		init: function (texCoords)
+		{
+			texCoords .push ([ ]);
+		},
+		addTexCoord: function (texCoord, index)
+		{
+			this .addTexCoordToChannel (texCoord [0], index);
+		},
 	});
 
 	return X3DTextureCoordinateNode;

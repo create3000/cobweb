@@ -42,6 +42,25 @@ function ($,
 		{
 			return "texCoord";
 		},
+		addTexCoordToChannel: function (texCoords, index)
+		{
+			if (index >= 0 && index < this .point_ .length)
+			{
+				var point = this .point_ [index];
+	
+				texCoords .push (point .x);
+				texCoords .push (point .y);
+				texCoords .push (point .z);
+				texCoords .push (1);
+			}
+			else
+			{
+				texCoords .push (0);
+				texCoords .push (0);
+				texCoords .push (0);
+				texCoords .push (1);
+			}
+		},
 	});
 
 	return TextureCoordinate3D;

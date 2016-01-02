@@ -25,29 +25,37 @@ var Bookmarks = (function ()
 	
 	function Bookmarks (browser, element, bookmarks, filesPerPage)
 	{
-		var
-			pages = [ ],
-			index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
-
-		if (mobile)
-			bookmarks = bookmarks .filter (function (bookmark) { return bookmark .mobile; });
-
-		while (bookmarks .length)
-			pages .push (bookmarks .splice (0, filesPerPage || 20));
-
-		index = Math .min (index, pages .length - 1);
+		var index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
 
 		this .browser         = browser;
 		this .element         = element;
-		this .bookmarks       = pages;
+		this .bookmarks       = bookmarks;
+		this .filesPerPage    = filesPerPage;
 		this .index           = index || 0;
 		this .randomBookmarks = [ ];
+
 	}
 	
 	Bookmarks .prototype =
 	{
 		setup: function ()
 		{
+			var
+				bookmarks    = this .bookmarks,
+				filesPerPage = this .filesPerPage,
+				index        = this .index,
+				pages        = [ ];
+
+			if (mobile)
+				bookmarks = bookmarks .filter (function (bookmark) { return bookmark .mobile; });
+	
+			while (bookmarks .length)
+				pages .push (bookmarks .splice (0, filesPerPage || 20));
+	
+			index = Math .min (index, pages .length - 1);
+	
+			this .pages = pages;
+
 			this .next (0);
 		},
 		setSplit (value)
@@ -64,11 +72,11 @@ var Bookmarks = (function ()
 		{
 			this .element .empty ();
 	
-			this .index = (this .index + this .bookmarks .length + n) % this .bookmarks .length;
+			this .index = (this .index + this .pages .length + n) % this .pages .length;
 
 			X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"] = this .index;
 
-			this .bookmarks [this .index] .forEach (function (item)
+			this .pages [this .index] .forEach (function (item)
 			{
 				if (this .split)
 				{
@@ -132,9 +140,9 @@ var Bookmarks = (function ()
 		{
 			if (this .randomBookmarks .length === 0)
 			{
-				for (var p = 0; p < this .bookmarks .length; ++ p)
+				for (var p = 0; p < this .pages .length; ++ p)
 				{
-					var page = this .bookmarks [p];
+					var page = this .pages [p];
 	
 					for (var w = 0; w < page .length; ++ w)
 						this .randomBookmarks .push (page [w]);

@@ -25225,6 +25225,11 @@ function ($,
 
 						switch (field .getType ())
 						{
+							case X3DConstants .SFImage:
+							{
+								location .array = new Int32Array (3 + field .array .length);
+								break;
+							}
 							case X3DConstants .MFBool:
 							case X3DConstants .MFInt32:
 							{
@@ -25236,6 +25241,11 @@ function ($,
 							case X3DConstants .MFTime:
 							{
 								location .array = new Float32Array (this .getLocationLength (gl, program, field));
+								break;
+							}
+							case X3DConstants .MFImage:
+							{
+								location .array = new Int32Array (this .getImagesLength (field));
 								break;
 							}
 							case X3DConstants .MFMatrix3d:
@@ -25252,10 +25262,17 @@ function ($,
 							}
 							case X3DConstants .MFNode:
 							{
-								var locations = location .locations = new Array (this .getLocationLength (gl, program, field));
+								var array = field .uniformLocation_ = [ ];
 
-								for (var i = 0, length = locations .length; i < length; ++ i)
-									locations [i] = name + "[" + i + "]";
+								for (var i = 0; ; ++ i)
+								{
+									var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+									if (location)
+										array [i] = location;
+									else
+										break;
+								}
 
 								break;
 							}
@@ -25372,6 +25389,23 @@ function ($,
 				}
 				case X3DConstants .SFImage:
 				{
+					var
+						location = field .uniformLocation_,
+						array    = location .array,
+						pixels   = field .array .getValue (),
+						length   = 3 + pixels .length;
+
+					if (length !== array .length)
+						array = location .array = new Int32Array (length);
+
+					array [0] = field .width;
+					array [1] = field .height;
+					array [2] = field .comp;
+
+					for (var a = 3, p = 0, length = pixels .length; p < length; ++ p)
+						array [a ++] = pixels [p] .getValue ();
+
+					gl .uniform1iv (location, array);
 					return;
 				}
 				case X3DConstants .SFMatrix3d:
@@ -25504,6 +25538,30 @@ function ($,
 				}
 				case X3DConstants .MFImage:
 				{
+					var
+						value    = field .getValue (),
+						location = field .uniformLocation_,
+						array    = location .array,
+						length   = this .getImagesLength (field);
+
+					if (length !== array .length)
+						array = location .array = new Int32Array (length);
+
+					for (var i = 0, a = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							value  = field [i],
+							pixels = value .array;
+
+						array [a ++] = value .width;
+						array [a ++] = value .height;
+						array [a ++] = value .comp;
+
+						for (var p = 0, length = pixels .length; p < length; ++ p)
+							array [a ++] = pixels [p] .getValue ();
+					}
+
+					gl .uniform1iv (location, array);
 					return;
 				}
 				case X3DConstants .MFMatrix3d:
@@ -25573,13 +25631,13 @@ function ($,
 				{
 					var
 						value     = field .getValue (),
-						locations = field .uniformLocation_ .locations;
+						locations = field .uniformLocation_;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
-						this .setNode (gl, program, gl .getUniformLocation (program, locations [i]), value [i]);
+						this .setNode (gl, program, locations [i], value [i]);
 
 					for (var length = locations .length; i < length; ++ i)
-						this .setNode (gl, program, gl .getUniformLocation (program, locations [i]), NULL);
+						this .setNode (gl, program, locations [i], NULL);
 
 					return;
 				}
@@ -25692,7 +25750,7 @@ function ($,
 					}
 					else
 					{
-						this .getBrowser () .println ("Warning: Not enough combined texture units for uniform variable '", field .getName (), "' available.");
+						console .warn ("Not enough combined texture units for uniform variable '", field .getName (), "' available.");
 						return;
 					}
 				}
@@ -25723,6 +25781,17 @@ function ($,
 				gl .bindTexture (gl .TEXTURE_2D, null);
 				gl .activeTexture (gl .TEXTURE0);
 			}
+		},
+		getImagesLength: function (field)
+		{
+			var
+				images = field .getValue (),
+				length = 3 * images .length;
+
+			for (var i = 0, l = images .length; i < l; ++ i)
+				length += images [i] .array .length;
+
+			return length;
 		},
 		getLocationLength: function (gl, program, field)
 		{
@@ -34168,7 +34237,7 @@ function ($,
 
 			success (scene);
 
-			if (this .URL .length)
+			if (this .URL .length && this .URL .scheme !== "data")
 				console .info ("Done loading scene " + this .URL);
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
@@ -34397,7 +34466,8 @@ function ($,
 		},
 		error: function (exception)
 		{
-			console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
+			if (this .URL .scheme !== "data")
+				console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
 		},
 		transform: function (sURL)
 		{
@@ -34574,23 +34644,23 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Rendering/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 4 * 16\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n// 19 * MAX_LIGHTS\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterial (vec3 N,\n             vec3 v,\n             float x3d_AmbientIntensity,\n             vec3  x3d_DiffuseColor,\n             vec3  x3d_SpecularColor,\n             vec3  x3d_EmissiveColor,\n             float x3d_Shininess,\n             float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != NO_LIGHT)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == DIRECTIONAL_LIGHT;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == SPOT_LIGHT)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterial (N, v,\n\t\t                          ambientIntensity,\n\t\t                          diffuseColor,\n\t\t                          specularColor,\n\t\t                          emissiveColor,\n\t\t                          shininess,\n\t\t                          transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\t\t\t\n\t\tbackColor = getMaterial (-N, v,\n\t\t                         ambientIntensity,\n\t\t                         diffuseColor,\n\t\t                         specularColor,\n\t\t                         emissiveColor,\n\t\t                         shininess,\n\t\t                         transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 4 * 16\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n// 19 * MAX_LIGHTS\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterial (vec3 N,\n             vec3 v,\n             float x3d_AmbientIntensity,\n             vec3  x3d_DiffuseColor,\n             vec3  x3d_SpecularColor,\n             vec3  x3d_EmissiveColor,\n             float x3d_Shininess,\n             float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != NO_LIGHT)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == DIRECTIONAL_LIGHT;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == SPOT_LIGHT)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterial (N, v,\n\t\t                          ambientIntensity,\n\t\t                          diffuseColor,\n\t\t                          specularColor,\n\t\t                          emissiveColor,\n\t\t                          shininess,\n\t\t                          transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\t\t\t\n\t\tbackColor = getMaterial (-N, v,\n\t\t                         ambientIntensity,\n\t\t                         diffuseColor,\n\t\t                         specularColor,\n\t\t                         emissiveColor,\n\t\t                         shininess,\n\t\t                         transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n#define MAX_TEXTURES 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n#define MAX_TEXTURES 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
 
 
 define ('standard/Math/Utility/MatrixStack',[
@@ -34647,15 +34717,15 @@ define ('cobweb/Browser/Rendering/X3DRenderingContext',[
 	"cobweb/Fields",
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
-	"text!cobweb/Browser/Rendering/PointSet.fs",
-	"text!cobweb/Browser/Rendering/Wireframe.vs",
-	"text!cobweb/Browser/Rendering/Wireframe.fs",
-	"text!cobweb/Browser/Rendering/Gouraud.vs",
-	"text!cobweb/Browser/Rendering/Gouraud.fs",
-	"text!cobweb/Browser/Rendering/Phong.vs",
-	"text!cobweb/Browser/Rendering/Phong.fs",
-	"text!cobweb/Browser/Rendering/Depth.vs",
-	"text!cobweb/Browser/Rendering/Depth.fs",
+	"text!cobweb/Browser/Shaders/PointSet.fs",
+	"text!cobweb/Browser/Shaders/Wireframe.vs",
+	"text!cobweb/Browser/Shaders/Wireframe.fs",
+	"text!cobweb/Browser/Shaders/Gouraud.vs",
+	"text!cobweb/Browser/Shaders/Gouraud.fs",
+	"text!cobweb/Browser/Shaders/Phong.vs",
+	"text!cobweb/Browser/Shaders/Phong.fs",
+	"text!cobweb/Browser/Shaders/Depth.vs",
+	"text!cobweb/Browser/Shaders/Depth.fs",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
@@ -43556,7 +43626,7 @@ function ($,
 		{
 			return this .sizeY;
 		},
-		getScreenScale: function (distance, viewport)
+		getScreenScale: function (dummy, viewport)
 		{
 			var
 				width  = viewport [2],
@@ -44757,7 +44827,9 @@ function ($,
 {
 
 
-	var screenScale = new Vector3 (0, 0, 0);
+	var
+		zAxis       = new Vector3 (0, 0, 1),
+		screenScale = new Vector3 (0, 0, 0);
 
 	function Viewpoint (executionContext)
 	{
@@ -44830,16 +44902,17 @@ function ($,
 
 			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
 		},
-		getScreenScale: function (distance, viewport)
+		getScreenScale: function (point, viewport)
 		{
 			var
 				width  = viewport [2],
 				height = viewport [3],
-				size   = distance * Math .tan (this .getFieldOfView () / 2) * 2;
+				size   = Math .tan (this .getFieldOfView () / 2) * 2 * point .abs (); // Assume we are on sphere.
+
+			size *= Math .abs (point .normalize () .dot (zAxis));
 
 			if (width > height)
 				size /= height;
-
 			else
 				size /= width;
 
@@ -46513,17 +46586,17 @@ function ($,
 
 
 
-define('text!cobweb/Browser/EnvironmentalEffects/SphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
 
-define('text!cobweb/Browser/EnvironmentalEffects/SphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
 
 
 define ('cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext',[
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
 	"cobweb/Components/Texturing/TextureProperties",
-	"text!cobweb/Browser/EnvironmentalEffects/SphereVertexShader.vs",
-	"text!cobweb/Browser/EnvironmentalEffects/SphereFragmentShader.fs",
+	"text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs",
+	"text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs",
 ],
 function (ComposedShader,
           ShaderPart,
@@ -55642,9 +55715,21 @@ function ($,
 		{
 			return this .localLights;
 		},
-		getLocalFogs: function ()
+		setGlobalFog: function (fog)
 		{
-			return this .localFogs;
+			this .localFog = this .localFogs [0] = fog;
+		},
+		pushLocalFog: function (fog)
+		{
+			this .localFogs .push (fog);
+
+			this .localFog = fog;
+		},
+		popLocalFog: function ()
+		{
+			this .localFogs .pop ();
+
+			this .localFog = this .localFogs [this .localFogs .length - 1];
 		},
 		addShape: function (shapeNode)
 		{
@@ -55681,7 +55766,7 @@ function ($,
 				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
 				context .distance  = distance - radius;
-				context .fogNode   = this .localFogs .length ? this .localFogs [this .localFogs .length - 1]: this .getFog ();
+				context .fogNode   = this .localFog;
 
 				// Clip planes
 
@@ -55908,7 +55993,8 @@ function ($,
 				{
 					this .numOpaqueShapes      = 0;
 					this .numTransparentShapes = 0;
-
+	
+					this .setGlobalFog (this .getFog ());
 					this .collect (type);
 					this .draw ();
 					break;
@@ -56884,7 +56970,8 @@ function ($,
 
 	var
 		SIZE        = 10000,
-		U_DIMENSION = 20;
+		U_DIMENSION = 20,
+		point       = new Vector3 (0, 0, -SIZE);
 	
 	var s = Math .sqrt (Math .pow (2 * SIZE, 2) / 2) / 2;
 
@@ -57322,7 +57409,7 @@ function ($,
 
 			var
 				viewpoint       = this .getCurrentViewpoint (),
-				scale           = viewpoint .getScreenScale (SIZE, viewport),
+				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
 				modelViewMatrix = this .transformationMatrix;
 
@@ -57886,12 +57973,15 @@ function ($,
 					this .urlStack .unshift (urls .fallback + sURL);
 			}
 
-			console .warn ("Error loading image:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading image:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setImage: function ()
 		{
-			console .info ("Done loading image:", this .URL .toString ());
+			if (this .URL .scheme !== "data")
+				console .info ("Done loading image:", this .URL .toString ());
 
 			try
 			{
@@ -60413,13 +60503,16 @@ function ($,
 					this .urlStack .unshift (urls .fallback + sURL);
 			}
 
-			console .warn ("Error loading audio:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading audio:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setAudio: function ()
 		{
 		   // Everything is fine.
-			console .info ("Done loading audio:", this .URL .toString ());
+			if (this .URL .scheme !== "data")
+				console .info ("Done loading audio:", this .URL .toString ());
 			
 			this .audio .unbind ("canplaythrough");
 			this .setMedia (this .audio);
@@ -67081,12 +67174,12 @@ function ($,
 		push: function ()
 		{
 			if (this .enabled_ .getValue ())
-				this .getCurrentLayer () .getLocalFogs () .push (this);
+				this .getCurrentLayer () .pushLocalFog (this);
 		},
 		pop: function ()
 		{
 			if (this .enabled_ .getValue ())
-				this .getCurrentLayer () .getLocalFogs () .pop ();
+				this .getCurrentLayer () .popLocalFog ();
 		},
 	});
 
@@ -67747,12 +67840,15 @@ function ($,
 					this .urlStack .unshift (urls .fallback + sURL);
 			}
 
-			console .warn ("Error loading movie:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading movie:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setVideo: function ()
 		{
-			console .info ("Done loading movie:", this .URL .toString ());
+			if (this .URL .scheme !== "data")
+				console .info ("Done loading movie:", this .URL .toString ());
 
 		   var video = this .video [0];
 	
@@ -69543,8 +69639,7 @@ function ($,
 		
 			var
 				viewport    = this .getCurrentLayer () .getViewVolume () .getViewport (),
-				distance    = this .modelViewMatrix .origin .abs (),
-				screenScale = this .getCurrentViewpoint () .getScreenScale (distance, viewport);
+				screenScale = this .getCurrentViewpoint () .getScreenScale (this .modelViewMatrix .origin, viewport);
 		
 			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 		                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
@@ -71458,29 +71553,29 @@ function ($,
 			this .set_topTexture__    (this .topTexture_);
 			this .set_bottomTexture__ (this .bottomTexture_);
 		},
-		set_frontTexture: function ()
+		set_frontTexture__: function ()
 		{
-			X3DBackgroundNode .prototype .set_frontTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .frontTexture_));
+			X3DBackgroundNode .prototype .set_frontTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .frontTexture_));
 		},
-		set_backTexture: function ()
+		set_backTexture__: function ()
 		{
-			X3DBackgroundNode .prototype .set_backTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .backTexture_));
+			X3DBackgroundNode .prototype .set_backTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .backTexture_));
 		},
-		set_leftTexture: function ()
+		set_leftTexture__: function ()
 		{
-			X3DBackgroundNode .prototype .set_leftTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .leftTexture_));
+			X3DBackgroundNode .prototype .set_leftTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .leftTexture_));
 		},
-		set_rightTexture: function ()
+		set_rightTexture__: function ()
 		{
-			X3DBackgroundNode .prototype .set_rightTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .rightTexture_));
+			X3DBackgroundNode .prototype .set_rightTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .rightTexture_));
 		},
-		set_topTexture: function ()
+		set_topTexture__: function ()
 		{
-			X3DBackgroundNode .prototype .set_topTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .topTexture_));
+			X3DBackgroundNode .prototype .set_topTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .topTexture_));
 		},
-		set_bottomTexture: function ()
+		set_bottomTexture__: function ()
 		{
-			X3DBackgroundNode .prototype .set_bottomTexture .call (X3DCast (X3DConstants .X3DTextureNode, this .bottomTexture_));
+			X3DBackgroundNode .prototype .set_bottomTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .bottomTexture_));
 		},
 	});
 
