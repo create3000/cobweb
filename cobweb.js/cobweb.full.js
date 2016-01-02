@@ -40285,10 +40285,14 @@ define ('cobweb/Components/Rendering/X3DCoordinateNode',[
 	"jquery",
 	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DGeometricPropertyNode, 
-          X3DConstants)
+          X3DConstants,
+          Triangle3,
+          Vector3)
 {
 
 
@@ -40302,61 +40306,6 @@ function ($,
 	X3DCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DCoordinateNode,
-	});
-
-	return X3DCoordinateNode;
-});
-
-
-
-
-define ('cobweb/Components/Rendering/Coordinate',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DCoordinateNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Triangle3",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DCoordinateNode, 
-          X3DConstants,
-          Triangle3,
-          Vector3)
-{
-
-
-	function Coordinate (executionContext)
-	{
-		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
-
-		this .addType (X3DConstants .Coordinate);
-	}
-
-	Coordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
-	{
-		constructor: Coordinate,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec3f ()),
-		]),
-		getTypeName: function ()
-		{
-			return "Coordinate";
-		},
-		getComponentName: function ()
-		{
-			return "Rendering";
-		},
-		getContainerField: function ()
-		{
-			return "coord";
-		},
 		isEmpty: function ()
 		{
 			return this .point_ .length == 0;
@@ -40402,6 +40351,57 @@ function ($,
 				                              new Vector3 (0, 0, 0));
 
 			return new Vector3 (0, 0, 0);
+		},
+	});
+
+	return X3DCoordinateNode;
+});
+
+
+
+
+define ('cobweb/Components/Rendering/Coordinate',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DCoordinateNode, 
+          X3DConstants)
+{
+
+
+	function Coordinate (executionContext)
+	{
+		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .Coordinate);
+	}
+
+	Coordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
+	{
+		constructor: Coordinate,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Coordinate";
+		},
+		getComponentName: function ()
+		{
+			return "Rendering";
+		},
+		getContainerField: function ()
+		{
+			return "coord";
 		},
 	});
 
@@ -62664,6 +62664,57 @@ function ($,
 
 
 
+define ('cobweb/Components/NURBS/CoordinateDouble',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DCoordinateNode, 
+          X3DConstants)
+{
+
+
+	function CoordinateDouble (executionContext)
+	{
+		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .CoordinateDouble);
+	}
+
+	CoordinateDouble .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
+	{
+		constructor: CoordinateDouble,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec3d ()),
+		]),
+		getTypeName: function ()
+		{
+			return "CoordinateDouble";
+		},
+		getComponentName: function ()
+		{
+			return "NURBS";
+		},
+		getContainerField: function ()
+		{
+			return "coord";
+		},
+	});
+
+	return CoordinateDouble;
+});
+
+
+
+
 define ('cobweb/Components/Interpolation/CoordinateInterpolator',[
 	"jquery",
 	"cobweb/Fields",
@@ -73728,6 +73779,8 @@ function ($,
 
 
 
+//define (function () {
+//});
 
 define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Networking/Anchor", // VRML
@@ -73772,7 +73825,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Rendering/Coordinate", // VRML
 	//"cobweb/Components/Followers/CoordinateChaser",
 	//"cobweb/Components/Followers/CoordinateDamper",
-	//"cobweb/Components/NURBS/CoordinateDouble",
+	"cobweb/Components/NURBS/CoordinateDouble",
 	"cobweb/Components/Interpolation/CoordinateInterpolator", // VRML
 	"cobweb/Components/Interpolation/CoordinateInterpolator2D",
 	"cobweb/Components/Geometry3D/Cylinder", // VRML
@@ -73994,7 +74047,7 @@ function (Anchor,
           Coordinate,
           //CoordinateChaser,
           //CoordinateDamper,
-          //CoordinateDouble,
+          CoordinateDouble,
           CoordinateInterpolator,
           CoordinateInterpolator2D,
           Cylinder,
@@ -74222,7 +74275,7 @@ function (Anchor,
 		Coordinate:                   Coordinate,
 		//CoordinateChaser:             CoordinateChaser,
 		//CoordinateDamper:             CoordinateDamper,
-		//CoordinateDouble:             CoordinateDouble,
+		CoordinateDouble:             CoordinateDouble,
 		CoordinateInterpolator:       CoordinateInterpolator,
 		CoordinateInterpolator2D:     CoordinateInterpolator2D,
 		Cylinder:                     Cylinder,

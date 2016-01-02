@@ -1,3 +1,5 @@
+//define (function () {
+//});
 
 define ([
 	"cobweb/Components/Networking/Anchor", // VRML
@@ -42,7 +44,7 @@ define ([
 	"cobweb/Components/Rendering/Coordinate", // VRML
 	//"cobweb/Components/Followers/CoordinateChaser",
 	//"cobweb/Components/Followers/CoordinateDamper",
-	//"cobweb/Components/NURBS/CoordinateDouble",
+	"cobweb/Components/NURBS/CoordinateDouble",
 	"cobweb/Components/Interpolation/CoordinateInterpolator", // VRML
 	"cobweb/Components/Interpolation/CoordinateInterpolator2D",
 	"cobweb/Components/Geometry3D/Cylinder", // VRML
@@ -264,7 +266,7 @@ function (Anchor,
           Coordinate,
           //CoordinateChaser,
           //CoordinateDamper,
-          //CoordinateDouble,
+          CoordinateDouble,
           CoordinateInterpolator,
           CoordinateInterpolator2D,
           Cylinder,
@@ -492,7 +494,7 @@ function (Anchor,
 		Coordinate:                   Coordinate,
 		//CoordinateChaser:             CoordinateChaser,
 		//CoordinateDamper:             CoordinateDamper,
-		//CoordinateDouble:             CoordinateDouble,
+		CoordinateDouble:             CoordinateDouble,
 		CoordinateInterpolator:       CoordinateInterpolator,
 		CoordinateInterpolator2D:     CoordinateInterpolator2D,
 		Cylinder:                     Cylinder,
