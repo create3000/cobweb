@@ -34747,16 +34747,6 @@ function (Fields,
           MatrixStack)
 {
 
-	
-	function createPointShader (executionContext, lineShader, gl)
-	{
-		var shader = new ComposedShader (executionContext);
-		shader .language_ = "GLSL";
-		shader .parts_ = lineShader .parts_;
-		shader .setCustom (false);
-		shader .setup ();
-		return shader;
-	}
 
 	function X3DRenderingContext ()
 	{
@@ -40417,6 +40407,14 @@ function ($,
 	X3DTextureCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DTextureCoordinateNode,
+		init: function (texCoords)
+		{
+			texCoords .push ([ ]);
+		},
+		addTexCoord: function (texCoord, index)
+		{
+			this .addTexCoordToChannel (texCoord [0], index);
+		},
 	});
 
 	return X3DTextureCoordinateNode;
@@ -40468,22 +40466,14 @@ function ($,
 		{
 			return "texCoord";
 		},
-		init: function (texCoords)
-		{
-			texCoords .push ([ ]);
-		},
-		addTexCoord: function (texCoord, index)
-		{
-			this .addTexCoordToChannel (texCoord [0], index);
-		},
 		addTexCoordToChannel: function (texCoords, index)
 		{
 			if (index >= 0 && index < this .point_ .length)
 			{
-				var point2 = this .point_ [index];
+				var point = this .point_ [index];
 	
-				texCoords .push (point2 .x);
-				texCoords .push (point2 .y);
+				texCoords .push (point .x);
+				texCoords .push (point .y);
 				texCoords .push (0);
 				texCoords .push (1);
 			}
@@ -55074,6 +55064,8 @@ function ($,
 {
 
 
+	var vector = new Vector2 (0, 0);
+
 	function TextureTransform (executionContext)
 	{
 		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
@@ -55117,24 +55109,29 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .eventsProcessed .call (this);
 			
-			var matrix3 = this .matrix3;
+			var
+				translation = this .translation_ .getValue (),
+				rotation    = this .rotation_ .getValue (),
+				scale       = this .scale_ .getValue (),
+				center      = this .center_ .getValue (),
+				matrix3     = this .matrix3;
 
 			matrix3 .identity ();
 
-			if (! this .center_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (Vector2 .negate (this .center_ .getValue ()));
+			if (! center .equals (Vector2 .Zero))
+				matrix3 .translate (vector .assign (center) .negate ());
 
-			if (! this .scale_ .getValue () .equals (Vector2 .One))
-				matrix3 .scale (this .scale_ .getValue ());
+			if (! scale .equals (Vector2 .One))
+				matrix3 .scale (scale);
 
-			if (this .rotation_ .getValue () !== 0)
-				matrix3 .rotate (this .rotation_ .getValue ());
+			if (rotation !== 0)
+				matrix3 .rotate (rotation);
 
-			if (! this .center_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (this .center_ .getValue ());
+			if (! center .equals (Vector2 .Zero))
+				matrix3 .translate (center);
 
-			if (! this .translation_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (this .translation_ .getValue ());
+			if (! translation .equals (Vector2 .Zero))
+				matrix3 .translate (translation);
 
 			var matrix4 = this .getMatrix ();
 			

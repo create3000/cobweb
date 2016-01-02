@@ -35,16 +35,6 @@ function (Fields,
           MatrixStack)
 {
 "use strict";
-	
-	function createPointShader (executionContext, lineShader, gl)
-	{
-		var shader = new ComposedShader (executionContext);
-		shader .language_ = "GLSL";
-		shader .parts_ = lineShader .parts_;
-		shader .setCustom (false);
-		shader .setup ();
-		return shader;
-	}
 
 	function X3DRenderingContext ()
 	{

@@ -34747,16 +34747,6 @@ function (Fields,
           MatrixStack)
 {
 
-	
-	function createPointShader (executionContext, lineShader, gl)
-	{
-		var shader = new ComposedShader (executionContext);
-		shader .language_ = "GLSL";
-		shader .parts_ = lineShader .parts_;
-		shader .setCustom (false);
-		shader .setup ();
-		return shader;
-	}
 
 	function X3DRenderingContext ()
 	{
@@ -40417,6 +40407,14 @@ function ($,
 	X3DTextureCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DTextureCoordinateNode,
+		init: function (texCoords)
+		{
+			texCoords .push ([ ]);
+		},
+		addTexCoord: function (texCoord, index)
+		{
+			this .addTexCoordToChannel (texCoord [0], index);
+		},
 	});
 
 	return X3DTextureCoordinateNode;
@@ -40468,22 +40466,14 @@ function ($,
 		{
 			return "texCoord";
 		},
-		init: function (texCoords)
-		{
-			texCoords .push ([ ]);
-		},
-		addTexCoord: function (texCoord, index)
-		{
-			this .addTexCoordToChannel (texCoord [0], index);
-		},
 		addTexCoordToChannel: function (texCoords, index)
 		{
 			if (index >= 0 && index < this .point_ .length)
 			{
-				var point2 = this .point_ [index];
+				var point = this .point_ [index];
 	
-				texCoords .push (point2 .x);
-				texCoords .push (point2 .y);
+				texCoords .push (point .x);
+				texCoords .push (point .y);
 				texCoords .push (0);
 				texCoords .push (1);
 			}
@@ -55074,6 +55064,8 @@ function ($,
 {
 
 
+	var vector = new Vector2 (0, 0);
+
 	function TextureTransform (executionContext)
 	{
 		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
@@ -55117,24 +55109,29 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .eventsProcessed .call (this);
 			
-			var matrix3 = this .matrix3;
+			var
+				translation = this .translation_ .getValue (),
+				rotation    = this .rotation_ .getValue (),
+				scale       = this .scale_ .getValue (),
+				center      = this .center_ .getValue (),
+				matrix3     = this .matrix3;
 
 			matrix3 .identity ();
 
-			if (! this .center_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (Vector2 .negate (this .center_ .getValue ()));
+			if (! center .equals (Vector2 .Zero))
+				matrix3 .translate (vector .assign (center) .negate ());
 
-			if (! this .scale_ .getValue () .equals (Vector2 .One))
-				matrix3 .scale (this .scale_ .getValue ());
+			if (! scale .equals (Vector2 .One))
+				matrix3 .scale (scale);
 
-			if (this .rotation_ .getValue () !== 0)
-				matrix3 .rotate (this .rotation_ .getValue ());
+			if (rotation !== 0)
+				matrix3 .rotate (rotation);
 
-			if (! this .center_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (this .center_ .getValue ());
+			if (! center .equals (Vector2 .Zero))
+				matrix3 .translate (center);
 
-			if (! this .translation_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (this .translation_ .getValue ());
+			if (! translation .equals (Vector2 .Zero))
+				matrix3 .translate (translation);
 
 			var matrix4 = this .getMatrix ();
 			
@@ -71585,6 +71582,307 @@ function ($,
 
 
 
+define ('cobweb/Components/Texturing3D/TextureCoordinate3D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureCoordinateNode, 
+          X3DConstants)
+{
+
+
+	function TextureCoordinate3D (executionContext)
+	{
+		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .TextureCoordinate3D);
+	}
+
+	TextureCoordinate3D .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
+	{
+		constructor: TextureCoordinate3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureCoordinate3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "texCoord";
+		},
+		addTexCoordToChannel: function (texCoords, index)
+		{
+			if (index >= 0 && index < this .point_ .length)
+			{
+				var point = this .point_ [index];
+	
+				texCoords .push (point .x);
+				texCoords .push (point .y);
+				texCoords .push (point .z);
+				texCoords .push (1);
+			}
+			else
+			{
+				texCoords .push (0);
+				texCoords .push (0);
+				texCoords .push (0);
+				texCoords .push (1);
+			}
+		},
+	});
+
+	return TextureCoordinate3D;
+});
+
+
+
+
+define ('cobweb/Components/Texturing3D/TextureCoordinate4D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureCoordinateNode, 
+          X3DConstants)
+{
+
+
+	function TextureCoordinate4D (executionContext)
+	{
+		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .TextureCoordinate4D);
+	}
+
+	TextureCoordinate4D .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
+	{
+		constructor: TextureCoordinate4D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec4f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureCoordinate4D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "texCoord";
+		},
+		addTexCoordToChannel: function (texCoords, index)
+		{
+			if (index >= 0 && index < this .point_ .length)
+			{
+				var point = this .point_ [index];
+
+				texCoords .push (point .x);
+				texCoords .push (point .y);
+				texCoords .push (point .z);
+				texCoords .push (point .w);
+			}
+			else
+			{
+				texCoords .push (0);
+				texCoords .push (0);
+				texCoords .push (0);
+				texCoords .push (1);
+			}
+		},
+	});
+
+	return TextureCoordinate4D;
+});
+
+
+
+
+define ('cobweb/Components/Texturing3D/TextureTransform3D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureTransformNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureTransformNode, 
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4)
+{
+
+
+	var vector = new Vector3 (0, 0, 0);
+
+	function TextureTransform3D (executionContext)
+	{
+		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .TextureTransform3D);
+	}
+
+	TextureTransform3D .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
+	{
+		constructor: TextureTransform3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "translation", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "rotation",    new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "scale",       new Fields .SFVec3f (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "center",      new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureTransform3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "textureTransform";
+		},
+		initialize: function ()
+		{
+			X3DTextureTransformNode .prototype .initialize .call (this);
+			
+			this .addInterest (this, "eventsProcessed");
+
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			X3DTextureTransformNode .prototype .eventsProcessed .call (this);
+			
+			var
+				translation = this .translation_ .getValue (),
+				rotation    = this .rotation_ .getValue (),
+				scale       = this .scale_ .getValue (),
+				center      = this .center_ .getValue (),
+				matrix4     = this .getMatrix ();
+
+			matrix4 .identity ();
+
+			if (! center .equals (Vector3 .Zero))
+				matrix4 .translate (vector .assign (center) .negate ());
+
+			if (! scale .equals (Vector3 .One))
+				matrix4 .scale (scale);
+
+			if (! rotation .equals (Rotation4 .Identity))
+				matrix4 .rotate (rotation);
+
+			if (! center .equals (Vector3 .Zero))
+				matrix4 .translate (center);
+
+			if (! translation .equals (Vector3 .Zero))
+				matrix4 .translate (translation);
+
+			this .setMatrix (matrix4);
+		},
+	});
+
+	return TextureTransform3D;
+});
+
+
+
+
+define ('cobweb/Components/Texturing3D/TextureTransformMatrix3D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureTransformNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureTransformNode, 
+          X3DConstants)
+{
+
+
+	function TextureTransformMatrix3D (executionContext)
+	{
+		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .TextureTransformMatrix3D);
+	}
+
+	TextureTransformMatrix3D .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
+	{
+		constructor: TextureTransformMatrix3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "matrix",   new Fields .SFMatrix4f (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureTransformMatrix3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "textureTransform";
+		},
+		eventsProcessed: function ()
+		{
+			X3DTextureTransformNode .prototype .eventsProcessed .call (this);
+			
+			var matrix4 = this .getMatrix ();
+
+			matrix4 .assign (this .matrix_ .getValue ());
+
+			this .setMatrix (matrix4);
+		},
+	});
+
+	return TextureTransformMatrix3D;
+});
+
+
+
+
 define ('cobweb/Components/EventUtilities/TimeTrigger',[
 	"jquery",
 	"cobweb/Fields",
@@ -72876,13 +73174,13 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Text/Text", // VRML
 	"cobweb/Components/EnvironmentalEffects/TextureBackground",
 	"cobweb/Components/Texturing/TextureCoordinate", // VRML
-	//"cobweb/Components/Texturing3D/TextureCoordinate3D",
-	//"cobweb/Components/Texturing3D/TextureCoordinate4D",
+	"cobweb/Components/Texturing3D/TextureCoordinate3D",
+	"cobweb/Components/Texturing3D/TextureCoordinate4D",
 	//"cobweb/Components/Texturing/TextureCoordinateGenerator",
 	"cobweb/Components/Texturing/TextureProperties",
 	"cobweb/Components/Texturing/TextureTransform", // VRML
-	//"cobweb/Components/Texturing3D/TextureTransform3D",
-	//"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
+	"cobweb/Components/Texturing3D/TextureTransform3D",
+	"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
 	"cobweb/Components/Time/TimeSensor", // VRML
 	"cobweb/Components/EventUtilities/TimeTrigger",
 	//"cobweb/Components/Titania/TouchGroup",
@@ -73098,13 +73396,13 @@ function (Anchor,
           Text,
           TextureBackground,
           TextureCoordinate,
-          //TextureCoordinate3D,
-          //TextureCoordinate4D,
+          TextureCoordinate3D,
+          TextureCoordinate4D,
           //TextureCoordinateGenerator,
           TextureProperties,
           TextureTransform,
-          //TextureTransform3D,
-          //TextureTransformMatrix3D,
+          TextureTransform3D,
+          TextureTransformMatrix3D,
           TimeSensor,
           TimeTrigger,
           //TouchGroup,
@@ -73326,13 +73624,13 @@ function (Anchor,
 		Text:                         Text,
 		TextureBackground:            TextureBackground,
 		TextureCoordinate:            TextureCoordinate,
-		//TextureCoordinate3D:          TextureCoordinate3D,
-		//TextureCoordinate4D:          TextureCoordinate4D,
+		TextureCoordinate3D:          TextureCoordinate3D,
+		TextureCoordinate4D:          TextureCoordinate4D,
 		//TextureCoordinateGenerator:   TextureCoordinateGenerator,
 		TextureProperties:            TextureProperties,
 		TextureTransform:             TextureTransform,
-		//TextureTransform3D:           TextureTransform3D,
-		//TextureTransformMatrix3D:     TextureTransformMatrix3D,
+		TextureTransform3D:           TextureTransform3D,
+		TextureTransformMatrix3D:     TextureTransformMatrix3D,
 		TimeSensor:                   TimeSensor,
 		TimeTrigger:                  TimeTrigger,
 		//TouchGroup:                   TouchGroup,
