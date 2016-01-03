@@ -1067,7 +1067,6 @@
     <None Include="tests\Components\Shaders\Fields.x3d" />
     <None Include="tests\Components\Networking\LoadSensor.x3d" />
     <None Include="cobweb\Browser\Layout\X3DLayoutContext.js" />
-    <None Include="cobweb.full.js" />
     <None Include="cobweb.release.html" />
     <None Include="cobweb.min.html" />
     <None Include="browser.html" />
@@ -1104,11 +1103,9 @@
     <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator1.js" />
     <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolatorTemplate.js" />
     <None Include="cobweb\Browser\Interpolation\SquatInterpolator.js" />
-    <None Include="CatmullRomSplineInterpolator.js">
-      <DependentUpon>Makefile</DependentUpon>
-    </None>
-    <None Include="cobweb.VRML.full.js" />
     <None Include="cobweb.VRML.min.js" />
+    <None Include="cobweb.VRML.uncompressed.js" />
+    <None Include="cobweb.uncompressed.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

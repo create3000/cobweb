@@ -19,14 +19,14 @@ my $LATEST      = "../stable/latest";
 sub cp {
 	my $VERSION_DIR = shift;
 
-	system "cp", "-v", "cobweb.css",          $VERSION_DIR;
-	system "cp", "-v", "spinner.css",         $VERSION_DIR;
-	system "cp", "-v", "cobweb.full.js",      "$VERSION_DIR/cobweb.js";
-	system "cp", "-v", "cobweb.min.js",       $VERSION_DIR;
-	system "cp", "-v", "cobweb.VRML.full.js", "$VERSION_DIR/cobweb.VRML.js";
-	system "cp", "-v", "cobweb.VRML.min.js",  $VERSION_DIR;
-	system "cp", "-v", "-r", "images",        $VERSION_DIR;
-	system "cp", "-v", "browser.html",        $VERSION_DIR;
+	system "cp", "-v", "cobweb.css",                   $VERSION_DIR;
+	system "cp", "-v", "spinner.css",                  $VERSION_DIR;
+	system "cp", "-v", "cobweb.uncompressed.js",      "$VERSION_DIR/cobweb.js";
+	system "cp", "-v", "cobweb.min.js",                $VERSION_DIR;
+	system "cp", "-v", "cobweb.VRML.uncompressed.js", "$VERSION_DIR/cobweb.VRML.js";
+	system "cp", "-v", "cobweb.VRML.min.js",           $VERSION_DIR;
+	system "cp", "-v", "-r", "images",                 $VERSION_DIR;
+	system "cp", "-v", "browser.html",                 $VERSION_DIR;
 
 	system "perl", "-pi", "-e", 's|\s*<script src="jam/require\.js"></script>\n||sg', "$VERSION_DIR/browser.html";
 	system "perl", "-pi", "-e", 's|cobweb\.js|cobweb.min.js|sg', "$VERSION_DIR/browser.html";
