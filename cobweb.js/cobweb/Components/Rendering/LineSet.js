@@ -128,7 +128,9 @@ function ($,
 
 			var
 				vertexCount = this .vertexCount_ .getValue (),
-				size        = this .coordNode .getSize (),
+				colorNode   = this .colorNode,
+				coordNode   = this .coordNode,
+				size        = coordNode .getSize (),
 				index       = 0;
 
 			for (var c = 0, length = vertexCount .length; c < length; ++ c)
@@ -147,10 +149,10 @@ function ($,
 						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 						//	attribNodes [a] -> addValue (attribArrays [a], index);
 
-						if (this .colorNode)
-							this .addColor (this .colorNode .getColor (index));
+						if (colorNode)
+							this .addColor (colorNode .getColor (index));
 
-						this .addVertex (this .coordNode .getPoint (index));
+						this .addVertex (coordNode .getPoint (index));
 					}
 
 					++ index;

@@ -23,6 +23,8 @@ function ($,
 		X3DNormalNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Normal);
+
+		this .vector = this .vector_ .getValue ();
 	}
 
 	Normal .prototype = $.extend (Object .create (X3DNormalNode .prototype),
@@ -46,8 +48,8 @@ function ($,
 		},
 		getVector: function (index)
 		{
-			if (index >= 0 && index < this .vector_ .length)
-				return this .vector_ [index] .getValue ();
+			if (index >= 0 && index < this .vector .length)
+				return this .vector [index] .getValue ();
 
 			return new Vector3 (0, 0, 0);
 		},

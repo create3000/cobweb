@@ -23,6 +23,8 @@ function ($,
 		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .ColorRGBA);
+
+		this .color = this .color_ .getValue ();
 	}
 
 	ColorRGBA .prototype = $.extend (Object .create (X3DColorNode .prototype),
@@ -50,8 +52,8 @@ function ($,
 		},
 		getColor: function (index)
 		{
-			if (index >= 0 && index < this .color_ .length)
-				return this .color_ [index] .getValue ();
+			if (index >= 0 && index < this .color .length)
+				return this .color [index] .getValue ();
 	
 			return new Color4 (1, 1, 1, 1);
 		},

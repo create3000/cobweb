@@ -128,6 +128,10 @@ function ($,
 			if (! this .coordNode || this .coordNode .isEmpty ())
 				return;
 
+			var
+				colorNode = this .colorNode,
+				coordNode = this .coordNode;
+
 			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 			//{
 			//	attribArrays [a] .reserve (coordNode -> getSize ());
@@ -138,15 +142,15 @@ function ($,
 			
 			if (this .colorNode)
 			{
-				for (var i = 0, length = this .colorNode .color_ .length; i < length; ++ i)
-					this .addColor (this .colorNode .getColor (i));
+				for (var i = 0, length = colorNode .color_ .length; i < length; ++ i)
+					this .addColor (colorNode .getColor (i));
 
-				for (var length = this .coordNode .point_ .length; i < length; ++ i)
+				for (var length = coordNode .point_ .length; i < length; ++ i)
 					this .addColor (new Color4 (1, 1, 1, 1));
 			}
 
-			for (var i = 0, length = this .coordNode .point_ .length; i < length; ++ i)
-				this .addVertex (this .coordNode .getPoint (i));
+			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
+				this .addVertex (coordNode .getPoint (i));
 
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},

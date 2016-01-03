@@ -185,7 +185,9 @@ function ($,
 			var
 				coordIndex     = this .coordIndex_. getValue (),
 				polylines      = this .getPolylineIndices (),
-				colorPerVertex = this .colorPerVertex_ .getValue ();
+				colorPerVertex = this .colorPerVertex_ .getValue (),
+				colorNode      = this .colorNode,
+				coordNode      = this .coordNode;
 
 			// Fill GeometryNode
 
@@ -206,15 +208,15 @@ function ($,
 						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 						//	attribNodes [a] -> addValue (attribArrays [a], coordIndex () [i]);
 
-						if (this .colorNode)
+						if (colorNode)
 						{
 							if (colorPerVertex)
-								this .addColor (this .colorNode .getColor (this .getColorPerVertexIndex (i)));
+								this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
 							else
-								this .addColor (this .colorNode .getColor (this .getColorIndex (face)));
+								this .addColor (colorNode .getColor (this .getColorIndex (face)));
 						}
 
-						this .addVertex (this .coordNode .getPoint (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .getPoint (coordIndex [i] .getValue ()));
 					}
 				}
 
