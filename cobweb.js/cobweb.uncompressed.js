@@ -12306,9 +12306,7 @@ function ($, Algorithm)
 {
 
 
-	var
-		clamp = Algorithm .clamp,
-		hsv   = [ ];
+	var clamp = Algorithm .clamp;
 
 	function Color3 (r, g, b)
 	{
@@ -12366,7 +12364,7 @@ function ($, Algorithm)
 			       this .g_ === vector .g_ &&
 			       this .b_ === vector .b_;
 		},
-		getHSV: function ()
+		getHSV: function (result)
 		{
 			var h, s, v;
 
@@ -12394,11 +12392,11 @@ function ($, Algorithm)
 			else
 				s = h = 0;         // s = 0, h is undefined
 
-			hsv [0] = h;
-			hsv [1] = s;
-			hsv [2] = v;
+			result [0] = h;
+			result [1] = s;
+			result [2] = v;
 
-			return hsv;
+			return result;
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12570,7 +12568,7 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		getHSV: function ()
 		{
-			return this .getValue () .getHSV () .slice (0);
+			return this .getValue () .getHSV ([ ]);
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12685,9 +12683,7 @@ function ($, Algorithm)
 {
 
 
-	var
-		clamp = Algorithm .clamp,
-		hsv   = [ ];
+	var clamp = Algorithm .clamp;
 
 	function Color4 (r, g, b, a)
 	{
@@ -12751,7 +12747,7 @@ function ($, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: function ()
+		getHSV: function (result)
 		{
 			var h, s, v;
 
@@ -12779,11 +12775,11 @@ function ($, Algorithm)
 			else
 				s = h = 0;         // s = 0, h is undefined
 
-			hsv [0] = h;
-			hsv [1] = s;
-			hsv [2] = v;
+			result [0] = h;
+			result [1] = s;
+			result [2] = v;
 
-			return hsv;
+			return result;
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12935,7 +12931,7 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		getHSV: function ()
 		{
-			return this .getValue () .getHSV () .slice (0);
+			return this .getValue () .getHSV ([ ]);
 		},
 		setHSV: function (h, s, v)
 		{
@@ -62149,7 +62145,7 @@ function ($,
 					this .getBrowser () .addBrowserEvent ();
 				}
 				else
-					getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
 			}
 		},
 	});
@@ -62203,8 +62199,6 @@ function ($,
 			for (var i = 1, length = this .getOrder () + 1; i < length; ++ i)
 				buffer [i] = this .copy (initialValue);
 	
-console .log (this .initialValue_);
-	
 			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
 				this .setValue (initialDestination);
 
@@ -62242,9 +62236,9 @@ console .log (this .initialValue_);
 		getTolerance: function ()
 		{
 			if (this .tolerance_ .getValue () < 0)
-				this .tolerance = 0.001;
+				return 1e-8;
 
-			return this .tolerance = this .tolerance_ .getValue ();
+			return this .tolerance_ .getValue ();
 		},
 		copy: function (value)
 		{
@@ -62389,27 +62383,19 @@ function ($,
 		},
 		getValue: function ()
 		{
-			var hsv = this .set_value_ .getValue () .getHSV ();
-
-			return vector .set (hsv [0], hsv [1], hsv [2]);
+			return this .set_value_ .getValue () .getHSV (vector);
 		},
 		getDestination: function ()
 		{
-			var hsv = this .set_destination_ .getValue () .getHSV ();
-
-			return vector .set (hsv [0], hsv [1], hsv [2]);
+			return this .set_destination_ .getValue () .getHSV (vector);
 		},
 		getInitialValue: function ()
 		{
-			var hsv = this .initialValue_ .getValue () .getHSV ();
-
-			return initialValue .set (hsv [0], hsv [1], hsv [2]);
+			return this .initialValue_ .getValue () .getHSV (initialValue);
 		},
 		getInitialDestination: function ()
 		{
-			var hsv = this .initialDestination_ .getValue () .getHSV ();
-
-			return initialDestination .set (hsv [0], hsv [1], hsv [2]);
+			return this .initialDestination_ .getValue () .getHSV (initialDestination);
 		},
 		setValue: function (value)
 		{
@@ -62417,9 +62403,7 @@ function ($,
 		},
 		equals: function (lhs, rhs, tolerance)
 		{
-			a .set (lhs .r, lhs .g, lhs .b);
-
-			return a .subtract (rhs) .abs () < tolerance;
+			return a .assign (lhs) .subtract (rhs) .abs () < tolerance;
 		},
 		interpolate: function (source, destination, weight)
 		{
@@ -62500,7 +62484,7 @@ function ($,
 			this .hsv .length = 0;
 
 			for (var i = 0, length = keyValue .length; i < length; ++ i)
-				this .hsv .push (keyValue [i] .getHSV ());
+				this .hsv .push (keyValue [i] .getHSV ([ ]));
 		},
 		interpolate: function (index0, index1, weight)
 		{
@@ -70380,8 +70364,6 @@ function ($,
 		},
 		equals: function (lhs, rhs, tolerance)
 		{
-			a .set (lhs .r, lhs .g, lhs .b);
-
 			return Math .abs (lhs - rhs) < tolerance;
 		},
 		interpolate: function (source, destination, weight)

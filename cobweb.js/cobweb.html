@@ -146,6 +146,7 @@ X3D (function (dom)
 		{ name: 'Smash',                url: [ "tests/Components/Geometry3D/Smash.x3d" ] },
 		{ name: 'Extrude1',             url: [ "tests/Components/Geometry3D/Extrusion/extrude1.x3d" ] },
 		{ name: 'Gears42P Extrusion',   url: [ "tests/Components/Geometry3D/Extrusion/gears42P.x3d" ] },
+		{ name: 'Interpolators',        url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/Interpolators.wrl" ] },
 		{ name: 'NormalInterpolator',   url: [ "tests/Components/Interpolation/NormalInterpolator.x3d" ] },
 		{ name: 'PositionInterpolator', url: [ "tests/Components/Interpolation/PositionInterpolator.x3d" ] },
 		{ name: 'PointLight',           url: [ "tests/Components/Lighting/PointLight.x3d", "tests/Components/Lighting/PointLight.x3dv" ] },
@@ -203,16 +204,17 @@ X3D (function (dom)
 		{ name: 'LocalFog',          url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EnvironmentalEffects/LocalFog.wrl" ] },
 		{ name: 'TextureBackground', url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EnvironmentalEffects/TextureBackground.wrl" ] },
 
-		{ name: 'SplinePosition',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator.wrl" ] },
-		{ name: 'SplinePosition2D',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator2.wrl" ] },
-		{ name: 'SplineScalar',      url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplineScalarInterpolator.wrl" ] },
-		{ name: 'SquadOrientation',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SquadOrientationInterpolator.wrl" ] },
-		{ name: 'ColorDamper',       url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/ColorDamper.wrl" ] },
-		{ name: 'PositionDamper',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/PositionDamper.wrl" ] },
-		{ name: 'PositionDamper2D',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/PositionDamper2D.wrl" ] },
-		{ name: 'CoordinateDamper',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/CoordinateDamper.wrl" ] },
-		{ name: 'OrientationDamper', url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationDamper.wrl" ] },
-		{ name: 'ScalarDamper',      url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/ScalarDamper.x3d" ] },
+		{ name: 'SplinePosition',      url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator.wrl" ] },
+		{ name: 'SplinePosition2D',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator2.wrl" ] },
+		{ name: 'SplineScalar',        url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplineScalarInterpolator.wrl" ] },
+		{ name: 'SquadOrientation',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SquadOrientationInterpolator.wrl" ] },
+		{ name: 'ScalarDamper',        url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/ScalarDamper.x3d" ] },
+		{ name: 'PositionDamper',      url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/PositionDamper.wrl" ] },
+		{ name: 'PositionDamper2D',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/PositionDamper2D.wrl" ] },
+		{ name: 'ColorDamper',         url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/ColorDamper.wrl" ] },
+		{ name: 'OrientationDamper',   url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationDamper.wrl" ] },
+		{ name: 'CoordinateDamper',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/CoordinateDamper.wrl" ] },
+		{ name: 'TexCoordDamper',      url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/TexCoordDamper.x3d" ] },
 	];
 
 	for (var i = 0, length = pages .length; i < length; ++ i)
@@ -245,7 +247,7 @@ function loadURL ()
 	<div class="tests">
 		<div class="examples"></div>
 		<X3D cache="false" url='
-			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationDamper.wrl"
+			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/ScalarDamper.x3d"
 			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SquadOrientationInterpolator.wrl"
 			"tests/Components/Geometry3D/Smash.x3d",
 			"tests/Components/Geometry3D/Extrusion/gears42P.x3d"

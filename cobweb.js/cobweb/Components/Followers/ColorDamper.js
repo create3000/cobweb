@@ -62,27 +62,19 @@ function ($,
 		},
 		getValue: function ()
 		{
-			var hsv = this .set_value_ .getValue () .getHSV ();
-
-			return vector .set (hsv [0], hsv [1], hsv [2]);
+			return this .set_value_ .getValue () .getHSV (vector);
 		},
 		getDestination: function ()
 		{
-			var hsv = this .set_destination_ .getValue () .getHSV ();
-
-			return vector .set (hsv [0], hsv [1], hsv [2]);
+			return this .set_destination_ .getValue () .getHSV (vector);
 		},
 		getInitialValue: function ()
 		{
-			var hsv = this .initialValue_ .getValue () .getHSV ();
-
-			return initialValue .set (hsv [0], hsv [1], hsv [2]);
+			return this .initialValue_ .getValue () .getHSV (initialValue);
 		},
 		getInitialDestination: function ()
 		{
-			var hsv = this .initialDestination_ .getValue () .getHSV ();
-
-			return initialDestination .set (hsv [0], hsv [1], hsv [2]);
+			return this .initialDestination_ .getValue () .getHSV (initialDestination);
 		},
 		setValue: function (value)
 		{
@@ -90,9 +82,7 @@ function ($,
 		},
 		equals: function (lhs, rhs, tolerance)
 		{
-			a .set (lhs .r, lhs .g, lhs .b);
-
-			return a .subtract (rhs) .abs () < tolerance;
+			return a .assign (lhs) .subtract (rhs) .abs () < tolerance;
 		},
 		interpolate: function (source, destination, weight)
 		{

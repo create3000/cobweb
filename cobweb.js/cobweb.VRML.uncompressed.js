@@ -12306,9 +12306,7 @@ function ($, Algorithm)
 {
 
 
-	var
-		clamp = Algorithm .clamp,
-		hsv   = [ ];
+	var clamp = Algorithm .clamp;
 
 	function Color3 (r, g, b)
 	{
@@ -12366,7 +12364,7 @@ function ($, Algorithm)
 			       this .g_ === vector .g_ &&
 			       this .b_ === vector .b_;
 		},
-		getHSV: function ()
+		getHSV: function (result)
 		{
 			var h, s, v;
 
@@ -12394,11 +12392,11 @@ function ($, Algorithm)
 			else
 				s = h = 0;         // s = 0, h is undefined
 
-			hsv [0] = h;
-			hsv [1] = s;
-			hsv [2] = v;
+			result [0] = h;
+			result [1] = s;
+			result [2] = v;
 
-			return hsv;
+			return result;
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12570,7 +12568,7 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		getHSV: function ()
 		{
-			return this .getValue () .getHSV () .slice (0);
+			return this .getValue () .getHSV ([ ]);
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12685,9 +12683,7 @@ function ($, Algorithm)
 {
 
 
-	var
-		clamp = Algorithm .clamp,
-		hsv   = [ ];
+	var clamp = Algorithm .clamp;
 
 	function Color4 (r, g, b, a)
 	{
@@ -12751,7 +12747,7 @@ function ($, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: function ()
+		getHSV: function (result)
 		{
 			var h, s, v;
 
@@ -12779,11 +12775,11 @@ function ($, Algorithm)
 			else
 				s = h = 0;         // s = 0, h is undefined
 
-			hsv [0] = h;
-			hsv [1] = s;
-			hsv [2] = v;
+			result [0] = h;
+			result [1] = s;
+			result [2] = v;
 
-			return hsv;
+			return result;
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12935,7 +12931,7 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		getHSV: function ()
 		{
-			return this .getValue () .getHSV () .slice (0);
+			return this .getValue () .getHSV ([ ]);
 		},
 		setHSV: function (h, s, v)
 		{
@@ -60685,7 +60681,7 @@ function ($,
 			this .hsv .length = 0;
 
 			for (var i = 0, length = keyValue .length; i < length; ++ i)
-				this .hsv .push (keyValue [i] .getHSV ());
+				this .hsv .push (keyValue [i] .getHSV ([ ]));
 		},
 		interpolate: function (index0, index1, weight)
 		{

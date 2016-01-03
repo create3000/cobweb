@@ -52,7 +52,7 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		getHSV: function ()
 		{
-			return this .getValue () .getHSV () .slice (0);
+			return this .getValue () .getHSV ([ ]);
 		},
 		setHSV: function (h, s, v)
 		{

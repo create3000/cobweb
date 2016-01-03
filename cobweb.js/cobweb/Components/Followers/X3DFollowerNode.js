@@ -32,7 +32,7 @@ function ($,
 					this .getBrowser () .addBrowserEvent ();
 				}
 				else
-					getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
 			}
 		},
 	});

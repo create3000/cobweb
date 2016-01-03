@@ -66,7 +66,7 @@ function ($,
 			this .hsv .length = 0;
 
 			for (var i = 0, length = keyValue .length; i < length; ++ i)
-				this .hsv .push (keyValue [i] .getHSV ());
+				this .hsv .push (keyValue [i] .getHSV ([ ]));
 		},
 		interpolate: function (index0, index1, weight)
 		{

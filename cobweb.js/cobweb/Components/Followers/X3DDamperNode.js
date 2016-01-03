@@ -42,8 +42,6 @@ function ($,
 			for (var i = 1, length = this .getOrder () + 1; i < length; ++ i)
 				buffer [i] = this .copy (initialValue);
 	
-console .log (this .initialValue_);
-	
 			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
 				this .setValue (initialDestination);
 
@@ -81,9 +79,9 @@ console .log (this .initialValue_);
 		getTolerance: function ()
 		{
 			if (this .tolerance_ .getValue () < 0)
-				this .tolerance = 0.001;
+				return 1e-8;
 
-			return this .tolerance = this .tolerance_ .getValue ();
+			return this .tolerance_ .getValue ();
 		},
 		copy: function (value)
 		{
