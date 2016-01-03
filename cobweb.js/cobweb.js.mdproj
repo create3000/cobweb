@@ -1107,6 +1107,8 @@
     <None Include="CatmullRomSplineInterpolator.js">
       <DependentUpon>Makefile</DependentUpon>
     </None>
+    <None Include="cobweb.VRML.full.js" />
+    <None Include="cobweb.VRML.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

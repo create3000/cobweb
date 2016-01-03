@@ -77,7 +77,7 @@ X3D (function (dom)
 		{ name: 'BIC Info',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.x3d",                 "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.wrl" ] },
 		{ name: 'Smashing Boxes',        url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Boxes/boxes.x3d" ] },
 		{ name: 'Capone',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Capone/index.wrl" ] },
-		{ name: 'Lost Cathedral',        url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.x3d",    "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.wrl" ] },
+		{ name: 'Lost Cathedral',        url: [ "https://rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.x3d",    "https://rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.wrl" ] },
 		{ name: 'Chomp!',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.wrl" ] },
 		{ name: 'Anatomy',               url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/anatomy/anatomy.wrl" ] },
 		{ name: 'Jungle',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/jungle/jungle.wrl" ] },
@@ -202,10 +202,15 @@ X3D (function (dom)
 		{ name: 'LocalFog',          url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EnvironmentalEffects/LocalFog.wrl" ] },
 		{ name: 'TextureBackground', url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EnvironmentalEffects/TextureBackground.wrl" ] },
 
-		{ name: 'SplinePosition',   url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator.wrl" ] },
-		{ name: 'SplinePosition2D', url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator2.wrl" ] },
-		{ name: 'SplineScalar',     url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplineScalarInterpolator.wrl" ] },
-		{ name: 'SquadOrientation', url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SquadOrientationInterpolator.wrl" ] },
+		{ name: 'SplinePosition',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator.wrl" ] },
+		{ name: 'SplinePosition2D',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplinePositionInterpolator2.wrl" ] },
+		{ name: 'SplineScalar',      url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SplineScalarInterpolator.wrl" ] },
+		{ name: 'SquadOrientation',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SquadOrientationInterpolator.wrl" ] },
+		{ name: 'ColorDamper',       url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/ColorDamper.wrl" ] },
+		{ name: 'PositionDamper',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/PositionDamper.wrl" ] },
+		{ name: 'PositionDamper2D',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/PositionDamper2D.wrl" ] },
+		{ name: 'CoordinateDamper',  url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/CoordinateDamper.wrl" ] },
+		{ name: 'OrientationDamper', url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationDamper.wrl" ] },
 	];
 
 	for (var i = 0, length = pages .length; i < length; ++ i)
@@ -238,6 +243,7 @@ function loadURL ()
 	<div class="tests">
 		<div class="examples"></div>
 		<X3D cache="false" url='
+			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationDamper.wrl"
 			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/SquadOrientationInterpolator.wrl"
 			"tests/Components/Geometry3D/Smash.x3d",
 			"tests/Components/Geometry3D/Extrusion/gears42P.x3d"
