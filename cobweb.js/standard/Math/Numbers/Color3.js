@@ -7,7 +7,9 @@ function ($, Algorithm)
 {
 "use strict";
 
-	var clamp = Algorithm .clamp;
+	var
+		clamp = Algorithm .clamp,
+		hsv   = [ ];
 
 	function Color3 (r, g, b)
 	{
@@ -93,7 +95,11 @@ function ($, Algorithm)
 			else
 				s = h = 0;         // s = 0, h is undefined
 
-			return [h, s, v];
+			hsv [0] = h;
+			hsv [1] = s;
+			hsv [2] = v;
+
+			return hsv;
 		},
 		setHSV: function (h, s, v)
 		{

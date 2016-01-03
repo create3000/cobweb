@@ -6,15 +6,21 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DDamperNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DDamperNode, 
-          X3DConstants)
+          X3DConstants,
+          Rotation4)
 {
 "use strict";
+
+	var
+		a        = new Rotation4 (0, 0, 1, 0),
+		rotation = new Rotation4 (0, 0, 1, 0);
 
 	function OrientationDamper (executionContext)
 	{
@@ -49,6 +55,16 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			a .assign (lhs) .inverse () .multRight (rhs);
+
+			return Math .abs (a .angle) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return rotation .assign (source) .slerp (destination, weight);
 		},
 	});
 

@@ -24,7 +24,7 @@ function ($,
 		cv       = new Vector3 (0, 0, 0),
 		t        = new Vector3 (0, 0, 0),
 		identity = new Vector4 (0, 0, 1, 0),
-		result   = new Vector3 (0, 0, 0, 0);
+		result   = new Vector4 (0, 0, 0, 0);
 
 	function Rotation4 (x, y, z, angle)
 	{
@@ -223,6 +223,7 @@ function ($,
 		toString: function ()
 		{
 			var r = this .get ();
+
 			return r .x + " " +
 			       r .y + " " +
 			       r .z + " " +

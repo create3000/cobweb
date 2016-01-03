@@ -29,46 +29,46 @@ function ($,
 		constructor: X3DSoundSourceNode,
 		initialize: function ()
 		{
-		   X3DChildNode         .prototype .initialize .call (this);
+			X3DChildNode         .prototype .initialize .call (this);
 			X3DTimeDependentNode .prototype .initialize .call (this);
 
 		},
 		set_browser_live__: function ()
 		{
-		   X3DTimeDependentNode .prototype .set_browser_live__ .call (this);
+			X3DTimeDependentNode .prototype .set_browser_live__ .call (this);
 
 			if (this .getDisabled ())
 			{
-			   this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
-			   this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
+				this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
 			}
 			else
 			{
-			   this .getBrowser () .volume_ .addInterest (this, "set_volume__");
-			   this .getBrowser () .mute_   .addInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .addInterest (this, "set_volume__");
+				this .getBrowser () .mute_   .addInterest (this, "set_volume__");
 				this .set_volume__ ();
 			}
 		},
 		setMedia: function (value)
 		{
-		   if (this .media)
-		   {
-		      this .media [0] .volume = 0;
-		      this .media [0] .pause ();
-		      this .media .unbind ("ended");
-		   }
+			if (this .media)
+			{
+				this .media [0] .volume = 0;
+				this .media [0] .pause ();
+				this .media .unbind ("ended");
+			}
 
-		   this .media = value;
-
-		   if (value)
-		   {
+			this .media = value;
+	
+			if (value)
+			{
 				var media = value [0];
 
-		      this .setVolume (0);
-		      this .duration_changed_ = media .duration;
+				this .setVolume (0);
+				this .duration_changed_ = media .duration;
 
-			   if (this .isActive_ .getValue ())
-			   {
+				if (this .isActive_ .getValue ())
+				{
 					if (this .loop_ .getValue ())
 						media .currentTime = this .getElapsedTime () % media .duration;
 					else
@@ -84,7 +84,7 @@ function ($,
 		},
 		getMedia: function ()
 		{
-		   return this .media;
+			return this .media;
 		},
 		setVolume: function (volume)
 		{
@@ -103,43 +103,43 @@ function ($,
 		{ },
 		set_start: function ()
 		{
-		   if (this .media)
-		   {
+			if (this .media)
+			{
 				if (this .speed_ .getValue ())
 				{
-				   this .media [0] .currentTime = 0;
+					this .media [0] .currentTime = 0;
 					this .media [0] .play ();
 				}
 			}
 		},
 		set_pause: function ()
 		{
-		   if (this .media)
-		   {
-		      this .media .unbind ("ended");
+			if (this .media)
+			{
+				this .media .unbind ("ended");
 				this .media [0] .pause ();
 			}
 		},
 		set_resume: function ()
 		{
-		   if (this .media)
-		   {
+			if (this .media)
+			{
 				if (this .speed_ .getValue ())
 					this .media [0] .play ();
 			}
 		},
 		set_stop: function ()
 		{
-		   if (this .media)
+			if (this .media)
 			{
-		      this .media .unbind ("ended");
+				this .media .unbind ("ended");
 				this .media [0] .pause ();
 			}
 		},
 		set_ended: function ()
 		{
-		   if (this .media)
-		   {
+			if (this .media)
+			{
 				var media = this .media [0];
 
 				if (media .currentTime < media .duration)

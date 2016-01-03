@@ -20,6 +20,21 @@ function ($,
 	X3DFollowerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DFollowerNode,
+		set_active: function (value)
+		{
+			if (value !== this .isActive_ .getValue ())
+			{
+				this .isActive_ = value;
+		
+				if (this .isActive_ .getValue ())
+				{
+					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+					this .getBrowser () .addBrowserEvent ();
+				}
+				else
+					getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+			}
+		},
 	});
 
 	return X3DFollowerNode;

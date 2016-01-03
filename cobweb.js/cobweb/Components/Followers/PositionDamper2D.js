@@ -6,15 +6,21 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DDamperNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DDamperNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector2)
 {
 "use strict";
+
+	var
+		a      = new Vector2 (0, 0),
+		vector = new Vector2 (0, 0);
 
 	function PositionDamper2D (executionContext)
 	{
@@ -49,6 +55,16 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			a .assign (lhs);
+
+			return a .subtract (rhs) .abs () < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return vector .assign (source) .lerp (destination, weight);
 		},
 	});
 
