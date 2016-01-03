@@ -40314,6 +40314,8 @@ function ($,
 		X3DGeometricPropertyNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DCoordinateNode);
+
+		this .point = this .point_ .getValue ();
 	}
 
 	X3DCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
@@ -40321,18 +40323,18 @@ function ($,
 		constructor: X3DCoordinateNode,
 		isEmpty: function ()
 		{
-			return this .point_ .length == 0;
+			return this .point .length == 0;
 		},
 		getSize: function ()
 		{
-			return this .point_ .length;
+			return this .point .length;
 		},
 		getPoint: function (index)
 		{
 			// The index cannot be less than 0.
 
-			if (index < this .point_ .length)
-				return this .point_ [index] .getValue ();
+			if (index < this .point .length)
+				return this .point [index] .getValue ();
 
 			return new Vector3 (0, 0, 0);
 		},
@@ -40341,7 +40343,7 @@ function ($,
 			// The index[1,2,3] cannot be less than 0.
 
 			var
-				point  = this .point_ .getValue (),
+				point  = this .point,
 				length = point .length;
 
 			if (index1 < length && index2 < length && index3 < length)
@@ -40357,7 +40359,7 @@ function ($,
 			// The index[1,2,3,4] cannot be less than 0.
 
 			var
-				point  = this .point_ .getValue (),
+				point  = this .point,
 				length = point .length;
 
 			if (index1 < length && index2 < length && index3 < length && index4 < length)
@@ -62072,6 +62074,8 @@ function ($,
 		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Color);
+
+		this .color = this .color_ .getValue ();
 	}
 
 	Color .prototype = $.extend (Object .create (X3DColorNode .prototype),
@@ -62099,8 +62103,8 @@ function ($,
 		},
 		getColor: function (index)
 		{
-			if (index >= 0 && index < this .color_ .length)
-				return this .color_ [index] .getValue ();
+			if (index >= 0 && index < this .color .length)
+				return this .color [index] .getValue ();
 
 			return new Color3 (1, 1, 1);
 		},
@@ -62536,6 +62540,8 @@ function ($,
 		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .ColorRGBA);
+
+		this .color = this .color_ .getValue ();
 	}
 
 	ColorRGBA .prototype = $.extend (Object .create (X3DColorNode .prototype),
@@ -62563,8 +62569,8 @@ function ($,
 		},
 		getColor: function (index)
 		{
-			if (index >= 0 && index < this .color_ .length)
-				return this .color_ [index] .getValue ();
+			if (index >= 0 && index < this .color .length)
+				return this .color [index] .getValue ();
 	
 			return new Color4 (1, 1, 1, 1);
 		},
@@ -65252,7 +65258,9 @@ function ($,
 			var
 				coordIndex     = this .coordIndex_. getValue (),
 				polylines      = this .getPolylineIndices (),
-				colorPerVertex = this .colorPerVertex_ .getValue ();
+				colorPerVertex = this .colorPerVertex_ .getValue (),
+				colorNode      = this .colorNode,
+				coordNode      = this .coordNode;
 
 			// Fill GeometryNode
 
@@ -65273,15 +65281,15 @@ function ($,
 						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 						//	attribNodes [a] -> addValue (attribArrays [a], coordIndex () [i]);
 
-						if (this .colorNode)
+						if (colorNode)
 						{
 							if (colorPerVertex)
-								this .addColor (this .colorNode .getColor (this .getColorPerVertexIndex (i)));
+								this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
 							else
-								this .addColor (this .colorNode .getColor (this .getColorIndex (face)));
+								this .addColor (colorNode .getColor (this .getColorIndex (face)));
 						}
 
-						this .addVertex (this .coordNode .getPoint (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .getPoint (coordIndex [i] .getValue ()));
 					}
 				}
 
@@ -67599,7 +67607,9 @@ function ($,
 
 			var
 				vertexCount = this .vertexCount_ .getValue (),
-				size        = this .coordNode .getSize (),
+				colorNode   = this .colorNode,
+				coordNode   = this .coordNode,
+				size        = coordNode .getSize (),
 				index       = 0;
 
 			for (var c = 0, length = vertexCount .length; c < length; ++ c)
@@ -67618,10 +67628,10 @@ function ($,
 						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 						//	attribNodes [a] -> addValue (attribArrays [a], index);
 
-						if (this .colorNode)
-							this .addColor (this .colorNode .getColor (index));
+						if (colorNode)
+							this .addColor (colorNode .getColor (index));
 
-						this .addVertex (this .coordNode .getPoint (index));
+						this .addVertex (coordNode .getPoint (index));
 					}
 
 					++ index;
@@ -68478,6 +68488,8 @@ function ($,
 		X3DNormalNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .Normal);
+
+		this .vector = this .vector_ .getValue ();
 	}
 
 	Normal .prototype = $.extend (Object .create (X3DNormalNode .prototype),
@@ -68501,8 +68513,8 @@ function ($,
 		},
 		getVector: function (index)
 		{
-			if (index >= 0 && index < this .vector_ .length)
-				return this .vector_ [index] .getValue ();
+			if (index >= 0 && index < this .vector .length)
+				return this .vector [index] .getValue ();
 
 			return new Vector3 (0, 0, 0);
 		},
@@ -69356,6 +69368,10 @@ function ($,
 			if (! this .coordNode || this .coordNode .isEmpty ())
 				return;
 
+			var
+				colorNode = this .colorNode,
+				coordNode = this .coordNode;
+
 			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 			//{
 			//	attribArrays [a] .reserve (coordNode -> getSize ());
@@ -69366,15 +69382,15 @@ function ($,
 			
 			if (this .colorNode)
 			{
-				for (var i = 0, length = this .colorNode .color_ .length; i < length; ++ i)
-					this .addColor (this .colorNode .getColor (i));
+				for (var i = 0, length = colorNode .color_ .length; i < length; ++ i)
+					this .addColor (colorNode .getColor (i));
 
-				for (var length = this .coordNode .point_ .length; i < length; ++ i)
+				for (var length = coordNode .point_ .length; i < length; ++ i)
 					this .addColor (new Color4 (1, 1, 1, 1));
 			}
 
-			for (var i = 0, length = this .coordNode .point_ .length; i < length; ++ i)
-				this .addVertex (this .coordNode .getPoint (i));
+			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
+				this .addVertex (coordNode .getPoint (i));
 
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},

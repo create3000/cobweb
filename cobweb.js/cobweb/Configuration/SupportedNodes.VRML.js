@@ -446,8 +446,6 @@ function (Anchor,
 {
 "use strict";
 
-console .log (WorldInfo);
-
 	return {
 		//MetadataBool:                 MetadataBoolean,
 
