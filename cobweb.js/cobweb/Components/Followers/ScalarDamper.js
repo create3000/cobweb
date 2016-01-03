@@ -62,8 +62,6 @@ function ($,
 		},
 		equals: function (lhs, rhs, tolerance)
 		{
-			a .set (lhs .r, lhs .g, lhs .b);
-
 			return Math .abs (lhs - rhs) < tolerance;
 		},
 		interpolate: function (source, destination, weight)
