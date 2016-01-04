@@ -6,15 +6,28 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DChaserNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DChaserNode, 
-          X3DConstants)
+          X3DConstants,
+          Color3,
+          Vector3,
+          Algorithm)
 {
 "use strict";
+
+	var
+		a                  = new Vector3 (0, 0, 0),
+		initialValue       = new Vector3 (0, 0, 0),
+		initialDestination = new Vector3 (0, 0, 0),
+		deltaOut           = new Vector3 (0, 0, 0),
+		vector             = new Vector3 (0, 0, 0);
 
 	function ColorChaser (executionContext)
 	{
@@ -47,6 +60,43 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getValue: function ()
+		{
+			return this .set_value_ .getValue () .getHSV (vector);
+		},
+		getDestination: function ()
+		{
+			return this .set_destination_ .getValue () .getHSV (vector);
+		},
+		getInitialValue: function ()
+		{
+			return this .initialValue_ .getValue () .getHSV (initialValue);
+		},
+		getInitialDestination: function ()
+		{
+			return this .initialDestination_ .getValue () .getHSV (initialDestination);
+		},
+		setValue: function (value)
+		{
+			this .value_changed_ .setHSV (value .x, value .y, value .z);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return a .assign (lhs) .subtract (rhs) .abs () < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Color3 .lerp (source, destination, weight, vector);
+		},
+		step: function (value1, value2, t)
+		{
+			deltaOut .assign (this .output) .add (value1) .subtract (value2);
+
+			//step .x = Algorithm .interval (step .x, 0, 2 * Math .PI);
+
+			// this .output is vector thus we need no assign.
+			this .interpolate (this .output, deltaOut, t);
 		},
 	});
 

@@ -6,15 +6,22 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DChaserNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DChaserNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 "use strict";
+
+	var
+		a        = new Vector3 (0, 0, 0),
+		vector   = new Vector3 (0, 0, 0),
+		deltaOut = new Vector3 (0, 0, 0);
 
 	function PositionChaser (executionContext)
 	{
@@ -47,6 +54,22 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			a .assign (lhs);
+
+			return a .subtract (rhs) .abs () < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return vector .assign (source) .lerp (destination, weight);
+		},
+		step: function (value1, value2, t)
+		{
+			deltaOut .assign (value1) .subtract (value2) .multiply (t);
+
+			this .output .add (deltaOut);
 		},
 	});
 
