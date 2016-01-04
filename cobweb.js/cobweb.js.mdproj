@@ -1108,6 +1108,7 @@
     <None Include="cobweb.uncompressed.js" />
     <None Include="cobweb\Browser\Followers\X3DArrayFollowerTemplate.js" />
     <None Include="cobweb\Browser\Followers\X3DArrayChaserTemplate.js" />
+    <None Include="tests\Components\Interpolation\OrientationInterpolator.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

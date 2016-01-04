@@ -15,7 +15,7 @@ all:
 	cp cobweb.html cobweb.min.html
 	perl -pi -e 's|\s*<script src="jam/require.js"></script>\n||sg' cobweb.min.html
 	perl -pi -e 's|cobweb.js|cobweb.min.js|sg' cobweb.min.html
-	perl -pi -e 's|"cobweb.min.html"|"cobweb.html"|sg' cobweb.min.html
+	perl -pi -e 's|([">])cobweb.min.html(["<])|\1cobweb.html\2|sg' cobweb.min.html
 
 	echo
 	ls -la cobweb.min.js

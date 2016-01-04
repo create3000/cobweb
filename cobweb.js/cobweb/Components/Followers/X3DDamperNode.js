@@ -53,7 +53,7 @@ function ($,
 		getTolerance: function ()
 		{
 			if (this .tolerance_ .getValue () < 0)
-				return 1e-8;
+				return 1e-4;
 
 			return this .tolerance_ .getValue ();
 		},

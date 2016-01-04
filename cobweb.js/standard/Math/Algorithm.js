@@ -50,17 +50,22 @@ define (function ()
 			{
 				// Reverse signs so we travel the short way round
 				cosom = -cosom;
-				destination .negate ()
+				destination .negate ();
 			}				
 
 			var
 				omega = Math .acos (cosom),
 				sinom = Math .sin  (omega),
 
-				scale0 = Math .sin ((1 - t) * omega),
-				scale1 = Math .sin (t * omega);
+				scale0 = Math .sin ((1 - t) * omega) / sinom,
+				scale1 = Math .sin (t * omega) / sinom;
 
-			return source .multiply (scale0) .add (destination .multiply (scale1)) .divide (sinom);
+			source .x = source .x * scale0 + destination .x * scale1;
+			source .y = source .y * scale0 + destination .y * scale1;
+			source .z = source .z * scale0 + destination .z * scale1;
+			source .w = source .w * scale0 + destination .w * scale1;
+
+			return source;
 		},
 		isPowerOfTwo: function (n)
 		{

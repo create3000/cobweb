@@ -12174,17 +12174,22 @@ define ('standard/Math/Algorithm',[],function ()
 			{
 				// Reverse signs so we travel the short way round
 				cosom = -cosom;
-				destination .negate ()
+				destination .negate ();
 			}				
 
 			var
 				omega = Math .acos (cosom),
 				sinom = Math .sin  (omega),
 
-				scale0 = Math .sin ((1 - t) * omega),
-				scale1 = Math .sin (t * omega);
+				scale0 = Math .sin ((1 - t) * omega) / sinom,
+				scale1 = Math .sin (t * omega) / sinom;
 
-			return source .multiply (scale0) .add (destination .multiply (scale1)) .divide (sinom);
+			source .x = source .x * scale0 + destination .x * scale1;
+			source .y = source .y * scale0 + destination .y * scale1;
+			source .z = source .z * scale0 + destination .z * scale1;
+			source .w = source .w * scale0 + destination .w * scale1;
+
+			return source;
 		},
 		isPowerOfTwo: function (n)
 		{
@@ -45795,12 +45800,7 @@ function ($,
 			var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
 
 			if (boundedObject)
-			{
-				if (!boundedObject .getBBox ())
-					console .log (boundedObject .getTypeName ());
-			
 				bbox .add (boundedObject .getBBox ());
-			}
 		}
 
 		return bbox;
@@ -62574,7 +62574,7 @@ function ($,
 		getTolerance: function ()
 		{
 			if (this .tolerance_ .getValue () < 0)
-				return 1e-8;
+				return 1e-4;
 
 			return this .tolerance_ .getValue ();
 		},

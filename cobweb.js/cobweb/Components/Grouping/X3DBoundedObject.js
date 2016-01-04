@@ -37,12 +37,7 @@ function ($,
 			var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
 
 			if (boundedObject)
-			{
-				if (!boundedObject .getBBox ())
-					console .log (boundedObject .getTypeName ());
-			
 				bbox .add (boundedObject .getBBox ());
-			}
 		}
 
 		return bbox;
