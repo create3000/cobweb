@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DChaserNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DChaserNode, 
-          X3DConstants)
+          X3DConstants,
+          Algorithm)
 {
 "use strict";
 
@@ -47,6 +49,34 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getVector: function ()
+		{
+			return 0;
+		},
+		setPreviousValue: function (value)
+		{
+			this .previousValue = value;
+		},
+		copy: function (value)
+		{
+			return value;
+		},
+		assign: function (buffer, i, value)
+		{
+			buffer [i] = value;
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return Math .abs (lhs - rhs) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Algorithm .lerp (source, destination, weight);
+		},
+		step: function (value1, value2, t)
+		{
+			this .output += (value1 - value2) * t;
 		},
 	});
 

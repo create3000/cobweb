@@ -22,7 +22,7 @@ function ($,
 		this .stepTime      = 0;
 
 		// Auxillary variables
-		this .deltaOut = this .getVector ();
+		this .deltaOut = this .getArray ();
 	}
 
 	X3DChaserNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
@@ -67,6 +67,10 @@ function ($,
 		getTolerance: function ()
 		{
 			return 1e-8;
+		},
+		getArray: function ()
+		{
+			return this .getVector ();
 		},
 		setPreviousValue: function (value)
 		{

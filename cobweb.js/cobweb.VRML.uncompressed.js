@@ -38936,6 +38936,9 @@ function ($,
 			this .texCoordBuffers = [ ];
 			this .normalBuffer    = gl .createBuffer ();
 			this .vertexBuffer    = gl .createBuffer ();
+			this .colorArray      = new Float32Array ();
+			this .texCoordArray   = [ ];
+			this .vertexArray     = new Float32Array ();
 			this .planes          = [ ];
 
 			if (! this .isLineGeometry ())
@@ -39265,27 +39268,45 @@ function ($,
 				count = this .vertices .length / 4;
 
 			// Transfer colors.
+	
+			if (this .colorArray .length !== this .colors .length)
+				this .colorArray = new Float32Array (this .colors);
+			else
+				this .colorArray .set (this .colors);
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors), gl .STATIC_DRAW);
+			gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
 
 			// Transfer texCoords.
 
-			for (var i = this .texCoordBuffers .length; i < this .texCoords .length; ++ i)
+			for (var i = this .texCoordBuffers .length, length = this .texCoords .length; i < length; ++ i)
+			{
 				this .texCoordBuffers .push (gl .createBuffer ());
+				this .texCoordArray   .push (new Float32Array ());
+			}
 
 			this .texCoordBuffers .length = this .texCoords .length;
 			
 			for (var i = 0, length = this .texCoords .length; i < length; ++ i)
 			{
+				if (this .texCoordArray [i] .length !== this .texCoords [i] .length)
+					this .texCoordArray [i] = new Float32Array (this .texCoords [i]);
+				else
+					this .texCoordArray [i] .set (this .texCoords [i]);
+
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [i]);
-				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .texCoords [i]), gl .STATIC_DRAW);
+				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray [i], gl .STATIC_DRAW);
 			}
 
 			// Transfer vertices.
 
+			if (this .vertexArray .length !== this .vertices .length)
+				this .vertexArray = new Float32Array (this .vertices);
+			else
+				this .vertexArray .set (this .vertices);
+
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 			this .vertexCount = count;
 	  	},
 		traverse: function (context)

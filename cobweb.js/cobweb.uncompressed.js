@@ -38936,6 +38936,9 @@ function ($,
 			this .texCoordBuffers = [ ];
 			this .normalBuffer    = gl .createBuffer ();
 			this .vertexBuffer    = gl .createBuffer ();
+			this .colorArray      = new Float32Array ();
+			this .texCoordArray   = [ ];
+			this .vertexArray     = new Float32Array ();
 			this .planes          = [ ];
 
 			if (! this .isLineGeometry ())
@@ -39265,27 +39268,45 @@ function ($,
 				count = this .vertices .length / 4;
 
 			// Transfer colors.
+	
+			if (this .colorArray .length !== this .colors .length)
+				this .colorArray = new Float32Array (this .colors);
+			else
+				this .colorArray .set (this .colors);
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors), gl .STATIC_DRAW);
+			gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
 
 			// Transfer texCoords.
 
-			for (var i = this .texCoordBuffers .length; i < this .texCoords .length; ++ i)
+			for (var i = this .texCoordBuffers .length, length = this .texCoords .length; i < length; ++ i)
+			{
 				this .texCoordBuffers .push (gl .createBuffer ());
+				this .texCoordArray   .push (new Float32Array ());
+			}
 
 			this .texCoordBuffers .length = this .texCoords .length;
 			
 			for (var i = 0, length = this .texCoords .length; i < length; ++ i)
 			{
+				if (this .texCoordArray [i] .length !== this .texCoords [i] .length)
+					this .texCoordArray [i] = new Float32Array (this .texCoords [i]);
+				else
+					this .texCoordArray [i] .set (this .texCoords [i]);
+
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [i]);
-				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .texCoords [i]), gl .STATIC_DRAW);
+				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray [i], gl .STATIC_DRAW);
 			}
 
 			// Transfer vertices.
 
+			if (this .vertexArray .length !== this .vertices .length)
+				this .vertexArray = new Float32Array (this .vertices);
+			else
+				this .vertexArray .set (this .vertices);
+
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 			this .vertexCount = count;
 	  	},
 		traverse: function (context)
@@ -62128,82 +62149,20 @@ function ($,
 		X3DChildNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DFollowerNode);
+
+		this .buffer = [ ];
+
+		// Auxillary variables
+		this .a      = this .getVector ();
+		this .vector = this .getVector ();
 	}
 
 	X3DFollowerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DFollowerNode,
-		set_active: function (value)
+		copy: function (value)
 		{
-			if (value !== this .isActive_ .getValue ())
-			{
-				this .isActive_ = value;
-		
-				if (this .isActive_ .getValue ())
-				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
-					this .getBrowser () .addBrowserEvent ();
-				}
-				else
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
-			}
-		},
-	});
-
-	return X3DFollowerNode;
-});
-
-
-
-
-define ('cobweb/Components/Followers/X3DDamperNode',[
-	"jquery",
-	"cobweb/Components/Followers/X3DFollowerNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
-],
-function ($,
-          X3DFollowerNode, 
-          X3DConstants,
-          Algorithm)
-{
-
-
-	function X3DDamperNode (browser, executionContext)
-	{
-		X3DFollowerNode .call (this, browser, executionContext);
-
-		this .addType (X3DConstants .X3DDamperNode);
-
-		this .buffer = [ ];
-	}
-
-	X3DDamperNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
-	{
-		constructor: X3DDamperNode,
-		initialize: function ()
-		{
-			X3DFollowerNode .prototype .initialize .call (this);
-		
-			this .order_           .addInterest (this, "set_order__");
-			this .set_value_       .addInterest (this, "set_value__");
-			this .set_destination_ .addInterest (this, "set_destination__");
-
-			var
-				buffer             = this .buffer,
-				initialValue       = this .getInitialValue (),
-				initialDestination = this .getInitialDestination ();
-
-			buffer [0] = this .copy (initialDestination);
-		
-			for (var i = 1, length = this .getOrder () + 1; i < length; ++ i)
-				buffer [i] = this .copy (initialValue);
-	
-			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
-				this .setValue (initialDestination);
-
-			else
-				this .set_active (true);
+			return value .copy ();
 		},
 		getBuffer: function ()
 		{
@@ -62229,6 +62188,385 @@ function ($,
 		{
 			this .value_changed_ = value;
 		},
+		assign: function (buffer, i, value)
+		{
+			buffer [i] .assign (value);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return this .a .assign (lhs) .subtract (rhs) .abs () < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return this .vector .assign (source) .lerp (destination, weight);
+		},
+		set_active: function (value)
+		{
+			if (value !== this .isActive_ .getValue ())
+			{
+				this .isActive_ = value;
+		
+				if (this .isActive_ .getValue ())
+				{
+					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+					this .getBrowser () .addBrowserEvent ();
+				}
+				else
+					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+			}
+		},
+	});
+
+	return X3DFollowerNode;
+});
+
+
+
+
+define ('cobweb/Components/Followers/X3DChaserNode',[
+	"jquery",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DFollowerNode, 
+          X3DConstants)
+{
+
+
+	function X3DChaserNode (browser, executionContext)
+	{
+		X3DFollowerNode .call (this, browser, executionContext);
+
+		this .addType (X3DConstants .X3DChaserNode);
+
+		this .destination   = null;
+		this .previousValue = null;
+		this .bufferEndTime = 0;
+		this .stepTime      = 0;
+
+		// Auxillary variables
+		this .deltaOut = this .getArray ();
+	}
+
+	X3DChaserNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
+	{
+		constructor: X3DChaserNode,
+		initialize: function ()
+		{
+			X3DFollowerNode .prototype .initialize .call (this);
+		
+			this .set_value_       .addInterest (this, "set_value__");
+			this .set_destination_ .addInterest (this, "set_destination__");
+			this .duration_        .addInterest (this, "set_duration__");
+
+			this .set_duration__ ();
+
+			var
+				buffer             = this .getBuffer (),
+				initialValue       = this .getInitialValue (),
+				initialDestination = this .getInitialDestination (),
+				numBuffers         = this .getNumBuffers ();
+
+			this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+			this .previousValue = this .copy (initialValue);
+	
+			buffer [0] = this .copy (initialDestination);
+
+			for (var i = 1; i < numBuffers; ++ i)
+				buffer [i] = this .copy (initialValue);
+
+			this .destination = this .copy (initialDestination);
+
+			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
+				this .setValue (initialDestination);
+
+			else
+				this .set_active (true);
+		},
+		getNumBuffers: function ()
+		{
+			return 60;
+		},
+		getTolerance: function ()
+		{
+			return 1e-8;
+		},
+		getArray: function ()
+		{
+			return this .getVector ();
+		},
+		setPreviousValue: function (value)
+		{
+			this .previousValue .assign (value);
+		},
+		step: function (value1, value2, t)
+		{
+			this .output .add (this .deltaOut .assign (value1) .subtract (value2) .multiply (t));
+		},
+		stepResponse: function (t)
+		{
+			if (t <= 0)
+				return 0;
+
+			var duration = this .duration_ .getValue ();
+		
+			if (t >= duration)
+				return 1;
+	
+			return 0.5 - 0.5 * Math .cos ((t / duration) * Math .PI);
+		},
+		set_value__: function ()
+		{
+			if (! this .isActive_ .getValue ())
+				this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+
+			var
+				buffer = this .getBuffer (),
+				value  = this .getValue ();
+
+			for (var i = 1, length = buffer .length; i < length; ++ i)
+				this .assign (buffer, i, value);
+
+			this .setPreviousValue (value);
+			this .setValue (value);
+
+			this .set_active (true);
+		},
+		set_destination__: function ()
+		{
+			this .destination   = this .copy (this .getDestination ());
+			this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+		
+			this .set_active (true);
+		},
+		set_duration__: function ()
+		{
+			this .stepTime = this .duration_ .getValue () / this .getNumBuffers ();
+		},
+		prepareEvents: function ()
+		{
+			var
+				buffer     = this .getBuffer (),
+				numBuffers = buffer .length,
+				fraction   = this .updateBuffer ();
+		
+			this .output = this .interpolate (this .previousValue,
+			                                  buffer [numBuffers - 1],
+			                                  this .stepResponse ((numBuffers - 1 + fraction) * this .stepTime));
+
+			for (var i = numBuffers - 2; i >= 0; -- i)
+			{
+				this .step (buffer [i], buffer [i + 1], this .stepResponse ((i + fraction) * this .stepTime));
+			}
+
+			this .setValue (this .output);
+	
+			if (this .equals (this .output, this .destination, this .getTolerance ()))
+				this .set_active (false);
+		},
+		updateBuffer: function ()
+		{
+			var
+				buffer     = this .getBuffer (),
+				numBuffers = buffer .length,
+				fraction   = (this .getBrowser () .getCurrentTime () - this .bufferEndTime) / this .stepTime;
+		
+			if (fraction >= 1)
+			{
+				var seconds = Math .floor (fraction);
+
+				fraction -= seconds;
+		
+				if (seconds < numBuffers)
+				{
+					this .setPreviousValue (buffer [numBuffers - seconds]);
+		
+					for (var i = numBuffers - 1; i >= seconds; -- i)
+					{
+						this .assign (buffer, i, buffer [i - seconds])
+					}
+		
+					for (var i = 0; i < seconds; ++ i)
+					{
+						var alpha = i / seconds;
+
+						this .assign (buffer, i, this .interpolate (this .destination, buffer [seconds], alpha))
+		 			}
+				}
+				else
+				{
+					this .setPreviousValue (seconds == numBuffers ? buffer [0] : this .destination);
+
+					for (var i = 0; i < numBuffers; ++ i)
+						this .assign (buffer, i, this .destination);
+				}
+		
+				this .bufferEndTime += seconds * this .stepTime;
+			}
+
+			return fraction;
+		},
+	});
+
+	return X3DChaserNode;
+});
+
+
+
+
+define ('cobweb/Components/Followers/ColorChaser',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Color3,
+          Vector3,
+          Algorithm)
+{
+
+
+	var
+		initialValue       = new Vector3 (0, 0, 0),
+		initialDestination = new Vector3 (0, 0, 0),
+		deltaOut           = new Vector3 (0, 0, 0),
+		vector             = new Vector3 (0, 0, 0);
+
+	function ColorChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .ColorChaser);
+	}
+
+	ColorChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: ColorChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFColor ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFColor ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFColor (0.8, 0.8, 0.8)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFColor (0.8, 0.8, 0.8)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFColor ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ColorChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+		getValue: function ()
+		{
+			return this .set_value_ .getValue () .getHSV (vector);
+		},
+		getDestination: function ()
+		{
+			return this .set_destination_ .getValue () .getHSV (vector);
+		},
+		getInitialValue: function ()
+		{
+			return this .initialValue_ .getValue () .getHSV (initialValue);
+		},
+		getInitialDestination: function ()
+		{
+			return this .initialDestination_ .getValue () .getHSV (initialDestination);
+		},
+		setValue: function (value)
+		{
+			this .value_changed_ .setHSV (value .x, value .y, value .z);
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Color3 .lerp (source, destination, weight, vector);
+		},
+		step: function (value1, value2, t)
+		{
+			deltaOut .assign (this .output) .add (value1) .subtract (value2);
+
+			//step .x = Algorithm .interval (step .x, 0, 2 * Math .PI);
+
+			Color3 .lerp (this .output, deltaOut, t, this .output);
+		},
+	});
+
+	return ColorChaser;
+});
+
+
+
+
+define ('cobweb/Components/Followers/X3DDamperNode',[
+	"jquery",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+],
+function ($,
+          X3DFollowerNode, 
+          X3DConstants,
+          Algorithm)
+{
+
+
+	function X3DDamperNode (browser, executionContext)
+	{
+		X3DFollowerNode .call (this, browser, executionContext);
+
+		this .addType (X3DConstants .X3DDamperNode);
+	}
+
+	X3DDamperNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
+	{
+		constructor: X3DDamperNode,
+		initialize: function ()
+		{
+			X3DFollowerNode .prototype .initialize .call (this);
+		
+			this .order_           .addInterest (this, "set_order__");
+			this .set_value_       .addInterest (this, "set_value__");
+			this .set_destination_ .addInterest (this, "set_destination__");
+
+			var
+				buffer             = this .getBuffer (),
+				initialValue       = this .getInitialValue (),
+				initialDestination = this .getInitialDestination ();
+
+			buffer [0] = this .copy (initialDestination);
+		
+			for (var i = 1, length = this .getOrder () + 1; i < length; ++ i)
+				buffer [i] = this .copy (initialValue);
+	
+			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
+				this .setValue (initialDestination);
+
+			else
+				this .set_active (true);
+		},
 		getOrder: function ()
 		{
 			return Algorithm .clamp (this .order_ .getValue (), 0, 5);
@@ -62240,18 +62578,10 @@ function ($,
 
 			return this .tolerance_ .getValue ();
 		},
-		copy: function (value)
-		{
-			return value .copy ();
-		},
-		assign: function (buffer, i, value)
-		{
-			buffer [i] .assign (value);
-		},
 		prepareEvents: function ()
 		{
 			var
-				buffer = this .buffer,
+				buffer = this .getBuffer (),
 				order  = buffer .length - 1;
 
 			if (this .tau_ .getValue ())
@@ -62285,7 +62615,7 @@ function ($,
 		set_value__: function ()
 		{
 			var
-				buffer = this .buffer,
+				buffer = this .getBuffer (),
 				value  = this .getValue ();
 
 			for (var i = 1, length = buffer .length; i < length; ++ i)
@@ -62297,14 +62627,14 @@ function ($,
 		},
 		set_destination__: function ()
 		{
-			this .assign (this .buffer, 0, this .getDestination ());
+			this .assign (this .getBuffer (), 0, this .getDestination ());
 
 			this .set_active (true);
 		},
 		set_order__: function ()
 		{
 			var
-				buffer = this .buffer,
+				buffer = this .getBuffer (),
 				value  = buffer [buffer .length - 1];
 
 			for (var i = buffer .length, length = this .getOrder () + 1; i < length; ++ i)
@@ -62380,6 +62710,10 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
 		},
 		getValue: function ()
 		{
@@ -62988,12 +63322,144 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/CoordinateDamper',[
+define ('cobweb/Browser/Followers/X3DArrayFollowerTemplate',[],function ()
+{
+
+
+	return function (Type)
+	{
+		function X3DArrayFollowerObject ()
+		{
+			this .array = this .getArray ();
+		}
+	
+		X3DArrayFollowerObject .prototype =
+		{
+			getValue: function ()
+			{
+				return this .set_value_;
+			},
+			getDestination: function ()
+			{
+				return this .set_destination_;
+			},
+			getInitialValue: function ()
+			{
+				return this .initialValue_;
+			},
+			getInitialDestination: function ()
+			{
+				return this .initialDestination_;
+			},
+			assign: function (buffer, i, value)
+			{
+				buffer [i] .setValue (value);
+			},
+			equals: function (lhs, rhs, tolerance)
+			{
+				var
+					a        = this .a,
+					l        = lhs .getValue (),
+					r        = rhs .getValue (),
+					distance = 0;
+
+				for (var i = 0, length = l .length; i < length; ++ i)
+				  distance = Math .max (a .assign (l [i] .getValue ()) .subtract (r [i] .getValue ()) .abs ());
+	
+				return distance < tolerance;
+			},
+			interpolate: function (source, destination, weight)
+			{
+				var
+					a = this .array .getValue (),
+					s = source .getValue (),
+					d = destination .getValue ();
+	
+				this .array .length = s .length;
+	
+				for (var i = 0, length = s .length; i < length; ++ i)
+					a [i] .getValue () .assign (s [i] .getValue ()) .lerp (d [i] .getValue (), weight);
+	
+				return this .array;
+			},
+			set_value__: function ()
+			{
+				this .getBuffer () [0] .length = this .set_value_ .length;
+	
+				Type .prototype .set_value__ .call (this);
+			},
+			set_destination__: function ()
+			{
+				var
+					buffer = this .getBuffer (),
+					l      = this .set_destination_ .length;
+	
+				for (var i = 0, length = buffer .length; i < length; ++ i)
+					buffer [i] .length = l;
+				
+				Type .prototype .set_destination__ .call (this);
+			},
+		};
+	
+		return X3DArrayFollowerObject;
+	};
+});
+
+
+
+
+define ('cobweb/Browser/Followers/X3DArrayChaserTemplate',[
+	"jquery",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+],
+function ($,
+          X3DArrayFollowerTemplate)
+{
+
+
+	return function (Type)
+	{
+		function X3DArrayChaserObject ()
+		{
+			this .array = this .getArray ();
+		}
+	
+		X3DArrayChaserObject .prototype = $.extend (Object .create (X3DArrayFollowerTemplate (Type) .prototype),
+		{
+			setPreviousValue: function (value)
+			{
+				this .previousValue .setValue (value);
+			},
+			step: function (value1, value2, t)
+			{
+				var
+					output   = this .output .getValue (),
+					deltaOut = this .deltaOut .getValue ();
+
+				value1 = value1 .getValue ();
+				value2 = value2 .getValue ();
+
+				this .deltaOut .length = output .length;
+
+				for (var i = 0, length = output .length; i < length; ++ i)
+					output [i] .getValue () .add (deltaOut [i] .getValue () .assign (value1 [i] .getValue ()) .subtract (value2 [i] .getValue ()) .multiply (t));
+			},
+		});
+	
+		return X3DArrayChaserObject;
+	};
+});
+
+
+
+
+define ('cobweb/Components/Followers/CoordinateChaser',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -63001,25 +63467,98 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DDamperNode, 
+          X3DChaserNode, 
+          X3DArrayChaserTemplate,
           X3DConstants,
           Vector3)
 {
 
 
-	var
-		a      = new Vector3 (0, 0),
-		vector = new Vector3 (0, 0),
-		array  = new Fields .MFVec3f ();
+	var X3DArrayChaserObject = X3DArrayChaserTemplate (X3DChaserNode);
+
+	function CoordinateChaser (executionContext)
+	{
+		X3DChaserNode        .call (this, executionContext .getBrowser (), executionContext);
+		X3DArrayChaserObject .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .CoordinateChaser);
+	}
+
+	CoordinateChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+		X3DArrayChaserObject .prototype,
+	{
+		constructor: CoordinateChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .MFVec3f (new Vector3 (0, 0, 0))),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .MFVec3f (new Vector3 (0, 0, 0))),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "CoordinateChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+		getArray: function ()
+		{
+			return new Fields .MFVec3f ();
+		},
+	});
+
+	return CoordinateChaser;
+});
+
+
+
+
+define ('cobweb/Components/Followers/CoordinateDamper',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode,
+          X3DArrayFollowerTemplate,
+          X3DConstants,
+          Vector3)
+{
+
+
+	var X3DArrayFollowerObject = X3DArrayFollowerTemplate (X3DDamperNode);
 
 	function CoordinateDamper (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode          .call (this, executionContext .getBrowser (), executionContext);
+		X3DArrayFollowerObject .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .CoordinateDamper);
 	}
 
 	CoordinateDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+		X3DArrayFollowerObject .prototype,
 	{
 		constructor: CoordinateDamper,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -63046,68 +63585,13 @@ function ($,
 		{
 			return "children";
 		},
-		getValue: function ()
+		getVector: function ()
 		{
-			return this .set_value_;
+			return new Vector3 (0, 0, 0);
 		},
-		getDestination: function ()
+		getArray: function ()
 		{
-			return this .set_destination_;
-		},
-		getInitialValue: function ()
-		{
-			return this .initialValue_;
-		},
-		getInitialDestination: function ()
-		{
-			return this .initialDestination_;
-		},
-		assign: function (buffer, i, value)
-		{
-			buffer [i] .setValue (value);
-		},
-		equals: function (lhs, rhs, tolerance)
-		{
-			var
-				l        = lhs .getValue (),
-				r        = rhs .getValue (),
-				distance = 0;
-
-			for (var i = 0, length = l .length; i < length; ++ i)
-			  distance = Math .max (a .assign (l [i] .getValue ()) .subtract (r [i] .getValue ()) .abs ());
-
-			return distance < tolerance;
-		},
-		interpolate: function (source, destination, weight)
-		{
-			var
-				a = array .getValue (),
-				s = source .getValue (),
-				d = destination .getValue ();
-
-			array .length = s .length;
-
-			for (var i = 0, length = s .length; i < length; ++ i)
-				a [i] .getValue () .assign (s [i] .getValue ()) .lerp (d [i] .getValue (), weight);
-
-			return array;
-		},
-		set_value__: function ()
-		{
-			this .getBuffer () [0] .length = this .set_value_ .length;
-
-			X3DDamperNode .prototype .set_value__ .call (this);
-		},
-		set_destination__: function ()
-		{
-			var
-				buffer = this .getBuffer (),
-				l      = this .set_destination_ .length;
-
-			for (var i = 1, length = buffer .length; i < length; ++ i)
-				buffer [i] .length = l;
-			
-			X3DDamperNode .prototype .set_destination__ .call (this);
+			return new Fields .MFVec3f ();
 		},
 	});
 
@@ -68597,6 +69081,89 @@ function ($,
 
 
 
+define ('cobweb/Components/Followers/OrientationChaser',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Rotation4)
+{
+
+
+	var
+		a        = new Rotation4 (0, 0, 1, 0),
+		rotation = new Rotation4 (0, 0, 1, 0);
+
+	function OrientationChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .OrientationChaser);
+	}
+
+	OrientationChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: OrientationChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFRotation ()),
+		]),
+		getTypeName: function ()
+		{
+			return "OrientationChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Rotation4 (0, 0, 1, 0);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			a .assign (lhs) .inverse () .multRight (rhs);
+
+			return Math .abs (a .angle) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return rotation .assign (source) .slerp (destination, weight);
+		},
+		step: function (value1, value2, t)
+		{
+			this .deltaOut .assign (value2) .inverse () .multRight (value1) .multLeft (this .output);
+
+			this .output .slerp (this .deltaOut, t);
+		},
+	});
+
+	return OrientationChaser;
+});
+
+
+
+
 define ('cobweb/Components/Followers/OrientationDamper',[
 	"jquery",
 	"cobweb/Fields",
@@ -68653,6 +69220,10 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getVector: function ()
+		{
+			return new Rotation4 (0, 0, 1, 0);
 		},
 		equals: function (lhs, rhs, tolerance)
 		{
@@ -69534,6 +70105,132 @@ function ($,
 
 
 
+define ('cobweb/Components/Followers/PositionChaser',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Vector3)
+{
+
+
+	function PositionChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .PositionChaser);
+	}
+
+	PositionChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: PositionChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PositionChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+	});
+
+	return PositionChaser;
+});
+
+
+
+
+define ('cobweb/Components/Followers/PositionChaser2D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Vector2)
+{
+
+
+	function PositionChaser2D (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .PositionChaser2D);
+	}
+
+	PositionChaser2D .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: PositionChaser2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PositionChaser2D";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector2 (0, 0);
+		},
+	});
+
+	return PositionChaser2D;
+});
+
+
+
+
 define ('cobweb/Components/Followers/PositionDamper',[
 	"jquery",
 	"cobweb/Fields",
@@ -69552,10 +70249,6 @@ function ($,
           Vector3)
 {
 
-
-	var
-		a      = new Vector3 (0, 0, 0),
-		vector = new Vector3 (0, 0, 0);
 
 	function PositionDamper (executionContext)
 	{
@@ -69591,15 +70284,9 @@ function ($,
 		{
 			return "children";
 		},
-		equals: function (lhs, rhs, tolerance)
+		getVector: function ()
 		{
-			a .assign (lhs);
-
-			return a .subtract (rhs) .abs () < tolerance;
-		},
-		interpolate: function (source, destination, weight)
-		{
-			return vector .assign (source) .lerp (destination, weight);
+			return new Vector3 (0, 0, 0);
 		},
 	});
 
@@ -69627,10 +70314,6 @@ function ($,
           Vector2)
 {
 
-
-	var
-		a      = new Vector2 (0, 0),
-		vector = new Vector2 (0, 0);
 
 	function PositionDamper2D (executionContext)
 	{
@@ -69666,15 +70349,9 @@ function ($,
 		{
 			return "children";
 		},
-		equals: function (lhs, rhs, tolerance)
+		getVector: function ()
 		{
-			a .assign (lhs);
-
-			return a .subtract (rhs) .abs () < tolerance;
-		},
-		interpolate: function (source, destination, weight)
-		{
-			return vector .assign (source) .lerp (destination, weight);
+			return new Vector2 (0, 0);
 		},
 	});
 
@@ -70301,6 +70978,93 @@ function ($,
 });
 
 
+define ('cobweb/Components/Followers/ScalarChaser',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Algorithm)
+{
+
+
+	function ScalarChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .ScalarChaser);
+	}
+
+	ScalarChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: ScalarChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ScalarChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return 0;
+		},
+		setPreviousValue: function (value)
+		{
+			this .previousValue = value;
+		},
+		copy: function (value)
+		{
+			return value;
+		},
+		assign: function (buffer, i, value)
+		{
+			buffer [i] = value;
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return Math .abs (lhs - rhs) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Algorithm .lerp (source, destination, weight);
+		},
+		step: function (value1, value2, t)
+		{
+			this .output += (value1 - value2) * t;
+		},
+	});
+
+	return ScalarChaser;
+});
+
+
+
+
 define ('cobweb/Components/Followers/ScalarDamper',[
 	"jquery",
 	"cobweb/Fields",
@@ -70353,6 +71117,10 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getVector: function ()
+		{
+			return 0;
 		},
 		copy: function (value)
 		{
@@ -72936,12 +73704,86 @@ function ($,
 
 
 
+define ('cobweb/Components/Followers/TexCoordChaser2D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DArrayChaserTemplate,
+          X3DConstants,
+          Vector2)
+{
+
+
+	var X3DArrayChaserObject = X3DArrayChaserTemplate (X3DChaserNode);
+
+	function TexCoordChaser2D (executionContext)
+	{
+		X3DChaserNode        .call (this, executionContext .getBrowser (), executionContext);
+		X3DArrayChaserObject .call (this, executionContext .getBrowser (), executionContext);
+
+		this .addType (X3DConstants .TexCoordChaser2D);
+	}
+
+	TexCoordChaser2D .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+		X3DArrayChaserObject .prototype,
+	{
+		constructor: TexCoordChaser2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .MFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TexCoordChaser2D";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector2 (0, 0);
+		},
+		getArray: function ()
+		{
+			return new Fields .MFVec2f ();
+		},
+	});
+
+	return TexCoordChaser2D;
+});
+
+
+
+
 define ('cobweb/Components/Followers/TexCoordDamper2D',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector2",
 ],
@@ -72950,24 +73792,24 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DDamperNode, 
+          X3DArrayFollowerTemplate,
           X3DConstants,
           Vector2)
 {
 
 
-	var
-		a      = new Vector2 (0, 0),
-		vector = new Vector2 (0, 0),
-		array  = new Fields .MFVec2f ();
+	var X3DArrayFollowerObject = X3DArrayFollowerTemplate (X3DDamperNode);
 
 	function TexCoordDamper2D (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode          .call (this, executionContext .getBrowser (), executionContext);
+		X3DArrayFollowerObject .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .TexCoordDamper2D);
 	}
 
 	TexCoordDamper2D .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+		X3DArrayFollowerObject .prototype,
 	{
 		constructor: TexCoordDamper2D,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -72994,68 +73836,13 @@ function ($,
 		{
 			return "children";
 		},
-		getValue: function ()
+		getVector: function ()
 		{
-			return this .set_value_;
+			return new Vector2 (0, 0, 0);
 		},
-		getDestination: function ()
+		getArray: function ()
 		{
-			return this .set_destination_;
-		},
-		getInitialValue: function ()
-		{
-			return this .initialValue_;
-		},
-		getInitialDestination: function ()
-		{
-			return this .initialDestination_;
-		},
-		assign: function (buffer, i, value)
-		{
-			buffer [i] .setValue (value);
-		},
-		equals: function (lhs, rhs, tolerance)
-		{
-			var
-				l        = lhs .getValue (),
-				r        = rhs .getValue (),
-				distance = 0;
-
-			for (var i = 0, length = l .length; i < length; ++ i)
-			  distance = Math .max (a .assign (l [i] .getValue ()) .subtract (r [i] .getValue ()) .abs ());
-
-			return distance < tolerance;
-		},
-		interpolate: function (source, destination, weight)
-		{
-			var
-				a = array .getValue (),
-				s = source .getValue (),
-				d = destination .getValue ();
-
-			array .length = s .length;
-
-			for (var i = 0, length = s .length; i < length; ++ i)
-				a [i] .getValue () .assign (s [i] .getValue ()) .lerp (d [i] .getValue (), weight);
-
-			return array;
-		},
-		set_value__: function ()
-		{
-			this .getBuffer () [0] .length = this .set_value_ .length;
-
-			X3DDamperNode .prototype .set_value__ .call (this);
-		},
-		set_destination__: function ()
-		{
-			var
-				buffer = this .getBuffer (),
-				l      = this .set_destination_ .length;
-
-			for (var i = 1, length = buffer .length; i < length; ++ i)
-				buffer [i] .length = l;
-			
-			X3DDamperNode .prototype .set_destination__ .call (this);
+			return new Fields .MFVec2f ();
 		},
 	});
 
@@ -74697,7 +75484,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/RigidBodyPhysics/CollisionSensor",
 	//"cobweb/Components/RigidBodyPhysics/CollisionSpace",
 	"cobweb/Components/Rendering/Color", // VRML
-	//"cobweb/Components/Followers/ColorChaser",
+	"cobweb/Components/Followers/ColorChaser",
 	"cobweb/Components/Followers/ColorDamper",
 	"cobweb/Components/Interpolation/ColorInterpolator", // VRML
 	"cobweb/Components/Rendering/ColorRGBA",
@@ -74710,7 +75497,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/NURBS/Contour2D",
 	//"cobweb/Components/NURBS/ContourPolyline2D",
 	"cobweb/Components/Rendering/Coordinate", // VRML
-	//"cobweb/Components/Followers/CoordinateChaser",
+	"cobweb/Components/Followers/CoordinateChaser",
 	"cobweb/Components/Followers/CoordinateDamper",
 	"cobweb/Components/NURBS/CoordinateDouble",
 	"cobweb/Components/Interpolation/CoordinateInterpolator", // VRML
@@ -74803,7 +75590,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/NURBS/NurbsSwungSurface",
 	//"cobweb/Components/NURBS/NurbsTextureCoordinate",
 	//"cobweb/Components/NURBS/NurbsTrimmedSurface",
-	//"cobweb/Components/Followers/OrientationChaser",
+	"cobweb/Components/Followers/OrientationChaser",
 	"cobweb/Components/Followers/OrientationDamper",
 	"cobweb/Components/Interpolation/OrientationInterpolator", // VRML
 	"cobweb/Components/Navigation/OrthoViewpoint",
@@ -74820,8 +75607,8 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Geometry2D/Polyline2D",
 	//"cobweb/Components/ParticleSystems/PolylineEmitter",
 	"cobweb/Components/Geometry2D/Polypoint2D",
-	//"cobweb/Components/Followers/PositionChaser",
-	//"cobweb/Components/Followers/PositionChaser2D",
+	"cobweb/Components/Followers/PositionChaser",
+	"cobweb/Components/Followers/PositionChaser2D",
 	"cobweb/Components/Followers/PositionDamper",
 	"cobweb/Components/Followers/PositionDamper2D",
 	"cobweb/Components/Interpolation/PositionInterpolator", // VRML
@@ -74834,7 +75621,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Geometry2D/Rectangle2D",
 	//"cobweb/Components/RigidBodyPhysics/RigidBody",
 	//"cobweb/Components/RigidBodyPhysics/RigidBodyCollection",
-	//"cobweb/Components/Followers/ScalarChaser",
+	"cobweb/Components/Followers/ScalarChaser",
 	"cobweb/Components/Followers/ScalarDamper",
 	"cobweb/Components/Interpolation/ScalarInterpolator", // VRML
 	//"cobweb/Components/Layout/ScreenFontStyle",
@@ -74858,7 +75645,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/KeyDeviceSensor/StringSensor",
 	//"cobweb/Components/ParticleSystems/SurfaceEmitter",
 	"cobweb/Components/Grouping/Switch", // VRML
-	//"cobweb/Components/Followers/TexCoordChaser2D",
+	"cobweb/Components/Followers/TexCoordChaser2D",
 	"cobweb/Components/Followers/TexCoordDamper2D",
 	"cobweb/Components/Text/Text", // VRML
 	"cobweb/Components/EnvironmentalEffects/TextureBackground",
@@ -74919,7 +75706,7 @@ function (Anchor,
           //CollisionSensor,
           //CollisionSpace,
           Color,
-          //ColorChaser,
+          ColorChaser,
           ColorDamper,
           ColorInterpolator,
           ColorRGBA,
@@ -74932,7 +75719,7 @@ function (Anchor,
           //Contour2D,
           //ContourPolyline2D,
           Coordinate,
-          //CoordinateChaser,
+          CoordinateChaser,
           CoordinateDamper,
           CoordinateDouble,
           CoordinateInterpolator,
@@ -75025,7 +75812,7 @@ function (Anchor,
           //NurbsSwungSurface,
           //NurbsTextureCoordinate,
           //NurbsTrimmedSurface,
-          //OrientationChaser,
+          OrientationChaser,
           OrientationDamper,
           OrientationInterpolator,
           OrthoViewpoint,
@@ -75042,8 +75829,8 @@ function (Anchor,
           Polyline2D,
           //PolylineEmitter,
           Polypoint2D,
-          //PositionChaser,
-          //PositionChaser2D,
+          PositionChaser,
+          PositionChaser2D,
           PositionDamper,
           PositionDamper2D,
           PositionInterpolator,
@@ -75056,7 +75843,7 @@ function (Anchor,
           Rectangle2D,
           //RigidBody,
           //RigidBodyCollection,
-          //ScalarChaser,
+          ScalarChaser,
           ScalarDamper,
           ScalarInterpolator,
           //ScreenFontStyle,
@@ -75080,7 +75867,7 @@ function (Anchor,
           //StringSensor,
           //SurfaceEmitter,
           Switch,
-          //TexCoordChaser2D,
+          TexCoordChaser2D,
           TexCoordDamper2D,
           Text,
           TextureBackground,
@@ -75147,7 +75934,7 @@ function (Anchor,
 		//CollisionSensor:              CollisionSensor,
 		//CollisionSpace:               CollisionSpace,
 		Color:                        Color,
-		//ColorChaser:                  ColorChaser,
+		ColorChaser:                  ColorChaser,
 		ColorDamper:                  ColorDamper,
 		ColorInterpolator:            ColorInterpolator,
 		ColorRGBA:                    ColorRGBA,
@@ -75160,7 +75947,7 @@ function (Anchor,
 		//Contour2D:                    Contour2D,
 		//ContourPolyline2D:            ContourPolyline2D,
 		Coordinate:                   Coordinate,
-		//CoordinateChaser:             CoordinateChaser,
+		CoordinateChaser:             CoordinateChaser,
 		CoordinateDamper:             CoordinateDamper,
 		CoordinateDouble:             CoordinateDouble,
 		CoordinateInterpolator:       CoordinateInterpolator,
@@ -75253,7 +76040,7 @@ function (Anchor,
 		//NurbsSwungSurface:            NurbsSwungSurface,
 		//NurbsTextureCoordinate:       NurbsTextureCoordinate,
 		//NurbsTrimmedSurface:          NurbsTrimmedSurface,
-		//OrientationChaser:            OrientationChaser,
+		OrientationChaser:            OrientationChaser,
 		OrientationDamper:            OrientationDamper,
 		OrientationInterpolator:      OrientationInterpolator,
 		OrthoViewpoint:               OrthoViewpoint,
@@ -75270,8 +76057,8 @@ function (Anchor,
 		Polyline2D:                   Polyline2D,
 		//PolylineEmitter:              PolylineEmitter,
 		Polypoint2D:                  Polypoint2D,
-		//PositionChaser:               PositionChaser,
-		//PositionChaser2D:             PositionChaser2D,
+		PositionChaser:               PositionChaser,
+		PositionChaser2D:             PositionChaser2D,
 		PositionDamper:               PositionDamper,
 		PositionDamper2D:             PositionDamper2D,
 		PositionInterpolator:         PositionInterpolator,
@@ -75284,7 +76071,7 @@ function (Anchor,
 		Rectangle2D:                  Rectangle2D,
 		//RigidBody:                    RigidBody,
 		//RigidBodyCollection:          RigidBodyCollection,
-		//ScalarChaser:                 ScalarChaser,
+		ScalarChaser:                 ScalarChaser,
 		ScalarDamper:                 ScalarDamper,
 		ScalarInterpolator:           ScalarInterpolator,
 		//ScreenFontStyle:              ScreenFontStyle,
@@ -75308,7 +76095,7 @@ function (Anchor,
 		//StringSensor:                 StringSensor,
 		//SurfaceEmitter:               SurfaceEmitter,
 		Switch:                       Switch,
-		//TexCoordChaser2D:             TexCoordChaser2D,
+		TexCoordChaser2D:             TexCoordChaser2D,
 		TexCoordDamper2D:             TexCoordDamper2D,
 		Text:                         Text,
 		TextureBackground:            TextureBackground,

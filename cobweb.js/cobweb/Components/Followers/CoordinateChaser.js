@@ -5,6 +5,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -13,19 +14,24 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DChaserNode, 
+          X3DArrayChaserTemplate,
           X3DConstants,
           Vector3)
 {
 "use strict";
 
+	var X3DArrayChaserObject = X3DArrayChaserTemplate (X3DChaserNode);
+
 	function CoordinateChaser (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode        .call (this, executionContext .getBrowser (), executionContext);
+		X3DArrayChaserObject .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .CoordinateChaser);
 	}
 
 	CoordinateChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+		X3DArrayChaserObject .prototype,
 	{
 		constructor: CoordinateChaser,
 		fieldDefinitions: new FieldDefinitionArray ([
@@ -49,6 +55,14 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+		getArray: function ()
+		{
+			return new Fields .MFVec3f ();
 		},
 	});
 

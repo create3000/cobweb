@@ -1106,6 +1106,8 @@
     <None Include="cobweb.VRML.min.js" />
     <None Include="cobweb.VRML.uncompressed.js" />
     <None Include="cobweb.uncompressed.js" />
+    <None Include="cobweb\Browser\Followers\X3DArrayFollowerTemplate.js" />
+    <None Include="cobweb\Browser\Followers\X3DArrayChaserTemplate.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1163,5 +1165,6 @@
     <Folder Include="tests\Components\Layout\library\" />
     <Folder Include="examples\map\" />
     <Folder Include="cobweb\Browser\Interpolation\" />
+    <Folder Include="cobweb\Browser\Followers\" />
   </ItemGroup>
 </Project>
