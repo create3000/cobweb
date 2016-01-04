@@ -1,11 +1,12 @@
 
 define ([
 	"jquery",
-	"standard/Math/Numbers/Color4",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFColor",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color4",
 ],
-function ($, Color4, X3DField, X3DConstants)
+function ($, X3DField, SFColor, X3DConstants, Color4)
 {
 "use strict";
 
@@ -42,31 +43,14 @@ function ($, Color4, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFColorRGBA;
 		},
-		equals: function (color)
-		{
-			return this .getValue () .equals (color .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		getHSV: function ()
-		{
-			return this .getValue () .getHSV ([ ]);
-		},
-		setHSV: function (h, s, v)
-		{
-			this .getValue () .setHSV (h, s, v);
-			this .addEvent ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
+		equals: SFColor .equals,
+		set: SFColor .set,
+		getHSV: SFColor .getHSV,
+		setHSV: SFColor .setHSV,
+		toString: SFColor .toString,
 	});
 
-	Object .defineProperty (SFColorRGBA .prototype, "r",
-	{
+	var r = {
 		get: function ()
 		{
 			return this .getValue () .r;
@@ -78,25 +62,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .r;
-		},
-		set: function (value)
-		{
-			this .getValue () .r = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "g",
-	{
+	var g = {
 		get: function ()
 		{
 			return this .getValue () .g;
@@ -108,25 +76,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .g;
-		},
-		set: function (value)
-		{
-			this .getValue () .g = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "b",
-	{
+	var b = {
 		get: function ()
 		{
 			return this .getValue () .b;
@@ -138,25 +90,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .b;
-		},
-		set: function (value)
-		{
-			this .getValue () .b = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "a",
-	{
+	var a = {
 		get: function ()
 		{
 			return this .getValue () .a;
@@ -168,22 +104,22 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .a;
-		},
-		set: function (value)
-		{
-			this .getValue () .a = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+	Object .defineProperty (SFColorRGBA .prototype, "r", r);
+	Object .defineProperty (SFColorRGBA .prototype, "g", g);
+	Object .defineProperty (SFColorRGBA .prototype, "b", b);
+	Object .defineProperty (SFColorRGBA .prototype, "a", a);
+
+	r .enumerable = false;
+	g .enumerable = false;
+	b .enumerable = false;
+	a .enumerable = false;
+
+	Object .defineProperty (SFColorRGBA .prototype, "0", r);
+	Object .defineProperty (SFColorRGBA .prototype, "1", g);
+	Object .defineProperty (SFColorRGBA .prototype, "2", b);
+	Object .defineProperty (SFColorRGBA .prototype, "3", a);
 
 	return SFColorRGBA;
 });

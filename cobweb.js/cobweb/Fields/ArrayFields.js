@@ -55,292 +55,6 @@ function ($,
 		SFVec4f    = SFVec4 .SFVec4f;
 
 	/*
-	 *  MFBool
-	 */
-
-	function MFBool (value)
-	{
-		if (this instanceof MFBool)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFBool .prototype), arguments);
-	}
-
-	MFBool .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFBool,
-		ValueType: SFBool,
-		getTypeName: function ()
-		{
-			return "MFBool";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFBool;
-		},
-	});
-
-	/*
-	 *  MFColor
-	 */
-
-	function MFColor (value)
-	{
-		if (this instanceof MFColor)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFColor .prototype), arguments);
-	}
-
-	MFColor .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFColor,
-		ValueType: SFColor,
-		getTypeName: function ()
-		{
-			return "MFColor";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFColor;
-		},
-	});
-
-	/*
-	 *  MFColorRGBA
-	 */
-
-	function MFColorRGBA (value)
-	{
-		if (this instanceof MFColorRGBA)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFColorRGBA .prototype), arguments);
-	}
-
-	MFColorRGBA .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFColorRGBA,
-		ValueType: SFColorRGBA,
-		getTypeName: function ()
-		{
-			return "MFColorRGBA";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFColorRGBA;
-		},
-	});
-
-	/*
-	 *  MFDouble
-	 */
-
-	function MFDouble (value)
-	{
-		if (this instanceof MFDouble)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFDouble .prototype), arguments);
-	}
-
-	MFDouble .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFDouble,
-		ValueType: SFDouble,
-		getTypeName: function ()
-		{
-			return "MFDouble";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFDouble;
-		},
-	});
-
-	/*
-	 *  MFFloat
-	 */
-
-	function MFFloat (value)
-	{
-		if (this instanceof MFFloat)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFFloat .prototype), arguments);
-	}
-
-	MFFloat .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFFloat,
-		ValueType: SFFloat,
-		getTypeName: function ()
-		{
-			return "MFFloat";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFFloat;
-		},
-	});
-
-	/*
-	 *  MFImage
-	 */
-
-	function MFImage (value)
-	{
-		if (this instanceof MFImage)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFImage .prototype), arguments);
-	}
-
-	MFImage .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFImage,
-		ValueType: SFImage,
-		getTypeName: function ()
-		{
-			return "MFImage";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFImage;
-		},
-	});
-
-	/*
-	 *  MFInt32
-	 */
-
-	function MFInt32 (value)
-	{
-		if (this instanceof MFInt32)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFInt32 .prototype), arguments);
-	}
-
-	MFInt32 .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFInt32,
-		ValueType: SFInt32,
-		getTypeName: function ()
-		{
-			return "MFInt32";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFInt32;
-		},
-	});
-
-	/*
-	 *  MFMatrix3d
-	 */
-
-	function MFMatrix3d (value)
-	{
-		if (this instanceof MFMatrix3d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix3d .prototype), arguments);
-	}
-
-	MFMatrix3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix3d,
-		ValueType: SFMatrix3d,
-		getTypeName: function ()
-		{
-			return "MFMatrix3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix3d;
-		},
-	});
-
-	/*
-	 *  MFMatrix3f
-	 */
-
-	function MFMatrix3f (value)
-	{
-		if (this instanceof MFMatrix3f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix3f .prototype), arguments);
-	}
-
-	MFMatrix3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix3f,
-		ValueType: SFMatrix3f,
-		getTypeName: function ()
-		{
-			return "MFMatrix3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix3f;
-		},
-	});
-
-	/*
-	 *  MFMatrix4d
-	 */
-
-	function MFMatrix4d (value)
-	{
-		if (this instanceof MFMatrix4d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix4d .prototype), arguments);
-	}
-
-	MFMatrix4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix4d,
-		ValueType: SFMatrix4d,
-		getTypeName: function ()
-		{
-			return "MFMatrix4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix4d;
-		},
-	});
-
-	/*
-	 *  MFMatrix4f
-	 */
-
-	function MFMatrix4f (value)
-	{
-		if (this instanceof MFMatrix4f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix4f .prototype), arguments);
-	}
-
-	MFMatrix4f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix4f,
-		ValueType: SFMatrix4f,
-		getTypeName: function ()
-		{
-			return "MFMatrix4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix4f;
-		},
-	});
-
-	/*
 	 *  MFNode
 	 */
 
@@ -387,264 +101,57 @@ function ($,
 			return copy;
 		},
 	});
-
-	/*
-	 *  MFRotation
-	 */
-
-	function MFRotation (value)
+	
+	function MFFieldTemplate (TypeName, Type, SFField)
 	{
-		if (this instanceof MFRotation)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFRotation .prototype), arguments);
+		function MFVec (value)
+		{
+			if (this instanceof MFVec)
+				return X3DArrayField .call (this, arguments);
+			
+			return X3DArrayField .call (Object .create (MFVec .prototype), arguments);
+		}
+	
+		MFVec .prototype = $.extend (Object .create (X3DArrayField .prototype),
+		{
+			constructor: MFVec,
+			ValueType: SFField,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
+
+		return MFVec;
 	}
-
-	MFRotation .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFRotation,
-		ValueType: SFRotation,
-		getTypeName: function ()
-		{
-			return "MFRotation";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFRotation;
-		},
-	});
-
-	/*
-	 *  MFString
-	 */
-
-	function MFString (value)
-	{
-		if (this instanceof MFString)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFString .prototype), arguments);
-	}
-
-	MFString .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFString,
-		ValueType: SFString,
-		getTypeName: function ()
-		{
-			return "MFString";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFString;
-		},
-	});
-
-	/*
-	 *  MFTime
-	 */
-
-	function MFTime (value)
-	{
-		if (this instanceof MFTime)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFTime .prototype), arguments);
-	}
-
-	MFTime .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFTime,
-		ValueType: SFTime,
-		getTypeName: function ()
-		{
-			return "MFTime";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFTime;
-		},
-	});
-
-	/*
-	 *  MFVec2d
-	 */
-
-	function MFVec2d (value)
-	{
-		if (this instanceof MFVec2d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec2d .prototype), arguments);
-	}
-
-	MFVec2d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec2d,
-		ValueType: SFVec2d,
-		getTypeName: function ()
-		{
-			return "MFVec2d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec2d;
-		},
-	});
-
-	/*
-	 *  MFVec2f
-	 */
-
-	function MFVec2f (value)
-	{
-		if (this instanceof MFVec2f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec2f .prototype), arguments);
-	}
-
-	MFVec2f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec2f,
-		ValueType: SFVec2f,
-		getTypeName: function ()
-		{
-			return "MFVec2f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec2f;
-		},
-	});
-
-	/*
-	 *  MFVec3d
-	 */
-
-	function MFVec3d (value)
-	{
-		if (this instanceof MFVec3d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec3d .prototype), arguments);
-	}
-
-	MFVec3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec3d,
-		ValueType: SFVec3d,
-		getTypeName: function ()
-		{
-			return "MFVec3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec3d;
-		},
-	});
-
-	/*
-	 *  MFVec3f
-	 */
-
-	function MFVec3f (value)
-	{
-		if (this instanceof MFVec3f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec3f .prototype), arguments);
-	}
-
-	MFVec3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec3f,
-		ValueType: SFVec3f,
-		getTypeName: function ()
-		{
-			return "MFVec3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec3f;
-		},
-	});
-
-	/*
-	 *  MFVec4d
-	 */
-
-	function MFVec4d (value)
-	{
-		if (this instanceof MFVec4d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec4d .prototype), arguments);
-	}
-
-	MFVec4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec4d,
-		ValueType: SFVec4d,
-		getTypeName: function ()
-		{
-			return "MFVec4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec4d;
-		},
-	});
-
-	/*
-	 *  MFVec4f
-	 */
-
-	function MFVec4f (value)
-	{
-		if (this instanceof MFVec4f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec4f .prototype), arguments);
-	}
-
-	MFVec4f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec4f,
-		ValueType: SFVec4f,
-		getTypeName: function ()
-		{
-			return "MFVec4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec4f;
-		},
-	});
 
 	var ArrayFields =
 	{
-		MFBool:      MFBool,
-		MFColor:     MFColor,
-		MFColorRGBA: MFColorRGBA,
-		MFDouble:    MFDouble,
-		MFFloat:     MFFloat,
-		MFImage:     MFImage,
-		MFInt32:     MFInt32,
-		MFMatrix3d:  MFMatrix3d,
-		MFMatrix3f:  MFMatrix3f,
-		MFMatrix4d:  MFMatrix4d,
-		MFMatrix4f:  MFMatrix4f,
+		MFBool:      MFFieldTemplate ("MFBool",      X3DConstants .MFBool,      SFBool),
+		MFColor:     MFFieldTemplate ("MFColor",     X3DConstants .MFColor,     SFColor),
+		MFColorRGBA: MFFieldTemplate ("MFColorRGBA", X3DConstants .MFColorRGBA, SFColorRGBA),
+		MFDouble:    MFFieldTemplate ("MFDouble",    X3DConstants .MFDouble,    SFDouble),
+		MFFloat:     MFFieldTemplate ("MFFloat",     X3DConstants .MFFloat,     SFFloat),
+		MFImage:     MFFieldTemplate ("MFImage",     X3DConstants .MFImage,     SFImage),
+		MFInt32:     MFFieldTemplate ("MFInt32",     X3DConstants .MFInt32,     SFInt32),
+		MFMatrix3d:  MFFieldTemplate ("MFMatrix3d",  X3DConstants .MFMatrix3d,  SFMatrix3d),
+		MFMatrix3f:  MFFieldTemplate ("MFMatrix3f",  X3DConstants .MFMatrix3f,  SFMatrix3f),
+		MFMatrix4d:  MFFieldTemplate ("MFMatrix4d",  X3DConstants .MFMatrix4d,  SFMatrix4d),
+		MFMatrix4f:  MFFieldTemplate ("MFMatrix4f",  X3DConstants .MFMatrix4f,  SFMatrix4f),
 		MFNode:      MFNode,
-		MFRotation:  MFRotation,
-		MFString:    MFString,
-		MFTime:      MFTime,
-		MFVec2d:     MFVec2d,
-		MFVec2f:     MFVec2f,
-		MFVec3d:     MFVec3d,
-		MFVec3f:     MFVec3f,
-		MFVec4d:     MFVec4d,
-		MFVec4f:     MFVec4f,
+		MFRotation:  MFFieldTemplate ("MFRotation",  X3DConstants .MFRotation,  SFRotation),
+		MFString:    MFFieldTemplate ("MFString",    X3DConstants .MFString,    SFString),
+		MFTime:      MFFieldTemplate ("MFTime",      X3DConstants .MFTime,      SFTime),
+		MFVec2d:     MFFieldTemplate ("MFVec2d",     X3DConstants .MFVec2d,     SFVec2d),
+		MFVec2f:     MFFieldTemplate ("MFVec2f",     X3DConstants .MFVec2f,     SFVec2f),
+		MFVec3d:     MFFieldTemplate ("MFVec3d",     X3DConstants .MFVec3d,     SFVec3d),
+		MFVec3f:     MFFieldTemplate ("MFVec3f",     X3DConstants .MFVec3f,     SFVec3f),
+		MFVec4d:     MFFieldTemplate ("MFVec4d",     X3DConstants .MFVec4d,     SFVec4d),
+		MFVec4f:     MFFieldTemplate ("MFVec4f",     X3DConstants .MFVec4f,     SFVec4f),
 	};
 
 	Object .preventExtensions (ArrayFields);

@@ -12328,16 +12328,6 @@ function ($, Algorithm)
 			this .b_ = 0;
 		}
 	}
-	
-	$.extend (Color3,
-	{
-		HSV: function (h, s, v)
-		{
-			var color = new Color3 ();
-			color .setHSV (h, s, v);
-			return color;
-		},
-	});
 
 	Color3 .prototype =
 	{
@@ -12586,8 +12576,7 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 	});
 
-	Object .defineProperty (SFColor .prototype, "r",
-	{
+	var r = {
 		get: function ()
 		{
 			return this .getValue () .r;
@@ -12599,25 +12588,9 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColor .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .r;
-		},
-		set: function (value)
-		{
-			this .getValue () .r = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColor .prototype, "g",
-	{
+	var g = {
 		get: function ()
 		{
 			return this .getValue () .g;
@@ -12629,25 +12602,9 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColor .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .g;
-		},
-		set: function (value)
-		{
-			this .getValue () .g = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColor .prototype, "b",
-	{
+	var b = {
 		get: function ()
 		{
 			return this .getValue () .b;
@@ -12659,22 +12616,19 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColor .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .b;
-		},
-		set: function (value)
-		{
-			this .getValue () .b = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+	Object .defineProperty (SFColor .prototype, "r", r);
+	Object .defineProperty (SFColor .prototype, "g", g);
+	Object .defineProperty (SFColor .prototype, "b", b);
+
+	r .enumerable = false;
+	g .enumerable = false;
+	b .enumerable = false;
+
+	Object .defineProperty (SFColor .prototype, "0", r);
+	Object .defineProperty (SFColor .prototype, "1", g);
+	Object .defineProperty (SFColor .prototype, "2", b);
 
 	return SFColor;
 });
@@ -12682,9 +12636,10 @@ function ($, Color3, X3DField, X3DConstants)
 
 define ('standard/Math/Numbers/Color4',[
 	"jquery",
+	"standard/Math/Numbers/Color3",
 	"standard/Math/Algorithm",
 ],
-function ($, Algorithm)
+function ($, Color3, Algorithm)
 {
 
 
@@ -12707,16 +12662,6 @@ function ($, Algorithm)
 			this .a_ = 0;
 		}
 	}
-	
-	$.extend (Color4,
-	{
-		HSVA: function (h, s, v, a)
-		{
-			var color = new Color3 (0, 0, 0, a);
-			color .setHSV (h, s, v);
-			return color;
-		},
-	});
 
 	Color4 .prototype =
 	{
@@ -12752,74 +12697,8 @@ function ($, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: function (result)
-		{
-			var h, s, v;
-
-			var min = Math .min (this .r_, this .g_, this .b_);
-			var max = Math .max (this .r_, this .g_, this .b_);
-			v = max; // value
-
-			var delta = max - min;
-
-			if (max !== 0 && delta !== 0)
-			{
-				s = delta / max; // s
-
-				if (this .r === max)
-					h =     (this .g_ - this .b_) / delta;  // between yellow & magenta
-				else if (this .g_ == max)
-					h = 2 + (this .b_ - this .r_) / delta;  // between cyan & yellow
-				else
-					h = 4 + (this .r_ - this .g_) / delta;  // between magenta & cyan
-
-				h *= Math .PI / 3;  // radiants
-				if (h < 0)
-					h += Math .PI * 2;
-			}
-			else
-				s = h = 0;         // s = 0, h is undefined
-
-			result [0] = h;
-			result [1] = s;
-			result [2] = v;
-
-			return result;
-		},
-		setHSV: function (h, s, v)
-		{
-			s = clamp (s, 0, 1),
-			v = clamp (v, 0, 1);
-
-			// H is given on [0, 2 * Pi]. S and V are given on [0, 1].
-			// RGB are each returned on [0, 1].
-
-			if (s === 0)
-			{
-				// achromatic (grey)
-				this .r_ = this .g_ = this .b_ = v;
-			}
-			else
-			{
-				var w = Algorithm .degrees (Algorithm .interval (h, 0, Math .PI * 2)) / 60;     // sector 0 to 5
-
-				var i = Math .floor (w);
-				var f = w - i;                      // factorial part of h
-				var p = v * (1 - s);
-				var q = v * (1 - s * f);
-				var t = v * (1 - s * (1 - f));
-
-				switch (i % 6)
-				{
-					case 0:  this .r_ = v; this .g_ = t; this .b_ = p; break;
-					case 1:  this .r_ = q; this .g_ = v; this .b_ = p; break;
-					case 2:  this .r_ = p; this .g_ = v; this .b_ = t; break;
-					case 3:  this .r_ = p; this .g_ = q; this .b_ = v; break;
-					case 4:  this .r_ = t; this .g_ = p; this .b_ = v; break;
-					default: this .r_ = v; this .g_ = p; this .b_ = q; break;
-				}
-			}
-		},
+		getHSV: Color3 .getHSV,
+		setHSV: Color3 .setHSV,
 		toString: function ()
 		{
 			return this .r_ + " " +
@@ -12885,11 +12764,12 @@ function ($, Algorithm)
 
 define ('cobweb/Fields/SFColorRGBA',[
 	"jquery",
-	"standard/Math/Numbers/Color4",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFColor",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color4",
 ],
-function ($, Color4, X3DField, X3DConstants)
+function ($, X3DField, SFColor, X3DConstants, Color4)
 {
 
 
@@ -12926,31 +12806,14 @@ function ($, Color4, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFColorRGBA;
 		},
-		equals: function (color)
-		{
-			return this .getValue () .equals (color .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		getHSV: function ()
-		{
-			return this .getValue () .getHSV ([ ]);
-		},
-		setHSV: function (h, s, v)
-		{
-			this .getValue () .setHSV (h, s, v);
-			this .addEvent ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
+		equals: SFColor .equals,
+		set: SFColor .set,
+		getHSV: SFColor .getHSV,
+		setHSV: SFColor .setHSV,
+		toString: SFColor .toString,
 	});
 
-	Object .defineProperty (SFColorRGBA .prototype, "r",
-	{
+	var r = {
 		get: function ()
 		{
 			return this .getValue () .r;
@@ -12962,25 +12825,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .r;
-		},
-		set: function (value)
-		{
-			this .getValue () .r = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "g",
-	{
+	var g = {
 		get: function ()
 		{
 			return this .getValue () .g;
@@ -12992,25 +12839,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .g;
-		},
-		set: function (value)
-		{
-			this .getValue () .g = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "b",
-	{
+	var b = {
 		get: function ()
 		{
 			return this .getValue () .b;
@@ -13022,25 +12853,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .b;
-		},
-		set: function (value)
-		{
-			this .getValue () .b = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "a",
-	{
+	var a = {
 		get: function ()
 		{
 			return this .getValue () .a;
@@ -13052,22 +12867,22 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .a;
-		},
-		set: function (value)
-		{
-			this .getValue () .a = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+	Object .defineProperty (SFColorRGBA .prototype, "r", r);
+	Object .defineProperty (SFColorRGBA .prototype, "g", g);
+	Object .defineProperty (SFColorRGBA .prototype, "b", b);
+	Object .defineProperty (SFColorRGBA .prototype, "a", a);
+
+	r .enumerable = false;
+	g .enumerable = false;
+	b .enumerable = false;
+	a .enumerable = false;
+
+	Object .defineProperty (SFColorRGBA .prototype, "0", r);
+	Object .defineProperty (SFColorRGBA .prototype, "1", g);
+	Object .defineProperty (SFColorRGBA .prototype, "2", b);
+	Object .defineProperty (SFColorRGBA .prototype, "3", a);
 
 	return SFColorRGBA;
 });
@@ -13211,6 +13026,160 @@ function ($, X3DField, X3DConstants)
 	});
 
 	return SFInt32;
+});
+
+
+define ('cobweb/Fields/SFMatrixPrototypeTemplate',[
+	"jquery",
+	"cobweb/Basic/X3DField",
+],
+function ($, X3DField)
+{
+;
+
+	return function (Matrix, SFVec)
+	{
+		return $.extend (Object .create (X3DField .prototype),
+		{
+			copy: function ()
+			{
+				return new (this .constructor) (this .getValue () .copy ());
+			},
+			equals: function (matrix)
+			{
+				return this .getValue () .equals (matrix .getValue ());
+			},
+			set: function (value)
+			{
+				this .getValue () .assign (value);
+			},
+			set: function (value)
+			{
+				this .getValue () .assign (value);
+			},
+			setTransform: function (translation, rotation, scale, scaleOrientation, center)
+			{
+				translation      = translation      ? translation      .getValue () : null;
+				rotation         = rotation         ? rotation         .getValue () : null;
+				scale            = scale            ? scale            .getValue () : null;
+				scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
+				center           = center           ? center           .getValue () : null;
+	
+				this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
+			},
+			getTransform: function (translation, rotation, scale, scaleOrientation, center)
+			{
+				translation      = translation      ? translation      .getValue () : null;
+				rotation         = rotation         ? rotation         .getValue () : null;
+				scale            = scale            ? scale            .getValue () : null;
+				scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
+				center           = center           ? center           .getValue () : null;
+	
+				this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
+			},
+			transpose: function ()
+			{
+				return new (this .constructor) (Matrix .transpose (this .getValue ()));
+			},
+			inverse: function ()
+			{
+				return new (this .constructor) (Matrix .inverse (this .getValue ()));
+			},
+			multLeft: function (matrix)
+			{
+				return new (this .constructor) (Matrix .multLeft (this .getValue (), matrix .getValue ()));
+			},
+			multRight: function (matrix)
+			{
+				return new (this .constructor) (Matrix .multRight (this .getValue (), matrix .getValue ()));
+			},
+			multVecMatrix: function (vector)
+			{
+				return new SFVec (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
+			},
+			multMatrixVec: function (vector)
+			{
+				return new SFVec (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
+			},
+			multDirMatrix: function (vector)
+			{
+				return new SFVec (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
+			},
+			multMatrixDir: function (vector)
+			{
+				return new SFVec (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
+			},
+			toString: function ()
+			{
+				return this .getValue () .toString ();
+			},
+		});
+	};
+});
+
+
+define ('cobweb/Fields/SFVecPrototypeTemplate',[
+	"jquery",
+	"cobweb/Basic/X3DField",
+],
+function ($, X3DField)
+{
+
+
+	return function (Type)
+	{
+		return $.extend (Object .create (X3DField .prototype),
+		{
+			copy: function ()
+			{
+				return new (this .constructor) (this .getValue () .copy ());
+			},
+			equals: function (vector)
+			{
+				return this .getValue () .equals (vector .getValue ());
+			},
+			set: function (value)
+			{
+				this .getValue () .assign (value);
+			},
+			negate: function ()
+			{
+				return new (this .constructor) (Type .negate (this .getValue () .copy ()));
+			},
+			add: function (vector)
+			{
+				return new (this .constructor) (Type .add (this .getValue (), vector .getValue ()));
+			},
+			subtract: function (vector)
+			{
+				return new (this .constructor) (Type .subtract (this .getValue (), vector .getValue ()));
+			},
+			multiply: function (value)
+			{
+				return new (this .constructor) (Type .multiply (this .getValue (), value));
+			},
+			divide: function (value)
+			{
+				return new (this .constructor) (Type .divide (this .getValue (), value));
+			},
+			dot: function (vector)
+			{
+				return this .getValue () .dot (vector .getValue ());
+			},
+			normalize: function (vector)
+			{
+				return new (this .constructor) (Type .normalize (this .getValue ()));
+			},
+			length: function ()
+			{
+				return this .getValue () .abs ();
+			},
+			toString: function ()
+			{
+				return this .getValue () .toString ();
+			},
+		});
+	};
 });
 
 
@@ -13506,193 +13475,87 @@ function ($, Algorithm)
 
 define ('cobweb/Fields/SFVec2',[
 	"jquery",
-	"standard/Math/Numbers/Vector2",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
-function ($, Vector2, X3DField, X3DConstants)
+function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector2)
 {
 
 
-	function SFVec2 (v)
+	function SFVec2Template (TypeName, Type)
 	{
-		if (v .length)
+		function SFVec2 (x, y)
 		{
-			if (v[0] instanceof Vector2)
-				return X3DField .call (this, v[0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Vector2)
+					return X3DField .call (this, arguments [0]);
 
-			return X3DField .call (this, new Vector2 (+v[0], +v[1]));
+				return X3DField .call (this, new Vector2 (+x, +y));
+			}
+
+			return X3DField .call (this, new Vector2 (0, 0));
 		}
 
-		return X3DField .call (this, new Vector2 (0, 0));
-	}
-
-	SFVec2 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFVec2,
-		copy: function ()
+		SFVec2 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFVecPrototypeTemplate (Vector2),
 		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (vector)
-		{
-			return this .getValue () .equals (vector .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		negate: function ()
-		{
-			return new (this .constructor) (Vector2 .negate (this .getValue () .copy ()));
-		},
-		add: function (vector)
-		{
-			return new (this .constructor) (Vector2 .add (this .getValue (), vector .getValue ()));
-		},
-		subtract: function (vector)
-		{
-			return new (this .constructor) (Vector2 .subtract (this .getValue (), vector .getValue ()));
-		},
-		multiply: function (value)
-		{
-			return new (this .constructor) (Vector2 .multiply (this .getValue (), value));
-		},
-		divide: function (value)
-		{
-			return new (this .constructor) (Vector2 .divide (this .getValue (), value));
-		},
-		dot: function (vector)
-		{
-			return this .getValue () .dot (vector .getValue ());
-		},
-		normalize: function (vector)
-		{
-			return new (this .constructor) (Vector2 .normalize (this .getValue ()));
-		},
-		length: function ()
-		{
-			return this .getValue () .abs ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	/*
-	 *  SFVec2d
-	 */
-
-	function SFVec2d (x, y)
-	{
-	   if (this instanceof SFVec2d)
-			return SFVec2 .call (this, arguments);
+			constructor: SFVec2,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
 	
-	   return SFVec2 .call (Object .create (SFVec2d .prototype), arguments);
-	}
-
-	SFVec2d .prototype = $.extend (Object .create (SFVec2 .prototype),
-	{
-		constructor: SFVec2d,
-		getTypeName: function ()
-		{
-			return "SFVec2d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec2d;
-		},
-	});
-
-	/*
-	 *  SFVec2f
-	 */
-
-	function SFVec2f (x, y)
-	{
-	   if (this instanceof SFVec2f)
-			return SFVec2 .call (this, arguments);
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
 	
-	   return SFVec2 .call (Object .create (SFVec2f .prototype), arguments);
-	}
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFVec2 .prototype, "x", x);
+		Object .defineProperty (SFVec2 .prototype, "y", y);
+	
+		x .enumerable = false;
+		y .enumerable = false;
+	
+		Object .defineProperty (SFVec2 .prototype, "0", x);
+		Object .defineProperty (SFVec2 .prototype, "1", y);
 
-	SFVec2f .prototype = $.extend (Object .create (SFVec2 .prototype),
-	{
-		constructor: SFVec2f,
-		getTypeName: function ()
-		{
-			return "SFVec2f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec2f;
-		},
-	});
+		return SFVec2;
+	}
 
 	return {
-		SFVec2d: SFVec2d,
-		SFVec2f: SFVec2f,
+		SFVec2d: SFVec2Template ("SFVec2d", X3DConstants .SFVec2d),
+		SFVec2f: SFVec2Template ("SFVec2f", X3DConstants .SFVec2f),
 	};
 });
 
@@ -14944,418 +14807,187 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 });
 
 
+
 define ('cobweb/Fields/SFMatrix3',[
 	"jquery",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFMatrixPrototypeTemplate",
 	"cobweb/Fields/SFVec2",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix3",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
 ],
-function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
+function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
 {
+;
 
-
-	var
-		SFVec2d = SFVec2 .SFVec2d,
-		SFVec2f = SFVec2 .SFVec2f;
-
-	function SFMatrix3 (m)
+	function SFMatrix3Template (TypeName, Type, SFVec2)
 	{
-		if (m .length)
+		function SFMatrix3 (m00, m01, m02,
+	                       m10, m11, m12,
+	                       m20, m21, m22)
 		{
-			if (m [0] instanceof Matrix3)
-				return X3DField .call (this, m [0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Matrix3)
+					return X3DField .call (this, arguments [0]);
 	
-			return X3DField .call (this, new Matrix3 (+m[0], +m[1], +m[2],
-                                                   +m[3], +m[4], +m[5],
-                                                   +m[6], +m[7], +m[8]));
+				return X3DField .call (this, new Matrix3 (+m00, +m01, +m02,
+	                                                   +m10, +m11, +m12,
+	                                                   +m20, +m21, +m22));
+			}
+
+			return X3DField .call (this, new Matrix3 ());
 		}
-
-		return X3DField .call (this, new Matrix3 ());
-	}
-
-	SFMatrix3 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFMatrix3,
-		copy: function ()
+	
+		SFMatrix3 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFMatrixPrototypeTemplate (Matrix3, SFVec2),
 		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (matrix)
-		{
-			return this .getValue () .equals (matrix .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		setTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : Vector2 .Zero;
-			rotation         = rotation         ? rotation         .getValue () : Vector3 .Zero;
-			scale            = scale            ? scale            .getValue () : Vector2 .One;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : Vector3 .Zero;
-			center           = center           ? center           .getValue () : Vector2 .Zero;
-
-			this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
-		},
-		getTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : null;
-			rotation         = rotation         ? rotation         .getValue () : null;
-			scale            = scale            ? scale            .getValue () : null;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
-			center           = center           ? center           .getValue () : null;
-
-			this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
-		},
-		transpose: function ()
-		{
-			return new (this .constructor) (Matrix3 .transpose (this .getValue ()));
-		},
-		inverse: function ()
-		{
-			return new (this .constructor) (Matrix3 .inverse (this .getValue ()));
-		},
-		multLeft: function (matrix)
-		{
-			return new (this .constructor) (Matrix3 .multLeft (this .getValue (), matrix .getValue ()));
-		},
-		multRight: function (matrix)
-		{
-			return new (this .constructor) (Matrix3 .multRight (this .getValue (), matrix .getValue ()));
-		},
-		multVecMatrix: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixVec: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
-		},
-		multDirMatrix: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixDir: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	function defineProperty (i)
-	{
-		Object .defineProperty (SFMatrix3 .prototype, i,
-		{
-			get: function ()
+			constructor: SFMatrix3,
+			getTypeName: function ()
 			{
-				return this .getValue () [i];
+				return TypeName;
 			},
-			set: function (value)
+			getType: function ()
 			{
-				this .getValue () [i] = value;
-				this .addEvent ();
+				return Type;
 			},
-			enumerable: false,
-			configurable: false
 		});
+	
+		function defineProperty (i)
+		{
+			Object .defineProperty (SFMatrix3 .prototype, i,
+			{
+				get: function ()
+				{
+					return this .getValue () [i];
+				},
+				set: function (value)
+				{
+					this .getValue () [i] = value;
+					this .addEvent ();
+				},
+				enumerable: false,
+				configurable: false
+			});
+		}
+	
+		for (var i = 0; i < Matrix3 .prototype .length; ++ i)
+			defineProperty (i);
+
+		return SFMatrix3;
 	}
-
-	for (var i = 0; i < Matrix3 .prototype .length; ++ i)
-		defineProperty (i);
-
-	/*
-	 *  SFMatrix3d
-	 */
-
-	function SFMatrix3d (m00, m01, m02,
-	                     m10, m11, m12,
-	                     m20, m21, m22)
-	{
-		if (this instanceof SFMatrix3d)
-			return SFMatrix3 .call (this, arguments);
-		
-		return SFMatrix3 .call (Object .create (SFMatrix3d .prototype), arguments);
-	}
-
-	SFMatrix3d .prototype = $.extend (Object .create (SFMatrix3 .prototype),
-	{
-		constructor: SFMatrix3d,
-		Vector2: SFVec2d,
-		getTypeName: function ()
-		{
-			return "SFMatrix3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix3d;
-		},
-	});
-
-	/*
-	 *  SFMatrix3f
-	 */
-
-	function SFMatrix3f (m00, m01, m02,
-	                     m10, m11, m12,
-	                     m20, m21, m22)
-	{
-		if (this instanceof SFMatrix3f)
-			return SFMatrix3 .call (this, arguments);
-		
-		return SFMatrix3 .call (Object .create (SFMatrix3f .prototype), arguments);
-	}
-
-	SFMatrix3f .prototype = $.extend (Object .create (SFMatrix3 .prototype),
-	{
-		constructor: SFMatrix3f,
-		Vector2: SFVec2f,
-		getTypeName: function ()
-		{
-			return "SFMatrix3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix3f;
-		},
-	});
 
 	return {
-		SFMatrix3d: SFMatrix3d,
-		SFMatrix3f: SFMatrix3f,
+		SFMatrix3d: SFMatrix3Template ("SFMatrix3d", X3DConstants .SFMatrix3d, SFVec2 .SFVec2d),
+		SFMatrix3f: SFMatrix3Template ("SFMatrix3f", X3DConstants .SFMatrix3f, SFVec2 .SFVec2f),
 	};
 });
 
 
 define ('cobweb/Fields/SFVec3',[
 	"jquery",
-	"standard/Math/Numbers/Vector3",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
-function ($, Vector3, X3DField, X3DConstants)
+function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector3)
 {
 
 
-	function SFVec3 (v)
+	function SFVec3Template (TypeName, Type)
 	{
-		if (v .length)
+		function SFVec3 (x, y, z)
 		{
-			if (v[0] instanceof Vector3)
-				return X3DField .call (this, v[0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Vector3)
+					return X3DField .call (this, arguments [0]);
 
-			return X3DField .call (this, new Vector3 (+v[0], +v[1], +v[2]));
+				return X3DField .call (this, new Vector3 (+x, +y, +z));
+			}
+
+			return X3DField .call (this, new Vector3 (0, 0, 0));
 		}
-
-		return X3DField .call (this, new Vector3 (0, 0, 0));
-	}
-
-	SFVec3 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFVec3,
-		copy: function ()
-		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (vector)
-		{
-			return this .getValue () .equals (vector .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		negate: function ()
-		{
-			return new (this .constructor) (Vector3 .negate (this .getValue () .copy ()));
-		},
-		add: function (vector)
-		{
-			return new (this .constructor) (Vector3 .add (this .getValue (), vector .getValue ()));
-		},
-		subtract: function (vector)
-		{
-			return new (this .constructor) (Vector3 .subtract (this .getValue (), vector .getValue ()));
-		},
-		multiply: function (value)
-		{
-			return new (this .constructor) (Vector3 .multiply (this .getValue (), value));
-		},
-		divide: function (value)
-		{
-			return new (this .constructor) (Vector3 .divide (this .getValue (), value));
-		},
-		cross: function (vector)
-		{
-			return new (this .constructor) (Vector3 .cross (this .getValue (), vector .getValue ()));
-		},
-		dot: function (vector)
-		{
-			return this .getValue () .dot (vector .getValue ());
-		},
-		normalize: function (vector)
-		{
-			return new (this .constructor) (Vector3 .normalize (this .getValue ()));
-		},
-		length: function ()
-		{
-			return this .getValue () .abs ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	/*
-	 *  SFVec3d
-	 */
-
-	function SFVec3d (x, y, z)
-	{
-	   if (this instanceof SFVec3d)
-			return SFVec3 .call (this, arguments);
 	
-	   return SFVec3 .call (Object .create (SFVec3d .prototype), arguments);
-	}
-
-	SFVec3d .prototype = $.extend (Object .create (SFVec3 .prototype),
-	{
-		constructor: SFVec3d,
-		getTypeName: function ()
+		SFVec3 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFVecPrototypeTemplate (Vector3),
 		{
-			return "SFVec3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec3d;
-		},
-	});
-
-	/*
-	 *  SFVec3f
-	 */
-
-	function SFVec3f (x, y, z)
-	{
-	   if (this instanceof SFVec3f)
-			return SFVec3 .call (this, arguments);
+			constructor: SFVec3,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+			cross: function (vector)
+			{
+				return new (this .constructor) (Vector3 .cross (this .getValue (), vector .getValue ()));
+			},
+		});
 	
-	   return SFVec3 .call (Object .create (SFVec3f .prototype), arguments);
-	}
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFVec3 .prototype, "x", x);
+		Object .defineProperty (SFVec3 .prototype, "y", y);
+		Object .defineProperty (SFVec3 .prototype, "z", z);
+	
+		x .enumerable = false;
+		y .enumerable = false;
+		z .enumerable = false;
+	
+		Object .defineProperty (SFVec3 .prototype, "0", x);
+		Object .defineProperty (SFVec3 .prototype, "1", y);
+		Object .defineProperty (SFVec3 .prototype, "2", z);
 
-	SFVec3f .prototype = $.extend (Object .create (SFVec3 .prototype),
-	{
-		constructor: SFVec3f,
-		getTypeName: function ()
-		{
-			return "SFVec3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec3f;
-		},
-	});
+		return SFVec3;
+	}
 
 	return {
-		SFVec3d: SFVec3d,
-		SFVec3f: SFVec3f,
+		SFVec3d: SFVec3Template ("SFVec3d", X3DConstants .SFVec3d),
+		SFVec3f: SFVec3Template ("SFVec3f", X3DConstants .SFVec3f),
 	};
 });
 
@@ -17595,225 +17227,78 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 define ('cobweb/Fields/SFMatrix4',[
 	"jquery",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFMatrixPrototypeTemplate",
 	"cobweb/Fields/SFVec3",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
 ],
-function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
+function ($, X3DField, SFMatrixPrototypeTemplate, SFVec3, X3DConstants, Matrix4)
 {
 ;
 
-	var
-		SFVec3d = SFVec3 .SFVec3d,
-		SFVec3f = SFVec3 .SFVec3f;
-
-	function SFMatrix4 (m)
+	function SFMatrix4Template (TypeName, Type, SFVec3)
 	{
-		if (m .length)
+		function SFMatrix4 (m00, m01, m02, m03,
+	                       m10, m11, m12, m13,
+	                       m20, m21, m22, m23,
+	                       m30, m31, m32, m33)
 		{
-			if (m [0] instanceof Matrix4)
-				return X3DField .call (this, m [0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Matrix4)
+					return X3DField .call (this, arguments [0]);
+	
+				return X3DField .call (this, new Matrix4 (+m00, +m01, +m02, +m03,
+	                                                   +m10, +m11, +m12, +m13,
+	                                                   +m20, +m21, +m22, +m23,
+	                                                   +m30, +m31, +m32, +m33));
+			}
 
-			return X3DField .call (this, new Matrix4 (+m[ 0], +m[ 1], +m[ 2], +m[ 3],
-                                                   +m[ 4], +m[ 5], +m[ 6], +m[ 7],
-                                                   +m[ 8], +m[ 9], +m[10], +m[11],
-                                                   +m[12], +m[13], +m[14], +m[15]));
+			return X3DField .call (this, new Matrix4 ());
 		}
-
-		return X3DField .call (this, new Matrix4 ());
-	}
-
-	SFMatrix4 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFMatrix4,
-		copy: function ()
+	
+		SFMatrix4 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFMatrixPrototypeTemplate (Matrix4, SFVec3),
 		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (matrix)
-		{
-			return this .getValue () .equals (matrix .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		setTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : null;
-			rotation         = rotation         ? rotation         .getValue () : null;
-			scale            = scale            ? scale            .getValue () : null;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
-			center           = center           ? center           .getValue () : null;
-
-			this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
-		},
-		getTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : null;
-			rotation         = rotation         ? rotation         .getValue () : null;
-			scale            = scale            ? scale            .getValue () : null;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
-			center           = center           ? center           .getValue () : null;
-
-			this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
-		},
-		transpose: function ()
-		{
-			return new (this .constructor) (Matrix4 .transpose (this .getValue ()));
-		},
-		inverse: function ()
-		{
-			return new (this .constructor) (Matrix4 .inverse (this .getValue ()));
-		},
-		multLeft: function (matrix)
-		{
-			return new (this .constructor) (Matrix4 .multLeft (this .getValue (), matrix .getValue ()));
-		},
-		multRight: function (matrix)
-		{
-			return new (this .constructor) (Matrix4 .multRight (this .getValue (), matrix .getValue ()));
-		},
-		multVecMatrix: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixVec: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
-		},
-		multDirMatrix: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixDir: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	function defineProperty (i)
-	{
-		Object .defineProperty (SFMatrix4 .prototype, i,
-		{
-			get: function ()
+			constructor: SFMatrix4,
+			getTypeName: function ()
 			{
-				return this .getValue () [i];
+				return TypeName;
 			},
-			set: function (value)
+			getType: function ()
 			{
-				this .getValue () [i] = value;
-				this .addEvent ();
+				return Type;
 			},
-			enumerable: false,
-			configurable: false
 		});
+	
+		function defineProperty (i)
+		{
+			Object .defineProperty (SFMatrix4 .prototype, i,
+			{
+				get: function ()
+				{
+					return this .getValue () [i];
+				},
+				set: function (value)
+				{
+					this .getValue () [i] = value;
+					this .addEvent ();
+				},
+				enumerable: false,
+				configurable: false
+			});
+		}
+	
+		for (var i = 0; i < Matrix4 .prototype .length; ++ i)
+			defineProperty (i);
+
+		return SFMatrix4;
 	}
-
-	for (var i = 0; i < Matrix4 .prototype .length; ++ i)
-		defineProperty (i);
-
-	/*
-	 *  SFMatrix4d
-	 */
-
-	function SFMatrix4d (m00, m01, m02, m03,
-	                     m10, m11, m12, m13,
-	                     m20, m21, m22, m23,
-	                     m30, m31, m32, m33)
-	{
-		if (this instanceof SFMatrix4d)
-			return SFMatrix4 .call (this, arguments);
-		
-		return SFMatrix4 .call (Object .create (SFMatrix4d .prototype), arguments);
-	}
-
-	SFMatrix4d .prototype = $.extend (Object .create (SFMatrix4 .prototype),
-	{
-		constructor: SFMatrix4d,
-		Vector3: SFVec3d,
-		getTypeName: function ()
-		{
-			return "SFMatrix4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix4d;
-		},
-	});
-
-	/*
-	 *  SFMatrix4f
-	 */
-
-	function SFMatrix4f (m00, m01, m02, m03,
-	                     m10, m11, m12, m13,
-	                     m20, m21, m22, m23,
-	                     m30, m31, m32, m33)
-	{
-		if (this instanceof SFMatrix4f)
-			return SFMatrix4 .call (this, arguments);
-		
-		return SFMatrix4 .call (Object .create (SFMatrix4f .prototype), arguments);
-	}
-
-	SFMatrix4f .prototype = $.extend (Object .create (SFMatrix4 .prototype),
-	{
-		constructor: SFMatrix4f,
-		Vector3: SFVec3f,
-		getTypeName: function ()
-		{
-			return "SFMatrix4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix4f;
-		},
-	});
-
-	/*
-	 *  VrmlMatrix
-	 */
-
-	function VrmlMatrix (m00, m01, m02, m03,
-	                     m10, m11, m12, m13,
-	                     m20, m21, m22, m23,
-	                     m30, m31, m32, m33)
-	{
-		if (this instanceof VrmlMatrix)
-			SFMatrix4 .call (this, arguments);
-		
-		return SFMatrix4 .call (Object .create (VrmlMatrix .prototype), arguments);
-	}
-
-	VrmlMatrix .prototype = $.extend (Object .create (SFMatrix4 .prototype),
-	{
-		constructor: VrmlMatrix,
-		Vector3: SFVec3f,
-		getTypeName: function ()
-		{
-			return "VrmlMatrix";
-		},
-		getType: function ()
-		{
-			return X3DConstants .VrmlMatrix;
-		},
-	});
 
 	return {
-		SFMatrix4d: SFMatrix4d,
-		SFMatrix4f: SFMatrix4f,
-		VrmlMatrix: VrmlMatrix,
+		SFMatrix4d: SFMatrix4Template ("SFMatrix4d", X3DConstants .SFMatrix4d, SFVec3 .SFVec3d),
+		SFMatrix4f: SFMatrix4Template ("SFMatrix4f", X3DConstants .SFMatrix4f, SFVec3 .SFVec3f),
+		VrmlMatrix: SFMatrix4Template ("VrmlMatrix", X3DConstants .VrmlMatrix, SFVec3 .SFVec3f),
 	};
 });
 
@@ -18048,125 +17533,76 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		},
 	});
 
-	Object .defineProperty (SFRotation .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var angle = {
+			get: function ()
+			{
+				return this .getValue () .angle;
+			},
+			set: function (value)
+			{
+				this .getValue () .angle = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFRotation .prototype, "x",     x);
+		Object .defineProperty (SFRotation .prototype, "y",     y);
+		Object .defineProperty (SFRotation .prototype, "z",     z);
+		Object .defineProperty (SFRotation .prototype, "angle", angle);
 
-	Object .defineProperty (SFRotation .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+		x     .enumerable = false;
+		y     .enumerable = false;
+		z     .enumerable = false;
+		angle .enumerable = false;
 
-	Object .defineProperty (SFRotation .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "angle",
-	{
-		get: function ()
-		{
-			return this .getValue () .angle;
-		},
-		set: function (value)
-		{
-			this .getValue () .angle = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .angle;
-		},
-		set: function (value)
-		{
-			this .getValue () .angle = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+		Object .defineProperty (SFRotation .prototype, "0", x);
+		Object .defineProperty (SFRotation .prototype, "1", y);
+		Object .defineProperty (SFRotation .prototype, "2", z);
+		Object .defineProperty (SFRotation .prototype, "3", angle);
 
 	return SFRotation;
 });
@@ -18294,253 +17730,121 @@ function ($, X3DField, X3DConstants)
 
 define ('cobweb/Fields/SFVec4',[
 	"jquery",
-	"standard/Math/Numbers/Vector4",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
-function ($, Vector4, X3DField, X3DConstants)
+function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector4)
 {
 
 
-	function SFVec4 (v)
+	function SFVec4Template (TypeName, Type)
 	{
-		if (v .length)
+		function SFVec4 (x, y, z, w)
 		{
-			if (v[0] instanceof Vector4)
-				return X3DField .call (this, v[0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Vector4)
+					return X3DField .call (this, arguments [0]);
 
-			return X3DField .call (this, new Vector4 (+v[0], +v[1], +v[2], +v[3]));
+				return X3DField .call (this, new Vector4 (+x, +y, +z, +w));
+			}
+
+			return X3DField .call (this, new Vector4 (0, 0, 0, 0));
 		}
-
-		return X3DField .call (this, new Vector4 (0, 0, 0, 0));
-	}
-
-	SFVec4 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFVec4,
-		copy: function ()
-		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (vector)
-		{
-			return this .getValue () .equals (vector .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		negate: function ()
-		{
-			return new (this .constructor) (Vector4 .negate (this .getValue () .copy ()));
-		},
-		add: function (vector)
-		{
-			return new (this .constructor) (Vector4 .add (this .getValue (), vector .getValue ()));
-		},
-		subtract: function (vector)
-		{
-			return new (this .constructor) (Vector4 .subtract (this .getValue (), vector .getValue ()));
-		},
-		multiply: function (value)
-		{
-			return new (this .constructor) (Vector4 .multiply (this .getValue (), value));
-		},
-		divide: function (value)
-		{
-			return new (this .constructor) (Vector4 .divide (this .getValue (), value));
-		},
-		dot: function (vector)
-		{
-			return this .getValue () .dot (vector .getValue ());
-		},
-		normalize: function (vector)
-		{
-			return new (this .constructor) (Vector4 .normalize (this .getValue ()));
-		},
-		length: function ()
-		{
-			return this .getValue () .abs ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "w",
-	{
-		get: function ()
-		{
-			return this .getValue () .w;
-		},
-		set: function (value)
-		{
-			this .getValue () .w = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .w;
-		},
-		set: function (value)
-		{
-			this .getValue () .w = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	/*
-	 *  SFVec4d
-	 */
-
-	function SFVec4d (x, y, z, w)
-	{
-	   if (this instanceof SFVec4d)
-			return SFVec4 .call (this, arguments);
 	
-	   return SFVec4 .call (Object .create (SFVec4d .prototype), arguments);
-	}
-
-	SFVec4d .prototype = $.extend (Object .create (SFVec4 .prototype),
-	{
-		constructor: SFVec4d,
-		getTypeName: function ()
+		SFVec4 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFVecPrototypeTemplate (Vector4),
 		{
-			return "SFVec4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec4d;
-		},
-	});
-
-	/*
-	 *  SFVec4f
-	 */
-
-	function SFVec4f (x, y, z, w)
-	{
-	   if (this instanceof SFVec4f)
-			return SFVec4 .call (this, arguments);
+			constructor: SFVec4,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
 	
-	   return SFVec4 .call (Object .create (SFVec4f .prototype), arguments);
-	}
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var w = {
+			get: function ()
+			{
+				return this .getValue () .w;
+			},
+			set: function (value)
+			{
+				this .getValue () .w = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFVec4 .prototype, "x", x);
+		Object .defineProperty (SFVec4 .prototype, "y", y);
+		Object .defineProperty (SFVec4 .prototype, "z", z);
+		Object .defineProperty (SFVec4 .prototype, "w", w);
+	
+		x .enumerable = false;
+		y .enumerable = false;
+		z .enumerable = false;
+		w .enumerable = false;
+	
+		Object .defineProperty (SFVec4 .prototype, "0", x);
+		Object .defineProperty (SFVec4 .prototype, "1", y);
+		Object .defineProperty (SFVec4 .prototype, "2", z);
+		Object .defineProperty (SFVec4 .prototype, "3", w);
 
-	SFVec4f .prototype = $.extend (Object .create (SFVec4 .prototype),
-	{
-		constructor: SFVec4f,
-		getTypeName: function ()
-		{
-			return "SFVec4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec4f;
-		},
-	});
+		return SFVec4;
+	}
 
 	return {
-		SFVec4d: SFVec4d,
-		SFVec4f: SFVec4f,
+		SFVec4d: SFVec4Template ("SFVec4d", X3DConstants .SFVec4d),
+		SFVec4f: SFVec4Template ("SFVec4f", X3DConstants .SFVec4f),
 	};
 });
 
@@ -18601,292 +17905,6 @@ function ($,
 		SFVec4f    = SFVec4 .SFVec4f;
 
 	/*
-	 *  MFBool
-	 */
-
-	function MFBool (value)
-	{
-		if (this instanceof MFBool)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFBool .prototype), arguments);
-	}
-
-	MFBool .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFBool,
-		ValueType: SFBool,
-		getTypeName: function ()
-		{
-			return "MFBool";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFBool;
-		},
-	});
-
-	/*
-	 *  MFColor
-	 */
-
-	function MFColor (value)
-	{
-		if (this instanceof MFColor)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFColor .prototype), arguments);
-	}
-
-	MFColor .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFColor,
-		ValueType: SFColor,
-		getTypeName: function ()
-		{
-			return "MFColor";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFColor;
-		},
-	});
-
-	/*
-	 *  MFColorRGBA
-	 */
-
-	function MFColorRGBA (value)
-	{
-		if (this instanceof MFColorRGBA)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFColorRGBA .prototype), arguments);
-	}
-
-	MFColorRGBA .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFColorRGBA,
-		ValueType: SFColorRGBA,
-		getTypeName: function ()
-		{
-			return "MFColorRGBA";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFColorRGBA;
-		},
-	});
-
-	/*
-	 *  MFDouble
-	 */
-
-	function MFDouble (value)
-	{
-		if (this instanceof MFDouble)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFDouble .prototype), arguments);
-	}
-
-	MFDouble .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFDouble,
-		ValueType: SFDouble,
-		getTypeName: function ()
-		{
-			return "MFDouble";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFDouble;
-		},
-	});
-
-	/*
-	 *  MFFloat
-	 */
-
-	function MFFloat (value)
-	{
-		if (this instanceof MFFloat)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFFloat .prototype), arguments);
-	}
-
-	MFFloat .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFFloat,
-		ValueType: SFFloat,
-		getTypeName: function ()
-		{
-			return "MFFloat";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFFloat;
-		},
-	});
-
-	/*
-	 *  MFImage
-	 */
-
-	function MFImage (value)
-	{
-		if (this instanceof MFImage)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFImage .prototype), arguments);
-	}
-
-	MFImage .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFImage,
-		ValueType: SFImage,
-		getTypeName: function ()
-		{
-			return "MFImage";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFImage;
-		},
-	});
-
-	/*
-	 *  MFInt32
-	 */
-
-	function MFInt32 (value)
-	{
-		if (this instanceof MFInt32)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFInt32 .prototype), arguments);
-	}
-
-	MFInt32 .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFInt32,
-		ValueType: SFInt32,
-		getTypeName: function ()
-		{
-			return "MFInt32";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFInt32;
-		},
-	});
-
-	/*
-	 *  MFMatrix3d
-	 */
-
-	function MFMatrix3d (value)
-	{
-		if (this instanceof MFMatrix3d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix3d .prototype), arguments);
-	}
-
-	MFMatrix3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix3d,
-		ValueType: SFMatrix3d,
-		getTypeName: function ()
-		{
-			return "MFMatrix3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix3d;
-		},
-	});
-
-	/*
-	 *  MFMatrix3f
-	 */
-
-	function MFMatrix3f (value)
-	{
-		if (this instanceof MFMatrix3f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix3f .prototype), arguments);
-	}
-
-	MFMatrix3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix3f,
-		ValueType: SFMatrix3f,
-		getTypeName: function ()
-		{
-			return "MFMatrix3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix3f;
-		},
-	});
-
-	/*
-	 *  MFMatrix4d
-	 */
-
-	function MFMatrix4d (value)
-	{
-		if (this instanceof MFMatrix4d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix4d .prototype), arguments);
-	}
-
-	MFMatrix4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix4d,
-		ValueType: SFMatrix4d,
-		getTypeName: function ()
-		{
-			return "MFMatrix4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix4d;
-		},
-	});
-
-	/*
-	 *  MFMatrix4f
-	 */
-
-	function MFMatrix4f (value)
-	{
-		if (this instanceof MFMatrix4f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix4f .prototype), arguments);
-	}
-
-	MFMatrix4f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix4f,
-		ValueType: SFMatrix4f,
-		getTypeName: function ()
-		{
-			return "MFMatrix4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix4f;
-		},
-	});
-
-	/*
 	 *  MFNode
 	 */
 
@@ -18933,264 +17951,57 @@ function ($,
 			return copy;
 		},
 	});
-
-	/*
-	 *  MFRotation
-	 */
-
-	function MFRotation (value)
+	
+	function MFFieldTemplate (TypeName, Type, SFField)
 	{
-		if (this instanceof MFRotation)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFRotation .prototype), arguments);
+		function MFVec (value)
+		{
+			if (this instanceof MFVec)
+				return X3DArrayField .call (this, arguments);
+			
+			return X3DArrayField .call (Object .create (MFVec .prototype), arguments);
+		}
+	
+		MFVec .prototype = $.extend (Object .create (X3DArrayField .prototype),
+		{
+			constructor: MFVec,
+			ValueType: SFField,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
+
+		return MFVec;
 	}
-
-	MFRotation .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFRotation,
-		ValueType: SFRotation,
-		getTypeName: function ()
-		{
-			return "MFRotation";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFRotation;
-		},
-	});
-
-	/*
-	 *  MFString
-	 */
-
-	function MFString (value)
-	{
-		if (this instanceof MFString)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFString .prototype), arguments);
-	}
-
-	MFString .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFString,
-		ValueType: SFString,
-		getTypeName: function ()
-		{
-			return "MFString";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFString;
-		},
-	});
-
-	/*
-	 *  MFTime
-	 */
-
-	function MFTime (value)
-	{
-		if (this instanceof MFTime)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFTime .prototype), arguments);
-	}
-
-	MFTime .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFTime,
-		ValueType: SFTime,
-		getTypeName: function ()
-		{
-			return "MFTime";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFTime;
-		},
-	});
-
-	/*
-	 *  MFVec2d
-	 */
-
-	function MFVec2d (value)
-	{
-		if (this instanceof MFVec2d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec2d .prototype), arguments);
-	}
-
-	MFVec2d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec2d,
-		ValueType: SFVec2d,
-		getTypeName: function ()
-		{
-			return "MFVec2d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec2d;
-		},
-	});
-
-	/*
-	 *  MFVec2f
-	 */
-
-	function MFVec2f (value)
-	{
-		if (this instanceof MFVec2f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec2f .prototype), arguments);
-	}
-
-	MFVec2f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec2f,
-		ValueType: SFVec2f,
-		getTypeName: function ()
-		{
-			return "MFVec2f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec2f;
-		},
-	});
-
-	/*
-	 *  MFVec3d
-	 */
-
-	function MFVec3d (value)
-	{
-		if (this instanceof MFVec3d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec3d .prototype), arguments);
-	}
-
-	MFVec3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec3d,
-		ValueType: SFVec3d,
-		getTypeName: function ()
-		{
-			return "MFVec3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec3d;
-		},
-	});
-
-	/*
-	 *  MFVec3f
-	 */
-
-	function MFVec3f (value)
-	{
-		if (this instanceof MFVec3f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec3f .prototype), arguments);
-	}
-
-	MFVec3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec3f,
-		ValueType: SFVec3f,
-		getTypeName: function ()
-		{
-			return "MFVec3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec3f;
-		},
-	});
-
-	/*
-	 *  MFVec4d
-	 */
-
-	function MFVec4d (value)
-	{
-		if (this instanceof MFVec4d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec4d .prototype), arguments);
-	}
-
-	MFVec4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec4d,
-		ValueType: SFVec4d,
-		getTypeName: function ()
-		{
-			return "MFVec4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec4d;
-		},
-	});
-
-	/*
-	 *  MFVec4f
-	 */
-
-	function MFVec4f (value)
-	{
-		if (this instanceof MFVec4f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec4f .prototype), arguments);
-	}
-
-	MFVec4f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec4f,
-		ValueType: SFVec4f,
-		getTypeName: function ()
-		{
-			return "MFVec4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec4f;
-		},
-	});
 
 	var ArrayFields =
 	{
-		MFBool:      MFBool,
-		MFColor:     MFColor,
-		MFColorRGBA: MFColorRGBA,
-		MFDouble:    MFDouble,
-		MFFloat:     MFFloat,
-		MFImage:     MFImage,
-		MFInt32:     MFInt32,
-		MFMatrix3d:  MFMatrix3d,
-		MFMatrix3f:  MFMatrix3f,
-		MFMatrix4d:  MFMatrix4d,
-		MFMatrix4f:  MFMatrix4f,
+		MFBool:      MFFieldTemplate ("MFBool",      X3DConstants .MFBool,      SFBool),
+		MFColor:     MFFieldTemplate ("MFColor",     X3DConstants .MFColor,     SFColor),
+		MFColorRGBA: MFFieldTemplate ("MFColorRGBA", X3DConstants .MFColorRGBA, SFColorRGBA),
+		MFDouble:    MFFieldTemplate ("MFDouble",    X3DConstants .MFDouble,    SFDouble),
+		MFFloat:     MFFieldTemplate ("MFFloat",     X3DConstants .MFFloat,     SFFloat),
+		MFImage:     MFFieldTemplate ("MFImage",     X3DConstants .MFImage,     SFImage),
+		MFInt32:     MFFieldTemplate ("MFInt32",     X3DConstants .MFInt32,     SFInt32),
+		MFMatrix3d:  MFFieldTemplate ("MFMatrix3d",  X3DConstants .MFMatrix3d,  SFMatrix3d),
+		MFMatrix3f:  MFFieldTemplate ("MFMatrix3f",  X3DConstants .MFMatrix3f,  SFMatrix3f),
+		MFMatrix4d:  MFFieldTemplate ("MFMatrix4d",  X3DConstants .MFMatrix4d,  SFMatrix4d),
+		MFMatrix4f:  MFFieldTemplate ("MFMatrix4f",  X3DConstants .MFMatrix4f,  SFMatrix4f),
 		MFNode:      MFNode,
-		MFRotation:  MFRotation,
-		MFString:    MFString,
-		MFTime:      MFTime,
-		MFVec2d:     MFVec2d,
-		MFVec2f:     MFVec2f,
-		MFVec3d:     MFVec3d,
-		MFVec3f:     MFVec3f,
-		MFVec4d:     MFVec4d,
-		MFVec4f:     MFVec4f,
+		MFRotation:  MFFieldTemplate ("MFRotation",  X3DConstants .MFRotation,  SFRotation),
+		MFString:    MFFieldTemplate ("MFString",    X3DConstants .MFString,    SFString),
+		MFTime:      MFFieldTemplate ("MFTime",      X3DConstants .MFTime,      SFTime),
+		MFVec2d:     MFFieldTemplate ("MFVec2d",     X3DConstants .MFVec2d,     SFVec2d),
+		MFVec2f:     MFFieldTemplate ("MFVec2f",     X3DConstants .MFVec2f,     SFVec2f),
+		MFVec3d:     MFFieldTemplate ("MFVec3d",     X3DConstants .MFVec3d,     SFVec3d),
+		MFVec3f:     MFFieldTemplate ("MFVec3f",     X3DConstants .MFVec3f,     SFVec3f),
+		MFVec4d:     MFFieldTemplate ("MFVec4d",     X3DConstants .MFVec4d,     SFVec4d),
+		MFVec4f:     MFFieldTemplate ("MFVec4f",     X3DConstants .MFVec4f,     SFVec4f),
 	};
 
 	Object .preventExtensions (ArrayFields);
@@ -19345,8 +18156,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 	});
 
-	Object .defineProperty (SFImage .prototype, "width",
-	{
+	var width = {
 		get: function ()
 		{
 			return this .getValue () .getWidth ();
@@ -19358,25 +18168,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .getWidth ();
-		},
-		set: function (value)
-		{
-			this .getValue () .setWidth (value);
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFImage .prototype, "height",
-	{
+	var height = {
 		get: function ()
 		{
 			return this .getValue () .getHeight ();
@@ -19388,25 +18182,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .getHeight ();
-		},
-		set: function (value)
-		{
-			this .getValue () .setHeight (value);
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFImage .prototype, "comp",
-	{
+	var comp = {
 		get: function ()
 		{
 			return this .getValue () .getComp ();
@@ -19418,10 +18196,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "array",
-	{
+	var array = {
 		get: function ()
 		{
 			return this .getValue () .getArray ();
@@ -19433,7 +18210,18 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
+
+	Object .defineProperty (SFImage .prototype, "width",  width);
+	Object .defineProperty (SFImage .prototype, "height", height);
+	Object .defineProperty (SFImage .prototype, "comp",   comp);
+	Object .defineProperty (SFImage .prototype, "array",  array);
+
+	width  .enumerable = false;
+	height .enumerable = false;
+
+	Object .defineProperty (SFImage .prototype, "x", width);
+	Object .defineProperty (SFImage .prototype, "y", height);
 
 	return SFImage;
 });

@@ -1109,6 +1109,8 @@
     <None Include="cobweb\Browser\Followers\X3DArrayFollowerTemplate.js" />
     <None Include="cobweb\Browser\Followers\X3DArrayChaserTemplate.js" />
     <None Include="tests\Components\Interpolation\OrientationInterpolator.x3d" />
+    <None Include="cobweb\Fields\SFVecPrototypeTemplate.js" />
+    <None Include="cobweb\Fields\SFMatrixPrototypeTemplate.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

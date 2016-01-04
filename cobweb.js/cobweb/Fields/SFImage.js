@@ -144,8 +144,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 	});
 
-	Object .defineProperty (SFImage .prototype, "width",
-	{
+	var width = {
 		get: function ()
 		{
 			return this .getValue () .getWidth ();
@@ -157,25 +156,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .getWidth ();
-		},
-		set: function (value)
-		{
-			this .getValue () .setWidth (value);
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFImage .prototype, "height",
-	{
+	var height = {
 		get: function ()
 		{
 			return this .getValue () .getHeight ();
@@ -187,25 +170,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .getHeight ();
-		},
-		set: function (value)
-		{
-			this .getValue () .setHeight (value);
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFImage .prototype, "comp",
-	{
+	var comp = {
 		get: function ()
 		{
 			return this .getValue () .getComp ();
@@ -217,10 +184,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "array",
-	{
+	var array = {
 		get: function ()
 		{
 			return this .getValue () .getArray ();
@@ -232,7 +198,18 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
+
+	Object .defineProperty (SFImage .prototype, "width",  width);
+	Object .defineProperty (SFImage .prototype, "height", height);
+	Object .defineProperty (SFImage .prototype, "comp",   comp);
+	Object .defineProperty (SFImage .prototype, "array",  array);
+
+	width  .enumerable = false;
+	height .enumerable = false;
+
+	Object .defineProperty (SFImage .prototype, "x", width);
+	Object .defineProperty (SFImage .prototype, "y", height);
 
 	return SFImage;
 });

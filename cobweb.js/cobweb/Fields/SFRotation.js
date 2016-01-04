@@ -89,125 +89,76 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		},
 	});
 
-	Object .defineProperty (SFRotation .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var angle = {
+			get: function ()
+			{
+				return this .getValue () .angle;
+			},
+			set: function (value)
+			{
+				this .getValue () .angle = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFRotation .prototype, "x",     x);
+		Object .defineProperty (SFRotation .prototype, "y",     y);
+		Object .defineProperty (SFRotation .prototype, "z",     z);
+		Object .defineProperty (SFRotation .prototype, "angle", angle);
 
-	Object .defineProperty (SFRotation .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+		x     .enumerable = false;
+		y     .enumerable = false;
+		z     .enumerable = false;
+		angle .enumerable = false;
 
-	Object .defineProperty (SFRotation .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "angle",
-	{
-		get: function ()
-		{
-			return this .getValue () .angle;
-		},
-		set: function (value)
-		{
-			this .getValue () .angle = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .angle;
-		},
-		set: function (value)
-		{
-			this .getValue () .angle = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+		Object .defineProperty (SFRotation .prototype, "0", x);
+		Object .defineProperty (SFRotation .prototype, "1", y);
+		Object .defineProperty (SFRotation .prototype, "2", z);
+		Object .defineProperty (SFRotation .prototype, "3", angle);
 
 	return SFRotation;
 });

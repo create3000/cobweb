@@ -24,16 +24,6 @@ function ($, Algorithm)
 			this .b_ = 0;
 		}
 	}
-	
-	$.extend (Color3,
-	{
-		HSV: function (h, s, v)
-		{
-			var color = new Color3 ();
-			color .setHSV (h, s, v);
-			return color;
-		},
-	});
 
 	Color3 .prototype =
 	{

@@ -1,252 +1,120 @@
 
 define ([
 	"jquery",
-	"standard/Math/Numbers/Vector4",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
-function ($, Vector4, X3DField, X3DConstants)
+function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector4)
 {
 "use strict";
 
-	function SFVec4 (v)
+	function SFVec4Template (TypeName, Type)
 	{
-		if (v .length)
+		function SFVec4 (x, y, z, w)
 		{
-			if (v[0] instanceof Vector4)
-				return X3DField .call (this, v[0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Vector4)
+					return X3DField .call (this, arguments [0]);
 
-			return X3DField .call (this, new Vector4 (+v[0], +v[1], +v[2], +v[3]));
+				return X3DField .call (this, new Vector4 (+x, +y, +z, +w));
+			}
+
+			return X3DField .call (this, new Vector4 (0, 0, 0, 0));
 		}
-
-		return X3DField .call (this, new Vector4 (0, 0, 0, 0));
-	}
-
-	SFVec4 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFVec4,
-		copy: function ()
-		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (vector)
-		{
-			return this .getValue () .equals (vector .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		negate: function ()
-		{
-			return new (this .constructor) (Vector4 .negate (this .getValue () .copy ()));
-		},
-		add: function (vector)
-		{
-			return new (this .constructor) (Vector4 .add (this .getValue (), vector .getValue ()));
-		},
-		subtract: function (vector)
-		{
-			return new (this .constructor) (Vector4 .subtract (this .getValue (), vector .getValue ()));
-		},
-		multiply: function (value)
-		{
-			return new (this .constructor) (Vector4 .multiply (this .getValue (), value));
-		},
-		divide: function (value)
-		{
-			return new (this .constructor) (Vector4 .divide (this .getValue (), value));
-		},
-		dot: function (vector)
-		{
-			return this .getValue () .dot (vector .getValue ());
-		},
-		normalize: function (vector)
-		{
-			return new (this .constructor) (Vector4 .normalize (this .getValue ()));
-		},
-		length: function ()
-		{
-			return this .getValue () .abs ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "w",
-	{
-		get: function ()
-		{
-			return this .getValue () .w;
-		},
-		set: function (value)
-		{
-			this .getValue () .w = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .w;
-		},
-		set: function (value)
-		{
-			this .getValue () .w = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	/*
-	 *  SFVec4d
-	 */
-
-	function SFVec4d (x, y, z, w)
-	{
-	   if (this instanceof SFVec4d)
-			return SFVec4 .call (this, arguments);
 	
-	   return SFVec4 .call (Object .create (SFVec4d .prototype), arguments);
-	}
-
-	SFVec4d .prototype = $.extend (Object .create (SFVec4 .prototype),
-	{
-		constructor: SFVec4d,
-		getTypeName: function ()
+		SFVec4 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFVecPrototypeTemplate (Vector4),
 		{
-			return "SFVec4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec4d;
-		},
-	});
-
-	/*
-	 *  SFVec4f
-	 */
-
-	function SFVec4f (x, y, z, w)
-	{
-	   if (this instanceof SFVec4f)
-			return SFVec4 .call (this, arguments);
+			constructor: SFVec4,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
 	
-	   return SFVec4 .call (Object .create (SFVec4f .prototype), arguments);
-	}
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var w = {
+			get: function ()
+			{
+				return this .getValue () .w;
+			},
+			set: function (value)
+			{
+				this .getValue () .w = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFVec4 .prototype, "x", x);
+		Object .defineProperty (SFVec4 .prototype, "y", y);
+		Object .defineProperty (SFVec4 .prototype, "z", z);
+		Object .defineProperty (SFVec4 .prototype, "w", w);
+	
+		x .enumerable = false;
+		y .enumerable = false;
+		z .enumerable = false;
+		w .enumerable = false;
+	
+		Object .defineProperty (SFVec4 .prototype, "0", x);
+		Object .defineProperty (SFVec4 .prototype, "1", y);
+		Object .defineProperty (SFVec4 .prototype, "2", z);
+		Object .defineProperty (SFVec4 .prototype, "3", w);
 
-	SFVec4f .prototype = $.extend (Object .create (SFVec4 .prototype),
-	{
-		constructor: SFVec4f,
-		getTypeName: function ()
-		{
-			return "SFVec4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec4f;
-		},
-	});
+		return SFVec4;
+	}
 
 	return {
-		SFVec4d: SFVec4d,
-		SFVec4f: SFVec4f,
+		SFVec4d: SFVec4Template ("SFVec4d", X3DConstants .SFVec4d),
+		SFVec4f: SFVec4Template ("SFVec4f", X3DConstants .SFVec4f),
 	};
 });
