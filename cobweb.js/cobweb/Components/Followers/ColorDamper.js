@@ -60,6 +60,10 @@ function ($,
 		{
 			return "children";
 		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
 		getValue: function ()
 		{
 			return this .set_value_ .getValue () .getHSV (vector);

@@ -6,15 +6,21 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DChaserNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DChaserNode, 
-          X3DConstants)
+          X3DConstants,
+          Rotation4)
 {
 "use strict";
+
+	var
+		a        = new Rotation4 (0, 0, 1, 0),
+		rotation = new Rotation4 (0, 0, 1, 0);
 
 	function OrientationChaser (executionContext)
 	{
@@ -47,6 +53,26 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getVector: function ()
+		{
+			return new Rotation4 (0, 0, 1, 0);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			a .assign (lhs) .inverse () .multRight (rhs);
+
+			return Math .abs (a .angle) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return rotation .assign (source) .slerp (destination, weight);
+		},
+		step: function (value1, value2, t)
+		{
+			this .deltaOut .assign (value2) .inverse () .multRight (value1) .multLeft (this .output);
+
+			this .output .slerp (this .deltaOut, t);
 		},
 	});
 

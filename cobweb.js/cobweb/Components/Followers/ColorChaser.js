@@ -23,7 +23,6 @@ function ($,
 "use strict";
 
 	var
-		a                  = new Vector3 (0, 0, 0),
 		initialValue       = new Vector3 (0, 0, 0),
 		initialDestination = new Vector3 (0, 0, 0),
 		deltaOut           = new Vector3 (0, 0, 0),
@@ -61,6 +60,10 @@ function ($,
 		{
 			return "children";
 		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
 		getValue: function ()
 		{
 			return this .set_value_ .getValue () .getHSV (vector);
@@ -81,10 +84,6 @@ function ($,
 		{
 			this .value_changed_ .setHSV (value .x, value .y, value .z);
 		},
-		equals: function (lhs, rhs, tolerance)
-		{
-			return a .assign (lhs) .subtract (rhs) .abs () < tolerance;
-		},
 		interpolate: function (source, destination, weight)
 		{
 			return Color3 .lerp (source, destination, weight, vector);
@@ -95,8 +94,7 @@ function ($,
 
 			//step .x = Algorithm .interval (step .x, 0, 2 * Math .PI);
 
-			// this .output is vector thus we need no assign.
-			this .interpolate (this .output, deltaOut, t);
+			Color3 .lerp (this .output, deltaOut, t, this .output);
 		},
 	});
 

@@ -56,6 +56,10 @@ function ($,
 		{
 			return "children";
 		},
+		getVector: function ()
+		{
+			return new Rotation4 (0, 0, 1, 0);
+		},
 		equals: function (lhs, rhs, tolerance)
 		{
 			a .assign (lhs) .inverse () .multRight (rhs);

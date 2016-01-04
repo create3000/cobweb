@@ -57,6 +57,10 @@ function ($,
 		{
 			return "children";
 		},
+		getVector: function ()
+		{
+			return new Fields .MFVec2f ();
+		},
 		getValue: function ()
 		{
 			return this .set_value_;

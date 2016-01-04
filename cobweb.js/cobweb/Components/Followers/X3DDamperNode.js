@@ -17,8 +17,6 @@ function ($,
 		X3DFollowerNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DDamperNode);
-
-		this .buffer = [ ];
 	}
 
 	X3DDamperNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
@@ -33,7 +31,7 @@ function ($,
 			this .set_destination_ .addInterest (this, "set_destination__");
 
 			var
-				buffer             = this .buffer,
+				buffer             = this .getBuffer (),
 				initialValue       = this .getInitialValue (),
 				initialDestination = this .getInitialDestination ();
 
@@ -48,30 +46,6 @@ function ($,
 			else
 				this .set_active (true);
 		},
-		getBuffer: function ()
-		{
-			return this .buffer;
-		},
-		getValue: function ()
-		{
-			return this .set_value_ .getValue ();
-		},
-		getDestination: function ()
-		{
-			return this .set_destination_ .getValue ();
-		},
-		getInitialValue: function ()
-		{
-			return this .initialValue_ .getValue ();
-		},
-		getInitialDestination: function ()
-		{
-			return this .initialDestination_ .getValue ();
-		},
-		setValue: function (value)
-		{
-			this .value_changed_ = value;
-		},
 		getOrder: function ()
 		{
 			return Algorithm .clamp (this .order_ .getValue (), 0, 5);
@@ -83,18 +57,10 @@ function ($,
 
 			return this .tolerance_ .getValue ();
 		},
-		copy: function (value)
-		{
-			return value .copy ();
-		},
-		assign: function (buffer, i, value)
-		{
-			buffer [i] .assign (value);
-		},
 		prepareEvents: function ()
 		{
 			var
-				buffer = this .buffer,
+				buffer = this .getBuffer (),
 				order  = buffer .length - 1;
 
 			if (this .tau_ .getValue ())
@@ -128,7 +94,7 @@ function ($,
 		set_value__: function ()
 		{
 			var
-				buffer = this .buffer,
+				buffer = this .getBuffer (),
 				value  = this .getValue ();
 
 			for (var i = 1, length = buffer .length; i < length; ++ i)
@@ -140,14 +106,14 @@ function ($,
 		},
 		set_destination__: function ()
 		{
-			this .assign (this .buffer, 0, this .getDestination ());
+			this .assign (this .getBuffer (), 0, this .getDestination ());
 
 			this .set_active (true);
 		},
 		set_order__: function ()
 		{
 			var
-				buffer = this .buffer,
+				buffer = this .getBuffer (),
 				value  = buffer [buffer .length - 1];
 
 			for (var i = buffer .length, length = this .getOrder () + 1; i < length; ++ i)

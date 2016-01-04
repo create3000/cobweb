@@ -18,10 +18,6 @@ function ($,
 {
 "use strict";
 
-	var
-		a      = new Vector2 (0, 0),
-		vector = new Vector2 (0, 0);
-
 	function PositionDamper2D (executionContext)
 	{
 		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
@@ -56,15 +52,9 @@ function ($,
 		{
 			return "children";
 		},
-		equals: function (lhs, rhs, tolerance)
+		getVector: function ()
 		{
-			a .assign (lhs);
-
-			return a .subtract (rhs) .abs () < tolerance;
-		},
-		interpolate: function (source, destination, weight)
-		{
-			return vector .assign (source) .lerp (destination, weight);
+			return new Vector2 (0, 0);
 		},
 	});
 

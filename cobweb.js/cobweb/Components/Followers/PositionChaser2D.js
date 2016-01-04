@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Followers/X3DChaserNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DChaserNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector2)
 {
 "use strict";
 
@@ -47,6 +49,10 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector2 (0, 0);
 		},
 	});
 

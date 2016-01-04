@@ -18,11 +18,6 @@ function ($,
 {
 "use strict";
 
-	var
-		a        = new Vector3 (0, 0, 0),
-		vector   = new Vector3 (0, 0, 0),
-		deltaOut = new Vector3 (0, 0, 0);
-
 	function PositionChaser (executionContext)
 	{
 		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
@@ -55,21 +50,9 @@ function ($,
 		{
 			return "children";
 		},
-		equals: function (lhs, rhs, tolerance)
+		getVector: function ()
 		{
-			a .assign (lhs);
-
-			return a .subtract (rhs) .abs () < tolerance;
-		},
-		interpolate: function (source, destination, weight)
-		{
-			return vector .assign (source) .lerp (destination, weight);
-		},
-		step: function (value1, value2, t)
-		{
-			deltaOut .assign (value1) .subtract (value2) .multiply (t);
-
-			this .output .add (deltaOut);
+			return new Vector3 (0, 0, 0);
 		},
 	});
 

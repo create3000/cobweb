@@ -16,11 +16,13 @@ function ($,
 
 		this .addType (X3DConstants .X3DChaserNode);
 
-		this .buffer        = [ ];
 		this .destination   = null;
 		this .previousValue = null;
 		this .bufferEndTime = 0;
-		this .stepTime      = 0; 
+		this .stepTime      = 0;
+
+		// Auxillary variables
+		this .deltaOut = this .getVector ();
 	}
 
 	X3DChaserNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
@@ -37,7 +39,7 @@ function ($,
 			this .set_duration__ ();
 
 			var
-				buffer             = this .buffer,
+				buffer             = this .getBuffer (),
 				initialValue       = this .getInitialValue (),
 				initialDestination = this .getInitialDestination (),
 				numBuffers         = this .getNumBuffers ();
@@ -62,30 +64,6 @@ function ($,
 		{
 			return 60;
 		},
-		getBuffer: function ()
-		{
-			return this .buffer;
-		},
-		getValue: function ()
-		{
-			return this .set_value_ .getValue ();
-		},
-		getDestination: function ()
-		{
-			return this .set_destination_ .getValue ();
-		},
-		getInitialValue: function ()
-		{
-			return this .initialValue_ .getValue ();
-		},
-		getInitialDestination: function ()
-		{
-			return this .initialDestination_ .getValue ();
-		},
-		setValue: function (value)
-		{
-			this .value_changed_ = value;
-		},
 		getTolerance: function ()
 		{
 			return 1e-8;
@@ -94,13 +72,9 @@ function ($,
 		{
 			this .previousValue .assign (value);
 		},
-		copy: function (value)
+		step: function (value1, value2, t)
 		{
-			return value .copy ();
-		},
-		assign: function (buffer, i, value)
-		{
-			buffer [i] .assign (value);
+			this .output .add (this .deltaOut .assign (value1) .subtract (value2) .multiply (t));
 		},
 		stepResponse: function (t)
 		{
@@ -120,7 +94,7 @@ function ($,
 				this .bufferEndTime = this .getBrowser () .getCurrentTime ();
 
 			var
-				buffer = this .buffer,
+				buffer = this .getBuffer (),
 				value  = this .getValue ();
 
 			for (var i = 1, length = buffer .length; i < length; ++ i)
@@ -145,7 +119,7 @@ function ($,
 		prepareEvents: function ()
 		{
 			var
-				buffer     = this .buffer,
+				buffer     = this .getBuffer (),
 				numBuffers = buffer .length,
 				fraction   = this .updateBuffer ();
 		
@@ -166,7 +140,7 @@ function ($,
 		updateBuffer: function ()
 		{
 			var
-				buffer     = this .buffer,
+				buffer     = this .getBuffer (),
 				numBuffers = buffer .length,
 				fraction   = (this .getBrowser () .getCurrentTime () - this .bufferEndTime) / this .stepTime;
 		

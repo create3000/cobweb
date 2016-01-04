@@ -52,6 +52,10 @@ function ($,
 		{
 			return "children";
 		},
+		getVector: function ()
+		{
+			return 0;
+		},
 		copy: function (value)
 		{
 			return value;
