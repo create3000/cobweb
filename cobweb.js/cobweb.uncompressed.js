@@ -50678,7 +50678,7 @@ function ($,
 					{
 						var font = this .getBrowser () .getFontCache () [this .URL .filename];
 
-						console .log (this .URL .filename .toString (), font);
+						//console .log (this .URL .filename .toString (), font);
 
 						if (font)
 							return this .setFont (font);
@@ -50729,7 +50729,7 @@ function ($,
 		setFont: function (font)
 		{
 			if (font === true)
-				return setTimeout (this .loadFont .bind (this), 100);
+				return setTimeout (this .loadFont .bind (this), 10);
 
 			this .font     = font;
 			font .fontName = font .familyName + font .styleName;
