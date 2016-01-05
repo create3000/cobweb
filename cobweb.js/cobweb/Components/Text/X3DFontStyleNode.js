@@ -60,9 +60,9 @@ function ($,
 
 		this .addType (X3DConstants .X3DFontStyleNode);
 
-		this .family     = [ ];
-		this .alignments = [ ];
-		this .loader     = new Loader (this, true);
+		this .familyStack = [ ];
+		this .alignments  = [ ];
+		this .loader      = new Loader (this, true);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -143,8 +143,7 @@ function ($,
 		},
 		requestAsyncLoad: function ()
 		{
-			this .familyIndex    = 0;
-			this .family .length = 0;
+			this .familyStack .length = 0;
 
 			var family = this .family_ .copy ();
 
@@ -159,43 +158,13 @@ function ($,
 				if (defaultFont)
 				{
 				   for (var d = 0; d < FontDirectories .length; ++ d)
-				      this .family .push (FontDirectories [d] + defaultFont);
+				      this .familyStack .push (FontDirectories [d] + defaultFont);
 				}
 				else
-					this .family .push (familyName);
+					this .familyStack .push (familyName);
 			}
 
-			this .loadFont ();
-		},
-		loadFont: function ()
-		{
-			try
-			{
-			   if (this .familyIndex < this .family .length)
-			   {
-					var familyName = this .family [this .familyIndex];
-
-					this .URL = this .loader .transform (familyName);
-
-					var font = this .getBrowser () .getFont (this .URL);
-
-					//console .log (this .URL .filename .toString (), font);
-
-					if (font)
-						return this .setFont (font);
-
-					if (font === false)
-						return this .setError ("Couldn't load font.");
-
-					this .getBrowser () .addFont (this .URL, true);
-
-					opentype .load (this .URL, this .addFont .bind (this));
-				}
-			}
-			catch (error)
-			{
-				this .setError (error .message);
-			}
+			this .loadNext ();
 		},
 		getDefaultFont: function (familyName)
 		{
@@ -213,6 +182,55 @@ function ($,
 
 		   return;
 		},
+		loadNext: function ()
+		{
+			try
+			{
+				if (this .familyStack .length === 0)
+				{
+					//this .setLoadState (X3DConstants .FAILED_STATE);
+					this .font = null;
+					return;
+				}
+
+				this .URL = this .loader .transform (this .familyStack .shift ());
+	
+				var font = this .getBrowser () .getFont (this .URL);
+	
+				console .log (this .URL .filename .toString (), font);
+
+				if (font)
+					return this .setFont (font);
+	
+				if (font === false)
+					return this .setError ("Couldn't load font.");
+	
+				this .getBrowser () .addFont (this .URL, true);
+	
+				opentype .load (this .URL, this .addFont .bind (this));
+			}
+			catch (error)
+			{
+				this .setError (error .message);
+			}
+		},
+		setError: function (error)
+		{
+			this .getBrowser () .addFont (this .URL, false);
+	
+			var URL = this .URL .toString ();
+
+			if (! this .URL .isLocal ())
+			{
+				if (! URL .match (urls .fallbackRx))
+					this .urlStack .unshift (urls .fallback + URL);
+			}
+
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading font '" + this .URL .toString () + "':", error);
+
+			this .loadNext ();
+		},
 		addFont: function (error, font)
 		{
 			if (error)
@@ -228,38 +246,19 @@ function ($,
 		setFont: function (font)
 		{
 			if (font === true)
-				return setTimeout (this .loadFont .bind (this), 10);
+			{
+				this .familyStack .unshift (this .URL .toString ());
+				setTimeout (this .loadNext .bind (this), 10);
+				return;
+			}
 
-			this .font     = font;
-			font .fontName = font .familyName + font .styleName;
-
-			// Workaround to initialize composite glyphs.
-			for (var i = 0; i < this .font .numGlyphs; ++ i)
-				this .font .glyphs .get (i) .getPath (0, 0, 1);
+			this .font = font;
 
 			this .addNodeEvent ();
 		},
 		getFont: function ()
 		{
 		   return this .font;
-		},
-		setError: function (error)
-		{
-			this .getBrowser () .addFont (this .URL, false);
-
-			var family = this .family [this .familyIndex];
-
-			this .font = null;
-			this .familyIndex ++;
-
-			if (! this .URL .isLocal ())
-			{
-				if (! family .toString () .match (urls .fallbackRx))
-					this .family .splice (this .familyIndex, 0, urls .fallback + family);
-			}
-
-			console .warn ("Error loading font '" + family + "':", error);
-			this .loadFont ();
 		},
 	});
 

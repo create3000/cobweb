@@ -30,7 +30,15 @@ function (FontStyle)
 		addFont: function (URL, font)
 		{
 			if (URL .query .length === 0)
+			{
 				this .fontCache [URL] = font;
+
+				font .fontName = font .familyName + font .styleName;
+
+				// Workaround to initialize composite glyphs.
+				for (var i = 0, length = font .numGlyphs; i < length; ++ i)
+					font .glyphs .get (i) .getPath (0, 0, 1);
+			}
 		},
 		getFont: function (URL)
 		{
