@@ -317,7 +317,7 @@ function (TextAlignment,
 					
 					var glyphNumber = topToBottom ? g : numChars - g - 1;
 		
-					this .translations [t] .set ((spacing - size .x) / 2, -glyphNumber * 1.2); // Use normal vertical distance of 120%
+					this .translations [t] .set ((spacing - size .x) / 2, -glyphNumber);
 
 					// Calculate center.
 

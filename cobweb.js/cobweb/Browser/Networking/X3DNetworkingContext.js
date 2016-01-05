@@ -25,6 +25,7 @@ function (Fields,
 		this .addChildren ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this);
+		this .loadingTotal   = 0;
 		this .loadingObjects = { };
 		this .location       = new URI (this .getElement () [0] .baseURI);
 		this .defaultScene   = this .createScene ();
@@ -88,6 +89,7 @@ function (Fields,
 		{
 		   var id = loadCountId ++;
 
+			++ this .loadingTotal;
 		   this .loadingObjects [id] = true;
 			
 			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () + 1);
@@ -119,10 +121,13 @@ function (Fields,
 				this .getNotification () .string_ = string;
 
 			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
+
+			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
 		},
 		resetLoadCount: function ()
 		{
 			this .loadCount_     = 0;
+			this .loadingTotal   = 0;
 			this .loadingObjects = { };			   
 		},
 	};

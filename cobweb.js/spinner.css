@@ -14,7 +14,7 @@ X3D .cobweb-loading {
 }
 
 X3D .cobweb-spinner {
-	position: relative;
+	position: absolute;
 	top: calc(50% - 70px);
 	left: calc(50% - 64px);
 	width: 128px;
@@ -76,16 +76,32 @@ X3D .cobweb-spinner-three {
 	border-top: 10px solid #d71f1f;
 }
 
+X3D .cobweb-progress {
+	position: absolute;
+	top: calc(50% - 11pt);
+	left: calc(50% - 100px);
+	width: 200px;
+}
+
 X3D .cobweb-spinner-text {
-	position: relative;
-	top: 58px;
-	left: -30px;
-	width: 188px;
 	color: white;
 	font-size: 11pt;
 	text-align: center;
 	text-shadow: 1px 1px 0px black;
 	font-family: PT Sans, sans-serif;
+}
+
+X3D .cobweb-progressbar {
+	margin: 8px;
+	border-left:  2px solid rgba(255, 255, 255, 0.5);
+	border-right: 2px solid rgba(255, 255, 255, 0.5);
+	padding: 0 2px;
+}
+
+X3D .cobweb-progressbar div {
+	width: 0%;
+	height: 6px;
+	background: rgba(255, 255, 255, 0.5);
 }
 
 @keyframes cobweb-spinner-rotate-one {
