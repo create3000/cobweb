@@ -223,7 +223,7 @@ function ($,
 			if (! this .URL .isLocal ())
 			{
 				if (! URL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + URL);
+					this .familyStack .unshift (urls .fallback + URL);
 			}
 
 			if (this .URL .scheme !== "data")
