@@ -50676,14 +50676,14 @@ function ($,
 
 					if (this .URL .query .length === 0)
 					{
-						var font = this .getScene () .getFontCache () [this .URL .filename];
+						var font = this .getBrowser () .getFontCache () [this .URL .filename];
 
 						console .log (this .URL .filename .toString (), font);
 
 						if (font)
 							return this .setFont (font);
 
-						this .getScene () .getFontCache () [this .URL .filename] = true;
+						this .getBrowser () .getFontCache () [this .URL .filename] = true;
 					}
 
 					opentype .load (this .URL, this .addFont .bind (this));
@@ -50721,7 +50721,7 @@ function ($,
 				//console .log ('Font loaded fine:', font .familyName, font .styleName);
 
 				if (this .URL .query .length === 0)
-					this .getScene () .getFontCache () [this .URL .filename] = font;
+					this .getBrowser () .getFontCache () [this .URL .filename] = font;
 
 				this .setFont (font);
 			}
@@ -50747,7 +50747,7 @@ function ($,
 		setError: function (error)
 		{
 			if (this .URL .query .length === 0)
-				delete this .getScene () .getFontCache () [this .URL .filename];
+				delete this .getBrowser () .getFontCache () [this .URL .filename];
 
 			var family = this .family [this .familyIndex];
 
@@ -54111,6 +54111,7 @@ function (FontStyle)
 
 	function X3DTextContext ()
 	{
+		this .fontCache         = { };
 		this .fontGeometryCache = { }; // [fontName] [primitveQuality] [glyphIndex]
 	}
 
@@ -54118,7 +54119,6 @@ function (FontStyle)
 	{
 		initialize: function ()
 		{
-		   this .getBrowser () .shutdown () .addInterest (this, "set_shutdown_TextContext");
 		},
 		getDefaultFontStyle: function ()
 		{
@@ -54130,13 +54130,13 @@ function (FontStyle)
 
 			return this .defaultFontStyle;
 		},
+		getFontCache: function ()
+		{
+			return this .fontCache;
+		},
 		getFontGeometryCache: function ()
 		{
 		   return this .fontGeometryCache;
-		},
-		set_shutdown_TextContext: function ()
-		{
-		   this .fontGeometryCache = { };
 		},
 	};
 
@@ -63940,8 +63940,7 @@ function ($,
 		this .units .add ("length", new UnitInfo ("length", "metre",    1));
 		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
 
-		this .metaData  = { };
-		this .fontCache = { };
+		this .metaData = { };
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -63975,10 +63974,6 @@ function ($,
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
-		},
-		getFontCache: function ()
-		{
-			return this .fontCache;
 		},
 	});
 

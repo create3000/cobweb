@@ -8,6 +8,7 @@ function (FontStyle)
 
 	function X3DTextContext ()
 	{
+		this .fontCache         = { };
 		this .fontGeometryCache = { }; // [fontName] [primitveQuality] [glyphIndex]
 	}
 
@@ -15,7 +16,6 @@ function (FontStyle)
 	{
 		initialize: function ()
 		{
-		   this .getBrowser () .shutdown () .addInterest (this, "set_shutdown_TextContext");
 		},
 		getDefaultFontStyle: function ()
 		{
@@ -27,13 +27,13 @@ function (FontStyle)
 
 			return this .defaultFontStyle;
 		},
+		getFontCache: function ()
+		{
+			return this .fontCache;
+		},
 		getFontGeometryCache: function ()
 		{
 		   return this .fontGeometryCache;
-		},
-		set_shutdown_TextContext: function ()
-		{
-		   this .fontGeometryCache = { };
 		},
 	};
 

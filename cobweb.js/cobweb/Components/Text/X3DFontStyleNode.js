@@ -179,14 +179,14 @@ function ($,
 
 					if (this .URL .query .length === 0)
 					{
-						var font = this .getScene () .getFontCache () [this .URL .filename];
+						var font = this .getBrowser () .getFontCache () [this .URL .filename];
 
 						console .log (this .URL .filename .toString (), font);
 
 						if (font)
 							return this .setFont (font);
 
-						this .getScene () .getFontCache () [this .URL .filename] = true;
+						this .getBrowser () .getFontCache () [this .URL .filename] = true;
 					}
 
 					opentype .load (this .URL, this .addFont .bind (this));
@@ -224,7 +224,7 @@ function ($,
 				//console .log ('Font loaded fine:', font .familyName, font .styleName);
 
 				if (this .URL .query .length === 0)
-					this .getScene () .getFontCache () [this .URL .filename] = font;
+					this .getBrowser () .getFontCache () [this .URL .filename] = font;
 
 				this .setFont (font);
 			}
@@ -250,7 +250,7 @@ function ($,
 		setError: function (error)
 		{
 			if (this .URL .query .length === 0)
-				delete this .getScene () .getFontCache () [this .URL .filename];
+				delete this .getBrowser () .getFontCache () [this .URL .filename];
 
 			var family = this .family [this .familyIndex];
 
