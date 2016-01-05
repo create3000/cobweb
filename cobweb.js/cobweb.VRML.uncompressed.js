@@ -50670,11 +50670,23 @@ function ($,
 			{
 			   if (this .familyIndex < this .family .length)
 			   {
-					var
-						familyName = this .family [this .familyIndex],
-						fontPath   = this .loader .transform (familyName);
+					var familyName = this .family [this .familyIndex];
 
-					opentype .load (fontPath, this .setFont .bind (this));
+					this .URL = this .loader .transform (familyName);
+
+					if (this .URL .query .length === 0)
+					{
+						var font = this .getScene () .getFontCache () [this .URL .filename];
+
+						console .log (this .URL .filename .toString (), font);
+
+						if (font)
+							return this .setFont (font);
+
+						this .getScene () .getFontCache () [this .URL .filename] = true;
+					}
+
+					opentype .load (this .URL, this .addFont .bind (this));
 				}
 			}
 			catch (error)
@@ -50698,7 +50710,7 @@ function ($,
 
 		   return;
 		},
-		setFont: function (error, font)
+		addFont: function (error, font)
 		{
 			if (error)
 			{
@@ -50708,15 +50720,25 @@ function ($,
 			{
 				//console .log ('Font loaded fine:', font .familyName, font .styleName);
 
-				this .font     = font;
-				font .fontName = font .familyName + font .styleName;
-		   
-		      // Workaround to initialize composite glyphs.
-		      for (var i = 0; i < this .font .numGlyphs; ++ i)
-					this .font .glyphs .get (i) .getPath (0, 0, 1);
+				if (this .URL .query .length === 0)
+					this .getScene () .getFontCache () [this .URL .filename] = font;
 
-				this .addNodeEvent ();
+				this .setFont (font);
 			}
+		},
+		setFont: function (font)
+		{
+			if (font === true)
+				return setTimeout (this .loadFont .bind (this), 100);
+
+			this .font     = font;
+			font .fontName = font .familyName + font .styleName;
+
+			// Workaround to initialize composite glyphs.
+			for (var i = 0; i < this .font .numGlyphs; ++ i)
+				this .font .glyphs .get (i) .getPath (0, 0, 1);
+
+			this .addNodeEvent ();
 		},
 		getFont: function ()
 		{
@@ -50724,14 +50746,15 @@ function ($,
 		},
 		setError: function (error)
 		{
-			var
-				family = this .family [this .familyIndex],
-				URL   = new URI (family);
+			if (this .URL .query .length === 0)
+				delete this .getScene () .getFontCache () [this .URL .filename];
+
+			var family = this .family [this .familyIndex];
 
 			this .font = null;
 			this .familyIndex ++;
 
-			if (! URL .isLocal ())
+			if (! this .URL .isLocal ())
 			{
 				if (! family .toString () .match (urls .fallbackRx))
 					this .family .splice (this .familyIndex, 0, urls .fallback + family);
@@ -63917,7 +63940,8 @@ function ($,
 		this .units .add ("length", new UnitInfo ("length", "metre",    1));
 		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
 
-		this .metaData = { };
+		this .metaData  = { };
+		this .fontCache = { };
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -63951,6 +63975,10 @@ function ($,
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
+		},
+		getFontCache: function ()
+		{
+			return this .fontCache;
 		},
 	});
 

@@ -29,7 +29,8 @@ function ($,
 		this .units .add ("length", new UnitInfo ("length", "metre",    1));
 		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
 
-		this .metaData = { };
+		this .metaData  = { };
+		this .fontCache = { };
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -63,6 +64,10 @@ function ($,
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
+		},
+		getFontCache: function ()
+		{
+			return this .fontCache;
 		},
 	});
 
