@@ -119,12 +119,12 @@ function ($,
 		},
 		setError: function ()
 		{
-			var sURL = this .URL .toString ();
+			var URL = this .URL .toString ();
 
 			if (! this .URL .isLocal ())
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + sURL);
+				if (! URL .match (urls .fallbackRx))
+					this .urlStack .unshift (urls .fallback + URL);
 			}
 
 			if (this .URL .scheme !== "data")

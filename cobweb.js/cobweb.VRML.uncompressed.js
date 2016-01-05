@@ -54118,6 +54118,8 @@ function (FontStyle)
 {
 
 
+	var FONT_CACHE_SIZE = 32;
+
 	function X3DTextContext ()
 	{
 		this .fontCache         = { };
@@ -54144,6 +54146,19 @@ function (FontStyle)
 			if (URL .query .length === 0)
 			{
 				this .fontCache [URL] = font;
+
+				var length = Object .keys (this .fontCache) .length;
+
+				for (var key in this .fontCache)
+				{
+					if (length < FONT_CACHE_SIZE)
+						break;
+
+					-- length;
+					delete this .fontCache [key];
+				}
+
+				// Setup font.
 
 				font .fontName = font .familyName + font .styleName;
 
@@ -59281,12 +59296,12 @@ function ($,
 		},
 		setError: function ()
 		{
-			var sURL = this .URL .toString ();
+			var URL = this .URL .toString ();
 
 			if (! this .URL .isLocal ())
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + sURL);
+				if (! URL .match (urls .fallbackRx))
+					this .urlStack .unshift (urls .fallback + URL);
 			}
 
 			if (this .URL .scheme !== "data")
@@ -62597,12 +62612,12 @@ function ($,
 		},
 		setError: function ()
 		{
-			var sURL = this .URL .toString ();
+			var URL = this .URL .toString ();
 
 			if (! this .URL .isLocal ())
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + sURL);
+				if (! URL .match (urls .fallbackRx))
+					this .urlStack .unshift (urls .fallback + URL);
 			}
 
 			if (this .URL .scheme !== "data")

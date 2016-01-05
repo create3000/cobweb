@@ -4,4 +4,6 @@
 Introduction
 --------------------------------------
 
-Cobweb is a work in progress. The goal is a full standard WebGL X3D browser for all major web browsers. This first release of Cobweb implements the full VRML standard.
+Cobweb is a work in progress. The goal is a full standard WebGL X3D browser for all major web browsers.
+
+For more information and live preview please visit [http://titania.create3000.de/cobweb/](http://titania.create3000.de/cobweb/).
