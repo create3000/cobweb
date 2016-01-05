@@ -1,7 +1,9 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
 	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
@@ -10,7 +12,9 @@ define ([
 	"lib/opentype.js/dist/opentype.js",
 ],
 function ($,
+          Fields,
           X3DNode,
+          X3DUrlObject,
           TextAlignment,
           Loader,
           X3DConstants,
@@ -59,6 +63,8 @@ function ($,
 		X3DNode .call (this, browser, executionContext);
 
 		this .addType (X3DConstants .X3DFontStyleNode);
+		
+		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 
 		this .familyStack = [ ];
 		this .alignments  = [ ];
@@ -70,17 +76,21 @@ function ($,
 		constructor: X3DFontStyleNode,
 		initialize: function ()
 		{
-		   X3DNode .prototype .initialize .call (this);
+			X3DNode .prototype .initialize .call (this);
 
-		   this .style_   .addInterest (this, "set_style__");
-		   this .justify_ .addInterest (this, "set_justify__");
+			this .style_   .addInterest (this, "set_style__");
+			this .justify_ .addInterest (this, "set_justify__");
 
 			this .font        = null;
 			this .familyIndex = 0;
 
-		   this .set_justify__ ();
-		   this .set_style__ ();
+			this .set_justify__ ();
+			this .set_style__ ();
+
+			this .requestAsyncLoad ();
 		},
+		setLoadState: X3DUrlObject .prototype .setLoadState,
+		checkLoadState: X3DUrlObject .prototype .checkLoadState,
 		getMajorAlignment: function ()
 		{
 			return this .alignments [0];
@@ -91,12 +101,9 @@ function ($,
 		},
 		set_style__: function ()
 		{
-		   //var style = this .style_ .getValue ();
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
 
-			//this .italic = (style == "ITALIC" || style == "BOLDITALIC");
-			//this .bold   = (style == "BOLD"   || style == "BOLDITALIC");
-		  
-		   this .requestAsyncLoad ();
+			this .requestAsyncLoad ();
 		},
 		set_justify__: function ()
 		{
@@ -143,13 +150,22 @@ function ($,
 		},
 		requestAsyncLoad: function ()
 		{
-			this .familyStack .length = 0;
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			// Add default font to family array.
 
 			var family = this .family_ .copy ();
 
 			family .push ("SERIF");
 
-			for (var i = 0; i < family .length; ++ i)
+			// Build family stack.
+
+			this .familyStack .length = 0;
+
+			for (var i = 0, length = family .length; i < length; ++ i)
 			{
 			   var
 			      familyName  = family [i],
@@ -188,7 +204,7 @@ function ($,
 			{
 				if (this .familyStack .length === 0)
 				{
-					//this .setLoadState (X3DConstants .FAILED_STATE);
+					this .setLoadState (X3DConstants .FAILED_STATE);
 					this .font = null;
 					return;
 				}
@@ -196,8 +212,6 @@ function ($,
 				this .URL = this .loader .transform (this .familyStack .shift ());
 	
 				var font = this .getBrowser () .getFont (this .URL);
-	
-				console .log (this .URL .filename .toString (), font);
 
 				if (font)
 					return this .setFont (font);
@@ -254,6 +268,7 @@ function ($,
 
 			this .font = font;
 
+			this .setLoadState (X3DConstants .COMPLETE_STATE);
 			this .addNodeEvent ();
 		},
 		getFont: function ()
