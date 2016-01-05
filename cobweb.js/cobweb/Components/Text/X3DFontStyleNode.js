@@ -2,6 +2,7 @@
 define ([
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
+	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
@@ -9,7 +10,8 @@ define ([
 	"lib/opentype.js/dist/opentype.js",
 ],
 function ($,
-          X3DNode, 
+          X3DNode,
+          TextAlignment,
           Loader,
           X3DConstants,
           urls,
@@ -50,18 +52,6 @@ function ($,
 	      BOLD:       "UbuntuMono-B.ttf",
 	      BOLDITALIC: "UbuntuMono-BI.ttf",
 	   },
-	};
-
-	//
-
-	var i = 0;
-
-	var Alignment =
-	{
-	   BEGIN:  ++ i,
-	   FIRST:  ++ i,
-	   MIDDLE: ++ i,
-	   END:    ++ i,
 	};
 
 	function X3DFontStyleNode (browser, executionContext)
@@ -114,13 +104,13 @@ function ($,
 
 			this .alignments [0] = this .justify_ .length > 0
 			                       ? this .getAlignment (0, majorNormal)
-								        : majorNormal ? Alignment .BEGIN : Alignment .END;
+								        : majorNormal ? TextAlignment .BEGIN : TextAlignment .END;
 
 			var minorNormal = this .horizontal_ .getValue () ? this .topToBottom_ .getValue () : this .leftToRight_ .getValue ();
 
 			this .alignments [1] = this .justify_ .length > 1
 			                       ? this .getAlignment (1, minorNormal)
-								        : minorNormal ? Alignment .FIRST : Alignment .END;
+								        : minorNormal ? TextAlignment .FIRST : TextAlignment .END;
 		},
 		getAlignment: function (index, normal)
 		{
@@ -130,10 +120,10 @@ function ($,
 
 				switch (this .justify_ [index])
 				{
-					case "FIRST":  return Alignment .FIRST;
-					case "BEGIN":  return Alignment .BEGIN;
-					case "MIDDLE": return Alignment .MIDDLE;
-					case "END":    return Alignment .END;
+					case "FIRST":  return TextAlignment .FIRST;
+					case "BEGIN":  return TextAlignment .BEGIN;
+					case "MIDDLE": return TextAlignment .MIDDLE;
+					case "END":    return TextAlignment .END;
 				}
 			}
 			else
@@ -142,14 +132,14 @@ function ($,
 
 				switch (this .justify_ [index])
 				{
-					case "FIRST":  return Alignment .END;
-					case "BEGIN":  return Alignment .END;
-					case "MIDDLE": return Alignment .MIDDLE;
-					case "END":    return Alignment .BEGIN;
+					case "FIRST":  return TextAlignment .END;
+					case "BEGIN":  return TextAlignment .END;
+					case "MIDDLE": return TextAlignment .MIDDLE;
+					case "END":    return TextAlignment .BEGIN;
 				}
 			}
 
-			return index ? Alignment .FIRST : Alignment .BEGIN;
+			return index ? TextAlignment .FIRST : TextAlignment .BEGIN;
 		},
 		requestAsyncLoad: function ()
 		{
@@ -254,8 +244,6 @@ function ($,
 			this .loadFont ();
 		},
 	});
-
-	X3DFontStyleNode .Alignment = Alignment;
 
 	return X3DFontStyleNode;
 });

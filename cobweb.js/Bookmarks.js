@@ -64,6 +64,8 @@ var Bookmarks = (function ()
 		},
 		loadURL: function (url)
 		{
+			X3D .require ("lib/dataStorage") ["Bookmarks.url"] = url;
+
 			this .browser .loadURL (new X3D .MFString (url), new X3D .MFString ());
 
 			return false;
@@ -153,6 +155,10 @@ var Bookmarks = (function ()
 
 			this .loadURL (this .randomBookmarks .pop () .url);
 			return false;
+		},
+		restore: function ()
+		{
+			this .loadURL (X3D .require ("lib/dataStorage") ["Bookmarks.url"]);
 		},
 	};
 

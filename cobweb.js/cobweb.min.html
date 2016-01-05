@@ -168,7 +168,8 @@ X3D (function (dom)
 		{ name: 'Sound',                url: [ "tests/Components/Sound/AudioClip.x3d" ] },
 		{ name: 'Text',                 url: [ "tests/Components/Text/test.x3d" ] },
 		{ name: 'Date',                 url: [ "tests/Components/Text/date.x3d" ] },
-		{ name: 'Text',                 url: [ "tests/Components/Text/Text.x3d" ] },
+		{ name: 'Horizontal Text',      url: [ "tests/Components/Text/horizontal.x3d" ] },
+		{ name: 'Vertical Text',        url: [ "tests/Components/Text/vertical.x3d" ] },
 		{ name: 'Ghost',                url: [ "tests/Examples/Cathedral/stage/geist.x3d" ] },
 		{ name: 'LayerSet',             url: [ "tests/Components/Layering/LayerSet.x3d" ] },
 		{ name: 'Simple',               url: [ "tests/Components/Layering/Simple.x3d" ] },
@@ -233,6 +234,7 @@ X3D (function (dom)
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();
+	bookmarks .restore ();
 
 	$(".version") .text (Browser .name + " V" + Browser .version);
 },
@@ -253,7 +255,7 @@ function loadURL ()
 <body>
 	<div class="tests">
 		<div class="examples"></div>
-		<X3D cache="false" url='
+		<X3D cache="false" xurl='
 			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl"
 		'>
 			<p class="fallback">Sorry,<br>
@@ -267,7 +269,7 @@ function loadURL ()
 		<table class="load-url" cellpadding="4" style="margin:0; width:100%">
 			<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
 		</table>
-		<div class="toggle"><a href="cobweb.html">cobweb.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.min.js/cobweb.min.html">github</a></div>
+		<div class="toggle"><a href="cobweb.html">cobweb.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html">github</a></div>
 		<p class="version"></p>
 		<p class="-cobweb-console"></p>
 	</div>

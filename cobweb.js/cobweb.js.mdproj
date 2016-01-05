@@ -513,7 +513,6 @@
     <None Include="cobweb\Rendering\DepthBuffer.js" />
     <None Include="cobweb\Browser\Sound\X3DSoundContext.js" />
     <None Include="tests\Components\Text\Poetica-ChanceryI.otf" />
-    <None Include="tests\Components\Text\Text.x3d" />
     <None Include="tests\Components\Interpolation\PositionInterpolator.x3d" />
     <None Include="tests\Components\Navigation\ClonedLOD.x3d" />
     <None Include="tests\Components\Navigation\Gravitation.x3d" />
@@ -1111,6 +1110,11 @@
     <None Include="tests\Components\Interpolation\OrientationInterpolator.x3d" />
     <None Include="cobweb\Fields\SFVecPrototypeTemplate.js" />
     <None Include="cobweb\Fields\SFMatrixPrototypeTemplate.js" />
+    <None Include="cobweb\Browser\Text\X3DTextGeometry.js" />
+    <None Include="cobweb\Browser\Text\TextAlignment.js" />
+    <None Include="tests\Components\Text\vertical.x3d" />
+    <None Include="tests\Components\Text\horizontal.x3d" />
+    <None Include="tests\Components\Text\ARIALUNI.TTF" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

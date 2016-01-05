@@ -23,10 +23,10 @@ function ($, X3DField, X3DConstants)
 
 				// Specification conform would be: accessType & X3DConstants .outputOnly.
 				// But we allow read access to plain fields, too.
-				if (accessType !== X3DConstants .inputOnly)
-					return field .valueOf ();
+				if (accessType === X3DConstants .inputOnly)
+					return undefined;
 
-				return undefined;
+				return field .valueOf ();
 			}
 			catch (error)
 			{
