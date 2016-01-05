@@ -177,17 +177,17 @@ function ($,
 
 					this .URL = this .loader .transform (familyName);
 
-					if (this .URL .query .length === 0)
-					{
-						var font = this .getBrowser () .getFontCache () [this .URL .filename];
+					var font = this .getBrowser () .getFont (this .URL);
 
-						//console .log (this .URL .filename .toString (), font);
+					//console .log (this .URL .filename .toString (), font);
 
-						if (font)
-							return this .setFont (font);
+					if (font)
+						return this .setFont (font);
 
-						this .getBrowser () .getFontCache () [this .URL .filename] = true;
-					}
+					if (font === false)
+						return this .setError ("Couldn't load font.");
+
+					this .getBrowser () .addFont (this .URL, true);
 
 					opentype .load (this .URL, this .addFont .bind (this));
 				}
@@ -221,11 +221,7 @@ function ($,
 			}
 			else
 			{
-				//console .log ('Font loaded fine:', font .familyName, font .styleName);
-
-				if (this .URL .query .length === 0)
-					this .getBrowser () .getFontCache () [this .URL .filename] = font;
-
+				this .getBrowser () .addFont (this .URL, font);
 				this .setFont (font);
 			}
 		},
@@ -249,8 +245,7 @@ function ($,
 		},
 		setError: function (error)
 		{
-			if (this .URL .query .length === 0)
-				delete this .getBrowser () .getFontCache () [this .URL .filename];
+			this .getBrowser () .addFont (this .URL, false);
 
 			var family = this .family [this .familyIndex];
 

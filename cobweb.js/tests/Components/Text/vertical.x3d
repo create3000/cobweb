@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 05 Jan 2016 09:38:50 GMT'/>
+    <meta name='modified' content='Tue, 05 Jan 2016 16:41:24 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -82,8 +82,8 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Viewpoint'
-        position='0.466118 -6.00725 22.9641'
-        centerOfRotation='0.466118 -6.00725 0'/>
+        position='-0.0552061 6.52955 27.041'
+        centerOfRotation='-0.0552061 6.52955 0'/>
     <Transform DEF='RedBox'
         translation='-0.5 0.5 0'>
       <Shape>

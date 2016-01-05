@@ -27,9 +27,17 @@ function (FontStyle)
 
 			return this .defaultFontStyle;
 		},
-		getFontCache: function ()
+		addFont: function (URL, font)
 		{
-			return this .fontCache;
+			if (URL .query .length === 0)
+				this .fontCache [URL] = font;
+		},
+		getFont: function (URL)
+		{
+			if (URL .query .length === 0)
+				return this .fontCache [URL .filename];
+
+			return null;
 		},
 		getFontGeometryCache: function ()
 		{
