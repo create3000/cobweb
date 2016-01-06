@@ -1115,6 +1115,7 @@
     <None Include="tests\Components\Text\vertical.x3d" />
     <None Include="tests\Components\Text\horizontal.x3d" />
     <None Include="tests\Components\Text\ARIALUNI.TTF" />
+    <None Include="cobweb\Browser\Text\PolygonText.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

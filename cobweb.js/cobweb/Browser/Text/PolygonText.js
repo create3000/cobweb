@@ -1,0 +1,569 @@
+
+define ([
+	"jquery",
+	"cobweb/Browser/Core/PrimitiveQuality",
+	"cobweb/Browser/Text/X3DTextGeometry",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Triangle2",
+	"lib/bezierjs/bezier.js",
+	"lib/poly2tri.js/dist/poly2tri.js",
+	"lib/earcut/src/earcut.js",
+],
+function ($,
+          PrimitiveQuality,
+          X3DTextGeometry,
+          Vector3,
+          Triangle2,
+          Bezier,
+          poly2tri,
+          earcut)
+{
+"use strict";
+
+	var
+		min    = new Vector3 (0, 0, 0),
+		max    = new Vector3 (0, 0, 0),
+		paths  = [ ],
+		points = [ ],
+		curves = [ ];
+
+	function PolygonText (text, fontStyle)
+	{
+		X3DTextGeometry .call (this, text, fontStyle);
+
+		this .texCoords = [ ];
+	}
+
+	PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
+	{
+		constructor: PolygonText,
+		build: function ()
+		{
+			var
+				text           = this .getText (),
+				fontStyle      = this .getFontStyle (),
+				glyphs         = this .getGlyphs (),
+				minorAlignment = this .getMinorAlignment (),
+				translations   = this .getTranslations (),
+				charSpacings   = this .getCharSpacings (),
+				size           = fontStyle .getScale ();
+
+			if (! fontStyle .getFont ())
+				return;
+
+			this .texCoords .length = 0;
+			text .getTexCoords () .push (this .texCoords);
+
+			this .getBBox () .getExtents (min, max);
+			text .getMin () .assign (min);
+			text .getMax () .assign (max);
+
+			if (fontStyle .horizontal_ .getValue ())
+			{
+				for (var i = 0, length = glyphs .length; i < length; ++ i)
+					this .render (glyphs [i], minorAlignment, size, translations [i], charSpacings [i]);
+			}
+			else
+			{
+				var
+					primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+					texCoords        = this .texCoords,
+					normals          = text .getNormals (),
+					vertices         = text .getVertices ();
+
+				var
+					leftToRight = fontStyle .leftToRight_ .getValue (),
+					topToBottom = fontStyle .topToBottom_ .getValue (),
+					first       = leftToRight ? 0 : text .string_ .length - 1,
+					last        = leftToRight ? text .string_ .length  : -1,
+					step        = leftToRight ? 1 : -1;
+
+				for (var l = first, t = 0; l !== last; l += step)
+				{
+					var line = glyphs [l];
+
+					//for (const auto & glyph : topToBottom ? line : String (line .rbegin (), line .rend ()))
+
+					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
+					{
+						var glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
+
+						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+						{
+							var
+								x = glyphVertices [v] .x * size + minorAlignment .x + translations [t] .x,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translations [t] .y;
+			
+							normals   .push (0, 0, 1);
+							vertices  .push (x, y, 0, 1);
+							texCoords .push (x / size, y / size, 0, 1);
+						}
+					}
+				}
+			}
+		},
+		render: function (glyphs, minorAlignment, size, translation, charSpacing)
+		{
+			var
+				text             = this .getText (),
+				fontStyle        = this .getFontStyle (),
+				font             = fontStyle .getFont (),
+				offset           = 0,
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+				sizeUnitsPerEm   = size / font .unitsPerEm,
+				texCoords        = this .texCoords,
+				normals          = text .getNormals (),
+				vertices         = text .getVertices ();
+
+			for (var g = 0, gl = glyphs .length; g < gl; ++ g)
+			{
+				var
+					glyph         = glyphs [g],
+					glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
+				
+				for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+				{
+					var
+						x = glyphVertices [v] .x * size + minorAlignment .x + g * charSpacing + translation .x + offset,
+						y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
+
+					normals   .push (0, 0, 1);
+					vertices  .push (x, y, 0, 1);
+					texCoords .push (x / size, y / size, 0, 1);
+				}
+
+				// Calculate offset.
+
+				var kerning = 0;
+
+				if (g + 1 < glyphs .length)
+					kerning = font .getKerningValue (glyph, glyphs [g + 1]);
+
+				offset += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+			}
+		},
+		getGlyphExtents: function (glyph, primitiveQuality, min, max)
+		{
+			var extents = glyph .extents [primitiveQuality];
+
+			if (extents)
+			{
+				min .assign (extents .min);
+				max .assign (extents .max);
+				return;
+			}
+
+			var vertices = this .getGlyphGeometry (glyph, primitiveQuality);
+
+			if (vertices .length)
+			{
+				var vertex = vertices [0];
+
+				min .assign (vertex);
+				max .assign (vertex);
+
+				for (var i = 1, length = vertices .length; i < length; ++ i)
+				{
+					var vertex = vertices [i];
+
+					min .min (vertex);
+					max .max (vertex);
+				}
+			}
+			else
+			{
+				min .set (0, 0, 0);
+				max .set (0, 0, 0);			   
+			}
+
+			var extents = glyph .extents [primitiveQuality] = { };
+
+			extents .min = min .copy ();
+			extents .max = max .copy ();
+		},
+		getGlyphGeometry: function (glyph, primitiveQuality)
+		{
+			var
+				fontStyle     = this .getFontStyle (),
+				font          = fontStyle .getFont (),
+				geometryCache = this .getBrowser () .getFontGeometryCache ();
+
+			var cachedFont = geometryCache [font .fontName];
+
+			if (! cachedFont)
+				geometryCache [font .fontName] = cachedFont = [[], [], []];
+
+			var cachedGeometry = cachedFont [primitiveQuality] [glyph .index];
+
+			if (cachedGeometry)
+				return cachedGeometry;
+
+			cachedGeometry = cachedFont [primitiveQuality] [glyph .index] = [ ];
+
+			this .createGlyphGeometry (glyph, cachedGeometry, primitiveQuality);
+
+		   return cachedGeometry;
+		},
+		createGlyphGeometry: function (glyph, vertices, primitiveQuality)
+		{
+			var
+				fontStyle  = this .getFontStyle (),
+				font       = fontStyle .getFont (),
+				components = glyph .components,
+				dimension  = this .getBezierDimension (primitiveQuality),
+				reverse    = font .outlinesFormat === "cff";
+
+			paths  .length = 0;
+			points .length = 0;
+			curves .length = 0;
+		
+			if (glyph .isComposite)
+			{
+				for (var c = 0, cl = components .length; c < cl; ++ c)
+				{
+					var component = components [c];
+
+					paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, 1));
+				}
+			}
+			else
+				paths .push (glyph .getPath (0, 0, 1));
+
+			// Get curves for the current glyph.
+
+			var
+				x = 0,
+				y = 0;
+
+			for (var p = 0, pl = paths .length; p < pl; ++ p)
+			{
+				var commands = paths [p] .commands;
+
+				for (var i = 0, cl = commands .length; i < cl; ++ i)
+				{
+					var command = commands [i];
+										      
+					switch (command .type)
+					{
+						case "M": // Start
+						case "Z": // End
+						{
+							if (points .length > 2)
+							{
+								if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
+									points .pop ();
+
+								curves .push (reverse ? points .reverse () : points);
+							}
+								
+							points = [ ];
+
+							if (command .type === "M")
+								points .push ({ x: command .x, y: -command .y });
+							
+							break;
+						}
+						case "L": // Linear
+						{
+							points .push ({ x: command .x, y: -command .y });
+							break;
+						}
+						case "C": // Bezier
+						{
+							var
+								curve = new Bezier (x, -y, command .x1, -command .y1, command .x2, -command .y2, command .x, -command .y),
+								lut   = curve .getLUT (dimension);
+
+							for (var l = 1, ll = lut .length; l < ll; ++ l)
+								points .push (lut [l]);
+
+							break;
+						}
+						case "Q": // Cubíc
+						{
+							var
+								curve = new Bezier (x, -y, command .x1, -command .y1, command .x, -command .y),
+								lut   = curve .getLUT (dimension);
+
+							for (var l = 1, ll = lut .length; l < ll; ++ l)
+								points .push (lut [l]);
+							
+							break;
+						}
+						default:
+						   continue;
+					}
+
+					x = command .x;
+					y = command .y;
+				}
+			}
+
+			// Determine contours and holes.
+
+			var
+				contours = [ ],
+				holes    = [ ];
+
+			switch (curves .length)
+			{
+			   case 0:
+					break;
+			   case 1:
+					contours = curves;
+					break;
+				default:
+				{
+					for (var i = 0, cl = curves .length; i < cl; ++ i)
+					{
+						var
+							curve       = curves [i],
+							orientation = this .getCurveOrientation (curve);
+
+						if (orientation < 0)
+							contours .push (curve);
+					   else
+							holes .push (curve);
+					}
+
+					break;
+				}
+			}
+
+			/*
+			if (glyph .name [0] == "O")
+				console .log (glyph .name, "\n",
+				              "font: ", font, "\n",
+				              "glyph: ", glyph, "\n",
+				              "paths: ", paths, "\n",
+				              "contours: ", contours, "\n",
+				              "holes: ", holes);
+			*/
+			   
+			// Determine the holes for every contour.
+
+			contours .map (this .removeCollinearPoints);
+			holes .map (this .removeCollinearPoints);
+
+			switch (contours .length)
+			{
+				case 0:
+					break;
+				case 1:
+					contours [0] .holes = holes;
+					break;
+				default:
+				{
+					for (var c = 0, cl = contours .length; c < cl; ++ c)
+						contours [c] .holes = [ ];
+
+					for (var h = 0, hl = holes .length; h < hl; ++ h)
+					{
+						var hole = holes [h];
+
+						for (var c = 0, cl = contours .length; c < cl; ++ c)
+						{
+							var contour = contours [c];
+
+							// Copy contour, as isPointInPolygon will shuffle the points.
+							if (this .isPointInPolygon (contour .slice (), hole [0]))
+							{
+								contour .holes .push (hole);
+								break;
+							}
+						}
+					}
+
+				   break;
+				}
+			}
+
+			// Triangulate contours.
+
+			for (var i = 0, length = contours .length; i < length; ++ i)
+				this .triangulate (contours [i], contours [i] .holes, vertices);
+		},
+		getBezierDimension: function (primitiveQuality)
+		{
+			switch (primitiveQuality)
+			{
+				case PrimitiveQuality .LOW:
+					return 2;
+				case PrimitiveQuality .HIGH:
+					return 5;
+				default:
+					return 3;
+			}
+		},
+		getCurveOrientation: function (curve)
+		{
+			// From Wikipedia:
+
+			var
+				minX     = Number .POSITIVE_INFINITY,
+				minIndex = 0;
+
+			for (var i = 0, length = curve .length; i < length; ++ i)
+			{
+				if (curve [i] .x < minX)
+				{
+					minX     = curve [i] .x;
+					minIndex = i;
+				}
+			}
+
+			var
+				a = curve [(minIndex + length - 1) % length],
+				b = curve [minIndex],
+				c = curve [(minIndex + 2) % length];
+
+		   return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+		},
+		/*isPointInPolygon: function (polygon, point)
+		{
+			// earcut version
+			// not always working!!!
+
+			try
+			{
+				// Triangulate polygon.
+
+				var coords = [ ];
+
+				for (var p = 0; p < contour .length; ++ p)
+					coords .push (contour [p] .x, contour [p] .y);
+
+				var t = earcut (coords, holesIndices);
+
+				for (var i = 0; i < t .length; i += 3)
+				{
+				   var  
+						a = polygon [t [i]],
+						b = polygon [t [i + 1]],
+						c = polygon [t [i + 2]];
+					
+					if (Triangle2 .isPointInTriangle (a, b, c, point))
+						return true;
+				}
+
+				return false;
+			}
+			catch (error)
+			{
+				//console .warn (error);
+			}
+		},*/
+		isPointInPolygon: function (polygon, point)
+		{
+			// poly2tri version
+
+			try
+			{
+				// Triangulate polygon.
+
+				var
+					context = new poly2tri .SweepContext (polygon),
+					ts      = context .triangulate () .getTriangles ();
+
+				for (var i = 0, length = ts .length; i < length; ++ i)
+				{
+					var  
+						a = ts [i] .getPoint (0),
+						b = ts [i] .getPoint (1),
+						c = ts [i] .getPoint (2);
+					
+					if (Triangle2 .isPointInTriangle (a, b, c, point))
+						return true;
+				}
+
+				return false;
+			}
+			catch (error)
+			{
+				//console .warn (error);
+			}
+		},
+		removeCollinearPoints: function (polygon)
+		{
+			function isCollinear (a, b, c)
+			{
+				return Math .abs ((a.y - b.y) * (a.x - c.x) - (a.y - c.y) * (a.x - b.x)) < 1e-8;
+			}
+
+			for (var i = 0, k = 0, length = polygon .length; i < length; ++ i)
+			{
+				var
+					i0 = (i - 1 + length) % length,
+					i1 = (i + 1) % length;
+
+				if (isCollinear (polygon [i0], polygon [i], polygon [i1]))
+					continue;
+
+				polygon [k ++] = polygon [i];
+			}
+
+		   polygon .length = k;
+		},
+		triangulate: function (polygon, holes, triangles)
+		{
+		   try
+			{
+				// Triangulate polygon.
+				var
+					context = new poly2tri .SweepContext (polygon) .addHoles (holes),
+					ts      = context .triangulate () .getTriangles ();
+
+				for (var i = 0, length = ts .length; i < length; ++ i)
+				{
+					triangles .push (ts [i] .getPoint (0), ts [i] .getPoint (1), ts [i] .getPoint (2));
+				}
+			}
+			catch (error)
+			{
+				//console .warn (error);
+				this .earcutTriangulate (polygon, holes, triangles);
+			}
+		},
+		earcutTriangulate: function (polygon, holes, triangles)
+		{
+		   try
+			{
+				// Triangulate polygon.
+
+				var
+					coords       = [ ],
+					holesIndices = [ ];
+
+				for (var p = 0, pl = polygon .length; p < pl; ++ p)
+					coords .push (polygon [p] .x, polygon [p] .y);
+
+				for (var h = 0, hsl = holes .length; h < hsl; ++ h)
+				{
+					var hole = holes [h];
+
+					for (var p = 0, hl = hole .length; p < hl; ++ p)
+					{
+						holesIndices .push (coords .length / 2);
+						coords .push (hole [p] .x, hole [p] .y);
+						polygon .push (hole [p]);
+					}
+				}
+
+				var t = earcut (coords, holesIndices);
+
+				for (var i = 0, tl = t .length; i < tl; ++ i)
+					triangles .push (polygon [t [i]]);
+			}
+			catch (error)
+			{
+				//console .warn (error);
+			}
+		},
+		draw: function ()
+		{
+
+		},
+	});
+
+	return PolygonText;
+});

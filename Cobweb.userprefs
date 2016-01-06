@@ -1,14 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.release.html">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Browser/Text/PolygonText.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="52" Column="52" />
+      <File FileName="cobweb.js/cobweb.release.html" Line="66" Column="66" />
       <File FileName="cobweb.js/cobweb/Components/Text/X3DFontStyleNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Text/X3DTextContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Networking/X3DUrlObject.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Texturing/ImageTexture.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Text/FontStyle.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="20" Column="20" />
+      <File FileName="cobweb.js/cobweb/Components/Text/FontStyle.js" Line="18" Column="18" />
+      <File FileName="cobweb.js/cobweb/Browser/Text/PolygonText.js" Line="41" Column="41" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
