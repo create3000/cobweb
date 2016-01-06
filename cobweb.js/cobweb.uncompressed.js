@@ -9788,47 +9788,54 @@ function ($)
 
 	var Events =
 	{
-	   stack: [ ],
-	   create: function (field)
-	   {
-	      if (this .stack .length)
-	      {
-	         var event = this .stack .pop ();
+		stack: [ ],
+		create: function (field)
+		{
+			if (this .stack .length)
+			{
+				var event = this .stack .pop ();
 
 				event .field = field;
 
-            return event;
-	      }
+				return event;
+			}
             
-	      return {
+			return {
 				field: field,
-				sources: { },
+				sources: { }, // Sparse arrays are much more expensive than plain objects!
 			};
-	   },
-	   copy: function (event)
+		},
+		copy: function (event)
 	   {
-	      if (this .stack .length)
-	      {
-	         var copy = this .stack .pop ();
+			if (this .stack .length)
+			{
+				var copy = this .stack .pop ();
 
 				copy .field = event .field;
-
-            $.extend (copy .sources, event .sources);
-
-            return copy;
 	      }
+			else
+			{
+				var copy = {
+					field: event .field,
+					sources: { },
+				};
+			}
 
-	      return {
-				field: event .field,
-				sources: $.extend ({ }, event .sources),
-			};
+			var
+				fromSources = event .sources,
+				toSources   = copy .sources;
+
+			for (var id in fromSources)
+				toSources [id] = fromSources [id];
+
+			return copy;
 	   },
 		push: function (event)
 		{
 		   var sources = event .sources;
 
 		   for (var id in sources)
-		      delete event .sources [id];
+		      delete sources [id];
 
 		   this .stack .push (event);
 		},
