@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 05 Jan 2016 02:10:32 GMT'/>
+    <meta name='modified' content='Wed, 06 Jan 2016 23:47:48 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -48,7 +48,7 @@
       </ProtoBody>
     </ProtoDeclare>
     <WorldInfo
-        title='Text'>
+        title='Horizontal Text'>
       <MetadataSet DEF='Titania'
           name='Titania'
           reference='http://titania.create3000.de'>
@@ -66,7 +66,7 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0.454192936420441, -0.893999338150024, 21.8554401397705'/>
+              value='1.33852517604828, -2.55980134010315, 9.78648948669434'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
@@ -74,7 +74,7 @@
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, -0.0839843973517418, 0'/>
+              value='1.13300037384033, -2.19326519966125, -0.101714372634888'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -82,8 +82,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Viewpoint'
-        position='0 -0.0839844 21.8746'
-        centerOfRotation='0 -0.0839844 0'/>
+        position='0.959376 -0.967396 7.60502'
+        orientation='0.872291 0.488929 0.00753122 0.0424616'
+        centerOfRotation='0.800486 -0.684029 -0.0388779'/>
     <Transform DEF='Text'>
       <Shape>
         <Appearance>
@@ -91,10 +92,13 @@
               diffuseColor='1 0 0'/>
         </Appearance>
         <Text DEF='Text_1'
-            string='"R e a d", "s o m i g", "T e x t", "t o d a y !"'>
-          <FontStyle
-              family='"SANS", "Ubuntu Mono"'
+            string='"R e a d", "s o m i g", "T e x t", "t o d a y !"'
+            length='1.11547, 1.24648, 0.964531, 1.34547'
+            maxExtent='1.12'>
+          <FontStyle DEF='_1'
+              family='"Ubuntu", "SANS"'
               style='BOLDITALIC'
+              size='0.5'
               spacing='2'
               justify='"BEGIN", "FIRST"'/>
         </Text>
@@ -150,30 +154,30 @@
       </Shape>
     </Transform>
     <Transform DEF='LineBounds'
-        translation='0 0.759844 0'>
+        translation='0 0.387969 0'>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='scale' value='2.39051 0.487029 1'/>
+        <fieldValue name='scale' value='1.11547 0.395 1'/>
         <fieldValue name='color' value='1 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -0.487029 0'/>
-        <fieldValue name='scale' value='2.95177 2 1'/>
+        <fieldValue name='translation' value='0 -0.395 0'/>
+        <fieldValue name='scale' value='1.12 1 1'/>
         <fieldValue name='color' value='0 1 0'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -2.48703 0'/>
-        <fieldValue name='scale' value='2.2053 2 1'/>
+        <fieldValue name='translation' value='0 -1.395 0'/>
+        <fieldValue name='scale' value='0.964531 1 1'/>
         <fieldValue name='color' value='0 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -4.48703 0'/>
-        <fieldValue name='scale' value='3.31207 2 1'/>
+        <fieldValue name='translation' value='0 -2.395 0'/>
+        <fieldValue name='scale' value='1.12 1 1'/>
         <fieldValue name='color' value='1 1 0'/>
       </ProtoInstance>
     </Transform>
     <Transform DEF='TextBounds'
-        translation='0 0.759844 0'
-        scale='5.33531 6.97563 1'>
+        translation='0 0.387969 0'
+        scale='1.12 3.48047 1'>
       <ProtoInstance name='BBox2'/>
     </Transform>
     <Script DEF='Bounds'>

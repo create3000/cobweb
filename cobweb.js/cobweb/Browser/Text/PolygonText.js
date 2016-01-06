@@ -40,16 +40,24 @@ function ($,
 		build: function ()
 		{
 			var
-				text           = this .getText (),
-				fontStyle      = this .getFontStyle (),
-				glyphs         = this .getGlyphs (),
-				minorAlignment = this .getMinorAlignment (),
-				translations   = this .getTranslations (),
-				charSpacings   = this .getCharSpacings (),
-				size           = fontStyle .getScale ();
+				fontStyle = this .getFontStyle (),
+				font      = fontStyle .getFont ();
 
-			if (! fontStyle .getFont ())
+			if (! font)
 				return;
+
+			var
+				text             = this .getText (),
+				glyphs           = this .getGlyphs (),
+				minorAlignment   = this .getMinorAlignment (),
+				translations     = this .getTranslations (),
+				charSpacings     = this .getCharSpacings (),
+				size             = fontStyle .getScale (),
+				sizeUnitsPerEm   = size / font .unitsPerEm,
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+				texCoords        = this .texCoords,
+				normals          = text .getNormals (),
+				vertices         = text .getVertices ();
 
 			this .texCoords .length = 0;
 			text .getTexCoords () .push (this .texCoords);
@@ -60,17 +68,44 @@ function ($,
 
 			if (fontStyle .horizontal_ .getValue ())
 			{
-				for (var i = 0, length = glyphs .length; i < length; ++ i)
-					this .render (glyphs [i], minorAlignment, size, translations [i], charSpacings [i]);
+				for (var l = 0, length = glyphs .length; l < length; ++ l)
+				{
+					var
+						line         = glyphs [l],
+						charSpacing  = charSpacings [l],
+						translation  = translations [l],
+						advanceWidth = 0;
+
+					for (var g = 0, gl = line .length; g < gl; ++ g)
+					{
+						var
+							glyph         = line [g],
+							glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
+						
+						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+						{
+							var
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
+		
+							normals   .push (0, 0, 1);
+							vertices  .push (x, y, 0, 1);
+							texCoords .push (x / size, y / size, 0, 1);
+						}
+		
+						// Calculate advanceWidth.
+		
+						var kerning = 0;
+		
+						if (g + 1 < line .length)
+							kerning = font .getKerningValue (glyph, line [g + 1]);
+		
+						advanceWidth += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+					}
+				}
 			}
 			else
 			{
-				var
-					primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-					texCoords        = this .texCoords,
-					normals          = text .getNormals (),
-					vertices         = text .getVertices ();
-
 				var
 					leftToRight = fontStyle .leftToRight_ .getValue (),
 					topToBottom = fontStyle .topToBottom_ .getValue (),
@@ -86,13 +121,15 @@ function ($,
 
 					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
 					{
-						var glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
+						var
+							translation   = translations [t],
+							glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
 
 						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
 						{
 							var
-								x = glyphVertices [v] .x * size + minorAlignment .x + translations [t] .x,
-								y = glyphVertices [v] .y * size + minorAlignment .y + translations [t] .y;
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
 			
 							normals   .push (0, 0, 1);
 							vertices  .push (x, y, 0, 1);
@@ -100,46 +137,6 @@ function ($,
 						}
 					}
 				}
-			}
-		},
-		render: function (glyphs, minorAlignment, size, translation, charSpacing)
-		{
-			var
-				text             = this .getText (),
-				fontStyle        = this .getFontStyle (),
-				font             = fontStyle .getFont (),
-				offset           = 0,
-				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-				sizeUnitsPerEm   = size / font .unitsPerEm,
-				texCoords        = this .texCoords,
-				normals          = text .getNormals (),
-				vertices         = text .getVertices ();
-
-			for (var g = 0, gl = glyphs .length; g < gl; ++ g)
-			{
-				var
-					glyph         = glyphs [g],
-					glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
-				
-				for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
-				{
-					var
-						x = glyphVertices [v] .x * size + minorAlignment .x + g * charSpacing + translation .x + offset,
-						y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
-
-					normals   .push (0, 0, 1);
-					vertices  .push (x, y, 0, 1);
-					texCoords .push (x / size, y / size, 0, 1);
-				}
-
-				// Calculate offset.
-
-				var kerning = 0;
-
-				if (g + 1 < glyphs .length)
-					kerning = font .getKerningValue (glyph, glyphs [g + 1]);
-
-				offset += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
 			}
 		},
 		getGlyphExtents: function (glyph, primitiveQuality, min, max)

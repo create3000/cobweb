@@ -26,6 +26,7 @@ function (TextAlignment,
 		max3        = new Vector3 (0, 0, 0),
 		size        = new Vector2 (0, 0),
 		center      = new Vector2 (0, 0),
+		size1_2     = new Vector2 (0, 0),
 		translation = new Vector2 (0, 0),
 		lineBound   = new Vector2 (0, 0),
 		origin      = new Vector3 (0, 0, 0),
@@ -139,11 +140,13 @@ function (TextAlignment,
 		horizontal: function (text, fontStyle)
 		{
 			var
+				font        = fontStyle .getFont (),
 				string      = text .string_ .getValue (),
 				numLines    = string .length,
+				maxExtent   = text .maxExtent_ .getValue (),
 				topToBottom = fontStyle .topToBottom_ .getValue (),
 				scale       = fontStyle .getScale (),
-				lineHeight  = fontStyle .spacing_ .getValue ();
+				spacing     = fontStyle .spacing_ .getValue ();
 			
 			bbox .set ();
 
@@ -172,15 +175,15 @@ function (TextAlignment,
 					charSpacing = 0,
 					length      = text .getLength (l);
 	
-				lineBound .set (size .x, lineNumber == 0 ? size .y : lineHeight) .multiply (scale);
+				lineBound .set (size .x, lineNumber == 0 ? max .y - font .descender / font .unitsPerEm : spacing) .multiply (scale);
 
-				if (text .maxExtent_ .getValue ())
+				if (maxExtent)
 				{
 					if (length)
-						length = Math .min (text .maxExtent_ .getValue (), length);
+						length = Math .min (maxExtent, length);
 
 					else
-						length = Math .min (text .maxExtent_ .getValue (), size .x * scale);
+						length = Math .min (maxExtent, size .x * scale);
 				}
 
 				if (length)
@@ -199,25 +202,25 @@ function (TextAlignment,
 				{
 					case TextAlignment .BEGIN:
 					case TextAlignment .FIRST:
-						this .translations [l] .set (0, -(l * lineHeight));
+						this .translations [l] .set (0, -l * spacing);
 						break;
 					case TextAlignment .MIDDLE:
-						this .translations [l] .set (-min .x - size .x / 2, -(l * lineHeight));
+						this .translations [l] .set (-min .x - size .x / 2, -l * spacing);
 						break;
 					case TextAlignment .END:
-						this .translations [l] .set (-min .x - size .x, -(l * lineHeight));
+						this .translations [l] .set (-min .x - size .x, -l * spacing);
 						break;
 				}
 
+				this .translations [l] .multiply (scale);
+
 				// Calculate center.
 
-				center .assign (min) .add (max) .divide (2);
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
 
 				// Add bbox.
 
-				bbox .add (box2 .set (size .multiply (scale), center .add (this .translations [l]) .multiply (scale)));
-
-				this .translations [l] .multiply (scale);
+				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [l])));
 			}
 
 			//console .log ("size", bbox .size, "center", bbox .center);
@@ -245,7 +248,7 @@ function (TextAlignment,
 					this .minorAlignment .set (0, size .y / 2 - max .y);
 					break;
 				case TextAlignment .END:
-					this .minorAlignment .set (0, (numLines - 1) * lineHeight * scale);
+					this .minorAlignment .set (0, (numLines - 1) * spacing * scale);
 					break;
 			}
 
@@ -321,7 +324,7 @@ function (TextAlignment,
 
 					// Calculate center.
 
-					center .assign (min) .add (max) .divide (2) .add (this .translations [t]);
+					center .assign (min) .add (size1_2 .assign (size) .divide (2)) .add (this .translations [t]);
 		
 					// Add bbox.
 		
@@ -332,8 +335,7 @@ function (TextAlignment,
 		
 				lineBBox .getExtents (min, max);
 		
-				size   .assign (max) .subtract (min);
-				center .assign (min) .add (max) .divide (2);
+				size .assign (max) .subtract (min);
 	
 				// Calculate charSpacing and lineBounds.
 
@@ -400,8 +402,8 @@ function (TextAlignment,
 					space += charSpacing;
 				}
 		
-				// Add bbox.
-					
+				// Calculate ypad to extend line bounds.
+
 				switch (fontStyle .getMajorAlignment ())
 				{
 					case TextAlignment .BEGIN:
@@ -415,7 +417,13 @@ function (TextAlignment,
 						yPad [l] = min .y + translation .y;
 						break;
 				}
+
+				// Calculate center.
+
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
 		
+				// Add bbox.
+					
 				bbox .add (box2 .set (size .multiply (scale), center .add (translation) .multiply (scale)));
 			}
 
@@ -543,7 +551,7 @@ function (TextAlignment,
 		getHorizontalLineExtents: function (fontStyle, line, min, max, lineNumber)
 		{
 			var
-			   font             = fontStyle .getFont (),
+				font             = fontStyle .getFont (),
 				normal           = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
 				glyphs           = this .stringToGlyphs (font, line, normal, lineNumber),
 				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
@@ -560,7 +568,9 @@ function (TextAlignment,
 
 				this .getGlyphExtents (glyph, primitiveQuality, glyphMin, glyphMax);
 
-				xMax += glyph .advanceWidth + kerning;
+				var advanceWidth = g + 1 < length ? glyph .advanceWidth : glyphMax .x * font .unitsPerEm;
+
+				xMax += advanceWidth + kerning;
 				yMin  = Math .min (yMin, glyphMin .y);
 				yMax  = Math .max (yMax, glyphMax .y);
 			}
@@ -585,9 +595,6 @@ function (TextAlignment,
 				case TextAlignment .BEGIN:
 				case TextAlignment .FIRST:
 					min .x = 0;
-					break;
-				case TextAlignment .MIDDLE:
-				case TextAlignment .END:
 					break;
 			}
 

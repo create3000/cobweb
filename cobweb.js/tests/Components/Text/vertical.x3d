@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 06 Jan 2016 21:51:21 GMT'/>
+    <meta name='modified' content='Wed, 06 Jan 2016 23:48:58 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -48,7 +48,7 @@
       </ProtoBody>
     </ProtoDeclare>
     <WorldInfo
-        title='Text'>
+        title='Vertical Text'>
       <MetadataSet DEF='Titania'
           name='Titania'
           reference='http://titania.create3000.de'>
@@ -134,30 +134,30 @@
       </Shape>
     </Transform>
     <Transform DEF='LineBounds'
-        translation='0 40.9128 0'>
+        translation='0 16.5214 0'>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='scale' value='0.862813 40.9473 1'/>
+        <fieldValue name='scale' value='0.862813 16.5559 1'/>
         <fieldValue name='color' value='1 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0.862813 -3.19086 0'/>
-        <fieldValue name='scale' value='1.25 37.7564 1'/>
+        <fieldValue name='translation' value='0.862813 -0.799453 0'/>
+        <fieldValue name='scale' value='1.25 15.7564 1'/>
         <fieldValue name='color' value='0 1 0'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='2.11281 -1.49484 0'/>
-        <fieldValue name='scale' value='1.25 39.4524 1'/>
+        <fieldValue name='translation' value='2.11281 -0.00585938 0'/>
+        <fieldValue name='scale' value='1.25 16.55 1'/>
         <fieldValue name='color' value='0 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='3.36281 -26.9977 0'/>
-        <fieldValue name='scale' value='1.25 13.9495 1'/>
+        <fieldValue name='translation' value='3.36281 -10.5263 0'/>
+        <fieldValue name='scale' value='1.25 6.02953 1'/>
         <fieldValue name='color' value='1 1 0'/>
       </ProtoInstance>
     </Transform>
     <Transform DEF='TextBounds'
-        translation='0 40.9128 0'
-        scale='4.21559 40.9473 1'>
+        translation='0 16.5214 0'
+        scale='4.21559 16.5559 1'>
       <ProtoInstance name='BBox2'/>
     </Transform>
     <Script DEF='Bounds'>
@@ -172,7 +172,8 @@
       <field accessType='initializeOnly' type='SFNode' name='text'>
         <Text DEF='Geo'
             string='"上海市第二中级人民法院2月18日对“复旦投毒案”依法公开", "一审宣判，被告人林森浩犯故意杀人罪被判死刑，剥夺政治", "权利终身。2013年4月，复旦大学研究生黄洋因舍友投毒", "死亡，年仅28岁。!"'
-            length='40.9414, 37.7539, 39.4524, 13.9151'>
+            length='17.1814, 15.7539, 16.5724, 5.99508'
+            maxExtent='16.55'>
           <FontStyle DEF='_1'
               family='"Arial Unicode MS", "ARIALUNI.TTF"'
               size='0.5'
