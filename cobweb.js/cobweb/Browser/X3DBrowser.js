@@ -60,14 +60,15 @@ function ($,
 			                "                Name: " + this .getVendor () + " " + this .getWebGLVersion () + "\n" +
 			                "                Shading language: " + this .getShadingLanguageVersion () + "\n" +
 			                "        Rendering Properties\n" +
+			                "                Antialiased: " + this .getAntialiased () + "\n" +
+			                "                Color depth: " + this .getColorDepth () + " bits\n" +
+			                "                Max clip planes: 6\n" +
+			                "                Max lights: 8\n" +
 			                "                Texture units: " + this .getMaxTextureUnits () + " / " + this .getMaxCombinedTextureUnits () + "\n" +
 			                "                Max texture size: " + this .getMaxTextureSize () + " × " + this .getMaxTextureSize () + " pixel\n" +
-			                "                Max lights: 0\n" +
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
-			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n" +
-			                "                Antialiased: " + this .getAntialiased () + "\n" +
-			                "                Color depth: " + this .getColorDepth () + " bits\n");
+			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");
 		},
 		realize: function ()
 		{
