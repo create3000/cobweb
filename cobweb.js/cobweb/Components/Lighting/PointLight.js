@@ -64,7 +64,7 @@ function ($,
 
 	function PointLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointLight);
 	}

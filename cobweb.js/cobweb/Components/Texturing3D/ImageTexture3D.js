@@ -20,8 +20,8 @@ function ($,
 
 	function ImageTexture3D (executionContext)
 	{
-		X3DTexture3DNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture3DNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .addType (X3DConstants .ImageTexture3D);
 	}

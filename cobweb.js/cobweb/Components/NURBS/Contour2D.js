@@ -18,7 +18,7 @@ function ($,
 
 	function Contour2D (executionContext)
 	{
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Contour2D);
 	}

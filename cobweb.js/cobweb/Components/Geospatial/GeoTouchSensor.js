@@ -20,8 +20,8 @@ function ($,
 
 	function GeoTouchSensor (executionContext)
 	{
-		X3DTouchSensorNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DTouchSensorNode .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoTouchSensor);
 	}

@@ -20,7 +20,7 @@ function ($,
 
 	function ScalarChaser (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScalarChaser);
 	}

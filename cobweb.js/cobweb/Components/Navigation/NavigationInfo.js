@@ -27,7 +27,7 @@ function ($,
 
 	function NavigationInfo (executionContext)
 	{
-		X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .NavigationInfo);
 				

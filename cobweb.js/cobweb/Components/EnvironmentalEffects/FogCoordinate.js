@@ -18,7 +18,7 @@ function ($,
 
 	function FogCoordinate (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .FogCoordinate);
 	}

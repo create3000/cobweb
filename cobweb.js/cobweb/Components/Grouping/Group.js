@@ -18,7 +18,7 @@ function ($,
 
 	function Group (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Group);
 	}

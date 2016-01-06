@@ -12,9 +12,9 @@ function ($,
 {
 "use strict";
 
-	function X3DNode (browser, executionContext)
+	function X3DNode (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .X3DNode);
 	}

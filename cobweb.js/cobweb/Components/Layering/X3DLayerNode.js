@@ -34,10 +34,10 @@ function ($,
 
 	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
-	function X3DLayerNode (browser, executionContext, defaultViewpoint, groupNode)
+	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
-		X3DNode     .call (this, browser, executionContext);
-		X3DRenderer .call (this, browser, executionContext);
+		X3DNode     .call (this, executionContext);
+		X3DRenderer .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
@@ -49,15 +49,15 @@ function ($,
 		this .defaultNavigationInfo = new NavigationInfo (executionContext);
 		this .defaultViewpoint      = defaultViewpoint;
 
-		this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
-		this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
-		this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
-		this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
+		this .backgroundStack     = new BindableStack (executionContext, this, this .defaultBackground);
+		this .fogStack            = new BindableStack (executionContext, this, this .defaultFog);
+		this .navigationInfoStack = new BindableStack (executionContext, this, this .defaultNavigationInfo);
+		this .viewpointStack      = new BindableStack (executionContext, this, this .defaultViewpoint);
 
-		this .backgrounds     = new BindableList (this .getExecutionContext (), this, this .defaultBackground)
-		this .fogs            = new BindableList (this .getExecutionContext (), this, this .defaultFog);
-		this .navigationInfos = new BindableList (this .getExecutionContext (), this, this .defaultNavigationInfo);
-		this .viewpoints      = new BindableList (this .getExecutionContext (), this, this .defaultViewpoint);
+		this .backgrounds     = new BindableList (executionContext, this, this .defaultBackground)
+		this .fogs            = new BindableList (executionContext, this, this .defaultFog);
+		this .navigationInfos = new BindableList (executionContext, this, this .defaultNavigationInfo);
+		this .viewpoints      = new BindableList (executionContext, this, this .defaultViewpoint);
 
 		this .defaultBackground .setHidden (true);
 		this .defaultFog        .setHidden (true);

@@ -18,7 +18,7 @@ function ($,
 
 	function BooleanSequencer (executionContext)
 	{
-		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSequencerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .BooleanSequencer);
 	}

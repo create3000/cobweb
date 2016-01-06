@@ -69,7 +69,7 @@ function ($,
 
 	function SpotLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SpotLight);
 	}

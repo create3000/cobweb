@@ -18,7 +18,7 @@ function ($,
 
 	function ComposedTexture3D (executionContext)
 	{
-		X3DTexture3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ComposedTexture3D);
 	}

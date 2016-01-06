@@ -10,9 +10,9 @@ function ($,
 {
 "use strict";
 
-	function X3DFollowerNode (browser, executionContext)
+	function X3DFollowerNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DFollowerNode);
 

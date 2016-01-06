@@ -28,9 +28,9 @@ function ($,
 		modelViewMatrix .pop ();
 	}
 
-	function X3DTransformMatrix4DNode (browser, executionContext)
+	function X3DTransformMatrix4DNode (executionContext)
 	{
-		X3DGroupingNode .call (this, browser, executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformMatrix4DNode);
 

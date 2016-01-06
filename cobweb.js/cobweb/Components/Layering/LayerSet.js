@@ -24,7 +24,7 @@ function ($,
 
 	function LayerSet (executionContext)
 	{
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LayerSet);
 

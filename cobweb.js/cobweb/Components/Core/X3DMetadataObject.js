@@ -8,7 +8,7 @@ function ($,
 {
 "use strict";
 
-	function X3DMetadataObject (browser, executionContext)
+	function X3DMetadataObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DMetadataObject);
 	}

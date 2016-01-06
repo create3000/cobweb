@@ -24,7 +24,7 @@ function ($,
 
 	function ViewpointGroup (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ViewpointGroup);
 	   

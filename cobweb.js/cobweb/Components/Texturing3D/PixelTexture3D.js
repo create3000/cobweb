@@ -18,7 +18,7 @@ function ($,
 
 	function PixelTexture3D (executionContext)
 	{
-		X3DTexture3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PixelTexture3D);
 	}

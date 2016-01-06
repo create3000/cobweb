@@ -20,8 +20,8 @@ function ($,
 
 	function GeoCoordinate (executionContext)
 	{
-		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DCoordinateNode .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoCoordinate);
 	}

@@ -10,7 +10,7 @@ function ($, X3DViewer, _)
 	
 	function NoneViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 	}
 
 	NoneViewer .prototype = $.extend (Object .create (X3DViewer .prototype),

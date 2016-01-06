@@ -18,7 +18,7 @@ function ($,
 
 	function SurfaceEmitter (executionContext)
 	{
-		X3DParticleEmitterNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DParticleEmitterNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SurfaceEmitter);
 	}

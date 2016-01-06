@@ -30,7 +30,7 @@ function ($,
 
 	function ColorChaser (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorChaser);
 	}

@@ -20,8 +20,8 @@ function ($,
 
 	function PickableGroup (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DPickableObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
+		X3DPickableObject .call (this, executionContext);
 
 		this .addType (X3DConstants .PickableGroup);
 	}

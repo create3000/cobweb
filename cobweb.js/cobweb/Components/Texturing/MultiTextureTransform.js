@@ -18,7 +18,7 @@ function ($,
 
 	function MultiTextureTransform (executionContext)
 	{
-		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .MultiTextureTransform);
 	}

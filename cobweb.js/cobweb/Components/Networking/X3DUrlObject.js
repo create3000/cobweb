@@ -10,7 +10,7 @@ function ($,
 {
 "use strict";
 
-	function X3DUrlObject (browser, executionContext)
+	function X3DUrlObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DUrlObject);
 		

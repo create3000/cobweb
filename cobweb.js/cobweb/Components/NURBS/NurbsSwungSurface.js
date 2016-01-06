@@ -18,7 +18,7 @@ function ($,
 
 	function NurbsSwungSurface (executionContext)
 	{
-		X3DParametricGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DParametricGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .NurbsSwungSurface);
 	}

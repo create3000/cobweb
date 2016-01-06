@@ -22,7 +22,7 @@ function ($,
 
 	function TouchSensor (executionContext)
 	{
-		X3DTouchSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTouchSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TouchSensor);
 	}

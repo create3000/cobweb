@@ -18,7 +18,7 @@ function ($,
 
 	function PolylineEmitter (executionContext)
 	{
-		X3DParticleEmitterNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DParticleEmitterNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PolylineEmitter);
 	}

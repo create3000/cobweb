@@ -10,9 +10,9 @@ function ($,
 {
 "use strict";
 
-	function X3DTransformNode (browser, executionContext)
+	function X3DTransformNode (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, browser, executionContext);
+		X3DTransformMatrix4DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformNode);
 	}

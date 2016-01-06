@@ -83,10 +83,10 @@ function ($,
 
 	var visible = new Fields .MFBool ();
 
-	function X3DGroupingNode (browser, executionContext)
+	function X3DGroupingNode (executionContext)
 	{
-		X3DChildNode     .call (this, browser, executionContext);
-		X3DBoundedObject .call (this, browser, executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGroupingNode);
 	               

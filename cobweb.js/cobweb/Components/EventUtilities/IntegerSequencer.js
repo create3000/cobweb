@@ -18,7 +18,7 @@ function ($,
 
 	function IntegerSequencer (executionContext)
 	{
-		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSequencerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IntegerSequencer);
 	}

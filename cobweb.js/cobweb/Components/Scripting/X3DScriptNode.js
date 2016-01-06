@@ -12,10 +12,10 @@ function ($,
 {
 "use strict";
 
-	function X3DScriptNode (browser, executionContext)
+	function X3DScriptNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
-		X3DUrlObject .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DScriptNode);
 	}

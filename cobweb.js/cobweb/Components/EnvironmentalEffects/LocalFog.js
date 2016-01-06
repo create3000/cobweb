@@ -20,8 +20,8 @@ function ($,
 
 	function LocalFog (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DFogObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
+		X3DFogObject .call (this, executionContext);
 
 		this .addType (X3DConstants .LocalFog);
 	}

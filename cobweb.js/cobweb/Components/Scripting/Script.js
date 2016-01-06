@@ -63,7 +63,7 @@ function ($,
 	{
 		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		X3DScriptNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DScriptNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Script);
 	}

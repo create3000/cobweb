@@ -30,8 +30,8 @@ function ($,
 
 	function CADFace (executionContext)
 	{
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject             .call (this, executionContext .getBrowser (), executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
+		X3DBoundedObject             .call (this, executionContext);
 
 		this .addType (X3DConstants .CADFace);
 

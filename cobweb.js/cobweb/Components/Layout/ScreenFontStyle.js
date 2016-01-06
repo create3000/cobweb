@@ -18,7 +18,7 @@ function ($,
 
 	function ScreenFontStyle (executionContext)
 	{
-		X3DFontStyleNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DFontStyleNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScreenFontStyle);
 	}

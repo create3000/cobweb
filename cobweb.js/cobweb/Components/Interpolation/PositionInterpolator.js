@@ -20,7 +20,7 @@ function ($,
 
 	function PositionInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionInterpolator);
 	}

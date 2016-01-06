@@ -18,7 +18,7 @@ function ($,
 
 	function PointPickSensor (executionContext)
 	{
-		X3DPickSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DPickSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointPickSensor);
 	}

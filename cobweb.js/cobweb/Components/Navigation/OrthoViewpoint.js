@@ -30,7 +30,7 @@ function ($,
 
 	function OrthoViewpoint (executionContext)
 	{
-		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode .call (this, executionContext);
 
 		this .addType (X3DConstants .OrthoViewpoint);
 

@@ -34,7 +34,7 @@ function ($,
 
 	function PlaneSensor (executionContext)
 	{
-		X3DDragSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDragSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PlaneSensor);
 	}

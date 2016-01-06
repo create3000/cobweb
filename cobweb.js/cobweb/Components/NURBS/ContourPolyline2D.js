@@ -18,7 +18,7 @@ function ($,
 
 	function ContourPolyline2D (executionContext)
 	{
-		X3DNurbsControlCurveNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNurbsControlCurveNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ContourPolyline2D);
 	}

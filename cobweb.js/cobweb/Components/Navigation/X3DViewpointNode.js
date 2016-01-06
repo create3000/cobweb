@@ -47,9 +47,9 @@ function ($,
 		vector     = new Vector3 (0, 0, 0),
 		rotation   = new Rotation4 (0, 0, 1, 0);
 
-	function X3DViewpointNode (browser, executionContext)
+	function X3DViewpointNode (executionContext)
 	{
-		X3DBindableNode .call (this, browser, executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DViewpointNode);
 
@@ -59,6 +59,8 @@ function ($,
 		this .transformationMatrix     = new Matrix4 ();
 		this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,  10, 1);
 		this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
+
+		var browser = this .getBrowser ();
 
 		this .timeSensor                   = new TimeSensor              (browser .getPrivateScene ());
 		this .easeInEaseOut                = new EaseInEaseOut           (browser .getPrivateScene ());

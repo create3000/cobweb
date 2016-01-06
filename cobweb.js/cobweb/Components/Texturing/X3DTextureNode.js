@@ -20,9 +20,9 @@ function ($,
 		"WEBKIT_EXT_texture_filter_anisotropic",
 	];
 	
-	function X3DTextureNode (browser, executionContext)
+	function X3DTextureNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTextureNode);
 

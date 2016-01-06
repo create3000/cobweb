@@ -38,9 +38,9 @@ function ($,
 		// left: We do not have to test for left.
 	];
 
-	function X3DGeometryNode (browser, executionContext)
+	function X3DGeometryNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			

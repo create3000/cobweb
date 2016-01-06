@@ -22,9 +22,9 @@ function ($,
 
 	function GeoLOD (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoLOD);
 	}

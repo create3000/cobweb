@@ -41,7 +41,7 @@ function ($,
 
 	function Layout (executionContext)
 	{
-		X3DLayoutNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLayoutNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Layout);
 

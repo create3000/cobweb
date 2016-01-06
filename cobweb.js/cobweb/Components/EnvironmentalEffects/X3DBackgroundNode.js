@@ -102,9 +102,9 @@ function ($,
 		y3 = new Complex (0, 0),
 		y4 = new Complex (0, 0);
 
-	function X3DBackgroundNode (browser, executionContext)
+	function X3DBackgroundNode (executionContext)
 	{
-		X3DBindableNode .call (this, browser, executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DBackgroundNode);
 

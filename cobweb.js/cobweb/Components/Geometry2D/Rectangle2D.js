@@ -20,11 +20,11 @@ function ($,
 {
 "use strict";
 
-      var defaultSize = new Vector2 (2, 2);
+	var defaultSize = new Vector2 (2, 2);
 
 	function Rectangle2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Rectangle2D);
 	}

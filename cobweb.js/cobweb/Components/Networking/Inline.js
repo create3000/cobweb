@@ -26,9 +26,9 @@ function ($,
 
 	function Inline (executionContext)
 	{
-		X3DChildNode     .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject     .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DUrlObject     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .Inline);
 		

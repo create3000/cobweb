@@ -203,7 +203,7 @@ function ($,
 		},
 		addChildren: function (name, field)
 		{
-			for (var i = 0; i < arguments .length; i += 2)
+			for (var i = 0, length = arguments .length; i < length; i += 2)
 				this .addChild (arguments [i + 0], arguments [i + 1]);
 		},
 		addChild: function (name, field)
@@ -270,7 +270,7 @@ function ($,
 
 			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
-			for (var i = 0; i < fieldDefinitions .length; ++ i)
+			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
 				if (fieldDefinitions [i] .name === name)
 				{

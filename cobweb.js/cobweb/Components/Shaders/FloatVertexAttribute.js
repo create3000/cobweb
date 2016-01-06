@@ -18,7 +18,7 @@ function ($,
 
 	function FloatVertexAttribute (executionContext)
 	{
-		X3DVertexAttributeNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DVertexAttributeNode .call (this, executionContext);
 
 		this .addType (X3DConstants .FloatVertexAttribute);
 	}

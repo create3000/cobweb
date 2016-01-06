@@ -18,7 +18,7 @@ function ($,
 
 	function TimeTrigger (executionContext)
 	{
-		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTriggerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TimeTrigger);
 	}

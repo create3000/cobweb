@@ -18,7 +18,7 @@ function ($,
 
 	function Transform (executionContext)
 	{
-		X3DTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Transform);
 	}

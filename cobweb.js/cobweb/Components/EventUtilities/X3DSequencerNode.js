@@ -12,9 +12,9 @@ function ($,
 {
 "use strict";
 
-	function X3DSequencerNode (browser, executionContext)
+	function X3DSequencerNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSequencerNode);
 

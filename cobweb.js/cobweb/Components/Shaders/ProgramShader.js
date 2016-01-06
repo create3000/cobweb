@@ -18,7 +18,7 @@ function ($,
 
 	function ProgramShader (executionContext)
 	{
-		X3DShaderNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DShaderNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ProgramShader);
 	}

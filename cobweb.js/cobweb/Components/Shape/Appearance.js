@@ -20,7 +20,7 @@ function ($,
 
 	function Appearance (executionContext)
 	{
-		X3DAppearanceNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DAppearanceNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Appearance);
 

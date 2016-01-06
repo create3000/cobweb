@@ -19,9 +19,10 @@ function ($,
 "use strict";
 
    var defaultSize = new Vector3 (2, 2, 2);
+
 	function Box (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Box);
 	}

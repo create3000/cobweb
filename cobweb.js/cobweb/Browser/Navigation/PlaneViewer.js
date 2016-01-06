@@ -17,7 +17,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 
 	function PlaneViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button = -1;
 		this .fromPoint = new Vector3 (0, 0, 0);

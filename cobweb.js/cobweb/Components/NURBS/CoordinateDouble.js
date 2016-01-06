@@ -18,7 +18,7 @@ function ($,
 
 	function CoordinateDouble (executionContext)
 	{
-		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateDouble);
 	}

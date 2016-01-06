@@ -23,7 +23,6 @@ function ($,
 	function LayoutLayer (executionContext)
 	{
 		X3DLayerNode .call (this,
-		                    executionContext .getBrowser (),
 		                    executionContext,
 		                    new OrthoViewpoint (executionContext),
 		                    new LayoutGroup (executionContext));

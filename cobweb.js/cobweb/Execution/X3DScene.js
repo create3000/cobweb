@@ -16,9 +16,9 @@ function ($,
 {
 "use strict";
 
-	function X3DScene (browser, executionContext)
+	function X3DScene (executionContext)
 	{
-		X3DExecutionContext .call (this, browser, executionContext);
+		X3DExecutionContext .call (this, executionContext);
 
 		this .getRootNodes () .setAccessType (X3DConstants .inputOutput);
 

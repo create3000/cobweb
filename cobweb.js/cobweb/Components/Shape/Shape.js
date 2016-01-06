@@ -34,7 +34,7 @@ function ($,
 
 	function Shape (executionContext)
 	{
-		X3DShapeNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DShapeNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Shape);
 	}

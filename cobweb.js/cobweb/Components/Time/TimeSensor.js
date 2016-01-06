@@ -20,8 +20,8 @@ function ($,
 
 	function TimeSensor (executionContext)
 	{
-		X3DSensorNode        .call (this, executionContext .getBrowser (), executionContext);
-		X3DTimeDependentNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSensorNode        .call (this, executionContext);
+		X3DTimeDependentNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TimeSensor);
 

@@ -10,9 +10,9 @@ function ($,
 {
 "use strict";
 
-	function X3DViewportNode (browser, executionContext)
+	function X3DViewportNode (executionContext)
 	{
-		X3DGroupingNode .call (this, browser, executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DViewportNode);
 	}

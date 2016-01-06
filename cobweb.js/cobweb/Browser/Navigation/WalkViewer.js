@@ -13,7 +13,7 @@ function (X3DFlyViewer, Vector3, Rotation4, _)
 	
 	function WalkViewer (executionContext)
 	{
-		X3DFlyViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DFlyViewer .call (this, executionContext);
 	}
 
 	WalkViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),

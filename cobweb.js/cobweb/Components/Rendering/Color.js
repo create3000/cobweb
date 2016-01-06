@@ -20,7 +20,7 @@ function ($,
 
 	function Color (executionContext)
 	{
-		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Color);
 

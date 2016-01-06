@@ -18,7 +18,7 @@ function ($,
 
 	function BallJoint (executionContext)
 	{
-		X3DRigidJointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DRigidJointNode .call (this, executionContext);
 
 		this .addType (X3DConstants .BallJoint);
 	}

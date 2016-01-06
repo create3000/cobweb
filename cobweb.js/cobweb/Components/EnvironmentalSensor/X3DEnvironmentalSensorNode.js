@@ -14,9 +14,9 @@ function ($,
 {
 "use strict";
 
-	function X3DEnvironmentalSensorNode (browser, executionContext)
+	function X3DEnvironmentalSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 

@@ -22,9 +22,9 @@ function ($,
 
 	function PackagedShader (executionContext)
 	{
-		X3DShaderNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
-		X3DProgrammableShaderObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DShaderNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
+		X3DProgrammableShaderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .PackagedShader);
 	}

@@ -28,7 +28,7 @@ function ($,
 
 	function Viewport (executionContext)
 	{
-		X3DViewportNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewportNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Viewport);
 

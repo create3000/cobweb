@@ -14,7 +14,7 @@ function ($,
 
 	var NULL = Fields .SFNode ();
 
-	function X3DProgrammableShaderObject (browser, executionContext)
+	function X3DProgrammableShaderObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DProgrammableShaderObject);
 	}

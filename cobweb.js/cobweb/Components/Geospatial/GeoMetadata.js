@@ -18,7 +18,7 @@ function ($,
 
 	function GeoMetadata (executionContext)
 	{
-		X3DInfoNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInfoNode .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoMetadata);
 	}

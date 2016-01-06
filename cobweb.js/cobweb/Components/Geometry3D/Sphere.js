@@ -20,7 +20,7 @@ function ($,
 
 	function Sphere (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Sphere);
 	}

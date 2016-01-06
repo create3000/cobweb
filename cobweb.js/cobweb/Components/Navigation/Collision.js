@@ -24,8 +24,8 @@ function ($,
 
 	function Collision (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DSensorNode   .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
+		X3DSensorNode   .call (this, executionContext);
 
 		this .addType (X3DConstants .Collision);
 

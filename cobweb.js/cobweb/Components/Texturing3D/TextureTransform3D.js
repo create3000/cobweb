@@ -26,7 +26,7 @@ function ($,
 
 	function TextureTransform3D (executionContext)
 	{
-		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureTransform3D);
 	}

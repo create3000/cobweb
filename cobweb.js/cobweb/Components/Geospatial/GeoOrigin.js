@@ -18,7 +18,7 @@ function ($,
 
 	function GeoOrigin (executionContext)
 	{
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoOrigin);
 	}

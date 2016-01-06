@@ -18,7 +18,7 @@ function ($,
 
 	function ParticleSystem (executionContext)
 	{
-		X3DShapeNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DShapeNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ParticleSystem);
 	}

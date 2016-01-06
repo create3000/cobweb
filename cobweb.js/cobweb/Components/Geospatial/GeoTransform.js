@@ -20,8 +20,8 @@ function ($,
 
 	function GeoTransform (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoTransform);
 	}

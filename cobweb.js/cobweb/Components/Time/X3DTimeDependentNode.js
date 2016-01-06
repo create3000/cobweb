@@ -12,7 +12,7 @@ function ($,
 {
 "use strict";
 
-	function X3DTimeDependentNode (browser, executionContext)
+	function X3DTimeDependentNode (executionContext)
 	{
 		this .addType (X3DConstants .X3DTimeDependentNode);
 

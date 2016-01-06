@@ -24,8 +24,8 @@ function ($,
 
 	function AudioClip (executionContext)
 	{
-		X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
+		X3DSoundSourceNode .call (this, executionContext);
+		X3DUrlObject       .call (this, executionContext);
 
 		this .addType (X3DConstants .AudioClip);
 

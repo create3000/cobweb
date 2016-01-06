@@ -30,9 +30,9 @@ function ($,
 {
 "use strict";
 
-	function X3DExecutionContext (browser, executionContext)
+	function X3DExecutionContext (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addChildren ("rootNodes", new Fields .MFNode (),
                          "loadCount", new Fields .SFInt32 ());

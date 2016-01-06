@@ -14,7 +14,7 @@ function ($,
 {
 "use strict";
 
-	function X3DBoundedObject (browser, executionContext)
+	function X3DBoundedObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DBoundedObject);
 	}

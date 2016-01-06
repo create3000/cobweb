@@ -16902,7 +16902,7 @@ function ($,
 		},
 		addChildren: function (name, field)
 		{
-			for (var i = 0; i < arguments .length; i += 2)
+			for (var i = 0, length = arguments .length; i < length; i += 2)
 				this .addChild (arguments [i + 0], arguments [i + 1]);
 		},
 		addChild: function (name, field)
@@ -16969,7 +16969,7 @@ function ($,
 
 			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
-			for (var i = 0; i < fieldDefinitions .length; ++ i)
+			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
 				if (fieldDefinitions [i] .name === name)
 				{
@@ -20477,9 +20477,9 @@ function ($,
 {
 
 
-	function X3DNode (browser, executionContext)
+	function X3DNode (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addType (X3DConstants .X3DNode);
 	}
@@ -20532,12 +20532,12 @@ function ($,
 {
 
 
-	function X3DChildNode (browser, executionContext)
+	function X3DChildNode (executionContext)
 	{
 		if (this .getExecutionContext ())
 			return;
 
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DChildNode);
 
@@ -20575,9 +20575,9 @@ function ($,
 {
 
 
-	function X3DSensorNode (browser, executionContext)
+	function X3DSensorNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSensorNode);
 	}
@@ -20604,9 +20604,9 @@ function ($,
 {
 
 
-	function X3DNetworkSensorNode (browser, executionContext)
+	function X3DNetworkSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNetworkSensorNode);
 	}
@@ -20673,7 +20673,7 @@ function ($,
 
 	function LoadSensor (executionContext)
 	{
-		X3DNetworkSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNetworkSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LoadSensor);
 
@@ -21911,9 +21911,9 @@ function ($,
 {
 
 
-	function X3DAppearanceNode (browser, executionContext)
+	function X3DAppearanceNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DAppearanceNode);
 	}
@@ -21956,7 +21956,7 @@ function ($,
 
 	function Appearance (executionContext)
 	{
-		X3DAppearanceNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DAppearanceNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Appearance);
 
@@ -22204,9 +22204,9 @@ function ($,
 {
 
 
-	function X3DAppearanceChildNode (browser, executionContext)
+	function X3DAppearanceChildNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DAppearanceChildNode);
 	}
@@ -22233,9 +22233,9 @@ function ($,
 {
 
 
-	function X3DShaderNode (browser, executionContext)
+	function X3DShaderNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DShaderNode);
 	}
@@ -22327,7 +22327,7 @@ function ($,
 
 	var NULL = Fields .SFNode ();
 
-	function X3DProgrammableShaderObject (browser, executionContext)
+	function X3DProgrammableShaderObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DProgrammableShaderObject);
 	}
@@ -23013,8 +23013,8 @@ function ($,
 	{
 		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		X3DShaderNode               .call (this, executionContext .getBrowser (), executionContext);
-		X3DProgrammableShaderObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DShaderNode               .call (this, executionContext);
+		X3DProgrammableShaderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .ComposedShader);
 
@@ -23406,7 +23406,7 @@ function ($,
 {
 
 
-	function X3DUrlObject (browser, executionContext)
+	function X3DUrlObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DUrlObject);
 		
@@ -23727,9 +23727,9 @@ function ($,
 {
 
 
-	function X3DExecutionContext (browser, executionContext)
+	function X3DExecutionContext (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 
 		this .addChildren ("rootNodes", new Fields .MFNode (),
                          "loadCount", new Fields .SFInt32 ());
@@ -24078,8 +24078,8 @@ function ($,
 
 		this .addChildren ("isLiveX3DPrototypeInstance", new Fields .SFBool (true));
 
-		X3DNode             .call (this, executionContext .getBrowser (), executionContext);
-		X3DExecutionContext .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode             .call (this, executionContext);
+		X3DExecutionContext .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);
@@ -24321,9 +24321,9 @@ function ($,
 {
 
 
-	function X3DProtoDeclarationNode (browser, executionContext)
+	function X3DProtoDeclarationNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclarationNode);
 
@@ -24393,8 +24393,8 @@ function ($,
 	{
 		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		X3DProtoDeclarationNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject            .call (this, executionContext .getBrowser (), executionContext);
+		X3DProtoDeclarationNode .call (this, executionContext);
+		X3DUrlObject            .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DExternProtoDeclaration);
 
@@ -24542,8 +24542,8 @@ function ($,
 	{
 		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		X3DProtoDeclarationNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DExecutionContext     .call (this, executionContext .getBrowser (), executionContext);
+		X3DProtoDeclarationNode .call (this, executionContext);
+		X3DExecutionContext     .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclaration);
 
@@ -31695,8 +31695,8 @@ function ($,
 
 	function ShaderPart (executionContext)
 	{
-		X3DNode      .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode      .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .valid = false;
 
@@ -31934,9 +31934,9 @@ function (Fields,
 
 			this .reshape ();
 
-			this .depthShader = this .createShader (this, depthVS, depthFS);
-			this .pointShader = this .createShader (this, wireframeVS, pointSetFS);
-			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
+			this .depthShader = this .createShader (this, "DepthShader",     depthVS,     depthFS);
+			this .pointShader = this .createShader (this, "PointShader",     wireframeVS, pointSetFS);
+			this .lineShader  = this .createShader (this, "WireframeShader", wireframeVS, wireframeFS);
 
 			this .pointShader .setGeometryType (0);
 			this .lineShader  .setGeometryType (1);
@@ -31992,27 +31992,26 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
-		createShader: function (executionContext, vs, fs)
+		createShader: function (executionContext, name, vs, fs)
 		{
 			var vertexShader = new ShaderPart (executionContext);
-			vertexShader .type_ = "VERTEX";
 			vertexShader .url_ .push (vs);
 			vertexShader .setup ();
-	
+
 			var fragmentShader = new ShaderPart (executionContext);
 			fragmentShader .type_ = "FRAGMENT";
 			fragmentShader .url_ .push (fs);
 			fragmentShader .setup ();
 	
 			var shader = new ComposedShader (executionContext);
+			shader .setName (name);
 			shader .language_ = "GLSL";
 			shader .parts_ .push (vertexShader);
 			shader .parts_ .push (fragmentShader);
 			shader .setCustom (false);
 			shader .setup ();
 
-			this .getLoadSensor () .watchList_ .push (vertexShader);
-			this .getLoadSensor () .watchList_ .push (fragmentShader);
+			this .getLoadSensor () .watchList_ = shader .parts_;
 
 			return shader;
 		},
@@ -32025,7 +32024,7 @@ function (Fields,
 				case "POINTSET":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -32041,7 +32040,7 @@ function (Fields,
 				case "WIREFRAME":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -32057,7 +32056,7 @@ function (Fields,
 				case "PHONG":
 				{
 					if (! this .phongShader)
-						this .phongShader = this .createShader (this, phongVS, phongFS);
+						this .phongShader = this .createShader (this, "PhongShader", phongVS, phongFS);
 
 					this .defaultShader = this .phongShader;
 
@@ -32075,7 +32074,7 @@ function (Fields,
 					// case "GOURAUD":
 
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -35997,9 +35996,9 @@ function ($,
 		// left: We do not have to test for left.
 	];
 
-	function X3DGeometryNode (browser, executionContext)
+	function X3DGeometryNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			
@@ -36705,9 +36704,9 @@ function ($,
 {
 
 
-	function X3DComposedGeometryNode (browser, executionContext)
+	function X3DComposedGeometryNode (executionContext)
 	{
-		X3DGeometryNode .call (this, browser, executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DComposedGeometryNode);
 
@@ -37013,7 +37012,7 @@ function ($,
 
 	function IndexedFaceSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedFaceSet);
 	}
@@ -37412,9 +37411,9 @@ function ($,
 {
 
 
-	function X3DGeometricPropertyNode (browser, executionContext)
+	function X3DGeometricPropertyNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGeometricPropertyNode);
 	}
@@ -37445,9 +37444,9 @@ function ($,
 {
 
 
-	function X3DCoordinateNode (browser, executionContext)
+	function X3DCoordinateNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DCoordinateNode);
 
@@ -37534,7 +37533,7 @@ function ($,
 
 	function Coordinate (executionContext)
 	{
-		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Coordinate);
 	}
@@ -37577,9 +37576,9 @@ function ($,
 {
 
 
-	function X3DTextureCoordinateNode (browser, executionContext)
+	function X3DTextureCoordinateNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTextureCoordinateNode);
 	}
@@ -37622,7 +37621,7 @@ function ($,
 
 	function TextureCoordinate (executionContext)
 	{
-		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureCoordinate);
 	}
@@ -39319,9 +39318,9 @@ function ($,
 {
 
 
-	function X3DBindableNode (browser, executionContext)
+	function X3DBindableNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DBindableNode);
 
@@ -39387,7 +39386,7 @@ function ($,
 {
 
 
-	function X3DTimeDependentNode (browser, executionContext)
+	function X3DTimeDependentNode (executionContext)
 	{
 		this .addType (X3DConstants .X3DTimeDependentNode);
 
@@ -39716,8 +39715,8 @@ function ($,
 
 	function TimeSensor (executionContext)
 	{
-		X3DSensorNode        .call (this, executionContext .getBrowser (), executionContext);
-		X3DTimeDependentNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSensorNode        .call (this, executionContext);
+		X3DTimeDependentNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TimeSensor);
 
@@ -39837,9 +39836,9 @@ function ($,
 {
 
 
-	function X3DInterpolatorNode (browser, executionContext)
+	function X3DInterpolatorNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DInterpolatorNode);
 	}
@@ -39934,7 +39933,7 @@ function ($,
 
 	function EaseInEaseOut (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .EaseInEaseOut);
 	}
@@ -40036,7 +40035,7 @@ function ($,
 
 	function PositionInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionInterpolator);
 	}
@@ -40112,7 +40111,7 @@ function ($,
 
 	function OrientationInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .OrientationInterpolator);
 	}
@@ -40220,9 +40219,9 @@ function ($,
 		vector     = new Vector3 (0, 0, 0),
 		rotation   = new Rotation4 (0, 0, 1, 0);
 
-	function X3DViewpointNode (browser, executionContext)
+	function X3DViewpointNode (executionContext)
 	{
-		X3DBindableNode .call (this, browser, executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DViewpointNode);
 
@@ -40232,6 +40231,8 @@ function ($,
 		this .transformationMatrix     = new Matrix4 ();
 		this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,  10, 1);
 		this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
+
+		var browser = this .getBrowser ();
 
 		this .timeSensor                   = new TimeSensor              (browser .getPrivateScene ());
 		this .easeInEaseOut                = new EaseInEaseOut           (browser .getPrivateScene ());
@@ -40707,7 +40708,7 @@ function ($,
 
 	function OrthoViewpoint (executionContext)
 	{
-		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode .call (this, executionContext);
 
 		this .addType (X3DConstants .OrthoViewpoint);
 
@@ -40873,9 +40874,9 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 	
 	var far = new Vector3 (0, 0, 0);
 
-	function X3DViewer (browser, executionContext)
+	function X3DViewer (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 	}
 
 	X3DViewer .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -41073,7 +41074,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 	function ExamineViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button            = -1;
 		this .orientationOffset = new Rotation4 (0, 0, 1, 0);
@@ -41362,7 +41363,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 	
 	function X3DFlyViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		var gl = this .getBrowser () .getContext ();
 
@@ -41820,7 +41821,7 @@ function (X3DFlyViewer, Vector3, Rotation4, _)
 	
 	function WalkViewer (executionContext)
 	{
-		X3DFlyViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DFlyViewer .call (this, executionContext);
 	}
 
 	WalkViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),
@@ -41866,7 +41867,7 @@ function (X3DFlyViewer, _)
 	
 	function FlyViewer (executionContext)
 	{
-		X3DFlyViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DFlyViewer .call (this, executionContext);
 	}
 
 	FlyViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),
@@ -41911,7 +41912,7 @@ function ($,
 
 	function ScalarInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScalarInterpolator);
 	}
@@ -41996,14 +41997,12 @@ function ($,
 
 	function Viewpoint (executionContext)
 	{
-		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Viewpoint);
 
-		this .projectionMatrix = new Matrix4 ();
-
+		this .projectionMatrix        = new Matrix4 ();
 		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
-		this .fieldOfViewInterpolator .setName ("Default");
 	}
 
 	Viewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -42106,7 +42105,7 @@ function ($,
 {
 
 
-	function X3DGeospatialObject (browser, executionContext)
+	function X3DGeospatialObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DGeospatialObject);
 	}
@@ -42144,8 +42143,8 @@ function ($,
 
 	function GeoViewpoint (executionContext)
 	{
-		X3DViewpointNode    .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode    .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoViewpoint);
 	}
@@ -42210,7 +42209,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 
 	function PlaneViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button = -1;
 		this .fromPoint = new Vector3 (0, 0, 0);
@@ -42384,7 +42383,7 @@ function ($, X3DViewer, _)
 	
 	function NoneViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 	}
 
 	NoneViewer .prototype = $.extend (Object .create (X3DViewer .prototype),
@@ -42410,7 +42409,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 	function LookAtViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button = -1;
 	}
@@ -42515,9 +42514,9 @@ function ($,
 {
 
 
-	function X3DLightNode (browser, executionContext)
+	function X3DLightNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLightNode);
 	}
@@ -42656,7 +42655,7 @@ function ($,
 
 	function DirectionalLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .DirectionalLight);
 	}
@@ -42891,7 +42890,7 @@ function ($,
 {
 
 
-	function X3DBoundedObject (browser, executionContext)
+	function X3DBoundedObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DBoundedObject);
 	}
@@ -43010,10 +43009,10 @@ function ($,
 
 	var visible = new Fields .MFBool ();
 
-	function X3DGroupingNode (browser, executionContext)
+	function X3DGroupingNode (executionContext)
 	{
-		X3DChildNode     .call (this, browser, executionContext);
-		X3DBoundedObject .call (this, browser, executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGroupingNode);
 	               
@@ -43364,9 +43363,9 @@ function ($,
 {
 
 
-	function X3DViewportNode (browser, executionContext)
+	function X3DViewportNode (executionContext)
 	{
-		X3DGroupingNode .call (this, browser, executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DViewportNode);
 	}
@@ -43411,7 +43410,7 @@ function ($,
 
 	function Viewport (executionContext)
 	{
-		X3DViewportNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewportNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Viewport);
 
@@ -43658,7 +43657,7 @@ function ($,
 
 	function TextureProperties (executionContext)
 	{
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureProperties);
 	}
@@ -43773,7 +43772,7 @@ function (ComposedShader,
 	{
 		initialize: function ()
 		{
-			this .backgroundSphereShader = this .createShader (this, vertexShaderText, fragmentShaderText);
+			this .backgroundSphereShader = this .createShader (this, "BackgroundSphereShader", vertexShaderText, fragmentShaderText);
 
 			this .backgroundTextureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
 			this .backgroundTextureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";
@@ -48873,9 +48872,9 @@ function ($,
 	   },
 	};
 
-	function X3DFontStyleNode (browser, executionContext)
+	function X3DFontStyleNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DFontStyleNode);
 		
@@ -52383,7 +52382,7 @@ function ($,
 
 	function FontStyle (executionContext)
 	{
-		X3DFontStyleNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DFontStyleNode .call (this, executionContext);
 
 		this .addType (X3DConstants .FontStyle);
 	}
@@ -52517,9 +52516,9 @@ function ($,
 {
 
 
-	function X3DTextureTransformNode (browser, executionContext)
+	function X3DTextureTransformNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTextureTransformNode);
 
@@ -52581,7 +52580,7 @@ function ($,
 
 	function TextureTransform (executionContext)
 	{
-		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureTransform);
 
@@ -53170,7 +53169,7 @@ function ($,
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
-	function X3DRenderer (browser, executionContext)
+	function X3DRenderer (executionContext)
 	{
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
@@ -54025,7 +54024,7 @@ function ($,
 
 	function NavigationInfo (executionContext)
 	{
-		X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .NavigationInfo);
 				
@@ -54298,7 +54297,7 @@ function ($,
 {
 
 
-	function X3DFogObject (browser, executionContext)
+	function X3DFogObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DFogObject);
 
@@ -54389,8 +54388,8 @@ function ($,
 
 	function Fog (executionContext)
 	{
-		X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DFogObject    .call (this, executionContext .getBrowser (), executionContext);
+		X3DBindableNode .call (this, executionContext);
+		X3DFogObject    .call (this, executionContext);
 
 		this .addType (X3DConstants .Fog);
 	}
@@ -54556,9 +54555,9 @@ function ($,
 		y3 = new Complex (0, 0),
 		y4 = new Complex (0, 0);
 
-	function X3DBackgroundNode (browser, executionContext)
+	function X3DBackgroundNode (executionContext)
 	{
-		X3DBindableNode .call (this, browser, executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DBackgroundNode);
 
@@ -55110,9 +55109,9 @@ function ($,
 		"WEBKIT_EXT_texture_filter_anisotropic",
 	];
 	
-	function X3DTextureNode (browser, executionContext)
+	function X3DTextureNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTextureNode);
 
@@ -55207,9 +55206,9 @@ function ($,
 {
 
 
-	function X3DTexture2DNode (browser, executionContext)
+	function X3DTexture2DNode (executionContext)
 	{
-		X3DTextureNode .call (this, browser, executionContext);
+		X3DTextureNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTexture2DNode);
 
@@ -55392,8 +55391,8 @@ function ($,
 
 	function ImageTexture (executionContext)
 	{
-		X3DTexture2DNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject     .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode .call (this, executionContext);
+		X3DUrlObject     .call (this, executionContext);
 
 		this .addType (X3DConstants .ImageTexture);
 
@@ -55583,7 +55582,7 @@ function ($,
 
 	function Background (executionContext)
 	{
-		X3DBackgroundNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBackgroundNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Background);
 	}
@@ -55711,10 +55710,10 @@ function ($,
 
 	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
-	function X3DLayerNode (browser, executionContext, defaultViewpoint, groupNode)
+	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
-		X3DNode     .call (this, browser, executionContext);
-		X3DRenderer .call (this, browser, executionContext);
+		X3DNode     .call (this, executionContext);
+		X3DRenderer .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
@@ -55726,15 +55725,15 @@ function ($,
 		this .defaultNavigationInfo = new NavigationInfo (executionContext);
 		this .defaultViewpoint      = defaultViewpoint;
 
-		this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
-		this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
-		this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
-		this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
+		this .backgroundStack     = new BindableStack (executionContext, this, this .defaultBackground);
+		this .fogStack            = new BindableStack (executionContext, this, this .defaultFog);
+		this .navigationInfoStack = new BindableStack (executionContext, this, this .defaultNavigationInfo);
+		this .viewpointStack      = new BindableStack (executionContext, this, this .defaultViewpoint);
 
-		this .backgrounds     = new BindableList (this .getExecutionContext (), this, this .defaultBackground)
-		this .fogs            = new BindableList (this .getExecutionContext (), this, this .defaultFog);
-		this .navigationInfos = new BindableList (this .getExecutionContext (), this, this .defaultNavigationInfo);
-		this .viewpoints      = new BindableList (this .getExecutionContext (), this, this .defaultViewpoint);
+		this .backgrounds     = new BindableList (executionContext, this, this .defaultBackground)
+		this .fogs            = new BindableList (executionContext, this, this .defaultFog);
+		this .navigationInfos = new BindableList (executionContext, this, this .defaultNavigationInfo);
+		this .viewpoints      = new BindableList (executionContext, this, this .defaultViewpoint);
 
 		this .defaultBackground .setHidden (true);
 		this .defaultFog        .setHidden (true);
@@ -56000,7 +55999,7 @@ function ($,
 
 	function Group (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Group);
 	}
@@ -56060,7 +56059,6 @@ function ($,
 	function Layer (executionContext)
 	{
 		X3DLayerNode .call (this,
-		                    executionContext .getBrowser (),
 		                    executionContext,
 		                    new Viewpoint (executionContext),
 		                    new Group (executionContext));
@@ -56124,7 +56122,7 @@ function ($,
 
 	function LayerSet (executionContext)
 	{
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LayerSet);
 
@@ -56971,9 +56969,9 @@ function ($,
 {
 
 
-	function X3DPointingDeviceSensorNode (browser, executionContext)
+	function X3DPointingDeviceSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPointingDeviceSensorNode);
 	}
@@ -57064,9 +57062,9 @@ function ($,
 {
 
 
-	function X3DTouchSensorNode (browser, executionContext)
+	function X3DTouchSensorNode (executionContext)
 	{
-		X3DPointingDeviceSensorNode .call (this, browser, executionContext);
+		X3DPointingDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTouchSensorNode);
 	}
@@ -57112,7 +57110,7 @@ function ($,
 
 	function TouchSensor (executionContext)
 	{
-		X3DTouchSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTouchSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TouchSensor);
 	}
@@ -57201,8 +57199,8 @@ function ($,
 
 	function Anchor (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject    .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
+		X3DUrlObject    .call (this, executionContext);
 
 		this .addType (X3DConstants .Anchor);
 
@@ -57334,13 +57332,13 @@ function ($,
 {
 
 
-	function X3DLineGeometryNode (browser, executionContext)
+	function X3DLineGeometryNode (executionContext)
 	{
-		X3DGeometryNode .call (this, browser, executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
-		this .addType (X3DConstants .X3DLineGeometryNode);
+		//this .addType (X3DConstants .X3DLineGeometryNode);
 
-		this .shader = browser .getLineShader ();
+		this .shader = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -57425,7 +57423,7 @@ function ($,
 
 	function Arc2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Arc2D);
 	}
@@ -57551,7 +57549,7 @@ function ($,
 
 	function ArcClose2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ArcClose2D);
 	}
@@ -57725,10 +57723,10 @@ function ($,
 {
 
 
-	function X3DSoundSourceNode (browser, executionContext)
+	function X3DSoundSourceNode (executionContext)
 	{
-		X3DChildNode         .call (this, browser, executionContext);
-		X3DTimeDependentNode .call (this, browser, executionContext);
+		X3DChildNode         .call (this, executionContext);
+		X3DTimeDependentNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSoundSourceNode);
 
@@ -57910,8 +57908,8 @@ function ($,
 
 	function AudioClip (executionContext)
 	{
-		X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
+		X3DSoundSourceNode .call (this, executionContext);
+		X3DUrlObject       .call (this, executionContext);
 
 		this .addType (X3DConstants .AudioClip);
 
@@ -58072,7 +58070,7 @@ function ($,
 
 	function Billboard (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Billboard);
 		
@@ -58178,7 +58176,7 @@ function ($,
 
 	function BooleanFilter (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .BooleanFilter);
 	}
@@ -58244,9 +58242,9 @@ function ($,
 {
 
 
-	function X3DSequencerNode (browser, executionContext)
+	function X3DSequencerNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSequencerNode);
 
@@ -58357,7 +58355,7 @@ function ($,
 
 	function BooleanSequencer (executionContext)
 	{
-		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSequencerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .BooleanSequencer);
 	}
@@ -58427,7 +58425,7 @@ function ($,
 
 	function BooleanToggle (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .BooleanToggle);
 	}
@@ -58482,9 +58480,9 @@ function ($,
 {
 
 
-	function X3DTriggerNode (browser, executionContext)
+	function X3DTriggerNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTriggerNode);
 	}
@@ -58519,7 +58517,7 @@ function ($,
 
 	function BooleanTrigger (executionContext)
 	{
-		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTriggerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .BooleanTrigger);
 	}
@@ -58582,9 +58580,10 @@ function ($,
 
 
    var defaultSize = new Vector3 (2, 2, 2);
+
 	function Box (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Box);
 	}
@@ -58669,9 +58668,9 @@ function ($,
 {
 
 
-	function X3DProductStructureChildNode (browser, executionContext)
+	function X3DProductStructureChildNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProductStructureChildNode);
 	}
@@ -58708,8 +58707,8 @@ function ($,
 
 	function CADAssembly (executionContext)
 	{
-		X3DGroupingNode              .call (this, executionContext .getBrowser (), executionContext);
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode              .call (this, executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CADAssembly);
 	}
@@ -58778,8 +58777,8 @@ function ($,
 
 	function CADFace (executionContext)
 	{
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject             .call (this, executionContext .getBrowser (), executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
+		X3DBoundedObject             .call (this, executionContext);
 
 		this .addType (X3DConstants .CADFace);
 
@@ -58897,7 +58896,7 @@ function ($,
 
 	function CADLayer (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CADLayer);
 	}
@@ -58974,9 +58973,9 @@ function ($,
 		modelViewMatrix .pop ();
 	}
 
-	function X3DTransformMatrix4DNode (browser, executionContext)
+	function X3DTransformMatrix4DNode (executionContext)
 	{
-		X3DGroupingNode .call (this, browser, executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformMatrix4DNode);
 
@@ -59027,9 +59026,9 @@ function ($,
 {
 
 
-	function X3DTransformNode (browser, executionContext)
+	function X3DTransformNode (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, browser, executionContext);
+		X3DTransformMatrix4DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformNode);
 	}
@@ -59088,8 +59087,8 @@ function ($,
 
 	function CADPart (executionContext)
 	{
-		X3DTransformNode             .call (this, executionContext .getBrowser (), executionContext);
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformNode             .call (this, executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CADPart);
 	}
@@ -59157,7 +59156,7 @@ function ($,
 
 	function Circle2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Circle2D);
 	}
@@ -59303,7 +59302,7 @@ function ($,
 
 	function ClipPlane (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ClipPlane);
 
@@ -59389,8 +59388,8 @@ function ($,
 
 	function Collision (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DSensorNode   .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
+		X3DSensorNode   .call (this, executionContext);
 
 		this .addType (X3DConstants .Collision);
 
@@ -59508,9 +59507,9 @@ function ($,
 {
 
 
-	function X3DColorNode (browser, executionContext)
+	function X3DColorNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DColorNode);
 	}
@@ -59547,7 +59546,7 @@ function ($,
 
 	function Color (executionContext)
 	{
-		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Color);
 
@@ -59603,9 +59602,9 @@ function ($,
 {
 
 
-	function X3DFollowerNode (browser, executionContext)
+	function X3DFollowerNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DFollowerNode);
 
@@ -59693,9 +59692,9 @@ function ($,
 {
 
 
-	function X3DChaserNode (browser, executionContext)
+	function X3DChaserNode (executionContext)
 	{
-		X3DFollowerNode .call (this, browser, executionContext);
+		X3DFollowerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DChaserNode);
 
@@ -59905,7 +59904,7 @@ function ($,
 
 	function ColorChaser (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorChaser);
 	}
@@ -59992,9 +59991,9 @@ function ($,
 {
 
 
-	function X3DDamperNode (browser, executionContext)
+	function X3DDamperNode (executionContext)
 	{
-		X3DFollowerNode .call (this, browser, executionContext);
+		X3DFollowerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DDamperNode);
 	}
@@ -60138,7 +60137,7 @@ function ($,
 
 	function ColorDamper (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorDamper);
 	}
@@ -60231,7 +60230,7 @@ function ($,
 
 	function ColorInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorInterpolator);
 
@@ -60314,7 +60313,7 @@ function ($,
 
 	function ColorRGBA (executionContext)
 	{
-		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorRGBA);
 
@@ -60370,9 +60369,9 @@ function ($,
 {
 
 
-	function X3DEnvironmentTextureNode (browser, executionContext)
+	function X3DEnvironmentTextureNode (executionContext)
 	{
-		X3DTextureNode .call (this, browser, executionContext);
+		X3DTextureNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DEnvironmentTextureNode);
 	}
@@ -60409,7 +60408,7 @@ function ($,
 
 	function ComposedCubeMapTexture (executionContext)
 	{
-		X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentTextureNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ComposedCubeMapTexture);
 
@@ -60600,7 +60599,7 @@ function ($,
 
 	function Cone (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Cone);
 	}
@@ -60937,8 +60936,8 @@ function ($,
 
 	function CoordinateChaser (executionContext)
 	{
-		X3DChaserNode        .call (this, executionContext .getBrowser (), executionContext);
-		X3DArrayChaserObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode        .call (this, executionContext);
+		X3DArrayChaserObject .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateChaser);
 	}
@@ -61010,8 +61009,8 @@ function ($,
 
 	function CoordinateDamper (executionContext)
 	{
-		X3DDamperNode          .call (this, executionContext .getBrowser (), executionContext);
-		X3DArrayFollowerObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode          .call (this, executionContext);
+		X3DArrayFollowerObject .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateDamper);
 	}
@@ -61079,7 +61078,7 @@ function ($,
 
 	function CoordinateDouble (executionContext)
 	{
-		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateDouble);
 	}
@@ -61132,7 +61131,7 @@ function ($,
 
 	function CoordinateInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateInterpolator);
 	}
@@ -61209,7 +61208,7 @@ function ($,
 
 	function CoordinateInterpolator2D (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateInterpolator2D);
 	}
@@ -61289,7 +61288,7 @@ function ($,
 
 	function Cylinder (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Cylinder);
 	}
@@ -61540,9 +61539,9 @@ function ($,
 {
 
 
-	function X3DDragSensorNode (browser, executionContext)
+	function X3DDragSensorNode (executionContext)
 	{
-		X3DPointingDeviceSensorNode .call (this, browser, executionContext);
+		X3DPointingDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DDragSensorNode);
 	}
@@ -61717,7 +61716,7 @@ function ($,
 
 	function CylinderSensor (executionContext)
 	{
-		X3DDragSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDragSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CylinderSensor);
 	}
@@ -61967,7 +61966,7 @@ function ($,
 
 	function Disk2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Disk2D);
 
@@ -62176,7 +62175,7 @@ function ($,
 
 	function ElevationGrid (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ElevationGrid);
 
@@ -62547,7 +62546,7 @@ function ($,
 
 	function Extrusion (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Extrusion);
 	}
@@ -63020,7 +63019,7 @@ function ($,
 
 	function IndexedLineSet (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedLineSet);
 
@@ -63252,7 +63251,7 @@ function ($,
 
 	function IndexedQuadSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedQuadSet);
 
@@ -63356,7 +63355,7 @@ function ($,
 
 	function IndexedTriangleFanSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleFanSet);
 
@@ -63470,7 +63469,7 @@ function ($,
 
 	function IndexedTriangleSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleSet);
 	}
@@ -63539,7 +63538,7 @@ function ($,
 
 	function IndexedTriangleStripSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleStripSet);
 
@@ -63672,9 +63671,9 @@ function ($,
 
 	function Inline (executionContext)
 	{
-		X3DChildNode     .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject     .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DUrlObject     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .Inline);
 		
@@ -63851,7 +63850,7 @@ function ($,
 
 	function IntegerSequencer (executionContext)
 	{
-		X3DSequencerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSequencerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IntegerSequencer);
 	}
@@ -63921,7 +63920,7 @@ function ($,
 
 	function IntegerTrigger (executionContext)
 	{
-		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTriggerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IntegerTrigger);
 	}
@@ -63976,9 +63975,9 @@ function ($,
 {
 
 
-	function X3DKeyDeviceSensorNode (browser, executionContext)
+	function X3DKeyDeviceSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DKeyDeviceSensorNode);
 	}
@@ -64101,7 +64100,7 @@ function ($,
 
 	function KeySensor (executionContext)
 	{
-		X3DKeyDeviceSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DKeyDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .KeySensor);
 	}
@@ -64356,7 +64355,7 @@ function ($,
 	
 	function LOD (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LOD);
 
@@ -64506,9 +64505,9 @@ function ($,
 {
 
 
-	function X3DLayoutNode (browser, executionContext)
+	function X3DLayoutNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayoutNode);
 	}
@@ -64566,7 +64565,7 @@ function ($,
 
 	function Layout (executionContext)
 	{
-		X3DLayoutNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLayoutNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Layout);
 
@@ -65169,7 +65168,7 @@ function ($,
 
 	function LayoutGroup (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LayoutGroup);
 
@@ -65288,7 +65287,6 @@ function ($,
 	function LayoutLayer (executionContext)
 	{
 		X3DLayerNode .call (this,
-		                    executionContext .getBrowser (),
 		                    executionContext,
 		                    new OrthoViewpoint (executionContext),
 		                    new LayoutGroup (executionContext));
@@ -65355,7 +65353,7 @@ function ($,
 
 	function LineProperties (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LineProperties);
 	}
@@ -65426,7 +65424,7 @@ function ($,
 
 	function LineSet (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LineSet);
 
@@ -65598,8 +65596,8 @@ function ($,
 
 	function LocalFog (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DFogObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
+		X3DFogObject .call (this, executionContext);
 
 		this .addType (X3DConstants .LocalFog);
 	}
@@ -65661,9 +65659,9 @@ function ($,
 {
 
 
-	function X3DMaterialNode (browser, executionContext)
+	function X3DMaterialNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DMaterialNode);
 	}
@@ -65700,7 +65698,7 @@ function ($,
 
 	function Material (executionContext)
 	{
-		X3DMaterialNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DMaterialNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Material);
 			
@@ -65803,7 +65801,7 @@ function ($,
 {
 
 
-	function X3DMetadataObject (browser, executionContext)
+	function X3DMetadataObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DMetadataObject);
 	}
@@ -65841,8 +65839,8 @@ function ($,
 
 	function MetadataBoolean (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataBoolean);
 	}
@@ -65898,8 +65896,8 @@ function ($,
 
 	function MetadataDouble (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataDouble);
 	}
@@ -65955,8 +65953,8 @@ function ($,
 
 	function MetadataFloat (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataFloat);
 	}
@@ -66012,8 +66010,8 @@ function ($,
 
 	function MetadataInteger (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataInteger);
 	}
@@ -66069,8 +66067,8 @@ function ($,
 
 	function MetadataSet (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataSet);
 	}
@@ -66126,8 +66124,8 @@ function ($,
 
 	function MetadataString (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataString);
 	}
@@ -66189,9 +66187,9 @@ function ($,
 
 	function MovieTexture (executionContext)
 	{
-		X3DTexture2DNode   .call (this, executionContext .getBrowser (), executionContext);
-		X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode   .call (this, executionContext);
+		X3DSoundSourceNode .call (this, executionContext);
+		X3DUrlObject       .call (this, executionContext);
 
 		this .addType (X3DConstants .MovieTexture);
 
@@ -66373,9 +66371,9 @@ function ($,
 {
 
 
-	function X3DNormalNode (browser, executionContext)
+	function X3DNormalNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNormalNode);
 	}
@@ -66412,7 +66410,7 @@ function ($,
 
 	function Normal (executionContext)
 	{
-		X3DNormalNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNormalNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Normal);
 
@@ -66476,7 +66474,7 @@ function ($,
 
 	function NormalInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .NormalInterpolator);
 	}
@@ -66565,7 +66563,7 @@ function ($,
 
 	function OrientationChaser (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext);
 
 		this .addType (X3DConstants .OrientationChaser);
 	}
@@ -66648,7 +66646,7 @@ function ($,
 
 	function OrientationDamper (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext);
 
 		this .addType (X3DConstants .OrientationDamper);
 	}
@@ -66725,7 +66723,7 @@ function ($,
 
 	function PixelTexture (executionContext)
 	{
-		X3DTexture2DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PixelTexture);
 
@@ -66939,7 +66937,7 @@ function ($,
 
 	function PlaneSensor (executionContext)
 	{
-		X3DDragSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDragSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PlaneSensor);
 	}
@@ -67210,7 +67208,7 @@ function ($,
 
 	function PointLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointLight);
 	}
@@ -67276,7 +67274,7 @@ function ($,
 
 	function PointSet (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointSet);
 
@@ -67437,7 +67435,7 @@ function ($,
 
 	function Polyline2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polyline2D);
 	}
@@ -67511,7 +67509,7 @@ function ($,
 
 	function Polypoint2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polypoint2D);
 	}
@@ -67585,7 +67583,7 @@ function ($,
 
 	function PositionChaser (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionChaser);
 	}
@@ -67648,7 +67646,7 @@ function ($,
 
 	function PositionChaser2D (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionChaser2D);
 	}
@@ -67711,7 +67709,7 @@ function ($,
 
 	function PositionDamper (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionDamper);
 	}
@@ -67776,7 +67774,7 @@ function ($,
 
 	function PositionDamper2D (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionDamper2D);
 	}
@@ -67841,7 +67839,7 @@ function ($,
 
 	function PositionInterpolator2D (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionInterpolator2D);
 	}
@@ -67911,9 +67909,9 @@ function ($,
 {
 
 
-	function X3DEnvironmentalSensorNode (browser, executionContext)
+	function X3DEnvironmentalSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 
@@ -68014,7 +68012,7 @@ function ($,
 	
 	function ProximitySensor (executionContext)
 	{
-		X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentalSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ProximitySensor);
 
@@ -68250,7 +68248,7 @@ function ($,
 
 	function QuadSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .QuadSet);
 
@@ -68347,11 +68345,11 @@ function ($,
 {
 
 
-      var defaultSize = new Vector2 (2, 2);
+	var defaultSize = new Vector2 (2, 2);
 
 	function Rectangle2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Rectangle2D);
 	}
@@ -68458,7 +68456,7 @@ function ($,
 
 	function ScalarChaser (executionContext)
 	{
-		X3DChaserNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScalarChaser);
 	}
@@ -68545,7 +68543,7 @@ function ($,
 
 	function ScalarDamper (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScalarDamper);
 	}
@@ -68637,7 +68635,7 @@ function ($,
 
 	function ScreenGroup (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScreenGroup);
 
@@ -68781,9 +68779,9 @@ function ($,
 {
 
 
-	function X3DScene (browser, executionContext)
+	function X3DScene (executionContext)
 	{
-		X3DExecutionContext .call (this, browser, executionContext);
+		X3DExecutionContext .call (this, executionContext);
 
 		this .getRootNodes () .setAccessType (X3DConstants .inputOutput);
 
@@ -68860,10 +68858,10 @@ function ($,
 {
 
 
-	function X3DScriptNode (browser, executionContext)
+	function X3DScriptNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
-		X3DUrlObject .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DScriptNode);
 	}
@@ -68944,7 +68942,7 @@ function ($,
 	{
 		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		X3DScriptNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DScriptNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Script);
 	}
@@ -69362,10 +69360,10 @@ function ($,
 {
 
 
-	function X3DShapeNode (browser, executionContext)
+	function X3DShapeNode (executionContext)
 	{
-		X3DChildNode     .call (this, browser, executionContext);
-		X3DBoundedObject .call (this, browser, executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DShapeNode);
 	}
@@ -69512,7 +69510,7 @@ function ($,
 
 	function Shape (executionContext)
 	{
-		X3DShapeNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DShapeNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Shape);
 	}
@@ -69650,9 +69648,9 @@ function ($,
 {
 
 
-	function X3DSoundNode (browser, executionContext)
+	function X3DSoundNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSoundNode);
 	}
@@ -69699,7 +69697,7 @@ function ($,
 
 	function Sound (executionContext)
 	{
-		X3DSoundNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSoundNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Sound);
 
@@ -69859,7 +69857,7 @@ function ($,
 
 	function Sphere (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Sphere);
 	}
@@ -69972,7 +69970,7 @@ function ($,
 
 	function SphereSensor (executionContext)
 	{
-		X3DDragSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDragSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SphereSensor);
 	}
@@ -70376,7 +70374,7 @@ function ($,
 
 	function SplinePositionInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SplinePositionInterpolator);
 
@@ -70486,7 +70484,7 @@ function ($,
 
 	function SplinePositionInterpolator2D (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SplinePositionInterpolator2D);
 
@@ -70637,7 +70635,7 @@ function ($,
 
 	function SplineScalarInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SplineScalarInterpolator);
 
@@ -70783,7 +70781,7 @@ function ($,
 
 	function SpotLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SpotLight);
 	}
@@ -70921,7 +70919,7 @@ function ($,
 
 	function SquadOrientationInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SquadOrientationInterpolator);
 
@@ -71012,8 +71010,8 @@ function ($,
 
 	function StaticGroup (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .StaticGroup);
 	}
@@ -71084,7 +71082,7 @@ function ($,
 
 	function Switch (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Switch);
 
@@ -71188,8 +71186,8 @@ function ($,
 
 	function TexCoordChaser2D (executionContext)
 	{
-		X3DChaserNode        .call (this, executionContext .getBrowser (), executionContext);
-		X3DArrayChaserObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode        .call (this, executionContext);
+		X3DArrayChaserObject .call (this, executionContext);
 
 		this .addType (X3DConstants .TexCoordChaser2D);
 	}
@@ -71261,8 +71259,8 @@ function ($,
 
 	function TexCoordDamper2D (executionContext)
 	{
-		X3DDamperNode          .call (this, executionContext .getBrowser (), executionContext);
-		X3DArrayFollowerObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode          .call (this, executionContext);
+		X3DArrayFollowerObject .call (this, executionContext);
 
 		this .addType (X3DConstants .TexCoordDamper2D);
 	}
@@ -71332,7 +71330,7 @@ function ($,
 
 	function Text (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Text);
 	}
@@ -71438,7 +71436,7 @@ function ($,
 
 	function TextureBackground (executionContext)
 	{
-		X3DBackgroundNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBackgroundNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureBackground);
 	}
@@ -71544,7 +71542,7 @@ function ($,
 
 	function TextureCoordinate3D (executionContext)
 	{
-		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureCoordinate3D);
 	}
@@ -71609,7 +71607,7 @@ function ($,
 
 	function TextureCoordinate4D (executionContext)
 	{
-		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureCoordinate4D);
 	}
@@ -71682,7 +71680,7 @@ function ($,
 
 	function TextureTransform3D (executionContext)
 	{
-		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureTransform3D);
 	}
@@ -71774,7 +71772,7 @@ function ($,
 
 	function TextureTransformMatrix3D (executionContext)
 	{
-		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureTransformMatrix3D);
 	}
@@ -71835,7 +71833,7 @@ function ($,
 
 	function TimeTrigger (executionContext)
 	{
-		X3DTriggerNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTriggerNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TimeTrigger);
 	}
@@ -71897,7 +71895,7 @@ function ($,
 
 	function Transform (executionContext)
 	{
-		X3DTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Transform);
 	}
@@ -71957,7 +71955,7 @@ function ($,
 
 	function TriangleFanSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleFanSet);
 
@@ -72058,7 +72056,7 @@ function ($,
 
 	function TriangleSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleSet);
 	}
@@ -72135,7 +72133,7 @@ function ($,
 
 	function TriangleSet2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleSet2D);
 	}
@@ -72234,7 +72232,7 @@ function ($,
 
 	function TriangleStripSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleStripSet);
 
@@ -72341,7 +72339,7 @@ function ($,
 
 	function TwoSidedMaterial (executionContext)
 	{
-		X3DMaterialNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DMaterialNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TwoSidedMaterial);
 			
@@ -72518,7 +72516,7 @@ function ($,
 
 	function ViewpointGroup (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ViewpointGroup);
 	   
@@ -72726,7 +72724,7 @@ function ($,
 	
 	function VisibilitySensor (executionContext)
 	{
-		X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentalSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .VisibilitySensor);
 
@@ -72843,9 +72841,9 @@ function ($,
 {
 
 
-	function X3DInfoNode (browser, executionContext)
+	function X3DInfoNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DInfoNode);
 	}
@@ -72880,7 +72878,7 @@ function ($,
 
 	function WorldInfo (executionContext)
 	{
-		X3DInfoNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInfoNode .call (this, executionContext);
 
 		this .addType (X3DConstants .WorldInfo);
 	}
@@ -73677,14 +73675,15 @@ function ($,
 			                "                Name: " + this .getVendor () + " " + this .getWebGLVersion () + "\n" +
 			                "                Shading language: " + this .getShadingLanguageVersion () + "\n" +
 			                "        Rendering Properties\n" +
+			                "                Antialiased: " + this .getAntialiased () + "\n" +
+			                "                Color depth: " + this .getColorDepth () + " bits\n" +
+			                "                Max clip planes: 6\n" +
+			                "                Max lights: 8\n" +
 			                "                Texture units: " + this .getMaxTextureUnits () + " / " + this .getMaxCombinedTextureUnits () + "\n" +
 			                "                Max texture size: " + this .getMaxTextureSize () + " × " + this .getMaxTextureSize () + " pixel\n" +
-			                "                Max lights: 0\n" +
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
-			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n" +
-			                "                Antialiased: " + this .getAntialiased () + "\n" +
-			                "                Color depth: " + this .getColorDepth () + " bits\n");
+			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");
 		},
 		realize: function ()
 		{

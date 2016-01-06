@@ -26,9 +26,9 @@ function ($,
 
 	function MovieTexture (executionContext)
 	{
-		X3DTexture2DNode   .call (this, executionContext .getBrowser (), executionContext);
-		X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode   .call (this, executionContext);
+		X3DSoundSourceNode .call (this, executionContext);
+		X3DUrlObject       .call (this, executionContext);
 
 		this .addType (X3DConstants .MovieTexture);
 

@@ -26,7 +26,7 @@ function ($,
 
 	function ArcClose2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ArcClose2D);
 	}

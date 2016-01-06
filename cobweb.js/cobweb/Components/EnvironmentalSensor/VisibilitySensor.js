@@ -28,7 +28,7 @@ function ($,
 	
 	function VisibilitySensor (executionContext)
 	{
-		X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentalSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .VisibilitySensor);
 

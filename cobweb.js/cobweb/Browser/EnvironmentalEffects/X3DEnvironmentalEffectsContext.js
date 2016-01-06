@@ -23,7 +23,7 @@ function (ComposedShader,
 	{
 		initialize: function ()
 		{
-			this .backgroundSphereShader = this .createShader (this, vertexShaderText, fragmentShaderText);
+			this .backgroundSphereShader = this .createShader (this, "BackgroundSphereShader", vertexShaderText, fragmentShaderText);
 
 			this .backgroundTextureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
 			this .backgroundTextureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";

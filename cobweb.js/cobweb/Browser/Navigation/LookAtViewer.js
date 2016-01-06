@@ -13,7 +13,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 	function LookAtViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button = -1;
 	}

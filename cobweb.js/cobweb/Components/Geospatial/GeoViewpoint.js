@@ -20,8 +20,8 @@ function ($,
 
 	function GeoViewpoint (executionContext)
 	{
-		X3DViewpointNode    .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode    .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoViewpoint);
 	}

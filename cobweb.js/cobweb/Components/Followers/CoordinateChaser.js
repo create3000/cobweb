@@ -24,8 +24,8 @@ function ($,
 
 	function CoordinateChaser (executionContext)
 	{
-		X3DChaserNode        .call (this, executionContext .getBrowser (), executionContext);
-		X3DArrayChaserObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChaserNode        .call (this, executionContext);
+		X3DArrayChaserObject .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateChaser);
 	}

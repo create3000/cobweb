@@ -20,8 +20,8 @@ function ($,
 
 	function ImageCubeMapTexture (executionContext)
 	{
-		X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentTextureNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .addType (X3DConstants .ImageCubeMapTexture);
 	}

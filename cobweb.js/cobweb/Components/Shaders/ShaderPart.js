@@ -32,8 +32,8 @@ function ($,
 
 	function ShaderPart (executionContext)
 	{
-		X3DNode      .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode      .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .valid = false;
 

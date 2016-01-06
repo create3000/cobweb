@@ -18,7 +18,7 @@ function ($,
 
 	function RigidBodyCollection (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .RigidBodyCollection);
 	}

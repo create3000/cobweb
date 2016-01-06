@@ -18,7 +18,7 @@ function ($,
 
 	function CollidableOffset (executionContext)
 	{
-		X3DNBodyCollidableNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNBodyCollidableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CollidableOffset);
 	}

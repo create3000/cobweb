@@ -58,9 +58,9 @@ function ($,
 	   },
 	};
 
-	function X3DFontStyleNode (browser, executionContext)
+	function X3DFontStyleNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DFontStyleNode);
 		

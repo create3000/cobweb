@@ -22,7 +22,7 @@ function ($,
 
 	function PixelTexture (executionContext)
 	{
-		X3DTexture2DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PixelTexture);
 

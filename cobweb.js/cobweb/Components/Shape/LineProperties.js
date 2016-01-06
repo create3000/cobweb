@@ -18,7 +18,7 @@ function ($,
 
 	function LineProperties (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LineProperties);
 	}

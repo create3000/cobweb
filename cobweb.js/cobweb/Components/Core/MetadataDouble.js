@@ -20,8 +20,8 @@ function ($,
 
 	function MetadataDouble (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataDouble);
 	}

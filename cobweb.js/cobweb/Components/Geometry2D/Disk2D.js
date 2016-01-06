@@ -22,7 +22,7 @@ function ($,
 
 	function Disk2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Disk2D);
 

@@ -20,7 +20,7 @@ function ($,
 
 	function Background (executionContext)
 	{
-		X3DBackgroundNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBackgroundNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Background);
 	}

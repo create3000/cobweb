@@ -18,7 +18,7 @@ function ($,
 
 	function StringSensor (executionContext)
 	{
-		X3DKeyDeviceSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DKeyDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .StringSensor);
 	}

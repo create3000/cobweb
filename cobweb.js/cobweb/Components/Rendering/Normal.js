@@ -20,7 +20,7 @@ function ($,
 
 	function Normal (executionContext)
 	{
-		X3DNormalNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNormalNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Normal);
 

@@ -10,9 +10,9 @@ function ($,
 {
 "use strict";
 
-	function X3DSoundNode (browser, executionContext)
+	function X3DSoundNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSoundNode);
 	}

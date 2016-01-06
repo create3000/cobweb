@@ -30,14 +30,12 @@ function ($,
 
 	function Viewpoint (executionContext)
 	{
-		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Viewpoint);
 
-		this .projectionMatrix = new Matrix4 ();
-
+		this .projectionMatrix        = new Matrix4 ();
 		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
-		this .fieldOfViewInterpolator .setName ("Default");
 	}
 
 	Viewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),

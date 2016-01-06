@@ -14,9 +14,9 @@ function ($,
 {
 "use strict";
 
-	function X3DTexture2DNode (browser, executionContext)
+	function X3DTexture2DNode (executionContext)
 	{
-		X3DTextureNode .call (this, browser, executionContext);
+		X3DTextureNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTexture2DNode);
 

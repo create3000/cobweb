@@ -24,7 +24,7 @@ function ($,
 
 	function Cone (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Cone);
 	}

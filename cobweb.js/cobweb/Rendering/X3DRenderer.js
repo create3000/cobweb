@@ -39,7 +39,7 @@ function ($,
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
-	function X3DRenderer (browser, executionContext)
+	function X3DRenderer (executionContext)
 	{
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];

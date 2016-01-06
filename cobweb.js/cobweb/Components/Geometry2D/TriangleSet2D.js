@@ -24,7 +24,7 @@ function ($,
 
 	function TriangleSet2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleSet2D);
 	}

@@ -18,7 +18,7 @@ function ($,
 
 	function CollisionSensor (executionContext)
 	{
-		X3DSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CollisionSensor);
 	}

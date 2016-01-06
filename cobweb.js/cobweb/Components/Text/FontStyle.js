@@ -20,7 +20,7 @@ function ($,
 
 	function FontStyle (executionContext)
 	{
-		X3DFontStyleNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DFontStyleNode .call (this, executionContext);
 
 		this .addType (X3DConstants .FontStyle);
 	}

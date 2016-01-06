@@ -13,9 +13,9 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 	
 	var far = new Vector3 (0, 0, 0);
 
-	function X3DViewer (browser, executionContext)
+	function X3DViewer (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
 	}
 
 	X3DViewer .prototype = $.extend (Object .create (X3DBaseNode .prototype),

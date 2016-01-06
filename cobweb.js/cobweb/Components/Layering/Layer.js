@@ -23,7 +23,6 @@ function ($,
 	function Layer (executionContext)
 	{
 		X3DLayerNode .call (this,
-		                    executionContext .getBrowser (),
 		                    executionContext,
 		                    new Viewpoint (executionContext),
 		                    new Group (executionContext));

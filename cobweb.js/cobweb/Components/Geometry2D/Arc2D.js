@@ -24,7 +24,7 @@ function ($,
 
 	function Arc2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Arc2D);
 	}

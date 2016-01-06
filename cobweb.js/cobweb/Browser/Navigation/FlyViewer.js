@@ -9,7 +9,7 @@ function (X3DFlyViewer, _)
 	
 	function FlyViewer (executionContext)
 	{
-		X3DFlyViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DFlyViewer .call (this, executionContext);
 	}
 
 	FlyViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),

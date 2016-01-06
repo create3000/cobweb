@@ -28,7 +28,7 @@ function ($,
 
 	function ColorDamper (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorDamper);
 	}

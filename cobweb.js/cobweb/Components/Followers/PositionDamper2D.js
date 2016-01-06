@@ -20,7 +20,7 @@ function ($,
 
 	function PositionDamper2D (executionContext)
 	{
-		X3DDamperNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionDamper2D);
 	}

@@ -14,9 +14,9 @@ function ($,
 {
 "use strict";
 
-	function X3DComposedGeometryNode (browser, executionContext)
+	function X3DComposedGeometryNode (executionContext)
 	{
-		X3DGeometryNode .call (this, browser, executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DComposedGeometryNode);
 

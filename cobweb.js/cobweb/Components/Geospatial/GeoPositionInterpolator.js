@@ -20,8 +20,8 @@ function ($,
 
 	function GeoPositionInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoPositionInterpolator);
 	}

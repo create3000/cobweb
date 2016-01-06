@@ -31,7 +31,7 @@ function ($,
 
 	function ScreenGroup (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScreenGroup);
 

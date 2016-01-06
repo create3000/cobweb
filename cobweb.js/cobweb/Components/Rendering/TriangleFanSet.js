@@ -18,7 +18,7 @@ function ($,
 
 	function TriangleFanSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleFanSet);
 

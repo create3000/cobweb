@@ -30,7 +30,7 @@ function ($,
 
 	function Sound (executionContext)
 	{
-		X3DSoundNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSoundNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Sound);
 

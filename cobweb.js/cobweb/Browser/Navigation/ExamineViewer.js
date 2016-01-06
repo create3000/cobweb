@@ -21,7 +21,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 	function ExamineViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button            = -1;
 		this .orientationOffset = new Rotation4 (0, 0, 1, 0);

@@ -10,9 +10,9 @@ function ($,
 {
 "use strict";
 
-	function X3DDragSensorNode (browser, executionContext)
+	function X3DDragSensorNode (executionContext)
 	{
-		X3DPointingDeviceSensorNode .call (this, browser, executionContext);
+		X3DPointingDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DDragSensorNode);
 	}

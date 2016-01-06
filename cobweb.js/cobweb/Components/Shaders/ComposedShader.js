@@ -44,8 +44,8 @@ function ($,
 	{
 		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		X3DShaderNode               .call (this, executionContext .getBrowser (), executionContext);
-		X3DProgrammableShaderObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DShaderNode               .call (this, executionContext);
+		X3DProgrammableShaderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .ComposedShader);
 

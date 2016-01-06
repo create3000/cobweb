@@ -20,8 +20,8 @@ function ($,
 
 	function TransmitterPdu (executionContext)
 	{
-		X3DSensorNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DSensorNode .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .TransmitterPdu);
 	}

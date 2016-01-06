@@ -20,7 +20,7 @@ function ($,
 
 	function LoadSensor (executionContext)
 	{
-		X3DNetworkSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNetworkSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LoadSensor);
 

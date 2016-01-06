@@ -18,7 +18,7 @@ function ($,
 
 	function NurbsTrimmedSurface (executionContext)
 	{
-		X3DNurbsSurfaceGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNurbsSurfaceGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .NurbsTrimmedSurface);
 	}

@@ -24,8 +24,8 @@ function ($,
 
 	function TexCoordDamper2D (executionContext)
 	{
-		X3DDamperNode          .call (this, executionContext .getBrowser (), executionContext);
-		X3DArrayFollowerObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DDamperNode          .call (this, executionContext);
+		X3DArrayFollowerObject .call (this, executionContext);
 
 		this .addType (X3DConstants .TexCoordDamper2D);
 	}

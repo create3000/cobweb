@@ -69,9 +69,9 @@ function (Fields,
 
 			this .reshape ();
 
-			this .depthShader = this .createShader (this, depthVS, depthFS);
-			this .pointShader = this .createShader (this, wireframeVS, pointSetFS);
-			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
+			this .depthShader = this .createShader (this, "DepthShader",     depthVS,     depthFS);
+			this .pointShader = this .createShader (this, "PointShader",     wireframeVS, pointSetFS);
+			this .lineShader  = this .createShader (this, "WireframeShader", wireframeVS, wireframeFS);
 
 			this .pointShader .setGeometryType (0);
 			this .lineShader  .setGeometryType (1);
@@ -127,27 +127,26 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
-		createShader: function (executionContext, vs, fs)
+		createShader: function (executionContext, name, vs, fs)
 		{
 			var vertexShader = new ShaderPart (executionContext);
-			vertexShader .type_ = "VERTEX";
 			vertexShader .url_ .push (vs);
 			vertexShader .setup ();
-	
+
 			var fragmentShader = new ShaderPart (executionContext);
 			fragmentShader .type_ = "FRAGMENT";
 			fragmentShader .url_ .push (fs);
 			fragmentShader .setup ();
 	
 			var shader = new ComposedShader (executionContext);
+			shader .setName (name);
 			shader .language_ = "GLSL";
 			shader .parts_ .push (vertexShader);
 			shader .parts_ .push (fragmentShader);
 			shader .setCustom (false);
 			shader .setup ();
 
-			this .getLoadSensor () .watchList_ .push (vertexShader);
-			this .getLoadSensor () .watchList_ .push (fragmentShader);
+			this .getLoadSensor () .watchList_ = shader .parts_;
 
 			return shader;
 		},
@@ -160,7 +159,7 @@ function (Fields,
 				case "POINTSET":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -176,7 +175,7 @@ function (Fields,
 				case "WIREFRAME":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -192,7 +191,7 @@ function (Fields,
 				case "PHONG":
 				{
 					if (! this .phongShader)
-						this .phongShader = this .createShader (this, phongVS, phongFS);
+						this .phongShader = this .createShader (this, "PhongShader", phongVS, phongFS);
 
 					this .defaultShader = this .phongShader;
 
@@ -210,7 +209,7 @@ function (Fields,
 					// case "GOURAUD":
 
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 

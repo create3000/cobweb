@@ -18,7 +18,7 @@ function ($,
 
 	function TextureCoordinateGenerator (executionContext)
 	{
-		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureCoordinateGenerator);
 	}

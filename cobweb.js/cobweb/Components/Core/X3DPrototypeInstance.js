@@ -23,8 +23,8 @@ function ($,
 
 		this .addChildren ("isLiveX3DPrototypeInstance", new Fields .SFBool (true));
 
-		X3DNode             .call (this, executionContext .getBrowser (), executionContext);
-		X3DExecutionContext .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode             .call (this, executionContext);
+		X3DExecutionContext .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);

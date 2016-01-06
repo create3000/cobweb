@@ -40,7 +40,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 	
 	function X3DFlyViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		var gl = this .getBrowser () .getContext ();
 

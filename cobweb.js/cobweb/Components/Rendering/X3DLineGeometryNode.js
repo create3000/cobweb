@@ -10,13 +10,13 @@ function ($,
 {
 "use strict";
 
-	function X3DLineGeometryNode (browser, executionContext)
+	function X3DLineGeometryNode (executionContext)
 	{
-		X3DGeometryNode .call (this, browser, executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
-		this .addType (X3DConstants .X3DLineGeometryNode);
+		//this .addType (X3DConstants .X3DLineGeometryNode);
 
-		this .shader = browser .getLineShader ();
+		this .shader = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),

@@ -10,9 +10,9 @@ function ($,
 {
 "use strict";
 
-	function X3DNurbsSurfaceGeometryNode (browser, executionContext)
+	function X3DNurbsSurfaceGeometryNode (executionContext)
 	{
-		X3DParametricGeometryNode .call (this, browser, executionContext);
+		X3DParametricGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNurbsSurfaceGeometryNode);
 	}

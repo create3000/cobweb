@@ -30,9 +30,9 @@ function ($,
 	{
 		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
 
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
-		X3DProgrammableShaderObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
+		X3DProgrammableShaderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .ShaderProgram);
 	}

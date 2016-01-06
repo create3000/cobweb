@@ -18,7 +18,7 @@ function ($,
 
 	function BoundedPhysicsModel (executionContext)
 	{
-		X3DParticlePhysicsModelNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DParticlePhysicsModelNode .call (this, executionContext);
 
 		this .addType (X3DConstants .BoundedPhysicsModel);
 	}

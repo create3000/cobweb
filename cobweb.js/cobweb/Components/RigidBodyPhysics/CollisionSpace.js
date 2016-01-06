@@ -18,7 +18,7 @@ function ($,
 
 	function CollisionSpace (executionContext)
 	{
-		X3DNBodyCollisionSpaceNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNBodyCollisionSpaceNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CollisionSpace);
 	}

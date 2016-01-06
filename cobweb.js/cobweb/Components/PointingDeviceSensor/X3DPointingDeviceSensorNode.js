@@ -14,9 +14,9 @@ function ($,
 {
 "use strict";
 
-	function X3DPointingDeviceSensorNode (browser, executionContext)
+	function X3DPointingDeviceSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPointingDeviceSensorNode);
 	}

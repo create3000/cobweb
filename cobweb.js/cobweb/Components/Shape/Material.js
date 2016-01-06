@@ -20,7 +20,7 @@ function ($,
 
 	function Material (executionContext)
 	{
-		X3DMaterialNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DMaterialNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Material);
 			

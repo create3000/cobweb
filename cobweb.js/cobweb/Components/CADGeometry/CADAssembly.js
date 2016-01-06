@@ -20,8 +20,8 @@ function ($,
 
 	function CADAssembly (executionContext)
 	{
-		X3DGroupingNode              .call (this, executionContext .getBrowser (), executionContext);
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode              .call (this, executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CADAssembly);
 	}
