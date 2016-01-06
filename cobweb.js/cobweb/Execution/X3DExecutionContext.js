@@ -230,6 +230,9 @@ function ($,
 				if (! destinationField .isInput ())
 					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
 
+				if (sourceField .getType () !== destinationField .getType ())
+					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
+
 				var
 					id    = sourceField .getId () + "." + destinationField .getId (),
 					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);

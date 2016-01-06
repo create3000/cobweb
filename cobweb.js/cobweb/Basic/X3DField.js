@@ -202,8 +202,16 @@ function ($,
 			this .setTainted (false);
 			this .setSet (true);
 
+			try
+			{
 			if (event .field !== this)
 				this .set (event .field .getValue ());
+			}
+			catch (error)
+			{
+				console .log (event);
+				throw error;
+			}
 
 			// Process interests
 

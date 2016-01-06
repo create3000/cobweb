@@ -35,10 +35,10 @@ function ($,
 				initialValue       = this .getInitialValue (),
 				initialDestination = this .getInitialDestination ();
 
-			buffer [0] = this .copy (initialDestination);
+			buffer [0] = this .duplicate (initialDestination);
 		
 			for (var i = 1, length = this .getOrder () + 1; i < length; ++ i)
-				buffer [i] = this .copy (initialValue);
+				buffer [i] = this .duplicate (initialValue);
 	
 			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
 				this .setValue (initialDestination);
@@ -71,7 +71,12 @@ function ($,
 
 				for (var i = 0; i < order; ++ i)
 				{
-					this .assign (buffer, i + 1, this .interpolate (buffer [i], buffer [i + 1], alpha));
+					try
+					{
+						this .assign (buffer, i + 1, this .interpolate (buffer [i], buffer [i + 1], alpha));
+					}
+					catch (error)
+					{ }
 				}
 
 				this .setValue (buffer [order]);
@@ -117,7 +122,7 @@ function ($,
 				value  = buffer [buffer .length - 1];
 
 			for (var i = buffer .length, length = this .getOrder () + 1; i < length; ++ i)
-				buffer [i] = this .copy (value);
+				buffer [i] = this .duplicate (value);
 
 			buffer .length = length;
 		},

@@ -45,14 +45,14 @@ function ($,
 				numBuffers         = this .getNumBuffers ();
 
 			this .bufferEndTime = this .getBrowser () .getCurrentTime ();
-			this .previousValue = this .copy (initialValue);
+			this .previousValue = this .duplicate (initialValue);
 	
-			buffer [0] = this .copy (initialDestination);
+			buffer [0] = this .duplicate (initialDestination);
 
 			for (var i = 1; i < numBuffers; ++ i)
-				buffer [i] = this .copy (initialValue);
+				buffer [i] = this .duplicate (initialValue);
 
-			this .destination = this .copy (initialDestination);
+			this .destination = this .duplicate (initialDestination);
 
 			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
 				this .setValue (initialDestination);
@@ -111,8 +111,10 @@ function ($,
 		},
 		set_destination__: function ()
 		{
-			this .destination   = this .copy (this .getDestination ());
-			this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+			this .destination = this .duplicate (this .getDestination ());
+
+			if (! this .isActive_ .getValue ())
+				this .bufferEndTime = this .getBrowser () .getCurrentTime ();
 		
 			this .set_active (true);
 		},
@@ -122,24 +124,29 @@ function ($,
 		},
 		prepareEvents: function ()
 		{
-			var
-				buffer     = this .getBuffer (),
-				numBuffers = buffer .length,
-				fraction   = this .updateBuffer ();
-		
-			this .output = this .interpolate (this .previousValue,
-			                                  buffer [numBuffers - 1],
-			                                  this .stepResponse ((numBuffers - 1 + fraction) * this .stepTime));
-
-			for (var i = numBuffers - 2; i >= 0; -- i)
+			try
 			{
-				this .step (buffer [i], buffer [i + 1], this .stepResponse ((i + fraction) * this .stepTime));
-			}
-
-			this .setValue (this .output);
+				var
+					buffer     = this .getBuffer (),
+					numBuffers = buffer .length,
+					fraction   = this .updateBuffer ();
+			
+				this .output = this .interpolate (this .previousValue,
+				                                  buffer [numBuffers - 1],
+				                                  this .stepResponse ((numBuffers - 1 + fraction) * this .stepTime));
 	
-			if (this .equals (this .output, this .destination, this .getTolerance ()))
-				this .set_active (false);
+				for (var i = numBuffers - 2; i >= 0; -- i)
+				{
+					this .step (buffer [i], buffer [i + 1], this .stepResponse ((i + fraction) * this .stepTime));
+				}
+	
+				this .setValue (this .output);
+		
+				if (this .equals (this .output, this .destination, this .getTolerance ()))
+					this .set_active (false);
+			}
+			catch (error)
+			{ }
 		},
 		updateBuffer: function ()
 		{
@@ -165,9 +172,14 @@ function ($,
 		
 					for (var i = 0; i < seconds; ++ i)
 					{
-						var alpha = i / seconds;
+						try
+						{
+							var alpha = i / seconds;
 
-						this .assign (buffer, i, this .interpolate (this .destination, buffer [seconds], alpha))
+							this .assign (buffer, i, this .interpolate (this .destination, buffer [seconds], alpha))
+						}
+						catch (error)
+						{ }
 		 			}
 				}
 				else

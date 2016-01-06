@@ -56,7 +56,7 @@ function ($,
 		{
 			return 0;
 		},
-		copy: function (value)
+		duplicate: function (value)
 		{
 			return value;
 		},

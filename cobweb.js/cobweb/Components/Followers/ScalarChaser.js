@@ -58,7 +58,7 @@ function ($,
 		{
 			this .previousValue = value;
 		},
-		copy: function (value)
+		duplicate: function (value)
 		{
 			return value;
 		},

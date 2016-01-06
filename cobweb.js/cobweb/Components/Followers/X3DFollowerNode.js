@@ -26,7 +26,7 @@ function ($,
 	X3DFollowerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DFollowerNode,
-		copy: function (value)
+		duplicate: function (value)
 		{
 			return value .copy ();
 		},
