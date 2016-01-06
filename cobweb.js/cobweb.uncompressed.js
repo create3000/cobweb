@@ -10048,8 +10048,16 @@ function ($,
 			this .setTainted (false);
 			this .setSet (true);
 
+			try
+			{
 			if (event .field !== this)
 				this .set (event .field .getValue ());
+			}
+			catch (error)
+			{
+				console .log (event);
+				throw error;
+			}
 
 			// Process interests
 
@@ -23934,6 +23942,9 @@ function ($,
 				if (! destinationField .isInput ())
 					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
 
+				if (sourceField .getType () !== destinationField .getType ())
+					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
+
 				var
 					id    = sourceField .getId () + "." + destinationField .getId (),
 					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
@@ -27648,7 +27659,7 @@ function ($,
 			catch (error)
 			{
 				console .warn ("XML Parser Error: ", error .message);
-				//console .warn (error);
+				console .warn (error);
 			}
 		},
 		children: function (childNodes, protoInstance)
@@ -59625,7 +59636,7 @@ function ($,
 	X3DFollowerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DFollowerNode,
-		copy: function (value)
+		duplicate: function (value)
 		{
 			return value .copy ();
 		},
@@ -59734,14 +59745,14 @@ function ($,
 				numBuffers         = this .getNumBuffers ();
 
 			this .bufferEndTime = this .getBrowser () .getCurrentTime ();
-			this .previousValue = this .copy (initialValue);
+			this .previousValue = this .duplicate (initialValue);
 	
-			buffer [0] = this .copy (initialDestination);
+			buffer [0] = this .duplicate (initialDestination);
 
 			for (var i = 1; i < numBuffers; ++ i)
-				buffer [i] = this .copy (initialValue);
+				buffer [i] = this .duplicate (initialValue);
 
-			this .destination = this .copy (initialDestination);
+			this .destination = this .duplicate (initialDestination);
 
 			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
 				this .setValue (initialDestination);
@@ -59800,8 +59811,10 @@ function ($,
 		},
 		set_destination__: function ()
 		{
-			this .destination   = this .copy (this .getDestination ());
-			this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+			this .destination = this .duplicate (this .getDestination ());
+
+			if (! this .isActive_ .getValue ())
+				this .bufferEndTime = this .getBrowser () .getCurrentTime ();
 		
 			this .set_active (true);
 		},
@@ -59811,24 +59824,29 @@ function ($,
 		},
 		prepareEvents: function ()
 		{
-			var
-				buffer     = this .getBuffer (),
-				numBuffers = buffer .length,
-				fraction   = this .updateBuffer ();
-		
-			this .output = this .interpolate (this .previousValue,
-			                                  buffer [numBuffers - 1],
-			                                  this .stepResponse ((numBuffers - 1 + fraction) * this .stepTime));
-
-			for (var i = numBuffers - 2; i >= 0; -- i)
+			try
 			{
-				this .step (buffer [i], buffer [i + 1], this .stepResponse ((i + fraction) * this .stepTime));
-			}
-
-			this .setValue (this .output);
+				var
+					buffer     = this .getBuffer (),
+					numBuffers = buffer .length,
+					fraction   = this .updateBuffer ();
+			
+				this .output = this .interpolate (this .previousValue,
+				                                  buffer [numBuffers - 1],
+				                                  this .stepResponse ((numBuffers - 1 + fraction) * this .stepTime));
 	
-			if (this .equals (this .output, this .destination, this .getTolerance ()))
-				this .set_active (false);
+				for (var i = numBuffers - 2; i >= 0; -- i)
+				{
+					this .step (buffer [i], buffer [i + 1], this .stepResponse ((i + fraction) * this .stepTime));
+				}
+	
+				this .setValue (this .output);
+		
+				if (this .equals (this .output, this .destination, this .getTolerance ()))
+					this .set_active (false);
+			}
+			catch (error)
+			{ }
 		},
 		updateBuffer: function ()
 		{
@@ -59854,9 +59872,14 @@ function ($,
 		
 					for (var i = 0; i < seconds; ++ i)
 					{
-						var alpha = i / seconds;
+						try
+						{
+							var alpha = i / seconds;
 
-						this .assign (buffer, i, this .interpolate (this .destination, buffer [seconds], alpha))
+							this .assign (buffer, i, this .interpolate (this .destination, buffer [seconds], alpha))
+						}
+						catch (error)
+						{ }
 		 			}
 				}
 				else
@@ -60021,10 +60044,10 @@ function ($,
 				initialValue       = this .getInitialValue (),
 				initialDestination = this .getInitialDestination ();
 
-			buffer [0] = this .copy (initialDestination);
+			buffer [0] = this .duplicate (initialDestination);
 		
 			for (var i = 1, length = this .getOrder () + 1; i < length; ++ i)
-				buffer [i] = this .copy (initialValue);
+				buffer [i] = this .duplicate (initialValue);
 	
 			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
 				this .setValue (initialDestination);
@@ -60057,7 +60080,12 @@ function ($,
 
 				for (var i = 0; i < order; ++ i)
 				{
-					this .assign (buffer, i + 1, this .interpolate (buffer [i], buffer [i + 1], alpha));
+					try
+					{
+						this .assign (buffer, i + 1, this .interpolate (buffer [i], buffer [i + 1], alpha));
+					}
+					catch (error)
+					{ }
 				}
 
 				this .setValue (buffer [order]);
@@ -60103,7 +60131,7 @@ function ($,
 				value  = buffer [buffer .length - 1];
 
 			for (var i = buffer .length, length = this .getOrder () + 1; i < length; ++ i)
-				buffer [i] = this .copy (value);
+				buffer [i] = this .duplicate (value);
 
 			buffer .length = length;
 		},
@@ -68501,7 +68529,7 @@ function ($,
 		{
 			this .previousValue = value;
 		},
-		copy: function (value)
+		duplicate: function (value)
 		{
 			return value;
 		},
@@ -68586,7 +68614,7 @@ function ($,
 		{
 			return 0;
 		},
-		copy: function (value)
+		duplicate: function (value)
 		{
 			return value;
 		},

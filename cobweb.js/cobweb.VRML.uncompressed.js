@@ -10048,8 +10048,16 @@ function ($,
 			this .setTainted (false);
 			this .setSet (true);
 
+			try
+			{
 			if (event .field !== this)
 				this .set (event .field .getValue ());
+			}
+			catch (error)
+			{
+				console .log (event);
+				throw error;
+			}
 
 			// Process interests
 
@@ -23934,6 +23942,9 @@ function ($,
 				if (! destinationField .isInput ())
 					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
 
+				if (sourceField .getType () !== destinationField .getType ())
+					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
+
 				var
 					id    = sourceField .getId () + "." + destinationField .getId (),
 					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
@@ -27648,7 +27659,7 @@ function ($,
 			catch (error)
 			{
 				console .warn ("XML Parser Error: ", error .message);
-				//console .warn (error);
+				console .warn (error);
 			}
 		},
 		children: function (childNodes, protoInstance)
