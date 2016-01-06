@@ -391,6 +391,7 @@ function ($,
 			try
 			{
 				this .context .prepareEvents ();
+				browser .addBrowserEvent ();
 			}
 			catch (error)
 			{

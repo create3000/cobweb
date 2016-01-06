@@ -142,11 +142,8 @@ function ($,
 			
 			if (this .colorNode)
 			{
-				for (var i = 0, length = colorNode .color_ .length; i < length; ++ i)
+				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
 					this .addColor (colorNode .getColor (i));
-
-				for (var length = coordNode .point_ .length; i < length; ++ i)
-					this .addColor (new Color4 (1, 1, 1, 1));
 			}
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)

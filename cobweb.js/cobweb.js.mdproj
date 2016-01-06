@@ -1117,6 +1117,7 @@
     <None Include="tests\Components\Text\ARIALUNI.TTF" />
     <None Include="cobweb\Browser\Text\PolygonText.js" />
     <None Include="tests\Components\Texturing\ubuntu.x3d" />
+    <None Include="tests\Components\Networking\Anchor.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

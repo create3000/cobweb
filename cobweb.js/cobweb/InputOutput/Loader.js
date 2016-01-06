@@ -299,14 +299,14 @@ function ($,
 						//console .log (this .getContentType (xhr));
 
 						if (foreign [this .getContentType (xhr)])
-							this .foreign (this .URL);
+							return this .foreign (this .URL .toString () .replace (urls .fallbackRx, ""));
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);
 
 					this .fileReader .readAsText (blob);
 				},
-				error: function (jqXHR, textStatus, exception)
+				error: function (xhr, textStatus, exception)
 				{
 					this .loadDocumentError (new Error (exception));
 				},

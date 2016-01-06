@@ -91,6 +91,8 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addLoadCount (this);
+			
+			// Don't create scene cache, as of possible default nodes and complete scenes.
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 

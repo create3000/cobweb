@@ -24476,6 +24476,8 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addLoadCount (this);
+			
+			// Don't create scene cache, as of possible default nodes and complete scenes.
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
@@ -31584,14 +31586,14 @@ function ($,
 						//console .log (this .getContentType (xhr));
 
 						if (foreign [this .getContentType (xhr)])
-							this .foreign (this .URL);
+							return this .foreign (this .URL .toString () .replace (urls .fallbackRx, ""));
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);
 
 					this .fileReader .readAsText (blob);
 				},
-				error: function (jqXHR, textStatus, exception)
+				error: function (xhr, textStatus, exception)
 				{
 					this .loadDocumentError (new Error (exception));
 				},
@@ -58032,11 +58034,23 @@ function ($,
 		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DColorNode);
+
+		this .color = this .color_ .getValue ();
 	}
 
 	X3DColorNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DColorNode,
+		getColor: function (index)
+		{
+			if (index >= 0 && index < this .color .length)
+				return this .color [index] .getValue ();
+
+			if (this .color .length)
+				return this .color [this .color .length - 1] .getValue ();
+
+			return this .getWhite ();
+		},
 	});
 
 	return X3DColorNode;
@@ -58063,6 +58077,8 @@ function ($,
           Color3)
 {
 
+
+	var white = new Color3 (1, 1, 1);
 
 	function Color (executionContext)
 	{
@@ -58096,12 +58112,9 @@ function ($,
 		{
 			return false;
 		},
-		getColor: function (index)
+		getWhite: function ()
 		{
-			if (index >= 0 && index < this .color .length)
-				return this .color [index] .getValue ();
-
-			return new Color3 (1, 1, 1);
+			return white;
 		},
 	});
 
@@ -61890,11 +61903,8 @@ function ($,
 			
 			if (this .colorNode)
 			{
-				for (var i = 0, length = colorNode .color_ .length; i < length; ++ i)
+				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
 					this .addColor (colorNode .getColor (i));
-
-				for (var length = coordNode .point_ .length; i < length; ++ i)
-					this .addColor (new Color4 (1, 1, 1, 1));
 			}
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
@@ -62795,6 +62805,7 @@ function ($,
 			try
 			{
 				this .context .prepareEvents ();
+				browser .addBrowserEvent ();
 			}
 			catch (error)
 			{

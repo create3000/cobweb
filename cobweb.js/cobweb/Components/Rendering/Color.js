@@ -18,6 +18,8 @@ function ($,
 {
 "use strict";
 
+	var white = new Color3 (1, 1, 1);
+
 	function Color (executionContext)
 	{
 		X3DColorNode .call (this, executionContext);
@@ -50,12 +52,9 @@ function ($,
 		{
 			return false;
 		},
-		getColor: function (index)
+		getWhite: function ()
 		{
-			if (index >= 0 && index < this .color .length)
-				return this .color [index] .getValue ();
-
-			return new Color3 (1, 1, 1);
+			return white;
 		},
 	});
 

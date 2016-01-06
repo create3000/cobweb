@@ -18,13 +18,13 @@ function ($,
 {
 "use strict";
 
+	var white = new Color4 (1, 1, 1, 1);
+
 	function ColorRGBA (executionContext)
 	{
 		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorRGBA);
-
-		this .color = this .color_ .getValue ();
 	}
 
 	ColorRGBA .prototype = $.extend (Object .create (X3DColorNode .prototype),
@@ -50,12 +50,9 @@ function ($,
 		{
 			return true;
 		},
-		getColor: function (index)
+		getWhite: function ()
 		{
-			if (index >= 0 && index < this .color .length)
-				return this .color [index] .getValue ();
-	
-			return new Color4 (1, 1, 1, 1);
+			return white;
 		},
 	});
 
