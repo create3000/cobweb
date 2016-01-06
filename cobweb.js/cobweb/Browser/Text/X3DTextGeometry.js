@@ -356,7 +356,7 @@ function (TextAlignment,
 		
 				if (length)
 				{
-					charSpacing  = (length - lineBound .y) / (line .length - 1) / scale;
+					charSpacing  = (length - lineBound .y) / (glyphs .length - 1) / scale;
 					lineBound .y = length;
 					size .y      = length / scale;
 					min .y       = max .y  - size .y;

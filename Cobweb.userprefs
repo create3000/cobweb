@@ -1,19 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Scripting/Script.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="37" Column="37" />
+      <File FileName="cobweb.js/cobweb.html" Line="7" Column="7" />
       <File FileName="cobweb.js/cobweb/Browser/X3DBrowserContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/Color.js" Line="5" Column="5" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/ColorRGBA.js" Line="25" Column="25" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DColorNode.js" Line="29" Column="29" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/PointSet.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/IndexedLineSet.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="5" Column="5" />
-      <File FileName="cobweb.js/cobweb/InputOutput/Loader.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Scripting/X3DScriptingContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="6" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

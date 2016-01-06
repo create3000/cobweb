@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 05 Jan 2016 16:41:24 GMT'/>
+    <meta name='modified' content='Wed, 06 Jan 2016 21:51:21 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -66,7 +66,7 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-0.0552061498165131, 6.52954769134521, 27.0409622192383'/>
+              value='-0.0552061013877392, 6.52955007553101, 27.0410003662109'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
@@ -74,7 +74,7 @@
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='-0.0552061498165131, 6.52954769134521, 0'/>
+              value='-0.0552061013877392, 6.52955007553101, 0'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -134,30 +134,30 @@
       </Shape>
     </Transform>
     <Transform DEF='LineBounds'
-        translation='0 16.607 0'>
+        translation='0 40.9128 0'>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='scale' value='0.862813 16.6414 1'/>
+        <fieldValue name='scale' value='0.862813 40.9473 1'/>
         <fieldValue name='color' value='1 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0.862813 -1.3875 0'/>
-        <fieldValue name='scale' value='1.25 15.2539 1'/>
+        <fieldValue name='translation' value='0.862813 -3.19086 0'/>
+        <fieldValue name='scale' value='1.25 37.7564 1'/>
         <fieldValue name='color' value='0 1 0'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='2.11281 -0.588985 0'/>
-        <fieldValue name='scale' value='1.25 16.0524 1'/>
+        <fieldValue name='translation' value='2.11281 -1.49484 0'/>
+        <fieldValue name='scale' value='1.25 39.4524 1'/>
         <fieldValue name='color' value='0 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='3.36281 -10.8263 0'/>
-        <fieldValue name='scale' value='1.25 5.81508 1'/>
+        <fieldValue name='translation' value='3.36281 -26.9977 0'/>
+        <fieldValue name='scale' value='1.25 13.9495 1'/>
         <fieldValue name='color' value='1 1 0'/>
       </ProtoInstance>
     </Transform>
     <Transform DEF='TextBounds'
-        translation='0 16.607 0'
-        scale='4.21559 16.6414 1'>
+        translation='0 40.9128 0'
+        scale='4.21559 40.9473 1'>
       <ProtoInstance name='BBox2'/>
     </Transform>
     <Script DEF='Bounds'>
@@ -171,8 +171,9 @@
       <field accessType='initializeOnly' type='MFColor' name='color' value='1 0 1, 0 1 0, 0 0 1, 1 1 0, 0 1 1, 1 0 0'/>
       <field accessType='initializeOnly' type='SFNode' name='text'>
         <Text DEF='Geo'
-            string='"上海市第二中级人民法院2月18日对“复旦投毒案”依法公开", "一审宣判，被告人林森浩犯故意杀人罪被判死刑，剥夺政治", "权利终身。2013年4月，复旦大学研究生黄洋因舍友投毒", "死亡，年仅28岁。!"'>
-          <FontStyle
+            string='"上海市第二中级人民法院2月18日对“复旦投毒案”依法公开", "一审宣判，被告人林森浩犯故意杀人罪被判死刑，剥夺政治", "权利终身。2013年4月，复旦大学研究生黄洋因舍友投毒", "死亡，年仅28岁。!"'
+            length='40.9414, 37.7539, 39.4524, 13.9151'>
+          <FontStyle DEF='_1'
               family='"Arial Unicode MS", "ARIALUNI.TTF"'
               size='0.5'
               spacing='2.5'
