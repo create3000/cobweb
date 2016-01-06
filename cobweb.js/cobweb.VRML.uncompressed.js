@@ -27661,7 +27661,7 @@ function ($,
 			catch (error)
 			{
 				console .warn ("XML Parser Error: ", error .message);
-				console .warn (error);
+				//console .warn (error);
 			}
 		},
 		children: function (childNodes, protoInstance)
