@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
     <meta name='icon' content='../../ui/icons/icon-bw.svg'/>
-    <meta name='modified' content='Wed, 06 Jan 2016 15:09:58 GMT'/>
+    <meta name='modified' content='Thu, 07 Jan 2016 11:49:14 GMT'/>
     <meta name='title' content='about:info'/>
   </head>
   <Scene>
@@ -44,11 +44,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0, 0, 10'/>
+              value='-0.00152639835141599, -0.028887877240777, 9.99995899200439'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='0.992968380451202, -0.052313357591629, -0.106194339692593, 0.00292968773283064'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -143,7 +143,7 @@
                   <fieldValue name='loop' value='true'/>
                 </ProtoInstance>
                 <Transform DEF='Logo'
-                    rotation='0 0 -1 0.179077'
+                    rotation='0 0 -1 5.29943'
                     center='5.6 -5.9 0'>
                   <Inline
                       url='"library/logo.x3dv"'/>
@@ -182,18 +182,20 @@
                 </Shape>
               </Transform>
               <Transform DEF='StayInteractive'
-                  translation='0.0368572 0.219 1'>
+                  translation='0.20047 0.219 1'>
                 <Shape>
                   <Appearance>
                     <Material
                         diffuseColor='1 1 1'/>
                   </Appearance>
                   <Text
-                      string='"Stay interactive!"'>
-                    <FontStyle
+                      string='"Stay interactive!"'
+                      length='0.181389'>
+                    <FontStyle DEF='_1'
                         family='"PTN57F.ttf", "sans"'
                         style='BOLD'
-                        size='0.03'/>
+                        size='0.03'
+                        justify='"END"'/>
                   </Text>
                 </Shape>
               </Transform>

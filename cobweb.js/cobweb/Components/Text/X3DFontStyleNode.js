@@ -209,7 +209,8 @@ function ($,
 					return;
 				}
 
-				this .URL = this .loader .transform (this .familyStack .shift ());
+				this .family = this .familyStack .shift ();
+				this .URL    = this .loader .transform (this .family);
 	
 				var font = this .getBrowser () .getFont (this .URL);
 
@@ -261,7 +262,7 @@ function ($,
 		{
 			if (font === true)
 			{
-				this .familyStack .unshift (this .URL .toString ());
+				this .familyStack .unshift (this .family);
 				setTimeout (this .loadNext .bind (this), 10);
 				return;
 			}

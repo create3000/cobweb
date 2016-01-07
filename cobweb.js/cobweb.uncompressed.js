@@ -49043,7 +49043,8 @@ function ($,
 					return;
 				}
 
-				this .URL = this .loader .transform (this .familyStack .shift ());
+				this .family = this .familyStack .shift ();
+				this .URL    = this .loader .transform (this .family);
 	
 				var font = this .getBrowser () .getFont (this .URL);
 
@@ -49095,7 +49096,7 @@ function ($,
 		{
 			if (font === true)
 			{
-				this .familyStack .unshift (this .URL .toString ());
+				this .familyStack .unshift (this .family);
 				setTimeout (this .loadNext .bind (this), 10);
 				return;
 			}
@@ -49371,6 +49372,7 @@ function (TextAlignment,
 		max3        = new Vector3 (0, 0, 0),
 		size        = new Vector2 (0, 0),
 		center      = new Vector2 (0, 0),
+		size1_2     = new Vector2 (0, 0),
 		translation = new Vector2 (0, 0),
 		lineBound   = new Vector2 (0, 0),
 		origin      = new Vector3 (0, 0, 0),
@@ -49484,11 +49486,13 @@ function (TextAlignment,
 		horizontal: function (text, fontStyle)
 		{
 			var
+				font        = fontStyle .getFont (),
 				string      = text .string_ .getValue (),
 				numLines    = string .length,
+				maxExtent   = text .maxExtent_ .getValue (),
 				topToBottom = fontStyle .topToBottom_ .getValue (),
 				scale       = fontStyle .getScale (),
-				lineHeight  = fontStyle .spacing_ .getValue ();
+				spacing     = fontStyle .spacing_ .getValue ();
 			
 			bbox .set ();
 
@@ -49517,15 +49521,15 @@ function (TextAlignment,
 					charSpacing = 0,
 					length      = text .getLength (l);
 	
-				lineBound .set (size .x, lineNumber == 0 ? size .y : lineHeight) .multiply (scale);
+				lineBound .set (size .x, lineNumber == 0 ? max .y - font .descender / font .unitsPerEm : spacing) .multiply (scale);
 
-				if (text .maxExtent_ .getValue ())
+				if (maxExtent)
 				{
 					if (length)
-						length = Math .min (text .maxExtent_ .getValue (), length);
+						length = Math .min (maxExtent, length);
 
 					else
-						length = Math .min (text .maxExtent_ .getValue (), size .x * scale);
+						length = Math .min (maxExtent, size .x * scale);
 				}
 
 				if (length)
@@ -49544,25 +49548,25 @@ function (TextAlignment,
 				{
 					case TextAlignment .BEGIN:
 					case TextAlignment .FIRST:
-						this .translations [l] .set (0, -(l * lineHeight));
+						this .translations [l] .set (0, -l * spacing);
 						break;
 					case TextAlignment .MIDDLE:
-						this .translations [l] .set (-min .x - size .x / 2, -(l * lineHeight));
+						this .translations [l] .set (-min .x - size .x / 2, -l * spacing);
 						break;
 					case TextAlignment .END:
-						this .translations [l] .set (-min .x - size .x, -(l * lineHeight));
+						this .translations [l] .set (-min .x - size .x, -l * spacing);
 						break;
 				}
 
+				this .translations [l] .multiply (scale);
+
 				// Calculate center.
 
-				center .assign (min) .add (max) .divide (2);
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
 
 				// Add bbox.
 
-				bbox .add (box2 .set (size .multiply (scale), center .add (this .translations [l]) .multiply (scale)));
-
-				this .translations [l] .multiply (scale);
+				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [l])));
 			}
 
 			//console .log ("size", bbox .size, "center", bbox .center);
@@ -49590,7 +49594,7 @@ function (TextAlignment,
 					this .minorAlignment .set (0, size .y / 2 - max .y);
 					break;
 				case TextAlignment .END:
-					this .minorAlignment .set (0, (numLines - 1) * lineHeight * scale);
+					this .minorAlignment .set (0, (numLines - 1) * spacing * scale);
 					break;
 			}
 
@@ -49666,7 +49670,7 @@ function (TextAlignment,
 
 					// Calculate center.
 
-					center .assign (min) .add (max) .divide (2) .add (this .translations [t]);
+					center .assign (min) .add (size1_2 .assign (size) .divide (2)) .add (this .translations [t]);
 		
 					// Add bbox.
 		
@@ -49677,8 +49681,7 @@ function (TextAlignment,
 		
 				lineBBox .getExtents (min, max);
 		
-				size   .assign (max) .subtract (min);
-				center .assign (min) .add (max) .divide (2);
+				size .assign (max) .subtract (min);
 	
 				// Calculate charSpacing and lineBounds.
 
@@ -49701,7 +49704,7 @@ function (TextAlignment,
 		
 				if (length)
 				{
-					charSpacing  = (length - lineBound .y) / (line .length - 1) / scale;
+					charSpacing  = (length - lineBound .y) / (glyphs .length - 1) / scale;
 					lineBound .y = length;
 					size .y      = length / scale;
 					min .y       = max .y  - size .y;
@@ -49745,8 +49748,8 @@ function (TextAlignment,
 					space += charSpacing;
 				}
 		
-				// Add bbox.
-					
+				// Calculate ypad to extend line bounds.
+
 				switch (fontStyle .getMajorAlignment ())
 				{
 					case TextAlignment .BEGIN:
@@ -49760,7 +49763,13 @@ function (TextAlignment,
 						yPad [l] = min .y + translation .y;
 						break;
 				}
+
+				// Calculate center.
+
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
 		
+				// Add bbox.
+					
 				bbox .add (box2 .set (size .multiply (scale), center .add (translation) .multiply (scale)));
 			}
 
@@ -49888,7 +49897,7 @@ function (TextAlignment,
 		getHorizontalLineExtents: function (fontStyle, line, min, max, lineNumber)
 		{
 			var
-			   font             = fontStyle .getFont (),
+				font             = fontStyle .getFont (),
 				normal           = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
 				glyphs           = this .stringToGlyphs (font, line, normal, lineNumber),
 				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
@@ -49905,7 +49914,9 @@ function (TextAlignment,
 
 				this .getGlyphExtents (glyph, primitiveQuality, glyphMin, glyphMax);
 
-				xMax += glyph .advanceWidth + kerning;
+				var advanceWidth = g + 1 < length ? glyph .advanceWidth : glyphMax .x * font .unitsPerEm;
+
+				xMax += advanceWidth + kerning;
 				yMin  = Math .min (yMin, glyphMin .y);
 				yMax  = Math .max (yMax, glyphMax .y);
 			}
@@ -49930,9 +49941,6 @@ function (TextAlignment,
 				case TextAlignment .BEGIN:
 				case TextAlignment .FIRST:
 					min .x = 0;
-					break;
-				case TextAlignment .MIDDLE:
-				case TextAlignment .END:
 					break;
 			}
 
@@ -51852,16 +51860,24 @@ function ($,
 		build: function ()
 		{
 			var
-				text           = this .getText (),
-				fontStyle      = this .getFontStyle (),
-				glyphs         = this .getGlyphs (),
-				minorAlignment = this .getMinorAlignment (),
-				translations   = this .getTranslations (),
-				charSpacings   = this .getCharSpacings (),
-				size           = fontStyle .getScale ();
+				fontStyle = this .getFontStyle (),
+				font      = fontStyle .getFont ();
 
-			if (! fontStyle .getFont ())
+			if (! font)
 				return;
+
+			var
+				text             = this .getText (),
+				glyphs           = this .getGlyphs (),
+				minorAlignment   = this .getMinorAlignment (),
+				translations     = this .getTranslations (),
+				charSpacings     = this .getCharSpacings (),
+				size             = fontStyle .getScale (),
+				sizeUnitsPerEm   = size / font .unitsPerEm,
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+				texCoords        = this .texCoords,
+				normals          = text .getNormals (),
+				vertices         = text .getVertices ();
 
 			this .texCoords .length = 0;
 			text .getTexCoords () .push (this .texCoords);
@@ -51872,17 +51888,44 @@ function ($,
 
 			if (fontStyle .horizontal_ .getValue ())
 			{
-				for (var i = 0, length = glyphs .length; i < length; ++ i)
-					this .render (glyphs [i], minorAlignment, size, translations [i], charSpacings [i]);
+				for (var l = 0, length = glyphs .length; l < length; ++ l)
+				{
+					var
+						line         = glyphs [l],
+						charSpacing  = charSpacings [l],
+						translation  = translations [l],
+						advanceWidth = 0;
+
+					for (var g = 0, gl = line .length; g < gl; ++ g)
+					{
+						var
+							glyph         = line [g],
+							glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
+						
+						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+						{
+							var
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
+		
+							normals   .push (0, 0, 1);
+							vertices  .push (x, y, 0, 1);
+							texCoords .push (x / size, y / size, 0, 1);
+						}
+		
+						// Calculate advanceWidth.
+		
+						var kerning = 0;
+		
+						if (g + 1 < line .length)
+							kerning = font .getKerningValue (glyph, line [g + 1]);
+		
+						advanceWidth += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+					}
+				}
 			}
 			else
 			{
-				var
-					primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-					texCoords        = this .texCoords,
-					normals          = text .getNormals (),
-					vertices         = text .getVertices ();
-
 				var
 					leftToRight = fontStyle .leftToRight_ .getValue (),
 					topToBottom = fontStyle .topToBottom_ .getValue (),
@@ -51898,13 +51941,15 @@ function ($,
 
 					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
 					{
-						var glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
+						var
+							translation   = translations [t],
+							glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
 
 						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
 						{
 							var
-								x = glyphVertices [v] .x * size + minorAlignment .x + translations [t] .x,
-								y = glyphVertices [v] .y * size + minorAlignment .y + translations [t] .y;
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
 			
 							normals   .push (0, 0, 1);
 							vertices  .push (x, y, 0, 1);
@@ -51912,46 +51957,6 @@ function ($,
 						}
 					}
 				}
-			}
-		},
-		render: function (glyphs, minorAlignment, size, translation, charSpacing)
-		{
-			var
-				text             = this .getText (),
-				fontStyle        = this .getFontStyle (),
-				font             = fontStyle .getFont (),
-				offset           = 0,
-				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-				sizeUnitsPerEm   = size / font .unitsPerEm,
-				texCoords        = this .texCoords,
-				normals          = text .getNormals (),
-				vertices         = text .getVertices ();
-
-			for (var g = 0, gl = glyphs .length; g < gl; ++ g)
-			{
-				var
-					glyph         = glyphs [g],
-					glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
-				
-				for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
-				{
-					var
-						x = glyphVertices [v] .x * size + minorAlignment .x + g * charSpacing + translation .x + offset,
-						y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
-
-					normals   .push (0, 0, 1);
-					vertices  .push (x, y, 0, 1);
-					texCoords .push (x / size, y / size, 0, 1);
-				}
-
-				// Calculate offset.
-
-				var kerning = 0;
-
-				if (g + 1 < glyphs .length)
-					kerning = font .getKerningValue (glyph, glyphs [g + 1]);
-
-				offset += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
 			}
 		},
 		getGlyphExtents: function (glyph, primitiveQuality, min, max)
