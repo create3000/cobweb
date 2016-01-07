@@ -63,7 +63,7 @@ function ($,
 		getLength: function (index)
 		{
 			if (index < this .length_ .length)
-				return this .length_ [index];
+				return Math .max (0, this .length_ [index]);
 
 			return 0;
 		},

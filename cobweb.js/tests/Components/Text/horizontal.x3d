@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 07 Jan 2016 00:54:40 GMT'/>
+    <meta name='modified' content='Thu, 07 Jan 2016 12:37:47 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -66,15 +66,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='1.36495411396027, 0.221950709819794, 7.70681476593018'/>
+              value='1.51616454124451, -0.891363441944122, 7.30037832260132'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.872291028499603, 0.488929092884064, 0.0075312159024179, 0.0424616187810898'/>
+              value='0.872290968894958, 0.488929092884064, 0.0075312159024179, 0.0424616187810898'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='1.20469212532043, 0.507764458656311, -0.00311020389199257'/>
+              value='1.36341178417206, -0.618941903114319, -0.0481606088578701'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -82,9 +82,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Viewpoint'
-        position='1.63599 -0.839562 7.66185'
+        position='1.51616 -0.891363 7.30038'
         orientation='0.872291 0.488929 0.00753122 0.0424616'
-        centerOfRotation='1.47572 -0.553748 -0.0480794'/>
+        centerOfRotation='1.36341 -0.618942 -0.0481606'/>
     <Transform DEF='Text'>
       <Shape>
         <Appearance>
@@ -92,9 +92,9 @@
               diffuseColor='1 0 0'/>
         </Appearance>
         <Text DEF='Text_1'
-            string='"R e a d", "s o m i g", "T e x t", "t o d a y !"'
-            length='1.11547, 1.24648, 0.964531, 1.34547'
-            maxExtent='1.12'>
+            string='"Read more", "good old", "Texts", "today!"'
+            length='3.47492, 2.90562, 1.79102, 2.14547'
+            maxExtent='3.15'>
           <FontStyle DEF='_1'
               family='"Ubuntu", "SANS"'
               style='BOLDITALIC'
@@ -156,28 +156,28 @@
     <Transform DEF='LineBounds'
         translation='0 0.387969 0'>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='scale' value='1.11547 0.395 1'/>
+        <fieldValue name='scale' value='3.15 0.482469 1'/>
         <fieldValue name='color' value='1 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -0.395 0'/>
-        <fieldValue name='scale' value='1.12 1 1'/>
+        <fieldValue name='translation' value='0 -0.482469 0'/>
+        <fieldValue name='scale' value='2.90562 1 1'/>
         <fieldValue name='color' value='0 1 0'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -1.395 0'/>
-        <fieldValue name='scale' value='0.964531 1 1'/>
+        <fieldValue name='translation' value='0 -1.48247 0'/>
+        <fieldValue name='scale' value='1.79102 1 1'/>
         <fieldValue name='color' value='0 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -2.395 0'/>
-        <fieldValue name='scale' value='1.12 1 1'/>
+        <fieldValue name='translation' value='0 -2.48247 0'/>
+        <fieldValue name='scale' value='2.14547 1 1'/>
         <fieldValue name='color' value='1 1 0'/>
       </ProtoInstance>
     </Transform>
     <Transform DEF='TextBounds'
         translation='0 0.387969 0'
-        scale='1.12 3.48047 1'>
+        scale='3.15 3.48047 1'>
       <ProtoInstance name='BBox2'/>
     </Transform>
     <Script DEF='Bounds'>
