@@ -1,62 +1,347 @@
 
 define ([
 	"jquery",
-	"cobweb/Configuration/ComponentInfo",
 	"cobweb/Configuration/ComponentInfoArray",
 	"cobweb/Browser/Networking/urls",
 ],
-function ($, ComponentInfo, ComponentInfoArray, urls)
+function ($, ComponentInfoArray, urls)
 {
 "use strict";
 
-	function add (title, name, level)
+	return function (browser)
 	{
-		supportedComponents .add (name, new ComponentInfo (name, level, title, urls .provider));
-	}
+		var supportedComponents = new ComponentInfoArray (browser);
 
-	var supportedComponents = new ComponentInfoArray ();
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Computer-Aided Design (CAD) model geometry",
+			name:       "CADGeometry",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
 
-	add ("Computer-Aided Design (CAD) model geometry", "CADGeometry",          2);
-	add ("Core",                                       "Core",                 2);
-	add ("Cube map environmental texturing",           "CubeMapTexturing",     3);
-	add ("Distributed interactive simulation (DIS)",   "DIS",                  2);
-	add ("Environmental effects",                      "EnvironmentalEffects", 4);
-	add ("Environmental sensor",                       "EnvironmentalSensor",  3);
-	add ("Event utilities",                            "EventUtilities",       1);
-	add ("Followers",                                  "Followers",            1);
-	add ("Geometry2D",                                 "Geometry2D",           2);
-	add ("Geometry3D",                                 "Geometry3D",           4);
-	add ("Geospatial",                                 "Geospatial",           2);
-	add ("Grouping",                                   "Grouping",             3);
-	add ("Humanoid animation (H-Anim)",                "H-Anim",               1);
-	add ("Interpolation",                              "Interpolation",        5);
-	add ("Key device sensor",                          "KeyDeviceSensor",      2);
-	add ("Layering",                                   "Layering",             1);
-	add ("Layout",                                     "Layout",               2);
-	add ("Lighting",                                   "Lighting",             3);
-	add ("Navigation",                                 "Navigation",           3);
-	add ("Networking",                                 "Networking",           4);
-	add ("Non-uniform Rational B-Spline (NURBS)",      "NURBS",                4);
-	add ("Particle systems",                           "ParticleSystems",      3);
-	add ("Picking sensor",                             "Picking",              3);
-	add ("Pointing device sensor",                     "PointingDeviceSensor", 1);
-	add ("Programmable shaders",                       "Shaders",              1);
-	add ("Rendering",                                  "Rendering",            5);
-	add ("Rigid body physics",                         "RigidBodyPhysics",     2);
-	add ("Scripting",                                  "Scripting",            1);
-	add ("Shape",                                      "Shape",                4);
-	add ("Sound",                                      "Sound",                1);
-	add ("Text",                                       "Text",                 1);
-	add ("Texturing",                                  "Texturing",            3);
-	add ("Texturing3D",                                "Texturing3D",          2);
-	add ("Time",                                       "Time",                 2);
-	add ("Volume rendering",                           "VolumeRendering",      4);
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Core",
+			name:       "Core",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
 
-	add ("Cobweb",                                     "Cobweb",               1); // Non standard.
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Cube map environmental texturing",
+			name:       "CubeMapTexturing",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
 
-	Object .preventExtensions (supportedComponents);
-	Object .freeze (supportedComponents);
-	Object .seal (supportedComponents);
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Distributed interactive simulation (DIS)",
+			name:       "DIS",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
 
-	return supportedComponents;
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Environmental effects",
+			name:       "EnvironmentalEffects",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Environmental sensor",
+			name:       "EnvironmentalSensor",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Event utilities",
+			name:       "EventUtilities",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Followers",
+			name:       "Followers",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geometry2D",
+			name:       "Geometry2D",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geometry3D",
+			name:       "Geometry3D",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geospatial",
+			name:       "Geospatial",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Grouping",
+			name:       "Grouping",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Humanoid animation (H-Anim)",
+			name:       "H-Anim",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Interpolation",
+			name:       "Interpolation",
+			level:       5,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Key device sensor",
+			name:       "KeyDeviceSensor",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Layering",
+			name:       "Layering",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Layout",
+			name:       "Layout",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Lighting",
+			name:       "Lighting",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Navigation",
+			name:       "Navigation",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Networking",
+			name:       "Networking",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Non-uniform Rational B-Spline (NURBS)",
+			name:       "NURBS",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Particle systems",
+			name:       "ParticleSystems",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Picking sensor",
+			name:       "Picking",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Pointing device sensor",
+			name:       "PointingDeviceSensor",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Programmable shaders",
+			name:       "Shaders",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Rendering",
+			name:       "Rendering",
+			level:       5,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Rigid body physics",
+			name:       "RigidBodyPhysics",
+			level:       5,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Scripting",
+			name:       "Scripting",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Shape",
+			name:       "Shape",
+			level:       4,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Sound",
+			name:       "Sound",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Text",
+			name:       "Text",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Texturing",
+			name:       "Texturing",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Texturing3D",
+			name:       "Texturing3D",
+			level:       3,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Time",
+			name:       "Time",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Volume rendering",
+			name:       "VolumeRendering",
+			level:       2,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		// Custom, non-standard component.
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Cobweb",
+			name:       "Cobweb",
+			level:       1,
+			providerUrl: urls .provider,
+			url: [ ],
+		});
+
+		Object .preventExtensions (supportedComponents);
+		Object .freeze (supportedComponents);
+		Object .seal (supportedComponents);
+	
+		return supportedComponents;
+	};
 });

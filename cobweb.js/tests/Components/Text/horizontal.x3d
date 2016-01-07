@@ -6,7 +6,7 @@
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 07 Jan 2016 12:37:47 GMT'/>
+    <meta name='modified' content='Thu, 07 Jan 2016 14:03:05 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -70,7 +70,7 @@
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.872290968894958, 0.488929092884064, 0.0075312159024179, 0.0424616187810898'/>
+              value='0.872291028499603, 0.488929092884064, 0.0075312159024179, 0.0424616187810898'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -93,9 +93,9 @@
         </Appearance>
         <Text DEF='Text_1'
             string='"Read more", "good old", "Texts", "today!"'
-            length='3.47492, 2.90562, 1.79102, 2.14547'
+            length='3.47492, 2.90563, 1.79102, 2.14547'
             maxExtent='3.15'>
-          <FontStyle DEF='_1'
+          <FontStyle
               family='"Ubuntu", "SANS"'
               style='BOLDITALIC'
               size='0.5'
@@ -161,7 +161,7 @@
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
         <fieldValue name='translation' value='0 -0.482469 0'/>
-        <fieldValue name='scale' value='2.90562 1 1'/>
+        <fieldValue name='scale' value='2.90563 1 1'/>
         <fieldValue name='color' value='0 1 0'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>

@@ -40,8 +40,8 @@ function ($,
 		this .currentFrameRate     = 0;
 		this .description_         = "";
 		this .supportedNodes       = SupportedNodes;
-		this .supportedComponents  = SupportedComponents;
-		this .supportedProfiles    = SupportedProfiles;
+		this .supportedComponents  = SupportedComponents (this);
+		this .supportedProfiles    = SupportedProfiles (this);
 	};
 
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),

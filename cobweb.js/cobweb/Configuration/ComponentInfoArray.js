@@ -2,15 +2,18 @@
 define ([
 	"jquery",
 	"cobweb/Configuration/X3DInfoArray",
+	"cobweb/Configuration/ComponentInfo",
 ],
-function ($, X3DInfoArray)
+function ($, X3DInfoArray, ComponentInfo)
 {
 "use strict";
 
-	function ComponentInfoArray (array)
+	function ComponentInfoArray (browser, array)
 	{
-		var proxy = X3DInfoArray .call (this);
+		this .browser = browser;
 
+		var proxy = X3DInfoArray .call (this);
+	
 		if (array)
 		{
 			for (var i = 0, length = array .length; i < length; ++ i)
@@ -23,6 +26,10 @@ function ($, X3DInfoArray)
 	ComponentInfoArray .prototype = $.extend (Object .create (X3DInfoArray .prototype),
 	{
 		constructor: ComponentInfoArray,
+		addComponentInfo: function (value)
+		{
+			this .add (value .name, new ComponentInfo (this .browser, value .name, value .level, value .title, value .providerUrl, value .url));
+		}
 	});
 
 	return ComponentInfoArray;

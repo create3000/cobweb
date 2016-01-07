@@ -40,7 +40,7 @@ function ($,
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
 		this .profile              = null;
-		this .components           = new ComponentInfoArray ();
+		this .components           = new ComponentInfoArray (this .getBrowser ());
 		this .url                  = new URI (window .location);
 		this .uninitializedNodes   = [ ];
 		this .namedNodes           = { };
