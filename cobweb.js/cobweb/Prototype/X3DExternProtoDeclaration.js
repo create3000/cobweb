@@ -18,14 +18,8 @@ function ($,
 {
 "use strict";
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-	];
-
 	function X3DExternProtoDeclaration (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DProtoDeclarationNode .call (this, executionContext);
 		X3DUrlObject            .call (this, executionContext);
 
@@ -33,13 +27,16 @@ function ($,
 
 		this .addChildren ("url", new Fields .MFString ());
 
-		this .callbacks = [ ];
+		this .deferred = $.Deferred ();
 	}
 
 	X3DExternProtoDeclaration .prototype = $.extend (Object .create (X3DProtoDeclarationNode .prototype),
 		X3DUrlObject .prototype,
 	{
 		constructor: X3DExternProtoDeclaration,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+		]),
 		getTypeName: function ()
 		{
 			return "EXTERNPROTO";
@@ -84,8 +81,10 @@ function ($,
 		{
 			return this .proto;
 		},
-		requestAsyncLoad: function ()
+		requestAsyncLoad: function (callback)
 		{
+			this .deferred .done (callback);
+
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
 				return;
 
@@ -103,45 +102,40 @@ function ($,
 			this .getScene () .removeLoadCount (this);
 		
 			if (value)
-			{
 				this .setScene (value);
-			}
+
 			else
-			{
-				this .setLoadState (X3DConstants .FAILED_STATE);
-		
-				this .scene = this .getBrowser () .getPrivateScene ();
-		
-				this .setProtoDeclaration (null);
-			}
+				this .setError ();
+		},
+		setError: function (error)
+		{
+			console .log (error);
+
+			this .setLoadState (X3DConstants .FAILED_STATE);
+
+			this .scene = this .getBrowser () .getPrivateScene ();
+
+			this .setProtoDeclaration (null);
+
+			this .deferred .resolve ();
+			this .deferred = $.Deferred ();
 		},
 		setScene: function (value)
 		{
 			this .scene = value;
-		
-			try
-			{
-				this .setLoadState (X3DConstants .COMPLETE_STATE);
-		
-				this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
-				//this .scene .setExecutionContext (this .getExecutionContext ());
-		
-				this .scene .setup ();
-		
-				var protoName = this .scene .getURL () .fragment || 0;
-		
-				this .setProtoDeclaration (this .scene .protos [protoName]);
-			}
-			catch (error)
-			{
-			   console .log (error);
 
-				this .setLoadState (X3DConstants .FAILED_STATE);
-		
-				this .scene = this .getBrowser () .getPrivateScene ();
+			this .setLoadState (X3DConstants .COMPLETE_STATE);
 
-				this .setProtoDeclaration (null);
-			}
+			this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+			//this .scene .setExecutionContext (this .getExecutionContext ());
+
+			this .scene .setup ();
+
+			var protoName = this .scene .getURL () .fragment || 0;
+
+			this .setProtoDeclaration (this .scene .protos [protoName]);
+
+			this .deferred .resolve ();
 		},
 	});
 

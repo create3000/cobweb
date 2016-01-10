@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/CADGeometry/X3DProductStructureChildNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",

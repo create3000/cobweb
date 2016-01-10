@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/EventUtilities/X3DTriggerNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",

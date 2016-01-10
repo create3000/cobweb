@@ -39,7 +39,7 @@ function ($,
 
 		this .node             = node;
 		this .browser          = node .getBrowser ();
-		this .external         = this .browser .isExternal () || external;
+		this .external         = external === undefined ? this .browser .isExternal () : external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
 		this .url              = [ ];
 		this .URL              = new URI ();
@@ -112,7 +112,7 @@ function ($,
 		setScene: function (scene, success)
 		{
 			scene .loadCount_ .addInterest (this, "set_loadCount__", scene, success);
-			scene .requestAsyncLoadOfExternProtos ();
+			scene .loadCount_ .addEvent ();
 		},
 		set_loadCount__: function (field, scene, success)
 		{
@@ -299,7 +299,7 @@ function ($,
 						//console .log (this .getContentType (xhr));
 
 						if (foreign [this .getContentType (xhr)])
-							return this .foreign (this .URL .toString () .replace (urls .fallbackRx, ""));
+							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""));
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);
@@ -363,8 +363,8 @@ function ($,
 				URL = this .browser .getLocation () .getRelativePath (URL);
 			else
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .url .unshift (urls .fallback + URL);
+				if (! sURL .match (urls .fallbackExpression))
+					this .url .unshift (urls .fallbackUrl + URL);
 			}
 
 			return URL;

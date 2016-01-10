@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Layout/LayoutGroup",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

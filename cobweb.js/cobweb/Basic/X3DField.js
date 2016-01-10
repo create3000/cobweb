@@ -16,7 +16,7 @@ function ($,
 	{
 		X3DChildObject .call (this);
 	
-		this .value_ = value;
+		this ._value = value;
 
 		return this;
 	}
@@ -24,19 +24,20 @@ function ($,
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
-		references_: { },
-		fieldInterests_: { },
-		fieldCallbacks_: { },
-		accessType_: X3DConstants .initializeOnly,
-		set_: null,
-		uniformLocation_: null,
+		_value: undefined,
+		_references: { },
+		_fieldInterests: { },
+		_fieldCallbacks: { },
+		_accessType: X3DConstants .initializeOnly,
+		_set: false,
+		_uniformLocation: null,
 		clone: function ()
 		{
 			return this .copy ();
 		},
 		equals: function (value)
 		{
-			return this .getValue () == value .valueOf ();
+			return this ._value === value .valueOf ();
 		},
 		setValue: function (value)
 		{
@@ -45,19 +46,19 @@ function ($,
 		},
 		set: function (value)
 		{
-			this .value_ = value;
+			this ._value = value;
 		},
 		getValue: function ()
 		{
-			return this .value_;
+			return this ._value;
 		},
 		setAccessType: function (value)
 		{
-			this .accessType_ = value;
+			this ._accessType = value;
 		},
 		getAccessType: function ()
 		{
-			return this .accessType_;
+			return this ._accessType;
 		},
 		isInitializable: function ()
 		{
@@ -82,16 +83,16 @@ function ($,
 		setSet: function (value)
 		{
 			// Boolean indication whether the value is set during parse, or undefined.
-			return this .set_ = value;
+			return this ._set = value;
 		},
 		getSet: function ()
 		{
-			return this .set_;
+			return this ._set;
 		},
 		hasReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
-				return ! $.isEmptyObject (this .references_);
+			if (this .hasOwnProperty ("_references"))
+				return ! $.isEmptyObject (this ._references);
 
 			return false;
 		},
@@ -130,18 +131,18 @@ function ($,
 		},
 		getReferences: function ()
 		{
-			if (! this .hasOwnProperty ("references_"))
-				this .references_ = { };
+			if (! this .hasOwnProperty ("_references"))
+				this ._references = { };
 
-			return this .references_;
+			return this ._references;
 		},
 		updateReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
+			if (this .hasOwnProperty ("_references"))
 			{
-				for (var id in this .references_)
+				for (var id in this ._references)
 				{
-					var reference = this .references_ [id];
+					var reference = this ._references [id];
 
 					switch (this .getAccessType () & reference .getAccessType ())
 					{
@@ -158,39 +159,33 @@ function ($,
 		},
 		addFieldInterest: function (field)
 		{
-			if (! this .hasOwnProperty ("fieldInterests_"))
-				this .fieldInterests_ = { };
+			if (! this .hasOwnProperty ("_fieldInterests"))
+				this ._fieldInterests = { };
 
-			this .fieldInterests_ [field .getId ()] = field;
+			this ._fieldInterests [field .getId ()] = field;
 		},
 		removeFieldInterest: function (field)
 		{
-			delete this .fieldInterests_ [field .getId ()];
+			delete this ._fieldInterests [field .getId ()];
+		},
+		getFieldInterests: function ()
+		{
+			return this ._fieldInterests;
 		},
 		addFieldCallback: function (string, object)
 		{
-			if (! this .hasOwnProperty ("fieldCallbacks_"))
-				this .fieldCallbacks_ = { };
+			if (! this .hasOwnProperty ("_fieldCallbacks"))
+				this ._fieldCallbacks = { };
 
-			this .fieldCallbacks_ [string] = object;
+			this ._fieldCallbacks [string] = object;
 		},
 		removeFieldCallback: function (string)
 		{
-			delete this .fieldCallbacks_ [string];
+			delete this ._fieldCallbacks [string];
 		},
-		addEvent: function ()
+		getFieldCallbacks: function ()
 		{
-			var parents = this .getParents ();
-
-			for (var key in parents)
-				parents [key] .addEvent (this);
-		},
-		addEventObject: function (field, event)
-		{
-			var parents = this .getParents ();
-
-			for (var key in parents)
-				parents [key] .addEventObject (this, event);
+			return this ._fieldCallbacks;
 		},
 		processEvent: function (event)
 		{
@@ -200,18 +195,9 @@ function ($,
 			event .sources [this .getId ()] = true;
 
 			this .setTainted (false);
-			this .setSet (true);
 
-			try
-			{
 			if (event .field !== this)
 				this .set (event .field .getValue ());
-			}
-			catch (error)
-			{
-				console .log (event);
-				throw error;
-			}
 
 			// Process interests
 
@@ -220,7 +206,7 @@ function ($,
 			// Process routes
 
 			var
-				fieldInterests = this .fieldInterests_,
+				fieldInterests = this ._fieldInterests,
 				first          = true;
 
 			for (var key in fieldInterests)
@@ -239,7 +225,7 @@ function ($,
 
 			// Process field callbacks
 
-			var fieldCallbacks = this .fieldCallbacks_;
+			var fieldCallbacks = this ._fieldCallbacks;
 
 			for (var key in fieldCallbacks)
 				fieldCallbacks [key] (this .valueOf ());

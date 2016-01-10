@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/CADGeometry/IndexedQuadSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

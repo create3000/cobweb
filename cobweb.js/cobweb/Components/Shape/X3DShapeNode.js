@@ -41,8 +41,6 @@ function ($,
 			this .set_apparance__ ();
 			this .set_geometry__ ();
 			this .set_bbox__ ();
-
-			this .static_ = true;
 		},
 		getBBox: function ()
 		{

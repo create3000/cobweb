@@ -18,7 +18,7 @@ function (Fields,
 	
 	function IcoSphereOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("type",  new Fields .SFString ("ICOSAHEDRON"),
 		                   "order", new Fields .SFInt32 (2))

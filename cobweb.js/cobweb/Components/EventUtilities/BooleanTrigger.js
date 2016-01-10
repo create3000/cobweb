@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/EventUtilities/BooleanTrigger",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

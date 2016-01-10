@@ -10,7 +10,7 @@ function ($,
 	
 	function RenderingProperties (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	RenderingProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),

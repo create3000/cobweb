@@ -54,7 +54,7 @@ function ($, X3DField, X3DConstants)
 			}
 			catch (error)
 			{
-				//console .log (target, key, error);
+				console .error (target, key, error);
 				return false;
 			}
 		},
@@ -98,7 +98,26 @@ function ($, X3DField, X3DConstants)
 		},
 		set: function (value)
 		{
-			X3DField .prototype .set .call (this, value ? value : null);
+try
+{
+			var current = this .getValue ();
+
+			if (current)
+				current .removeParent (this);
+
+			if (value)
+			{
+				value .addParent (this);
+
+				X3DField .prototype .set .call (this, value);
+			}
+			else
+				X3DField .prototype .set .call (this, null);
+}
+catch (error)
+{
+console .log (error);
+}
 		},
 		getNodeTypeName: function ()
 		{

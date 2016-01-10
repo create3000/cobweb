@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Geometry3D/Cone",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

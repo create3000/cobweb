@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Followers/TexCoordChaser2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

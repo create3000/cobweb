@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Scripting/Script",
+[
 	"jquery",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
@@ -52,17 +53,8 @@ function ($,
           Loader,
           X3DConstants)
 {
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
-	];
-
 	function Script (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DScriptNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Script);
@@ -71,6 +63,12 @@ function ($,
 	Script .prototype = $.extend (Object .create (X3DScriptNode .prototype),
 	{
 		constructor: Script,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
+		]),
 		getTypeName: function ()
 		{
 			return "Script";

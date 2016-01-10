@@ -59,7 +59,7 @@ function ($,
 	
 					if (location)
 					{
-						field .uniformLocation_ = location;
+						field ._uniformLocation = location;
 
 						field .addInterest (this, "set_field__");
 
@@ -102,7 +102,7 @@ function ($,
 							}
 							case X3DConstants .MFNode:
 							{
-								var array = field .uniformLocation_ = [ ];
+								var array = field ._uniformLocation = [ ];
 
 								for (var i = 0; ; ++ i)
 								{
@@ -165,7 +165,7 @@ function ($,
 					{
 						case X3DConstants .SFNode:
 						{
-							this .removeNode (gl, program, field .uniformLocation_);
+							this .removeNode (gl, program, field ._uniformLocation);
 							break;
 						}
 						case X3DConstants .MFNode:
@@ -205,32 +205,32 @@ function ($,
 				case X3DConstants .SFBool:
 				case X3DConstants .SFInt32:
 				{
-					gl .uniform1i (field .uniformLocation_, field .getValue ());
+					gl .uniform1i (field ._uniformLocation, field .getValue ());
 					return;
 				}
 				case X3DConstants .SFColor:
 				{
 					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .r, value .g, value .b);
+					gl .uniform3f (field ._uniformLocation, value .r, value .g, value .b);
 					return;
 				}
 				case X3DConstants .SFColorRGBA:
 				{
 					var value = field .getValue ();
-					gl .uniform4f (field .uniformLocation_, value .r, value .g, value .b, value .a);
+					gl .uniform4f (field ._uniformLocation, value .r, value .g, value .b, value .a);
 					return;
 				}
 				case X3DConstants .SFDouble:
 				case X3DConstants .SFFloat:
 				case X3DConstants .SFTime:
 				{
-					gl .uniform1f (field .uniformLocation_, field .getValue ());
+					gl .uniform1f (field ._uniformLocation, field .getValue ());
 					return;
 				}
 				case X3DConstants .SFImage:
 				{
 					var
-						location = field .uniformLocation_,
+						location = field ._uniformLocation,
 						array    = location .array,
 						pixels   = field .array .getValue (),
 						length   = 3 + pixels .length;
@@ -252,19 +252,19 @@ function ($,
 				case X3DConstants .SFMatrix3f:
 				{
 					this .matrix3f .set (field .getValue ());
-					gl .uniformMatrix3fv (field .uniformLocation_, false, this .matrix3f);
+					gl .uniformMatrix3fv (field ._uniformLocation, false, this .matrix3f);
 					return;
 				}
 				case X3DConstants .SFMatrix4d:
 				case X3DConstants .SFMatrix4f:
 				{
 					this .matrix4f .set (field .getValue ());
-					gl .uniformMatrix4fv (field .uniformLocation_, false, this .matrix4f);
+					gl .uniformMatrix4fv (field ._uniformLocation, false, this .matrix4f);
 					return;
 				}
 				case X3DConstants .SFNode:
 				{
-					var location = field .uniformLocation_;
+					var location = field ._uniformLocation;
 
 					this .setNode (gl, program, location, field);
 					return;
@@ -272,7 +272,7 @@ function ($,
 				case X3DConstants .SFRotation:
 				{
 					var quat = field .getValue () .quat;
-					gl .uniform4f (field .uniformLocation_, quat .x, quat .y, quat .z, quat .w);
+					gl .uniform4f (field ._uniformLocation, quat .x, quat .y, quat .z, quat .w);
 					return;
 				}
 				case X3DConstants .SFString:
@@ -283,21 +283,21 @@ function ($,
 				case X3DConstants .SFVec2f:
 				{
 					var value = field .getValue ();
-					gl .uniform2f (field .uniformLocation_, value .x, value .y);
+					gl .uniform2f (field ._uniformLocation, value .x, value .y);
 					return;
 				}
 				case X3DConstants .SFVec3d:
 				case X3DConstants .SFVec3f:
 				{
 					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .x, value .y, value .z);
+					gl .uniform3f (field ._uniformLocation, value .x, value .y, value .z);
 					return;
 				}
 				case X3DConstants .SFVec4d:
 				case X3DConstants .SFVec4f:
 				{
 					var value = field .getValue ();
-					gl .uniform4f (field .uniformLocation_, value .x, value .y, value .z, value .w);
+					gl .uniform4f (field ._uniformLocation, value .x, value .y, value .z, value .w);
 					return;
 				}
 				case X3DConstants .MFBool:
@@ -305,7 +305,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						array [i] = value [i] .getValue ();
@@ -313,14 +313,14 @@ function ($,
 					for (var length = array .length; i < length; ++ i)
 						array [i] = 0;
 
-					gl .uniform1iv (field .uniformLocation_, array);
+					gl .uniform1iv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFColor:
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -334,14 +334,14 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform3fv (field .uniformLocation_, array);
+					gl .uniform3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFColorRGBA:
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -356,7 +356,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFDouble:
@@ -365,7 +365,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						array [i] = value [i] .getValue ();
@@ -373,14 +373,14 @@ function ($,
 					for (var length = array .length; i < length; ++ i)
 						array [i] = 0;
 
-					gl .uniform1fv (field .uniformLocation_, array);
+					gl .uniform1fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFImage:
 				{
 					var
 						value    = field .getValue (),
-						location = field .uniformLocation_,
+						location = field ._uniformLocation,
 						array    = location .array,
 						length   = this .getImagesLength (field);
 
@@ -409,7 +409,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -429,7 +429,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniformMatrix3fv (field .uniformLocation_, array);
+					gl .uniformMatrix3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFMatrix4d:
@@ -437,7 +437,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -464,14 +464,14 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniformMatrix4fv (field .uniformLocation_, array);
+					gl .uniformMatrix4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFNode:
 				{
 					var
 						value     = field .getValue (),
-						locations = field .uniformLocation_;
+						locations = field ._uniformLocation;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						this .setNode (gl, program, locations [i], value [i]);
@@ -485,7 +485,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -500,7 +500,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFString:
@@ -512,7 +512,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -525,7 +525,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform2fv (field .uniformLocation_, array);
+					gl .uniform2fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFVec3d:
@@ -533,7 +533,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -547,7 +547,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform3fv (field .uniformLocation_, array);
+					gl .uniform3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFVec4d:
@@ -555,7 +555,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -570,7 +570,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 			}

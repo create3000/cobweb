@@ -14,7 +14,7 @@ function ($,
 
 	function X3DNode (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNode);
 	}

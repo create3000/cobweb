@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/CubeMapTexturing/ImageCubeMapTexture",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -26,7 +27,8 @@ function ($,
 		this .addType (X3DConstants .ImageCubeMapTexture);
 	}
 
-	ImageCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),new X3DUrlObject (),
+	ImageCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
+		X3DUrlObject .prototype,
 	{
 		constructor: ImageCubeMapTexture,
 		fieldDefinitions: new FieldDefinitionArray ([

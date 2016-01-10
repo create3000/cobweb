@@ -31,19 +31,8 @@ function ($,
 
 	var shader = null;
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-		new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
-	];
-
 	function ComposedShader (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DShaderNode               .call (this, executionContext);
 		X3DProgrammableShaderObject .call (this, executionContext);
 
@@ -68,6 +57,14 @@ function ($,
 		X3DProgrammableShaderObject .prototype,
 	{
 		constructor: ComposedShader,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
+		]),
 		wireframe: false,
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,

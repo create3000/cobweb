@@ -58,6 +58,8 @@ function ($,
 	if (! console .warn)  console .warn  = console .log;
 	if (! console .error) console .error = console .log;
 
+	// X3D
+
 	function getBrowser (dom)
 	{
 		return $(dom) .data ("browser");
@@ -78,8 +80,6 @@ function ($,
 		
 		return browser;
 	}
-
-	// X3D
 
 	var
 	   initialized = false,
@@ -105,10 +105,21 @@ function ($,
 		
 			try
 			{
-				$.map (elements, createBrowser);
-	
+				var
+					time     = performance .now (),
+					browsers = $.map (elements, createBrowser);
+
+				numBrowsers = browsers .length;
+
 				if (elements .length)
-					callbacks .resolve (elements);
+				{
+					for (var i = 0; i < numBrowsers; ++ i)
+					{
+						var browser = browsers [i];
+
+						browser .initialized () .addFieldCallback ("initialized" + browser .getId (), set_initialized .bind (null, browser, elements));
+					}
+				}
 			}
 			catch (error)
 			{
@@ -118,10 +129,24 @@ function ($,
 		});
 	}
 
+	var numBrowsers = 0;
+
+	function set_initialized (browser, elements)
+	{
+		browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
+
+		if (-- numBrowsers)
+			return;
+
+		callbacks .resolve (elements);
+		
+	}
+
 	$.extend (X3D,
 		Fields,
 	{
 		require:                     require,
+		define:                      define,
 		getBrowser:                  getBrowser,
 		createBrowser:               createBrowser,
 		X3DConstants:                X3DConstants,

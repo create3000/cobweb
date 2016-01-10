@@ -20,16 +20,8 @@ function ($,
 {
 "use strict";
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "type",     new Fields .SFString ("VERTEX")),
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "url",      new Fields .MFString ()),
-	];
-
 	function ShaderProgram (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DNode .call (this, executionContext);
 		X3DUrlObject .call (this, executionContext);
 		X3DProgrammableShaderObject .call (this, executionContext);
@@ -40,6 +32,11 @@ function ($,
 	ShaderProgram .prototype = $.extend (Object .create (X3DNode .prototype),new X3DUrlObject (),new X3DProgrammableShaderObject (),
 	{
 		constructor: ShaderProgram,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "type",     new Fields .SFString ("VERTEX")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",      new Fields .MFString ()),
+		]),
 		getTypeName: function ()
 		{
 			return "ShaderProgram";

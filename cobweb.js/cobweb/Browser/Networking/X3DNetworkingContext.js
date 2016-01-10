@@ -47,7 +47,7 @@ function (Fields,
 		},
 		getProviderUrl: function ()
 		{
-			return urls .provider;
+			return urls .providerUrl;
 		},
 		doCaching: function ()
 		{

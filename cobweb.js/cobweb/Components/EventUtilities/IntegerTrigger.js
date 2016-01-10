@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/EventUtilities/IntegerTrigger",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

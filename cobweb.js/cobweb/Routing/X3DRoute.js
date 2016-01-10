@@ -9,15 +9,19 @@ function ($, X3DBaseNode)
 
 	function X3DRoute (/* executionContext, */ sourceNode, sourceField, destinationNode, destinationField)
 	{
-		//X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		//X3DBaseNode .call (this, executionContext);
 		
-		this .sourceNode_       = sourceNode;
+		this .sourceNode        = sourceNode;
 		this .sourceField_      = sourceField;
-		this .destinationNode_  = destinationNode;
+		this .destinationNode   = destinationNode;
 		this .destinationField_ = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
 			sourceField .addFieldInterest (destinationField);
+
+		Object .preventExtensions (this);
+		Object .freeze (this);
+		Object .seal (this);
 	}
 
 	X3DRoute .prototype =
@@ -32,31 +36,11 @@ function ($, X3DBaseNode)
 		},
 	};
 
-	Object .defineProperty (X3DRoute .prototype, "sourceNode",
-	{
-		get: function ()
-		{
-			return this .sourceNode_;
-		},
-		enumerable: true,
-		configurable: false
-	});
-
 	Object .defineProperty (X3DRoute .prototype, "sourceField",
 	{
 		get: function ()
 		{
 			return this .sourceField_ .getName ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (X3DRoute .prototype, "destinationNode",
-	{
-		get: function ()
-		{
-			return this .destinationNode_;
 		},
 		enumerable: true,
 		configurable: false

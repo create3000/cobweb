@@ -1,12 +1,12 @@
 
 all:
-	mv cobweb/Configuration/SupportedNodes.js cobweb/Configuration/SupportedNodes.X3D.js
-	mv cobweb/Configuration/SupportedNodes.VRML.js cobweb/Configuration/SupportedNodes.js
-	jam compile --almond --wrap --no-minify cobweb.js -i cobweb.js -o cobweb.VRML.uncompressed.js
-	uglifyjs -m -c -- cobweb.VRML.uncompressed.js > cobweb.VRML.ugly.js
-	mv cobweb.VRML.ugly.js cobweb.VRML.min.js
-	mv cobweb/Configuration/SupportedNodes.js cobweb/Configuration/SupportedNodes.VRML.js
-	mv cobweb/Configuration/SupportedNodes.X3D.js cobweb/Configuration/SupportedNodes.js
+#	mv cobweb/Configuration/SupportedNodes.js cobweb/Configuration/SupportedNodes.X3D.js
+#	mv cobweb/Configuration/SupportedNodes.VRML.js cobweb/Configuration/SupportedNodes.js
+#	jam compile --almond --wrap --no-minify cobweb.js -i cobweb.js -o cobweb.VRML.uncompressed.js
+#	uglifyjs -m -c -- cobweb.VRML.uncompressed.js > cobweb.VRML.ugly.js
+#	mv cobweb.VRML.ugly.js cobweb.VRML.min.js
+#	mv cobweb/Configuration/SupportedNodes.js cobweb/Configuration/SupportedNodes.VRML.js
+#	mv cobweb/Configuration/SupportedNodes.X3D.js cobweb/Configuration/SupportedNodes.js
 
 	jam compile --almond --wrap --no-minify cobweb.js -i cobweb.js -o cobweb.uncompressed.js
 	uglifyjs -m -c -- cobweb.uncompressed.js > cobweb.ugly.js
@@ -19,11 +19,13 @@ all:
 
 	echo
 	ls -la cobweb.min.js
-	ls -la cobweb.VRML.min.js
+#	ls -la cobweb.VRML.min.js
 	echo
+
 
 version: all
 	perl version.pl
+
 
 clean:
 	rm cobweb.min.html

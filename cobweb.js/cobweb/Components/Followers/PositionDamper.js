@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Followers/PositionDamper",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

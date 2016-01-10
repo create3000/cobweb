@@ -22,7 +22,7 @@ function ($,
 
    function Notification (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	Notification .prototype = $.extend (Object .create (X3DBaseNode .prototype),

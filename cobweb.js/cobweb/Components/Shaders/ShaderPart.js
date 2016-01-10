@@ -70,7 +70,7 @@ function ($,
 
 			this .shader = gl .createShader (gl [this .getShaderType ()]);
 
-			this .requestImmediateLoad ();
+			this .requestAsyncLoad ();
 		},
 		isValid: function ()
 		{
@@ -93,7 +93,7 @@ function ($,
 		{
 			return this .url_;
 		},
-		requestImmediateLoad: function ()
+		requestAsyncLoad: function ()
 		{
 			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE || this .checkLoadState () == X3DConstants .IN_PROGRESS_STATE)
 				return;

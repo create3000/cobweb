@@ -1,27 +1,21 @@
 
 define ([
+	"jquery",
 	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
 ],
-function (Fields)
+function ($,
+          Fields,
+          X3DConstants)
 {
 "use strict";
 
-	function url (browser, name)
+	function ComponentInfo (browser, value)
 	{
-		return new Fields .MFString (
-			"https://cdn.rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js"
-		);
-	}
-
-	function ComponentInfo (browser, name, level, title, providerUrl)
-	{
-console .log (name, browser);
-
-		this .browser     = browser;
-		this .name        = name;
-		this .level       = level;
-		this .title       = title;
-		this .providerUrl = providerUrl;
+		this .name        = value .name;
+		this .level       = value .level;
+		this .title       = value .title;
+		this .providerUrl = value .providerUrl;
 
 		Object .preventExtensions (this);
 		Object .freeze (this);

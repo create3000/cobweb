@@ -20,7 +20,7 @@ function ($,
 	
 	function Rectangle2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	Rectangle2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),

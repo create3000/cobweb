@@ -32,7 +32,7 @@ function ($,
 
 	function X3DExecutionContext (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("rootNodes", new Fields .MFNode (),
                          "loadCount", new Fields .SFInt32 ());
@@ -46,6 +46,7 @@ function ($,
 		this .namedNodes           = { };
 		this .protos               = new ProtoDeclarationArray ();
 		this .externprotos         = new ExternProtoDeclarationArray ();
+		this .pendingRoutes        = [ ];
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
 
@@ -58,6 +59,28 @@ function ($,
 		setup: function ()
 		{
 			X3DBaseNode .prototype .setup .call (this);
+
+			// Add routes
+
+			var pendingRoutes = this .pendingRoutes;
+
+			for (var i = 0, length = pendingRoutes .length; i < length; ++ i)
+			{
+				try
+				{
+					var route = pendingRoutes [i];
+
+					this .addRoute (route .sourceNode, route .sourceField, route .destinationNode, route .destinationField);
+				}
+				catch (error)
+				{
+					console .warn (error .message);
+				}
+			}
+
+			pendingRoutes .length = 0;
+
+			// Setup nodes
 
 			var uninitializedNodes = this .uninitializedNodes;
 
@@ -92,12 +115,12 @@ function ($,
 		},
 		createNode: function (typeName, setup)
 		{
-			var constructor = this .getBrowser () .supportedNodes [typeName];
+			var interfaceDeclaration = this .getBrowser () .supportedNodes [typeName];
 
-			if (! constructor)
+			if (! interfaceDeclaration)
 				throw new Error ("Unknown node type '" + typeName + "'.");
 
-			var node = new constructor (this);
+			var node = interfaceDeclaration .createInstance (this);
 
 			if (setup === false)
 				return node;
@@ -142,13 +165,11 @@ function ($,
 		},
 		updateNamedNode: function (name, node)
 		{
-			name = String (name);
-			
-			if (node instanceof X3DBaseNode)
-				node = new Fields .SFNode (node);				
-
-			if (! (node instanceof Fields .SFNode))
+			if (! (node instanceof Fields .SFNode || node instanceof X3DBaseNode))
 				throw new Error ("Couldn't update named node: node must be of type SFNode.");
+
+			name = String (name);
+			node = new Fields .SFNode (node .valueOf ());
 
 			if (! node .getValue ())
 				throw new Error ("Couldn't update named node: node IS NULL.");
@@ -168,7 +189,7 @@ function ($,
 
 			node .getValue () .setName (name);
 
-			this .namedNodes [name] = new Fields .SFNode (node .getValue ());
+			this .namedNodes [name] = node;
 		},
 		removeNamedNode: function (name)
 		{
@@ -210,7 +231,16 @@ function ($,
 		{
 			return this .rootNodes_;
 		},
-		addRoute: function (sourceNode, fromField, destinationNode, toField)
+		registerRoute: function (sourceNode, sourceField, destinationNode, destinationField)
+		{
+			this .pendingRoutes .push ({
+				sourceNode:      sourceNode,
+				sourceField:     sourceField,
+				destinationNode: destinationNode,
+				destinationField: destinationField,
+			});
+		},
+		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			try
 			{
@@ -220,9 +250,8 @@ function ($,
 				if (! destinationNode .getValue ())
 					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
 
-				var
-					sourceField      = sourceNode .getValue () .getField (fromField),
-					destinationField = destinationNode .getValue () .getField (toField);
+				sourceField      = sourceNode      .getValue () .getField (sourceField),
+				destinationField = destinationNode .getValue () .getField (destinationField);
 
 				if (! sourceField .isOutput ())
 					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
@@ -269,7 +298,7 @@ function ($,
 				console .log (error);
 			}
 		},
-		getRoute: function (sourceNode, fromField, destinationNode, toField)
+		getRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			if (! sourceNode .getValue ())
 				throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
@@ -278,8 +307,8 @@ function ($,
 				throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
 
 			var
-				sourceField      = sourceNode .getValue () .getField (fromField),
-				destinationField = destinationNode .getValue () .getField (toField),
+				sourceField      = sourceNode .getValue () .getField (sourceField),
+				destinationField = destinationNode .getValue () .getField (destinationField),
 				id               = sourceField .getId () + "." + destinationField .getId ();
 
 			return this .routeIndex [id];
@@ -316,28 +345,6 @@ function ($,
 		removeLoadCount: function (node)
 		{
 			this .loadCount_ = this .loadCount_ .getValue () - 1;
-		},
-		requestAsyncLoadOfExternProtos: function ()
-		{
-			this .loadCount_ .setTainted (false);
-			this .loadCount_ .addEvent ();
-
-			for (var i = 0, length = this .externprotos .length; i < length; ++ i)
-			{
-				var externproto = this .externprotos [i];
-
-				if (externproto .getInstances () .length === 0)
-				   continue;
-		
-				externproto .requestAsyncLoad ();
-			}
-		
-			for (var i = 0, length = this .protos .length; i < length; ++ i)
-			{
-				var proto = this .protos [i];
-
-			   proto .requestAsyncLoadOfExternProtos ();
-			}
 		},
 	});
 

@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Followers/X3DChaserNode",
+[
 	"jquery",
 	"cobweb/Components/Followers/X3DFollowerNode",
 	"cobweb/Bits/X3DConstants",

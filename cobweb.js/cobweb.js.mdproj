@@ -668,7 +668,6 @@
     <None Include="lib\sprintf.js\src\angular-sprintf.js" />
     <None Include="lib\sprintf.js\src\sprintf.js" />
     <None Include="lib\sprintf.js\test\test.js" />
-    <None Include="cobweb\Configuration\SupportedNodes.VRML.js" />
     <None Include="lib\bezierjs\bezier.js" />
     <None Include="lib\bezierjs\index.html" />
     <None Include="lib\bezierjs\js\draw.js" />
@@ -1070,7 +1069,6 @@
     <None Include="cobweb.min.html" />
     <None Include="browser.html" />
     <None Include="tests\Components\Layout\info.x3d" />
-    <None Include="cobweb\Browser\Version.js" />
     <None Include="version.pl" />
     <None Include="examples\water\tiles.jpg" />
     <None Include="examples\water\water.x3d" />
@@ -1102,8 +1100,6 @@
     <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolator1.js" />
     <None Include="cobweb\Browser\Interpolation\CatmullRomSplineInterpolatorTemplate.js" />
     <None Include="cobweb\Browser\Interpolation\SquatInterpolator.js" />
-    <None Include="cobweb.VRML.min.js" />
-    <None Include="cobweb.VRML.uncompressed.js" />
     <None Include="cobweb.uncompressed.js" />
     <None Include="cobweb\Browser\Followers\X3DArrayFollowerTemplate.js" />
     <None Include="cobweb\Browser\Followers\X3DArrayChaserTemplate.js" />
@@ -1121,6 +1117,8 @@
     <None Include="tests\Components\Layout\PTN57F.ttf" />
     <None Include="tests\Components\Layout\PTN77F.ttf" />
     <None Include="tests\Components\Layout\info.png" />
+    <None Include="cobweb\Browser\VERSION.js" />
+    <None Include="tests\Components\Scripting\rotation.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

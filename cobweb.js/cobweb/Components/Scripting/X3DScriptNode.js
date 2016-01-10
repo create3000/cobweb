@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Scripting/X3DScriptNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Networking/X3DUrlObject",

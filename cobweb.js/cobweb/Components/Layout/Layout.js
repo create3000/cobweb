@@ -1,5 +1,6 @@
 
-define ("cobweb/Components/Layout/Layout", [
+define ("cobweb/Components/Layout/Layout",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -77,12 +78,12 @@ function ($,
 		modelViewMatrix: new Matrix4 (),
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "align",       new Fields .MFString ([ "CENTER", "CENTER" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offsetUnits", new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",      new Fields .MFFloat ([ 0, 0 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "sizeUnits",   new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "size",        new Fields .MFFloat ([ 1, 1 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "scaleMode",   new Fields .MFString ([ "NONE", "NONE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "align",       new Fields .MFString ("CENTER", "CENTER")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "offsetUnits", new Fields .MFString ("WORLD", "WORLD")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",      new Fields .MFFloat (0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "sizeUnits",   new Fields .MFString ("WORLD", "WORLD")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",        new Fields .MFFloat (1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "scaleMode",   new Fields .MFString ("NONE", "NONE")),
 		]),
 		getTypeName: function ()
 		{

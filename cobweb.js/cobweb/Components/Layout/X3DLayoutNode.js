@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Layout/X3DLayoutNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",

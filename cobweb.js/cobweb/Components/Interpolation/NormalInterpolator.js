@@ -71,9 +71,14 @@ function ($,
 
 			for (var i = 0; i < size; ++ i)
 			{
-				value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-				                                       .slerp (keyValue [index1 + i] .getValue (),
-				                                               weight));
+				try
+				{
+					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
+					                                       .slerp (keyValue [index1 + i] .getValue (),
+					                                               weight));
+				}
+				catch (error)
+				{ }
 			}
 
 			this .value_changed_ .addEvent ();

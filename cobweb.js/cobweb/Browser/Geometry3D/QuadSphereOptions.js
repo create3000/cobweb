@@ -24,7 +24,7 @@ function ($,
 	
 	function QuadSphereOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("uDimension", new Fields .SFInt32 (32),
 		                   "vDimension", new Fields .SFInt32 (16))

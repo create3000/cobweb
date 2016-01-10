@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DSensorNode",
 	"cobweb/Bits/X3DConstants",

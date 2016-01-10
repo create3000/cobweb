@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

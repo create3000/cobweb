@@ -12,7 +12,7 @@ function ($,
 	
 	function CylinderOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 			
 		this .addChildren ("uDimension", new Fields .SFInt32 (1),
 		                   "vDimension", new Fields .SFInt32 (20))

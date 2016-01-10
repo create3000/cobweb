@@ -8,7 +8,7 @@ use open qw/:std :utf8/;
 
 say `pwd`;
 
-my $VERSION = `cat cobweb/Browser/Version.js`;
+my $VERSION = `cat cobweb/Browser/VERSION.js`;
 $VERSION =~ /"(.*?)"/;
 $VERSION = $1;
 

@@ -5,8 +5,8 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 01 Jan 2016 09:17:51 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 01 Jan 2016 09:19:29 GMT'/>
+    <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
+    <meta name='modified' content='Fri, 08 Jan 2016 19:26:29 GMT'/>
     <meta name='title' content='ScreenGroup'/>
   </head>
   <Scene>
@@ -43,11 +43,11 @@
     </WorldInfo>
     <Background
         skyColor='0.2 0.2 0.2'/>
-    <OrthoViewpoint DEF='_1'
+    <OrthoViewpoint
         description='OthoViewpoint'/>
-    <Viewpoint DEF='_2'
+    <Viewpoint
         description='Viewpoint'/>
-    <Transform
+    <Transform DEF='Text'
         scale='2 1 1'
         scaleOrientation='0 0 1 0.785398'>
       <ScreenGroup>
@@ -81,10 +81,10 @@
         </Transform>
       </ScreenGroup>
     </Transform>
-    <Transform
+    <Transform DEF='Box'
         translation='-0.767947 0.507512 0'>
       <ScreenGroup>
-        <Transform DEF='Box'
+        <Transform DEF='Box_1'
             scale='20 20 20'>
           <Shape>
             <Appearance>

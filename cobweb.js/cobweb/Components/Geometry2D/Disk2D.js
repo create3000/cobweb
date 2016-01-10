@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Geometry2D/Disk2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

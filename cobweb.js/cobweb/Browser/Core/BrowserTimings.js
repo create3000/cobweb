@@ -18,7 +18,7 @@ function ($,
 
 	function BrowserTimings (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("enabled", new SFBool ());
 	}

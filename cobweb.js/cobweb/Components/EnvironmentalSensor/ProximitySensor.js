@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

@@ -16,7 +16,7 @@ function ($,
 	
 	function Circle2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("segments", new Fields .SFInt32 (40))
 

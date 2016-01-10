@@ -1,5 +1,6 @@
 
-define (function ()
+define ("cobweb/Browser/Scripting/evaluate",
+function ()
 {
 	return function (/* __global__, __text__ */)
 	{

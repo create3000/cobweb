@@ -20,7 +20,7 @@ function ($,
 	
 	function BoxOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	BoxOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),

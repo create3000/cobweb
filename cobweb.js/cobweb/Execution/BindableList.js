@@ -23,7 +23,7 @@ function ($, X3DBaseNode)
 
 	function BindableList (executionContext, layer, defaultNode)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layer     = layer;
 		this .collected = [ defaultNode ];

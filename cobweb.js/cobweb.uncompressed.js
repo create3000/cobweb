@@ -9213,13 +9213,16 @@ define ('cobweb/Basic/X3DFieldDefinition',[],function ()
 {
 
 
-	function X3DFieldDefinition (accessType, name, value, userDefined)
+	function X3DFieldDefinition (accessType, name, value)
 	{
 		this .accessType  = accessType;
 		this .dataType    = value .getType ();
 		this .name        = name;
 		this .value       = value;
-		this .userDefined = userDefined;
+
+		Object .preventExtensions (this);
+		Object .freeze (this);
+		Object .seal (this);
 	}
 
 	X3DFieldDefinition .prototype .constructor = X3DFieldDefinition;
@@ -9289,7 +9292,7 @@ function ()
 
 	var id = 0;
 	
-	function getId () { return this .id_; }
+	function getId () { return this ._id; }
 
 	/*
 	 *  X3DObject
@@ -9300,54 +9303,54 @@ function ()
 	X3DObject .prototype =
 	{
 		constructor: X3DObject,
-		id_: 0,
-		name_: "",
-		tainted_: false,
-		interests_: { },
+		_id: 0,
+		_name: "",
+		_tainted: false,
+		_interests: { },
 		getId: function ()
 		{
 			this .getId = getId;
 
-			return this .id_ = ++ id;
+			return this ._id = ++ id;
 		},
 		setName: function (value)
 		{
-			this .name_ = value;
+			this ._name = value;
 		},
 		getName: function ()
 		{
-			return this .name_;
+			return this ._name;
 		},
 		setTainted: function (value)
 		{
-			this .tainted_ = value;
+			this ._tainted = value;
 		},
 		getTainted: function ()
 		{
-			return this .tainted_;
+			return this ._tainted;
 		},
 		addInterest: function (object, callback)
 		{
-			if (! this .hasOwnProperty ("interests_"))
-				this .interests_ = { };
+			if (! this .hasOwnProperty ("_interests"))
+				this ._interests = { };
 
 			var args = Array .prototype .slice .call (arguments, 0);
 	
 			args [1] = this;
 
-			this .interests_ [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
+			this ._interests [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
 		},
 		removeInterest: function (object, callback)
 		{
-			delete this .interests_ [object .getId () + callback];
+			delete this ._interests [object .getId () + callback];
 		},
 		getInterests: function ()
 		{
-			return this .interests_;
+			return this ._interests;
 		},
 		processInterests: function ()
 		{
-			var interests = this .interests_;
+			var interests = this ._interests;
 
 			for (var key in interests)
 				interests [key] ();
@@ -9370,23 +9373,37 @@ function ($, X3DObject)
 	{
 		X3DObject .call (this);
 
-		this .parents_ = { };
+		this ._parents = { };
 	}
 
 	X3DChildObject .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
 		constructor: X3DChildObject,
+		addEvent: function ()
+		{
+			var parents = this ._parents;
+
+			for (var key in parents)
+				parents [key] .addEvent (this);
+		},
+		addEventObject: function (field, event)
+		{
+			var parents = this ._parents;
+
+			for (var key in parents)
+				parents [key] .addEventObject (this, event);
+		},
 		addParent: function (parent)
 		{
-			this .parents_ [parent .getId ()] = parent;
+			this ._parents [parent .getId ()] = parent;
 		},
 		removeParent: function (parent)
 		{
-			delete this .parents_ [parent .getId ()];
+			delete this ._parents [parent .getId ()];
 		},
 		getParents: function ()
 		{
-			return this .parents_;
+			return this ._parents;
 		},
 	});
 
@@ -9862,7 +9879,7 @@ function ($,
 	{
 		X3DChildObject .call (this);
 	
-		this .value_ = value;
+		this ._value = value;
 
 		return this;
 	}
@@ -9870,19 +9887,20 @@ function ($,
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
-		references_: { },
-		fieldInterests_: { },
-		fieldCallbacks_: { },
-		accessType_: X3DConstants .initializeOnly,
-		set_: null,
-		uniformLocation_: null,
+		_value: undefined,
+		_references: { },
+		_fieldInterests: { },
+		_fieldCallbacks: { },
+		_accessType: X3DConstants .initializeOnly,
+		_set: false,
+		_uniformLocation: null,
 		clone: function ()
 		{
 			return this .copy ();
 		},
 		equals: function (value)
 		{
-			return this .getValue () == value .valueOf ();
+			return this ._value === value .valueOf ();
 		},
 		setValue: function (value)
 		{
@@ -9891,19 +9909,19 @@ function ($,
 		},
 		set: function (value)
 		{
-			this .value_ = value;
+			this ._value = value;
 		},
 		getValue: function ()
 		{
-			return this .value_;
+			return this ._value;
 		},
 		setAccessType: function (value)
 		{
-			this .accessType_ = value;
+			this ._accessType = value;
 		},
 		getAccessType: function ()
 		{
-			return this .accessType_;
+			return this ._accessType;
 		},
 		isInitializable: function ()
 		{
@@ -9928,16 +9946,16 @@ function ($,
 		setSet: function (value)
 		{
 			// Boolean indication whether the value is set during parse, or undefined.
-			return this .set_ = value;
+			return this ._set = value;
 		},
 		getSet: function ()
 		{
-			return this .set_;
+			return this ._set;
 		},
 		hasReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
-				return ! $.isEmptyObject (this .references_);
+			if (this .hasOwnProperty ("_references"))
+				return ! $.isEmptyObject (this ._references);
 
 			return false;
 		},
@@ -9976,18 +9994,18 @@ function ($,
 		},
 		getReferences: function ()
 		{
-			if (! this .hasOwnProperty ("references_"))
-				this .references_ = { };
+			if (! this .hasOwnProperty ("_references"))
+				this ._references = { };
 
-			return this .references_;
+			return this ._references;
 		},
 		updateReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
+			if (this .hasOwnProperty ("_references"))
 			{
-				for (var id in this .references_)
+				for (var id in this ._references)
 				{
-					var reference = this .references_ [id];
+					var reference = this ._references [id];
 
 					switch (this .getAccessType () & reference .getAccessType ())
 					{
@@ -10004,39 +10022,33 @@ function ($,
 		},
 		addFieldInterest: function (field)
 		{
-			if (! this .hasOwnProperty ("fieldInterests_"))
-				this .fieldInterests_ = { };
+			if (! this .hasOwnProperty ("_fieldInterests"))
+				this ._fieldInterests = { };
 
-			this .fieldInterests_ [field .getId ()] = field;
+			this ._fieldInterests [field .getId ()] = field;
 		},
 		removeFieldInterest: function (field)
 		{
-			delete this .fieldInterests_ [field .getId ()];
+			delete this ._fieldInterests [field .getId ()];
+		},
+		getFieldInterests: function ()
+		{
+			return this ._fieldInterests;
 		},
 		addFieldCallback: function (string, object)
 		{
-			if (! this .hasOwnProperty ("fieldCallbacks_"))
-				this .fieldCallbacks_ = { };
+			if (! this .hasOwnProperty ("_fieldCallbacks"))
+				this ._fieldCallbacks = { };
 
-			this .fieldCallbacks_ [string] = object;
+			this ._fieldCallbacks [string] = object;
 		},
 		removeFieldCallback: function (string)
 		{
-			delete this .fieldCallbacks_ [string];
+			delete this ._fieldCallbacks [string];
 		},
-		addEvent: function ()
+		getFieldCallbacks: function ()
 		{
-			var parents = this .getParents ();
-
-			for (var key in parents)
-				parents [key] .addEvent (this);
-		},
-		addEventObject: function (field, event)
-		{
-			var parents = this .getParents ();
-
-			for (var key in parents)
-				parents [key] .addEventObject (this, event);
+			return this ._fieldCallbacks;
 		},
 		processEvent: function (event)
 		{
@@ -10046,18 +10058,9 @@ function ($,
 			event .sources [this .getId ()] = true;
 
 			this .setTainted (false);
-			this .setSet (true);
 
-			try
-			{
 			if (event .field !== this)
 				this .set (event .field .getValue ());
-			}
-			catch (error)
-			{
-				console .log (event);
-				throw error;
-			}
 
 			// Process interests
 
@@ -10066,7 +10069,7 @@ function ($,
 			// Process routes
 
 			var
-				fieldInterests = this .fieldInterests_,
+				fieldInterests = this ._fieldInterests,
 				first          = true;
 
 			for (var key in fieldInterests)
@@ -10085,7 +10088,7 @@ function ($,
 
 			// Process field callbacks
 
-			var fieldCallbacks = this .fieldCallbacks_;
+			var fieldCallbacks = this ._fieldCallbacks;
 
 			for (var key in fieldCallbacks)
 				fieldCallbacks [key] (this .valueOf ());
@@ -15691,7 +15694,7 @@ function ($, X3DField, X3DConstants)
 			}
 			catch (error)
 			{
-				//console .log (target, key, error);
+				console .error (target, key, error);
 				return false;
 			}
 		},
@@ -15735,7 +15738,26 @@ function ($, X3DField, X3DConstants)
 		},
 		set: function (value)
 		{
-			X3DField .prototype .set .call (this, value ? value : null);
+try
+{
+			var current = this .getValue ();
+
+			if (current)
+				current .removeParent (this);
+
+			if (value)
+			{
+				value .addParent (this);
+
+				X3DField .prototype .set .call (this, value);
+			}
+			else
+				X3DField .prototype .set .call (this, null);
+}
+catch (error)
+{
+console .log (error);
+}
 		},
 		getNodeTypeName: function ()
 		{
@@ -16636,6 +16658,12 @@ function ($,
 	return Fields;
 });
 
+define ('cobweb/Browser/VERSION',[],function ()
+{
+	return "1.22a";
+});
+
+
 define ('cobweb/Base/X3DEventObject',[
 	"jquery",
 	"cobweb/Base/X3DChildObject",
@@ -16718,6 +16746,7 @@ define ('cobweb/Basic/X3DBaseNode',[
 	"cobweb/Base/X3DEventObject",
 	"cobweb/Base/Events",
 	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
 ],
@@ -16725,41 +16754,45 @@ function ($,
           X3DEventObject,
           Events,
           X3DFieldDefinition,
+          FieldDefinitionArray,
           Fields,
           X3DConstants)
 {
 
 
-	function X3DBaseNode (browser, executionContext)
+	function X3DBaseNode (executionContext)
 	{
 		if (this .hasOwnProperty ("executionContext"))
 			return;
 
-		X3DEventObject .call (this, browser);
+		X3DEventObject .call (this, executionContext .getBrowser ());
 
 		this .executionContext  = executionContext;
 		this .type              = [ X3DConstants .X3DBaseNode ];
 		this .fields            = { };
-		this .preDefinedFields  = { };
+		this .predefinedFields  = { };
 		this .userDefinedFields = { };
-		
-		this .addChildren ("isLive", new Fields .SFBool (true));
 
-		var fieldDefinitions = this .fieldDefinitions;
+		// Setup fields.
+
+		if (this .hasUserDefinedFields ())
+			this .fieldDefinitions = new FieldDefinitionArray (this .fieldDefinitions .getValue () .slice ());
+
+		var fieldDefinitions = this .fieldDefinitions .getValue ();
 
 		for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			this .addField (fieldDefinitions [i]);
+
+		// Add children.
+
+		this .addChildren ("isLive", new Fields .SFBool (true));
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
 	{
 		constructor: X3DBaseNode,
-		fieldDefinitions: [ ],
-		$initialized: false,
-		create: function (executionContext)
-		{
-			return new (this .constructor) (executionContext);
-		},
+		fieldDefinitions: new FieldDefinitionArray ([ ]),
+		_initialized: false,
 		getScene: function ()
 		{
 			var executionContext = this .executionContext;
@@ -16787,7 +16820,7 @@ function ($,
 		},
 		isInitialized: function ()
 		{
-			return this .$initialized;
+			return this ._initialized;
 		},
 		isLive: function ()
 		{
@@ -16795,12 +16828,12 @@ function ($,
 		},
 		setup: function ()
 		{
-			if (this .$initialized)
+			if (this ._initialized)
 				return;
 
-			this .$initialized = true;
+			this ._initialized = true;
 
-			var fieldDefinitions = this .fieldDefinitions;
+			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
 			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
@@ -16813,6 +16846,10 @@ function ($,
 		},
 		initialize: function () { },
 		eventsProcessed: function () { },
+		create: function (executionContext)
+		{
+			return new (this .constructor) (executionContext);
+		},
 		copy: function (executionContext)
 		{
 			// First try to get a named node with the node's name.
@@ -16838,38 +16875,52 @@ function ($,
 
 			// Default fields
 
-			for (var i = 0, length = copy .fieldDefinitions .length; i < length; ++ i)
+			var predefinedFields = this .getPredefinedFields ();
+
+			for (var name in predefinedFields)
 			{
 				try
 				{
 					var
-						fieldDefinition = copy .fieldDefinitions [i],
-						field1          = this .preDefinedFields [fieldDefinition .name],
-						field2          = copy .getField (fieldDefinition .name);
-						
-					field2 .setSet (field1 .getSet ());
+						sourceField = predefinedFields [name],
+						destfield   = copy .getField (name);
 
-					if (field1 .hasReferences ())
+					destfield .setSet (sourceField .getSet ());
+
+					if (sourceField .hasReferences ())
 					{
-						// IS relationship
-						for (var id in field1 .getReferences ())
-						{
-							var originalReference = field1 .getReferences () [id];
+						var references = sourceField .getReferences ();
 
+						// IS relationship
+						for (var id in references)
+						{
 							try
 							{
-								field2 .addReference (executionContext .getField (originalReference .getName ()));
+								var originalReference = references [id];
+	
+								destfield .addReference (executionContext .getField (originalReference .getName ()));
 							}
 							catch (error)
 							{
-								console .log (error .message);
+								console .error (error .message);
 							}
 						}
 					}
 					else
 					{
-						if (field1 .getAccessType () & X3DConstants .initializeOnly)
-							field2 .set (field1 .copy (executionContext) .getValue ());
+						if (sourceField .getAccessType () & X3DConstants .initializeOnly)
+						{
+							switch (sourceField .getType ())
+							{
+								case X3DConstants .SFNode:
+								case X3DConstants .MFNode:
+									destfield .set (sourceField .copy (executionContext) .getValue ());
+									break;
+								default:
+									destfield .set (sourceField .getValue ());
+									break;
+							}
+						}
 					}
 				}
 				catch (error)
@@ -16880,33 +16931,37 @@ function ($,
 
 			// User-defined fields
 
-			for (var name in this .userDefinedFields)
+			var userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
 				var
-					field1 = this .userDefinedFields [name],
-					field2 = field1 .copy (executionContext);
+					sourceField = userDefinedFields [name],
+					destfield   = sourceField .copy (executionContext);
 
-				copy .addUserDefinedField (field1 .getAccessType (),
-				                           field1 .getName (),
-				                           field2);
+				copy .addUserDefinedField (sourceField .getAccessType (),
+				                           sourceField .getName (),
+				                           destfield);
 
-				field2 .setSet (field1 .getSet ());
+				destfield .setSet (sourceField .getSet ());
 
-				if (field1 .hasReferences ())
+				if (sourceField .hasReferences ())
 				{
 					// IS relationship
 
-					for (var id in field1 .getReferences ())
-					{
-						var originalReference = field1 .getReferences () [id];
+					var references = sourceField .getReferences ();
 
+					for (var id in references)
+					{
 						try
 						{
-							field2 .addReference (executionContext .getField (originalReference .getName ()));
+							var originalReference = references [id];
+	
+							destfield .addReference (executionContext .getField (originalReference .getName ()));
 						}
 						catch (error)
 						{
-							console .log ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
+							console .error ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
 						}
 					}
 				}
@@ -16945,28 +17000,32 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .addAlias (name, field, fieldDefinition .userDefined);
+			this .setField (name, field);
 		},
-		addAlias: function (name, field, userDefined)
+		setField: function (name, field, userDefined)
 		{
-			this .fields [name]           = field;
-			this .preDefinedFields [name] = field;
-
 			if (field .getAccessType () === X3DConstants .inputOutput)
 			{
 				this .fields ["set_" + name]     = field;
 				this .fields [name + "_changed"] = field;
 			}
 
+			this .fields [name] = field;
+
 			if (userDefined)
+			{
+				this .userDefinedFields [name] = field;
 				return;
+			}
+
+			this .predefinedFields [name] = field;
 
 			Object .defineProperty (this, name + "_",
 			{
 				get: function () { return this; } .bind (field),
 				set: field .setValue .bind (field),
 				enumerable: true,
-				configurable: false,
+				configurable: true, // false : non deleteable
 			});
 		},
 		removeField: function (name /*, completely */)
@@ -17020,20 +17079,21 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field, true));
+			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field));
 
-			this .fields [name]            = field;
-			this .userDefinedFields [name] = field;
-
-			if (field .getAccessType () === X3DConstants .inputOutput)
-			{
-				this .fields ["set_" + name]     = field;
-				this .fields [name + "_changed"] = field;
-			}
+			this .setField (name, field, true);
 		},
 		getUserDefinedFields: function ()
 		{
 			return this .userDefinedFields;
+		},
+		getPredefinedFields: function ()
+		{
+			return this .predefinedFields;
+		},
+		getFields: function ()
+		{
+			return this .fields;
 		},
 		getCDATA: function ()
 		{
@@ -17061,6 +17121,8 @@ function ($,
 			return this .getTypeName () + " { }";
 		},
 	});
+
+	X3DBaseNode .prototype .addAlias = X3DBaseNode .prototype .setField;
 
 	return X3DBaseNode;
 });
@@ -17176,7 +17238,7 @@ function ($,
 	
 	function BrowserOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addAlias ("AntiAliased", this .Antialiased_);
 
@@ -17401,7 +17463,7 @@ function ($,
 	
 	function RenderingProperties (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	RenderingProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -17448,7 +17510,7 @@ function ($,
 
    function Notification (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	Notification .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -17909,7 +17971,7 @@ function ($,
 
 	function BrowserTimings (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("enabled", new SFBool ());
 	}
@@ -19905,7 +19967,7 @@ function ($,
 	
 	function ContextMenu (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
 	}
@@ -20494,7 +20556,7 @@ function ($,
 
 	function X3DNode (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNode);
 	}
@@ -20876,18 +20938,6 @@ function ($,
 });
 
 
-
-
-define ('cobweb/Browser/Networking/urls',[],function ()
-{
-
-	
-	return {
-		provider:   "http://titania.create3000.de/cobweb",
-		fallback:   "https://crossorigin.me/",
-		fallbackRx: new RegExp ("^https://crossorigin.me/")
-	};
-});
 
 
 define ('standard/Networking/URI',[
@@ -21729,6 +21779,58 @@ function ($)
 })(typeof window === "undefined" ? this : window);
 
 
+define ('cobweb/Browser/Networking/urls',[
+	"jquery",
+	"cobweb/Browser/VERSION",
+	"standard/Networking/URI",
+	"lib/sprintf.js/src/sprintf",
+],
+function ($,
+          VERSION,
+          URI,
+          sprintf)
+{
+
+
+	var
+		MAJOR            = parseInt (VERSION),
+		cobwebExpression = /\/(?:cobweb\.min\.js|cobweb\.uncompressed\.js|cobweb\.js)$/,
+		script           = $("script") .filter (function (i, element) { return element .src .match (cobwebExpression); }),
+		scriptURL        = new URI (script [0] .src);
+
+	function componentUrl (name)
+	{
+		if (VERSION === String (parseFloat (VERSION)))
+		{
+			return [
+				scriptURL .transform (new URI (sprintf .sprintf ("components/%s.js", name))) .toString (),
+				sprintf .sprintf ("https://cdn.rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js", MAJOR, VERSION, name),
+				sprintf .sprintf ("http://cdn.rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",  MAJOR, VERSION, name),
+				sprintf .sprintf ("https://rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",     MAJOR, VERSION, name),
+				sprintf .sprintf ("http://rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",      MAJOR, VERSION, name),
+			];
+		}
+		else
+		{
+			return [
+				scriptURL .transform (new URI (sprintf .sprintf ("components/%s.js", name))) .toString (),
+				sprintf .sprintf ("https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js", name),
+				sprintf .sprintf ("http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js", name),
+				sprintf .sprintf ("https://rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js",     name),
+				sprintf .sprintf ("http://rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js",      name),
+			];
+		}
+	}
+
+	return {
+		providerUrl:       "http://titania.create3000.de/cobweb",
+		componentUrl:       componentUrl,
+		fallbackUrl:       "https://crossorigin.me/",
+		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
+	};
+});
+
+
 define ('cobweb/Browser/Networking/X3DNetworkingContext',[
 	"cobweb/Fields",
 	"cobweb/Components/Networking/LoadSensor",
@@ -21777,7 +21879,7 @@ function (Fields,
 		},
 		getProviderUrl: function ()
 		{
-			return urls .provider;
+			return urls .providerUrl;
 		},
 		doCaching: function ()
 		{
@@ -22387,7 +22489,7 @@ function ($,
 	
 					if (location)
 					{
-						field .uniformLocation_ = location;
+						field ._uniformLocation = location;
 
 						field .addInterest (this, "set_field__");
 
@@ -22430,7 +22532,7 @@ function ($,
 							}
 							case X3DConstants .MFNode:
 							{
-								var array = field .uniformLocation_ = [ ];
+								var array = field ._uniformLocation = [ ];
 
 								for (var i = 0; ; ++ i)
 								{
@@ -22493,7 +22595,7 @@ function ($,
 					{
 						case X3DConstants .SFNode:
 						{
-							this .removeNode (gl, program, field .uniformLocation_);
+							this .removeNode (gl, program, field ._uniformLocation);
 							break;
 						}
 						case X3DConstants .MFNode:
@@ -22533,32 +22635,32 @@ function ($,
 				case X3DConstants .SFBool:
 				case X3DConstants .SFInt32:
 				{
-					gl .uniform1i (field .uniformLocation_, field .getValue ());
+					gl .uniform1i (field ._uniformLocation, field .getValue ());
 					return;
 				}
 				case X3DConstants .SFColor:
 				{
 					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .r, value .g, value .b);
+					gl .uniform3f (field ._uniformLocation, value .r, value .g, value .b);
 					return;
 				}
 				case X3DConstants .SFColorRGBA:
 				{
 					var value = field .getValue ();
-					gl .uniform4f (field .uniformLocation_, value .r, value .g, value .b, value .a);
+					gl .uniform4f (field ._uniformLocation, value .r, value .g, value .b, value .a);
 					return;
 				}
 				case X3DConstants .SFDouble:
 				case X3DConstants .SFFloat:
 				case X3DConstants .SFTime:
 				{
-					gl .uniform1f (field .uniformLocation_, field .getValue ());
+					gl .uniform1f (field ._uniformLocation, field .getValue ());
 					return;
 				}
 				case X3DConstants .SFImage:
 				{
 					var
-						location = field .uniformLocation_,
+						location = field ._uniformLocation,
 						array    = location .array,
 						pixels   = field .array .getValue (),
 						length   = 3 + pixels .length;
@@ -22580,19 +22682,19 @@ function ($,
 				case X3DConstants .SFMatrix3f:
 				{
 					this .matrix3f .set (field .getValue ());
-					gl .uniformMatrix3fv (field .uniformLocation_, false, this .matrix3f);
+					gl .uniformMatrix3fv (field ._uniformLocation, false, this .matrix3f);
 					return;
 				}
 				case X3DConstants .SFMatrix4d:
 				case X3DConstants .SFMatrix4f:
 				{
 					this .matrix4f .set (field .getValue ());
-					gl .uniformMatrix4fv (field .uniformLocation_, false, this .matrix4f);
+					gl .uniformMatrix4fv (field ._uniformLocation, false, this .matrix4f);
 					return;
 				}
 				case X3DConstants .SFNode:
 				{
-					var location = field .uniformLocation_;
+					var location = field ._uniformLocation;
 
 					this .setNode (gl, program, location, field);
 					return;
@@ -22600,7 +22702,7 @@ function ($,
 				case X3DConstants .SFRotation:
 				{
 					var quat = field .getValue () .quat;
-					gl .uniform4f (field .uniformLocation_, quat .x, quat .y, quat .z, quat .w);
+					gl .uniform4f (field ._uniformLocation, quat .x, quat .y, quat .z, quat .w);
 					return;
 				}
 				case X3DConstants .SFString:
@@ -22611,21 +22713,21 @@ function ($,
 				case X3DConstants .SFVec2f:
 				{
 					var value = field .getValue ();
-					gl .uniform2f (field .uniformLocation_, value .x, value .y);
+					gl .uniform2f (field ._uniformLocation, value .x, value .y);
 					return;
 				}
 				case X3DConstants .SFVec3d:
 				case X3DConstants .SFVec3f:
 				{
 					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .x, value .y, value .z);
+					gl .uniform3f (field ._uniformLocation, value .x, value .y, value .z);
 					return;
 				}
 				case X3DConstants .SFVec4d:
 				case X3DConstants .SFVec4f:
 				{
 					var value = field .getValue ();
-					gl .uniform4f (field .uniformLocation_, value .x, value .y, value .z, value .w);
+					gl .uniform4f (field ._uniformLocation, value .x, value .y, value .z, value .w);
 					return;
 				}
 				case X3DConstants .MFBool:
@@ -22633,7 +22735,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						array [i] = value [i] .getValue ();
@@ -22641,14 +22743,14 @@ function ($,
 					for (var length = array .length; i < length; ++ i)
 						array [i] = 0;
 
-					gl .uniform1iv (field .uniformLocation_, array);
+					gl .uniform1iv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFColor:
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22662,14 +22764,14 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform3fv (field .uniformLocation_, array);
+					gl .uniform3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFColorRGBA:
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22684,7 +22786,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFDouble:
@@ -22693,7 +22795,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						array [i] = value [i] .getValue ();
@@ -22701,14 +22803,14 @@ function ($,
 					for (var length = array .length; i < length; ++ i)
 						array [i] = 0;
 
-					gl .uniform1fv (field .uniformLocation_, array);
+					gl .uniform1fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFImage:
 				{
 					var
 						value    = field .getValue (),
-						location = field .uniformLocation_,
+						location = field ._uniformLocation,
 						array    = location .array,
 						length   = this .getImagesLength (field);
 
@@ -22737,7 +22839,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22757,7 +22859,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniformMatrix3fv (field .uniformLocation_, array);
+					gl .uniformMatrix3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFMatrix4d:
@@ -22765,7 +22867,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22792,14 +22894,14 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniformMatrix4fv (field .uniformLocation_, array);
+					gl .uniformMatrix4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFNode:
 				{
 					var
 						value     = field .getValue (),
-						locations = field .uniformLocation_;
+						locations = field ._uniformLocation;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						this .setNode (gl, program, locations [i], value [i]);
@@ -22813,7 +22915,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22828,7 +22930,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFString:
@@ -22840,7 +22942,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22853,7 +22955,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform2fv (field .uniformLocation_, array);
+					gl .uniform2fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFVec3d:
@@ -22861,7 +22963,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22875,7 +22977,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform3fv (field .uniformLocation_, array);
+					gl .uniform3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFVec4d:
@@ -22883,7 +22985,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -22898,7 +23000,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 			}
@@ -23015,19 +23117,8 @@ function ($,
 
 	var shader = null;
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-		new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
-	];
-
 	function ComposedShader (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DShaderNode               .call (this, executionContext);
 		X3DProgrammableShaderObject .call (this, executionContext);
 
@@ -23052,6 +23143,14 @@ function ($,
 		X3DProgrammableShaderObject .prototype,
 	{
 		constructor: ComposedShader,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
+		]),
 		wireframe: false,
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
@@ -23519,18 +23618,52 @@ function ($)
 });
 
 
-define ('cobweb/Configuration/ComponentInfoArray',[
+define ('cobweb/Configuration/ComponentInfo',[
 	"jquery",
-	"cobweb/Configuration/X3DInfoArray",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
 ],
-function ($, X3DInfoArray)
+function ($,
+          Fields,
+          X3DConstants)
 {
 
 
-	function ComponentInfoArray (array)
+	function ComponentInfo (browser, value)
 	{
-		var proxy = X3DInfoArray .call (this);
+		this .name        = value .name;
+		this .level       = value .level;
+		this .title       = value .title;
+		this .providerUrl = value .providerUrl;
 
+		Object .preventExtensions (this);
+		Object .freeze (this);
+		Object .seal (this);
+	}
+
+	$.extend (ComponentInfo .prototype,
+	{
+		constructor: ComponentInfo,
+	});
+
+	return ComponentInfo;
+});
+
+define ('cobweb/Configuration/ComponentInfoArray',[
+	"jquery",
+	"cobweb/Configuration/X3DInfoArray",
+	"cobweb/Configuration/ComponentInfo",
+],
+function ($, X3DInfoArray, ComponentInfo)
+{
+
+
+	function ComponentInfoArray (browser, array)
+	{
+		this .browser = browser;
+
+		var proxy = X3DInfoArray .call (this);
+	
 		if (array)
 		{
 			for (var i = 0, length = array .length; i < length; ++ i)
@@ -23543,6 +23676,10 @@ function ($, X3DInfoArray)
 	ComponentInfoArray .prototype = $.extend (Object .create (X3DInfoArray .prototype),
 	{
 		constructor: ComponentInfoArray,
+		addComponentInfo: function (value)
+		{
+			this .add (value .name, new ComponentInfo (this .browser, value));
+		}
 	});
 
 	return ComponentInfoArray;
@@ -23645,15 +23782,19 @@ function ($, X3DBaseNode)
 
 	function X3DRoute (/* executionContext, */ sourceNode, sourceField, destinationNode, destinationField)
 	{
-		//X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		//X3DBaseNode .call (this, executionContext);
 		
-		this .sourceNode_       = sourceNode;
+		this .sourceNode        = sourceNode;
 		this .sourceField_      = sourceField;
-		this .destinationNode_  = destinationNode;
+		this .destinationNode   = destinationNode;
 		this .destinationField_ = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
 			sourceField .addFieldInterest (destinationField);
+
+		Object .preventExtensions (this);
+		Object .freeze (this);
+		Object .seal (this);
 	}
 
 	X3DRoute .prototype =
@@ -23668,31 +23809,11 @@ function ($, X3DBaseNode)
 		},
 	};
 
-	Object .defineProperty (X3DRoute .prototype, "sourceNode",
-	{
-		get: function ()
-		{
-			return this .sourceNode_;
-		},
-		enumerable: true,
-		configurable: false
-	});
-
 	Object .defineProperty (X3DRoute .prototype, "sourceField",
 	{
 		get: function ()
 		{
 			return this .sourceField_ .getName ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (X3DRoute .prototype, "destinationNode",
-	{
-		get: function ()
-		{
-			return this .destinationNode_;
 		},
 		enumerable: true,
 		configurable: false
@@ -23744,7 +23865,7 @@ function ($,
 
 	function X3DExecutionContext (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("rootNodes", new Fields .MFNode (),
                          "loadCount", new Fields .SFInt32 ());
@@ -23752,12 +23873,13 @@ function ($,
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
 		this .profile              = null;
-		this .components           = new ComponentInfoArray ();
+		this .components           = new ComponentInfoArray (this .getBrowser ());
 		this .url                  = new URI (window .location);
 		this .uninitializedNodes   = [ ];
 		this .namedNodes           = { };
 		this .protos               = new ProtoDeclarationArray ();
 		this .externprotos         = new ExternProtoDeclarationArray ();
+		this .pendingRoutes        = [ ];
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
 
@@ -23770,6 +23892,28 @@ function ($,
 		setup: function ()
 		{
 			X3DBaseNode .prototype .setup .call (this);
+
+			// Add routes
+
+			var pendingRoutes = this .pendingRoutes;
+
+			for (var i = 0, length = pendingRoutes .length; i < length; ++ i)
+			{
+				try
+				{
+					var route = pendingRoutes [i];
+
+					this .addRoute (route .sourceNode, route .sourceField, route .destinationNode, route .destinationField);
+				}
+				catch (error)
+				{
+					console .warn (error .message);
+				}
+			}
+
+			pendingRoutes .length = 0;
+
+			// Setup nodes
 
 			var uninitializedNodes = this .uninitializedNodes;
 
@@ -23804,12 +23948,12 @@ function ($,
 		},
 		createNode: function (typeName, setup)
 		{
-			var constructor = this .getBrowser () .supportedNodes [typeName];
+			var interfaceDeclaration = this .getBrowser () .supportedNodes [typeName];
 
-			if (! constructor)
+			if (! interfaceDeclaration)
 				throw new Error ("Unknown node type '" + typeName + "'.");
 
-			var node = new constructor (this);
+			var node = interfaceDeclaration .createInstance (this);
 
 			if (setup === false)
 				return node;
@@ -23854,13 +23998,11 @@ function ($,
 		},
 		updateNamedNode: function (name, node)
 		{
-			name = String (name);
-			
-			if (node instanceof X3DBaseNode)
-				node = new Fields .SFNode (node);				
-
-			if (! (node instanceof Fields .SFNode))
+			if (! (node instanceof Fields .SFNode || node instanceof X3DBaseNode))
 				throw new Error ("Couldn't update named node: node must be of type SFNode.");
+
+			name = String (name);
+			node = new Fields .SFNode (node .valueOf ());
 
 			if (! node .getValue ())
 				throw new Error ("Couldn't update named node: node IS NULL.");
@@ -23880,7 +24022,7 @@ function ($,
 
 			node .getValue () .setName (name);
 
-			this .namedNodes [name] = new Fields .SFNode (node .getValue ());
+			this .namedNodes [name] = node;
 		},
 		removeNamedNode: function (name)
 		{
@@ -23922,7 +24064,16 @@ function ($,
 		{
 			return this .rootNodes_;
 		},
-		addRoute: function (sourceNode, fromField, destinationNode, toField)
+		registerRoute: function (sourceNode, sourceField, destinationNode, destinationField)
+		{
+			this .pendingRoutes .push ({
+				sourceNode:      sourceNode,
+				sourceField:     sourceField,
+				destinationNode: destinationNode,
+				destinationField: destinationField,
+			});
+		},
+		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			try
 			{
@@ -23932,9 +24083,8 @@ function ($,
 				if (! destinationNode .getValue ())
 					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
 
-				var
-					sourceField      = sourceNode .getValue () .getField (fromField),
-					destinationField = destinationNode .getValue () .getField (toField);
+				sourceField      = sourceNode      .getValue () .getField (sourceField),
+				destinationField = destinationNode .getValue () .getField (destinationField);
 
 				if (! sourceField .isOutput ())
 					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
@@ -23981,7 +24131,7 @@ function ($,
 				console .log (error);
 			}
 		},
-		getRoute: function (sourceNode, fromField, destinationNode, toField)
+		getRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			if (! sourceNode .getValue ())
 				throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
@@ -23990,8 +24140,8 @@ function ($,
 				throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
 
 			var
-				sourceField      = sourceNode .getValue () .getField (fromField),
-				destinationField = destinationNode .getValue () .getField (toField),
+				sourceField      = sourceNode .getValue () .getField (sourceField),
+				destinationField = destinationNode .getValue () .getField (destinationField),
 				id               = sourceField .getId () + "." + destinationField .getId ();
 
 			return this .routeIndex [id];
@@ -24029,28 +24179,6 @@ function ($,
 		{
 			this .loadCount_ = this .loadCount_ .getValue () - 1;
 		},
-		requestAsyncLoadOfExternProtos: function ()
-		{
-			this .loadCount_ .setTainted (false);
-			this .loadCount_ .addEvent ();
-
-			for (var i = 0, length = this .externprotos .length; i < length; ++ i)
-			{
-				var externproto = this .externprotos [i];
-
-				if (externproto .getInstances () .length === 0)
-				   continue;
-		
-				externproto .requestAsyncLoad ();
-			}
-		
-			for (var i = 0, length = this .protos .length; i < length; ++ i)
-			{
-				var proto = this .protos [i];
-
-			   proto .requestAsyncLoadOfExternProtos ();
-			}
-		},
 	});
 
 	Object .defineProperty (X3DExecutionContext .prototype, "worldURL",
@@ -24076,6 +24204,7 @@ define ('cobweb/Components/Core/X3DPrototypeInstance',[
 	"jquery",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Fields",
+	"cobweb/Base/X3DChildObject",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Bits/X3DConstants",
@@ -24083,6 +24212,7 @@ define ('cobweb/Components/Core/X3DPrototypeInstance',[
 function ($,
           FieldDefinitionArray,
           Fields,
+          X3DChildObject,
           X3DNode,
           X3DExecutionContext,
           X3DConstants)
@@ -24092,7 +24222,7 @@ function ($,
 	function X3DPrototypeInstance (executionContext, protoNode)
 	{
 		this .protoNode        = protoNode;
-		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice (0));
+		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice ());
 
 		this .addChildren ("isLiveX3DPrototypeInstance", new Fields .SFBool (true));
 
@@ -24102,13 +24232,11 @@ function ($,
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);
 
-		protoNode .addInstance (this);
+		this .getScene () .addLoadCount (this);
 
 		if (protoNode .isExternProto ())
-		{
-			if (protoNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
-				this .construct ();
-		}
+			protoNode .requestAsyncLoad (this .construct .bind (this));
+
 		else
 			this .construct ();
 	}
@@ -24135,6 +24263,8 @@ function ($,
 		},
 		construct: function ()
 		{
+			this .getScene () .removeLoadCount (this);
+
 			var proto = this .protoNode .getProtoDeclaration ();
 
 			if (proto)
@@ -24153,9 +24283,8 @@ function ($,
 						{
 							var
 								fieldDefinition = fieldDefinitions [i],
+                        field           = this .getField (fieldDefinition .name),
 								protoField      = proto .getField (fieldDefinition .name);
-
-							var field = this .getField (fieldDefinition .name);
 
 							// Continue if something is wrong.
 							if (field .getAccessType () !== protoField .getAccessType ())
@@ -24191,9 +24320,15 @@ function ($,
 
 				this .setURL (proto .getURL ());
 
-				this .importExternProtos (proto);
-				this .importProtos (proto);
-				this .copyRootNodes (proto);
+				this .importExternProtos (proto .externprotos);
+				this .importProtos       (proto .protos);
+				this .copyRootNodes      (proto .rootNodes);
+
+				if (this .isInitialized ())
+				{
+					this .setup ();
+					X3DChildObject .prototype .addEvent .call (this);
+				}
 			}
 		},
 		setup: function ()
@@ -24205,18 +24340,13 @@ function ($,
 		{
 			try
 			{
-				if (this .protoNode .isExternProto ())
-					this .construct ();
-	
-				if (this .protoNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
-				{
-					var proto = this .protoNode .getProtoDeclaration ();
+				var proto = this .protoNode .getProtoDeclaration ();
 
-					if (proto)
-					{
-						//this .copyImportedNodes (proto);
-						this .copyRoutes (proto);
-					}
+				if (proto)
+				{
+					//this .copyImportedNodes (proto);
+					this .copyRoutes (proto .routes);
+					this .copyRoutes (proto .pendingRoutes);
 				}
 				
 				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
@@ -24226,12 +24356,12 @@ function ($,
 	
 				// Now initialize bases.
 	
-				X3DExecutionContext .prototype .initialize .call (this);
 				X3DNode             .prototype .initialize .call (this);
+				X3DExecutionContext .prototype .initialize .call (this);
 			}
 			catch (error)
 			{
-				console .log (error);
+				console .error (error .message);
 			}
 		},
 		getExtendedEventHandling: function ()
@@ -24244,7 +24374,7 @@ function ($,
 		},
 		getInnerNode: function ()
 		{
-			var rootNodes = this .getRootNodes ();
+			var rootNodes = this .getRootNodes () .getValue ();
 			
 			if (rootNodes .length)
 			{
@@ -24265,24 +24395,20 @@ function ($,
 			else
 				this .endUpdate ();
 		},
-		importExternProtos: function (executionContext)
+		importExternProtos: function (externprotos)
 		{
-			var externprotos = executionContext .externprotos;
-
 			for (var i = 0, length = externprotos .length; i < length; ++ i)
 				this .externprotos .add (externprotos [i] .getName (), externprotos [i]);
 		},
-		importProtos: function (executionContext)
+		importProtos: function (protos)
 		{
-			var protos = executionContext .protos;
-
 			for (var i = 0, length = protos .length; i < length; ++ i)
 				this .protos .add (protos [i] .getName (), protos [i]);
 		},
-		copyRootNodes: function (executionContext)
+		copyRootNodes: function (rootNodes)
 		{
 			var
-				rootNodes1 = executionContext .getRootNodes () .getValue (),
+				rootNodes1 = rootNodes .getValue (),
 				rootNodes2 = this  .getRootNodes () .getValue ();
 
 			for (var i = 0, length = rootNodes1 .length; i < length; ++ i)
@@ -24292,12 +24418,8 @@ function ($,
 				rootNodes2 .push (value);
 			}
 		},
-		copyRoutes: function (executionContext)
+		copyRoutes: function (routes)
 		{
-			// Copy routes.
-
-			var routes = executionContext .routes;
-
 			for (var i = 0, length = routes .length; i < length; ++ i)
 			{
 				try
@@ -24344,8 +24466,6 @@ function ($,
 		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclarationNode);
-
-		this .instances = { };
 	}
 
 	X3DProtoDeclarationNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -24365,18 +24485,6 @@ function ($,
 			instance .setup ();
 
 			return new Fields .SFNode (instance);
-		},
-		addInstance: function (instance)
-		{
-			this .instances [instance .getId ()] = instance;
-		},
-		removeInstance: function (instance)
-		{
-			delete this .instances [instance .getId ()];
-		},
-		getInstances: function ()
-		{
-			return this .instances;
 		},
 	});
 
@@ -24403,14 +24511,8 @@ function ($,
 {
 
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-	];
-
 	function X3DExternProtoDeclaration (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DProtoDeclarationNode .call (this, executionContext);
 		X3DUrlObject            .call (this, executionContext);
 
@@ -24418,13 +24520,16 @@ function ($,
 
 		this .addChildren ("url", new Fields .MFString ());
 
-		this .callbacks = [ ];
+		this .deferred = $.Deferred ();
 	}
 
 	X3DExternProtoDeclaration .prototype = $.extend (Object .create (X3DProtoDeclarationNode .prototype),
 		X3DUrlObject .prototype,
 	{
 		constructor: X3DExternProtoDeclaration,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+		]),
 		getTypeName: function ()
 		{
 			return "EXTERNPROTO";
@@ -24469,8 +24574,10 @@ function ($,
 		{
 			return this .proto;
 		},
-		requestAsyncLoad: function ()
+		requestAsyncLoad: function (callback)
 		{
+			this .deferred .done (callback);
+
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
 				return;
 
@@ -24488,45 +24595,40 @@ function ($,
 			this .getScene () .removeLoadCount (this);
 		
 			if (value)
-			{
 				this .setScene (value);
-			}
+
 			else
-			{
-				this .setLoadState (X3DConstants .FAILED_STATE);
-		
-				this .scene = this .getBrowser () .getPrivateScene ();
-		
-				this .setProtoDeclaration (null);
-			}
+				this .setError ();
+		},
+		setError: function (error)
+		{
+			console .log (error);
+
+			this .setLoadState (X3DConstants .FAILED_STATE);
+
+			this .scene = this .getBrowser () .getPrivateScene ();
+
+			this .setProtoDeclaration (null);
+
+			this .deferred .resolve ();
+			this .deferred = $.Deferred ();
 		},
 		setScene: function (value)
 		{
 			this .scene = value;
-		
-			try
-			{
-				this .setLoadState (X3DConstants .COMPLETE_STATE);
-		
-				this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
-				//this .scene .setExecutionContext (this .getExecutionContext ());
-		
-				this .scene .setup ();
-		
-				var protoName = this .scene .getURL () .fragment || 0;
-		
-				this .setProtoDeclaration (this .scene .protos [protoName]);
-			}
-			catch (error)
-			{
-			   console .log (error);
 
-				this .setLoadState (X3DConstants .FAILED_STATE);
-		
-				this .scene = this .getBrowser () .getPrivateScene ();
+			this .setLoadState (X3DConstants .COMPLETE_STATE);
 
-				this .setProtoDeclaration (null);
-			}
+			this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+			//this .scene .setExecutionContext (this .getExecutionContext ());
+
+			this .scene .setup ();
+
+			var protoName = this .scene .getURL () .fragment || 0;
+
+			this .setProtoDeclaration (this .scene .protos [protoName]);
+
+			this .deferred .resolve ();
 		},
 	});
 
@@ -24554,14 +24656,8 @@ function ($,
 {
 
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-	];
-
 	function X3DProtoDeclaration (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DProtoDeclarationNode .call (this, executionContext);
 		X3DExecutionContext     .call (this, executionContext);
 
@@ -24574,6 +24670,9 @@ function ($,
 		X3DProtoDeclarationNode .prototype,
 	{
 		constructor: X3DProtoDeclaration,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+		]),
 		getTypeName: function ()
 		{
 			return "PROTO";
@@ -24854,6 +24953,8 @@ function ($,
 		},
 		getError: function (error)
 		{
+			//console .log (error);
+
 			var string = error .message;
 
 			var
@@ -25672,7 +25773,7 @@ function ($,
 											{
 												var eventInId = this .result [1];
 
-												this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
+												this .getExecutionContext () .registerRoute (fromNode, eventOutId, toNode, eventInId);
 												return true;
 											}
 											catch (error)
@@ -27631,10 +27732,9 @@ function ($,
 			}
 			catch (error)
 			{
-				//if (element .nodeName === "VisibilitySensor")
-				//	console .warn (error);
+				console .error (error);
 
-				console .warn ("XML Parser Error: " + error .message);
+				console .error ("XML Parser Error: " + error .message);
 			}
 		},
 		ProtoInstance: function (element)
@@ -27758,14 +27858,18 @@ function ($,
 
 				if (parent instanceof X3DField)
 				{
-					if (parent .getSet () === false)
-						parent .setSet (true);
+					switch (parent .getType ())
+					{
+						case X3DConstants .SFNode:
+							parent .set (node);
+							parent .setSet (true);
+							return;
 
-					if (parent .getType () === X3DConstants .SFNode)
-						parent .set (node);
-
-					if (parent .getType () === X3DConstants .MFNode)
-						parent .push (node);
+						case X3DConstants .MFNode:
+							parent .push (node);
+							parent .setSet (true);
+							return;
+					}
 				}
 				else
 				{
@@ -27779,11 +27883,18 @@ function ($,
 						{
 							var field = parent .getField (containerField);
 
-							if (field .getType () === X3DConstants .SFNode)
-								return field .set (node);
+							switch (field .getType ())
+							{
+								case X3DConstants .SFNode:
+									field .set (node);
+									field .setSet (true);
+									return;
 
-							if (field .getType () === X3DConstants .MFNode)
-								return field .push (node);
+								case X3DConstants .MFNode:
+									field .push (node);
+									field .setSet (true);
+									return;
+							}
 						}
 					}
 					catch (error)
@@ -27797,11 +27908,18 @@ function ($,
 
 						var field = parent .getField (node .getContainerField ());
 
-						if (field .getType () === X3DConstants .SFNode)
-							return field .set (node);
+						switch (field .getType ())
+						{
+							case X3DConstants .SFNode:
+								field .set (node);
+								field .setSet (true);
+								return;
 
-						if (field .getType () === X3DConstants .MFNode)
-							return field .push (node);
+							case X3DConstants .MFNode:
+								field .push (node);
+								field .setSet (true);
+								return;
+						}
 					}
 					catch (error)
 					{
@@ -27829,6 +27947,7 @@ function ($,
 
 				this .parser .setInput (value);
 				fieldType .call (this .parser, field);
+				field .setSet (true);
 			}
 			catch (error)
 			{
@@ -27842,7 +27961,10 @@ function ($,
 				field = node .getCDATA ();
 
 			if (field)
+			{
 				field .push (element .data);
+				field .setSet (true);
+			}
 		},
 		field: function (element)
 		{
@@ -27911,8 +28033,6 @@ function ($,
 						this .fieldTypes [field .getType ()] .call (this .parser, field);
 						field .setSet (true);
 					}
-					else
-						field .setSet (false);
 
 					this .pushParent (field);
 					this .statements (element .childNodes);
@@ -28074,7 +28194,7 @@ function ($,
 					sourceNode      = this .getExecutionContext () .getLocalNode (fromNode),
 					destinationNode = this .getExecutionContext () .getLocalNode (toNode);
 
-				this .getExecutionContext () .addRoute (sourceNode, fromField, destinationNode, toField);
+				this .getExecutionContext () .registerRoute (sourceNode, fromField, destinationNode, toField);
 			}
 			catch (error)
 			{
@@ -31326,7 +31446,7 @@ function ($,
 
 		this .node             = node;
 		this .browser          = node .getBrowser ();
-		this .external         = this .browser .isExternal () || external;
+		this .external         = external === undefined ? this .browser .isExternal () : external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
 		this .url              = [ ];
 		this .URL              = new URI ();
@@ -31399,7 +31519,7 @@ function ($,
 		setScene: function (scene, success)
 		{
 			scene .loadCount_ .addInterest (this, "set_loadCount__", scene, success);
-			scene .requestAsyncLoadOfExternProtos ();
+			scene .loadCount_ .addEvent ();
 		},
 		set_loadCount__: function (field, scene, success)
 		{
@@ -31586,7 +31706,7 @@ function ($,
 						//console .log (this .getContentType (xhr));
 
 						if (foreign [this .getContentType (xhr)])
-							return this .foreign (this .URL .toString () .replace (urls .fallbackRx, ""));
+							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""));
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);
@@ -31650,8 +31770,8 @@ function ($,
 				URL = this .browser .getLocation () .getRelativePath (URL);
 			else
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .url .unshift (urls .fallback + URL);
+				if (! sURL .match (urls .fallbackExpression))
+					this .url .unshift (urls .fallbackUrl + URL);
 			}
 
 			return URL;
@@ -31753,7 +31873,7 @@ function ($,
 
 			this .shader = gl .createShader (gl [this .getShaderType ()]);
 
-			this .requestImmediateLoad ();
+			this .requestAsyncLoad ();
 		},
 		isValid: function ()
 		{
@@ -31776,7 +31896,7 @@ function ($,
 		{
 			return this .url_;
 		},
-		requestImmediateLoad: function ()
+		requestAsyncLoad: function ()
 		{
 			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE || this .checkLoadState () == X3DConstants .IN_PROGRESS_STATE)
 				return;
@@ -32189,7 +32309,7 @@ function ($,
 	
 	function ArcClose2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}
@@ -32228,7 +32348,7 @@ function ($,
 	
 	function Arc2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}
@@ -32434,7 +32554,7 @@ function ($,
 	
 	function Circle2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("segments", new Fields .SFInt32 (40))
 
@@ -32506,7 +32626,7 @@ function ($,
 
 	function Disk2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("segments", new Fields .SFInt32 (40))
 
@@ -37001,7 +37121,8 @@ function ($,
 
 // https://github.com/r3mi/poly2tri.js
 
-define ('cobweb/Components/Geometry3D/IndexedFaceSet',[
+define ("cobweb/Components/Geometry3D/IndexedFaceSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -37706,7 +37827,7 @@ function ($,
 	
 	function Rectangle2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	Rectangle2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -37850,7 +37971,7 @@ function ($,
 	
 	function BoxOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	BoxOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -37938,7 +38059,7 @@ function ($,
 	
 	function ConeOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("uDimension", new Fields .SFInt32 (1),
 		                   "vDimension", new Fields .SFInt32 (20))
@@ -37978,7 +38099,7 @@ function ($,
 	
 	function CylinderOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 			
 		this .addChildren ("uDimension", new Fields .SFInt32 (1),
 		                   "vDimension", new Fields .SFInt32 (20))
@@ -38030,7 +38151,7 @@ function ($,
 	
 	function QuadSphereOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("uDimension", new Fields .SFInt32 (32),
 		                   "vDimension", new Fields .SFInt32 (16))
@@ -38327,7 +38448,7 @@ function (jquery,
 	
 	function PointingDevice (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .cursor     = "DEFAULT";
 		this .isOver     = false;
@@ -40896,7 +41017,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 
 	function X3DViewer (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	X3DViewer .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -48902,7 +49023,7 @@ function ($,
 
 		this .familyStack = [ ];
 		this .alignments  = [ ];
-		this .loader      = new Loader (this, true);
+		this .loader      = new Loader (this);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -49071,8 +49192,8 @@ function ($,
 
 			if (! this .URL .isLocal ())
 			{
-				if (! URL .match (urls .fallbackRx))
-					this .familyStack .unshift (urls .fallback + URL);
+				if (! URL .match (urls .fallbackExpression))
+					this .familyStack .unshift (urls .fallbackUrl + URL);
 			}
 
 			if (this .URL .scheme !== "data")
@@ -49489,7 +49610,7 @@ function (TextAlignment,
 				font        = fontStyle .getFont (),
 				string      = text .string_ .getValue (),
 				numLines    = string .length,
-				maxExtent   = text .maxExtent_ .getValue (),
+				maxExtent   = Math .max (0, text .maxExtent_ .getValue ()),
 				topToBottom = fontStyle .topToBottom_ .getValue (),
 				scale       = fontStyle .getScale (),
 				spacing     = fontStyle .spacing_ .getValue ();
@@ -49617,7 +49738,7 @@ function (TextAlignment,
 				font             = fontStyle .getFont (),
 				string           = text .string_ .getValue (),
 				numLines         = string .length,
-				maxExtent        = text .maxExtent_ .getValue (),
+				maxExtent        = Math .max (0, text .maxExtent_ .getValue ()),
 				leftToRight      = fontStyle .leftToRight_ .getValue (),
 				topToBottom      = fontStyle .topToBottom_ .getValue (),
 				scale            = fontStyle .getScale (),
@@ -53813,7 +53934,7 @@ function ($, X3DBaseNode)
 
 	function BindableStack (executionContext, layer, defaultNode)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layer = layer;
 		this .array = [ defaultNode ];
@@ -53945,7 +54066,7 @@ function ($, X3DBaseNode)
 
 	function BindableList (executionContext, layer, defaultNode)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layer     = layer;
 		this .collected = [ defaultNode ];
@@ -55503,8 +55624,8 @@ function ($,
 
 			if (! this .URL .isLocal ())
 			{
-				if (! URL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + URL);
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
 			}
 
 			if (this .URL .scheme !== "data")
@@ -56323,7 +56444,7 @@ function ($,
 
 	function World (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layerSet        = new LayerSet (executionContext);
 		this .defaultLayerSet = this .layerSet;
@@ -56480,7 +56601,7 @@ function ($,
 
 	function X3DBrowserContext (element)
 	{
-		X3DBaseNode                    .call (this, this, this);
+		X3DBaseNode                    .call (this, this);
 		X3DRoutingContext              .call (this);
 		X3DCoreContext                 .call (this, element);
 		X3DScriptingContext            .call (this);
@@ -56590,6 +56711,10 @@ function ($,
 		{
 			return this .getExecutionContext () .getURL ();
 		},
+		getBrowser: function ()
+		{
+			return this;
+		},
 		getWorld: function ()
 		{
 			return this .world;
@@ -56655,39 +56780,6 @@ function ($,
 });
 
 
-define ('cobweb/Browser/Version',[],function ()
-{
-	return "1.22a";
-});
-
-
-define ('cobweb/Configuration/ComponentInfo',[
-	"jquery",
-],
-function ($)
-{
-
-
-	function ComponentInfo (name, level, title, providerUrl)
-	{
-		this .name        = name;
-		this .level       = level;
-		this .title       = title;
-		this .providerUrl = providerUrl;
-
-		Object .preventExtensions (this);
-		Object .freeze (this);
-		Object .seal (this);
-	}
-
-	$.extend (ComponentInfo .prototype,
-	{
-		constructor: ComponentInfo,
-	});
-
-	return ComponentInfo;
-});
-
 define ('cobweb/Configuration/ProfileInfo',[
 	"jquery",
 ],
@@ -56737,249 +56829,502 @@ function ($, X3DInfoArray)
 });
 
 
-define ('cobweb/Configuration/SupportedComponents',[
-	"jquery",
-	"cobweb/Configuration/ComponentInfo",
-	"cobweb/Configuration/ComponentInfoArray",
-	"cobweb/Browser/Networking/urls",
-],
-function ($, ComponentInfo, ComponentInfoArray, urls)
-{
-
-
-	function add (title, name, level)
-	{
-		supportedComponents .add (name, new ComponentInfo (name, level, title, urls .provider));
-	}
-
-	var supportedComponents = new ComponentInfoArray ();
-
-	add ("Computer-Aided Design (CAD) model geometry", "CADGeometry",          2);
-	add ("Core",                                       "Core",                 2);
-	add ("Cube map environmental texturing",           "CubeMapTexturing",     3);
-	add ("Distributed interactive simulation (DIS)",   "DIS",                  2);
-	add ("Environmental effects",                      "EnvironmentalEffects", 4);
-	add ("Environmental sensor",                       "EnvironmentalSensor",  3);
-	add ("Event utilities",                            "EventUtilities",       1);
-	add ("Followers",                                  "Followers",            1);
-	add ("Geometry2D",                                 "Geometry2D",           2);
-	add ("Geometry3D",                                 "Geometry3D",           4);
-	add ("Geospatial",                                 "Geospatial",           2);
-	add ("Grouping",                                   "Grouping",             3);
-	add ("Humanoid animation (H-Anim)",                "H-Anim",               1);
-	add ("Interpolation",                              "Interpolation",        5);
-	add ("Key device sensor",                          "KeyDeviceSensor",      2);
-	add ("Layering",                                   "Layering",             1);
-	add ("Layout",                                     "Layout",               2);
-	add ("Lighting",                                   "Lighting",             3);
-	add ("Navigation",                                 "Navigation",           3);
-	add ("Networking",                                 "Networking",           4);
-	add ("Non-uniform Rational B-Spline (NURBS)",      "NURBS",                4);
-	add ("Particle systems",                           "ParticleSystems",      3);
-	add ("Picking sensor",                             "Picking",              3);
-	add ("Pointing device sensor",                     "PointingDeviceSensor", 1);
-	add ("Programmable shaders",                       "Shaders",              1);
-	add ("Rendering",                                  "Rendering",            5);
-	add ("Rigid body physics",                         "RigidBodyPhysics",     2);
-	add ("Scripting",                                  "Scripting",            1);
-	add ("Shape",                                      "Shape",                4);
-	add ("Sound",                                      "Sound",                1);
-	add ("Text",                                       "Text",                 1);
-	add ("Texturing",                                  "Texturing",            3);
-	add ("Texturing3D",                                "Texturing3D",          2);
-	add ("Time",                                       "Time",                 2);
-	add ("Volume rendering",                           "VolumeRendering",      4);
-
-	add ("Cobweb",                                     "Cobweb",               1); // Non standard.
-
-	Object .preventExtensions (supportedComponents);
-	Object .freeze (supportedComponents);
-	Object .seal (supportedComponents);
-
-	return supportedComponents;
-});
-
 define ('cobweb/Configuration/SupportedProfiles',[
 	"jquery",
 	"cobweb/Configuration/ProfileInfo",
 	"cobweb/Configuration/ProfileInfoArray",
 	"cobweb/Configuration/ComponentInfoArray",
-	"cobweb/Configuration/SupportedComponents",
 	"cobweb/Browser/Networking/urls",
 ],
 function ($,
           ProfileInfo,
           ProfileInfoArray,
           ComponentInfoArray,
-          SupportedComponents,
           urls)
 {
 
 
-	function add (title, name, components)
+	return function (browser)
 	{
-		supportedProfiles .add (name, new ProfileInfo (name, title, urls .povider, new ComponentInfoArray (components)));
-	}
+		function add (title, name, components)
+		{
+			supportedProfiles .add (name, new ProfileInfo (name, title, urls .povider, new ComponentInfoArray (browser, components)));
+		}
 
-	var supportedProfiles = new ProfileInfoArray ();
+		var
+			supportedComponents = browser .supportedComponents,
+			supportedProfiles   = new ProfileInfoArray ();
 
-	add ("Computer-Aided Design (CAD) interchange", "CADInterchange", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["Shaders"],
-		SupportedComponents ["CADGeometry"],
-	]);
-
-	add ("Core", "Core", [
-		SupportedComponents ["Core"],
-	]);
-
-	add ("Full", "Full", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Geometry2D"],
-		SupportedComponents ["Text"],
-		SupportedComponents ["Sound"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["KeyDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-		SupportedComponents ["Geospatial"],
-		SupportedComponents ["H-Anim"],
-		SupportedComponents ["NURBS"],
-		SupportedComponents ["DIS"],
-		SupportedComponents ["Scripting"],
-		SupportedComponents ["EventUtilities"],
-		SupportedComponents ["Shaders"],
-		SupportedComponents ["CADGeometry"],
-		SupportedComponents ["Texturing3D"],
-		SupportedComponents ["CubeMapTexturing"],
-		SupportedComponents ["Layering"],
-		SupportedComponents ["Layout"],
-		SupportedComponents ["RigidBodyPhysics"],
-		SupportedComponents ["Picking"],
-		SupportedComponents ["Followers"],
-		SupportedComponents ["ParticleSystems"], /*,
-		SupportedComponents ["VolumeRendering"], */
-	]);
-
-	add ("Immersive", "Immersive", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Geometry2D"],
-		SupportedComponents ["Text"],
-		SupportedComponents ["Sound"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["KeyDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-		SupportedComponents ["Scripting"],
-		SupportedComponents ["EventUtilities"],
-	]);
-
-	add ("Interactive", "Interactive", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["KeyDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-		SupportedComponents ["EventUtilities"],
-	]);
-
-	add ("Interchange", "Interchange", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-	]);
-
-//	add ("Medical interchange", "MedicalInterchange", [
-//		SupportedComponents ["Core"],
-//		SupportedComponents ["Time"],
-//		SupportedComponents ["Networking"],
-//		SupportedComponents ["Grouping"],
-//		SupportedComponents ["Rendering"],
-//		SupportedComponents ["Shape"],
-//		SupportedComponents ["Geometry3D"],
-//		SupportedComponents ["Geometry2D"],
-//		SupportedComponents ["Text"],
-//		SupportedComponents ["Lighting"],
-//		SupportedComponents ["Texturing"],
-//		SupportedComponents ["Interpolation"],
-//		SupportedComponents ["Navigation"],
-//		SupportedComponents ["EnvironmentalEffects"],
-//		SupportedComponents ["EventUtilities"],
-//		SupportedComponents ["Texturing3D"],
-//		SupportedComponents ["VolumeRendering"],
-//	]);
-
-	add ("MPEG-4 interactive", "MPEG-4", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-	]);
-
-	Object .preventExtensions (supportedProfiles);
-	Object .freeze (supportedProfiles);
-	Object .seal (supportedProfiles);
-
-	return supportedProfiles;
+		add ("Computer-Aided Design (CAD) interchange", "CADInterchange", [
+			supportedComponents ["Core"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["Shaders"],
+			supportedComponents ["CADGeometry"],
+		]);
+	
+		add ("Core", "Core", [
+			supportedComponents ["Core"],
+		]);
+	
+		add ("Full", "Full", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Geometry2D"],
+			supportedComponents ["Text"],
+			supportedComponents ["Sound"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["KeyDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+			supportedComponents ["Geospatial"],
+			supportedComponents ["H-Anim"],
+			supportedComponents ["NURBS"],
+			supportedComponents ["DIS"],
+			supportedComponents ["Scripting"],
+			supportedComponents ["EventUtilities"],
+			supportedComponents ["Shaders"],
+			supportedComponents ["CADGeometry"],
+			supportedComponents ["Texturing3D"],
+			supportedComponents ["CubeMapTexturing"],
+			supportedComponents ["Layering"],
+			supportedComponents ["Layout"],
+			supportedComponents ["RigidBodyPhysics"],
+			supportedComponents ["Picking"],
+			supportedComponents ["Followers"],
+			supportedComponents ["ParticleSystems"], /*,
+			supportedComponents ["VolumeRendering"], */
+		]);
+	
+		add ("Immersive", "Immersive", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Geometry2D"],
+			supportedComponents ["Text"],
+			supportedComponents ["Sound"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["KeyDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+			supportedComponents ["Scripting"],
+			supportedComponents ["EventUtilities"],
+		]);
+	
+		add ("Interactive", "Interactive", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["KeyDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+			supportedComponents ["EventUtilities"],
+		]);
+	
+		add ("Interchange", "Interchange", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+		]);
+	
+	//	add ("Medical interchange", "MedicalInterchange", [
+	//		supportedComponents ["Core"],
+	//		supportedComponents ["Time"],
+	//		supportedComponents ["Networking"],
+	//		supportedComponents ["Grouping"],
+	//		supportedComponents ["Rendering"],
+	//		supportedComponents ["Shape"],
+	//		supportedComponents ["Geometry3D"],
+	//		supportedComponents ["Geometry2D"],
+	//		supportedComponents ["Text"],
+	//		supportedComponents ["Lighting"],
+	//		supportedComponents ["Texturing"],
+	//		supportedComponents ["Interpolation"],
+	//		supportedComponents ["Navigation"],
+	//		supportedComponents ["EnvironmentalEffects"],
+	//		supportedComponents ["EventUtilities"],
+	//		supportedComponents ["Texturing3D"],
+	//		supportedComponents ["VolumeRendering"],
+	//	]);
+	
+		add ("MPEG-4 interactive", "MPEG-4", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+		]);
+	
+		Object .preventExtensions (supportedProfiles);
+		Object .freeze (supportedProfiles);
+		Object .seal (supportedProfiles);
+	
+		return supportedProfiles;
+	};
 });
 
-define ('cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode',[
+define ('cobweb/Configuration/SupportedComponents',[
+	"jquery",
+	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Browser/Networking/urls",
+],
+function ($, ComponentInfoArray, urls)
+{
+
+
+	return function (browser)
+	{
+		var supportedComponents = new ComponentInfoArray (browser);
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Computer-Aided Design (CAD) model geometry",
+			name:       "CADGeometry",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Core",
+			name:       "Core",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Cube map environmental texturing",
+			name:       "CubeMapTexturing",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Distributed interactive simulation (DIS)",
+			name:       "DIS",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Environmental effects",
+			name:       "EnvironmentalEffects",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Environmental sensor",
+			name:       "EnvironmentalSensor",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Event utilities",
+			name:       "EventUtilities",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Followers",
+			name:       "Followers",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geometry2D",
+			name:       "Geometry2D",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geometry3D",
+			name:       "Geometry3D",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geospatial",
+			name:       "Geospatial",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Grouping",
+			name:       "Grouping",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Humanoid animation (H-Anim)",
+			name:       "H-Anim",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Interpolation",
+			name:       "Interpolation",
+			level:       5,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Key device sensor",
+			name:       "KeyDeviceSensor",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Layering",
+			name:       "Layering",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Layout",
+			name:       "Layout",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Lighting",
+			name:       "Lighting",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Navigation",
+			name:       "Navigation",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Networking",
+			name:       "Networking",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Non-uniform Rational B-Spline (NURBS)",
+			name:       "NURBS",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Particle systems",
+			name:       "ParticleSystems",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Picking sensor",
+			name:       "Picking",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Pointing device sensor",
+			name:       "PointingDeviceSensor",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Programmable shaders",
+			name:       "Shaders",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Rendering",
+			name:       "Rendering",
+			level:       5,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Rigid body physics",
+			name:       "RigidBodyPhysics",
+			level:       5,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Scripting",
+			name:       "Scripting",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Shape",
+			name:       "Shape",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Sound",
+			name:       "Sound",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Text",
+			name:       "Text",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Texturing",
+			name:       "Texturing",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Texturing3D",
+			name:       "Texturing3D",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Time",
+			name:       "Time",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Volume rendering",
+			name:       "VolumeRendering",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		// Custom, non-standard component.
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Cobweb",
+			name:       "Cobweb",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		Object .preventExtensions (supportedComponents);
+		Object .freeze (supportedComponents);
+		Object .seal (supportedComponents);
+	
+		return supportedComponents;
+	};
+});
+
+define ("cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DSensorNode",
 	"cobweb/Bits/X3DConstants",
@@ -57076,7 +57421,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode',[
+define ("cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
+[
 	"jquery",
 	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
 	"cobweb/Bits/X3DConstants",
@@ -57112,7 +57458,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/TouchSensor',[
+define ("cobweb/Components/PointingDeviceSensor/TouchSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -57423,7 +57770,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Arc2D',[
+define ("cobweb/Components/Geometry2D/Arc2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -57547,7 +57895,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/ArcClose2D',[
+define ("cobweb/Components/Geometry2D/ArcClose2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58032,8 +58381,8 @@ function ($,
 
 			if (! this .URL .isLocal ())
 			{
-				if (! URL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + URL);
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
 			}
 
 			if (this .URL .scheme !== "data")
@@ -58182,7 +58531,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/BooleanFilter',[
+define ("cobweb/Components/EventUtilities/BooleanFilter",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58254,7 +58604,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/X3DSequencerNode',[
+define ("cobweb/Components/EventUtilities/X3DSequencerNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
@@ -58361,7 +58712,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/BooleanSequencer',[
+define ("cobweb/Components/EventUtilities/BooleanSequencer",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58431,7 +58783,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/BooleanToggle',[
+define ("cobweb/Components/EventUtilities/BooleanToggle",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58494,7 +58847,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/X3DTriggerNode',[
+define ("cobweb/Components/EventUtilities/X3DTriggerNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
@@ -58523,7 +58877,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/BooleanTrigger',[
+define ("cobweb/Components/EventUtilities/BooleanTrigger",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58585,7 +58940,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Box',[
+define ("cobweb/Components/Geometry3D/Box",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58682,7 +59038,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/X3DProductStructureChildNode',[
+define ("cobweb/Components/CADGeometry/X3DProductStructureChildNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
@@ -58711,7 +59068,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADAssembly',[
+define ("cobweb/Components/CADGeometry/CADAssembly",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58771,7 +59129,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADFace',[
+define ("cobweb/Components/CADGeometry/CADFace",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -58902,7 +59261,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADLayer',[
+define ("cobweb/Components/CADGeometry/CADLayer",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -59091,7 +59451,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADPart',[
+define ("cobweb/Components/CADGeometry/CADPart",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -59160,7 +59521,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Circle2D',[
+define ("cobweb/Components/Geometry2D/Circle2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -59627,7 +59989,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/X3DFollowerNode',[
+define ("cobweb/Components/Followers/X3DFollowerNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
@@ -59717,7 +60080,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/X3DChaserNode',[
+define ("cobweb/Components/Followers/X3DChaserNode",
+[
 	"jquery",
 	"cobweb/Components/Followers/X3DFollowerNode",
 	"cobweb/Bits/X3DConstants",
@@ -59921,7 +60285,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/ColorChaser',[
+define ("cobweb/Components/Followers/ColorChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60026,7 +60391,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/X3DDamperNode',[
+define ("cobweb/Components/Followers/X3DDamperNode",
+[
 	"jquery",
 	"cobweb/Components/Followers/X3DFollowerNode",
 	"cobweb/Bits/X3DConstants",
@@ -60161,7 +60527,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/ColorDamper',[
+define ("cobweb/Components/Followers/ColorDamper",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60408,7 +60775,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode',[
+define ("cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+[
 	"jquery",
 	"cobweb/Components/Texturing/X3DTextureNode",
 	"cobweb/Bits/X3DConstants",
@@ -60437,7 +60805,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture',[
+define ("cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60624,7 +60993,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Cone',[
+define ("cobweb/Components/Geometry3D/Cone",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60830,7 +61200,8 @@ function ($,
 
 
 
-define ('cobweb/Browser/Followers/X3DArrayFollowerTemplate',[],function ()
+define ("cobweb/Browser/Followers/X3DArrayFollowerTemplate",[],
+function ()
 {
 
 
@@ -60916,7 +61287,8 @@ define ('cobweb/Browser/Followers/X3DArrayFollowerTemplate',[],function ()
 
 
 
-define ('cobweb/Browser/Followers/X3DArrayChaserTemplate',[
+define ("cobweb/Browser/Followers/X3DArrayChaserTemplate",
+[
 	"jquery",
 	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
 ],
@@ -60961,7 +61333,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/CoordinateChaser',[
+define ("cobweb/Components/Followers/CoordinateChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61034,7 +61407,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/CoordinateDamper',[
+define ("cobweb/Components/Followers/CoordinateDamper",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61313,7 +61687,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Cylinder',[
+define ("cobweb/Components/Geometry3D/Cylinder",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61578,7 +61953,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/X3DDragSensorNode',[
+define ("cobweb/Components/PointingDeviceSensor/X3DDragSensorNode",
+[
 	"jquery",
 	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
 	"cobweb/Bits/X3DConstants",
@@ -61733,7 +62109,8 @@ function (Vector3,
 });
 
 
-define ('cobweb/Components/PointingDeviceSensor/CylinderSensor',[
+define ("cobweb/Components/PointingDeviceSensor/CylinderSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61993,7 +62370,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Disk2D',[
+define ("cobweb/Components/Geometry2D/Disk2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -62198,7 +62576,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/ElevationGrid',[
+define ("cobweb/Components/Geometry3D/ElevationGrid",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -62567,7 +62946,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Extrusion',[
+define ("cobweb/Components/Geometry3D/Extrusion",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -63282,7 +63662,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/IndexedQuadSet',[
+define ("cobweb/Components/CADGeometry/IndexedQuadSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -63881,7 +64262,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/IntegerSequencer',[
+define ("cobweb/Components/EventUtilities/IntegerSequencer",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -63951,7 +64333,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/IntegerTrigger',[
+define ("cobweb/Components/EventUtilities/IntegerTrigger",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -64544,7 +64927,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/X3DLayoutNode',[
+define ("cobweb/Components/Layout/X3DLayoutNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
@@ -64573,7 +64957,8 @@ function ($,
 
 
 
-define ("cobweb/Components/Layout/Layout", [
+define ("cobweb/Components/Layout/Layout",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -64651,12 +65036,12 @@ function ($,
 		modelViewMatrix: new Matrix4 (),
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "align",       new Fields .MFString ([ "CENTER", "CENTER" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offsetUnits", new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",      new Fields .MFFloat ([ 0, 0 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "sizeUnits",   new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "size",        new Fields .MFFloat ([ 1, 1 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "scaleMode",   new Fields .MFString ([ "NONE", "NONE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "align",       new Fields .MFString ("CENTER", "CENTER")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "offsetUnits", new Fields .MFString ("WORLD", "WORLD")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",      new Fields .MFFloat (0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "sizeUnits",   new Fields .MFString ("WORLD", "WORLD")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",        new Fields .MFFloat (1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "scaleMode",   new Fields .MFString ("NONE", "NONE")),
 		]),
 		getTypeName: function ()
 		{
@@ -65195,7 +65580,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/LayoutGroup',[
+define ("cobweb/Components/Layout/LayoutGroup",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -65313,7 +65699,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/LayoutLayer',[
+define ("cobweb/Components/Layout/LayoutLayer",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -66345,8 +66732,8 @@ function ($,
 
 			if (! this .URL .isLocal ())
 			{
-				if (! URL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + URL);
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
 			}
 
 			if (this .URL .scheme !== "data")
@@ -66573,9 +66960,14 @@ function ($,
 
 			for (var i = 0; i < size; ++ i)
 			{
-				value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-				                                       .slerp (keyValue [index1 + i] .getValue (),
-				                                               weight));
+				try
+				{
+					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
+					                                       .slerp (keyValue [index1 + i] .getValue (),
+					                                               weight));
+				}
+				catch (error)
+				{ }
 			}
 
 			this .value_changed_ .addEvent ();
@@ -66588,7 +66980,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/OrientationChaser',[
+define ("cobweb/Components/Followers/OrientationChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -66671,7 +67064,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/OrientationDamper',[
+define ("cobweb/Components/Followers/OrientationDamper",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -66952,7 +67346,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/PlaneSensor',[
+define ("cobweb/Components/PointingDeviceSensor/PlaneSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67459,7 +67854,8 @@ function ($,
 });
 
 
-define ('cobweb/Components/Geometry2D/Polyline2D',[
+define ("cobweb/Components/Geometry2D/Polyline2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67533,7 +67929,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Polypoint2D',[
+define ("cobweb/Components/Geometry2D/Polypoint2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67609,7 +68006,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/PositionChaser',[
+define ("cobweb/Components/Followers/PositionChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67672,7 +68070,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/PositionChaser2D',[
+define ("cobweb/Components/Followers/PositionChaser2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67735,7 +68134,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/PositionDamper',[
+define ("cobweb/Components/Followers/PositionDamper",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67800,7 +68200,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/PositionDamper2D',[
+define ("cobweb/Components/Followers/PositionDamper2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67941,7 +68342,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode',[
+define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DSensorNode",
@@ -68028,7 +68430,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EnvironmentalSensor/ProximitySensor',[
+define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68276,7 +68679,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/QuadSet',[
+define ("cobweb/Components/CADGeometry/QuadSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68371,7 +68775,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Rectangle2D',[
+define ("cobweb/Components/Geometry2D/Rectangle2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68482,7 +68887,8 @@ function ($,
 });
 
 
-define ('cobweb/Components/Followers/ScalarChaser',[
+define ("cobweb/Components/Followers/ScalarChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68569,7 +68975,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/ScalarDamper',[
+define ("cobweb/Components/Followers/ScalarDamper",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68650,7 +69057,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/ScreenGroup',[
+define ("cobweb/Components/Layout/ScreenGroup",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68880,7 +69288,8 @@ function ($,
 });
 
 
-define ('cobweb/Browser/Scripting/evaluate',[],function ()
+define ("cobweb/Browser/Scripting/evaluate",[],
+function ()
 {
 	return function (/* __global__, __text__ */)
 	{
@@ -68892,7 +69301,8 @@ define ('cobweb/Browser/Scripting/evaluate',[],function ()
 });
 
 
-define ('cobweb/Components/Scripting/X3DScriptNode',[
+define ("cobweb/Components/Scripting/X3DScriptNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Networking/X3DUrlObject",
@@ -68925,7 +69335,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Scripting/Script',[
+define ("cobweb/Components/Scripting/Script",
+[
 	"jquery",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
@@ -68978,17 +69389,8 @@ function ($,
           Loader,
           X3DConstants)
 {
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
-	];
-
 	function Script (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DScriptNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Script);
@@ -68997,6 +69399,12 @@ function ($,
 	Script .prototype = $.extend (Object .create (X3DScriptNode .prototype),
 	{
 		constructor: Script,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
+		]),
 		getTypeName: function ()
 		{
 			return "Script";
@@ -69433,8 +69841,6 @@ function ($,
 			this .set_apparance__ ();
 			this .set_geometry__ ();
 			this .set_bbox__ ();
-
-			this .static_ = true;
 		},
 		getBBox: function ()
 		{
@@ -69884,7 +70290,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Sphere',[
+define ("cobweb/Components/Geometry3D/Sphere",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -69985,7 +70392,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/SphereSensor',[
+define ("cobweb/Components/PointingDeviceSensor/SphereSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -71209,7 +71617,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/TexCoordChaser2D',[
+define ("cobweb/Components/Followers/TexCoordChaser2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -71282,7 +71691,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Followers/TexCoordDamper2D',[
+define ("cobweb/Components/Followers/TexCoordDamper2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -71421,7 +71831,7 @@ function ($,
 		getLength: function (index)
 		{
 			if (index < this .length_ .length)
-				return this .length_ [index];
+				return Math .max (0, this .length_ [index]);
 
 			return 0;
 		},
@@ -71862,7 +72272,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EventUtilities/TimeTrigger',[
+define ("cobweb/Components/EventUtilities/TimeTrigger",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -72156,7 +72567,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/TriangleSet2D',[
+define ("cobweb/Components/Geometry2D/TriangleSet2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -72743,7 +73155,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EnvironmentalSensor/VisibilitySensor',[
+define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -72958,8 +73371,6 @@ function ($,
 
 
 
-//define (function () {
-//});
 
 define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Networking/Anchor", // VRML
@@ -73408,7 +73819,8 @@ function (Anchor,
 {
 
 
-	return {
+	var supportedNodes =
+	{
 		// 3.1
 		MetadataBool:                 MetadataBoolean,
 		// 3.3
@@ -73634,7 +74046,15 @@ function (Anchor,
 		//WindPhysicsModel:             WindPhysicsModel,
 		WorldInfo:                    WorldInfo,
 	};
+
+	function createInstance (executionContext) { return new this (executionContext); }
+
+	for (var name in supportedNodes)
+		supportedNodes [name] .createInstance = createInstance .bind (supportedNodes [name]);
+
+	return supportedNodes;
 });
+
 
 
 define ('cobweb/Execution/Scene',[
@@ -73664,9 +74084,9 @@ function (X3DScene)
 
 define ('cobweb/Browser/X3DBrowser',[
 	"jquery",
+	"cobweb/Browser/VERSION",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
-	"cobweb/Browser/Version",
 	"cobweb/Configuration/ComponentInfo",
 	"cobweb/Configuration/SupportedProfiles",
 	"cobweb/Configuration/SupportedComponents",
@@ -73679,9 +74099,9 @@ define ('cobweb/Browser/X3DBrowser',[
 	"lib/gettext",
 ],
 function ($,
+          VERSION,
           Fields,
           X3DBrowserContext,
-          Version,
           ComponentInfo,
           SupportedProfiles,
           SupportedComponents,
@@ -73703,8 +74123,9 @@ function ($,
 		this .currentFrameRate     = 0;
 		this .description_         = "";
 		this .supportedNodes       = SupportedNodes;
-		this .supportedComponents  = SupportedComponents;
-		this .supportedProfiles    = SupportedProfiles;
+		this .supportedComponents  = SupportedComponents (this);
+		this .supportedProfiles    = SupportedProfiles (this);
+		this .components           = { };
 	};
 
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
@@ -73732,6 +74153,8 @@ function ($,
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
 			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");
+
+			
 		},
 		realize: function ()
 		{
@@ -73792,8 +74215,16 @@ function ($,
 
 			if (component)
 			{
-				if (level <= component .level)
-					return new ComponentInfo (name, level, component .title, this .browser .getProviderUrl ());
+				//if (level <= component .level)
+				//{
+					return new ComponentInfo (this,
+					{
+						title: component .title,
+						name:  name,
+						level: level,
+						providerUrl: this .getProviderUrl ()
+					});
+				//}
 			}
 
 			throw Error ("Component '" + name + "' at level '" + level + "' is not supported.");
@@ -74190,7 +74621,7 @@ function ($,
 
 	Object .defineProperty (X3DBrowser .prototype, "version",
 	{
-		get: function () { return Version; },
+		get: function () { return VERSION; },
 		enumerable: true,
 		configurable: false
 	});
@@ -74280,6 +74711,8 @@ function ($,
 	if (! console .warn)  console .warn  = console .log;
 	if (! console .error) console .error = console .log;
 
+	// X3D
+
 	function getBrowser (dom)
 	{
 		return $(dom) .data ("browser");
@@ -74300,8 +74733,6 @@ function ($,
 		
 		return browser;
 	}
-
-	// X3D
 
 	var
 	   initialized = false,
@@ -74327,10 +74758,21 @@ function ($,
 		
 			try
 			{
-				$.map (elements, createBrowser);
-	
+				var
+					time     = performance .now (),
+					browsers = $.map (elements, createBrowser);
+
+				numBrowsers = browsers .length;
+
 				if (elements .length)
-					callbacks .resolve (elements);
+				{
+					for (var i = 0; i < numBrowsers; ++ i)
+					{
+						var browser = browsers [i];
+
+						browser .initialized () .addFieldCallback ("initialized" + browser .getId (), set_initialized .bind (null, browser, elements));
+					}
+				}
 			}
 			catch (error)
 			{
@@ -74340,10 +74782,24 @@ function ($,
 		});
 	}
 
+	var numBrowsers = 0;
+
+	function set_initialized (browser, elements)
+	{
+		browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
+
+		if (-- numBrowsers)
+			return;
+
+		callbacks .resolve (elements);
+		
+	}
+
 	$.extend (X3D,
 		Fields,
 	{
 		require:                     require,
+		define:                      define,
 		getBrowser:                  getBrowser,
 		createBrowser:               createBrowser,
 		X3DConstants:                X3DConstants,
@@ -74381,22 +74837,12 @@ function ($,
 		X3D .fallbacks .push (fallback);
 	}
 
+	X3D .require   = require;
+	X3D .define    = define;
 	X3D .callbacks = [ ];
 	X3D .fallbacks = [ ];
 
-	function fallback (error)
-	{
-		require (["cobweb/Error"],
-		function (Error)
-		{
-			Error (error, window .X3D .fallbacks);
-
-			delete window .X3D;
-		});
-	}
-
-	// Temporary X3D before page load.
-	if (window .X3D === undefined)
+	function initialize ()
 	{
 		window .X3D = X3D;
 
@@ -74419,6 +74865,20 @@ function ($,
 		},
 		fallback);
 	}
+
+	function fallback (error)
+	{
+		require (["cobweb/Error"],
+		function (Error)
+		{
+			Error (error, window .X3D .fallbacks);
+
+			delete window .X3D;
+		});
+	}
+
+	initialize ();
+
 }) ();
 define("cobweb.js", function(){});
 }());

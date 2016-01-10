@@ -68,7 +68,7 @@ function ($,
 
 		this .familyStack = [ ];
 		this .alignments  = [ ];
-		this .loader      = new Loader (this, true);
+		this .loader      = new Loader (this);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -237,8 +237,8 @@ function ($,
 
 			if (! this .URL .isLocal ())
 			{
-				if (! URL .match (urls .fallbackRx))
-					this .familyStack .unshift (urls .fallback + URL);
+				if (! URL .match (urls .fallbackExpression))
+					this .familyStack .unshift (urls .fallbackUrl + URL);
 			}
 
 			if (this .URL .scheme !== "data")

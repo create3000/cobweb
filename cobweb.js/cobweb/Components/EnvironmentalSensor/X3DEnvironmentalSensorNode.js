@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DSensorNode",

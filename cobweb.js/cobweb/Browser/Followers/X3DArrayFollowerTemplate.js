@@ -1,5 +1,6 @@
 
-define (function ()
+define ("cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+function ()
 {
 "use strict";
 

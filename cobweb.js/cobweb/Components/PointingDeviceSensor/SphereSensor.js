@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/PointingDeviceSensor/SphereSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

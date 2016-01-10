@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/PointingDeviceSensor/TouchSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

@@ -18,14 +18,8 @@ function ($,
 {
 "use strict";
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-	];
-
 	function X3DProtoDeclaration (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
 		X3DProtoDeclarationNode .call (this, executionContext);
 		X3DExecutionContext     .call (this, executionContext);
 
@@ -38,6 +32,9 @@ function ($,
 		X3DProtoDeclarationNode .prototype,
 	{
 		constructor: X3DProtoDeclaration,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+		]),
 		getTypeName: function ()
 		{
 			return "PROTO";

@@ -9,22 +9,12 @@
 		X3D .fallbacks .push (fallback);
 	}
 
+	X3D .require   = require;
+	X3D .define    = define;
 	X3D .callbacks = [ ];
 	X3D .fallbacks = [ ];
 
-	function fallback (error)
-	{
-		require (["cobweb/Error"],
-		function (Error)
-		{
-			Error (error, window .X3D .fallbacks);
-
-			delete window .X3D;
-		});
-	}
-
-	// Temporary X3D before page load.
-	if (window .X3D === undefined)
+	function initialize ()
 	{
 		window .X3D = X3D;
 
@@ -47,4 +37,18 @@
 		},
 		fallback);
 	}
+
+	function fallback (error)
+	{
+		require (["cobweb/Error"],
+		function (Error)
+		{
+			Error (error, window .X3D .fallbacks);
+
+			delete window .X3D;
+		});
+	}
+
+	initialize ();
+
 }) ();

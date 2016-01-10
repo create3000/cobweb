@@ -1,7 +1,8 @@
 
 // https://github.com/r3mi/poly2tri.js
 
-define ([
+define ("cobweb/Components/Geometry3D/IndexedFaceSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

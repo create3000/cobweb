@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Followers/OrientationChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

@@ -18,6 +18,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "CADGeometry",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -26,6 +27,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Core",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -34,6 +36,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "CubeMapTexturing",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -42,6 +45,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "DIS",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -50,6 +54,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "EnvironmentalEffects",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -58,6 +63,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "EnvironmentalSensor",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -66,6 +72,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "EventUtilities",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -74,6 +81,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Followers",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -82,6 +90,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Geometry2D",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -90,6 +99,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Geometry3D",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -98,6 +108,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Geospatial",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -106,6 +117,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Grouping",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -114,6 +126,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "H-Anim",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -122,6 +135,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Interpolation",
 			level:       5,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -130,6 +144,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "KeyDeviceSensor",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -138,6 +153,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Layering",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -146,6 +162,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Layout",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -154,6 +171,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Lighting",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -162,6 +180,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Navigation",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -170,6 +189,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Networking",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -178,6 +198,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "NURBS",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -186,6 +207,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "ParticleSystems",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -194,6 +216,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Picking",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -202,6 +225,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "PointingDeviceSensor",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -210,6 +234,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Shaders",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -218,6 +243,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Rendering",
 			level:       5,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -226,6 +252,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "RigidBodyPhysics",
 			level:       5,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -234,6 +261,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Scripting",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -242,6 +270,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Shape",
 			level:       4,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -250,6 +279,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Sound",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -258,6 +288,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Text",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -266,6 +297,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Texturing",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -274,6 +306,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Texturing3D",
 			level:       3,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -282,6 +315,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Time",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		supportedComponents .addComponentInfo (
@@ -290,6 +324,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "VolumeRendering",
 			level:       2,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		// Custom, non-standard component.
@@ -300,6 +335,7 @@ function ($, ComponentInfoArray, urls)
 			name:       "Cobweb",
 			level:       1,
 			providerUrl: urls .provider,
+			url: [ ],
 		});
 
 		Object .preventExtensions (supportedComponents);

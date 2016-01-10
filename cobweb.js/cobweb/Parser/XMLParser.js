@@ -268,10 +268,9 @@ function ($,
 			}
 			catch (error)
 			{
-				//if (element .nodeName === "VisibilitySensor")
-				//	console .warn (error);
+				console .error (error);
 
-				console .warn ("XML Parser Error: " + error .message);
+				console .error ("XML Parser Error: " + error .message);
 			}
 		},
 		ProtoInstance: function (element)
@@ -395,14 +394,18 @@ function ($,
 
 				if (parent instanceof X3DField)
 				{
-					if (parent .getSet () === false)
-						parent .setSet (true);
+					switch (parent .getType ())
+					{
+						case X3DConstants .SFNode:
+							parent .set (node);
+							parent .setSet (true);
+							return;
 
-					if (parent .getType () === X3DConstants .SFNode)
-						parent .set (node);
-
-					if (parent .getType () === X3DConstants .MFNode)
-						parent .push (node);
+						case X3DConstants .MFNode:
+							parent .push (node);
+							parent .setSet (true);
+							return;
+					}
 				}
 				else
 				{
@@ -416,11 +419,18 @@ function ($,
 						{
 							var field = parent .getField (containerField);
 
-							if (field .getType () === X3DConstants .SFNode)
-								return field .set (node);
+							switch (field .getType ())
+							{
+								case X3DConstants .SFNode:
+									field .set (node);
+									field .setSet (true);
+									return;
 
-							if (field .getType () === X3DConstants .MFNode)
-								return field .push (node);
+								case X3DConstants .MFNode:
+									field .push (node);
+									field .setSet (true);
+									return;
+							}
 						}
 					}
 					catch (error)
@@ -434,11 +444,18 @@ function ($,
 
 						var field = parent .getField (node .getContainerField ());
 
-						if (field .getType () === X3DConstants .SFNode)
-							return field .set (node);
+						switch (field .getType ())
+						{
+							case X3DConstants .SFNode:
+								field .set (node);
+								field .setSet (true);
+								return;
 
-						if (field .getType () === X3DConstants .MFNode)
-							return field .push (node);
+							case X3DConstants .MFNode:
+								field .push (node);
+								field .setSet (true);
+								return;
+						}
 					}
 					catch (error)
 					{
@@ -466,6 +483,7 @@ function ($,
 
 				this .parser .setInput (value);
 				fieldType .call (this .parser, field);
+				field .setSet (true);
 			}
 			catch (error)
 			{
@@ -479,7 +497,10 @@ function ($,
 				field = node .getCDATA ();
 
 			if (field)
+			{
 				field .push (element .data);
+				field .setSet (true);
+			}
 		},
 		field: function (element)
 		{
@@ -548,8 +569,6 @@ function ($,
 						this .fieldTypes [field .getType ()] .call (this .parser, field);
 						field .setSet (true);
 					}
-					else
-						field .setSet (false);
 
 					this .pushParent (field);
 					this .statements (element .childNodes);
@@ -711,7 +730,7 @@ function ($,
 					sourceNode      = this .getExecutionContext () .getLocalNode (fromNode),
 					destinationNode = this .getExecutionContext () .getLocalNode (toNode);
 
-				this .getExecutionContext () .addRoute (sourceNode, fromField, destinationNode, toField);
+				this .getExecutionContext () .registerRoute (sourceNode, fromField, destinationNode, toField);
 			}
 			catch (error)
 			{

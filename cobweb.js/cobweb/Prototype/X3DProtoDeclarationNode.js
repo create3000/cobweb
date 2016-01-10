@@ -19,8 +19,6 @@ function ($,
 		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclarationNode);
-
-		this .instances = { };
 	}
 
 	X3DProtoDeclarationNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -40,18 +38,6 @@ function ($,
 			instance .setup ();
 
 			return new Fields .SFNode (instance);
-		},
-		addInstance: function (instance)
-		{
-			this .instances [instance .getId ()] = instance;
-		},
-		removeInstance: function (instance)
-		{
-			delete this .instances [instance .getId ()];
-		},
-		getInstances: function ()
-		{
-			return this .instances;
 		},
 	});
 

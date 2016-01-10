@@ -113,8 +113,8 @@ function ($,
 
 			if (! this .URL .isLocal ())
 			{
-				if (! URL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + URL);
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
 			}
 
 			if (this .URL .scheme !== "data")

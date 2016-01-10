@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

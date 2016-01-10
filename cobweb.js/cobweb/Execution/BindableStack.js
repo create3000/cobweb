@@ -9,7 +9,7 @@ function ($, X3DBaseNode)
 
 	function BindableStack (executionContext, layer, defaultNode)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layer = layer;
 		this .array = [ defaultNode ];

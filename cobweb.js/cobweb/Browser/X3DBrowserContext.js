@@ -56,7 +56,7 @@ function ($,
 
 	function X3DBrowserContext (element)
 	{
-		X3DBaseNode                    .call (this, this, this);
+		X3DBaseNode                    .call (this, this);
 		X3DRoutingContext              .call (this);
 		X3DCoreContext                 .call (this, element);
 		X3DScriptingContext            .call (this);
@@ -165,6 +165,10 @@ function ($,
 		getURL: function ()
 		{
 			return this .getExecutionContext () .getURL ();
+		},
+		getBrowser: function ()
+		{
+			return this;
 		},
 		getWorld: function ()
 		{

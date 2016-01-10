@@ -674,8 +674,6 @@ function (Anchor,
 		WorldInfo:                    WorldInfo,
 	};
 
-	function createInstance (executionContext) { return new this (executionContext); }
-
 	for (var name in supportedNodes)
 		supportedNodes [name] .createInstance = createInstance .bind (supportedNodes [name]);
 

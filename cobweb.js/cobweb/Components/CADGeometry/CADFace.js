@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/CADGeometry/CADFace",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

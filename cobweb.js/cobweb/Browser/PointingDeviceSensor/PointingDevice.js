@@ -10,7 +10,7 @@ function (jquery,
 	
 	function PointingDevice (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .cursor     = "DEFAULT";
 		this .isOver     = false;

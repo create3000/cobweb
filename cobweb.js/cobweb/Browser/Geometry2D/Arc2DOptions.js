@@ -12,7 +12,7 @@ function ($,
 	
 	function ArcClose2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}

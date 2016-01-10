@@ -28,7 +28,7 @@ function ($, X3DInfoArray, ComponentInfo)
 		constructor: ComponentInfoArray,
 		addComponentInfo: function (value)
 		{
-			this .add (value .name, new ComponentInfo (this .browser, value .name, value .level, value .title, value .providerUrl, value .url));
+			this .add (value .name, new ComponentInfo (this .browser, value));
 		}
 	});
 

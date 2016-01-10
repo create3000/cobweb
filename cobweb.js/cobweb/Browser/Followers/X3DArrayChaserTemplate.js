@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Browser/Followers/X3DArrayChaserTemplate",
+[
 	"jquery",
 	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
 ],

@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Followers/ScalarChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

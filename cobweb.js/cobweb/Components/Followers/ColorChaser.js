@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Followers/ColorChaser",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

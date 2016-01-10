@@ -4,6 +4,7 @@ define ([
 	"cobweb/Base/X3DEventObject",
 	"cobweb/Base/Events",
 	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
 ],
@@ -11,41 +12,45 @@ function ($,
           X3DEventObject,
           Events,
           X3DFieldDefinition,
+          FieldDefinitionArray,
           Fields,
           X3DConstants)
 {
 "use strict";
 
-	function X3DBaseNode (browser, executionContext)
+	function X3DBaseNode (executionContext)
 	{
 		if (this .hasOwnProperty ("executionContext"))
 			return;
 
-		X3DEventObject .call (this, browser);
+		X3DEventObject .call (this, executionContext .getBrowser ());
 
 		this .executionContext  = executionContext;
 		this .type              = [ X3DConstants .X3DBaseNode ];
 		this .fields            = { };
-		this .preDefinedFields  = { };
+		this .predefinedFields  = { };
 		this .userDefinedFields = { };
-		
-		this .addChildren ("isLive", new Fields .SFBool (true));
 
-		var fieldDefinitions = this .fieldDefinitions;
+		// Setup fields.
+
+		if (this .hasUserDefinedFields ())
+			this .fieldDefinitions = new FieldDefinitionArray (this .fieldDefinitions .getValue () .slice ());
+
+		var fieldDefinitions = this .fieldDefinitions .getValue ();
 
 		for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			this .addField (fieldDefinitions [i]);
+
+		// Add children.
+
+		this .addChildren ("isLive", new Fields .SFBool (true));
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
 	{
 		constructor: X3DBaseNode,
-		fieldDefinitions: [ ],
-		$initialized: false,
-		create: function (executionContext)
-		{
-			return new (this .constructor) (executionContext);
-		},
+		fieldDefinitions: new FieldDefinitionArray ([ ]),
+		_initialized: false,
 		getScene: function ()
 		{
 			var executionContext = this .executionContext;
@@ -73,7 +78,7 @@ function ($,
 		},
 		isInitialized: function ()
 		{
-			return this .$initialized;
+			return this ._initialized;
 		},
 		isLive: function ()
 		{
@@ -81,12 +86,12 @@ function ($,
 		},
 		setup: function ()
 		{
-			if (this .$initialized)
+			if (this ._initialized)
 				return;
 
-			this .$initialized = true;
+			this ._initialized = true;
 
-			var fieldDefinitions = this .fieldDefinitions;
+			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
 			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
@@ -99,6 +104,10 @@ function ($,
 		},
 		initialize: function () { },
 		eventsProcessed: function () { },
+		create: function (executionContext)
+		{
+			return new (this .constructor) (executionContext);
+		},
 		copy: function (executionContext)
 		{
 			// First try to get a named node with the node's name.
@@ -124,38 +133,52 @@ function ($,
 
 			// Default fields
 
-			for (var i = 0, length = copy .fieldDefinitions .length; i < length; ++ i)
+			var predefinedFields = this .getPredefinedFields ();
+
+			for (var name in predefinedFields)
 			{
 				try
 				{
 					var
-						fieldDefinition = copy .fieldDefinitions [i],
-						field1          = this .preDefinedFields [fieldDefinition .name],
-						field2          = copy .getField (fieldDefinition .name);
-						
-					field2 .setSet (field1 .getSet ());
+						sourceField = predefinedFields [name],
+						destfield   = copy .getField (name);
 
-					if (field1 .hasReferences ())
+					destfield .setSet (sourceField .getSet ());
+
+					if (sourceField .hasReferences ())
 					{
-						// IS relationship
-						for (var id in field1 .getReferences ())
-						{
-							var originalReference = field1 .getReferences () [id];
+						var references = sourceField .getReferences ();
 
+						// IS relationship
+						for (var id in references)
+						{
 							try
 							{
-								field2 .addReference (executionContext .getField (originalReference .getName ()));
+								var originalReference = references [id];
+	
+								destfield .addReference (executionContext .getField (originalReference .getName ()));
 							}
 							catch (error)
 							{
-								console .log (error .message);
+								console .error (error .message);
 							}
 						}
 					}
 					else
 					{
-						if (field1 .getAccessType () & X3DConstants .initializeOnly)
-							field2 .set (field1 .copy (executionContext) .getValue ());
+						if (sourceField .getAccessType () & X3DConstants .initializeOnly)
+						{
+							switch (sourceField .getType ())
+							{
+								case X3DConstants .SFNode:
+								case X3DConstants .MFNode:
+									destfield .set (sourceField .copy (executionContext) .getValue ());
+									break;
+								default:
+									destfield .set (sourceField .getValue ());
+									break;
+							}
+						}
 					}
 				}
 				catch (error)
@@ -166,33 +189,37 @@ function ($,
 
 			// User-defined fields
 
-			for (var name in this .userDefinedFields)
+			var userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
 				var
-					field1 = this .userDefinedFields [name],
-					field2 = field1 .copy (executionContext);
+					sourceField = userDefinedFields [name],
+					destfield   = sourceField .copy (executionContext);
 
-				copy .addUserDefinedField (field1 .getAccessType (),
-				                           field1 .getName (),
-				                           field2);
+				copy .addUserDefinedField (sourceField .getAccessType (),
+				                           sourceField .getName (),
+				                           destfield);
 
-				field2 .setSet (field1 .getSet ());
+				destfield .setSet (sourceField .getSet ());
 
-				if (field1 .hasReferences ())
+				if (sourceField .hasReferences ())
 				{
 					// IS relationship
 
-					for (var id in field1 .getReferences ())
-					{
-						var originalReference = field1 .getReferences () [id];
+					var references = sourceField .getReferences ();
 
+					for (var id in references)
+					{
 						try
 						{
-							field2 .addReference (executionContext .getField (originalReference .getName ()));
+							var originalReference = references [id];
+	
+							destfield .addReference (executionContext .getField (originalReference .getName ()));
 						}
 						catch (error)
 						{
-							console .log ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
+							console .error ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
 						}
 					}
 				}
@@ -231,28 +258,32 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .addAlias (name, field, fieldDefinition .userDefined);
+			this .setField (name, field);
 		},
-		addAlias: function (name, field, userDefined)
+		setField: function (name, field, userDefined)
 		{
-			this .fields [name]           = field;
-			this .preDefinedFields [name] = field;
-
 			if (field .getAccessType () === X3DConstants .inputOutput)
 			{
 				this .fields ["set_" + name]     = field;
 				this .fields [name + "_changed"] = field;
 			}
 
+			this .fields [name] = field;
+
 			if (userDefined)
+			{
+				this .userDefinedFields [name] = field;
 				return;
+			}
+
+			this .predefinedFields [name] = field;
 
 			Object .defineProperty (this, name + "_",
 			{
 				get: function () { return this; } .bind (field),
 				set: field .setValue .bind (field),
 				enumerable: true,
-				configurable: false,
+				configurable: true, // false : non deleteable
 			});
 		},
 		removeField: function (name /*, completely */)
@@ -306,20 +337,21 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field, true));
+			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field));
 
-			this .fields [name]            = field;
-			this .userDefinedFields [name] = field;
-
-			if (field .getAccessType () === X3DConstants .inputOutput)
-			{
-				this .fields ["set_" + name]     = field;
-				this .fields [name + "_changed"] = field;
-			}
+			this .setField (name, field, true);
 		},
 		getUserDefinedFields: function ()
 		{
 			return this .userDefinedFields;
+		},
+		getPredefinedFields: function ()
+		{
+			return this .predefinedFields;
+		},
+		getFields: function ()
+		{
+			return this .fields;
 		},
 		getCDATA: function ()
 		{
@@ -347,6 +379,8 @@ function ($,
 			return this .getTypeName () + " { }";
 		},
 	});
+
+	X3DBaseNode .prototype .addAlias = X3DBaseNode .prototype .setField;
 
 	return X3DBaseNode;
 });

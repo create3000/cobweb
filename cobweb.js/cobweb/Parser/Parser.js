@@ -238,6 +238,8 @@ function ($,
 		},
 		getError: function (error)
 		{
+			//console .log (error);
+
 			var string = error .message;
 
 			var
@@ -1056,7 +1058,7 @@ function ($,
 											{
 												var eventInId = this .result [1];
 
-												this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
+												this .getExecutionContext () .registerRoute (fromNode, eventOutId, toNode, eventInId);
 												return true;
 											}
 											catch (error)

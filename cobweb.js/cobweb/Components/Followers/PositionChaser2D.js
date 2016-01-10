@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Followers/PositionChaser2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",

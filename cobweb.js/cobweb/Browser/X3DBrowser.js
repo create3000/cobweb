@@ -1,9 +1,9 @@
 
 define ([
 	"jquery",
+	"cobweb/Browser/VERSION",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
-	"cobweb/Browser/Version",
 	"cobweb/Configuration/ComponentInfo",
 	"cobweb/Configuration/SupportedProfiles",
 	"cobweb/Configuration/SupportedComponents",
@@ -16,9 +16,9 @@ define ([
 	"lib/gettext",
 ],
 function ($,
+          VERSION,
           Fields,
           X3DBrowserContext,
-          Version,
           ComponentInfo,
           SupportedProfiles,
           SupportedComponents,
@@ -42,6 +42,7 @@ function ($,
 		this .supportedNodes       = SupportedNodes;
 		this .supportedComponents  = SupportedComponents (this);
 		this .supportedProfiles    = SupportedProfiles (this);
+		this .components           = { };
 	};
 
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
@@ -69,6 +70,8 @@ function ($,
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
 			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");
+
+			
 		},
 		realize: function ()
 		{
@@ -129,8 +132,16 @@ function ($,
 
 			if (component)
 			{
-				if (level <= component .level)
-					return new ComponentInfo (name, level, component .title, this .browser .getProviderUrl ());
+				//if (level <= component .level)
+				//{
+					return new ComponentInfo (this,
+					{
+						title: component .title,
+						name:  name,
+						level: level,
+						providerUrl: this .getProviderUrl ()
+					});
+				//}
 			}
 
 			throw Error ("Component '" + name + "' at level '" + level + "' is not supported.");
@@ -527,7 +538,7 @@ function ($,
 
 	Object .defineProperty (X3DBrowser .prototype, "version",
 	{
-		get: function () { return Version; },
+		get: function () { return VERSION; },
 		enumerable: true,
 		configurable: false
 	});

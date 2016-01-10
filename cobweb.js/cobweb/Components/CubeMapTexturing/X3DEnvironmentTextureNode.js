@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+[
 	"jquery",
 	"cobweb/Components/Texturing/X3DTextureNode",
 	"cobweb/Bits/X3DConstants",
