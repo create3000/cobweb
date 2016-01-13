@@ -98,8 +98,6 @@ function ($, X3DField, X3DConstants)
 		},
 		set: function (value)
 		{
-try
-{
 			var current = this .getValue ();
 
 			if (current)
@@ -113,11 +111,6 @@ try
 			}
 			else
 				X3DField .prototype .set .call (this, null);
-}
-catch (error)
-{
-console .log (error);
-}
 		},
 		getNodeTypeName: function ()
 		{

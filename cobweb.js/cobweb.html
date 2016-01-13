@@ -43,7 +43,6 @@ body {
 .version {
 	margin-left: 40px;
 	margin-right: 20px;
-	font-family: Ubuntu;
 	font-weight: bold;
 	font-size: 50px;
 }
@@ -60,6 +59,10 @@ X3D {
 
 .toggle {
 	float: right;
+}
+
+.cobweb-min {
+	color: #FF3E3E;
 }
 	</style>
 	<script type="text/javascript" src="Bookmarks.js"></script>
@@ -226,6 +229,8 @@ X3D (function (dom)
 		{ name: 'CoordinateChaser',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/CoordinateChaser.wrl" ] },
 		{ name: 'TexCoordChaser2D',    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/TexCoordChaser2D.x3d" ] },
 		{ name: '3rd Person View',     url: [ "http://www.web3d.org/x3d/content/examples/Basic/Followers/3rdPersonViewChaser.x3d" ] },
+		{ name: 'EXPORT',              url: [ "tests/Components/Core/EXPORT.x3d", "tests/Components/Core/EXPORT.x3dv" ] },
+		{ name: 'IMPORT',              url: [ "tests/Components/Core/IMPORT.x3d", "tests/Components/Core/IMPORT.x3dv" ] },
 	];
 
 	for (var i = 0, length = pages .length; i < length; ++ i)
@@ -273,7 +278,7 @@ function loadURL ()
 			<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
 		</table>
 		<div class="toggle"><a href="cobweb.min.html">cobweb.min.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html">github</a></div>
-		<p class="version"></p>
+		<p class="version cobweb-dev"></p>
 		<p class="-cobweb-console"></p>
 	</div>
 </body>

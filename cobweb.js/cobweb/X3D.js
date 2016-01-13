@@ -105,9 +105,7 @@ function ($,
 		
 			try
 			{
-				var
-					time     = performance .now (),
-					browsers = $.map (elements, createBrowser);
+				var browsers = $.map (elements, createBrowser);
 
 				numBrowsers = browsers .length;
 

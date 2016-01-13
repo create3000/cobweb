@@ -1,11 +1,12 @@
 
-define ([
+define ("cobweb/Execution/X3DExecutionContext", [
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Execution/ImportedNode",
 	"cobweb/Prototype/ExternProtoDeclarationArray",
 	"cobweb/Prototype/ProtoDeclarationArray",
 	"cobweb/Routing/RouteArray",
@@ -20,6 +21,7 @@ function ($,
           FieldDefinitionArray,
           X3DBaseNode,
           ComponentInfoArray,
+          ImportedNode,
           ExternProtoDeclarationArray,
           ProtoDeclarationArray,
           RouteArray,
@@ -44,9 +46,9 @@ function ($,
 		this .url                  = new URI (window .location);
 		this .uninitializedNodes   = [ ];
 		this .namedNodes           = { };
+		this .importedNodes        = { };
 		this .protos               = new ProtoDeclarationArray ();
 		this .externprotos         = new ExternProtoDeclarationArray ();
-		this .pendingRoutes        = [ ];
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
 
@@ -59,26 +61,6 @@ function ($,
 		setup: function ()
 		{
 			X3DBaseNode .prototype .setup .call (this);
-
-			// Add routes
-
-			var pendingRoutes = this .pendingRoutes;
-
-			for (var i = 0, length = pendingRoutes .length; i < length; ++ i)
-			{
-				try
-				{
-					var route = pendingRoutes [i];
-
-					this .addRoute (route .sourceNode, route .sourceField, route .destinationNode, route .destinationField);
-				}
-				catch (error)
-				{
-					console .warn (error .message);
-				}
-			}
-
-			pendingRoutes .length = 0;
 
 			// Setup nodes
 
@@ -159,7 +141,7 @@ function ($,
 		addNamedNode: function (name, node)
 		{
 			if (this .namedNodes [name] !== undefined)
-				throw new Error ("Couldn't add named node: node name '" + name + "' is already in use.");
+				throw new Error ("Couldn't add named node: node named '" + name + "' is already in use.");
 
 			this .updateNamedNode (name, node);
 		},
@@ -175,7 +157,7 @@ function ($,
 				throw new Error ("Couldn't update named node: node IS NULL.");
 
 			if (node .getValue () .getExecutionContext () !== this)
-				throw new Error ("Couldn't update named node: the node does not belong to this execution context.");
+				throw new Error ("Couldn't update named node: node does not belong to this execution context.");
 
 			if (name .length === 0)
 				throw new Error ("Couldn't update named node: node name is empty.");
@@ -199,10 +181,61 @@ function ($,
 		{
 			var node = this .namedNodes [name];
 
-			if (node !== undefined)
-				return node;
+			if (! node)
+				throw new Error ("Named node '" + name + "' not found.");
 
-			throw new Error ("Named node '" + name + "' not found.");
+			return node;
+		},
+		addImportedNode: function (inlineNode, exportedName, importedName)
+		{
+			if (importedName === undefined)
+				importedName = importedName;
+
+			if (this .importedNodes [importedName])
+				throw new Error ("Couldn't add imported node: imported name '" + importedName + "' already in use.");
+
+			this .updateImportedNode (inlineNode, exportedName, importedName);
+		},
+		updateImportedNode: function (inlineNode, exportedName, importedName)
+		{
+			inlineNode   = X3DCast (X3DConstants .Inline, inlineNode);
+			exportedName = String (exportedName);
+			importedName = importedName === undefined ? exportedName : String (importedName);
+
+			if (! inlineNode)
+				throw new Error ("Node named is not an Inline node.");
+
+			if (inlineNode .getExecutionContext () !== this)
+				throw new Error ("Couldn't update imported node: Inline node does not belong to this execution context.");
+
+			if (exportedName .length === 0)
+				throw new Error ("Couldn't update imported node: exported name is empty.");
+
+			if (importedName .length === 0)
+				throw new Error ("Couldn't update imported node: imported name is empty.");
+
+			this .removeImportedNode (importedName);
+
+			this .importedNodes [importedName] = new ImportedNode (this, inlineNode, exportedName, importedName);
+			this .importedNodes [importedName] .setup ();
+		},
+		removeImportedNode: function (importedName)
+		{
+			var importedNode = this .importedNodes [importedName];
+
+			if (importedNode)
+				importedNode .dispose ();
+
+			delete this .importedNodes [importedName];
+		},
+		getImportedNode: function (importedName)
+		{
+			var importedNode = this .importedNodes [importedName];
+
+			if (importedNode)
+				return importedNode .getExportedNode ();
+
+			throw new Error ("Imported node '" + importedName + "' not found.");
 		},
 		getLocalNode: function (name)
 		{
@@ -214,7 +247,12 @@ function ($,
 			{
 				try
 				{
-					return this .getImportedNode (name);
+					var importedNode = this .importedNodes [name];
+
+					if (importedNode)
+						return new Fields .SFNode (importedNode);
+
+					throw true;
 				}
 				catch (error)
 				{
@@ -222,42 +260,52 @@ function ($,
 				}
 			}
 		},
-		getImportedNode: function (name)
-		{
-			throw new Error ("Imported node '" + name + "' not found.");
-		},
 		setRootNodes: function () { },
 		getRootNodes: function ()
 		{
 			return this .rootNodes_;
 		},
-		registerRoute: function (sourceNode, sourceField, destinationNode, destinationField)
-		{
-			this .pendingRoutes .push ({
-				sourceNode:      sourceNode,
-				sourceField:     sourceField,
-				destinationNode: destinationNode,
-				destinationField: destinationField,
-			});
-		},
 		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			try
 			{
-				if (! sourceNode .getValue ())
-					throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
+				sourceField      = String (sourceField);
+				destinationField = String (destinationField);
 
-				if (! destinationNode .getValue ())
-					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
+				if (! (sourceNode instanceof Fields .SFNode))
+					throw new Error ("Bad ROUTE specification: source node must be of type SFNode.");
 
-				sourceField      = sourceNode      .getValue () .getField (sourceField),
-				destinationField = destinationNode .getValue () .getField (destinationField);
+				if (! (destinationNode instanceof Fields .SFNode))
+					throw new Error ("Bad ROUTE specification: destination node must be of type SFNode.");
+
+				sourceNode      = sourceNode      .getValue ();
+				destinationNode = destinationNode .getValue ();
+
+				if (! sourceNode)
+					throw new Error ("Bad ROUTE specification: source node is NULL.");
+
+				if (! destinationNode)
+					throw new Error ("Bad ROUTE specification: destination node is NULL.");
+
+				if (sourceNode instanceof ImportedNode || destinationNode instanceof ImportedNode)
+				{
+					if (sourceNode instanceof ImportedNode)
+						sourceNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+	
+					if (destinationNode instanceof ImportedNode)
+						destinationNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+
+					return;
+				}
+
+				sourceField      = sourceNode      .getField (sourceField),
+				destinationField = destinationNode .getField (destinationField);
 
 				if (! sourceField .isOutput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
+					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getName () + "' of type " + sourceNode .getTypeName () + " is not an output field.");
 
 				if (! destinationField .isInput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
+					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getTypeName () + " is not an input field.");
 
 				if (sourceField .getType () !== destinationField .getType ())
 					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
@@ -281,8 +329,8 @@ function ($,
 			try
 			{
 				var
-					sourceField      = route .sourceField_,
-					destinationField = route .destinationField_,
+					sourceField      = route ._sourceField,
+					destinationField = route ._destinationField,
 					id               = sourceField .getId () + "." + destinationField .getId (),
 					index            = this .routes .getValue () .indexOf (route);
 

@@ -8,6 +8,7 @@ define ([
 	"standard/Networking/URI",
 	"lib/BinaryTransport",
 	"lib/pako/dist/pako_inflate",
+	"cobweb/DEBUG",
 ],
 function ($,
           X3DObject,
@@ -16,7 +17,8 @@ function ($,
           XMLParser,
           URI,
           BinaryTransport,
-          pako)
+          pako,
+          DEBUG)
 {
 "use strict";
 
@@ -123,8 +125,11 @@ function ($,
 
 			success (scene);
 
-			if (this .URL .length && this .URL .scheme !== "data")
-				console .info ("Done loading scene " + this .URL);
+			if (DEBUG)
+			{
+				if (this .URL .length && this .URL .scheme !== "data")
+					console .info ("Done loading scene " + this .URL);
+			}
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
 		{

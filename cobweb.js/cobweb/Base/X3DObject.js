@@ -74,6 +74,7 @@ function ()
 			for (var key in interests)
 				interests [key] ();
 		},
+		dispose: function () { },
 	};
 
 	return X3DObject;

@@ -9355,6 +9355,7 @@ function ()
 			for (var key in interests)
 				interests [key] ();
 		},
+		dispose: function () { },
 	};
 
 	return X3DObject;
@@ -10052,7 +10053,7 @@ function ($,
 		},
 		processEvent: function (event)
 		{
-			if (event .sources .hasOwnProperty (this .getId ()))
+			if (event .sources [this .getId ()])
 				return;
 
 			event .sources [this .getId ()] = true;
@@ -15738,8 +15739,6 @@ function ($, X3DField, X3DConstants)
 		},
 		set: function (value)
 		{
-try
-{
 			var current = this .getValue ();
 
 			if (current)
@@ -15753,11 +15752,6 @@ try
 			}
 			else
 				X3DField .prototype .set .call (this, null);
-}
-catch (error)
-{
-console .log (error);
-}
 		},
 		getNodeTypeName: function ()
 		{
@@ -23686,6 +23680,155 @@ function ($, X3DInfoArray, ComponentInfo)
 });
 
 
+define ('cobweb/Execution/ImportedNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DBaseNode,
+          X3DConstants)
+{
+
+
+	function ImportedNode (executionContext, inlineNode, exportedName, importedName)
+	{
+		X3DBaseNode .call (this, executionContext);
+
+		this .inlineNode   = inlineNode;
+		this .exportedName = exportedName;
+		this .importedName = importedName;
+		this .routes       = { };
+
+		this .inlineNode .loadState_ .addInterest (this, "set_loadState__");
+	}
+
+	ImportedNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	{
+		constructor: ImportedNode,
+		getTypeName: function ()
+		{
+			return "ImportedNode";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "importedNodes";
+		},
+		getInlineNode: function ()
+		{
+			return this .inlineNode;
+		},
+		getExportedName: function ()
+		{
+			return this .exportedName;
+		},
+		getExportedNode: function ()
+		{
+			return this .inlineNode .getScene () .getExportedNode (this .exportedName);
+		},
+		getImportedName: function ()
+		{
+			return this .importedName;
+		},
+		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
+		{
+			// Add route.
+
+			var id = sourceNode .getId () + "." + sourceField + " " + destinationNode .getId () + "." + destinationField;
+
+			this .routes [id] =
+			{
+				sourceNode:       sourceNode,
+				sourceField:      sourceField,
+				destinationNode:  destinationNode,
+				destinationField: destinationField,
+			};
+
+			// Try to resolve source or destination node.
+
+			if (this .inlineNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				return this .resolveRoute (id);
+		},
+		resolveRoute: function (id)
+		{
+			try
+			{
+				var
+					route            = this .routes [id],
+					sourceNode       = route .sourceNode,
+					sourceField      = route .sourceField,
+					destinationNode  = route .destinationNode,
+					destinationField = route .destinationField;
+
+				if (sourceNode instanceof ImportedNode)
+					sourceNode = sourceNode .getExportedNode () .getValue ();
+
+				if (destinationNode instanceof ImportedNode)
+					destinationNode = destinationNode .getExportedNode () .getValue ();
+
+				return route .route = this .getExecutionContext () .addRoute (new Fields .SFNode (sourceNode), sourceField, new Fields .SFNode (destinationNode), destinationField);
+			}
+			catch (error)
+			{
+				console .error (error .message);
+			}
+		},
+		set_loadState__: function ()
+		{
+			var routes = this .routes;
+
+			switch (this .inlineNode .checkLoadState ())
+			{
+				case X3DConstants .NOT_STARTED_STATE:
+				{
+					for (var id in routes)
+					{
+						if (routes [id] .route)
+							routes [id] .route .disconnect ();
+					}
+
+					break;
+				}
+				case X3DConstants .COMPLETE_STATE:
+				{
+					for (var id in routes)
+					{
+						if (routes [id] .route)
+							this .getExecutionContext () .deleteRoute (routes [id] .route);
+					}
+
+					try
+					{
+						for (var id in routes)
+							this .resolveRoute (id);
+					}
+					catch (error)
+					{
+						console .error (error);
+					}
+
+					break;
+				}
+			}
+		},
+		dispose: function ()
+		{
+			X3DBaseNode .prototype .dispose .call (this);
+
+			this .inlineNode .loadState_ .removeInterest (this, "set_loadState__");
+		},
+	});
+
+	return ImportedNode;
+});
+
+
 define ('cobweb/Prototype/ExternProtoDeclarationArray',[
 	"jquery",
 	"cobweb/Configuration/X3DInfoArray",
@@ -23774,9 +23917,12 @@ function ($)
 
 define ('cobweb/Routing/X3DRoute',[
 	"jquery",
-	"cobweb/Basic/X3DBaseNode"
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
 ],
-function ($, X3DBaseNode)
+function ($,
+          Fields,
+          X3DBaseNode)
 {
 
 
@@ -23784,10 +23930,10 @@ function ($, X3DBaseNode)
 	{
 		//X3DBaseNode .call (this, executionContext);
 		
-		this .sourceNode        = sourceNode;
-		this .sourceField_      = sourceField;
-		this .destinationNode   = destinationNode;
-		this .destinationField_ = destinationField;
+		this ._sourceNode       = sourceNode;
+		this ._sourceField      = sourceField;
+		this ._destinationNode  = destinationNode;
+		this ._destinationField = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
 			sourceField .addFieldInterest (destinationField);
@@ -23801,7 +23947,7 @@ function ($, X3DBaseNode)
 	{
 		disconnect: function ()
 		{
-			this .sourceField_ .removeFieldInterest (this .destinationField_);
+			this ._sourceField .removeFieldInterest (this ._destinationField);
 		},
 		toString: function ()
 		{
@@ -23809,11 +23955,31 @@ function ($, X3DBaseNode)
 		},
 	};
 
+	Object .defineProperty (X3DRoute .prototype, "sourceNode",
+	{
+		get: function ()
+		{
+			return new Fields .SFNode (this ._sourceNode);
+		},
+		enumerable: true,
+		configurable: false
+	});
+
 	Object .defineProperty (X3DRoute .prototype, "sourceField",
 	{
 		get: function ()
 		{
-			return this .sourceField_ .getName ();
+			return this ._sourceField .getName ();
+		},
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DRoute .prototype, "destinationNode",
+	{
+		get: function ()
+		{
+			return new Fields .SFNode (this ._destinationNode);
 		},
 		enumerable: true,
 		configurable: false
@@ -23823,7 +23989,7 @@ function ($, X3DBaseNode)
 	{
 		get: function ()
 		{
-			return this .destinationField_ .getName ();
+			return this ._destinationField .getName ();
 		},
 		enumerable: true,
 		configurable: false
@@ -23832,13 +23998,16 @@ function ($, X3DBaseNode)
 	return X3DRoute;
 });
 
-define ('cobweb/Execution/X3DExecutionContext',[
+
+
+define ("cobweb/Execution/X3DExecutionContext", [
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Execution/ImportedNode",
 	"cobweb/Prototype/ExternProtoDeclarationArray",
 	"cobweb/Prototype/ProtoDeclarationArray",
 	"cobweb/Routing/RouteArray",
@@ -23853,6 +24022,7 @@ function ($,
           FieldDefinitionArray,
           X3DBaseNode,
           ComponentInfoArray,
+          ImportedNode,
           ExternProtoDeclarationArray,
           ProtoDeclarationArray,
           RouteArray,
@@ -23877,9 +24047,9 @@ function ($,
 		this .url                  = new URI (window .location);
 		this .uninitializedNodes   = [ ];
 		this .namedNodes           = { };
+		this .importedNodes        = { };
 		this .protos               = new ProtoDeclarationArray ();
 		this .externprotos         = new ExternProtoDeclarationArray ();
-		this .pendingRoutes        = [ ];
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
 
@@ -23892,26 +24062,6 @@ function ($,
 		setup: function ()
 		{
 			X3DBaseNode .prototype .setup .call (this);
-
-			// Add routes
-
-			var pendingRoutes = this .pendingRoutes;
-
-			for (var i = 0, length = pendingRoutes .length; i < length; ++ i)
-			{
-				try
-				{
-					var route = pendingRoutes [i];
-
-					this .addRoute (route .sourceNode, route .sourceField, route .destinationNode, route .destinationField);
-				}
-				catch (error)
-				{
-					console .warn (error .message);
-				}
-			}
-
-			pendingRoutes .length = 0;
 
 			// Setup nodes
 
@@ -23992,7 +24142,7 @@ function ($,
 		addNamedNode: function (name, node)
 		{
 			if (this .namedNodes [name] !== undefined)
-				throw new Error ("Couldn't add named node: node name '" + name + "' is already in use.");
+				throw new Error ("Couldn't add named node: node named '" + name + "' is already in use.");
 
 			this .updateNamedNode (name, node);
 		},
@@ -24008,7 +24158,7 @@ function ($,
 				throw new Error ("Couldn't update named node: node IS NULL.");
 
 			if (node .getValue () .getExecutionContext () !== this)
-				throw new Error ("Couldn't update named node: the node does not belong to this execution context.");
+				throw new Error ("Couldn't update named node: node does not belong to this execution context.");
 
 			if (name .length === 0)
 				throw new Error ("Couldn't update named node: node name is empty.");
@@ -24032,10 +24182,61 @@ function ($,
 		{
 			var node = this .namedNodes [name];
 
-			if (node !== undefined)
-				return node;
+			if (! node)
+				throw new Error ("Named node '" + name + "' not found.");
 
-			throw new Error ("Named node '" + name + "' not found.");
+			return node;
+		},
+		addImportedNode: function (inlineNode, exportedName, importedName)
+		{
+			if (importedName === undefined)
+				importedName = importedName;
+
+			if (this .importedNodes [importedName])
+				throw new Error ("Couldn't add imported node: imported name '" + importedName + "' already in use.");
+
+			this .updateImportedNode (inlineNode, exportedName, importedName);
+		},
+		updateImportedNode: function (inlineNode, exportedName, importedName)
+		{
+			inlineNode   = X3DCast (X3DConstants .Inline, inlineNode);
+			exportedName = String (exportedName);
+			importedName = importedName === undefined ? exportedName : String (importedName);
+
+			if (! inlineNode)
+				throw new Error ("Node named is not an Inline node.");
+
+			if (inlineNode .getExecutionContext () !== this)
+				throw new Error ("Couldn't update imported node: Inline node does not belong to this execution context.");
+
+			if (exportedName .length === 0)
+				throw new Error ("Couldn't update imported node: exported name is empty.");
+
+			if (importedName .length === 0)
+				throw new Error ("Couldn't update imported node: imported name is empty.");
+
+			this .removeImportedNode (importedName);
+
+			this .importedNodes [importedName] = new ImportedNode (this, inlineNode, exportedName, importedName);
+			this .importedNodes [importedName] .setup ();
+		},
+		removeImportedNode: function (importedName)
+		{
+			var importedNode = this .importedNodes [importedName];
+
+			if (importedNode)
+				importedNode .dispose ();
+
+			delete this .importedNodes [importedName];
+		},
+		getImportedNode: function (importedName)
+		{
+			var importedNode = this .importedNodes [importedName];
+
+			if (importedNode)
+				return importedName .getExportedNode ();
+
+			throw new Error ("Imported node '" + importedName + "' not found.");
 		},
 		getLocalNode: function (name)
 		{
@@ -24047,7 +24248,12 @@ function ($,
 			{
 				try
 				{
-					return this .getImportedNode (name);
+					var importedNode = this .importedNodes [name];
+
+					if (importedNode)
+						return new Fields .SFNode (importedNode);
+
+					throw true;
 				}
 				catch (error)
 				{
@@ -24064,33 +24270,47 @@ function ($,
 		{
 			return this .rootNodes_;
 		},
-		registerRoute: function (sourceNode, sourceField, destinationNode, destinationField)
-		{
-			this .pendingRoutes .push ({
-				sourceNode:      sourceNode,
-				sourceField:     sourceField,
-				destinationNode: destinationNode,
-				destinationField: destinationField,
-			});
-		},
 		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			try
 			{
-				if (! sourceNode .getValue ())
-					throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
+				sourceField      = String (sourceField);
+				destinationField = String (destinationField);
 
-				if (! destinationNode .getValue ())
-					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
+				if (! (sourceNode instanceof Fields .SFNode))
+					throw new Error ("Bad ROUTE specification: source node must be of type SFNode.");
 
-				sourceField      = sourceNode      .getValue () .getField (sourceField),
-				destinationField = destinationNode .getValue () .getField (destinationField);
+				if (! (destinationNode instanceof Fields .SFNode))
+					throw new Error ("Bad ROUTE specification: destination node must be of type SFNode.");
+
+				sourceNode      = sourceNode      .getValue ();
+				destinationNode = destinationNode .getValue ();
+
+				if (! sourceNode)
+					throw new Error ("Bad ROUTE specification: source node is NULL.");
+
+				if (! destinationNode)
+					throw new Error ("Bad ROUTE specification: destination node is NULL.");
+
+				if (sourceNode instanceof ImportedNode || destinationNode instanceof ImportedNode)
+				{
+					if (sourceNode instanceof ImportedNode)
+						sourceNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+	
+					if (destinationNode instanceof ImportedNode)
+						destinationNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+
+					return;
+				}
+
+				sourceField      = sourceNode      .getField (sourceField),
+				destinationField = destinationNode .getField (destinationField);
 
 				if (! sourceField .isOutput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
+					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getName () + "' of type " + sourceNode .getTypeName () + " is not an output field.");
 
 				if (! destinationField .isInput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
+					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getTypeName () + " is not an input field.");
 
 				if (sourceField .getType () !== destinationField .getType ())
 					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
@@ -24114,8 +24334,8 @@ function ($,
 			try
 			{
 				var
-					sourceField      = route .sourceField_,
-					destinationField = route .destinationField_,
+					sourceField      = route ._sourceField,
+					destinationField = route ._destinationField,
 					id               = sourceField .getId () + "." + destinationField .getId (),
 					index            = this .routes .getValue () .indexOf (route);
 
@@ -24346,7 +24566,6 @@ function ($,
 				{
 					//this .copyImportedNodes (proto);
 					this .copyRoutes (proto .routes);
-					this .copyRoutes (proto .pendingRoutes);
 				}
 				
 				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
@@ -24759,11 +24978,14 @@ function ($,
 		Header:	    new RegExp ("^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\\n\\r]"),
 
 		// Keywords
+		AS:          new RegExp ('^AS',          'y'),
 		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
 		DEF:         new RegExp ('^DEF',         'y'),
+		EXPORT:      new RegExp ('^EXPORT',      'y'),
 		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
 		FALSE:       new RegExp ('^FALSE',       'y'),
 		false:       new RegExp ('^false',       'y'),
+		IMPORT:      new RegExp ('^IMPORT',      'y'),
 		IS:          new RegExp ('^IS',          'y'),
 		META:        new RegExp ('^META',        'y'),
 		NULL:        new RegExp ('^NULL',        'y'),
@@ -25232,10 +25454,84 @@ function ($,
 		},
 		exportStatement: function ()
 		{
+			this .comments ();
+
+			if (Grammar .EXPORT .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						localNodeNameId    = this .result [1],
+						exportedNodeNameId = "";
+		
+					this .comments ();
+		
+					var node = this .scene .getLocalNode (localNodeNameId);
+		
+					if (Grammar .AS .parse (this))
+					{
+						if (this .exportedNodeNameId ())
+							exportedNodeNameId = this .result [1];
+						else
+							throw new Error ("No name given after AS.");
+					}
+					else
+						exportedNodeNameId = localNodeNameId;
+		
+					this .scene .updateExportedNode (exportedNodeNameId, node);
+					return true;
+				}
+		
+				throw new Error ("No name given after EXPORT.");
+			}
+		
 			return false;
 		},
 		importStatement: function ()
 		{
+			this .comments ();
+
+			if (Grammar .IMPORT .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						inlineNodeNameId = this .result [1],
+						namedNode        = this .getExecutionContext () .getNamedNode (inlineNodeNameId);
+		
+					this .comments ();
+	
+					if (Grammar .Period .parse (this))
+					{
+						if (this .exportedNodeNameId ())
+						{
+							var
+								exportedNodeNameId = this .result [1],
+								nodeNameId         = exportedNodeNameId;
+	
+							this .comments ();
+	
+							if (Grammar .AS .parse (this))
+							{
+								if (this .nodeNameId ())
+									nodeNameId = this .result [1];
+
+								else
+									throw new Error ("No name given after AS.");
+							}
+	
+							this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeNameId, nodeNameId);
+							return true;
+						}
+	
+						throw new Error ("Expected exported node name.");
+					}
+	
+					throw new Error ("Expected a '.' after exported node name.");
+				}
+		
+				throw new Error ("No name given after IMPORT statement.");
+			}
 			return false;
 		},
 		statements: function ()
@@ -25773,7 +26069,7 @@ function ($,
 											{
 												var eventInId = this .result [1];
 
-												this .getExecutionContext () .registerRoute (fromNode, eventOutId, toNode, eventInId);
+												this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
 												return true;
 											}
 											catch (error)
@@ -26088,6 +26384,7 @@ function ($,
 		},
 		categoryNameId: function () { return this .Id (); },
 		unitNameId: function () { return this .Id (); },
+		exportedNodeNameId: function () { return this .Id (); },
 		nodeNameId: function () { return this .Id (); },
 		nodeTypeId: function () { return this .Id (); },
 		initializeOnlyId: function () { return this .Id (); },
@@ -27634,14 +27931,17 @@ function ($,
 		{
 			try
 			{
-				var componentNameIdCharacters = element .getAttribute ("name");
-	
-				if (! componentNameIdCharacters)
-					return;
-				
 				var
-					componentSupportLevel = parseInt (element .getAttribute ("level")),
-					component             = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
+					componentNameIdCharacters = element .getAttribute ("name"),
+					componentSupportLevel = parseInt (element .getAttribute ("level"));
+	
+				if (componentNameIdCharacters == null)
+					return console .warn ("XML Parser Error: Bad component statement: Expected name attribute.");
+	
+				if (componentSupportLevel == null)
+					return console .warn ("XML Parser Error: Bad component statement: Expected level attribute.");
+
+				var component = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
 	
 				this .scene .addComponent (component);
 			}
@@ -27652,25 +27952,33 @@ function ($,
 		},
 		unit: function (element)
 		{
-			var category = element .getAttribute ("category");
-
-			if (! category)
-				return;
-			
 			var
+				category         = element .getAttribute ("category"),
 				name             = element .getAttribute ("name"),
-				conversionFactor = parseFloat (element .getAttribute ("conversionFactor"));
+				conversionFactor = element .getAttribute ("conversionFactor");
 
-			this .scene .updateUnit (category, name, conversionFactor);
+			if (category == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected category attribute.");
+
+			if (name == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected name attribute.");
+
+			if (conversionFactor == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected conversionFactor attribute.");
+
+			this .scene .updateUnit (category, name, parseFloat (conversionFactor));
 		},
 		meta: function (element)
 		{
-			var metakey = element .getAttribute ("name");
+			var
+				metakey   = element .getAttribute ("name"),
+				metavalue = element .getAttribute ("content");
 
-			if (! metakey)
-				return;
-			
-			var metavalue = element .getAttribute ("content");
+			if (metakey == null)
+				return console .warn ("XML Parser Error: Bad meta statement: Expected name attribute.");	
+
+			if (metavalue === null)
+				return console .warn ("XML Parser Error: Bad meta statement: Expected content attribute.");
 
 			this .scene .setMetaData (metakey, metavalue);
 		},
@@ -27704,8 +28012,16 @@ function ($,
 					this .ProtoInstance (child);
 					return;
 
+				case "IMPORT":
+					this .IMPORT (child);
+					return;
+
 				case "ROUTE":
 					this .ROUTE (child);
+					return;
+
+				case "EXPORT":
+					this .EXPORT (child);
 					return;
 
 				default:
@@ -27732,7 +28048,7 @@ function ($,
 			}
 			catch (error)
 			{
-				console .error (error);
+				//console .error (error);
 
 				console .error ("XML Parser Error: " + error .message);
 			}
@@ -28069,8 +28385,11 @@ function ($,
 				nodeFieldName  = element .getAttribute ("nodeField"),
 				protoFieldName = element .getAttribute ("protoField");
 
-			if (! nodeFieldName || ! protoFieldName)
-				return;
+			if (nodeFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected nodeField attribute.");
+
+			if (protoFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected protoField attribute.");
 
 			try
 			{
@@ -28092,7 +28411,7 @@ function ($,
 			}
 			catch (error)
 			{
-				console .warn ("Couldn't create IS reference: " + error .message);
+				console .warn ("XML Parser Error: Couldn't create IS reference: " + error .message);
 			}
 		},
 		ExternProtoDeclare: function (element)
@@ -28102,6 +28421,9 @@ function ($,
 			if (this .id (name))
 			{
 				var url = element .getAttribute ("url");
+
+				if (url === null)
+					return console .warn ("XML Parser Error: Bad ExternProtoDeclare statement: Expected url attribute.");
 				
 				if (url !== null)
 				{
@@ -28180,21 +28502,83 @@ function ($,
 		{
 			this .statements (element .childNodes);
 		},
-		ROUTE: function (element)
+		IMPORT: function (element)
 		{
-			var
-				fromNode  = element .getAttribute ("fromNode"),
-				fromField = element .getAttribute ("fromField"),
-				toNode    = element .getAttribute ("toNode"),
-				toField   = element .getAttribute ("toField");
-
 			try
 			{
 				var
-					sourceNode      = this .getExecutionContext () .getLocalNode (fromNode),
-					destinationNode = this .getExecutionContext () .getLocalNode (toNode);
+					inlineNodeName   = element .getAttribute ("inlineDEF"),
+					exportedNodeName = element .getAttribute ("exportedDEF"),
+					localNodeName    = element .getAttribute ("AS");
 
-				this .getExecutionContext () .registerRoute (sourceNode, fromField, destinationNode, toField);
+				if (inlineNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (exportedNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (! localNodeName)
+					localNodeName = exportedNodeName;
+
+				var namedNode = this .getExecutionContext () .getNamedNode (inlineNodeName);
+
+				this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeName, localNodeName);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		ROUTE: function (element)
+		{
+			try
+			{
+				var
+					sourceNodeName      = element .getAttribute ("fromNode"),
+					sourceField         = element .getAttribute ("fromField"),
+					destinationNodeName = element .getAttribute ("toNode"),
+					destinationField    = element .getAttribute ("toField");
+
+				if (sourceNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected fromNode attribute.");
+
+				if (sourceField === null)
+					throw new Error ("Bad ROUTE statement: Expected fromField attribute.");
+
+				if (destinationNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected toNode attribute.");
+
+				if (destinationField === null)
+					throw new Error ("Bad ROUTE statement: Expected toField attribute.");
+
+				var
+					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
+					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName);
+
+				this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		EXPORT: function (element)
+		{
+			try
+			{
+				var
+					localNodeName    = element .getAttribute ("localDEF"),
+					exportedNodeName = element .getAttribute ("AS");
+
+				if (localNodeName === null)
+					throw new Error ("Bad EXPORT statement: Expected localDEF attribute.");
+
+				if (! exportedNodeName)
+					exportedNodeName = localNodeName;
+
+				var localNode = this .getExecutionContext () .getLocalNode (localNodeName);
+
+				this .getExecutionContext () .updateExportedNode (exportedNodeName, localNode);
 			}
 			catch (error)
 			{
@@ -28203,13 +28587,13 @@ function ($,
 		},
 		id: function (string)
 		{
-			if (string)
-			{
-				// Test for id characters.
-				return true;
-			}
+			if (string === null)
+				return false;
 
-			return false;
+			if (string .length === 0)
+				return false;
+
+			return true;
 		},
 	};
 
@@ -31406,6 +31790,17 @@ exports.ungzip  = inflate;
 },{"./utils/common":1,"./utils/strings":2,"./zlib/constants":4,"./zlib/gzheader":6,"./zlib/inflate.js":8,"./zlib/messages":10,"./zlib/zstream":11}]},{},[])("/lib/inflate.js")
 });
 
+define ('cobweb/DEBUG',[
+	"cobweb/Browser/VERSION",
+],
+function (VERSION)
+{
+
+
+	return VERSION .match (/^\d+\.\d+a$/);
+});
+
+
 define ('cobweb/InputOutput/Loader',[
 	"jquery",
 	"cobweb/Base/X3DObject",
@@ -31415,6 +31810,7 @@ define ('cobweb/InputOutput/Loader',[
 	"standard/Networking/URI",
 	"lib/BinaryTransport",
 	"lib/pako/dist/pako_inflate",
+	"cobweb/DEBUG",
 ],
 function ($,
           X3DObject,
@@ -31423,7 +31819,8 @@ function ($,
           XMLParser,
           URI,
           BinaryTransport,
-          pako)
+          pako,
+          DEBUG)
 {
 
 
@@ -31530,8 +31927,11 @@ function ($,
 
 			success (scene);
 
-			if (this .URL .length && this .URL .scheme !== "data")
-				console .info ("Done loading scene " + this .URL);
+			if (DEBUG)
+			{
+				if (this .URL .length && this .URL .scheme !== "data")
+					console .info ("Done loading scene " + this .URL);
+			}
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
 		{
@@ -55521,6 +55921,7 @@ define ('cobweb/Components/Texturing/ImageTexture',[
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
 	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -55531,7 +55932,8 @@ function ($,
           X3DConstants,
           urls,
           URI,
-          Algorithm)
+          Algorithm,
+          DEBUG)
 {
 
 
@@ -55635,8 +56037,11 @@ function ($,
 		},
 		setImage: function ()
 		{
-			if (this .URL .scheme !== "data")
-				console .info ("Done loading image:", this .URL .toString ());
+			if (DEBUG)
+			{
+				 if (this .URL .scheme !== "data")
+			   	console .info ("Done loading image:", this .URL .toString ());
+			}
 
 			try
 			{
@@ -58267,6 +58672,7 @@ define ('cobweb/Components/Sound/AudioClip',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -58276,7 +58682,8 @@ function ($,
           X3DUrlObject, 
           X3DConstants,
           urls,
-          URI)
+          URI,
+          DEBUG)
 {
 
 
@@ -58392,9 +58799,11 @@ function ($,
 		},
 		setAudio: function ()
 		{
-		   // Everything is fine.
-			if (this .URL .scheme !== "data")
-				console .info ("Done loading audio:", this .URL .toString ());
+			if (DEBUG)
+			{
+				if (this .URL .scheme !== "data")
+					console .info ("Done loading audio:", this .URL .toString ());
+			}
 			
 			this .audio .unbind ("canplaythrough");
 			this .setMedia (this .audio);
@@ -66608,6 +67017,7 @@ define ('cobweb/Components/Texturing/MovieTexture',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -66618,7 +67028,8 @@ function ($,
           X3DUrlObject, 
           X3DConstants,
           urls,
-          URI)
+          URI,
+          DEBUG)
 {
 
 
@@ -66743,8 +67154,11 @@ function ($,
 		},
 		setVideo: function ()
 		{
-			if (this .URL .scheme !== "data")
-				console .info ("Done loading movie:", this .URL .toString ());
+			if (DEBUG)
+			{
+				if (this .URL .scheme !== "data")
+					console .info ("Done loading movie:", this .URL .toString ());
+			}
 
 		   var video = this .video [0];
 	
@@ -69217,12 +69631,49 @@ function ($, X3DInfoArray)
 });
 
 
+define ('cobweb/Execution/ExportedNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Base/X3DObject",
+],
+function ($,
+          Fields,
+          X3DObject)
+{
+
+
+	function ExportedNode (exportedName, localNode)
+	{
+		X3DObject .call (this);
+
+		this .exportedName = exportedName;
+		this .localNode    = localNode;
+	}
+
+	ExportedNode .prototype = $.extend (Object .create (X3DObject .prototype),
+	{
+		constructor: ExportedNode,
+		getExportedName: function ()
+		{
+			return this .exportedName;
+		},
+		getLocalNode: function ()
+		{
+			return new Fields .SFNode (this .localNode);
+		},
+	});
+
+	return ExportedNode;
+});
+
+
 define ('cobweb/Execution/X3DScene',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Configuration/UnitInfo",
 	"cobweb/Configuration/UnitInfoArray",
+	"cobweb/Execution/ExportedNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -69230,6 +69681,7 @@ function ($,
           X3DExecutionContext,
           UnitInfo,
           UnitInfoArray,
+          ExportedNode,
           X3DConstants)
 {
 
@@ -69247,7 +69699,8 @@ function ($,
 		this .units .add ("length", new UnitInfo ("length", "metre",    1));
 		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
 
-		this .metaData = { };
+		this .metaData      = { };
+		this .exportedNodes = { };
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -69277,6 +69730,44 @@ function ($,
 		getMetaData: function (name)
 		{
 			return this .metaData [name];
+		},
+		addExportedNode: function (exportedName, node)
+		{
+			if (this .exportedNodes [exportedName])
+				throw new Error ("Couldn't add exported node: exported name '" + exportedName + "' already in use.");
+
+			this .updateExportedNode (exportedName, node);
+		},
+		updateExportedNode: function (exportedName, node)
+		{
+			exportedName = String (exportedName);
+
+			if (exportedName .length === 0)
+				throw new Error ("Couldn't update exported node: node exported name is empty.");
+
+			if (! (node instanceof Fields .SFNode))
+				throw new Error ("Couldn't update exported node: node must be of type SFNode.");
+
+			if (! node .getValue ())
+				throw new Error ("Couldn't update exported node: node IS NULL.");
+
+			//if (node .getValue () .getExecutionContext () !== this)
+			//	throw new Error ("Couldn't update exported node: node does not belong to this execution context.");
+
+			this .exportedNodes [exportedName] = new ExportedNode (exportedName, node .getValue ());
+		},
+		removeExportedNode: function (exportedName)
+		{
+			delete this .exportedNodes [exportedName];
+		},
+		getExportedNode: function (exportedName)
+		{
+			var exportedNode = this .exportedNodes [exportedName];
+
+			if (exportedNode)
+				return exportedNode .getLocalNode ();	
+
+			throw new Error ("Exported node '" + exportedName + "' not found.");
 		},
 		setRootNodes: function (value)
 		{
@@ -74758,9 +75249,7 @@ function ($,
 		
 			try
 			{
-				var
-					time     = performance .now (),
-					browsers = $.map (elements, createBrowser);
+				var browsers = $.map (elements, createBrowser);
 
 				numBrowsers = browsers .length;
 

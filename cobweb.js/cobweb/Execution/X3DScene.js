@@ -5,6 +5,7 @@ define ([
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Configuration/UnitInfo",
 	"cobweb/Configuration/UnitInfoArray",
+	"cobweb/Execution/ExportedNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -12,6 +13,7 @@ function ($,
           X3DExecutionContext,
           UnitInfo,
           UnitInfoArray,
+          ExportedNode,
           X3DConstants)
 {
 "use strict";
@@ -29,7 +31,8 @@ function ($,
 		this .units .add ("length", new UnitInfo ("length", "metre",    1));
 		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
 
-		this .metaData = { };
+		this .metaData      = { };
+		this .exportedNodes = { };
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -59,6 +62,44 @@ function ($,
 		getMetaData: function (name)
 		{
 			return this .metaData [name];
+		},
+		addExportedNode: function (exportedName, node)
+		{
+			if (this .exportedNodes [exportedName])
+				throw new Error ("Couldn't add exported node: exported name '" + exportedName + "' already in use.");
+
+			this .updateExportedNode (exportedName, node);
+		},
+		updateExportedNode: function (exportedName, node)
+		{
+			exportedName = String (exportedName);
+
+			if (exportedName .length === 0)
+				throw new Error ("Couldn't update exported node: node exported name is empty.");
+
+			if (! (node instanceof Fields .SFNode))
+				throw new Error ("Couldn't update exported node: node must be of type SFNode.");
+
+			if (! node .getValue ())
+				throw new Error ("Couldn't update exported node: node IS NULL.");
+
+			//if (node .getValue () .getExecutionContext () !== this)
+			//	throw new Error ("Couldn't update exported node: node does not belong to this execution context.");
+
+			this .exportedNodes [exportedName] = new ExportedNode (exportedName, node .getValue ());
+		},
+		removeExportedNode: function (exportedName)
+		{
+			delete this .exportedNodes [exportedName];
+		},
+		getExportedNode: function (exportedName)
+		{
+			var exportedNode = this .exportedNodes [exportedName];
+
+			if (exportedNode)
+				return exportedNode .getLocalNode ();	
+
+			throw new Error ("Exported node '" + exportedName + "' not found.");
 		},
 		setRootNodes: function (value)
 		{

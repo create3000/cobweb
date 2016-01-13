@@ -44,11 +44,14 @@ function ($,
 		Header:	    new RegExp ("^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\\n\\r]"),
 
 		// Keywords
+		AS:          new RegExp ('^AS',          'y'),
 		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
 		DEF:         new RegExp ('^DEF',         'y'),
+		EXPORT:      new RegExp ('^EXPORT',      'y'),
 		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
 		FALSE:       new RegExp ('^FALSE',       'y'),
 		false:       new RegExp ('^false',       'y'),
+		IMPORT:      new RegExp ('^IMPORT',      'y'),
 		IS:          new RegExp ('^IS',          'y'),
 		META:        new RegExp ('^META',        'y'),
 		NULL:        new RegExp ('^NULL',        'y'),
@@ -517,10 +520,84 @@ function ($,
 		},
 		exportStatement: function ()
 		{
+			this .comments ();
+
+			if (Grammar .EXPORT .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						localNodeNameId    = this .result [1],
+						exportedNodeNameId = "";
+		
+					this .comments ();
+		
+					var node = this .scene .getLocalNode (localNodeNameId);
+		
+					if (Grammar .AS .parse (this))
+					{
+						if (this .exportedNodeNameId ())
+							exportedNodeNameId = this .result [1];
+						else
+							throw new Error ("No name given after AS.");
+					}
+					else
+						exportedNodeNameId = localNodeNameId;
+		
+					this .scene .updateExportedNode (exportedNodeNameId, node);
+					return true;
+				}
+		
+				throw new Error ("No name given after EXPORT.");
+			}
+		
 			return false;
 		},
 		importStatement: function ()
 		{
+			this .comments ();
+
+			if (Grammar .IMPORT .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						inlineNodeNameId = this .result [1],
+						namedNode        = this .getExecutionContext () .getNamedNode (inlineNodeNameId);
+		
+					this .comments ();
+	
+					if (Grammar .Period .parse (this))
+					{
+						if (this .exportedNodeNameId ())
+						{
+							var
+								exportedNodeNameId = this .result [1],
+								nodeNameId         = exportedNodeNameId;
+	
+							this .comments ();
+	
+							if (Grammar .AS .parse (this))
+							{
+								if (this .nodeNameId ())
+									nodeNameId = this .result [1];
+
+								else
+									throw new Error ("No name given after AS.");
+							}
+	
+							this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeNameId, nodeNameId);
+							return true;
+						}
+	
+						throw new Error ("Expected exported node name.");
+					}
+	
+					throw new Error ("Expected a '.' after exported node name.");
+				}
+		
+				throw new Error ("No name given after IMPORT statement.");
+			}
 			return false;
 		},
 		statements: function ()
@@ -1058,7 +1135,7 @@ function ($,
 											{
 												var eventInId = this .result [1];
 
-												this .getExecutionContext () .registerRoute (fromNode, eventOutId, toNode, eventInId);
+												this .getExecutionContext () .addRoute (fromNode, eventOutId, toNode, eventInId);
 												return true;
 											}
 											catch (error)
@@ -1373,6 +1450,7 @@ function ($,
 		},
 		categoryNameId: function () { return this .Id (); },
 		unitNameId: function () { return this .Id (); },
+		exportedNodeNameId: function () { return this .Id (); },
 		nodeNameId: function () { return this .Id (); },
 		nodeTypeId: function () { return this .Id (); },
 		initializeOnlyId: function () { return this .Id (); },

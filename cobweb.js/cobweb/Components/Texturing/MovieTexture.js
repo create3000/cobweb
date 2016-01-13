@@ -10,6 +10,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -20,7 +21,8 @@ function ($,
           X3DUrlObject, 
           X3DConstants,
           urls,
-          URI)
+          URI,
+          DEBUG)
 {
 "use strict";
 
@@ -145,8 +147,11 @@ function ($,
 		},
 		setVideo: function ()
 		{
-			if (this .URL .scheme !== "data")
-				console .info ("Done loading movie:", this .URL .toString ());
+			if (DEBUG)
+			{
+				if (this .URL .scheme !== "data")
+					console .info ("Done loading movie:", this .URL .toString ());
+			}
 
 		   var video = this .video [0];
 	

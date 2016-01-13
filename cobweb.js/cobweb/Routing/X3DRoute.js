@@ -1,9 +1,12 @@
 
 define ([
 	"jquery",
-	"cobweb/Basic/X3DBaseNode"
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
 ],
-function ($, X3DBaseNode)
+function ($,
+          Fields,
+          X3DBaseNode)
 {
 "use strict";
 
@@ -11,10 +14,10 @@ function ($, X3DBaseNode)
 	{
 		//X3DBaseNode .call (this, executionContext);
 		
-		this .sourceNode        = sourceNode;
-		this .sourceField_      = sourceField;
-		this .destinationNode   = destinationNode;
-		this .destinationField_ = destinationField;
+		this ._sourceNode       = sourceNode;
+		this ._sourceField      = sourceField;
+		this ._destinationNode  = destinationNode;
+		this ._destinationField = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
 			sourceField .addFieldInterest (destinationField);
@@ -28,7 +31,7 @@ function ($, X3DBaseNode)
 	{
 		disconnect: function ()
 		{
-			this .sourceField_ .removeFieldInterest (this .destinationField_);
+			this ._sourceField .removeFieldInterest (this ._destinationField);
 		},
 		toString: function ()
 		{
@@ -36,11 +39,31 @@ function ($, X3DBaseNode)
 		},
 	};
 
+	Object .defineProperty (X3DRoute .prototype, "sourceNode",
+	{
+		get: function ()
+		{
+			return new Fields .SFNode (this ._sourceNode);
+		},
+		enumerable: true,
+		configurable: false
+	});
+
 	Object .defineProperty (X3DRoute .prototype, "sourceField",
 	{
 		get: function ()
 		{
-			return this .sourceField_ .getName ();
+			return this ._sourceField .getName ();
+		},
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DRoute .prototype, "destinationNode",
+	{
+		get: function ()
+		{
+			return new Fields .SFNode (this ._destinationNode);
 		},
 		enumerable: true,
 		configurable: false
@@ -50,7 +73,7 @@ function ($, X3DBaseNode)
 	{
 		get: function ()
 		{
-			return this .destinationField_ .getName ();
+			return this ._destinationField .getName ();
 		},
 		enumerable: true,
 		configurable: false
@@ -58,3 +81,4 @@ function ($, X3DBaseNode)
 
 	return X3DRoute;
 });
+

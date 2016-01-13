@@ -1,22 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Prototype/X3DNodeInstance.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Execution/X3DExecutionContext.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="99" Column="99" />
-      <File FileName="cobweb.js/Makefile" Line="44" Column="44" />
-      <File FileName="cobweb.js/cobweb/Configuration/ComponentInfo.js" Line="4" Column="4" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DInterfaceDeclaration.js" Line="4" Column="4" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DNodeInstance.js" Line="22" Column="22" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="26" Column="26" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Configuration/SupportedComponents.js" Line="20" Column="20" />
-      <File FileName="cobweb.js/cobweb/Configuration/SupportedNodes.js" Line="43" Column="43" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="4" Column="4" />
-      <File FileName="cobweb.js/cobweb/Fields/SFNode.js" Line="7" Column="7" />
-      <File FileName="cobweb.js/cobweb/Base/X3DChildObject.js" Line="4" Column="4" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DField.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Parser/XMLParser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DFieldDefinition.js" Line="28" Column="28" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="2" Column="2" />
+      <File FileName="cobweb.js/cobweb/Execution/ImportedNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DScene.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

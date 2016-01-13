@@ -10,6 +10,7 @@ define ([
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
 	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -20,7 +21,8 @@ function ($,
           X3DConstants,
           urls,
           URI,
-          Algorithm)
+          Algorithm,
+          DEBUG)
 {
 "use strict";
 
@@ -124,8 +126,11 @@ function ($,
 		},
 		setImage: function ()
 		{
-			if (this .URL .scheme !== "data")
-				console .info ("Done loading image:", this .URL .toString ());
+			if (DEBUG)
+			{
+				 if (this .URL .scheme !== "data")
+			   	console .info ("Done loading image:", this .URL .toString ());
+			}
 
 			try
 			{

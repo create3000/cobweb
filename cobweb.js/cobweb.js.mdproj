@@ -440,7 +440,6 @@
     <None Include="tests\Components\Geometry3D\Geometry3D.x3d" />
     <None Include="tests\Components\images\image.png" />
     <None Include="cobweb\Browser\Geometry3D\CylinderOptions.js" />
-    <None Include="cobweb\Debug.js" />
     <None Include="cobweb\Browser\Geometry3D\ConeOptions.js" />
     <None Include="tests\Components\Geometry3D\Extrusion\extrude1.x3d" />
     <None Include="cobweb\Browser\PointingDeviceSensor\PointingDevice.js" />
@@ -1119,6 +1118,13 @@
     <None Include="tests\Components\Layout\info.png" />
     <None Include="cobweb\Browser\VERSION.js" />
     <None Include="tests\Components\Scripting\rotation.x3dv" />
+    <None Include="tests\Components\Core\EXPORT.x3d" />
+    <None Include="tests\Components\Core\EXPORT.x3dv" />
+    <None Include="tests\Components\Core\IMPORT.x3d" />
+    <None Include="tests\Components\Core\IMPORT.x3dv" />
+    <None Include="cobweb\DEBUG.js" />
+    <None Include="cobweb\Execution\ExportedNode.js" />
+    <None Include="cobweb\Execution\ImportedNode.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1177,5 +1183,6 @@
     <Folder Include="examples\map\" />
     <Folder Include="cobweb\Browser\Interpolation\" />
     <Folder Include="cobweb\Browser\Followers\" />
+    <Folder Include="tests\Components\Core\" />
   </ItemGroup>
 </Project>

@@ -189,7 +189,7 @@ function ($,
 		},
 		processEvent: function (event)
 		{
-			if (event .sources .hasOwnProperty (this .getId ()))
+			if (event .sources [this .getId ()])
 				return;
 
 			event .sources [this .getId ()] = true;

@@ -170,14 +170,17 @@ function ($,
 		{
 			try
 			{
-				var componentNameIdCharacters = element .getAttribute ("name");
-	
-				if (! componentNameIdCharacters)
-					return;
-				
 				var
-					componentSupportLevel = parseInt (element .getAttribute ("level")),
-					component             = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
+					componentNameIdCharacters = element .getAttribute ("name"),
+					componentSupportLevel = parseInt (element .getAttribute ("level"));
+	
+				if (componentNameIdCharacters == null)
+					return console .warn ("XML Parser Error: Bad component statement: Expected name attribute.");
+	
+				if (componentSupportLevel == null)
+					return console .warn ("XML Parser Error: Bad component statement: Expected level attribute.");
+
+				var component = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
 	
 				this .scene .addComponent (component);
 			}
@@ -188,25 +191,33 @@ function ($,
 		},
 		unit: function (element)
 		{
-			var category = element .getAttribute ("category");
-
-			if (! category)
-				return;
-			
 			var
+				category         = element .getAttribute ("category"),
 				name             = element .getAttribute ("name"),
-				conversionFactor = parseFloat (element .getAttribute ("conversionFactor"));
+				conversionFactor = element .getAttribute ("conversionFactor");
 
-			this .scene .updateUnit (category, name, conversionFactor);
+			if (category == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected category attribute.");
+
+			if (name == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected name attribute.");
+
+			if (conversionFactor == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected conversionFactor attribute.");
+
+			this .scene .updateUnit (category, name, parseFloat (conversionFactor));
 		},
 		meta: function (element)
 		{
-			var metakey = element .getAttribute ("name");
+			var
+				metakey   = element .getAttribute ("name"),
+				metavalue = element .getAttribute ("content");
 
-			if (! metakey)
-				return;
-			
-			var metavalue = element .getAttribute ("content");
+			if (metakey == null)
+				return console .warn ("XML Parser Error: Bad meta statement: Expected name attribute.");	
+
+			if (metavalue === null)
+				return console .warn ("XML Parser Error: Bad meta statement: Expected content attribute.");
 
 			this .scene .setMetaData (metakey, metavalue);
 		},
@@ -240,8 +251,16 @@ function ($,
 					this .ProtoInstance (child);
 					return;
 
+				case "IMPORT":
+					this .IMPORT (child);
+					return;
+
 				case "ROUTE":
 					this .ROUTE (child);
+					return;
+
+				case "EXPORT":
+					this .EXPORT (child);
 					return;
 
 				default:
@@ -268,7 +287,7 @@ function ($,
 			}
 			catch (error)
 			{
-				console .error (error);
+				//console .error (error);
 
 				console .error ("XML Parser Error: " + error .message);
 			}
@@ -342,8 +361,16 @@ function ($,
 					this .ProtoInstance (child);
 					return;
 
+				case "IMPORT":
+					this .IMPORT (child);
+					return;
+
 				case "ROUTE":
 					this .ROUTE (child);
+					return;
+
+				case "EXPORT":
+					this .EXPORT (child);
 					return;
 
 				default:
@@ -605,8 +632,11 @@ function ($,
 				nodeFieldName  = element .getAttribute ("nodeField"),
 				protoFieldName = element .getAttribute ("protoField");
 
-			if (! nodeFieldName || ! protoFieldName)
-				return;
+			if (nodeFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected nodeField attribute.");
+
+			if (protoFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected protoField attribute.");
 
 			try
 			{
@@ -628,7 +658,7 @@ function ($,
 			}
 			catch (error)
 			{
-				console .warn ("Couldn't create IS reference: " + error .message);
+				console .warn ("XML Parser Error: Couldn't create IS reference: " + error .message);
 			}
 		},
 		ExternProtoDeclare: function (element)
@@ -638,6 +668,9 @@ function ($,
 			if (this .id (name))
 			{
 				var url = element .getAttribute ("url");
+
+				if (url === null)
+					return console .warn ("XML Parser Error: Bad ExternProtoDeclare statement: Expected url attribute.");
 				
 				if (url !== null)
 				{
@@ -716,21 +749,83 @@ function ($,
 		{
 			this .statements (element .childNodes);
 		},
-		ROUTE: function (element)
+		IMPORT: function (element)
 		{
-			var
-				fromNode  = element .getAttribute ("fromNode"),
-				fromField = element .getAttribute ("fromField"),
-				toNode    = element .getAttribute ("toNode"),
-				toField   = element .getAttribute ("toField");
-
 			try
 			{
 				var
-					sourceNode      = this .getExecutionContext () .getLocalNode (fromNode),
-					destinationNode = this .getExecutionContext () .getLocalNode (toNode);
+					inlineNodeName   = element .getAttribute ("inlineDEF"),
+					exportedNodeName = element .getAttribute ("exportedDEF"),
+					localNodeName    = element .getAttribute ("AS");
 
-				this .getExecutionContext () .registerRoute (sourceNode, fromField, destinationNode, toField);
+				if (inlineNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (exportedNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (! localNodeName)
+					localNodeName = exportedNodeName;
+
+				var namedNode = this .getExecutionContext () .getNamedNode (inlineNodeName);
+
+				this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeName, localNodeName);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		ROUTE: function (element)
+		{
+			try
+			{
+				var
+					sourceNodeName      = element .getAttribute ("fromNode"),
+					sourceField         = element .getAttribute ("fromField"),
+					destinationNodeName = element .getAttribute ("toNode"),
+					destinationField    = element .getAttribute ("toField");
+
+				if (sourceNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected fromNode attribute.");
+
+				if (sourceField === null)
+					throw new Error ("Bad ROUTE statement: Expected fromField attribute.");
+
+				if (destinationNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected toNode attribute.");
+
+				if (destinationField === null)
+					throw new Error ("Bad ROUTE statement: Expected toField attribute.");
+
+				var
+					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
+					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName);
+
+				this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		EXPORT: function (element)
+		{
+			try
+			{
+				var
+					localNodeName    = element .getAttribute ("localDEF"),
+					exportedNodeName = element .getAttribute ("AS");
+
+				if (localNodeName === null)
+					throw new Error ("Bad EXPORT statement: Expected localDEF attribute.");
+
+				if (! exportedNodeName)
+					exportedNodeName = localNodeName;
+
+				var localNode = this .getExecutionContext () .getLocalNode (localNodeName);
+
+				this .getExecutionContext () .updateExportedNode (exportedNodeName, localNode);
 			}
 			catch (error)
 			{
@@ -739,13 +834,13 @@ function ($,
 		},
 		id: function (string)
 		{
-			if (string)
-			{
-				// Test for id characters.
-				return true;
-			}
+			if (string === null)
+				return false;
 
-			return false;
+			if (string .length === 0)
+				return false;
+
+			return true;
 		},
 	};
 

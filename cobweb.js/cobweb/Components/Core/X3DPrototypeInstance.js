@@ -145,7 +145,6 @@ function ($,
 				{
 					//this .copyImportedNodes (proto);
 					this .copyRoutes (proto .routes);
-					this .copyRoutes (proto .pendingRoutes);
 				}
 				
 				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");

@@ -9,6 +9,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -18,7 +19,8 @@ function ($,
           X3DUrlObject, 
           X3DConstants,
           urls,
-          URI)
+          URI,
+          DEBUG)
 {
 "use strict";
 
@@ -134,9 +136,11 @@ function ($,
 		},
 		setAudio: function ()
 		{
-		   // Everything is fine.
-			if (this .URL .scheme !== "data")
-				console .info ("Done loading audio:", this .URL .toString ());
+			if (DEBUG)
+			{
+				if (this .URL .scheme !== "data")
+					console .info ("Done loading audio:", this .URL .toString ());
+			}
 			
 			this .audio .unbind ("canplaythrough");
 			this .setMedia (this .audio);
