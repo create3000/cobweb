@@ -99,7 +99,7 @@ function ($,
 				if (index >= 0 && index < this .layers_ .length)
 				{
 					if (this .activeLayerNode !== this .layers_ [index] .getValue ())
-						this .activeLayerNode = this .layers_ [index] .getValue ();
+						this .activeLayerNode = X3DCast (X3DConstants .X3DLayerNode, this .layers_ [index]);
 				}
 				else
 				{

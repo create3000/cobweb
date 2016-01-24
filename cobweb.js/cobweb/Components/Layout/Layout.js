@@ -545,7 +545,7 @@ function ($,
 					currentRotation    = this .currentRotation,
 					currentScale       = this .currentScale;
 
-				var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+				var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
 				modelViewMatrix .get (currentTranslation, currentRotation, currentScale);
 		
 				switch (this .getScaleModeX ())

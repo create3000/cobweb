@@ -23766,45 +23766,55 @@ function ($,
 					destinationNode  = route .destinationNode,
 					destinationField = route .destinationField;
 
+				if (route ._route)
+					route ._route .disconnect ();
+
 				if (sourceNode instanceof ImportedNode)
 					sourceNode = sourceNode .getExportedNode () .getValue ();
 
 				if (destinationNode instanceof ImportedNode)
 					destinationNode = destinationNode .getExportedNode () .getValue ();
 
-				return route .route = this .getExecutionContext () .addRoute (new Fields .SFNode (sourceNode), sourceField, new Fields .SFNode (destinationNode), destinationField);
+				return route ._route = this .getExecutionContext () .addRoute (new Fields .SFNode (sourceNode), sourceField, new Fields .SFNode (destinationNode), destinationField);
 			}
 			catch (error)
 			{
 				console .error (error .message);
 			}
 		},
-		set_loadState__: function ()
+		deleteRoutes: function ()
 		{
 			var routes = this .routes;
 
+			for (var id in routes)
+			{
+				var route = routes [id];
+
+				if (route ._route)
+				{
+					this .getExecutionContext () .deleteRoute (route ._route);
+					delete route ._route;
+				}
+			}
+		},
+		set_loadState__: function ()
+		{
 			switch (this .inlineNode .checkLoadState ())
 			{
 				case X3DConstants .NOT_STARTED_STATE:
+				case X3DConstants .FAILED_STATE:
 				{
-					for (var id in routes)
-					{
-						if (routes [id] .route)
-							routes [id] .route .disconnect ();
-					}
-
+					this .deleteRoutes ();
 					break;
 				}
 				case X3DConstants .COMPLETE_STATE:
 				{
-					for (var id in routes)
-					{
-						if (routes [id] .route)
-							this .getExecutionContext () .deleteRoute (routes [id] .route);
-					}
+					this .deleteRoutes ();
 
 					try
 					{
+						var routes = this .routes;
+
 						for (var id in routes)
 							this .resolveRoute (id);
 					}
@@ -23819,9 +23829,11 @@ function ($,
 		},
 		dispose: function ()
 		{
-			X3DBaseNode .prototype .dispose .call (this);
-
 			this .inlineNode .loadState_ .removeInterest (this, "set_loadState__");
+
+			this .deleteRoutes ();
+
+			X3DBaseNode .prototype .dispose .call (this);
 		},
 	});
 
@@ -24234,7 +24246,7 @@ function ($,
 			var importedNode = this .importedNodes [importedName];
 
 			if (importedNode)
-				return importedName .getExportedNode ();
+				return importedNode .getExportedNode ();
 
 			throw new Error ("Imported node '" + importedName + "' not found.");
 		},
@@ -24260,10 +24272,6 @@ function ($,
 					throw new Error ("Unknown named or imported node '" + name + "'.");
 				}
 			}
-		},
-		getImportedNode: function (name)
-		{
-			throw new Error ("Imported node '" + name + "' not found.");
 		},
 		setRootNodes: function () { },
 		getRootNodes: function ()
@@ -28122,8 +28130,16 @@ function ($,
 					this .ProtoInstance (child);
 					return;
 
+				case "IMPORT":
+					this .IMPORT (child);
+					return;
+
 				case "ROUTE":
 					this .ROUTE (child);
+					return;
+
+				case "EXPORT":
+					this .EXPORT (child);
 					return;
 
 				default:

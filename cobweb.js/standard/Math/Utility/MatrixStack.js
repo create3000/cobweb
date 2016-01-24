@@ -40,6 +40,10 @@ function ($)
 			{
 				this [this .top] .multLeft (matrix);
 			},
+			scale: function (vector)
+			{
+				this [this .top] .scale (vector);
+			},
 		});
 	}
 
