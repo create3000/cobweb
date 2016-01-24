@@ -1,11 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Execution/X3DExecutionContext.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Layout/ScreenGroup.js">
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="47" Column="47" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Execution/ImportedNode.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Execution/X3DScene.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Layout/ScreenGroup.js" Line="3" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

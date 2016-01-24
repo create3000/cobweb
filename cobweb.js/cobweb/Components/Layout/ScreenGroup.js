@@ -89,13 +89,11 @@ function ($,
 				viewport    = this .getCurrentLayer () .getViewVolume () .getViewport (),
 				screenScale = this .getCurrentViewpoint () .getScreenScale (this .modelViewMatrix .origin, viewport);
 		
-			//this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
-		   //                                                            screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
-		   //                                                            screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+		                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+		                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
 
-			//this .getBrowser () .getModelViewMatrix () .set (this .screenMatrix);
-
-			this .getBrowser () .getModelViewMatrix () .scale (screenScale .divVec (scale));
+			this .getBrowser () .getModelViewMatrix () .set (this .screenMatrix);
 		},
 		traverse: function (type)
 		{
