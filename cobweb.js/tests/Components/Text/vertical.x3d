@@ -236,7 +236,7 @@ function set_lineBounds (value, time)
 		x = 0,
 		y = 0;
 		
-	for (var i in value)
+	for (var i = 0; i < value .length; ++ i)
 	{
 		var transform = Browser .currentScene .createProto ('BBox2');
 		

@@ -3,11 +3,13 @@ data:text/plain;charset=utf-8,
 
 precision mediump float;
 
+// 225 uniforms
+
 uniform mat4 x3d_TextureMatrix;
 uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
-// 4 * 16
+// 3 * 16 + 9
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false

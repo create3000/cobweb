@@ -1125,6 +1125,7 @@
     <None Include="cobweb\DEBUG.js" />
     <None Include="cobweb\Execution\ExportedNode.js" />
     <None Include="cobweb\Execution\ImportedNode.js" />
+    <None Include="tests\Components\Scripting\string.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

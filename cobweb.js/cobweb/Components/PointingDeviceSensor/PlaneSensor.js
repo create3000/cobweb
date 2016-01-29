@@ -143,7 +143,10 @@ function ($,
 						this .getLineTrackPoint (hit, this .line, this .startPoint);
 
 					this .startOffset .assign (this .offset_ .getValue ());
-				}
+	
+					//this .trackPoint_changed_  .set (trackPoint);
+					//this .translation_changed_ .set (this .offset_ .getValue ());
+			}
 				else
 				{
 					if (this .autoOffset_ .getValue ())

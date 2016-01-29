@@ -1,2093 +1,411 @@
 (function () {
-/** vim: et:ts=4:sw=4:sts=4
- * @license RequireJS 2.1.4 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
+/**
+ * almond 0.2.5 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
- * see: http://github.com/jrburke/requirejs for details
+ * see: http://github.com/jrburke/almond for details
  */
-//Not using strict: uneven strict support in browsers, #392, and causes
-//problems with requirejs.exec()/transpiler plugins that may not be strict.
-/*jslint regexp: true, nomen: true, sloppy: true */
-/*global window, navigator, document, importScripts, setTimeout, opera */
+//Going sloppy to avoid 'use strict' string cost, but strict practices should
+//be followed.
+/*jslint sloppy: true */
+/*global setTimeout: false */
 
 var requirejs, require, define;
-(function (global) {
-    var req, s, head, baseElement, dataMain, src,
-        interactiveScript, currentlyAddingScript, mainScript, subPath,
-        version = '2.1.4',
-        commentRegExp = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg,
-        cjsRequireRegExp = /[^.]\s*require\s*\(\s*["']([^'"\s]+)["']\s*\)/g,
-        jsSuffixRegExp = /\.js$/,
-        currDirRegExp = /^\.\//,
-        op = Object.prototype,
-        ostring = op.toString,
-        hasOwn = op.hasOwnProperty,
-        ap = Array.prototype,
-        apsp = ap.splice,
-        isBrowser = !!(typeof window !== 'undefined' && navigator && document),
-        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',
-        //PS3 indicates loaded and complete, but need to wait for complete
-        //specifically. Sequence is 'loading', 'loaded', execution,
-        // then 'complete'. The UA check is unfortunate, but not sure how
-        //to feature test w/o causing perf issues.
-        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?
-                      /^complete$/ : /^(complete|loaded)$/,
-        defContextName = '_',
-        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.
-        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',
-        contexts = {},
-        cfg = {},
-        globalDefQueue = [],
-        useInteractive = false;
-
-    function isFunction(it) {
-        return ostring.call(it) === '[object Function]';
-    }
-
-    function isArray(it) {
-        return ostring.call(it) === '[object Array]';
-    }
-
-    /**
-     * Helper function for iterating over an array. If the func returns
-     * a true value, it will break out of the loop.
-     */
-    function each(ary, func) {
-        if (ary) {
-            var i;
-            for (i = 0; i < ary.length; i += 1) {
-                if (ary[i] && func(ary[i], i, ary)) {
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Helper function for iterating over an array backwards. If the func
-     * returns a true value, it will break out of the loop.
-     */
-    function eachReverse(ary, func) {
-        if (ary) {
-            var i;
-            for (i = ary.length - 1; i > -1; i -= 1) {
-                if (ary[i] && func(ary[i], i, ary)) {
-                    break;
-                }
-            }
-        }
-    }
+(function (undef) {
+    var main, req, makeMap, handlers,
+        defined = {},
+        waiting = {},
+        config = {},
+        defining = {},
+        hasOwn = Object.prototype.hasOwnProperty,
+        aps = [].slice;
 
     function hasProp(obj, prop) {
         return hasOwn.call(obj, prop);
     }
 
-    function getOwn(obj, prop) {
-        return hasProp(obj, prop) && obj[prop];
-    }
-
     /**
-     * Cycles over properties in an object and calls a function for each
-     * property value. If the function returns a truthy value, then the
-     * iteration is stopped.
+     * Given a relative module name, like ./something, normalize it to
+     * a real name that can be mapped to a path.
+     * @param {String} name the relative name
+     * @param {String} baseName a real name that the name arg is relative
+     * to.
+     * @returns {String} normalized name
      */
-    function eachProp(obj, func) {
-        var prop;
-        for (prop in obj) {
-            if (hasProp(obj, prop)) {
-                if (func(obj[prop], prop)) {
-                    break;
-                }
-            }
-        }
-    }
+    function normalize(name, baseName) {
+        var nameParts, nameSegment, mapValue, foundMap,
+            foundI, foundStarMap, starI, i, j, part,
+            baseParts = baseName && baseName.split("/"),
+            map = config.map,
+            starMap = (map && map['*']) || {};
 
-    /**
-     * Simple function to mix in properties from source into target,
-     * but only if target does not already have a property of the same name.
-     */
-    function mixin(target, source, force, deepStringMixin) {
-        if (source) {
-            eachProp(source, function (value, prop) {
-                if (force || !hasProp(target, prop)) {
-                    if (deepStringMixin && typeof value !== 'string') {
-                        if (!target[prop]) {
-                            target[prop] = {};
+        //Adjust any relative paths.
+        if (name && name.charAt(0) === ".") {
+            //If have a base name, try to normalize against it,
+            //otherwise, assume it is a top-level require that will
+            //be relative to baseUrl in the end.
+            if (baseName) {
+                //Convert baseName to array, and lop off the last part,
+                //so that . matches that "directory" and not name of the baseName's
+                //module. For instance, baseName of "one/two/three", maps to
+                //"one/two/three.js", but we want the directory, "one/two" for
+                //this normalization.
+                baseParts = baseParts.slice(0, baseParts.length - 1);
+
+                name = baseParts.concat(name.split("/"));
+
+                //start trimDots
+                for (i = 0; i < name.length; i += 1) {
+                    part = name[i];
+                    if (part === ".") {
+                        name.splice(i, 1);
+                        i -= 1;
+                    } else if (part === "..") {
+                        if (i === 1 && (name[2] === '..' || name[0] === '..')) {
+                            //End of the line. Keep at least one non-dot
+                            //path segment at the front so it can be mapped
+                            //correctly to disk. Otherwise, there is likely
+                            //no path mapping for a path starting with '..'.
+                            //This can still fail, but catches the most reasonable
+                            //uses of ..
+                            break;
+                        } else if (i > 0) {
+                            name.splice(i - 1, 2);
+                            i -= 2;
                         }
-                        mixin(target[prop], value, force, deepStringMixin);
-                    } else {
-                        target[prop] = value;
                     }
                 }
-            });
-        }
-        return target;
-    }
+                //end trimDots
 
-    //Similar to Function.prototype.bind, but the 'this' object is specified
-    //first, since it is easier to read/figure out what 'this' will be.
-    function bind(obj, fn) {
-        return function () {
-            return fn.apply(obj, arguments);
-        };
-    }
-
-    function scripts() {
-        return document.getElementsByTagName('script');
-    }
-
-    //Allow getting a global that expressed in
-    //dot notation, like 'a.b.c'.
-    function getGlobal(value) {
-        if (!value) {
-            return value;
-        }
-        var g = global;
-        each(value.split('.'), function (part) {
-            g = g[part];
-        });
-        return g;
-    }
-
-    /**
-     * Constructs an error with a pointer to an URL with more information.
-     * @param {String} id the error ID that maps to an ID on a web page.
-     * @param {String} message human readable error.
-     * @param {Error} [err] the original error, if there is one.
-     *
-     * @returns {Error}
-     */
-    function makeError(id, msg, err, requireModules) {
-        var e = new Error(msg + '\nhttp://requirejs.org/docs/errors.html#' + id);
-        e.requireType = id;
-        e.requireModules = requireModules;
-        if (err) {
-            e.originalError = err;
-        }
-        return e;
-    }
-
-    if (typeof define !== 'undefined') {
-        //If a define is already in play via another AMD loader,
-        //do not overwrite.
-        return;
-    }
-
-    if (typeof requirejs !== 'undefined') {
-        if (isFunction(requirejs)) {
-            //Do not overwrite and existing requirejs instance.
-            return;
-        }
-        cfg = requirejs;
-        requirejs = undefined;
-    }
-
-    //Allow for a require config object
-    if (typeof require !== 'undefined' && !isFunction(require)) {
-        //assume it is a config object.
-        cfg = require;
-        require = undefined;
-    }
-
-    function newContext(contextName) {
-        var inCheckLoaded, Module, context, handlers,
-            checkLoadedTimeoutId,
-            config = {
-                waitSeconds: 7,
-                baseUrl: './',
-                paths: {},
-                pkgs: {},
-                shim: {},
-                map: {},
-                config: {}
-            },
-            registry = {},
-            undefEvents = {},
-            defQueue = [],
-            defined = {},
-            urlFetched = {},
-            requireCounter = 1,
-            unnormalizedCounter = 1;
-
-        /**
-         * Trims the . and .. from an array of path segments.
-         * It will keep a leading path segment if a .. will become
-         * the first path segment, to help with module name lookups,
-         * which act like paths, but can be remapped. But the end result,
-         * all paths that use this function should look normalized.
-         * NOTE: this method MODIFIES the input array.
-         * @param {Array} ary the array of path segments.
-         */
-        function trimDots(ary) {
-            var i, part;
-            for (i = 0; ary[i]; i += 1) {
-                part = ary[i];
-                if (part === '.') {
-                    ary.splice(i, 1);
-                    i -= 1;
-                } else if (part === '..') {
-                    if (i === 1 && (ary[2] === '..' || ary[0] === '..')) {
-                        //End of the line. Keep at least one non-dot
-                        //path segment at the front so it can be mapped
-                        //correctly to disk. Otherwise, there is likely
-                        //no path mapping for a path starting with '..'.
-                        //This can still fail, but catches the most reasonable
-                        //uses of ..
-                        break;
-                    } else if (i > 0) {
-                        ary.splice(i - 1, 2);
-                        i -= 2;
-                    }
-                }
+                name = name.join("/");
+            } else if (name.indexOf('./') === 0) {
+                // No baseName, so this is ID is resolved relative
+                // to baseUrl, pull off the leading dot.
+                name = name.substring(2);
             }
         }
 
-        /**
-         * Given a relative module name, like ./something, normalize it to
-         * a real name that can be mapped to a path.
-         * @param {String} name the relative name
-         * @param {String} baseName a real name that the name arg is relative
-         * to.
-         * @param {Boolean} applyMap apply the map config to the value. Should
-         * only be done if this normalization is for a dependency ID.
-         * @returns {String} normalized name
-         */
-        function normalize(name, baseName, applyMap) {
-            var pkgName, pkgConfig, mapValue, nameParts, i, j, nameSegment,
-                foundMap, foundI, foundStarMap, starI,
-                baseParts = baseName && baseName.split('/'),
-                normalizedBaseParts = baseParts,
-                map = config.map,
-                starMap = map && map['*'];
+        //Apply map config if available.
+        if ((baseParts || starMap) && map) {
+            nameParts = name.split('/');
 
-            //Adjust any relative paths.
-            if (name && name.charAt(0) === '.') {
-                //If have a base name, try to normalize against it,
-                //otherwise, assume it is a top-level require that will
-                //be relative to baseUrl in the end.
-                if (baseName) {
-                    if (getOwn(config.pkgs, baseName)) {
-                        //If the baseName is a package name, then just treat it as one
-                        //name to concat the name with.
-                        normalizedBaseParts = baseParts = [baseName];
-                    } else {
-                        //Convert baseName to array, and lop off the last part,
-                        //so that . matches that 'directory' and not name of the baseName's
-                        //module. For instance, baseName of 'one/two/three', maps to
-                        //'one/two/three.js', but we want the directory, 'one/two' for
-                        //this normalization.
-                        normalizedBaseParts = baseParts.slice(0, baseParts.length - 1);
-                    }
+            for (i = nameParts.length; i > 0; i -= 1) {
+                nameSegment = nameParts.slice(0, i).join("/");
 
-                    name = normalizedBaseParts.concat(name.split('/'));
-                    trimDots(name);
+                if (baseParts) {
+                    //Find the longest baseName segment match in the config.
+                    //So, do joins on the biggest to smallest lengths of baseParts.
+                    for (j = baseParts.length; j > 0; j -= 1) {
+                        mapValue = map[baseParts.slice(0, j).join('/')];
 
-                    //Some use of packages may use a . path to reference the
-                    //'main' module name, so normalize for that.
-                    pkgConfig = getOwn(config.pkgs, (pkgName = name[0]));
-                    name = name.join('/');
-                    if (pkgConfig && name === pkgName + '/' + pkgConfig.main) {
-                        name = pkgName;
-                    }
-                } else if (name.indexOf('./') === 0) {
-                    // No baseName, so this is ID is resolved relative
-                    // to baseUrl, pull off the leading dot.
-                    name = name.substring(2);
-                }
-            }
-
-            //Apply map config if available.
-            if (applyMap && (baseParts || starMap) && map) {
-                nameParts = name.split('/');
-
-                for (i = nameParts.length; i > 0; i -= 1) {
-                    nameSegment = nameParts.slice(0, i).join('/');
-
-                    if (baseParts) {
-                        //Find the longest baseName segment match in the config.
-                        //So, do joins on the biggest to smallest lengths of baseParts.
-                        for (j = baseParts.length; j > 0; j -= 1) {
-                            mapValue = getOwn(map, baseParts.slice(0, j).join('/'));
-
-                            //baseName segment has config, find if it has one for
-                            //this name.
+                        //baseName segment has  config, find if it has one for
+                        //this name.
+                        if (mapValue) {
+                            mapValue = mapValue[nameSegment];
                             if (mapValue) {
-                                mapValue = getOwn(mapValue, nameSegment);
-                                if (mapValue) {
-                                    //Match, update name to the new value.
-                                    foundMap = mapValue;
-                                    foundI = i;
-                                    break;
-                                }
+                                //Match, update name to the new value.
+                                foundMap = mapValue;
+                                foundI = i;
+                                break;
                             }
                         }
                     }
-
-                    if (foundMap) {
-                        break;
-                    }
-
-                    //Check for a star map match, but just hold on to it,
-                    //if there is a shorter segment match later in a matching
-                    //config, then favor over this star map.
-                    if (!foundStarMap && starMap && getOwn(starMap, nameSegment)) {
-                        foundStarMap = getOwn(starMap, nameSegment);
-                        starI = i;
-                    }
-                }
-
-                if (!foundMap && foundStarMap) {
-                    foundMap = foundStarMap;
-                    foundI = starI;
                 }
 
                 if (foundMap) {
-                    nameParts.splice(0, foundI, foundMap);
-                    name = nameParts.join('/');
+                    break;
+                }
+
+                //Check for a star map match, but just hold on to it,
+                //if there is a shorter segment match later in a matching
+                //config, then favor over this star map.
+                if (!foundStarMap && starMap && starMap[nameSegment]) {
+                    foundStarMap = starMap[nameSegment];
+                    starI = i;
                 }
             }
 
-            return name;
-        }
+            if (!foundMap && foundStarMap) {
+                foundMap = foundStarMap;
+                foundI = starI;
+            }
 
-        function removeScript(name) {
-            if (isBrowser) {
-                each(scripts(), function (scriptNode) {
-                    if (scriptNode.getAttribute('data-requiremodule') === name &&
-                            scriptNode.getAttribute('data-requirecontext') === context.contextName) {
-                        scriptNode.parentNode.removeChild(scriptNode);
-                        return true;
-                    }
-                });
+            if (foundMap) {
+                nameParts.splice(0, foundI, foundMap);
+                name = nameParts.join('/');
             }
         }
 
-        function hasPathFallback(id) {
-            var pathConfig = getOwn(config.paths, id);
-            if (pathConfig && isArray(pathConfig) && pathConfig.length > 1) {
-                removeScript(id);
-                //Pop off the first array value, since it failed, and
-                //retry
-                pathConfig.shift();
-                context.require.undef(id);
-                context.require([id]);
-                return true;
-            }
+        return name;
+    }
+
+    function makeRequire(relName, forceSync) {
+        return function () {
+            //A version of a require function that passes a moduleName
+            //value for items that may need to
+            //look up paths relative to the moduleName
+            return req.apply(undef, aps.call(arguments, 0).concat([relName, forceSync]));
+        };
+    }
+
+    function makeNormalize(relName) {
+        return function (name) {
+            return normalize(name, relName);
+        };
+    }
+
+    function makeLoad(depName) {
+        return function (value) {
+            defined[depName] = value;
+        };
+    }
+
+    function callDep(name) {
+        if (hasProp(waiting, name)) {
+            var args = waiting[name];
+            delete waiting[name];
+            defining[name] = true;
+            main.apply(undef, args);
         }
 
-        //Turns a plugin!resource to [plugin, resource]
-        //with the plugin being undefined if the name
-        //did not have a plugin prefix.
-        function splitPrefix(name) {
-            var prefix,
-                index = name ? name.indexOf('!') : -1;
-            if (index > -1) {
-                prefix = name.substring(0, index);
-                name = name.substring(index + 1, name.length);
-            }
-            return [prefix, name];
+        if (!hasProp(defined, name) && !hasProp(defining, name)) {
+            throw new Error('No ' + name);
+        }
+        return defined[name];
+    }
+
+    //Turns a plugin!resource to [plugin, resource]
+    //with the plugin being undefined if the name
+    //did not have a plugin prefix.
+    function splitPrefix(name) {
+        var prefix,
+            index = name ? name.indexOf('!') : -1;
+        if (index > -1) {
+            prefix = name.substring(0, index);
+            name = name.substring(index + 1, name.length);
+        }
+        return [prefix, name];
+    }
+
+    /**
+     * Makes a name map, normalizing the name, and using a plugin
+     * for normalization if necessary. Grabs a ref to plugin
+     * too, as an optimization.
+     */
+    makeMap = function (name, relName) {
+        var plugin,
+            parts = splitPrefix(name),
+            prefix = parts[0];
+
+        name = parts[1];
+
+        if (prefix) {
+            prefix = normalize(prefix, relName);
+            plugin = callDep(prefix);
         }
 
-        /**
-         * Creates a module mapping that includes plugin prefix, module
-         * name, and path. If parentModuleMap is provided it will
-         * also normalize the name via require.normalize()
-         *
-         * @param {String} name the module name
-         * @param {String} [parentModuleMap] parent module map
-         * for the module name, used to resolve relative names.
-         * @param {Boolean} isNormalized: is the ID already normalized.
-         * This is true if this call is done for a define() module ID.
-         * @param {Boolean} applyMap: apply the map config to the ID.
-         * Should only be true if this map is for a dependency.
-         *
-         * @returns {Object}
-         */
-        function makeModuleMap(name, parentModuleMap, isNormalized, applyMap) {
-            var url, pluginModule, suffix, nameParts,
-                prefix = null,
-                parentName = parentModuleMap ? parentModuleMap.name : null,
-                originalName = name,
-                isDefine = true,
-                normalizedName = '';
-
-            //If no name, then it means it is a require call, generate an
-            //internal name.
-            if (!name) {
-                isDefine = false;
-                name = '_@r' + (requireCounter += 1);
+        //Normalize according
+        if (prefix) {
+            if (plugin && plugin.normalize) {
+                name = plugin.normalize(name, makeNormalize(relName));
+            } else {
+                name = normalize(name, relName);
             }
-
-            nameParts = splitPrefix(name);
-            prefix = nameParts[0];
-            name = nameParts[1];
-
+        } else {
+            name = normalize(name, relName);
+            parts = splitPrefix(name);
+            prefix = parts[0];
+            name = parts[1];
             if (prefix) {
-                prefix = normalize(prefix, parentName, applyMap);
-                pluginModule = getOwn(defined, prefix);
+                plugin = callDep(prefix);
+            }
+        }
+
+        //Using ridiculous property names for space reasons
+        return {
+            f: prefix ? prefix + '!' + name : name, //fullName
+            n: name,
+            pr: prefix,
+            p: plugin
+        };
+    };
+
+    function makeConfig(name) {
+        return function () {
+            return (config && config.config && config.config[name]) || {};
+        };
+    }
+
+    handlers = {
+        require: function (name) {
+            return makeRequire(name);
+        },
+        exports: function (name) {
+            var e = defined[name];
+            if (typeof e !== 'undefined') {
+                return e;
+            } else {
+                return (defined[name] = {});
+            }
+        },
+        module: function (name) {
+            return {
+                id: name,
+                uri: '',
+                exports: defined[name],
+                config: makeConfig(name)
+            };
+        }
+    };
+
+    main = function (name, deps, callback, relName) {
+        var cjsModule, depName, ret, map, i,
+            args = [],
+            usingExports;
+
+        //Use name if no relName
+        relName = relName || name;
+
+        //Call the callback to define the module, if necessary.
+        if (typeof callback === 'function') {
+
+            //Pull out the defined dependencies and pass the ordered
+            //values to the callback.
+            //Default to [require, exports, module] if no deps
+            deps = !deps.length && callback.length ? ['require', 'exports', 'module'] : deps;
+            for (i = 0; i < deps.length; i += 1) {
+                map = makeMap(deps[i], relName);
+                depName = map.f;
+
+                //Fast path CommonJS standard dependencies.
+                if (depName === "require") {
+                    args[i] = handlers.require(name);
+                } else if (depName === "exports") {
+                    //CommonJS module spec 1.1
+                    args[i] = handlers.exports(name);
+                    usingExports = true;
+                } else if (depName === "module") {
+                    //CommonJS module spec 1.1
+                    cjsModule = args[i] = handlers.module(name);
+                } else if (hasProp(defined, depName) ||
+                           hasProp(waiting, depName) ||
+                           hasProp(defining, depName)) {
+                    args[i] = callDep(depName);
+                } else if (map.p) {
+                    map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
+                    args[i] = defined[depName];
+                } else {
+                    throw new Error(name + ' missing ' + depName);
+                }
             }
 
-            //Account for relative paths if there is a base name.
+            ret = callback.apply(defined[name], args);
+
             if (name) {
-                if (prefix) {
-                    if (pluginModule && pluginModule.normalize) {
-                        //Plugin is loaded, use its normalize method.
-                        normalizedName = pluginModule.normalize(name, function (name) {
-                            return normalize(name, parentName, applyMap);
-                        });
-                    } else {
-                        normalizedName = normalize(name, parentName, applyMap);
-                    }
-                } else {
-                    //A regular module.
-                    normalizedName = normalize(name, parentName, applyMap);
-
-                    //Normalized name may be a plugin ID due to map config
-                    //application in normalize. The map config values must
-                    //already be normalized, so do not need to redo that part.
-                    nameParts = splitPrefix(normalizedName);
-                    prefix = nameParts[0];
-                    normalizedName = nameParts[1];
-                    isNormalized = true;
-
-                    url = context.nameToUrl(normalizedName);
+                //If setting exports via "module" is in play,
+                //favor that over return value and exports. After that,
+                //favor a non-undefined return value over exports use.
+                if (cjsModule && cjsModule.exports !== undef &&
+                        cjsModule.exports !== defined[name]) {
+                    defined[name] = cjsModule.exports;
+                } else if (ret !== undef || !usingExports) {
+                    //Use the return value from the function.
+                    defined[name] = ret;
                 }
             }
-
-            //If the id is a plugin id that cannot be determined if it needs
-            //normalization, stamp it with a unique ID so two matching relative
-            //ids that may conflict can be separate.
-            suffix = prefix && !pluginModule && !isNormalized ?
-                     '_unnormalized' + (unnormalizedCounter += 1) :
-                     '';
-
-            return {
-                prefix: prefix,
-                name: normalizedName,
-                parentMap: parentModuleMap,
-                unnormalized: !!suffix,
-                url: url,
-                originalName: originalName,
-                isDefine: isDefine,
-                id: (prefix ?
-                        prefix + '!' + normalizedName :
-                        normalizedName) + suffix
-            };
+        } else if (name) {
+            //May just be an object definition for the module. Only
+            //worry about defining if have a module name.
+            defined[name] = callback;
         }
+    };
 
-        function getModule(depMap) {
-            var id = depMap.id,
-                mod = getOwn(registry, id);
-
-            if (!mod) {
-                mod = registry[id] = new context.Module(depMap);
+    requirejs = require = req = function (deps, callback, relName, forceSync, alt) {
+        if (typeof deps === "string") {
+            if (handlers[deps]) {
+                //callback in this case is really relName
+                return handlers[deps](callback);
             }
-
-            return mod;
-        }
-
-        function on(depMap, name, fn) {
-            var id = depMap.id,
-                mod = getOwn(registry, id);
-
-            if (hasProp(defined, id) &&
-                    (!mod || mod.defineEmitComplete)) {
-                if (name === 'defined') {
-                    fn(defined[id]);
-                }
-            } else {
-                getModule(depMap).on(name, fn);
-            }
-        }
-
-        function onError(err, errback) {
-            var ids = err.requireModules,
-                notified = false;
-
-            if (errback) {
-                errback(err);
-            } else {
-                each(ids, function (id) {
-                    var mod = getOwn(registry, id);
-                    if (mod) {
-                        //Set error on module, so it skips timeout checks.
-                        mod.error = err;
-                        if (mod.events.error) {
-                            notified = true;
-                            mod.emit('error', err);
-                        }
-                    }
-                });
-
-                if (!notified) {
-                    req.onError(err);
-                }
-            }
-        }
-
-        /**
-         * Internal method to transfer globalQueue items to this context's
-         * defQueue.
-         */
-        function takeGlobalQueue() {
-            //Push all the globalDefQueue items into the context's defQueue
-            if (globalDefQueue.length) {
-                //Array splice in the values since the context code has a
-                //local var ref to defQueue, so cannot just reassign the one
-                //on context.
-                apsp.apply(defQueue,
-                           [defQueue.length - 1, 0].concat(globalDefQueue));
-                globalDefQueue = [];
-            }
-        }
-
-        handlers = {
-            'require': function (mod) {
-                if (mod.require) {
-                    return mod.require;
-                } else {
-                    return (mod.require = context.makeRequire(mod.map));
-                }
-            },
-            'exports': function (mod) {
-                mod.usingExports = true;
-                if (mod.map.isDefine) {
-                    if (mod.exports) {
-                        return mod.exports;
-                    } else {
-                        return (mod.exports = defined[mod.map.id] = {});
-                    }
-                }
-            },
-            'module': function (mod) {
-                if (mod.module) {
-                    return mod.module;
-                } else {
-                    return (mod.module = {
-                        id: mod.map.id,
-                        uri: mod.map.url,
-                        config: function () {
-                            return (config.config && getOwn(config.config, mod.map.id)) || {};
-                        },
-                        exports: defined[mod.map.id]
-                    });
-                }
-            }
-        };
-
-        function cleanRegistry(id) {
-            //Clean up machinery used for waiting modules.
-            delete registry[id];
-        }
-
-        function breakCycle(mod, traced, processed) {
-            var id = mod.map.id;
-
-            if (mod.error) {
-                mod.emit('error', mod.error);
-            } else {
-                traced[id] = true;
-                each(mod.depMaps, function (depMap, i) {
-                    var depId = depMap.id,
-                        dep = getOwn(registry, depId);
-
-                    //Only force things that have not completed
-                    //being defined, so still in the registry,
-                    //and only if it has not been matched up
-                    //in the module already.
-                    if (dep && !mod.depMatched[i] && !processed[depId]) {
-                        if (getOwn(traced, depId)) {
-                            mod.defineDep(i, defined[depId]);
-                            mod.check(); //pass false?
-                        } else {
-                            breakCycle(dep, traced, processed);
-                        }
-                    }
-                });
-                processed[id] = true;
-            }
-        }
-
-        function checkLoaded() {
-            var map, modId, err, usingPathFallback,
-                waitInterval = config.waitSeconds * 1000,
-                //It is possible to disable the wait interval by using waitSeconds of 0.
-                expired = waitInterval && (context.startTime + waitInterval) < new Date().getTime(),
-                noLoads = [],
-                reqCalls = [],
-                stillLoading = false,
-                needCycleCheck = true;
-
-            //Do not bother if this call was a result of a cycle break.
-            if (inCheckLoaded) {
-                return;
-            }
-
-            inCheckLoaded = true;
-
-            //Figure out the state of all the modules.
-            eachProp(registry, function (mod) {
-                map = mod.map;
-                modId = map.id;
-
-                //Skip things that are not enabled or in error state.
-                if (!mod.enabled) {
-                    return;
-                }
-
-                if (!map.isDefine) {
-                    reqCalls.push(mod);
-                }
-
-                if (!mod.error) {
-                    //If the module should be executed, and it has not
-                    //been inited and time is up, remember it.
-                    if (!mod.inited && expired) {
-                        if (hasPathFallback(modId)) {
-                            usingPathFallback = true;
-                            stillLoading = true;
-                        } else {
-                            noLoads.push(modId);
-                            removeScript(modId);
-                        }
-                    } else if (!mod.inited && mod.fetched && map.isDefine) {
-                        stillLoading = true;
-                        if (!map.prefix) {
-                            //No reason to keep looking for unfinished
-                            //loading. If the only stillLoading is a
-                            //plugin resource though, keep going,
-                            //because it may be that a plugin resource
-                            //is waiting on a non-plugin cycle.
-                            return (needCycleCheck = false);
-                        }
-                    }
-                }
-            });
-
-            if (expired && noLoads.length) {
-                //If wait time expired, throw error of unloaded modules.
-                err = makeError('timeout', 'Load timeout for modules: ' + noLoads, null, noLoads);
-                err.contextName = context.contextName;
-                return onError(err);
-            }
-
-            //Not expired, check for a cycle.
-            if (needCycleCheck) {
-                each(reqCalls, function (mod) {
-                    breakCycle(mod, {}, {});
-                });
-            }
-
-            //If still waiting on loads, and the waiting load is something
-            //other than a plugin resource, or there are still outstanding
-            //scripts, then just try back later.
-            if ((!expired || usingPathFallback) && stillLoading) {
-                //Something is still waiting to load. Wait for it, but only
-                //if a timeout is not already in effect.
-                if ((isBrowser || isWebWorker) && !checkLoadedTimeoutId) {
-                    checkLoadedTimeoutId = setTimeout(function () {
-                        checkLoadedTimeoutId = 0;
-                        checkLoaded();
-                    }, 50);
-                }
-            }
-
-            inCheckLoaded = false;
-        }
-
-        Module = function (map) {
-            this.events = getOwn(undefEvents, map.id) || {};
-            this.map = map;
-            this.shim = getOwn(config.shim, map.id);
-            this.depExports = [];
-            this.depMaps = [];
-            this.depMatched = [];
-            this.pluginMaps = {};
-            this.depCount = 0;
-
-            /* this.exports this.factory
-               this.depMaps = [],
-               this.enabled, this.fetched
-            */
-        };
-
-        Module.prototype = {
-            init: function (depMaps, factory, errback, options) {
-                options = options || {};
-
-                //Do not do more inits if already done. Can happen if there
-                //are multiple define calls for the same module. That is not
-                //a normal, common case, but it is also not unexpected.
-                if (this.inited) {
-                    return;
-                }
-
-                this.factory = factory;
-
-                if (errback) {
-                    //Register for errors on this module.
-                    this.on('error', errback);
-                } else if (this.events.error) {
-                    //If no errback already, but there are error listeners
-                    //on this module, set up an errback to pass to the deps.
-                    errback = bind(this, function (err) {
-                        this.emit('error', err);
-                    });
-                }
-
-                //Do a copy of the dependency array, so that
-                //source inputs are not modified. For example
-                //"shim" deps are passed in here directly, and
-                //doing a direct modification of the depMaps array
-                //would affect that config.
-                this.depMaps = depMaps && depMaps.slice(0);
-
-                this.errback = errback;
-
-                //Indicate this module has be initialized
-                this.inited = true;
-
-                this.ignore = options.ignore;
-
-                //Could have option to init this module in enabled mode,
-                //or could have been previously marked as enabled. However,
-                //the dependencies are not known until init is called. So
-                //if enabled previously, now trigger dependencies as enabled.
-                if (options.enabled || this.enabled) {
-                    //Enable this module and dependencies.
-                    //Will call this.check()
-                    this.enable();
-                } else {
-                    this.check();
-                }
-            },
-
-            defineDep: function (i, depExports) {
-                //Because of cycles, defined callback for a given
-                //export can be called more than once.
-                if (!this.depMatched[i]) {
-                    this.depMatched[i] = true;
-                    this.depCount -= 1;
-                    this.depExports[i] = depExports;
-                }
-            },
-
-            fetch: function () {
-                if (this.fetched) {
-                    return;
-                }
-                this.fetched = true;
-
-                context.startTime = (new Date()).getTime();
-
-                var map = this.map;
-
-                //If the manager is for a plugin managed resource,
-                //ask the plugin to load it now.
-                if (this.shim) {
-                    context.makeRequire(this.map, {
-                        enableBuildCallback: true
-                    })(this.shim.deps || [], bind(this, function () {
-                        return map.prefix ? this.callPlugin() : this.load();
-                    }));
-                } else {
-                    //Regular dependency.
-                    return map.prefix ? this.callPlugin() : this.load();
-                }
-            },
-
-            load: function () {
-                var url = this.map.url;
-
-                //Regular dependency.
-                if (!urlFetched[url]) {
-                    urlFetched[url] = true;
-                    context.load(this.map.id, url);
-                }
-            },
-
-            /**
-             * Checks is the module is ready to define itself, and if so,
-             * define it.
-             */
-            check: function () {
-                if (!this.enabled || this.enabling) {
-                    return;
-                }
-
-                var err, cjsModule,
-                    id = this.map.id,
-                    depExports = this.depExports,
-                    exports = this.exports,
-                    factory = this.factory;
-
-                if (!this.inited) {
-                    this.fetch();
-                } else if (this.error) {
-                    this.emit('error', this.error);
-                } else if (!this.defining) {
-                    //The factory could trigger another require call
-                    //that would result in checking this module to
-                    //define itself again. If already in the process
-                    //of doing that, skip this work.
-                    this.defining = true;
-
-                    if (this.depCount < 1 && !this.defined) {
-                        if (isFunction(factory)) {
-                            //If there is an error listener, favor passing
-                            //to that instead of throwing an error.
-                            if (this.events.error) {
-                                try {
-                                    exports = context.execCb(id, factory, depExports, exports);
-                                } catch (e) {
-                                    err = e;
-                                }
-                            } else {
-                                exports = context.execCb(id, factory, depExports, exports);
-                            }
-
-                            if (this.map.isDefine) {
-                                //If setting exports via 'module' is in play,
-                                //favor that over return value and exports. After that,
-                                //favor a non-undefined return value over exports use.
-                                cjsModule = this.module;
-                                if (cjsModule &&
-                                        cjsModule.exports !== undefined &&
-                                        //Make sure it is not already the exports value
-                                        cjsModule.exports !== this.exports) {
-                                    exports = cjsModule.exports;
-                                } else if (exports === undefined && this.usingExports) {
-                                    //exports already set the defined value.
-                                    exports = this.exports;
-                                }
-                            }
-
-                            if (err) {
-                                err.requireMap = this.map;
-                                err.requireModules = [this.map.id];
-                                err.requireType = 'define';
-                                return onError((this.error = err));
-                            }
-
-                        } else {
-                            //Just a literal value
-                            exports = factory;
-                        }
-
-                        this.exports = exports;
-
-                        if (this.map.isDefine && !this.ignore) {
-                            defined[id] = exports;
-
-                            if (req.onResourceLoad) {
-                                req.onResourceLoad(context, this.map, this.depMaps);
-                            }
-                        }
-
-                        //Clean up
-                        delete registry[id];
-
-                        this.defined = true;
-                    }
-
-                    //Finished the define stage. Allow calling check again
-                    //to allow define notifications below in the case of a
-                    //cycle.
-                    this.defining = false;
-
-                    if (this.defined && !this.defineEmitted) {
-                        this.defineEmitted = true;
-                        this.emit('defined', this.exports);
-                        this.defineEmitComplete = true;
-                    }
-
-                }
-            },
-
-            callPlugin: function () {
-                var map = this.map,
-                    id = map.id,
-                    //Map already normalized the prefix.
-                    pluginMap = makeModuleMap(map.prefix);
-
-                //Mark this as a dependency for this plugin, so it
-                //can be traced for cycles.
-                this.depMaps.push(pluginMap);
-
-                on(pluginMap, 'defined', bind(this, function (plugin) {
-                    var load, normalizedMap, normalizedMod,
-                        name = this.map.name,
-                        parentName = this.map.parentMap ? this.map.parentMap.name : null,
-                        localRequire = context.makeRequire(map.parentMap, {
-                            enableBuildCallback: true
-                        });
-
-                    //If current map is not normalized, wait for that
-                    //normalized name to load instead of continuing.
-                    if (this.map.unnormalized) {
-                        //Normalize the ID if the plugin allows it.
-                        if (plugin.normalize) {
-                            name = plugin.normalize(name, function (name) {
-                                return normalize(name, parentName, true);
-                            }) || '';
-                        }
-
-                        //prefix and name should already be normalized, no need
-                        //for applying map config again either.
-                        normalizedMap = makeModuleMap(map.prefix + '!' + name,
-                                                      this.map.parentMap);
-                        on(normalizedMap,
-                            'defined', bind(this, function (value) {
-                                this.init([], function () { return value; }, null, {
-                                    enabled: true,
-                                    ignore: true
-                                });
-                            }));
-
-                        normalizedMod = getOwn(registry, normalizedMap.id);
-                        if (normalizedMod) {
-                            //Mark this as a dependency for this plugin, so it
-                            //can be traced for cycles.
-                            this.depMaps.push(normalizedMap);
-
-                            if (this.events.error) {
-                                normalizedMod.on('error', bind(this, function (err) {
-                                    this.emit('error', err);
-                                }));
-                            }
-                            normalizedMod.enable();
-                        }
-
-                        return;
-                    }
-
-                    load = bind(this, function (value) {
-                        this.init([], function () { return value; }, null, {
-                            enabled: true
-                        });
-                    });
-
-                    load.error = bind(this, function (err) {
-                        this.inited = true;
-                        this.error = err;
-                        err.requireModules = [id];
-
-                        //Remove temp unnormalized modules for this module,
-                        //since they will never be resolved otherwise now.
-                        eachProp(registry, function (mod) {
-                            if (mod.map.id.indexOf(id + '_unnormalized') === 0) {
-                                cleanRegistry(mod.map.id);
-                            }
-                        });
-
-                        onError(err);
-                    });
-
-                    //Allow plugins to load other code without having to know the
-                    //context or how to 'complete' the load.
-                    load.fromText = bind(this, function (text, textAlt) {
-                        /*jslint evil: true */
-                        var moduleName = map.name,
-                            moduleMap = makeModuleMap(moduleName),
-                            hasInteractive = useInteractive;
-
-                        //As of 2.1.0, support just passing the text, to reinforce
-                        //fromText only being called once per resource. Still
-                        //support old style of passing moduleName but discard
-                        //that moduleName in favor of the internal ref.
-                        if (textAlt) {
-                            text = textAlt;
-                        }
-
-                        //Turn off interactive script matching for IE for any define
-                        //calls in the text, then turn it back on at the end.
-                        if (hasInteractive) {
-                            useInteractive = false;
-                        }
-
-                        //Prime the system by creating a module instance for
-                        //it.
-                        getModule(moduleMap);
-
-                        //Transfer any config to this other module.
-                        if (hasProp(config.config, id)) {
-                            config.config[moduleName] = config.config[id];
-                        }
-
-                        try {
-                            req.exec(text);
-                        } catch (e) {
-                            return onError(makeError('fromtexteval',
-                                             'fromText eval for ' + id +
-                                            ' failed: ' + e,
-                                             e,
-                                             [id]));
-                        }
-
-                        if (hasInteractive) {
-                            useInteractive = true;
-                        }
-
-                        //Mark this as a dependency for the plugin
-                        //resource
-                        this.depMaps.push(moduleMap);
-
-                        //Support anonymous modules.
-                        context.completeLoad(moduleName);
-
-                        //Bind the value of that module to the value for this
-                        //resource ID.
-                        localRequire([moduleName], load);
-                    });
-
-                    //Use parentName here since the plugin's name is not reliable,
-                    //could be some weird string with no path that actually wants to
-                    //reference the parentName's path.
-                    plugin.load(map.name, localRequire, load, config);
-                }));
-
-                context.enable(pluginMap, this);
-                this.pluginMaps[pluginMap.id] = pluginMap;
-            },
-
-            enable: function () {
-                this.enabled = true;
-
-                //Set flag mentioning that the module is enabling,
-                //so that immediate calls to the defined callbacks
-                //for dependencies do not trigger inadvertent load
-                //with the depCount still being zero.
-                this.enabling = true;
-
-                //Enable each dependency
-                each(this.depMaps, bind(this, function (depMap, i) {
-                    var id, mod, handler;
-
-                    if (typeof depMap === 'string') {
-                        //Dependency needs to be converted to a depMap
-                        //and wired up to this module.
-                        depMap = makeModuleMap(depMap,
-                                               (this.map.isDefine ? this.map : this.map.parentMap),
-                                               false,
-                                               !this.skipMap);
-                        this.depMaps[i] = depMap;
-
-                        handler = getOwn(handlers, depMap.id);
-
-                        if (handler) {
-                            this.depExports[i] = handler(this);
-                            return;
-                        }
-
-                        this.depCount += 1;
-
-                        on(depMap, 'defined', bind(this, function (depExports) {
-                            this.defineDep(i, depExports);
-                            this.check();
-                        }));
-
-                        if (this.errback) {
-                            on(depMap, 'error', this.errback);
-                        }
-                    }
-
-                    id = depMap.id;
-                    mod = registry[id];
-
-                    //Skip special modules like 'require', 'exports', 'module'
-                    //Also, don't call enable if it is already enabled,
-                    //important in circular dependency cases.
-                    if (!hasProp(handlers, id) && mod && !mod.enabled) {
-                        context.enable(depMap, this);
-                    }
-                }));
-
-                //Enable each plugin that is used in
-                //a dependency
-                eachProp(this.pluginMaps, bind(this, function (pluginMap) {
-                    var mod = getOwn(registry, pluginMap.id);
-                    if (mod && !mod.enabled) {
-                        context.enable(pluginMap, this);
-                    }
-                }));
-
-                this.enabling = false;
-
-                this.check();
-            },
-
-            on: function (name, cb) {
-                var cbs = this.events[name];
-                if (!cbs) {
-                    cbs = this.events[name] = [];
-                }
-                cbs.push(cb);
-            },
-
-            emit: function (name, evt) {
-                each(this.events[name], function (cb) {
-                    cb(evt);
-                });
-                if (name === 'error') {
-                    //Now that the error handler was triggered, remove
-                    //the listeners, since this broken Module instance
-                    //can stay around for a while in the registry.
-                    delete this.events[name];
-                }
-            }
-        };
-
-        function callGetModule(args) {
-            //Skip modules already defined.
-            if (!hasProp(defined, args[0])) {
-                getModule(makeModuleMap(args[0], null, true)).init(args[1], args[2]);
-            }
-        }
-
-        function removeListener(node, func, name, ieName) {
-            //Favor detachEvent because of IE9
-            //issue, see attachEvent/addEventListener comment elsewhere
-            //in this file.
-            if (node.detachEvent && !isOpera) {
-                //Probably IE. If not it will throw an error, which will be
-                //useful to know.
-                if (ieName) {
-                    node.detachEvent(ieName, func);
-                }
-            } else {
-                node.removeEventListener(name, func, false);
-            }
-        }
-
-        /**
-         * Given an event from a script node, get the requirejs info from it,
-         * and then removes the event listeners on the node.
-         * @param {Event} evt
-         * @returns {Object}
-         */
-        function getScriptData(evt) {
-            //Using currentTarget instead of target for Firefox 2.0's sake. Not
-            //all old browsers will be supported, but this one was easy enough
-            //to support and still makes sense.
-            var node = evt.currentTarget || evt.srcElement;
-
-            //Remove the listeners once here.
-            removeListener(node, context.onScriptLoad, 'load', 'onreadystatechange');
-            removeListener(node, context.onScriptError, 'error');
-
-            return {
-                node: node,
-                id: node && node.getAttribute('data-requiremodule')
-            };
-        }
-
-        function intakeDefines() {
-            var args;
-
-            //Any defined modules in the global queue, intake them now.
-            takeGlobalQueue();
-
-            //Make sure any remaining defQueue items get properly processed.
-            while (defQueue.length) {
-                args = defQueue.shift();
-                if (args[0] === null) {
-                    return onError(makeError('mismatch', 'Mismatched anonymous define() module: ' + args[args.length - 1]));
-                } else {
-                    //args are id, deps, factory. Should be normalized by the
-                    //define() function.
-                    callGetModule(args);
-                }
-            }
-        }
-
-        context = {
-            config: config,
-            contextName: contextName,
-            registry: registry,
-            defined: defined,
-            urlFetched: urlFetched,
-            defQueue: defQueue,
-            Module: Module,
-            makeModuleMap: makeModuleMap,
-            nextTick: req.nextTick,
-
-            /**
-             * Set a configuration for the context.
-             * @param {Object} cfg config object to integrate.
-             */
-            configure: function (cfg) {
-                //Make sure the baseUrl ends in a slash.
-                if (cfg.baseUrl) {
-                    if (cfg.baseUrl.charAt(cfg.baseUrl.length - 1) !== '/') {
-                        cfg.baseUrl += '/';
-                    }
-                }
-
-                //Save off the paths and packages since they require special processing,
-                //they are additive.
-                var pkgs = config.pkgs,
-                    shim = config.shim,
-                    objs = {
-                        paths: true,
-                        config: true,
-                        map: true
-                    };
-
-                eachProp(cfg, function (value, prop) {
-                    if (objs[prop]) {
-                        if (prop === 'map') {
-                            mixin(config[prop], value, true, true);
-                        } else {
-                            mixin(config[prop], value, true);
-                        }
-                    } else {
-                        config[prop] = value;
-                    }
-                });
-
-                //Merge shim
-                if (cfg.shim) {
-                    eachProp(cfg.shim, function (value, id) {
-                        //Normalize the structure
-                        if (isArray(value)) {
-                            value = {
-                                deps: value
-                            };
-                        }
-                        if ((value.exports || value.init) && !value.exportsFn) {
-                            value.exportsFn = context.makeShimExports(value);
-                        }
-                        shim[id] = value;
-                    });
-                    config.shim = shim;
-                }
-
-                //Adjust packages if necessary.
-                if (cfg.packages) {
-                    each(cfg.packages, function (pkgObj) {
-                        var location;
-
-                        pkgObj = typeof pkgObj === 'string' ? { name: pkgObj } : pkgObj;
-                        location = pkgObj.location;
-
-                        //Create a brand new object on pkgs, since currentPackages can
-                        //be passed in again, and config.pkgs is the internal transformed
-                        //state for all package configs.
-                        pkgs[pkgObj.name] = {
-                            name: pkgObj.name,
-                            location: location || pkgObj.name,
-                            //Remove leading dot in main, so main paths are normalized,
-                            //and remove any trailing .js, since different package
-                            //envs have different conventions: some use a module name,
-                            //some use a file name.
-                            main: (pkgObj.main || 'main')
-                                  .replace(currDirRegExp, '')
-                                  .replace(jsSuffixRegExp, '')
-                        };
-                    });
-
-                    //Done with modifications, assing packages back to context config
-                    config.pkgs = pkgs;
-                }
-
-                //If there are any "waiting to execute" modules in the registry,
-                //update the maps for them, since their info, like URLs to load,
-                //may have changed.
-                eachProp(registry, function (mod, id) {
-                    //If module already has init called, since it is too
-                    //late to modify them, and ignore unnormalized ones
-                    //since they are transient.
-                    if (!mod.inited && !mod.map.unnormalized) {
-                        mod.map = makeModuleMap(id);
-                    }
-                });
-
-                //If a deps array or a config callback is specified, then call
-                //require with those args. This is useful when require is defined as a
-                //config object before require.js is loaded.
-                if (cfg.deps || cfg.callback) {
-                    context.require(cfg.deps || [], cfg.callback);
-                }
-            },
-
-            makeShimExports: function (value) {
-                function fn() {
-                    var ret;
-                    if (value.init) {
-                        ret = value.init.apply(global, arguments);
-                    }
-                    return ret || (value.exports && getGlobal(value.exports));
-                }
-                return fn;
-            },
-
-            makeRequire: function (relMap, options) {
-                options = options || {};
-
-                function localRequire(deps, callback, errback) {
-                    var id, map, requireMod;
-
-                    if (options.enableBuildCallback && callback && isFunction(callback)) {
-                        callback.__requireJsBuild = true;
-                    }
-
-                    if (typeof deps === 'string') {
-                        if (isFunction(callback)) {
-                            //Invalid call
-                            return onError(makeError('requireargs', 'Invalid require call'), errback);
-                        }
-
-                        //If require|exports|module are requested, get the
-                        //value for them from the special handlers. Caveat:
-                        //this only works while module is being defined.
-                        if (relMap && hasProp(handlers, deps)) {
-                            return handlers[deps](registry[relMap.id]);
-                        }
-
-                        //Synchronous access to one module. If require.get is
-                        //available (as in the Node adapter), prefer that.
-                        if (req.get) {
-                            return req.get(context, deps, relMap);
-                        }
-
-                        //Normalize module name, if it contains . or ..
-                        map = makeModuleMap(deps, relMap, false, true);
-                        id = map.id;
-
-                        if (!hasProp(defined, id)) {
-                            return onError(makeError('notloaded', 'Module name "' +
-                                        id +
-                                        '" has not been loaded yet for context: ' +
-                                        contextName +
-                                        (relMap ? '' : '. Use require([])')));
-                        }
-                        return defined[id];
-                    }
-
-                    //Grab defines waiting in the global queue.
-                    intakeDefines();
-
-                    //Mark all the dependencies as needing to be loaded.
-                    context.nextTick(function () {
-                        //Some defines could have been added since the
-                        //require call, collect them.
-                        intakeDefines();
-
-                        requireMod = getModule(makeModuleMap(null, relMap));
-
-                        //Store if map config should be applied to this require
-                        //call for dependencies.
-                        requireMod.skipMap = options.skipMap;
-
-                        requireMod.init(deps, callback, errback, {
-                            enabled: true
-                        });
-
-                        checkLoaded();
-                    });
-
-                    return localRequire;
-                }
-
-                mixin(localRequire, {
-                    isBrowser: isBrowser,
-
-                    /**
-                     * Converts a module name + .extension into an URL path.
-                     * *Requires* the use of a module name. It does not support using
-                     * plain URLs like nameToUrl.
-                     */
-                    toUrl: function (moduleNamePlusExt) {
-                        var ext, url,
-                            index = moduleNamePlusExt.lastIndexOf('.'),
-                            segment = moduleNamePlusExt.split('/')[0],
-                            isRelative = segment === '.' || segment === '..';
-
-                        //Have a file extension alias, and it is not the
-                        //dots from a relative path.
-                        if (index !== -1 && (!isRelative || index > 1)) {
-                            ext = moduleNamePlusExt.substring(index, moduleNamePlusExt.length);
-                            moduleNamePlusExt = moduleNamePlusExt.substring(0, index);
-                        }
-
-                        url = context.nameToUrl(normalize(moduleNamePlusExt,
-                                                relMap && relMap.id, true), ext || '.fake');
-                        return ext ? url : url.substring(0, url.length - 5);
-                    },
-
-                    defined: function (id) {
-                        return hasProp(defined, makeModuleMap(id, relMap, false, true).id);
-                    },
-
-                    specified: function (id) {
-                        id = makeModuleMap(id, relMap, false, true).id;
-                        return hasProp(defined, id) || hasProp(registry, id);
-                    }
-                });
-
-                //Only allow undef on top level require calls
-                if (!relMap) {
-                    localRequire.undef = function (id) {
-                        //Bind any waiting define() calls to this context,
-                        //fix for #408
-                        takeGlobalQueue();
-
-                        var map = makeModuleMap(id, relMap, true),
-                            mod = getOwn(registry, id);
-
-                        delete defined[id];
-                        delete urlFetched[map.url];
-                        delete undefEvents[id];
-
-                        if (mod) {
-                            //Hold on to listeners in case the
-                            //module will be attempted to be reloaded
-                            //using a different config.
-                            if (mod.events.defined) {
-                                undefEvents[id] = mod.events;
-                            }
-
-                            cleanRegistry(id);
-                        }
-                    };
-                }
-
-                return localRequire;
-            },
-
-            /**
-             * Called to enable a module if it is still in the registry
-             * awaiting enablement. A second arg, parent, the parent module,
-             * is passed in for context, when this method is overriden by
-             * the optimizer. Not shown here to keep code compact.
-             */
-            enable: function (depMap) {
-                var mod = getOwn(registry, depMap.id);
-                if (mod) {
-                    getModule(depMap).enable();
-                }
-            },
-
-            /**
-             * Internal method used by environment adapters to complete a load event.
-             * A load event could be a script load or just a load pass from a synchronous
-             * load call.
-             * @param {String} moduleName the name of the module to potentially complete.
-             */
-            completeLoad: function (moduleName) {
-                var found, args, mod,
-                    shim = getOwn(config.shim, moduleName) || {},
-                    shExports = shim.exports;
-
-                takeGlobalQueue();
-
-                while (defQueue.length) {
-                    args = defQueue.shift();
-                    if (args[0] === null) {
-                        args[0] = moduleName;
-                        //If already found an anonymous module and bound it
-                        //to this name, then this is some other anon module
-                        //waiting for its completeLoad to fire.
-                        if (found) {
-                            break;
-                        }
-                        found = true;
-                    } else if (args[0] === moduleName) {
-                        //Found matching define call for this script!
-                        found = true;
-                    }
-
-                    callGetModule(args);
-                }
-
-                //Do this after the cycle of callGetModule in case the result
-                //of those calls/init calls changes the registry.
-                mod = getOwn(registry, moduleName);
-
-                if (!found && !hasProp(defined, moduleName) && mod && !mod.inited) {
-                    if (config.enforceDefine && (!shExports || !getGlobal(shExports))) {
-                        if (hasPathFallback(moduleName)) {
-                            return;
-                        } else {
-                            return onError(makeError('nodefine',
-                                             'No define call for ' + moduleName,
-                                             null,
-                                             [moduleName]));
-                        }
-                    } else {
-                        //A script that does not call define(), so just simulate
-                        //the call for it.
-                        callGetModule([moduleName, (shim.deps || []), shim.exportsFn]);
-                    }
-                }
-
-                checkLoaded();
-            },
-
-            /**
-             * Converts a module name to a file path. Supports cases where
-             * moduleName may actually be just an URL.
-             * Note that it **does not** call normalize on the moduleName,
-             * it is assumed to have already been normalized. This is an
-             * internal API, not a public one. Use toUrl for the public API.
-             */
-            nameToUrl: function (moduleName, ext) {
-                var paths, pkgs, pkg, pkgPath, syms, i, parentModule, url,
-                    parentPath;
-
-                //If a colon is in the URL, it indicates a protocol is used and it is just
-                //an URL to a file, or if it starts with a slash, contains a query arg (i.e. ?)
-                //or ends with .js, then assume the user meant to use an url and not a module id.
-                //The slash is important for protocol-less URLs as well as full paths.
-                if (req.jsExtRegExp.test(moduleName)) {
-                    //Just a plain path, not module name lookup, so just return it.
-                    //Add extension if it is included. This is a bit wonky, only non-.js things pass
-                    //an extension, this method probably needs to be reworked.
-                    url = moduleName + (ext || '');
-                } else {
-                    //A module that needs to be converted to a path.
-                    paths = config.paths;
-                    pkgs = config.pkgs;
-
-                    syms = moduleName.split('/');
-                    //For each module name segment, see if there is a path
-                    //registered for it. Start with most specific name
-                    //and work up from it.
-                    for (i = syms.length; i > 0; i -= 1) {
-                        parentModule = syms.slice(0, i).join('/');
-                        pkg = getOwn(pkgs, parentModule);
-                        parentPath = getOwn(paths, parentModule);
-                        if (parentPath) {
-                            //If an array, it means there are a few choices,
-                            //Choose the one that is desired
-                            if (isArray(parentPath)) {
-                                parentPath = parentPath[0];
-                            }
-                            syms.splice(0, i, parentPath);
-                            break;
-                        } else if (pkg) {
-                            //If module name is just the package name, then looking
-                            //for the main module.
-                            if (moduleName === pkg.name) {
-                                pkgPath = pkg.location + '/' + pkg.main;
-                            } else {
-                                pkgPath = pkg.location;
-                            }
-                            syms.splice(0, i, pkgPath);
-                            break;
-                        }
-                    }
-
-                    //Join the path parts together, then figure out if baseUrl is needed.
-                    url = syms.join('/');
-                    url += (ext || (/\?/.test(url) ? '' : '.js'));
-                    url = (url.charAt(0) === '/' || url.match(/^[\w\+\.\-]+:/) ? '' : config.baseUrl) + url;
-                }
-
-                return config.urlArgs ? url +
-                                        ((url.indexOf('?') === -1 ? '?' : '&') +
-                                         config.urlArgs) : url;
-            },
-
-            //Delegates to req.load. Broken out as a separate function to
-            //allow overriding in the optimizer.
-            load: function (id, url) {
-                req.load(context, id, url);
-            },
-
-            /**
-             * Executes a module callack function. Broken out as a separate function
-             * solely to allow the build system to sequence the files in the built
-             * layer in the right sequence.
-             *
-             * @private
-             */
-            execCb: function (name, callback, args, exports) {
-                return callback.apply(exports, args);
-            },
-
-            /**
-             * callback for script loads, used to check status of loading.
-             *
-             * @param {Event} evt the event from the browser for the script
-             * that was loaded.
-             */
-            onScriptLoad: function (evt) {
-                //Using currentTarget instead of target for Firefox 2.0's sake. Not
-                //all old browsers will be supported, but this one was easy enough
-                //to support and still makes sense.
-                if (evt.type === 'load' ||
-                        (readyRegExp.test((evt.currentTarget || evt.srcElement).readyState))) {
-                    //Reset interactive script so a script node is not held onto for
-                    //to long.
-                    interactiveScript = null;
-
-                    //Pull out the name of the module and the context.
-                    var data = getScriptData(evt);
-                    context.completeLoad(data.id);
-                }
-            },
-
-            /**
-             * Callback for script errors.
-             */
-            onScriptError: function (evt) {
-                var data = getScriptData(evt);
-                if (!hasPathFallback(data.id)) {
-                    return onError(makeError('scripterror', 'Script error', evt, [data.id]));
-                }
-            }
-        };
-
-        context.require = context.makeRequire();
-        return context;
-    }
-
-    /**
-     * Main entry point.
-     *
-     * If the only argument to require is a string, then the module that
-     * is represented by that string is fetched for the appropriate context.
-     *
-     * If the first argument is an array, then it will be treated as an array
-     * of dependency string names to fetch. An optional function callback can
-     * be specified to execute when all of those dependencies are available.
-     *
-     * Make a local req variable to help Caja compliance (it assumes things
-     * on a require that are not standardized), and to give a short
-     * name for minification/local scope use.
-     */
-    req = requirejs = function (deps, callback, errback, optional) {
-
-        //Find the right context, use default
-        var context, config,
-            contextName = defContextName;
-
-        // Determine if have config object in the call.
-        if (!isArray(deps) && typeof deps !== 'string') {
-            // deps is a config object
+            //Just return the module wanted. In this scenario, the
+            //deps arg is the module name, and second arg (if passed)
+            //is just the relName.
+            //Normalize module name, if it contains . or ..
+            return callDep(makeMap(deps, callback).f);
+        } else if (!deps.splice) {
+            //deps is a config object, not an array.
             config = deps;
-            if (isArray(callback)) {
-                // Adjust args if there are dependencies
+            if (callback.splice) {
+                //callback is an array, which means it is a dependency list.
+                //Adjust args if there are dependencies
                 deps = callback;
-                callback = errback;
-                errback = optional;
+                callback = relName;
+                relName = null;
             } else {
-                deps = [];
+                deps = undef;
             }
         }
 
-        if (config && config.context) {
-            contextName = config.context;
+        //Support require(['a'])
+        callback = callback || function () {};
+
+        //If relName is a function, it is an errback handler,
+        //so remove it.
+        if (typeof relName === 'function') {
+            relName = forceSync;
+            forceSync = alt;
         }
 
-        context = getOwn(contexts, contextName);
-        if (!context) {
-            context = contexts[contextName] = req.s.newContext(contextName);
+        //Simulate async callback;
+        if (forceSync) {
+            main(undef, deps, callback, relName);
+        } else {
+            //Using a non-zero value because of concern for what old browsers
+            //do, and latest browsers "upgrade" to 4 if lower value is used:
+            //http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#dom-windowtimers-settimeout:
+            //If want a value immediately, use require('id') instead -- something
+            //that works in almond on the global level, but not guaranteed and
+            //unlikely to work in other AMD implementations.
+            setTimeout(function () {
+                main(undef, deps, callback, relName);
+            }, 4);
         }
 
-        if (config) {
-            context.configure(config);
-        }
-
-        return context.require(deps, callback, errback);
+        return req;
     };
 
     /**
-     * Support require.config() to make it easier to cooperate with other
-     * AMD loaders on globally agreed names.
+     * Just drops the config on the floor, but returns req in case
+     * the config return value is used.
      */
-    req.config = function (config) {
-        return req(config);
-    };
-
-    /**
-     * Execute something after the current tick
-     * of the event loop. Override for other envs
-     * that have a better solution than setTimeout.
-     * @param  {Function} fn function to execute later.
-     */
-    req.nextTick = typeof setTimeout !== 'undefined' ? function (fn) {
-        setTimeout(fn, 4);
-    } : function (fn) { fn(); };
-
-    /**
-     * Export require as a global, but only if it does not already exist.
-     */
-    if (!require) {
-        require = req;
-    }
-
-    req.version = version;
-
-    //Used to filter out dependencies that are already paths.
-    req.jsExtRegExp = /^\/|:|\?|\.js$/;
-    req.isBrowser = isBrowser;
-    s = req.s = {
-        contexts: contexts,
-        newContext: newContext
-    };
-
-    //Create default context.
-    req({});
-
-    //Exports some context-sensitive methods on global require.
-    each([
-        'toUrl',
-        'undef',
-        'defined',
-        'specified'
-    ], function (prop) {
-        //Reference from contexts instead of early binding to default context,
-        //so that during builds, the latest instance of the default context
-        //with its config gets used.
-        req[prop] = function () {
-            var ctx = contexts[defContextName];
-            return ctx.require[prop].apply(ctx, arguments);
-        };
-    });
-
-    if (isBrowser) {
-        head = s.head = document.getElementsByTagName('head')[0];
-        //If BASE tag is in play, using appendChild is a problem for IE6.
-        //When that browser dies, this can be removed. Details in this jQuery bug:
-        //http://dev.jquery.com/ticket/2709
-        baseElement = document.getElementsByTagName('base')[0];
-        if (baseElement) {
-            head = s.head = baseElement.parentNode;
+    req.config = function (cfg) {
+        config = cfg;
+        if (config.deps) {
+            req(config.deps, config.callback);
         }
-    }
-
-    /**
-     * Any errors that require explicitly generates will be passed to this
-     * function. Intercept/override it if you want custom error handling.
-     * @param {Error} err the error object.
-     */
-    req.onError = function (err) {
-        throw err;
+        return req;
     };
 
-    /**
-     * Does the request to load a module for the browser case.
-     * Make this a separate function to allow other environments
-     * to override it.
-     *
-     * @param {Object} context the require context to find state.
-     * @param {String} moduleName the name of the module.
-     * @param {Object} url the URL to the module.
-     */
-    req.load = function (context, moduleName, url) {
-        var config = (context && context.config) || {},
-            node;
-        if (isBrowser) {
-            //In the browser so use a script tag
-            node = config.xhtml ?
-                    document.createElementNS('http://www.w3.org/1999/xhtml', 'html:script') :
-                    document.createElement('script');
-            node.type = config.scriptType || 'text/javascript';
-            node.charset = 'utf-8';
-            node.async = true;
-
-            node.setAttribute('data-requirecontext', context.contextName);
-            node.setAttribute('data-requiremodule', moduleName);
-
-            //Set up load listener. Test attachEvent first because IE9 has
-            //a subtle issue in its addEventListener and script onload firings
-            //that do not match the behavior of all other browsers with
-            //addEventListener support, which fire the onload event for a
-            //script right after the script execution. See:
-            //https://connect.microsoft.com/IE/feedback/details/648057/script-onload-event-is-not-fired-immediately-after-script-execution
-            //UNFORTUNATELY Opera implements attachEvent but does not follow the script
-            //script execution mode.
-            if (node.attachEvent &&
-                    //Check if node.attachEvent is artificially added by custom script or
-                    //natively supported by browser
-                    //read https://github.com/jrburke/requirejs/issues/187
-                    //if we can NOT find [native code] then it must NOT natively supported.
-                    //in IE8, node.attachEvent does not have toString()
-                    //Note the test for "[native code" with no closing brace, see:
-                    //https://github.com/jrburke/requirejs/issues/273
-                    !(node.attachEvent.toString && node.attachEvent.toString().indexOf('[native code') < 0) &&
-                    !isOpera) {
-                //Probably IE. IE (at least 6-8) do not fire
-                //script onload right after executing the script, so
-                //we cannot tie the anonymous define call to a name.
-                //However, IE reports the script as being in 'interactive'
-                //readyState at the time of the define call.
-                useInteractive = true;
-
-                node.attachEvent('onreadystatechange', context.onScriptLoad);
-                //It would be great to add an error handler here to catch
-                //404s in IE9+. However, onreadystatechange will fire before
-                //the error handler, so that does not help. If addEvenListener
-                //is used, then IE will fire error before load, but we cannot
-                //use that pathway given the connect.microsoft.com issue
-                //mentioned above about not doing the 'script execute,
-                //then fire the script load event listener before execute
-                //next script' that other browsers do.
-                //Best hope: IE10 fixes the issues,
-                //and then destroys all installs of IE 6-9.
-                //node.attachEvent('onerror', context.onScriptError);
-            } else {
-                node.addEventListener('load', context.onScriptLoad, false);
-                node.addEventListener('error', context.onScriptError, false);
-            }
-            node.src = url;
-
-            //For some cache cases in IE 6-8, the script executes before the end
-            //of the appendChild execution, so to tie an anonymous define
-            //call to the module name (which is stored on the node), hold on
-            //to a reference to this node, but clear after the DOM insertion.
-            currentlyAddingScript = node;
-            if (baseElement) {
-                head.insertBefore(node, baseElement);
-            } else {
-                head.appendChild(node);
-            }
-            currentlyAddingScript = null;
-
-            return node;
-        } else if (isWebWorker) {
-            //In a web worker, use importScripts. This is not a very
-            //efficient use of importScripts, importScripts will block until
-            //its script is downloaded and evaluated. However, if web workers
-            //are in play, the expectation that a build has been done so that
-            //only one script needs to be loaded anyway. This may need to be
-            //reevaluated if other use cases become common.
-            importScripts(url);
-
-            //Account for anonymous modules
-            context.completeLoad(moduleName);
-        }
-    };
-
-    function getInteractiveScript() {
-        if (interactiveScript && interactiveScript.readyState === 'interactive') {
-            return interactiveScript;
-        }
-
-        eachReverse(scripts(), function (script) {
-            if (script.readyState === 'interactive') {
-                return (interactiveScript = script);
-            }
-        });
-        return interactiveScript;
-    }
-
-    //Look for a data-main script attribute, which could also adjust the baseUrl.
-    if (isBrowser) {
-        //Figure out baseUrl. Get it from the script tag with require.js in it.
-        eachReverse(scripts(), function (script) {
-            //Set the 'head' where we can append children by
-            //using the script's parent.
-            if (!head) {
-                head = script.parentNode;
-            }
-
-            //Look for a data-main attribute to set main script for the page
-            //to load. If it is there, the path to data main becomes the
-            //baseUrl, if it is not already set.
-            dataMain = script.getAttribute('data-main');
-            if (dataMain) {
-                //Set final baseUrl if there is not already an explicit one.
-                if (!cfg.baseUrl) {
-                    //Pull off the directory of data-main for use as the
-                    //baseUrl.
-                    src = dataMain.split('/');
-                    mainScript = src.pop();
-                    subPath = src.length ? src.join('/')  + '/' : './';
-
-                    cfg.baseUrl = subPath;
-                    dataMain = mainScript;
-                }
-
-                //Strip off any trailing .js since dataMain is now
-                //like a module name.
-                dataMain = dataMain.replace(jsSuffixRegExp, '');
-
-                //Put the data-main script in the files to load.
-                cfg.deps = cfg.deps ? cfg.deps.concat(dataMain) : [dataMain];
-
-                return true;
-            }
-        });
-    }
-
-    /**
-     * The function that handles definitions of modules. Differs from
-     * require() in that a string for the module should be the first argument,
-     * and the function to execute after dependencies are loaded should
-     * return a value to define the module corresponding to the first argument's
-     * name.
-     */
     define = function (name, deps, callback) {
-        var node, context;
-
-        //Allow for anonymous modules
-        if (typeof name !== 'string') {
-            //Adjust args appropriately
-            callback = deps;
-            deps = name;
-            name = null;
-        }
 
         //This module may not have dependencies
-        if (!isArray(deps)) {
+        if (!deps.splice) {
+            //deps is not an array, so probably means
+            //an object literal or factory function for
+            //the value. Adjust args.
             callback = deps;
             deps = [];
         }
 
-        //If no name, and callback is a function, then figure out if it a
-        //CommonJS thing with dependencies.
-        if (!deps.length && isFunction(callback)) {
-            //Remove comments from the callback string,
-            //look for require calls, and pull them into the dependencies,
-            //but only if there are function args.
-            if (callback.length) {
-                callback
-                    .toString()
-                    .replace(commentRegExp, '')
-                    .replace(cjsRequireRegExp, function (match, dep) {
-                        deps.push(dep);
-                    });
-
-                //May be a CommonJS thing even without require calls, but still
-                //could use exports, and module. Avoid doing exports and module
-                //work though if it just needs require.
-                //REQUIRES the function to expect the CommonJS variables in the
-                //order listed below.
-                deps = (callback.length === 1 ? ['require'] : ['require', 'exports', 'module']).concat(deps);
-            }
+        if (!hasProp(defined, name) && !hasProp(waiting, name)) {
+            waiting[name] = [name, deps, callback];
         }
-
-        //If in IE 6-8 and hit an anonymous define() call, do the interactive
-        //work.
-        if (useInteractive) {
-            node = currentlyAddingScript || getInteractiveScript();
-            if (node) {
-                if (!name) {
-                    name = node.getAttribute('data-requiremodule');
-                }
-                context = contexts[node.getAttribute('data-requirecontext')];
-            }
-        }
-
-        //Always save off evaluating the def call until the script onload handler.
-        //This allows multiple modules to be in a file without prematurely
-        //tracing dependencies, and allows for anonymous module support,
-        //where the module name is not known until the script onload event
-        //occurs. If no context, use the global queue, and get it processed
-        //in the onscript load callback.
-        (context ? context.defQueue : globalDefQueue).push([name, deps, callback]);
     };
 
     define.amd = {
         jQuery: true
     };
-
-
-    /**
-     * Executes the text. Normally just uses eval, but can be modified
-     * to use a better, environment-specific call. Only used for transpiling
-     * loader plugins, not for plain JS modules.
-     * @param {String} text the text to execute/evaluate.
-     */
-    req.exec = function (text) {
-        /*jslint evil: true */
-        return eval(text);
-    };
-
-    //Set up with config info.
-    req(cfg);
-}(this));
+}());
 
 define("requireLib", function(){});
-
-var jam = {
-    "packages": [
-        {
-            "name": "jquery",
-            "location": "jam/jquery",
-            "main": "dist/jquery.js"
-        },
-        {
-            "name": "jquery-mousewheel",
-            "location": "jam/jquery-mousewheel",
-            "main": "jquery.mousewheel.js"
-        },
-        {
-            "name": "require",
-            "location": "jam/require",
-            "main": "require.min.js"
-        },
-        {
-            "name": "text",
-            "location": "jam/text",
-            "main": "text.js"
-        }
-    ],
-    "version": "0.2.17",
-    "shim": {}
-};
-
-if (typeof require !== "undefined" && require.config) {
-    require.config({
-    "packages": [
-        {
-            "name": "jquery",
-            "location": "jam/jquery",
-            "main": "dist/jquery.js"
-        },
-        {
-            "name": "jquery-mousewheel",
-            "location": "jam/jquery-mousewheel",
-            "main": "jquery.mousewheel.js"
-        },
-        {
-            "name": "require",
-            "location": "jam/require",
-            "main": "require.min.js"
-        },
-        {
-            "name": "text",
-            "location": "jam/text",
-            "main": "text.js"
-        }
-    ],
-    "shim": {}
-});
-}
-else {
-    var require = {
-    "packages": [
-        {
-            "name": "jquery",
-            "location": "jam/jquery",
-            "main": "dist/jquery.js"
-        },
-        {
-            "name": "jquery-mousewheel",
-            "location": "jam/jquery-mousewheel",
-            "main": "jquery.mousewheel.js"
-        },
-        {
-            "name": "require",
-            "location": "jam/require",
-            "main": "require.min.js"
-        },
-        {
-            "name": "text",
-            "location": "jam/text",
-            "main": "text.js"
-        }
-    ],
-    "shim": {}
-};
-}
-
-if (typeof exports !== "undefined" && typeof module !== "undefined") {
-    module.exports = jam;
-};
-define("jam/require.config", function(){});
 
 /*!
  * jQuery JavaScript Library v2.0.0
@@ -10895,13 +9213,16 @@ define ('cobweb/Basic/X3DFieldDefinition',[],function ()
 {
 
 
-	function X3DFieldDefinition (accessType, name, value, userDefined)
+	function X3DFieldDefinition (accessType, name, value)
 	{
 		this .accessType  = accessType;
 		this .dataType    = value .getType ();
 		this .name        = name;
 		this .value       = value;
-		this .userDefined = userDefined;
+
+		Object .preventExtensions (this);
+		Object .freeze (this);
+		Object .seal (this);
 	}
 
 	X3DFieldDefinition .prototype .constructor = X3DFieldDefinition;
@@ -10971,7 +9292,7 @@ function ()
 
 	var id = 0;
 	
-	function getId () { return this .id_; }
+	function getId () { return this ._id; }
 
 	/*
 	 *  X3DObject
@@ -10982,58 +9303,59 @@ function ()
 	X3DObject .prototype =
 	{
 		constructor: X3DObject,
-		id_: 0,
-		name_: "",
-		tainted_: false,
-		interests_: { },
+		_id: 0,
+		_name: "",
+		_tainted: false,
+		_interests: { },
 		getId: function ()
 		{
 			this .getId = getId;
 
-			return this .id_ = ++ id;
+			return this ._id = ++ id;
 		},
 		setName: function (value)
 		{
-			this .name_ = value;
+			this ._name = value;
 		},
 		getName: function ()
 		{
-			return this .name_;
+			return this ._name;
 		},
 		setTainted: function (value)
 		{
-			this .tainted_ = value;
+			this ._tainted = value;
 		},
 		getTainted: function ()
 		{
-			return this .tainted_;
+			return this ._tainted;
 		},
 		addInterest: function (object, callback)
 		{
-			if (! this .hasOwnProperty ("interests_"))
-				this .interests_ = { };
+			if (! this .hasOwnProperty ("_interests"))
+				this ._interests = { };
 
 			var args = Array .prototype .slice .call (arguments, 0);
 	
 			args [1] = this;
 
-			this .interests_ [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
+			this ._interests [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
 		},
 		removeInterest: function (object, callback)
 		{
-			delete this .interests_ [object .getId () + callback];
+			delete this ._interests [object .getId () + callback];
 		},
 		getInterests: function ()
 		{
-			return this .interests_;
+			return this ._interests;
 		},
 		processInterests: function ()
 		{
-			var interests = this .interests_;
+			var interests = this ._interests;
 
 			for (var key in interests)
 				interests [key] ();
 		},
+		dispose: function () { },
 	};
 
 	return X3DObject;
@@ -11052,23 +9374,37 @@ function ($, X3DObject)
 	{
 		X3DObject .call (this);
 
-		this .parents_ = { };
+		this ._parents = { };
 	}
 
 	X3DChildObject .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
 		constructor: X3DChildObject,
+		addEvent: function ()
+		{
+			var parents = this ._parents;
+
+			for (var key in parents)
+				parents [key] .addEvent (this);
+		},
+		addEventObject: function (field, event)
+		{
+			var parents = this ._parents;
+
+			for (var key in parents)
+				parents [key] .addEventObject (this, event);
+		},
 		addParent: function (parent)
 		{
-			this .parents_ [parent .getId ()] = parent;
+			this ._parents [parent .getId ()] = parent;
 		},
 		removeParent: function (parent)
 		{
-			delete this .parents_ [parent .getId ()];
+			delete this ._parents [parent .getId ()];
 		},
 		getParents: function ()
 		{
-			return this .parents_;
+			return this ._parents;
 		},
 	});
 
@@ -11470,47 +9806,54 @@ function ($)
 
 	var Events =
 	{
-	   stack: [ ],
-	   create: function (field)
-	   {
-	      if (this .stack .length)
-	      {
-	         var event = this .stack .pop ();
+		stack: [ ],
+		create: function (field)
+		{
+			if (this .stack .length)
+			{
+				var event = this .stack .pop ();
 
 				event .field = field;
 
-            return event;
-	      }
+				return event;
+			}
             
-	      return {
+			return {
 				field: field,
-				sources: { },
+				sources: { }, // Sparse arrays are much more expensive than plain objects!
 			};
-	   },
-	   copy: function (event)
+		},
+		copy: function (event)
 	   {
-	      if (this .stack .length)
-	      {
-	         var copy = this .stack .pop ();
+			if (this .stack .length)
+			{
+				var copy = this .stack .pop ();
 
 				copy .field = event .field;
-
-            $.extend (copy .sources, event .sources);
-
-            return copy;
 	      }
+			else
+			{
+				var copy = {
+					field: event .field,
+					sources: { },
+				};
+			}
 
-	      return {
-				field: event .field,
-				sources: $.extend ({ }, event .sources),
-			};
+			var
+				fromSources = event .sources,
+				toSources   = copy .sources;
+
+			for (var id in fromSources)
+				toSources [id] = fromSources [id];
+
+			return copy;
 	   },
 		push: function (event)
 		{
 		   var sources = event .sources;
 
 		   for (var id in sources)
-		      delete event .sources [id];
+		      delete sources [id];
 
 		   this .stack .push (event);
 		},
@@ -11537,7 +9880,7 @@ function ($,
 	{
 		X3DChildObject .call (this);
 	
-		this .value_ = value;
+		this ._value = value;
 
 		return this;
 	}
@@ -11545,19 +9888,20 @@ function ($,
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
-		references_: { },
-		fieldInterests_: { },
-		fieldCallbacks_: { },
-		accessType_: X3DConstants .initializeOnly,
-		set_: null,
-		uniformLocation_: null,
+		_value: undefined,
+		_references: { },
+		_fieldInterests: { },
+		_fieldCallbacks: { },
+		_accessType: X3DConstants .initializeOnly,
+		_set: false,
+		_uniformLocation: null,
 		clone: function ()
 		{
 			return this .copy ();
 		},
 		equals: function (value)
 		{
-			return this .getValue () == value .valueOf ();
+			return this ._value === value .valueOf ();
 		},
 		setValue: function (value)
 		{
@@ -11566,19 +9910,19 @@ function ($,
 		},
 		set: function (value)
 		{
-			this .value_ = value;
+			this ._value = value;
 		},
 		getValue: function ()
 		{
-			return this .value_;
+			return this ._value;
 		},
 		setAccessType: function (value)
 		{
-			this .accessType_ = value;
+			this ._accessType = value;
 		},
 		getAccessType: function ()
 		{
-			return this .accessType_;
+			return this ._accessType;
 		},
 		isInitializable: function ()
 		{
@@ -11603,16 +9947,16 @@ function ($,
 		setSet: function (value)
 		{
 			// Boolean indication whether the value is set during parse, or undefined.
-			return this .set_ = value;
+			return this ._set = value;
 		},
 		getSet: function ()
 		{
-			return this .set_;
+			return this ._set;
 		},
 		hasReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
-				return ! $.isEmptyObject (this .references_);
+			if (this .hasOwnProperty ("_references"))
+				return ! $.isEmptyObject (this ._references);
 
 			return false;
 		},
@@ -11651,18 +9995,18 @@ function ($,
 		},
 		getReferences: function ()
 		{
-			if (! this .hasOwnProperty ("references_"))
-				this .references_ = { };
+			if (! this .hasOwnProperty ("_references"))
+				this ._references = { };
 
-			return this .references_;
+			return this ._references;
 		},
 		updateReferences: function ()
 		{
-			if (this .hasOwnProperty ("references_"))
+			if (this .hasOwnProperty ("_references"))
 			{
-				for (var id in this .references_)
+				for (var id in this ._references)
 				{
-					var reference = this .references_ [id];
+					var reference = this ._references [id];
 
 					switch (this .getAccessType () & reference .getAccessType ())
 					{
@@ -11679,49 +10023,42 @@ function ($,
 		},
 		addFieldInterest: function (field)
 		{
-			if (! this .hasOwnProperty ("fieldInterests_"))
-				this .fieldInterests_ = { };
+			if (! this .hasOwnProperty ("_fieldInterests"))
+				this ._fieldInterests = { };
 
-			this .fieldInterests_ [field .getId ()] = field;
+			this ._fieldInterests [field .getId ()] = field;
 		},
 		removeFieldInterest: function (field)
 		{
-			delete this .fieldInterests_ [field .getId ()];
+			delete this ._fieldInterests [field .getId ()];
+		},
+		getFieldInterests: function ()
+		{
+			return this ._fieldInterests;
 		},
 		addFieldCallback: function (string, object)
 		{
-			if (! this .hasOwnProperty ("fieldCallbacks_"))
-				this .fieldCallbacks_ = { };
+			if (! this .hasOwnProperty ("_fieldCallbacks"))
+				this ._fieldCallbacks = { };
 
-			this .fieldCallbacks_ [string] = object;
+			this ._fieldCallbacks [string] = object;
 		},
 		removeFieldCallback: function (string)
 		{
-			delete this .fieldCallbacks_ [string];
+			delete this ._fieldCallbacks [string];
 		},
-		addEvent: function ()
+		getFieldCallbacks: function ()
 		{
-			var parents = this .getParents ();
-
-			for (var key in parents)
-				parents [key] .addEvent (this);
-		},
-		addEventObject: function (field, event)
-		{
-			var parents = this .getParents ();
-
-			for (var key in parents)
-				parents [key] .addEventObject (this, event);
+			return this ._fieldCallbacks;
 		},
 		processEvent: function (event)
 		{
-			if (event .sources .hasOwnProperty (this .getId ()))
+			if (event .sources [this .getId ()])
 				return;
 
 			event .sources [this .getId ()] = true;
 
 			this .setTainted (false);
-			this .setSet (true);
 
 			if (event .field !== this)
 				this .set (event .field .getValue ());
@@ -11733,7 +10070,7 @@ function ($,
 			// Process routes
 
 			var
-				fieldInterests = this .fieldInterests_,
+				fieldInterests = this ._fieldInterests,
 				first          = true;
 
 			for (var key in fieldInterests)
@@ -11752,7 +10089,7 @@ function ($,
 
 			// Process field callbacks
 
-			var fieldCallbacks = this .fieldCallbacks_;
+			var fieldCallbacks = this ._fieldCallbacks;
 
 			for (var key in fieldCallbacks)
 				fieldCallbacks [key] (this .valueOf ());
@@ -11808,6 +10145,9 @@ function ($, X3DField, X3DConstants, Generator)
 	{
 		get: function (target, key)
 		{
+			if ((typeof key) === "symbol")
+				console .log (typeof key, key);
+
 			try
 			{
 				if (key in target)
@@ -11827,7 +10167,7 @@ function ($, X3DField, X3DConstants, Generator)
 			catch (error)
 			{
 				// if target not instance of X3DArrayField, then the constuctor is called as function.
-				console .log (target, key, error);
+				console .log (target, typeof key, key, error);
 			}
 		},
 		set: function (target, key, value)
@@ -12130,6 +10470,10 @@ define ('standard/Math/Algorithm',[],function ()
 
 	var Algorithm =
 	{
+		signum: function (value)
+		{
+			return (0 < value) - (value < 0);
+		},
 		radians: function (value)
 		{
 			return value * (Math .PI / 180);
@@ -12170,17 +10514,22 @@ define ('standard/Math/Algorithm',[],function ()
 			{
 				// Reverse signs so we travel the short way round
 				cosom = -cosom;
-				destination .negate ()
+				destination .negate ();
 			}				
 
 			var
 				omega = Math .acos (cosom),
 				sinom = Math .sin  (omega),
 
-				scale0 = Math .sin ((1 - t) * omega),
-				scale1 = Math .sin (t * omega);
+				scale0 = Math .sin ((1 - t) * omega) / sinom,
+				scale1 = Math .sin (t * omega) / sinom;
 
-			return source .multiply (scale0) .add (destination .multiply (scale1)) .divide (sinom);
+			source .x = source .x * scale0 + destination .x * scale1;
+			source .y = source .y * scale0 + destination .y * scale1;
+			source .z = source .z * scale0 + destination .z * scale1;
+			source .w = source .w * scale0 + destination .w * scale1;
+
+			return source;
 		},
 		isPowerOfTwo: function (n)
 		{
@@ -12319,16 +10668,6 @@ function ($, Algorithm)
 			this .b_ = 0;
 		}
 	}
-	
-	$.extend (Color3,
-	{
-		HSV: function (h, s, v)
-		{
-			var color = new Color3 ();
-			color .setHSV (h, s, v);
-			return color;
-		},
-	});
 
 	Color3 .prototype =
 	{
@@ -12360,7 +10699,7 @@ function ($, Algorithm)
 			       this .g_ === vector .g_ &&
 			       this .b_ === vector .b_;
 		},
-		getHSV: function ()
+		getHSV: function (result)
 		{
 			var h, s, v;
 
@@ -12388,7 +10727,11 @@ function ($, Algorithm)
 			else
 				s = h = 0;         // s = 0, h is undefined
 
-			return [h, s, v];
+			result [0] = h;
+			result [1] = s;
+			result [2] = v;
+
+			return result;
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12560,7 +10903,7 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		getHSV: function ()
 		{
-			return this .getValue () .getHSV ();
+			return this .getValue () .getHSV ([ ]);
 		},
 		setHSV: function (h, s, v)
 		{
@@ -12573,8 +10916,7 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 	});
 
-	Object .defineProperty (SFColor .prototype, "r",
-	{
+	var r = {
 		get: function ()
 		{
 			return this .getValue () .r;
@@ -12586,25 +10928,9 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColor .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .r;
-		},
-		set: function (value)
-		{
-			this .getValue () .r = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColor .prototype, "g",
-	{
+	var g = {
 		get: function ()
 		{
 			return this .getValue () .g;
@@ -12616,25 +10942,9 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColor .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .g;
-		},
-		set: function (value)
-		{
-			this .getValue () .g = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColor .prototype, "b",
-	{
+	var b = {
 		get: function ()
 		{
 			return this .getValue () .b;
@@ -12646,22 +10956,19 @@ function ($, Color3, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColor .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .b;
-		},
-		set: function (value)
-		{
-			this .getValue () .b = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+	Object .defineProperty (SFColor .prototype, "r", r);
+	Object .defineProperty (SFColor .prototype, "g", g);
+	Object .defineProperty (SFColor .prototype, "b", b);
+
+	r .enumerable = false;
+	g .enumerable = false;
+	b .enumerable = false;
+
+	Object .defineProperty (SFColor .prototype, "0", r);
+	Object .defineProperty (SFColor .prototype, "1", g);
+	Object .defineProperty (SFColor .prototype, "2", b);
 
 	return SFColor;
 });
@@ -12669,9 +10976,10 @@ function ($, Color3, X3DField, X3DConstants)
 
 define ('standard/Math/Numbers/Color4',[
 	"jquery",
+	"standard/Math/Numbers/Color3",
 	"standard/Math/Algorithm",
 ],
-function ($, Algorithm)
+function ($, Color3, Algorithm)
 {
 
 
@@ -12694,16 +11002,6 @@ function ($, Algorithm)
 			this .a_ = 0;
 		}
 	}
-	
-	$.extend (Color4,
-	{
-		HSVA: function (h, s, v, a)
-		{
-			var color = new Color3 (0, 0, 0, a);
-			color .setHSV (h, s, v);
-			return color;
-		},
-	});
 
 	Color4 .prototype =
 	{
@@ -12739,70 +11037,8 @@ function ($, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: function ()
-		{
-			var h, s, v;
-
-			var min = Math .min (this .r_, this .g_, this .b_);
-			var max = Math .max (this .r_, this .g_, this .b_);
-			v = max; // value
-
-			var delta = max - min;
-
-			if (max !== 0 && delta !== 0)
-			{
-				s = delta / max; // s
-
-				if (this .r === max)
-					h =     (this .g_ - this .b_) / delta;  // between yellow & magenta
-				else if (this .g_ == max)
-					h = 2 + (this .b_ - this .r_) / delta;  // between cyan & yellow
-				else
-					h = 4 + (this .r_ - this .g_) / delta;  // between magenta & cyan
-
-				h *= Math .PI / 3;  // radiants
-				if (h < 0)
-					h += Math .PI * 2;
-			}
-			else
-				s = h = 0;         // s = 0, h is undefined
-
-			return [h, s, v];
-		},
-		setHSV: function (h, s, v)
-		{
-			s = clamp (s, 0, 1),
-			v = clamp (v, 0, 1);
-
-			// H is given on [0, 2 * Pi]. S and V are given on [0, 1].
-			// RGB are each returned on [0, 1].
-
-			if (s === 0)
-			{
-				// achromatic (grey)
-				this .r_ = this .g_ = this .b_ = v;
-			}
-			else
-			{
-				var w = Algorithm .degrees (Algorithm .interval (h, 0, Math .PI * 2)) / 60;     // sector 0 to 5
-
-				var i = Math .floor (w);
-				var f = w - i;                      // factorial part of h
-				var p = v * (1 - s);
-				var q = v * (1 - s * f);
-				var t = v * (1 - s * (1 - f));
-
-				switch (i % 6)
-				{
-					case 0:  this .r_ = v; this .g_ = t; this .b_ = p; break;
-					case 1:  this .r_ = q; this .g_ = v; this .b_ = p; break;
-					case 2:  this .r_ = p; this .g_ = v; this .b_ = t; break;
-					case 3:  this .r_ = p; this .g_ = q; this .b_ = v; break;
-					case 4:  this .r_ = t; this .g_ = p; this .b_ = v; break;
-					default: this .r_ = v; this .g_ = p; this .b_ = q; break;
-				}
-			}
-		},
+		getHSV: Color3 .getHSV,
+		setHSV: Color3 .setHSV,
 		toString: function ()
 		{
 			return this .r_ + " " +
@@ -12868,11 +11104,12 @@ function ($, Algorithm)
 
 define ('cobweb/Fields/SFColorRGBA',[
 	"jquery",
-	"standard/Math/Numbers/Color4",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFColor",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color4",
 ],
-function ($, Color4, X3DField, X3DConstants)
+function ($, X3DField, SFColor, X3DConstants, Color4)
 {
 
 
@@ -12909,31 +11146,14 @@ function ($, Color4, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFColorRGBA;
 		},
-		equals: function (color)
-		{
-			return this .getValue () .equals (color .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		getHSV: function ()
-		{
-			return this .getValue () .getHSV ();
-		},
-		setHSV: function (h, s, v)
-		{
-			this .getValue () .setHSV (h, s, v);
-			this .addEvent ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
+		equals: SFColor .equals,
+		set: SFColor .set,
+		getHSV: SFColor .getHSV,
+		setHSV: SFColor .setHSV,
+		toString: SFColor .toString,
 	});
 
-	Object .defineProperty (SFColorRGBA .prototype, "r",
-	{
+	var r = {
 		get: function ()
 		{
 			return this .getValue () .r;
@@ -12945,25 +11165,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .r;
-		},
-		set: function (value)
-		{
-			this .getValue () .r = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "g",
-	{
+	var g = {
 		get: function ()
 		{
 			return this .getValue () .g;
@@ -12975,25 +11179,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .g;
-		},
-		set: function (value)
-		{
-			this .getValue () .g = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "b",
-	{
+	var b = {
 		get: function ()
 		{
 			return this .getValue () .b;
@@ -13005,25 +11193,9 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .b;
-		},
-		set: function (value)
-		{
-			this .getValue () .b = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFColorRGBA .prototype, "a",
-	{
+	var a = {
 		get: function ()
 		{
 			return this .getValue () .a;
@@ -13035,22 +11207,22 @@ function ($, Color4, X3DField, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFColorRGBA .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .a;
-		},
-		set: function (value)
-		{
-			this .getValue () .a = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+	Object .defineProperty (SFColorRGBA .prototype, "r", r);
+	Object .defineProperty (SFColorRGBA .prototype, "g", g);
+	Object .defineProperty (SFColorRGBA .prototype, "b", b);
+	Object .defineProperty (SFColorRGBA .prototype, "a", a);
+
+	r .enumerable = false;
+	g .enumerable = false;
+	b .enumerable = false;
+	a .enumerable = false;
+
+	Object .defineProperty (SFColorRGBA .prototype, "0", r);
+	Object .defineProperty (SFColorRGBA .prototype, "1", g);
+	Object .defineProperty (SFColorRGBA .prototype, "2", b);
+	Object .defineProperty (SFColorRGBA .prototype, "3", a);
 
 	return SFColorRGBA;
 });
@@ -13194,6 +11366,160 @@ function ($, X3DField, X3DConstants)
 	});
 
 	return SFInt32;
+});
+
+
+define ('cobweb/Fields/SFMatrixPrototypeTemplate',[
+	"jquery",
+	"cobweb/Basic/X3DField",
+],
+function ($, X3DField)
+{
+;
+
+	return function (Matrix, SFVec)
+	{
+		return $.extend (Object .create (X3DField .prototype),
+		{
+			copy: function ()
+			{
+				return new (this .constructor) (this .getValue () .copy ());
+			},
+			equals: function (matrix)
+			{
+				return this .getValue () .equals (matrix .getValue ());
+			},
+			set: function (value)
+			{
+				this .getValue () .assign (value);
+			},
+			set: function (value)
+			{
+				this .getValue () .assign (value);
+			},
+			setTransform: function (translation, rotation, scale, scaleOrientation, center)
+			{
+				translation      = translation      ? translation      .getValue () : null;
+				rotation         = rotation         ? rotation         .getValue () : null;
+				scale            = scale            ? scale            .getValue () : null;
+				scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
+				center           = center           ? center           .getValue () : null;
+	
+				this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
+			},
+			getTransform: function (translation, rotation, scale, scaleOrientation, center)
+			{
+				translation      = translation      ? translation      .getValue () : null;
+				rotation         = rotation         ? rotation         .getValue () : null;
+				scale            = scale            ? scale            .getValue () : null;
+				scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
+				center           = center           ? center           .getValue () : null;
+	
+				this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
+			},
+			transpose: function ()
+			{
+				return new (this .constructor) (Matrix .transpose (this .getValue ()));
+			},
+			inverse: function ()
+			{
+				return new (this .constructor) (Matrix .inverse (this .getValue ()));
+			},
+			multLeft: function (matrix)
+			{
+				return new (this .constructor) (Matrix .multLeft (this .getValue (), matrix .getValue ()));
+			},
+			multRight: function (matrix)
+			{
+				return new (this .constructor) (Matrix .multRight (this .getValue (), matrix .getValue ()));
+			},
+			multVecMatrix: function (vector)
+			{
+				return new SFVec (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
+			},
+			multMatrixVec: function (vector)
+			{
+				return new SFVec (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
+			},
+			multDirMatrix: function (vector)
+			{
+				return new SFVec (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
+			},
+			multMatrixDir: function (vector)
+			{
+				return new SFVec (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
+			},
+			toString: function ()
+			{
+				return this .getValue () .toString ();
+			},
+		});
+	};
+});
+
+
+define ('cobweb/Fields/SFVecPrototypeTemplate',[
+	"jquery",
+	"cobweb/Basic/X3DField",
+],
+function ($, X3DField)
+{
+
+
+	return function (Type)
+	{
+		return $.extend (Object .create (X3DField .prototype),
+		{
+			copy: function ()
+			{
+				return new (this .constructor) (this .getValue () .copy ());
+			},
+			equals: function (vector)
+			{
+				return this .getValue () .equals (vector .getValue ());
+			},
+			set: function (value)
+			{
+				this .getValue () .assign (value);
+			},
+			negate: function ()
+			{
+				return new (this .constructor) (Type .negate (this .getValue () .copy ()));
+			},
+			add: function (vector)
+			{
+				return new (this .constructor) (Type .add (this .getValue (), vector .getValue ()));
+			},
+			subtract: function (vector)
+			{
+				return new (this .constructor) (Type .subtract (this .getValue (), vector .getValue ()));
+			},
+			multiply: function (value)
+			{
+				return new (this .constructor) (Type .multiply (this .getValue (), value));
+			},
+			divide: function (value)
+			{
+				return new (this .constructor) (Type .divide (this .getValue (), value));
+			},
+			dot: function (vector)
+			{
+				return this .getValue () .dot (vector .getValue ());
+			},
+			normalize: function (vector)
+			{
+				return new (this .constructor) (Type .normalize (this .getValue ()));
+			},
+			length: function ()
+			{
+				return this .getValue () .abs ();
+			},
+			toString: function ()
+			{
+				return this .getValue () .toString ();
+			},
+		});
+	};
 });
 
 
@@ -13489,193 +11815,87 @@ function ($, Algorithm)
 
 define ('cobweb/Fields/SFVec2',[
 	"jquery",
-	"standard/Math/Numbers/Vector2",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
-function ($, Vector2, X3DField, X3DConstants)
+function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector2)
 {
 
 
-	function SFVec2 (v)
+	function SFVec2Template (TypeName, Type)
 	{
-		if (v .length)
+		function SFVec2 (x, y)
 		{
-			if (v[0] instanceof Vector2)
-				return X3DField .call (this, v[0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Vector2)
+					return X3DField .call (this, arguments [0]);
 
-			return X3DField .call (this, new Vector2 (+v[0], +v[1]));
+				return X3DField .call (this, new Vector2 (+x, +y));
+			}
+
+			return X3DField .call (this, new Vector2 (0, 0));
 		}
 
-		return X3DField .call (this, new Vector2 (0, 0));
-	}
-
-	SFVec2 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFVec2,
-		copy: function ()
+		SFVec2 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFVecPrototypeTemplate (Vector2),
 		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (vector)
-		{
-			return this .getValue () .equals (vector .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		negate: function ()
-		{
-			return new (this .constructor) (Vector2 .negate (this .getValue () .copy ()));
-		},
-		add: function (vector)
-		{
-			return new (this .constructor) (Vector2 .add (this .getValue (), vector .getValue ()));
-		},
-		subtract: function (vector)
-		{
-			return new (this .constructor) (Vector2 .subtract (this .getValue (), vector .getValue ()));
-		},
-		multiply: function (value)
-		{
-			return new (this .constructor) (Vector2 .multiply (this .getValue (), value));
-		},
-		divide: function (value)
-		{
-			return new (this .constructor) (Vector2 .divide (this .getValue (), value));
-		},
-		dot: function (vector)
-		{
-			return this .getValue () .dot (vector .getValue ());
-		},
-		normalize: function (vector)
-		{
-			return new (this .constructor) (Vector2 .normalize (this .getValue ()));
-		},
-		length: function ()
-		{
-			return this .getValue () .abs ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec2 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	/*
-	 *  SFVec2d
-	 */
-
-	function SFVec2d (x, y)
-	{
-	   if (this instanceof SFVec2d)
-			return SFVec2 .call (this, arguments);
+			constructor: SFVec2,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
 	
-	   return SFVec2 .call (Object .create (SFVec2d .prototype), arguments);
-	}
-
-	SFVec2d .prototype = $.extend (Object .create (SFVec2 .prototype),
-	{
-		constructor: SFVec2d,
-		getTypeName: function ()
-		{
-			return "SFVec2d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec2d;
-		},
-	});
-
-	/*
-	 *  SFVec2f
-	 */
-
-	function SFVec2f (x, y)
-	{
-	   if (this instanceof SFVec2f)
-			return SFVec2 .call (this, arguments);
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
 	
-	   return SFVec2 .call (Object .create (SFVec2f .prototype), arguments);
-	}
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFVec2 .prototype, "x", x);
+		Object .defineProperty (SFVec2 .prototype, "y", y);
+	
+		x .enumerable = false;
+		y .enumerable = false;
+	
+		Object .defineProperty (SFVec2 .prototype, "0", x);
+		Object .defineProperty (SFVec2 .prototype, "1", y);
 
-	SFVec2f .prototype = $.extend (Object .create (SFVec2 .prototype),
-	{
-		constructor: SFVec2f,
-		getTypeName: function ()
-		{
-			return "SFVec2f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec2f;
-		},
-	});
+		return SFVec2;
+	}
 
 	return {
-		SFVec2d: SFVec2d,
-		SFVec2f: SFVec2f,
+		SFVec2d: SFVec2Template ("SFVec2d", X3DConstants .SFVec2d),
+		SFVec2f: SFVec2Template ("SFVec2f", X3DConstants .SFVec2f),
 	};
 });
 
@@ -14927,418 +13147,187 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 });
 
 
+
 define ('cobweb/Fields/SFMatrix3',[
 	"jquery",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFMatrixPrototypeTemplate",
 	"cobweb/Fields/SFVec2",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix3",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
 ],
-function ($, X3DField, SFVec2, X3DConstants, Matrix3, Vector2, Vector3)
+function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
 {
+;
 
-
-	var
-		SFVec2d = SFVec2 .SFVec2d,
-		SFVec2f = SFVec2 .SFVec2f;
-
-	function SFMatrix3 (m)
+	function SFMatrix3Template (TypeName, Type, SFVec2)
 	{
-		if (m .length)
+		function SFMatrix3 (m00, m01, m02,
+	                       m10, m11, m12,
+	                       m20, m21, m22)
 		{
-			if (m [0] instanceof Matrix3)
-				return X3DField .call (this, m [0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Matrix3)
+					return X3DField .call (this, arguments [0]);
 	
-			return X3DField .call (this, new Matrix3 (+m[0], +m[1], +m[2],
-                                                   +m[3], +m[4], +m[5],
-                                                   +m[6], +m[7], +m[8]));
+				return X3DField .call (this, new Matrix3 (+m00, +m01, +m02,
+	                                                   +m10, +m11, +m12,
+	                                                   +m20, +m21, +m22));
+			}
+
+			return X3DField .call (this, new Matrix3 ());
 		}
-
-		return X3DField .call (this, new Matrix3 ());
-	}
-
-	SFMatrix3 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFMatrix3,
-		copy: function ()
+	
+		SFMatrix3 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFMatrixPrototypeTemplate (Matrix3, SFVec2),
 		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (matrix)
-		{
-			return this .getValue () .equals (matrix .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		setTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : Vector2 .Zero;
-			rotation         = rotation         ? rotation         .getValue () : Vector3 .Zero;
-			scale            = scale            ? scale            .getValue () : Vector2 .One;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : Vector3 .Zero;
-			center           = center           ? center           .getValue () : Vector2 .Zero;
-
-			this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
-		},
-		getTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : null;
-			rotation         = rotation         ? rotation         .getValue () : null;
-			scale            = scale            ? scale            .getValue () : null;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
-			center           = center           ? center           .getValue () : null;
-
-			this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
-		},
-		transpose: function ()
-		{
-			return new (this .constructor) (Matrix3 .transpose (this .getValue ()));
-		},
-		inverse: function ()
-		{
-			return new (this .constructor) (Matrix3 .inverse (this .getValue ()));
-		},
-		multLeft: function (matrix)
-		{
-			return new (this .constructor) (Matrix3 .multLeft (this .getValue (), matrix .getValue ()));
-		},
-		multRight: function (matrix)
-		{
-			return new (this .constructor) (Matrix3 .multRight (this .getValue (), matrix .getValue ()));
-		},
-		multVecMatrix: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixVec: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
-		},
-		multDirMatrix: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixDir: function (vector)
-		{
-			return new (this .Vector2) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	function defineProperty (i)
-	{
-		Object .defineProperty (SFMatrix3 .prototype, i,
-		{
-			get: function ()
+			constructor: SFMatrix3,
+			getTypeName: function ()
 			{
-				return this .getValue () [i];
+				return TypeName;
 			},
-			set: function (value)
+			getType: function ()
 			{
-				this .getValue () [i] = value;
-				this .addEvent ();
+				return Type;
 			},
-			enumerable: false,
-			configurable: false
 		});
+	
+		function defineProperty (i)
+		{
+			Object .defineProperty (SFMatrix3 .prototype, i,
+			{
+				get: function ()
+				{
+					return this .getValue () [i];
+				},
+				set: function (value)
+				{
+					this .getValue () [i] = value;
+					this .addEvent ();
+				},
+				enumerable: false,
+				configurable: false
+			});
+		}
+	
+		for (var i = 0; i < Matrix3 .prototype .length; ++ i)
+			defineProperty (i);
+
+		return SFMatrix3;
 	}
-
-	for (var i = 0; i < Matrix3 .prototype .length; ++ i)
-		defineProperty (i);
-
-	/*
-	 *  SFMatrix3d
-	 */
-
-	function SFMatrix3d (m00, m01, m02,
-	                     m10, m11, m12,
-	                     m20, m21, m22)
-	{
-		if (this instanceof SFMatrix3d)
-			return SFMatrix3 .call (this, arguments);
-		
-		return SFMatrix3 .call (Object .create (SFMatrix3d .prototype), arguments);
-	}
-
-	SFMatrix3d .prototype = $.extend (Object .create (SFMatrix3 .prototype),
-	{
-		constructor: SFMatrix3d,
-		Vector2: SFVec2d,
-		getTypeName: function ()
-		{
-			return "SFMatrix3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix3d;
-		},
-	});
-
-	/*
-	 *  SFMatrix3f
-	 */
-
-	function SFMatrix3f (m00, m01, m02,
-	                     m10, m11, m12,
-	                     m20, m21, m22)
-	{
-		if (this instanceof SFMatrix3f)
-			return SFMatrix3 .call (this, arguments);
-		
-		return SFMatrix3 .call (Object .create (SFMatrix3f .prototype), arguments);
-	}
-
-	SFMatrix3f .prototype = $.extend (Object .create (SFMatrix3 .prototype),
-	{
-		constructor: SFMatrix3f,
-		Vector2: SFVec2f,
-		getTypeName: function ()
-		{
-			return "SFMatrix3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix3f;
-		},
-	});
 
 	return {
-		SFMatrix3d: SFMatrix3d,
-		SFMatrix3f: SFMatrix3f,
+		SFMatrix3d: SFMatrix3Template ("SFMatrix3d", X3DConstants .SFMatrix3d, SFVec2 .SFVec2d),
+		SFMatrix3f: SFMatrix3Template ("SFMatrix3f", X3DConstants .SFMatrix3f, SFVec2 .SFVec2f),
 	};
 });
 
 
 define ('cobweb/Fields/SFVec3',[
 	"jquery",
-	"standard/Math/Numbers/Vector3",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
-function ($, Vector3, X3DField, X3DConstants)
+function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector3)
 {
 
 
-	function SFVec3 (v)
+	function SFVec3Template (TypeName, Type)
 	{
-		if (v .length)
+		function SFVec3 (x, y, z)
 		{
-			if (v[0] instanceof Vector3)
-				return X3DField .call (this, v[0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Vector3)
+					return X3DField .call (this, arguments [0]);
 
-			return X3DField .call (this, new Vector3 (+v[0], +v[1], +v[2]));
+				return X3DField .call (this, new Vector3 (+x, +y, +z));
+			}
+
+			return X3DField .call (this, new Vector3 (0, 0, 0));
 		}
-
-		return X3DField .call (this, new Vector3 (0, 0, 0));
-	}
-
-	SFVec3 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFVec3,
-		copy: function ()
-		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (vector)
-		{
-			return this .getValue () .equals (vector .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		negate: function ()
-		{
-			return new (this .constructor) (Vector3 .negate (this .getValue () .copy ()));
-		},
-		add: function (vector)
-		{
-			return new (this .constructor) (Vector3 .add (this .getValue (), vector .getValue ()));
-		},
-		subtract: function (vector)
-		{
-			return new (this .constructor) (Vector3 .subtract (this .getValue (), vector .getValue ()));
-		},
-		multiply: function (value)
-		{
-			return new (this .constructor) (Vector3 .multiply (this .getValue (), value));
-		},
-		divide: function (value)
-		{
-			return new (this .constructor) (Vector3 .divide (this .getValue (), value));
-		},
-		cross: function (vector)
-		{
-			return new (this .constructor) (Vector3 .cross (this .getValue (), vector .getValue ()));
-		},
-		dot: function (vector)
-		{
-			return this .getValue () .dot (vector .getValue ());
-		},
-		normalize: function (vector)
-		{
-			return new (this .constructor) (Vector3 .normalize (this .getValue ()));
-		},
-		length: function ()
-		{
-			return this .getValue () .abs ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec3 .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	/*
-	 *  SFVec3d
-	 */
-
-	function SFVec3d (x, y, z)
-	{
-	   if (this instanceof SFVec3d)
-			return SFVec3 .call (this, arguments);
 	
-	   return SFVec3 .call (Object .create (SFVec3d .prototype), arguments);
-	}
-
-	SFVec3d .prototype = $.extend (Object .create (SFVec3 .prototype),
-	{
-		constructor: SFVec3d,
-		getTypeName: function ()
+		SFVec3 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFVecPrototypeTemplate (Vector3),
 		{
-			return "SFVec3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec3d;
-		},
-	});
-
-	/*
-	 *  SFVec3f
-	 */
-
-	function SFVec3f (x, y, z)
-	{
-	   if (this instanceof SFVec3f)
-			return SFVec3 .call (this, arguments);
+			constructor: SFVec3,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+			cross: function (vector)
+			{
+				return new (this .constructor) (Vector3 .cross (this .getValue (), vector .getValue ()));
+			},
+		});
 	
-	   return SFVec3 .call (Object .create (SFVec3f .prototype), arguments);
-	}
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFVec3 .prototype, "x", x);
+		Object .defineProperty (SFVec3 .prototype, "y", y);
+		Object .defineProperty (SFVec3 .prototype, "z", z);
+	
+		x .enumerable = false;
+		y .enumerable = false;
+		z .enumerable = false;
+	
+		Object .defineProperty (SFVec3 .prototype, "0", x);
+		Object .defineProperty (SFVec3 .prototype, "1", y);
+		Object .defineProperty (SFVec3 .prototype, "2", z);
 
-	SFVec3f .prototype = $.extend (Object .create (SFVec3 .prototype),
-	{
-		constructor: SFVec3f,
-		getTypeName: function ()
-		{
-			return "SFVec3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec3f;
-		},
-	});
+		return SFVec3;
+	}
 
 	return {
-		SFVec3d: SFVec3d,
-		SFVec3f: SFVec3f,
+		SFVec3d: SFVec3Template ("SFVec3d", X3DConstants .SFVec3d),
+		SFVec3f: SFVec3Template ("SFVec3f", X3DConstants .SFVec3f),
 	};
 });
 
@@ -15930,7 +13919,7 @@ function ($, Vector3, Algorithm)
 		pow: function (exponent)
 		{
 			if (exponent instanceof Quaternion)
-				return this .exp (exponent * this .log ());
+				return this .assign (e .assign (exponent) .multRight (this .log ()) .exp ());
 
 			if (this .isReal ())
 				return this .set (0, 0, 0, Math .pow (this .w, exponent));
@@ -15991,7 +13980,15 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (dest, t)
 		{
-			return Algorithm .slerp (this, tmp .assign (dest), t);
+			return Algorithm .slerp (this, t1 .assign (dest), t);
+		},
+		squad: function (a, b, destination, t)
+		{
+			// We must use shortest path slerp to prevent flipping.  Also see spline.
+
+			return Algorithm .slerp (Algorithm .slerp (this, t1 .assign (destination), t),
+                                  Algorithm .slerp (t2 .assign (a), t3 .assign (b), t),
+                                  2 * t * (1 - t));
 		},
 		toString: function ()
 		{
@@ -16215,18 +14212,17 @@ function ($, Vector3, Algorithm)
 		},
 		slerp: function (source, dest, t)
 		{
-			return Algorithm .slerp (source .copy (), tmp .assign (dest), t);
+			return Algorithm .slerp (source .copy (), t2 .assign (dest), t);
 		},
-		/*
-
-		!!! Algorithm .slerp is in place.
-
 		squad: function (source, a, b, destination, t)
 		{
 			// We must use shortest path slerp to prevent flipping.  Also see spline.
 
-			return Algorithm .slerp (Algorithm .slerp (source, destination, t), Algorithm .slerp (a, b, t), 2 * t * (1 - t));
+			return Algorithm .slerp (Algorithm .slerp (source .copy (), t1 .assign (destination), t),
+                                  Algorithm .slerp (t2 .assign (a), t3 .assign (b), t),
+                                  2 * t * (1 - t));
 		},
+		/*
 		bezier: function (q0, a, b, q1, t)
 		{
 			var q11 = Algorithm .slerp (q0,  a, t);
@@ -16235,30 +14231,43 @@ function ($, Vector3, Algorithm)
 
 			return Algorithm .slerp (Algorithm .slerp (q11, q12, t), Algorithm .slerp (q12, q13, t), t);
 		},
-		spline: function (q0, q1, q2)
+		*/
+		spline: function (Q0, Q1, Q2)
 		{
+			q0 .assign (Q0);
+			q1 .assign (Q1);
+			q2 .assign (Q2);
+
 			// If the dot product is smaller than 0 we must negate the quaternion to prevent flipping. If we negate all
 			// the terms we get a different quaternion but it represents the same rotation.
 
 			if (q0 .dot (q1) < 0)
-				q0 = Quaternion .negate (q0);
+				q0 .negate ();
 
 			if (q2 .dot (q1) < 0)
-				q2 = Quaternion .negate (q2);
+				q2 .negate ();
 
-			var q1_i = Quaternion .inverse (q1);
+			q1_i .assign (q1) .inverse ();
 
 			// The result must be normalized as it will be used in slerp and we can only slerp normalized vectors.
 
-			return Quaternion .multiply (q1,
-				Quaternion .multiply (q1_i, q0) .log () .add (Quaternion .multiply (q1_i, q2) .log ()) .divide (-4) .exp ()
+			return q1 .multRight (
+				t1 .assign (q1_i) .multRight (q0) .log () .add (t2 .assign (q1_i) .multRight (q2) .log ()) .divide (-4) .exp ()
 			)
-			.normalize ();
+			.normalize () .copy ();
 		},
-		*/
 	});
 
-	var tmp = new Quaternion (0, 0, 0, 1);
+	var
+		t1 = new Quaternion (0, 0, 0, 1),
+		t2 = new Quaternion (0, 0, 0, 1),
+		t3 = new Quaternion (0, 0, 0, 1);
+	
+	var
+		q0   = new Quaternion (0, 0, 0, 1),
+		q1   = new Quaternion (0, 0, 0, 1),
+		q2   = new Quaternion (0, 0, 0, 1),
+		q1_i = new Quaternion (0, 0, 0, 1);
 
 	return Quaternion;
 });
@@ -16289,7 +14298,7 @@ function ($,
 		cv       = new Vector3 (0, 0, 0),
 		t        = new Vector3 (0, 0, 0),
 		identity = new Vector4 (0, 0, 1, 0),
-		result   = new Vector3 (0, 0, 0, 0);
+		result   = new Vector4 (0, 0, 0, 0);
 
 	function Rotation4 (x, y, z, angle)
 	{
@@ -16480,9 +14489,15 @@ function ($,
 			this .value .slerp (dest .value, t);
 			return this;
 		},
+		squad: function (a ,b, dest, t)
+		{
+			this .value .squad (a .value, b .value, dest .value, t);
+			return this;
+		},
 		toString: function ()
 		{
 			var r = this .get ();
+
 			return r .x + " " +
 			       r .y + " " +
 			       r .z + " " +
@@ -16603,7 +14618,7 @@ function ($,
 			copy .value = Quaternion .bezier (source .value, a, b, destination .value, t);
 			return copy;
 		},
-		spline: function (q0, a1, q2)
+		spline: function (q0, q1, q2)
 		{
 			var copy = Object .create (this .prototype);
 			copy .value = Quaternion .spline (q0 .value, q1 .value, q2 .value);
@@ -17552,225 +15567,78 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 define ('cobweb/Fields/SFMatrix4',[
 	"jquery",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFMatrixPrototypeTemplate",
 	"cobweb/Fields/SFVec3",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
 ],
-function ($, X3DField, SFVec3, X3DConstants, Matrix4, Vector3, Rotation4)
+function ($, X3DField, SFMatrixPrototypeTemplate, SFVec3, X3DConstants, Matrix4)
 {
 ;
 
-	var
-		SFVec3d = SFVec3 .SFVec3d,
-		SFVec3f = SFVec3 .SFVec3f;
-
-	function SFMatrix4 (m)
+	function SFMatrix4Template (TypeName, Type, SFVec3)
 	{
-		if (m .length)
+		function SFMatrix4 (m00, m01, m02, m03,
+	                       m10, m11, m12, m13,
+	                       m20, m21, m22, m23,
+	                       m30, m31, m32, m33)
 		{
-			if (m [0] instanceof Matrix4)
-				return X3DField .call (this, m [0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Matrix4)
+					return X3DField .call (this, arguments [0]);
+	
+				return X3DField .call (this, new Matrix4 (+m00, +m01, +m02, +m03,
+	                                                   +m10, +m11, +m12, +m13,
+	                                                   +m20, +m21, +m22, +m23,
+	                                                   +m30, +m31, +m32, +m33));
+			}
 
-			return X3DField .call (this, new Matrix4 (+m[ 0], +m[ 1], +m[ 2], +m[ 3],
-                                                   +m[ 4], +m[ 5], +m[ 6], +m[ 7],
-                                                   +m[ 8], +m[ 9], +m[10], +m[11],
-                                                   +m[12], +m[13], +m[14], +m[15]));
+			return X3DField .call (this, new Matrix4 ());
 		}
-
-		return X3DField .call (this, new Matrix4 ());
-	}
-
-	SFMatrix4 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFMatrix4,
-		copy: function ()
+	
+		SFMatrix4 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFMatrixPrototypeTemplate (Matrix4, SFVec3),
 		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (matrix)
-		{
-			return this .getValue () .equals (matrix .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		setTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : null;
-			rotation         = rotation         ? rotation         .getValue () : null;
-			scale            = scale            ? scale            .getValue () : null;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
-			center           = center           ? center           .getValue () : null;
-
-			this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
-		},
-		getTransform: function (translation, rotation, scale, scaleOrientation, center)
-		{
-			translation      = translation      ? translation      .getValue () : null;
-			rotation         = rotation         ? rotation         .getValue () : null;
-			scale            = scale            ? scale            .getValue () : null;
-			scaleOrientation = scaleOrientation ? scaleOrientation .getValue () : null;
-			center           = center           ? center           .getValue () : null;
-
-			this .getValue () .get (translation, rotation, scale, scaleOrientation, center);
-		},
-		transpose: function ()
-		{
-			return new (this .constructor) (Matrix4 .transpose (this .getValue ()));
-		},
-		inverse: function ()
-		{
-			return new (this .constructor) (Matrix4 .inverse (this .getValue ()));
-		},
-		multLeft: function (matrix)
-		{
-			return new (this .constructor) (Matrix4 .multLeft (this .getValue (), matrix .getValue ()));
-		},
-		multRight: function (matrix)
-		{
-			return new (this .constructor) (Matrix4 .multRight (this .getValue (), matrix .getValue ()));
-		},
-		multVecMatrix: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multVecMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixVec: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multMatrixVec (vector .getValue () .copy ()));
-		},
-		multDirMatrix: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multDirMatrix (vector .getValue () .copy ()));
-		},
-		multMatrixDir: function (vector)
-		{
-			return new (this .Vector3) (this .getValue () .multMatrixDir (vector .getValue () .copy ()));
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	function defineProperty (i)
-	{
-		Object .defineProperty (SFMatrix4 .prototype, i,
-		{
-			get: function ()
+			constructor: SFMatrix4,
+			getTypeName: function ()
 			{
-				return this .getValue () [i];
+				return TypeName;
 			},
-			set: function (value)
+			getType: function ()
 			{
-				this .getValue () [i] = value;
-				this .addEvent ();
+				return Type;
 			},
-			enumerable: false,
-			configurable: false
 		});
+	
+		function defineProperty (i)
+		{
+			Object .defineProperty (SFMatrix4 .prototype, i,
+			{
+				get: function ()
+				{
+					return this .getValue () [i];
+				},
+				set: function (value)
+				{
+					this .getValue () [i] = value;
+					this .addEvent ();
+				},
+				enumerable: false,
+				configurable: false
+			});
+		}
+	
+		for (var i = 0; i < Matrix4 .prototype .length; ++ i)
+			defineProperty (i);
+
+		return SFMatrix4;
 	}
-
-	for (var i = 0; i < Matrix4 .prototype .length; ++ i)
-		defineProperty (i);
-
-	/*
-	 *  SFMatrix4d
-	 */
-
-	function SFMatrix4d (m00, m01, m02, m03,
-	                     m10, m11, m12, m13,
-	                     m20, m21, m22, m23,
-	                     m30, m31, m32, m33)
-	{
-		if (this instanceof SFMatrix4d)
-			return SFMatrix4 .call (this, arguments);
-		
-		return SFMatrix4 .call (Object .create (SFMatrix4d .prototype), arguments);
-	}
-
-	SFMatrix4d .prototype = $.extend (Object .create (SFMatrix4 .prototype),
-	{
-		constructor: SFMatrix4d,
-		Vector3: SFVec3d,
-		getTypeName: function ()
-		{
-			return "SFMatrix4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix4d;
-		},
-	});
-
-	/*
-	 *  SFMatrix4f
-	 */
-
-	function SFMatrix4f (m00, m01, m02, m03,
-	                     m10, m11, m12, m13,
-	                     m20, m21, m22, m23,
-	                     m30, m31, m32, m33)
-	{
-		if (this instanceof SFMatrix4f)
-			return SFMatrix4 .call (this, arguments);
-		
-		return SFMatrix4 .call (Object .create (SFMatrix4f .prototype), arguments);
-	}
-
-	SFMatrix4f .prototype = $.extend (Object .create (SFMatrix4 .prototype),
-	{
-		constructor: SFMatrix4f,
-		Vector3: SFVec3f,
-		getTypeName: function ()
-		{
-			return "SFMatrix4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFMatrix4f;
-		},
-	});
-
-	/*
-	 *  VrmlMatrix
-	 */
-
-	function VrmlMatrix (m00, m01, m02, m03,
-	                     m10, m11, m12, m13,
-	                     m20, m21, m22, m23,
-	                     m30, m31, m32, m33)
-	{
-		if (this instanceof VrmlMatrix)
-			SFMatrix4 .call (this, arguments);
-		
-		return SFMatrix4 .call (Object .create (VrmlMatrix .prototype), arguments);
-	}
-
-	VrmlMatrix .prototype = $.extend (Object .create (SFMatrix4 .prototype),
-	{
-		constructor: VrmlMatrix,
-		Vector3: SFVec3f,
-		getTypeName: function ()
-		{
-			return "VrmlMatrix";
-		},
-		getType: function ()
-		{
-			return X3DConstants .VrmlMatrix;
-		},
-	});
 
 	return {
-		SFMatrix4d: SFMatrix4d,
-		SFMatrix4f: SFMatrix4f,
-		VrmlMatrix: VrmlMatrix,
+		SFMatrix4d: SFMatrix4Template ("SFMatrix4d", X3DConstants .SFMatrix4d, SFVec3 .SFVec3d),
+		SFMatrix4f: SFMatrix4Template ("SFMatrix4f", X3DConstants .SFMatrix4f, SFVec3 .SFVec3f),
+		VrmlMatrix: SFMatrix4Template ("VrmlMatrix", X3DConstants .VrmlMatrix, SFVec3 .SFVec3f),
 	};
 });
 
@@ -17799,10 +15667,10 @@ function ($, X3DField, X3DConstants)
 
 				// Specification conform would be: accessType & X3DConstants .outputOnly.
 				// But we allow read access to plain fields, too.
-				if (accessType !== X3DConstants .inputOnly)
-					return field .valueOf ();
+				if (accessType === X3DConstants .inputOnly)
+					return undefined;
 
-				return undefined;
+				return field .valueOf ();
 			}
 			catch (error)
 			{
@@ -17830,7 +15698,7 @@ function ($, X3DField, X3DConstants)
 			}
 			catch (error)
 			{
-				//console .log (target, key, error);
+				console .error (target, key, error);
 				return false;
 			}
 		},
@@ -17874,7 +15742,19 @@ function ($, X3DField, X3DConstants)
 		},
 		set: function (value)
 		{
-			X3DField .prototype .set .call (this, value ? value : null);
+			var current = this .getValue ();
+
+			if (current)
+				current .removeParent (this);
+
+			if (value)
+			{
+				value .addParent (this);
+
+				X3DField .prototype .set .call (this, value);
+			}
+			else
+				X3DField .prototype .set .call (this, null);
 		},
 		getNodeTypeName: function ()
 		{
@@ -17914,6 +15794,7 @@ function ($, X3DField, X3DConstants)
 
 	return SFNode;
 });
+
 
 define ('cobweb/Fields/SFRotation',[
 	"jquery",
@@ -18005,125 +15886,76 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		},
 	});
 
-	Object .defineProperty (SFRotation .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var angle = {
+			get: function ()
+			{
+				return this .getValue () .angle;
+			},
+			set: function (value)
+			{
+				this .getValue () .angle = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFRotation .prototype, "x",     x);
+		Object .defineProperty (SFRotation .prototype, "y",     y);
+		Object .defineProperty (SFRotation .prototype, "z",     z);
+		Object .defineProperty (SFRotation .prototype, "angle", angle);
 
-	Object .defineProperty (SFRotation .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+		x     .enumerable = false;
+		y     .enumerable = false;
+		z     .enumerable = false;
+		angle .enumerable = false;
 
-	Object .defineProperty (SFRotation .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "angle",
-	{
-		get: function ()
-		{
-			return this .getValue () .angle;
-		},
-		set: function (value)
-		{
-			this .getValue () .angle = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFRotation .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .angle;
-		},
-		set: function (value)
-		{
-			this .getValue () .angle = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
+		Object .defineProperty (SFRotation .prototype, "0", x);
+		Object .defineProperty (SFRotation .prototype, "1", y);
+		Object .defineProperty (SFRotation .prototype, "2", z);
+		Object .defineProperty (SFRotation .prototype, "3", angle);
 
 	return SFRotation;
 });
@@ -18251,253 +16083,121 @@ function ($, X3DField, X3DConstants)
 
 define ('cobweb/Fields/SFVec4',[
 	"jquery",
-	"standard/Math/Numbers/Vector4",
 	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
-function ($, Vector4, X3DField, X3DConstants)
+function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector4)
 {
 
 
-	function SFVec4 (v)
+	function SFVec4Template (TypeName, Type)
 	{
-		if (v .length)
+		function SFVec4 (x, y, z, w)
 		{
-			if (v[0] instanceof Vector4)
-				return X3DField .call (this, v[0]);
+			if (arguments .length)
+			{
+				if (arguments [0] instanceof Vector4)
+					return X3DField .call (this, arguments [0]);
 
-			return X3DField .call (this, new Vector4 (+v[0], +v[1], +v[2], +v[3]));
+				return X3DField .call (this, new Vector4 (+x, +y, +z, +w));
+			}
+
+			return X3DField .call (this, new Vector4 (0, 0, 0, 0));
 		}
-
-		return X3DField .call (this, new Vector4 (0, 0, 0, 0));
-	}
-
-	SFVec4 .prototype = $.extend (Object .create (X3DField .prototype),
-	{
-		constructor: SFVec4,
-		copy: function ()
-		{
-			return new (this .constructor) (this .getValue () .copy ());
-		},
-		equals: function (vector)
-		{
-			return this .getValue () .equals (vector .getValue ());
-		},
-		set: function (value)
-		{
-			this .getValue () .assign (value);
-		},
-		negate: function ()
-		{
-			return new (this .constructor) (Vector4 .negate (this .getValue () .copy ()));
-		},
-		add: function (vector)
-		{
-			return new (this .constructor) (Vector4 .add (this .getValue (), vector .getValue ()));
-		},
-		subtract: function (vector)
-		{
-			return new (this .constructor) (Vector4 .subtract (this .getValue (), vector .getValue ()));
-		},
-		multiply: function (value)
-		{
-			return new (this .constructor) (Vector4 .multiply (this .getValue (), value));
-		},
-		divide: function (value)
-		{
-			return new (this .constructor) (Vector4 .divide (this .getValue (), value));
-		},
-		dot: function (vector)
-		{
-			return this .getValue () .dot (vector .getValue ());
-		},
-		normalize: function (vector)
-		{
-			return new (this .constructor) (Vector4 .normalize (this .getValue ()));
-		},
-		length: function ()
-		{
-			return this .getValue () .abs ();
-		},
-		toString: function ()
-		{
-			return this .getValue () .toString ();
-		},
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "0",
-	{
-		get: function ()
-		{
-			return this .getValue () .x;
-		},
-		set: function (value)
-		{
-			this .getValue () .x = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "1",
-	{
-		get: function ()
-		{
-			return this .getValue () .y;
-		},
-		set: function (value)
-		{
-			this .getValue () .y = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "z",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "2",
-	{
-		get: function ()
-		{
-			return this .getValue () .z;
-		},
-		set: function (value)
-		{
-			this .getValue () .z = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "w",
-	{
-		get: function ()
-		{
-			return this .getValue () .w;
-		},
-		set: function (value)
-		{
-			this .getValue () .w = value;
-			this .addEvent ();
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (SFVec4 .prototype, "3",
-	{
-		get: function ()
-		{
-			return this .getValue () .w;
-		},
-		set: function (value)
-		{
-			this .getValue () .w = value;
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	/*
-	 *  SFVec4d
-	 */
-
-	function SFVec4d (x, y, z, w)
-	{
-	   if (this instanceof SFVec4d)
-			return SFVec4 .call (this, arguments);
 	
-	   return SFVec4 .call (Object .create (SFVec4d .prototype), arguments);
-	}
-
-	SFVec4d .prototype = $.extend (Object .create (SFVec4 .prototype),
-	{
-		constructor: SFVec4d,
-		getTypeName: function ()
+		SFVec4 .prototype = $.extend (Object .create (X3DField .prototype),
+			SFVecPrototypeTemplate (Vector4),
 		{
-			return "SFVec4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec4d;
-		},
-	});
-
-	/*
-	 *  SFVec4f
-	 */
-
-	function SFVec4f (x, y, z, w)
-	{
-	   if (this instanceof SFVec4f)
-			return SFVec4 .call (this, arguments);
+			constructor: SFVec4,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
 	
-	   return SFVec4 .call (Object .create (SFVec4f .prototype), arguments);
-	}
+		var x = {
+			get: function ()
+			{
+				return this .getValue () .x;
+			},
+			set: function (value)
+			{
+				this .getValue () .x = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var y = {
+			get: function ()
+			{
+				return this .getValue () .y;
+			},
+			set: function (value)
+			{
+				this .getValue () .y = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var z = {
+			get: function ()
+			{
+				return this .getValue () .z;
+			},
+			set: function (value)
+			{
+				this .getValue () .z = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		var w = {
+			get: function ()
+			{
+				return this .getValue () .w;
+			},
+			set: function (value)
+			{
+				this .getValue () .w = value;
+				this .addEvent ();
+			},
+			enumerable: true,
+			configurable: false
+		};
+	
+		Object .defineProperty (SFVec4 .prototype, "x", x);
+		Object .defineProperty (SFVec4 .prototype, "y", y);
+		Object .defineProperty (SFVec4 .prototype, "z", z);
+		Object .defineProperty (SFVec4 .prototype, "w", w);
+	
+		x .enumerable = false;
+		y .enumerable = false;
+		z .enumerable = false;
+		w .enumerable = false;
+	
+		Object .defineProperty (SFVec4 .prototype, "0", x);
+		Object .defineProperty (SFVec4 .prototype, "1", y);
+		Object .defineProperty (SFVec4 .prototype, "2", z);
+		Object .defineProperty (SFVec4 .prototype, "3", w);
 
-	SFVec4f .prototype = $.extend (Object .create (SFVec4 .prototype),
-	{
-		constructor: SFVec4f,
-		getTypeName: function ()
-		{
-			return "SFVec4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .SFVec4f;
-		},
-	});
+		return SFVec4;
+	}
 
 	return {
-		SFVec4d: SFVec4d,
-		SFVec4f: SFVec4f,
+		SFVec4d: SFVec4Template ("SFVec4d", X3DConstants .SFVec4d),
+		SFVec4f: SFVec4Template ("SFVec4f", X3DConstants .SFVec4f),
 	};
 });
 
@@ -18558,292 +16258,6 @@ function ($,
 		SFVec4f    = SFVec4 .SFVec4f;
 
 	/*
-	 *  MFBool
-	 */
-
-	function MFBool (value)
-	{
-		if (this instanceof MFBool)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFBool .prototype), arguments);
-	}
-
-	MFBool .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFBool,
-		ValueType: SFBool,
-		getTypeName: function ()
-		{
-			return "MFBool";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFBool;
-		},
-	});
-
-	/*
-	 *  MFColor
-	 */
-
-	function MFColor (value)
-	{
-		if (this instanceof MFColor)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFColor .prototype), arguments);
-	}
-
-	MFColor .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFColor,
-		ValueType: SFColor,
-		getTypeName: function ()
-		{
-			return "MFColor";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFColor;
-		},
-	});
-
-	/*
-	 *  MFColorRGBA
-	 */
-
-	function MFColorRGBA (value)
-	{
-		if (this instanceof MFColorRGBA)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFColorRGBA .prototype), arguments);
-	}
-
-	MFColorRGBA .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFColorRGBA,
-		ValueType: SFColorRGBA,
-		getTypeName: function ()
-		{
-			return "MFColorRGBA";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFColorRGBA;
-		},
-	});
-
-	/*
-	 *  MFDouble
-	 */
-
-	function MFDouble (value)
-	{
-		if (this instanceof MFDouble)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFDouble .prototype), arguments);
-	}
-
-	MFDouble .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFDouble,
-		ValueType: SFDouble,
-		getTypeName: function ()
-		{
-			return "MFDouble";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFDouble;
-		},
-	});
-
-	/*
-	 *  MFFloat
-	 */
-
-	function MFFloat (value)
-	{
-		if (this instanceof MFFloat)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFFloat .prototype), arguments);
-	}
-
-	MFFloat .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFFloat,
-		ValueType: SFFloat,
-		getTypeName: function ()
-		{
-			return "MFFloat";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFFloat;
-		},
-	});
-
-	/*
-	 *  MFImage
-	 */
-
-	function MFImage (value)
-	{
-		if (this instanceof MFImage)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFImage .prototype), arguments);
-	}
-
-	MFImage .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFImage,
-		ValueType: SFImage,
-		getTypeName: function ()
-		{
-			return "MFImage";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFImage;
-		},
-	});
-
-	/*
-	 *  MFInt32
-	 */
-
-	function MFInt32 (value)
-	{
-		if (this instanceof MFInt32)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFInt32 .prototype), arguments);
-	}
-
-	MFInt32 .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFInt32,
-		ValueType: SFInt32,
-		getTypeName: function ()
-		{
-			return "MFInt32";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFInt32;
-		},
-	});
-
-	/*
-	 *  MFMatrix3d
-	 */
-
-	function MFMatrix3d (value)
-	{
-		if (this instanceof MFMatrix3d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix3d .prototype), arguments);
-	}
-
-	MFMatrix3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix3d,
-		ValueType: SFMatrix3d,
-		getTypeName: function ()
-		{
-			return "MFMatrix3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix3d;
-		},
-	});
-
-	/*
-	 *  MFMatrix3f
-	 */
-
-	function MFMatrix3f (value)
-	{
-		if (this instanceof MFMatrix3f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix3f .prototype), arguments);
-	}
-
-	MFMatrix3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix3f,
-		ValueType: SFMatrix3f,
-		getTypeName: function ()
-		{
-			return "MFMatrix3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix3f;
-		},
-	});
-
-	/*
-	 *  MFMatrix4d
-	 */
-
-	function MFMatrix4d (value)
-	{
-		if (this instanceof MFMatrix4d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix4d .prototype), arguments);
-	}
-
-	MFMatrix4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix4d,
-		ValueType: SFMatrix4d,
-		getTypeName: function ()
-		{
-			return "MFMatrix4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix4d;
-		},
-	});
-
-	/*
-	 *  MFMatrix4f
-	 */
-
-	function MFMatrix4f (value)
-	{
-		if (this instanceof MFMatrix4f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFMatrix4f .prototype), arguments);
-	}
-
-	MFMatrix4f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFMatrix4f,
-		ValueType: SFMatrix4f,
-		getTypeName: function ()
-		{
-			return "MFMatrix4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFMatrix4f;
-		},
-	});
-
-	/*
 	 *  MFNode
 	 */
 
@@ -18890,264 +16304,57 @@ function ($,
 			return copy;
 		},
 	});
-
-	/*
-	 *  MFRotation
-	 */
-
-	function MFRotation (value)
+	
+	function MFFieldTemplate (TypeName, Type, SFField)
 	{
-		if (this instanceof MFRotation)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFRotation .prototype), arguments);
+		function MFVec (value)
+		{
+			if (this instanceof MFVec)
+				return X3DArrayField .call (this, arguments);
+			
+			return X3DArrayField .call (Object .create (MFVec .prototype), arguments);
+		}
+	
+		MFVec .prototype = $.extend (Object .create (X3DArrayField .prototype),
+		{
+			constructor: MFVec,
+			ValueType: SFField,
+			getTypeName: function ()
+			{
+				return TypeName;
+			},
+			getType: function ()
+			{
+				return Type;
+			},
+		});
+
+		return MFVec;
 	}
-
-	MFRotation .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFRotation,
-		ValueType: SFRotation,
-		getTypeName: function ()
-		{
-			return "MFRotation";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFRotation;
-		},
-	});
-
-	/*
-	 *  MFString
-	 */
-
-	function MFString (value)
-	{
-		if (this instanceof MFString)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFString .prototype), arguments);
-	}
-
-	MFString .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFString,
-		ValueType: SFString,
-		getTypeName: function ()
-		{
-			return "MFString";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFString;
-		},
-	});
-
-	/*
-	 *  MFTime
-	 */
-
-	function MFTime (value)
-	{
-		if (this instanceof MFTime)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFTime .prototype), arguments);
-	}
-
-	MFTime .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFTime,
-		ValueType: SFTime,
-		getTypeName: function ()
-		{
-			return "MFTime";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFTime;
-		},
-	});
-
-	/*
-	 *  MFVec2d
-	 */
-
-	function MFVec2d (value)
-	{
-		if (this instanceof MFVec2d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec2d .prototype), arguments);
-	}
-
-	MFVec2d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec2d,
-		ValueType: SFVec2d,
-		getTypeName: function ()
-		{
-			return "MFVec2d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec2d;
-		},
-	});
-
-	/*
-	 *  MFVec2f
-	 */
-
-	function MFVec2f (value)
-	{
-		if (this instanceof MFVec2f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec2f .prototype), arguments);
-	}
-
-	MFVec2f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec2f,
-		ValueType: SFVec2f,
-		getTypeName: function ()
-		{
-			return "MFVec2f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec2f;
-		},
-	});
-
-	/*
-	 *  MFVec3d
-	 */
-
-	function MFVec3d (value)
-	{
-		if (this instanceof MFVec3d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec3d .prototype), arguments);
-	}
-
-	MFVec3d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec3d,
-		ValueType: SFVec3d,
-		getTypeName: function ()
-		{
-			return "MFVec3d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec3d;
-		},
-	});
-
-	/*
-	 *  MFVec3f
-	 */
-
-	function MFVec3f (value)
-	{
-		if (this instanceof MFVec3f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec3f .prototype), arguments);
-	}
-
-	MFVec3f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec3f,
-		ValueType: SFVec3f,
-		getTypeName: function ()
-		{
-			return "MFVec3f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec3f;
-		},
-	});
-
-	/*
-	 *  MFVec4d
-	 */
-
-	function MFVec4d (value)
-	{
-		if (this instanceof MFVec4d)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec4d .prototype), arguments);
-	}
-
-	MFVec4d .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec4d,
-		ValueType: SFVec4d,
-		getTypeName: function ()
-		{
-			return "MFVec4d";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec4d;
-		},
-	});
-
-	/*
-	 *  MFVec4f
-	 */
-
-	function MFVec4f (value)
-	{
-		if (this instanceof MFVec4f)
-			return X3DArrayField .call (this, arguments);
-		
-		return X3DArrayField .call (Object .create (MFVec4f .prototype), arguments);
-	}
-
-	MFVec4f .prototype = $.extend (Object .create (X3DArrayField .prototype),
-	{
-		constructor: MFVec4f,
-		ValueType: SFVec4f,
-		getTypeName: function ()
-		{
-			return "MFVec4f";
-		},
-		getType: function ()
-		{
-			return X3DConstants .MFVec4f;
-		},
-	});
 
 	var ArrayFields =
 	{
-		MFBool:      MFBool,
-		MFColor:     MFColor,
-		MFColorRGBA: MFColorRGBA,
-		MFDouble:    MFDouble,
-		MFFloat:     MFFloat,
-		MFImage:     MFImage,
-		MFInt32:     MFInt32,
-		MFMatrix3d:  MFMatrix3d,
-		MFMatrix3f:  MFMatrix3f,
-		MFMatrix4d:  MFMatrix4d,
-		MFMatrix4f:  MFMatrix4f,
+		MFBool:      MFFieldTemplate ("MFBool",      X3DConstants .MFBool,      SFBool),
+		MFColor:     MFFieldTemplate ("MFColor",     X3DConstants .MFColor,     SFColor),
+		MFColorRGBA: MFFieldTemplate ("MFColorRGBA", X3DConstants .MFColorRGBA, SFColorRGBA),
+		MFDouble:    MFFieldTemplate ("MFDouble",    X3DConstants .MFDouble,    SFDouble),
+		MFFloat:     MFFieldTemplate ("MFFloat",     X3DConstants .MFFloat,     SFFloat),
+		MFImage:     MFFieldTemplate ("MFImage",     X3DConstants .MFImage,     SFImage),
+		MFInt32:     MFFieldTemplate ("MFInt32",     X3DConstants .MFInt32,     SFInt32),
+		MFMatrix3d:  MFFieldTemplate ("MFMatrix3d",  X3DConstants .MFMatrix3d,  SFMatrix3d),
+		MFMatrix3f:  MFFieldTemplate ("MFMatrix3f",  X3DConstants .MFMatrix3f,  SFMatrix3f),
+		MFMatrix4d:  MFFieldTemplate ("MFMatrix4d",  X3DConstants .MFMatrix4d,  SFMatrix4d),
+		MFMatrix4f:  MFFieldTemplate ("MFMatrix4f",  X3DConstants .MFMatrix4f,  SFMatrix4f),
 		MFNode:      MFNode,
-		MFRotation:  MFRotation,
-		MFString:    MFString,
-		MFTime:      MFTime,
-		MFVec2d:     MFVec2d,
-		MFVec2f:     MFVec2f,
-		MFVec3d:     MFVec3d,
-		MFVec3f:     MFVec3f,
-		MFVec4d:     MFVec4d,
-		MFVec4f:     MFVec4f,
+		MFRotation:  MFFieldTemplate ("MFRotation",  X3DConstants .MFRotation,  SFRotation),
+		MFString:    MFFieldTemplate ("MFString",    X3DConstants .MFString,    SFString),
+		MFTime:      MFFieldTemplate ("MFTime",      X3DConstants .MFTime,      SFTime),
+		MFVec2d:     MFFieldTemplate ("MFVec2d",     X3DConstants .MFVec2d,     SFVec2d),
+		MFVec2f:     MFFieldTemplate ("MFVec2f",     X3DConstants .MFVec2f,     SFVec2f),
+		MFVec3d:     MFFieldTemplate ("MFVec3d",     X3DConstants .MFVec3d,     SFVec3d),
+		MFVec3f:     MFFieldTemplate ("MFVec3f",     X3DConstants .MFVec3f,     SFVec3f),
+		MFVec4d:     MFFieldTemplate ("MFVec4d",     X3DConstants .MFVec4d,     SFVec4d),
+		MFVec4f:     MFFieldTemplate ("MFVec4f",     X3DConstants .MFVec4f,     SFVec4f),
 	};
 
 	Object .preventExtensions (ArrayFields);
@@ -19302,8 +16509,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 	});
 
-	Object .defineProperty (SFImage .prototype, "width",
-	{
+	var width = {
 		get: function ()
 		{
 			return this .getValue () .getWidth ();
@@ -19315,25 +16521,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "x",
-	{
-		get: function ()
-		{
-			return this .getValue () .getWidth ();
-		},
-		set: function (value)
-		{
-			this .getValue () .setWidth (value);
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFImage .prototype, "height",
-	{
+	var height = {
 		get: function ()
 		{
 			return this .getValue () .getHeight ();
@@ -19345,25 +16535,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "y",
-	{
-		get: function ()
-		{
-			return this .getValue () .getHeight ();
-		},
-		set: function (value)
-		{
-			this .getValue () .setHeight (value);
-			this .addEvent ();
-		},
-		enumerable: false,
-		configurable: false
-	});
-
-	Object .defineProperty (SFImage .prototype, "comp",
-	{
+	var comp = {
 		get: function ()
 		{
 			return this .getValue () .getComp ();
@@ -19375,10 +16549,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
 
-	Object .defineProperty (SFImage .prototype, "array",
-	{
+	var array = {
 		get: function ()
 		{
 			return this .getValue () .getArray ();
@@ -19390,7 +16563,18 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		enumerable: true,
 		configurable: false
-	});
+	};
+
+	Object .defineProperty (SFImage .prototype, "width",  width);
+	Object .defineProperty (SFImage .prototype, "height", height);
+	Object .defineProperty (SFImage .prototype, "comp",   comp);
+	Object .defineProperty (SFImage .prototype, "array",  array);
+
+	width  .enumerable = false;
+	height .enumerable = false;
+
+	Object .defineProperty (SFImage .prototype, "x", width);
+	Object .defineProperty (SFImage .prototype, "y", height);
 
 	return SFImage;
 });
@@ -19470,6 +16654,12 @@ function ($,
 
 	return Fields;
 });
+
+define ('cobweb/Browser/VERSION',[],function ()
+{
+	return "1.22";
+});
+
 
 define ('cobweb/Base/X3DEventObject',[
 	"jquery",
@@ -19553,6 +16743,7 @@ define ('cobweb/Basic/X3DBaseNode',[
 	"cobweb/Base/X3DEventObject",
 	"cobweb/Base/Events",
 	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
 ],
@@ -19560,41 +16751,45 @@ function ($,
           X3DEventObject,
           Events,
           X3DFieldDefinition,
+          FieldDefinitionArray,
           Fields,
           X3DConstants)
 {
 
 
-	function X3DBaseNode (browser, executionContext)
+	function X3DBaseNode (executionContext)
 	{
 		if (this .hasOwnProperty ("executionContext"))
 			return;
 
-		X3DEventObject .call (this, browser);
+		X3DEventObject .call (this, executionContext .getBrowser ());
 
 		this .executionContext  = executionContext;
 		this .type              = [ X3DConstants .X3DBaseNode ];
 		this .fields            = { };
-		this .preDefinedFields  = { };
+		this .predefinedFields  = { };
 		this .userDefinedFields = { };
-		
-		this .addChildren ("isLive", new Fields .SFBool (true));
 
-		var fieldDefinitions = this .fieldDefinitions;
+		// Setup fields.
+
+		if (this .hasUserDefinedFields ())
+			this .fieldDefinitions = new FieldDefinitionArray (this .fieldDefinitions .getValue () .slice ());
+
+		var fieldDefinitions = this .fieldDefinitions .getValue ();
 
 		for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			this .addField (fieldDefinitions [i]);
+
+		// Add children.
+
+		this .addChildren ("isLive", new Fields .SFBool (true));
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
 	{
 		constructor: X3DBaseNode,
-		fieldDefinitions: [ ],
-		$initialized: false,
-		create: function (executionContext)
-		{
-			return new (this .constructor) (executionContext);
-		},
+		fieldDefinitions: new FieldDefinitionArray ([ ]),
+		_initialized: false,
 		getScene: function ()
 		{
 			var executionContext = this .executionContext;
@@ -19622,7 +16817,7 @@ function ($,
 		},
 		isInitialized: function ()
 		{
-			return this .$initialized;
+			return this ._initialized;
 		},
 		isLive: function ()
 		{
@@ -19630,12 +16825,12 @@ function ($,
 		},
 		setup: function ()
 		{
-			if (this .$initialized)
+			if (this ._initialized)
 				return;
 
-			this .$initialized = true;
+			this ._initialized = true;
 
-			var fieldDefinitions = this .fieldDefinitions;
+			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
 			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
@@ -19648,6 +16843,10 @@ function ($,
 		},
 		initialize: function () { },
 		eventsProcessed: function () { },
+		create: function (executionContext)
+		{
+			return new (this .constructor) (executionContext);
+		},
 		copy: function (executionContext)
 		{
 			// First try to get a named node with the node's name.
@@ -19673,38 +16872,52 @@ function ($,
 
 			// Default fields
 
-			for (var i = 0, length = copy .fieldDefinitions .length; i < length; ++ i)
+			var predefinedFields = this .getPredefinedFields ();
+
+			for (var name in predefinedFields)
 			{
 				try
 				{
 					var
-						fieldDefinition = copy .fieldDefinitions [i],
-						field1          = this .preDefinedFields [fieldDefinition .name],
-						field2          = copy .getField (fieldDefinition .name);
-						
-					field2 .setSet (field1 .getSet ());
+						sourceField = predefinedFields [name],
+						destfield   = copy .getField (name);
 
-					if (field1 .hasReferences ())
+					destfield .setSet (sourceField .getSet ());
+
+					if (sourceField .hasReferences ())
 					{
-						// IS relationship
-						for (var id in field1 .getReferences ())
-						{
-							var originalReference = field1 .getReferences () [id];
+						var references = sourceField .getReferences ();
 
+						// IS relationship
+						for (var id in references)
+						{
 							try
 							{
-								field2 .addReference (executionContext .getField (originalReference .getName ()));
+								var originalReference = references [id];
+	
+								destfield .addReference (executionContext .getField (originalReference .getName ()));
 							}
 							catch (error)
 							{
-								console .log (error .message);
+								console .error (error .message);
 							}
 						}
 					}
 					else
 					{
-						if (field1 .getAccessType () & X3DConstants .initializeOnly)
-							field2 .set (field1 .copy (executionContext) .getValue ());
+						if (sourceField .getAccessType () & X3DConstants .initializeOnly)
+						{
+							switch (sourceField .getType ())
+							{
+								case X3DConstants .SFNode:
+								case X3DConstants .MFNode:
+									destfield .set (sourceField .copy (executionContext) .getValue ());
+									break;
+								default:
+									destfield .set (sourceField .getValue ());
+									break;
+							}
+						}
 					}
 				}
 				catch (error)
@@ -19715,33 +16928,37 @@ function ($,
 
 			// User-defined fields
 
-			for (var name in this .userDefinedFields)
+			var userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
 				var
-					field1 = this .userDefinedFields [name],
-					field2 = field1 .copy (executionContext);
+					sourceField = userDefinedFields [name],
+					destfield   = sourceField .copy (executionContext);
 
-				copy .addUserDefinedField (field1 .getAccessType (),
-				                           field1 .getName (),
-				                           field2);
+				copy .addUserDefinedField (sourceField .getAccessType (),
+				                           sourceField .getName (),
+				                           destfield);
 
-				field2 .setSet (field1 .getSet ());
+				destfield .setSet (sourceField .getSet ());
 
-				if (field1 .hasReferences ())
+				if (sourceField .hasReferences ())
 				{
 					// IS relationship
 
-					for (var id in field1 .getReferences ())
-					{
-						var originalReference = field1 .getReferences () [id];
+					var references = sourceField .getReferences ();
 
+					for (var id in references)
+					{
 						try
 						{
-							field2 .addReference (executionContext .getField (originalReference .getName ()));
+							var originalReference = references [id];
+	
+							destfield .addReference (executionContext .getField (originalReference .getName ()));
 						}
 						catch (error)
 						{
-							console .log ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
+							console .error ("No reference '" + originalReference .getName () + "' inside execution context " + executionContext .getTypeName () + " '" + executionContext .getName () + "'.");
 						}
 					}
 				}
@@ -19752,7 +16969,7 @@ function ($,
 		},
 		addChildren: function (name, field)
 		{
-			for (var i = 0; i < arguments .length; i += 2)
+			for (var i = 0, length = arguments .length; i < length; i += 2)
 				this .addChild (arguments [i + 0], arguments [i + 1]);
 		},
 		addChild: function (name, field)
@@ -19780,28 +16997,32 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .addAlias (name, field, fieldDefinition .userDefined);
+			this .setField (name, field);
 		},
-		addAlias: function (name, field, userDefined)
+		setField: function (name, field, userDefined)
 		{
-			this .fields [name]           = field;
-			this .preDefinedFields [name] = field;
-
 			if (field .getAccessType () === X3DConstants .inputOutput)
 			{
 				this .fields ["set_" + name]     = field;
 				this .fields [name + "_changed"] = field;
 			}
 
+			this .fields [name] = field;
+
 			if (userDefined)
+			{
+				this .userDefinedFields [name] = field;
 				return;
+			}
+
+			this .predefinedFields [name] = field;
 
 			Object .defineProperty (this, name + "_",
 			{
 				get: function () { return this; } .bind (field),
 				set: field .setValue .bind (field),
 				enumerable: true,
-				configurable: false,
+				configurable: true, // false : non deleteable
 			});
 		},
 		removeField: function (name /*, completely */)
@@ -19819,7 +17040,7 @@ function ($,
 
 			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
-			for (var i = 0; i < fieldDefinitions .length; ++ i)
+			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
 				if (fieldDefinitions [i] .name === name)
 				{
@@ -19855,20 +17076,21 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field, true));
+			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field));
 
-			this .fields [name]            = field;
-			this .userDefinedFields [name] = field;
-
-			if (field .getAccessType () === X3DConstants .inputOutput)
-			{
-				this .fields ["set_" + name]     = field;
-				this .fields [name + "_changed"] = field;
-			}
+			this .setField (name, field, true);
 		},
 		getUserDefinedFields: function ()
 		{
 			return this .userDefinedFields;
+		},
+		getPredefinedFields: function ()
+		{
+			return this .predefinedFields;
+		},
+		getFields: function ()
+		{
+			return this .fields;
 		},
 		getCDATA: function ()
 		{
@@ -19896,6 +17118,8 @@ function ($,
 			return this .getTypeName () + " { }";
 		},
 	});
+
+	X3DBaseNode .prototype .addAlias = X3DBaseNode .prototype .setField;
 
 	return X3DBaseNode;
 });
@@ -20011,7 +17235,7 @@ function ($,
 	
 	function BrowserOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addAlias ("AntiAliased", this .Antialiased_);
 
@@ -20236,7 +17460,7 @@ function ($,
 	
 	function RenderingProperties (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	RenderingProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -20283,7 +17507,7 @@ function ($,
 
    function Notification (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	Notification .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -20744,7 +17968,7 @@ function ($,
 
 	function BrowserTimings (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("enabled", new SFBool ());
 	}
@@ -22740,7 +19964,7 @@ function ($,
 	
 	function ContextMenu (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
 	}
@@ -23115,15 +20339,17 @@ function (BrowserOptions,
 
 		// Get canvas & context.
 
-		var browser = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .element);
-		var loading = $("<div/>") .addClass ("cobweb-loading") .appendTo (browser);
-		var spinner = $("<div/>") .addClass ("cobweb-spinner") .appendTo (loading);
-		var canvas  = $("<div/>") .addClass ("cobweb-surface") .appendTo (browser);
+		var browser  = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .element);
+		var loading  = $("<div/>") .addClass ("cobweb-loading")  .appendTo (browser);
+		var spinner  = $("<div/>") .addClass ("cobweb-spinner")  .appendTo (loading);
+		var progress = $("<div/>") .addClass ("cobweb-progress") .appendTo (loading);
+		var canvas   = $("<div/>") .addClass ("cobweb-surface")  .appendTo (browser);
 
-		$("<div/>") .addClass ("cobweb-spinner-one") .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-two") .appendTo (spinner);
+		$("<div/>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
+		$("<div/>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
 		$("<div/>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-text") .text ("Lade 0 Dateien") .appendTo (spinner);
+		$("<div/>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
+		$("<div/>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div/>"));
 
 		this .loading = loading;
 		this .canvas  = $("<canvas/>") .prependTo (canvas);
@@ -23325,9 +20551,9 @@ function ($,
 {
 
 
-	function X3DNode (browser, executionContext)
+	function X3DNode (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNode);
 	}
@@ -23380,12 +20606,12 @@ function ($,
 {
 
 
-	function X3DChildNode (browser, executionContext)
+	function X3DChildNode (executionContext)
 	{
 		if (this .getExecutionContext ())
 			return;
 
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DChildNode);
 
@@ -23423,9 +20649,9 @@ function ($,
 {
 
 
-	function X3DSensorNode (browser, executionContext)
+	function X3DSensorNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSensorNode);
 	}
@@ -23452,9 +20678,9 @@ function ($,
 {
 
 
-	function X3DNetworkSensorNode (browser, executionContext)
+	function X3DNetworkSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNetworkSensorNode);
 	}
@@ -23521,7 +20747,7 @@ function ($,
 
 	function LoadSensor (executionContext)
 	{
-		X3DNetworkSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNetworkSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LoadSensor);
 
@@ -23709,18 +20935,6 @@ function ($,
 });
 
 
-
-
-define ('cobweb/Browser/Networking/urls',[],function ()
-{
-
-	
-	return {
-		provider:   "http://titania.create3000.de/cobweb",
-		fallback:   "https://crossorigin.me/",
-		fallbackRx: new RegExp ("^https://crossorigin.me/")
-	};
-});
 
 
 define ('standard/Networking/URI',[
@@ -24562,6 +21776,58 @@ function ($)
 })(typeof window === "undefined" ? this : window);
 
 
+define ('cobweb/Browser/Networking/urls',[
+	"jquery",
+	"cobweb/Browser/VERSION",
+	"standard/Networking/URI",
+	"lib/sprintf.js/src/sprintf",
+],
+function ($,
+          VERSION,
+          URI,
+          sprintf)
+{
+
+
+	var
+		MAJOR            = parseInt (VERSION),
+		cobwebExpression = /\/(?:cobweb\.min\.js|cobweb\.uncompressed\.js|cobweb\.js)$/,
+		script           = $("script") .filter (function (i, element) { return element .src .match (cobwebExpression); }),
+		scriptURL        = new URI (script [0] .src);
+
+	function componentUrl (name)
+	{
+		if (VERSION === String (parseFloat (VERSION)))
+		{
+			return [
+				scriptURL .transform (new URI (sprintf .sprintf ("components/%s.js", name))) .toString (),
+				sprintf .sprintf ("https://cdn.rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js", MAJOR, VERSION, name),
+				sprintf .sprintf ("http://cdn.rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",  MAJOR, VERSION, name),
+				sprintf .sprintf ("https://rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",     MAJOR, VERSION, name),
+				sprintf .sprintf ("http://rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",      MAJOR, VERSION, name),
+			];
+		}
+		else
+		{
+			return [
+				scriptURL .transform (new URI (sprintf .sprintf ("components/%s.js", name))) .toString (),
+				sprintf .sprintf ("https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js", name),
+				sprintf .sprintf ("http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js", name),
+				sprintf .sprintf ("https://rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js",     name),
+				sprintf .sprintf ("http://rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js",      name),
+			];
+		}
+	}
+
+	return {
+		providerUrl:       "http://titania.create3000.de/cobweb",
+		componentUrl:       componentUrl,
+		fallbackUrl:       "https://crossorigin.me/",
+		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
+	};
+});
+
+
 define ('cobweb/Browser/Networking/X3DNetworkingContext',[
 	"cobweb/Fields",
 	"cobweb/Components/Networking/LoadSensor",
@@ -24588,6 +21854,7 @@ function (Fields,
 		this .addChildren ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this);
+		this .loadingTotal   = 0;
 		this .loadingObjects = { };
 		this .location       = new URI (this .getElement () [0] .baseURI);
 		this .defaultScene   = this .createScene ();
@@ -24609,7 +21876,7 @@ function (Fields,
 		},
 		getProviderUrl: function ()
 		{
-			return urls .provider;
+			return urls .providerUrl;
 		},
 		doCaching: function ()
 		{
@@ -24651,6 +21918,7 @@ function (Fields,
 		{
 		   var id = loadCountId ++;
 
+			++ this .loadingTotal;
 		   this .loadingObjects [id] = true;
 			
 			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () + 1);
@@ -24682,10 +21950,13 @@ function (Fields,
 				this .getNotification () .string_ = string;
 
 			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
+
+			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
 		},
 		resetLoadCount: function ()
 		{
 			this .loadCount_     = 0;
+			this .loadingTotal   = 0;
 			this .loadingObjects = { };			   
 		},
 	};
@@ -24754,9 +22025,9 @@ function ($,
 {
 
 
-	function X3DAppearanceNode (browser, executionContext)
+	function X3DAppearanceNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DAppearanceNode);
 	}
@@ -24799,7 +22070,7 @@ function ($,
 
 	function Appearance (executionContext)
 	{
-		X3DAppearanceNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DAppearanceNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Appearance);
 
@@ -25047,9 +22318,9 @@ function ($,
 {
 
 
-	function X3DAppearanceChildNode (browser, executionContext)
+	function X3DAppearanceChildNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DAppearanceChildNode);
 	}
@@ -25076,9 +22347,9 @@ function ($,
 {
 
 
-	function X3DShaderNode (browser, executionContext)
+	function X3DShaderNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DShaderNode);
 	}
@@ -25170,7 +22441,7 @@ function ($,
 
 	var NULL = Fields .SFNode ();
 
-	function X3DProgrammableShaderObject (browser, executionContext)
+	function X3DProgrammableShaderObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DProgrammableShaderObject);
 	}
@@ -25215,12 +22486,17 @@ function ($,
 	
 					if (location)
 					{
-						field .uniformLocation_ = location;
+						field ._uniformLocation = location;
 
 						field .addInterest (this, "set_field__");
 
 						switch (field .getType ())
 						{
+							case X3DConstants .SFImage:
+							{
+								location .array = new Int32Array (3 + field .array .length);
+								break;
+							}
 							case X3DConstants .MFBool:
 							case X3DConstants .MFInt32:
 							{
@@ -25232,6 +22508,11 @@ function ($,
 							case X3DConstants .MFTime:
 							{
 								location .array = new Float32Array (this .getLocationLength (gl, program, field));
+								break;
+							}
+							case X3DConstants .MFImage:
+							{
+								location .array = new Int32Array (this .getImagesLength (field));
 								break;
 							}
 							case X3DConstants .MFMatrix3d:
@@ -25248,10 +22529,17 @@ function ($,
 							}
 							case X3DConstants .MFNode:
 							{
-								var locations = location .locations = new Array (this .getLocationLength (gl, program, field));
+								var array = field ._uniformLocation = [ ];
 
-								for (var i = 0, length = locations .length; i < length; ++ i)
-									locations [i] = name + "[" + i + "]";
+								for (var i = 0; ; ++ i)
+								{
+									var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+									if (location)
+										array [i] = location;
+									else
+										break;
+								}
 
 								break;
 							}
@@ -25304,7 +22592,7 @@ function ($,
 					{
 						case X3DConstants .SFNode:
 						{
-							this .removeNode (gl, program, field .uniformLocation_);
+							this .removeNode (gl, program, field ._uniformLocation);
 							break;
 						}
 						case X3DConstants .MFNode:
@@ -25344,49 +22632,66 @@ function ($,
 				case X3DConstants .SFBool:
 				case X3DConstants .SFInt32:
 				{
-					gl .uniform1i (field .uniformLocation_, field .getValue ());
+					gl .uniform1i (field ._uniformLocation, field .getValue ());
 					return;
 				}
 				case X3DConstants .SFColor:
 				{
 					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .r, value .g, value .b);
+					gl .uniform3f (field ._uniformLocation, value .r, value .g, value .b);
 					return;
 				}
 				case X3DConstants .SFColorRGBA:
 				{
 					var value = field .getValue ();
-					gl .uniform4f (field .uniformLocation_, value .r, value .g, value .b, value .a);
+					gl .uniform4f (field ._uniformLocation, value .r, value .g, value .b, value .a);
 					return;
 				}
 				case X3DConstants .SFDouble:
 				case X3DConstants .SFFloat:
 				case X3DConstants .SFTime:
 				{
-					gl .uniform1f (field .uniformLocation_, field .getValue ());
+					gl .uniform1f (field ._uniformLocation, field .getValue ());
 					return;
 				}
 				case X3DConstants .SFImage:
 				{
+					var
+						location = field ._uniformLocation,
+						array    = location .array,
+						pixels   = field .array .getValue (),
+						length   = 3 + pixels .length;
+
+					if (length !== array .length)
+						array = location .array = new Int32Array (length);
+
+					array [0] = field .width;
+					array [1] = field .height;
+					array [2] = field .comp;
+
+					for (var a = 3, p = 0, length = pixels .length; p < length; ++ p)
+						array [a ++] = pixels [p] .getValue ();
+
+					gl .uniform1iv (location, array);
 					return;
 				}
 				case X3DConstants .SFMatrix3d:
 				case X3DConstants .SFMatrix3f:
 				{
 					this .matrix3f .set (field .getValue ());
-					gl .uniformMatrix3fv (field .uniformLocation_, false, this .matrix3f);
+					gl .uniformMatrix3fv (field ._uniformLocation, false, this .matrix3f);
 					return;
 				}
 				case X3DConstants .SFMatrix4d:
 				case X3DConstants .SFMatrix4f:
 				{
 					this .matrix4f .set (field .getValue ());
-					gl .uniformMatrix4fv (field .uniformLocation_, false, this .matrix4f);
+					gl .uniformMatrix4fv (field ._uniformLocation, false, this .matrix4f);
 					return;
 				}
 				case X3DConstants .SFNode:
 				{
-					var location = field .uniformLocation_;
+					var location = field ._uniformLocation;
 
 					this .setNode (gl, program, location, field);
 					return;
@@ -25394,7 +22699,7 @@ function ($,
 				case X3DConstants .SFRotation:
 				{
 					var quat = field .getValue () .quat;
-					gl .uniform4f (field .uniformLocation_, quat .x, quat .y, quat .z, quat .w);
+					gl .uniform4f (field ._uniformLocation, quat .x, quat .y, quat .z, quat .w);
 					return;
 				}
 				case X3DConstants .SFString:
@@ -25405,21 +22710,21 @@ function ($,
 				case X3DConstants .SFVec2f:
 				{
 					var value = field .getValue ();
-					gl .uniform2f (field .uniformLocation_, value .x, value .y);
+					gl .uniform2f (field ._uniformLocation, value .x, value .y);
 					return;
 				}
 				case X3DConstants .SFVec3d:
 				case X3DConstants .SFVec3f:
 				{
 					var value = field .getValue ();
-					gl .uniform3f (field .uniformLocation_, value .x, value .y, value .z);
+					gl .uniform3f (field ._uniformLocation, value .x, value .y, value .z);
 					return;
 				}
 				case X3DConstants .SFVec4d:
 				case X3DConstants .SFVec4f:
 				{
 					var value = field .getValue ();
-					gl .uniform4f (field .uniformLocation_, value .x, value .y, value .z, value .w);
+					gl .uniform4f (field ._uniformLocation, value .x, value .y, value .z, value .w);
 					return;
 				}
 				case X3DConstants .MFBool:
@@ -25427,7 +22732,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						array [i] = value [i] .getValue ();
@@ -25435,14 +22740,14 @@ function ($,
 					for (var length = array .length; i < length; ++ i)
 						array [i] = 0;
 
-					gl .uniform1iv (field .uniformLocation_, array);
+					gl .uniform1iv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFColor:
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25456,14 +22761,14 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform3fv (field .uniformLocation_, array);
+					gl .uniform3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFColorRGBA:
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25478,7 +22783,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFDouble:
@@ -25487,7 +22792,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
 						array [i] = value [i] .getValue ();
@@ -25495,11 +22800,35 @@ function ($,
 					for (var length = array .length; i < length; ++ i)
 						array [i] = 0;
 
-					gl .uniform1fv (field .uniformLocation_, array);
+					gl .uniform1fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFImage:
 				{
+					var
+						value    = field .getValue (),
+						location = field ._uniformLocation,
+						array    = location .array,
+						length   = this .getImagesLength (field);
+
+					if (length !== array .length)
+						array = location .array = new Int32Array (length);
+
+					for (var i = 0, a = 0, length = value .length; i < length; ++ i)
+					{
+						var
+							value  = field [i],
+							pixels = value .array;
+
+						array [a ++] = value .width;
+						array [a ++] = value .height;
+						array [a ++] = value .comp;
+
+						for (var p = 0, length = pixels .length; p < length; ++ p)
+							array [a ++] = pixels [p] .getValue ();
+					}
+
+					gl .uniform1iv (location, array);
 					return;
 				}
 				case X3DConstants .MFMatrix3d:
@@ -25507,7 +22836,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25527,7 +22856,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniformMatrix3fv (field .uniformLocation_, array);
+					gl .uniformMatrix3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFMatrix4d:
@@ -25535,7 +22864,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25562,20 +22891,20 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniformMatrix4fv (field .uniformLocation_, array);
+					gl .uniformMatrix4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFNode:
 				{
 					var
 						value     = field .getValue (),
-						locations = field .uniformLocation_ .locations;
+						locations = field ._uniformLocation;
 
 					for (var i = 0, length = value .length; i < length; ++ i)
-						this .setNode (gl, program, gl .getUniformLocation (program, locations [i]), value [i]);
+						this .setNode (gl, program, locations [i], value [i]);
 
 					for (var length = locations .length; i < length; ++ i)
-						this .setNode (gl, program, gl .getUniformLocation (program, locations [i]), NULL);
+						this .setNode (gl, program, locations [i], NULL);
 
 					return;
 				}
@@ -25583,7 +22912,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25598,7 +22927,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFString:
@@ -25610,7 +22939,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25623,7 +22952,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform2fv (field .uniformLocation_, array);
+					gl .uniform2fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFVec3d:
@@ -25631,7 +22960,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25645,7 +22974,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform3fv (field .uniformLocation_, array);
+					gl .uniform3fv (field ._uniformLocation, array);
 					return;
 				}
 				case X3DConstants .MFVec4d:
@@ -25653,7 +22982,7 @@ function ($,
 				{
 					var
 						value = field .getValue (),
-						array = field .uniformLocation_ .array;
+						array = field ._uniformLocation .array;
 
 					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 					{
@@ -25668,7 +22997,7 @@ function ($,
 					for (var length = array .length; k < length; ++ k)
 						array [k] = 0;
 
-					gl .uniform4fv (field .uniformLocation_, array);
+					gl .uniform4fv (field ._uniformLocation, array);
 					return;
 				}
 			}
@@ -25688,7 +23017,7 @@ function ($,
 					}
 					else
 					{
-						this .getBrowser () .println ("Warning: Not enough combined texture units for uniform variable '", field .getName (), "' available.");
+						console .warn ("Not enough combined texture units for uniform variable '", field .getName (), "' available.");
 						return;
 					}
 				}
@@ -25719,6 +23048,17 @@ function ($,
 				gl .bindTexture (gl .TEXTURE_2D, null);
 				gl .activeTexture (gl .TEXTURE0);
 			}
+		},
+		getImagesLength: function (field)
+		{
+			var
+				images = field .getValue (),
+				length = 3 * images .length;
+
+			for (var i = 0, l = images .length; i < l; ++ i)
+				length += images [i] .array .length;
+
+			return length;
 		},
 		getLocationLength: function (gl, program, field)
 		{
@@ -25774,27 +23114,15 @@ function ($,
 
 	var shader = null;
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-		new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
-	];
-
 	function ComposedShader (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
-		X3DShaderNode               .call (this, executionContext .getBrowser (), executionContext);
-		X3DProgrammableShaderObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DShaderNode               .call (this, executionContext);
+		X3DProgrammableShaderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .ComposedShader);
 
 		this .loadSensor            = new LoadSensor (executionContext);
-		this .clipPlaneEnabled      = [ ];
-		this .clipPlaneVector       = [ ];
+		this .clipPlane             = [ ];
 		this .lightType             = [ ];
 		this .lightOn               = [ ];
 		this .lightColor            = [ ];
@@ -25812,10 +23140,19 @@ function ($,
 		X3DProgrammableShaderObject .prototype,
 	{
 		constructor: ComposedShader,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
+		]),
 		wireframe: false,
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
-		fog: null,
+		noClipPlane: new Float32Array (4),
+		fogNode: null,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
 		textureTypeArray: new Int32Array (MAX_TEXTURES),
@@ -25929,10 +23266,7 @@ function ($,
 			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
-			{
-				this .clipPlaneEnabled [i] = gl .getUniformLocation (program, "x3d_ClipPlaneEnabled[" + i + "]");
-				this .clipPlaneVector [i]  = gl .getUniformLocation (program, "x3d_ClipPlaneVector[" + i + "]");
-			}
+				this .clipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
 
 			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
 			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
@@ -26036,17 +23370,19 @@ function ($,
 					clipPlanes [i] .use (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
-					gl .uniform1i (this .clipPlaneEnabled [i], false);
+					gl .uniform4fv (this .clipPlane [i], this .noClipPlane);
 			}
 			else
-				gl .uniform1i (this .clipPlaneEnabled [0], false);
-
-			// Fog
-
-			if (context .fog !== this .fog)
 			{
-				this .fog = context .fog;
-				context .fog .use (gl, this);
+				gl .uniform4fv (this .clipPlane [0], this .noClipPlane);
+			}
+
+			// Fog, there is always one
+
+			if (context .fogNode !== this .fogNode)
+			{
+				this .fogNode = context .fogNode;
+				context .fogNode .use (gl, this);
 			}
 
 			// LineProperties
@@ -26181,7 +23517,7 @@ function ($,
 {
 
 
-	function X3DUrlObject (browser, executionContext)
+	function X3DUrlObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DUrlObject);
 		
@@ -26279,18 +23615,52 @@ function ($)
 });
 
 
-define ('cobweb/Configuration/ComponentInfoArray',[
+define ('cobweb/Configuration/ComponentInfo',[
 	"jquery",
-	"cobweb/Configuration/X3DInfoArray",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
 ],
-function ($, X3DInfoArray)
+function ($,
+          Fields,
+          X3DConstants)
 {
 
 
-	function ComponentInfoArray (array)
+	function ComponentInfo (browser, value)
 	{
-		var proxy = X3DInfoArray .call (this);
+		this .name        = value .name;
+		this .level       = value .level;
+		this .title       = value .title;
+		this .providerUrl = value .providerUrl;
 
+		Object .preventExtensions (this);
+		Object .freeze (this);
+		Object .seal (this);
+	}
+
+	$.extend (ComponentInfo .prototype,
+	{
+		constructor: ComponentInfo,
+	});
+
+	return ComponentInfo;
+});
+
+define ('cobweb/Configuration/ComponentInfoArray',[
+	"jquery",
+	"cobweb/Configuration/X3DInfoArray",
+	"cobweb/Configuration/ComponentInfo",
+],
+function ($, X3DInfoArray, ComponentInfo)
+{
+
+
+	function ComponentInfoArray (browser, array)
+	{
+		this .browser = browser;
+
+		var proxy = X3DInfoArray .call (this);
+	
 		if (array)
 		{
 			for (var i = 0, length = array .length; i < length; ++ i)
@@ -26303,9 +23673,174 @@ function ($, X3DInfoArray)
 	ComponentInfoArray .prototype = $.extend (Object .create (X3DInfoArray .prototype),
 	{
 		constructor: ComponentInfoArray,
+		addComponentInfo: function (value)
+		{
+			this .add (value .name, new ComponentInfo (this .browser, value));
+		}
 	});
 
 	return ComponentInfoArray;
+});
+
+
+define ('cobweb/Execution/ImportedNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DBaseNode,
+          X3DConstants)
+{
+
+
+	function ImportedNode (executionContext, inlineNode, exportedName, importedName)
+	{
+		X3DBaseNode .call (this, executionContext);
+
+		this .inlineNode   = inlineNode;
+		this .exportedName = exportedName;
+		this .importedName = importedName;
+		this .routes       = { };
+
+		this .inlineNode .loadState_ .addInterest (this, "set_loadState__");
+	}
+
+	ImportedNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	{
+		constructor: ImportedNode,
+		getTypeName: function ()
+		{
+			return "ImportedNode";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "importedNodes";
+		},
+		getInlineNode: function ()
+		{
+			return this .inlineNode;
+		},
+		getExportedName: function ()
+		{
+			return this .exportedName;
+		},
+		getExportedNode: function ()
+		{
+			return this .inlineNode .getScene () .getExportedNode (this .exportedName);
+		},
+		getImportedName: function ()
+		{
+			return this .importedName;
+		},
+		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
+		{
+			// Add route.
+
+			var id = sourceNode .getId () + "." + sourceField + " " + destinationNode .getId () + "." + destinationField;
+
+			this .routes [id] =
+			{
+				sourceNode:       sourceNode,
+				sourceField:      sourceField,
+				destinationNode:  destinationNode,
+				destinationField: destinationField,
+			};
+
+			// Try to resolve source or destination node.
+
+			if (this .inlineNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				return this .resolveRoute (id);
+		},
+		resolveRoute: function (id)
+		{
+			try
+			{
+				var
+					route            = this .routes [id],
+					sourceNode       = route .sourceNode,
+					sourceField      = route .sourceField,
+					destinationNode  = route .destinationNode,
+					destinationField = route .destinationField;
+
+				if (route ._route)
+					route ._route .disconnect ();
+
+				if (sourceNode instanceof ImportedNode)
+					sourceNode = sourceNode .getExportedNode () .getValue ();
+
+				if (destinationNode instanceof ImportedNode)
+					destinationNode = destinationNode .getExportedNode () .getValue ();
+
+				return route ._route = this .getExecutionContext () .addRoute (new Fields .SFNode (sourceNode), sourceField, new Fields .SFNode (destinationNode), destinationField);
+			}
+			catch (error)
+			{
+				console .error (error .message);
+			}
+		},
+		deleteRoutes: function ()
+		{
+			var routes = this .routes;
+
+			for (var id in routes)
+			{
+				var route = routes [id];
+
+				if (route ._route)
+				{
+					this .getExecutionContext () .deleteRoute (route ._route);
+					delete route ._route;
+				}
+			}
+		},
+		set_loadState__: function ()
+		{
+			switch (this .inlineNode .checkLoadState ())
+			{
+				case X3DConstants .NOT_STARTED_STATE:
+				case X3DConstants .FAILED_STATE:
+				{
+					this .deleteRoutes ();
+					break;
+				}
+				case X3DConstants .COMPLETE_STATE:
+				{
+					this .deleteRoutes ();
+
+					try
+					{
+						var routes = this .routes;
+
+						for (var id in routes)
+							this .resolveRoute (id);
+					}
+					catch (error)
+					{
+						console .error (error);
+					}
+
+					break;
+				}
+			}
+		},
+		dispose: function ()
+		{
+			this .inlineNode .loadState_ .removeInterest (this, "set_loadState__");
+
+			this .deleteRoutes ();
+
+			X3DBaseNode .prototype .dispose .call (this);
+		},
+	});
+
+	return ImportedNode;
 });
 
 
@@ -26397,30 +23932,37 @@ function ($)
 
 define ('cobweb/Routing/X3DRoute',[
 	"jquery",
-	"cobweb/Basic/X3DBaseNode"
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
 ],
-function ($, X3DBaseNode)
+function ($,
+          Fields,
+          X3DBaseNode)
 {
 
 
 	function X3DRoute (/* executionContext, */ sourceNode, sourceField, destinationNode, destinationField)
 	{
-		//X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		//X3DBaseNode .call (this, executionContext);
 		
-		this .sourceNode_       = sourceNode;
-		this .sourceField_      = sourceField;
-		this .destinationNode_  = destinationNode;
-		this .destinationField_ = destinationField;
+		this ._sourceNode       = sourceNode;
+		this ._sourceField      = sourceField;
+		this ._destinationNode  = destinationNode;
+		this ._destinationField = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
 			sourceField .addFieldInterest (destinationField);
+
+		Object .preventExtensions (this);
+		Object .freeze (this);
+		Object .seal (this);
 	}
 
 	X3DRoute .prototype =
 	{
 		disconnect: function ()
 		{
-			this .sourceField_ .removeFieldInterest (this .destinationField_);
+			this ._sourceField .removeFieldInterest (this ._destinationField);
 		},
 		toString: function ()
 		{
@@ -26432,7 +23974,7 @@ function ($, X3DBaseNode)
 	{
 		get: function ()
 		{
-			return this .sourceNode_;
+			return new Fields .SFNode (this ._sourceNode);
 		},
 		enumerable: true,
 		configurable: false
@@ -26442,7 +23984,7 @@ function ($, X3DBaseNode)
 	{
 		get: function ()
 		{
-			return this .sourceField_ .getName ();
+			return this ._sourceField .getName ();
 		},
 		enumerable: true,
 		configurable: false
@@ -26452,7 +23994,7 @@ function ($, X3DBaseNode)
 	{
 		get: function ()
 		{
-			return this .destinationNode_;
+			return new Fields .SFNode (this ._destinationNode);
 		},
 		enumerable: true,
 		configurable: false
@@ -26462,7 +24004,7 @@ function ($, X3DBaseNode)
 	{
 		get: function ()
 		{
-			return this .destinationField_ .getName ();
+			return this ._destinationField .getName ();
 		},
 		enumerable: true,
 		configurable: false
@@ -26471,13 +24013,16 @@ function ($, X3DBaseNode)
 	return X3DRoute;
 });
 
-define ('cobweb/Execution/X3DExecutionContext',[
+
+
+define ("cobweb/Execution/X3DExecutionContext", [
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Execution/ImportedNode",
 	"cobweb/Prototype/ExternProtoDeclarationArray",
 	"cobweb/Prototype/ProtoDeclarationArray",
 	"cobweb/Routing/RouteArray",
@@ -26492,6 +24037,7 @@ function ($,
           FieldDefinitionArray,
           X3DBaseNode,
           ComponentInfoArray,
+          ImportedNode,
           ExternProtoDeclarationArray,
           ProtoDeclarationArray,
           RouteArray,
@@ -26502,9 +24048,9 @@ function ($,
 {
 
 
-	function X3DExecutionContext (browser, executionContext)
+	function X3DExecutionContext (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("rootNodes", new Fields .MFNode (),
                          "loadCount", new Fields .SFInt32 ());
@@ -26512,10 +24058,11 @@ function ($,
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
 		this .profile              = null;
-		this .components           = new ComponentInfoArray ();
+		this .components           = new ComponentInfoArray (this .getBrowser ());
 		this .url                  = new URI (window .location);
 		this .uninitializedNodes   = [ ];
 		this .namedNodes           = { };
+		this .importedNodes        = { };
 		this .protos               = new ProtoDeclarationArray ();
 		this .externprotos         = new ExternProtoDeclarationArray ();
 		this .routes               = new RouteArray ();
@@ -26530,6 +24077,8 @@ function ($,
 		setup: function ()
 		{
 			X3DBaseNode .prototype .setup .call (this);
+
+			// Setup nodes
 
 			var uninitializedNodes = this .uninitializedNodes;
 
@@ -26564,12 +24113,12 @@ function ($,
 		},
 		createNode: function (typeName, setup)
 		{
-			var constructor = this .getBrowser () .supportedNodes [typeName];
+			var interfaceDeclaration = this .getBrowser () .supportedNodes [typeName];
 
-			if (! constructor)
+			if (! interfaceDeclaration)
 				throw new Error ("Unknown node type '" + typeName + "'.");
 
-			var node = new constructor (this);
+			var node = interfaceDeclaration .createInstance (this);
 
 			if (setup === false)
 				return node;
@@ -26608,25 +24157,23 @@ function ($,
 		addNamedNode: function (name, node)
 		{
 			if (this .namedNodes [name] !== undefined)
-				throw new Error ("Couldn't add named node: node name '" + name + "' is already in use.");
+				throw new Error ("Couldn't add named node: node named '" + name + "' is already in use.");
 
 			this .updateNamedNode (name, node);
 		},
 		updateNamedNode: function (name, node)
 		{
-			name = String (name);
-			
-			if (node instanceof X3DBaseNode)
-				node = new Fields .SFNode (node);				
-
-			if (! (node instanceof Fields .SFNode))
+			if (! (node instanceof Fields .SFNode || node instanceof X3DBaseNode))
 				throw new Error ("Couldn't update named node: node must be of type SFNode.");
+
+			name = String (name);
+			node = new Fields .SFNode (node .valueOf ());
 
 			if (! node .getValue ())
 				throw new Error ("Couldn't update named node: node IS NULL.");
 
 			if (node .getValue () .getExecutionContext () !== this)
-				throw new Error ("Couldn't update named node: the node does not belong to this execution context.");
+				throw new Error ("Couldn't update named node: node does not belong to this execution context.");
 
 			if (name .length === 0)
 				throw new Error ("Couldn't update named node: node name is empty.");
@@ -26640,7 +24187,7 @@ function ($,
 
 			node .getValue () .setName (name);
 
-			this .namedNodes [name] = new Fields .SFNode (node .getValue ());
+			this .namedNodes [name] = node;
 		},
 		removeNamedNode: function (name)
 		{
@@ -26650,10 +24197,61 @@ function ($,
 		{
 			var node = this .namedNodes [name];
 
-			if (node !== undefined)
-				return node;
+			if (! node)
+				throw new Error ("Named node '" + name + "' not found.");
 
-			throw new Error ("Named node '" + name + "' not found.");
+			return node;
+		},
+		addImportedNode: function (inlineNode, exportedName, importedName)
+		{
+			if (importedName === undefined)
+				importedName = importedName;
+
+			if (this .importedNodes [importedName])
+				throw new Error ("Couldn't add imported node: imported name '" + importedName + "' already in use.");
+
+			this .updateImportedNode (inlineNode, exportedName, importedName);
+		},
+		updateImportedNode: function (inlineNode, exportedName, importedName)
+		{
+			inlineNode   = X3DCast (X3DConstants .Inline, inlineNode);
+			exportedName = String (exportedName);
+			importedName = importedName === undefined ? exportedName : String (importedName);
+
+			if (! inlineNode)
+				throw new Error ("Node named is not an Inline node.");
+
+			if (inlineNode .getExecutionContext () !== this)
+				throw new Error ("Couldn't update imported node: Inline node does not belong to this execution context.");
+
+			if (exportedName .length === 0)
+				throw new Error ("Couldn't update imported node: exported name is empty.");
+
+			if (importedName .length === 0)
+				throw new Error ("Couldn't update imported node: imported name is empty.");
+
+			this .removeImportedNode (importedName);
+
+			this .importedNodes [importedName] = new ImportedNode (this, inlineNode, exportedName, importedName);
+			this .importedNodes [importedName] .setup ();
+		},
+		removeImportedNode: function (importedName)
+		{
+			var importedNode = this .importedNodes [importedName];
+
+			if (importedNode)
+				importedNode .dispose ();
+
+			delete this .importedNodes [importedName];
+		},
+		getImportedNode: function (importedName)
+		{
+			var importedNode = this .importedNodes [importedName];
+
+			if (importedNode)
+				return importedNode .getExportedNode ();
+
+			throw new Error ("Imported node '" + importedName + "' not found.");
 		},
 		getLocalNode: function (name)
 		{
@@ -26665,7 +24263,12 @@ function ($,
 			{
 				try
 				{
-					return this .getImportedNode (name);
+					var importedNode = this .importedNodes [name];
+
+					if (importedNode)
+						return new Fields .SFNode (importedNode);
+
+					throw true;
 				}
 				catch (error)
 				{
@@ -26673,34 +24276,55 @@ function ($,
 				}
 			}
 		},
-		getImportedNode: function (name)
-		{
-			throw new Error ("Imported node '" + name + "' not found.");
-		},
 		setRootNodes: function () { },
 		getRootNodes: function ()
 		{
 			return this .rootNodes_;
 		},
-		addRoute: function (sourceNode, fromField, destinationNode, toField)
+		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			try
 			{
-				if (! sourceNode .getValue ())
-					throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
+				sourceField      = String (sourceField);
+				destinationField = String (destinationField);
 
-				if (! destinationNode .getValue ())
-					throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
+				if (! (sourceNode instanceof Fields .SFNode))
+					throw new Error ("Bad ROUTE specification: source node must be of type SFNode.");
 
-				var
-					sourceField      = sourceNode .getValue () .getField (fromField),
-					destinationField = destinationNode .getValue () .getField (toField);
+				if (! (destinationNode instanceof Fields .SFNode))
+					throw new Error ("Bad ROUTE specification: destination node must be of type SFNode.");
+
+				sourceNode      = sourceNode      .getValue ();
+				destinationNode = destinationNode .getValue ();
+
+				if (! sourceNode)
+					throw new Error ("Bad ROUTE specification: source node is NULL.");
+
+				if (! destinationNode)
+					throw new Error ("Bad ROUTE specification: destination node is NULL.");
+
+				if (sourceNode instanceof ImportedNode || destinationNode instanceof ImportedNode)
+				{
+					if (sourceNode instanceof ImportedNode)
+						sourceNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+	
+					if (destinationNode instanceof ImportedNode)
+						destinationNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+
+					return;
+				}
+
+				sourceField      = sourceNode      .getField (sourceField),
+				destinationField = destinationNode .getField (destinationField);
 
 				if (! sourceField .isOutput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getNodeName () + "' of type " + sourceNode .getNodeTypeName () + " is not an output field.");
+					throw new Error ("Bad ROUTE specification: Field named '" + sourceField .getName () + "' in node named '" + sourceNode .getName () + "' of type " + sourceNode .getTypeName () + " is not an output field.");
 
 				if (! destinationField .isInput ())
-					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getNodeTypeName () + " is not an input field.");
+					throw new Error ("Bad ROUTE specification: Field named '" + destinationField .getName () + "' in node named '" + destinationNode .getName () + "' of type " + destinationNode .getTypeName () + " is not an input field.");
+
+				if (sourceField .getType () !== destinationField .getType ())
+					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
 
 				var
 					id    = sourceField .getId () + "." + destinationField .getId (),
@@ -26721,8 +24345,8 @@ function ($,
 			try
 			{
 				var
-					sourceField      = route .sourceField_,
-					destinationField = route .destinationField_,
+					sourceField      = route ._sourceField,
+					destinationField = route ._destinationField,
 					id               = sourceField .getId () + "." + destinationField .getId (),
 					index            = this .routes .getValue () .indexOf (route);
 
@@ -26738,7 +24362,7 @@ function ($,
 				console .log (error);
 			}
 		},
-		getRoute: function (sourceNode, fromField, destinationNode, toField)
+		getRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
 			if (! sourceNode .getValue ())
 				throw new Error ("Bad ROUTE specification: sourceNode is NULL.");
@@ -26747,8 +24371,8 @@ function ($,
 				throw new Error ("Bad ROUTE specification: destinationNode is NULL.");
 
 			var
-				sourceField      = sourceNode .getValue () .getField (fromField),
-				destinationField = destinationNode .getValue () .getField (toField),
+				sourceField      = sourceNode .getValue () .getField (sourceField),
+				destinationField = destinationNode .getValue () .getField (destinationField),
 				id               = sourceField .getId () + "." + destinationField .getId ();
 
 			return this .routeIndex [id];
@@ -26786,28 +24410,6 @@ function ($,
 		{
 			this .loadCount_ = this .loadCount_ .getValue () - 1;
 		},
-		requestAsyncLoadOfExternProtos: function ()
-		{
-			this .loadCount_ .setTainted (false);
-			this .loadCount_ .addEvent ();
-
-			for (var i = 0, length = this .externprotos .length; i < length; ++ i)
-			{
-				var externproto = this .externprotos [i];
-
-				if (externproto .getInstances () .length === 0)
-				   continue;
-		
-				externproto .requestAsyncLoad ();
-			}
-		
-			for (var i = 0, length = this .protos .length; i < length; ++ i)
-			{
-				var proto = this .protos [i];
-
-			   proto .requestAsyncLoadOfExternProtos ();
-			}
-		},
 	});
 
 	Object .defineProperty (X3DExecutionContext .prototype, "worldURL",
@@ -26833,6 +24435,7 @@ define ('cobweb/Components/Core/X3DPrototypeInstance',[
 	"jquery",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Fields",
+	"cobweb/Base/X3DChildObject",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Bits/X3DConstants",
@@ -26840,6 +24443,7 @@ define ('cobweb/Components/Core/X3DPrototypeInstance',[
 function ($,
           FieldDefinitionArray,
           Fields,
+          X3DChildObject,
           X3DNode,
           X3DExecutionContext,
           X3DConstants)
@@ -26849,23 +24453,21 @@ function ($,
 	function X3DPrototypeInstance (executionContext, protoNode)
 	{
 		this .protoNode        = protoNode;
-		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice (0));
+		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice ());
 
 		this .addChildren ("isLiveX3DPrototypeInstance", new Fields .SFBool (true));
 
-		X3DNode             .call (this, executionContext .getBrowser (), executionContext);
-		X3DExecutionContext .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode             .call (this, executionContext);
+		X3DExecutionContext .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);
 
-		protoNode .addInstance (this);
+		this .getScene () .addLoadCount (this);
 
 		if (protoNode .isExternProto ())
-		{
-			if (protoNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
-				this .construct ();
-		}
+			protoNode .requestAsyncLoad (this .construct .bind (this));
+
 		else
 			this .construct ();
 	}
@@ -26892,6 +24494,8 @@ function ($,
 		},
 		construct: function ()
 		{
+			this .getScene () .removeLoadCount (this);
+
 			var proto = this .protoNode .getProtoDeclaration ();
 
 			if (proto)
@@ -26910,9 +24514,8 @@ function ($,
 						{
 							var
 								fieldDefinition = fieldDefinitions [i],
+                        field           = this .getField (fieldDefinition .name),
 								protoField      = proto .getField (fieldDefinition .name);
-
-							var field = this .getField (fieldDefinition .name);
 
 							// Continue if something is wrong.
 							if (field .getAccessType () !== protoField .getAccessType ())
@@ -26948,9 +24551,15 @@ function ($,
 
 				this .setURL (proto .getURL ());
 
-				this .importExternProtos (proto);
-				this .importProtos (proto);
-				this .copyRootNodes (proto);
+				this .importExternProtos (proto .externprotos);
+				this .importProtos       (proto .protos);
+				this .copyRootNodes      (proto .rootNodes);
+
+				if (this .isInitialized ())
+				{
+					this .setup ();
+					X3DChildObject .prototype .addEvent .call (this);
+				}
 			}
 		},
 		setup: function ()
@@ -26962,18 +24571,12 @@ function ($,
 		{
 			try
 			{
-				if (this .protoNode .isExternProto ())
-					this .construct ();
-	
-				if (this .protoNode .checkLoadState () === X3DConstants .COMPLETE_STATE)
-				{
-					var proto = this .protoNode .getProtoDeclaration ();
+				var proto = this .protoNode .getProtoDeclaration ();
 
-					if (proto)
-					{
-						//this .copyImportedNodes (proto);
-						this .copyRoutes (proto);
-					}
+				if (proto)
+				{
+					//this .copyImportedNodes (proto);
+					this .copyRoutes (proto .routes);
 				}
 				
 				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
@@ -26983,12 +24586,12 @@ function ($,
 	
 				// Now initialize bases.
 	
-				X3DExecutionContext .prototype .initialize .call (this);
 				X3DNode             .prototype .initialize .call (this);
+				X3DExecutionContext .prototype .initialize .call (this);
 			}
 			catch (error)
 			{
-				console .log (error);
+				console .error (error .message);
 			}
 		},
 		getExtendedEventHandling: function ()
@@ -27001,7 +24604,7 @@ function ($,
 		},
 		getInnerNode: function ()
 		{
-			var rootNodes = this .getRootNodes ();
+			var rootNodes = this .getRootNodes () .getValue ();
 			
 			if (rootNodes .length)
 			{
@@ -27022,24 +24625,20 @@ function ($,
 			else
 				this .endUpdate ();
 		},
-		importExternProtos: function (executionContext)
+		importExternProtos: function (externprotos)
 		{
-			var externprotos = executionContext .externprotos;
-
 			for (var i = 0, length = externprotos .length; i < length; ++ i)
 				this .externprotos .add (externprotos [i] .getName (), externprotos [i]);
 		},
-		importProtos: function (executionContext)
+		importProtos: function (protos)
 		{
-			var protos = executionContext .protos;
-
 			for (var i = 0, length = protos .length; i < length; ++ i)
 				this .protos .add (protos [i] .getName (), protos [i]);
 		},
-		copyRootNodes: function (executionContext)
+		copyRootNodes: function (rootNodes)
 		{
 			var
-				rootNodes1 = executionContext .getRootNodes () .getValue (),
+				rootNodes1 = rootNodes .getValue (),
 				rootNodes2 = this  .getRootNodes () .getValue ();
 
 			for (var i = 0, length = rootNodes1 .length; i < length; ++ i)
@@ -27049,12 +24648,8 @@ function ($,
 				rootNodes2 .push (value);
 			}
 		},
-		copyRoutes: function (executionContext)
+		copyRoutes: function (routes)
 		{
-			// Copy routes.
-
-			var routes = executionContext .routes;
-
 			for (var i = 0, length = routes .length; i < length; ++ i)
 			{
 				try
@@ -27096,13 +24691,11 @@ function ($,
 {
 
 
-	function X3DProtoDeclarationNode (browser, executionContext)
+	function X3DProtoDeclarationNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclarationNode);
-
-		this .instances = { };
 	}
 
 	X3DProtoDeclarationNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -27122,18 +24715,6 @@ function ($,
 			instance .setup ();
 
 			return new Fields .SFNode (instance);
-		},
-		addInstance: function (instance)
-		{
-			this .instances [instance .getId ()] = instance;
-		},
-		removeInstance: function (instance)
-		{
-			delete this .instances [instance .getId ()];
-		},
-		getInstances: function ()
-		{
-			return this .instances;
 		},
 	});
 
@@ -27160,28 +24741,25 @@ function ($,
 {
 
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-	];
-
 	function X3DExternProtoDeclaration (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
-		X3DProtoDeclarationNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject            .call (this, executionContext .getBrowser (), executionContext);
+		X3DProtoDeclarationNode .call (this, executionContext);
+		X3DUrlObject            .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DExternProtoDeclaration);
 
 		this .addChildren ("url", new Fields .MFString ());
 
-		this .callbacks = [ ];
+		this .deferred = $.Deferred ();
 	}
 
 	X3DExternProtoDeclaration .prototype = $.extend (Object .create (X3DProtoDeclarationNode .prototype),
 		X3DUrlObject .prototype,
 	{
 		constructor: X3DExternProtoDeclaration,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+		]),
 		getTypeName: function ()
 		{
 			return "EXTERNPROTO";
@@ -27226,13 +24804,17 @@ function ($,
 		{
 			return this .proto;
 		},
-		requestAsyncLoad: function ()
+		requestAsyncLoad: function (callback)
 		{
+			this .deferred .done (callback);
+
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addLoadCount (this);
+			
+			// Don't create scene cache, as of possible default nodes and complete scenes.
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
@@ -27243,45 +24825,40 @@ function ($,
 			this .getScene () .removeLoadCount (this);
 		
 			if (value)
-			{
 				this .setScene (value);
-			}
+
 			else
-			{
-				this .setLoadState (X3DConstants .FAILED_STATE);
-		
-				this .scene = this .getBrowser () .getPrivateScene ();
-		
-				this .setProtoDeclaration (null);
-			}
+				this .setError ();
+		},
+		setError: function (error)
+		{
+			console .log (error);
+
+			this .setLoadState (X3DConstants .FAILED_STATE);
+
+			this .scene = this .getBrowser () .getPrivateScene ();
+
+			this .setProtoDeclaration (null);
+
+			this .deferred .resolve ();
+			this .deferred = $.Deferred ();
 		},
 		setScene: function (value)
 		{
 			this .scene = value;
-		
-			try
-			{
-				this .setLoadState (X3DConstants .COMPLETE_STATE);
-		
-				this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
-				//this .scene .setExecutionContext (this .getExecutionContext ());
-		
-				this .scene .setup ();
-		
-				var protoName = this .scene .getURL () .fragment || 0;
-		
-				this .setProtoDeclaration (this .scene .protos [protoName]);
-			}
-			catch (error)
-			{
-			   console .log (error);
 
-				this .setLoadState (X3DConstants .FAILED_STATE);
-		
-				this .scene = this .getBrowser () .getPrivateScene ();
+			this .setLoadState (X3DConstants .COMPLETE_STATE);
 
-				this .setProtoDeclaration (null);
-			}
+			this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+			//this .scene .setExecutionContext (this .getExecutionContext ());
+
+			this .scene .setup ();
+
+			var protoName = this .scene .getURL () .fragment || 0;
+
+			this .setProtoDeclaration (this .scene .protos [protoName]);
+
+			this .deferred .resolve ();
 		},
 	});
 
@@ -27309,16 +24886,10 @@ function ($,
 {
 
 
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
-	];
-
 	function X3DProtoDeclaration (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
-		X3DProtoDeclarationNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DExecutionContext     .call (this, executionContext .getBrowser (), executionContext);
+		X3DProtoDeclarationNode .call (this, executionContext);
+		X3DExecutionContext     .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProtoDeclaration);
 
@@ -27329,6 +24900,9 @@ function ($,
 		X3DProtoDeclarationNode .prototype,
 	{
 		constructor: X3DProtoDeclaration,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+		]),
 		getTypeName: function ()
 		{
 			return "PROTO";
@@ -27415,11 +24989,14 @@ function ($,
 		Header:	    new RegExp ("^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\\n\\r]"),
 
 		// Keywords
+		AS:          new RegExp ('^AS',          'y'),
 		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
 		DEF:         new RegExp ('^DEF',         'y'),
+		EXPORT:      new RegExp ('^EXPORT',      'y'),
 		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
 		FALSE:       new RegExp ('^FALSE',       'y'),
 		false:       new RegExp ('^false',       'y'),
+		IMPORT:      new RegExp ('^IMPORT',      'y'),
 		IS:          new RegExp ('^IS',          'y'),
 		META:        new RegExp ('^META',        'y'),
 		NULL:        new RegExp ('^NULL',        'y'),
@@ -27458,8 +25035,8 @@ function ($,
 		// Values
 		int32:  new RegExp ('^((?:0[xX][\\da-fA-F]+)|(?:[+-]?\\d+))', 'y'),
 		double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
-		string: new RegExp ('^"((?:[^\\\\"]|\\\\\\\\|\\\\\\")*)"', 'y'),
-		
+		string: new RegExp ('^"((?:[^"\\\\]|\\\\\\\\|\\\\")*)"', 'y'),
+
 		Inf:         new RegExp ('^[+]?inf',  'yi'),
 		NegativeInf: new RegExp ('^-inf',     'yi'),
 		NaN:         new RegExp ('^[+-]?nan', 'yi'),
@@ -27468,11 +25045,28 @@ function ($,
 		Break: new RegExp ('\\r?\\n', 'g'),
 	};
 
-	function parse (parser)
+	// +scriptBodyElement assignments
+	function parseY (parser)
 	{
 		this .lastIndex = parser .lastIndex;
 
 		parser .result = this .exec (parser .input);
+
+		if (parser .result)
+		{
+			parser .lastIndex = this .lastIndex;
+			return true;
+		}
+
+		return false;
+	}
+
+	function parse (parser)
+	{
+		this .lastIndex = 0;
+
+		parser .result = this .exec (parser .input);
+		parser .input  = parser .input .slice (this .lastIndex);
 
 		if (parser .result)
 		{
@@ -27609,6 +25203,8 @@ function ($,
 		},
 		getError: function (error)
 		{
+			//console .log (error);
+
 			var string = error .message;
 
 			var
@@ -27886,10 +25482,84 @@ function ($,
 		},
 		exportStatement: function ()
 		{
+			this .comments ();
+
+			if (Grammar .EXPORT .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						localNodeNameId    = this .result [1],
+						exportedNodeNameId = "";
+		
+					this .comments ();
+		
+					var node = this .scene .getLocalNode (localNodeNameId);
+		
+					if (Grammar .AS .parse (this))
+					{
+						if (this .exportedNodeNameId ())
+							exportedNodeNameId = this .result [1];
+						else
+							throw new Error ("No name given after AS.");
+					}
+					else
+						exportedNodeNameId = localNodeNameId;
+		
+					this .scene .updateExportedNode (exportedNodeNameId, node);
+					return true;
+				}
+		
+				throw new Error ("No name given after EXPORT.");
+			}
+		
 			return false;
 		},
 		importStatement: function ()
 		{
+			this .comments ();
+
+			if (Grammar .IMPORT .parse (this))
+			{
+				if (this .nodeNameId ())
+				{
+					var
+						inlineNodeNameId = this .result [1],
+						namedNode        = this .getExecutionContext () .getNamedNode (inlineNodeNameId);
+		
+					this .comments ();
+	
+					if (Grammar .Period .parse (this))
+					{
+						if (this .exportedNodeNameId ())
+						{
+							var
+								exportedNodeNameId = this .result [1],
+								nodeNameId         = exportedNodeNameId;
+	
+							this .comments ();
+	
+							if (Grammar .AS .parse (this))
+							{
+								if (this .nodeNameId ())
+									nodeNameId = this .result [1];
+
+								else
+									throw new Error ("No name given after AS.");
+							}
+	
+							this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeNameId, nodeNameId);
+							return true;
+						}
+	
+						throw new Error ("Expected exported node name.");
+					}
+	
+					throw new Error ("Expected a '.' after exported node name.");
+				}
+		
+				throw new Error ("No name given after IMPORT statement.");
+			}
 			return false;
 		},
 		statements: function ()
@@ -28519,8 +26189,12 @@ function ($,
 		},
 		scriptBodyElement: function (baseNode)
 		{
+//			var
+//				lastIndex  = this .lastIndex,
+//				lineNumber = this .lineNumber;
+
 			var
-				lastIndex  = this .lastIndex,
+				input      = this .input,
 				lineNumber = this .lineNumber;
 
 			if (this .Id ())
@@ -28612,7 +26286,10 @@ function ($,
 				}
 			}
 
-			this .lastIndex  = lastIndex;
+//			this .lastIndex  = lastIndex;
+//			this .lineNumber = lineNumber;
+
+			this .input      = input;
 			this .lineNumber = lineNumber;
 
 			var field = this .interfaceDeclaration ();
@@ -28742,6 +26419,7 @@ function ($,
 		},
 		categoryNameId: function () { return this .Id (); },
 		unitNameId: function () { return this .Id (); },
+		exportedNodeNameId: function () { return this .Id (); },
 		nodeNameId: function () { return this .Id (); },
 		nodeTypeId: function () { return this .Id (); },
 		initializeOnlyId: function () { return this .Id (); },
@@ -30288,14 +27966,17 @@ function ($,
 		{
 			try
 			{
-				var componentNameIdCharacters = element .getAttribute ("name");
-	
-				if (! componentNameIdCharacters)
-					return;
-				
 				var
-					componentSupportLevel = parseInt (element .getAttribute ("level")),
-					component             = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
+					componentNameIdCharacters = element .getAttribute ("name"),
+					componentSupportLevel = parseInt (element .getAttribute ("level"));
+	
+				if (componentNameIdCharacters == null)
+					return console .warn ("XML Parser Error: Bad component statement: Expected name attribute.");
+	
+				if (componentSupportLevel == null)
+					return console .warn ("XML Parser Error: Bad component statement: Expected level attribute.");
+
+				var component = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
 	
 				this .scene .addComponent (component);
 			}
@@ -30306,25 +27987,33 @@ function ($,
 		},
 		unit: function (element)
 		{
-			var category = element .getAttribute ("category");
-
-			if (! category)
-				return;
-			
 			var
+				category         = element .getAttribute ("category"),
 				name             = element .getAttribute ("name"),
-				conversionFactor = parseFloat (element .getAttribute ("conversionFactor"));
+				conversionFactor = element .getAttribute ("conversionFactor");
 
-			this .scene .updateUnit (category, name, conversionFactor);
+			if (category == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected category attribute.");
+
+			if (name == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected name attribute.");
+
+			if (conversionFactor == null)
+				return console .warn ("XML Parser Error: Bad unit statement: Expected conversionFactor attribute.");
+
+			this .scene .updateUnit (category, name, parseFloat (conversionFactor));
 		},
 		meta: function (element)
 		{
-			var metakey = element .getAttribute ("name");
+			var
+				metakey   = element .getAttribute ("name"),
+				metavalue = element .getAttribute ("content");
 
-			if (! metakey)
-				return;
-			
-			var metavalue = element .getAttribute ("content");
+			if (metakey == null)
+				return console .warn ("XML Parser Error: Bad meta statement: Expected name attribute.");	
+
+			if (metavalue === null)
+				return console .warn ("XML Parser Error: Bad meta statement: Expected content attribute.");
 
 			this .scene .setMetaData (metakey, metavalue);
 		},
@@ -30358,8 +28047,16 @@ function ($,
 					this .ProtoInstance (child);
 					return;
 
+				case "IMPORT":
+					this .IMPORT (child);
+					return;
+
 				case "ROUTE":
 					this .ROUTE (child);
+					return;
+
+				case "EXPORT":
+					this .EXPORT (child);
 					return;
 
 				default:
@@ -30386,10 +28083,9 @@ function ($,
 			}
 			catch (error)
 			{
-				//if (element .nodeName === "VisibilitySensor")
-				//	console .warn (error);
+				//console .error (error);
 
-				console .warn ("XML Parser Error: " + error .message);
+				console .error ("XML Parser Error: " + error .message);
 			}
 		},
 		ProtoInstance: function (element)
@@ -30461,8 +28157,16 @@ function ($,
 					this .ProtoInstance (child);
 					return;
 
+				case "IMPORT":
+					this .IMPORT (child);
+					return;
+
 				case "ROUTE":
 					this .ROUTE (child);
+					return;
+
+				case "EXPORT":
+					this .EXPORT (child);
 					return;
 
 				default:
@@ -30513,14 +28217,18 @@ function ($,
 
 				if (parent instanceof X3DField)
 				{
-					if (parent .getSet () === false)
-						parent .setSet (true);
+					switch (parent .getType ())
+					{
+						case X3DConstants .SFNode:
+							parent .set (node);
+							parent .setSet (true);
+							return;
 
-					if (parent .getType () === X3DConstants .SFNode)
-						parent .set (node);
-
-					if (parent .getType () === X3DConstants .MFNode)
-						parent .push (node);
+						case X3DConstants .MFNode:
+							parent .push (node);
+							parent .setSet (true);
+							return;
+					}
 				}
 				else
 				{
@@ -30534,11 +28242,18 @@ function ($,
 						{
 							var field = parent .getField (containerField);
 
-							if (field .getType () === X3DConstants .SFNode)
-								return field .set (node);
+							switch (field .getType ())
+							{
+								case X3DConstants .SFNode:
+									field .set (node);
+									field .setSet (true);
+									return;
 
-							if (field .getType () === X3DConstants .MFNode)
-								return field .push (node);
+								case X3DConstants .MFNode:
+									field .push (node);
+									field .setSet (true);
+									return;
+							}
 						}
 					}
 					catch (error)
@@ -30552,11 +28267,18 @@ function ($,
 
 						var field = parent .getField (node .getContainerField ());
 
-						if (field .getType () === X3DConstants .SFNode)
-							return field .set (node);
+						switch (field .getType ())
+						{
+							case X3DConstants .SFNode:
+								field .set (node);
+								field .setSet (true);
+								return;
 
-						if (field .getType () === X3DConstants .MFNode)
-							return field .push (node);
+							case X3DConstants .MFNode:
+								field .push (node);
+								field .setSet (true);
+								return;
+						}
 					}
 					catch (error)
 					{
@@ -30584,6 +28306,7 @@ function ($,
 
 				this .parser .setInput (value);
 				fieldType .call (this .parser, field);
+				field .setSet (true);
 			}
 			catch (error)
 			{
@@ -30597,7 +28320,10 @@ function ($,
 				field = node .getCDATA ();
 
 			if (field)
+			{
 				field .push (element .data);
+				field .setSet (true);
+			}
 		},
 		field: function (element)
 		{
@@ -30666,8 +28392,6 @@ function ($,
 						this .fieldTypes [field .getType ()] .call (this .parser, field);
 						field .setSet (true);
 					}
-					else
-						field .setSet (false);
 
 					this .pushParent (field);
 					this .statements (element .childNodes);
@@ -30704,8 +28428,11 @@ function ($,
 				nodeFieldName  = element .getAttribute ("nodeField"),
 				protoFieldName = element .getAttribute ("protoField");
 
-			if (! nodeFieldName || ! protoFieldName)
-				return;
+			if (nodeFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected nodeField attribute.");
+
+			if (protoFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected protoField attribute.");
 
 			try
 			{
@@ -30727,7 +28454,7 @@ function ($,
 			}
 			catch (error)
 			{
-				console .warn ("Couldn't create IS reference: " + error .message);
+				console .warn ("XML Parser Error: Couldn't create IS reference: " + error .message);
 			}
 		},
 		ExternProtoDeclare: function (element)
@@ -30737,6 +28464,9 @@ function ($,
 			if (this .id (name))
 			{
 				var url = element .getAttribute ("url");
+
+				if (url === null)
+					return console .warn ("XML Parser Error: Bad ExternProtoDeclare statement: Expected url attribute.");
 				
 				if (url !== null)
 				{
@@ -30815,21 +28545,83 @@ function ($,
 		{
 			this .statements (element .childNodes);
 		},
-		ROUTE: function (element)
+		IMPORT: function (element)
 		{
-			var
-				fromNode  = element .getAttribute ("fromNode"),
-				fromField = element .getAttribute ("fromField"),
-				toNode    = element .getAttribute ("toNode"),
-				toField   = element .getAttribute ("toField");
-
 			try
 			{
 				var
-					sourceNode      = this .getExecutionContext () .getLocalNode (fromNode),
-					destinationNode = this .getExecutionContext () .getLocalNode (toNode);
+					inlineNodeName   = element .getAttribute ("inlineDEF"),
+					exportedNodeName = element .getAttribute ("exportedDEF"),
+					localNodeName    = element .getAttribute ("AS");
 
-				this .getExecutionContext () .addRoute (sourceNode, fromField, destinationNode, toField);
+				if (inlineNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (exportedNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (! localNodeName)
+					localNodeName = exportedNodeName;
+
+				var namedNode = this .getExecutionContext () .getNamedNode (inlineNodeName);
+
+				this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeName, localNodeName);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		ROUTE: function (element)
+		{
+			try
+			{
+				var
+					sourceNodeName      = element .getAttribute ("fromNode"),
+					sourceField         = element .getAttribute ("fromField"),
+					destinationNodeName = element .getAttribute ("toNode"),
+					destinationField    = element .getAttribute ("toField");
+
+				if (sourceNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected fromNode attribute.");
+
+				if (sourceField === null)
+					throw new Error ("Bad ROUTE statement: Expected fromField attribute.");
+
+				if (destinationNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected toNode attribute.");
+
+				if (destinationField === null)
+					throw new Error ("Bad ROUTE statement: Expected toField attribute.");
+
+				var
+					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
+					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName);
+
+				this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		EXPORT: function (element)
+		{
+			try
+			{
+				var
+					localNodeName    = element .getAttribute ("localDEF"),
+					exportedNodeName = element .getAttribute ("AS");
+
+				if (localNodeName === null)
+					throw new Error ("Bad EXPORT statement: Expected localDEF attribute.");
+
+				if (! exportedNodeName)
+					exportedNodeName = localNodeName;
+
+				var localNode = this .getExecutionContext () .getLocalNode (localNodeName);
+
+				this .getExecutionContext () .updateExportedNode (exportedNodeName, localNode);
 			}
 			catch (error)
 			{
@@ -30838,13 +28630,13 @@ function ($,
 		},
 		id: function (string)
 		{
-			if (string)
-			{
-				// Test for id characters.
-				return true;
-			}
+			if (string === null)
+				return false;
 
-			return false;
+			if (string .length === 0)
+				return false;
+
+			return true;
 		},
 	};
 
@@ -34041,6 +31833,17 @@ exports.ungzip  = inflate;
 },{"./utils/common":1,"./utils/strings":2,"./zlib/constants":4,"./zlib/gzheader":6,"./zlib/inflate.js":8,"./zlib/messages":10,"./zlib/zstream":11}]},{},[])("/lib/inflate.js")
 });
 
+define ('cobweb/DEBUG',[
+	"cobweb/Browser/VERSION",
+],
+function (VERSION)
+{
+
+
+	return VERSION .match (/^\d+\.\d+a$/);
+});
+
+
 define ('cobweb/InputOutput/Loader',[
 	"jquery",
 	"cobweb/Base/X3DObject",
@@ -34050,6 +31853,7 @@ define ('cobweb/InputOutput/Loader',[
 	"standard/Networking/URI",
 	"lib/BinaryTransport",
 	"lib/pako/dist/pako_inflate",
+	"cobweb/DEBUG",
 ],
 function ($,
           X3DObject,
@@ -34058,16 +31862,23 @@ function ($,
           XMLParser,
           URI,
           BinaryTransport,
-          pako)
+          pako,
+          DEBUG)
 {
 
 
 	BinaryTransport ($);
 
 	var
-		TIMEOUT    = 17,
-		ECMAScript = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
-		dataURL    = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/;
+		TIMEOUT       = 17,
+		ECMAScript    = /^\s*(?:vrmlscript|javascript|ecmascript)\:([^]*)$/,
+		dataURL       = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
+		contentTypeRx = /^(?:(.*?);(.*?)$)/;
+
+	var foreign = {
+		"text/html":             true,
+		"application/xhtml+xml": true,
+	};
 
 	function Loader (node, external)
 	{
@@ -34075,7 +31886,7 @@ function ($,
 
 		this .node             = node;
 		this .browser          = node .getBrowser ();
-		this .external         = this .browser .isExternal () || external;
+		this .external         = external === undefined ? this .browser .isExternal () : external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
 		this .url              = [ ];
 		this .URL              = new URI ();
@@ -34148,7 +31959,7 @@ function ($,
 		setScene: function (scene, success)
 		{
 			scene .loadCount_ .addInterest (this, "set_loadCount__", scene, success);
-			scene .requestAsyncLoadOfExternProtos ();
+			scene .loadCount_ .addEvent ();
 		},
 		set_loadCount__: function (field, scene, success)
 		{
@@ -34159,8 +31970,11 @@ function ($,
 
 			success (scene);
 
-			if (this .URL .length)
-				console .info ("Done loading scene " + this .URL);
+			if (DEBUG)
+			{
+				if (this .URL .length && this .URL .scheme !== "data")
+					console .info ("Done loading scene " + this .URL);
+			}
 		},
 		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
 		{
@@ -34332,15 +32146,17 @@ function ($,
 				{
 					if (this .foreign)
 					{
-						if (xhr .getResponseHeader ("Content-Type") === "text/html")
-							this .foreign (this .URL);
+						//console .log (this .getContentType (xhr));
+
+						if (foreign [this .getContentType (xhr)])
+							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""));
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);
 
 					this .fileReader .readAsText (blob);
 				},
-				error: function (jqXHR, textStatus, exception)
+				error: function (xhr, textStatus, exception)
 				{
 					this .loadDocumentError (new Error (exception));
 				},
@@ -34386,7 +32202,8 @@ function ($,
 		},
 		error: function (exception)
 		{
-			console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
+			if (this .URL .scheme !== "data")
+				console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
 		},
 		transform: function (sURL)
 		{
@@ -34396,8 +32213,8 @@ function ($,
 				URL = this .browser .getLocation () .getRelativePath (URL);
 			else
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .url .unshift (urls .fallback + URL);
+				if (! sURL .match (urls .fallbackExpression))
+					this .url .unshift (urls .fallbackUrl + URL);
 			}
 
 			return URL;
@@ -34411,6 +32228,17 @@ function ($,
 			}
 
 			return this .executionContext .getURL ();
+		},
+		getContentType: function (xhr)
+		{
+			var
+				contentType = xhr .getResponseHeader ("Content-Type"),
+				result      = contentTypeRx .exec (contentType);
+
+			if (result)
+				return result [1];
+
+			return "";
 		},
 	});
 
@@ -34450,8 +32278,8 @@ function ($,
 
 	function ShaderPart (executionContext)
 	{
-		X3DNode      .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode      .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .valid = false;
 
@@ -34488,7 +32316,7 @@ function ($,
 
 			this .shader = gl .createShader (gl [this .getShaderType ()]);
 
-			this .requestImmediateLoad ();
+			this .requestAsyncLoad ();
 		},
 		isValid: function ()
 		{
@@ -34511,7 +32339,7 @@ function ($,
 		{
 			return this .url_;
 		},
-		requestImmediateLoad: function ()
+		requestAsyncLoad: function ()
 		{
 			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE || this .checkLoadState () == X3DConstants .IN_PROGRESS_STATE)
 				return;
@@ -34552,23 +32380,23 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Rendering/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n// 2\nuniform float x3d_LinewidthScaleFactor;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\n// 5\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\n// 5\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n// 2\nuniform float x3d_LinewidthScaleFactor;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\n// 5\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\n// 5\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 4 * 16\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n// 19 * MAX_LIGHTS\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterial (vec3 N,\n             vec3 v,\n             float x3d_AmbientIntensity,\n             vec3  x3d_DiffuseColor,\n             vec3  x3d_SpecularColor,\n             vec3  x3d_EmissiveColor,\n             float x3d_Shininess,\n             float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != NO_LIGHT)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == DIRECTIONAL_LIGHT;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == SPOT_LIGHT)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterial (N, v,\n\t\t                          ambientIntensity,\n\t\t                          diffuseColor,\n\t\t                          specularColor,\n\t\t                          emissiveColor,\n\t\t                          shininess,\n\t\t                          transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\t\t\t\n\t\tbackColor = getMaterial (-N, v,\n\t\t                         ambientIntensity,\n\t\t                         diffuseColor,\n\t\t                         specularColor,\n\t\t                         emissiveColor,\n\t\t                         shininess,\n\t\t                         transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n// 225 uniforms\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 3 * 16 + 9\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n// 19 * MAX_LIGHTS\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterial (vec3 N,\n             vec3 v,\n             float x3d_AmbientIntensity,\n             vec3  x3d_DiffuseColor,\n             vec3  x3d_SpecularColor,\n             vec3  x3d_EmissiveColor,\n             float x3d_Shininess,\n             float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != NO_LIGHT)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == DIRECTIONAL_LIGHT;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == SPOT_LIGHT)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterial (N, v,\n\t\t                          ambientIntensity,\n\t\t                          diffuseColor,\n\t\t                          specularColor,\n\t\t                          emissiveColor,\n\t\t                          shininess,\n\t\t                          transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\t\t\t\n\t\tbackColor = getMaterial (-N, v,\n\t\t                         ambientIntensity,\n\t\t                         diffuseColor,\n\t\t                         specularColor,\n\t\t                         emissiveColor,\n\t\t                         shininess,\n\t\t                         transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n// 30\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n#define MAX_TEXTURES 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n#define MAX_TEXTURES 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n// 30\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Rendering/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nvec3\npack (float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
 
 
 define ('standard/Math/Utility/MatrixStack',[
@@ -34612,6 +32440,10 @@ function ($)
 			{
 				this [this .top] .multLeft (matrix);
 			},
+			scale: function (vector)
+			{
+				this [this .top] .scale (vector);
+			},
 		});
 	}
 
@@ -34625,15 +32457,15 @@ define ('cobweb/Browser/Rendering/X3DRenderingContext',[
 	"cobweb/Fields",
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
-	"text!cobweb/Browser/Rendering/PointSet.fs",
-	"text!cobweb/Browser/Rendering/Wireframe.vs",
-	"text!cobweb/Browser/Rendering/Wireframe.fs",
-	"text!cobweb/Browser/Rendering/Gouraud.vs",
-	"text!cobweb/Browser/Rendering/Gouraud.fs",
-	"text!cobweb/Browser/Rendering/Phong.vs",
-	"text!cobweb/Browser/Rendering/Phong.fs",
-	"text!cobweb/Browser/Rendering/Depth.vs",
-	"text!cobweb/Browser/Rendering/Depth.fs",
+	"text!cobweb/Browser/Shaders/PointSet.fs",
+	"text!cobweb/Browser/Shaders/Wireframe.vs",
+	"text!cobweb/Browser/Shaders/Wireframe.fs",
+	"text!cobweb/Browser/Shaders/Gouraud.vs",
+	"text!cobweb/Browser/Shaders/Gouraud.fs",
+	"text!cobweb/Browser/Shaders/Phong.vs",
+	"text!cobweb/Browser/Shaders/Phong.fs",
+	"text!cobweb/Browser/Shaders/Depth.vs",
+	"text!cobweb/Browser/Shaders/Depth.fs",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
@@ -34655,16 +32487,6 @@ function (Fields,
           MatrixStack)
 {
 
-	
-	function createPointShader (executionContext, lineShader, gl)
-	{
-		var shader = new ComposedShader (executionContext);
-		shader .language_ = "GLSL";
-		shader .parts_ = lineShader .parts_;
-		shader .setCustom (false);
-		shader .setup ();
-		return shader;
-	}
 
 	function X3DRenderingContext ()
 	{
@@ -34699,9 +32521,9 @@ function (Fields,
 
 			this .reshape ();
 
-			this .depthShader = this .createShader (this, depthVS, depthFS);
-			this .pointShader = this .createShader (this, wireframeVS, pointSetFS);
-			this .lineShader  = this .createShader (this, wireframeVS, wireframeFS);
+			this .depthShader = this .createShader (this, "DepthShader",     depthVS,     depthFS);
+			this .pointShader = this .createShader (this, "PointShader",     wireframeVS, pointSetFS);
+			this .lineShader  = this .createShader (this, "WireframeShader", wireframeVS, wireframeFS);
 
 			this .pointShader .setGeometryType (0);
 			this .lineShader  .setGeometryType (1);
@@ -34757,27 +32579,26 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
-		createShader: function (executionContext, vs, fs)
+		createShader: function (executionContext, name, vs, fs)
 		{
 			var vertexShader = new ShaderPart (executionContext);
-			vertexShader .type_ = "VERTEX";
 			vertexShader .url_ .push (vs);
 			vertexShader .setup ();
-	
+
 			var fragmentShader = new ShaderPart (executionContext);
 			fragmentShader .type_ = "FRAGMENT";
 			fragmentShader .url_ .push (fs);
 			fragmentShader .setup ();
 	
 			var shader = new ComposedShader (executionContext);
+			shader .setName (name);
 			shader .language_ = "GLSL";
 			shader .parts_ .push (vertexShader);
 			shader .parts_ .push (fragmentShader);
 			shader .setCustom (false);
 			shader .setup ();
 
-			this .getLoadSensor () .watchList_ .push (vertexShader);
-			this .getLoadSensor () .watchList_ .push (fragmentShader);
+			this .getLoadSensor () .watchList_ = shader .parts_;
 
 			return shader;
 		},
@@ -34790,7 +32611,7 @@ function (Fields,
 				case "POINTSET":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -34806,7 +32627,7 @@ function (Fields,
 				case "WIREFRAME":
 				{
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -34822,7 +32643,7 @@ function (Fields,
 				case "PHONG":
 				{
 					if (! this .phongShader)
-						this .phongShader = this .createShader (this, phongVS, phongFS);
+						this .phongShader = this .createShader (this, "PhongShader", phongVS, phongFS);
 
 					this .defaultShader = this .phongShader;
 
@@ -34840,7 +32661,7 @@ function (Fields,
 					// case "GOURAUD":
 
 					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, gouraudVS, gouraudFS);
+						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
 
@@ -34935,7 +32756,7 @@ function ($,
 	
 	function ArcClose2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}
@@ -34974,7 +32795,7 @@ function ($,
 	
 	function Arc2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}
@@ -35180,7 +33001,7 @@ function ($,
 	
 	function Circle2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("segments", new Fields .SFInt32 (40))
 
@@ -35252,7 +33073,7 @@ function ($,
 
 	function Disk2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("segments", new Fields .SFInt32 (40))
 
@@ -38762,9 +36583,9 @@ function ($,
 		// left: We do not have to test for left.
 	];
 
-	function X3DGeometryNode (browser, executionContext)
+	function X3DGeometryNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			
@@ -38820,6 +36641,9 @@ function ($,
 			this .texCoordBuffers = [ ];
 			this .normalBuffer    = gl .createBuffer ();
 			this .vertexBuffer    = gl .createBuffer ();
+			this .colorArray      = new Float32Array ();
+			this .texCoordArray   = [ ];
+			this .vertexArray     = new Float32Array ();
 			this .planes          = [ ];
 
 			if (! this .isLineGeometry ())
@@ -39149,27 +36973,45 @@ function ($,
 				count = this .vertices .length / 4;
 
 			// Transfer colors.
+	
+			if (this .colorArray .length !== this .colors .length)
+				this .colorArray = new Float32Array (this .colors);
+			else
+				this .colorArray .set (this .colors);
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .colors), gl .STATIC_DRAW);
+			gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
 
 			// Transfer texCoords.
 
-			for (var i = this .texCoordBuffers .length; i < this .texCoords .length; ++ i)
+			for (var i = this .texCoordBuffers .length, length = this .texCoords .length; i < length; ++ i)
+			{
 				this .texCoordBuffers .push (gl .createBuffer ());
+				this .texCoordArray   .push (new Float32Array ());
+			}
 
 			this .texCoordBuffers .length = this .texCoords .length;
 			
 			for (var i = 0, length = this .texCoords .length; i < length; ++ i)
 			{
+				if (this .texCoordArray [i] .length !== this .texCoords [i] .length)
+					this .texCoordArray [i] = new Float32Array (this .texCoords [i]);
+				else
+					this .texCoordArray [i] .set (this .texCoords [i]);
+
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [i]);
-				gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .texCoords [i]), gl .STATIC_DRAW);
+				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray [i], gl .STATIC_DRAW);
 			}
 
 			// Transfer vertices.
 
+			if (this .vertexArray .length !== this .vertices .length)
+				this .vertexArray = new Float32Array (this .vertices);
+			else
+				this .vertexArray .set (this .vertices);
+
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (this .vertices), gl .STATIC_DRAW);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 			this .vertexCount = count;
 	  	},
 		traverse: function (context)
@@ -39449,9 +37291,9 @@ function ($,
 {
 
 
-	function X3DComposedGeometryNode (browser, executionContext)
+	function X3DComposedGeometryNode (executionContext)
 	{
-		X3DGeometryNode .call (this, browser, executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DComposedGeometryNode);
 
@@ -39726,7 +37568,8 @@ function ($,
 
 // https://github.com/r3mi/poly2tri.js
 
-define ('cobweb/Components/Geometry3D/IndexedFaceSet',[
+define ("cobweb/Components/Geometry3D/IndexedFaceSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -39757,7 +37600,7 @@ function ($,
 
 	function IndexedFaceSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedFaceSet);
 	}
@@ -40156,9 +37999,9 @@ function ($,
 {
 
 
-	function X3DGeometricPropertyNode (browser, executionContext)
+	function X3DGeometricPropertyNode (executionContext)
 	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGeometricPropertyNode);
 	}
@@ -40178,23 +38021,79 @@ define ('cobweb/Components/Rendering/X3DCoordinateNode',[
 	"jquery",
 	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DGeometricPropertyNode, 
-          X3DConstants)
+          X3DConstants,
+          Triangle3,
+          Vector3)
 {
 
 
-	function X3DCoordinateNode (browser, executionContext)
+	function X3DCoordinateNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DCoordinateNode);
+
+		this .point = this .point_ .getValue ();
 	}
 
 	X3DCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DCoordinateNode,
+		isEmpty: function ()
+		{
+			return this .point .length == 0;
+		},
+		getSize: function ()
+		{
+			return this .point .length;
+		},
+		getPoint: function (index)
+		{
+			// The index cannot be less than 0.
+
+			if (index < this .point .length)
+				return this .point [index] .getValue ();
+
+			return new Vector3 (0, 0, 0);
+		},
+		getNormal: function (index1, index2, index3)
+		{
+			// The index[1,2,3] cannot be less than 0.
+
+			var
+				point  = this .point,
+				length = point .length;
+
+			if (index1 < length && index2 < length && index3 < length)
+				return Triangle3 .normal (point [index1] .getValue (),
+				                          point [index2] .getValue (),
+				                          point [index3] .getValue (),
+				                          new Vector3 (0, 0, 0));
+
+			return new Vector3 (0, 0, 0);
+		},
+		getQuadNormal: function (index1, index2, index3, index4)
+		{
+			// The index[1,2,3,4] cannot be less than 0.
+
+			var
+				point  = this .point,
+				length = point .length;
+
+			if (index1 < length && index2 < length && index3 < length && index4 < length)
+				return Triangle3 .quadNormal (point [index1] .getValue (),
+				                              point [index2] .getValue (),
+				                              point [index3] .getValue (),
+				                              point [index4] .getValue (),
+				                              new Vector3 (0, 0, 0));
+
+			return new Vector3 (0, 0, 0);
+		},
 	});
 
 	return X3DCoordinateNode;
@@ -40210,23 +38109,19 @@ define ('cobweb/Components/Rendering/Coordinate',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DCoordinateNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Triangle3",
-	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DCoordinateNode, 
-          X3DConstants,
-          Triangle3,
-          Vector3)
+          X3DConstants)
 {
 
 
 	function Coordinate (executionContext)
 	{
-		X3DCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Coordinate);
 	}
@@ -40250,52 +38145,6 @@ function ($,
 		{
 			return "coord";
 		},
-		isEmpty: function ()
-		{
-			return this .point_ .length == 0;
-		},
-		getSize: function ()
-		{
-			return this .point_ .length;
-		},
-		getPoint: function (index)
-		{
-			// The index cannot be less than 0.
-
-			if (index < this .point_ .length)
-				return this .point_ [index] .getValue ();
-
-			return new Vector3 (0, 0, 0);
-		},
-		getNormal: function (index1, index2, index3)
-		{
-			// The index[1,2,3] cannot be less than 0.
-
-			var length = this .point_ .length;
-
-			if (index1 < length && index2 < length && index3 < length)
-				return Triangle3 .normal (this .point_ [index1] .getValue (),
-				                          this .point_ [index2] .getValue (),
-				                          this .point_ [index3] .getValue (),
-				                          new Vector3 (0, 0, 0));
-
-			return new Vector3 (0, 0, 0);
-		},
-		getQuadNormal: function (index1, index2, index3, index4)
-		{
-			// The index[1,2,3,4] cannot be less than 0.
-
-			var length = this .point_ .length;
-
-			if (index1 < length && index2 < length && index3 < length && index4 < length)
-				return Triangle3 .quadNormal (this .point_ [index1] .getValue (),
-				                              this .point_ [index2] .getValue (),
-				                              this .point_ [index3] .getValue (),
-				                              this .point_ [index4] .getValue (),
-				                              new Vector3 (0, 0, 0));
-
-			return new Vector3 (0, 0, 0);
-		},
 	});
 
 	return Coordinate;
@@ -40315,9 +38164,9 @@ function ($,
 {
 
 
-	function X3DTextureCoordinateNode (browser, executionContext)
+	function X3DTextureCoordinateNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTextureCoordinateNode);
 	}
@@ -40325,6 +38174,14 @@ function ($,
 	X3DTextureCoordinateNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DTextureCoordinateNode,
+		init: function (texCoords)
+		{
+			texCoords .push ([ ]);
+		},
+		addTexCoord: function (texCoord, index)
+		{
+			this .addTexCoordToChannel (texCoord [0], index);
+		},
 	});
 
 	return X3DTextureCoordinateNode;
@@ -40352,7 +38209,7 @@ function ($,
 
 	function TextureCoordinate (executionContext)
 	{
-		X3DTextureCoordinateNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureCoordinateNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureCoordinate);
 	}
@@ -40376,32 +38233,17 @@ function ($,
 		{
 			return "texCoord";
 		},
-		init: function (texCoords)
-		{
-			texCoords .push ([ ]);
-		},
-		addTexCoord: function (texCoord, index)
-		{
-			this .addTexCoordToChannel (texCoord [0], index);
-		},
 		addTexCoordToChannel: function (texCoords, index)
 		{
 			if (index >= 0 && index < this .point_ .length)
 			{
-				var point2 = this .point_ [index];
+				var point = this .point_ [index];
 	
-				texCoords .push (point2 .x);
-				texCoords .push (point2 .y);
-				texCoords .push (0);
-				texCoords .push (1);
+				texCoords .push (point .x, point .y, 0, 1);
 			}
 			else
-			{
-				texCoords .push (0);
-				texCoords .push (0);
-				texCoords .push (0);
-				texCoords .push (1);
-			}
+				texCoords .push (0, 0, 0, 1);
+
 		},
 	});
 
@@ -40432,7 +38274,7 @@ function ($,
 	
 	function Rectangle2DOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	Rectangle2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -40576,7 +38418,7 @@ function ($,
 	
 	function BoxOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	BoxOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -40664,7 +38506,7 @@ function ($,
 	
 	function ConeOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("uDimension", new Fields .SFInt32 (1),
 		                   "vDimension", new Fields .SFInt32 (20))
@@ -40704,7 +38546,7 @@ function ($,
 	
 	function CylinderOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 			
 		this .addChildren ("uDimension", new Fields .SFInt32 (1),
 		                   "vDimension", new Fields .SFInt32 (20))
@@ -40756,7 +38598,7 @@ function ($,
 	
 	function QuadSphereOptions (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .addChildren ("uDimension", new Fields .SFInt32 (32),
 		                   "vDimension", new Fields .SFInt32 (16))
@@ -41053,7 +38895,7 @@ function (jquery,
 	
 	function PointingDevice (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .cursor     = "DEFAULT";
 		this .isOver     = false;
@@ -42064,9 +39906,9 @@ function ($,
 {
 
 
-	function X3DBindableNode (browser, executionContext)
+	function X3DBindableNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DBindableNode);
 
@@ -42132,7 +39974,7 @@ function ($,
 {
 
 
-	function X3DTimeDependentNode (browser, executionContext)
+	function X3DTimeDependentNode (executionContext)
 	{
 		this .addType (X3DConstants .X3DTimeDependentNode);
 
@@ -42461,8 +40303,8 @@ function ($,
 
 	function TimeSensor (executionContext)
 	{
-		X3DSensorNode        .call (this, executionContext .getBrowser (), executionContext);
-		X3DTimeDependentNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSensorNode        .call (this, executionContext);
+		X3DTimeDependentNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TimeSensor);
 
@@ -42582,9 +40424,9 @@ function ($,
 {
 
 
-	function X3DInterpolatorNode (browser, executionContext)
+	function X3DInterpolatorNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DInterpolatorNode);
 	}
@@ -42679,7 +40521,7 @@ function ($,
 
 	function EaseInEaseOut (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .EaseInEaseOut);
 	}
@@ -42781,7 +40623,7 @@ function ($,
 
 	function PositionInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionInterpolator);
 	}
@@ -42857,7 +40699,7 @@ function ($,
 
 	function OrientationInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .OrientationInterpolator);
 	}
@@ -42965,9 +40807,9 @@ function ($,
 		vector     = new Vector3 (0, 0, 0),
 		rotation   = new Rotation4 (0, 0, 1, 0);
 
-	function X3DViewpointNode (browser, executionContext)
+	function X3DViewpointNode (executionContext)
 	{
-		X3DBindableNode .call (this, browser, executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DViewpointNode);
 
@@ -42977,6 +40819,8 @@ function ($,
 		this .transformationMatrix     = new Matrix4 ();
 		this .cameraSpaceMatrix        = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,  10, 1);
 		this .inverseCameraSpaceMatrix = new Matrix4 (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -10, 1);
+
+		var browser = this .getBrowser ();
 
 		this .timeSensor                   = new TimeSensor              (browser .getPrivateScene ());
 		this .easeInEaseOut                = new EaseInEaseOut           (browser .getPrivateScene ());
@@ -43452,7 +41296,7 @@ function ($,
 
 	function OrthoViewpoint (executionContext)
 	{
-		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode .call (this, executionContext);
 
 		this .addType (X3DConstants .OrthoViewpoint);
 
@@ -43534,7 +41378,7 @@ function ($,
 		{
 			return this .sizeY;
 		},
-		getScreenScale: function (distance, viewport)
+		getScreenScale: function (dummy, viewport)
 		{
 			var
 				width  = viewport [2],
@@ -43618,9 +41462,9 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 	
 	var far = new Vector3 (0, 0, 0);
 
-	function X3DViewer (browser, executionContext)
+	function X3DViewer (executionContext)
 	{
-		X3DBaseNode .call (this, browser, executionContext);
+		X3DBaseNode .call (this, executionContext);
 	}
 
 	X3DViewer .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -43818,7 +41662,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 	function ExamineViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button            = -1;
 		this .orientationOffset = new Rotation4 (0, 0, 1, 0);
@@ -44107,7 +41951,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 	
 	function X3DFlyViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		var gl = this .getBrowser () .getContext ();
 
@@ -44473,7 +42317,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			shader .use ();
 
-			gl .uniform1i (shader .clipPlaneEnabled [0], false);
+			gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			gl .uniform1i (shader .fogType,       0);
 			gl .uniform1i (shader .colorMaterial, false);
@@ -44565,7 +42409,7 @@ function (X3DFlyViewer, Vector3, Rotation4, _)
 	
 	function WalkViewer (executionContext)
 	{
-		X3DFlyViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DFlyViewer .call (this, executionContext);
 	}
 
 	WalkViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),
@@ -44611,7 +42455,7 @@ function (X3DFlyViewer, _)
 	
 	function FlyViewer (executionContext)
 	{
-		X3DFlyViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DFlyViewer .call (this, executionContext);
 	}
 
 	FlyViewer .prototype = $.extend (Object .create (X3DFlyViewer .prototype),
@@ -44656,7 +42500,7 @@ function ($,
 
 	function ScalarInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ScalarInterpolator);
 	}
@@ -44735,18 +42579,18 @@ function ($,
 {
 
 
-	var screenScale = new Vector3 (0, 0, 0);
+	var
+		zAxis       = new Vector3 (0, 0, 1),
+		screenScale = new Vector3 (0, 0, 0);
 
 	function Viewpoint (executionContext)
 	{
-		X3DViewpointNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Viewpoint);
 
-		this .projectionMatrix = new Matrix4 ();
-
+		this .projectionMatrix        = new Matrix4 ();
 		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
-		this .fieldOfViewInterpolator .setName ("Default");
 	}
 
 	Viewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -44808,16 +42652,17 @@ function ($,
 
 			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
 		},
-		getScreenScale: function (distance, viewport)
+		getScreenScale: function (point, viewport)
 		{
 			var
 				width  = viewport [2],
 				height = viewport [3],
-				size   = distance * Math .tan (this .getFieldOfView () / 2) * 2;
+				size   = Math .tan (this .getFieldOfView () / 2) * 2 * point .abs (); // Assume we are on sphere.
+
+			size *= Math .abs (point .normalize () .dot (zAxis));
 
 			if (width > height)
 				size /= height;
-
 			else
 				size /= width;
 
@@ -44848,7 +42693,7 @@ function ($,
 {
 
 
-	function X3DGeospatialObject (browser, executionContext)
+	function X3DGeospatialObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DGeospatialObject);
 	}
@@ -44886,8 +42731,8 @@ function ($,
 
 	function GeoViewpoint (executionContext)
 	{
-		X3DViewpointNode    .call (this, executionContext .getBrowser (), executionContext);
-		X3DGeospatialObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewpointNode    .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoViewpoint);
 	}
@@ -44952,7 +42797,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 
 	function PlaneViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button = -1;
 		this .fromPoint = new Vector3 (0, 0, 0);
@@ -45126,7 +42971,7 @@ function ($, X3DViewer, _)
 	
 	function NoneViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 	}
 
 	NoneViewer .prototype = $.extend (Object .create (X3DViewer .prototype),
@@ -45152,7 +42997,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 	function LookAtViewer (executionContext)
 	{
-		X3DViewer .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewer .call (this, executionContext);
 
 		this .button = -1;
 	}
@@ -45257,9 +43102,9 @@ function ($,
 {
 
 
-	function X3DLightNode (browser, executionContext)
+	function X3DLightNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLightNode);
 	}
@@ -45398,7 +43243,7 @@ function ($,
 
 	function DirectionalLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .DirectionalLight);
 	}
@@ -45633,7 +43478,7 @@ function ($,
 {
 
 
-	function X3DBoundedObject (browser, executionContext)
+	function X3DBoundedObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DBoundedObject);
 	}
@@ -45656,12 +43501,7 @@ function ($,
 			var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
 
 			if (boundedObject)
-			{
-				if (!boundedObject .getBBox ())
-					console .log (boundedObject .getTypeName ());
-			
 				bbox .add (boundedObject .getBBox ());
-			}
 		}
 
 		return bbox;
@@ -45757,10 +43597,10 @@ function ($,
 
 	var visible = new Fields .MFBool ();
 
-	function X3DGroupingNode (browser, executionContext)
+	function X3DGroupingNode (executionContext)
 	{
-		X3DChildNode     .call (this, browser, executionContext);
-		X3DBoundedObject .call (this, browser, executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DGroupingNode);
 	               
@@ -46111,9 +43951,9 @@ function ($,
 {
 
 
-	function X3DViewportNode (browser, executionContext)
+	function X3DViewportNode (executionContext)
 	{
-		X3DGroupingNode .call (this, browser, executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DViewportNode);
 	}
@@ -46158,7 +43998,7 @@ function ($,
 
 	function Viewport (executionContext)
 	{
-		X3DViewportNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DViewportNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Viewport);
 
@@ -46405,7 +44245,7 @@ function ($,
 
 	function TextureProperties (executionContext)
 	{
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureProperties);
 	}
@@ -46491,17 +44331,17 @@ function ($,
 
 
 
-define('text!cobweb/Browser/EnvironmentalEffects/SphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
 
-define('text!cobweb/Browser/EnvironmentalEffects/SphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\n// 30\nuniform bool x3d_ClipPlaneEnabled [MAX_CLIP_PLANES];\nuniform vec4 x3d_ClipPlaneVector [MAX_CLIP_PLANES];\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlaneEnabled [i])\n\t\t{\n\t\t\tif (dot (v, x3d_ClipPlaneVector [i] .xyz) - x3d_ClipPlaneVector [i] .w < 0.0)\n\t\t\t{\n\t\t\t\tdiscard;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
 
 
 define ('cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext',[
 	"cobweb/Components/Shaders/ComposedShader",
 	"cobweb/Components/Shaders/ShaderPart",
 	"cobweb/Components/Texturing/TextureProperties",
-	"text!cobweb/Browser/EnvironmentalEffects/SphereVertexShader.vs",
-	"text!cobweb/Browser/EnvironmentalEffects/SphereFragmentShader.fs",
+	"text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs",
+	"text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs",
 ],
 function (ComposedShader,
           ShaderPart,
@@ -46520,7 +44360,7 @@ function (ComposedShader,
 	{
 		initialize: function ()
 		{
-			this .backgroundSphereShader = this .createShader (this, vertexShaderText, fragmentShaderText);
+			this .backgroundSphereShader = this .createShader (this, "BackgroundSphereShader", vertexShaderText, fragmentShaderText);
 
 			this .backgroundTextureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
 			this .backgroundTextureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";
@@ -46613,6 +44453,28 @@ function (Fields,
 	};
 
 	return X3DSoundContext;
+});
+
+
+define ('cobweb/Browser/Text/TextAlignment',[],function ()
+{
+
+	
+	var i = 0;
+
+	var TextAlignment =
+	{
+	   BEGIN:  ++ i,
+	   FIRST:  ++ i,
+	   MIDDLE: ++ i,
+	   END:    ++ i,
+	};
+
+	Object .preventExtensions (TextAlignment);
+	Object .freeze (TextAlignment);
+	Object .seal (TextAlignment);
+
+	return TextAlignment;
 });
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define('lib/opentype.js/dist/opentype.js',[],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.opentype = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -51541,7 +49403,10 @@ exports.sizeOf = sizeOf;
 
 define ('cobweb/Components/Text/X3DFontStyleNode',[
 	"jquery",
+	"cobweb/Fields",
 	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
@@ -51549,7 +49414,10 @@ define ('cobweb/Components/Text/X3DFontStyleNode',[
 	"lib/opentype.js/dist/opentype.js",
 ],
 function ($,
-          X3DNode, 
+          Fields,
+          X3DNode,
+          X3DUrlObject,
+          TextAlignment,
           Loader,
           X3DConstants,
           urls,
@@ -51563,11 +49431,11 @@ function ($,
     */
 
 	var FontDirectories = [
-		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
-		"http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 		"https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
-		"http://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+		"http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 		"https://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+		"http://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
 	];
 
 	var Fonts =
@@ -51592,27 +49460,17 @@ function ($,
 	   },
 	};
 
-	//
-
-	var i = 0;
-
-	var Alignment =
+	function X3DFontStyleNode (executionContext)
 	{
-	   BEGIN:  ++ i,
-	   FIRST:  ++ i,
-	   MIDDLE: ++ i,
-	   END:    ++ i,
-	};
-
-	function X3DFontStyleNode (browser, executionContext)
-	{
-		X3DNode .call (this, browser, executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DFontStyleNode);
+		
+		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 
-		this .family     = [ ];
-		this .alignments = [ ];
-		this .loader     = new Loader (this, true);
+		this .familyStack = [ ];
+		this .alignments  = [ ];
+		this .loader      = new Loader (this);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -51620,17 +49478,21 @@ function ($,
 		constructor: X3DFontStyleNode,
 		initialize: function ()
 		{
-		   X3DNode .prototype .initialize .call (this);
+			X3DNode .prototype .initialize .call (this);
 
-		   this .style_   .addInterest (this, "set_style__");
-		   this .justify_ .addInterest (this, "set_justify__");
+			this .style_   .addInterest (this, "set_style__");
+			this .justify_ .addInterest (this, "set_justify__");
 
 			this .font        = null;
 			this .familyIndex = 0;
 
-		   this .set_justify__ ();
-		   this .set_style__ ();
+			this .set_justify__ ();
+			this .set_style__ ();
+
+			this .requestAsyncLoad ();
 		},
+		setLoadState: X3DUrlObject .prototype .setLoadState,
+		checkLoadState: X3DUrlObject .prototype .checkLoadState,
 		getMajorAlignment: function ()
 		{
 			return this .alignments [0];
@@ -51641,12 +49503,9 @@ function ($,
 		},
 		set_style__: function ()
 		{
-		   //var style = this .style_ .getValue ();
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
 
-			//this .italic = (style == "ITALIC" || style == "BOLDITALIC");
-			//this .bold   = (style == "BOLD"   || style == "BOLDITALIC");
-		  
-		   this .requestAsyncLoad ();
+			this .requestAsyncLoad ();
 		},
 		set_justify__: function ()
 		{
@@ -51654,13 +49513,13 @@ function ($,
 
 			this .alignments [0] = this .justify_ .length > 0
 			                       ? this .getAlignment (0, majorNormal)
-								        : majorNormal ? Alignment .BEGIN : Alignment .END;
+								        : majorNormal ? TextAlignment .BEGIN : TextAlignment .END;
 
 			var minorNormal = this .horizontal_ .getValue () ? this .topToBottom_ .getValue () : this .leftToRight_ .getValue ();
 
 			this .alignments [1] = this .justify_ .length > 1
 			                       ? this .getAlignment (1, minorNormal)
-								        : minorNormal ? Alignment .FIRST : Alignment .END;
+								        : minorNormal ? TextAlignment .FIRST : TextAlignment .END;
 		},
 		getAlignment: function (index, normal)
 		{
@@ -51670,10 +49529,10 @@ function ($,
 
 				switch (this .justify_ [index])
 				{
-					case "FIRST":  return Alignment .FIRST;
-					case "BEGIN":  return Alignment .BEGIN;
-					case "MIDDLE": return Alignment .MIDDLE;
-					case "END":    return Alignment .END;
+					case "FIRST":  return TextAlignment .FIRST;
+					case "BEGIN":  return TextAlignment .BEGIN;
+					case "MIDDLE": return TextAlignment .MIDDLE;
+					case "END":    return TextAlignment .END;
 				}
 			}
 			else
@@ -51682,25 +49541,33 @@ function ($,
 
 				switch (this .justify_ [index])
 				{
-					case "FIRST":  return Alignment .END;
-					case "BEGIN":  return Alignment .END;
-					case "MIDDLE": return Alignment .MIDDLE;
-					case "END":    return Alignment .BEGIN;
+					case "FIRST":  return TextAlignment .END;
+					case "BEGIN":  return TextAlignment .END;
+					case "MIDDLE": return TextAlignment .MIDDLE;
+					case "END":    return TextAlignment .BEGIN;
 				}
 			}
 
-			return index ? Alignment .FIRST : Alignment .BEGIN;
+			return index ? TextAlignment .FIRST : TextAlignment .BEGIN;
 		},
 		requestAsyncLoad: function ()
 		{
-			this .familyIndex    = 0;
-			this .family .length = 0;
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			// Add default font to family array.
 
 			var family = this .family_ .copy ();
 
 			family .push ("SERIF");
 
-			for (var i = 0; i < family .length; ++ i)
+			// Build family stack.
+
+			this .familyStack .length = 0;
+
+			for (var i = 0, length = family .length; i < length; ++ i)
 			{
 			   var
 			      familyName  = family [i],
@@ -51709,31 +49576,13 @@ function ($,
 				if (defaultFont)
 				{
 				   for (var d = 0; d < FontDirectories .length; ++ d)
-				      this .family .push (FontDirectories [d] + defaultFont);
+				      this .familyStack .push (FontDirectories [d] + defaultFont);
 				}
 				else
-					this .family .push (familyName);
+					this .familyStack .push (familyName);
 			}
 
-			this .loadFont ();
-		},
-		loadFont: function ()
-		{
-			try
-			{
-			   if (this .familyIndex < this .family .length)
-			   {
-					var
-						familyName = this .family [this .familyIndex],
-						fontPath   = this .loader .transform (familyName);
-
-					opentype .load (fontPath, this .setFont .bind (this));
-				}
-			}
-			catch (error)
-			{
-				this .setError (error .message);
-			}
+			this .loadNext ();
 		},
 		getDefaultFont: function (familyName)
 		{
@@ -51751,7 +49600,55 @@ function ($,
 
 		   return;
 		},
-		setFont: function (error, font)
+		loadNext: function ()
+		{
+			try
+			{
+				if (this .familyStack .length === 0)
+				{
+					this .setLoadState (X3DConstants .FAILED_STATE);
+					this .font = null;
+					return;
+				}
+
+				this .family = this .familyStack .shift ();
+				this .URL    = this .loader .transform (this .family);
+	
+				var font = this .getBrowser () .getFont (this .URL);
+
+				if (font)
+					return this .setFont (font);
+	
+				if (font === false)
+					return this .setError ("Couldn't load font.");
+	
+				this .getBrowser () .addFont (this .URL, true);
+	
+				opentype .load (this .URL, this .addFont .bind (this));
+			}
+			catch (error)
+			{
+				this .setError (error .message);
+			}
+		},
+		setError: function (error)
+		{
+			this .getBrowser () .addFont (this .URL, false);
+	
+			var URL = this .URL .toString ();
+
+			if (! this .URL .isLocal ())
+			{
+				if (! URL .match (urls .fallbackExpression))
+					this .familyStack .unshift (urls .fallbackUrl + URL);
+			}
+
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading font '" + this .URL .toString () + "':", error);
+
+			this .loadNext ();
+		},
+		addFont: function (error, font)
 		{
 			if (error)
 			{
@@ -51759,43 +49656,29 @@ function ($,
 			}
 			else
 			{
-				//console .log ('Font loaded fine:', font .familyName, font .styleName);
-
-				this .font     = font;
-				font .fontName = font .familyName + font .styleName;
-		   
-		      // Workaround to initialize composite glyphs.
-		      for (var i = 0; i < this .font .numGlyphs; ++ i)
-					this .font .glyphs .get (i) .getPath (0, 0, 1);
-
-				this .addNodeEvent ();
+				this .getBrowser () .addFont (this .URL, font);
+				this .setFont (font);
 			}
+		},
+		setFont: function (font)
+		{
+			if (font === true)
+			{
+				this .familyStack .unshift (this .family);
+				setTimeout (this .loadNext .bind (this), 10);
+				return;
+			}
+
+			this .font = font;
+
+			this .setLoadState (X3DConstants .COMPLETE_STATE);
+			this .addNodeEvent ();
 		},
 		getFont: function ()
 		{
 		   return this .font;
 		},
-		setError: function (error)
-		{
-			var
-				family = this .family [this .familyIndex],
-				URL   = new URI (family);
-
-			this .font = null;
-			this .familyIndex ++;
-
-			if (! URL .isLocal ())
-			{
-				if (! family .toString () .match (urls .fallbackRx))
-					this .family .splice (this .familyIndex, 0, urls .fallback + family);
-			}
-
-			console .warn ("Error loading font '" + family + "':", error);
-			this .loadFont ();
-		},
 	});
-
-	X3DFontStyleNode .Alignment = Alignment;
 
 	return X3DFontStyleNode;
 });
@@ -52027,6 +49910,613 @@ function (Matrix3, Vector2)
 	});
 
 	return Box2;
+});
+
+
+define ('cobweb/Browser/Text/X3DTextGeometry',[
+	"cobweb/Browser/Text/TextAlignment",
+	"standard/Math/Geometry/Box2",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+],
+function (TextAlignment,
+          Box2,
+          Box3,
+          Vector2,
+          Vector3)
+{
+
+
+	var
+		glyphCache  = { },
+		bbox        = new Box2 (),
+		lineBBox    = new Box2 (),
+		min         = new Vector2 (0, 0),
+		max         = new Vector2 (0, 0),
+		glyphMin    = new Vector2 (0, 0),
+		glyphMax    = new Vector2 (0, 0),
+		min3        = new Vector3 (0, 0, 0),
+		max3        = new Vector3 (0, 0, 0),
+		size        = new Vector2 (0, 0),
+		center      = new Vector2 (0, 0),
+		size1_2     = new Vector2 (0, 0),
+		translation = new Vector2 (0, 0),
+		lineBound   = new Vector2 (0, 0),
+		origin      = new Vector3 (0, 0, 0),
+		vector      = new Vector2 (0, 0),
+		box2        = new Box2 (),
+		zero2       = new Vector2 (0, 0),
+		zero3       = new Vector3 (0, 0, 0);
+
+	function X3DTextGeometry (text, fontStyle)
+	{
+		this .text           = text;
+		this .fontStyle      = fontStyle;
+		this .glyphs         = [ ];
+		this .minorAlignment = new Vector2 (0, 0);
+		this .translations   = [ ];
+		this .charSpacings   = [ ];
+		this .bearing        = new Vector2 (0, 0);
+		this .yPad           = [ ];
+		this .bbox           = new Box3 ();
+	}
+
+	X3DTextGeometry .prototype =
+	{
+		constructor: X3DTextGeometry,
+		getBrowser: function ()
+		{
+			return this .text .getBrowser ();
+		},
+		getText: function ()
+		{
+			return this .text;
+		},
+		getFontStyle: function ()
+		{
+			return this .fontStyle;
+		},
+		getGlyphs: function ()
+		{
+			return this .glyphs;
+		},
+		getMinorAlignment: function ()
+		{
+			return this .minorAlignment;
+		},
+		getTranslations: function ()
+		{
+			return this .translations;
+		},
+		getCharSpacings: function ()
+		{
+			return this .charSpacings;
+		},
+		getBearing: function ()
+		{
+			return this .bearing;
+		},
+		getBBox: function ()
+		{
+			return this .bbox;
+		},
+		update: function ()
+		{
+			var
+				text      = this .text,
+				fontStyle = this .fontStyle,
+				numLines  = text .string_ .length;
+			
+			text .lineBounds_ .length = numLines;
+			this .glyphs      .length = 0;
+
+			if (numLines === 0 || ! fontStyle .getFont ())
+			{
+				text .origin_     .setValue (zero3);
+				text .textBounds_ .setValue (zero2);
+
+				this .bbox .set ();
+				return;
+			}
+
+			if (fontStyle .horizontal_ .getValue ())
+			{
+				this .resizeArray (this .translations, numLines);
+				this .resizeArray (this .charSpacings, numLines);
+
+				this .horizontal (text, fontStyle);
+			}
+			else
+			{
+				var
+					string   = text .string_ .getValue (),
+					numChars = 0;
+			
+				for (var i = 0, length = string .length; i < length; ++ i)
+					numChars += string [i] .length;
+
+				this .resizeArray (this .translations, numChars);
+				this .resizeArray (this .charSpacings, numChars);
+
+				this .vertical (text, fontStyle);
+			}
+		},
+		resizeArray: function (array, size)
+		{
+			// Resize array in grow only fashion.
+
+			for (var i = array .length; i < size; ++ i)
+				array .push (new Vector2 (0, 0));
+
+			array .length = size;
+		},
+		horizontal: function (text, fontStyle)
+		{
+			var
+				font        = fontStyle .getFont (),
+				string      = text .string_ .getValue (),
+				numLines    = string .length,
+				maxExtent   = Math .max (0, text .maxExtent_ .getValue ()),
+				topToBottom = fontStyle .topToBottom_ .getValue (),
+				scale       = fontStyle .getScale (),
+				spacing     = fontStyle .spacing_ .getValue ();
+			
+			bbox .set ();
+
+			// Calculate bboxes.
+
+			var
+				first = topToBottom ? 0 : numLines - 1,
+				last  = topToBottom ? numLines : -1,
+				step  = topToBottom ? 1 : -1;
+
+			for (var l = first; l !== last; l += step)
+			{
+				var line = string [l];
+
+				// Get line extents.
+
+				var glyphs = this .getHorizontalLineExtents (fontStyle, line, min, max, l);
+
+				size .assign (max) .subtract (min);
+
+				// Calculate charSpacing and lineBounds.
+
+				var lineNumber = topToBottom ? l : numLines - l - 1;
+
+				var
+					charSpacing = 0,
+					length      = text .getLength (l);
+	
+				lineBound .set (size .x, lineNumber == 0 ? max .y - font .descender / font .unitsPerEm : spacing) .multiply (scale);
+
+				if (maxExtent)
+				{
+					if (length)
+						length = Math .min (maxExtent, length);
+
+					else
+						length = Math .min (maxExtent, size .x * scale);
+				}
+
+				if (length)
+				{
+					charSpacing  = (length - lineBound .x) / (glyphs .length - 1);
+					lineBound .x = length;
+					size .x      = length / scale;
+				}
+
+				this .charSpacings [l] = charSpacing 
+				text .lineBounds_ [l]  = lineBound;
+
+				// Calculate line translation.
+
+				switch (fontStyle .getMajorAlignment ())
+				{
+					case TextAlignment .BEGIN:
+					case TextAlignment .FIRST:
+						this .translations [l] .set (0, -l * spacing);
+						break;
+					case TextAlignment .MIDDLE:
+						this .translations [l] .set (-min .x - size .x / 2, -l * spacing);
+						break;
+					case TextAlignment .END:
+						this .translations [l] .set (-min .x - size .x, -l * spacing);
+						break;
+				}
+
+				this .translations [l] .multiply (scale);
+
+				// Calculate center.
+
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
+
+				// Add bbox.
+
+				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [l])));
+			}
+
+			//console .log ("size", bbox .size, "center", bbox .center);
+
+			// Get text extents.
+
+			bbox .getExtents (min, max);
+
+			size .assign (max) .subtract (min);
+
+			// Calculate text position
+
+			text .textBounds_ = size;
+			this .bearing .set (0, -max .y);
+
+			switch (fontStyle .getMinorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+					this .minorAlignment .assign (this .bearing);
+					break;
+				case TextAlignment .FIRST:
+					this .minorAlignment .set (0, 0);
+					break;
+				case TextAlignment .MIDDLE:
+					this .minorAlignment .set (0, size .y / 2 - max .y);
+					break;
+				case TextAlignment .END:
+					this .minorAlignment .set (0, (numLines - 1) * spacing * scale);
+					break;
+			}
+
+			// Translate bbox by minorAlignment.
+
+			min .add (this .minorAlignment);
+			max .add (this .minorAlignment);
+
+			// The value of the origin field represents the upper left corner of the textBounds.
+
+			text .origin_ .setValue (origin .set (min .x, max .y, 0));
+
+			this .bbox .set (min3 .set (min .x, min .y, 0),
+			                 max3 .set (max .x, max .y, 0),
+			                 true);
+		},
+		vertical: function (text, fontStyle)
+		{		
+			var
+				font             = fontStyle .getFont (),
+				string           = text .string_ .getValue (),
+				numLines         = string .length,
+				maxExtent        = Math .max (0, text .maxExtent_ .getValue ()),
+				leftToRight      = fontStyle .leftToRight_ .getValue (),
+				topToBottom      = fontStyle .topToBottom_ .getValue (),
+				scale            = fontStyle .getScale (),
+				spacing          = fontStyle .spacing_ .getValue (),
+				yPad             = this .yPad,
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
+	
+			bbox .set ();
+		
+			// Calculate bboxes.
+
+			var
+				firstL = leftToRight ? 0 : numLines - 1,
+				lastL  = leftToRight ? numLines : -1,
+				stepL  = leftToRight ? 1 : -1,
+				t      = 0; // Translation index
+
+			for (var l = firstL; l !== lastL; l += stepL)
+			{
+				var glyphs = this .stringToGlyphs (font, string [l], true, l);
+
+				var
+					t0       = t,
+					numChars = glyphs .length;
+
+				// Calculate line bbox
+		
+				lineBBox .set ();
+		
+				var
+					firstG = topToBottom ? 0 : numChars - 1,
+					lastG  = topToBottom ? numChars : -1,
+					stepG  = topToBottom ? 1 : -1;
+		
+				for (var g = firstG; g !== lastG; g += stepG, ++ t)
+				{
+					var glyph = glyphs [g];
+
+					// Get glyph extents.
+
+					this .getGlyphExtents (glyph, primitiveQuality, min, max);
+		
+					size .assign (max) .subtract (min);
+					
+					// Calculate glyph translation
+					
+					var glyphNumber = topToBottom ? g : numChars - g - 1;
+		
+					this .translations [t] .set ((spacing - size .x) / 2, -glyphNumber);
+
+					// Calculate center.
+
+					center .assign (min) .add (size1_2 .assign (size) .divide (2)) .add (this .translations [t]);
+		
+					// Add bbox.
+		
+					lineBBox .add (box2 .set (size, center));
+				}
+			
+				// Get line extents.
+		
+				lineBBox .getExtents (min, max);
+		
+				size .assign (max) .subtract (min);
+	
+				// Calculate charSpacing and lineBounds.
+
+				var
+					lineNumber  = leftToRight ? l : numLines - l - 1,
+					padding     = (spacing - size .x) / 2,
+					charSpacing = 0,
+					length      = text .getLength (l);
+
+				lineBound .set (l === 0 ? spacing - padding: spacing, size .y) .multiply (scale);
+
+				if (maxExtent)
+				{
+					if (length)
+						length = Math .min (maxExtent, length);
+		
+					else
+						length = Math .min (maxExtent, size .y * scale);
+				}
+		
+				if (length)
+				{
+					charSpacing  = (length - lineBound .y) / (glyphs .length - 1) / scale;
+					lineBound .y = length;
+					size .y      = length / scale;
+					min .y       = max .y  - size .y;
+				}
+		
+				text .lineBounds_ [l] = lineBound;
+	
+				// Calculate line translation.
+				
+				switch (fontStyle .getMajorAlignment ())
+				{
+					case TextAlignment .BEGIN:
+					case TextAlignment .FIRST:
+						translation .set (lineNumber * spacing, -1);
+						break;
+					case TextAlignment .MIDDLE:
+						translation .set (lineNumber * spacing, (size .y / 2 - max .y));
+						break;
+					case TextAlignment .END:
+					{
+						// This is needed to make maxExtend and charSpacing work.
+						this .getGlyphExtents (glyphs [topToBottom ? numChars - 1 : 0] , primitiveQuality, glyphMin, vector);
+
+						translation .set (lineNumber * spacing, (size .y - max .y + glyphMin .y));
+						break;
+					}
+				}
+		
+				// Calculate glyph translation		
+		
+				var space = 0;
+		
+				for (var tt = t0; tt < t; ++ tt)
+				{
+					this .translations [tt] .add (translation);
+
+					this .translations [tt] .y -= space;
+
+					this .translations [tt] .multiply (scale);
+
+					space += charSpacing;
+				}
+		
+				// Calculate ypad to extend line bounds.
+
+				switch (fontStyle .getMajorAlignment ())
+				{
+					case TextAlignment .BEGIN:
+					case TextAlignment .FIRST:
+						yPad [l] = max .y + translation .y;
+						break;
+					case TextAlignment .MIDDLE:
+						yPad [l] = 0;
+						break;
+					case TextAlignment .END:
+						yPad [l] = min .y + translation .y;
+						break;
+				}
+
+				// Calculate center.
+
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
+		
+				// Add bbox.
+					
+				bbox .add (box2 .set (size .multiply (scale), center .add (translation) .multiply (scale)));
+			}
+
+			// Get text extents.
+		
+			bbox .getExtents (min, max);
+		
+			size .assign (max) .subtract (min);
+			
+			// Extend lineBounds.
+		
+			switch (fontStyle .getMajorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+				{
+					var lineBounds = text .lineBounds_ .getValue ();
+
+					for (var i = 0, length = lineBounds .length; i < length; ++ i)
+						lineBounds [i] .y += max .y - yPad [i] * scale;
+		
+					break;
+				}
+				case TextAlignment .MIDDLE:
+					break;
+				case TextAlignment .END:
+				{
+					var lineBounds = text .lineBounds_ .getValue ();
+
+					for (var i = 0, length = lineBounds .length; i < length; ++ i)
+						lineBounds [i].y += yPad [i] * scale - min .y;
+		
+					break;
+				}
+			}
+	
+			// Calculate text position
+		
+			text .textBounds_ = size;
+		
+			switch (fontStyle .getMajorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					this .bearing .set (-min .x, max .y);
+					break;
+				case TextAlignment .MIDDLE:
+					this .bearing .set (-min .x, 0);
+					break;
+				case TextAlignment .END:
+					this .bearing .set (-min .x, min .y);
+					break;
+			}
+		
+			switch (fontStyle .getMinorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					this .minorAlignment .set (-min .x, 0);
+					break;
+				case TextAlignment .MIDDLE:
+					this .minorAlignment .set (-min .x - size .x / 2, 0);
+					break;
+				case TextAlignment .END:
+					this .minorAlignment .set (-min .x - size .x, 0);
+					break;
+			}
+		
+			// Translate bbox by minorAlignment.
+		
+			min .add (this .minorAlignment);
+			max .add (this .minorAlignment);
+
+			// The value of the origin field represents the upper left corner of the textBounds.
+
+			text .origin_ .setValue (origin .set (min .x, max .y, 0));
+
+			this .bbox .set (min3 .set (min .x, min .y, 0),
+			                 max3 .set (max .x, max .y, 0),
+			                 true);
+		},
+		stringToGlyphs: function (font, line, normal, lineNumber)
+		{
+			line = line .getValue ();
+
+			var
+				fontGlyphCache = glyphCache [font .fontName],
+				glypes         = this .glyphs [lineNumber];
+
+			if (! fontGlyphCache)
+				fontGlyphCache = glyphCache [font .fontName] = [ ];
+
+			if (! glypes)
+				glypes = this .glyphs [lineNumber] = [ ];
+
+			glypes .length = line .length;
+
+			var
+				first = normal ? 0 : line .length - 1,
+				last  = normal ? line .length : -1,
+				step  = normal ? 1 : -1;
+
+			for (var c = first, g = 0; c !== last; c += step, ++ g)
+			{
+				var
+					charCode = line .charCodeAt (c),
+					glyph     = null;
+				
+				if (glyph = fontGlyphCache [charCode])
+					;
+				else
+				{
+					glyph = font .stringToGlyphs (line [c]) [0];
+
+					fontGlyphCache [charCode] = glyph;
+
+					glyph .extents = { };
+				}
+
+				glypes [g] = glyph;
+			}
+
+			return glypes;
+		},
+		getHorizontalLineExtents: function (fontStyle, line, min, max, lineNumber)
+		{
+			var
+				font             = fontStyle .getFont (),
+				normal           = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
+				glyphs           = this .stringToGlyphs (font, line, normal, lineNumber),
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+				xMin             = 0,
+				xMax             = 0,
+				yMin             = Number .POSITIVE_INFINITY,
+				yMax             = Number .NEGATIVE_INFINITY;
+
+			for (var g = 0, length = glyphs .length; g < length; ++ g)
+			{
+				var
+					glyph   = glyphs [g],
+					kerning = g + 1 < length ? font .getKerningValue (glyph, glyphs [g + 1]) : 0;
+
+				this .getGlyphExtents (glyph, primitiveQuality, glyphMin, glyphMax);
+
+				var advanceWidth = g + 1 < length ? glyph .advanceWidth : glyphMax .x * font .unitsPerEm;
+
+				xMax += advanceWidth + kerning;
+				yMin  = Math .min (yMin, glyphMin .y);
+				yMax  = Math .max (yMax, glyphMax .y);
+			}
+
+			if (glyphs .length)
+			{
+				this .getGlyphExtents (glyphs [0], primitiveQuality, glyphMin, glyphMax);
+
+				xMin  = glyphMin .x;
+			}
+			else
+			{
+				yMin = 0;
+				yMax = 0;
+			}
+
+			min .set (xMin, yMin);
+			max .set (xMax / font .unitsPerEm, yMax);
+
+			switch (fontStyle .getMajorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					min .x = 0;
+					break;
+			}
+
+			return glyphs;
+		},
+	};
+
+	return X3DTextGeometry;
 });
 
 
@@ -53897,37 +52387,21 @@ function Node(i) {
    return earcut;
 });
 
-define ('cobweb/Components/Text/FontStyle',[
+define ('cobweb/Browser/Text/PolygonText',[
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Text/X3DFontStyleNode",
-	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Core/PrimitiveQuality",
-	"standard/Math/Geometry/Box2",
-	"standard/Math/Geometry/Box3",
-	"standard/Math/Numbers/Vector2",
+	"cobweb/Browser/Text/X3DTextGeometry",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Geometry/Triangle2",
-	"standard/Math/Algorithm",
 	"lib/bezierjs/bezier.js",
 	"lib/poly2tri.js/dist/poly2tri.js",
 	"lib/earcut/src/earcut.js",
 ],
 function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DFontStyleNode, 
-          X3DConstants,
           PrimitiveQuality,
-          Box2,
-          Box3,
-          Vector2,
+          X3DTextGeometry,
           Vector3,
           Triangle2,
-          Algorithm,
           Bezier,
           poly2tri,
           earcut)
@@ -53935,345 +52409,11 @@ function ($,
 
 
 	var
-		glyphCache = { },
-		bbox       = new Box2 (),
-		min        = new Vector2 (0, 0),
-		max        = new Vector2 (0, 0),
-		glyphMin   = new Vector2 (0, 0),
-		glyphMax   = new Vector2 (0, 0),
-		min3       = new Vector3 (0, 0, 0),
-		max3       = new Vector3 (0, 0, 0),
-		size       = new Vector2 (0, 0),
-		center     = new Vector2 (0, 0),
-		lineBound  = new Vector2 (0, 0),
-		origin     = new Vector3 (0, 0, 0),
-		box2       = new Box2 (),
-		zero2      = new Vector2 (0, 0),
-		zero3      = new Vector3 (0, 0, 0),
-		FONT_SIZE  = 1; // This is the internally used font size of the cached geometry to prevent triangulation errors.
-
-	function X3DTextGeometry (text, fontStyle)
-	{
-		this .text           = text;
-		this .fontStyle      = fontStyle;
-		this .glyphs         = [ ];
-		this .minorAlignment = new Vector2 (0, 0);
-		this .translations   = [ ];
-		this .charSpacings   = [ ];
-		this .bearing        = new Vector2 (0, 0);
-		this .bbox           = new Box3 ();
-	}
-
-	X3DTextGeometry .prototype =
-	{
-		constructor: X3DTextGeometry,
-		getBrowser: function ()
-		{
-			return this .text .getBrowser ();
-		},
-		getText: function ()
-		{
-			return this .text;
-		},
-		getFontStyle: function ()
-		{
-			return this .fontStyle;
-		},
-		getGlyphs: function ()
-		{
-			return this .glyphs;
-		},
-		getMinorAlignment: function ()
-		{
-			return this .minorAlignment;
-		},
-		getTranslations: function ()
-		{
-			return this .translations;
-		},
-		getCharSpacings: function ()
-		{
-			return this .charSpacings;
-		},
-		getBearing: function ()
-		{
-			return this .bearing;
-		},
-		getBBox: function ()
-		{
-			return this .bbox;
-		},
-		update: function ()
-		{
-			var
-				text      = this .text,
-				fontStyle = this .fontStyle,
-				numLines  = text .string_ .length;
-			
-			text .lineBounds_ .length = numLines;
-			this .glyphs      .length = 0;
-
-			this .resizeArray (this .translations, numLines);
-			this .resizeArray (this .charSpacings, numLines);
-
-			if (numLines === 0 || ! fontStyle .getFont ())
-			{
-				text .origin_     .setValue (zero3);
-				text .textBounds_ .setValue (zero2);
-
-				this .bbox .set ();
-				return;
-			}
-
-			if (fontStyle .horizontal_ .getValue ())
-				this .horizontal (text, fontStyle);
-			else
-				this .horizontal (text, fontStyle);
-		},
-		resizeArray: function (array, size)
-		{
-			// Resize array in grow only fashion.
-
-			for (var i = array .length; i < size; ++ i)
-				array .push (new Vector2 (0, 0));
-
-			array .length = size;
-		},
-		horizontal: function (text, fontStyle)
-		{
-			var
-				string      = text .string_ .getValue (),
-				numLines    = string .length,
-				topToBottom = fontStyle .topToBottom_ .getValue (),
-				lineHeight  = fontStyle .spacing_ .getValue (),
-				scale       = fontStyle .getScale ();
-			
-			bbox .set ();
-
-			// Calculate bboxes.
-
-			var
-				first = topToBottom ? 0 : numLines - 1,
-				last  = topToBottom ? numLines : -1,
-				step  = topToBottom ? 1 : -1;
-
-			for (var l = first; l !== last; l += step)
-			{
-				var line = string [l];
-
-				// Get line extents.
-
-				var glyphs = this .getLineExtents (fontStyle, line, min, max, l);
-
-				size .assign (max) .subtract (min);
-
-				// Calculate charSpacing and lineBounds.
-
-				var lineNumber = topToBottom ? l : numLines - l - 1;
-
-				var
-					charSpacing = 0,
-					length      = text .getLength (l);
-	
-				lineBound .set (size .x, lineNumber == 0 ? size .y : lineHeight) .multiply (scale);
-
-				if (text .maxExtent_ .getValue ())
-				{
-					if (length)
-						length = Math .min (text .maxExtent_ .getValue (), length);
-
-					else
-						length = Math .min (text .maxExtent_ .getValue (), size .x * scale);
-				}
-
-				if (length)
-				{
-					charSpacing  = (length - lineBound .x) / (glyphs .length - 1);
-					lineBound .x = length;
-					size .x      = length / scale;
-				}
-
-				this .charSpacings [l] = charSpacing 
-				text .lineBounds_ [l]  = lineBound;
-
-				// Calculate line translation.
-
-				switch (fontStyle .getMajorAlignment ())
-				{
-					case X3DFontStyleNode .Alignment .BEGIN:
-					case X3DFontStyleNode .Alignment .FIRST:
-						this .translations [l] .set (0, -(l * lineHeight));
-						break;
-					case X3DFontStyleNode .Alignment .MIDDLE:
-						this .translations [l] .set (-min .x - size .x / 2, -(l * lineHeight));
-						break;
-					case X3DFontStyleNode .Alignment .END:
-						this .translations [l] .set (-min .x - size .x, -(l * lineHeight));
-						break;
-				}
-
-				// Calculate center.
-
-				center .assign (min) .add (size) .divide (2);
-
-				// Add bbox.
-
-				bbox .add (box2 .set (size .multiply (scale), center .add (this .translations [l]) .multiply (scale)));
-
-				this .translations [l] .multiply (scale);
-			}
-
-			//console .log ("size", bbox .size, "center", bbox .center);
-
-			// Get text extents.
-
-			bbox .getExtents (min, max);
-
-			size .assign (max) .subtract (min);
-
-			// Calculate text position
-
-			text .textBounds_ = size;
-			this .bearing .set (0, -max .y);
-
-			switch (fontStyle .getMinorAlignment ())
-			{
-				case X3DFontStyleNode .Alignment .BEGIN:
-					this .minorAlignment .assign (this .bearing);
-					break;
-				case X3DFontStyleNode .Alignment .FIRST:
-					this .minorAlignment .set (0, 0);
-					break;
-				case X3DFontStyleNode .Alignment .MIDDLE:
-					this .minorAlignment .set (0, size .y / 2 - max .y);
-					break;
-				case X3DFontStyleNode .Alignment .END:
-					this .minorAlignment .set (0, (numLines - 1) * lineHeight * scale);
-					break;
-			}
-
-			// Translate bbox by minorAlignment.
-
-			min .add (this .minorAlignment);
-			max .add (this .minorAlignment);
-
-			// The value of the origin field represents the upper left corner of the textBounds.
-
-			text .origin_ .setValue (origin .set (min .x, max .y, 0));
-
-			this .bbox .set (min3 .set (min .x, min .y, 0),
-			                 max3 .set (max .x, max .y, 0),
-			                 true);
-		},
-		vertical: function (text, fontStyle)
-		{
-
-		},
-		stringToGlyphs: function (font, line, normal, lineNumber)
-		{
-			line = line .getValue ();
-
-			var
-				fontGlyphCache = glyphCache [font .fontName],
-				glypes         = this .glyphs [lineNumber];
-
-			if (! fontGlyphCache)
-				fontGlyphCache = glyphCache [font .fontName] = [ ];
-
-			if (! glypes)
-				glypes = this .glyphs [lineNumber] = [ ];
-
-			glypes .length = line .length;
-
-			var
-				first = normal ? 0 : line .length - 1,
-				last  = normal ? line .length : -1,
-				step  = normal ? 1 : -1;
-
-			for (var c = first, g = 0; c !== last; c += step, ++ g)
-			{
-				var
-					charCode = line .charCodeAt (c),
-					glyph     = null;
-				
-				if (glyph = fontGlyphCache [charCode])
-					;
-				else
-				{
-					glyph = font .stringToGlyphs (line [c]) [0];
-
-					fontGlyphCache [charCode] = glyph;
-
-					glyph .extents = { };
-				}
-
-				glypes [g] = glyph;
-			}
-
-			return glypes;
-		},
-		getLineExtents: function (fontStyle, line, min, max, lineNumber)
-		{
-			var
-			   font             = fontStyle .getFont (),
-				normal           = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
-				glyphs           = this .stringToGlyphs (font, line, normal, lineNumber),
-				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-				xMin             = 0,
-				xMax             = 0,
-				yMin             = Number .POSITIVE_INFINITY,
-				yMax             = Number .NEGATIVE_INFINITY;
-
-			for (var g = 0, length = glyphs .length; g < length; ++ g)
-			{
-				var
-					glyph   = glyphs [g],
-					kerning = g + 1 < length ? font .getKerningValue (glyph, glyphs [g + 1]) : 0;
-
-				this .getGlyphExtents (glyph, primitiveQuality, glyphMin, glyphMax);
-
-				xMax += glyph .advanceWidth + kerning;
-				yMin  = Math .min (yMin, glyphMin .y);
-				yMax  = Math .max (yMax, glyphMax .y);
-			}
-
-			if (glyphs .length)
-			{
-				this .getGlyphExtents (glyphs [0], primitiveQuality, glyphMin, glyphMax);
-
-				xMin  = glyphMin .x;
-			}
-			else
-			{
-				yMin = 0;
-				yMax = 0;
-			}
-
-			min .set (xMin, yMin);
-			max .set (xMax / font .unitsPerEm, yMax);
-
-			switch (fontStyle .getMajorAlignment ())
-			{
-				case X3DFontStyleNode .Alignment .BEGIN:
-				case X3DFontStyleNode .Alignment .FIRST:
-					min .x = 0;
-					break;
-				case X3DFontStyleNode .Alignment .MIDDLE:
-				case X3DFontStyleNode .Alignment .END:
-					break;
-			}
-
-			return glyphs;
-		},
-	};
-
-	/*
-	 * PolygonText
-	 */
-	
-	var
-		min = new Vector3 (0, 0, 0),
-		max = new Vector3 (0, 0, 0);
+		min    = new Vector3 (0, 0, 0),
+		max    = new Vector3 (0, 0, 0),
+		paths  = [ ],
+		points = [ ],
+		curves = [ ];
 
 	function PolygonText (text, fontStyle)
 	{
@@ -54288,102 +52428,103 @@ function ($,
 		build: function ()
 		{
 			var
-				fontStyle      = this .getFontStyle (),
-				glyphs         = this .getGlyphs (),
-				minorAlignment = this .getMinorAlignment (),
-				translations   = this .getTranslations (),
-				charSpacings   = this .getCharSpacings ();
-	
-			if (! fontStyle .getFont ())
+				fontStyle = this .getFontStyle (),
+				font      = fontStyle .getFont ();
+
+			if (! font)
 				return;
 
-			this .texCoords .length = 0;
-			this .getText () .getTexCoords () .push (this .texCoords);
-
-			this .getBBox () .getExtents (min, max);
-			this .getText () .getMin () .assign (min);
-			this .getText () .getMax () .assign (max);
-
-			if (fontStyle .horizontal_ .getValue ())
-			{
-				var size  = fontStyle .getScale ();
-
-				for (var i = 0, length = glyphs .length; i < length; ++ i)
-					this .render (glyphs [i], minorAlignment, size, translations [i], charSpacings [i]);
-			}
-			else
-			{
-				/*
-				glTranslatef (getMinorAlignment () .x (), getMinorAlignment () .y (), 0);
-
-				const double size = fontStyle -> getScale ();
-
-				glScalef (size, size, size);
-
-				// Render lines.
-
-				const bool leftToRight = fontStyle -> leftToRight ();
-				const bool topToBottom = fontStyle -> topToBottom ();
-				const int  first       = leftToRight ? 0 : text -> string () .size () - 1;
-				const int  last        = leftToRight ? text -> string () .size () : -1;
-				const int  step        = leftToRight ? 1 : -1;
-
-				for (int i = first, g = 0; i not_eq last; i += step)
-				{
-					const auto & line = text -> string () [i] .getValue ();
-
-					for (const auto & glyph : topToBottom ? line : String (line .rbegin (), line .rend ()))
-					{
-						fontStyle -> getPolygonFont () -> Render (String (1, glyph) .c_str (),
-						                                          -1,
-						                                          FTPoint (getTranslations () [g] .x (), getTranslations () [g] .y (), 0),
-						                                          FTPoint (),
-						                                          FTGL::RENDER_ALL);
-						++ g;
-					}
-				}
-				*/
-			}
-		},
-		render: function (glyphs, minorAlignment, size, translation, charSpacing)
-		{
 			var
 				text             = this .getText (),
-				fontStyle        = this .getFontStyle (),
-				font             = fontStyle .getFont (),
-				offset           = 0,
-				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-				fontSize         = size / FONT_SIZE,
+				glyphs           = this .getGlyphs (),
+				minorAlignment   = this .getMinorAlignment (),
+				translations     = this .getTranslations (),
+				charSpacings     = this .getCharSpacings (),
+				size             = fontStyle .getScale (),
 				sizeUnitsPerEm   = size / font .unitsPerEm,
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
 				texCoords        = this .texCoords,
 				normals          = text .getNormals (),
 				vertices         = text .getVertices ();
 
-			for (var g = 0, gl = glyphs .length; g < gl; ++ g)
+			this .texCoords .length = 0;
+			text .getTexCoords () .push (this .texCoords);
+
+			this .getBBox () .getExtents (min, max);
+			text .getMin () .assign (min);
+			text .getMax () .assign (max);
+
+			if (fontStyle .horizontal_ .getValue ())
 			{
-				var
-					glyph         = glyphs [g],
-					glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
-				
-				for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+				for (var l = 0, length = glyphs .length; l < length; ++ l)
 				{
 					var
-						x = glyphVertices [v] .x * fontSize + minorAlignment .x + g * charSpacing + translation .x + offset,
-						y = glyphVertices [v] .y * fontSize + minorAlignment .y + translation .y;
+						line         = glyphs [l],
+						charSpacing  = charSpacings [l],
+						translation  = translations [l],
+						advanceWidth = 0;
 
-					normals   .push (0, 0, 1);
-					vertices  .push (x, y, 0, 1);
-					texCoords .push (x / fontSize, y / fontSize, 0, 1);
+					for (var g = 0, gl = line .length; g < gl; ++ g)
+					{
+						var
+							glyph         = line [g],
+							glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
+						
+						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+						{
+							var
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
+		
+							normals   .push (0, 0, 1);
+							vertices  .push (x, y, 0, 1);
+							texCoords .push (x / size, y / size, 0, 1);
+						}
+		
+						// Calculate advanceWidth.
+		
+						var kerning = 0;
+		
+						if (g + 1 < line .length)
+							kerning = font .getKerningValue (glyph, line [g + 1]);
+		
+						advanceWidth += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+					}
 				}
+			}
+			else
+			{
+				var
+					leftToRight = fontStyle .leftToRight_ .getValue (),
+					topToBottom = fontStyle .topToBottom_ .getValue (),
+					first       = leftToRight ? 0 : text .string_ .length - 1,
+					last        = leftToRight ? text .string_ .length  : -1,
+					step        = leftToRight ? 1 : -1;
 
-				// Calculate offset.
+				for (var l = first, t = 0; l !== last; l += step)
+				{
+					var line = glyphs [l];
 
-				var kerning = 0;
+					//for (const auto & glyph : topToBottom ? line : String (line .rbegin (), line .rend ()))
 
-				if (g + 1 < glyphs .length)
-					kerning = font .getKerningValue (glyph, glyphs [g + 1]);
+					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
+					{
+						var
+							translation   = translations [t],
+							glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
 
-				offset += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+						{
+							var
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
+			
+							normals   .push (0, 0, 1);
+							vertices  .push (x, y, 0, 1);
+							texCoords .push (x / size, y / size, 0, 1);
+						}
+					}
+				}
 			}
 		},
 		getGlyphExtents: function (glyph, primitiveQuality, min, max)
@@ -54451,13 +52592,11 @@ function ($,
 		createGlyphGeometry: function (glyph, vertices, primitiveQuality)
 		{
 			var
-				fontStyle = this .getFontStyle (),
-				font      = fontStyle .getFont (),
-				paths     = [ ],
-				points    = [ ],
-				curves    = [ ],
-				dimension = this .getBezierDimension (primitiveQuality),
-				reverse   = font .outlinesFormat === "cff";
+				fontStyle  = this .getFontStyle (),
+				font       = fontStyle .getFont (),
+				components = glyph .components,
+				dimension  = this .getBezierDimension (primitiveQuality),
+				reverse    = font .outlinesFormat === "cff";
 
 			paths  .length = 0;
 			points .length = 0;
@@ -54465,15 +52604,15 @@ function ($,
 		
 			if (glyph .isComposite)
 			{
-				for (var c = 0; c < glyph .components .length; ++ c)
+				for (var c = 0, cl = components .length; c < cl; ++ c)
 				{
-					var component = glyph .components [c];
+					var component = components [c];
 
-					paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, FONT_SIZE));
+					paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, 1));
 				}
 			}
 			else
-				paths .push (glyph .getPath (0, 0, FONT_SIZE));
+				paths .push (glyph .getPath (0, 0, 1));
 
 			// Get curves for the current glyph.
 
@@ -54481,57 +52620,57 @@ function ($,
 				x = 0,
 				y = 0;
 
-			for (var p = 0; p < paths .length; ++ p)
+			for (var p = 0, pl = paths .length; p < pl; ++ p)
 			{
-				var path = paths [p];
+				var commands = paths [p] .commands;
 
-				for (var i = 0; i < path .commands .length; ++ i)
+				for (var i = 0, cl = commands .length; i < cl; ++ i)
 				{
-					var command = path .commands [i];
+					var command = commands [i];
 										      
 					switch (command .type)
 					{
-						case "M":
-						case "Z":
+						case "M": // Start
+						case "Z": // End
 						{
 							if (points .length > 2)
 							{
 								if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
 									points .pop ();
 
-								curves .push (reverse ? points .reverse () .slice () : points .slice ());
+								curves .push (reverse ? points .reverse () : points);
 							}
 								
-							points .length = 0;
+							points = [ ];
 
 							if (command .type === "M")
 								points .push ({ x: command .x, y: -command .y });
 							
 							break;
 						}
-						case "L":
+						case "L": // Linear
 						{
 							points .push ({ x: command .x, y: -command .y });
 							break;
 						}
-						case "C":
+						case "C": // Bezier
 						{
 							var
 								curve = new Bezier (x, -y, command .x1, -command .y1, command .x2, -command .y2, command .x, -command .y),
 								lut   = curve .getLUT (dimension);
 
-							for (var l = 1; l < lut .length; ++ l)
+							for (var l = 1, ll = lut .length; l < ll; ++ l)
 								points .push (lut [l]);
 
 							break;
 						}
-						case "Q":
+						case "Q": // Cubíc
 						{
 							var
 								curve = new Bezier (x, -y, command .x1, -command .y1, command .x, -command .y),
 								lut   = curve .getLUT (dimension);
 
-							for (var l = 1; l < lut .length; ++ l)
+							for (var l = 1, ll = lut .length; l < ll; ++ l)
 								points .push (lut [l]);
 							
 							break;
@@ -54560,7 +52699,7 @@ function ($,
 					break;
 				default:
 				{
-					for (var i = 0; i < curves .length; ++ i)
+					for (var i = 0, cl = curves .length; i < cl; ++ i)
 					{
 						var
 							curve       = curves [i],
@@ -54600,14 +52739,14 @@ function ($,
 					break;
 				default:
 				{
-					for (var c = 0; c < contours .length; ++ c)
+					for (var c = 0, cl = contours .length; c < cl; ++ c)
 						contours [c] .holes = [ ];
 
-					for (var h = 0; h < holes .length; ++ h)
+					for (var h = 0, hl = holes .length; h < hl; ++ h)
 					{
 						var hole = holes [h];
 
-						for (var c = 0; c < contours .length; ++ c)
+						for (var c = 0, cl = contours .length; c < cl; ++ c)
 						{
 							var contour = contours [c];
 
@@ -54626,7 +52765,7 @@ function ($,
 
 			// Triangulate contours.
 
-			for (var i = 0; i < contours .length; ++ i)
+			for (var i = 0, length = contours .length; i < length; ++ i)
 				this .triangulate (contours [i], contours [i] .holes, vertices);
 		},
 		getBezierDimension: function (primitiveQuality)
@@ -54711,7 +52850,7 @@ function ($,
 					context = new poly2tri .SweepContext (polygon),
 					ts      = context .triangulate () .getTriangles ();
 
-				for (var i = 0; i < ts .length; ++ i)
+				for (var i = 0, length = ts .length; i < length; ++ i)
 				{
 					var  
 						a = ts [i] .getPoint (0),
@@ -54736,11 +52875,11 @@ function ($,
 				return Math .abs ((a.y - b.y) * (a.x - c.x) - (a.y - c.y) * (a.x - b.x)) < 1e-8;
 			}
 
-			for (var i = 0, k = 0; i < polygon .length; ++ i)
+			for (var i = 0, k = 0, length = polygon .length; i < length; ++ i)
 			{
 				var
-					i0 = (i - 1 + polygon .length) % polygon .length,
-					i1 = (i + 1) % polygon .length;
+					i0 = (i - 1 + length) % length,
+					i1 = (i + 1) % length;
 
 				if (isCollinear (polygon [i0], polygon [i], polygon [i1]))
 					continue;
@@ -54755,16 +52894,13 @@ function ($,
 		   try
 			{
 				// Triangulate polygon.
-
 				var
 					context = new poly2tri .SweepContext (polygon) .addHoles (holes),
 					ts      = context .triangulate () .getTriangles ();
 
-				for (var i = 0; i < ts .length; ++ i)
+				for (var i = 0, length = ts .length; i < length; ++ i)
 				{
-					triangles .push (ts [i] .getPoint (0));
-					triangles .push (ts [i] .getPoint (1));
-					triangles .push (ts [i] .getPoint (2));
+					triangles .push (ts [i] .getPoint (0), ts [i] .getPoint (1), ts [i] .getPoint (2));
 				}
 			}
 			catch (error)
@@ -54783,14 +52919,14 @@ function ($,
 					coords       = [ ],
 					holesIndices = [ ];
 
-				for (var p = 0; p < polygon .length; ++ p)
+				for (var p = 0, pl = polygon .length; p < pl; ++ p)
 					coords .push (polygon [p] .x, polygon [p] .y);
 
-				for (var h = 0; h < holes .length; ++ h)
+				for (var h = 0, hsl = holes .length; h < hsl; ++ h)
 				{
 					var hole = holes [h];
 
-					for (var p = 0; p < hole .length; ++ p)
+					for (var p = 0, hl = hole .length; p < hl; ++ p)
 					{
 						holesIndices .push (coords .length / 2);
 						coords .push (hole [p] .x, hole [p] .y);
@@ -54800,7 +52936,7 @@ function ($,
 
 				var t = earcut (coords, holesIndices);
 
-				for (var i = 0; i < t .length; ++ i)
+				for (var i = 0, tl = t .length; i < tl; ++ i)
 					triangles .push (polygon [t [i]]);
 			}
 			catch (error)
@@ -54814,9 +52950,32 @@ function ($,
 		},
 	});
 
+	return PolygonText;
+});
+
+
+define ('cobweb/Components/Text/FontStyle',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Text/X3DFontStyleNode",
+	"cobweb/Browser/Text/PolygonText",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DFontStyleNode,
+          PolygonText,
+          X3DConstants)
+{
+
+
 	function FontStyle (executionContext)
 	{
-		X3DFontStyleNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DFontStyleNode .call (this, executionContext);
 
 		this .addType (X3DConstants .FontStyle);
 	}
@@ -54871,8 +53030,11 @@ function (FontStyle)
 {
 
 
+	var FONT_CACHE_SIZE = 32;
+
 	function X3DTextContext ()
 	{
+		this .fontCache         = { };
 		this .fontGeometryCache = { }; // [fontName] [primitveQuality] [glyphIndex]
 	}
 
@@ -54880,7 +53042,6 @@ function (FontStyle)
 	{
 		initialize: function ()
 		{
-		   this .getBrowser () .shutdown () .addInterest (this, "set_shutdown_TextContext");
 		},
 		getDefaultFontStyle: function ()
 		{
@@ -54892,13 +53053,45 @@ function (FontStyle)
 
 			return this .defaultFontStyle;
 		},
+		addFont: function (URL, font)
+		{
+			if (URL .query .length === 0)
+			{
+				this .fontCache [URL] = font;
+
+				if (typeof font !== "object")
+					return;
+
+				var length = Object .keys (this .fontCache) .length;
+
+				for (var key in this .fontCache)
+				{
+					if (length < FONT_CACHE_SIZE)
+						break;
+
+					-- length;
+					delete this .fontCache [key];
+				}
+
+				// Setup font.
+
+				font .fontName = font .familyName + font .styleName;
+
+				// Workaround to initialize composite glyphs.
+				for (var i = 0, length = font .numGlyphs; i < length; ++ i)
+					font .glyphs .get (i) .getPath (0, 0, 1);
+			}
+		},
+		getFont: function (URL)
+		{
+			if (URL .query .length === 0)
+				return this .fontCache [URL .filename];
+
+			return null;
+		},
 		getFontGeometryCache: function ()
 		{
 		   return this .fontGeometryCache;
-		},
-		set_shutdown_TextContext: function ()
-		{
-		   this .fontGeometryCache = { };
 		},
 	};
 
@@ -54919,9 +53112,9 @@ function ($,
 {
 
 
-	function X3DTextureTransformNode (browser, executionContext)
+	function X3DTextureTransformNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTextureTransformNode);
 
@@ -54979,9 +53172,11 @@ function ($,
 {
 
 
+	var vector = new Vector2 (0, 0);
+
 	function TextureTransform (executionContext)
 	{
-		X3DTextureTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTextureTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TextureTransform);
 
@@ -55022,24 +53217,29 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .eventsProcessed .call (this);
 			
-			var matrix3 = this .matrix3;
+			var
+				translation = this .translation_ .getValue (),
+				rotation    = this .rotation_ .getValue (),
+				scale       = this .scale_ .getValue (),
+				center      = this .center_ .getValue (),
+				matrix3     = this .matrix3;
 
 			matrix3 .identity ();
 
-			if (! this .center_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (Vector2 .negate (this .center_ .getValue ()));
+			if (! center .equals (Vector2 .Zero))
+				matrix3 .translate (vector .assign (center) .negate ());
 
-			if (! this .scale_ .getValue () .equals (Vector2 .One))
-				matrix3 .scale (this .scale_ .getValue ());
+			if (! scale .equals (Vector2 .One))
+				matrix3 .scale (scale);
 
-			if (this .rotation_ .getValue () !== 0)
-				matrix3 .rotate (this .rotation_ .getValue ());
+			if (rotation !== 0)
+				matrix3 .rotate (rotation);
 
-			if (! this .center_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (this .center_ .getValue ());
+			if (! center .equals (Vector2 .Zero))
+				matrix3 .translate (center);
 
-			if (! this .translation_ .getValue () .equals (Vector2 .Zero))
-				matrix3 .translate (this .translation_ .getValue ());
+			if (! translation .equals (Vector2 .Zero))
+				matrix3 .translate (translation);
 
 			var matrix4 = this .getMatrix ();
 			
@@ -55565,11 +53765,12 @@ function ($,
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
-	function X3DRenderer (browser, executionContext)
+	function X3DRenderer (executionContext)
 	{
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
 		this .localLights          = [ ];
+		this .localFogs            = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -55619,19 +53820,35 @@ function ($,
 		{
 			return this .localLights;
 		},
-		addShape: function (shape)
+		setGlobalFog: function (fog)
+		{
+			this .localFog = this .localFogs [0] = fog;
+		},
+		pushLocalFog: function (fog)
+		{
+			this .localFogs .push (fog);
+
+			this .localFog = fog;
+		},
+		popLocalFog: function ()
+		{
+			this .localFogs .pop ();
+
+			this .localFog = this .localFogs [this .localFogs .length - 1];
+		},
+		addShape: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shape .getBBoxSize ())),
-				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shape .getBBoxCenter ())),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
+				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
 				radius          = bboxSize .abs () / 2,
 				distance        = bboxCenter .z,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
 			if (viewVolume .intersectsSphere (radius, bboxCenter))
 			{
-				if (shape .isTransparent ())
+				if (shapeNode .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
 						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], });
@@ -55651,10 +53868,10 @@ function ($,
 				}
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shape    = shape;
+				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
-				context .distance = distance - radius;
-				context .fog      = this .getFog ();
+				context .distance  = distance - radius;
+				context .fogNode   = this .localFog;
 
 				// Clip planes
 
@@ -55679,7 +53896,7 @@ function ($,
 				destLights .length = sourceLights .length;
 			}
 		},
-		addCollision: function (shape)
+		addCollision: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
@@ -55693,8 +53910,8 @@ function ($,
 				++ this .numCollisionShapes;
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shape   = shape;
-				context .scissor = viewVolume .getScissor ();
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
 
 				// Collisions
 
@@ -55836,10 +54053,10 @@ function ($,
 						clipPlanes [c] .use (gl, shader, c);
 	
 					if (c < shader .maxClipPlanes)
-						gl .uniform1i (shader .clipPlaneEnabled [c], false);
+						gl .uniform4fv (shader .clipPlane [c], shader .noClipPlane);
 				}
 				else
-					gl .uniform1i (shader .clipPlaneEnabled [0], false);
+					gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 				// modelViewMatrix
 	
@@ -55847,7 +54064,7 @@ function ($,
 
 				// Draw
 	
-				context .shape .collision (shader);
+				context .shapeNode .collision (shader);
 			}
 
 			var
@@ -55881,7 +54098,8 @@ function ($,
 				{
 					this .numOpaqueShapes      = 0;
 					this .numTransparentShapes = 0;
-
+	
+					this .setGlobalFog (this .getFog ());
 					this .collect (type);
 					this .draw ();
 					break;
@@ -55910,7 +54128,7 @@ function ($,
 
 					   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
 
-						if (context .shape .intersectsSphere (this .collisionSphere))
+						if (context .shapeNode .intersectsSphere (this .collisionSphere))
 						{
 						   for (var c = 0; c < collisions .length; ++ c)
 								activeCollisions [collisions [c] .getId ()] = collisions [c];
@@ -56096,7 +54314,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shape .draw (context);
+				context .shapeNode .draw (context);
 			}
 
 			// Render transparent objects
@@ -56117,7 +54335,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shape .draw (context);
+				context .shapeNode .draw (context);
 			}
 
 			gl .depthMask (true);
@@ -56166,7 +54384,7 @@ function ($, X3DBaseNode)
 
 	function BindableStack (executionContext, layer, defaultNode)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layer = layer;
 		this .array = [ defaultNode ];
@@ -56298,7 +54516,7 @@ function ($, X3DBaseNode)
 
 	function BindableList (executionContext, layer, defaultNode)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layer     = layer;
 		this .collected = [ defaultNode ];
@@ -56402,7 +54620,7 @@ function ($,
 
 	function NavigationInfo (executionContext)
 	{
-		X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .NavigationInfo);
 				
@@ -56675,7 +54893,7 @@ function ($,
 {
 
 
-	function X3DFogObject (browser, executionContext)
+	function X3DFogObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DFogObject);
 
@@ -56766,8 +54984,8 @@ function ($,
 
 	function Fog (executionContext)
 	{
-		X3DBindableNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DFogObject    .call (this, executionContext .getBrowser (), executionContext);
+		X3DBindableNode .call (this, executionContext);
+		X3DFogObject    .call (this, executionContext);
 
 		this .addType (X3DConstants .Fog);
 	}
@@ -56857,8 +55075,9 @@ function ($,
 
 	var
 		SIZE        = 10000,
-		U_DIMENSION = 20;
-	
+		U_DIMENSION = 20,
+		point       = new Vector3 (0, 0, SIZE);
+
 	var s = Math .sqrt (Math .pow (2 * SIZE, 2) / 2) / 2;
 
 	var texCoords = [
@@ -56932,9 +55151,9 @@ function ($,
 		y3 = new Complex (0, 0),
 		y4 = new Complex (0, 0);
 
-	function X3DBackgroundNode (browser, executionContext)
+	function X3DBackgroundNode (executionContext)
 	{
-		X3DBindableNode .call (this, browser, executionContext);
+		X3DBindableNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DBackgroundNode);
 
@@ -57295,7 +55514,7 @@ function ($,
 
 			var
 				viewpoint       = this .getCurrentViewpoint (),
-				scale           = viewpoint .getScreenScale (SIZE, viewport),
+				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
 				modelViewMatrix = this .transformationMatrix;
 
@@ -57345,10 +55564,10 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform1i (shader .clipPlaneEnabled [0], false);
+				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
@@ -57399,10 +55618,10 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform1i (shader .clipPlaneEnabled [i], false);
+					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform1i (shader .clipPlaneEnabled [0], false);
+				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
@@ -57486,9 +55705,9 @@ function ($,
 		"WEBKIT_EXT_texture_filter_anisotropic",
 	];
 	
-	function X3DTextureNode (browser, executionContext)
+	function X3DTextureNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTextureNode);
 
@@ -57583,9 +55802,9 @@ function ($,
 {
 
 
-	function X3DTexture2DNode (browser, executionContext)
+	function X3DTexture2DNode (executionContext)
 	{
-		X3DTextureNode .call (this, browser, executionContext);
+		X3DTextureNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTexture2DNode);
 
@@ -57752,6 +55971,7 @@ define ('cobweb/Components/Texturing/ImageTexture',[
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
 	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -57762,14 +55982,15 @@ function ($,
           X3DConstants,
           urls,
           URI,
-          Algorithm)
+          Algorithm,
+          DEBUG)
 {
 
 
 	function ImageTexture (executionContext)
 	{
-		X3DTexture2DNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject     .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode .call (this, executionContext);
+		X3DUrlObject     .call (this, executionContext);
 
 		this .addType (X3DConstants .ImageTexture);
 
@@ -57851,20 +56072,26 @@ function ($,
 		},
 		setError: function ()
 		{
-			var sURL = this .URL .toString ();
+			var URL = this .URL .toString ();
 
 			if (! this .URL .isLocal ())
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + sURL);
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
 			}
 
-			console .warn ("Error loading image:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading image:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setImage: function ()
 		{
-			console .info ("Done loading image:", this .URL .toString ());
+			if (DEBUG)
+			{
+				 if (this .URL .scheme !== "data")
+			   	console .info ("Done loading image:", this .URL .toString ());
+			}
 
 			try
 			{
@@ -57956,7 +56183,7 @@ function ($,
 
 	function Background (executionContext)
 	{
-		X3DBackgroundNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBackgroundNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Background);
 	}
@@ -58084,10 +56311,10 @@ function ($,
 
 	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
-	function X3DLayerNode (browser, executionContext, defaultViewpoint, groupNode)
+	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
-		X3DNode     .call (this, browser, executionContext);
-		X3DRenderer .call (this, browser, executionContext);
+		X3DNode     .call (this, executionContext);
+		X3DRenderer .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
@@ -58099,15 +56326,15 @@ function ($,
 		this .defaultNavigationInfo = new NavigationInfo (executionContext);
 		this .defaultViewpoint      = defaultViewpoint;
 
-		this .backgroundStack     = new BindableStack (this .getExecutionContext (), this, this .defaultBackground);
-		this .fogStack            = new BindableStack (this .getExecutionContext (), this, this .defaultFog);
-		this .navigationInfoStack = new BindableStack (this .getExecutionContext (), this, this .defaultNavigationInfo);
-		this .viewpointStack      = new BindableStack (this .getExecutionContext (), this, this .defaultViewpoint);
+		this .backgroundStack     = new BindableStack (executionContext, this, this .defaultBackground);
+		this .fogStack            = new BindableStack (executionContext, this, this .defaultFog);
+		this .navigationInfoStack = new BindableStack (executionContext, this, this .defaultNavigationInfo);
+		this .viewpointStack      = new BindableStack (executionContext, this, this .defaultViewpoint);
 
-		this .backgrounds     = new BindableList (this .getExecutionContext (), this, this .defaultBackground)
-		this .fogs            = new BindableList (this .getExecutionContext (), this, this .defaultFog);
-		this .navigationInfos = new BindableList (this .getExecutionContext (), this, this .defaultNavigationInfo);
-		this .viewpoints      = new BindableList (this .getExecutionContext (), this, this .defaultViewpoint);
+		this .backgrounds     = new BindableList (executionContext, this, this .defaultBackground)
+		this .fogs            = new BindableList (executionContext, this, this .defaultFog);
+		this .navigationInfos = new BindableList (executionContext, this, this .defaultNavigationInfo);
+		this .viewpoints      = new BindableList (executionContext, this, this .defaultViewpoint);
 
 		this .defaultBackground .setHidden (true);
 		this .defaultFog        .setHidden (true);
@@ -58373,7 +56600,7 @@ function ($,
 
 	function Group (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Group);
 	}
@@ -58433,7 +56660,6 @@ function ($,
 	function Layer (executionContext)
 	{
 		X3DLayerNode .call (this,
-		                    executionContext .getBrowser (),
 		                    executionContext,
 		                    new Viewpoint (executionContext),
 		                    new Group (executionContext));
@@ -58497,7 +56723,7 @@ function ($,
 
 	function LayerSet (executionContext)
 	{
-		X3DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LayerSet);
 
@@ -58572,7 +56798,7 @@ function ($,
 				if (index >= 0 && index < this .layers_ .length)
 				{
 					if (this .activeLayerNode !== this .layers_ [index] .getValue ())
-						this .activeLayerNode = this .layers_ [index] .getValue ();
+						this .activeLayerNode = X3DCast (X3DConstants .X3DLayerNode, this .layers_ [index]);
 				}
 				else
 				{
@@ -58673,7 +56899,7 @@ function ($,
 
 	function World (executionContext)
 	{
-		X3DBaseNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DBaseNode .call (this, executionContext);
 
 		this .layerSet        = new LayerSet (executionContext);
 		this .defaultLayerSet = this .layerSet;
@@ -58830,7 +57056,7 @@ function ($,
 
 	function X3DBrowserContext (element)
 	{
-		X3DBaseNode                    .call (this, this, this);
+		X3DBaseNode                    .call (this, this);
 		X3DRoutingContext              .call (this);
 		X3DCoreContext                 .call (this, element);
 		X3DScriptingContext            .call (this);
@@ -58940,6 +57166,10 @@ function ($,
 		{
 			return this .getExecutionContext () .getURL ();
 		},
+		getBrowser: function ()
+		{
+			return this;
+		},
 		getWorld: function ()
 		{
 			return this .world;
@@ -59005,39 +57235,6 @@ function ($,
 });
 
 
-define ('cobweb/Browser/Version',[],function ()
-{
-	return "1.21";
-});
-
-
-define ('cobweb/Configuration/ComponentInfo',[
-	"jquery",
-],
-function ($)
-{
-
-
-	function ComponentInfo (name, level, title, providerUrl)
-	{
-		this .name        = name;
-		this .level       = level;
-		this .title       = title;
-		this .providerUrl = providerUrl;
-
-		Object .preventExtensions (this);
-		Object .freeze (this);
-		Object .seal (this);
-	}
-
-	$.extend (ComponentInfo .prototype,
-	{
-		constructor: ComponentInfo,
-	});
-
-	return ComponentInfo;
-});
-
 define ('cobweb/Configuration/ProfileInfo',[
 	"jquery",
 ],
@@ -59087,249 +57284,502 @@ function ($, X3DInfoArray)
 });
 
 
-define ('cobweb/Configuration/SupportedComponents',[
-	"jquery",
-	"cobweb/Configuration/ComponentInfo",
-	"cobweb/Configuration/ComponentInfoArray",
-	"cobweb/Browser/Networking/urls",
-],
-function ($, ComponentInfo, ComponentInfoArray, urls)
-{
-
-
-	function add (title, name, level)
-	{
-		supportedComponents .add (name, new ComponentInfo (name, level, title, urls .provider));
-	}
-
-	var supportedComponents = new ComponentInfoArray ();
-
-	add ("Computer-Aided Design (CAD) model geometry", "CADGeometry",          2);
-	add ("Core",                                       "Core",                 2);
-	add ("Cube map environmental texturing",           "CubeMapTexturing",     3);
-	add ("Distributed interactive simulation (DIS)",   "DIS",                  2);
-	add ("Environmental effects",                      "EnvironmentalEffects", 4);
-	add ("Environmental sensor",                       "EnvironmentalSensor",  3);
-	add ("Event utilities",                            "EventUtilities",       1);
-	add ("Followers",                                  "Followers",            1);
-	add ("Geometry2D",                                 "Geometry2D",           2);
-	add ("Geometry3D",                                 "Geometry3D",           4);
-	add ("Geospatial",                                 "Geospatial",           2);
-	add ("Grouping",                                   "Grouping",             3);
-	add ("Humanoid animation (H-Anim)",                "H-Anim",               1);
-	add ("Interpolation",                              "Interpolation",        5);
-	add ("Key device sensor",                          "KeyDeviceSensor",      2);
-	add ("Layering",                                   "Layering",             1);
-	add ("Layout",                                     "Layout",               2);
-	add ("Lighting",                                   "Lighting",             3);
-	add ("Navigation",                                 "Navigation",           3);
-	add ("Networking",                                 "Networking",           4);
-	add ("Non-uniform Rational B-Spline (NURBS)",      "NURBS",                4);
-	add ("Particle systems",                           "ParticleSystems",      3);
-	add ("Picking sensor",                             "Picking",              3);
-	add ("Pointing device sensor",                     "PointingDeviceSensor", 1);
-	add ("Programmable shaders",                       "Shaders",              1);
-	add ("Rendering",                                  "Rendering",            5);
-	add ("Rigid body physics",                         "RigidBodyPhysics",     2);
-	add ("Scripting",                                  "Scripting",            1);
-	add ("Shape",                                      "Shape",                4);
-	add ("Sound",                                      "Sound",                1);
-	add ("Text",                                       "Text",                 1);
-	add ("Texturing",                                  "Texturing",            3);
-	add ("Texturing3D",                                "Texturing3D",          2);
-	add ("Time",                                       "Time",                 2);
-	add ("Volume rendering",                           "VolumeRendering",      4);
-
-	add ("Cobweb",                                     "Cobweb",               1); // Non standard.
-
-	Object .preventExtensions (supportedComponents);
-	Object .freeze (supportedComponents);
-	Object .seal (supportedComponents);
-
-	return supportedComponents;
-});
-
 define ('cobweb/Configuration/SupportedProfiles',[
 	"jquery",
 	"cobweb/Configuration/ProfileInfo",
 	"cobweb/Configuration/ProfileInfoArray",
 	"cobweb/Configuration/ComponentInfoArray",
-	"cobweb/Configuration/SupportedComponents",
 	"cobweb/Browser/Networking/urls",
 ],
 function ($,
           ProfileInfo,
           ProfileInfoArray,
           ComponentInfoArray,
-          SupportedComponents,
           urls)
 {
 
 
-	function add (title, name, components)
+	return function (browser)
 	{
-		supportedProfiles .add (name, new ProfileInfo (name, title, urls .povider, new ComponentInfoArray (components)));
-	}
+		function add (title, name, components)
+		{
+			supportedProfiles .add (name, new ProfileInfo (name, title, urls .povider, new ComponentInfoArray (browser, components)));
+		}
 
-	var supportedProfiles = new ProfileInfoArray ();
+		var
+			supportedComponents = browser .supportedComponents,
+			supportedProfiles   = new ProfileInfoArray ();
 
-	add ("Computer-Aided Design (CAD) interchange", "CADInterchange", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["Shaders"],
-		SupportedComponents ["CADGeometry"],
-	]);
-
-	add ("Core", "Core", [
-		SupportedComponents ["Core"],
-	]);
-
-	add ("Full", "Full", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Geometry2D"],
-		SupportedComponents ["Text"],
-		SupportedComponents ["Sound"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["KeyDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-		SupportedComponents ["Geospatial"],
-		SupportedComponents ["H-Anim"],
-		SupportedComponents ["NURBS"],
-		SupportedComponents ["DIS"],
-		SupportedComponents ["Scripting"],
-		SupportedComponents ["EventUtilities"],
-		SupportedComponents ["Shaders"],
-		SupportedComponents ["CADGeometry"],
-		SupportedComponents ["Texturing3D"],
-		SupportedComponents ["CubeMapTexturing"],
-		SupportedComponents ["Layering"],
-		SupportedComponents ["Layout"],
-		SupportedComponents ["RigidBodyPhysics"],
-		SupportedComponents ["Picking"],
-		SupportedComponents ["Followers"],
-		SupportedComponents ["ParticleSystems"], /*,
-		SupportedComponents ["VolumeRendering"], */
-	]);
-
-	add ("Immersive", "Immersive", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Geometry2D"],
-		SupportedComponents ["Text"],
-		SupportedComponents ["Sound"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["KeyDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-		SupportedComponents ["Scripting"],
-		SupportedComponents ["EventUtilities"],
-	]);
-
-	add ("Interactive", "Interactive", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["KeyDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-		SupportedComponents ["EventUtilities"],
-	]);
-
-	add ("Interchange", "Interchange", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-	]);
-
-//	add ("Medical interchange", "MedicalInterchange", [
-//		SupportedComponents ["Core"],
-//		SupportedComponents ["Time"],
-//		SupportedComponents ["Networking"],
-//		SupportedComponents ["Grouping"],
-//		SupportedComponents ["Rendering"],
-//		SupportedComponents ["Shape"],
-//		SupportedComponents ["Geometry3D"],
-//		SupportedComponents ["Geometry2D"],
-//		SupportedComponents ["Text"],
-//		SupportedComponents ["Lighting"],
-//		SupportedComponents ["Texturing"],
-//		SupportedComponents ["Interpolation"],
-//		SupportedComponents ["Navigation"],
-//		SupportedComponents ["EnvironmentalEffects"],
-//		SupportedComponents ["EventUtilities"],
-//		SupportedComponents ["Texturing3D"],
-//		SupportedComponents ["VolumeRendering"],
-//	]);
-
-	add ("MPEG-4 interactive", "MPEG-4", [
-		SupportedComponents ["Core"],
-		SupportedComponents ["Time"],
-		SupportedComponents ["Networking"],
-		SupportedComponents ["Grouping"],
-		SupportedComponents ["Rendering"],
-		SupportedComponents ["Shape"],
-		SupportedComponents ["Geometry3D"],
-		SupportedComponents ["Lighting"],
-		SupportedComponents ["Texturing"],
-		SupportedComponents ["Interpolation"],
-		SupportedComponents ["PointingDeviceSensor"],
-		SupportedComponents ["EnvironmentalSensor"],
-		SupportedComponents ["Navigation"],
-		SupportedComponents ["EnvironmentalEffects"],
-	]);
-
-	Object .preventExtensions (supportedProfiles);
-	Object .freeze (supportedProfiles);
-	Object .seal (supportedProfiles);
-
-	return supportedProfiles;
+		add ("Computer-Aided Design (CAD) interchange", "CADInterchange", [
+			supportedComponents ["Core"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["Shaders"],
+			supportedComponents ["CADGeometry"],
+		]);
+	
+		add ("Core", "Core", [
+			supportedComponents ["Core"],
+		]);
+	
+		add ("Full", "Full", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Geometry2D"],
+			supportedComponents ["Text"],
+			supportedComponents ["Sound"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["KeyDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+			supportedComponents ["Geospatial"],
+			supportedComponents ["H-Anim"],
+			supportedComponents ["NURBS"],
+			supportedComponents ["DIS"],
+			supportedComponents ["Scripting"],
+			supportedComponents ["EventUtilities"],
+			supportedComponents ["Shaders"],
+			supportedComponents ["CADGeometry"],
+			supportedComponents ["Texturing3D"],
+			supportedComponents ["CubeMapTexturing"],
+			supportedComponents ["Layering"],
+			supportedComponents ["Layout"],
+			supportedComponents ["RigidBodyPhysics"],
+			supportedComponents ["Picking"],
+			supportedComponents ["Followers"],
+			supportedComponents ["ParticleSystems"], /*,
+			supportedComponents ["VolumeRendering"], */
+		]);
+	
+		add ("Immersive", "Immersive", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Geometry2D"],
+			supportedComponents ["Text"],
+			supportedComponents ["Sound"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["KeyDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+			supportedComponents ["Scripting"],
+			supportedComponents ["EventUtilities"],
+		]);
+	
+		add ("Interactive", "Interactive", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["KeyDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+			supportedComponents ["EventUtilities"],
+		]);
+	
+		add ("Interchange", "Interchange", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+		]);
+	
+	//	add ("Medical interchange", "MedicalInterchange", [
+	//		supportedComponents ["Core"],
+	//		supportedComponents ["Time"],
+	//		supportedComponents ["Networking"],
+	//		supportedComponents ["Grouping"],
+	//		supportedComponents ["Rendering"],
+	//		supportedComponents ["Shape"],
+	//		supportedComponents ["Geometry3D"],
+	//		supportedComponents ["Geometry2D"],
+	//		supportedComponents ["Text"],
+	//		supportedComponents ["Lighting"],
+	//		supportedComponents ["Texturing"],
+	//		supportedComponents ["Interpolation"],
+	//		supportedComponents ["Navigation"],
+	//		supportedComponents ["EnvironmentalEffects"],
+	//		supportedComponents ["EventUtilities"],
+	//		supportedComponents ["Texturing3D"],
+	//		supportedComponents ["VolumeRendering"],
+	//	]);
+	
+		add ("MPEG-4 interactive", "MPEG-4", [
+			supportedComponents ["Core"],
+			supportedComponents ["Time"],
+			supportedComponents ["Networking"],
+			supportedComponents ["Grouping"],
+			supportedComponents ["Rendering"],
+			supportedComponents ["Shape"],
+			supportedComponents ["Geometry3D"],
+			supportedComponents ["Lighting"],
+			supportedComponents ["Texturing"],
+			supportedComponents ["Interpolation"],
+			supportedComponents ["PointingDeviceSensor"],
+			supportedComponents ["EnvironmentalSensor"],
+			supportedComponents ["Navigation"],
+			supportedComponents ["EnvironmentalEffects"],
+		]);
+	
+		Object .preventExtensions (supportedProfiles);
+		Object .freeze (supportedProfiles);
+		Object .seal (supportedProfiles);
+	
+		return supportedProfiles;
+	};
 });
 
-define ('cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode',[
+define ('cobweb/Configuration/SupportedComponents',[
+	"jquery",
+	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Browser/Networking/urls",
+],
+function ($, ComponentInfoArray, urls)
+{
+
+
+	return function (browser)
+	{
+		var supportedComponents = new ComponentInfoArray (browser);
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Computer-Aided Design (CAD) model geometry",
+			name:       "CADGeometry",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Core",
+			name:       "Core",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Cube map environmental texturing",
+			name:       "CubeMapTexturing",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Distributed interactive simulation (DIS)",
+			name:       "DIS",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Environmental effects",
+			name:       "EnvironmentalEffects",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Environmental sensor",
+			name:       "EnvironmentalSensor",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Event utilities",
+			name:       "EventUtilities",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Followers",
+			name:       "Followers",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geometry2D",
+			name:       "Geometry2D",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geometry3D",
+			name:       "Geometry3D",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Geospatial",
+			name:       "Geospatial",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Grouping",
+			name:       "Grouping",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Humanoid animation (H-Anim)",
+			name:       "H-Anim",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Interpolation",
+			name:       "Interpolation",
+			level:       5,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Key device sensor",
+			name:       "KeyDeviceSensor",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Layering",
+			name:       "Layering",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Layout",
+			name:       "Layout",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Lighting",
+			name:       "Lighting",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Navigation",
+			name:       "Navigation",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Networking",
+			name:       "Networking",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Non-uniform Rational B-Spline (NURBS)",
+			name:       "NURBS",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Particle systems",
+			name:       "ParticleSystems",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Picking sensor",
+			name:       "Picking",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Pointing device sensor",
+			name:       "PointingDeviceSensor",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Programmable shaders",
+			name:       "Shaders",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Rendering",
+			name:       "Rendering",
+			level:       5,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Rigid body physics",
+			name:       "RigidBodyPhysics",
+			level:       5,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Scripting",
+			name:       "Scripting",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Shape",
+			name:       "Shape",
+			level:       4,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Sound",
+			name:       "Sound",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Text",
+			name:       "Text",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Texturing",
+			name:       "Texturing",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Texturing3D",
+			name:       "Texturing3D",
+			level:       3,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Time",
+			name:       "Time",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Volume rendering",
+			name:       "VolumeRendering",
+			level:       2,
+			providerUrl: urls .provider,
+		});
+
+		// Custom, non-standard component.
+
+		supportedComponents .addComponentInfo (
+		{
+			title:      "Cobweb",
+			name:       "Cobweb",
+			level:       1,
+			providerUrl: urls .provider,
+		});
+
+		Object .preventExtensions (supportedComponents);
+		Object .freeze (supportedComponents);
+		Object .seal (supportedComponents);
+	
+		return supportedComponents;
+	};
+});
+
+define ("cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DSensorNode",
 	"cobweb/Bits/X3DConstants",
@@ -59344,9 +57794,9 @@ function ($,
 {
 
 
-	function X3DPointingDeviceSensorNode (browser, executionContext)
+	function X3DPointingDeviceSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPointingDeviceSensorNode);
 	}
@@ -59426,7 +57876,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode',[
+define ("cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
+[
 	"jquery",
 	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
 	"cobweb/Bits/X3DConstants",
@@ -59437,9 +57888,9 @@ function ($,
 {
 
 
-	function X3DTouchSensorNode (browser, executionContext)
+	function X3DTouchSensorNode (executionContext)
 	{
-		X3DPointingDeviceSensorNode .call (this, browser, executionContext);
+		X3DPointingDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTouchSensorNode);
 	}
@@ -59462,7 +57913,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/TouchSensor',[
+define ("cobweb/Components/PointingDeviceSensor/TouchSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -59485,7 +57937,7 @@ function ($,
 
 	function TouchSensor (executionContext)
 	{
-		X3DTouchSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTouchSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TouchSensor);
 	}
@@ -59574,8 +58026,8 @@ function ($,
 
 	function Anchor (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject    .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
+		X3DUrlObject    .call (this, executionContext);
 
 		this .addType (X3DConstants .Anchor);
 
@@ -59707,13 +58159,13 @@ function ($,
 {
 
 
-	function X3DLineGeometryNode (browser, executionContext)
+	function X3DLineGeometryNode (executionContext)
 	{
-		X3DGeometryNode .call (this, browser, executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
-		this .addType (X3DConstants .X3DLineGeometryNode);
+		//this .addType (X3DConstants .X3DLineGeometryNode);
 
-		this .shader = browser .getLineShader ();
+		this .shader = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -59773,7 +58225,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Arc2D',[
+define ("cobweb/Components/Geometry2D/Arc2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -59798,7 +58251,7 @@ function ($,
 
 	function Arc2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Arc2D);
 	}
@@ -59897,7 +58350,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/ArcClose2D',[
+define ("cobweb/Components/Geometry2D/ArcClose2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -59924,7 +58378,7 @@ function ($,
 
 	function ArcClose2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ArcClose2D);
 	}
@@ -60098,10 +58552,10 @@ function ($,
 {
 
 
-	function X3DSoundSourceNode (browser, executionContext)
+	function X3DSoundSourceNode (executionContext)
 	{
-		X3DChildNode         .call (this, browser, executionContext);
-		X3DTimeDependentNode .call (this, browser, executionContext);
+		X3DChildNode         .call (this, executionContext);
+		X3DTimeDependentNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSoundSourceNode);
 
@@ -60115,46 +58569,46 @@ function ($,
 		constructor: X3DSoundSourceNode,
 		initialize: function ()
 		{
-		   X3DChildNode         .prototype .initialize .call (this);
+			X3DChildNode         .prototype .initialize .call (this);
 			X3DTimeDependentNode .prototype .initialize .call (this);
 
 		},
 		set_browser_live__: function ()
 		{
-		   X3DTimeDependentNode .prototype .set_browser_live__ .call (this);
+			X3DTimeDependentNode .prototype .set_browser_live__ .call (this);
 
 			if (this .getDisabled ())
 			{
-			   this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
-			   this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
+				this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
 			}
 			else
 			{
-			   this .getBrowser () .volume_ .addInterest (this, "set_volume__");
-			   this .getBrowser () .mute_   .addInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .addInterest (this, "set_volume__");
+				this .getBrowser () .mute_   .addInterest (this, "set_volume__");
 				this .set_volume__ ();
 			}
 		},
 		setMedia: function (value)
 		{
-		   if (this .media)
-		   {
-		      this .media [0] .volume = 0;
-		      this .media [0] .pause ();
-		      this .media .unbind ("ended");
-		   }
+			if (this .media)
+			{
+				this .media [0] .volume = 0;
+				this .media [0] .pause ();
+				this .media .unbind ("ended");
+			}
 
-		   this .media = value;
-
-		   if (value)
-		   {
+			this .media = value;
+	
+			if (value)
+			{
 				var media = value [0];
 
-		      this .setVolume (0);
-		      this .duration_changed_ = media .duration;
+				this .setVolume (0);
+				this .duration_changed_ = media .duration;
 
-			   if (this .isActive_ .getValue ())
-			   {
+				if (this .isActive_ .getValue ())
+				{
 					if (this .loop_ .getValue ())
 						media .currentTime = this .getElapsedTime () % media .duration;
 					else
@@ -60170,7 +58624,7 @@ function ($,
 		},
 		getMedia: function ()
 		{
-		   return this .media;
+			return this .media;
 		},
 		setVolume: function (volume)
 		{
@@ -60189,43 +58643,43 @@ function ($,
 		{ },
 		set_start: function ()
 		{
-		   if (this .media)
-		   {
+			if (this .media)
+			{
 				if (this .speed_ .getValue ())
 				{
-				   this .media [0] .currentTime = 0;
+					this .media [0] .currentTime = 0;
 					this .media [0] .play ();
 				}
 			}
 		},
 		set_pause: function ()
 		{
-		   if (this .media)
-		   {
-		      this .media .unbind ("ended");
+			if (this .media)
+			{
+				this .media .unbind ("ended");
 				this .media [0] .pause ();
 			}
 		},
 		set_resume: function ()
 		{
-		   if (this .media)
-		   {
+			if (this .media)
+			{
 				if (this .speed_ .getValue ())
 					this .media [0] .play ();
 			}
 		},
 		set_stop: function ()
 		{
-		   if (this .media)
+			if (this .media)
 			{
-		      this .media .unbind ("ended");
+				this .media .unbind ("ended");
 				this .media [0] .pause ();
 			}
 		},
 		set_ended: function ()
 		{
-		   if (this .media)
-		   {
+			if (this .media)
+			{
 				var media = this .media [0];
 
 				if (media .currentTime < media .duration)
@@ -60268,6 +58722,7 @@ define ('cobweb/Components/Sound/AudioClip',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -60277,14 +58732,15 @@ function ($,
           X3DUrlObject, 
           X3DConstants,
           urls,
-          URI)
+          URI,
+          DEBUG)
 {
 
 
 	function AudioClip (executionContext)
 	{
-		X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
+		X3DSoundSourceNode .call (this, executionContext);
+		X3DUrlObject       .call (this, executionContext);
 
 		this .addType (X3DConstants .AudioClip);
 
@@ -60378,21 +58834,26 @@ function ($,
 		},
 		setError: function ()
 		{
-			var sURL = this .URL .toString ();
+			var URL = this .URL .toString ();
 
 			if (! this .URL .isLocal ())
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + sURL);
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
 			}
 
-			console .warn ("Error loading audio:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading audio:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setAudio: function ()
 		{
-		   // Everything is fine.
-			console .info ("Done loading audio:", this .URL .toString ());
+			if (DEBUG)
+			{
+				if (this .URL .scheme !== "data")
+					console .info ("Done loading audio:", this .URL .toString ());
+			}
 			
 			this .audio .unbind ("canplaythrough");
 			this .setMedia (this .audio);
@@ -60434,7 +58895,6 @@ function ($,
 		yAxis                  = new Vector3 (0, 1, 0),
 		zAxis                  = new Vector3 (0, 0, 1),
 		viewerYAxis            = new Vector3 (0, 0, 0),
-		billboardToViewer      = new Vector3 (0, 0, 0),
 		x                      = new Vector3 (0, 0, 0),
 		y                      = new Vector3 (0, 0, 0),
 		N1                     = new Vector3 (0, 0, 0),
@@ -60443,7 +58903,7 @@ function ($,
 
 	function Billboard (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Billboard);
 		
@@ -60479,7 +58939,8 @@ function ($,
 			try
 			{
 				this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
-				billboardToViewer .set (inverseModelViewMatrix [12], inverseModelViewMatrix [13], inverseModelViewMatrix [14]) .normalize (); // Normalized to get work with Geo
+
+				var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
 
 				if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 				{
@@ -60529,7 +58990,417 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Box',[
+define ("cobweb/Components/EventUtilities/BooleanFilter",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function BooleanFilter (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .BooleanFilter);
+	}
+
+	BooleanFilter .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: BooleanFilter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputTrue",   new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputFalse",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "inputNegate", new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanFilter";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			var value = this .set_boolean_ .getValue ();
+
+			if (value)
+				this .inputTrue_ = true;
+		
+			else
+				this .inputFalse_ = true;
+		
+			this .inputNegate_ = ! value;
+		},
+	});
+
+	return BooleanFilter;
+});
+
+
+
+
+define ("cobweb/Components/EventUtilities/X3DSequencerNode",
+[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants,
+          Algorithm)
+{
+
+
+	function X3DSequencerNode (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DSequencerNode);
+
+		this .index = -1;
+	}
+
+	X3DSequencerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DSequencerNode,
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+		
+			this .set_fraction_ .addInterest (this, "set_fraction__");
+			this .previous_     .addInterest (this, "set_previous__");
+			this .next_         .addInterest (this, "set_next__");
+			this .key_          .addInterest (this, "set_index__");
+		},
+		set_fraction__: function ()
+		{
+			var
+				fraction = this .set_fraction_ .getValue (),
+				key      = this .key_,
+				length   = key .length;
+
+			if (length === 0)
+				return;
+		
+			var i = 0;
+		
+			if (length === 1 || fraction <= key [0])
+				i = 0;
+		
+			else if (fraction >= key [length - 1])
+				i = this .getSize () - 1;
+		
+			else
+			{
+				var index = Algorithm .upperBound (key, 0, length, fraction, Algorithm .less);
+
+				i = index - 1;
+			}
+		
+			if (i !== this .index)
+			{
+				if (i < this .getSize ())
+				{
+					this .sequence (this .index = i);
+				}
+			}
+		},
+		set_previous__: function ()
+		{
+			if (this .previous_ .getValue ())
+			{
+				if (this .index <= 0)
+					this .index = this .getSize () - 1;
+
+				else
+					-- this .index;
+
+				if (this .index < this .getSize ())
+					this .sequence (this .index);
+			}
+		},
+		set_next__: function ()
+		{
+			if (this .next_ .getValue ())
+			{
+				if (this .index >= this .getSize () - 1)
+					this .index = 0;
+		
+				else
+					++ this .index;
+		
+				if (this .index < this .getSize ())
+					this .sequence (this .index);
+			}
+		},
+		set_index__: function ()
+		{
+			this .index = -1;
+		},
+	});
+
+	return X3DSequencerNode;
+});
+
+
+
+
+define ("cobweb/Components/EventUtilities/BooleanSequencer",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DSequencerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DSequencerNode, 
+          X3DConstants)
+{
+
+
+	function BooleanSequencer (executionContext)
+	{
+		X3DSequencerNode .call (this, executionContext);
+
+		this .addType (X3DConstants .BooleanSequencer);
+	}
+
+	BooleanSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
+	{
+		constructor: BooleanSequencer,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanSequencer";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DSequencerNode .prototype .initialize .call (this);
+
+			this .keyValue_ .addInterest (this, "set_index__");
+		},
+		getSize: function ()
+		{
+			return this .keyValue_ .length;
+		},
+		sequence: function (index)
+		{
+			this .value_changed_ = this .keyValue_ [index];
+		},
+	});
+
+	return BooleanSequencer;
+});
+
+
+
+
+define ("cobweb/Components/EventUtilities/BooleanToggle",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function BooleanToggle (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .BooleanToggle);
+	}
+
+	BooleanToggle .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: BooleanToggle,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "toggle",      new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanToggle";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			if (this .set_boolean_ .getValue ())
+				this .toggle_ = ! this .toggle_ .getValue ();
+		},
+	});
+
+	return BooleanToggle;
+});
+
+
+
+
+define ("cobweb/Components/EventUtilities/X3DTriggerNode",
+[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DTriggerNode (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DTriggerNode);
+	}
+
+	X3DTriggerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DTriggerNode,
+	});
+
+	return X3DTriggerNode;
+});
+
+
+
+
+define ("cobweb/Components/EventUtilities/BooleanTrigger",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTriggerNode, 
+          X3DConstants)
+{
+
+
+	function BooleanTrigger (executionContext)
+	{
+		X3DTriggerNode .call (this, executionContext);
+
+		this .addType (X3DConstants .BooleanTrigger);
+	}
+
+	BooleanTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	{
+		constructor: BooleanTrigger,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_triggerTime", new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerTrue",     new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BooleanTrigger";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+
+			this .set_triggerTime_ .addInterest (this, "set_triggerTime__");
+		},
+		set_triggerTime__: function ()
+		{
+			this .triggerTrue_ = true;
+		},
+	});
+
+	return BooleanTrigger;
+});
+
+
+
+
+define ("cobweb/Components/Geometry3D/Box",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60549,9 +59420,10 @@ function ($,
 
 
    var defaultSize = new Vector3 (2, 2, 2);
+
 	function Box (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Box);
 	}
@@ -60625,7 +59497,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/X3DProductStructureChildNode',[
+define ("cobweb/Components/CADGeometry/X3DProductStructureChildNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
@@ -60636,9 +59509,9 @@ function ($,
 {
 
 
-	function X3DProductStructureChildNode (browser, executionContext)
+	function X3DProductStructureChildNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DProductStructureChildNode);
 	}
@@ -60654,7 +59527,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADAssembly',[
+define ("cobweb/Components/CADGeometry/CADAssembly",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60675,8 +59549,8 @@ function ($,
 
 	function CADAssembly (executionContext)
 	{
-		X3DGroupingNode              .call (this, executionContext .getBrowser (), executionContext);
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode              .call (this, executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CADAssembly);
 	}
@@ -60714,7 +59588,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADFace',[
+define ("cobweb/Components/CADGeometry/CADFace",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60745,8 +59620,8 @@ function ($,
 
 	function CADFace (executionContext)
 	{
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject             .call (this, executionContext .getBrowser (), executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
+		X3DBoundedObject             .call (this, executionContext);
 
 		this .addType (X3DConstants .CADFace);
 
@@ -60845,7 +59720,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADLayer',[
+define ("cobweb/Components/CADGeometry/CADLayer",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -60864,7 +59740,7 @@ function ($,
 
 	function CADLayer (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CADLayer);
 	}
@@ -60941,9 +59817,9 @@ function ($,
 		modelViewMatrix .pop ();
 	}
 
-	function X3DTransformMatrix4DNode (browser, executionContext)
+	function X3DTransformMatrix4DNode (executionContext)
 	{
-		X3DGroupingNode .call (this, browser, executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformMatrix4DNode);
 
@@ -60994,9 +59870,9 @@ function ($,
 {
 
 
-	function X3DTransformNode (browser, executionContext)
+	function X3DTransformNode (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, browser, executionContext);
+		X3DTransformMatrix4DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformNode);
 	}
@@ -61034,7 +59910,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/CADPart',[
+define ("cobweb/Components/CADGeometry/CADPart",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61055,8 +59932,8 @@ function ($,
 
 	function CADPart (executionContext)
 	{
-		X3DTransformNode             .call (this, executionContext .getBrowser (), executionContext);
-		X3DProductStructureChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformNode             .call (this, executionContext);
+		X3DProductStructureChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CADPart);
 	}
@@ -61103,7 +59980,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Circle2D',[
+define ("cobweb/Components/Geometry2D/Circle2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61124,7 +60002,7 @@ function ($,
 
 	function Circle2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Circle2D);
 	}
@@ -61198,6 +60076,7 @@ define ('cobweb/Components/Rendering/ClipPlane',[
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
 	"standard/Math/Geometry/Plane3",
 	"standard/Utility/ObjectCache",
 ],
@@ -61208,6 +60087,7 @@ function ($,
           X3DChildNode, 
           X3DConstants,
           Vector3,
+          Vector4,
           Plane3,
           ObjectCache)
 {
@@ -61245,7 +60125,7 @@ function ($,
 		{
 			var
 				plane  = this .plane,
-				plane_ = clipPlane .plane_ .getValue ();
+				plane_ = clipPlane .plane;
 
 			plane .normal .assign (plane_);
 			plane .distanceFromOrigin = -plane_ .w;
@@ -61258,8 +60138,7 @@ function ($,
 				plane  = this .plane,
 				normal = plane .normal;
 
-			gl .uniform1i (shader .clipPlaneEnabled [i], true);
-			gl .uniform4f (shader .clipPlaneVector [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+			gl .uniform4f (shader .clipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
 		recycle: function ()
 		{
@@ -61269,9 +60148,12 @@ function ($,
 
 	function ClipPlane (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ClipPlane);
+
+		this .enabled = false;
+		this .plane   = new Vector4 (0, 0, 0, 0);
 	}
 
 	ClipPlane .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -61294,14 +60176,29 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .enabled_ .addInterest (this, "set_enabled__");
+			this .plane_   .addInterest (this, "set_enabled__");
+
+			this .set_enabled__ ();
+		},
+		set_enabled__: function ()
+		{
+			this .plane .assign (this .plane_ .getValue ());
+
+			this .enabled = this .enabled_ .getValue () && ! this .plane .equals (Vector4 .Zero);
+		},
 		push: function ()
 		{
-			if (this .enabled_ .getValue ())
+			if (this .enabled)
 				this .getCurrentLayer () .getClipPlanes () .push (ClipPlanes .pop (this));
 		},
 		pop: function ()
 		{
-			if (this .enabled_ .getValue ())
+			if (this .enabled)
 				this .getBrowser () .getClipPlanes () .push (this .getCurrentLayer () .getClipPlanes () .pop ());
 		},
 	});
@@ -61337,8 +60234,8 @@ function ($,
 
 	function Collision (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DSensorNode   .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
+		X3DSensorNode   .call (this, executionContext);
 
 		this .addType (X3DConstants .Collision);
 
@@ -61456,16 +60353,28 @@ function ($,
 {
 
 
-	function X3DColorNode (browser, executionContext)
+	function X3DColorNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DColorNode);
+
+		this .color = this .color_ .getValue ();
 	}
 
 	X3DColorNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DColorNode,
+		getColor: function (index)
+		{
+			if (index >= 0 && index < this .color .length)
+				return this .color [index] .getValue ();
+
+			if (this .color .length)
+				return this .color [this .color .length - 1] .getValue ();
+
+			return this .getWhite ();
+		},
 	});
 
 	return X3DColorNode;
@@ -61493,11 +60402,15 @@ function ($,
 {
 
 
+	var white = new Color3 (1, 1, 1);
+
 	function Color (executionContext)
 	{
-		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Color);
+
+		this .color = this .color_ .getValue ();
 	}
 
 	Color .prototype = $.extend (Object .create (X3DColorNode .prototype),
@@ -61523,16 +60436,653 @@ function ($,
 		{
 			return false;
 		},
-		getColor: function (index)
+		getWhite: function ()
 		{
-			if (index >= 0 && index < this .color_ .length)
-				return this .color_ [index] .getValue ();
-
-			return new Color3 (1, 1, 1);
+			return white;
 		},
 	});
 
 	return Color;
+});
+
+
+
+
+define ("cobweb/Components/Followers/X3DFollowerNode",
+[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DFollowerNode (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DFollowerNode);
+
+		this .buffer = [ ];
+
+		// Auxillary variables
+		this .a      = this .getVector ();
+		this .vector = this .getVector ();
+	}
+
+	X3DFollowerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DFollowerNode,
+		duplicate: function (value)
+		{
+			return value .copy ();
+		},
+		getBuffer: function ()
+		{
+			return this .buffer;
+		},
+		getValue: function ()
+		{
+			return this .set_value_ .getValue ();
+		},
+		getDestination: function ()
+		{
+			return this .set_destination_ .getValue ();
+		},
+		getInitialValue: function ()
+		{
+			return this .initialValue_ .getValue ();
+		},
+		getInitialDestination: function ()
+		{
+			return this .initialDestination_ .getValue ();
+		},
+		setValue: function (value)
+		{
+			this .value_changed_ = value;
+		},
+		assign: function (buffer, i, value)
+		{
+			buffer [i] .assign (value);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return this .a .assign (lhs) .subtract (rhs) .abs () < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return this .vector .assign (source) .lerp (destination, weight);
+		},
+		set_active: function (value)
+		{
+			if (value !== this .isActive_ .getValue ())
+			{
+				this .isActive_ = value;
+		
+				if (this .isActive_ .getValue ())
+				{
+					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+					this .getBrowser () .addBrowserEvent ();
+				}
+				else
+					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+			}
+		},
+	});
+
+	return X3DFollowerNode;
+});
+
+
+
+
+define ("cobweb/Components/Followers/X3DChaserNode",
+[
+	"jquery",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DFollowerNode, 
+          X3DConstants)
+{
+
+
+	function X3DChaserNode (executionContext)
+	{
+		X3DFollowerNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DChaserNode);
+
+		this .destination   = null;
+		this .previousValue = null;
+		this .bufferEndTime = 0;
+		this .stepTime      = 0;
+
+		// Auxillary variables
+		this .deltaOut = this .getArray ();
+	}
+
+	X3DChaserNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
+	{
+		constructor: X3DChaserNode,
+		initialize: function ()
+		{
+			X3DFollowerNode .prototype .initialize .call (this);
+		
+			this .set_value_       .addInterest (this, "set_value__");
+			this .set_destination_ .addInterest (this, "set_destination__");
+			this .duration_        .addInterest (this, "set_duration__");
+
+			this .set_duration__ ();
+
+			var
+				buffer             = this .getBuffer (),
+				initialValue       = this .getInitialValue (),
+				initialDestination = this .getInitialDestination (),
+				numBuffers         = this .getNumBuffers ();
+
+			this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+			this .previousValue = this .duplicate (initialValue);
+	
+			buffer [0] = this .duplicate (initialDestination);
+
+			for (var i = 1; i < numBuffers; ++ i)
+				buffer [i] = this .duplicate (initialValue);
+
+			this .destination = this .duplicate (initialDestination);
+
+			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
+				this .setValue (initialDestination);
+
+			else
+				this .set_active (true);
+		},
+		getNumBuffers: function ()
+		{
+			return 60;
+		},
+		getTolerance: function ()
+		{
+			return 1e-8;
+		},
+		getArray: function ()
+		{
+			return this .getVector ();
+		},
+		setPreviousValue: function (value)
+		{
+			this .previousValue .assign (value);
+		},
+		step: function (value1, value2, t)
+		{
+			this .output .add (this .deltaOut .assign (value1) .subtract (value2) .multiply (t));
+		},
+		stepResponse: function (t)
+		{
+			if (t <= 0)
+				return 0;
+
+			var duration = this .duration_ .getValue ();
+		
+			if (t >= duration)
+				return 1;
+	
+			return 0.5 - 0.5 * Math .cos ((t / duration) * Math .PI);
+		},
+		set_value__: function ()
+		{
+			if (! this .isActive_ .getValue ())
+				this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+
+			var
+				buffer = this .getBuffer (),
+				value  = this .getValue ();
+
+			for (var i = 1, length = buffer .length; i < length; ++ i)
+				this .assign (buffer, i, value);
+
+			this .setPreviousValue (value);
+			this .setValue (value);
+
+			this .set_active (true);
+		},
+		set_destination__: function ()
+		{
+			this .destination = this .duplicate (this .getDestination ());
+
+			if (! this .isActive_ .getValue ())
+				this .bufferEndTime = this .getBrowser () .getCurrentTime ();
+		
+			this .set_active (true);
+		},
+		set_duration__: function ()
+		{
+			this .stepTime = this .duration_ .getValue () / this .getNumBuffers ();
+		},
+		prepareEvents: function ()
+		{
+			try
+			{
+				var
+					buffer     = this .getBuffer (),
+					numBuffers = buffer .length,
+					fraction   = this .updateBuffer ();
+			
+				this .output = this .interpolate (this .previousValue,
+				                                  buffer [numBuffers - 1],
+				                                  this .stepResponse ((numBuffers - 1 + fraction) * this .stepTime));
+	
+				for (var i = numBuffers - 2; i >= 0; -- i)
+				{
+					this .step (buffer [i], buffer [i + 1], this .stepResponse ((i + fraction) * this .stepTime));
+				}
+	
+				this .setValue (this .output);
+		
+				if (this .equals (this .output, this .destination, this .getTolerance ()))
+					this .set_active (false);
+			}
+			catch (error)
+			{ }
+		},
+		updateBuffer: function ()
+		{
+			var
+				buffer     = this .getBuffer (),
+				numBuffers = buffer .length,
+				fraction   = (this .getBrowser () .getCurrentTime () - this .bufferEndTime) / this .stepTime;
+		
+			if (fraction >= 1)
+			{
+				var seconds = Math .floor (fraction);
+
+				fraction -= seconds;
+		
+				if (seconds < numBuffers)
+				{
+					this .setPreviousValue (buffer [numBuffers - seconds]);
+		
+					for (var i = numBuffers - 1; i >= seconds; -- i)
+					{
+						this .assign (buffer, i, buffer [i - seconds])
+					}
+		
+					for (var i = 0; i < seconds; ++ i)
+					{
+						try
+						{
+							var alpha = i / seconds;
+
+							this .assign (buffer, i, this .interpolate (this .destination, buffer [seconds], alpha))
+						}
+						catch (error)
+						{ }
+		 			}
+				}
+				else
+				{
+					this .setPreviousValue (seconds == numBuffers ? buffer [0] : this .destination);
+
+					for (var i = 0; i < numBuffers; ++ i)
+						this .assign (buffer, i, this .destination);
+				}
+		
+				this .bufferEndTime += seconds * this .stepTime;
+			}
+
+			return fraction;
+		},
+	});
+
+	return X3DChaserNode;
+});
+
+
+
+
+define ("cobweb/Components/Followers/ColorChaser",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Color3,
+          Vector3,
+          Algorithm)
+{
+
+
+	var
+		initialValue       = new Vector3 (0, 0, 0),
+		initialDestination = new Vector3 (0, 0, 0),
+		deltaOut           = new Vector3 (0, 0, 0),
+		vector             = new Vector3 (0, 0, 0);
+
+	function ColorChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ColorChaser);
+	}
+
+	ColorChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: ColorChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFColor ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFColor ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFColor (0.8, 0.8, 0.8)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFColor (0.8, 0.8, 0.8)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFColor ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ColorChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+		getValue: function ()
+		{
+			return this .set_value_ .getValue () .getHSV (vector);
+		},
+		getDestination: function ()
+		{
+			return this .set_destination_ .getValue () .getHSV (vector);
+		},
+		getInitialValue: function ()
+		{
+			return this .initialValue_ .getValue () .getHSV (initialValue);
+		},
+		getInitialDestination: function ()
+		{
+			return this .initialDestination_ .getValue () .getHSV (initialDestination);
+		},
+		setValue: function (value)
+		{
+			this .value_changed_ .setHSV (value .x, value .y, value .z);
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Color3 .lerp (source, destination, weight, vector);
+		},
+		step: function (value1, value2, t)
+		{
+			deltaOut .assign (this .output) .add (value1) .subtract (value2);
+
+			//step .x = Algorithm .interval (step .x, 0, 2 * Math .PI);
+
+			Color3 .lerp (this .output, deltaOut, t, this .output);
+		},
+	});
+
+	return ColorChaser;
+});
+
+
+
+
+define ("cobweb/Components/Followers/X3DDamperNode",
+[
+	"jquery",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+],
+function ($,
+          X3DFollowerNode, 
+          X3DConstants,
+          Algorithm)
+{
+
+
+	function X3DDamperNode (executionContext)
+	{
+		X3DFollowerNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DDamperNode);
+	}
+
+	X3DDamperNode .prototype = $.extend (Object .create (X3DFollowerNode .prototype),
+	{
+		constructor: X3DDamperNode,
+		initialize: function ()
+		{
+			X3DFollowerNode .prototype .initialize .call (this);
+		
+			this .order_           .addInterest (this, "set_order__");
+			this .set_value_       .addInterest (this, "set_value__");
+			this .set_destination_ .addInterest (this, "set_destination__");
+
+			var
+				buffer             = this .getBuffer (),
+				initialValue       = this .getInitialValue (),
+				initialDestination = this .getInitialDestination ();
+
+			buffer [0] = this .duplicate (initialDestination);
+		
+			for (var i = 1, length = this .getOrder () + 1; i < length; ++ i)
+				buffer [i] = this .duplicate (initialValue);
+	
+			if (this .equals (initialDestination, initialValue, this .getTolerance ()))
+				this .setValue (initialDestination);
+
+			else
+				this .set_active (true);
+		},
+		getOrder: function ()
+		{
+			return Algorithm .clamp (this .order_ .getValue (), 0, 5);
+		},
+		getTolerance: function ()
+		{
+			if (this .tolerance_ .getValue () < 0)
+				return 1e-4;
+
+			return this .tolerance_ .getValue ();
+		},
+		prepareEvents: function ()
+		{
+			var
+				buffer = this .getBuffer (),
+				order  = buffer .length - 1;
+
+			if (this .tau_ .getValue ())
+			{
+				var
+					delta = 1 / this .getBrowser () .currentFrameRate,
+					alpha = Math .exp (-delta / this .tau_ .getValue ());
+
+				for (var i = 0; i < order; ++ i)
+				{
+					try
+					{
+						this .assign (buffer, i + 1, this .interpolate (buffer [i], buffer [i + 1], alpha));
+					}
+					catch (error)
+					{ }
+				}
+
+				this .setValue (buffer [order]);
+
+				if (! this .equals (buffer [order], buffer [0], this .getTolerance ()))
+					return;
+			}
+			else
+			{
+				this .setValue (buffer [0]);
+
+				order = 0;
+			}
+
+			for (var i = 1, length = buffer .length; i < length; ++ i)
+				this .assign (buffer, i, buffer [order]);
+
+			this .set_active (false);
+		},
+		set_value__: function ()
+		{
+			var
+				buffer = this .getBuffer (),
+				value  = this .getValue ();
+
+			for (var i = 1, length = buffer .length; i < length; ++ i)
+				this .assign (buffer, i, value);
+
+			this .setValue (value);
+		
+			this .set_active (true);
+		},
+		set_destination__: function ()
+		{
+			this .assign (this .getBuffer (), 0, this .getDestination ());
+
+			this .set_active (true);
+		},
+		set_order__: function ()
+		{
+			var
+				buffer = this .getBuffer (),
+				value  = buffer [buffer .length - 1];
+
+			for (var i = buffer .length, length = this .getOrder () + 1; i < length; ++ i)
+				buffer [i] = this .duplicate (value);
+
+			buffer .length = length;
+		},
+	});
+
+	return X3DDamperNode;
+});
+
+
+
+
+define ("cobweb/Components/Followers/ColorDamper",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode, 
+          X3DConstants,
+          Color3,
+          Vector3)
+{
+
+
+	var
+		a                  = new Vector3 (0, 0, 0),
+		initialValue       = new Vector3 (0, 0, 0),
+		initialDestination = new Vector3 (0, 0, 0),
+		vector             = new Vector3 (0, 0, 0);
+
+	function ColorDamper (executionContext)
+	{
+		X3DDamperNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ColorDamper);
+	}
+
+	ColorDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+	{
+		constructor: ColorDamper,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFColor ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFColor ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFColor (0.8, 0.8, 0.8)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFColor (0.8, 0.8, 0.8)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFColor ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ColorDamper";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+		getValue: function ()
+		{
+			return this .set_value_ .getValue () .getHSV (vector);
+		},
+		getDestination: function ()
+		{
+			return this .set_destination_ .getValue () .getHSV (vector);
+		},
+		getInitialValue: function ()
+		{
+			return this .initialValue_ .getValue () .getHSV (initialValue);
+		},
+		getInitialDestination: function ()
+		{
+			return this .initialDestination_ .getValue () .getHSV (initialDestination);
+		},
+		setValue: function (value)
+		{
+			this .value_changed_ .setHSV (value .x, value .y, value .z);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return a .assign (lhs) .subtract (rhs) .abs () < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Color3 .lerp (source, destination, weight, vector);
+		},
+	});
+
+	return ColorDamper;
 });
 
 
@@ -61559,7 +61109,7 @@ function ($,
 
 	function ColorInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorInterpolator);
 
@@ -61605,7 +61155,7 @@ function ($,
 			this .hsv .length = 0;
 
 			for (var i = 0, length = keyValue .length; i < length; ++ i)
-				this .hsv .push (keyValue [i] .getHSV ());
+				this .hsv .push (keyValue [i] .getHSV ([ ]));
 		},
 		interpolate: function (index0, index1, weight)
 		{
@@ -61640,9 +61190,11 @@ function ($,
 {
 
 
+	var white = new Color4 (1, 1, 1, 1);
+
 	function ColorRGBA (executionContext)
 	{
-		X3DColorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ColorRGBA);
 	}
@@ -61670,12 +61222,9 @@ function ($,
 		{
 			return true;
 		},
-		getColor: function (index)
+		getWhite: function ()
 		{
-			if (index >= 0 && index < this .color_ .length)
-				return this .color_ [index] .getValue ();
-	
-			return new Color4 (1, 1, 1, 1);
+			return white;
 		},
 	});
 
@@ -61685,7 +61234,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode',[
+define ("cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+[
 	"jquery",
 	"cobweb/Components/Texturing/X3DTextureNode",
 	"cobweb/Bits/X3DConstants",
@@ -61696,9 +61246,9 @@ function ($,
 {
 
 
-	function X3DEnvironmentTextureNode (browser, executionContext)
+	function X3DEnvironmentTextureNode (executionContext)
 	{
-		X3DTextureNode .call (this, browser, executionContext);
+		X3DTextureNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DEnvironmentTextureNode);
 	}
@@ -61714,7 +61264,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture',[
+define ("cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61735,7 +61286,7 @@ function ($,
 
 	function ComposedCubeMapTexture (executionContext)
 	{
-		X3DEnvironmentTextureNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentTextureNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ComposedCubeMapTexture);
 
@@ -61901,7 +61452,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Cone',[
+define ("cobweb/Components/Geometry3D/Cone",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -61926,7 +61478,7 @@ function ($,
 
 	function Cone (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Cone);
 	}
@@ -62107,6 +61659,340 @@ function ($,
 
 
 
+define ("cobweb/Browser/Followers/X3DArrayFollowerTemplate",[],
+function ()
+{
+
+
+	return function (Type)
+	{
+		function X3DArrayFollowerObject ()
+		{
+			this .array = this .getArray ();
+		}
+	
+		X3DArrayFollowerObject .prototype =
+		{
+			getValue: function ()
+			{
+				return this .set_value_;
+			},
+			getDestination: function ()
+			{
+				return this .set_destination_;
+			},
+			getInitialValue: function ()
+			{
+				return this .initialValue_;
+			},
+			getInitialDestination: function ()
+			{
+				return this .initialDestination_;
+			},
+			assign: function (buffer, i, value)
+			{
+				buffer [i] .setValue (value);
+			},
+			equals: function (lhs, rhs, tolerance)
+			{
+				var
+					a        = this .a,
+					l        = lhs .getValue (),
+					r        = rhs .getValue (),
+					distance = 0;
+
+				for (var i = 0, length = l .length; i < length; ++ i)
+				  distance = Math .max (a .assign (l [i] .getValue ()) .subtract (r [i] .getValue ()) .abs ());
+	
+				return distance < tolerance;
+			},
+			interpolate: function (source, destination, weight)
+			{
+				var
+					a = this .array .getValue (),
+					s = source .getValue (),
+					d = destination .getValue ();
+	
+				this .array .length = s .length;
+	
+				for (var i = 0, length = s .length; i < length; ++ i)
+					a [i] .getValue () .assign (s [i] .getValue ()) .lerp (d [i] .getValue (), weight);
+	
+				return this .array;
+			},
+			set_value__: function ()
+			{
+				this .getBuffer () [0] .length = this .set_value_ .length;
+	
+				Type .prototype .set_value__ .call (this);
+			},
+			set_destination__: function ()
+			{
+				var
+					buffer = this .getBuffer (),
+					l      = this .set_destination_ .length;
+	
+				for (var i = 0, length = buffer .length; i < length; ++ i)
+					buffer [i] .length = l;
+				
+				Type .prototype .set_destination__ .call (this);
+			},
+		};
+	
+		return X3DArrayFollowerObject;
+	};
+});
+
+
+
+
+define ("cobweb/Browser/Followers/X3DArrayChaserTemplate",
+[
+	"jquery",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+],
+function ($,
+          X3DArrayFollowerTemplate)
+{
+
+
+	return function (Type)
+	{
+		function X3DArrayChaserObject ()
+		{
+			this .array = this .getArray ();
+		}
+	
+		X3DArrayChaserObject .prototype = $.extend (Object .create (X3DArrayFollowerTemplate (Type) .prototype),
+		{
+			setPreviousValue: function (value)
+			{
+				this .previousValue .setValue (value);
+			},
+			step: function (value1, value2, t)
+			{
+				var
+					output   = this .output .getValue (),
+					deltaOut = this .deltaOut .getValue ();
+
+				value1 = value1 .getValue ();
+				value2 = value2 .getValue ();
+
+				this .deltaOut .length = output .length;
+
+				for (var i = 0, length = output .length; i < length; ++ i)
+					output [i] .getValue () .add (deltaOut [i] .getValue () .assign (value1 [i] .getValue ()) .subtract (value2 [i] .getValue ()) .multiply (t));
+			},
+		});
+	
+		return X3DArrayChaserObject;
+	};
+});
+
+
+
+
+define ("cobweb/Components/Followers/CoordinateChaser",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DArrayChaserTemplate,
+          X3DConstants,
+          Vector3)
+{
+
+
+	var X3DArrayChaserObject = X3DArrayChaserTemplate (X3DChaserNode);
+
+	function CoordinateChaser (executionContext)
+	{
+		X3DChaserNode        .call (this, executionContext);
+		X3DArrayChaserObject .call (this, executionContext);
+
+		this .addType (X3DConstants .CoordinateChaser);
+	}
+
+	CoordinateChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+		X3DArrayChaserObject .prototype,
+	{
+		constructor: CoordinateChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .MFVec3f (new Vector3 (0, 0, 0))),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .MFVec3f (new Vector3 (0, 0, 0))),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "CoordinateChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+		getArray: function ()
+		{
+			return new Fields .MFVec3f ();
+		},
+	});
+
+	return CoordinateChaser;
+});
+
+
+
+
+define ("cobweb/Components/Followers/CoordinateDamper",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode,
+          X3DArrayFollowerTemplate,
+          X3DConstants,
+          Vector3)
+{
+
+
+	var X3DArrayFollowerObject = X3DArrayFollowerTemplate (X3DDamperNode);
+
+	function CoordinateDamper (executionContext)
+	{
+		X3DDamperNode          .call (this, executionContext);
+		X3DArrayFollowerObject .call (this, executionContext);
+
+		this .addType (X3DConstants .CoordinateDamper);
+	}
+
+	CoordinateDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+		X3DArrayFollowerObject .prototype,
+	{
+		constructor: CoordinateDamper,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .MFVec3f (new Vector3 (0, 0, 0))),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .MFVec3f (new Vector3 (0, 0, 0))),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "CoordinateDamper";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+		getArray: function ()
+		{
+			return new Fields .MFVec3f ();
+		},
+	});
+
+	return CoordinateDamper;
+});
+
+
+
+
+define ('cobweb/Components/NURBS/CoordinateDouble',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DCoordinateNode, 
+          X3DConstants)
+{
+
+
+	function CoordinateDouble (executionContext)
+	{
+		X3DCoordinateNode .call (this, executionContext);
+
+		this .addType (X3DConstants .CoordinateDouble);
+	}
+
+	CoordinateDouble .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
+	{
+		constructor: CoordinateDouble,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec3d ()),
+		]),
+		getTypeName: function ()
+		{
+			return "CoordinateDouble";
+		},
+		getComponentName: function ()
+		{
+			return "NURBS";
+		},
+		getContainerField: function ()
+		{
+			return "coord";
+		},
+	});
+
+	return CoordinateDouble;
+});
+
+
+
+
 define ('cobweb/Components/Interpolation/CoordinateInterpolator',[
 	"jquery",
 	"cobweb/Fields",
@@ -62128,7 +62014,7 @@ function ($,
 
 	function CoordinateInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateInterpolator);
 	}
@@ -62171,9 +62057,7 @@ function ($,
 
 			for (var i = 0; i < size; ++ i)
 			{
-				value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-				                                       .lerp (keyValue [index1 + i] .getValue (),
-				                                              weight));
+				value_changed [i] .getValue () .assign (keyValue [index0 + i] .getValue ()) .lerp (keyValue [index1 + i] .getValue (), weight);
 			}
 
 			this .value_changed_ .addEvent ();
@@ -62207,7 +62091,7 @@ function ($,
 
 	function CoordinateInterpolator2D (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CoordinateInterpolator2D);
 	}
@@ -62222,7 +62106,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFVec2f ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .MFVec2f ()),
 		]),
-		keyValue: new Vector2 (0, 0),
 		getTypeName: function ()
 		{
 			return "CoordinateInterpolator2D";
@@ -62250,9 +62133,7 @@ function ($,
 
 			for (var i = 0; i < size; ++ i)
 			{
-				value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-				                                       .lerp (keyValue [index1 + i] .getValue (),
-				                                              weight));
+				value_changed [i] .getValue () .assign (keyValue [index0 + i] .getValue ()) .lerp (keyValue [index1 + i] .getValue (), weight);
 			}
 
 			this .value_changed_ .addEvent ();
@@ -62265,7 +62146,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Cylinder',[
+define ("cobweb/Components/Geometry3D/Cylinder",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -62290,7 +62172,7 @@ function ($,
 
 	function Cylinder (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Cylinder);
 	}
@@ -62530,7 +62412,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/X3DDragSensorNode',[
+define ("cobweb/Components/PointingDeviceSensor/X3DDragSensorNode",
+[
 	"jquery",
 	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
 	"cobweb/Bits/X3DConstants",
@@ -62541,9 +62424,9 @@ function ($,
 {
 
 
-	function X3DDragSensorNode (browser, executionContext)
+	function X3DDragSensorNode (executionContext)
 	{
-		X3DPointingDeviceSensorNode .call (this, browser, executionContext);
+		X3DPointingDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DDragSensorNode);
 	}
@@ -62685,7 +62568,8 @@ function (Vector3,
 });
 
 
-define ('cobweb/Components/PointingDeviceSensor/CylinderSensor',[
+define ("cobweb/Components/PointingDeviceSensor/CylinderSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -62718,7 +62602,7 @@ function ($,
 
 	function CylinderSensor (executionContext)
 	{
-		X3DDragSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDragSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .CylinderSensor);
 	}
@@ -62860,6 +62744,9 @@ function ($,
 
 					this .fromVector  = this .cylinder .axis .getPerpendicularVector (trackPoint) .negate ();
 					this .startOffset = new Rotation4 (yAxis, this .offset_ .getValue ());
+	
+					//this .trackPoint_changed_  .set (trackPoint);
+					//this .rotation_changed .set (this .startOffset);
 				}
 				else
 				{
@@ -62945,7 +62832,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Disk2D',[
+define ("cobweb/Components/Geometry2D/Disk2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -62968,7 +62856,7 @@ function ($,
 
 	function Disk2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Disk2D);
 
@@ -63150,7 +63038,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/ElevationGrid',[
+define ("cobweb/Components/Geometry3D/ElevationGrid",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -63177,7 +63066,7 @@ function ($,
 
 	function ElevationGrid (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ElevationGrid);
 
@@ -63519,7 +63408,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Extrusion',[
+define ("cobweb/Components/Geometry3D/Extrusion",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -63548,7 +63438,7 @@ function ($,
 
 	function Extrusion (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Extrusion);
 	}
@@ -64021,7 +63911,7 @@ function ($,
 
 	function IndexedLineSet (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedLineSet);
 
@@ -64186,7 +64076,9 @@ function ($,
 			var
 				coordIndex     = this .coordIndex_. getValue (),
 				polylines      = this .getPolylineIndices (),
-				colorPerVertex = this .colorPerVertex_ .getValue ();
+				colorPerVertex = this .colorPerVertex_ .getValue (),
+				colorNode      = this .colorNode,
+				coordNode      = this .coordNode;
 
 			// Fill GeometryNode
 
@@ -64207,15 +64099,15 @@ function ($,
 						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 						//	attribNodes [a] -> addValue (attribArrays [a], coordIndex () [i]);
 
-						if (this .colorNode)
+						if (colorNode)
 						{
 							if (colorPerVertex)
-								this .addColor (this .colorNode .getColor (this .getColorPerVertexIndex (i)));
+								this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
 							else
-								this .addColor (this .colorNode .getColor (this .getColorIndex (face)));
+								this .addColor (colorNode .getColor (this .getColorIndex (face)));
 						}
 
-						this .addVertex (this .coordNode .getPoint (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .getPoint (coordIndex [i] .getValue ()));
 					}
 				}
 
@@ -64232,7 +64124,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/IndexedQuadSet',[
+define ("cobweb/Components/CADGeometry/IndexedQuadSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -64251,7 +64144,7 @@ function ($,
 
 	function IndexedQuadSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedQuadSet);
 
@@ -64355,7 +64248,7 @@ function ($,
 
 	function IndexedTriangleFanSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleFanSet);
 
@@ -64469,7 +64362,7 @@ function ($,
 
 	function IndexedTriangleSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleSet);
 	}
@@ -64538,7 +64431,7 @@ function ($,
 
 	function IndexedTriangleStripSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .IndexedTriangleStripSet);
 
@@ -64671,9 +64564,9 @@ function ($,
 
 	function Inline (executionContext)
 	{
-		X3DChildNode     .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject     .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DUrlObject     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .Inline);
 		
@@ -64831,6 +64724,141 @@ function ($,
 
 
 
+define ("cobweb/Components/EventUtilities/IntegerSequencer",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DSequencerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DSequencerNode, 
+          X3DConstants)
+{
+
+
+	function IntegerSequencer (executionContext)
+	{
+		X3DSequencerNode .call (this, executionContext);
+
+		this .addType (X3DConstants .IntegerSequencer);
+	}
+
+	IntegerSequencer .prototype = $.extend (Object .create (X3DSequencerNode .prototype),
+	{
+		constructor: IntegerSequencer,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "previous",      new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "next",          new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFInt32 ()),
+		]),
+		getTypeName: function ()
+		{
+			return "IntegerSequencer";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DSequencerNode .prototype .initialize .call (this);
+
+			this .keyValue_ .addInterest (this, "set_index__");
+		},
+		getSize: function ()
+		{
+			return this .keyValue_ .length;
+		},
+		sequence: function (index)
+		{
+			this .value_changed_ = this .keyValue_ [index];
+		},
+	});
+
+	return IntegerSequencer;
+});
+
+
+
+
+define ("cobweb/Components/EventUtilities/IntegerTrigger",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTriggerNode, 
+          X3DConstants)
+{
+
+
+	function IntegerTrigger (executionContext)
+	{
+		X3DTriggerNode .call (this, executionContext);
+
+		this .addType (X3DConstants .IntegerTrigger);
+	}
+
+	IntegerTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	{
+		constructor: IntegerTrigger,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "integerKey",   new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerValue", new Fields .SFInt32 ()),
+		]),
+		getTypeName: function ()
+		{
+			return "IntegerTrigger";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			this .triggerValue_ = this .integerKey_;
+		},
+	});
+
+	return IntegerTrigger;
+});
+
+
+
+
 define ('cobweb/Components/KeyDeviceSensor/X3DKeyDeviceSensorNode',[
 	"jquery",
 	"cobweb/Components/Core/X3DSensorNode",
@@ -64842,9 +64870,9 @@ function ($,
 {
 
 
-	function X3DKeyDeviceSensorNode (browser, executionContext)
+	function X3DKeyDeviceSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DKeyDeviceSensorNode);
 	}
@@ -64967,7 +64995,7 @@ function ($,
 
 	function KeySensor (executionContext)
 	{
-		X3DKeyDeviceSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DKeyDeviceSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .KeySensor);
 	}
@@ -65222,7 +65250,7 @@ function ($,
 	
 	function LOD (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LOD);
 
@@ -65361,7 +65389,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/X3DLayoutNode',[
+define ("cobweb/Components/Layout/X3DLayoutNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/X3DConstants",
@@ -65372,9 +65401,9 @@ function ($,
 {
 
 
-	function X3DLayoutNode (browser, executionContext)
+	function X3DLayoutNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayoutNode);
 	}
@@ -65390,7 +65419,8 @@ function ($,
 
 
 
-define ("cobweb/Components/Layout/Layout", [
+define ("cobweb/Components/Layout/Layout",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -65432,7 +65462,7 @@ function ($,
 
 	function Layout (executionContext)
 	{
-		X3DLayoutNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLayoutNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Layout);
 
@@ -65468,12 +65498,12 @@ function ($,
 		modelViewMatrix: new Matrix4 (),
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "align",       new Fields .MFString ([ "CENTER", "CENTER" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offsetUnits", new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",      new Fields .MFFloat ([ 0, 0 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "sizeUnits",   new Fields .MFString ([ "WORLD", "WORLD" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "size",        new Fields .MFFloat ([ 1, 1 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "scaleMode",   new Fields .MFString ([ "NONE", "NONE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "align",       new Fields .MFString ("CENTER", "CENTER")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "offsetUnits", new Fields .MFString ("WORLD", "WORLD")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",      new Fields .MFFloat (0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "sizeUnits",   new Fields .MFString ("WORLD", "WORLD")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",        new Fields .MFFloat (1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "scaleMode",   new Fields .MFString ("NONE", "NONE")),
 		]),
 		getTypeName: function ()
 		{
@@ -65935,7 +65965,7 @@ function ($,
 					currentRotation    = this .currentRotation,
 					currentScale       = this .currentScale;
 
-				var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+				var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
 				modelViewMatrix .get (currentTranslation, currentRotation, currentScale);
 		
 				switch (this .getScaleModeX ())
@@ -66012,7 +66042,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/LayoutGroup',[
+define ("cobweb/Components/Layout/LayoutGroup",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -66035,7 +66066,7 @@ function ($,
 
 	function LayoutGroup (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LayoutGroup);
 
@@ -66130,7 +66161,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Layout/LayoutLayer',[
+define ("cobweb/Components/Layout/LayoutLayer",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -66154,7 +66186,6 @@ function ($,
 	function LayoutLayer (executionContext)
 	{
 		X3DLayerNode .call (this,
-		                    executionContext .getBrowser (),
 		                    executionContext,
 		                    new OrthoViewpoint (executionContext),
 		                    new LayoutGroup (executionContext));
@@ -66221,7 +66252,7 @@ function ($,
 
 	function LineProperties (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LineProperties);
 	}
@@ -66292,7 +66323,7 @@ function ($,
 
 	function LineSet (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LineSet);
 
@@ -66400,7 +66431,9 @@ function ($,
 
 			var
 				vertexCount = this .vertexCount_ .getValue (),
-				size        = this .coordNode .getSize (),
+				colorNode   = this .colorNode,
+				coordNode   = this .coordNode,
+				size        = coordNode .getSize (),
 				index       = 0;
 
 			for (var c = 0, length = vertexCount .length; c < length; ++ c)
@@ -66419,10 +66452,10 @@ function ($,
 						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 						//	attribNodes [a] -> addValue (attribArrays [a], index);
 
-						if (this .colorNode)
-							this .addColor (this .colorNode .getColor (index));
+						if (colorNode)
+							this .addColor (colorNode .getColor (index));
 
-						this .addVertex (this .coordNode .getPoint (index));
+						this .addVertex (coordNode .getPoint (index));
 					}
 
 					++ index;
@@ -66441,6 +66474,79 @@ function ($,
 
 
 
+define ('cobweb/Components/EnvironmentalEffects/LocalFog',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/EnvironmentalEffects/X3DFogObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DFogObject, 
+          X3DConstants)
+{
+
+
+	function LocalFog (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+		X3DFogObject .call (this, executionContext);
+
+		this .addType (X3DConstants .LocalFog);
+	}
+
+	LocalFog .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DFogObject .prototype,
+	{
+		constructor: LocalFog,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",         new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "fogType",         new Fields .SFString ("LINEAR")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "color",           new Fields .SFColor (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "visibilityRange", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "LocalFog";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalEffects";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+			X3DFogObject .prototype .initialize .call (this);
+		},
+		push: function ()
+		{
+			if (this .enabled_ .getValue ())
+				this .getCurrentLayer () .pushLocalFog (this);
+		},
+		pop: function ()
+		{
+			if (this .enabled_ .getValue ())
+				this .getCurrentLayer () .popLocalFog ();
+		},
+	});
+
+	return LocalFog;
+});
+
+
+
+
 define ('cobweb/Components/Shape/X3DMaterialNode',[
 	"jquery",
 	"cobweb/Components/Shape/X3DAppearanceChildNode",
@@ -66452,9 +66558,9 @@ function ($,
 {
 
 
-	function X3DMaterialNode (browser, executionContext)
+	function X3DMaterialNode (executionContext)
 	{
-		X3DAppearanceChildNode .call (this, browser, executionContext);
+		X3DAppearanceChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DMaterialNode);
 	}
@@ -66491,7 +66597,7 @@ function ($,
 
 	function Material (executionContext)
 	{
-		X3DMaterialNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DMaterialNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Material);
 			
@@ -66594,7 +66700,7 @@ function ($,
 {
 
 
-	function X3DMetadataObject (browser, executionContext)
+	function X3DMetadataObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DMetadataObject);
 	}
@@ -66632,8 +66738,8 @@ function ($,
 
 	function MetadataBoolean (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataBoolean);
 	}
@@ -66689,8 +66795,8 @@ function ($,
 
 	function MetadataDouble (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataDouble);
 	}
@@ -66746,8 +66852,8 @@ function ($,
 
 	function MetadataFloat (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataFloat);
 	}
@@ -66803,8 +66909,8 @@ function ($,
 
 	function MetadataInteger (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataInteger);
 	}
@@ -66860,8 +66966,8 @@ function ($,
 
 	function MetadataSet (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataSet);
 	}
@@ -66917,8 +67023,8 @@ function ($,
 
 	function MetadataString (executionContext)
 	{
-		X3DNode           .call (this, executionContext .getBrowser (), executionContext);
-		X3DMetadataObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DNode           .call (this, executionContext);
+		X3DMetadataObject .call (this, executionContext);
 
 		this .addType (X3DConstants .MetadataString);
 	}
@@ -66964,6 +67070,7 @@ define ('cobweb/Components/Texturing/MovieTexture',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -66974,15 +67081,16 @@ function ($,
           X3DUrlObject, 
           X3DConstants,
           urls,
-          URI)
+          URI,
+          DEBUG)
 {
 
 
 	function MovieTexture (executionContext)
 	{
-		X3DTexture2DNode   .call (this, executionContext .getBrowser (), executionContext);
-		X3DSoundSourceNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DUrlObject       .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode   .call (this, executionContext);
+		X3DSoundSourceNode .call (this, executionContext);
+		X3DUrlObject       .call (this, executionContext);
 
 		this .addType (X3DConstants .MovieTexture);
 
@@ -67084,20 +67192,26 @@ function ($,
 		},
 		setError: function ()
 		{
-			var sURL = this .URL .toString ();
+			var URL = this .URL .toString ();
 
 			if (! this .URL .isLocal ())
 			{
-				if (! sURL .match (urls .fallbackRx))
-					this .urlStack .unshift (urls .fallback + sURL);
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
 			}
 
-			console .warn ("Error loading movie:", sURL);
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading movie:", this .URL .toString ());
+
 			this .loadNext ();
 		},
 		setVideo: function ()
 		{
-			console .info ("Done loading movie:", this .URL .toString ());
+			if (DEBUG)
+			{
+				if (this .URL .scheme !== "data")
+					console .info ("Done loading movie:", this .URL .toString ());
+			}
 
 		   var video = this .video [0];
 	
@@ -67161,9 +67275,9 @@ function ($,
 {
 
 
-	function X3DNormalNode (browser, executionContext)
+	function X3DNormalNode (executionContext)
 	{
-		X3DGeometricPropertyNode .call (this, browser, executionContext);
+		X3DGeometricPropertyNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DNormalNode);
 	}
@@ -67200,9 +67314,11 @@ function ($,
 
 	function Normal (executionContext)
 	{
-		X3DNormalNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DNormalNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Normal);
+
+		this .vector = this .vector_ .getValue ();
 	}
 
 	Normal .prototype = $.extend (Object .create (X3DNormalNode .prototype),
@@ -67226,8 +67342,8 @@ function ($,
 		},
 		getVector: function (index)
 		{
-			if (index >= 0 && index < this .vector_ .length)
-				return this .vector_ [index] .getValue ();
+			if (index >= 0 && index < this .vector .length)
+				return this .vector [index] .getValue ();
 
 			return new Vector3 (0, 0, 0);
 		},
@@ -67262,7 +67378,7 @@ function ($,
 
 	function NormalInterpolator (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .NormalInterpolator);
 	}
@@ -67311,9 +67427,14 @@ function ($,
 
 			for (var i = 0; i < size; ++ i)
 			{
-				value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-				                                       .slerp (keyValue [index1 + i] .getValue (),
-				                                               weight));
+				try
+				{
+					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
+					                                       .slerp (keyValue [index1 + i] .getValue (),
+					                                               weight));
+				}
+				catch (error)
+				{ }
 			}
 
 			this .value_changed_ .addEvent ();
@@ -67321,6 +67442,170 @@ function ($,
 	});
 
 	return NormalInterpolator;
+});
+
+
+
+
+define ("cobweb/Components/Followers/OrientationChaser",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Rotation4)
+{
+
+
+	var
+		a        = new Rotation4 (0, 0, 1, 0),
+		rotation = new Rotation4 (0, 0, 1, 0);
+
+	function OrientationChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext);
+
+		this .addType (X3DConstants .OrientationChaser);
+	}
+
+	OrientationChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: OrientationChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFRotation ()),
+		]),
+		getTypeName: function ()
+		{
+			return "OrientationChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Rotation4 (0, 0, 1, 0);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			a .assign (lhs) .inverse () .multRight (rhs);
+
+			return Math .abs (a .angle) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return rotation .assign (source) .slerp (destination, weight);
+		},
+		step: function (value1, value2, t)
+		{
+			this .deltaOut .assign (value2) .inverse () .multRight (value1) .multLeft (this .output);
+
+			this .output .slerp (this .deltaOut, t);
+		},
+	});
+
+	return OrientationChaser;
+});
+
+
+
+
+define ("cobweb/Components/Followers/OrientationDamper",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode, 
+          X3DConstants,
+          Rotation4)
+{
+
+
+	var
+		a        = new Rotation4 (0, 0, 1, 0),
+		rotation = new Rotation4 (0, 0, 1, 0);
+
+	function OrientationDamper (executionContext)
+	{
+		X3DDamperNode .call (this, executionContext);
+
+		this .addType (X3DConstants .OrientationDamper);
+	}
+
+	OrientationDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+	{
+		constructor: OrientationDamper,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFRotation ()),
+		]),
+		getTypeName: function ()
+		{
+			return "OrientationDamper";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Rotation4 (0, 0, 1, 0);
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			a .assign (lhs) .inverse () .multRight (rhs);
+
+			return Math .abs (a .angle) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return rotation .assign (source) .slerp (destination, weight);
+		},
+	});
+
+	return OrientationDamper;
 });
 
 
@@ -67349,7 +67634,7 @@ function ($,
 
 	function PixelTexture (executionContext)
 	{
-		X3DTexture2DNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTexture2DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PixelTexture);
 
@@ -67528,7 +67813,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/PlaneSensor',[
+define ("cobweb/Components/PointingDeviceSensor/PlaneSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -67563,7 +67849,7 @@ function ($,
 
 	function PlaneSensor (executionContext)
 	{
-		X3DDragSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDragSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PlaneSensor);
 	}
@@ -67671,7 +67957,10 @@ function ($,
 						this .getLineTrackPoint (hit, this .line, this .startPoint);
 
 					this .startOffset .assign (this .offset_ .getValue ());
-				}
+	
+					//this .trackPoint_changed_  .set (trackPoint);
+					//this .translation_changed_ .set (this .offset_ .getValue ());
+			}
 				else
 				{
 					if (this .autoOffset_ .getValue ())
@@ -67834,7 +68123,7 @@ function ($,
 
 	function PointLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointLight);
 	}
@@ -67900,7 +68189,7 @@ function ($,
 
 	function PointSet (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointSet);
 
@@ -68006,6 +68295,10 @@ function ($,
 			if (! this .coordNode || this .coordNode .isEmpty ())
 				return;
 
+			var
+				colorNode = this .colorNode,
+				coordNode = this .coordNode;
+
 			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
 			//{
 			//	attribArrays [a] .reserve (coordNode -> getSize ());
@@ -68016,15 +68309,12 @@ function ($,
 			
 			if (this .colorNode)
 			{
-				for (var i = 0, length = this .colorNode .color_ .length; i < length; ++ i)
-					this .addColor (this .colorNode .getColor (i));
-
-				for (var length = this .coordNode .point_ .length; i < length; ++ i)
-					this .addColor (new Color4 (1, 1, 1, 1));
+				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
+					this .addColor (colorNode .getColor (i));
 			}
 
-			for (var i = 0, length = this .coordNode .point_ .length; i < length; ++ i)
-				this .addVertex (this .coordNode .getPoint (i));
+			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
+				this .addVertex (coordNode .getPoint (i));
 
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},
@@ -68034,7 +68324,8 @@ function ($,
 });
 
 
-define ('cobweb/Components/Geometry2D/Polyline2D',[
+define ("cobweb/Components/Geometry2D/Polyline2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68057,7 +68348,7 @@ function ($,
 
 	function Polyline2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polyline2D);
 	}
@@ -68108,7 +68399,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Polypoint2D',[
+define ("cobweb/Components/Geometry2D/Polypoint2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68131,7 +68423,7 @@ function ($,
 
 	function Polypoint2D (executionContext)
 	{
-		X3DLineGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polypoint2D);
 	}
@@ -68184,6 +68476,266 @@ function ($,
 
 
 
+define ("cobweb/Components/Followers/PositionChaser",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Vector3)
+{
+
+
+	function PositionChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext);
+
+		this .addType (X3DConstants .PositionChaser);
+	}
+
+	PositionChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: PositionChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PositionChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+	});
+
+	return PositionChaser;
+});
+
+
+
+
+define ("cobweb/Components/Followers/PositionChaser2D",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Vector2)
+{
+
+
+	function PositionChaser2D (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext);
+
+		this .addType (X3DConstants .PositionChaser2D);
+	}
+
+	PositionChaser2D .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: PositionChaser2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PositionChaser2D";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector2 (0, 0);
+		},
+	});
+
+	return PositionChaser2D;
+});
+
+
+
+
+define ("cobweb/Components/Followers/PositionDamper",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode, 
+          X3DConstants,
+          Vector3)
+{
+
+
+	function PositionDamper (executionContext)
+	{
+		X3DDamperNode .call (this, executionContext);
+
+		this .addType (X3DConstants .PositionDamper);
+	}
+
+	PositionDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+	{
+		constructor: PositionDamper,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PositionDamper";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector3 (0, 0, 0);
+		},
+	});
+
+	return PositionDamper;
+});
+
+
+
+
+define ("cobweb/Components/Followers/PositionDamper2D",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode, 
+          X3DConstants,
+          Vector2)
+{
+
+
+	function PositionDamper2D (executionContext)
+	{
+		X3DDamperNode .call (this, executionContext);
+
+		this .addType (X3DConstants .PositionDamper2D);
+	}
+
+	PositionDamper2D .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+	{
+		constructor: PositionDamper2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PositionDamper2D";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector2 (0, 0);
+		},
+	});
+
+	return PositionDamper2D;
+});
+
+
+
+
 define ('cobweb/Components/Interpolation/PositionInterpolator2D',[
 	"jquery",
 	"cobweb/Fields",
@@ -68205,7 +68757,7 @@ function ($,
 
 	function PositionInterpolator2D (executionContext)
 	{
-		X3DInterpolatorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInterpolatorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PositionInterpolator2D);
 	}
@@ -68260,7 +68812,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode',[
+define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DSensorNode",
@@ -68275,9 +68828,9 @@ function ($,
 {
 
 
-	function X3DEnvironmentalSensorNode (browser, executionContext)
+	function X3DEnvironmentalSensorNode (executionContext)
 	{
-		X3DSensorNode .call (this, browser, executionContext);
+		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 
@@ -68347,7 +68900,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EnvironmentalSensor/ProximitySensor',[
+define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68378,7 +68932,7 @@ function ($,
 	
 	function ProximitySensor (executionContext)
 	{
-		X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentalSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ProximitySensor);
 
@@ -68595,7 +69149,8 @@ function ($,
 
 
 
-define ('cobweb/Components/CADGeometry/QuadSet',[
+define ("cobweb/Components/CADGeometry/QuadSet",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68614,7 +69169,7 @@ function ($,
 
 	function QuadSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .QuadSet);
 
@@ -68690,7 +69245,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/Rectangle2D',[
+define ("cobweb/Components/Geometry2D/Rectangle2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -68711,11 +69267,11 @@ function ($,
 {
 
 
-      var defaultSize = new Vector2 (2, 2);
+	var defaultSize = new Vector2 (2, 2);
 
 	function Rectangle2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Rectangle2D);
 	}
@@ -68801,6 +69357,292 @@ function ($,
 });
 
 
+define ("cobweb/Components/Followers/ScalarChaser",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DConstants,
+          Algorithm)
+{
+
+
+	function ScalarChaser (executionContext)
+	{
+		X3DChaserNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ScalarChaser);
+	}
+
+	ScalarChaser .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+	{
+		constructor: ScalarChaser,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ScalarChaser";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return 0;
+		},
+		setPreviousValue: function (value)
+		{
+			this .previousValue = value;
+		},
+		duplicate: function (value)
+		{
+			return value;
+		},
+		assign: function (buffer, i, value)
+		{
+			buffer [i] = value;
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return Math .abs (lhs - rhs) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Algorithm .lerp (source, destination, weight);
+		},
+		step: function (value1, value2, t)
+		{
+			this .output += (value1 - value2) * t;
+		},
+	});
+
+	return ScalarChaser;
+});
+
+
+
+
+define ("cobweb/Components/Followers/ScalarDamper",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode, 
+          X3DConstants,
+          Algorithm)
+{
+
+
+	function ScalarDamper (executionContext)
+	{
+		X3DDamperNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ScalarDamper);
+	}
+
+	ScalarDamper .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+	{
+		constructor: ScalarDamper,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ScalarDamper";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return 0;
+		},
+		duplicate: function (value)
+		{
+			return value;
+		},
+		assign: function (buffer, i, value)
+		{
+			buffer [i] = value;
+		},
+		equals: function (lhs, rhs, tolerance)
+		{
+			return Math .abs (lhs - rhs) < tolerance;
+		},
+		interpolate: function (source, destination, weight)
+		{
+			return Algorithm .lerp (source, destination, weight);
+		},
+	});
+
+	return ScalarDamper;
+});
+
+
+
+
+define ("cobweb/Components/Layout/ScreenGroup",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DGroupingNode, 
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4,
+          Algorithm)
+{
+
+
+		var
+			translation = new Vector3 (0, 0, 0),
+			rotation    = new Rotation4 (0, 0, 1, 0),
+			scale       = new Vector3 (1, 1, 1);
+
+	function ScreenGroup (executionContext)
+	{
+		X3DGroupingNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ScreenGroup);
+
+		this .screenMatrix       = new Matrix4 ();
+		this .modelViewMatrix    = new Matrix4 ();
+		this .invModelViewMatrix = new Matrix4 ();
+	}
+
+	ScreenGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+	{
+		constructor: ScreenGroup,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ScreenGroup";
+		},
+		getComponentName: function ()
+		{
+			return "Layout";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getBBox: function ()
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .getMatrix ());
+		},
+		getMatrix: function ()
+		{
+			try
+			{
+				this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
+				this .matrix .assign (this .screenMatrix) .multRight (this .invModelViewMatrix);
+			}
+			catch (error)
+			{ }
+
+			return this .matrix;
+		},
+		scale: function (type)
+		{
+			this .getModelViewMatrix (type, this .modelViewMatrix);
+			this .modelViewMatrix .get (translation, rotation, scale);
+		
+			var
+				viewport    = this .getCurrentLayer () .getViewVolume () .getViewport (),
+				screenScale = this .getCurrentViewpoint () .getScreenScale (this .modelViewMatrix .origin, viewport);
+		
+			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+		                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+		                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+
+			this .getBrowser () .getModelViewMatrix () .set (this .screenMatrix);
+		},
+		traverse: function (type)
+		{
+			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+	
+			modelViewMatrix .push ();
+		
+			this .scale (type);
+		
+			X3DGroupingNode .prototype .traverse .call (this, type);
+		
+			modelViewMatrix .pop ();
+		},
+	});
+
+	return ScreenGroup;
+});
+
+
+
+
 define ('cobweb/Configuration/UnitInfo',[
 	"jquery",
 ],
@@ -68845,12 +69687,49 @@ function ($, X3DInfoArray)
 });
 
 
+define ('cobweb/Execution/ExportedNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Base/X3DObject",
+],
+function ($,
+          Fields,
+          X3DObject)
+{
+
+
+	function ExportedNode (exportedName, localNode)
+	{
+		X3DObject .call (this);
+
+		this .exportedName = exportedName;
+		this .localNode    = localNode;
+	}
+
+	ExportedNode .prototype = $.extend (Object .create (X3DObject .prototype),
+	{
+		constructor: ExportedNode,
+		getExportedName: function ()
+		{
+			return this .exportedName;
+		},
+		getLocalNode: function ()
+		{
+			return new Fields .SFNode (this .localNode);
+		},
+	});
+
+	return ExportedNode;
+});
+
+
 define ('cobweb/Execution/X3DScene',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Configuration/UnitInfo",
 	"cobweb/Configuration/UnitInfoArray",
+	"cobweb/Execution/ExportedNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -68858,13 +69737,14 @@ function ($,
           X3DExecutionContext,
           UnitInfo,
           UnitInfoArray,
+          ExportedNode,
           X3DConstants)
 {
 
 
-	function X3DScene (browser, executionContext)
+	function X3DScene (executionContext)
 	{
-		X3DExecutionContext .call (this, browser, executionContext);
+		X3DExecutionContext .call (this, executionContext);
 
 		this .getRootNodes () .setAccessType (X3DConstants .inputOutput);
 
@@ -68875,7 +69755,8 @@ function ($,
 		this .units .add ("length", new UnitInfo ("length", "metre",    1));
 		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
 
-		this .metaData = { };
+		this .metaData      = { };
+		this .exportedNodes = { };
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -68906,6 +69787,44 @@ function ($,
 		{
 			return this .metaData [name];
 		},
+		addExportedNode: function (exportedName, node)
+		{
+			if (this .exportedNodes [exportedName])
+				throw new Error ("Couldn't add exported node: exported name '" + exportedName + "' already in use.");
+
+			this .updateExportedNode (exportedName, node);
+		},
+		updateExportedNode: function (exportedName, node)
+		{
+			exportedName = String (exportedName);
+
+			if (exportedName .length === 0)
+				throw new Error ("Couldn't update exported node: node exported name is empty.");
+
+			if (! (node instanceof Fields .SFNode))
+				throw new Error ("Couldn't update exported node: node must be of type SFNode.");
+
+			if (! node .getValue ())
+				throw new Error ("Couldn't update exported node: node IS NULL.");
+
+			//if (node .getValue () .getExecutionContext () !== this)
+			//	throw new Error ("Couldn't update exported node: node does not belong to this execution context.");
+
+			this .exportedNodes [exportedName] = new ExportedNode (exportedName, node .getValue ());
+		},
+		removeExportedNode: function (exportedName)
+		{
+			delete this .exportedNodes [exportedName];
+		},
+		getExportedNode: function (exportedName)
+		{
+			var exportedNode = this .exportedNodes [exportedName];
+
+			if (exportedNode)
+				return exportedNode .getLocalNode ();	
+
+			throw new Error ("Exported node '" + exportedName + "' not found.");
+		},
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
@@ -68916,7 +69835,8 @@ function ($,
 });
 
 
-define ('cobweb/Browser/Scripting/evaluate',[],function ()
+define ("cobweb/Browser/Scripting/evaluate",[],
+function ()
 {
 	return function (/* __global__, __text__ */)
 	{
@@ -68928,7 +69848,8 @@ define ('cobweb/Browser/Scripting/evaluate',[],function ()
 });
 
 
-define ('cobweb/Components/Scripting/X3DScriptNode',[
+define ("cobweb/Components/Scripting/X3DScriptNode",
+[
 	"jquery",
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Components/Networking/X3DUrlObject",
@@ -68941,10 +69862,10 @@ function ($,
 {
 
 
-	function X3DScriptNode (browser, executionContext)
+	function X3DScriptNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
-		X3DUrlObject .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DScriptNode);
 	}
@@ -68961,7 +69882,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Scripting/Script',[
+define ("cobweb/Components/Scripting/Script",
+[
 	"jquery",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
@@ -69014,18 +69936,9 @@ function ($,
           Loader,
           X3DConstants)
 {
-	var fieldDefinitions = [
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
-		new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
-		new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
-	];
-
 	function Script (executionContext)
 	{
-		this .fieldDefinitions = new FieldDefinitionArray (fieldDefinitions .slice (0));
-
-		X3DScriptNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DScriptNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Script);
 	}
@@ -69033,6 +69946,12 @@ function ($,
 	Script .prototype = $.extend (Object .create (X3DScriptNode .prototype),
 	{
 		constructor: Script,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",          new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "directOutput", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mustEvaluate", new Fields .SFBool ()),
+		]),
 		getTypeName: function ()
 		{
 			return "Script";
@@ -69353,6 +70272,7 @@ function ($,
 			try
 			{
 				this .context .prepareEvents ();
+				browser .addBrowserEvent ();
 			}
 			catch (error)
 			{
@@ -69443,10 +70363,10 @@ function ($,
 {
 
 
-	function X3DShapeNode (browser, executionContext)
+	function X3DShapeNode (executionContext)
 	{
-		X3DChildNode     .call (this, browser, executionContext);
-		X3DBoundedObject .call (this, browser, executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DShapeNode);
 	}
@@ -69468,8 +70388,6 @@ function ($,
 			this .set_apparance__ ();
 			this .set_geometry__ ();
 			this .set_bbox__ ();
-
-			this .static_ = true;
 		},
 		getBBox: function ()
 		{
@@ -69593,7 +70511,7 @@ function ($,
 
 	function Shape (executionContext)
 	{
-		X3DShapeNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DShapeNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Shape);
 	}
@@ -69731,9 +70649,9 @@ function ($,
 {
 
 
-	function X3DSoundNode (browser, executionContext)
+	function X3DSoundNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DSoundNode);
 	}
@@ -69780,7 +70698,7 @@ function ($,
 
 	function Sound (executionContext)
 	{
-		X3DSoundNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DSoundNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Sound);
 
@@ -69919,7 +70837,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry3D/Sphere',[
+define ("cobweb/Components/Geometry3D/Sphere",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -69940,7 +70859,7 @@ function ($,
 
 	function Sphere (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Sphere);
 	}
@@ -70020,7 +70939,8 @@ function ($,
 
 
 
-define ('cobweb/Components/PointingDeviceSensor/SphereSensor',[
+define ("cobweb/Components/PointingDeviceSensor/SphereSensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -70053,7 +70973,7 @@ function ($,
 
 	function SphereSensor (executionContext)
 	{
-		X3DDragSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DDragSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SphereSensor);
 	}
@@ -70136,6 +71056,9 @@ function ($,
 					this .fromVector  .assign (hitPoint);
 					this .startPoint  .assign (hitPoint);
 					this .startOffset .assign (this .offset_ .getValue ());
+	
+					//this .trackPoint_changed_  .set (hitPoint);
+					//this .rotation_changed .set (this .offset_ .getValue ());
 				}
 				else
 				{
@@ -70215,6 +71138,585 @@ function ($,
 
 
 
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator',[
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
+],
+function (Vector4,
+          Matrix4)
+{
+
+
+	var
+		T  = [ ],
+		Fp = [ ],
+		Fm = [ ],
+		S  = new Vector4 (0, 0, 0, 0);
+		
+	var H = new Matrix4 ( 2, -2,  1,  1,
+			               -3,  3, -2, -1,
+			                0,  0,  1,  0,
+			                1,  0,  0,  0);
+
+	function CatmullRomSplineInterpolator ()
+	{
+		this .T0 = [ ];
+		this .T1 = [ ];
+	}
+
+	CatmullRomSplineInterpolator .prototype =
+	{
+		constructor: CatmullRomSplineInterpolator,
+		generate: function (closed, key, keyValue, keyVelocity, normalizeVelocity)
+		{
+			var
+				T0 = this .T0,
+				T1 = this .T1;
+
+			T0 .length = 0;
+			T1 .length = 0;
+
+			T  .length = 0;
+			Fp .length = 0;
+			Fm .length = 0;
+
+			if (key .length > 1)
+			{
+				// T
+		
+				if (keyVelocity .length === 0)
+				{
+					if (closed)
+						T .push (this .divide (this .subtract (keyValue [1] .getValue (), keyValue [keyValue .size () - 2] .getValue ()), 2));
+		
+					else
+						T .push (this .create ());
+		
+					for (var i = 1, length = keyValue .length - 1; i < length; ++ i)
+						T .push (this .divide (this .subtract (keyValue [i + 1] .getValue (), keyValue [i - 1] .getValue ()), 2));
+		
+					T .push (this .copy (T [0]));
+				}
+				else
+				{
+					for (var i = 0, length = keyVelocity .length; i < length; ++ i)
+						T .push (this .copy (keyVelocity [i] .getValue ()));
+		
+					if (normalizeVelocity)
+					{
+						var Dtot = 0;
+		
+						for (var i = 0, length = keyValue .length - 1; i < length; ++ i)
+							Dtot += this .abs (this .subtract (keyValue [i] .getValue (), keyValue [i + 1] .getValue ()));
+		
+						for (var i = 0, length = T .length - 1; i < length; ++ i)
+							T [i] = this .multiply (T [i], Dtot / this .abs (T [i]));
+					}
+				}
+
+				// Fm, Fp
+		
+				if (closed)
+				{
+					var i_1 = key .length - 1;
+					var i_2 = key .length - 2;
+		
+					var d = key [1] .getValue () - key [0] .getValue () + key [i_1] .getValue () - key [i_2] .getValue ();
+		
+					Fm .push (2 * (key [1]   .getValue () - key [0]   .getValue ()) / d);
+					Fp .push (2 * (key [i_1] .getValue () - key [i_2] .getValue ()) / d);
+
+				}
+				else
+				{
+					Fm .push (1);
+					Fp .push (1);
+				}
+
+				for (var i = 1, length = key .length - 1; i < length; ++ i)
+				{
+					var d = key [i + 1] .getValue () - key [i - 1] .getValue ();
+		
+					Fm .push (2 * (key [i + 1] .getValue () - key [i]     .getValue ()) / d);
+					Fp .push (2 * (key [i]     .getValue () - key [i - 1] .getValue ()) / d);
+				}
+		
+				Fm .push (Fm [0]);
+				Fp .push (Fp [0]);
+		
+				// T0, T1
+		
+				for (var i = 0, length = T .length; i < length; ++ i)
+				{
+					T0 .push (this .multiply (T [i], Fp [i]));
+					T1 .push (this .multiply (T [i], Fm [i]));
+				}
+			}
+			else
+			{
+				T0 .push (this .create ());
+				T1 .push (this .create ());
+			}
+		},
+		interpolate: function (index0, index1, weight, keyValue)
+		{
+			S .set (Math .pow (weight, 3), Math .pow (weight, 2), weight, 1);
+		
+			// Taking dot product from SH and C;
+
+			return this .dot (H .multVecMatrix (S),
+                           keyValue [index0] .getValue (),
+                           keyValue [index1] .getValue (),
+                           this .T0 [index0],
+                           this .T1 [index1]);
+		},
+	};
+
+	return CatmullRomSplineInterpolator;
+});
+
+
+
+
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate',[
+	"jquery",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator"
+],
+function ($,
+          CatmullRomSplineInterpolator)
+{
+
+
+	return function (Type)
+	{
+		var
+			c0 = new Type (0, 0, 0, 0),
+			c1 = new Type (0, 0, 0, 0),
+			c2 = new Type (0, 0, 0, 0),
+			c3 = new Type (0, 0, 0, 0);
+	
+		function CatmullRomSplineInterpolatorInstance ()
+		{
+			this .T0 = [ ];
+			this .T1 = [ ];
+		}
+	
+		CatmullRomSplineInterpolatorInstance .prototype = $.extend (Object .create (CatmullRomSplineInterpolator .prototype),
+		{
+			constructor: CatmullRomSplineInterpolatorInstance,
+			create: function ()
+			{
+				return new Type (0, 0, 0, 0);
+			},
+			copy: function (value)
+			{
+				return value .copy ();
+			},
+			subtract: function (lhs, rhs)
+			{
+				return Type .subtract (lhs, rhs);
+			},
+			multiply: function (lhs, rhs)
+			{
+				return Type .multiply (lhs, rhs);
+			},
+			divide: function (lhs, rhs)
+			{
+				return Type .divide (lhs, rhs);
+			},
+			abs: function (value)
+			{
+				return value .abs ();
+			},
+			dot: function (SH, C0, C1, C2, C3)
+			{
+				c0 .assign (C0) .multiply (SH [0]);
+				c1 .assign (C1) .multiply (SH [1]);
+				c2 .assign (C2) .multiply (SH [2]);
+				c3 .assign (C3) .multiply (SH [3]);
+	
+				return c0 .add (c1) .add (c2) .add (c3);
+			},
+		});
+	
+		return CatmullRomSplineInterpolatorInstance;
+	};
+});
+
+
+
+
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator3',[
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate",
+	"standard/Math/Numbers/Vector3",
+],
+function (CatmullRomSplineInterpolatorTemplate,
+          Vector3)
+{
+
+
+	return CatmullRomSplineInterpolatorTemplate (Vector3);
+});
+
+
+define ('cobweb/Components/Interpolation/SplinePositionInterpolator',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator3",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInterpolatorNode, 
+          CatmullRomSplineInterpolator3,
+          X3DConstants)
+{
+
+
+	function SplinePositionInterpolator (executionContext)
+	{
+		X3DInterpolatorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .SplinePositionInterpolator);
+
+		this .spline = new CatmullRomSplineInterpolator3 ();
+	}
+
+	SplinePositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+	{
+		constructor: SplinePositionInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",      new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "closed",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",               new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",          new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyVelocity",       new Fields .MFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "normalizeVelocity", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed",     new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SplinePositionInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "Interpolation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+		
+			this .keyValue_    .addInterest (this, "set_keyValue__");
+			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFVec3f ());
+		
+			this .set_keyVelocity__ ();
+		},
+		set_keyVelocity__: function ()
+		{
+			if (this .keyVelocity_ .length)
+			{
+				if (this .keyVelocity_ .length < this .key_ .length)
+					this .keyVelocity_ .resize (this .key_ .length, new Fields .SFVec3f ());
+			}
+
+			this .spline .generate (this .closed_            .getValue (),
+			                        this .key_               .getValue (),
+			                        this .keyValue_          .getValue (),
+			                        this .keyVelocity_       .getValue (),
+			                        this .normalizeVelocity_ .getValue ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			this .value_changed_ = this .spline .interpolate (index0, index1, weight, this .keyValue_ .getValue ());
+		},
+	});
+
+	return SplinePositionInterpolator;
+});
+
+
+
+
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator2',[
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate",
+	"standard/Math/Numbers/Vector2",
+],
+function (CatmullRomSplineInterpolatorTemplate,
+          Vector2)
+{
+
+
+	return CatmullRomSplineInterpolatorTemplate (Vector2);
+});
+
+
+define ('cobweb/Components/Interpolation/SplinePositionInterpolator2D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator2",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInterpolatorNode,
+          CatmullRomSplineInterpolator2,
+          X3DConstants)
+{
+
+
+	function SplinePositionInterpolator2D (executionContext)
+	{
+		X3DInterpolatorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .SplinePositionInterpolator2D);
+
+		this .spline = new CatmullRomSplineInterpolator2 ();
+	}
+
+	SplinePositionInterpolator2D .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+	{
+		constructor: SplinePositionInterpolator2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",      new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "closed",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",               new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",          new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyVelocity",       new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "normalizeVelocity", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed",     new Fields .SFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SplinePositionInterpolator2D";
+		},
+		getComponentName: function ()
+		{
+			return "Interpolation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+		
+			this .keyValue_    .addInterest (this, "set_keyValue__");
+			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFVec2f ());
+		
+			this .set_keyVelocity__ ();
+		},
+		set_keyVelocity__: function ()
+		{
+			if (this .keyVelocity_ .length)
+			{
+				if (this .keyVelocity_ .length < this .key_ .length)
+					this .keyVelocity_ .resize (this .key_ .length, new Fields .SFVec2f ());
+			}
+
+			this .spline .generate (this .closed_            .getValue (),
+			                        this .key_               .getValue (),
+			                        this .keyValue_          .getValue (),
+			                        this .keyVelocity_       .getValue (),
+			                        this .normalizeVelocity_ .getValue ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			this .value_changed_ = this .spline .interpolate (index0, index1, weight, this .keyValue_ .getValue ());
+		},
+	});
+
+	return SplinePositionInterpolator2D;
+});
+
+
+
+
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator1',[
+	"jquery",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator"
+],
+function ($,
+          CatmullRomSplineInterpolator)
+{
+
+
+	function CatmullRomSplineInterpolator1 ()
+	{
+		this .T0 = [ ];
+		this .T1 = [ ];
+	}
+
+	CatmullRomSplineInterpolator1 .prototype = $.extend (Object .create (CatmullRomSplineInterpolator .prototype),
+	{
+		constructor: CatmullRomSplineInterpolator1,
+		create: function ()
+		{
+			return 0;
+		},
+		copy: function (value)
+		{
+			return value;
+		},
+		subtract: function (lhs, rhs)
+		{
+			return lhs - rhs;
+		},
+		multiply: function (lhs, rhs)
+		{
+			return lhs * rhs;
+		},
+		divide: function (lhs, rhs)
+		{
+			return lhs / rhs;
+		},
+		abs: function (value)
+		{
+			return Math .abs (value);
+		},
+		dot: function (SH, C0, C1, C2, C3)
+		{
+			return C0 * SH [0] + C1 * SH [1] + C2 * SH [2] + C3 * SH [3];
+		},
+	});
+
+	return CatmullRomSplineInterpolator1;
+});
+
+
+
+
+define ('cobweb/Components/Interpolation/SplineScalarInterpolator',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator1",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInterpolatorNode, 
+          CatmullRomSplineInterpolator1,
+          X3DConstants)
+{
+
+
+	function SplineScalarInterpolator (executionContext)
+	{
+		X3DInterpolatorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .SplineScalarInterpolator);
+
+		this .spline = new CatmullRomSplineInterpolator1 ();
+	}
+
+	SplineScalarInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+	{
+		constructor: SplineScalarInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",      new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "closed",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",               new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",          new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyVelocity",       new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "normalizeVelocity", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed",     new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SplineScalarInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "Interpolation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+		
+			this .keyValue_    .addInterest (this, "set_keyValue__");
+			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFFloat ());
+		
+			this .set_keyVelocity__ ();
+		},
+		set_keyVelocity__: function ()
+		{
+			if (this .keyVelocity_ .length)
+			{
+				if (this .keyVelocity_ .length < this .key_ .length)
+					this .keyVelocity_ .resize (this .key_ .length, new Fields .SFFloat ());
+			}
+
+			this .spline .generate (this .closed_            .getValue (),
+			                        this .key_               .getValue (),
+			                        this .keyValue_          .getValue (),
+			                        this .keyVelocity_       .getValue (),
+			                        this .normalizeVelocity_ .getValue ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			this .value_changed_ = this .spline .interpolate (index0, index1, weight, this .keyValue_ .getValue ());
+		},
+	});
+
+	return SplineScalarInterpolator;
+});
+
+
+
+
 define ('cobweb/Components/Lighting/SpotLight',[
 	"jquery",
 	"cobweb/Fields",
@@ -70285,7 +71787,7 @@ function ($,
 
 	function SpotLight (executionContext)
 	{
-		X3DLightNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .SpotLight);
 	}
@@ -70331,6 +71833,166 @@ function ($,
 
 
 
+define ('cobweb/Browser/Interpolation/SquatInterpolator',[
+	"standard/Math/Numbers/Rotation4",
+],
+function (Rotation4)
+{
+
+
+	var result = new Rotation4 (0, 0, 1, 0);
+
+	function SquatInterpolator ()
+	{
+		this .s = [ ];
+	}
+
+	SquatInterpolator .prototype =
+	{
+		constructor: SquatInterpolator,
+		generate: function (closed, key, keyValue)
+		{
+			var s = this .s;
+
+			s .length = 0;
+
+			if (key .length > 1)
+			{
+				if (closed)
+				{
+					s .push (Rotation4 .spline (keyValue [key .length - 2] .getValue (),
+					                            keyValue [0] .getValue (),
+					                            keyValue [1] .getValue ()));
+				}
+				else
+				{
+					s .push (keyValue [0] .getValue ());
+				}
+		
+				for (var i = 1, length = key .length - 1; i < length; ++ i)
+				{
+					s .push (Rotation4 .spline (keyValue [i - 1] .getValue (),
+					                            keyValue [i]     .getValue (),
+					                            keyValue [i + 1] .getValue ()));
+				}
+		
+				if (closed)
+				{
+					s .push (Rotation4 .spline (keyValue [key .length - 2] .getValue (),
+					                            keyValue [key .length - 1] .getValue (),
+					                            keyValue [1] .getValue ()));
+				}
+				else
+				{
+					s .push (keyValue [key .length - 1] .getValue ());
+				}
+			}
+			else if (key .length > 0)
+				s .push (keyValue [0] .getValue () .copy ());
+		},
+		interpolate: function (index0, index1, weight, keyValue)
+		{
+			return result .assign (keyValue [index0] .getValue ()) .squad (this .s [index0],
+			                                                               this .s [index1],
+			                                                               keyValue [index1] .getValue (), weight);
+		},
+	};
+
+	return SquatInterpolator;
+});
+
+
+
+
+define ('cobweb/Components/Interpolation/SquadOrientationInterpolator',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/SquatInterpolator",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInterpolatorNode,
+          SquatInterpolator,
+          X3DConstants)
+{
+
+
+	function SquadOrientationInterpolator (executionContext)
+	{
+		X3DInterpolatorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .SquadOrientationInterpolator);
+
+		this .squad = new SquatInterpolator ();
+	}
+
+	SquadOrientationInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+	{
+		constructor: SquadOrientationInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_fraction",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "closed",        new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "key",           new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFRotation ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .SFRotation ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SquadOrientationInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "Interpolation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+		
+			this .keyValue_    .addInterest (this, "set_keyValue__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFRotation ());
+
+			this .squad .generate (this .closed_   .getValue (),
+			                       this .key_      .getValue (),
+			                       this .keyValue_ .getValue ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			try
+			{
+				this .value_changed_ = this .squad .interpolate (index0, index1, weight, this .keyValue_ .getValue ());
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
+		},
+	});
+
+	return SquadOrientationInterpolator;
+});
+
+
+
+
 define ('cobweb/Components/Grouping/StaticGroup',[
 	"jquery",
 	"cobweb/Fields",
@@ -70354,8 +72016,8 @@ function ($,
 
 	function StaticGroup (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
-		X3DBoundedObject .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .StaticGroup);
 	}
@@ -70426,7 +72088,7 @@ function ($,
 
 	function Switch (executionContext)
 	{
-		X3DGroupingNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGroupingNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Switch);
 
@@ -70505,6 +72167,156 @@ function ($,
 
 
 
+define ("cobweb/Components/Followers/TexCoordChaser2D",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChaserNode, 
+          X3DArrayChaserTemplate,
+          X3DConstants,
+          Vector2)
+{
+
+
+	var X3DArrayChaserObject = X3DArrayChaserTemplate (X3DChaserNode);
+
+	function TexCoordChaser2D (executionContext)
+	{
+		X3DChaserNode        .call (this, executionContext);
+		X3DArrayChaserObject .call (this, executionContext);
+
+		this .addType (X3DConstants .TexCoordChaser2D);
+	}
+
+	TexCoordChaser2D .prototype = $.extend (Object .create (X3DChaserNode .prototype),
+		X3DArrayChaserObject .prototype,
+	{
+		constructor: TexCoordChaser2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "duration",           new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .MFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TexCoordChaser2D";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector2 (0, 0);
+		},
+		getArray: function ()
+		{
+			return new Fields .MFVec2f ();
+		},
+	});
+
+	return TexCoordChaser2D;
+});
+
+
+
+
+define ("cobweb/Components/Followers/TexCoordDamper2D",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DDamperNode, 
+          X3DArrayFollowerTemplate,
+          X3DConstants,
+          Vector2)
+{
+
+
+	var X3DArrayFollowerObject = X3DArrayFollowerTemplate (X3DDamperNode);
+
+	function TexCoordDamper2D (executionContext)
+	{
+		X3DDamperNode          .call (this, executionContext);
+		X3DArrayFollowerObject .call (this, executionContext);
+
+		this .addType (X3DConstants .TexCoordDamper2D);
+	}
+
+	TexCoordDamper2D .prototype = $.extend (Object .create (X3DDamperNode .prototype),
+		X3DArrayFollowerObject .prototype,
+	{
+		constructor: TexCoordDamper2D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_value",          new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_destination",    new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialValue",       new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "initialDestination", new Fields .MFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "order",              new Fields .SFInt32 (3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tau",                new Fields .SFTime (0.3)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "tolerance",          new Fields .SFFloat (-1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",      new Fields .MFVec2f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TexCoordDamper2D";
+		},
+		getComponentName: function ()
+		{
+			return "Followers";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		getVector: function ()
+		{
+			return new Vector2 (0, 0, 0);
+		},
+		getArray: function ()
+		{
+			return new Fields .MFVec2f ();
+		},
+	});
+
+	return TexCoordDamper2D;
+});
+
+
+
+
 define ('cobweb/Components/Text/Text',[
 	"jquery",
 	"cobweb/Fields",
@@ -70526,7 +72338,7 @@ function ($,
 
 	function Text (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Text);
 	}
@@ -70569,7 +72381,7 @@ function ($,
 		getLength: function (index)
 		{
 			if (index < this .length_ .length)
-				return this .length_ [index];
+				return Math .max (0, this .length_ [index]);
 
 			return 0;
 		},
@@ -70611,6 +72423,468 @@ function ($,
 
 
 
+define ('cobweb/Components/EnvironmentalEffects/TextureBackground',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalEffects/X3DBackgroundNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DBackgroundNode, 
+          X3DCast,
+          X3DConstants)
+{
+
+
+	function TextureBackground (executionContext)
+	{
+		X3DBackgroundNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TextureBackground);
+	}
+
+	TextureBackground .prototype = $.extend (Object .create (X3DBackgroundNode .prototype),
+	{
+		constructor: TextureBackground,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_bind",      new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "skyAngle",      new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "skyColor",      new Fields .MFColor (0, 0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "groundAngle",   new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "groundColor",   new Fields .MFColor ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "transparency",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",       new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "bindTime",      new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "frontTexture",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "backTexture",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "leftTexture",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "rightTexture",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "topTexture",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "bottomTexture", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureBackground";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalEffects";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DBackgroundNode .prototype .initialize .call (this);
+
+			this .frontTexture_  .addInterest (this, "set_frontTexture__");
+			this .backTexture_   .addInterest (this, "set_backTexture__");
+			this .leftTexture_   .addInterest (this, "set_leftTexture__");
+			this .rightTexture_  .addInterest (this, "set_rightTexture__");
+			this .topTexture_    .addInterest (this, "set_topTexture__");
+			this .bottomTexture_ .addInterest (this, "set_bottomTexture__");
+
+			this .set_frontTexture__  (this .frontTexture_);
+			this .set_backTexture__   (this .backTexture_);
+			this .set_leftTexture__   (this .leftTexture_);
+			this .set_rightTexture__  (this .rightTexture_);
+			this .set_topTexture__    (this .topTexture_);
+			this .set_bottomTexture__ (this .bottomTexture_);
+		},
+		set_frontTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_frontTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .frontTexture_));
+		},
+		set_backTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_backTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .backTexture_));
+		},
+		set_leftTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_leftTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .leftTexture_));
+		},
+		set_rightTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_rightTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .rightTexture_));
+		},
+		set_topTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_topTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .topTexture_));
+		},
+		set_bottomTexture__: function ()
+		{
+			X3DBackgroundNode .prototype .set_bottomTexture__ .call (this, X3DCast (X3DConstants .X3DTextureNode, this .bottomTexture_));
+		},
+	});
+
+	return TextureBackground;
+});
+
+
+
+
+define ('cobweb/Components/Texturing3D/TextureCoordinate3D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureCoordinateNode, 
+          X3DConstants)
+{
+
+
+	function TextureCoordinate3D (executionContext)
+	{
+		X3DTextureCoordinateNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TextureCoordinate3D);
+	}
+
+	TextureCoordinate3D .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
+	{
+		constructor: TextureCoordinate3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureCoordinate3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "texCoord";
+		},
+		addTexCoordToChannel: function (texCoords, index)
+		{
+			if (index >= 0 && index < this .point_ .length)
+			{
+				var point = this .point_ [index];
+	
+				texCoords .push (point .x,
+				                 point .y,
+				                 point .z,
+				                 1);
+			}
+			else
+				texCoords .push (0, 0, 0, 1);
+		},
+	});
+
+	return TextureCoordinate3D;
+});
+
+
+
+
+define ('cobweb/Components/Texturing3D/TextureCoordinate4D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureCoordinateNode, 
+          X3DConstants)
+{
+
+
+	function TextureCoordinate4D (executionContext)
+	{
+		X3DTextureCoordinateNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TextureCoordinate4D);
+	}
+
+	TextureCoordinate4D .prototype = $.extend (Object .create (X3DTextureCoordinateNode .prototype),
+	{
+		constructor: TextureCoordinate4D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "point",    new Fields .MFVec4f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureCoordinate4D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "texCoord";
+		},
+		addTexCoordToChannel: function (texCoords, index)
+		{
+			if (index >= 0 && index < this .point_ .length)
+			{
+				var point = this .point_ [index];
+
+				texCoords .push (point .x,
+				                 point .y,
+				                 point .z,
+				                 point .w);
+			}
+			else
+				texCoords .push (0, 0, 0, 1);
+		},
+	});
+
+	return TextureCoordinate4D;
+});
+
+
+
+
+define ('cobweb/Components/Texturing3D/TextureTransform3D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureTransformNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureTransformNode, 
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4)
+{
+
+
+	var vector = new Vector3 (0, 0, 0);
+
+	function TextureTransform3D (executionContext)
+	{
+		X3DTextureTransformNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TextureTransform3D);
+	}
+
+	TextureTransform3D .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
+	{
+		constructor: TextureTransform3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "translation", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "rotation",    new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "scale",       new Fields .SFVec3f (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "center",      new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureTransform3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "textureTransform";
+		},
+		initialize: function ()
+		{
+			X3DTextureTransformNode .prototype .initialize .call (this);
+			
+			this .addInterest (this, "eventsProcessed");
+
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			X3DTextureTransformNode .prototype .eventsProcessed .call (this);
+			
+			var
+				translation = this .translation_ .getValue (),
+				rotation    = this .rotation_ .getValue (),
+				scale       = this .scale_ .getValue (),
+				center      = this .center_ .getValue (),
+				matrix4     = this .getMatrix ();
+
+			matrix4 .identity ();
+
+			if (! center .equals (Vector3 .Zero))
+				matrix4 .translate (vector .assign (center) .negate ());
+
+			if (! scale .equals (Vector3 .One))
+				matrix4 .scale (scale);
+
+			if (! rotation .equals (Rotation4 .Identity))
+				matrix4 .rotate (rotation);
+
+			if (! center .equals (Vector3 .Zero))
+				matrix4 .translate (center);
+
+			if (! translation .equals (Vector3 .Zero))
+				matrix4 .translate (translation);
+
+			this .setMatrix (matrix4);
+		},
+	});
+
+	return TextureTransform3D;
+});
+
+
+
+
+define ('cobweb/Components/Texturing3D/TextureTransformMatrix3D',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureTransformNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTextureTransformNode, 
+          X3DConstants)
+{
+
+
+	function TextureTransformMatrix3D (executionContext)
+	{
+		X3DTextureTransformNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TextureTransformMatrix3D);
+	}
+
+	TextureTransformMatrix3D .prototype = $.extend (Object .create (X3DTextureTransformNode .prototype),
+	{
+		constructor: TextureTransformMatrix3D,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "matrix",   new Fields .SFMatrix4f (1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)),
+		]),
+		getTypeName: function ()
+		{
+			return "TextureTransformMatrix3D";
+		},
+		getComponentName: function ()
+		{
+			return "Texturing3D";
+		},
+		getContainerField: function ()
+		{
+			return "textureTransform";
+		},
+		eventsProcessed: function ()
+		{
+			X3DTextureTransformNode .prototype .eventsProcessed .call (this);
+			
+			var matrix4 = this .getMatrix ();
+
+			matrix4 .assign (this .matrix_ .getValue ());
+
+			this .setMatrix (matrix4);
+		},
+	});
+
+	return TextureTransformMatrix3D;
+});
+
+
+
+
+define ("cobweb/Components/EventUtilities/TimeTrigger",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTriggerNode, 
+          X3DConstants)
+{
+
+
+	function TimeTrigger (executionContext)
+	{
+		X3DTriggerNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TimeTrigger);
+	}
+
+	TimeTrigger .prototype = $.extend (Object .create (X3DTriggerNode .prototype),
+	{
+		constructor: TimeTrigger,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerTime", new Fields .SFTime ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TimeTrigger";
+		},
+		getComponentName: function ()
+		{
+			return "EventUtilities";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTriggerNode .prototype .initialize .call (this);
+		
+			this .set_boolean_ .addInterest (this, "set_boolean__");
+		},
+		set_boolean__: function ()
+		{
+			this .triggerTime_ = this .getBrowser () .getCurrentTime ();
+		},
+	});
+
+	return TimeTrigger;
+});
+
+
+
+
 define ('cobweb/Components/Grouping/Transform',[
 	"jquery",
 	"cobweb/Fields",
@@ -70630,7 +72904,7 @@ function ($,
 
 	function Transform (executionContext)
 	{
-		X3DTransformNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DTransformNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Transform);
 	}
@@ -70690,7 +72964,7 @@ function ($,
 
 	function TriangleFanSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleFanSet);
 
@@ -70791,7 +73065,7 @@ function ($,
 
 	function TriangleSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleSet);
 	}
@@ -70843,7 +73117,8 @@ function ($,
 
 
 
-define ('cobweb/Components/Geometry2D/TriangleSet2D',[
+define ("cobweb/Components/Geometry2D/TriangleSet2D",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -70868,7 +73143,7 @@ function ($,
 
 	function TriangleSet2D (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleSet2D);
 	}
@@ -70967,7 +73242,7 @@ function ($,
 
 	function TriangleStripSet (executionContext)
 	{
-		X3DComposedGeometryNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DComposedGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleStripSet);
 
@@ -71074,7 +73349,7 @@ function ($,
 
 	function TwoSidedMaterial (executionContext)
 	{
-		X3DMaterialNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DMaterialNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TwoSidedMaterial);
 			
@@ -71251,7 +73526,7 @@ function ($,
 
 	function ViewpointGroup (executionContext)
 	{
-		X3DChildNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ViewpointGroup);
 	   
@@ -71430,7 +73705,8 @@ function ($,
 
 
 
-define ('cobweb/Components/EnvironmentalSensor/VisibilitySensor',[
+define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -71459,7 +73735,7 @@ function ($,
 	
 	function VisibilitySensor (executionContext)
 	{
-		X3DEnvironmentalSensorNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DEnvironmentalSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .VisibilitySensor);
 
@@ -71576,9 +73852,9 @@ function ($,
 {
 
 
-	function X3DInfoNode (browser, executionContext)
+	function X3DInfoNode (executionContext)
 	{
-		X3DChildNode .call (this, browser, executionContext);
+		X3DChildNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DInfoNode);
 	}
@@ -71613,7 +73889,7 @@ function ($,
 
 	function WorldInfo (executionContext)
 	{
-		X3DInfoNode .call (this, executionContext .getBrowser (), executionContext);
+		X3DInfoNode .call (this, executionContext);
 
 		this .addType (X3DConstants .WorldInfo);
 	}
@@ -71655,10 +73931,10 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/EnvironmentalEffects/Background", // VRML
 	//"cobweb/Components/RigidBodyPhysics/BallJoint",
 	"cobweb/Components/Navigation/Billboard", // VRML
-	//"cobweb/Components/EventUtilities/BooleanFilter",
-	//"cobweb/Components/EventUtilities/BooleanSequencer",
-	//"cobweb/Components/EventUtilities/BooleanToggle",
-	//"cobweb/Components/EventUtilities/BooleanTrigger",
+	"cobweb/Components/EventUtilities/BooleanFilter",
+	"cobweb/Components/EventUtilities/BooleanSequencer",
+	"cobweb/Components/EventUtilities/BooleanToggle",
+	"cobweb/Components/EventUtilities/BooleanTrigger",
 	//"cobweb/Components/ParticleSystems/BoundedPhysicsModel",
 	"cobweb/Components/Geometry3D/Box", // VRML
 	"cobweb/Components/CADGeometry/CADAssembly",
@@ -71674,8 +73950,8 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/RigidBodyPhysics/CollisionSensor",
 	//"cobweb/Components/RigidBodyPhysics/CollisionSpace",
 	"cobweb/Components/Rendering/Color", // VRML
-	//"cobweb/Components/Followers/ColorChaser",
-	//"cobweb/Components/Followers/ColorDamper",
+	"cobweb/Components/Followers/ColorChaser",
+	"cobweb/Components/Followers/ColorDamper",
 	"cobweb/Components/Interpolation/ColorInterpolator", // VRML
 	"cobweb/Components/Rendering/ColorRGBA",
 	"cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
@@ -71687,9 +73963,9 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/NURBS/Contour2D",
 	//"cobweb/Components/NURBS/ContourPolyline2D",
 	"cobweb/Components/Rendering/Coordinate", // VRML
-	//"cobweb/Components/Followers/CoordinateChaser",
-	//"cobweb/Components/Followers/CoordinateDamper",
-	//"cobweb/Components/NURBS/CoordinateDouble",
+	"cobweb/Components/Followers/CoordinateChaser",
+	"cobweb/Components/Followers/CoordinateDamper",
+	"cobweb/Components/NURBS/CoordinateDouble",
 	"cobweb/Components/Interpolation/CoordinateInterpolator", // VRML
 	"cobweb/Components/Interpolation/CoordinateInterpolator2D",
 	"cobweb/Components/Geometry3D/Cylinder", // VRML
@@ -71738,8 +74014,8 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Rendering/IndexedTriangleSet",
 	"cobweb/Components/Rendering/IndexedTriangleStripSet",
 	"cobweb/Components/Networking/Inline", // VRML
-	//"cobweb/Components/EventUtilities/IntegerSequencer",
-	//"cobweb/Components/EventUtilities/IntegerTrigger",
+	"cobweb/Components/EventUtilities/IntegerSequencer",
+	"cobweb/Components/EventUtilities/IntegerTrigger",
 	"cobweb/Components/KeyDeviceSensor/KeySensor",
 	"cobweb/Components/Navigation/LOD", // VRML
 	"cobweb/Components/Layering/Layer",
@@ -71751,7 +74027,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Shape/LineProperties",
 	"cobweb/Components/Rendering/LineSet",
 	"cobweb/Components/Networking/LoadSensor",
-	//"cobweb/Components/EnvironmentalEffects/LocalFog",
+	"cobweb/Components/EnvironmentalEffects/LocalFog",
 	"cobweb/Components/Shape/Material", // VRML
 	//"cobweb/Components/Shaders/Matrix3VertexAttribute",
 	//"cobweb/Components/Shaders/Matrix4VertexAttribute",
@@ -71780,8 +74056,8 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/NURBS/NurbsSwungSurface",
 	//"cobweb/Components/NURBS/NurbsTextureCoordinate",
 	//"cobweb/Components/NURBS/NurbsTrimmedSurface",
-	//"cobweb/Components/Followers/OrientationChaser",
-	//"cobweb/Components/Followers/OrientationDamper",
+	"cobweb/Components/Followers/OrientationChaser",
+	"cobweb/Components/Followers/OrientationDamper",
 	"cobweb/Components/Interpolation/OrientationInterpolator", // VRML
 	"cobweb/Components/Navigation/OrthoViewpoint",
 	//"cobweb/Components/Shaders/PackagedShader",
@@ -71797,10 +74073,10 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Geometry2D/Polyline2D",
 	//"cobweb/Components/ParticleSystems/PolylineEmitter",
 	"cobweb/Components/Geometry2D/Polypoint2D",
-	//"cobweb/Components/Followers/PositionChaser",
-	//"cobweb/Components/Followers/PositionChaser2D",
-	//"cobweb/Components/Followers/PositionDamper",
-	//"cobweb/Components/Followers/PositionDamper2D",
+	"cobweb/Components/Followers/PositionChaser",
+	"cobweb/Components/Followers/PositionChaser2D",
+	"cobweb/Components/Followers/PositionDamper",
+	"cobweb/Components/Followers/PositionDamper2D",
 	"cobweb/Components/Interpolation/PositionInterpolator", // VRML
 	"cobweb/Components/Interpolation/PositionInterpolator2D",
 	//"cobweb/Components/Picking/PrimitivePickSensor",
@@ -71811,11 +74087,11 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Geometry2D/Rectangle2D",
 	//"cobweb/Components/RigidBodyPhysics/RigidBody",
 	//"cobweb/Components/RigidBodyPhysics/RigidBodyCollection",
-	//"cobweb/Components/Followers/ScalarChaser",
-	//"cobweb/Components/Followers/ScalarDamper",
+	"cobweb/Components/Followers/ScalarChaser",
+	"cobweb/Components/Followers/ScalarDamper",
 	"cobweb/Components/Interpolation/ScalarInterpolator", // VRML
 	//"cobweb/Components/Layout/ScreenFontStyle",
-	//"cobweb/Components/Layout/ScreenGroup",
+	"cobweb/Components/Layout/ScreenGroup",
 	"cobweb/Components/Scripting/Script", // VRML
 	"cobweb/Components/Shaders/ShaderPart",
 	//"cobweb/Components/Shaders/ShaderProgram",
@@ -71826,29 +74102,29 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Sound/Sound", // VRML
 	"cobweb/Components/Geometry3D/Sphere", // VRML
 	"cobweb/Components/PointingDeviceSensor/SphereSensor", // VRML
-	//"cobweb/Components/Interpolation/SplinePositionInterpolator",
-	//"cobweb/Components/Interpolation/SplinePositionInterpolator2D",
-	//"cobweb/Components/Interpolation/SplineScalarInterpolator",
+	"cobweb/Components/Interpolation/SplinePositionInterpolator",
+	"cobweb/Components/Interpolation/SplinePositionInterpolator2D",
+	"cobweb/Components/Interpolation/SplineScalarInterpolator",
 	"cobweb/Components/Lighting/SpotLight", // VRML
-	//"cobweb/Components/Interpolation/SquadOrientationInterpolator",
+	"cobweb/Components/Interpolation/SquadOrientationInterpolator",
 	"cobweb/Components/Grouping/StaticGroup",
 	//"cobweb/Components/KeyDeviceSensor/StringSensor",
 	//"cobweb/Components/ParticleSystems/SurfaceEmitter",
 	"cobweb/Components/Grouping/Switch", // VRML
-	//"cobweb/Components/Followers/TexCoordChaser2D",
-	//"cobweb/Components/Followers/TexCoordDamper2D",
+	"cobweb/Components/Followers/TexCoordChaser2D",
+	"cobweb/Components/Followers/TexCoordDamper2D",
 	"cobweb/Components/Text/Text", // VRML
-	//"cobweb/Components/EnvironmentalEffects/TextureBackground",
+	"cobweb/Components/EnvironmentalEffects/TextureBackground",
 	"cobweb/Components/Texturing/TextureCoordinate", // VRML
-	//"cobweb/Components/Texturing3D/TextureCoordinate3D",
-	//"cobweb/Components/Texturing3D/TextureCoordinate4D",
+	"cobweb/Components/Texturing3D/TextureCoordinate3D",
+	"cobweb/Components/Texturing3D/TextureCoordinate4D",
 	//"cobweb/Components/Texturing/TextureCoordinateGenerator",
 	"cobweb/Components/Texturing/TextureProperties",
 	"cobweb/Components/Texturing/TextureTransform", // VRML
-	//"cobweb/Components/Texturing3D/TextureTransform3D",
-	//"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
+	"cobweb/Components/Texturing3D/TextureTransform3D",
+	"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
 	"cobweb/Components/Time/TimeSensor", // VRML
-	//"cobweb/Components/EventUtilities/TimeTrigger",
+	"cobweb/Components/EventUtilities/TimeTrigger",
 	//"cobweb/Components/Titania/TouchGroup",
 	"cobweb/Components/PointingDeviceSensor/TouchSensor", // VRML
 	"cobweb/Components/Grouping/Transform", // VRML
@@ -71877,10 +74153,10 @@ function (Anchor,
           Background,
           //BallJoint,
           Billboard,
-          //BooleanFilter,
-          //BooleanSequencer,
-          //BooleanToggle,
-          //BooleanTrigger,
+          BooleanFilter,
+          BooleanSequencer,
+          BooleanToggle,
+          BooleanTrigger,
           //BoundedPhysicsModel,
           Box,
           CADAssembly,
@@ -71896,8 +74172,8 @@ function (Anchor,
           //CollisionSensor,
           //CollisionSpace,
           Color,
-          //ColorChaser,
-          //ColorDamper,
+          ColorChaser,
+          ColorDamper,
           ColorInterpolator,
           ColorRGBA,
           ComposedCubeMapTexture,
@@ -71909,9 +74185,9 @@ function (Anchor,
           //Contour2D,
           //ContourPolyline2D,
           Coordinate,
-          //CoordinateChaser,
-          //CoordinateDamper,
-          //CoordinateDouble,
+          CoordinateChaser,
+          CoordinateDamper,
+          CoordinateDouble,
           CoordinateInterpolator,
           CoordinateInterpolator2D,
           Cylinder,
@@ -71960,8 +74236,8 @@ function (Anchor,
           IndexedTriangleSet,
           IndexedTriangleStripSet,
           Inline,
-          //IntegerSequencer,
-          //IntegerTrigger,
+          IntegerSequencer,
+          IntegerTrigger,
           KeySensor,
           LOD,
           Layer,
@@ -71973,7 +74249,7 @@ function (Anchor,
           LineProperties,
           LineSet,
           LoadSensor,
-          //LocalFog,
+          LocalFog,
           Material,
           //Matrix3VertexAttribute,
           //Matrix4VertexAttribute,
@@ -72002,8 +74278,8 @@ function (Anchor,
           //NurbsSwungSurface,
           //NurbsTextureCoordinate,
           //NurbsTrimmedSurface,
-          //OrientationChaser,
-          //OrientationDamper,
+          OrientationChaser,
+          OrientationDamper,
           OrientationInterpolator,
           OrthoViewpoint,
           //PackagedShader,
@@ -72019,10 +74295,10 @@ function (Anchor,
           Polyline2D,
           //PolylineEmitter,
           Polypoint2D,
-          //PositionChaser,
-          //PositionChaser2D,
-          //PositionDamper,
-          //PositionDamper2D,
+          PositionChaser,
+          PositionChaser2D,
+          PositionDamper,
+          PositionDamper2D,
           PositionInterpolator,
           PositionInterpolator2D,
           //PrimitivePickSensor,
@@ -72033,11 +74309,11 @@ function (Anchor,
           Rectangle2D,
           //RigidBody,
           //RigidBodyCollection,
-          //ScalarChaser,
-          //ScalarDamper,
+          ScalarChaser,
+          ScalarDamper,
           ScalarInterpolator,
           //ScreenFontStyle,
-          //ScreenGroup,
+          ScreenGroup,
           Script,
           ShaderPart,
           //ShaderProgram,
@@ -72048,29 +74324,29 @@ function (Anchor,
           Sound,
           Sphere,
           SphereSensor,
-          //SplinePositionInterpolator,
-          //SplinePositionInterpolator2D,
-          //SplineScalarInterpolator,
+          SplinePositionInterpolator,
+          SplinePositionInterpolator2D,
+          SplineScalarInterpolator,
           SpotLight,
-          //SquadOrientationInterpolator,
+          SquadOrientationInterpolator,
           StaticGroup,
           //StringSensor,
           //SurfaceEmitter,
           Switch,
-          //TexCoordChaser2D,
-          //TexCoordDamper2D,
+          TexCoordChaser2D,
+          TexCoordDamper2D,
           Text,
-          //TextureBackground,
+          TextureBackground,
           TextureCoordinate,
-          //TextureCoordinate3D,
-          //TextureCoordinate4D,
+          TextureCoordinate3D,
+          TextureCoordinate4D,
           //TextureCoordinateGenerator,
           TextureProperties,
           TextureTransform,
-          //TextureTransform3D,
-          //TextureTransformMatrix3D,
+          TextureTransform3D,
+          TextureTransformMatrix3D,
           TimeSensor,
-          //TimeTrigger,
+          TimeTrigger,
           //TouchGroup,
           TouchSensor,
           Transform,
@@ -72093,7 +74369,8 @@ function (Anchor,
 {
 
 
-	return {
+	var supportedNodes =
+	{
 		// 3.1
 		MetadataBool:                 MetadataBoolean,
 		// 3.3
@@ -72105,10 +74382,10 @@ function (Anchor,
 		Background:                   Background,
 		//BallJoint:                    BallJoint,
 		Billboard:                    Billboard,
-		//BooleanFilter:                BooleanFilter,
-		//BooleanSequencer:             BooleanSequencer,
-		//BooleanToggle:                BooleanToggle,
-		//BooleanTrigger:               BooleanTrigger,
+		BooleanFilter:                BooleanFilter,
+		BooleanSequencer:             BooleanSequencer,
+		BooleanToggle:                BooleanToggle,
+		BooleanTrigger:               BooleanTrigger,
 		//BoundedPhysicsModel:          BoundedPhysicsModel,
 		Box:                          Box,
 		CADAssembly:                  CADAssembly,
@@ -72124,8 +74401,8 @@ function (Anchor,
 		//CollisionSensor:              CollisionSensor,
 		//CollisionSpace:               CollisionSpace,
 		Color:                        Color,
-		//ColorChaser:                  ColorChaser,
-		//ColorDamper:                  ColorDamper,
+		ColorChaser:                  ColorChaser,
+		ColorDamper:                  ColorDamper,
 		ColorInterpolator:            ColorInterpolator,
 		ColorRGBA:                    ColorRGBA,
 		ComposedCubeMapTexture:       ComposedCubeMapTexture,
@@ -72137,9 +74414,9 @@ function (Anchor,
 		//Contour2D:                    Contour2D,
 		//ContourPolyline2D:            ContourPolyline2D,
 		Coordinate:                   Coordinate,
-		//CoordinateChaser:             CoordinateChaser,
-		//CoordinateDamper:             CoordinateDamper,
-		//CoordinateDouble:             CoordinateDouble,
+		CoordinateChaser:             CoordinateChaser,
+		CoordinateDamper:             CoordinateDamper,
+		CoordinateDouble:             CoordinateDouble,
 		CoordinateInterpolator:       CoordinateInterpolator,
 		CoordinateInterpolator2D:     CoordinateInterpolator2D,
 		Cylinder:                     Cylinder,
@@ -72188,8 +74465,8 @@ function (Anchor,
 		IndexedTriangleSet:           IndexedTriangleSet,
 		IndexedTriangleStripSet:      IndexedTriangleStripSet,
 		Inline:                       Inline,
-		//IntegerSequencer:             IntegerSequencer,
-		//IntegerTrigger:               IntegerTrigger,
+		IntegerSequencer:             IntegerSequencer,
+		IntegerTrigger:               IntegerTrigger,
 		KeySensor:                    KeySensor,
 		LOD:                          LOD,
 		Layer:                        Layer,
@@ -72201,7 +74478,7 @@ function (Anchor,
 		LineProperties:               LineProperties,
 		LineSet:                      LineSet,
 		LoadSensor:                   LoadSensor,
-		//LocalFog:                     LocalFog,
+		LocalFog:                     LocalFog,
 		Material:                     Material,
 		//Matrix3VertexAttribute:       Matrix3VertexAttribute,
 		//Matrix4VertexAttribute:       Matrix4VertexAttribute,
@@ -72230,8 +74507,8 @@ function (Anchor,
 		//NurbsSwungSurface:            NurbsSwungSurface,
 		//NurbsTextureCoordinate:       NurbsTextureCoordinate,
 		//NurbsTrimmedSurface:          NurbsTrimmedSurface,
-		//OrientationChaser:            OrientationChaser,
-		//OrientationDamper:            OrientationDamper,
+		OrientationChaser:            OrientationChaser,
+		OrientationDamper:            OrientationDamper,
 		OrientationInterpolator:      OrientationInterpolator,
 		OrthoViewpoint:               OrthoViewpoint,
 		//PackagedShader:               PackagedShader,
@@ -72247,10 +74524,10 @@ function (Anchor,
 		Polyline2D:                   Polyline2D,
 		//PolylineEmitter:              PolylineEmitter,
 		Polypoint2D:                  Polypoint2D,
-		//PositionChaser:               PositionChaser,
-		//PositionChaser2D:             PositionChaser2D,
-		//PositionDamper:               PositionDamper,
-		//PositionDamper2D:             PositionDamper2D,
+		PositionChaser:               PositionChaser,
+		PositionChaser2D:             PositionChaser2D,
+		PositionDamper:               PositionDamper,
+		PositionDamper2D:             PositionDamper2D,
 		PositionInterpolator:         PositionInterpolator,
 		PositionInterpolator2D:       PositionInterpolator2D,
 		//PrimitivePickSensor:          PrimitivePickSensor,
@@ -72261,11 +74538,11 @@ function (Anchor,
 		Rectangle2D:                  Rectangle2D,
 		//RigidBody:                    RigidBody,
 		//RigidBodyCollection:          RigidBodyCollection,
-		//ScalarChaser:                 ScalarChaser,
-		//ScalarDamper:                 ScalarDamper,
+		ScalarChaser:                 ScalarChaser,
+		ScalarDamper:                 ScalarDamper,
 		ScalarInterpolator:           ScalarInterpolator,
 		//ScreenFontStyle:              ScreenFontStyle,
-		//ScreenGroup:                  ScreenGroup,
+		ScreenGroup:                  ScreenGroup,
 		Script:                       Script,
 		ShaderPart:                   ShaderPart,
 		//ShaderProgram:                ShaderProgram,
@@ -72276,29 +74553,29 @@ function (Anchor,
 		Sound:                        Sound,
 		Sphere:                       Sphere,
 		SphereSensor:                 SphereSensor,
-		//SplinePositionInterpolator:   SplinePositionInterpolator,
-		//SplinePositionInterpolator2D: SplinePositionInterpolator2D,
-		//SplineScalarInterpolator:     SplineScalarInterpolator,
+		SplinePositionInterpolator:   SplinePositionInterpolator,
+		SplinePositionInterpolator2D: SplinePositionInterpolator2D,
+		SplineScalarInterpolator:     SplineScalarInterpolator,
 		SpotLight:                    SpotLight,
-		//SquadOrientationInterpolator: SquadOrientationInterpolator,
+		SquadOrientationInterpolator: SquadOrientationInterpolator,
 		StaticGroup:                  StaticGroup,
 		//StringSensor:                 StringSensor,
 		//SurfaceEmitter:               SurfaceEmitter,
 		Switch:                       Switch,
-		//TexCoordChaser2D:             TexCoordChaser2D,
-		//TexCoordDamper2D:             TexCoordDamper2D,
+		TexCoordChaser2D:             TexCoordChaser2D,
+		TexCoordDamper2D:             TexCoordDamper2D,
 		Text:                         Text,
-		//TextureBackground:            TextureBackground,
+		TextureBackground:            TextureBackground,
 		TextureCoordinate:            TextureCoordinate,
-		//TextureCoordinate3D:          TextureCoordinate3D,
-		//TextureCoordinate4D:          TextureCoordinate4D,
+		TextureCoordinate3D:          TextureCoordinate3D,
+		TextureCoordinate4D:          TextureCoordinate4D,
 		//TextureCoordinateGenerator:   TextureCoordinateGenerator,
 		TextureProperties:            TextureProperties,
 		TextureTransform:             TextureTransform,
-		//TextureTransform3D:           TextureTransform3D,
-		//TextureTransformMatrix3D:     TextureTransformMatrix3D,
+		TextureTransform3D:           TextureTransform3D,
+		TextureTransformMatrix3D:     TextureTransformMatrix3D,
 		TimeSensor:                   TimeSensor,
-		//TimeTrigger:                  TimeTrigger,
+		TimeTrigger:                  TimeTrigger,
 		//TouchGroup:                   TouchGroup,
 		TouchSensor:                  TouchSensor,
 		Transform:                    Transform,
@@ -72319,7 +74596,15 @@ function (Anchor,
 		//WindPhysicsModel:             WindPhysicsModel,
 		WorldInfo:                    WorldInfo,
 	};
+
+	function createInstance (executionContext) { return new this (executionContext); }
+
+	for (var name in supportedNodes)
+		supportedNodes [name] .createInstance = createInstance .bind (supportedNodes [name]);
+
+	return supportedNodes;
 });
+
 
 
 define ('cobweb/Execution/Scene',[
@@ -72349,9 +74634,9 @@ function (X3DScene)
 
 define ('cobweb/Browser/X3DBrowser',[
 	"jquery",
+	"cobweb/Browser/VERSION",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
-	"cobweb/Browser/Version",
 	"cobweb/Configuration/ComponentInfo",
 	"cobweb/Configuration/SupportedProfiles",
 	"cobweb/Configuration/SupportedComponents",
@@ -72364,9 +74649,9 @@ define ('cobweb/Browser/X3DBrowser',[
 	"lib/gettext",
 ],
 function ($,
+          VERSION,
           Fields,
           X3DBrowserContext,
-          Version,
           ComponentInfo,
           SupportedProfiles,
           SupportedComponents,
@@ -72388,8 +74673,9 @@ function ($,
 		this .currentFrameRate     = 0;
 		this .description_         = "";
 		this .supportedNodes       = SupportedNodes;
-		this .supportedComponents  = SupportedComponents;
-		this .supportedProfiles    = SupportedProfiles;
+		this .supportedComponents  = SupportedComponents (this);
+		this .supportedProfiles    = SupportedProfiles (this);
+		this .components           = { };
 	};
 
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
@@ -72397,9 +74683,6 @@ function ($,
 		constructor: X3DBrowser,
 		initialize: function ()
 		{
-			// Create an empty scene if any thing goes wrong in loadURL.
-			var scene = this .createScene ();
-
 			this .replaceWorld (this .createScene ());
 
 			X3DBrowserContext .prototype .initialize .call (this);
@@ -72411,14 +74694,17 @@ function ($,
 			                "                Name: " + this .getVendor () + " " + this .getWebGLVersion () + "\n" +
 			                "                Shading language: " + this .getShadingLanguageVersion () + "\n" +
 			                "        Rendering Properties\n" +
+			                "                Antialiased: " + this .getAntialiased () + "\n" +
+			                "                Color depth: " + this .getColorDepth () + " bits\n" +
+			                "                Max clip planes: 6\n" +
+			                "                Max lights: 8\n" +
 			                "                Texture units: " + this .getMaxTextureUnits () + " / " + this .getMaxCombinedTextureUnits () + "\n" +
 			                "                Max texture size: " + this .getMaxTextureSize () + " × " + this .getMaxTextureSize () + " pixel\n" +
-			                "                Max lights: 0\n" +
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
-			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n" +
-			                "                Antialiased: " + this .getAntialiased () + "\n" +
-			                "                Color depth: " + this .getColorDepth () + " bits\n");
+			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");
+
+			
 		},
 		realize: function ()
 		{
@@ -72479,8 +74765,16 @@ function ($,
 
 			if (component)
 			{
-				if (level <= component .level)
-					return new ComponentInfo (name, level, component .title, this .browser .getProviderUrl ());
+				//if (level <= component .level)
+				//{
+					return new ComponentInfo (this,
+					{
+						title: component .title,
+						name:  name,
+						level: level,
+						providerUrl: this .getProviderUrl ()
+					});
+				//}
 			}
 
 			throw Error ("Component '" + name + "' at level '" + level + "' is not supported.");
@@ -72877,7 +75171,7 @@ function ($,
 
 	Object .defineProperty (X3DBrowser .prototype, "version",
 	{
-		get: function () { return Version; },
+		get: function () { return VERSION; },
 		enumerable: true,
 		configurable: false
 	});
@@ -72967,6 +75261,8 @@ function ($,
 	if (! console .warn)  console .warn  = console .log;
 	if (! console .error) console .error = console .log;
 
+	// X3D
+
 	function getBrowser (dom)
 	{
 		return $(dom) .data ("browser");
@@ -72987,8 +75283,6 @@ function ($,
 		
 		return browser;
 	}
-
-	// X3D
 
 	var
 	   initialized = false,
@@ -73014,10 +75308,19 @@ function ($,
 		
 			try
 			{
-				$.map (elements, createBrowser);
-	
+				var browsers = $.map (elements, createBrowser);
+
+				numBrowsers = browsers .length;
+
 				if (elements .length)
-					callbacks .resolve (elements);
+				{
+					for (var i = 0; i < numBrowsers; ++ i)
+					{
+						var browser = browsers [i];
+
+						browser .initialized () .addFieldCallback ("initialized" + browser .getId (), set_initialized .bind (null, browser, elements));
+					}
+				}
 			}
 			catch (error)
 			{
@@ -73027,10 +75330,24 @@ function ($,
 		});
 	}
 
+	var numBrowsers = 0;
+
+	function set_initialized (browser, elements)
+	{
+		browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
+
+		if (-- numBrowsers)
+			return;
+
+		callbacks .resolve (elements);
+		
+	}
+
 	$.extend (X3D,
 		Fields,
 	{
 		require:                     require,
+		define:                      define,
 		getBrowser:                  getBrowser,
 		createBrowser:               createBrowser,
 		X3DConstants:                X3DConstants,
@@ -73068,22 +75385,12 @@ function ($,
 		X3D .fallbacks .push (fallback);
 	}
 
+	X3D .require   = require;
+	X3D .define    = define;
 	X3D .callbacks = [ ];
 	X3D .fallbacks = [ ];
 
-	function fallback (error)
-	{
-		require (["cobweb/Error"],
-		function (Error)
-		{
-			Error (error, window .X3D .fallbacks);
-
-			delete window .X3D;
-		});
-	}
-
-	// Temporary X3D before page load.
-	if (window .X3D === undefined)
+	function initialize ()
 	{
 		window .X3D = X3D;
 
@@ -73106,6 +75413,20 @@ function ($,
 		},
 		fallback);
 	}
+
+	function fallback (error)
+	{
+		require (["cobweb/Error"],
+		function (Error)
+		{
+			Error (error, window .X3D .fallbacks);
+
+			delete window .X3D;
+		});
+	}
+
+	initialize ();
+
 }) ();
 define("cobweb.js", function(){});
 }());

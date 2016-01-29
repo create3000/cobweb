@@ -35,6 +35,9 @@ function (FontStyle)
 			{
 				this .fontCache [URL] = font;
 
+				if (typeof font !== "object")
+					return;
+
 				var length = Object .keys (this .fontCache) .length;
 
 				for (var key in this .fontCache)

@@ -296,6 +296,28 @@
     <None Include="latest\browser.html" />
     <None Include="1\1.21\cobweb.js" />
     <None Include="latest\cobweb.js" />
+    <None Include="1\1.22\browser.html" />
+    <None Include="1\1.22\cobweb.css" />
+    <None Include="1\1.22\cobweb.js" />
+    <None Include="1\1.22\cobweb.min.js" />
+    <None Include="1\1.22\spinner.css" />
+    <None Include="1\1.22\images\ExamineViewer.png" />
+    <None Include="1\1.22\images\FlyViewer.png" />
+    <None Include="1\1.22\images\NoneViewer.png" />
+    <None Include="1\1.22\images\PlaneViewer.png" />
+    <None Include="1\1.22\images\PrimitiveQuality.png" />
+    <None Include="1\1.22\images\TextureQuality.png" />
+    <None Include="1\1.22\images\Viewpoint.png" />
+    <None Include="1\1.22\images\WalkViewer.png" />
+    <None Include="1\1.22\images\gtk-fullscreen.png" />
+    <None Include="1\1.22\images\gtk-leave-fullscreen.png" />
+    <None Include="1\1.22\images\gtk-zoom-fit.png" />
+    <None Include="1\1.22\images\gtk-zoom-in.png" />
+    <None Include="1\1.22\images\help-about.png" />
+    <None Include="1\1.22\images\icon.bw.png" />
+    <None Include="1\1.22\images\icon.png" />
+    <None Include="1\1.22\images\logo.bw.png" />
+    <None Include="1\1.22\images\logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
@@ -315,5 +337,6 @@
     <Folder Include="1\1.19\" />
     <Folder Include="1\1.20\" />
     <Folder Include="1\1.21\" />
+    <Folder Include="1\1.22\" />
   </ItemGroup>
 </Project>

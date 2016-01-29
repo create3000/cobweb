@@ -90,8 +90,8 @@ function ($,
 		// Values
 		int32:  new RegExp ('^((?:0[xX][\\da-fA-F]+)|(?:[+-]?\\d+))', 'y'),
 		double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
-		string: new RegExp ('^"((?:[^\\\\"]|\\\\\\\\|\\\\\\")*)"', 'y'),
-		
+		string: new RegExp ('^"((?:[^"\\\\]|\\\\\\\\|\\\\")*)"', 'y'),
+
 		Inf:         new RegExp ('^[+]?inf',  'yi'),
 		NegativeInf: new RegExp ('^-inf',     'yi'),
 		NaN:         new RegExp ('^[+-]?nan', 'yi'),
@@ -100,11 +100,28 @@ function ($,
 		Break: new RegExp ('\\r?\\n', 'g'),
 	};
 
-	function parse (parser)
+	// +scriptBodyElement assignments
+	function parseY (parser)
 	{
 		this .lastIndex = parser .lastIndex;
 
 		parser .result = this .exec (parser .input);
+
+		if (parser .result)
+		{
+			parser .lastIndex = this .lastIndex;
+			return true;
+		}
+
+		return false;
+	}
+
+	function parse (parser)
+	{
+		this .lastIndex = 0;
+
+		parser .result = this .exec (parser .input);
+		parser .input  = parser .input .slice (this .lastIndex);
 
 		if (parser .result)
 		{
@@ -1227,8 +1244,12 @@ function ($,
 		},
 		scriptBodyElement: function (baseNode)
 		{
+//			var
+//				lastIndex  = this .lastIndex,
+//				lineNumber = this .lineNumber;
+
 			var
-				lastIndex  = this .lastIndex,
+				input      = this .input,
 				lineNumber = this .lineNumber;
 
 			if (this .Id ())
@@ -1320,7 +1341,10 @@ function ($,
 				}
 			}
 
-			this .lastIndex  = lastIndex;
+//			this .lastIndex  = lastIndex;
+//			this .lineNumber = lineNumber;
+
+			this .input      = input;
 			this .lineNumber = lineNumber;
 
 			var field = this .interfaceDeclaration ();
