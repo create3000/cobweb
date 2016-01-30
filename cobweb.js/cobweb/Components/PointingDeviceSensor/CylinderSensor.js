@@ -176,8 +176,8 @@ function ($,
 					this .fromVector  = this .cylinder .axis .getPerpendicularVector (trackPoint) .negate ();
 					this .startOffset = new Rotation4 (yAxis, this .offset_ .getValue ());
 	
-					//this .trackPoint_changed_  .set (trackPoint);
-					//this .rotation_changed .set (this .startOffset);
+					this .trackPoint_changed_  .set (trackPoint);
+					this .rotation_changed .set (this .startOffset);
 				}
 				else
 				{

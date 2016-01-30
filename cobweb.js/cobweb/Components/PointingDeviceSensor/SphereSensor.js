@@ -117,8 +117,8 @@ function ($,
 					this .startPoint  .assign (hitPoint);
 					this .startOffset .assign (this .offset_ .getValue ());
 	
-					//this .trackPoint_changed_  .set (hitPoint);
-					//this .rotation_changed .set (this .offset_ .getValue ());
+					this .trackPoint_changed_  .set (hitPoint);
+					this .rotation_changed .set (this .offset_ .getValue ());
 				}
 				else
 				{

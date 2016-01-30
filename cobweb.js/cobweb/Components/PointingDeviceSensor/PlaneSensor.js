@@ -103,9 +103,9 @@ function ($,
 				{
 					var matrices = this .getMatrices () [hit .layer .getId ()];
 
-					this .modelViewMatrix .assign (matrices .modelViewMatrix);
-					this .projectionMatrix .assign (matrices .projectionMatrix);
-					this .viewport .assign (matrices .viewport);
+					this .modelViewMatrix    .assign (matrices .modelViewMatrix);
+					this .projectionMatrix   .assign (matrices .projectionMatrix);
+					this .viewport           .assign (matrices .viewport);
 					this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
 
 					var
@@ -136,17 +136,34 @@ function ($,
 						this .plane       = new Plane3 (hitPoint, axisRotation .multVecRot (new Vector3 (0, 0, 1)));
 					}
 
+					var trackPoint = new Vector3 (0, 0, 0);
+
 					if (this .planeSensor)
+					{
 						this .plane .intersectsLine (hitRay, this .startPoint);
 
+//						new Plane3 (new Vector3 (0, 0, 0), this .plane .normal) .intersectsLine (hitRay, trackPoint);
+					}
 					else
+					{
 						this .getLineTrackPoint (hit, this .line, this .startPoint);
 
-					this .startOffset .assign (this .offset_ .getValue ());
-	
-					//this .trackPoint_changed_  .set (trackPoint);
-					//this .translation_changed_ .set (this .offset_ .getValue ());
-			}
+						try
+						{
+							this .getLineTrackPoint (hit, new Line3 (this .line .direction, this .line .direction), trackPoint);
+						}
+						catch (error)
+						{
+							//console .log (error);
+
+							trackPoint = this .startPoint;
+						}
+					}
+
+					this .startOffset          .assign (this .offset_ .getValue ());
+					this .trackPoint_changed_  .set (trackPoint);
+					this .translation_changed_ .set (this .offset_ .getValue ());
+				}
 				else
 				{
 					if (this .autoOffset_ .getValue ())
@@ -155,7 +172,7 @@ function ($,
 			}
 			catch (error)
 			{
-				//console .log (error);
+				console .log (error);
 			}
 		},
 		set_motion__: function (hit)
