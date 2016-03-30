@@ -16657,7 +16657,7 @@ function ($,
 
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.22";
+	return "1.23";
 });
 
 
@@ -17182,14 +17182,10 @@ define ('lib/dataStorage',[],function ()
 			   return undefined;
 
 			return JSON .parse (localStorage [key])
- 		},
+		},
 		set: function (target, key, value)
 		{
-		   if (value === undefined)
-		      localStorage .removeItem (key);
-		   else
-				localStorage [key] = JSON .stringify (value);
-
+			localStorage [key] = JSON .stringify (value);
 			return true;
 		},
 	};
@@ -17201,6 +17197,10 @@ define ('lib/dataStorage',[],function ()
 
 	DataStorage .prototype = {
 		constructor: DataStorage,
+		removeItem: function (key)
+		{
+			return localStorage .removeItem (key);
+		},
 		clear: function ()
 		{
 			return localStorage .clear ();
@@ -21822,8 +21822,8 @@ function ($,
 	return {
 		providerUrl:       "http://titania.create3000.de/cobweb",
 		componentUrl:       componentUrl,
-		fallbackUrl:       "https://crossorigin.me/",
-		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
+		fallbackUrl:       "https://cdn.rawgit.com/technoboy10/crossorigin.me/master/",
+		fallbackExpression: new RegExp ("^https://cdn.rawgit.com/technoboy10/crossorigin.me/master/"),
 	};
 });
 
@@ -24982,75 +24982,74 @@ function ($,
 	var Grammar =
 	{
 		// General
-		Whitespaces: new RegExp ('^([\\x20\\n,\\t\\r]+)', 'y'),
-		Comment:     new RegExp ('^#(.*?)(?=[\\n\\r])',   'y'),
+		Whitespaces: /^([\x20\n,\t\r]+)/,
+		Comment:     /^#(.*?)(?=[\n\r])/,
 
 		// Header
-		Header:	    new RegExp ("^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\\n\\r]"),
+		Header:	    /^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\n\r]/,
 
 		// Keywords
-		AS:          new RegExp ('^AS',          'y'),
-		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
-		DEF:         new RegExp ('^DEF',         'y'),
-		EXPORT:      new RegExp ('^EXPORT',      'y'),
-		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
-		FALSE:       new RegExp ('^FALSE',       'y'),
-		false:       new RegExp ('^false',       'y'),
-		IMPORT:      new RegExp ('^IMPORT',      'y'),
-		IS:          new RegExp ('^IS',          'y'),
-		META:        new RegExp ('^META',        'y'),
-		NULL:        new RegExp ('^NULL',        'y'),
-		TRUE:        new RegExp ('^TRUE',        'y'),
-		true:        new RegExp ('^true',        'y'),
-		PROFILE:     new RegExp ('^PROFILE',     'y'),
-		PROTO:       new RegExp ('^PROTO',       'y'),
-		ROUTE:       new RegExp ('^ROUTE',       'y'),
-		TO:          new RegExp ('^TO',          'y'),
-		UNIT:        new RegExp ('^UNIT',        'y'),
-		USE:         new RegExp ('^USE',         'y'),
+		AS:          /^AS/,
+		COMPONENT:   /^COMPONENT/,
+		DEF:         /^DEF/,
+		EXPORT:      /^EXPORT/,
+		EXTERNPROTO: /^EXTERNPROTO/,
+		FALSE:       /^FALSE/,
+		false:       /^false/,
+		IMPORT:      /^IMPORT/,
+		IS:          /^IS/,
+		META:        /^META/,
+		NULL:        /^NULL/,
+		TRUE:        /^TRUE/,
+		true:        /^true/,
+		PROFILE:     /^PROFILE/,
+		PROTO:       /^PROTO/,
+		ROUTE:       /^ROUTE/,
+		TO:          /^TO/,
+		UNIT:        /^UNIT/,
+		USE:         /^USE/,
 
 		// Terminal symbols
-		OpenBrace:    new RegExp ('^\\{', 'y'),
-		CloseBrace:   new RegExp ('^\\}', 'y'),
-		OpenBracket:  new RegExp ('^\\[', 'y'),
-		CloseBracket: new RegExp ('^\\]', 'y'),
-		Period:       new RegExp ('^\\.', 'y'),
-		Colon:        new RegExp ('^\\:', 'y'),
+		OpenBrace:    /^\{/,
+		CloseBrace:   /^\}/,
+		OpenBracket:  /^\[/,
+		CloseBracket: /^\]/,
+		Period:       /^\./,
+		Colon:        /^\:/,
 
-		Id: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]*)', 'y'),
-		ComponentNameId: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]*)', 'y'),
+		Id: /^([^\x30-\x39\x00-\x20\x22\x23\x27\x2b\x2c\x2d\x2e\x5b\x5c\x5d\x7b\x7d\x7f]{1}[^\x00-\x20\x22\x23\x27\x2c\x2e\x5b\x5c\x5d\x7b\x7d\x7f]*)/,
+		ComponentNameId: /^([^\x30-\x39\x00-\x20\x22\x23\x27\x2b\x2c\x2d\x2e\x5b\x5c\x5d\x7b\x7d\x7f\x3a]{1}[^\x00-\x20\x22\x23\x27\x2c\x2e\x5b\x5c\x5d\x7b\x7d\x7f\x3a]*)/,
 
-		initializeOnly: new RegExp ('^initializeOnly', 'y'),
-		inputOnly:      new RegExp ('^inputOnly',      'y'),
-		outputOnly:     new RegExp ('^outputOnly',     'y'),
-		inputOutput:    new RegExp ('^inputOutput',    'y'),
+		initializeOnly: /^initializeOnly/,
+		inputOnly:      /^inputOnly/,
+		outputOnly:     /^outputOnly/,
+		inputOutput:    /^inputOutput/,
 
-		field:        new RegExp ('^field', 'y'),
-		eventIn:      new RegExp ('^eventIn', 'y'),
-		eventOut:     new RegExp ('^eventOut', 'y'),
-		exposedField: new RegExp ('^exposedField', 'y'),
+		field:        /^field/,
+		eventIn:      /^eventIn/,
+		eventOut:     /^eventOut/,
+		exposedField: /^exposedField/,
 
-		FieldType: new RegExp ('^(MFBool|MFColorRGBA|MFColor|MFDouble|MFFloat|MFImage|MFInt32|MFMatrix3d|MFMatrix3f|MFMatrix4d|MFMatrix4f|MFNode|MFRotation|MFString|MFTime|MFVec2d|MFVec2f|MFVec3d|MFVec3f|MFVec4d|MFVec4f|SFBool|SFColorRGBA|SFColor|SFDouble|SFFloat|SFImage|SFInt32|SFMatrix3d|SFMatrix3f|SFMatrix4d|SFMatrix4f|SFNode|SFRotation|SFString|SFTime|SFVec2d|SFVec2f|SFVec3d|SFVec3f|SFVec4d|SFVec4f)', 'y'),
+		FieldType: /^(MFBool|MFColorRGBA|MFColor|MFDouble|MFFloat|MFImage|MFInt32|MFMatrix3d|MFMatrix3f|MFMatrix4d|MFMatrix4f|MFNode|MFRotation|MFString|MFTime|MFVec2d|MFVec2f|MFVec3d|MFVec3f|MFVec4d|MFVec4f|SFBool|SFColorRGBA|SFColor|SFDouble|SFFloat|SFImage|SFInt32|SFMatrix3d|SFMatrix3f|SFMatrix4d|SFMatrix4f|SFNode|SFRotation|SFString|SFTime|SFVec2d|SFVec2f|SFVec3d|SFVec3f|SFVec4d|SFVec4f)/,
 
 		// Values
-		int32:  new RegExp ('^((?:0[xX][\\da-fA-F]+)|(?:[+-]?\\d+))', 'y'),
-		double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
-		string: new RegExp ('^"((?:[^"\\\\]|\\\\\\\\|\\\\")*)"', 'y'),
+		int32:  /^((?:0[xX][\da-fA-F]+)|(?:[+-]?\d+))/,
+		double: /^([+-]?(?:(?:(?:\d*\.\d+)|(?:\d+(?:\.)?))(?:[eE][+-]?\d+)?))/,
+		string: /^"((?:[^"\\]|\\\\|\\")*)"/,
 
-		Inf:         new RegExp ('^[+]?inf',  'yi'),
-		NegativeInf: new RegExp ('^-inf',     'yi'),
-		NaN:         new RegExp ('^[+-]?nan', 'yi'),
+		Inf:         /^[+]?inf/i,
+		NegativeInf: /^-inf/i,
+		NaN:         /^[+-]?nan/i,
 
 		// Misc
-		Break: new RegExp ('\\r?\\n', 'g'),
+		Break: /\r?\n/g,
 	};
 
 	// +scriptBodyElement assignments
 	function parseY (parser)
 	{
 		this .lastIndex = parser .lastIndex;
-
-		parser .result = this .exec (parser .input);
+		parser .result  = this .exec (parser .input);
 
 		if (parser .result)
 		{
@@ -25064,13 +25063,11 @@ function ($,
 	function parse (parser)
 	{
 		this .lastIndex = 0;
-
-		parser .result = this .exec (parser .input);
-		parser .input  = parser .input .slice (this .lastIndex);
+		parser .result  = this .exec (parser .input);
 
 		if (parser .result)
 		{
-			parser .lastIndex = this .lastIndex;
+			parser .input = parser .input .slice (parser .result [0] .length);
 			return true;
 		}
 
@@ -58607,17 +58604,22 @@ function ($,
 				this .setVolume (0);
 				this .duration_changed_ = media .duration;
 
-				if (this .isActive_ .getValue ())
-				{
-					if (this .loop_ .getValue ())
-						media .currentTime = this .getElapsedTime () % media .duration;
-					else
-						media .currentTime = this .getElapsedTime ();
+				//this .set_loop__ ();
 
-					if (! this .isPaused_ .getValue ())
-					{							
-						if (this .speed_ .getValue ())
-							media .play ();
+				if (this .enabled_ .getValue ())
+				{
+					if (this .isActive_ .getValue ())
+					{
+						if (this .loop_ .getValue ())
+							media .currentTime = this .getElapsedTime () % media .duration;
+						else
+							media .currentTime = this .getElapsedTime ();
+
+						if (! this .isPaused_ .getValue ())
+						{							
+							if (this .speed_ .getValue ())
+								media .play ();
+						}
 					}
 				}
 			}
@@ -62745,8 +62747,8 @@ function ($,
 					this .fromVector  = this .cylinder .axis .getPerpendicularVector (trackPoint) .negate ();
 					this .startOffset = new Rotation4 (yAxis, this .offset_ .getValue ());
 	
-					//this .trackPoint_changed_  .set (trackPoint);
-					//this .rotation_changed .set (this .startOffset);
+					this .trackPoint_changed_  .set (trackPoint);
+					this .rotation_changed .set (this .startOffset);
 				}
 				else
 				{
@@ -66445,7 +66447,7 @@ function ($,
 
 				if (count > 1)
 				{
-					count = 2 * count - 2;
+					count = 2 * count - 2; // numVertices for line lines trip
 
 					for (var i = 0; i < count; ++ i, index += i & 1)
 					{
@@ -67917,9 +67919,9 @@ function ($,
 				{
 					var matrices = this .getMatrices () [hit .layer .getId ()];
 
-					this .modelViewMatrix .assign (matrices .modelViewMatrix);
-					this .projectionMatrix .assign (matrices .projectionMatrix);
-					this .viewport .assign (matrices .viewport);
+					this .modelViewMatrix    .assign (matrices .modelViewMatrix);
+					this .projectionMatrix   .assign (matrices .projectionMatrix);
+					this .viewport           .assign (matrices .viewport);
 					this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
 
 					var
@@ -67950,17 +67952,34 @@ function ($,
 						this .plane       = new Plane3 (hitPoint, axisRotation .multVecRot (new Vector3 (0, 0, 1)));
 					}
 
+					var trackPoint = new Vector3 (0, 0, 0);
+
 					if (this .planeSensor)
+					{
 						this .plane .intersectsLine (hitRay, this .startPoint);
 
+//						new Plane3 (new Vector3 (0, 0, 0), this .plane .normal) .intersectsLine (hitRay, trackPoint);
+					}
 					else
+					{
 						this .getLineTrackPoint (hit, this .line, this .startPoint);
 
-					this .startOffset .assign (this .offset_ .getValue ());
-	
-					//this .trackPoint_changed_  .set (trackPoint);
-					//this .translation_changed_ .set (this .offset_ .getValue ());
-			}
+						try
+						{
+							this .getLineTrackPoint (hit, new Line3 (this .line .direction, this .line .direction), trackPoint);
+						}
+						catch (error)
+						{
+							//console .log (error);
+
+							trackPoint = this .startPoint;
+						}
+					}
+
+					this .startOffset          .assign (this .offset_ .getValue ());
+					this .trackPoint_changed_  .set (trackPoint);
+					this .translation_changed_ .set (this .offset_ .getValue ());
+				}
 				else
 				{
 					if (this .autoOffset_ .getValue ())
@@ -67969,7 +67988,7 @@ function ($,
 			}
 			catch (error)
 			{
-				//console .log (error);
+				console .log (error);
 			}
 		},
 		set_motion__: function (hit)
@@ -70809,7 +70828,7 @@ function ($,
 			
 			this .translation .z = e;
 			this .rotation .setFromToVec (this .zAxis, this .direction_ .getValue ());
-			this .scale .z = b / a;
+			this .scale .z = a / b;
 
 			var transformationMatrix = this .transformationMatrix;
 
@@ -71057,8 +71076,8 @@ function ($,
 					this .startPoint  .assign (hitPoint);
 					this .startOffset .assign (this .offset_ .getValue ());
 	
-					//this .trackPoint_changed_  .set (hitPoint);
-					//this .rotation_changed .set (this .offset_ .getValue ());
+					this .trackPoint_changed_  .set (hitPoint);
+					this .rotation_changed .set (this .offset_ .getValue ());
 				}
 				else
 				{

@@ -142,7 +142,7 @@ function ($,
 
 				if (count > 1)
 				{
-					count = 2 * count - 2;
+					count = 2 * count - 2; // numVertices for line lines trip
 
 					for (var i = 0; i < count; ++ i, index += i & 1)
 					{

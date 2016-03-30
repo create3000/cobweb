@@ -45,7 +45,7 @@ function ($,
 	return {
 		providerUrl:       "http://titania.create3000.de/cobweb",
 		componentUrl:       componentUrl,
-		fallbackUrl:       "https://crossorigin.me/",
-		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
+		fallbackUrl:       "https://cdn.rawgit.com/technoboy10/crossorigin.me/master/",
+		fallbackExpression: new RegExp ("^https://cdn.rawgit.com/technoboy10/crossorigin.me/master/"),
 	};
 });

@@ -14,14 +14,10 @@ define (function ()
 			   return undefined;
 
 			return JSON .parse (localStorage [key])
- 		},
+		},
 		set: function (target, key, value)
 		{
-		   if (value === undefined)
-		      localStorage .removeItem (key);
-		   else
-				localStorage [key] = JSON .stringify (value);
-
+			localStorage [key] = JSON .stringify (value);
 			return true;
 		},
 	};
@@ -33,6 +29,10 @@ define (function ()
 
 	DataStorage .prototype = {
 		constructor: DataStorage,
+		removeItem: function (key)
+		{
+			return localStorage .removeItem (key);
+		},
 		clear: function ()
 		{
 			return localStorage .clear ();

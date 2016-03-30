@@ -67,17 +67,22 @@ function ($,
 				this .setVolume (0);
 				this .duration_changed_ = media .duration;
 
-				if (this .isActive_ .getValue ())
-				{
-					if (this .loop_ .getValue ())
-						media .currentTime = this .getElapsedTime () % media .duration;
-					else
-						media .currentTime = this .getElapsedTime ();
+				//this .set_loop__ ();
 
-					if (! this .isPaused_ .getValue ())
-					{							
-						if (this .speed_ .getValue ())
-							media .play ();
+				if (this .enabled_ .getValue ())
+				{
+					if (this .isActive_ .getValue ())
+					{
+						if (this .loop_ .getValue ())
+							media .currentTime = this .getElapsedTime () % media .duration;
+						else
+							media .currentTime = this .getElapsedTime ();
+
+						if (! this .isPaused_ .getValue ())
+						{							
+							if (this .speed_ .getValue ())
+								media .play ();
+						}
 					}
 				}
 			}

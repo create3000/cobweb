@@ -141,7 +141,7 @@ function ($,
 			
 			this .translation .z = e;
 			this .rotation .setFromToVec (this .zAxis, this .direction_ .getValue ());
-			this .scale .z = b / a;
+			this .scale .z = a / b;
 
 			var transformationMatrix = this .transformationMatrix;
 
