@@ -92,7 +92,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				{
 					this .button = event .button;
 				
-					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
 					event .preventDefault ();
@@ -125,7 +125,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				{
 					this .button = event .button;
 				
-					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
 					event .preventDefault ();

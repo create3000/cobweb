@@ -41704,7 +41704,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				{
 					this .button = event .button;
 					
-					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 
 					event .preventDefault ();
@@ -41724,7 +41724,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					
 					this .getBrowser () .getCanvas () .unbind ("mousemove.ExamineViewer");
 
-					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 		
 					event .preventDefault ();
@@ -41774,21 +41774,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					break;
 				}
 			}
-		},
-		documentmousemove: function (event)
-		{
-		   var
-		      topOffset = this .getWindowRelativeOffset (top, this .getBrowser () .getCanvas ()),
-				offset    = this .getBrowser () .getCanvas () .offset ();
-
-			event .pageX -= topOffset .left;
-			event .pageY -= topOffset .top;
-			event .pageX += offset .left;
-			event .pageY += offset .top;
-
-			this .mousemove (event);
-	
-			event .preventDefault ();
 		},
 		mousemove: function (event)
 		{
@@ -42014,7 +41999,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				{
 					this .button = event .button;
 				
-					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
 					event .preventDefault ();
@@ -42047,7 +42032,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				{
 					this .button = event .button;
 				
-					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
 					event .preventDefault ();
