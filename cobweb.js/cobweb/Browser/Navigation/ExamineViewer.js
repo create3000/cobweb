@@ -153,10 +153,14 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		},
 		documentmousemove: function (event)
 		{
-		   var offset = this .getWindowRelativeOffset (top, this .getBrowser () .getCanvas ());
+		   var
+		      topOffset = this .getWindowRelativeOffset (top, this .getBrowser () .getCanvas ()),
+				offset    = this .getBrowser () .getCanvas () .offset ();
 
-			event .pageX -= offset .left;
-			event .pageY -= offset .top;
+			event .pageX -= topOffset .left;
+			event .pageY -= topOffset .top;
+			event .pageX += offset .left;
+			event .pageY += offset .top;
 
 			this .mousemove (event);
 	
