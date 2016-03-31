@@ -46,8 +46,6 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 				offset      = element .offset (),
 				childWindow = window;
 
-			console .log ("");
-
 			while (childWindow !== parentWindow)
 			{
 			   var

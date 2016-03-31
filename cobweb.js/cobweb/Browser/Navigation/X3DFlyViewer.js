@@ -95,10 +95,10 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 		
 					event .preventDefault ();
@@ -134,10 +134,10 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 
 					event .preventDefault ();
@@ -163,10 +163,10 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			this .button = -1;
 		
-			$(document)      .unbind ("mousemove.X3DFlyViewer" + this .getId ());
-			$(top .document) .unbind ("mousemove.X3DFlyViewer" + this .getId ());
-			$(document)      .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
-			$(top .document) .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
+			$(document) .unbind ("mousemove.X3DFlyViewer" + this .getId ());
+			$(top)      .unbind ("mousemove.X3DFlyViewer" + this .getId ());
+			$(document) .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
+			$(top)      .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
 
 			this .disconnect ();
 			this .getBrowser () .setCursor ("DEFAULT");
@@ -498,8 +498,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		{
 			this .disconnect ();
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
-			$(document)      .unbind (".X3DFlyViewer" + this .getId ());
-			$(top .document) .unbind (".X3DFlyViewer" + this .getId ());
+			$(document) .unbind (".X3DFlyViewer" + this .getId ());
+			$(top)      .unbind (".X3DFlyViewer" + this .getId ());
 		},
 	});
 

@@ -41492,8 +41492,6 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 				offset      = element .offset (),
 				childWindow = window;
 
-			console .log ("");
-
 			while (childWindow !== parentWindow)
 			{
 			   var
@@ -41732,10 +41730,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 		
 					event .preventDefault ();
@@ -41758,10 +41756,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 		
 					event .preventDefault ();
@@ -41781,10 +41779,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			this .button = -1;
 		
-			$(document)      .unbind ("mousemove.ExamineViewer" + this .getId ());
-			$(top .document) .unbind ("mousemove.ExamineViewer" + this .getId ());
-			$(document)      .unbind ("mouseup.ExamineViewer"   + this .getId ());
-			$(top .document) .unbind ("mouseup.ExamineViewer"   + this .getId ());
+			$(document) .unbind ("mousemove.ExamineViewer" + this .getId ());
+			$(top)      .unbind ("mousemove.ExamineViewer" + this .getId ());
+			$(document) .unbind ("mouseup.ExamineViewer"   + this .getId ());
+			$(top)      .unbind ("mouseup.ExamineViewer"   + this .getId ());
 
 			switch (event .button)
 			{
@@ -41948,8 +41946,8 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		{
 			this .disconnect ();
 			this .getBrowser () .getCanvas () .unbind (".ExamineViewer");
-			$(document)      .unbind (".ExamineViewer" + this .getId ());
-			$(top .document) .unbind (".ExamineViewer" + this .getId ());
+			$(document) .unbind (".ExamineViewer" + this .getId ());
+			$(top)      .unbind (".ExamineViewer" + this .getId ());
 		},
 	});
 
@@ -42053,10 +42051,10 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 		
 					event .preventDefault ();
@@ -42092,10 +42090,10 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 
 					event .preventDefault ();
@@ -42121,10 +42119,10 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			this .button = -1;
 		
-			$(document)      .unbind ("mousemove.X3DFlyViewer" + this .getId ());
-			$(top .document) .unbind ("mousemove.X3DFlyViewer" + this .getId ());
-			$(document)      .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
-			$(top .document) .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
+			$(document) .unbind ("mousemove.X3DFlyViewer" + this .getId ());
+			$(top)      .unbind ("mousemove.X3DFlyViewer" + this .getId ());
+			$(document) .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
+			$(top)      .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
 
 			this .disconnect ();
 			this .getBrowser () .setCursor ("DEFAULT");
@@ -42456,8 +42454,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		{
 			this .disconnect ();
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
-			$(document)      .unbind (".X3DFlyViewer" + this .getId ());
-			$(top .document) .unbind (".X3DFlyViewer" + this .getId ());
+			$(document) .unbind (".X3DFlyViewer" + this .getId ());
+			$(top)      .unbind (".X3DFlyViewer" + this .getId ());
 		},
 	});
 
@@ -43101,9 +43099,9 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					
 					$(document) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
 
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
 					}
 		
 					event .preventDefault ();
@@ -43120,8 +43118,8 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			this .button = -1;
 		
-			$(document)      .unbind (".LookAtViewer" + this .getId ());
-			$(top .document) .unbind (".LookAtViewer" + this .getId ());
+			$(document) .unbind (".LookAtViewer" + this .getId ());
+			$(top)      .unbind (".LookAtViewer" + this .getId ());
 
 			var
 				offset = this .getBrowser () .getCanvas () .offset (), 
@@ -43158,6 +43156,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		{
 			this .getBrowser () .getCanvas () .unbind (".LookAtViewer");
 			$(document) .unbind (".LookAtViewer" + this .getId ());
+			$(top)      .unbind (".LookAtViewer" + this .getId ());
 		},
 	});
 

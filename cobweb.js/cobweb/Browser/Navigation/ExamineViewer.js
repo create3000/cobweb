@@ -69,10 +69,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 		
 					event .preventDefault ();
@@ -95,10 +95,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top .document !== document)
+					if (top !== window)
 					{
-						$(top .document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top .document) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
+						$(top) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup .bind (this));
+						$(top) .bind ("mousemove.ExamineViewer" + this .getId (), this .documentmousemove .bind (this));
 					}
 		
 					event .preventDefault ();
@@ -118,10 +118,10 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			this .button = -1;
 		
-			$(document)      .unbind ("mousemove.ExamineViewer" + this .getId ());
-			$(top .document) .unbind ("mousemove.ExamineViewer" + this .getId ());
-			$(document)      .unbind ("mouseup.ExamineViewer"   + this .getId ());
-			$(top .document) .unbind ("mouseup.ExamineViewer"   + this .getId ());
+			$(document) .unbind ("mousemove.ExamineViewer" + this .getId ());
+			$(top)      .unbind ("mousemove.ExamineViewer" + this .getId ());
+			$(document) .unbind ("mouseup.ExamineViewer"   + this .getId ());
+			$(top)      .unbind ("mouseup.ExamineViewer"   + this .getId ());
 
 			switch (event .button)
 			{
@@ -285,8 +285,8 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		{
 			this .disconnect ();
 			this .getBrowser () .getCanvas () .unbind (".ExamineViewer");
-			$(document)      .unbind (".ExamineViewer" + this .getId ());
-			$(top .document) .unbind (".ExamineViewer" + this .getId ());
+			$(document) .unbind (".ExamineViewer" + this .getId ());
+			$(top)      .unbind (".ExamineViewer" + this .getId ());
 		},
 	});
 
