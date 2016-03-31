@@ -95,12 +95,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top !== window)
-					{
-						$(top) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
-					}
-		
 					event .preventDefault ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
@@ -134,12 +128,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					if (top !== window)
-					{
-						$(top) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup .bind (this));
-						$(top) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .documentmousemove .bind (this));
-					}
-
 					event .preventDefault ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
@@ -164,28 +152,11 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			this .button = -1;
 		
 			$(document) .unbind ("mousemove.X3DFlyViewer" + this .getId ());
-			$(top)      .unbind ("mousemove.X3DFlyViewer" + this .getId ());
 			$(document) .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
-			$(top)      .unbind ("mouseup.X3DFlyViewer"   + this .getId ());
 
 			this .disconnect ();
 			this .getBrowser () .setCursor ("DEFAULT");
 			this .removeCollision ();
-		},
-		documentmousemove: function (event)
-		{
-		   var
-		      topOffset = this .getWindowRelativeOffset (top, this .getBrowser () .getCanvas ()),
-				offset    = this .getBrowser () .getCanvas () .offset ();
-
-			event .pageX -= topOffset .left;
-			event .pageY -= topOffset .top;
-			event .pageX += offset .left;
-			event .pageY += offset .top;
-
-			this .mousemove (event);
-	
-			event .preventDefault ();
 		},
 		mousemove: function (event)
 		{
@@ -196,8 +167,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				x      = event .pageX - offset .left,
 				y      = event .pageY - offset .top;
 			
-			console .log (x, y);
-
 			switch (this .button)
 			{
 				case 0:
@@ -505,7 +474,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			this .disconnect ();
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
 			$(document) .unbind (".X3DFlyViewer" + this .getId ());
-			$(top)      .unbind (".X3DFlyViewer" + this .getId ());
 		},
 	});
 

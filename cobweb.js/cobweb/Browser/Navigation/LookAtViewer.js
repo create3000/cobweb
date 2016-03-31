@@ -47,11 +47,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					
 					$(document) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
 
-					if (top !== window)
-					{
-						$(top) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
-					}
-		
 					event .preventDefault ();
 					this .getActiveViewpoint () .transitionStop ();
 
@@ -67,7 +62,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			this .button = -1;
 		
 			$(document) .unbind (".LookAtViewer" + this .getId ());
-			$(top)      .unbind (".LookAtViewer" + this .getId ());
 
 			var
 				offset = this .getBrowser () .getCanvas () .offset (), 
@@ -104,7 +98,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		{
 			this .getBrowser () .getCanvas () .unbind (".LookAtViewer");
 			$(document) .unbind (".LookAtViewer" + this .getId ());
-			$(top)      .unbind (".LookAtViewer" + this .getId ());
 		},
 	});
 
