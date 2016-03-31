@@ -40,6 +40,31 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		{
 			return this .getBrowser () .getActiveLayer () .getViewpoint ();
 		},
+		getWindowRelativeOffset: function (parentWindow, element)
+		{
+			var
+				offset      = element .offset (),
+				childWindow = window;
+
+			console .log ("");
+
+			while (childWindow !== parentWindow)
+			{
+			   var
+			      frame          = $(childWindow .frameElement),
+					relativeOffset = frame .offset (),
+					borderLeft     = parseFloat (frame .css ("border-left-width")),
+					borderTop      = parseFloat (frame .css ("border-top-width")),
+					paddingLeft    = parseFloat (frame .css ("padding-left")),
+					paddingTop     = parseFloat (frame .css ("padding-top"));
+
+				offset.left += relativeOffset .left + borderLeft + paddingLeft;
+				offset.top  += relativeOffset .top  + borderTop  + paddingTop;
+				childWindow  = childWindow.parent;
+			}
+
+			return offset;
+		},
 		getPointOnCenterPlane: function (x, y)
 		{
 			try
