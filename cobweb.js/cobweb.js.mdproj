@@ -1128,6 +1128,14 @@
     <None Include="iframe.html" />
     <None Include="examples\noise\noise.x3d" />
     <None Include="examples\noise\noise2.x3d" />
+    <None Include="examples\fourmilab\earth.x3d" />
+    <None Include="examples\fourmilab\clouds.gif" />
+    <None Include="examples\fourmilab\color.gif" />
+    <None Include="examples\fourmilab\earth.jpg" />
+    <None Include="examples\fourmilab\fourmiearth.png" />
+    <None Include="examples\fourmilab\moon.jpg" />
+    <None Include="examples\fourmilab\topo.jpg" />
+    <None Include="examples\fourmilab\vapour.gif" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1186,5 +1194,6 @@
     <Folder Include="cobweb\Browser\Interpolation\" />
     <Folder Include="cobweb\Browser\Followers\" />
     <Folder Include="tests\Components\Core\" />
+    <Folder Include="examples\fourmilab\" />
   </ItemGroup>
 </Project>
