@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/fourmilab/earth.x3d'/>
-    <meta name='modified' content='Fri, 01 Apr 2016 18:35:30 GMT'/>
+    <meta name='modified' content='Fri, 01 Apr 2016 21:00:38 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -44,11 +44,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='1.4147616744763, 4.97728481802588, 4.5520406934495'/>
+              value='0, 0, 3'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.932847501400316, 0.33148744770188, 0.141108508415621, 0.858451519895864'/>
+              value='0, 0, 1, 0'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -60,6 +60,22 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <Transform DEF='Disk2D' containerField='value'
+                rotation='0 0 1 0'
+                scale='1.21903 1.21903 1.21903'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                  <ImageTexture
+                      url='"glow.png"'/>
+                </Appearance>
+                <Disk2D/>
+              </Shape>
+            </Transform>
+          </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='LayerSet' containerField='value'
             name='LayerSet'
@@ -91,12 +107,13 @@
             <MetadataBoolean DEF='enabled_3' containerField='value'
                 name='enabled'
                 reference='http://titania.create3000.de'
-                value='true'/>
+                value='false'/>
           </MetadataSet>
         </MetadataSet>
         <Viewpoint
             position='0 0 3'/>
         <Group DEF='SolarSystem'>
+          <SphereSensor DEF='_1'/>
           <Transform DEF='Sphere'>
             <Transform DEF='Earth'
                 rotation='0 1 0 2.40685867379771'
@@ -114,7 +131,7 @@
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_1'
+                <TimeSensor DEF='_2'
                     cycleInterval='200'
                     loop='true'/>
                 <OrientationInterpolator DEF='EarthRotationInterpolator'
@@ -142,7 +159,7 @@
                 <Shape>
                   <Appearance>
                     <Material/>
-                    <ImageTexture DEF='_2'
+                    <ImageTexture DEF='_3'
                         url='"https://www.fourmilab.ch/cgi-bin/Earth?di=97CCA071D5F93BF45FA9D435C248A81F24CBDEFDBFACFC9A618668864F310F746C53EC94B4BEBD72580668F0A6181C3CB8A86060D17541E96F2B874090006B318740E26A20FF20AEB08C17D206272C691A45D38EE00CDC7D65CB764DFAE0D8D5E8FD8747BF48882BE1EE7C"'/>
                   </Appearance>
                   <Sphere/>
@@ -170,7 +187,7 @@
                         <Transform DEF='TOP-SECTOR3'>
                           <Shape>
                             <Appearance>
-                              <Material DEF='_3'
+                              <Material DEF='_4'
                                   emissiveColor='0.5 0.5 0.5'/>
                             </Appearance>
                             <IndexedFaceSet
@@ -185,7 +202,7 @@
                         <Transform DEF='TOP-SECTOR4'>
                           <Shape>
                             <Appearance>
-                              <Material USE='_3'/>
+                              <Material USE='_4'/>
                             </Appearance>
                             <IndexedFaceSet
                                 solid='false'
@@ -201,7 +218,7 @@
                         <Transform DEF='TOP-SECTOR1'>
                           <Shape>
                             <Appearance>
-                              <Material USE='_3'/>
+                              <Material USE='_4'/>
                             </Appearance>
                             <IndexedFaceSet
                                 solid='false'
@@ -215,7 +232,7 @@
                         <Transform DEF='TOP-SECTOR2'>
                           <Shape>
                             <Appearance>
-                              <Material USE='_3'/>
+                              <Material USE='_4'/>
                             </Appearance>
                             <IndexedFaceSet
                                 solid='false'
@@ -233,7 +250,7 @@
                         <Transform DEF='BOTTOM-SECTOR3'>
                           <Shape>
                             <Appearance>
-                              <Material USE='_3'/>
+                              <Material USE='_4'/>
                             </Appearance>
                             <IndexedFaceSet
                                 solid='false'
@@ -247,7 +264,7 @@
                         <Transform DEF='BOTTOM-SECTOR4'>
                           <Shape>
                             <Appearance>
-                              <Material USE='_3'/>
+                              <Material USE='_4'/>
                             </Appearance>
                             <IndexedFaceSet
                                 solid='false'
@@ -263,7 +280,7 @@
                         <Transform DEF='BOTTOM-SECTOR1'>
                           <Shape>
                             <Appearance>
-                              <Material USE='_3'/>
+                              <Material USE='_4'/>
                             </Appearance>
                             <IndexedFaceSet
                                 solid='false'
@@ -277,7 +294,7 @@
                         <Transform DEF='BOTTOM-SECTOR2'>
                           <Shape>
                             <Appearance>
-                              <Material USE='_3'/>
+                              <Material USE='_4'/>
                             </Appearance>
                             <IndexedFaceSet
                                 solid='false'
@@ -308,7 +325,10 @@
               </Shape>
             </Transform>
           </Transform>
-          <SphereSensor DEF='_4'/>
+          <Billboard
+              axisOfRotation='0 0 0'>
+            <Transform USE='Disk2D'/>
+          </Billboard>
         </Group>
         <Script DEF='EarthScript'>
           <field accessType='inputOnly' type='SFTime' name='set_marble'/>
@@ -432,7 +452,7 @@ function eventsProcessed ()
           </Shape>
         </Transform>
         <Transform DEF='BlueMarble'>
-          <Transform DEF='Disk2D'
+          <Transform DEF='Disk2D_1'
               translation='-6 3 1.086e-05'
               scale='0.5 0.5 0.5'>
             <Shape>
@@ -474,7 +494,7 @@ function eventsProcessed ()
           </Transform>
         </Transform>
         <Transform DEF='Topo'>
-          <Transform DEF='Disk2D_1'
+          <Transform DEF='Disk2D_2'
               translation='-6 1.4 5.06799e-06'
               rotation='0 0 0 2.06476546236143e-07'
               scale='0.5 0.5 0.5'>
@@ -517,7 +537,7 @@ function eventsProcessed ()
           </Transform>
         </Transform>
         <Transform DEF='Weather'>
-          <Transform DEF='Disk2D_2'
+          <Transform DEF='Disk2D_3'
               translation='-6 -0.2 -7.23998e-07'
               rotation='0 0 0 4.12953092472286e-07'
               scale='0.5 0.5 0.5'>
@@ -560,7 +580,7 @@ function eventsProcessed ()
           </Transform>
         </Transform>
         <Transform DEF='Clouds'>
-          <Transform DEF='Disk2D_3'
+          <Transform DEF='Disk2D_4'
               translation='6 3 1.086e-05'
               rotation='0 0 0 6.19429638708431e-07'
               scale='0.5 0.5 0.5'>
@@ -603,7 +623,7 @@ function eventsProcessed ()
           </Transform>
         </Transform>
         <Transform DEF='Vapour'>
-          <Transform DEF='Disk2D_4'
+          <Transform DEF='Disk2D_5'
               translation='6 1.4 5.06799e-06'
               rotation='0 0 0 2.06476546236143e-07'
               scale='0.5 0.5 0.5'>
@@ -702,8 +722,8 @@ function set_time ()
     </LayerSet>
     <ROUTE fromNode='STARSHELL-ENGINE' fromField='value_changed' toNode='STARSHELL-XFORM' toField='set_rotation'/>
     <ROUTE fromNode='STARSHELL-TIMER' fromField='fraction_changed' toNode='STARSHELL-ENGINE' toField='set_fraction'/>
-    <ROUTE fromNode='_4' fromField='rotation_changed' toNode='Sphere' toField='set_rotation'/>
-    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='EarthRotationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_1' fromField='rotation_changed' toNode='Sphere' toField='set_rotation'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='EarthRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='EarthRotationInterpolator' fromField='value_changed' toNode='Earth' toField='set_rotation'/>
     <ROUTE fromNode='TimeScript' fromField='string_changed' toNode='_12' toField='set_string'/>
     <ROUTE fromNode='_14' fromField='cycleTime' toNode='TimeScript' toField='set_time'/>
@@ -712,7 +732,7 @@ function set_time ()
     <ROUTE fromNode='_8' fromField='touchTime' toNode='EarthScript' toField='set_weather'/>
     <ROUTE fromNode='_9' fromField='touchTime' toNode='EarthScript' toField='set_clouds'/>
     <ROUTE fromNode='_10' fromField='touchTime' toNode='EarthScript' toField='set_vapour'/>
-    <ROUTE fromNode='EarthScript' fromField='image_changed' toNode='_2' toField='set_url'/>
+    <ROUTE fromNode='EarthScript' fromField='image_changed' toNode='_3' toField='set_url'/>
     <ROUTE fromNode='_5' fromField='cycleTime' toNode='EarthScript' toField='set_time'/>
   </Scene>
 </X3D>

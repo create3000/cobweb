@@ -1136,6 +1136,7 @@
     <None Include="examples\fourmilab\moon.jpg" />
     <None Include="examples\fourmilab\topo.jpg" />
     <None Include="examples\fourmilab\vapour.gif" />
+    <None Include="examples\fourmilab\glow.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
