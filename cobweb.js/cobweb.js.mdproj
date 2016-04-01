@@ -1041,7 +1041,6 @@
     <None Include="tests\Components\Texturing\circles\green.png" />
     <None Include="tests\Components\Texturing\circles\red.png" />
     <None Include="tests\Components\Texturing\circles\circles.x3d" />
-    <None Include="tests\Components\PROTO\Noise\noise.x3d" />
     <None Include="examples\puzzle\puzzle.x3d" />
     <None Include="examples\puzzle\AlienEncountersItalic.otf" />
     <None Include="examples\puzzle\AlienEncountersSolid.otf" />
@@ -1127,6 +1126,8 @@
     <None Include="cobweb\Execution\ImportedNode.js" />
     <None Include="tests\Components\Scripting\string.x3dv" />
     <None Include="iframe.html" />
+    <None Include="examples\noise\noise.x3d" />
+    <None Include="examples\noise\noise2.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1172,7 +1173,6 @@
     <Folder Include="tests\Components\CADGeometry\" />
     <Folder Include="tests\Components\Lighting\lights\" />
     <Folder Include="tests\Components\Texturing\circles\" />
-    <Folder Include="tests\Components\PROTO\Noise\" />
     <Folder Include="examples\puzzle\" />
     <Folder Include="tests\Components\ComposedCubeMapTexture\" />
     <Folder Include="tests\Components\Shaders\" />

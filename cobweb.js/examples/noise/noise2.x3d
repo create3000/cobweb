@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Mon, 21 Dec 2015 11:20:27 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/noise/noise2.x3d'/>
+    <meta name='modified' content='Fri, 01 Apr 2016 10:53:07 GMT'/>
+  </head>
+  <Scene>
+    <ProtoDeclare name='Noise'>
+      <ProtoInterface>
+        <field accessType='inputOutput' type='SFBool' name='enabled' value='true'/>
+        <field accessType='inputOutput' type='SFTime' name='cycleInterval' value='1'/>
+        <field accessType='inputOutput' type='SFTime' name='frequency' value='1'/>
+        <field accessType='inputOutput' type='SFFloat' name='amplitude' value='1'/>
+        <field accessType='inputOutput' type='SFBool' name='loop'/>
+        <field accessType='inputOutput' type='SFTime' name='startTime'/>
+        <field accessType='inputOutput' type='SFTime' name='resumeTime'/>
+        <field accessType='inputOutput' type='SFTime' name='pauseTime'/>
+        <field accessType='inputOutput' type='SFTime' name='stopTime'/>
+        <field accessType='outputOnly' type='SFTime' name='cycleTime'/>
+        <field accessType='outputOnly' type='SFBool' name='isPaused'/>
+        <field accessType='outputOnly' type='SFBool' name='isActive'/>
+        <field accessType='outputOnly' type='SFTime' name='elapsedTime'/>
+        <field accessType='outputOnly' type='SFFloat' name='fraction_changed'/>
+        <field accessType='outputOnly' type='SFTime' name='time'/>
+        <field accessType='inputOutput' type='MFNode' name='children'/>
+      </ProtoInterface>
+      <ProtoBody>
+        <TimeSensor DEF='Timer'>
+          <IS>
+            <connect nodeField='enabled' protoField='enabled'/>
+            <connect nodeField='cycleInterval' protoField='cycleInterval'/>
+            <connect nodeField='loop' protoField='loop'/>
+            <connect nodeField='startTime' protoField='startTime'/>
+            <connect nodeField='resumeTime' protoField='resumeTime'/>
+            <connect nodeField='pauseTime' protoField='pauseTime'/>
+            <connect nodeField='stopTime' protoField='stopTime'/>
+            <connect nodeField='isPaused' protoField='isPaused'/>
+            <connect nodeField='isActive' protoField='isActive'/>
+            <connect nodeField='cycleTime' protoField='cycleTime'/>
+            <connect nodeField='elapsedTime' protoField='elapsedTime'/>
+            <connect nodeField='time' protoField='time'/>
+          </IS>
+        </TimeSensor>
+        <Script DEF='PEACHEYnoise'
+            directOutput='true'>
+          <field accessType='outputOnly' type='SFFloat' name='fraction_changed'/>
+          <field accessType='inputOnly' type='SFTime' name='set_time'/>
+          <field accessType='inputOutput' type='SFTime' name='frequency'/>
+          <field accessType='inputOutput' type='SFFloat' name='amplitude'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR00' value='-0.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR01' value='1.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR02' value='-1.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR03' value='0.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR10' value='1'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR11' value='-2.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR12' value='2'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR13' value='-0.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR20' value='-0.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR21'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR22' value='0.5'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR23'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR30'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR31' value='1'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR32'/>
+          <field accessType='initializeOnly' type='SFFloat' name='CR33'/>
+          <field accessType='initializeOnly' type='SFInt32' name='TABSIZE' value='256'/>
+          <field accessType='initializeOnly' type='SFInt32' name='TABMASK' value='255'/>
+          <field accessType='initializeOnly' type='MFFloat' name='VALUTAB' value='-0.676944, -0.718805, 0.624373, 0.280473, -0.265912, 0.8961, -0.280905, -0.699751, -0.921512, 0.145631, 0.539075, -0.460858, -0.958776, 0.0638213, 0.757979, 0.266016, -0.762812, 0.796109, -0.420728, 0.335279, -0.289786, 0.102572, 0.497216, 0.879682, 0.868764, 0.597697, 0.895882, -0.698134, 0.59017, -0.832965, -0.931365, 0.816558, -0.214165, 0.858546, 0.269834, 0.871465, -0.282133, 0.341334, -0.122679, -0.211389, 0.793162, 0.756919, -0.351477, -0.080967, -0.566008, 0.458092, 0.39484, -0.507608, 0.934701, 0.737832, -0.821768, 0.169275, -0.0378253, 0.195692, -0.64922, -0.932403, 0.543269, -0.128527, -0.587785, 0.735701, 0.00546268, -0.304081, -0.247703, 0.183428, 0.397509, -0.834384, 0.874126, 0.658587, 0.414945, -0.555827, 0.66135, -0.630051, 0.790839, 0.324189, -0.343522, 0.809029, 0.485206, -0.345548, 0.159312, 0.711632, -0.182914, 0.944206, -0.766164, 0.0262684, -0.0687006, 0.901275, -0.571348, -0.47974, -0.32253, 0.643233, 0.170402, -0.144518, -0.898075, 0.240742, -0.61864, -0.895597, -0.686353, 0.109593, 0.901712, -0.246773, -0.516499, 0.562921, 0.763826, 0.252626, -0.828516, 0.567476, 0.270108, 0.127721, 0.0498209, 0.417743, 0.167837, 0.547638, -0.59974, 0.649165, -0.00631526, 0.0811482, 0.511969, -0.943407, -0.12261, 0.128555, 0.291982, -0.833452, 0.748395, 0.221184, 0.023203, 0.931791, 0.981011, 0.0184793, -0.734503, -0.225892, -0.956997, 0.408915, -0.606525, -0.603853, 0.679266, 0.634561, 0.200094, -0.984416, -0.43343, -0.189647, 0.368281, 0.84477, 0.217144, -0.402243, 0.423279, 0.746488, -0.811836, 0.118721, -0.973465, 0.0413317, -0.628988, -0.540553, 0.157414, -0.575345, 0.288473, 0.314709, -0.147855, 0.870964, 0.919816, -0.537885, 0.729903, 0.261034, 0.603024, 0.83187, 0.533985, 0.261978, 0.030229, 0.951275, -0.648381, -0.277115, 0.256681, 0.494372, -0.951058, 0.518597, 0.985425, -0.444176, -0.231743, -0.618408, 0.169108, -0.905742, 0.0827416, 0.806886, -0.812836, 0.754024, -0.410713, -0.402742, -0.489092, -0.0245656, -0.656777, 0.0360642, -0.139115, 0.942283, 0.599227, -0.967717, -0.60991, 0.49155, -0.179244, 0.877397, 0.393492, -0.376064, -0.144115, -0.513888, -0.551413, -0.295026, -0.449505, 0.162844, 0.733505, -0.164791, 0.880287, -0.956667, -0.451522, 0.19404, -0.0688516, 0.405654, -0.216706, -0.574452, -0.257039, 0.0273204, 0.22764, 0.335761, -0.845049, 0.685103, -0.786947, -0.690487, 0.351276, -0.248396, -0.895525, 0.931196, 0.803537, 0.637545, -0.373782, 0.307411, 0.742513, -0.438841, -0.0885615, -0.45935, -0.835612, 0.795985, -0.493984, -0.308135, -0.312634, -0.844199, 0.337031, -0.604097, 0.322551, 0.0203397, 0.872826, 0.0575003, 0.408551, 0.687865, 0.355948, -0.743342, -0.417686, 0.260591, -0.917958, 0.630943'/>
+          <field accessType='initializeOnly' type='MFInt32' name='PERM' value='225, 155, 210, 108, 175, 199, 221, 144, 203, 116, 70, 213, 69, 158, 33, 252, 5, 82, 173, 133, 222, 139, 174, 27, 9, 71, 90, 246, 75, 130, 91, 191, 169, 138, 2, 151, 194, 235, 81, 7, 25, 113, 228, 159, 205, 253, 134, 142, 248, 65, 224, 217, 22, 121, 229, 63, 89, 103, 96, 104, 156, 17, 201, 129, 36, 8, 165, 110, 237, 117, 231, 56, 132, 211, 152, 20, 181, 111, 239, 218, 170, 163, 51, 172, 157, 47, 80, 212, 176, 250, 87, 49, 99, 242, 136, 189, 162, 115, 44, 43, 124, 94, 150, 16, 141, 247, 32, 10, 198, 223, 255, 72, 53, 131, 84, 57, 220, 197, 58, 50, 208, 11, 241, 28, 3, 192, 62, 202, 18, 215, 153, 24, 76, 41, 15, 179, 39, 46, 55, 6, 128, 167, 23, 188, 106, 34, 187, 140, 164, 73, 112, 182, 244, 195, 227, 13, 35, 77, 196, 185, 26, 200, 226, 119, 31, 123, 168, 125, 249, 68, 183, 230, 177, 135, 160, 180, 12, 1, 243, 148, 102, 166, 38, 238, 251, 37, 240, 126, 64, 74, 161, 40, 184, 149, 171, 178, 101, 66, 29, 59, 146, 61, 254, 107, 42, 86, 154, 4, 236, 232, 120, 21, 233, 209, 45, 98, 193, 114, 78, 19, 206, 14, 118, 127, 48, 79, 147, 85, 30, 207, 219, 54, 88, 234, 190, 122, 95, 67, 143, 109, 137, 214, 145, 93, 92, 100, 245, 0, 216, 186, 60, 83, 105, 97, 204, 52'/>
+          <field accessType='initializeOnly' type='SFNode' name='timer'>
+            <TimeSensor USE='Timer'/>
+          </field>
+          <field accessType='initializeOnly' type='SFInt32' name='seed'/>
+          <IS>
+            <connect nodeField='fraction_changed' protoField='fraction_changed'/>
+            <connect nodeField='frequency' protoField='frequency'/>
+            <connect nodeField='amplitude' protoField='amplitude'/>
+          </IS>
+<![CDATA[vrmlscript:
+// private:
+function perm(x)			  { return PERM[(x & TABMASK)]; }
+function index(ix, iy, iz)    { return ( perm(ix + perm(iy + perm(iz))) ); }
+function vlattice(ix, iy, iz) { return VALUTAB[index(ix, iy, iz)]; }
+function clamp(x, a, b) 	  { return ( (x <= a) ? a : ((x >= b) ? b : x) ); }
+
+function initialize() { for(i = 0; i < TABSIZE; i++) { VALUTAB[i] = 1.0 - 2.0*Math.random(); } }
+
+function spline(x, nknots, knot) {
+   i = 0;
+   nspans = nknots - 3;
+   c0 = 0; c1 = 0; c2 = 0; c3 = 0;   /* coefficients of the cubic.*/
+
+   if (nspans >= 1) {
+	  /* Find the appropriate 4-point span of the spline. */
+	  x = clamp(x, 0, 1) * nspans;
+	  span = Math.floor(x);
+	  if (span >= (nknots - 3)) { span = (nknots - 3); }
+	  x -= span;
+	  i += span;
+
+	  /* Evaluate the span cubic at x using Horners rule. */
+	  c3 = CR00*knot[0 + i] + CR01*knot[1 + i] + CR02*knot[2 + i] + CR03*knot[3 + i];
+	  c2 = CR10*knot[0 + i] + CR11*knot[1 + i] + CR12*knot[2 + i] + CR13*knot[3 + i];
+	  c1 = CR20*knot[0 + i] + CR21*knot[1 + i] + CR22*knot[2 + i] + CR23*knot[3 + i];
+	  c0 = CR30*knot[0 + i] + CR31*knot[1 + i] + CR32*knot[2 + i] + CR33*knot[3 + i];
+
+	  return ((c3*x + c2)*x + c1)*x + c0;
+   }
+}
+
+function vnoise(value) {
+   xknots = new MFFloat();
+   yknots = new MFFloat();
+   zknots = new MFFloat();
+
+   ix = Math.floor(value);
+   fx = value - ix;
+
+   for (k = -1; k <= 2; k++) {
+	  for (j = -1; j <= 2; j++) {
+		 for (i = -1; i <= 2; i++)
+		 	xknots[i + 1] = vlattice(ix + i, ix + j, k);
+
+		 yknots[j + 1] = spline(fx, 4, xknots);
+	  }
+	  zknots[k + 1] = spline(fx, 4, yknots);
+   }
+   return spline(0, 4, zknots);
+}
+
+function set_time(time) {
+	fraction_changed = amplitude * vnoise(time * frequency);
+}
+]]> 
+        </Script>
+        <ROUTE fromNode='Timer' fromField='time' toNode='PEACHEYnoise' toField='set_time'/>
+      </ProtoBody>
+    </ProtoDeclare>
+    <ProtoDeclare name='Grid'>
+      <ProtoInterface>
+        <field accessType='inputOutput' type='SFVec3f' name='translation'/>
+        <field accessType='inputOutput' type='SFRotation' name='rotation'/>
+        <field accessType='inputOutput' type='SFVec3f' name='scale' value='1 1 1'/>
+        <field accessType='inputOutput' type='MFInt32' name='dimension' value='10, 10, 10'/>
+        <field accessType='inputOutput' type='MFInt32' name='majorLineEvery' value='5, 5, 5'/>
+        <field accessType='inputOutput' type='MFInt32' name='majorLineOffset' value='0, 0, 0'/>
+        <field accessType='inputOutput' type='SFColor' name='color' value='0.5 0.5 0.5'/>
+        <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.61803'/>
+        <field accessType='inputOutput' type='SFColor' name='lineColor' value='1 0.7 0.7'/>
+        <field accessType='inputOutput' type='SFFloat' name='lineTransparency' value='0.8'/>
+        <field accessType='inputOutput' type='SFColor' name='majorLineColor' value='1 0.7 0.7'/>
+        <field accessType='inputOutput' type='SFFloat' name='majorLineTransparency' value='0.6'/>
+        <field accessType='initializeOnly' type='SFBool' name='solid' value='true'/>
+      </ProtoInterface>
+      <ProtoBody>
+        <Transform>
+          <IS>
+            <connect nodeField='translation' protoField='translation'/>
+            <connect nodeField='rotation' protoField='rotation'/>
+            <connect nodeField='scale' protoField='scale'/>
+          </IS>
+          <Transform DEF='Plane'
+              rotation='-3.09087122910219e-08 0.70710528118436 0.707108281185553 3.14159'
+              scale='10 10 1'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Material2'
+                    diffuseColor='0 0 0'>
+                  <IS>
+                    <connect nodeField='emissiveColor' protoField='color'/>
+                    <connect nodeField='transparency' protoField='transparency'/>
+                  </IS>
+                </Material>
+              </Appearance>
+              <Rectangle2D
+                  size='1 1'>
+                <IS>
+                  <connect nodeField='solid' protoField='solid'/>
+                </IS>
+              </Rectangle2D>
+            </Shape>
+          </Transform>
+          <Shape DEF='MajorGrid'>
+            <Appearance>
+              <Material DEF='MajorMaterial'>
+                <IS>
+                  <connect nodeField='emissiveColor' protoField='majorLineColor'/>
+                  <connect nodeField='transparency' protoField='majorLineTransparency'/>
+                </IS>
+              </Material>
+            </Appearance>
+            <IndexedLineSet DEF='MajorGrid_1'
+                coordIndex='0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7, -1, 8, 9, -1, 10, 11, -1'>
+              <Coordinate
+                  point='-5 0 -5.25, -5 0 5.25, 0 0 -5.25, 0 0 5.25, 5 0 -5.25, 5 0 5.25, -5.25 0 -5, 5.25 0 -5, -5.25 0 0, 5.25 0 0, -5.25 0 5, 5.25 0 5'/>
+            </IndexedLineSet>
+          </Shape>
+          <Shape DEF='MinorGrid'>
+            <Appearance>
+              <Material DEF='MinorMaterial'>
+                <IS>
+                  <connect nodeField='emissiveColor' protoField='lineColor'/>
+                  <connect nodeField='transparency' protoField='lineTransparency'/>
+                </IS>
+              </Material>
+            </Appearance>
+            <IndexedLineSet DEF='MinorGrid_1'
+                coordIndex='0, 1, -1, 2, 3, -1, 4, 5, -1, 6, 7, -1, 8, 9, -1, 10, 11, -1, 12, 13, -1, 14, 15, -1, 16, 17, -1, 18, 19, -1, 20, 21, -1, 22, 23, -1, 24, 25, -1, 26, 27, -1, 28, 29, -1, 30, 31, -1'>
+              <Coordinate
+                  point='-4 0 -5, -4 0 5, -3 0 -5, -3 0 5, -2 0 -5, -2 0 5, -1 0 -5, -1 0 5, 1 0 -5, 1 0 5, 2 0 -5, 2 0 5, 3 0 -5, 3 0 5, 4 0 -5, 4 0 5, -5 0 -4, 5 0 -4, -5 0 -3, 5 0 -3, -5 0 -2, 5 0 -2, -5 0 -1, 5 0 -1, -5 0 1, 5 0 1, -5 0 2, 5 0 2, -5 0 3, 5 0 3, -5 0 4, 5 0 4'/>
+            </IndexedLineSet>
+          </Shape>
+          <Shape DEF='MajorPoints'>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='6'/>
+              <Material USE='MajorMaterial'/>
+            </Appearance>
+            <PointSet DEF='MajorPoints_1'>
+              <Coordinate
+                  point='0 -5 0, 0 0 0, 0 5 0'/>
+            </PointSet>
+          </Shape>
+          <Shape DEF='MinorPoints'>
+            <Appearance>
+              <LineProperties
+                  linewidthScaleFactor='4'/>
+              <Material USE='MinorMaterial'/>
+            </Appearance>
+            <PointSet DEF='MinorPoints_1'>
+              <Coordinate
+                  point='0 -4 0, 0 -3 0, 0 -2 0, 0 -1 0, 0 1 0, 0 2 0, 0 3 0, 0 4 0'/>
+            </PointSet>
+          </Shape>
+        </Transform>
+        <Script DEF='GridScript'
+            directOutput='true'
+            mustEvaluate='true'>
+          <field accessType='inputOutput' type='MFInt32' name='dimension'/>
+          <field accessType='inputOutput' type='MFInt32' name='majorLineEvery'/>
+          <field accessType='inputOutput' type='MFInt32' name='majorLineOffset'/>
+          <field accessType='initializeOnly' type='SFNode' name='plane'>
+            <Transform USE='Plane'/>
+          </field>
+          <field accessType='initializeOnly' type='SFNode' name='majorGrid'>
+            <IndexedLineSet USE='MajorGrid_1'/>
+          </field>
+          <field accessType='initializeOnly' type='SFNode' name='minorGrid'>
+            <IndexedLineSet USE='MinorGrid_1'/>
+          </field>
+          <field accessType='initializeOnly' type='SFNode' name='majorPoints'>
+            <PointSet USE='MajorPoints_1'/>
+          </field>
+          <field accessType='initializeOnly' type='SFNode' name='minorPoints'>
+            <PointSet USE='MinorPoints_1'/>
+          </field>
+          <IS>
+            <connect nodeField='dimension' protoField='dimension'/>
+            <connect nodeField='majorLineEvery' protoField='majorLineEvery'/>
+            <connect nodeField='majorLineOffset' protoField='majorLineOffset'/>
+          </IS>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	eventsProcessed ();
+}
+
+function eventsProcessed ()
+{
+	// Plane
+
+	plane .scale = new SFVec3f (dimension [0], dimension [2], 1);
+
+	// Grid
+
+	generateGrid (true, majorGrid);
+	generateGrid (false, minorGrid);
+
+	// Points
+
+	generatePoints (true,  majorPoints .coord .point);
+	generatePoints (false, minorPoints .coord .point);
+}
+
+function generateGrid (major, grid)
+{
+	var point       = grid .coord .point;
+	var coordIndex  = new MFInt32 ();
+	var scaleX1_2   = dimension [0] / 2;
+	var scaleZ1_2   = dimension [2] / 2;
+	var majorAdd    = major / 4;
+	var p           = 0;
+
+	for (var i = 0, size = dimension [0] + 1; i < size; ++ i)
+	{
+		if (major - isMajorLine (i, 0))
+			continue;
+
+		var x = -scaleX1_2 + i;
+
+		point [p]     = new SFVec3f (x, 0, -scaleZ1_2 - majorAdd);
+		point [p + 1] = new SFVec3f (x, 0,  scaleZ1_2 + majorAdd);
+		coordIndex [coordIndex .length] = p;
+		coordIndex [coordIndex .length] = p + 1;
+		coordIndex [coordIndex .length] = -1;
+			
+		p += 2;
+	}
+
+	for (var i = 0, size = dimension [2] + 1; i < size; ++ i)
+	{
+		if (major - isMajorLine (i, 2))
+			continue;
+
+		var z = -scaleZ1_2 + i;
+
+		point [p]     = new SFVec3f (-scaleX1_2 - majorAdd, 0, z);
+		point [p + 1] = new SFVec3f ( scaleX1_2 + majorAdd, 0, z);
+		coordIndex [coordIndex .length] = p;
+		coordIndex [coordIndex .length] = p + 1;
+		coordIndex [coordIndex .length] = -1;
+		
+		p += 2;
+	}
+
+	point .length = p;
+
+	grid .set_coordIndex = coordIndex;
+}
+
+function generatePoints (major, point)
+{
+	var scaleY1_2 = -dimension [1] / 2;
+	var p         = 0;
+
+	for (var i = 0, size = dimension [1] + 1; i < size; ++ i)
+	{
+		if (major - isMajorLine (i, 1))
+			continue;
+
+		point [p] = new SFVec3f (0, scaleY1_2 + i, 0);
+		++ p;
+	}
+
+	point .length = p;
+}
+
+function isMajorLine (i, index)
+{
+	for (var d = index; d < majorLineEvery .length; d += 3)
+	{
+		if (isMajor (i, dimension [index], majorLineEvery [d], majorLineOffset [d]))
+			return true;
+	}
+
+	return false;
+}
+
+function isMajor (i, dimension, majorLineEvery, majorLineOffset)
+{
+	if (majorLineEvery)
+	{
+		var index = Math .floor (i - dimension / 2 - majorLineOffset);
+
+		return !(index % majorLineEvery);
+	}
+
+	return false;
+}
+]]> 
+        </Script>
+      </ProtoBody>
+    </ProtoDeclare>
+    <ProtoDeclare name='DiskSensor'>
+      <ProtoInterface>
+        <field accessType='inputOutput' type='SFString' name='description'/>
+        <field accessType='inputOutput' type='SFRotation' name='axisRotation'/>
+        <field accessType='inputOutput' type='SFFloat' name='offset'/>
+        <field accessType='outputOnly' type='SFRotation' name='rotation_changed'/>
+        <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
+      </ProtoInterface>
+      <ProtoBody>
+        <CylinderSensor DEF='CylinderTouch'>
+          <IS>
+            <connect nodeField='description' protoField='description'/>
+            <connect nodeField='axisRotation' protoField='axisRotation'/>
+            <connect nodeField='offset' protoField='offset'/>
+            <connect nodeField='rotation_changed' protoField='rotation_changed'/>
+          </IS>
+        </CylinderSensor>
+        <Script DEF='Wheel'>
+          <field accessType='inputOnly' type='SFRotation' name='set_rotation'/>
+          <field accessType='inputOutput' type='SFRotation' name='axisRotation'/>
+          <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
+          <field accessType='initializeOnly' type='SFVec3f' name='startVector' value='0 0 1'/>
+          <IS>
+            <connect nodeField='axisRotation' protoField='axisRotation'/>
+            <connect nodeField='value_changed' protoField='value_changed'/>
+          </IS>
+<![CDATA[vrmlscript:
+function initialize ()
+{
+	startVector = axisRotation .multVec (new SFVec3f (0, 0, 1));
+}
+
+function set_rotation (value)
+{
+	var endVector     = value .multVec (new SFVec3f (0, 0, 1));
+	var deltaRotation = new SFRotation (startVector, endVector);
+
+	startVector = endVector;
+
+	var axis  = axisRotation .multVec (new SFVec3f (0, 1, 0));
+	var angle = axis .dot (deltaRotation .getAxis ());
+	var sign  = angle < 0 ? 1 : -1;
+	
+	value_changed += sign * deltaRotation .angle;
+}
+]]> 
+        </Script>
+        <ROUTE fromNode='CylinderTouch' fromField='rotation_changed' toNode='Wheel' toField='set_rotation'/>
+      </ProtoBody>
+    </ProtoDeclare>
+    <WorldInfo>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='-0.347694491480508, 1.1441447019938, 1.87409623205845'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.944192921783873, 0.102748199854612, 0.312957718997103, 1.79211922680037'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='-1.98454058170319, 0.165585234761238, 2.70187211036682'/>
+        </MetadataSet>
+        <MetadataSet DEF='AngleGrid' containerField='value'
+            name='AngleGrid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet DEF='Grid' containerField='value'
+            name='Grid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled_1' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='true'/>
+          <MetadataFloat DEF='rotation' containerField='value'
+              name='rotation'
+              reference='http://titania.create3000.de'
+              value='1, 0, 0, 1.5708'/>
+          <MetadataInteger DEF='dimension' containerField='value'
+              name='dimension'
+              reference='http://titania.create3000.de'
+              value='10, 10, 10'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='0'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Script DEF='EnterWorldScript'>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	Browser .setBrowserOption ("PrimitiveQuality", "LOW");
+}
+]]> 
+    </Script>
+    <LayerSet
+        order='1, 2'>
+      <Layer>
+        <MetadataSet DEF='Titania_1'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='AngleGrid_1' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_2' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+          <MetadataSet DEF='Grid_1' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_3' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='true'/>
+            <MetadataFloat DEF='rotation_1' containerField='value'
+                name='rotation'
+                reference='http://titania.create3000.de'
+                value='1, 0, 0, 1.5708'/>
+            <MetadataFloat DEF='scale' containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='0.3, 0.3, 0.3'/>
+          </MetadataSet>
+        </MetadataSet>
+        <Background DEF='White'
+            skyColor='1 1 1'/>
+        <NavigationInfo
+            type='"NONE"'
+            headlight='false'/>
+        <Group>
+          <Group DEF='Animation'>
+            <MetadataSet DEF='Animation_1'
+                name='Animation'
+                reference='http://titania.create3000.de'>
+              <MetadataInteger DEF='duration' containerField='value'
+                  name='duration'
+                  reference='http://titania.create3000.de'
+                  value='340'/>
+              <MetadataInteger DEF='framesPerSecond' containerField='value'
+                  name='framesPerSecond'
+                  reference='http://titania.create3000.de'
+                  value='10'/>
+            </MetadataSet>
+            <TimeSensor DEF='_1'
+                cycleInterval='34'
+                loop='true'/>
+            <PositionInterpolator DEF='PositionInterpolator'
+                key='0, 0.117646, 0.117647, 0.338235, 0.341176, 0.344118, 0.347059, 0.35, 0.352941, 0.355882, 0.358824, 0.361765, 0.364706, 0.367647, 0.370588, 0.373529, 0.376471, 0.379412, 0.382353, 0.385294, 0.388235, 0.391176, 0.394118, 0.397059, 0.4, 0.402941, 0.405882, 0.408824, 0.411765, 0.414706, 0.417647, 0.420588, 0.423529, 0.426471, 0.429412, 0.432353, 0.435294, 0.438235, 0.441176, 0.444118, 0.447059, 0.45, 0.452941, 0.455882, 0.458824, 0.461765, 0.464706, 0.467647, 0.470588, 0.473529, 0.476471, 0.479412, 0.482353, 0.485294, 0.488235, 0.491176, 0.494118, 0.497059, 0.5, 0.502941, 0.505882, 0.508824, 0.511765, 0.514706, 0.517647, 0.520588, 0.523529, 0.526471, 0.529412, 0.532353, 0.535294, 0.538235, 0.541176, 0.544118, 0.547059, 0.55, 0.552941, 0.555882, 0.558824, 0.561765, 0.564706, 0.567647, 0.570588, 0.573529, 0.576471, 0.579412, 0.582353, 0.585294, 0.588235, 0.591176, 0.594118, 0.597059, 0.6, 0.602941, 0.605882, 0.608824, 0.611765, 0.614706, 0.617647, 0.620588, 0.623529, 0.626471, 0.629412, 0.632353, 0.635294, 0.638235, 0.641176, 0.644118, 0.647059, 0.65, 0.652941, 0.655882, 0.658824, 0.661765, 0.664706, 0.667647, 0.670588, 0.673529, 0.676471, 0.679412, 0.682353, 0.685294, 0.688235, 0.691176, 0.694118, 0.697059, 0.7, 0.702941, 0.705882, 0.708824, 0.711765, 0.714706, 0.717647, 0.720588, 0.723529, 0.726471, 0.729412, 0.732353, 0.735294, 0.738235, 0.741176, 0.744118, 0.747059, 0.75, 0.752941, 0.755882, 0.758824, 0.761765, 0.764706, 0.767647, 0.770588, 0.773529, 0.776471, 0.779412, 0.782353, 0.785294, 0.788235, 0.791176, 0.794118, 0.797059, 0.8, 0.802941, 0.805882, 0.808824, 0.811765, 0.814706, 0.817647, 0.820588, 0.823529, 0.826471, 0.829412, 0.832353, 0.835294, 0.838235, 0.841176, 0.844118, 0.847059, 0.85, 0.852941, 0.855882, 0.858824, 0.861765, 0.864706, 0.867647, 0.870588, 0.873529, 0.876471, 0.879412, 0.882353, 0.885294, 0.888235, 0.891176, 0.894118, 0.897059, 0.9, 0.902941, 0.905882, 0.908824, 0.911765, 0.914706, 0.917647, 0.920588, 0.923529, 0.926471, 0.929412, 0.932353, 0.935294, 0.938235, 0.941176, 0.944118, 0.947059, 0.95, 0.952941, 0.955882, 0.958824, 0.961765, 0.964706, 0.967647, 0.970588, 0.973529, 0.976471, 0.979412, 0.982353, 0.985294, 0.988235, 0.991176, 0.994118, 0.997059, 1'
+                keyValue='0 0 4.35914, 0 0 4.35914, 0 0 4.35914, 2.39018 0.0263855 1.32355, 2.39111 0.0263743 1.32292, 2.39384 0.0263411 1.32106, 2.39833 0.0262867 1.31801, 2.40451 0.0262117 1.31381, 2.41234 0.0261169 1.30849, 2.42174 0.026003 1.30209, 2.43267 0.0258706 1.29466, 2.44508 0.0257205 1.28622, 2.45889 0.0255534 1.27682, 2.47406 0.02537 1.26649, 2.49052 0.025171 1.25527, 2.50823 0.0249571 1.24321, 2.52713 0.024729 1.23033, 2.54715 0.0244875 1.21668, 2.56824 0.0242331 1.20229, 2.59034 0.0239667 1.1872, 2.61341 0.023689 1.17146, 2.63737 0.0234006 1.15509, 2.66217 0.0231022 1.13814, 2.68777 0.0227946 1.12064, 2.71409 0.0224785 1.10264, 2.74108 0.0221545 1.08416, 2.76869 0.0218234 1.06526, 2.79686 0.0214859 1.04596, 2.82553 0.0211427 1.0263, 2.85465 0.0207944 1.00633, 2.88415 0.0204419 0.986072, 2.91399 0.0200858 0.965576, 2.9441 0.0197268 0.944876, 2.97443 0.0193656 0.92401, 3.00492 0.019003 0.903017, 3.03551 0.0186396 0.881933, 3.06615 0.0182761 0.860797, 3.09678 0.0179133 0.839648, 3.12734 0.0175518 0.818522, 3.15778 0.0171924 0.797459, 3.18804 0.0168358 0.776496, 3.21806 0.0164826 0.755671, 3.24778 0.0161337 0.735021, 3.27716 0.0157896 0.714586, 3.30613 0.0154511 0.694403, 3.33463 0.0151189 0.67451, 3.36261 0.0147937 0.654945, 3.39001 0.0144762 0.635747, 3.41678 0.0141671 0.616952, 3.44285 0.0138672 0.598599, 3.46817 0.0135771 0.580726, 3.49269 0.0132975 0.563372, 3.51635 0.0130292 0.546573, 3.53908 0.0127728 0.530369, 3.56084 0.0125291 0.514796, 3.58156 0.0122988 0.499893, 3.60119 0.0120825 0.485699, 3.61968 0.011881 0.472251, 3.63696 0.011695 0.459586, 3.65298 0.0115251 0.447744, 3.66768 0.0113722 0.436761, 3.68101 0.0112369 0.426677, 3.69291 0.0111198 0.417529, 3.70331 0.0110218 0.409354, 3.71217 0.0109435 0.402192, 3.71943 0.0108857 0.39608, 3.72503 0.010849 0.391055, 3.72891 0.0108341 0.387157, 3.73102 0.0108417 0.384423, 3.7313 0.0108726 0.38289, 3.72969 0.0109275 0.382598, 3.72614 0.0110071 0.383584, 3.72058 0.011112 0.385885, 3.71297 0.011243 0.389541, 3.70325 0.0114008 0.394588, 3.69135 0.011586 0.401066, 3.67723 0.0117995 0.409012, 3.66082 0.0120419 0.418463, 3.64206 0.0123139 0.429459, 3.62073 0.0126246 0.441989, 3.59665 0.0129817 0.455995, 3.5699 0.0133838 0.471443, 3.54056 0.0138295 0.488297, 3.5087 0.0143174 0.506522, 3.47439 0.0148461 0.526082, 3.4377 0.0154142 0.546943, 3.39872 0.0160202 0.56907, 3.35751 0.0166628 0.592426, 3.31415 0.0173406 0.616978, 3.2687 0.0180521 0.642689, 3.22125 0.018796 0.669525, 3.17187 0.0195708 0.697451, 3.12063 0.0203751 0.72643, 3.0676 0.0212076 0.756429, 3.01286 0.0220668 0.787411, 2.95648 0.0229513 0.819343, 2.89854 0.0238597 0.852187, 2.8391 0.0247906 0.88591, 2.77825 0.0257426 0.920477, 2.71605 0.0267143 0.955851, 2.65258 0.0277042 0.991998, 2.58792 0.0287111 1.02888, 2.52213 0.0297334 1.06647, 2.45529 0.0307698 1.10472, 2.38747 0.0318188 1.14361, 2.31875 0.0328791 1.18309, 2.2492 0.0339492 1.22314, 2.17889 0.0350278 1.26371, 2.1079 0.0361134 1.30477, 2.0363 0.0372046 1.34629, 1.96417 0.0383001 1.38823, 1.89157 0.0393984 1.43055, 1.81859 0.040498 1.47323, 1.74529 0.0415977 1.51622, 1.67174 0.042696 1.55949, 1.59803 0.0437914 1.60301, 1.52423 0.0448827 1.64674, 1.4504 0.0459683 1.69064, 1.37663 0.0470469 1.73468, 1.30298 0.048117 1.77882, 1.22953 0.0491773 1.82304, 1.15636 0.0502263 1.86728, 1.08353 0.0512627 1.91153, 1.01112 0.0522851 1.95574, 0.939204 0.0532919 1.99988, 0.867856 0.0542819 2.04391, 0.797148 0.0552536 2.0878, 0.727155 0.0562056 2.13151, 0.65795 0.0571365 2.17501, 0.589605 0.058045 2.21826, 0.522196 0.0589295 2.26123, 0.455794 0.0597887 2.30388, 0.390475 0.0606212 2.34618, 0.32631 0.0614255 2.38809, 0.263375 0.0622003 2.42958, 0.201742 0.0629442 2.47061, 0.141485 0.0636557 2.51114, 0.0826771 0.0643335 2.55115, 0.0253923 0.0649762 2.59059, -0.0302961 0.0655822 2.62943, -0.0843145 0.0661503 2.66764, -0.136589 0.066679 2.70517, -0.187047 0.067167 2.74201, -0.235614 0.0676127 2.7781, -0.282218 0.0680149 2.81341, -0.326783 0.068372 2.84792, -0.369238 0.0686827 2.88158, -0.409507 0.0689457 2.91436, -0.447519 0.0691594 2.94622, -0.483199 0.0693224 2.97714, -0.516474 0.0694335 3.00706, -0.54727 0.0694911 3.03597, -0.575513 0.0694938 3.06381, -0.601131 0.0694403 3.09057, -0.62445 0.0693237 3.11674, -0.645877 0.0691393 3.14287, -0.665453 0.0688889 3.16893, -0.683222 0.0685746 3.19492, -0.699227 0.0681981 3.22084, -0.713511 0.0677613 3.24667, -0.726116 0.0672662 3.27241, -0.737086 0.0667146 3.29805, -0.746464 0.0661084 3.32358, -0.754293 0.0654494 3.34899, -0.760616 0.0647397 3.37427, -0.765476 0.0639811 3.39943, -0.768915 0.0631754 3.42444, -0.770977 0.0623246 3.4493, -0.771705 0.0614305 3.474, -0.771142 0.060495 3.49854, -0.769331 0.05952 3.5229, -0.766314 0.0585074 3.54708, -0.762136 0.0574592 3.57107, -0.756838 0.056377 3.59486, -0.750463 0.055263 3.61844, -0.743056 0.0541189 3.64181, -0.734658 0.0529466 3.66496, -0.725314 0.0517481 3.68787, -0.715065 0.0505252 3.71055, -0.703954 0.0492797 3.73297, -0.692026 0.0480137 3.75514, -0.679322 0.0467289 3.77705, -0.665887 0.0454273 3.79869, -0.651761 0.0441107 3.82004, -0.63699 0.0427811 3.84111, -0.621616 0.0414403 3.86188, -0.605681 0.0400902 3.88235, -0.589229 0.0387328 3.9025, -0.572303 0.0373698 3.92233, -0.554945 0.0360032 3.94184, -0.537199 0.0346348 3.96101, -0.519108 0.0332666 3.97983, -0.500715 0.0319004 3.9983, -0.482063 0.0305382 4.0164, -0.463194 0.0291818 4.03414, -0.444152 0.027833 4.0515, -0.42498 0.0264939 4.06847, -0.405721 0.0251662 4.08505, -0.386417 0.0238519 4.10123, -0.367112 0.0225529 4.11699, -0.347849 0.021271 4.13234, -0.328671 0.0200081 4.14726, -0.30962 0.0187661 4.16175, -0.29074 0.017547 4.1758, -0.272074 0.0163525 4.18939, -0.253664 0.0151846 4.20252, -0.235555 0.0140452 4.21519, -0.217788 0.0129361 4.22738, -0.200406 0.0118593 4.23909, -0.183454 0.0108166 4.2503, -0.166973 0.00980988 4.26102, -0.151007 0.00884109 4.27122, -0.135598 0.00791209 4.28092, -0.120791 0.00702477 4.29008, -0.106627 0.00618102 4.29872, -0.0931494 0.00538272 4.30681, -0.0804019 0.00463176 4.31436, -0.068427 0.00393004 4.32135, -0.0572679 0.00327942 4.32777, -0.0469675 0.00268182 4.33362, -0.0375687 0.0021391 4.33889, -0.0291147 0.00165316 4.34357, -0.0216484 0.0012259 4.34765, -0.0152128 0.000859181 4.35113, -0.00985083 0.00055491 4.35399, -0.00560559 0.000314968 4.35623, -0.00252004 0.000141244 4.35784, -0.000637176 3.56257e-05 4.35881, 0 0 4.35914'>
+              <MetadataSet DEF='Interpolator'
+                  name='Interpolator'
+                  reference='http://titania.create3000.de'>
+                <MetadataInteger DEF='key' containerField='value'
+                    name='key'
+                    reference='http://titania.create3000.de'
+                    value='0, 40, 115, 190, 265, 340'/>
+                <MetadataDouble DEF='keyValue' containerField='value'
+                    name='keyValue'
+                    reference='http://titania.create3000.de'
+                    value='0, 0, 4.35913991928101, 0, 0, 4.35913991928101, 2.39018130302429, 0.0263854712247849, 1.32354629039764, 3.64206314086914, 0.0123138902708888, 0.429458647966385, -0.601130962371826, 0.0694403424859047, 3.09056997299194, 0, 0, 4.35913991928101'/>
+                <MetadataString DEF='keyType' containerField='value'
+                    name='keyType'
+                    reference='http://titania.create3000.de'
+                    value='"CONSTANT", "LINEAR", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
+              </MetadataSet>
+            </PositionInterpolator>
+            <OrientationInterpolator DEF='OrientationInterpolator'
+                key='0, 0.117646, 0.117647, 0.338235, 0.341176, 0.344118, 0.347059, 0.35, 0.352941, 0.355882, 0.358824, 0.361765, 0.364706, 0.367647, 0.370588, 0.373529, 0.376471, 0.379412, 0.382353, 0.385294, 0.388235, 0.391176, 0.394118, 0.397059, 0.4, 0.402941, 0.405882, 0.408824, 0.411765, 0.414706, 0.417647, 0.420588, 0.423529, 0.426471, 0.429412, 0.432353, 0.435294, 0.438235, 0.441176, 0.444118, 0.447059, 0.45, 0.452941, 0.455882, 0.458824, 0.461765, 0.464706, 0.467647, 0.470588, 0.473529, 0.476471, 0.479412, 0.482353, 0.485294, 0.488235, 0.491176, 0.494118, 0.497059, 0.5, 0.502941, 0.505882, 0.508824, 0.511765, 0.514706, 0.517647, 0.520588, 0.523529, 0.526471, 0.529412, 0.532353, 0.535294, 0.538235, 0.541176, 0.544118, 0.547059, 0.55, 0.552941, 0.555882, 0.558824, 0.561765, 0.564706, 0.567647, 0.570588, 0.573529, 0.576471, 0.579412, 0.582353, 0.585294, 0.588235, 0.591176, 0.594118, 0.597059, 0.6, 0.602941, 0.605882, 0.608824, 0.611765, 0.614706, 0.617647, 0.620588, 0.623529, 0.626471, 0.629412, 0.632353, 0.635294, 0.638235, 0.641176, 0.644118, 0.647059, 0.65, 0.652941, 0.655882, 0.658824, 0.661765, 0.664706, 0.667647, 0.670588, 0.673529, 0.676471, 0.679412, 0.682353, 0.685294, 0.688235, 0.691176, 0.694118, 0.697059, 0.7, 0.702941, 0.705882, 0.708824, 0.711765, 0.714706, 0.717647, 0.720588, 0.723529, 0.726471, 0.729412, 0.732353, 0.735294, 0.738235, 0.741176, 0.744118, 0.747059, 0.75, 0.752941, 0.755882, 0.758824, 0.761765, 0.764706, 0.767647, 0.770588, 0.773529, 0.776471, 0.779412, 0.782353, 0.785294, 0.788235, 0.791176, 0.794118, 0.797059, 0.8, 0.802941, 0.805882, 0.808824, 0.811765, 0.814706, 0.817647, 0.820588, 0.823529, 0.826471, 0.829412, 0.832353, 0.835294, 0.838235, 0.841176, 0.844118, 0.847059, 0.85, 0.852941, 0.855882, 0.858824, 0.861765, 0.864706, 0.867647, 0.870588, 0.873529, 0.876471, 0.879412, 0.882353, 0.885294, 0.888235, 0.891176, 0.894118, 0.897059, 0.9, 0.902941, 0.905882, 0.908824, 0.911765, 0.914706, 0.917647, 0.920588, 0.923529, 0.926471, 0.929412, 0.932353, 0.935294, 0.938235, 0.941176, 0.944118, 0.947059, 0.95, 0.952941, 0.955882, 0.958824, 0.961765, 0.964706, 0.967647, 0.970588, 0.973529, 0.976471, 0.979412, 0.982353, 0.985294, 0.988235, 0.991176, 0.994118, 0.997059, 1'
+                keyValue='0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0, 0.509883164865394 0.499576161532732 0.700316226439935 0.0257266000000057, 0.511872050966079 0.501356049919022 0.697588069457452 0.0518558999999967, 0.513769726469584 0.5030527321753 0.69496663000056 0.0783768000000014, 0.515578866815427 0.504669869633444 0.692449821126039 0.105272999999998, 0.517302102270636 0.506210100077747 0.690036136420158 0.132528000000001, 0.518944993981535 0.507676994112216 0.687720992024156 0.160125999999999, 0.52050891683153 0.509073918658649 0.6855028904683 0.188050999999999, 0.52199727455524 0.510403268457133 0.683379359437478 0.216284, 0.523413887102516 0.511666889636278 0.681347853037031 0.244810999999999, 0.524759952352586 0.51286895343227 0.679405938310963 0.273615000000001, 0.52603899412809 0.514009994262363 0.677551992436826 0.302679, 0.527253129406651 0.515092126421909 0.675784165861445 0.331985, 0.528403889199793 0.516118891775815 0.674099858649027 0.361518, 0.529493852186252 0.517090855648678 0.672497812265201 0.391259, 0.530525019019057 0.5180100185704 0.670976024054155 0.421192, 0.531499716452152 0.518877723185813 0.669532642813469 0.451301000000001, 0.532418079306607 0.519697077411744 0.668166099527023 0.481567, 0.533283287492298 0.520467280583206 0.666875359511603 0.511974, 0.534095866481925 0.521190869708032 0.665658833592635 0.542504, 0.53485714739729 0.521869143818023 0.664515183128781 0.57314, 0.535569238860185 0.52250223303239 0.663443295891132 0.603865, 0.536231879927775 0.523092882869839 0.662441851667031 0.634661, 0.536846978958283 0.523640979475892 0.661509974072117 0.665511, 0.537416222495468 0.524147217001972 0.66064627351389 0.696398, 0.537939855739343 0.524611859313545 0.659850823046179 0.727304, 0.538417823654193 0.525037828036488 0.659121784120514 0.758212, 0.538851969727028 0.525423970481419 0.658458963007447 0.789104, 0.539242917939637 0.525771919989613 0.657860899888709 0.819962, 0.539590354444879 0.526081345571113 0.657328431784399 0.85077, 0.539895937635274 0.52635293919966 0.656859924124472 0.88151, 0.54015975304739 0.526587759252294 0.656454699879155 0.912165, 0.540381804612835 0.526784809529134 0.656113762767349 0.942716, 0.540563002402803 0.526946002342275 0.655835002915187 0.973146, 0.540702687027858 0.527070694918393 0.655619620511083 1.00344, 0.540802245621349 0.527159239424974 0.655466297699423 1.03358, 0.540861064573947 0.52721106294426 0.65537607824601 1.06354, 0.540878876212041 0.527227879336269 0.655347850014159 1.09332, 0.540856963319893 0.527207964245548 0.65538195555298 1.12288, 0.540795034715527 0.527152033839735 0.655478042077431 1.15222, 0.540692080811574 0.527061078774291 0.655636097991051 1.18132, 0.540548288857731 0.526933281582155 0.655857350476489 1.21016, 0.540364042219185 0.526769041156994 0.656141051264958 1.23873, 0.540137874431732 0.526568877586178 0.656487847383334 1.26699, 0.539872063015491 0.526331061434944 0.656897076675002 1.29495, 0.539563130812241 0.526057127537832 0.657370159373498 1.32258, 0.539212977071856 0.525744977644535 0.657906972024809 1.34986, 0.538819801908324 0.525395806843521 0.658507757906252 1.37678, 0.538384060447343 0.525008058945546 0.659173074008991 1.40332, 0.537904991082073 0.524581991302955 0.659902989059468 1.42946, 0.537382029336492 0.524117028612336 0.660698036068498 1.45518, 0.536814951351147 0.523611952547669 0.661558940046224 1.48048, 0.536202093747169 0.52306609145053 0.662487115826276 1.50532, 0.535543783464161 0.522480788745908 0.663480731735553 1.5297, 0.534839879935681 0.521852882851086 0.664541850819342 1.5536, 0.534087830736644 0.521183834826185 0.665670789035314 1.57699, 0.533287967162261 0.520471967951419 0.66686795893694 1.59987, 0.532439969062044 0.519715969801385 0.668133961177409 1.62221, 0.531542144903458 0.518916141461489 0.669469182503684 1.644, 0.530594138550617 0.518071135280566 0.670874175181036 1.66523, 0.529594939470744 0.517180940889584 0.672348923154893 1.68587, 0.5285432619136 0.516243255818472 0.673895333941166 1.7059, 0.527439219565345 0.515258214494568 0.675512281206026 1.72532, 0.526280214873414 0.514225209951511 0.677201276492534 1.7441, 0.525067140692547 0.513142137497224 0.67896218192896 1.76223, 0.523797165170558 0.512010161453726 0.680795214677231 1.77969, 0.522471051328081 0.510826050184064 0.682701067069239 1.79646, 0.521086185012725 0.509590180931045 0.684680243097133 1.81252, 0.519643105520299 0.508301103217157 0.686732139449903 1.82787, 0.518139056671722 0.506958055448794 0.688858075344201 1.84247, 0.516574891138569 0.505559893459836 0.691056854368767 1.85632, 0.514947796379383 0.504105800666524 0.693329725843614 1.8694, 0.51325784459453 0.502594847823099 0.695675789361577 1.88169, 0.511502898492004 0.501025900571169 0.698095861462541 1.89317, 0.509682982208496 0.499397982567515 0.700588975544541 1.90382, 0.507797002200284 0.497710002156577 0.703155003046771 1.91364, 0.505776899606836 0.495900901567152 0.705883859887009 1.92274, 0.503560934733723 0.493916935983677 0.708852908125935 1.93126, 0.501152930411663 0.491759931715942 0.712051901126972 1.93922, 0.498559927713552 0.48943492903659 0.71546589626425 1.94661, 0.495784004802164 0.486946004716559 0.719084006965048 1.95345, 0.492830059200722 0.484296058175583 0.722894086836934 1.95975, 0.489701986439907 0.481488986667329 0.726883979872219 1.96552, 0.486403803299801 0.478526806485234 0.731042704368583 1.97075, 0.482938248374239 0.475414244504658 0.73535837819344 1.97547, 0.479309832422527 0.472151834925124 0.739820741342068 1.97968, 0.475520257254151 0.468743253587825 0.744419402727284 1.9834, 0.471574014523065 0.465191014326488 0.749143023071358 1.98662, 0.467472156343284 0.461498154345315 0.753982252164883 1.98937, 0.463219878459226 0.457666879916236 0.758925800871177 1.99164, 0.458818959030451 0.453698959487634 0.7639649317829 1.99346, 0.454272013516183 0.449597013377085 0.76909002288312 1.99483, 0.449582085442859 0.44536408464123 0.774291147153659 1.99576, 0.444752948965936 0.441001949396352 0.779558910547959 1.99626, 0.43978685316333 0.436512854256458 0.78488473794155 1.99634, 0.434685913889598 0.431899914441499 0.790259843451121 1.99601, 0.42945494849225 0.427164948766907 0.795674904568747 1.99529, 0.424094903888867 0.422311904292942 0.801121818444587 1.99417, 0.418610789975903 0.41734279061208 0.806591595319386 1.99268, 0.413005068758122 0.412259068633926 0.812077135196643 1.99082, 0.407281079200294 0.407066079158484 0.817569158985332 1.98861, 0.401441958990699 0.401764958957703 0.823060915920216 1.98604, 0.395492091184469 0.396359091384364 0.828544191028757 1.98314, 0.389433972271523 0.390851972170559 0.834011940616684 1.97991, 0.383273182250083 0.385246183188263 0.839456399169588 1.97636, 0.377010957403231 0.3795469571167 0.844870904541844 1.9725, 0.370654074732023 0.373756075357455 0.850248171428754 1.96834, 0.364206033390775 0.367879033727519 0.855581078440532 1.96389, 0.357669818330782 0.361917816173121 0.860864562745908 1.95916, 0.351051074463909 0.355878075487798 0.866091183712683 1.95416, 0.344355034914331 0.349763035462651 0.871255088336994 1.94889, 0.33758590926941 0.343576907659252 0.876350764469371 1.94337, 0.330748944820993 0.337325943723749 0.881371852960305 1.9376, 0.323849133269451 0.331014136217972 0.886313364733092 1.93159, 0.316891894327662 0.324644891742309 0.891170702825811 1.92535, 0.309883977699975 0.318224977099736 0.895937935526069 1.91889, 0.302829927347929 0.311759925205529 0.900610783934042 1.91221, 0.295736961271769 0.30525396002547 0.905184881461522 1.90532, 0.288610025364205 0.298714026252185 0.909656079944218 1.89823, 0.281456094899693 0.292146098504085 0.914020308183935 1.89095, 0.27428208055323 0.285555083863971 0.918274269685714 1.88347, 0.26709399120326 0.278946990812881 0.922414969620263 1.87582, 0.25990005829494 0.272331061083183 0.926438207797797 1.86798, 0.252707075769932 0.265711079668962 0.930342278947358 1.85998, 0.2455219033707 0.259094898028818 0.934124632359443 1.85181, 0.23835296331772 0.25248996114205 0.937782855676167 1.84348, 0.231208017837121 0.245904018970881 0.941315072620107 1.835, 0.224095000250874 0.239344000267946 0.944720001057614 1.82637, 0.217022088368808 0.232818094800754 0.947996386012831 1.81759, 0.209997926959689 0.226332921278142 0.951143669178498 1.80867, 0.203031921107293 0.219898914553236 0.954160629239014 1.79961, 0.196131972520736 0.213521970084293 0.957047865911861 1.79041, 0.18930892779049 0.207212920961237 0.95980463389459 1.78109, 0.182569989052739 0.200979987948838 0.962431942290658 1.77164, 0.17592591988353 0.194830911274218 0.964930560571688 1.76206, 0.169387005412 0.18877700603152 0.967301030905752 1.75236, 0.162962987099606 0.182826985527142 0.969544923249372 1.74255, 0.156664975621287 0.176989972458504 0.971663848798914 1.73262, 0.15050199128744 0.171275990084833 0.973659943634827 1.72257, 0.144485027750808 0.165696031824743 0.975535187368135 1.71242, 0.138626974631751 0.160259970672989 0.977291821159034 1.70216, 0.132936963116711 0.154978957001172 0.978932728395642 1.69179, 0.127427943536627 0.149863933595231 0.980460565557529 1.68131, 0.122112043172476 0.144926051238325 0.981878347141187 1.67074, 0.117000046738603 0.140177055997241 0.983189392759661 1.66006, 0.112106006055182 0.135627007325622 0.98439705317024 1.64929, 0.107440960375459 0.131289951579881 0.985504636543001 1.63843, 0.103020040728518 0.12717805027928 0.986515390014497 1.62747, 0.0988547961749106 0.123303995228873 0.98743296179225 1.61642, 0.0949601740708887 0.119679967321088 0.988260730152954 1.60529, 0.0913500936432208 0.11631999190564 0.98900193117832 1.59408, 0.0879434537357204 0.113147940476434 0.98967847936134 1.58257, 0.0846492342684447 0.110081044563973 0.990311400906538 1.57055, 0.0814655317489467 0.107116041745526 0.990903386177296 1.55802, 0.0783911748132943 0.104251966504347 0.991456681449759 1.545, 0.0754248321563266 0.101488043268014 0.991973422914052 1.5315, 0.0725647830051194 0.0988225768554686 0.992455767564008 1.51752, 0.0698099725660475 0.0962549621736843 0.992905609807534 1.50308, 0.0671589915871629 0.093783588251967 0.993324875568704 1.48818, 0.0646103230470109 0.0914073326057152 0.993715354466091 1.47283, 0.0621626847860786 0.0891247781872778 0.994078756705552 1.45706, 0.0598147793100699 0.0869350699291623 0.994416656031313 1.44085, 0.0575654760589411 0.0848367647170124 0.994730586298852 1.42423, 0.0554131987127725 0.0828289980759139 0.995021976886018 1.40721, 0.0533570099366459 0.0809104150679011 0.995292185352704 1.38979, 0.0513955252458929 0.0790800388447474 0.995542489018431 1.37199, 0.0495276047693934 0.0773367074473455 0.995774095890735 1.35381, 0.0477521064278453 0.0756794101871013 0.995988134068592 1.33526, 0.0460678841084323 0.0741072744359701 0.996185656356005 1.31636, 0.0444739849609324 0.0726191754435162 0.996367663074027 1.29712, 0.0429693033625204 0.0712143055728052 0.996535077982869 1.27754, 0.0415528905270162 0.0698916840665045 0.99668877278075 1.25764, 0.0402236824552008 0.0686503700560246 0.996829565202053 1.23742, 0.0389808074816118 0.0674897129533447 0.996958191346837 1.2169, 0.0378235132099647 0.0664088231934619 0.997075348231273 1.19609, 0.036750888380429 0.0654068793202311 0.99718168471991 1.17499, 0.0357621921285326 0.0644832858068522 0.997277780493336 1.15362, 0.0348567059829859 0.0636374109230555 0.997364171192762 1.13199, 0.0340337118763611 0.0628686219385548 0.997441348065872 1.11011, 0.0332925920570344 0.0621761851659702 0.997509762013551 1.08799, 0.0326329928390656 0.061559886491392 0.997569781094803 1.06564, 0.0320541926726296 0.0610190860514519 0.997621771950448 1.04307, 0.0315558010993852 0.0605534021096442 0.997666034758087 1.02029, 0.031137394702066 0.0601624897635334 0.997702830243866 0.997318, 0.0307988114937884 0.0598460223338982 0.997732372343095 0.974157, 0.0305394952043882 0.0596037906404267 0.997754843322724 0.950821, 0.0303596111000903 0.0594356217308703 0.997770364805107 0.92732, 0.0302587011570829 0.059341402269196 0.997779038154747 0.903665, 0.0302367974438381 0.0593209949851148 0.997780915649481 0.879868, 0.0302940001213675 0.0593744002378728 0.99777600399741 0.855939, 0.0304302083824444 0.0595017163906149 0.99776427484871 0.83189, 0.0306456894631942 0.0597029794725224 0.997745656948417 0.807732, 0.03094050103028 0.0599785019972092 0.99772003322283 0.783475, 0.0313150077174867 0.0603285148677758 0.997687245876934 0.759131, 0.0317696032499766 0.06075320621495 0.997647102057608 0.734711, 0.0323046113996247 0.0612531216149512 0.997599352032039 0.710227, 0.0329205905580744 0.0618285822669988 0.997543713895366 0.685689, 0.0336179950293102 0.0624801907618034 0.997479852514615 0.661107, 0.0343977128556617 0.0632086236233347 0.997407372766987 0.636495, 0.0352601951448936 0.0640143911856222 0.997325862674521 0.611862, 0.0362064935156021 0.0648983883770303 0.99723482140034 0.58722, 0.037237389782947 0.0658612819292326 0.99713372641025 0.562581, 0.0383538988089801 0.0669041979223955 0.997021969039054 0.537954, 0.0395570965280774 0.0680278940291981 0.996898912502276 0.513351, 0.0408480932531502 0.0692335885647386 0.996763835365244 0.488784, 0.0422282981065117 0.0705223968378234 0.996615955312414 0.464262, 0.0436989189894249 0.0718955312423012 0.996454433010633 0.439799, 0.045261316024994 0.0733543259714639 0.996278352737305 0.415403, 0.046917186858384 0.0749000790203092 0.996086720993733 0.391087, 0.0486682215535665 0.0765345338946465 0.995878441042049 0.36686, 0.0505159189942513 0.0782591294258444 0.995652374370531 0.342734, 0.05246221448579 0.0800754221103085 0.995407274850401 0.318719, 0.0545090877910567 0.0819853816369175 0.995141777108185 0.294825999999999, 0.0566586245684711 0.0839908364203412 0.994854431391558 0.271066999999999, 0.0589127819986269 0.0860936736932413 0.994543696107508 0.24745, 0.0612739928322913 0.0882959896713123 0.994207883699557 0.223986000000001, 0.0637446121734959 0.0906000173021515 0.993845189797536 0.200688000000001, 0.0663270793598648 0.0930079710571139 0.993453690849971 0.177562000000001, 0.069024021734638 0.0955222300785298 0.993031312690794 0.154618999999999, 0.0718379894289314 0.0981451855577878 0.992575853940965 0.131871999999999, 0.0747720892117562 0.100879985444865 0.992084856860316 0.109327999999999, 0.0778290934652046 0.103727991290645 0.991555916745593 0.0869977000000023, 0.0810121158463194 0.106693020869615 0.990986193841175 0.0648909999999982, 0.0843243792204365 0.109777972948056 0.990372755948236 0.0430139000000027, 0.0877692389867255 0.112986050187927 0.989712439626088 0.0213843999999935, 0 0 1 0'>
+              <MetadataSet DEF='Interpolator_1'
+                  name='Interpolator'
+                  reference='http://titania.create3000.de'>
+                <MetadataInteger DEF='key_1' containerField='value'
+                    name='key'
+                    reference='http://titania.create3000.de'
+                    value='0, 40, 115, 190, 265, 340'/>
+                <MetadataDouble DEF='keyValue_1' containerField='value'
+                    name='keyValue'
+                    reference='http://titania.create3000.de'
+                    value='0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.507796943187714, 0.497709572315216, 0.703155398368835, 1.91363787651062, 0.0913500636816025, 0.116319634020329, 0.989001989364624, 1.59408318996429, 0, 0, 1, 0'/>
+                <MetadataString DEF='keyType_1' containerField='value'
+                    name='keyType'
+                    reference='http://titania.create3000.de'
+                    value='"CONSTANT", "LINEAR", "SPLINE", "SPLINE", "SPLINE", "SPLINE"'/>
+              </MetadataSet>
+            </OrientationInterpolator>
+          </Group>
+          <Viewpoint DEF='_2'
+              position='3.72811 0.010963 0.383038'
+              orientation='0.520440619713523 0.509013552103349 0.68559956616624 1.81936871459577'
+              centerOfRotation='-1.98454 0.165585 2.70187'/>
+        </Group>
+        <Transform DEF='Grid_2'
+            rotation='0.999999999993428 3.62557999997617e-06 7.80115999994873e-10 1.5708'
+            scaleOrientation='-0.999526091616386 -0.0121340011122004 -0.0282906025931117 0.785518'>
+          <ProtoInstance name='Grid'>
+            <fieldValue name='scale' value='0.3 0.3 0.3'/>
+            <fieldValue name='dimension' value='20, 0, 10'/>
+            <fieldValue name='color' value='0 0 0'/>
+            <fieldValue name='transparency' value='1'/>
+            <fieldValue name='lineColor' value='0 0 0'/>
+            <fieldValue name='majorLineColor' value='0 0 0'/>
+          </ProtoInstance>
+        </Transform>
+        <ProtoInstance name='Noise' DEF='_3'>
+          <fieldValue name='frequency' value='1.4'/>
+          <fieldValue name='amplitude' value='0.695348'/>
+          <fieldValue name='loop' value='true'/>
+          <fieldValue name='startTime' value='1450696646.28844'/>
+        </ProtoInstance>
+        <Script DEF='LineGraphScript'>
+          <field accessType='inputOnly' type='SFFloat' name='set_fraction'/>
+          <field accessType='inputOutput' type='SFTime' name='updateInterval' value='0.05'/>
+          <field accessType='inputOutput' type='SFInt32' name='numPoints' value='80'/>
+          <field accessType='inputOutput' type='SFNode' name='transform'>
+            <Transform DEF='Polyline2D'
+                translation='-159.305 0 0'>
+              <Shape>
+                <Appearance>
+                  <Material DEF='Rococo8'
+                      ambientIntensity='0.226102'
+                      diffuseColor='0 0 0'
+                      emissiveColor='1 0.595323 0.377559'
+                      shininess='0.078125'/>
+                </Appearance>
+                <Extrusion DEF='_4'
+                    creaseAngle='3.14159'
+                    crossSection='0.05 0, 0.0383022 0.0321394, 0.00868241 0.0492404, -0.025 0.0433013, -0.0469846 0.017101, -0.0469846 -0.017101, -0.025 -0.0433013, 0.00868241 -0.0492404, 0.0383022 -0.0321394, 0.05 0'
+                    spine='155.305 0.00302048 0, 155.355 0.0118443 0, 155.405 0.0245602 0, 155.455 0.0373503 0, 155.505 0.0452256 0, 155.555 0.0493929 0, 155.605 0.0523877 0, 155.655 0.0578765 0, 155.705 0.0687413 0, 155.755 0.0870587 0, 155.805 0.115445 0, 155.855 0.152304 0, 155.905 0.197343 0, 155.955 0.25028 0, 156.005 0.304224 0, 156.055 0.356498 0, 156.105 0.416193 0, 156.155 0.456021 0, 156.205 0.493792 0, 156.255 0.533932 0, 156.305 0.557119 0, 156.355 0.56069 0, 156.405 0.550763 0, 156.455 0.527915 0, 156.505 0.493477 0, 156.555 0.449778 0, 156.605 0.400825 0, 156.655 0.350678 0, 156.705 0.304271 0, 156.755 0.265211 0, 156.805 0.235738 0, 156.855 0.212547 0, 156.905 0.193918 0, 156.955 0.178463 0, 157.005 0.164523 0, 157.055 0.150019 0, 157.105 0.134398 0, 157.155 0.116712 0, 157.205 0.0969047 0, 157.255 0.0759709 0, 157.305 0.0557749 0, 157.355 0.0386939 0, 157.405 0.0267078 0, 157.455 0.022372 0, 157.505 0.0281948 0, 157.555 0.0495329 0, 157.605 0.0971216 0, 157.655 0.14352 0, 157.705 0.193504 0, 157.755 0.242324 0, 157.805 0.286637 0, 157.855 0.32233 0, 157.905 0.345903 0, 157.955 0.355608 0, 158.005 0.349724 0, 158.055 0.327866 0, 158.105 0.291062 0, 158.155 0.239225 0, 158.205 0.150326 0, 158.255 0.0424934 0, 158.305 -0.0529925 0, 158.355 -0.10347 0, 158.405 -0.122937 0, 158.455 -0.0976675 0, 158.505 -0.0316288 0, 158.555 0.0948674 0, 158.605 0.258837 0, 158.655 0.391072 0, 158.705 0.514094 0, 158.755 0.615898 0, 158.805 0.68196 0, 158.855 0.71666 0, 158.905 0.725654 0, 158.955 0.709098 0, 159.005 0.683827 0, 159.055 0.655164 0, 159.105 0.628391 0, 159.155 0.607093 0, 159.205 0.592819 0, 159.255 0.585722 0, 159.305 0.583619 0'/>
+              </Shape>
+            </Transform>
+          </field>
+          <field accessType='inputOutput' type='SFNode' name='geometry'>
+            <Extrusion USE='_4'/>
+          </field>
+<![CDATA[ecmascript:
+
+var
+	points   = [ ],
+	lastTime = 0;
+
+function initialize ()
+{
+	lastTime       = 0;
+	points .length = 0;
+
+	transform .translation = new SFVec3f ();
+
+	geometry .spine .length = 0;
+	
+	set_crossSection ()
+}
+
+function set_crossSection ()
+{
+	var segments = 10;
+	var radius   = 0.05;
+	
+	geometry .crossSection .length = segments;
+
+	for (var i = 0; i < segments; ++ i)
+	{
+		var
+			angle = i / (segments - 1) * 2 * Math .PI,
+			x     = Math .cos (angle) * radius,
+			y     = Math .sin (angle) * radius;
+			
+			geometry .crossSection [i] .x = x;
+			geometry .crossSection [i] .y = y;
+	}
+	
+	geometry .crossSection [segments - 1] = geometry .crossSection [0];
+}
+
+function set_fraction (value, time)
+{
+	if (lastTime == 0)
+		lastTime = time;
+
+	var dt = time - lastTime;
+
+	if (dt < updateInterval)
+		return;
+		
+	if (points .length > numPoints)
+		var point = points .shift ();
+	else
+		var point = new SFVec3f ();
+	
+	var
+		x     = points .length ? points [points .length - 1] .x : 0,
+		spine = geometry .spine;
+	
+	transform .translation .x -= updateInterval;
+
+	point .x = x + updateInterval;
+	point .y = value;
+
+	points .push (point);
+	
+	for (var i = 0, length = points .length; i < length; ++ i)
+		spine [i] = points [i];
+	
+	lastTime = time; 
+}]]> 
+        </Script>
+        <Transform DEF='x'
+            translation='3 0 0'
+            scale='0.292257 0.292257 0.292257'>
+          <Shape>
+            <Appearance>
+              <Material DEF='_5'
+                  diffuseColor='0 0 0'/>
+            </Appearance>
+            <Text
+                string='" x"'
+                solid='true'>
+              <FontStyle
+                  family='"SANS"'
+                  style='BOLDITALIC'
+                  justify='"END", "BEGIN"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='y'
+            translation='0 1.5 -5.13428e-08'
+            scale='0.292257 0.292257 0.292257'>
+          <Shape>
+            <Appearance>
+              <Material USE='_5'/>
+            </Appearance>
+            <Text
+                string='"y "'
+                solid='true'>
+              <FontStyle
+                  family='"SANS"'
+                  style='BOLDITALIC'
+                  justify='"END", "FIRST"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='Disk2D'
+            scale='1.57048 1.57048 1.57048'>
+          <Shape>
+            <Appearance>
+              <Material USE='_5'/>
+            </Appearance>
+            <Disk2D
+                innerRadius='0.04'
+                outerRadius='0.07'/>
+          </Shape>
+        </Transform>
+        <Transform
+            translation='2.01858 0 0'
+            scale='1.22283 1 1'
+            center='-1.73595 -0.0403243 0'>
+          <Transform USE='Polyline2D'/>
+        </Transform>
+        <Group>
+          <Transform DEF='Text'
+              translation='2.4 -1.2 -4.40964e-06'
+              scale='0.292257 0.292257 0.292257'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'/>
+              </Appearance>
+              <Text DEF='_6'
+                  string='"58° Boyz Noise"'
+                  solid='true'>
+                <FontStyle
+                    family='"SANS"'
+                    style='BOLDITALIC'
+                    justify='"END", "BEGIN"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Script DEF='NumberScript'>
+            <field accessType='inputOnly' type='SFFloat' name='set_value'/>
+            <field accessType='outputOnly' type='MFString' name='string_changed'/>
+<![CDATA[ecmascript:
+
+var last = "";
+
+function set_value (value)
+{
+	value = Math .round (value * 100);
+
+	if (value == last)
+		return;
+		
+	last = value;
+		
+	string_changed [0] = value + "° Boyz Noise";
+}]]> 
+          </Script>
+        </Group>
+      </Layer>
+    </LayerSet>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='LineGraphScript' toField='set_fraction'/>
+    <ROUTE fromNode='x' fromField='scale_changed' toNode='y' toField='set_scale'/>
+    <ROUTE fromNode='y' fromField='scale_changed' toNode='x' toField='set_scale'/>
+    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='PositionInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='PositionInterpolator' fromField='value_changed' toNode='_2' toField='set_position'/>
+    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='OrientationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='OrientationInterpolator' fromField='value_changed' toNode='_2' toField='set_orientation'/>
+    <ROUTE fromNode='NumberScript' fromField='string_changed' toNode='_6' toField='set_string'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='NumberScript' toField='set_value'/>
+  </Scene>
+</X3D>
