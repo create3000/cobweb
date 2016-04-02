@@ -1137,6 +1137,9 @@
     <None Include="examples\fourmilab\topo.jpg" />
     <None Include="examples\fourmilab\vapour.gif" />
     <None Include="examples\fourmilab\glow.png" />
+    <None Include="examples\currencies\currencies.x3d" />
+    <None Include="examples\currencies\stripes.png" />
+    <None Include="examples\currencies\world.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1196,5 +1199,6 @@
     <Folder Include="cobweb\Browser\Followers\" />
     <Folder Include="tests\Components\Core\" />
     <Folder Include="examples\fourmilab\" />
+    <Folder Include="examples\currencies\" />
   </ItemGroup>
 </Project>
