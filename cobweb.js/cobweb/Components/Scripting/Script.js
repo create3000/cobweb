@@ -191,6 +191,8 @@ function ($,
 
 			var global =
 			{
+				$: { value: $ },
+
 				NULL:  { value: null },
 				FALSE: { value: false },
 				TRUE:  { value: true },
