@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/fourmilab/earth.x3d'/>
-    <meta name='modified' content='Fri, 01 Apr 2016 21:00:38 GMT'/>
+    <meta name='modified' content='Sun, 03 Apr 2016 11:39:37 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -64,7 +64,6 @@
               name='children'
               reference='http://titania.create3000.de'>
             <Transform DEF='Disk2D' containerField='value'
-                rotation='0 0 1 0'
                 scale='1.21903 1.21903 1.21903'>
               <Shape>
                 <Appearance>
@@ -115,9 +114,7 @@
         <Group DEF='SolarSystem'>
           <SphereSensor DEF='_1'/>
           <Transform DEF='Sphere'>
-            <Transform DEF='Earth'
-                rotation='0 1 0 2.40685867379771'
-                scale='1 1 1'>
+            <Transform DEF='Earth'>
               <Group DEF='Animation'>
                 <MetadataSet DEF='Animation_1'
                     name='Animation'
@@ -168,7 +165,6 @@
             </Transform>
             <Transform
                 rotation='0 1 0 3.14158999999984'
-                scale='1 1 1'
                 scaleOrientation='0 1 0 9.89571743158713e-06'>
               <TimeSensor DEF='STARSHELL-TIMER'
                   cycleInterval='1000'
@@ -180,8 +176,7 @@
               <Group>
                 <Collision
                     enabled='false'>
-                  <Transform DEF='STARSHELL-XFORM'
-                      rotation='0 1 0 6.25147701109653'>
+                  <Transform DEF='STARSHELL-XFORM'>
                     <Transform DEF='TOP-HEMISPHERE'>
                       <Transform DEF='TOP-LEFT-HEMI'>
                         <Transform DEF='TOP-SECTOR3'>
@@ -313,7 +308,6 @@
             </Transform>
             <Transform
                 translation='-3 0 -4'
-                rotation='0 0 1 0'
                 scale='0.272511 0.272511 0.272511'>
               <Shape>
                 <Appearance>
@@ -380,6 +374,9 @@ function set_time ()
 
 function eventsProcessed ()
 {
+	if (typeof $ == "undefined")
+		return;
+	
 	var URL = "https://crossorigin.me/http://www.fourmilab.ch/cgi-bin/Earth?opt=-p&imgsize=1024&img=" + img;
 
 	$.ajax ({
@@ -476,7 +473,6 @@ function eventsProcessed ()
           </Transform>
           <Transform DEF='Text'
               translation='-6 2.4 8.68798e-06'
-              rotation='0 0 1 0'
               scale='0.20137 0.20137 0.20137'>
             <Shape>
               <Appearance>
@@ -496,7 +492,6 @@ function eventsProcessed ()
         <Transform DEF='Topo'>
           <Transform DEF='Disk2D_2'
               translation='-6 1.4 5.06799e-06'
-              rotation='0 0 0 2.06476546236143e-07'
               scale='0.5 0.5 0.5'>
             <Shape>
               <Appearance>
@@ -519,7 +514,6 @@ function eventsProcessed ()
           </Transform>
           <Transform DEF='Text_1'
               translation='-6 0.8 2.89599e-06'
-              rotation='0 0 0 0.000222121937110349'
               scale='0.20137 0.20137 0.20137'>
             <Shape>
               <Appearance>
@@ -539,7 +533,6 @@ function eventsProcessed ()
         <Transform DEF='Weather'>
           <Transform DEF='Disk2D_3'
               translation='-6 -0.2 -7.23998e-07'
-              rotation='0 0 0 4.12953092472286e-07'
               scale='0.5 0.5 0.5'>
             <Shape>
               <Appearance>
@@ -562,7 +555,6 @@ function eventsProcessed ()
           </Transform>
           <Transform DEF='Text_2'
               translation='-6 -0.8 -2.89599e-06'
-              rotation='0 0 0 0.000222121937110349'
               scale='0.20137 0.20137 0.20137'>
             <Shape>
               <Appearance>
@@ -582,7 +574,6 @@ function eventsProcessed ()
         <Transform DEF='Clouds'>
           <Transform DEF='Disk2D_4'
               translation='6 3 1.086e-05'
-              rotation='0 0 0 6.19429638708431e-07'
               scale='0.5 0.5 0.5'>
             <Shape>
               <Appearance>
@@ -605,7 +596,6 @@ function eventsProcessed ()
           </Transform>
           <Transform DEF='Text_3'
               translation='6 2.4 8.68798e-06'
-              rotation='0 0 0 0.000222121937110349'
               scale='0.20137 0.20137 0.20137'>
             <Shape>
               <Appearance>
@@ -625,7 +615,6 @@ function eventsProcessed ()
         <Transform DEF='Vapour'>
           <Transform DEF='Disk2D_5'
               translation='6 1.4 5.06799e-06'
-              rotation='0 0 0 2.06476546236143e-07'
               scale='0.5 0.5 0.5'>
             <Shape>
               <Appearance>
@@ -648,7 +637,6 @@ function eventsProcessed ()
           </Transform>
           <Transform DEF='Text_4'
               translation='6 0.8 2.89599e-06'
-              rotation='0 0 0 0.000222121937110349'
               scale='0.20137 0.20137 0.20137'>
             <Shape>
               <Appearance>
@@ -667,7 +655,6 @@ function eventsProcessed ()
         </Transform>
         <Transform DEF='Rectangle2D'
             translation='5.21541e-08 -3.9 -1.086e-05'
-            rotation='0 0 0 0.000149264621551156'
             scale='7 0.0999999 1'>
           <Shape>
             <Appearance>
@@ -688,16 +675,15 @@ function eventsProcessed ()
         </Transform>
         <Transform DEF='CurrentTime'
             translation='-6.8 -3.2 -1.1584e-05'
-            rotation='0 0 0 0.000222121937110349'
             scale='0.20137 0.20137 0.20137'>
           <Shape>
             <Appearance>
-              <Material DEF='_11'/>
+              <Material/>
             </Appearance>
-            <Text DEF='_12'
+            <Text DEF='_11'
                 string='"Current Time", "Fr 01 Apr 2016 20:30:31 CEST"'
                 solid='true'>
-              <FontStyle DEF='_13'
+              <FontStyle
                   family='"SANS"'
                   style='BOLD'
                   spacing='1.2'
@@ -715,7 +701,7 @@ function set_time ()
 	string_changed [1] = new Date () .toLocaleString ();
 }]]> 
           </Script>
-          <TimeSensor DEF='_14'
+          <TimeSensor DEF='_12'
               loop='true'/>
         </Transform>
       </Layer>
@@ -725,8 +711,8 @@ function set_time ()
     <ROUTE fromNode='_1' fromField='rotation_changed' toNode='Sphere' toField='set_rotation'/>
     <ROUTE fromNode='_2' fromField='fraction_changed' toNode='EarthRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='EarthRotationInterpolator' fromField='value_changed' toNode='Earth' toField='set_rotation'/>
-    <ROUTE fromNode='TimeScript' fromField='string_changed' toNode='_12' toField='set_string'/>
-    <ROUTE fromNode='_14' fromField='cycleTime' toNode='TimeScript' toField='set_time'/>
+    <ROUTE fromNode='TimeScript' fromField='string_changed' toNode='_11' toField='set_string'/>
+    <ROUTE fromNode='_12' fromField='cycleTime' toNode='TimeScript' toField='set_time'/>
     <ROUTE fromNode='_6' fromField='touchTime' toNode='EarthScript' toField='set_marble'/>
     <ROUTE fromNode='_7' fromField='touchTime' toNode='EarthScript' toField='set_topo'/>
     <ROUTE fromNode='_8' fromField='touchTime' toNode='EarthScript' toField='set_weather'/>
