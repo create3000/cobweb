@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/currencies.x3d'/>
-    <meta name='modified' content='Sun, 03 Apr 2016 07:00:02 GMT'/>
+    <meta name='modified' content='Sun, 03 Apr 2016 07:14:44 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='RoundedExtrusion' url='"RoundedExtrusion.x3d#RoundedExtrusion", "file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d#RoundedExtrusion"'>
@@ -288,7 +288,7 @@ function set_currency (value, time)
 		minValue  = Math .min .apply (Math, keyValues),
 		maxValue  = Math .max .apply (Math, keyValues)
 		length    = keyValues .length,
-		length2   = interpolator .keyValue .length;
+		length2   = interpolator .value_changed .length;
 		
 	// Move current keyValues
 		
@@ -297,7 +297,7 @@ function set_currency (value, time)
 		var x = (i + 1) / length * numValues;
 		
 		if (length2 - length + i >= 0)
-			var y = interpolator .keyValue [length2 - length + i] .y;
+			var y = interpolator .value_changed [length2 - length + i] .y;
 		else
 			var y = minY;
 	
@@ -320,6 +320,7 @@ function set_currency (value, time)
 	
 	interpolator .keyValue .length = length * 2;
 		
+	timer .stopTime  = time;
 	timer .startTime = time;
 	
 	// Generate text
