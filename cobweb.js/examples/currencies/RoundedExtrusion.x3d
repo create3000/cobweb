@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d'/>
-    <meta name='modified' content='Sun, 03 Apr 2016 06:23:41 GMT'/>
+    <meta name='modified' content='Sun, 03 Apr 2016 06:53:51 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='RoundedExtrusion'>
@@ -23,6 +23,7 @@
         <field accessType='inputOutput' type='MFVec2f' name='scale' value='1 1'/>
         <field accessType='inputOutput' type='MFVec3f' name='spine' value='0 0 0, 0 1 0'/>
         <field accessType='inputOutput' type='SFFloat' name='cornerRadius' value='1'/>
+        <field accessType='inputOutput' type='SFInt32' name='cornerSegments' value='16'/>
       </ProtoInterface>
       <ProtoBody>
         <Extrusion DEF='_1'>
@@ -41,18 +42,18 @@
         <Script DEF='RoundedExtrusionScript'>
           <field accessType='inputOutput' type='MFVec3f' name='spine'/>
           <field accessType='inputOutput' type='SFFloat' name='cornerRadius'/>
+          <field accessType='inputOutput' type='SFInt32' name='cornerSegments'/>
           <field accessType='initializeOnly' type='SFNode' name='geometry'>
             <Extrusion USE='_1'/>
           </field>
           <IS>
             <connect nodeField='spine' protoField='spine'/>
             <connect nodeField='cornerRadius' protoField='cornerRadius'/>
+            <connect nodeField='cornerSegments' protoField='cornerSegments'/>
           </IS>
 <![CDATA[ecmascript:
 
-var
-	numSegments      = 32,
-	rotationIdentity = new SFRotation ();
+var rotationIdentity = new SFRotation ();
 
 function initialize ()
 {
@@ -102,7 +103,7 @@ function eventsProcessed ()
 
 			roundedSpine [roundedSpine .length] = startPoint;
 
-			for (var s = 1, segments = angle * numSegments / (2 * Math .PI);  s < segments; ++ s)
+			for (var s = 1, segments = angle * cornerSegments / Math .PI;  s < segments; ++ s)
 			{
 			   var r = rotationIdentity .slerp (rotation, s / segments);
 
@@ -110,6 +111,8 @@ function eventsProcessed ()
 			}
 
 			roundedSpine [roundedSpine .length] = endPoint;
+
+			print (direction1 .length (), " ", direction2 .length ());
 		}
 	}
 
@@ -189,11 +192,6 @@ function get_closest_point (point1, direction1, point2, direction2, closestPoint
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'>
-            <!-- NULL -->
-          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
