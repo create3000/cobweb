@@ -53,7 +53,9 @@
           </IS>
 <![CDATA[ecmascript:
 
-var rotationIdentity = new SFRotation ();
+var
+	identity = new SFRotation (),
+	center   = new SFVec3f ();
 
 function initialize ()
 {
@@ -62,9 +64,7 @@ function initialize ()
 
 function eventsProcessed ()
 {
-	var
-		roundedSpine = new MFVec3f (),
-		center       = new SFVec3f ();
+	var roundedSpine = new MFVec3f ();
 
 	if (spine .length)
 		roundedSpine [0] = spine [0];
@@ -108,7 +108,7 @@ function eventsProcessed ()
 
 				for (var d = 1;  d < dimension; ++ d)
 				{
-				   var r = rotationIdentity .slerp (rotation, d / dimension);
+				   var r = identity .slerp (rotation, d / dimension);
 
 					roundedSpine [roundedSpine .length] = center .add (r .multVec (segment1));
 				}
