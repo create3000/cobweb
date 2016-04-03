@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Sun, 03 Apr 2016 04:01:10 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d'/>
+    <meta name='modified' content='Sun, 03 Apr 2016 06:23:41 GMT'/>
+  </head>
+  <Scene>
+    <ProtoDeclare name='RoundedExtrusion'>
+      <ProtoInterface>
+        <field accessType='initializeOnly' type='SFBool' name='beginCap' value='true'/>
+        <field accessType='initializeOnly' type='SFBool' name='endCap' value='true'/>
+        <field accessType='initializeOnly' type='SFBool' name='solid' value='true'/>
+        <field accessType='initializeOnly' type='SFBool' name='ccw' value='true'/>
+        <field accessType='initializeOnly' type='SFBool' name='convex' value='true'/>
+        <field accessType='initializeOnly' type='SFFloat' name='creaseAngle'/>
+        <field accessType='inputOutput' type='MFVec2f' name='crossSection' value='1 1, 1 -1, -1 -1, -1 1, 1 1'/>
+        <field accessType='inputOutput' type='MFRotation' name='orientation' value='0 0 1 0'/>
+        <field accessType='inputOutput' type='MFVec2f' name='scale' value='1 1'/>
+        <field accessType='inputOutput' type='MFVec3f' name='spine' value='0 0 0, 0 1 0'/>
+        <field accessType='inputOutput' type='SFFloat' name='cornerRadius' value='1'/>
+      </ProtoInterface>
+      <ProtoBody>
+        <Extrusion DEF='_1'>
+          <IS>
+            <connect nodeField='beginCap' protoField='beginCap'/>
+            <connect nodeField='endCap' protoField='endCap'/>
+            <connect nodeField='solid' protoField='solid'/>
+            <connect nodeField='ccw' protoField='ccw'/>
+            <connect nodeField='convex' protoField='convex'/>
+            <connect nodeField='creaseAngle' protoField='creaseAngle'/>
+            <connect nodeField='crossSection' protoField='crossSection'/>
+            <connect nodeField='orientation' protoField='orientation'/>
+            <connect nodeField='scale' protoField='scale'/>
+          </IS>
+        </Extrusion>
+        <Script DEF='RoundedExtrusionScript'>
+          <field accessType='inputOutput' type='MFVec3f' name='spine'/>
+          <field accessType='inputOutput' type='SFFloat' name='cornerRadius'/>
+          <field accessType='initializeOnly' type='SFNode' name='geometry'>
+            <Extrusion USE='_1'/>
+          </field>
+          <IS>
+            <connect nodeField='spine' protoField='spine'/>
+            <connect nodeField='cornerRadius' protoField='cornerRadius'/>
+          </IS>
+<![CDATA[ecmascript:
+
+var
+	numSegments      = 32,
+	rotationIdentity = new SFRotation ();
+
+function initialize ()
+{
+	eventsProcessed ();
+}
+
+function eventsProcessed ()
+{
+	var
+		roundedSpine = new MFVec3f (),
+		center       = new SFVec3f ();
+
+	if (spine .length)
+		roundedSpine [0] = spine [0];
+
+	for (var i = 1, length = spine .length - 1; i < length; ++ i)
+	{
+		var
+			vector1    = spine [i - 1] .subtract (spine [i]),
+			vector2    = spine [i + 1] .subtract (spine [i]),
+			normal1    = vector1 .normalize (),
+			normal2    = vector2 .normalize (),
+			normal     = normal1 .cross (normal2) .normalize (), // plane normal
+			direction1 = normal1 .cross (normal),                // line direction
+			direction2 = normal2 .cross (normal),                // line direction
+			length1    = vector1 .length (),
+			length2    = vector2 .length (),
+			radius1    = cornerRadius < length1 / 2 ? cornerRadius : length1 / 2,
+			radius2    = cornerRadius < length2 / 2 ? cornerRadius : length2 / 2,
+			radius     = Math .min (radius1, radius2);
+
+		var
+			startPoint = spine [i] .add (normal1 .multiply (radius)),
+			endPoint   = spine [i] .add (normal2 .multiply (radius)),
+			theta      = get_closest_point (startPoint, direction1, endPoint, direction2, center);
+
+		if (Math .abs (theta) >= 1)
+			roundedSpine [roundedSpine .length] = spine [i];
+
+		else
+		{
+		   var
+		      segment1 = startPoint .subtract (center),
+		      segment2 = endPoint   .subtract (center),
+		      rotation = new SFRotation (segment1, segment2);
+				angle    = Math .acos (segment1 .normalize () .dot (segment2 .normalize ()));
+
+			roundedSpine [roundedSpine .length] = startPoint;
+
+			for (var s = 1, segments = angle * numSegments / (2 * Math .PI);  s < segments; ++ s)
+			{
+			   var r = rotationIdentity .slerp (rotation, s / segments);
+
+				roundedSpine [roundedSpine .length] = center .add (r .multVec (segment1));
+			}
+
+			roundedSpine [roundedSpine .length] = endPoint;
+		}
+	}
+
+	if (spine .length > 1)
+		roundedSpine [roundedSpine .length] = spine [spine .length - 1];
+
+	geometry .spine = roundedSpine;
+}
+
+function get_closest_point (point1, direction1, point2, direction2, closestPoint)
+{
+	var
+		theta = direction1 .dot (direction2), // angle between both lines
+		u     = point2 .subtract (point1),
+		t     = (u .dot (direction1) - theta * u .dot (direction2)) / (1 - theta * theta);
+
+	var point = point1 .add (direction1 .multiply (t));
+
+	closestPoint .x = point .x;
+	closestPoint .y = point .y;
+	closestPoint .z = point .z;
+
+	return theta;
+}
+
+]]> 
+        </Script>
+      </ProtoBody>
+    </ProtoDeclare>
+    <WorldInfo>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='AngleGrid' containerField='value'
+            name='AngleGrid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet DEF='Grid' containerField='value'
+            name='Grid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled_1' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='true'/>
+        </MetadataSet>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='22.2332248687744, 13.2277936935425, 33.2398872375488'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.788531234305659, 0.598715046667055, 0.140565946867867, 0.126639878970804'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='18.7368354797363, 8.5366849899292, -13.1791152954102'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <!-- NULL -->
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Transform DEF='Extrusion'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <ProtoInstance name='RoundedExtrusion' containerField='geometry'>
+          <fieldValue name='spine' value='0 0 0, 10 20 0, 20 0 0, 30 10 0, 40 0 0'/>
+        </ProtoInstance>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>

@@ -1140,6 +1140,7 @@
     <None Include="examples\currencies\currencies.x3d" />
     <None Include="examples\currencies\stripes.png" />
     <None Include="examples\currencies\world.png" />
+    <None Include="examples\currencies\RoundedExtrusion.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

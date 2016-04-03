@@ -8,9 +8,22 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/currencies.x3d'/>
-    <meta name='modified' content='Sat, 02 Apr 2016 08:52:14 GMT'/>
+    <meta name='modified' content='Sun, 03 Apr 2016 06:31:05 GMT'/>
   </head>
   <Scene>
+    <ExternProtoDeclare name='RoundedExtrusion' url='"RoundedExtrusion.x3d#RoundedExtrusion", "file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d#RoundedExtrusion"'>
+      <field accessType='initializeOnly' type='SFBool' name='beginCap'/>
+      <field accessType='initializeOnly' type='SFBool' name='endCap'/>
+      <field accessType='initializeOnly' type='SFBool' name='solid'/>
+      <field accessType='initializeOnly' type='SFBool' name='ccw'/>
+      <field accessType='initializeOnly' type='SFBool' name='convex'/>
+      <field accessType='initializeOnly' type='SFFloat' name='creaseAngle'/>
+      <field accessType='inputOutput' type='MFVec2f' name='crossSection'/>
+      <field accessType='inputOutput' type='MFRotation' name='orientation'/>
+      <field accessType='inputOutput' type='MFVec2f' name='scale'/>
+      <field accessType='inputOutput' type='MFVec3f' name='spine'/>
+      <field accessType='inputOutput' type='SFFloat' name='cornerRadius'/>
+    </ExternProtoDeclare>
     <WorldInfo>
       <MetadataSet DEF='Titania'
           name='Titania'
@@ -1212,10 +1225,11 @@
                 <Material
                     diffuseColor='1 0 0'/>
               </Appearance>
-              <Extrusion DEF='_38'
-                  crossSection='1 0, 0.951057 0.309017, 0.809017 0.587785, 0.587785 0.809017, 0.309017 0.951057, 6.12323e-17 1, -0.309017 0.951057, -0.587785 0.809017, -0.809017 0.587785, -0.951057 0.309017, -1 1.22465e-16, -0.951057 -0.309017, -0.809017 -0.587785, -0.587785 -0.809017, -0.309017 -0.951057, -1.83697e-16 -1, 0.309017 -0.951057, 0.587785 -0.809017, 0.809017 -0.587785, 0.951057 -0.309017, 1 0'
-                  scale='0.3 0.3'
-                  spine='1 6 0, 90 6 0'/>
+              <ProtoInstance name='RoundedExtrusion' DEF='_38' containerField='geometry'>
+                <fieldValue name='crossSection' value='1 0, 0.951057 0.309017, 0.809017 0.587785, 0.587785 0.809017, 0.309017 0.951057, 6.12323e-17 1, -0.309017 0.951057, -0.587785 0.809017, -0.809017 0.587785, -0.951057 0.309017, -1 1.22465e-16, -0.951057 -0.309017, -0.809017 -0.587785, -0.587785 -0.809017, -0.309017 -0.951057, -1.83697e-16 -1, 0.309017 -0.951057, 0.587785 -0.809017, 0.809017 -0.587785, 0.951057 -0.309017, 1 0'/>
+                <fieldValue name='scale' value='0.3 0.3'/>
+                <fieldValue name='spine' value='1 6 0, 90 6 0'/>
+              </ProtoInstance>
             </Shape>
           </Transform>
         </Group>
@@ -1482,7 +1496,7 @@ function get_trend (last2, last1)
         </Script>
         <Transform DEF='EuroSign'
             translation='1.41973 0.373394 0.270001'
-            rotation='0 0 1 0'
+            rotation='0 1 0 5.50072852572742'
             scale='0.208199 0.208199 0.208199'>
           <Group DEF='EuroSignAnimation'>
             <MetadataSet DEF='Animation'
@@ -1573,9 +1587,9 @@ function get_trend (last2, last1)
     <ROUTE fromNode='_2' fromField='touchTime' toNode='CurrenciesScript' toField='set_USD'/>
     <ROUTE fromNode='_39' fromField='fraction_changed' toNode='_40' toField='set_fraction'/>
     <ROUTE fromNode='_40' fromField='modifiedFraction_changed' toNode='_41' toField='set_fraction'/>
-    <ROUTE fromNode='_41' fromField='value_changed' toNode='_38' toField='set_spine'/>
     <ROUTE fromNode='CurrenciesScript' fromField='text_changed' toNode='_34' toField='set_string'/>
     <ROUTE fromNode='_42' fromField='fraction_changed' toNode='EuroSignRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='EuroSignRotationInterpolator' fromField='value_changed' toNode='EuroSign' toField='set_rotation'/>
+    <ROUTE fromNode='_41' fromField='value_changed' toNode='_38' toField='set_spine'/>
   </Scene>
 </X3D>
