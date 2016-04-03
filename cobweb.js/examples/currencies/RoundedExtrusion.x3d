@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d'/>
-    <meta name='modified' content='Sun, 03 Apr 2016 06:53:51 GMT'/>
+    <meta name='modified' content='Sun, 03 Apr 2016 10:40:43 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='RoundedExtrusion'>
@@ -96,21 +96,27 @@ function eventsProcessed ()
 		else
 		{
 		   var
-		      segment1 = startPoint .subtract (center),
-		      segment2 = endPoint   .subtract (center),
-		      rotation = new SFRotation (segment1, segment2);
-				angle    = Math .acos (segment1 .normalize () .dot (segment2 .normalize ()));
-
-			roundedSpine [roundedSpine .length] = startPoint;
-
-			for (var d = 1, dimension = Math .round (angle / (2 * Math .PI) * cornerDimension);  d < dimension; ++ d)
+		      segment1  = startPoint .subtract (center),
+		      segment2  = endPoint   .subtract (center),
+		      rotation  = new SFRotation (segment1, segment2);
+				angle     = Math .PI - Math .acos (clamp (normal1 .dot (normal2), -1, 1)),
+				dimension = Math .round (angle / (2 * Math .PI) * cornerDimension);
+			
+			if (dimension)
 			{
-			   var r = rotationIdentity .slerp (rotation, d / dimension);
+				roundedSpine [roundedSpine .length] = startPoint;
 
-				roundedSpine [roundedSpine .length] = center .add (r .multVec (segment1));
+				for (var d = 1;  d < dimension; ++ d)
+				{
+				   var r = rotationIdentity .slerp (rotation, d / dimension);
+
+					roundedSpine [roundedSpine .length] = center .add (r .multVec (segment1));
+				}
+
+				roundedSpine [roundedSpine .length] = endPoint;
 			}
-
-			roundedSpine [roundedSpine .length] = endPoint;
+			else
+			   roundedSpine [roundedSpine .length] = spine [i];
 		}
 	}
 
@@ -136,6 +142,10 @@ function get_closest_point (point1, direction1, point2, direction2, closestPoint
 	return theta;
 }
 
+function clamp (value, min, max)
+{
+	return value < min ? min : (value > max ? max : value);
+}
 ]]> 
         </Script>
       </ProtoBody>
@@ -190,6 +200,9 @@ function get_closest_point (point1, direction1, point2, direction2, closestPoint
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -199,7 +212,8 @@ function get_closest_point (point1, direction1, point2, direction2, closestPoint
           <Material/>
         </Appearance>
         <ProtoInstance name='RoundedExtrusion' containerField='geometry'>
-          <fieldValue name='spine' value='0 0 0, 10 20 0, 20 0 0, 30 10 0, 40 0 0'/>
+          <fieldValue name='spine' value='0 0 0, 10 20 0, 20 0 0, 30 10 0, 40 20 0'/>
+          <fieldValue name='cornerDimension' value='8'/>
         </ProtoInstance>
       </Shape>
     </Transform>
