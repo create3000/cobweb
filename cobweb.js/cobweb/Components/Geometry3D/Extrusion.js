@@ -385,7 +385,7 @@ function ($,
 				{
 					var
 						j         = 0, // spine
-						polygon  = [ ],
+						polygon   = [ ],
 						triangles = [ ];
 
 					for (var k = 0; k < numCapPoints; ++ k)
@@ -404,15 +404,18 @@ function ($,
 					else
 						Triangle3 .triangulatePolygon (polygon, triangles);
 
-					var normal = Triangle3 .normal (points [triangles [0] .index],
-					                                points [triangles [1] .index],
-					                                points [triangles [2] .index],
-					                                new Vector3 (0, 0, 0));
+					if (triangles .length >= 3)
+					{
+						var normal = Triangle3 .normal (points [triangles [0] .index],
+						                                points [triangles [1] .index],
+						                                points [triangles [2] .index],
+						                                new Vector3 (0, 0, 0));
 
-					if (cw)
-						normal .negate ();
+						if (cw)
+							normal .negate ();
 
-					this .addCap (texCoords, normal, points, triangles);
+						this .addCap (texCoords, normal, points, triangles);
+					}
 				}
 
 				if (this .endCap_ .getValue ())
@@ -438,15 +441,18 @@ function ($,
 					else
 						Triangle3 .triangulatePolygon (polygon, triangles);
 
-					var normal = Triangle3 .normal (points [triangles [0] .index],
-					                                points [triangles [1] .index],
-					                                points [triangles [2] .index],
-					                                new Vector3 (0, 0, 0));
+					if (triangles .length >= 3)
+					{
+						var normal = Triangle3 .normal (points [triangles [0] .index],
+						                                points [triangles [1] .index],
+						                                points [triangles [2] .index],
+						                                new Vector3 (0, 0, 0));
 
-					if (cw)
-						normal .negate ();
+						if (cw)
+							normal .negate ();
 
-					this .addCap (texCoords, normal, points, triangles);
+						this .addCap (texCoords, normal, points, triangles);
+					}
 				}
 			}
 

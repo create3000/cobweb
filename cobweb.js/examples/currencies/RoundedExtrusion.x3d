@@ -111,8 +111,6 @@ function eventsProcessed ()
 			}
 
 			roundedSpine [roundedSpine .length] = endPoint;
-
-			print (direction1 .length (), " ", direction2 .length ());
 		}
 	}
 

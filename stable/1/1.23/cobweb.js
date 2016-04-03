@@ -63434,6 +63434,10 @@ function ($,
 {
 
 
+	var
+		matrix    = new Matrix4 (),
+		rotations = [ ];
+
 	function Extrusion (executionContext)
 	{
 		X3DGeometryNode .call (this, executionContext);
@@ -63484,8 +63488,6 @@ function ($,
 
 			// calculate vertices.
 			
-			var matrix = new Matrix4 ();
-
 			for (var i = 0, length = spine .length; i < length; ++ i)
 			{
 				matrix .identity ();
@@ -63513,15 +63515,19 @@ function ($,
 		},
 		createRotations: function ()
 		{
-			var rotations = [ ];
-
 			// calculate SCP rotations
 
 			var
 				spine       = this .spine_ .getValue (),
+				numSpines   = spine .length,
 				firstSpine  = spine [0] .getValue (),
 				lastSpine   = spine [spine .length - 1] .getValue (),
 				closedSpine = firstSpine .equals (lastSpine);
+
+			for (var i = rotations .length; i < numSpines; ++ i)
+				rotations [i] = new Matrix4 ();
+
+			rotations .length = numSpines;
 
 			var
 				SCPxAxis,
@@ -63559,10 +63565,10 @@ function ($,
 			// We do not have to normalize SCPxAxis, as SCPyAxis and SCPzAxis are orthogonal.
 			SCPxAxis = Vector3 .cross (SCPyAxis, SCPzAxis);
 
-			rotations .push (new Matrix4 (SCPxAxis .x, SCPxAxis .y, SCPxAxis .z, 0,
-			                              SCPyAxis .x, SCPyAxis .y, SCPyAxis .z, 0,
-			                              SCPzAxis .x, SCPzAxis .y, SCPzAxis .z, 0,
-			                              0,           0,           0,           1));
+			rotations [0] .set (SCPxAxis .x, SCPxAxis .y, SCPxAxis .z, 0,
+			                    SCPyAxis .x, SCPyAxis .y, SCPyAxis .z, 0,
+			                    SCPzAxis .x, SCPzAxis .y, SCPzAxis .z, 0,
+			                    0,           0,           0,           1);
 
 			// For all points other than the first or last:
 
@@ -63588,17 +63594,17 @@ function ($,
 				// We do not have to normalize SCPxAxis, as SCPyAxis and SCPzAxis are orthogonal.
 				SCPxAxis = Vector3 .cross (SCPyAxis, SCPzAxis);
 
-				rotations .push (new Matrix4 (SCPxAxis .x, SCPxAxis .y, SCPxAxis .z, 0,
-				                              SCPyAxis .x, SCPyAxis .y, SCPyAxis .z, 0,
-				                              SCPzAxis .x, SCPzAxis .y, SCPzAxis .z, 0,
-				                              0,           0,           0,           1));
+				rotations [i] .set (SCPxAxis .x, SCPxAxis .y, SCPxAxis .z, 0,
+				                    SCPyAxis .x, SCPyAxis .y, SCPyAxis .z, 0,
+				                    SCPzAxis .x, SCPzAxis .y, SCPzAxis .z, 0,
+				                    0,           0,           0,           1);
 			}
 
 			// SCP for the last point
 			if (closedSpine)
 			{
 				// The SCPs for the first and last points are the same.
-				rotations .push (rotations [0] .copy ());
+				rotations [numSpines - 1] .assign (rotations [0]);
 			}
 			else
 			{
@@ -63622,10 +63628,10 @@ function ($,
 				// We do not have to normalize SCPxAxis, as SCPyAxis and SCPzAxis are orthogonal.
 				SCPxAxis = Vector3 .cross (SCPyAxis, SCPzAxis);
 
-				rotations .push (new Matrix4 (SCPxAxis .x, SCPxAxis .y, SCPxAxis .z, 0,
-				                              SCPyAxis .x, SCPyAxis .y, SCPyAxis .z, 0,
-				                              SCPzAxis .x, SCPzAxis .y, SCPzAxis .z, 0,
-				                              0,           0,           0,           1));
+				rotations [numSpines - 1] .set (SCPxAxis .x, SCPxAxis .y, SCPxAxis .z, 0,
+				                                SCPyAxis .x, SCPyAxis .y, SCPyAxis .z, 0,
+				                                SCPzAxis .x, SCPzAxis .y, SCPzAxis .z, 0,
+				                                0,           0,           0,           1);
 			}
 
 			return rotations;
@@ -63786,7 +63792,7 @@ function ($,
 				{
 					var
 						j         = 0, // spine
-						polygon  = [ ],
+						polygon   = [ ],
 						triangles = [ ];
 
 					for (var k = 0; k < numCapPoints; ++ k)
@@ -63805,15 +63811,18 @@ function ($,
 					else
 						Triangle3 .triangulatePolygon (polygon, triangles);
 
-					var normal = Triangle3 .normal (points [triangles [0] .index],
-					                                points [triangles [1] .index],
-					                                points [triangles [2] .index],
-					                                new Vector3 (0, 0, 0));
+					if (triangles .length >= 3)
+					{
+						var normal = Triangle3 .normal (points [triangles [0] .index],
+						                                points [triangles [1] .index],
+						                                points [triangles [2] .index],
+						                                new Vector3 (0, 0, 0));
 
-					if (cw)
-						normal .negate ();
+						if (cw)
+							normal .negate ();
 
-					this .addCap (texCoords, normal, points, triangles);
+						this .addCap (texCoords, normal, points, triangles);
+					}
 				}
 
 				if (this .endCap_ .getValue ())
@@ -63839,15 +63848,18 @@ function ($,
 					else
 						Triangle3 .triangulatePolygon (polygon, triangles);
 
-					var normal = Triangle3 .normal (points [triangles [0] .index],
-					                                points [triangles [1] .index],
-					                                points [triangles [2] .index],
-					                                new Vector3 (0, 0, 0));
+					if (triangles .length >= 3)
+					{
+						var normal = Triangle3 .normal (points [triangles [0] .index],
+						                                points [triangles [1] .index],
+						                                points [triangles [2] .index],
+						                                new Vector3 (0, 0, 0));
 
-					if (cw)
-						normal .negate ();
+						if (cw)
+							normal .negate ();
 
-					this .addCap (texCoords, normal, points, triangles);
+						this .addCap (texCoords, normal, points, triangles);
+					}
 				}
 			}
 

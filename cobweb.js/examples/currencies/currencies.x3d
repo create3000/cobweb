@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/currencies.x3d'/>
-    <meta name='modified' content='Sun, 03 Apr 2016 07:14:44 GMT'/>
+    <meta name='modified' content='Sun, 03 Apr 2016 08:25:15 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='RoundedExtrusion' url='"RoundedExtrusion.x3d#RoundedExtrusion", "file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d#RoundedExtrusion"'>
@@ -121,7 +121,6 @@
               <field accessType='inputOnly' type='SFTime' name='set_ZAR'/>
               <field accessType='inputOnly' type='SFTime' name='set_ISK'/>
               <field accessType='inputOnly' type='SFString' name='set_currency'/>
-              <field accessType='outputOnly' type='MFVec2f' name='crossSection_changed'/>
               <field accessType='outputOnly' type='MFString' name='text_changed'/>
               <field accessType='initializeOnly' type='SFNode' name='timer'>
                 <TimeSensor DEF='_1'
@@ -188,8 +187,6 @@ var currencies = {
 
 function initialize ()
 {
-	set_crossSection ();
-
 	interpolator .keyValue .length = 0;
 	interpolator .keyValue .length = numValues * 2;
 
@@ -197,27 +194,6 @@ function initialize ()
 		interpolator .keyValue [i] = new SFVec3f ((i % numValues) + 1, minY, 0);
 
 	set_loadTime ();
-}
-
-function set_crossSection ()
-{
-	var segments = 9;
-
-	crossSection_changed .length = segments;
-
-	for (var i = 0; i < segments; ++ i)
-	{
-		var
-			angle = i / (segments - 1) * 2 * Math .PI,
-			x     = Math .cos (angle),
-			y     = Math .sin (angle);
-			
-			crossSection_changed [i] .x = x;
-			crossSection_changed [i] .y = y;
-	}
-	
-	crossSection_changed [segments - 1] = crossSection_changed [0];
-
 }
 
 function set_loadTime ()
@@ -1514,7 +1490,8 @@ function get_trend (last2, last1)
                     diffuseColor='1 0 0'/>
               </Appearance>
               <ProtoInstance name='RoundedExtrusion' DEF='_41' containerField='geometry'>
-                <fieldValue name='crossSection' value='1 0, 0.707107 0.707107, 6.12323e-17 1, -0.707107 0.707107, -1 1.22465e-16, -0.707107 -0.707107, -1.83697e-16 -1, 0.707107 -0.707107, 1 0'/>
+                <fieldValue name='solid' value='false'/>
+                <fieldValue name='crossSection' value='-1 0, 1 0'/>
                 <fieldValue name='scale' value='0.3 0.3'/>
                 <fieldValue name='spine' value='1 6 0, 90 6 0'/>
                 <fieldValue name='cornerSegments' value='4'/>
@@ -1619,6 +1596,5 @@ function get_trend (last2, last1)
     <ROUTE fromNode='_42' fromField='fraction_changed' toNode='EuroSignRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='EuroSignRotationInterpolator' fromField='value_changed' toNode='EuroSign' toField='set_rotation'/>
     <ROUTE fromNode='_3' fromField='value_changed' toNode='_41' toField='set_spine'/>
-    <ROUTE fromNode='CurrenciesScript' fromField='crossSection_changed' toNode='_41' toField='set_crossSection'/>
   </Scene>
 </X3D>

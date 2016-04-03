@@ -1,9 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.release.html">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="62" Column="62" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="95" Column="95" />
+      <File FileName="cobweb.js/cobweb.html" Line="2" Column="2" />
+      <File FileName="cobweb.js/cobweb.release.html" Line="2" Column="2" />
+      <File FileName="cobweb.js/examples/currencies/RoundedExtrusion.x3d" Line="14" Column="14" />
+      <File FileName="cobweb.js/cobweb/Components/Geometry3D/Extrusion.js" Line="37" Column="37" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
