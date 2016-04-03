@@ -23,7 +23,7 @@
         <field accessType='inputOutput' type='MFVec2f' name='scale' value='1 1'/>
         <field accessType='inputOutput' type='MFVec3f' name='spine' value='0 0 0, 0 1 0'/>
         <field accessType='inputOutput' type='SFFloat' name='cornerRadius' value='1'/>
-        <field accessType='inputOutput' type='SFInt32' name='cornerSegments' value='16'/>
+        <field accessType='inputOutput' type='SFInt32' name='cornerDimension' value='16'/>
       </ProtoInterface>
       <ProtoBody>
         <Extrusion DEF='_1'>
@@ -42,14 +42,14 @@
         <Script DEF='RoundedExtrusionScript'>
           <field accessType='inputOutput' type='MFVec3f' name='spine'/>
           <field accessType='inputOutput' type='SFFloat' name='cornerRadius'/>
-          <field accessType='inputOutput' type='SFInt32' name='cornerSegments'/>
+          <field accessType='inputOutput' type='SFInt32' name='cornerDimension'/>
           <field accessType='initializeOnly' type='SFNode' name='geometry'>
             <Extrusion USE='_1'/>
           </field>
           <IS>
             <connect nodeField='spine' protoField='spine'/>
             <connect nodeField='cornerRadius' protoField='cornerRadius'/>
-            <connect nodeField='cornerSegments' protoField='cornerSegments'/>
+            <connect nodeField='cornerDimension' protoField='cornerDimension'/>
           </IS>
 <![CDATA[ecmascript:
 
@@ -103,9 +103,9 @@ function eventsProcessed ()
 
 			roundedSpine [roundedSpine .length] = startPoint;
 
-			for (var s = 1, segments = angle * cornerSegments / Math .PI;  s < segments; ++ s)
+			for (var d = 1, dimension = Math .round (angle / (2 * Math .PI) * cornerDimension);  d < dimension; ++ d)
 			{
-			   var r = rotationIdentity .slerp (rotation, s / segments);
+			   var r = rotationIdentity .slerp (rotation, d / dimension);
 
 				roundedSpine [roundedSpine .length] = center .add (r .multVec (segment1));
 			}
