@@ -1,11 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/standard/Math/Algorithm.js">
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="2" Column="2" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="2" Column="2" />
-      <File FileName="cobweb.js/examples/currencies/RoundedExtrusion.x3d" Line="14" Column="14" />
-      <File FileName="cobweb.js/cobweb/Components/Geometry3D/Extrusion.js" Line="37" Column="37" />
+      <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Interpolation/X3DInterpolatorNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/standard/Math/Algorithm.js" Line="59" Column="59" />
+      <File FileName="cobweb.js/cobweb/Components/Interpolation/CoordinateInterpolator.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

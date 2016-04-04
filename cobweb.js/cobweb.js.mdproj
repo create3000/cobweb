@@ -1141,6 +1141,16 @@
     <None Include="examples\currencies\stripes.png" />
     <None Include="examples\currencies\world.png" />
     <None Include="examples\currencies\RoundedExtrusion.x3d" />
+    <None Include="examples\paul bourke\astronaut.png" />
+    <None Include="examples\paul bourke\elephant-4214115.jpg" />
+    <None Include="examples\paul bourke\pulsarpos.x3d" />
+    <None Include="examples\paul bourke\pulsars.x3d" />
+    <None Include="examples\paul bourke\scene.x3d" />
+    <None Include="examples\paul bourke\universe.x3d" />
+    <None Include="examples\paul bourke\wpid-universe-wallpaper.jpg" />
+    <None Include="examples\paul bourke\Voltaire\Voltaire.ttf" />
+    <None Include="examples\paul bourke\stripes.png" />
+    <None Include="examples\paul bourke\GridTool.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1201,5 +1211,6 @@
     <Folder Include="tests\Components\Core\" />
     <Folder Include="examples\fourmilab\" />
     <Folder Include="examples\currencies\" />
+    <Folder Include="examples\paul bourke\" />
   </ItemGroup>
 </Project>
