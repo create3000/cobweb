@@ -1,11 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/standard/Math/Algorithm.js">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="2" Column="2" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Interpolation/X3DInterpolatorNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Math/Algorithm.js" Line="59" Column="59" />
+      <File FileName="cobweb.js/standard/Math/Algorithm.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Interpolation/CoordinateInterpolator.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
