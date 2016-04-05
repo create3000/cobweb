@@ -6,6 +6,7 @@ define ("cobweb/Components/Layout/ScreenFontStyle",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Text/X3DFontStyleNode",
+	"cobweb/Browser/Layout/ScreenText",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -13,6 +14,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DFontStyleNode, 
+          ScreenText, 
           X3DConstants)
 {
 "use strict";
@@ -50,6 +52,14 @@ function ($,
 		getContainerField: function ()
 		{
 			return "fontStyle";
+		},
+		getTextGeometry: function (text)
+		{
+			return new ScreenText (text, this);
+		},
+		getScale: function ()
+		{
+			return this .pointSize_ .getValue ();
 		},
 	});
 

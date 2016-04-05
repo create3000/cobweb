@@ -1151,6 +1151,7 @@
     <None Include="examples\paul bourke\Voltaire\Voltaire.ttf" />
     <None Include="examples\paul bourke\stripes.png" />
     <None Include="examples\paul bourke\GridTool.x3dv" />
+    <None Include="cobweb\Browser\Layout\ScreenText.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -201,6 +201,7 @@ function ($,
 			var browser = this .getBrowser ();
 
 			browser .setAppearance (this);
+			browser .setTexture (this .textureNode);
 			browser .setShader (this .shaderNode || browser .getDefaultShader ());
 		},
 	});

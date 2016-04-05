@@ -261,9 +261,8 @@ function (TextAlignment,
 
 			text .origin_ .setValue (origin .set (min .x, max .y, 0));
 
-			this .bbox .set (min3 .set (min .x, min .y, 0),
-			                 max3 .set (max .x, max .y, 0),
-			                 true);
+			this .bbox .setExtents (min3 .set (min .x, min .y, 0),
+			                        max3 .set (max .x, max .y, 0));
 		},
 		vertical: function (text, fontStyle)
 		{		

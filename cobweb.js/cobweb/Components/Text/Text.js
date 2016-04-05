@@ -92,10 +92,16 @@ function ($,
 		},
 		build: function ()
 		{
-		   this .textGeometry .update ();
-		   this .textGeometry .build ();
+			this .textGeometry .update ();
+			this .textGeometry .build ();
 
 			this .setSolid (this .solid_ .getValue ());
+		},
+		traverse: function (context)
+		{
+			this .textGeometry .traverse (context);
+
+			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});
 

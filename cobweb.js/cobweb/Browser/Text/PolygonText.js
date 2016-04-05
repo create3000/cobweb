@@ -59,8 +59,8 @@ function ($,
 				normals          = text .getNormals (),
 				vertices         = text .getVertices ();
 
-			this .texCoords .length = 0;
-			text .getTexCoords () .push (this .texCoords);
+			texCoords .length = 0;
+			text .getTexCoords () .push (texCoords);
 
 			this .getBBox () .getExtents (min, max);
 			text .getMin () .assign (min);
@@ -556,9 +556,8 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		draw: function ()
+		traverse: function (context)
 		{
-
 		},
 	});
 

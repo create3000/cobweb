@@ -268,7 +268,7 @@ function ($,
 				appearance      = browser .getAppearance (),
 				lineProperties  = appearance .getLineProperties (),
 				material        = appearance .getMaterial (),
-				texture         = appearance .getTexture (),
+				texture         = browser .getTexture (),
 				modelViewMatrix = context .modelViewMatrix,
 				clipPlanes      = context .clipPlanes;
 
