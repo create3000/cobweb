@@ -319,9 +319,7 @@ function (TextAlignment,
 					
 					var glyphNumber = topToBottom ? g : numChars - g - 1;
 
-					console .log (t);
-		
-					this .translations [t] .set ((spacing - size .x) / 2, -glyphNumber);
+					this .translations [t] .set ((spacing - size .x - min .x) / 2, -glyphNumber);
 
 					// Calculate center.
 

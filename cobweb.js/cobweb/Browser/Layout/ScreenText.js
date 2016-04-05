@@ -34,7 +34,7 @@ function ($,
 	{
 		X3DTextGeometry .call (this, text, fontStyle);
 
-		//text .transparent_ = true;
+		text .transparent_ = true;
 
 		this .texture      = new PixelTexture (text .getExecutionContext ());
 		this .canvas       = $("<canvas>");
@@ -152,9 +152,6 @@ function ($,
 			   height = text .textBounds_ .y,
 			   scaleX = 1,
 			   scaleY = 1;
-
-			console .log (min, max);
-			console .log (width, height);
 
 			// Scale canvas.
 	
