@@ -176,7 +176,6 @@ function ($,
 
 			// Setup canvas.
 
-			cx .fillStyle = "rgba(255,255,255,1)";
 			cx .clearRect (0, 0, width, height);
 
 			// Draw glyphs.
@@ -249,9 +248,24 @@ function ($,
 
 			if (imageData)
 			{
-				var data = cx .getImageData (0, 0, width, height) .data;
+				var data = new Uint8Array (imageData .data);
 
-				this .texture .setTexture (width, height, true, new Uint8Array (data), true);
+				// Set RGB to white, but leave alpha channel.
+				{
+					var
+						first = 0;
+						last  = data .length;
+
+					while (first !== last)
+					{
+						data [first ++] = 255;
+						data [first ++] = 255;
+						data [first ++] = 255;
+						++ first;
+					}
+				}
+
+				this .texture .setTexture (width, height, true, data, true);
 			}
 			else
 			   this .texture .clear ();
