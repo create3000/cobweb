@@ -24,6 +24,7 @@ function ($,
 		paths       = [ ],
 		min         = new Vector3 (0, 0, 0),
 		max         = new Vector3 (1, 1, 0),
+		texCoords   = [ 0, 0, 0, 1,  1, 0, 0, 1,  1, 1, 0, 1,    0, 0, 0, 1,  1, 1, 0, 1,  0, 1, 0, 1 ],
 		translation = new Vector3 (0, 0, 0),
 		rotation    = new Rotation4 (0, 0, 1, 0),
 		scale       = new Vector3 (1, 1, 1),
@@ -33,14 +34,13 @@ function ($,
 	{
 		X3DTextGeometry .call (this, text, fontStyle);
 
-		text .transparent_ = true;
+		//text .transparent_ = true;
 
-		this .texture           = new PixelTexture (text .getExecutionContext ());
-		this .texCoords         = [0, 0, 0, 1,  1, 0, 0, 1,  1, 1, 0, 1,    0, 0, 0, 1,  1, 1, 0, 1,  0, 1, 0, 1];
-		this .canvas            = $("<canvas>");
-		this .context           = this .canvas [0] .getContext ("2d");
-		this .screenMatrix      = new Matrix4 ();
-		this .matrix            = new Matrix4 ();
+		this .texture      = new PixelTexture (text .getExecutionContext ());
+		this .canvas       = $("<canvas>");
+		this .context      = this .canvas [0] .getContext ("2d");
+		this .screenMatrix = new Matrix4 ();
+		this .matrix       = new Matrix4 ();
 
 		this .texture .textureProperties_ = fontStyle .getBrowser () .getScreenTextureProperties ();
 		this .texture .setup ();
@@ -123,7 +123,7 @@ function ($,
 				canvas         = this .canvas [0],
 				cx             = this .context;
 
-			text .getTexCoords () .push (this .texCoords);
+			text .getTexCoords () .push (texCoords);
 
 			this .getBBox () .getExtents (min, max);
 			text .getMin () .assign (min);
@@ -148,10 +148,13 @@ function ($,
 			// Generate texture.
 
 			var
-			   width  = max .x - min .x,
-			   height = max .y - min .y,
+			   width  = text .textBounds_ .x,
+			   height = text .textBounds_ .y,
 			   scaleX = 1,
 			   scaleY = 1;
+
+			console .log (min, max);
+			console .log (width, height);
 
 			// Scale canvas.
 	
@@ -195,8 +198,8 @@ function ($,
 					{
 						var
 							glyph = line [g],
-							x     = minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
-							y     = minorAlignment .y + translation .y;
+							x     = minorAlignment .x + translation .x + advanceWidth + g * charSpacing - min .x,
+							y     = minorAlignment .y + translation .y - max .y;
 
 						this .drawGlyph (cx, font, glyph, x, y, size);
 
@@ -208,6 +211,30 @@ function ($,
 							kerning = font .getKerningValue (glyph, line [g + 1]);
 		
 						advanceWidth += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+					}
+				}
+			}
+			else
+			{
+				var
+					leftToRight = fontStyle .leftToRight_ .getValue (),
+					first       = leftToRight ? 0 : text .string_ .length - 1,
+					last        = leftToRight ? text .string_ .length  : -1,
+					step        = leftToRight ? 1 : -1;
+
+				for (var l = first, t = 0; l !== last; l += step)
+				{
+					var line = glyphs [l];
+
+					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
+					{
+						var translation = translations [t];
+
+							var
+								x = minorAlignment .x + translation .x - min .x,
+								y = minorAlignment .y + translation .y - max .y;
+
+						this .drawGlyph (cx, font, line [g], x, y, size);
 					}
 				}
 			}
@@ -227,6 +254,8 @@ function ($,
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
+		   console .log (x, -y);
+
 			var
 				components = glyph .components,
 				reverse    = font .outlinesFormat === "cff";

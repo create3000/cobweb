@@ -110,7 +110,6 @@ function ($,
 			{
 				var
 					leftToRight = fontStyle .leftToRight_ .getValue (),
-					topToBottom = fontStyle .topToBottom_ .getValue (),
 					first       = leftToRight ? 0 : text .string_ .length - 1,
 					last        = leftToRight ? text .string_ .length  : -1,
 					step        = leftToRight ? 1 : -1;
@@ -118,8 +117,6 @@ function ($,
 				for (var l = first, t = 0; l !== last; l += step)
 				{
 					var line = glyphs [l];
-
-					//for (const auto & glyph : topToBottom ? line : String (line .rbegin (), line .rend ()))
 
 					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
 					{

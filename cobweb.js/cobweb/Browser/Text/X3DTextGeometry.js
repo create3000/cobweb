@@ -157,13 +157,13 @@ function (TextAlignment,
 				last  = topToBottom ? numLines : -1,
 				step  = topToBottom ? 1 : -1;
 
-			for (var l = first; l !== last; l += step)
+			for (var l = first, ll = 0; l !== last; l += step, ++ ll)
 			{
 				var line = string [l];
 
 				// Get line extents.
 
-				var glyphs = this .getHorizontalLineExtents (fontStyle, line, min, max, l);
+				var glyphs = this .getHorizontalLineExtents (fontStyle, line, min, max, ll);
 
 				size .assign (max) .subtract (min);
 
@@ -290,7 +290,7 @@ function (TextAlignment,
 
 			for (var l = firstL; l !== lastL; l += stepL)
 			{
-				var glyphs = this .stringToGlyphs (font, string [l], true, l);
+				var glyphs = this .stringToGlyphs (font, string [l], topToBottom, l);
 
 				var
 					t0       = t,
