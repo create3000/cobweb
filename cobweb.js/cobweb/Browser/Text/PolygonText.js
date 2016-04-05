@@ -31,6 +31,8 @@ function ($,
 	{
 		X3DTextGeometry .call (this, text, fontStyle);
 
+		text .transparent_ = false;
+
 		this .texCoords = [ ];
 	}
 

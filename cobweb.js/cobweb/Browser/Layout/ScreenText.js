@@ -4,7 +4,6 @@ define ([
 	"cobweb/Browser/Text/X3DTextGeometry",
 	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/Components/Texturing/PixelTexture",
-	"cobweb/Components/Texturing/TextureProperties",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
@@ -14,7 +13,6 @@ function ($,
           X3DTextGeometry,
           TextAlignment,
           PixelTexture,
-          TextureProperties,
           Vector3,
           Rotation4,
           Matrix4,
@@ -35,24 +33,17 @@ function ($,
 	{
 		X3DTextGeometry .call (this, text, fontStyle);
 
+		text .transparent_ = true;
+
 		this .texture           = new PixelTexture (text .getExecutionContext ());
-		this .textureProperties = new TextureProperties (text .getExecutionContext ());
 		this .texCoords         = [0, 0, 0, 1,  1, 0, 0, 1,  1, 1, 0, 1,    0, 0, 0, 1,  1, 1, 0, 1,  0, 1, 0, 1];
 		this .canvas            = $("<canvas>");
 		this .context           = this .canvas [0] .getContext ("2d");
 		this .screenMatrix      = new Matrix4 ();
 		this .matrix            = new Matrix4 ();
 
-		this .textureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
-		this .textureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";
-		this .textureProperties .boundaryModeR_       = "CLAMP_TO_EDGE";
-		this .textureProperties .minificationFilter_  = "NEAREST_PIXEL";
-		this .textureProperties .magnificationFilter_ = "NEAREST_PIXEL";
-
-		this .texture .textureProperties_ = this .textureProperties;
-
-		this .textureProperties .setup ();
-		this .texture           .setup ();
+		this .texture .textureProperties_ = fontStyle .getBrowser () .getScreenTextureProperties ();
+		this .texture .setup ();
 	}
 
 	ScreenText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
@@ -223,11 +214,16 @@ function ($,
 
 			// Transfer texture data.
 
-			var data = cx .getImageData (0, 0, width, height) .data;
+			var imageData = cx .getImageData (0, 0, width, height);
 
-			console .log (data);
+			if (imageData)
+			{
+				var data = cx .getImageData (0, 0, width, height) .data;
 
-			this .texture .setTexture (width, height, true, new Uint8Array (data), true);
+				this .texture .setTexture (width, height, true, new Uint8Array (data), true);
+			}
+			else
+			   this .texture .clear ();
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
@@ -302,7 +298,7 @@ function ($,
 		},
 		scale: function (modelViewMatrix)
 		{
-			//try
+			try
 			{
 				// Same as in ScreenGroup
 
@@ -313,7 +309,7 @@ function ($,
 					fontStyle   = this .getFontStyle (),
 					viewport    = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
 					screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (origin .set (modelViewMatrix [12], modelViewMatrix [13], modelViewMatrix [14]), viewport);
-			
+
 				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
 			                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
@@ -322,8 +318,8 @@ function ($,
 
 				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
 			}
-			//catch (error)
-			//{ }
+			catch (error)
+			{ }
 		},
 		traverse: function (context)
 		{

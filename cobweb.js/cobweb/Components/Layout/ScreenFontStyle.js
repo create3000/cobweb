@@ -59,7 +59,7 @@ function ($,
 		},
 		getScale: function ()
 		{
-			return this .pointSize_ .getValue ();
+			return this .pointSize_ .getValue () * this .getBrowser () .getPointSize ();
 		},
 	});
 
