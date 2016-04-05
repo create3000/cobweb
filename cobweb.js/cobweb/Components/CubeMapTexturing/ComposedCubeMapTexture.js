@@ -19,6 +19,8 @@ function ($,
 {
 "use strict";
 
+   var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
 	function ComposedCubeMapTexture (executionContext)
 	{
 		X3DEnvironmentTextureNode .call (this, executionContext);
@@ -139,16 +141,16 @@ function ($,
 
 				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
 				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
+				gl .bindTexture (this .target, this .getTexture ());
 				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
+				gl .bindTexture (this .target, null);
 
 				this .set_textureQuality__ ();
 			}
 			else
 			{
 				gl .bindTexture (this .target, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, new Uint8Array ([ 255, 255, 255, 255 ]));
+				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 				gl .bindTexture (this .target, null);
 			}
 		},

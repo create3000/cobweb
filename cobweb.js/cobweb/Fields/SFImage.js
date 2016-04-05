@@ -140,7 +140,14 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		toString: function ()
 		{
-			return this .width + " " + this .height + " " + this .comp;
+		   var
+				string = this .width + " " + this .height + " " + this .comp,
+				array  = this .array;
+
+			for (var i = 0, length = this .width * this .height; i < length; ++ i)
+				string += " " + array [i];
+
+			return string;
 		},
 	});
 

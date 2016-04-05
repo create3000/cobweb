@@ -40,7 +40,7 @@ function ($,
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
 
-			if (shader .vertex < 0)
+			if (shader .vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.

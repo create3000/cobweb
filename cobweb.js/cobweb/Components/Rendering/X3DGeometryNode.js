@@ -476,7 +476,7 @@ function ($,
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
 
-			if (shader .vertex < 0)
+			if (shader .vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.

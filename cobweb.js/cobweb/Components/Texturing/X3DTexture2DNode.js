@@ -14,6 +14,8 @@ function ($,
 {
 "use strict";
 
+   var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
 	function X3DTexture2DNode (executionContext)
 	{
 		X3DTextureNode .call (this, executionContext);
@@ -41,6 +43,10 @@ function ($,
 			this .repeatT_           .addInterest (this, "updateTextureProperties");
 			this .textureProperties_ .addInterest (this, "set_textureProperties__");
 
+			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .bindTexture (gl .TEXTURE_2D, null);
+		
 			this .set_textureProperties__ ();
 		},
 		set_textureProperties__: function ()
@@ -125,7 +131,7 @@ function ($,
 		},
 		clear: function ()
 		{
-			this .setTexture (1, 1, false, new Uint8Array ([ 255, 255, 255, 255 ]), false);
+			this .setTexture (1, 1, false, defaultData, false);
 		},
 		resize: function (input, inputWidth, inputHeight, outputWidth, outputHeight)
 		{
