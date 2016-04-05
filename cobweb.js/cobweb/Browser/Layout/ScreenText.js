@@ -6,6 +6,8 @@ define ([
 	"cobweb/Components/Texturing/PixelTexture",
 	"cobweb/Components/Texturing/TextureProperties",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
 ],
 function ($,
@@ -14,14 +16,20 @@ function ($,
           PixelTexture,
           TextureProperties,
           Vector3,
+          Rotation4,
+          Matrix4,
           Algorithm)
 {
 "use strict";
 
 	var
-		paths  = [ ],
-		min    = new Vector3 (0, 0, 0),
-		max    = new Vector3 (1, 1, 0);
+		paths       = [ ],
+		min         = new Vector3 (0, 0, 0),
+		max         = new Vector3 (1, 1, 0),
+		translation = new Vector3 (0, 0, 0),
+		rotation    = new Rotation4 (0, 0, 1, 0),
+		scale       = new Vector3 (1, 1, 1),
+		origin      = new Vector3 (0, 0, 0);
 
 	function ScreenText (text, fontStyle)
 	{
@@ -31,6 +39,9 @@ function ($,
 		this .textureProperties = new TextureProperties (text .getExecutionContext ());
 		this .texCoords         = [0, 0, 0, 1,  1, 0, 0, 1,  1, 1, 0, 1,    0, 0, 0, 1,  1, 1, 0, 1,  0, 1, 0, 1];
 		this .canvas            = $("<canvas>");
+		this .context           = this .canvas [0] .getContext ("2d");
+		this .screenMatrix      = new Matrix4 ();
+		this .matrix            = new Matrix4 ();
 
 		this .textureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
 		this .textureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";
@@ -119,7 +130,7 @@ function ($,
 				normals        = text .getNormals (),
 				vertices       = text .getVertices (),
 				canvas         = this .canvas [0],
-				cx             = canvas .getContext ("2d");
+				cx             = this .context;
 
 			text .getTexCoords () .push (this .texCoords);
 
@@ -145,31 +156,36 @@ function ($,
 
 			// Generate texture.
 
-			console .log (min, max);
-
 			var
 			   width  = max .x - min .x,
-			   height = max .y - min .y;
+			   height = max .y - min .y,
+			   scaleX = 1,
+			   scaleY = 1;
 
 			// Scale canvas.
-
+	
 			if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
 			{
 				var
 					width2  = Algorithm .nextPowerOfTwo (width),
 					height2 = Algorithm .nextPowerOfTwo (height);
 
-				cx .scale (width2 / width, height2 / height);
+				scaleX = width2 / width;
+				scaleY = height2 / height;
 
 				width  = width2;
 				height = height2;
 			}
-
-			// Setup canvas.
-
+	
 			canvas .width  = width;
 			canvas .height = height
 
+			cx .resetTransform ();
+			cx .scale (scaleX, scaleY);
+
+			// Setup canvas.
+
+			cx .fillStyle = "rgba(255,255,255,1)";
 			cx .clearRect (0, 0, width, height);
 
 			// Draw glyphs.
@@ -208,6 +224,8 @@ function ($,
 			// Transfer texture data.
 
 			var data = cx .getImageData (0, 0, width, height) .data;
+
+			console .log (data);
 
 			this .texture .setTexture (width, height, true, new Uint8Array (data), true);
 		},
@@ -282,8 +300,34 @@ function ($,
 			min .set (glyph .xMin / unitsPerEm, glyph .yMin / unitsPerEm, 0);
 			max .set (glyph .xMax / unitsPerEm, glyph .yMax / unitsPerEm, 0);
 		},
+		scale: function (modelViewMatrix)
+		{
+			//try
+			{
+				// Same as in ScreenGroup
+
+				this .screenMatrix .assign (modelViewMatrix);
+				this .screenMatrix .get (translation, rotation, scale);
+
+				var
+					fontStyle   = this .getFontStyle (),
+					viewport    = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
+					screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (origin .set (modelViewMatrix [12], modelViewMatrix [13], modelViewMatrix [14]), viewport);
+			
+				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+			                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+
+				Matrix4 .prototype .assign .call (modelViewMatrix, this .screenMatrix);
+
+				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+			}
+			//catch (error)
+			//{ }
+		},
 		traverse: function (context)
 		{
+		   this .scale (context .modelViewMatrix);
 		   this .getBrowser () .setTexture (this .texture);
 		},
 	});

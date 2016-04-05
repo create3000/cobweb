@@ -25,10 +25,10 @@ function ($,
 {
 "use strict";
 
-		var
-			translation = new Vector3 (0, 0, 0),
-			rotation    = new Rotation4 (0, 0, 1, 0),
-			scale       = new Vector3 (1, 1, 1);
+	var
+		translation = new Vector3 (0, 0, 0),
+		rotation    = new Rotation4 (0, 0, 1, 0),
+		scale       = new Vector3 (1, 1, 1);
 
 	function ScreenGroup (executionContext)
 	{
