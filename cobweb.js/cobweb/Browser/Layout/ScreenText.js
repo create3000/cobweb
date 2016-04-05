@@ -34,7 +34,7 @@ function ($,
 	{
 		X3DTextGeometry .call (this, text, fontStyle);
 
-		//text .transparent_ = true;
+		text .transparent_ = true;
 
 		this .texture      = new PixelTexture (text .getExecutionContext ());
 		this .canvas       = $("<canvas>");
@@ -153,9 +153,6 @@ function ($,
 			   scaleX = 1,
 			   scaleY = 1;
 
-			console .log (min, max);
-			console .log (width, height);
-
 			// Scale canvas.
 	
 			if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
@@ -254,8 +251,6 @@ function ($,
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
-		   console .log (x, -y);
-
 			var
 				components = glyph .components,
 				reverse    = font .outlinesFormat === "cff";
