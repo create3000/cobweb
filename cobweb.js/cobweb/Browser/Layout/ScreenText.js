@@ -34,7 +34,7 @@ function ($,
 	{
 		X3DTextGeometry .call (this, text, fontStyle);
 
-		text .transparent_ = true;
+		//text .transparent_ = true;
 
 		this .texture      = new PixelTexture (text .getExecutionContext ());
 		this .canvas       = $("<canvas>");
@@ -153,6 +153,9 @@ function ($,
 			   scaleX = 1,
 			   scaleY = 1;
 
+			console .log (min, max);
+			console .log (width, height);
+
 			// Scale canvas.
 	
 			if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
@@ -215,6 +218,7 @@ function ($,
 			{
 				var
 					leftToRight = fontStyle .leftToRight_ .getValue (),
+					topToBottom = fontStyle .topToBottom_ .getValue (),
 					first       = leftToRight ? 0 : text .string_ .length - 1,
 					last        = leftToRight ? text .string_ .length  : -1,
 					step        = leftToRight ? 1 : -1;
@@ -223,7 +227,13 @@ function ($,
 				{
 					var line = glyphs [l];
 
-					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
+					var
+					   numChars = line .length,
+						firstG   = topToBottom ? 0 : numChars - 1,
+						lastG    = topToBottom ? numChars : -1,
+						stepG    = topToBottom ? 1 : -1;
+
+					for (var g = firstG; g !== lastG; g += stepG, ++ t)
 					{
 						var translation = translations [t];
 

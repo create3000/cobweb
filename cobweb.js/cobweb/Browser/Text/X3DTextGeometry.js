@@ -290,7 +290,7 @@ function (TextAlignment,
 
 			for (var l = firstL; l !== lastL; l += stepL)
 			{
-				var glyphs = this .stringToGlyphs (font, string [l], topToBottom, l);
+				var glyphs = this .stringToGlyphs (font, string [l], true, l);
 
 				var
 					t0       = t,
@@ -304,7 +304,7 @@ function (TextAlignment,
 					firstG = topToBottom ? 0 : numChars - 1,
 					lastG  = topToBottom ? numChars : -1,
 					stepG  = topToBottom ? 1 : -1;
-		
+
 				for (var g = firstG; g !== lastG; g += stepG, ++ t)
 				{
 					var glyph = glyphs [g];
@@ -318,6 +318,8 @@ function (TextAlignment,
 					// Calculate glyph translation
 					
 					var glyphNumber = topToBottom ? g : numChars - g - 1;
+
+					console .log (t);
 		
 					this .translations [t] .set ((spacing - size .x) / 2, -glyphNumber);
 
@@ -329,7 +331,7 @@ function (TextAlignment,
 		
 					lineBBox .add (box2 .set (size, center));
 				}
-			
+							
 				// Get line extents.
 		
 				lineBBox .getExtents (min, max);

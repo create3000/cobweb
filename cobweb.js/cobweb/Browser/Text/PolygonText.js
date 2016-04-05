@@ -118,7 +118,13 @@ function ($,
 				{
 					var line = glyphs [l];
 
-					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
+					var
+					   numChars = line .length,
+						firstG   = topToBottom ? 0 : numChars - 1,
+						lastG    = topToBottom ? numChars : -1,
+						stepG    = topToBottom ? 1 : -1;
+
+					for (var g = firstG; g !== lastG; g += stepG, ++ t)
 					{
 						var
 							translation   = translations [t],
