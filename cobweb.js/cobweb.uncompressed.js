@@ -39740,7 +39740,7 @@ function ($)
 		},
 		keydown: function (event)
 		{
-			//console .log (event .which);
+			console .log (event .which);
 
 			event .preventDefault ();
 
@@ -39833,7 +39833,8 @@ function ($)
 					this .altGrKey = true;
 					break;
 				}
-				case 171: // Plus
+				case 171: // Plus // Firefox
+				case 187: // Plus // Opera
 				{
 					if (this .ctrlKey)
 						this .getBrowserTimings () .enabled_ = ! this .getBrowserTimings () .enabled_ .getValue ();
