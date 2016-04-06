@@ -69795,11 +69795,9 @@ function ($,
 
 			// Setup canvas.
 
-			cx .clearRect (0, 0, canvas .width, canvas .height);
-
-//			cx .fillStyle = "rgba(255,255,255,0)";
-//			cx .fillRect (0, 0, canvas .width, canvas .height);
-//			cx .fillStyle = "rgba(255,255,255,1)";
+			cx .fillStyle = "rgba(255,255,255,0)";
+			cx .fillRect (0, 0, canvas .width, canvas .height);
+			cx .fillStyle = "rgba(255,255,255,1)";
 
 			// Draw glyphs.
 
@@ -69869,27 +69867,9 @@ function ($,
 
 			var imageData = cx .getImageData (0, 0, canvas .width, canvas .height);
 
+			// If the cavas is to large imageData is null.
 			if (imageData)
-			{
-				var data = new Uint8Array (imageData .data);
-
-				// Set RGB to white, but leave alpha channel for better antialiasing results.
-				{
-					var
-						first = 0;
-						last  = data .length;
-
-					while (first !== last)
-					{
-						data [first ++] = 255;
-						data [first ++] = 255;
-						data [first ++] = 255;
-						++ first;
-					}
-				}
-
-				this .texture .setTexture (canvas .width, canvas .height, true, data, true);
-			}
+				this .texture .setTexture (canvas .width, canvas .height, true, new Uint8Array (imageData .data), true);
 			else
 			   this .texture .clear ();
 
