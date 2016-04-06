@@ -10,6 +10,7 @@ define ("cobweb/Components/Layout/ScreenGroup",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Algorithm",
 ],
 function ($,
@@ -21,6 +22,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
+          ViewVolume,
           Algorithm)
 {
 "use strict";
@@ -28,7 +30,8 @@ function ($,
 	var
 		translation = new Vector3 (0, 0, 0),
 		rotation    = new Rotation4 (0, 0, 1, 0),
-		scale       = new Vector3 (1, 1, 1);
+		scale       = new Vector3 (1, 1, 1),
+		screenPoint = new Vector3 (0, 0, 0);
 
 	function ScreenGroup (executionContext)
 	{
@@ -86,16 +89,27 @@ function ($,
 			this .modelViewMatrix .get (translation, rotation, scale);
 		
 			var
-				viewport    = this .getCurrentLayer () .getViewVolume () .getViewport (),
-				screenScale = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
+				projectionMatrix = this .getBrowser () .getProjectionMatrix (),
+				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
+				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
 		
-			translation .x = Math .round (translation .x / screenScale .x) * screenScale .x;
-			translation .y = Math .round (translation .y / screenScale .y) * screenScale .y;
-			translation .z = Math .round (translation .z / screenScale .z) * screenScale .z;
-
 			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 		                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
 		                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+
+			// Snap to whole pixel
+
+			ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+
+			screenPoint .x = Math .round (screenPoint .x);
+			screenPoint .y = Math .round (screenPoint .y);
+
+			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+
+			screenPoint .z = 0;
+			this .screenMatrix .translate (screenPoint);
+
+			// Assign modelViewMatrix
 
 			this .getBrowser () .getModelViewMatrix () .set (this .screenMatrix);
 		},

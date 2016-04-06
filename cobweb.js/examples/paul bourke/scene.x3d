@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/paul bourke/scene.x3d'/>
-    <meta name='modified' content='Wed, 06 Apr 2016 07:05:00 GMT'/>
+    <meta name='modified' content='Wed, 06 Apr 2016 09:02:54 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='MFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/MFNode.x3dv"'>
@@ -191,6 +191,20 @@ function upperBound (array, first, last, value, comp)
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <Text DEF='SidebarText' containerField='value'
+                string='"Universe", "Galaxy", "Pulsars"'
+                solid='true'>
+              <ScreenFontStyle DEF='_1'
+                  family='"Voltaire/Voltaire.ttf", "SANS"'
+                  style='BOLD'
+                  pointSize='16'
+                  spacing='1.6'
+                  justify='"END", "BEGIN"'/>
+            </Text>
+          </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='LayerSet' containerField='value'
             name='LayerSet'
@@ -202,7 +216,7 @@ function upperBound (array, first, last, value, comp)
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <LayerSet DEF='_1'
+    <LayerSet DEF='_2'
         activeLayer='4'
         order='0, 1, 2, 3, 4, 5, 6'>
       <Layer DEF='Background'
@@ -279,7 +293,7 @@ function upperBound (array, first, last, value, comp)
         <Transform DEF='Rectangle2D_1'>
           <Shape>
             <Appearance>
-              <Material DEF='_2'
+              <Material DEF='_3'
                   diffuseColor='0.493057 0.802707 1'/>
             </Appearance>
             <IndexedFaceSet
@@ -295,7 +309,7 @@ function upperBound (array, first, last, value, comp)
         <Transform DEF='Rectangle2D_2'>
           <Shape>
             <Appearance>
-              <Material DEF='_3'
+              <Material DEF='_4'
                   diffuseColor='0.133844 0.400708 0.711178'/>
               <ImageTexture
                   url='"stripes.png"'/>
@@ -318,7 +332,7 @@ function upperBound (array, first, last, value, comp)
             scale='0.11 0.01 0.353753'>
           <Shape>
             <Appearance>
-              <Material DEF='_4'
+              <Material DEF='_5'
                   diffuseColor='1 1 1'/>
             </Appearance>
             <Rectangle2D/>
@@ -329,7 +343,7 @@ function upperBound (array, first, last, value, comp)
             scale='0.307692 0.01 0.353753'>
           <Shape>
             <Appearance>
-              <Material USE='_4'/>
+              <Material USE='_5'/>
             </Appearance>
             <Rectangle2D/>
           </Shape>
@@ -339,7 +353,7 @@ function upperBound (array, first, last, value, comp)
             scale='0.08 0.06 0.353754'>
           <Shape>
             <Appearance>
-              <Material USE='_3'/>
+              <Material USE='_4'/>
             </Appearance>
             <Rectangle2D/>
           </Shape>
@@ -349,7 +363,7 @@ function upperBound (array, first, last, value, comp)
             scale='0.08 0.255 0.353753'>
           <Shape>
             <Appearance>
-              <Material USE='_4'/>
+              <Material USE='_5'/>
             </Appearance>
             <IndexedFaceSet
                 colorIndex='0, 0, 0, 0, -1, 0, 1, 1, 0, -1'
@@ -378,16 +392,7 @@ function upperBound (array, first, last, value, comp)
                 <Material
                     diffuseColor='0 0 0'/>
               </Appearance>
-              <Text
-                  string='"Universe", "Galaxy", "Pulsars"'
-                  solid='true'>
-                <ScreenFontStyle
-                    family='"Voltaire/Voltaire.ttf", "SANS"'
-                    style='BOLD'
-                    pointSize='16'
-                    spacing='1.6'
-                    justify='"END", "BEGIN"'/>
-              </Text>
+              <Text USE='SidebarText'/>
             </Shape>
           </Transform>
         </LayoutGroup>
@@ -479,7 +484,7 @@ function upperBound (array, first, last, value, comp)
               scale='0.08 0.045 0.353753'>
             <Shape>
               <Appearance>
-                <Material USE='_2'/>
+                <Material USE='_3'/>
               </Appearance>
               <Rectangle2D/>
             </Shape>
@@ -511,11 +516,11 @@ function upperBound (array, first, last, value, comp)
               </Shape>
             </Transform>
           </LayoutGroup>
-          <TouchSensor DEF='_5'/>
+          <TouchSensor DEF='_6'/>
         </Group>
       </LayoutLayer>
       <Layer DEF='Galaxy'>
-        <Viewport DEF='_6'
+        <Viewport DEF='_7'
             clipBoundary='0.697, 1, 0.306, 0.726'/>
         <Background
             skyColor='0.085 0.085 0.085'/>
@@ -536,7 +541,7 @@ function upperBound (array, first, last, value, comp)
             </Appearance>
             <Rectangle2D/>
           </Shape>
-          <TouchSensor DEF='_7'/>
+          <TouchSensor DEF='_8'/>
           <Script DEF='GalaxyToggleScript'>
             <field accessType='inputOnly' type='SFTime' name='set_time'/>
             <field accessType='inputOutput' type='SFTime' name='resetTime'/>
@@ -575,7 +580,7 @@ function set_time (value, time)
               <Layer USE='Background' containerField='children'/>
               <LayoutLayer USE='Layout' containerField='children'/>
               <Layer DEF='Pulsars' containerField='children'>
-                <Viewport DEF='_8'
+                <Viewport DEF='_9'
                     clipBoundary='0.697, 1, 0, 0.29'/>
                 <Background
                     skyColor='0.085 0.085 0.085'/>
@@ -594,7 +599,7 @@ function set_time (value, time)
                     </Appearance>
                     <Rectangle2D/>
                   </Shape>
-                  <TouchSensor DEF='_9'/>
+                  <TouchSensor DEF='_10'/>
                   <Script DEF='PulsarsToggleScript'>
                     <field accessType='inputOnly' type='SFTime' name='set_time'/>
                     <field accessType='inputOutput' type='SFTime' name='resetTime'/>
@@ -634,7 +639,7 @@ function set_time (value, time)
                       <LayoutLayer USE='Layout' containerField='children'/>
                       <Layer USE='Galaxy' containerField='children'/>
                       <Layer DEF='Universe' containerField='children'>
-                        <Viewport DEF='_10'
+                        <Viewport DEF='_11'
                             clipBoundary='0.165, 0.688, 0, 0.726'/>
                         <NavigationInfo
                             transitionType='"TELEPORT"'/>
@@ -658,7 +663,7 @@ function set_time (value, time)
                             </Appearance>
                             <Rectangle2D/>
                           </Shape>
-                          <TouchSensor DEF='_11'/>
+                          <TouchSensor DEF='_12'/>
                           <Script DEF='UniverseToggleScript'>
                             <field accessType='inputOnly' type='SFTime' name='set_time'/>
                             <field accessType='inputOutput' type='SFTime' name='resetTime'/>
@@ -708,21 +713,21 @@ function set_time (value, time)
                             <fieldValue name='keyValue' value='0.165, 1, 0, 1'/>
                           </ProtoInstance>
                           <Group>
-                            <TimeSensor DEF='_12'
+                            <TimeSensor DEF='_13'
                                 cycleInterval='2'/>
-                            <EaseInEaseOut DEF='_13'
+                            <EaseInEaseOut DEF='_14'
                                 key='0, 1'
                                 easeInEaseOut='0 1, 1 0'/>
-                            <ProtoInstance name='FloatArrayInterpolator' DEF='_14'>
+                            <ProtoInstance name='FloatArrayInterpolator' DEF='_15'>
                               <fieldValue name='key' value='0, 1'/>
                               <fieldValue name='keyValue' value='0.165, 0.688, 0, 0.726, 0.165, 1, 0, 1'/>
                             </ProtoInstance>
-                            <TimeSensor DEF='_15'
+                            <TimeSensor DEF='_16'
                                 cycleInterval='2'/>
-                            <EaseInEaseOut DEF='_16'
+                            <EaseInEaseOut DEF='_17'
                                 key='0, 1'
                                 easeInEaseOut='0 1, 1 0'/>
-                            <ProtoInstance name='FloatArrayInterpolator' DEF='_17'>
+                            <ProtoInstance name='FloatArrayInterpolator' DEF='_18'>
                               <fieldValue name='key' value='0, 1'/>
                               <fieldValue name='keyValue' value='0.165, 1, 0, 1, 0.165, 0.688, 0, 0.726'/>
                             </ProtoInstance>
@@ -739,21 +744,21 @@ function set_time (value, time)
                     <fieldValue name='keyValue' value='0.165, 1, 0, 1'/>
                   </ProtoInstance>
                   <Group>
-                    <TimeSensor DEF='_18'
+                    <TimeSensor DEF='_19'
                         cycleInterval='2'/>
-                    <EaseInEaseOut DEF='_19'
+                    <EaseInEaseOut DEF='_20'
                         key='0, 1'
                         easeInEaseOut='0 1, 1 0'/>
-                    <ProtoInstance name='FloatArrayInterpolator' DEF='_20'>
+                    <ProtoInstance name='FloatArrayInterpolator' DEF='_21'>
                       <fieldValue name='key' value='0, 1'/>
                       <fieldValue name='keyValue' value='0.697, 1, 0, 0.29, 0.165, 1, 0, 1'/>
                     </ProtoInstance>
-                    <TimeSensor DEF='_21'
+                    <TimeSensor DEF='_22'
                         cycleInterval='2'/>
-                    <EaseInEaseOut DEF='_22'
+                    <EaseInEaseOut DEF='_23'
                         key='0, 1'
                         easeInEaseOut='0 1, 1 0'/>
-                    <ProtoInstance name='FloatArrayInterpolator' DEF='_23'>
+                    <ProtoInstance name='FloatArrayInterpolator' DEF='_24'>
                       <fieldValue name='key' value='0, 1'/>
                       <fieldValue name='keyValue' value='0.165, 1, 0, 1, 0.697, 1, 0, 0.29'/>
                     </ProtoInstance>
@@ -771,21 +776,21 @@ function set_time (value, time)
             <fieldValue name='keyValue' value='0.165, 1, 0, 1'/>
           </ProtoInstance>
           <Group>
-            <TimeSensor DEF='_24'
+            <TimeSensor DEF='_25'
                 cycleInterval='2'/>
-            <EaseInEaseOut DEF='_25'
+            <EaseInEaseOut DEF='_26'
                 key='0, 1'
                 easeInEaseOut='0 1, 1 0'/>
-            <ProtoInstance name='FloatArrayInterpolator' DEF='_26'>
+            <ProtoInstance name='FloatArrayInterpolator' DEF='_27'>
               <fieldValue name='key' value='0, 1'/>
               <fieldValue name='keyValue' value='0.697, 1, 0.306, 0.726, 0.165, 1, 0, 1'/>
             </ProtoInstance>
-            <TimeSensor DEF='_27'
+            <TimeSensor DEF='_28'
                 cycleInterval='2'/>
-            <EaseInEaseOut DEF='_28'
+            <EaseInEaseOut DEF='_29'
                 key='0, 1'
                 easeInEaseOut='0 1, 1 0'/>
-            <ProtoInstance name='FloatArrayInterpolator' DEF='_29'>
+            <ProtoInstance name='FloatArrayInterpolator' DEF='_30'>
               <fieldValue name='key' value='0, 1'/>
               <fieldValue name='keyValue' value='0.165, 1, 0, 1, 0.697, 1, 0.306, 0.726'/>
             </ProtoInstance>
@@ -795,53 +800,53 @@ function set_time (value, time)
       <Layer USE='Pulsars'/>
       <Layer USE='Universe'/>
     </LayerSet>
-    <ROUTE fromNode='Layers_2' fromField='value_changed' toNode='_1' toField='set_layers'/>
-    <ROUTE fromNode='NormalSize' fromField='value_changed' toNode='_10' toField='set_clipBoundary'/>
-    <ROUTE fromNode='FullScreen' fromField='value_changed' toNode='_10' toField='set_clipBoundary'/>
-    <ROUTE fromNode='_11' fromField='touchTime' toNode='UniverseToggleScript' toField='set_time'/>
+    <ROUTE fromNode='Layers_2' fromField='value_changed' toNode='_2' toField='set_layers'/>
+    <ROUTE fromNode='NormalSize' fromField='value_changed' toNode='_11' toField='set_clipBoundary'/>
+    <ROUTE fromNode='FullScreen' fromField='value_changed' toNode='_11' toField='set_clipBoundary'/>
+    <ROUTE fromNode='_12' fromField='touchTime' toNode='UniverseToggleScript' toField='set_time'/>
     <ROUTE fromNode='UniverseToggleScript' fromField='triggerTrue' toNode='Layers_2' toField='set_triggerTime'/>
-    <ROUTE fromNode='_14' fromField='value_changed' toNode='_10' toField='set_clipBoundary'/>
-    <ROUTE fromNode='UniverseToggleScript' fromField='triggerTrue' toNode='_12' toField='set_startTime'/>
-    <ROUTE fromNode='_12' fromField='fraction_changed' toNode='_13' toField='set_fraction'/>
-    <ROUTE fromNode='_13' fromField='modifiedFraction_changed' toNode='_14' toField='set_fraction'/>
-    <ROUTE fromNode='_16' fromField='modifiedFraction_changed' toNode='_17' toField='set_fraction'/>
-    <ROUTE fromNode='_15' fromField='fraction_changed' toNode='_16' toField='set_fraction'/>
-    <ROUTE fromNode='UniverseToggleScript' fromField='triggerFalse' toNode='_15' toField='set_startTime'/>
-    <ROUTE fromNode='_17' fromField='value_changed' toNode='_10' toField='set_clipBoundary'/>
-    <ROUTE fromNode='_24' fromField='fraction_changed' toNode='_25' toField='set_fraction'/>
-    <ROUTE fromNode='_28' fromField='modifiedFraction_changed' toNode='_29' toField='set_fraction'/>
-    <ROUTE fromNode='_27' fromField='fraction_changed' toNode='_28' toField='set_fraction'/>
-    <ROUTE fromNode='_25' fromField='modifiedFraction_changed' toNode='_26' toField='set_fraction'/>
-    <ROUTE fromNode='GalaxyToggleScript' fromField='triggerFalse' toNode='_27' toField='set_startTime'/>
-    <ROUTE fromNode='GalaxyToggleScript' fromField='triggerTrue' toNode='_24' toField='set_startTime'/>
-    <ROUTE fromNode='_7' fromField='touchTime' toNode='GalaxyToggleScript' toField='set_time'/>
+    <ROUTE fromNode='_15' fromField='value_changed' toNode='_11' toField='set_clipBoundary'/>
+    <ROUTE fromNode='UniverseToggleScript' fromField='triggerTrue' toNode='_13' toField='set_startTime'/>
+    <ROUTE fromNode='_13' fromField='fraction_changed' toNode='_14' toField='set_fraction'/>
+    <ROUTE fromNode='_14' fromField='modifiedFraction_changed' toNode='_15' toField='set_fraction'/>
+    <ROUTE fromNode='_17' fromField='modifiedFraction_changed' toNode='_18' toField='set_fraction'/>
+    <ROUTE fromNode='_16' fromField='fraction_changed' toNode='_17' toField='set_fraction'/>
+    <ROUTE fromNode='UniverseToggleScript' fromField='triggerFalse' toNode='_16' toField='set_startTime'/>
+    <ROUTE fromNode='_18' fromField='value_changed' toNode='_11' toField='set_clipBoundary'/>
+    <ROUTE fromNode='_25' fromField='fraction_changed' toNode='_26' toField='set_fraction'/>
+    <ROUTE fromNode='_29' fromField='modifiedFraction_changed' toNode='_30' toField='set_fraction'/>
+    <ROUTE fromNode='_28' fromField='fraction_changed' toNode='_29' toField='set_fraction'/>
+    <ROUTE fromNode='_26' fromField='modifiedFraction_changed' toNode='_27' toField='set_fraction'/>
+    <ROUTE fromNode='GalaxyToggleScript' fromField='triggerFalse' toNode='_28' toField='set_startTime'/>
+    <ROUTE fromNode='GalaxyToggleScript' fromField='triggerTrue' toNode='_25' toField='set_startTime'/>
+    <ROUTE fromNode='_8' fromField='touchTime' toNode='GalaxyToggleScript' toField='set_time'/>
     <ROUTE fromNode='GalaxyToggleScript' fromField='triggerTrue' toNode='Layers' toField='set_triggerTime'/>
-    <ROUTE fromNode='_29' fromField='value_changed' toNode='_6' toField='set_clipBoundary'/>
-    <ROUTE fromNode='_26' fromField='value_changed' toNode='_6' toField='set_clipBoundary'/>
-    <ROUTE fromNode='NormalSize_2' fromField='value_changed' toNode='_6' toField='set_clipBoundary'/>
-    <ROUTE fromNode='FullScreen_2' fromField='value_changed' toNode='_6' toField='set_clipBoundary'/>
-    <ROUTE fromNode='Layers' fromField='value_changed' toNode='_1' toField='set_layers'/>
-    <ROUTE fromNode='_22' fromField='modifiedFraction_changed' toNode='_23' toField='set_fraction'/>
-    <ROUTE fromNode='_21' fromField='fraction_changed' toNode='_22' toField='set_fraction'/>
-    <ROUTE fromNode='_19' fromField='modifiedFraction_changed' toNode='_20' toField='set_fraction'/>
-    <ROUTE fromNode='_18' fromField='fraction_changed' toNode='_19' toField='set_fraction'/>
-    <ROUTE fromNode='PulsarsToggleScript' fromField='triggerFalse' toNode='_21' toField='set_startTime'/>
+    <ROUTE fromNode='_30' fromField='value_changed' toNode='_7' toField='set_clipBoundary'/>
+    <ROUTE fromNode='_27' fromField='value_changed' toNode='_7' toField='set_clipBoundary'/>
+    <ROUTE fromNode='NormalSize_2' fromField='value_changed' toNode='_7' toField='set_clipBoundary'/>
+    <ROUTE fromNode='FullScreen_2' fromField='value_changed' toNode='_7' toField='set_clipBoundary'/>
+    <ROUTE fromNode='Layers' fromField='value_changed' toNode='_2' toField='set_layers'/>
+    <ROUTE fromNode='_23' fromField='modifiedFraction_changed' toNode='_24' toField='set_fraction'/>
+    <ROUTE fromNode='_22' fromField='fraction_changed' toNode='_23' toField='set_fraction'/>
+    <ROUTE fromNode='_20' fromField='modifiedFraction_changed' toNode='_21' toField='set_fraction'/>
+    <ROUTE fromNode='_19' fromField='fraction_changed' toNode='_20' toField='set_fraction'/>
+    <ROUTE fromNode='PulsarsToggleScript' fromField='triggerFalse' toNode='_22' toField='set_startTime'/>
     <ROUTE fromNode='PulsarsToggleScript' fromField='triggerTrue' toNode='Layers_1' toField='set_triggerTime'/>
-    <ROUTE fromNode='PulsarsToggleScript' fromField='triggerTrue' toNode='_18' toField='set_startTime'/>
-    <ROUTE fromNode='_9' fromField='touchTime' toNode='PulsarsToggleScript' toField='set_time'/>
-    <ROUTE fromNode='_23' fromField='value_changed' toNode='_8' toField='set_clipBoundary'/>
-    <ROUTE fromNode='_20' fromField='value_changed' toNode='_8' toField='set_clipBoundary'/>
-    <ROUTE fromNode='FullScreen_1' fromField='value_changed' toNode='_8' toField='set_clipBoundary'/>
-    <ROUTE fromNode='NormalSize_1' fromField='value_changed' toNode='_8' toField='set_clipBoundary'/>
-    <ROUTE fromNode='Layers_1' fromField='value_changed' toNode='_1' toField='set_layers'/>
-    <ROUTE fromNode='_18' fromField='isActive' toNode='PulsarsToggleScript' toField='set_active'/>
-    <ROUTE fromNode='_21' fromField='isActive' toNode='PulsarsToggleScript' toField='set_active'/>
-    <ROUTE fromNode='_12' fromField='isActive' toNode='UniverseToggleScript' toField='set_active'/>
-    <ROUTE fromNode='_15' fromField='isActive' toNode='UniverseToggleScript' toField='set_active'/>
-    <ROUTE fromNode='_24' fromField='isActive' toNode='GalaxyToggleScript' toField='set_active'/>
-    <ROUTE fromNode='_27' fromField='isActive' toNode='GalaxyToggleScript' toField='set_active'/>
-    <ROUTE fromNode='_5' fromField='touchTime' toNode='GalaxyToggleScript' toField='set_resetTime'/>
-    <ROUTE fromNode='_5' fromField='touchTime' toNode='PulsarsToggleScript' toField='set_resetTime'/>
-    <ROUTE fromNode='_5' fromField='touchTime' toNode='UniverseToggleScript' toField='set_resetTime'/>
+    <ROUTE fromNode='PulsarsToggleScript' fromField='triggerTrue' toNode='_19' toField='set_startTime'/>
+    <ROUTE fromNode='_10' fromField='touchTime' toNode='PulsarsToggleScript' toField='set_time'/>
+    <ROUTE fromNode='_24' fromField='value_changed' toNode='_9' toField='set_clipBoundary'/>
+    <ROUTE fromNode='_21' fromField='value_changed' toNode='_9' toField='set_clipBoundary'/>
+    <ROUTE fromNode='FullScreen_1' fromField='value_changed' toNode='_9' toField='set_clipBoundary'/>
+    <ROUTE fromNode='NormalSize_1' fromField='value_changed' toNode='_9' toField='set_clipBoundary'/>
+    <ROUTE fromNode='Layers_1' fromField='value_changed' toNode='_2' toField='set_layers'/>
+    <ROUTE fromNode='_19' fromField='isActive' toNode='PulsarsToggleScript' toField='set_active'/>
+    <ROUTE fromNode='_22' fromField='isActive' toNode='PulsarsToggleScript' toField='set_active'/>
+    <ROUTE fromNode='_13' fromField='isActive' toNode='UniverseToggleScript' toField='set_active'/>
+    <ROUTE fromNode='_16' fromField='isActive' toNode='UniverseToggleScript' toField='set_active'/>
+    <ROUTE fromNode='_25' fromField='isActive' toNode='GalaxyToggleScript' toField='set_active'/>
+    <ROUTE fromNode='_28' fromField='isActive' toNode='GalaxyToggleScript' toField='set_active'/>
+    <ROUTE fromNode='_6' fromField='touchTime' toNode='GalaxyToggleScript' toField='set_resetTime'/>
+    <ROUTE fromNode='_6' fromField='touchTime' toNode='PulsarsToggleScript' toField='set_resetTime'/>
+    <ROUTE fromNode='_6' fromField='touchTime' toNode='UniverseToggleScript' toField='set_resetTime'/>
   </Scene>
 </X3D>

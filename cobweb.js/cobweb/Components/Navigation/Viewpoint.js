@@ -100,6 +100,8 @@ function ($,
 		},
 		getScreenScale: function (point, viewport)
 		{
+		   // Returns the screen scale in meter/pixel for on pixel.
+
 			var
 				width  = viewport [2],
 				height = viewport [3],

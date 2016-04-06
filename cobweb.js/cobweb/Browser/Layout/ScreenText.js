@@ -8,6 +8,7 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Algorithm",
 ],
 function ($,
@@ -18,6 +19,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
+          ViewVolume,
           Algorithm)
 {
 "use strict";
@@ -28,7 +30,8 @@ function ($,
 		max         = new Vector3 (1, 1, 0),
 		translation = new Vector3 (0, 0, 0),
 		rotation    = new Rotation4 (0, 0, 1, 0),
-		scale       = new Vector3 (1, 1, 1);
+		scale       = new Vector3 (1, 1, 1),
+		screenPoint = new Vector3 (0, 0, 0);
 
 	function ScreenText (text, fontStyle)
 	{
@@ -71,6 +74,9 @@ function ($,
 					max .x = min .x + text .textBounds_ .x;
 					break;
 				case TextAlignment .MIDDLE:
+					if (text .textBounds_ .x & 1)
+					   ++ text .textBounds_ .x;
+		
 					min .x = Math .round (min .x);
 					max .x = min .x + text .textBounds_ .x;
 					break;
@@ -88,6 +94,9 @@ function ($,
 					min .y = max .y - text .textBounds_ .y;
 					break;
 				case TextAlignment .MIDDLE:
+					if (text .textBounds_ .y & 1)
+					   ++ text .textBounds_ .y;
+		
 					max .y = Math .round (max .y);
 					min .y = max .y - text .textBounds_ .y;
 					break;
@@ -350,7 +359,7 @@ function ($,
 		},
 		scale: function (modelViewMatrix)
 		{
-			try
+			//try
 			{
 				// Same as in ScreenGroup
 
@@ -358,23 +367,41 @@ function ($,
 				this .screenMatrix .get (translation, rotation, scale);
 
 				var
-					fontStyle   = this .getFontStyle (),
-					viewport    = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
-					screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport);
-
-				translation .x = Math .round (translation .x / screenScale .x) * screenScale .x;
-				translation .y = Math .round (translation .y / screenScale .y) * screenScale .y;
-				translation .z = Math .round (translation .z / screenScale .z) * screenScale .z;
+					fontStyle        = this .getFontStyle (),
+					projectionMatrix = this .getBrowser () .getProjectionMatrix (),
+					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
+					screenScale      = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
 
 				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
 			                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
 
+				// Snap to whole pixel
+
+				ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+
+				screenPoint .x = Math .round (screenPoint .x);
+				screenPoint .y = Math .round (screenPoint .y);
+	
+				ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+
+				screenPoint .z = 0;
+				this .screenMatrix .translate (screenPoint);
+
+				// Assign modelViewMatrix and calculate relative matrix
+
 				Matrix4 .prototype .assign .call (modelViewMatrix, this .screenMatrix);
 
 				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+
+//				// DEBUG
+//
+//				ViewVolume .projectPoint (new Vector3 (0,0,0), this .screenMatrix, projectionMatrix, viewport, screenPoint);
+//
+//				if (this .getText () .getName () == "SidebarText")
+//					console .log ("w", viewport [2], viewport [3], screenPoint);
 			}
-			catch (error)
+			//catch (error)
 			{ }
 		},
 		traverse: function (context)
