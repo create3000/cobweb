@@ -43,7 +43,6 @@ function ($,
 		this .context      = this .canvas [0] .getContext ("2d");
 		this .screenMatrix = new Matrix4 ();
 		this .matrix       = new Matrix4 ();
-		this .offset       = new Vector2 (0, 0);
 
 		this .texture .textureProperties_ = fontStyle .getBrowser () .getScreenTextureProperties ();
 		this .texture .setup ();
@@ -64,8 +63,6 @@ function ($,
 			text .textBounds_ .y = Math .ceil (text .textBounds_ .y);
 
 			this .getBBox () .getExtents (min, max);
-
-			this .offset .set (min .x, max .y);
 
 			switch (fontStyle .getMajorAlignment ())
 			{
@@ -123,7 +120,6 @@ function ($,
 				charSpacings   = this .getCharSpacings (),
 				size           = fontStyle .getScale (), // in pixel
 				sizeUnitsPerEm = size / font .unitsPerEm,
-				offset         = this .offset,
 				texCoords      = this .texCoords,
 				normals        = text .getNormals (),
 				vertices       = text .getVertices (),
@@ -209,8 +205,8 @@ function ($,
 					{
 						var
 							glyph = line [g],
-							x     = minorAlignment .x + translation .x + advanceWidth + g * charSpacing - offset .x,
-							y     = minorAlignment .y + translation .y - offset .y;
+							x     = minorAlignment .x + translation .x + advanceWidth + g * charSpacing - min .x,
+							y     = minorAlignment .y + translation .y - max .y;
 
 						this .drawGlyph (cx, font, glyph, x, y, size);
 
@@ -249,8 +245,8 @@ function ($,
 						var translation = translations [t];
 
 							var
-								x = minorAlignment .x + translation .x - offset .x,
-								y = minorAlignment .y + translation .y - offset .y;
+								x = minorAlignment .x + translation .x - min .x,
+								y = minorAlignment .y + translation .y - max .y;
 
 						this .drawGlyph (cx, font, line [g], x, y, size);
 					}
