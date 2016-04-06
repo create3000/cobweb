@@ -18,11 +18,12 @@ function ($, TextureProperties)
 	{
 		initialize: function ()
 		{
-			this .screenTextureProperties .boundaryModeS_       = "CLAMP_TO_EDGE";
-			this .screenTextureProperties .boundaryModeT_       = "CLAMP_TO_EDGE";
-			this .screenTextureProperties .boundaryModeR_       = "CLAMP_TO_EDGE";
-			this .screenTextureProperties .minificationFilter_  = "NEAREST_PIXEL";
-			this .screenTextureProperties .magnificationFilter_ = "NEAREST_PIXEL";
+			this .screenTextureProperties .boundaryModeS_       = "CLAMP";
+			this .screenTextureProperties .boundaryModeT_       = "CLAMP";
+			this .screenTextureProperties .boundaryModeR_       = "CLAMP";
+			this .screenTextureProperties .minificationFilter_  = "NEAREST";
+			this .screenTextureProperties .magnificationFilter_ = "NEAREST";
+			this .screenTextureProperties .generateMipMaps_     = false;
 
 			this .screenTextureProperties .setup ();
 

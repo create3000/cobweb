@@ -16505,7 +16505,14 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		},
 		toString: function ()
 		{
-			return this .width + " " + this .height + " " + this .comp;
+		   var
+				string = this .width + " " + this .height + " " + this .comp,
+				array  = this .array;
+
+			for (var i = 0, length = this .width * this .height; i < length; ++ i)
+				string += " " + array [i];
+
+			return string;
 		},
 	});
 
@@ -16657,7 +16664,7 @@ function ($,
 
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.23";
+	return "1.24";
 });
 
 
@@ -22251,6 +22258,7 @@ function ($,
 			var browser = this .getBrowser ();
 
 			browser .setAppearance (this);
+			browser .setTexture (this .textureNode);
 			browser .setShader (this .shaderNode || browser .getDefaultShader ());
 		},
 	});
@@ -23351,7 +23359,7 @@ function ($,
 				appearance      = browser .getAppearance (),
 				lineProperties  = appearance .getLineProperties (),
 				material        = appearance .getMaterial (),
-				texture         = appearance .getTexture (),
+				texture         = browser .getTexture (),
 				modelViewMatrix = context .modelViewMatrix,
 				clipPlanes      = context .clipPlanes;
 
@@ -37018,7 +37026,7 @@ function ($,
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
 
-			if (shader .vertex < 0)
+			if (shader .vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
@@ -44156,32 +44164,6 @@ function (Viewport)
 });
 
 
-define ('cobweb/Browser/Layout/X3DLayoutContext',[],function ()
-{
-
-
-	function X3DLayoutContext ()
-	{
-		this .layouts = [ ];
-	}
-
-	X3DLayoutContext .prototype =
-	{
-		initialize: function () { },
-		getLayouts: function ()
-		{
-			return this .layouts;
-		},
-		getParentLayout: function ()
-		{
-			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
-		},
-	};
-
-	return X3DLayoutContext;
-});
-
-
 define ('cobweb/Components/Texturing/TextureProperties',[
 	"jquery",
 	"cobweb/Fields",
@@ -44323,6 +44305,60 @@ function ($,
 });
 
 
+
+
+define ('cobweb/Browser/Layout/X3DLayoutContext',[
+	"jquery",
+	"cobweb/Components/Texturing/TextureProperties",
+],
+function ($, TextureProperties)
+{
+
+
+	function X3DLayoutContext ()
+	{
+		this .layouts = [ ];
+
+		this .screenTextureProperties = new TextureProperties (this);
+	}
+
+	X3DLayoutContext .prototype =
+	{
+		initialize: function ()
+		{
+			this .screenTextureProperties .boundaryModeS_       = "CLAMP";
+			this .screenTextureProperties .boundaryModeT_       = "CLAMP";
+			this .screenTextureProperties .boundaryModeR_       = "CLAMP";
+			this .screenTextureProperties .minificationFilter_  = "NEAREST";
+			this .screenTextureProperties .magnificationFilter_ = "NEAREST";
+			this .screenTextureProperties .generateMipMaps_     = false;
+
+			this .screenTextureProperties .setup ();
+
+			var div = $("<div>");
+			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .height () / 72;
+			div .remove ();
+		},
+		getLayouts: function ()
+		{
+			return this .layouts;
+		},
+		getParentLayout: function ()
+		{
+			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
+		},
+		getScreenTextureProperties: function ()
+		{
+		   return this .screenTextureProperties;
+		},
+		getPointSize: function ()
+		{
+		   return this .pointSize;
+		},
+	};
+
+	return X3DLayoutContext;
+});
 
 define('text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
 
@@ -50064,13 +50100,13 @@ function (TextAlignment,
 				last  = topToBottom ? numLines : -1,
 				step  = topToBottom ? 1 : -1;
 
-			for (var l = first; l !== last; l += step)
+			for (var l = first, ll = 0; l !== last; l += step, ++ ll)
 			{
 				var line = string [l];
 
 				// Get line extents.
 
-				var glyphs = this .getHorizontalLineExtents (fontStyle, line, min, max, l);
+				var glyphs = this .getHorizontalLineExtents (fontStyle, line, min, max, ll);
 
 				size .assign (max) .subtract (min);
 
@@ -50168,9 +50204,8 @@ function (TextAlignment,
 
 			text .origin_ .setValue (origin .set (min .x, max .y, 0));
 
-			this .bbox .set (min3 .set (min .x, min .y, 0),
-			                 max3 .set (max .x, max .y, 0),
-			                 true);
+			this .bbox .setExtents (min3 .set (min .x, min .y, 0),
+			                        max3 .set (max .x, max .y, 0));
 		},
 		vertical: function (text, fontStyle)
 		{		
@@ -50212,7 +50247,7 @@ function (TextAlignment,
 					firstG = topToBottom ? 0 : numChars - 1,
 					lastG  = topToBottom ? numChars : -1,
 					stepG  = topToBottom ? 1 : -1;
-		
+
 				for (var g = firstG; g !== lastG; g += stepG, ++ t)
 				{
 					var glyph = glyphs [g];
@@ -50226,8 +50261,8 @@ function (TextAlignment,
 					// Calculate glyph translation
 					
 					var glyphNumber = topToBottom ? g : numChars - g - 1;
-		
-					this .translations [t] .set ((spacing - size .x) / 2, -glyphNumber);
+
+					this .translations [t] .set ((spacing - size .x - min .x) / 2, -glyphNumber);
 
 					// Calculate center.
 
@@ -50237,7 +50272,7 @@ function (TextAlignment,
 		
 					lineBBox .add (box2 .set (size, center));
 				}
-			
+							
 				// Get line extents.
 		
 				lineBBox .getExtents (min, max);
@@ -52412,6 +52447,8 @@ function ($,
 	{
 		X3DTextGeometry .call (this, text, fontStyle);
 
+		text .transparent_ = false;
+
 		this .texCoords = [ ];
 	}
 
@@ -52440,8 +52477,8 @@ function ($,
 				normals          = text .getNormals (),
 				vertices         = text .getVertices ();
 
-			this .texCoords .length = 0;
-			text .getTexCoords () .push (this .texCoords);
+			texCoords .length = 0;
+			text .getTexCoords () .push (texCoords);
 
 			this .getBBox () .getExtents (min, max);
 			text .getMin () .assign (min);
@@ -52489,7 +52526,6 @@ function ($,
 			{
 				var
 					leftToRight = fontStyle .leftToRight_ .getValue (),
-					topToBottom = fontStyle .topToBottom_ .getValue (),
 					first       = leftToRight ? 0 : text .string_ .length - 1,
 					last        = leftToRight ? text .string_ .length  : -1,
 					step        = leftToRight ? 1 : -1;
@@ -52498,9 +52534,13 @@ function ($,
 				{
 					var line = glyphs [l];
 
-					//for (const auto & glyph : topToBottom ? line : String (line .rbegin (), line .rend ()))
+					var
+					   numChars = line .length,
+						firstG   = topToBottom ? 0 : numChars - 1,
+						lastG    = topToBottom ? numChars : -1,
+						stepG    = topToBottom ? 1 : -1;
 
-					for (var g = 0, length = line .length; g < length; ++ g, ++ t)
+					for (var g = firstG; g !== lastG; g += stepG, ++ t)
 					{
 						var
 							translation   = translations [t],
@@ -52937,9 +52977,8 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		draw: function ()
+		traverse: function (context)
 		{
-
 		},
 	});
 
@@ -53274,6 +53313,7 @@ function (TextureProperties,
 		this .combinedTextureUnits     = [ ];
 		this .textureStages            = 1;
 		this .textureTransform         = [ ];
+		this .texture                  = null;
 		this .defaultTextureProperties = new TextureProperties (this);
 		this .defaultTextureTransform  = new TextureTransform (this);
 		this .defaultTextureCoordinate = new TextureCoordinate (this);
@@ -53338,6 +53378,14 @@ function (TextureProperties,
 		getTextureTransform: function ()
 		{
 			return this .textureTransform;
+		},
+		setTexture: function (value)
+		{
+			this .texture = value;
+		},
+		getTexture: function ()
+		{
+			return this .texture;
 		},
 		getDefaultTextureProperties: function ()
 		{
@@ -55795,6 +55843,8 @@ function ($,
 {
 
 
+   var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
 	function X3DTexture2DNode (executionContext)
 	{
 		X3DTextureNode .call (this, executionContext);
@@ -55822,6 +55872,10 @@ function ($,
 			this .repeatT_           .addInterest (this, "updateTextureProperties");
 			this .textureProperties_ .addInterest (this, "set_textureProperties__");
 
+			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .bindTexture (gl .TEXTURE_2D, null);
+		
 			this .set_textureProperties__ ();
 		},
 		set_textureProperties__: function ()
@@ -55906,7 +55960,7 @@ function ($,
 		},
 		clear: function ()
 		{
-			this .setTexture (1, 1, false, new Uint8Array ([ 255, 255, 255, 255 ]), false);
+			this .setTexture (1, 1, false, defaultData, false);
 		},
 		resize: function (input, inputWidth, inputHeight, outputWidth, outputHeight)
 		{
@@ -58182,7 +58236,7 @@ function ($,
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
 
-			if (shader .vertex < 0)
+			if (shader .vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
@@ -61282,6 +61336,8 @@ function ($,
 {
 
 
+   var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
 	function ComposedCubeMapTexture (executionContext)
 	{
 		X3DEnvironmentTextureNode .call (this, executionContext);
@@ -61402,16 +61458,16 @@ function ($,
 
 				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
 				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
+				gl .bindTexture (this .target, this .getTexture ());
 				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .bindTexture (gl .TEXTURE_CUBE_MAP, null);
+				gl .bindTexture (this .target, null);
 
 				this .set_textureQuality__ ();
 			}
 			else
 			{
 				gl .bindTexture (this .target, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, new Uint8Array ([ 255, 255, 255, 255 ]));
+				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 				gl .bindTexture (this .target, null);
 			}
 		},
@@ -69554,6 +69610,482 @@ function ($,
 
 
 
+define ('cobweb/Browser/Layout/ScreenText',[
+	"jquery",
+	"cobweb/Browser/Text/X3DTextGeometry",
+	"cobweb/Browser/Text/TextAlignment",
+	"cobweb/Components/Texturing/PixelTexture",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
+],
+function ($,
+          X3DTextGeometry,
+          TextAlignment,
+          PixelTexture,
+          Vector2,
+          Vector3,
+          Rotation4,
+          Matrix4,
+          Algorithm)
+{
+
+
+	var
+		paths       = [ ],
+		min         = new Vector3 (0, 0, 0),
+		max         = new Vector3 (1, 1, 0),
+		translation = new Vector3 (0, 0, 0),
+		rotation    = new Rotation4 (0, 0, 1, 0),
+		scale       = new Vector3 (1, 1, 1),
+		origin      = new Vector3 (0, 0, 0);
+
+	function ScreenText (text, fontStyle)
+	{
+		X3DTextGeometry .call (this, text, fontStyle);
+
+		text .transparent_ = true;
+
+		this .texCoords    = [ ];
+		this .texture      = new PixelTexture (text .getExecutionContext ());
+		this .canvas       = $("<canvas>");
+		this .context      = this .canvas [0] .getContext ("2d");
+		this .screenMatrix = new Matrix4 ();
+		this .matrix       = new Matrix4 ();
+		this .offset       = new Vector2 (0, 0);
+
+		this .texture .textureProperties_ = fontStyle .getBrowser () .getScreenTextureProperties ();
+		this .texture .setup ();
+	}
+
+	ScreenText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
+	{
+		constructor: ScreenText,
+		update: function ()
+		{
+			X3DTextGeometry .prototype .update .call (this);
+	
+			var
+				fontStyle = this .getFontStyle (),
+				text      = this .getText ();
+
+			text .textBounds_ .x = Math .ceil (text .textBounds_ .x);
+			text .textBounds_ .y = Math .ceil (text .textBounds_ .y);
+
+			this .getBBox () .getExtents (min, max);
+
+			this .offset .set (min .x, max .y);
+
+			switch (fontStyle .getMajorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					min .x = Math .floor (min .x);
+					max .x = min .x + text .textBounds_ .x;
+					break;
+				case TextAlignment .MIDDLE:
+					min .x = Math .round (min .x);
+					max .x = min .x + text .textBounds_ .x;
+					break;
+				case TextAlignment .END:
+					max .x = Math .ceil (max .x);
+					min .x = max .x - text .textBounds_ .x;
+					break;
+			}
+
+			switch (fontStyle .getMinorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					max .y = Math .ceil (max .y);
+					min .y = max .y - text .textBounds_ .y;
+					break;
+				case TextAlignment .MIDDLE:
+					max .y = Math .round (max .y);
+					min .y = max .y - text .textBounds_ .y;
+					break;
+				case TextAlignment .END:
+					min .y = Math .floor (min .y);
+					max .y = min .y + text .textBounds_ .y;
+					break;
+			}
+
+			text .origin_ .x = min .x;
+			text .origin_ .y = max .y;
+
+			this .getBBox () .setExtents (min, max);
+		},
+		build: function ()
+		{
+			var
+				fontStyle = this .getFontStyle (),
+				font      = fontStyle .getFont ();
+
+			if (! font)
+				return;
+
+			var
+				text           = this .getText (),
+				glyphs         = this .getGlyphs (),
+				minorAlignment = this .getMinorAlignment (),
+				translations   = this .getTranslations (),
+				charSpacings   = this .getCharSpacings (),
+				size           = fontStyle .getScale (), // in pixel
+				sizeUnitsPerEm = size / font .unitsPerEm,
+				offset         = this .offset,
+				texCoords      = this .texCoords,
+				normals        = text .getNormals (),
+				vertices       = text .getVertices (),
+				canvas         = this .canvas [0],
+				cx             = this .context;
+
+			texCoords .length = 0;
+			text .getTexCoords () .push (texCoords);
+
+			this .getBBox () .getExtents (min, max);
+			text .getMin () .assign (min);
+			text .getMax () .assign (max);
+	
+	      // Triangle one and two.
+
+			normals  .push (0, 0, 1,
+			                0, 0, 1,
+			                0, 0, 1,
+			                0, 0, 1,
+			                0, 0, 1,
+			                0, 0, 1);
+
+			vertices .push (min .x, min .y, 0, 1,
+			                max .x, min .y, 0, 1,
+			                max .x, max .y, 0, 1,
+			                min .x, min .y, 0, 1,
+			                max .x, max .y, 0, 1,
+			                min .x, max .y, 0, 1);
+
+			// Generate texture.
+
+			var
+			   width  = text .textBounds_ .x,
+			   height = text .textBounds_ .y;
+
+			// Scale canvas.
+	
+			if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
+			{
+				canvas .width  = Algorithm .nextPowerOfTwo (width),
+				canvas .height = Algorithm .nextPowerOfTwo (height);
+			}
+			else
+			{
+				canvas .width  = width;
+				canvas .height = height;
+			}
+
+			var
+			   w = width  / canvas .width,
+			   h = height / canvas .height,
+			   x = 1 - w,
+			   y = 1 - h;
+
+			texCoords .push (0, y, 0, 1,
+			                 w, y, 0, 1,
+			                 w, 1, 0, 1,
+			                 0, y, 0, 1,
+			                 w, 1, 0, 1,
+			                 0, 1, 0, 1);
+
+			// Setup canvas.
+
+			cx .clearRect (0, 0, canvas .width, canvas .height);
+
+//			cx .fillStyle = "rgba(255,255,255,0)";
+//			cx .fillRect (0, 0, canvas .width, canvas .height);
+//			cx .fillStyle = "rgba(255,255,255,1)";
+
+			// Draw glyphs.
+
+			if (fontStyle .horizontal_ .getValue ())
+			{
+				for (var l = 0, length = glyphs .length; l < length; ++ l)
+				{
+					var
+						line         = glyphs [l],
+						charSpacing  = charSpacings [l],
+						translation  = translations [l],
+						advanceWidth = 0;
+
+					for (var g = 0, gl = line .length; g < gl; ++ g)
+					{
+						var
+							glyph = line [g],
+							x     = minorAlignment .x + translation .x + advanceWidth + g * charSpacing - offset .x,
+							y     = minorAlignment .y + translation .y - offset .y;
+
+						this .drawGlyph (cx, font, glyph, x, y, size);
+
+						// Calculate advanceWidth.
+		
+						var kerning = 0;
+		
+						if (g + 1 < line .length)
+							kerning = font .getKerningValue (glyph, line [g + 1]);
+		
+						advanceWidth += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+					}
+				}
+			}
+			else
+			{
+				var
+					leftToRight = fontStyle .leftToRight_ .getValue (),
+					topToBottom = fontStyle .topToBottom_ .getValue (),
+					first       = leftToRight ? 0 : text .string_ .length - 1,
+					last        = leftToRight ? text .string_ .length  : -1,
+					step        = leftToRight ? 1 : -1;
+
+				for (var l = first, t = 0; l !== last; l += step)
+				{
+					var line = glyphs [l];
+
+					var
+					   numChars = line .length,
+						firstG   = topToBottom ? 0 : numChars - 1,
+						lastG    = topToBottom ? numChars : -1,
+						stepG    = topToBottom ? 1 : -1;
+
+					for (var g = firstG; g !== lastG; g += stepG, ++ t)
+					{
+						var translation = translations [t];
+
+							var
+								x = minorAlignment .x + translation .x - offset .x,
+								y = minorAlignment .y + translation .y - offset .y;
+
+						this .drawGlyph (cx, font, line [g], x, y, size);
+					}
+				}
+			}
+
+			// Transfer texture data.
+
+			var imageData = cx .getImageData (0, 0, canvas .width, canvas .height);
+
+			if (imageData)
+			{
+				var data = new Uint8Array (imageData .data);
+
+				// Set RGB to white, but leave alpha channel for better antialiasing results.
+				{
+					var
+						first = 0;
+						last  = data .length;
+
+					while (first !== last)
+					{
+						data [first ++] = 255;
+						data [first ++] = 255;
+						data [first ++] = 255;
+						++ first;
+					}
+				}
+
+				this .texture .setTexture (canvas .width, canvas .height, true, data, true);
+			}
+			else
+			   this .texture .clear ();
+		},
+		drawGlyph: function (cx, font, glyph, x, y, size)
+		{
+			var
+				components = glyph .components,
+				reverse    = font .outlinesFormat === "cff";
+
+			paths  .length = 0;
+		
+			if (glyph .isComposite)
+			{
+				for (var c = 0, cl = components .length; c < cl; ++ c)
+				{
+					var component = components [c];
+
+					paths .push (glyph .getPath (component .dx / font .unitsPerEm * size + x, component .dy / font .unitsPerEm * size - y, size));
+				}
+			}
+			else
+				paths .push (glyph .getPath (x, -y, size));
+
+			// Get curves for the current glyph.
+
+			for (var p = 0, pl = paths .length; p < pl; ++ p)
+			{
+				var
+				   path     = paths [p],
+					commands = path .commands;
+
+				cx .beginPath ();
+
+				for (var i = 0, cl = commands .length; i < cl; ++ i)
+				{
+					var command = commands [i];
+
+					switch (command .type)
+					{
+						case "M": // Start
+						{
+							cx .moveTo (command .x, command .y);
+							continue;
+						}
+						case "Z": // End
+						{
+						   cx .closePath ();
+							continue;
+						}
+						case "L": // Linear
+						{
+							cx .lineTo (command .x, command .y);
+							continue;
+						}
+						case "C": // Bezier
+						{
+							cx .bezierCurveTo (command .x1, command .y1, command .x2, command .y2, command .x, command .y);
+							continue;
+						}
+						case "Q": // Cubíc
+						{
+						   cx .quadraticCurveTo (command .x1, command .y1, command .x, command .y);
+							continue;
+						}
+					}
+				}
+
+				if (path .fill)
+					cx .fill ();
+	
+				if (path .stroke)
+				{
+					cx .lineWidth = path .strokeWidth;
+					cx .stroke ();
+				}
+			}
+		},
+		getGlyphExtents: function (glyph, primitiveQuality, min, max)
+		{
+			var
+				fontStyle  = this .getFontStyle (),
+				font       = fontStyle .getFont (),
+				unitsPerEm = font .unitsPerEm;
+
+			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
+			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
+		},
+		scale: function (modelViewMatrix)
+		{
+			try
+			{
+				// Same as in ScreenGroup
+
+				this .screenMatrix .assign (modelViewMatrix);
+				this .screenMatrix .get (translation, rotation, scale);
+
+				var
+					fontStyle   = this .getFontStyle (),
+					viewport    = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
+					screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (origin .set (modelViewMatrix [12], modelViewMatrix [13], modelViewMatrix [14]), viewport);
+
+				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+			                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+
+				Matrix4 .prototype .assign .call (modelViewMatrix, this .screenMatrix);
+
+				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+			}
+			catch (error)
+			{ }
+		},
+		traverse: function (context)
+		{
+		   this .scale (context .modelViewMatrix);
+		   this .getBrowser () .setTexture (this .texture);
+		},
+	});
+
+	return ScreenText;
+});
+
+
+define ("cobweb/Components/Layout/ScreenFontStyle",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Text/X3DFontStyleNode",
+	"cobweb/Browser/Layout/ScreenText",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DFontStyleNode, 
+          ScreenText, 
+          X3DConstants)
+{
+
+
+	function ScreenFontStyle (executionContext)
+	{
+		X3DFontStyleNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ScreenFontStyle);
+	}
+
+	ScreenFontStyle .prototype = $.extend (Object .create (X3DFontStyleNode .prototype),
+	{
+		constructor: ScreenFontStyle,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",    new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "family",      new Fields .MFString ("SERIF")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "style",       new Fields .SFString ("PLAIN")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "pointSize",   new Fields .SFFloat (12)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "spacing",     new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "horizontal",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "leftToRight", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "topToBottom", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "justify",     new Fields .MFString ("BEGIN")),
+		]),
+		getTypeName: function ()
+		{
+			return "ScreenFontStyle";
+		},
+		getComponentName: function ()
+		{
+			return "Layout";
+		},
+		getContainerField: function ()
+		{
+			return "fontStyle";
+		},
+		getTextGeometry: function (text)
+		{
+			return new ScreenText (text, this);
+		},
+		getScale: function ()
+		{
+			return this .pointSize_ .getValue () * this .getBrowser () .getPointSize ();
+		},
+	});
+
+	return ScreenFontStyle;
+});
+
+
+
+
 define ("cobweb/Components/Layout/ScreenGroup",
 [
 	"jquery",
@@ -69580,10 +70112,10 @@ function ($,
 {
 
 
-		var
-			translation = new Vector3 (0, 0, 0),
-			rotation    = new Rotation4 (0, 0, 1, 0),
-			scale       = new Vector3 (1, 1, 1);
+	var
+		translation = new Vector3 (0, 0, 0),
+		rotation    = new Rotation4 (0, 0, 1, 0),
+		scale       = new Vector3 (1, 1, 1);
 
 	function ScreenGroup (executionContext)
 	{
@@ -72439,10 +72971,16 @@ function ($,
 		},
 		build: function ()
 		{
-		   this .textGeometry .update ();
-		   this .textGeometry .build ();
+			this .textGeometry .update ();
+			this .textGeometry .build ();
 
 			this .setSolid (this .solid_ .getValue ());
+		},
+		traverse: function (context)
+		{
+			this .textGeometry .traverse (context);
+
+			X3DGeometryNode .prototype .traverse .call (this, context);
 		},
 	});
 
@@ -74119,7 +74657,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Followers/ScalarChaser",
 	"cobweb/Components/Followers/ScalarDamper",
 	"cobweb/Components/Interpolation/ScalarInterpolator", // VRML
-	//"cobweb/Components/Layout/ScreenFontStyle",
+	"cobweb/Components/Layout/ScreenFontStyle",
 	"cobweb/Components/Layout/ScreenGroup",
 	"cobweb/Components/Scripting/Script", // VRML
 	"cobweb/Components/Shaders/ShaderPart",
@@ -74341,7 +74879,7 @@ function (Anchor,
           ScalarChaser,
           ScalarDamper,
           ScalarInterpolator,
-          //ScreenFontStyle,
+          ScreenFontStyle,
           ScreenGroup,
           Script,
           ShaderPart,
@@ -74570,7 +75108,7 @@ function (Anchor,
 		ScalarChaser:                 ScalarChaser,
 		ScalarDamper:                 ScalarDamper,
 		ScalarInterpolator:           ScalarInterpolator,
-		//ScreenFontStyle:              ScreenFontStyle,
+		ScreenFontStyle:              ScreenFontStyle,
 		ScreenGroup:                  ScreenGroup,
 		Script:                       Script,
 		ShaderPart:                   ShaderPart,

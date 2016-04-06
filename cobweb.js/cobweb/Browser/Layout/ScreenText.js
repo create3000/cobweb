@@ -4,6 +4,7 @@ define ([
 	"cobweb/Browser/Text/X3DTextGeometry",
 	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/Components/Texturing/PixelTexture",
+	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
@@ -13,6 +14,7 @@ function ($,
           X3DTextGeometry,
           TextAlignment,
           PixelTexture,
+          Vector2,
           Vector3,
           Rotation4,
           Matrix4,
@@ -24,7 +26,6 @@ function ($,
 		paths       = [ ],
 		min         = new Vector3 (0, 0, 0),
 		max         = new Vector3 (1, 1, 0),
-		texCoords   = [ 0, 0, 0, 1,  1, 0, 0, 1,  1, 1, 0, 1,    0, 0, 0, 1,  1, 1, 0, 1,  0, 1, 0, 1 ],
 		translation = new Vector3 (0, 0, 0),
 		rotation    = new Rotation4 (0, 0, 1, 0),
 		scale       = new Vector3 (1, 1, 1),
@@ -36,11 +37,13 @@ function ($,
 
 		text .transparent_ = true;
 
+		this .texCoords    = [ ];
 		this .texture      = new PixelTexture (text .getExecutionContext ());
 		this .canvas       = $("<canvas>");
 		this .context      = this .canvas [0] .getContext ("2d");
 		this .screenMatrix = new Matrix4 ();
 		this .matrix       = new Matrix4 ();
+		this .offset       = new Vector2 (0, 0);
 
 		this .texture .textureProperties_ = fontStyle .getBrowser () .getScreenTextureProperties ();
 		this .texture .setup ();
@@ -61,6 +64,8 @@ function ($,
 			text .textBounds_ .y = Math .ceil (text .textBounds_ .y);
 
 			this .getBBox () .getExtents (min, max);
+
+			this .offset .set (min .x, max .y);
 
 			switch (fontStyle .getMajorAlignment ())
 			{
@@ -118,11 +123,14 @@ function ($,
 				charSpacings   = this .getCharSpacings (),
 				size           = fontStyle .getScale (), // in pixel
 				sizeUnitsPerEm = size / font .unitsPerEm,
+				offset         = this .offset,
+				texCoords      = this .texCoords,
 				normals        = text .getNormals (),
 				vertices       = text .getVertices (),
 				canvas         = this .canvas [0],
 				cx             = this .context;
 
+			texCoords .length = 0;
 			text .getTexCoords () .push (texCoords);
 
 			this .getBBox () .getExtents (min, max);
@@ -149,34 +157,41 @@ function ($,
 
 			var
 			   width  = text .textBounds_ .x,
-			   height = text .textBounds_ .y,
-			   scaleX = 1,
-			   scaleY = 1;
+			   height = text .textBounds_ .y;
 
 			// Scale canvas.
 	
 			if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
 			{
-				var
-					width2  = Algorithm .nextPowerOfTwo (width),
-					height2 = Algorithm .nextPowerOfTwo (height);
-
-				scaleX = width2 / width;
-				scaleY = height2 / height;
-
-				width  = width2;
-				height = height2;
+				canvas .width  = Algorithm .nextPowerOfTwo (width),
+				canvas .height = Algorithm .nextPowerOfTwo (height);
 			}
-	
-			canvas .width  = width;
-			canvas .height = height
+			else
+			{
+				canvas .width  = width;
+				canvas .height = height;
+			}
 
-			cx .resetTransform ();
-			cx .scale (scaleX, scaleY);
+			var
+			   w = width  / canvas .width,
+			   h = height / canvas .height,
+			   x = 1 - w,
+			   y = 1 - h;
+
+			texCoords .push (0, y, 0, 1,
+			                 w, y, 0, 1,
+			                 w, 1, 0, 1,
+			                 0, y, 0, 1,
+			                 w, 1, 0, 1,
+			                 0, 1, 0, 1);
 
 			// Setup canvas.
 
-			cx .clearRect (0, 0, width, height);
+			cx .clearRect (0, 0, canvas .width, canvas .height);
+
+//			cx .fillStyle = "rgba(255,255,255,0)";
+//			cx .fillRect (0, 0, canvas .width, canvas .height);
+//			cx .fillStyle = "rgba(255,255,255,1)";
 
 			// Draw glyphs.
 
@@ -194,8 +209,8 @@ function ($,
 					{
 						var
 							glyph = line [g],
-							x     = minorAlignment .x + translation .x + advanceWidth + g * charSpacing - min .x,
-							y     = minorAlignment .y + translation .y - max .y;
+							x     = minorAlignment .x + translation .x + advanceWidth + g * charSpacing - offset .x,
+							y     = minorAlignment .y + translation .y - offset .y;
 
 						this .drawGlyph (cx, font, glyph, x, y, size);
 
@@ -234,8 +249,8 @@ function ($,
 						var translation = translations [t];
 
 							var
-								x = minorAlignment .x + translation .x - min .x,
-								y = minorAlignment .y + translation .y - max .y;
+								x = minorAlignment .x + translation .x - offset .x,
+								y = minorAlignment .y + translation .y - offset .y;
 
 						this .drawGlyph (cx, font, line [g], x, y, size);
 					}
@@ -244,13 +259,13 @@ function ($,
 
 			// Transfer texture data.
 
-			var imageData = cx .getImageData (0, 0, width, height);
+			var imageData = cx .getImageData (0, 0, canvas .width, canvas .height);
 
 			if (imageData)
 			{
 				var data = new Uint8Array (imageData .data);
 
-				// Set RGB to white, but leave alpha channel.
+				// Set RGB to white, but leave alpha channel for better antialiasing results.
 				{
 					var
 						first = 0;
@@ -265,7 +280,7 @@ function ($,
 					}
 				}
 
-				this .texture .setTexture (width, height, true, data, true);
+				this .texture .setTexture (canvas .width, canvas .height, true, data, true);
 			}
 			else
 			   this .texture .clear ();
@@ -294,7 +309,11 @@ function ($,
 
 			for (var p = 0, pl = paths .length; p < pl; ++ p)
 			{
-				var commands = paths [p] .commands;
+				var
+				   path     = paths [p],
+					commands = path .commands;
+
+				cx .beginPath ();
 
 				for (var i = 0, cl = commands .length; i < cl; ++ i)
 				{
@@ -309,7 +328,7 @@ function ($,
 						}
 						case "Z": // End
 						{
-							cx .fill ("evenodd");
+						   cx .closePath ();
 							continue;
 						}
 						case "L": // Linear
@@ -329,6 +348,15 @@ function ($,
 						}
 					}
 				}
+
+				if (path .fill)
+					cx .fill ();
+	
+				if (path .stroke)
+				{
+					cx .lineWidth = path .strokeWidth;
+					cx .stroke ();
+				}
 			}
 		},
 		getGlyphExtents: function (glyph, primitiveQuality, min, max)
@@ -338,8 +366,8 @@ function ($,
 				font       = fontStyle .getFont (),
 				unitsPerEm = font .unitsPerEm;
 
-			min .set (glyph .xMin / unitsPerEm, glyph .yMin / unitsPerEm, 0);
-			max .set (glyph .xMax / unitsPerEm, glyph .yMax / unitsPerEm, 0);
+			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
+			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
 		scale: function (modelViewMatrix)
 		{
