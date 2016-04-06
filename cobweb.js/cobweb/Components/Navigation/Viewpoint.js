@@ -26,7 +26,8 @@ function ($,
 
 	var
 		zAxis       = new Vector3 (0, 0, 1),
-		screenScale = new Vector3 (0, 0, 0);
+		screenScale = new Vector3 (0, 0, 0),
+		normalized  = new Vector3 (0, 0, 0);
 
 	function Viewpoint (executionContext)
 	{
@@ -104,7 +105,7 @@ function ($,
 				height = viewport [3],
 				size   = Math .tan (this .getFieldOfView () / 2) * 2 * point .abs (); // Assume we are on sphere.
 
-			size *= Math .abs (point .normalize () .dot (zAxis));
+			size *= Math .abs (normalized .assign (point) .normalize () .dot (zAxis));
 
 			if (width > height)
 				size /= height;

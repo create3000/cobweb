@@ -28,8 +28,7 @@ function ($,
 		max         = new Vector3 (1, 1, 0),
 		translation = new Vector3 (0, 0, 0),
 		rotation    = new Rotation4 (0, 0, 1, 0),
-		scale       = new Vector3 (1, 1, 1),
-		origin      = new Vector3 (0, 0, 0);
+		scale       = new Vector3 (1, 1, 1);
 
 	function ScreenText (text, fontStyle)
 	{
@@ -280,6 +279,8 @@ function ($,
 			}
 			else
 			   this .texture .clear ();
+
+			//$("body") .append ("<br>") .append (this .canvas);
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
@@ -295,7 +296,9 @@ function ($,
 				{
 					var component = components [c];
 
-					paths .push (glyph .getPath (component .dx / font .unitsPerEm * size + x, component .dy / font .unitsPerEm * size - y, size));
+					paths .push (glyph .getPath (component .dx / font .unitsPerEm * size + x,
+					                             component .dy / font .unitsPerEm * size - y,
+					                             size));
 				}
 			}
 			else
@@ -377,7 +380,11 @@ function ($,
 				var
 					fontStyle   = this .getFontStyle (),
 					viewport    = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
-					screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (origin .set (modelViewMatrix [12], modelViewMatrix [13], modelViewMatrix [14]), viewport);
+					screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport);
+
+				translation .x = Math .round (translation .x / screenScale .x) * screenScale .x;
+				translation .y = Math .round (translation .y / screenScale .y) * screenScale .y;
+				translation .z = Math .round (translation .z / screenScale .z) * screenScale .z;
 
 				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),

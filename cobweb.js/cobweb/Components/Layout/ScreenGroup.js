@@ -87,8 +87,12 @@ function ($,
 		
 			var
 				viewport    = this .getCurrentLayer () .getViewVolume () .getViewport (),
-				screenScale = this .getCurrentViewpoint () .getScreenScale (this .modelViewMatrix .origin, viewport);
+				screenScale = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
 		
+			translation .x = Math .round (translation .x / screenScale .x) * screenScale .x;
+			translation .y = Math .round (translation .y / screenScale .y) * screenScale .y;
+			translation .z = Math .round (translation .z / screenScale .z) * screenScale .z;
+
 			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 		                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
 		                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
