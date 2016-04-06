@@ -49,7 +49,7 @@ function ($)
 		},
 		keydown: function (event)
 		{
-			console .log (event .which);
+			//console .log (event .which);
 
 			event .preventDefault ();
 
