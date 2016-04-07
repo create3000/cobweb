@@ -4,6 +4,7 @@ define ([
 	"cobweb/Browser/Core/PrimitiveQuality",
 	"cobweb/Browser/Text/X3DTextGeometry",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/Triangle2",
 	"lib/bezierjs/bezier.js",
 	"lib/poly2tri.js/dist/poly2tri.js",
@@ -13,6 +14,7 @@ function ($,
           PrimitiveQuality,
           X3DTextGeometry,
           Vector3,
+          Matrix4,
           Triangle2,
           Bezier,
           poly2tri,
@@ -110,6 +112,7 @@ function ($,
 			{
 				var
 					leftToRight = fontStyle .leftToRight_ .getValue (),
+					topToBottom = fontStyle .topToBottom_ .getValue (),
 					first       = leftToRight ? 0 : text .string_ .length - 1,
 					last        = leftToRight ? text .string_ .length  : -1,
 					step        = leftToRight ? 1 : -1;
@@ -561,8 +564,22 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		traverse: function (context)
+		traverse: function (type)
 		{
+		},
+		display: function (context)
+		{
+		},
+		transform: function ()
+		{
+		},
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
+		transformLine: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
 		},
 	});
 

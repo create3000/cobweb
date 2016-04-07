@@ -2,14 +2,15 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="73" Column="73" />
+      <File FileName="cobweb.js/cobweb.html" Line="11" Column="11" />
       <File FileName="cobweb.js/cobweb.release.html" Line="86" Column="86" />
       <File FileName="cobweb.js/cobweb/Components/Text/X3DFontStyleNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Text/X3DTextGeometry.js" Line="55" Column="55" />
-      <File FileName="cobweb.js/cobweb/Browser/Text/PolygonText.js" Line="28" Column="28" />
-      <File FileName="cobweb.js/cobweb/Browser/Layout/ScreenText.js" Line="13" Column="13" />
+      <File FileName="cobweb.js/cobweb/Browser/Text/X3DTextGeometry.js" Line="4" Column="4" />
+      <File FileName="cobweb.js/cobweb/Browser/Text/PolygonText.js" Line="16" Column="16" />
+      <File FileName="cobweb.js/cobweb/Browser/Layout/ScreenText.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="2" Column="2" />
-      <File FileName="cobweb.js/cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext.js" Line="4" Column="4" />
+      <File FileName="cobweb.js/cobweb/Components/Layout/Layout.js" Line="80" Column="80" />
+      <File FileName="cobweb.js/cobweb/Components/Layout/ScreenGroup.js" Line="4" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

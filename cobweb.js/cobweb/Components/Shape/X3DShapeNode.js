@@ -101,16 +101,16 @@ function ($,
 		{
 			if (this .geometryNode)
 			{
-				this .geometryNode .removeInterest (this, "set_transparent__");
-				this .geometryNode .removeInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
+				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
 			}
 
 			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
 			{
-				this .geometryNode .addInterest (this, "set_transparent__");
-				this .geometryNode .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
+				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
 			}
 
 			this .set_transparent__ ();

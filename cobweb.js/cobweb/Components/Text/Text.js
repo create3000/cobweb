@@ -97,11 +97,29 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 		},
-		traverse: function (context)
+		traverse: function (type)
 		{
-			this .textGeometry .traverse (context);
+			this .textGeometry .traverse (type);
+		},
+		display: function (context)
+		{
+			this .textGeometry .display (context);
 
-			X3DGeometryNode .prototype .traverse .call (this, context);
+			X3DGeometryNode .prototype .display .call (this, context);
+		},
+		transform: function (object)
+		{
+			// Apply sceen nodes transformation in place here.
+			this .textGeometry .transform (object);
+		},
+		getMatrix: function ()
+		{
+			return this .textGeometry .getMatrix ();
+		},
+		transformLine: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
+			return this .textGeometry .transformLine (line);
 		},
 	});
 

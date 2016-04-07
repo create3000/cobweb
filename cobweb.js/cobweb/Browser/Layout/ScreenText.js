@@ -8,6 +8,7 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Algorithm",
 ],
@@ -19,6 +20,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
+          Box3,
           ViewVolume,
           Algorithm)
 {
@@ -31,7 +33,8 @@ function ($,
 		translation = new Vector3 (0, 0, 0),
 		rotation    = new Rotation4 (0, 0, 1, 0),
 		scale       = new Vector3 (1, 1, 1),
-		screenPoint = new Vector3 (0, 0, 0);
+		screenPoint = new Vector3 (0, 0, 0),
+		bbox        = new Box3 ();
 
 	function ScreenText (text, fontStyle)
 	{
@@ -59,12 +62,16 @@ function ($,
 	
 			var
 				fontStyle = this .getFontStyle (),
-				text      = this .getText ();
+				text      = this .getText (),
+				offset    = 1; // For antialiasing border on bottom and right side
 
-			text .textBounds_ .x = Math .ceil (text .textBounds_ .x);
-			text .textBounds_ .y = Math .ceil (text .textBounds_ .y);
+			text .textBounds_ .x = Math .ceil (text .textBounds_ .x) + offset;
+			text .textBounds_ .y = Math .ceil (text .textBounds_ .y) + offset;
 
 			this .getBBox () .getExtents (min, max);
+
+			min .x -= offset;
+			min .y -= offset;
 
 			switch (fontStyle .getMajorAlignment ())
 			{
@@ -74,9 +81,6 @@ function ($,
 					max .x = min .x + text .textBounds_ .x;
 					break;
 				case TextAlignment .MIDDLE:
-					if (text .textBounds_ .x & 1)
-					   ++ text .textBounds_ .x;
-		
 					min .x = Math .round (min .x);
 					max .x = min .x + text .textBounds_ .x;
 					break;
@@ -94,9 +98,6 @@ function ($,
 					min .y = max .y - text .textBounds_ .y;
 					break;
 				case TextAlignment .MIDDLE:
-					if (text .textBounds_ .y & 1)
-					   ++ text .textBounds_ .y;
-		
 					max .y = Math .round (max .y);
 					min .y = max .y - text .textBounds_ .y;
 					break;
@@ -140,7 +141,7 @@ function ($,
 			this .getBBox () .getExtents (min, max);
 			text .getMin () .assign (min);
 			text .getMax () .assign (max);
-	
+
 	      // Triangle one and two.
 
 			normals  .push (0, 0, 1,
@@ -269,10 +270,14 @@ function ($,
 			else
 			   this .texture .clear ();
 
+			// Update Text extends.
+
 			//$("body") .append ("<br>") .append (this .canvas);
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
+		   //console .log (glyph .name, x, y);
+
 			var
 				components = glyph .components,
 				reverse    = font .outlinesFormat === "cff";
@@ -357,9 +362,9 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		scale: function (modelViewMatrix)
+		transform: function (modelViewMatrix)
 		{
-			//try
+			try
 			{
 				// Same as in ScreenGroup
 
@@ -390,24 +395,47 @@ function ($,
 
 				// Assign modelViewMatrix and calculate relative matrix
 
-				Matrix4 .prototype .assign .call (modelViewMatrix, this .screenMatrix);
-
 				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+					
+				// Update Text bbox
 
-//				// DEBUG
-//
-//				ViewVolume .projectPoint (new Vector3 (0,0,0), this .screenMatrix, projectionMatrix, viewport, screenPoint);
-//
-//				if (this .getText () .getName () == "SidebarText")
-//					console .log ("w", viewport [2], viewport [3], screenPoint);
+				bbox .assign (this .getBBox ()) .multRight (this .matrix);
+
+				if (! bbox .equals (this .getText () .getBBox ()))
+				{
+				   bbox .getExtents (min, max);
+					this .getText () .getMin () .assign (min);
+					this .getText () .getMax () .assign (max);
+					this .getText () .getBBox () .assign (bbox);
+					this .getText () .bbox_changed_ .addEvent ();
+				}
 			}
-			//catch (error)
+			catch (error)
 			{ }
 		},
-		traverse: function (context)
+		traverse: function (type)
 		{
-		   this .scale (context .modelViewMatrix);
+			this .transform (this .getBrowser () .getModelViewMatrix () .get ());
+		},
+		display: function (context)
+		{
+			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
+
 		   this .getBrowser () .setTexture (this .texture);
+		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
+		transformLine: function (line)
+		{
+		   try
+		   {
+				// Apply sceen nodes transformation in place here.
+				return line .multLineMatrix (Matrix4 .inverse (this .matrix));
+			}
+			catch (error)
+			{ }
 		},
 	});
 

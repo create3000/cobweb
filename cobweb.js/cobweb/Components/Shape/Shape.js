@@ -49,7 +49,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",   new Fields .SFNode ()),
 		]),
-		modelViewMatrix: new Matrix4 (),
 		invModelViewMatrix: new Matrix4 (),
 		hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 		intersections: intersections,
@@ -73,6 +72,8 @@ function ($,
 		{
 			if (this .getGeometry ())
 			{
+			   this .getGeometry () .traverse (type);
+
 				switch (type)
 				{
 					case TraverseType .POINTER:
@@ -100,7 +101,7 @@ function ($,
 
 				var
 					browser            = this .getBrowser (),
-					modelViewMatrix    = geometry .transformMatrix (this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ())),
+					modelViewMatrix    = browser .getModelViewMatrix () .get (),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
@@ -137,13 +138,13 @@ function ($,
 			}
 			catch (error)
 			{
-				//console .log (error);
+				console .log (error);
 			}
 		},
-		draw: function (context)
+		display: function (context)
 		{
 			this .getAppearance () .traverse ();
-			this .getGeometry ()   .traverse (context);
+			this .getGeometry ()   .display (context);
 		},
 		collision: function (shader)
 		{

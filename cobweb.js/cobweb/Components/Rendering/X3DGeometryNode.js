@@ -28,6 +28,8 @@ function ($,
 {
 "use strict";
 
+	var modelViewMatrix = new Matrix4 ();
+
 	// Box normals for bbox / line intersection.
 	var boxNormals = [
 		new Vector3 (0,  0,  1), // front
@@ -44,7 +46,8 @@ function ($,
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			
-		this .addChildren ("transparent", new Fields .SFBool ());
+		this .addChildren ("transparent",  new Fields .SFBool ());
+		this .addChildren ("bbox_changed", new Fields .SFTime ());
 	}
 
 	X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -111,20 +114,27 @@ function ($,
 
 			this .set_live__ ();
 		},
+		getExtendedEventHandling: function ()
+		{
+			return false;
+		},
 		isLineGeometry: function ()
 		{
 			return false;
 		},
 		getBBox: function ()
 		{
+			// With screen matrix applied.
 			return this .bbox;
 		},
 		getMin: function ()
 		{
+			// Without screen matrix applied.
 			return this .min;
 		},
 		getMax: function ()
 		{
+			// Without screen matrix applied.
 			return this .max;
 		},
 		getMatrix: function ()
@@ -393,6 +403,8 @@ function ($,
 			else
 				this .bbox .setExtents (this .min .set (0, 0, 0), this .max .set (0, 0, 0));
 
+			this .bbox_changed_ .addEvent ();
+
 			if (! this .isLineGeometry ())
 			{
 				var
@@ -469,7 +481,9 @@ function ($,
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 			this .vertexCount = count;
 	  	},
-		traverse: function (context)
+		traverse: function (type)
+		{ },
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),
@@ -575,6 +589,8 @@ function ($,
 
 				if (this .intersectsBBox (line))
 				{
+				   this .transformLine (line); // Apply screen transformations.
+
 					var
 						texCoords = this .texCoords [0],
 						normals   = this .normals,
@@ -619,7 +635,7 @@ function ($,
 							                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
 							                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
 
-							intersections .push ({ texCoord: texCoord, normal: normal, point: point });
+							intersections .push ({ texCoord: texCoord, normal: normal, point: this .getMatrix () .multVecMatrix (point) });
 							intersected = true;
 						}
 					}
@@ -690,10 +706,13 @@ function ($,
 
 			return false;
 		},
-		transformMatrix: function (matrix)
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
+		transformLine: function (line)
 		{
 			// Apply sceen nodes transformation in place here.
-			return matrix;
 		},
 		isClipped: function (point, invModelViewMatrix)
 		{

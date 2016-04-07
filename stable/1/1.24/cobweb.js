@@ -33248,6 +33248,10 @@ function (Matrix4, Vector3)
 			this .matrix .assign (box .matrix);
 			return this;
 		},
+		equals: function (box)
+		{
+			return this .matrix .equals (box .matrix);
+		},
 		set: function (size, center)
 		{
 			var m = this .matrix;
@@ -36549,7 +36553,7 @@ function (Vector3,
 });
 
 
-define ('cobweb/Components/Rendering/X3DGeometryNode',[
+define ([
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DNode",
@@ -36578,6 +36582,8 @@ function ($,
 {
 
 
+	var modelViewMatrix = new Matrix4 ();
+
 	// Box normals for bbox / line intersection.
 	var boxNormals = [
 		new Vector3 (0,  0,  1), // front
@@ -36594,7 +36600,8 @@ function ($,
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			
-		this .addChildren ("transparent", new Fields .SFBool ());
+		this .addChildren ("transparent",  new Fields .SFBool ());
+		this .addChildren ("bbox_changed", new Fields .SFTime ());
 	}
 
 	X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -36661,20 +36668,27 @@ function ($,
 
 			this .set_live__ ();
 		},
+		getExtendedEventHandling: function ()
+		{
+			return false;
+		},
 		isLineGeometry: function ()
 		{
 			return false;
 		},
 		getBBox: function ()
 		{
+			// With screen matrix applied.
 			return this .bbox;
 		},
 		getMin: function ()
 		{
+			// Without screen matrix applied.
 			return this .min;
 		},
 		getMax: function ()
 		{
+			// Without screen matrix applied.
 			return this .max;
 		},
 		getMatrix: function ()
@@ -36943,6 +36957,8 @@ function ($,
 			else
 				this .bbox .setExtents (this .min .set (0, 0, 0), this .max .set (0, 0, 0));
 
+			this .bbox_changed_ .addEvent ();
+
 			if (! this .isLineGeometry ())
 			{
 				var
@@ -37019,7 +37035,9 @@ function ($,
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 			this .vertexCount = count;
 	  	},
-		traverse: function (context)
+		traverse: function (type)
+		{ },
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),
@@ -37125,6 +37143,8 @@ function ($,
 
 				if (this .intersectsBBox (line))
 				{
+				   this .transformLine (line); // Apply screen transformations.
+
 					var
 						texCoords = this .texCoords [0],
 						normals   = this .normals,
@@ -37169,7 +37189,7 @@ function ($,
 							                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
 							                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
 
-							intersections .push ({ texCoord: texCoord, normal: normal, point: point });
+							intersections .push ({ texCoord: texCoord, normal: normal, point: this .getMatrix () .multVecMatrix (point) });
 							intersected = true;
 						}
 					}
@@ -37240,10 +37260,13 @@ function ($,
 
 			return false;
 		},
-		transformMatrix: function (matrix)
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
+		transformLine: function (line)
 		{
 			// Apply sceen nodes transformation in place here.
-			return matrix;
 		},
 		isClipped: function (point, invModelViewMatrix)
 		{
@@ -49790,6 +49813,10 @@ function (Matrix3, Vector2)
 			this .matrix .assign (box .matrix);
 			return this;
 		},
+		equals: function (box)
+		{
+			return this .matrix .equals (box .matrix);
+		},
 		set: function (size, center)
 		{
 			var m = this .matrix;
@@ -50149,17 +50176,17 @@ function (TextAlignment,
 				{
 					case TextAlignment .BEGIN:
 					case TextAlignment .FIRST:
-						this .translations [l] .set (0, -l * spacing);
+						this .translations [ll] .set (0, -ll * spacing);
 						break;
 					case TextAlignment .MIDDLE:
-						this .translations [l] .set (-min .x - size .x / 2, -l * spacing);
+						this .translations [ll] .set (-min .x - size .x / 2, -ll * spacing);
 						break;
 					case TextAlignment .END:
-						this .translations [l] .set (-min .x - size .x, -l * spacing);
+						this .translations [ll] .set (-min .x - size .x, -ll * spacing);
 						break;
 				}
 
-				this .translations [l] .multiply (scale);
+				this .translations [ll] .multiply (scale);
 
 				// Calculate center.
 
@@ -50167,7 +50194,7 @@ function (TextAlignment,
 
 				// Add bbox.
 
-				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [l])));
+				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [ll])));
 			}
 
 			//console .log ("size", bbox .size, "center", bbox .center);
@@ -52424,6 +52451,7 @@ define ('cobweb/Browser/Text/PolygonText',[
 	"cobweb/Browser/Core/PrimitiveQuality",
 	"cobweb/Browser/Text/X3DTextGeometry",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/Triangle2",
 	"lib/bezierjs/bezier.js",
 	"lib/poly2tri.js/dist/poly2tri.js",
@@ -52433,6 +52461,7 @@ function ($,
           PrimitiveQuality,
           X3DTextGeometry,
           Vector3,
+          Matrix4,
           Triangle2,
           Bezier,
           poly2tri,
@@ -52530,6 +52559,7 @@ function ($,
 			{
 				var
 					leftToRight = fontStyle .leftToRight_ .getValue (),
+					topToBottom = fontStyle .topToBottom_ .getValue (),
 					first       = leftToRight ? 0 : text .string_ .length - 1,
 					last        = leftToRight ? text .string_ .length  : -1,
 					step        = leftToRight ? 1 : -1;
@@ -52981,8 +53011,22 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		traverse: function (context)
+		traverse: function (type)
 		{
+		},
+		display: function (context)
+		{
+		},
+		transform: function ()
+		{
+		},
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
+		transformLine: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
 		},
 	});
 
@@ -54329,7 +54373,7 @@ function ($,
 			             viewport [2],
 			             viewport [3]);
 
-			this .getBackground () .draw (viewport);
+			this .getBackground () .display (viewport);
 
 			// Sorted blend
 
@@ -54359,7 +54403,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shapeNode .draw (context);
+				context .shapeNode .display (context);
 			}
 
 			// Render transparent objects
@@ -54380,7 +54424,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shapeNode .draw (context);
+				context .shapeNode .display (context);
 			}
 
 			gl .depthMask (true);
@@ -55539,7 +55583,7 @@ function ($,
 				}
 			}
 		},
-		draw: function (viewport)
+		display: function (viewport)
 		{
 			if (this .hidden)
 				return;
@@ -58230,7 +58274,7 @@ function ($,
 		{
 			this .shader = value;
 		},
-		traverse: function (context)
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),
@@ -58568,7 +58612,7 @@ function ($,
 			this .setSolid (this .solid_ .getValue ());
 			this .setCurrentTexCoord (null);
 		},
-		traverse: function (context)
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),
@@ -58578,7 +58622,7 @@ function ($,
 			shader .use ();
 			gl .uniform1i (shader .geometryType, 2);
 
-			X3DGeometryNode .prototype .traverse .call (this, context);
+			X3DGeometryNode .prototype .display .call (this, context);
 
 			gl .uniform1i (shader .geometryType, 3);
 		},
@@ -63067,11 +63111,11 @@ function ($,
 
 			this .lineGeometry = false;
 		},
-		traverse: function (context)
+		display: function (context)
 		{
 			if (this .isLineGeometry ())
 			{
-				X3DLineGeometryNode .prototype .traverse .call (this, context);
+				X3DLineGeometryNode .prototype .display .call (this, context);
 			}
 			else
 			{
@@ -63083,7 +63127,7 @@ function ($,
 				shader .use ();
 				gl .uniform1i (shader .geometryType, 2);
 	
-				X3DGeometryNode .prototype .traverse .call (this, context);
+				X3DGeometryNode .prototype .display .call (this, context);
 	
 				gl .uniform1i (shader .geometryType, 3);
 			}
@@ -69424,7 +69468,7 @@ function ($,
 			this .setSolid (this .solid_ .getValue ());
 			this .setCurrentTexCoord (null);
 		},
-		traverse: function (context)
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),
@@ -69434,7 +69478,7 @@ function ($,
 			shader .use ();
 			gl .uniform1i (shader .geometryType, 2);
 
-			X3DGeometryNode .prototype .traverse .call (this, context);
+			X3DGeometryNode .prototype .display .call (this, context);
 
 			gl .uniform1i (shader .geometryType, 3);
 		},
@@ -69623,6 +69667,7 @@ define ('cobweb/Browser/Layout/ScreenText',[
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Algorithm",
 ],
@@ -69634,6 +69679,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
+          Box3,
           ViewVolume,
           Algorithm)
 {
@@ -69646,7 +69692,8 @@ function ($,
 		translation = new Vector3 (0, 0, 0),
 		rotation    = new Rotation4 (0, 0, 1, 0),
 		scale       = new Vector3 (1, 1, 1),
-		screenPoint = new Vector3 (0, 0, 0);
+		screenPoint = new Vector3 (0, 0, 0),
+		bbox        = new Box3 ();
 
 	function ScreenText (text, fontStyle)
 	{
@@ -69674,12 +69721,16 @@ function ($,
 	
 			var
 				fontStyle = this .getFontStyle (),
-				text      = this .getText ();
+				text      = this .getText (),
+				offset    = 1; // For antialiasing border on bottom and right side
 
-			text .textBounds_ .x = Math .ceil (text .textBounds_ .x);
-			text .textBounds_ .y = Math .ceil (text .textBounds_ .y);
+			text .textBounds_ .x = Math .ceil (text .textBounds_ .x) + offset;
+			text .textBounds_ .y = Math .ceil (text .textBounds_ .y) + offset;
 
 			this .getBBox () .getExtents (min, max);
+
+			min .x -= offset;
+			min .y -= offset;
 
 			switch (fontStyle .getMajorAlignment ())
 			{
@@ -69689,9 +69740,6 @@ function ($,
 					max .x = min .x + text .textBounds_ .x;
 					break;
 				case TextAlignment .MIDDLE:
-					if (text .textBounds_ .x & 1)
-					   ++ text .textBounds_ .x;
-		
 					min .x = Math .round (min .x);
 					max .x = min .x + text .textBounds_ .x;
 					break;
@@ -69709,9 +69757,6 @@ function ($,
 					min .y = max .y - text .textBounds_ .y;
 					break;
 				case TextAlignment .MIDDLE:
-					if (text .textBounds_ .y & 1)
-					   ++ text .textBounds_ .y;
-		
 					max .y = Math .round (max .y);
 					min .y = max .y - text .textBounds_ .y;
 					break;
@@ -69755,7 +69800,7 @@ function ($,
 			this .getBBox () .getExtents (min, max);
 			text .getMin () .assign (min);
 			text .getMax () .assign (max);
-	
+
 	      // Triangle one and two.
 
 			normals  .push (0, 0, 1,
@@ -69884,10 +69929,14 @@ function ($,
 			else
 			   this .texture .clear ();
 
+			// Update Text extends.
+
 			//$("body") .append ("<br>") .append (this .canvas);
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
+		   //console .log (glyph .name, x, y);
+
 			var
 				components = glyph .components,
 				reverse    = font .outlinesFormat === "cff";
@@ -69972,9 +70021,9 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		scale: function (modelViewMatrix)
+		transform: function (modelViewMatrix)
 		{
-			//try
+			try
 			{
 				// Same as in ScreenGroup
 
@@ -70005,24 +70054,47 @@ function ($,
 
 				// Assign modelViewMatrix and calculate relative matrix
 
-				Matrix4 .prototype .assign .call (modelViewMatrix, this .screenMatrix);
-
 				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+					
+				// Update Text bbox
 
-//				// DEBUG
-//
-//				ViewVolume .projectPoint (new Vector3 (0,0,0), this .screenMatrix, projectionMatrix, viewport, screenPoint);
-//
-//				if (this .getText () .getName () == "SidebarText")
-//					console .log ("w", viewport [2], viewport [3], screenPoint);
+				bbox .assign (this .getBBox ()) .multRight (this .matrix);
+
+				if (! bbox .equals (this .getText () .getBBox ()))
+				{
+				   bbox .getExtents (min, max);
+					this .getText () .getMin () .assign (min);
+					this .getText () .getMax () .assign (max);
+					this .getText () .getBBox () .assign (bbox);
+					this .getText () .bbox_changed_ .addEvent ();
+				}
 			}
-			//catch (error)
+			catch (error)
 			{ }
 		},
-		traverse: function (context)
+		traverse: function (type)
 		{
-		   this .scale (context .modelViewMatrix);
+			this .transform (this .getBrowser () .getModelViewMatrix () .get ());
+		},
+		display: function (context)
+		{
+			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
+
 		   this .getBrowser () .setTexture (this .texture);
+		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
+		transformLine: function (line)
+		{
+		   try
+		   {
+				// Apply sceen nodes transformation in place here.
+				return line .multLineMatrix (Matrix4 .inverse (this .matrix));
+			}
+			catch (error)
+			{ }
 		},
 	});
 
@@ -71041,16 +71113,16 @@ function ($,
 		{
 			if (this .geometryNode)
 			{
-				this .geometryNode .removeInterest (this, "set_transparent__");
-				this .geometryNode .removeInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
+				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
 			}
 
 			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
 			{
-				this .geometryNode .addInterest (this, "set_transparent__");
-				this .geometryNode .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
+				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
 			}
 
 			this .set_transparent__ ();
@@ -71119,7 +71191,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",   new Fields .SFNode ()),
 		]),
-		modelViewMatrix: new Matrix4 (),
 		invModelViewMatrix: new Matrix4 (),
 		hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 		intersections: intersections,
@@ -71143,6 +71214,8 @@ function ($,
 		{
 			if (this .getGeometry ())
 			{
+			   this .getGeometry () .traverse (type);
+
 				switch (type)
 				{
 					case TraverseType .POINTER:
@@ -71170,7 +71243,7 @@ function ($,
 
 				var
 					browser            = this .getBrowser (),
-					modelViewMatrix    = geometry .transformMatrix (this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ())),
+					modelViewMatrix    = browser .getModelViewMatrix () .get (),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
@@ -71207,13 +71280,13 @@ function ($,
 			}
 			catch (error)
 			{
-				//console .log (error);
+				console .log (error);
 			}
 		},
-		draw: function (context)
+		display: function (context)
 		{
 			this .getAppearance () .traverse ();
-			this .getGeometry ()   .traverse (context);
+			this .getGeometry ()   .display (context);
 		},
 		collision: function (shader)
 		{
@@ -73008,11 +73081,29 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 		},
-		traverse: function (context)
+		traverse: function (type)
 		{
-			this .textGeometry .traverse (context);
+			this .textGeometry .traverse (type);
+		},
+		display: function (context)
+		{
+			this .textGeometry .display (context);
 
-			X3DGeometryNode .prototype .traverse .call (this, context);
+			X3DGeometryNode .prototype .display .call (this, context);
+		},
+		transform: function (object)
+		{
+			// Apply sceen nodes transformation in place here.
+			this .textGeometry .transform (object);
+		},
+		getMatrix: function ()
+		{
+			return this .textGeometry .getMatrix ();
+		},
+		transformLine: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
+			return this .textGeometry .transformLine (line);
 		},
 	});
 
@@ -73800,7 +73891,7 @@ function ($,
 				                 1);
 			}
 		},
-		traverse: function (context)
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),
@@ -73810,7 +73901,7 @@ function ($,
 			shader .use ();
 			gl .uniform1i (shader .geometryType, 2);
 
-			X3DGeometryNode .prototype .traverse .call (this, context);
+			X3DGeometryNode .prototype .display .call (this, context);
 
 			gl .uniform1i (shader .geometryType, 3);
 		},

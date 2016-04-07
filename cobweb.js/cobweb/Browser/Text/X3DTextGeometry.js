@@ -202,17 +202,17 @@ function (TextAlignment,
 				{
 					case TextAlignment .BEGIN:
 					case TextAlignment .FIRST:
-						this .translations [l] .set (0, -l * spacing);
+						this .translations [ll] .set (0, -ll * spacing);
 						break;
 					case TextAlignment .MIDDLE:
-						this .translations [l] .set (-min .x - size .x / 2, -l * spacing);
+						this .translations [ll] .set (-min .x - size .x / 2, -ll * spacing);
 						break;
 					case TextAlignment .END:
-						this .translations [l] .set (-min .x - size .x, -l * spacing);
+						this .translations [ll] .set (-min .x - size .x, -ll * spacing);
 						break;
 				}
 
-				this .translations [l] .multiply (scale);
+				this .translations [ll] .multiply (scale);
 
 				// Calculate center.
 
@@ -220,7 +220,7 @@ function (TextAlignment,
 
 				// Add bbox.
 
-				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [l])));
+				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [ll])));
 			}
 
 			//console .log ("size", bbox .size, "center", bbox .center);

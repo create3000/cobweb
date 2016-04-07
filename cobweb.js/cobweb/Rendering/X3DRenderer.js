@@ -558,7 +558,7 @@ function ($,
 			             viewport [2],
 			             viewport [3]);
 
-			this .getBackground () .draw (viewport);
+			this .getBackground () .display (viewport);
 
 			// Sorted blend
 
@@ -588,7 +588,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shapeNode .draw (context);
+				context .shapeNode .display (context);
 			}
 
 			// Render transparent objects
@@ -609,7 +609,7 @@ function ($,
 				             scissor .z,
 				             scissor .w);
 
-				context .shapeNode .draw (context);
+				context .shapeNode .display (context);
 			}
 
 			gl .depthMask (true);

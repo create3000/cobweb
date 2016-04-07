@@ -30,7 +30,7 @@ function ($,
 		{
 			this .shader = value;
 		},
-		traverse: function (context)
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),

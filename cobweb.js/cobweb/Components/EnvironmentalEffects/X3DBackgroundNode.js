@@ -445,7 +445,7 @@ function ($,
 				}
 			}
 		},
-		draw: function (viewport)
+		display: function (viewport)
 		{
 			if (this .hidden)
 				return;

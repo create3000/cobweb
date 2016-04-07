@@ -70,6 +70,10 @@ function (Matrix3, Vector2)
 			this .matrix .assign (box .matrix);
 			return this;
 		},
+		equals: function (box)
+		{
+			return this .matrix .equals (box .matrix);
+		},
 		set: function (size, center)
 		{
 			var m = this .matrix;

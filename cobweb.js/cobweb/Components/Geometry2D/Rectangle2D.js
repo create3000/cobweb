@@ -91,7 +91,7 @@ function ($,
 			this .setSolid (this .solid_ .getValue ());
 			this .setCurrentTexCoord (null);
 		},
-		traverse: function (context)
+		display: function (context)
 		{
 			var
 				browser = this .getBrowser (),
@@ -101,7 +101,7 @@ function ($,
 			shader .use ();
 			gl .uniform1i (shader .geometryType, 2);
 
-			X3DGeometryNode .prototype .traverse .call (this, context);
+			X3DGeometryNode .prototype .display .call (this, context);
 
 			gl .uniform1i (shader .geometryType, 3);
 		},
