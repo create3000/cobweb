@@ -1,5 +1,6 @@
 
-define ([
+define ("cobweb/Components/Rendering/X3DGeometryNode",
+[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Core/X3DNode",
