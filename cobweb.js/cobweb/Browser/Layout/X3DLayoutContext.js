@@ -28,7 +28,7 @@ function ($, TextureProperties)
 			this .screenTextureProperties .setup ();
 
 			var div = $("<div>");
-			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .height () / 72;
+			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .css ("display", "none") .height () / 72;
 			div .remove ();
 		},
 		getLayouts: function ()
