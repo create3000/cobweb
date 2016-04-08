@@ -36684,12 +36684,12 @@ function ($,
 		},
 		getMin: function ()
 		{
-			// Without screen matrix applied.
+			// With screen matrix applied.
 			return this .min;
 		},
 		getMax: function ()
 		{
-			// Without screen matrix applied.
+			// With screen matrix applied.
 			return this .max;
 		},
 		getMatrix: function ()
@@ -44364,7 +44364,7 @@ function ($, TextureProperties)
 			this .screenTextureProperties .setup ();
 
 			var div = $("<div>");
-			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .height () / 72;
+			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .css ("display", "none") .height () / 72;
 			div .remove ();
 		},
 		getLayouts: function ()
@@ -70064,8 +70064,8 @@ function ($,
 				if (! bbox .equals (this .getText () .getBBox ()))
 				{
 				   bbox .getExtents (min, max);
-					this .getText () .getMin () .assign (min);
-					this .getText () .getMax () .assign (max);
+					this .getText () .getMin ()  .assign (min);
+					this .getText () .getMax ()  .assign (max);
 					this .getText () .getBBox () .assign (bbox);
 					this .getText () .bbox_changed_ .addEvent ();
 				}

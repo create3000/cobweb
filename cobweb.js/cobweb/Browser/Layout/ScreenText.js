@@ -404,8 +404,8 @@ function ($,
 				if (! bbox .equals (this .getText () .getBBox ()))
 				{
 				   bbox .getExtents (min, max);
-					this .getText () .getMin () .assign (min);
-					this .getText () .getMax () .assign (max);
+					this .getText () .getMin ()  .assign (min);
+					this .getText () .getMax ()  .assign (max);
 					this .getText () .getBBox () .assign (bbox);
 					this .getText () .bbox_changed_ .addEvent ();
 				}

@@ -130,12 +130,12 @@ function ($,
 		},
 		getMin: function ()
 		{
-			// Without screen matrix applied.
+			// With screen matrix applied.
 			return this .min;
 		},
 		getMax: function ()
 		{
-			// Without screen matrix applied.
+			// With screen matrix applied.
 			return this .max;
 		},
 		getMatrix: function ()
