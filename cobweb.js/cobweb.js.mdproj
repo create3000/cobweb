@@ -1156,6 +1156,8 @@
     <None Include="standard\Geospatial\ReferenceEllipsoids.js" />
     <None Include="standard\Geospatial\Geodetic.js" />
     <None Include="standard\Geospatial\UniversalTransverseMercator.js" />
+    <None Include="cobweb\Browser\Geospatial\Geospatial.js" />
+    <None Include="cobweb\Browser\Geospatial\Geocentric.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1218,5 +1220,6 @@
     <Folder Include="examples\currencies\" />
     <Folder Include="examples\paul bourke\" />
     <Folder Include="standard\Geospatial\" />
+    <Folder Include="cobweb\Browser\Geospatial\" />
   </ItemGroup>
 </Project>

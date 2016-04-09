@@ -2,15 +2,11 @@
 define ([
 	"jquery",
 	"cobweb/Bits/X3DConstants",
-	"standard/Geospatial/ReferenceEllipsoids",
-	"standard/Geospatial/Geodetic",
-	"standard/Geospatial/UniversalTransverseMercator",
+	"cobweb/Browser/Geospatial/Geospatial",
 ],
 function ($,
           X3DConstants,
-          ReferenceEllipsoids,
-          Geodedic,
-          UniversalTransverseMercator)
+          Geospatial)
 {
 "use strict";
 

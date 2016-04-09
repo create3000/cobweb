@@ -48,6 +48,8 @@ function (Geodetic,
 		constructor: UniversalTransverseMercator,
 		convert: function (utm, result)
 		{
+			// https://gist.github.com/duedal/840476
+
 			var
 				northing = utm .x,
 				easting  = utm .y;
@@ -106,6 +108,8 @@ function (Geodetic,
 		},
 		apply: function (geocentric, result)
 		{
+			// https://gist.github.com/duedal/840476
+
 			var
 				geodetic  = geodeticConverter .applyRadians (geocentric, result),
 				latitude  = geodetic .x,
