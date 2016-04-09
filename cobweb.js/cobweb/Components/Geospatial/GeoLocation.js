@@ -7,7 +7,7 @@ define ([
 	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Math/Matrix4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,

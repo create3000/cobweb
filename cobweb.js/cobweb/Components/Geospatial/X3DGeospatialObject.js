@@ -4,7 +4,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Geospatial/Geospatial",
 	"cobweb/Bits/X3DCast",
-	"standard/Math/Math/Vector3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DConstants,
@@ -85,7 +85,7 @@ function ($,
 				this .origin = this .geoOriginNode .getOrigin ();
 			else
 				this .origin = new Vector3 (0, 0, 0);
-		}
+		},
 		getGeoCoord: function (point, result)
 		{
 			return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);
