@@ -31,6 +31,9 @@ function (ReferenceEllipsoids,
 
 	var Geospatial =
 	{
+		GD: GD,
+		UTM: UTM,
+		GC: GC,
 		getReferenceFrame: function (geoSystem, radians)
 		{
 			switch (getCoordinateSystem (geoSystem))
