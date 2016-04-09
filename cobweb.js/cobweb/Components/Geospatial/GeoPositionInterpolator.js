@@ -26,7 +26,8 @@ function ($,
 		this .addType (X3DConstants .GeoPositionInterpolator);
 	}
 
-	GeoPositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),new X3DGeospatialObject (),
+	GeoPositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoPositionInterpolator,
 		fieldDefinitions: new FieldDefinitionArray ([

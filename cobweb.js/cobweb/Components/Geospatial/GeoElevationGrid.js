@@ -20,13 +20,14 @@ function ($,
 
 	function GeoElevationGrid (executionContext)
 	{
-		X3DGeometryNode .call (this, executionContext);
+		X3DGeometryNode     .call (this, executionContext);
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoElevationGrid);
 	}
 
-	GeoElevationGrid .prototype = $.extend (Object .create (X3DGeometryNode .prototype),new X3DGeospatialObject (),
+	GeoElevationGrid .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoElevationGrid,
 		fieldDefinitions: new FieldDefinitionArray ([

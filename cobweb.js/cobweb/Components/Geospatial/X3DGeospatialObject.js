@@ -2,9 +2,13 @@
 define ([
 	"jquery",
 	"cobweb/Bits/X3DConstants",
+	"standard/Geospatial/ReferenceEllipsoids",
+	"standard/Geospatial/Geodetic",
 ],
 function ($,
-          X3DConstants)
+          X3DConstants,
+          ReferenceEllipsoids,
+          Geodedic)
 {
 "use strict";
 

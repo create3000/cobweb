@@ -21,12 +21,13 @@ function ($,
 	function GeoTransform (executionContext)
 	{
 		X3DTransformMatrix4DNode .call (this, executionContext);
-		X3DGeospatialObject .call (this, executionContext);
+		X3DGeospatialObject      .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoTransform);
 	}
 
-	GeoTransform .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),new X3DGeospatialObject (),
+	GeoTransform .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoTransform,
 		fieldDefinitions: new FieldDefinitionArray ([

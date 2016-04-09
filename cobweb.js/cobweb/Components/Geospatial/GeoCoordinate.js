@@ -20,13 +20,14 @@ function ($,
 
 	function GeoCoordinate (executionContext)
 	{
-		X3DCoordinateNode .call (this, executionContext);
+		X3DCoordinateNode   .call (this, executionContext);
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoCoordinate);
 	}
 
-	GeoCoordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),new X3DGeospatialObject (),
+	GeoCoordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoCoordinate,
 		fieldDefinitions: new FieldDefinitionArray ([

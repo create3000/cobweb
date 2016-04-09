@@ -22,14 +22,16 @@ function ($,
 
 	function GeoLOD (executionContext)
 	{
-		X3DChildNode .call (this, executionContext);
-		X3DBoundedObject .call (this, executionContext);
+		X3DChildNode        .call (this, executionContext);
+		X3DBoundedObject    .call (this, executionContext);
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoLOD);
 	}
 
-	GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),new X3DBoundedObject (),new X3DGeospatialObject (),
+	GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DBoundedObject .prototype,
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoLOD,
 		fieldDefinitions: new FieldDefinitionArray ([

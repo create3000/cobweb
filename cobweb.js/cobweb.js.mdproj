@@ -1152,6 +1152,9 @@
     <None Include="examples\paul bourke\stripes.png" />
     <None Include="examples\paul bourke\GridTool.x3dv" />
     <None Include="cobweb\Browser\Layout\ScreenText.js" />
+    <None Include="standard\Math\Geometry\Spheroid3.js" />
+    <None Include="standard\Geospatial\ReferenceEllipsoids.js" />
+    <None Include="standard\Geospatial\Geodetic.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1213,5 +1216,6 @@
     <Folder Include="examples\fourmilab\" />
     <Folder Include="examples\currencies\" />
     <Folder Include="examples\paul bourke\" />
+    <Folder Include="standard\Geospatial\" />
   </ItemGroup>
 </Project>

@@ -20,13 +20,14 @@ function ($,
 
 	function GeoTouchSensor (executionContext)
 	{
-		X3DTouchSensorNode .call (this, executionContext);
+		X3DTouchSensorNode  .call (this, executionContext);
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoTouchSensor);
 	}
 
-	GeoTouchSensor .prototype = $.extend (Object .create (X3DTouchSensorNode .prototype),new X3DGeospatialObject (),
+	GeoTouchSensor .prototype = $.extend (Object .create (X3DTouchSensorNode .prototype),
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoTouchSensor,
 		fieldDefinitions: new FieldDefinitionArray ([

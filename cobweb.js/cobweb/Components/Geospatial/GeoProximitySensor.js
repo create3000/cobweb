@@ -21,12 +21,13 @@ function ($,
 	function GeoProximitySensor (executionContext)
 	{
 		X3DEnvironmentalSensorNode .call (this, executionContext);
-		X3DGeospatialObject .call (this, executionContext);
+		X3DGeospatialObject        .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoProximitySensor);
 	}
 
-	GeoProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),new X3DGeospatialObject (),
+	GeoProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoProximitySensor,
 		fieldDefinitions: new FieldDefinitionArray ([

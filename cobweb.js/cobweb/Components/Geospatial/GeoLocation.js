@@ -21,12 +21,13 @@ function ($,
 	function GeoLocation (executionContext)
 	{
 		X3DTransformMatrix4DNode .call (this, executionContext);
-		X3DGeospatialObject .call (this, executionContext);
+		X3DGeospatialObject      .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoLocation);
 	}
 
-	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),new X3DGeospatialObject (),
+	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoLocation,
 		fieldDefinitions: new FieldDefinitionArray ([
