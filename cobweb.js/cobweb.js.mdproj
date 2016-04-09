@@ -1155,6 +1155,7 @@
     <None Include="standard\Math\Geometry\Spheroid3.js" />
     <None Include="standard\Geospatial\ReferenceEllipsoids.js" />
     <None Include="standard\Geospatial\Geodetic.js" />
+    <None Include="standard\Geospatial\UniversalTransverseMercator.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

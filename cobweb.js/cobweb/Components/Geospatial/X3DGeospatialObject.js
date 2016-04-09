@@ -4,11 +4,13 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Geospatial/ReferenceEllipsoids",
 	"standard/Geospatial/Geodetic",
+	"standard/Geospatial/UniversalTransverseMercator",
 ],
 function ($,
           X3DConstants,
           ReferenceEllipsoids,
-          Geodedic)
+          Geodedic,
+          UniversalTransverseMercator)
 {
 "use strict";
 

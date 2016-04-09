@@ -91,7 +91,9 @@ function (Algorithm)
 				longitude = Math .atan2 (y, x),
 				elevation = 0;
 		
-			var N = a;
+			var
+				N    = a,
+				ecc2 = this .ecc2;
 		
 			for (var i = 0; i < IMAX; ++ i)
 			{
@@ -99,11 +101,11 @@ function (Algorithm)
 					h0 = elevation,
 					b0 = latitude;
 		
-				latitude = Math .atan (z / P / (1 - this .ecc2 * N / (N + elevation)));
+				latitude = Math .atan (z / P / (1 - ecc2 * N / (N + elevation)));
 		
 				var sin_p = Math .sin (latitude);
 		
-				N         = a / Math .sqrt (1 - this .ecc2 * sin_p * sin_p);
+				N         = a / Math .sqrt (1 - ecc2 * sin_p * sin_p);
 				elevation = P / Math .cos (latitude) - N;
 		
 				if (Math .abs (elevation - h0) < EPS_H && Math .abs (latitude - b0) < EPS_P)
