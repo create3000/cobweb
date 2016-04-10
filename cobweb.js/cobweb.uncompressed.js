@@ -43428,7 +43428,7 @@ function ($,
 			if (x .equals (Vector3 .Zero))
 				x .set (1, 0, 0);
 		
-			z .assign (x) .cross (x, y);
+			z .assign (x) .cross (y);
 		
 			x .normalize ();
 			z .normalize ();
