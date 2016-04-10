@@ -22,7 +22,6 @@ function ($,
 		x      = new Vector3 (0, 0, 0),
 		y      = new Vector3 (0, 0, 0),
 		z      = new Vector3 (0, 0, 0);
-		
 
 	function X3DGeospatialObject (executionContext)
 	{
@@ -108,7 +107,7 @@ function ($,
 		{
 			// Position
 			this .referenceFrame .convert (geoPoint, p);
-			t .assing (p) .subtract (this .origin);
+			t .assign (p) .subtract (this .origin);
 		
 			// Let's work out the orientation at that location in order
 			// to maintain a view where +Y is in the direction of gravitional
@@ -122,7 +121,7 @@ function ($,
 			if (x .equals (Vector3 .Zero))
 				x .set (1, 0, 0);
 		
-			z .assing (x) .cross (xy);
+			z .assign (x) .cross (x, y);
 		
 			x .normalize ();
 			z .normalize ();

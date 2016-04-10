@@ -49,6 +49,10 @@ function ($,
 
 			return bbox;
 		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		setTransform: function (t, r, s, so, c)
 		{
 			if (t .equals (Vector3 .Zero) && r .equals (Rotation4 .Identity) && s .equals (Vector3 .One))

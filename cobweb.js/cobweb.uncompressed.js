@@ -16664,7 +16664,7 @@ function ($,
 
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.24";
+	return "1.25a";
 });
 
 
@@ -42713,24 +42713,731 @@ function ($,
 
 
 
+define ('standard/Math/Geometry/Spheroid3',[],function ()
+{
+
+
+	function Spheroid3 (semiMajorAxis, semiMinorAxis)
+	{
+		switch (arguments .length)
+		{
+			case 0:
+				this .semiMajorAxis = 0; // a
+				this .semiMinorAxis = 0; // c
+				break;
+			case 2:
+				this .semiMajorAxis = semiMajorAxis; // a
+				this .semiMinorAxis = semiMinorAxis; // c
+				break;
+			case 3:
+				var f_1 = arguments [1];
+				this .semiMajorAxis = semiMajorAxis;                 // a
+				this .semiMinorAxis = semiMajorAxis * (1 - 1 / f_1); // c
+				break;
+		}
+	}
+
+	Spheroid3 .prototype =
+	{
+		constructor: Spheroid3,
+		getSemiMajorAxis: function ()
+		{
+			// Returns the semi-major axis (a)
+			return this .semiMajorAxis; // a
+		},
+		getSemiMinorAxis: function ()
+		{
+			// Returns the semi-minor axis (c)
+			return this .semiMinorAxis; // c
+		},
+		toString: function ()
+		{
+			return this .semiMajorAxis + " " + this .semiMinorAxis;
+		},
+	};
+
+	return Spheroid3;
+});
+
+
+define ('standard/Geospatial/ReferenceEllipsoids',[
+	"standard/Math/Geometry/Spheroid3",
+],
+function (Spheroid3)
+{
+
+
+	var ReferenceEllipsoids =
+	{
+		// Earth
+		// X3D Specification
+		AA: new Spheroid3 (6377563.396, 299.3249646,   true), // Airy 1830
+		AM: new Spheroid3 (6377340.189, 299.3249646,   true), // Modified Airy
+		AN: new Spheroid3 (6378160,     298.25,        true), // Australian National
+		BN: new Spheroid3 (6377483.865, 299.1528128,   true), // Bessel 1841 (Namibia)
+		BR: new Spheroid3 (6377397.155, 299.1528128,   true), // Bessel 1841 (Ethiopia Indonesia...)
+		CC: new Spheroid3 (6378206.4,   294.9786982,   true), // Clarke 1866
+		CD: new Spheroid3 (6378249.145, 293.465,       true), // Clarke 1880
+		EA: new Spheroid3 (6377276.345, 300.8017,      true), // Everest (India 1830)
+		EB: new Spheroid3 (6377298.556, 300.8017,      true), // Everest (Sabah & Sarawak)
+		EC: new Spheroid3 (6377301.243, 300.8017,      true), // Everest (India 1956)
+		ED: new Spheroid3 (6377295.664, 300.8017,      true), // Everest (W. Malaysia 1969)
+		EE: new Spheroid3 (6377304.063, 300.8017,      true), // Everest (W. Malaysia & Singapore 1948)
+		EF: new Spheroid3 (6377309.613, 300.8017,      true), // Everest (Pakistan)
+		FA: new Spheroid3 (6378155,     298.3,         true), // Modified Fischer 1960
+		HE: new Spheroid3 (6378200,     298.3,         true), // Helmert 1906
+		HO: new Spheroid3 (6378270,     297,           true), // Hough 1960
+		ID: new Spheroid3 (6378160,     298.247,       true), // Indonesian 1974
+		IN: new Spheroid3 (6378388,     297,           true), // International 1924
+		KA: new Spheroid3 (6378245,     298.3,         true), // Krassovsky 1940
+		RF: new Spheroid3 (6378137,     298.257222101, true), // Geodetic Reference System 1980 (GRS 80)
+		SA: new Spheroid3 (6378160,     298.25,        true), // South American 1969
+		WD: new Spheroid3 (6378135,     298.26,        true), // WGS 72
+		WE: new Spheroid3 (6378137,     298.257223563, true), // WGS 84
+		// Solar System
+		// http://en.wikipedia.de
+		// Can someone give me more accurate parameters.
+		SUN:     new Spheroid3 (696342000, 1 / 9e-6, true),
+		MERCURY: new Spheroid3 (2439700,  2439700),
+		VENUS:   new Spheroid3 (6051800,  6051800),
+		MOON:    new Spheroid3 (1738140,  1735970),
+		MARS:    new Spheroid3 (3395428,  3377678), // http://adsabs.harvard.edu/abs/2010EM%26P..106....1A
+		JUPITER: new Spheroid3 (71492000, 66854000),
+		SATURN:  new Spheroid3 (60268000, 54364000),
+		URANUS:  new Spheroid3 (2555000,  24973000),
+		NEPTUNE: new Spheroid3 (24764000, 24341000),
+		PLUTO:   new Spheroid3 (1153000,  1153000),
+	};
+
+	return ReferenceEllipsoids;
+});
+
+
+define ('standard/Geospatial/Geodetic',[
+	"standard/Math/Algorithm",
+],
+function (Algorithm)
+{
+
+
+	var
+		EPS_H = 1e-3,
+		EPS_P = 1e-10,
+		IMAX  = 30;
+		
+	function Geodetic (spheroid, latitudeFirst, radians)
+	{
+		this .longitudeFirst = ! latitudeFirst;
+      this .degrees        = ! radians;
+      this .a              = spheroid .getSemiMajorAxis ();
+      this .c2a2           = Math .pow (spheroid .getSemiMinorAxis () / this .a, 2);
+      this .ecc2           = 1 - this .c2a2;
+	}
+
+	Geodetic .prototype =
+	{
+		constructor: Geodetic,
+		convert: function (geodetic, result)
+		{
+			var
+				latitude  = geodetic .x,
+				longitude = geodetic .y,
+				elevation = geodetic .z;
+		
+			if (this .longitudeFirst)
+			{
+				latitude  = geodetic .y;
+				longitude = geodetic .x;
+			}
+		
+			if (this .degrees)
+			{
+				latitude  = Algorithm .radians (latitude);
+				longitude = Algorithm .radians (longitude);
+			}
+		
+			return this .convertRadians (latitude, longitude, elevation, result);
+		},
+		convertRadians: function (latitude, longitude, elevation, result)
+		{
+			var
+				slat  = Math .sin (latitude),
+				slat2 = Math .pow (slat, 2),
+				clat  = Math .cos (latitude),
+				N     = this .a / Math .sqrt (1 - this .ecc2 * slat2),
+				Nhl   = (N + elevation) * clat;
+
+			return result .set (Nhl * Math .cos (longitude),
+			                    Nhl * Math .sin (longitude),
+			                    (N * this .c2a2 + elevation) * slat);
+		},
+		apply: function (geocentric, result)
+		{
+			this .applyRadians (geocentric, result);
+
+			if (this .degrees)
+			{
+				result .x = Algorithm .degrees (result .x); // latitude
+				result .y = Algorithm .degrees (result .y); // longitude
+			}
+
+			if (this .longitudeFirst)
+			{
+				var tmp = result .x;
+
+				result .x = result .y; // latitude
+				result .y = tmp;       // longitude
+			}
+
+			return result;
+		},
+		applyRadians: function (geocentric, result)
+		{
+			var
+				x = geocentric .x,
+				y = geocentric .y,
+				z = geocentric .z;
+		
+			var P = Math .sqrt (x * x + y * y);
+		
+			var
+				latitude  = 0,
+				longitude = Math .atan2 (y, x),
+				elevation = 0;
+		
+			var
+				N    = a,
+				ecc2 = this .ecc2;
+		
+			for (var i = 0; i < IMAX; ++ i)
+			{
+				var
+					h0 = elevation,
+					b0 = latitude;
+		
+				latitude = Math .atan (z / P / (1 - ecc2 * N / (N + elevation)));
+		
+				var sin_p = Math .sin (latitude);
+		
+				N         = a / Math .sqrt (1 - ecc2 * sin_p * sin_p);
+				elevation = P / Math .cos (latitude) - N;
+		
+				if (Math .abs (elevation - h0) < EPS_H && Math .abs (latitude - b0) < EPS_P)
+					break;
+			}
+
+			return result .set (latitude, longitude, elevation);
+		},
+		normal: function (geocentric, result)
+		{
+			var geodetic = this .applyRadians (geocentric, result);
+
+			var
+				latitude  = geodetic .x,
+				longitude = geodetic .y;
+
+			var clat = Math .cos (latitude);
+
+			var
+				nx = Math .cos (longitude) * clat,
+				ny = Math .sin (longitude) * clat,
+				nz = Math .sin (latitude);
+
+			return result .set (nx, ny, nz);
+		},
+	};
+
+	return Geodetic;
+});
+
+
+define ('standard/Geospatial/UniversalTransverseMercator',[
+	"standard/Geospatial/Geodetic",
+	"standard/Math/Algorithm",
+],
+function (Geodetic,
+          Algorithm)
+{
+
+
+	var
+		N0 = 1.0e7,
+		E0 = 5.0e5,
+		k0 = 0.9996;
+
+	function UniversalTransverseMercator (spheroid, zone, northernHemisphere, northingFirst)
+	{
+		var
+			a    = spheroid .getSemiMajorAxis (),
+			ecc2 = 1 - Math .pow (spheroid .getSemiMinorAxis () / a, 2),
+			EE   = ecc2 / (1 - ecc2),
+			e1   = (1 - Math .sqrt (1 - ecc2)) / (1 + Math .sqrt (1 - ecc2));
+
+		this .southernHemisphere = ! northernHemisphere;
+		this .eastingFirst       = ! northingFirst;
+		this .a                  = a;
+		this .ecc2               = ecc2;
+		this .EE                 = EE;
+		this .E8                 = 8 * EE;
+		this .E9                 = 9 * EE;
+		this .E252               = 252 * EE;
+		this .e1                 = e1;
+		this .A                  = k0 * (a * (1 - ecc2 / 4 - 3 * ecc2 * ecc2 / 64 - 5 * ecc2 * ecc2 * ecc2 / 256));
+		this .B                  = 3 * e1 / 2 - 7 * e1 * e1 * e1 / 32;
+		this .C                  = 21 * e1 * e1 / 16 - 55 * e1 * e1 * e1 * e1 / 32;
+		this .D                  = 151 * e1 * e1 * e1 / 96;
+		this .E                  = a * (1 - ecc2);
+		this .W                  = 1 - ecc2 / 4 - 3 * ecc2 * ecc2 / 64 - 5 * ecc2 * ecc2 * ecc2 / 256;
+		this .X                  = 3 * ecc2 / 8 + 3 * ecc2 * ecc2 / 32 + 45 * ecc2 * ecc2 * ecc2 / 1024;
+		this .Y                  = 15 * ecc2 * ecc2 / 256 + 45 * ecc2 * ecc2 * ecc2 / 1024;
+		this .Z                  = 35 * ecc2 * ecc2 * ecc2 / 3072;
+		this .longitude0         = Algorithm .radians (zone * 6 - 183);
+		this .geodeticConverter  = new Geodetic (spheroid, true, true);
+	}
+
+	UniversalTransverseMercator .prototype =
+	{
+		constructor: UniversalTransverseMercator,
+		convert: function (utm, result)
+		{
+			// https://gist.github.com/duedal/840476
+
+			var
+				northing = utm .x,
+				easting  = utm .y;
+		
+			if (this .eastingFirst)
+			{
+				northing = utm .y;
+				easting  = utm .x;
+			}
+		
+			// Check for southern hemisphere and remove offset from easting.
+		
+			var S = this .southernHemisphere;
+		
+			if (northing < 0)
+			{
+				S        = ! this .southernHemisphere;
+				northing = -northing;
+			}
+		
+			if (S)
+				northing -= N0;
+		
+			easting -= E0;
+		
+			// Begin calculation.
+		
+			var
+				mu   = northing / this .A,
+				phi1 = mu + this .B * Math .sin (2 * mu) + this .C * Math .sin (4 * mu) + this .D * Math .sin (6 * mu);
+		
+			var
+				sinphi1 = Math .pow (Math .sin (phi1), 2),
+				cosphi1 = Math .cos (phi1),
+				tanphi1 = Math .tan (phi1);
+		
+			var
+				N1 = this .a / Math .sqrt (1 - this .ecc2 * sinphi1),
+				T2 = Math .pow (tanphi1, 2),
+				T8 = Math .pow (tanphi1, 8),
+				C1 = this .EE * T2,
+				C2 = C1 * C1,
+				R1 = this .E / Math .pow (1 - this .ecc2 * sinphi1, 1.5),
+				I  = easting / (N1 * k0);
+		
+			var
+				J = (5 + 3 * T2 + 10 * C1 - 4 * C2 - this .E9) * Math .pow (I, 4) / 24,
+				K = (61 + 90 * T2 + 298 * C1 + 45 * T8 - this .E252 - 3 * C2) * Math .pow (I, 6) / 720,
+				L = (5 - 2 * C1 + 28 * T2 - 3 * C2 + this .E8 + 24 * T8) * Math .pow (I, 5) / 120;
+		
+			var
+				latitude  = phi1 - (N1 * tanphi1 / R1) * (I * I / 2 - J + K),
+				longitude = longitude0 + (I - (1 + 2 * T2 + C1) * Math .pow (I, 3) / 6 + L) / cosphi1;
+		
+			return geodeticConverter .convertRadians (latitude, longitude, utm .z, result);
+		},
+		apply: function (geocentric, result)
+		{
+			// https://gist.github.com/duedal/840476
+
+			var
+				geodetic  = geodeticConverter .applyRadians (geocentric, result),
+				latitude  = geodetic .x,
+				longitude = geodetic .y;
+		
+			var
+				tanlat = Math .tan (latitude),
+				coslat = Math .cos (latitude);
+		
+			var
+				EE = this .EE,
+				N  = this .a / Math .sqrt (1 - this .ecc2 * Math .pow (Math .sin (latitude), 2)),
+				T  = tanlat * tanlat,
+				T6 = T * T * T,
+				C  = EE * coslat * coslat,
+				A  = coslat * (longitude - longitude0);
+		
+			var M = this .a * (this .W * latitude
+			                   - this .X * Math .sin (2 * latitude)
+			                   + this .Y * Math .sin (4 * latitude)
+			                   - this .Z * Math .sin (6 * latitude));
+		
+			var easting = k0 * N * (A + (1 - T + C) * Math .pow (A, 3) / 6
+			                        + (5 - 18 * T6 + 72 * C - 58 * EE) * Math .pow (A, 5) / 120)
+			              + E0;
+		
+			var northing = k0 * (M + N * tanlat * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * Math .pow (A, 4) / 24
+			                                       + (61 - 58 * T6 + 600 * C - 330 * EE) * Math .pow (A, 6) / 720));
+		
+			if (latitude < 0)
+			{
+				northing += N0;
+				
+				if (! this .southernHemisphere)
+					northing = -northing;
+			}
+			else
+			{
+				if (this .southernHemisphere)
+					northing = -northing;		
+			}
+		
+			if (this .eastingFirst)
+				return result .set (easting, northing, geodetic .z);
+		
+			return result .set (northing, easting, geodetic .z);
+		},
+	};
+
+	return UniversalTransverseMercator;
+});
+
+
+define ('cobweb/Browser/Geospatial/Geocentric',[],function ()
+{
+
+
+	function Geocentric () { }
+
+	Geocentric .prototype =
+	{
+		constructor: Geocentric,
+		convert: function (geocentric, result)
+		{
+			return result .assign (geocentric);
+		},
+		apply: function (geocentric, result)
+		{
+			return result .assign (geocentric);
+		},
+	};
+
+	return Geocentric;
+});
+
+
+define ('cobweb/Browser/Geospatial/Geospatial',[
+	"standard/Geospatial/ReferenceEllipsoids",
+	"standard/Geospatial/Geodetic",
+	"standard/Geospatial/UniversalTransverseMercator",
+	"cobweb/Browser/Geospatial/Geocentric",
+],
+function (ReferenceEllipsoids,
+          Geodedic,
+          UniversalTransverseMercator,
+          Geocentric)
+{
+
+
+	var
+		i   = 0,
+		GD  = i ++,
+		UTM = i ++,
+		GC  = i ++;
+
+	var CoordinateSystems = {
+		GD:  GD,
+		GDC: GD,
+		UTM: UTM,
+		GC:  GC,
+		GCC: GC,
+		GS:  GC,
+	};
+	
+	var Zone = /^Z(\d+)$/;
+
+	var Geospatial =
+	{
+		GD: GD,
+		UTM: UTM,
+		GC: GC,
+		getReferenceFrame: function (geoSystem, radians)
+		{
+			switch (getCoordinateSystem (geoSystem))
+			{
+				case GD:
+				{
+					return new Geodetic (this .getEllipsoid (geoSystem),
+					                     this .getLatitudeFirst (geoSystem),
+					                     radians);
+				}
+				case UTM:
+				{
+					return new UniversalTransverseMercator (this .getEllipsoid (geoSystem),
+					                                        this .getZone (geoSystem),
+					                                        this .getNorthernHemisphere (geoSystem),
+					                                        this .getNorthingFirst (geoSystem));
+				}
+				case GC:
+				{
+					return new Geocentric ();
+				}
+			}
+
+			return new Geodetic (ReferenceEllipsoids .WE, true, radians);
+		},
+		getElevationFrame: function (geoSystem, radians)
+		{
+			return new Geodetic (getEllipsoid (geoSystem), true, radians);
+		},
+		getCoordinateSystem: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var coordinateSystem = coordinateSystems [geoSystem [i]];
+
+				if (coordinateSystem !== undefined)
+					return coordinateSystem;
+			}
+		
+			return GD;
+		},
+		getEllipsoid: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var ellipsoid = ReferenceEllipsoids [geoSystem [i]];
+
+				if (ellipsoid !== undefined)
+					return ellipsoid;
+			}
+		
+			return ReferenceEllipsoids .WE;
+		},
+		getEllipsoidString: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var ellipsoid = ReferenceEllipsoids [geoSystem [i]];
+
+				if (ellipsoid !== undefined)
+					return geoSystem [i];
+			}
+
+			return "WE";
+		},
+		isStandardOrder: function (geoSystem)
+		{
+			switch (this .getCoordinateSystem (geoSystem))
+			{
+				case GD:
+				{
+					return this .getLatitudeFirst (geoSystem);
+				}
+				case UTM:
+				{
+					return this .getNorthingFirst (geoSystem);
+				}
+				case GC:
+				{
+					return true;
+				}
+			}
+		
+			return this .getLatitudeFirst (geoSystem);
+		},
+		getLatitudeFirst: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				if (geoSystem [i] === "longitude_first")
+					return false;
+			}
+
+			return true;
+		},
+		getNorthingFirst: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				if (geoSystem [i] === "easting_first")
+					return false;
+			}
+		
+			return true;
+		},
+		getZone: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var match = geoSystem [i] .match (Zone);
+
+				if (match)
+					return parseInt (match [1]);
+			}
+		
+			return 1;
+		},
+		getNorthernHemisphere: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				if (geoSystem [i] === "S")
+					return false;
+			}
+
+			return true;
+		},
+	};
+	
+	return Geospatial;
+});
+
+
 define ('cobweb/Components/Geospatial/X3DGeospatialObject',[
 	"jquery",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Geospatial/Geospatial",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
-          X3DConstants)
+          X3DConstants,
+          Geospatial,
+          X3DCast,
+          Vector3)
 {
 
+
+	var
+		vector = new Vector3 (0, 0, 0),
+		result = new Vector3 (0, 0, 0),
+		p      = new Vector3 (0, 0, 0),
+		t      = new Vector3 (0, 0, 0),
+		x      = new Vector3 (0, 0, 0),
+		y      = new Vector3 (0, 0, 0),
+		z      = new Vector3 (0, 0, 0);
 
 	function X3DGeospatialObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DGeospatialObject);
+
+		this .radians = true;
 	}
 
 	X3DGeospatialObject .prototype =
 	{
 		constructor: X3DGeospatialObject,
-		initialize: function () { },
+		initialize: function ()
+		{
+			this .geoSystem_ .addInterest (this, "set_geoSystem__");
+			this .geoOrigin_ .addInterest (this, "set_geoOrigin__");
+
+			switch (this .getExecutionContext () .specificationVersion)
+			{
+				case "2.0":
+				case "3.0":
+				case "3.1":
+				case "3.2":
+					this .radians = false;
+					break;
+				default:
+					break;
+			}
+
+			this .set_geoSystem__ ();
+			this .set_geoOrigin__ ();
+		},
+		set_geoSystem__: function ()
+		{
+			this .coordinateSystem = Geospatial .getCoordinateSystem (this .geoSystem_);
+			this .referenceFrame   = Geospatial .getReferenceFrame (this .geoSystem_, this .radians);
+			this .elevationFrame   = Geospatial .getElevationFrame (this .geoSystem_, this .radians);
+			this .standardOrder    = Geospatial .isStandardOrder (this .geoSystem_);
+		},
+		set_geoOrigin__: function ()
+		{
+			if (this .geoOriginNode)
+			{
+				this .geoOriginNode .removeInterest (this, "set_origin__");
+				this .geoOriginNode .removeInterest (this, "addNodeEvent");
+			}
+		
+			this .geoOriginNode = X3DCast (X3DConstants .GeoOrigin, this .geoOrigin_);
+		
+			if (this .geoOriginNode)
+			{
+				this .geoOriginNode .addInterest (this, "set_origin__");
+				this .geoOriginNode .addInterest (this, "addNodeEvent");
+			}
+		
+			this .set_origin__ ();
+		},
+		set_origin__: function ()
+		{
+			if (this .geoOriginNode)
+				this .origin = this .geoOriginNode .getOrigin ();
+			else
+				this .origin = new Vector3 (0, 0, 0);
+		},
+		getGeoCoord: function (point, result)
+		{
+			return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);
+		},
+		getElevation: function (point)
+		{
+			vector .assign (point) .add (this .origin);
+
+			return this .elevationFrame .applyRadians (vector .x, vector .y, vector .z, result) .z;
+		},
+		getUpVector: function (point, result)
+		{
+			return this .elevationFrame .normal (vector .assign (point) .add (this .origin), result);
+		},
+		getCoord: function (geoPoint, result)
+		{
+			return this .referenceFrame .convert (geoPoint, result) .subtract (this .origin);
+		},
+		getLocationMatrix: function (geoPoint, result)
+		{
+			// Position
+			this .referenceFrame .convert (geoPoint, p);
+			t .assign (p) .subtract (this .origin);
+		
+			// Let's work out the orientation at that location in order
+			// to maintain a view where +Y is in the direction of gravitional
+			// up for that region of the planet's surface. This will be the
+			// value of the rotation matrix for the transform.
+		
+			this .elevationFrame .normal (p, y);
+			x .assign (0, 0, 1) .cross (y);
+
+			// Handle pole cases.
+			if (x .equals (Vector3 .Zero))
+				x .set (1, 0, 0);
+		
+			z .assign (x) .cross (x, y);
+		
+			x .normalize ();
+			z .normalize ();
+		
+			return result .set (x .x, x .y, x .z, 0,
+			                    y .x, y .y, y .z, 0,
+			                    z .x, z .y, z .z, 0,
+			                    t .x, t .y, t .z, 1);
+		},
 	};
 
 	return X3DGeospatialObject;
@@ -59939,6 +60646,10 @@ function ($,
 
 			return bbox;
 		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		setTransform: function (t, r, s, so, c)
 		{
 			if (t .equals (Vector3 .Zero) && r .equals (Rotation4 .Identity) && s .equals (Vector3 .One))
@@ -64000,6 +64711,770 @@ function ($,
 	});
 
 	return Extrusion;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoCoordinate',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DCoordinateNode, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoCoordinate (executionContext)
+	{
+		X3DCoordinateNode   .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoCoordinate);
+	}
+
+	GeoCoordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoCoordinate,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "point",     new Fields .MFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoCoordinate";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "coord";
+		},
+		isEmpty: function ()
+		{
+			return this .point_ .length == 0;
+		},
+		getSize: function ()
+		{
+			return this .point_ .length;
+		},
+	});
+
+	return GeoCoordinate;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoElevationGrid',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DGeometryNode, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoElevationGrid (executionContext)
+	{
+		X3DGeometryNode     .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoElevationGrid);
+	}
+
+	GeoElevationGrid .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoElevationGrid,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",       new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoGridOrigin",   new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "xDimension",      new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "zDimension",      new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "xSpacing",        new Fields .SFDouble (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "zSpacing",        new Fields .SFDouble (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "yScale",          new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "creaseAngle",     new Fields .SFDouble ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "height",          new Fields .MFDouble ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",       new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoElevationGrid";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "geometry";
+		},
+	});
+
+	return GeoElevationGrid;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoLOD',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DBoundedObject, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoLOD (executionContext)
+	{
+		X3DChildNode        .call (this, executionContext);
+		X3DBoundedObject    .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoLOD);
+	}
+
+	GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DBoundedObject .prototype,
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoLOD,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootUrl",       new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child1Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child2Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child3Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child4Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "center",        new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "range",         new Fields .SFFloat (10)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed", new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNode",      new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",      new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "children",      new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoLOD";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoLOD;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoLocation',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTransformMatrix4DNode, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoLocation (executionContext)
+	{
+		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DGeospatialObject      .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoLocation);
+	}
+
+	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoLocation,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",      new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords",      new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoLocation";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
+			X3DGeospatialObject      .prototype .initialize .call (this);
+		
+			this .addInterest (this, "eventsProcessed");
+		
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			this .getLocationMatrix (this .geoCoords_ .getValue (), this .getMatrix ());
+		},
+	});
+
+	return GeoLocation;
+});
+
+
+
+
+define ('cobweb/Components/Core/X3DInfoNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DInfoNode (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DInfoNode);
+	}
+
+	X3DInfoNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DInfoNode,
+	});
+
+	return X3DInfoNode;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoMetadata',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DInfoNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInfoNode, 
+          X3DConstants)
+{
+
+
+	function GeoMetadata (executionContext)
+	{
+		X3DInfoNode .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoMetadata);
+	}
+
+	GeoMetadata .prototype = $.extend (Object .create (X3DInfoNode .prototype),
+	{
+		constructor: GeoMetadata,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "url",      new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "summary",  new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "data",     new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoMetadata";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoMetadata;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoOrigin',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DNode, 
+          X3DConstants)
+{
+
+
+	function GeoOrigin (executionContext)
+	{
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoOrigin);
+	}
+
+	GeoOrigin .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: GeoOrigin,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new Fields .SFVec3d ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoOrigin";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "geoOrigin";
+		},
+	});
+
+	return GeoOrigin;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoPositionInterpolator',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInterpolatorNode, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoPositionInterpolator (executionContext)
+	{
+		X3DInterpolatorNode .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoPositionInterpolator);
+	}
+
+	GeoPositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoPositionInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_fraction",     new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "key",              new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "keyValue",         new Fields .MFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",    new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "geovalue_changed", new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",        new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoPositionInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoPositionInterpolator;
+});
+
+
+
+
+define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DSensorNode, 
+          X3DConstants,
+          Vector3)
+{
+
+
+	function X3DEnvironmentalSensorNode (executionContext)
+	{
+		X3DSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
+
+		this .addChildren ("traversed", new Fields .SFBool (true));
+
+		this .currentTraversed = true;
+	}
+
+	X3DEnvironmentalSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
+	{
+		constructor: X3DEnvironmentalSensorNode,
+		initialize: function ()
+		{
+			X3DSensorNode .prototype .initialize .call (this);
+
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
+			this .enabled_   .addInterest (this, "set_live__");
+			this .size_      .addInterest (this, "set_live__");
+			this .traversed_ .addInterest (this, "set_live__");
+
+			this .set_live__ ();
+		},
+		setTraversed: function (value)
+		{
+		   if (value)
+			{
+				if (this .traversed_ .getValue () === false)
+					this .traversed_ = true;
+			}
+			else
+			{
+				if (this .currentTraversed !== this .traversed_ .getValue ())
+					this .traversed_ = this .currentTraversed;
+			}
+
+		   this .currentTraversed = value;
+		},
+		getTraversed: function ()
+		{
+		   return this .currentTraversed;
+		},
+		set_live__: function ()
+		{
+			if (this .traversed_ .getValue () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			{
+				this .getBrowser () .sensors () .addInterest (this, "update");
+			}
+			else
+			{
+				this .getBrowser () .sensors () .removeInterest (this, "update");
+				
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
+		},
+		update: function () { },
+	});
+
+	return X3DEnvironmentalSensorNode;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoProximitySensor',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentalSensorNode, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoProximitySensor (executionContext)
+	{
+		X3DEnvironmentalSensorNode .call (this, executionContext);
+		X3DGeospatialObject        .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoProximitySensor);
+	}
+
+	GeoProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoProximitySensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",                 new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",                  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",                new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "size",                     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "center",                   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",                 new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "enterTime",                new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "exitTime",                 new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "geoCoord_changed",         new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "position_changed",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "orientation_changed",      new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "centerOfRotation_changed", new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",                new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoProximitySensor";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoProximitySensor;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoTouchSensor',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTouchSensorNode, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoTouchSensor (executionContext)
+	{
+		X3DTouchSensorNode  .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoTouchSensor);
+	}
+
+	GeoTouchSensor .prototype = $.extend (Object .create (X3DTouchSensorNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoTouchSensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",            new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",           new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "description",         new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitTexCoord_changed", new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitNormal_changed",   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitPoint_changed",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitGeoCoord_changed", new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isOver",              new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "touchTime",           new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",           new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoTouchSensor";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoTouchSensor;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoTransform',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTransformMatrix4DNode, 
+          X3DGeospatialObject, 
+          X3DConstants)
+{
+
+
+	function GeoTransform (executionContext)
+	{
+		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DGeospatialObject      .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoTransform);
+	}
+
+	GeoTransform .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoTransform,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "translation",      new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",         new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "scale",            new Fields .SFVec3f (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "scaleOrientation", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCenter",        new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",         new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",       new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",      new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren",   new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",         new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoTransform";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoTransform;
 });
 
 
@@ -68939,94 +70414,6 @@ function ($,
 	});
 
 	return PositionInterpolator2D;
-});
-
-
-
-
-define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
-[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DSensorNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DSensorNode, 
-          X3DConstants,
-          Vector3)
-{
-
-
-	function X3DEnvironmentalSensorNode (executionContext)
-	{
-		X3DSensorNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
-
-		this .addChildren ("traversed", new Fields .SFBool (true));
-
-		this .currentTraversed = true;
-	}
-
-	X3DEnvironmentalSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
-	{
-		constructor: X3DEnvironmentalSensorNode,
-		initialize: function ()
-		{
-			X3DSensorNode .prototype .initialize .call (this);
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .enabled_   .addInterest (this, "set_live__");
-			this .size_      .addInterest (this, "set_live__");
-			this .traversed_ .addInterest (this, "set_live__");
-
-			this .set_live__ ();
-		},
-		setTraversed: function (value)
-		{
-		   if (value)
-			{
-				if (this .traversed_ .getValue () === false)
-					this .traversed_ = true;
-			}
-			else
-			{
-				if (this .currentTraversed !== this .traversed_ .getValue ())
-					this .traversed_ = this .currentTraversed;
-			}
-
-		   this .currentTraversed = value;
-		},
-		getTraversed: function ()
-		{
-		   return this .currentTraversed;
-		},
-		set_live__: function ()
-		{
-			if (this .traversed_ .getValue () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
-			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
-			}
-			else
-			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
-				
-				if (this .isActive_ .getValue ())
-				{
-					this .isActive_ = false;
-					this .exitTime_ = this .getBrowser () .getCurrentTime ();
-				}
-			}
-		},
-		update: function () { },
-	});
-
-	return X3DEnvironmentalSensorNode;
 });
 
 
@@ -74532,35 +75919,6 @@ function ($,
 
 
 
-define ('cobweb/Components/Core/X3DInfoNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DChildNode, 
-          X3DConstants)
-{
-
-
-	function X3DInfoNode (executionContext)
-	{
-		X3DChildNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DInfoNode);
-	}
-
-	X3DInfoNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: X3DInfoNode,
-	});
-
-	return X3DInfoNode;
-});
-
-
-
-
 define ('cobweb/Components/Core/WorldInfo',[
 	"jquery",
 	"cobweb/Fields",
@@ -74678,17 +76036,17 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Text/FontStyle", // VRML
 	//"cobweb/Components/ParticleSystems/ForcePhysicsModel",
 	//"cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
-	//"cobweb/Components/Geospatial/GeoCoordinate",
-	//"cobweb/Components/Geospatial/GeoElevationGrid",
-	//"cobweb/Components/Geospatial/GeoLOD",
-	//"cobweb/Components/Geospatial/GeoLocation",
-	//"cobweb/Components/Geospatial/GeoMetadata",
-	//"cobweb/Components/Geospatial/GeoOrigin",
-	//"cobweb/Components/Geospatial/GeoPositionInterpolator",
-	//"cobweb/Components/Geospatial/GeoProximitySensor",
-	//"cobweb/Components/Geospatial/GeoTouchSensor",
-	//"cobweb/Components/Geospatial/GeoTransform",
-	//"cobweb/Components/Geospatial/GeoViewpoint",
+	"cobweb/Components/Geospatial/GeoCoordinate",
+	"cobweb/Components/Geospatial/GeoElevationGrid",
+	"cobweb/Components/Geospatial/GeoLOD",
+	"cobweb/Components/Geospatial/GeoLocation",
+	"cobweb/Components/Geospatial/GeoMetadata",
+	"cobweb/Components/Geospatial/GeoOrigin",
+	"cobweb/Components/Geospatial/GeoPositionInterpolator",
+	"cobweb/Components/Geospatial/GeoProximitySensor",
+	"cobweb/Components/Geospatial/GeoTouchSensor",
+	"cobweb/Components/Geospatial/GeoTransform",
+	"cobweb/Components/Geospatial/GeoViewpoint",
 	"cobweb/Components/Grouping/Group", // VRML
 	//"cobweb/Components/H-Anim/HAnimDisplacer",
 	//"cobweb/Components/H-Anim/HAnimHumanoid",
@@ -74900,17 +76258,17 @@ function (Anchor,
           FontStyle,
           //ForcePhysicsModel,
           //GeneratedCubeMapTexture,
-          //GeoCoordinate,
-          //GeoElevationGrid,
-          //GeoLOD,
-          //GeoLocation,
-          //GeoMetadata,
-          //GeoOrigin,
-          //GeoPositionInterpolator,
-          //GeoProximitySensor,
-          //GeoTouchSensor,
-          //GeoTransform,
-          //GeoViewpoint,
+          GeoCoordinate,
+          GeoElevationGrid,
+          GeoLOD,
+          GeoLocation,
+          GeoMetadata,
+          GeoOrigin,
+          GeoPositionInterpolator,
+          GeoProximitySensor,
+          GeoTouchSensor,
+          GeoTransform,
+          GeoViewpoint,
           Group,
           //HAnimDisplacer,
           //HAnimHumanoid,
@@ -75129,17 +76487,17 @@ function (Anchor,
 		FontStyle:                    FontStyle,
 		//ForcePhysicsModel:            ForcePhysicsModel,
 		//GeneratedCubeMapTexture:      GeneratedCubeMapTexture,
-		//GeoCoordinate:                GeoCoordinate,
-		//GeoElevationGrid:             GeoElevationGrid,
-		//GeoLOD:                       GeoLOD,
-		//GeoLocation:                  GeoLocation,
-		//GeoMetadata:                  GeoMetadata,
-		//GeoOrigin:                    GeoOrigin,
-		//GeoPositionInterpolator:      GeoPositionInterpolator,
-		//GeoProximitySensor:           GeoProximitySensor,
-		//GeoTouchSensor:               GeoTouchSensor,
-		//GeoTransform:                 GeoTransform,
-		//GeoViewpoint:                 GeoViewpoint,
+		GeoCoordinate:                GeoCoordinate,
+		GeoElevationGrid:             GeoElevationGrid,
+		GeoLOD:                       GeoLOD,
+		GeoLocation:                  GeoLocation,
+		GeoMetadata:                  GeoMetadata,
+		GeoOrigin:                    GeoOrigin,
+		GeoPositionInterpolator:      GeoPositionInterpolator,
+		GeoProximitySensor:           GeoProximitySensor,
+		GeoTouchSensor:               GeoTouchSensor,
+		GeoTransform:                 GeoTransform,
+		GeoViewpoint:                 GeoViewpoint,
 		Group:                        Group,
 		//HAnimDisplacer:               HAnimDisplacer,
 		//HAnimHumanoid:                HAnimHumanoid,
