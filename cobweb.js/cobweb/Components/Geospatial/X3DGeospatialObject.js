@@ -28,6 +28,7 @@ function ($,
 		this .addType (X3DConstants .X3DGeospatialObject);
 
 		this .radians = true;
+		this .origin  = new Vector3 (0, 0, 0);
 	}
 
 	X3DGeospatialObject .prototype =
@@ -46,8 +47,6 @@ function ($,
 				case "3.2":
 					this .radians = false;
 					break;
-				default:
-					break;
 			}
 
 			this .set_geoSystem__ ();
@@ -56,9 +55,9 @@ function ($,
 		set_geoSystem__: function ()
 		{
 			this .coordinateSystem = Geospatial .getCoordinateSystem (this .geoSystem_);
-			this .referenceFrame   = Geospatial .getReferenceFrame (this .geoSystem_, this .radians);
-			this .elevationFrame   = Geospatial .getElevationFrame (this .geoSystem_, this .radians);
-			this .standardOrder    = Geospatial .isStandardOrder (this .geoSystem_);
+			this .referenceFrame   = Geospatial .getReferenceFrame   (this .geoSystem_, this .radians);
+			this .elevationFrame   = Geospatial .getElevationFrame   (this .geoSystem_, this .radians);
+			this .standardOrder    = Geospatial .isStandardOrder     (this .geoSystem_);
 		},
 		set_geoOrigin__: function ()
 		{
@@ -81,9 +80,9 @@ function ($,
 		set_origin__: function ()
 		{
 			if (this .geoOriginNode)
-				this .origin = this .geoOriginNode .getOrigin ();
+				this .geoOriginNode .getOrigin (this .origin);
 			else
-				this .origin = new Vector3 (0, 0, 0);
+				this .origin .set (0, 0, 0);
 		},
 		getGeoCoord: function (point, result)
 		{
