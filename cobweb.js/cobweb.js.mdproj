@@ -1158,7 +1158,8 @@
     <None Include="standard\Geospatial\UniversalTransverseMercator.js" />
     <None Include="cobweb\Browser\Geospatial\Geospatial.js" />
     <None Include="cobweb\Browser\Geospatial\Geocentric.js" />
-    <None Include="tests\Components\Geospatial\Geospatial.x3d" />
+    <None Include="tests\Components\Geospatial\GeoTransform.x3d" />
+    <None Include="tests\Components\Geospatial\GeoLocation.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

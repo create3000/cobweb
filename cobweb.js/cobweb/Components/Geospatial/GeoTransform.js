@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -14,9 +15,14 @@ function ($,
           FieldDefinitionArray,
           X3DTransformMatrix4DNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 "use strict";
+
+	var
+		matrix         = new Matrix4 (),
+		locationMatrix = new Matrix4 ();
 
 	function GeoTransform (executionContext)
 	{
@@ -56,6 +62,24 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTransformMatrix4DNode .prototype .initialize .call (this);
+			X3DGeospatialObject      .prototype .initialize .call (this);
+		
+			this .addInterest (this, "eventsProcessed");
+		
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			matrix .set (this .translation_      .getValue (),
+			             this .rotation_         .getValue (),
+			             this .scale_            .getValue (),
+			             this .scaleOrientation_ .getValue ());
+
+			this .setMatrix (matrix .multRight (this .getLocationMatrix (this .geoCenter_ .getValue (), locationMatrix)));
 		},
 	});
 

@@ -20,7 +20,7 @@ function ($,
 {
 "use strict";
 
-	var matrix = new Matrix4 ();
+	var locationMatrix = new Matrix4 ();
 
 	function GeoLocation (executionContext)
 	{
@@ -68,7 +68,7 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			this .setMatrix (this .getLocationMatrix (this .geoCoords_ .getValue (), matrix));
+			this .setMatrix (this .getLocationMatrix (this .geoCoords_ .getValue (), locationMatrix));
 		},
 	});
 
