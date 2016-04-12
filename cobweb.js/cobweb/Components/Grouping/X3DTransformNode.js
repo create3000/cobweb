@@ -1,28 +1,28 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
-          X3DTransformMatrix4DNode, 
+          X3DTransformMatrix3DNode, 
           X3DConstants)
 {
 "use strict";
 
 	function X3DTransformNode (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DTransformMatrix3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformNode);
 	}
 
-	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
 	{
 		constructor: X3DTransformNode,
 		initialize: function ()
 		{
-			X3DTransformMatrix4DNode .prototype .initialize .call (this);
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			
 			this .addInterest (this, "eventsProcessed");
 
@@ -30,7 +30,7 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			X3DTransformMatrix4DNode .prototype .eventsProcessed .call (this);
+			X3DTransformMatrix3DNode .prototype .eventsProcessed .call (this);
 			
 			this .setHidden (this .scale_ .x === 0 ||
 			                 this .scale_ .y === 0 ||

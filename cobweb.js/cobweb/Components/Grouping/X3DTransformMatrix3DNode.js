@@ -28,18 +28,18 @@ function ($,
 		modelViewMatrix .pop ();
 	}
 
-	function X3DTransformMatrix4DNode (executionContext)
+	function X3DTransformMatrix3DNode (executionContext)
 	{
 		X3DGroupingNode .call (this, executionContext);
 
-		this .addType (X3DConstants .X3DTransformMatrix4DNode);
+		this .addType (X3DConstants .X3DTransformMatrix3DNode);
 
 		this .matrix = new Matrix4 ();
 	}
 
-	X3DTransformMatrix4DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+	X3DTransformMatrix3DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 	{
-		constructor: X3DTransformMatrix4DNode,
+		constructor: X3DTransformMatrix3DNode,
 		getBBox: function ()
 		{
 			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
@@ -81,7 +81,7 @@ function ($,
 		},
 	});
 
-	return X3DTransformMatrix4DNode;
+	return X3DTransformMatrix3DNode;
 });
 
 

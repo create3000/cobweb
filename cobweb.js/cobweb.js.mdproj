@@ -135,7 +135,6 @@
     <None Include="cobweb\Components\Grouping\Transform.js" />
     <None Include="cobweb\Components\Grouping\X3DBoundedObject.js" />
     <None Include="cobweb\Components\Grouping\X3DGroupingNode.js" />
-    <None Include="cobweb\Components\Grouping\X3DTransformMatrix4DNode.js" />
     <None Include="cobweb\Components\Grouping\X3DTransformNode.js" />
     <None Include="cobweb\Components\H-Anim\HAnimDisplacer.js" />
     <None Include="cobweb\Components\H-Anim\HAnimHumanoid.js" />
@@ -1160,6 +1159,7 @@
     <None Include="cobweb\Browser\Geospatial\Geocentric.js" />
     <None Include="tests\Components\Geospatial\GeoTransform.x3d" />
     <None Include="tests\Components\Geospatial\GeoLocation.x3d" />
+    <None Include="cobweb\Components\Grouping\X3DTransformMatrix3DNode.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

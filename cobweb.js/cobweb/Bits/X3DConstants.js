@@ -363,7 +363,7 @@ define (function ()
 		X3DTextureTransformNode:      nodeType ++,
 		X3DTimeDependentNode:         nodeType ++,
 		X3DTouchSensorNode:           nodeType ++,
-		X3DTransformMatrix4DNode:     nodeType ++,
+		X3DTransformMatrix3DNode:     nodeType ++,
 		X3DTransformNode:             nodeType ++,
 		X3DTriggerNode:               nodeType ++,
 		X3DUrlObject:                 nodeType ++,

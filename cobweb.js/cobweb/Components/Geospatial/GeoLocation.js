@@ -4,7 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
@@ -13,7 +13,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DTransformMatrix4DNode, 
+          X3DTransformMatrix3DNode, 
           X3DGeospatialObject, 
           X3DConstants,
           Matrix4)
@@ -24,13 +24,13 @@ function ($,
 
 	function GeoLocation (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DTransformMatrix3DNode .call (this, executionContext);
 		X3DGeospatialObject      .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoLocation);
 	}
 
-	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
 		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoLocation,
@@ -59,7 +59,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DTransformMatrix4DNode .prototype .initialize .call (this);
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			X3DGeospatialObject      .prototype .initialize .call (this);
 		
 			this .addInterest (this, "eventsProcessed");
