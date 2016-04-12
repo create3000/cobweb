@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -14,9 +15,12 @@ function ($,
           FieldDefinitionArray,
           X3DTransformMatrix4DNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 "use strict";
+
+	var matrix = new Matrix4 ();
 
 	function GeoLocation (executionContext)
 	{
@@ -55,7 +59,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			X3DTransformMatrix3DNode .prototype .initialize .call (this);
+			X3DTransformMatrix4DNode .prototype .initialize .call (this);
 			X3DGeospatialObject      .prototype .initialize .call (this);
 		
 			this .addInterest (this, "eventsProcessed");
@@ -64,7 +68,7 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			this .getLocationMatrix (this .geoCoords_ .getValue (), this .getMatrix ());
+			this .setMatrix (this .getLocationMatrix (this .geoCoords_ .getValue (), matrix));
 		},
 	});
 

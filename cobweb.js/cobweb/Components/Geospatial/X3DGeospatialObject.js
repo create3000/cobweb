@@ -108,14 +108,15 @@ function ($,
 			// Position
 			this .referenceFrame .convert (geoPoint, p);
 			t .assign (p) .subtract (this .origin);
-		
+
 			// Let's work out the orientation at that location in order
 			// to maintain a view where +Y is in the direction of gravitional
 			// up for that region of the planet's surface. This will be the
 			// value of the rotation matrix for the transform.
 		
 			this .elevationFrame .normal (p, y);
-			x .assign (0, 0, 1) .cross (y);
+
+			x .set (0, 0, 1) .cross (y);
 
 			// Handle pole cases.
 			if (x .equals (Vector3 .Zero))

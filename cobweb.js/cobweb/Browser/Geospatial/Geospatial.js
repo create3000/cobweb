@@ -6,7 +6,7 @@ define ([
 	"cobweb/Browser/Geospatial/Geocentric",
 ],
 function (ReferenceEllipsoids,
-          Geodedic,
+          Geodetic,
           UniversalTransverseMercator,
           Geocentric)
 {
@@ -36,7 +36,7 @@ function (ReferenceEllipsoids,
 		GC: GC,
 		getReferenceFrame: function (geoSystem, radians)
 		{
-			switch (getCoordinateSystem (geoSystem))
+			switch (this .getCoordinateSystem (geoSystem))
 			{
 				case GD:
 				{
@@ -61,13 +61,13 @@ function (ReferenceEllipsoids,
 		},
 		getElevationFrame: function (geoSystem, radians)
 		{
-			return new Geodetic (getEllipsoid (geoSystem), true, radians);
+			return new Geodetic (this .getEllipsoid (geoSystem), true, radians);
 		},
 		getCoordinateSystem: function (geoSystem)
 		{
 			for (var i = 0, length = geoSystem .length; i < length; ++ i)
 			{
-				var coordinateSystem = coordinateSystems [geoSystem [i]];
+				var coordinateSystem = CoordinateSystems [geoSystem [i]];
 
 				if (coordinateSystem !== undefined)
 					return coordinateSystem;

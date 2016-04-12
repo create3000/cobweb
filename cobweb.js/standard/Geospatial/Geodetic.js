@@ -92,6 +92,7 @@ function (Algorithm)
 				elevation = 0;
 		
 			var
+				a    = this .a,
 				N    = a,
 				ecc2 = this .ecc2;
 		

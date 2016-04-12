@@ -102,16 +102,16 @@ function (Geodetic,
 		
 			var
 				latitude  = phi1 - (N1 * tanphi1 / R1) * (I * I / 2 - J + K),
-				longitude = longitude0 + (I - (1 + 2 * T2 + C1) * Math .pow (I, 3) / 6 + L) / cosphi1;
+				longitude = this .longitude0 + (I - (1 + 2 * T2 + C1) * Math .pow (I, 3) / 6 + L) / cosphi1;
 		
-			return geodeticConverter .convertRadians (latitude, longitude, utm .z, result);
+			return this .geodeticConverter .convertRadians (latitude, longitude, utm .z, result);
 		},
 		apply: function (geocentric, result)
 		{
 			// https://gist.github.com/duedal/840476
 
 			var
-				geodetic  = geodeticConverter .applyRadians (geocentric, result),
+				geodetic  = this .geodeticConverter .applyRadians (geocentric, result),
 				latitude  = geodetic .x,
 				longitude = geodetic .y;
 		
@@ -125,7 +125,7 @@ function (Geodetic,
 				T  = tanlat * tanlat,
 				T6 = T * T * T,
 				C  = EE * coslat * coslat,
-				A  = coslat * (longitude - longitude0);
+				A  = coslat * (longitude - this .longitude0);
 		
 			var M = this .a * (this .W * latitude
 			                   - this .X * Math .sin (2 * latitude)

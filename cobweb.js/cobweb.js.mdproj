@@ -1158,6 +1158,7 @@
     <None Include="standard\Geospatial\UniversalTransverseMercator.js" />
     <None Include="cobweb\Browser\Geospatial\Geospatial.js" />
     <None Include="cobweb\Browser\Geospatial\Geocentric.js" />
+    <None Include="tests\Components\Geospatial\Geospatial.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1221,5 +1222,7 @@
     <Folder Include="examples\paul bourke\" />
     <Folder Include="standard\Geospatial\" />
     <Folder Include="cobweb\Browser\Geospatial\" />
+    <Folder Include="tests\Geospatial\" />
+    <Folder Include="tests\Components\Geospatial\" />
   </ItemGroup>
 </Project>

@@ -49,6 +49,19 @@ function ($,
 
 			return bbox;
 		},
+		setMatrix: function (matrix)
+		{
+			if (matrix .equals (Matrix4 .Identity))
+			{
+				this .matrix .identity ();
+				this .traverse = X3DGroupingNode .prototype .traverse;
+			}
+			else
+			{
+			   this .matrix .assign (matrix);
+				this .traverse = traverse;
+			}
+		},
 		getMatrix: function ()
 		{
 			return this .matrix;
