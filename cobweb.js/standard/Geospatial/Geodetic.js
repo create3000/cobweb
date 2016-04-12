@@ -25,15 +25,19 @@ function (Algorithm)
 		constructor: Geodetic,
 		convert: function (geodetic, result)
 		{
-			var
-				latitude  = geodetic .x,
-				longitude = geodetic .y,
-				elevation = geodetic .z;
-		
+			var elevation = geodetic .z;
+
 			if (this .longitudeFirst)
 			{
-				latitude  = geodetic .y;
-				longitude = geodetic .x;
+				var
+					latitude  = geodetic .y;
+					longitude = geodetic .x;
+			}
+			else
+			{
+				var
+					latitude  = geodetic .x,
+					longitude = geodetic .y;
 			}
 		
 			if (this .degrees)

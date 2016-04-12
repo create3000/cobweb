@@ -49,15 +49,18 @@ function (Geodetic,
 		convert: function (utm, result)
 		{
 			// https://gist.github.com/duedal/840476
-
-			var
-				northing = utm .x,
-				easting  = utm .y;
 		
 			if (this .eastingFirst)
 			{
-				northing = utm .y;
-				easting  = utm .x;
+				var
+					northing = utm .y;
+					easting  = utm .x;
+			}
+			else
+			{
+				var
+					northing = utm .x,
+					easting  = utm .y;
 			}
 		
 			// Check for southern hemisphere and remove offset from easting.

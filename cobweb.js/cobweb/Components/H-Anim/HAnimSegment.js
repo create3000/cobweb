@@ -37,7 +37,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",            new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "displacers",       new Fields .MFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "mass",             new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "momentsOfInertia", new Fields .MFFloat ([ 0, 0, 0, 0, 0, 0, 0, 0, 0 ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "momentsOfInertia", new Fields .MFFloat (0, 0, 0, 0, 0, 0, 0, 0, 0)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "name",             new Fields .SFString ()),
 		]),
 		getTypeName: function ()
