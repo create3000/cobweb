@@ -1,8 +1,5 @@
 
-define ([
-	"standard/Math/Algorithm",
-],
-function (Algorithm)
+define (function ()
 {
 "use strict";
 
@@ -42,8 +39,8 @@ function (Algorithm)
 		
 			if (this .degrees)
 			{
-				latitude  = Algorithm .radians (latitude);
-				longitude = Algorithm .radians (longitude);
+				latitude  *= Math .PI / 180;
+				longitude *= Math .PI / 180;
 			}
 		
 			return this .convertRadians (latitude, longitude, elevation, result);
@@ -67,8 +64,8 @@ function (Algorithm)
 
 			if (this .degrees)
 			{
-				result .x = Algorithm .degrees (result .x); // latitude
-				result .y = Algorithm .degrees (result .y); // longitude
+				result .x *= 180 / Math .PI; // latitude
+				result .y *= 180 / Math .PI; // longitude
 			}
 
 			if (this .longitudeFirst)
