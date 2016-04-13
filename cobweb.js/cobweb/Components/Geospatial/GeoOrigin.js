@@ -54,6 +54,7 @@ function ($,
 
 			this .geoSystem_ .addInterest (this, "set_geoSystem__");
 
+			// See 3.3 specification 25.2.4 Specifying geospatial coordinates
 			switch (this .getExecutionContext () .specificationVersion)
 			{
 				case "2.0":
