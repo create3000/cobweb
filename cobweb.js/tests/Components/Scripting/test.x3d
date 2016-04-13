@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Mon, 23 Mar 2015 10:08:53 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 12 Dec 2015 20:24:30 GMT'/>
+    <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/test.x3d'/>
+    <meta name='modified' content='Wed, 13 Apr 2016 11:34:36 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -38,32 +39,36 @@
               reference='http://titania.create3000.de'
               value='0, 0, 0'/>
         </MetadataSet>
-      </MetadataSet>
-    </WorldInfo>
-    <Script DEF='CustomStript'>
-      <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
-      <field accessType='initializeOnly' type='SFNode' name='child'>
-        <Transform DEF='Box'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Box/>
-          </Shape>
-        </Transform>
-      </field>
-      <field accessType='initializeOnly' type='MFNode' name='children'>
-        <Transform DEF='Box_1'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Box/>
-          </Shape>
-        </Transform>
-        <Viewpoint/>
-      </field>
-      <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <Script DEF='CustomStript' containerField='value'>
+              <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
+              <field accessType='initializeOnly' type='SFNode' name='child'>
+                <Transform DEF='Box'>
+                  <Shape>
+                    <Appearance>
+                      <Material/>
+                    </Appearance>
+                    <Box/>
+                  </Shape>
+                </Transform>
+              </field>
+              <field accessType='initializeOnly' type='MFNode' name='children'>
+                <Transform DEF='Box_1'>
+                  <Shape>
+                    <Appearance>
+                      <Material/>
+                    </Appearance>
+                    <Box/>
+                  </Shape>
+                </Transform>
+                <Viewpoint/>
+              </field>
+              <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
 <![CDATA[
 javascript:
 
@@ -71,21 +76,18 @@ function initialize ()
 {
 	print ("initialize");
 	
-	var node = new SFNode ("<Transform/>");
-	print (child instanceof SFNode);
-	print (child);
-	print (child .children [0]);
-	print (child .children [0] .geometry);
-	print (child .children [0] .geometry .size);
-	print (child .children [0] .geometry .getName ());
-	print (node .scale);
-	print (node instanceof SFNode);
-	print (node .toString ());
-
-	print ("Browser: ", Browser .getWorldURL ());
-	print ("Scene:   ", Browser .currentScene .worldURL);
+	print (Browser .currentScene .routes);
 }
 ]]> 
-    </Script>
+            </Script>
+          </MetadataSet>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Script USE='CustomStript'/>
+    <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Box_1' toField='set_scale'/>
   </Scene>
 </X3D>

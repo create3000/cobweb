@@ -34,7 +34,7 @@ function ($,
 		{
 			return this .point .length;
 		},
-		getPoint: function (index)
+		get1Point: function (index)
 		{
 			// The index cannot be less than 0.
 

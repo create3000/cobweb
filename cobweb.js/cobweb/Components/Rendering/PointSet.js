@@ -143,11 +143,11 @@ function ($,
 			if (this .colorNode)
 			{
 				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
-					this .addColor (colorNode .getColor (i));
+					this .addColor (colorNode .get1Color (i));
 			}
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
-				this .addVertex (coordNode .getPoint (i));
+				this .addVertex (coordNode .get1Point (i));
 
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},

@@ -150,9 +150,9 @@ function ($,
 						//	attribNodes [a] -> addValue (attribArrays [a], index);
 
 						if (colorNode)
-							this .addColor (colorNode .getColor (index));
+							this .addColor (colorNode .get1Color (index));
 
-						this .addVertex (coordNode .getPoint (index));
+						this .addVertex (coordNode .get1Point (index));
 					}
 
 					++ index;

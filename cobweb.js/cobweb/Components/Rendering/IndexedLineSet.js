@@ -211,12 +211,12 @@ function ($,
 						if (colorNode)
 						{
 							if (colorPerVertex)
-								this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
+								this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
 							else
-								this .addColor (colorNode .getColor (this .getColorIndex (face)));
+								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 						}
 
-						this .addVertex (coordNode .getPoint (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .get1Point (coordIndex [i] .getValue ()));
 					}
 				}
 

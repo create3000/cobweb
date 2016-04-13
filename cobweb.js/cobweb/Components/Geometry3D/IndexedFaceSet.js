@@ -149,9 +149,9 @@ function ($,
 					if (colorNode)
 					{
 						if (colorPerVertex)
-							this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
+							this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
 						else
-							this .addColor (colorNode .getColor (this .getColorIndex (face)));
+							this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 					}
 
 					if (texCoordNode)
@@ -160,13 +160,13 @@ function ($,
 					if (normalNode)
 					{
 						if (normalPerVertex)
-							this .addNormal (normalNode .getVector (this .getNormalPerVertexIndex (i)));
+							this .addNormal (normalNode .get1Vector (this .getNormalPerVertexIndex (i)));
 
 						else
-							this .addNormal (normalNode .getVector (this .getNormalIndex (face)));
+							this .addNormal (normalNode .get1Vector (this .getNormalIndex (face)));
 					}
 
-					this .addVertex (coordNode .getPoint (index));
+					this .addVertex (coordNode .get1Point (index));
 				}
 
 				++ face;
@@ -282,7 +282,7 @@ function ($,
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
 			{
-				var vertex = coord .getPoint (coordIndex [vertices [i]] .getValue ()) .copy ();
+				var vertex = coord .get1Point (coordIndex [vertices [i]] .getValue ()) .copy ();
 
 				vertex .index = i;
 
@@ -398,13 +398,13 @@ function ($,
 
 			var
 				normal = new Vector3 (0, 0, 0),
-				next   = coord .getPoint (coordIndex [vertices [0]] .getValue ());
+				next   = coord .get1Point (coordIndex [vertices [0]] .getValue ());
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
 			{
 				var
 					current = next,
-					next    = coord .getPoint (coordIndex [vertices [(i + 1) % length]] .getValue ());
+					next    = coord .get1Point (coordIndex [vertices [(i + 1) % length]] .getValue ());
 
 				normal .x += (current .y - next .y) * (current .z + next .z);
 				normal .y += (current .z - next .z) * (current .x + next .x);

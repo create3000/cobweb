@@ -46,7 +46,7 @@ function ($,
 		{
 			return "normal";
 		},
-		getVector: function (index)
+		get1Vector: function (index)
 		{
 			if (index >= 0 && index < this .vector .length)
 				return this .vector [index] .getValue ();

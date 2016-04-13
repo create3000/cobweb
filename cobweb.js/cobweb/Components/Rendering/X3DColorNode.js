@@ -22,7 +22,7 @@ function ($,
 	X3DColorNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DColorNode,
-		getColor: function (index)
+		get1Color: function (index)
 		{
 			if (index >= 0 && index < this .color .length)
 				return this .color [index] .getValue ();

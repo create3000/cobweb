@@ -320,9 +320,9 @@ function ($,
 					if (colorNode)
 					{
 						if (colorPerVertex)
-							this .addColor (colorNode .getColor (index));
+							this .addColor (colorNode .get1Color (index));
 						else
-							this .addColor (colorNode .getColor (face));
+							this .addColor (colorNode .get1Color (face));
 					}
 						
 					if (texCoordNode)
@@ -337,10 +337,10 @@ function ($,
 					if (normalNode)
 					{
 						if (normalPerVertex)
-							this .addNormal (normalNode .getVector (index));
+							this .addNormal (normalNode .get1Vector (index));
 
 						else
-							this .addNormal (normalNode .getVector (face));
+							this .addNormal (normalNode .get1Vector (face));
 					}
 
 					this .addVertex (points [index]);

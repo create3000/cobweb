@@ -13,9 +13,6 @@ function ($, X3DField, X3DConstants, Generator)
 	{
 		get: function (target, key)
 		{
-			if ((typeof key) === "symbol")
-				console .log (typeof key, key);
-
 			try
 			{
 				if (key in target)
@@ -34,6 +31,10 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
+				// Don't know what to do with symbols, but it seem not to affect anything.
+				if ((typeof key) === "symbol")
+					return;
+
 				// if target not instance of X3DArrayField, then the constuctor is called as function.
 				console .log (target, typeof key, key, error);
 			}
