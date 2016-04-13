@@ -1160,6 +1160,7 @@
     <None Include="tests\Components\Geospatial\GeoTransform.x3d" />
     <None Include="tests\Components\Geospatial\GeoLocation.x3d" />
     <None Include="cobweb\Components\Grouping\X3DTransformMatrix3DNode.js" />
+    <None Include="tests\Components\Geospatial\GeoCoordinate.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
