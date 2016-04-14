@@ -30,7 +30,7 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			X3DTransformMatrix3DNode .prototype .eventsProcessed .call (this);
+			X3DTransformMatrix3DNode .prototype .eventsProcessed .call (this); // XXX, empty function call???
 			
 			this .setHidden (this .scale_ .x === 0 ||
 			                 this .scale_ .y === 0 ||

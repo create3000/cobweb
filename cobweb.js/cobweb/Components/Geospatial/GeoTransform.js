@@ -74,12 +74,26 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			matrix .set (this .translation_      .getValue (),
-			             this .rotation_         .getValue (),
-			             this .scale_            .getValue (),
-			             this .scaleOrientation_ .getValue ());
-
-			this .setMatrix (matrix .multRight (this .getLocationMatrix (this .geoCenter_ .getValue (), locationMatrix)));
+			try
+			{
+				this .setHidden (this .scale_ .x === 0 ||
+				                 this .scale_ .y === 0 ||
+				                 this .scale_ .z === 0);
+	
+				this .getLocationMatrix (this .geoCenter_ .getValue (), locationMatrix);
+	
+				matrix .set (this .translation_      .getValue (),
+				             this .rotation_         .getValue (),
+				             this .scale_            .getValue (),
+				             this .scaleOrientation_ .getValue ());
+	
+				this .setMatrix (matrix .multRight (locationMatrix) .multLeft (locationMatrix .inverse ()));
+			}
+			catch (error)
+			{
+				// Should normally not happen.
+				this .setHidden (true);
+			}
 		},
 	});
 
