@@ -66,6 +66,10 @@ function ($,
 		{
 			return "children";
 		},
+		getBBox: function ()
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .matrix);
+		},
 		rotate: function (type)
 		{
 			try

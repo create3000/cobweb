@@ -26,6 +26,9 @@ function ($,
 		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .StaticGroup);
+
+		this .group = new Group (this .getExecutionContext ());
+		this .bbox  = null;
 	}
 
 	StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -52,16 +55,32 @@ function ($,
 		},
 		initialize: function ()
 		{
-		   X3DChildNode .prototype .initialize .call (this);
-		   X3DBoundedObject .prototype .initialize .call (this);
+			X3DChildNode     .prototype .initialize .call (this);
+			X3DBoundedObject .prototype .initialize .call (this);
 
-		   this .group = new Group (this .getExecutionContext ());
+			this .bboxSize_   .addFieldInterest (this .group .bboxSize_);
+			this .bboxCenter_ .addFieldInterest (this .group .bboxCenter_);
+			this .children_   .addFieldInterest (this .group .children_);
 
-		   this .children_ .addFieldInterest (this .group .children_);
-		   this .group .children_ = this .children_;
+			this .group .bboxSize_   = this .bboxSize_;
+			this .group .bboxCenter_ = this .bboxCenter_;
+			this .group .children_   = this .children_;
 			this .group .setup ();
 
 			this .traverse = this .group .traverse .bind (this .group);
+
+			// Connect after Group setup.
+			this .group .children_ .addInterest (this, "set_children__");
+
+			this .set_children__ ();
+		},
+		getBBox: function ()
+		{
+			return this .bbox;
+		},
+		set_children__: function ()
+		{
+			this .bbox = this .group .getBBox ();
 		},
 	});
 

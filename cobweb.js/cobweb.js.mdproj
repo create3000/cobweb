@@ -1224,5 +1224,6 @@
     <Folder Include="standard\Geospatial\" />
     <Folder Include="cobweb\Browser\Geospatial\" />
     <Folder Include="tests\Components\Geospatial\" />
+    <Folder Include="tests\Components\Grouping\" />
   </ItemGroup>
 </Project>

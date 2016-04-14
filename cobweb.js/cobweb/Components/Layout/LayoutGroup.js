@@ -9,6 +9,7 @@ define ("cobweb/Components/Layout/LayoutGroup",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -17,7 +18,8 @@ function ($,
           X3DGroupingNode,
           X3DCast,
           TraverseType,
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 "use strict";
 
@@ -27,8 +29,10 @@ function ($,
 
 		this .addType (X3DConstants .LayoutGroup);
 
-		this .viewportNode = null;
-		this .layoutNode   = null;
+		this .viewportNode    = null;
+		this .layoutNode      = null;
+		this .modelViewMatrix = new Matrix4 ();
+		this .screenMatrix    = new Matrix4 ();
 	}
 
 	LayoutGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
@@ -74,6 +78,24 @@ function ($,
 		{
 			this .layoutNode = X3DCast (X3DConstants .X3DLayoutNode, this .layout_);
 		},
+		getBBox: function ()
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .getMatrix ());
+		},
+		getMatrix: function ()
+		{
+			try
+			{
+				if (this .layoutNode)
+					this .matrix .assign (this .modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+				else
+					this .matrix .identity ();
+			}
+			catch (error)
+			{ }
+		
+			return this .matrix;
+		},
 		traverse: function (type)
 		{
 			switch (type)
@@ -91,8 +113,10 @@ function ($,
 							browser         = this .getBrowser (),
 							modelViewMatrix = browser .getModelViewMatrix ();
 
+						this .modelViewMatrix .assign (modelViewMatrix .get ());
+
 						modelViewMatrix .push ();
-						modelViewMatrix .set (this .layoutNode .transform (type));
+						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type)));
 						browser .getLayouts () .push (this .layoutNode);
 
 						X3DGroupingNode .prototype .traverse .call (this, type);
