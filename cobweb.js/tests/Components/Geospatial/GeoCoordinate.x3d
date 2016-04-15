@@ -76,7 +76,7 @@
                     solid='false'
                     coordIndex='0, 1, 2, -1'>
                   <GeoCoordinate DEF='_2'
-                      point='0 0 0, 0.89555602 0.2159173 0, -0.646 2.513 0'/>
+                      point='0 0 0, 51.31158 12.37115 0, -37.013074 143.98429 0'/>
                 </IndexedFaceSet>
               </Shape>
             </Transform>

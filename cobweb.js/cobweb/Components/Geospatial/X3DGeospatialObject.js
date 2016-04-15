@@ -27,7 +27,7 @@ function ($,
 	{
 		this .addType (X3DConstants .X3DGeospatialObject);
 
-		this .radians = true;
+		this .radians = false;
 		this .origin  = new Vector3 (0, 0, 0);
 	}
 
@@ -38,17 +38,6 @@ function ($,
 		{
 			this .geoSystem_ .addInterest (this, "set_geoSystem__");
 			this .geoOrigin_ .addInterest (this, "set_geoOrigin__");
-
-			// See 3.3 specification 25.2.4 Specifying geospatial coordinates
-			switch (this .getExecutionContext () .specificationVersion)
-			{
-				case "2.0":
-				case "3.0":
-				case "3.1":
-				case "3.2":
-					this .radians = false;
-					break;
-			}
 
 			this .set_geoSystem__ ();
 			this .set_geoOrigin__ ();

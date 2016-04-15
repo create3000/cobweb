@@ -124,7 +124,7 @@
       </Transform>
     </GeoLocation>
     <GeoLocation DEF='Leipzig'
-        geoCoords='0.89555602 0.2159173 0'>
+        geoCoords='51.31158 12.37115 0'>
       <Transform
           scale='1e+06 1e+06 1e+06'>
         <Shape DEF='Axes_1'>

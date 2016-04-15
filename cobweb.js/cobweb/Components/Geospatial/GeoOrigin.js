@@ -24,7 +24,7 @@ function ($,
 
 		this .addType (X3DConstants .GeoOrigin);
 
-		this .radians = true;
+		this .radians = false;
 	}
 
 	GeoOrigin .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -53,17 +53,6 @@ function ($,
 			X3DNode .prototype .initialize .call (this);
 
 			this .geoSystem_ .addInterest (this, "set_geoSystem__");
-
-			// See 3.3 specification 25.2.4 Specifying geospatial coordinates
-			switch (this .getExecutionContext () .specificationVersion)
-			{
-				case "2.0":
-				case "3.0":
-				case "3.1":
-				case "3.2":
-					this .radians = false;
-					break;
-			}
 
 			this .set_geoSystem__ ();
 		},
