@@ -52,6 +52,11 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+		},
 	});
 
 	return GeoPositionInterpolator;

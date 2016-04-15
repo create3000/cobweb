@@ -23,16 +23,13 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		ROLL_TIME              = 0.2;
 
 	var
-		yAxis = new Vector3 (0, 1, 0),
-		zAxis = new Vector3 (0, 0, 1);
-
-	var
-		black = new Float32Array ([0, 0, 0]),
-		white = new Float32Array ([1, 1, 1]);
-
-	var
+		yAxis     = new Vector3 (0, 1, 0),
+		zAxis     = new Vector3 (0, 0, 1),
+		black     = new Float32Array ([0, 0, 0]),
+		white     = new Float32Array ([1, 1, 1]),
 		fromPoint = new Vector3 (0, 0, 0),
-		toPoint   = new Vector3 (0, 0, 0);
+		toPoint   = new Vector3 (0, 0, 0),
+		upVector  = new Vector3 (0, 0, 0);
 	
 	var
 		MOVE = 0,
@@ -257,8 +254,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var
 				navigationInfo = this .getNavigationInfo (),
-				viewpoint      = this .getActiveViewpoint (),
-				upVector       = viewpoint .getUpVector ();
+				viewpoint      = this .getActiveViewpoint ();
+
+			upVector .assign (viewpoint .getUpVector ());
 
 			// Rubberband values
 

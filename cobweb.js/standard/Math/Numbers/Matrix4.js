@@ -19,7 +19,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		dummyCenter           = new Vector3 (0, 0, 0),
 		rot                   = new Matrix3 (),
 		so                    = new Matrix3 (),
-		si                    = new Matrix3 ();
+		si                    = new Matrix3 (),
+		rotationMatrix        = new Matrix3 ();
 
 	function Matrix4 ()
 	{
@@ -276,20 +277,20 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				case 2:
 				{
 					this .factor (translation, rot, dummyScale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
+					Rotation4 .Matrix3 (rot, rotation);
 					break;
 				}
 				case 3:
 				{
 					this .factor (translation, rot, scale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
+					Rotation4 .Matrix3 (rot, rotation);
 					break;
 				}
 				case 4:
 				{
 					this .factor (translation, rot, scale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
-					scaleOrientation .assign (Rotation4 .Matrix3 (so));
+					Rotation4 .Matrix3 (rot, rotation);
+					Rotation4 .Matrix3 (so, scaleOrientation);
 					break;
 				}
 				case 5:

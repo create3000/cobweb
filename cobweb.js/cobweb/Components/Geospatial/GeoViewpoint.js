@@ -6,17 +6,52 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Navigation/X3DViewpointNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Components/Interpolation/ScalarInterpolator",
+	"cobweb/Components/Navigation/NavigationInfo",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DViewpointNode, 
-          X3DGeospatialObject, 
-          X3DConstants)
+          X3DGeospatialObject,
+          ScalarInterpolator,
+          NavigationInfo,
+          X3DConstants,
+          Camera,
+          Vector3,
+          Rotation4,
+          Matrix4)
 {
 "use strict";
+
+	var
+		zAxis            = new Vector3 (0, 0, 1),
+		screenScale      = new Vector3 (0, 0, 0),
+		normalized       = new Vector3 (0, 0, 0),
+		coord            = new Vector3 (0, 0, 0),
+		upVector         = new Vector3 (0, 0, 0),
+		locationMatrix   = new Matrix4 (),
+		localOrientation = new Rotation4 (0, 0, 1, 0);
+
+	var
+		projectionScale = 1e-6,
+		scaleMatrix     = new Matrix4 (projectionScale, 0, 0, 0,
+	                                  0, projectionScale, 0, 0,
+	                                  0, 0, projectionScale, 0,
+	                                  0, 0, 0, 1);
+
+	function traverse (type)
+	{
+		X3DViewpointNode .prototype .traverse .call (this .type);
+
+		this .navigationInfoNode .traverse (type);
+	}
 
 	function GeoViewpoint (executionContext)
 	{
@@ -24,6 +59,22 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoViewpoint);
+
+		this .navigationInfoNode      = new NavigationInfo (executionContext);
+		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
+		this .projectionMatrix        = new Matrix4 ();
+		this .coord                   = new Vector3 ();
+		this .elevation               = 0;
+
+		switch (executionContext .specificationVersion)
+		{
+			case "2.0":
+			case "3.0":
+			case "3.1":
+			case "3.2":
+				this .traverse = traverse;
+				break;
+		}
 	}
 
 	GeoViewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -59,6 +110,121 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DViewpointNode    .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			this .position_       .addInterest (this, "set_position__");
+			this .positionOffset_ .addInterest (this, "set_position__");
+			this .navType_        .addFieldInterest (this .navigationInfoNode .type_);
+			this .headlight_      .addFieldInterest (this .navigationInfoNode .headlight_);
+		
+			this .navigationInfoNode .setup ();
+		
+			this .set_position__ ();
+
+			// Setup interpolators
+
+			this .fieldOfViewInterpolator .key_ = [ 0, 1 ];
+			this .fieldOfViewInterpolator .setup ();
+
+			this .getEaseInEaseOut () .modifiedFraction_changed_ .addFieldInterest (this .fieldOfViewInterpolator .set_fraction_);
+			this .fieldOfViewInterpolator .value_changed_ .addFieldInterest (this .fieldOfViewScale_);
+		},
+		setInterpolators: function (fromViewpoint)
+		{
+			if (fromViewpoint .getType () .indexOf (X3DConstants .GeoViewpoint) < 0)
+			{
+				this .fieldOfViewInterpolator .keyValue_ = [ this .fieldOfViewScale_ .getValue (), this .fieldOfViewScale_ .getValue () ];
+			}
+			else
+			{
+				var scale = fromViewpoint .getFieldOfView () / this .fieldOfView_ .getValue ();
+	
+				this .fieldOfViewInterpolator .keyValue_ = [ scale, this .fieldOfViewScale_ .getValue () ];
+	
+				this .fieldOfViewScale_ = scale;
+			}
+		},
+		setPosition: function (value)
+		{
+			this .position_ .setValue (this .getGeoCoord (value, coord));
+		},
+		getPosition: function () 
+		{
+			return this .getCoord (this .position_ .getValue (), coord);
+		},
+		set_position__: function ()
+		{
+			this .getCoord (this .position_ .getValue (), this .coord);
+
+			this .elevation = this .getElevation (coord .assign (this .coord) .add (this .positionOffset_ .getValue ()));
+		},
+		setOrientation: function (value)
+		{
+			///  Returns the resulting orientation for this viewpoint.
+
+			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
+
+			Rotation4 .Matrix3 (rotationMatrix, localOrientation);
+
+			this .orientation_ .setValue (localOrientation .inverse () .multLeft (value));
+		},
+		getOrientation: function ()
+		{
+			///  Returns the resulting orientation for this viewpoint.
+
+			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
+
+			Rotation4 .Matrix3 (rotationMatrix, localOrientation);
+		
+			return localOrientation .multLeft (this .orientation_ .getValue ());
+		},
+		getFieldOfView: function ()
+		{
+			var fov = this .fieldOfView_ * this .fieldOfViewScale_;
+
+			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
+		},
+		getUpVector: function ()
+		{
+			return X3DGeospatialObject .prototype .getUpVector .call (this, coord .assign (this .coord) .add (this .positionOffset_ .getValue ()), upVector);
+		},
+		getSpeedFactor: function ()
+		{
+			return (Math .max (this .elevation, 0.0) + 10) / 10 * this .speedFactor_ .getValue ();
+		},
+		getScreenScale: function (point, viewport)
+		{
+		   // Returns the screen scale in meter/pixel for on pixel.
+
+			var
+				width  = viewport [2],
+				height = viewport [3],
+				size   = Math .tan (this .getFieldOfView () / 2) * 2 * point .abs (); // Assume we are on sphere.
+
+			size *= Math .abs (normalized .assign (point) .normalize () .dot (zAxis));
+
+			if (width > height)
+				size /= height;
+			else
+				size /= width;
+
+			return screenScale .set (size, size, size);
+		},
+		getLookAtDistance: function (bbox)
+		{
+			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
+		},
+		getProjectionMatrix: function (zNear, zFar, viewport)
+		{
+			var
+				geoZNear = zNear * Math .max (this .elevation / 100, 1) * projectionScale,
+				geoZFar  = zFar;
+
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix) .multLeft (scaleMatrix);
 		},
 	});
 

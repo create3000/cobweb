@@ -57,6 +57,11 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+			X3DGeospatialObject        .prototype .initialize .call (this);
+		},
 	});
 
 	return GeoProximitySensor;

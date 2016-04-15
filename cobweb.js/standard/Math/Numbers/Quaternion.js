@@ -341,10 +341,8 @@ function ($, Vector3, Algorithm)
 
 	$.extend (Quaternion,
 	{
-		Matrix3: function (matrix)
+		Matrix3: function (matrix, quat)
 		{
-			var quat = Object .create (this .prototype);
-
 			var i;
 
 			// First, find largest diagonal in matrix:

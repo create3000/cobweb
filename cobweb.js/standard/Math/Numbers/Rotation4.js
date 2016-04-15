@@ -308,11 +308,9 @@ function ($,
 	$.extend (Rotation4,
 	{
 		Identity: new Rotation4 (),
-		Matrix3: function (matrix)
+		Matrix3: function (matrix, result)
 		{
-			var copy = Object .create (this .prototype);
-			copy .value = Quaternion .Matrix3 (matrix);
-			return copy;
+			return Quaternion .Matrix3 (matrix, result .value);
 		},
 		inverse: function (rotation)
 		{

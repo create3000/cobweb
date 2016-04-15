@@ -94,6 +94,12 @@ function (Fields,
 		{
 			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 0;
 		},
+		getDepthSize: function ()
+		{
+			var gl = this .context;
+
+			return gl .getParameter (gl .DEPTH_BITS);
+		},
 		getColorDepth: function ()
 		{
 			var gl = this .context;

@@ -62,6 +62,7 @@ function ($,
 			                "                Shading language: " + this .getShadingLanguageVersion () + "\n" +
 			                "        Rendering Properties\n" +
 			                "                Antialiased: " + this .getAntialiased () + "\n" +
+			                "                Depth size: " + this .getDepthSize () + " bits\n" +
 			                "                Color depth: " + this .getColorDepth () + " bits\n" +
 			                "                Max clip planes: 6\n" +
 			                "                Max lights: 8\n" +

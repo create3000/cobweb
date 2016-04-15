@@ -82,7 +82,7 @@ function ($,
 		{
 			vector .assign (point) .add (this .origin);
 
-			return this .elevationFrame .applyRadians (vector .x, vector .y, vector .z, result) .z;
+			return this .elevationFrame .applyRadians (vector, result) .z;
 		},
 		getUpVector: function (point, result)
 		{

@@ -62,6 +62,14 @@ function ($,
 		{
 			return "geometry";
 		},
+		initialize: function ()
+		{
+			X3DGeometryNode     .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+		},
+		build: function ()
+		{
+		},
 	});
 
 	return GeoElevationGrid;

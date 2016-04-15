@@ -302,8 +302,8 @@ function ($,
 
 			differenceMatrix .get (relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
-			relativePosition .subtract (this .position_ .getValue ());
-			relativeOrientation .assign (this .orientation_ .getValue () .copy () .inverse () .multRight (relativeOrientation));
+			relativePosition .subtract (this .getPosition ());
+			relativeOrientation .assign (this .getOrientation () .copy () .inverse () .multRight (relativeOrientation));
 		},
 		straightenHorizon: function (orientation)
 		{
@@ -429,6 +429,8 @@ function ($,
 			}
 		},
 	});
+
+var s = 1;
 
 	return X3DViewpointNode;
 });
