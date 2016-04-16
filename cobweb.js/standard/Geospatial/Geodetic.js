@@ -93,6 +93,7 @@ function (Vector3,
 		
 			var P = Math .sqrt (x * x + y * y);
 		
+			// Handle pole case.
 			if (P == 0)
 				return result .set (Math .PI, 0, z - this .c);
 

@@ -277,20 +277,20 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				case 2:
 				{
 					this .factor (translation, rot, dummyScale, so);
-					Rotation4 .Matrix3 (rot, rotation);
+					rotation .setMatrix (rot);
 					break;
 				}
 				case 3:
 				{
 					this .factor (translation, rot, scale, so);
-					Rotation4 .Matrix3 (rot, rotation);
+					rotation .setMatrix (rot);
 					break;
 				}
 				case 4:
 				{
 					this .factor (translation, rot, scale, so);
-					Rotation4 .Matrix3 (rot, rotation);
-					Rotation4 .Matrix3 (so, scaleOrientation);
+					rotation         .setMatrix (rot);
+					scaleOrientation .setMatrix (so);
 					break;
 				}
 				case 5:

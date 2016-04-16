@@ -47,6 +47,51 @@ function ($, Vector3, Algorithm)
 			this .w = w;
 			return this;
 		},
+		setMatrix: function (matrix)
+		{
+			var i;
+
+			// First, find largest diagonal in matrix:
+			if (matrix [0] > matrix [4])
+			{
+				i = matrix [0] > matrix [8] ? 0 : 2;
+			}
+			else
+			{
+				i = matrix [4] > matrix [8] ? 1 : 2;
+			}
+
+			var scalerow = matrix [0] + matrix [4] + matrix [8];
+
+			if (scalerow > matrix [i * 3 + i])
+			{
+				// Compute w first:
+				this [3] = Math .sqrt (scalerow + 1) / 2;
+
+				// And compute other values:
+				var d = 4 * this [3];
+				this [0] = (matrix [5] - matrix [7]) / d;
+				this [1] = (matrix [6] - matrix [2]) / d;
+				this [2] = (matrix [1] - matrix [3]) / d;
+			}
+			else
+			{
+				// Compute x, y, or z first:
+				var j = (i + 1) % 3;
+				var k = (i + 2) % 3;
+
+				// Compute first value:
+				this [i] = Math .sqrt (matrix [i * 3 + i] - matrix [j * 3 + j] - matrix [k * 3 + k] + 1) / 2;
+
+				// And the others:
+				var d = 4 * this [i];
+				this [j] = (matrix [i * 3 + j] + matrix [j * 3 + i]) / d;
+				this [k] = (matrix [i * 3 + k] + matrix [k * 3 + i]) / d;
+				this [3] = (matrix [j * 3 + k] - matrix [k * 3 + j]) / d;
+			}
+
+			return this;
+		},
 		isReal: function ()
 		{
 			return ! (this .x || this .y || this .z);
@@ -341,51 +386,6 @@ function ($, Vector3, Algorithm)
 
 	$.extend (Quaternion,
 	{
-		Matrix3: function (matrix, quat)
-		{
-			var i;
-
-			// First, find largest diagonal in matrix:
-			if (matrix [0] > matrix [4])
-			{
-				i = matrix [0] > matrix [8] ? 0 : 2;
-			}
-			else
-			{
-				i = matrix [4] > matrix [8] ? 1 : 2;
-			}
-
-			var scalerow = matrix [0] + matrix [4] + matrix [8];
-
-			if (scalerow > matrix [i * 3 + i])
-			{
-				// Compute w first:
-				quat [3] = Math .sqrt (scalerow + 1) / 2;
-
-				// And compute other values:
-				var d = 4 * quat [3];
-				quat [0] = (matrix [5] - matrix [7]) / d;
-				quat [1] = (matrix [6] - matrix [2]) / d;
-				quat [2] = (matrix [1] - matrix [3]) / d;
-			}
-			else
-			{
-				// Compute x, y, or z first:
-				var j = (i + 1) % 3;
-				var k = (i + 2) % 3;
-
-				// Compute first value:
-				quat [i] = Math .sqrt (matrix [i * 3 + i] - matrix [j * 3 + j] - matrix [k * 3 + k] + 1) / 2;
-
-				// And the others:
-				var d = 4 * quat [i];
-				quat [j] = (matrix [i * 3 + j] + matrix [j * 3 + i]) / d;
-				quat [k] = (matrix [i * 3 + k] + matrix [k * 3 + i]) / d;
-				quat [3] = (matrix [j * 3 + k] - matrix [k * 3 + j]) / d;
-			}
-
-			return quat;
-		},
 		negate: function (vector)
 		{
 			var copy = Object .create (this .prototype);

@@ -183,6 +183,11 @@ function ($,
 
 			return this .value .imag .normalize ();
 		},
+		setMatrix: function (matrix)
+		{
+			this .value .setMatrix (matrix);
+			return this;
+		},
 		equals: function (rot)
 		{
 			return this .value .equals (rot .value);
@@ -308,10 +313,6 @@ function ($,
 	$.extend (Rotation4,
 	{
 		Identity: new Rotation4 (),
-		Matrix3: function (matrix, result)
-		{
-			return Quaternion .Matrix3 (matrix, result .value);
-		},
 		inverse: function (rotation)
 		{
 			var copy = Object .create (this .prototype);

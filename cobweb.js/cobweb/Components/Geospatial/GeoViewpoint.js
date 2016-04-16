@@ -163,7 +163,7 @@ function ($,
 
 			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
 
-			Rotation4 .Matrix3 (rotationMatrix, orientation);
+			orientation .setMatrix (rotationMatrix);
 
 			this .orientation_ .setValue (orientation .inverse () .multLeft (value));
 		},
@@ -173,7 +173,7 @@ function ($,
 
 			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
 
-			Rotation4 .Matrix3 (rotationMatrix, orientation);
+			orientation .setMatrix (rotationMatrix);
 		
 			return orientation .multLeft (this .orientation_ .getValue ());
 		},
