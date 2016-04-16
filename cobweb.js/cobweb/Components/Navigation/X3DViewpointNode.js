@@ -430,8 +430,6 @@ function ($,
 		},
 	});
 
-var s = 1;
-
 	return X3DViewpointNode;
 });
 

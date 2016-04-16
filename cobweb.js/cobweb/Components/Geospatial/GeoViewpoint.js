@@ -196,6 +196,10 @@ function ($,
 		{
 			return (Math .max (this .elevation, 0.0) + 10) / 10 * this .speedFactor_ .getValue ();
 		},
+		getMaxZFar: function ()
+		{
+			return 1e9;
+		},
 		getScreenScale: function (point, viewport)
 		{
 		   // Returns the screen scale in meter/pixel for on pixel.
