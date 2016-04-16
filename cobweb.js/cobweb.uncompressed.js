@@ -9776,7 +9776,7 @@ define ('cobweb/Bits/X3DConstants',[],function ()
 		X3DTextureTransformNode:      nodeType ++,
 		X3DTimeDependentNode:         nodeType ++,
 		X3DTouchSensorNode:           nodeType ++,
-		X3DTransformMatrix4DNode:     nodeType ++,
+		X3DTransformMatrix3DNode:     nodeType ++,
 		X3DTransformNode:             nodeType ++,
 		X3DTriggerNode:               nodeType ++,
 		X3DUrlObject:                 nodeType ++,
@@ -10145,9 +10145,6 @@ function ($, X3DField, X3DConstants, Generator)
 	{
 		get: function (target, key)
 		{
-			if ((typeof key) === "symbol")
-				console .log (typeof key, key);
-
 			try
 			{
 				if (key in target)
@@ -10166,6 +10163,10 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
+				// Don't know what to do with symbols, but it seem not to affect anything.
+				if ((typeof key) === "symbol")
+					return;
+
 				// if target not instance of X3DArrayField, then the constuctor is called as function.
 				console .log (target, typeof key, key, error);
 			}
@@ -12962,10 +12963,14 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 
 			this [6] += this [0] * x + this [3] * y;
 			this [7] += this [1] * x + this [4] * y;
+
+			return this;
 		},
 		rotate: function (rotation)
 		{
 			this .multLeft (Matrix3 .Rotation (rotation));
+
+			return this;
 		},
 		scale: function (scale)
 		{
@@ -12978,6 +12983,8 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 
 			this [1] *= x;
 			this [4] *= y;
+
+			return this;
 		},
 		toString: function ()
 		{
@@ -13758,6 +13765,51 @@ function ($, Vector3, Algorithm)
 			this .w = w;
 			return this;
 		},
+		setMatrix: function (matrix)
+		{
+			var i;
+
+			// First, find largest diagonal in matrix:
+			if (matrix [0] > matrix [4])
+			{
+				i = matrix [0] > matrix [8] ? 0 : 2;
+			}
+			else
+			{
+				i = matrix [4] > matrix [8] ? 1 : 2;
+			}
+
+			var scalerow = matrix [0] + matrix [4] + matrix [8];
+
+			if (scalerow > matrix [i * 3 + i])
+			{
+				// Compute w first:
+				this [3] = Math .sqrt (scalerow + 1) / 2;
+
+				// And compute other values:
+				var d = 4 * this [3];
+				this [0] = (matrix [5] - matrix [7]) / d;
+				this [1] = (matrix [6] - matrix [2]) / d;
+				this [2] = (matrix [1] - matrix [3]) / d;
+			}
+			else
+			{
+				// Compute x, y, or z first:
+				var j = (i + 1) % 3;
+				var k = (i + 2) % 3;
+
+				// Compute first value:
+				this [i] = Math .sqrt (matrix [i * 3 + i] - matrix [j * 3 + j] - matrix [k * 3 + k] + 1) / 2;
+
+				// And the others:
+				var d = 4 * this [i];
+				this [j] = (matrix [i * 3 + j] + matrix [j * 3 + i]) / d;
+				this [k] = (matrix [i * 3 + k] + matrix [k * 3 + i]) / d;
+				this [3] = (matrix [j * 3 + k] - matrix [k * 3 + j]) / d;
+			}
+
+			return this;
+		},
 		isReal: function ()
 		{
 			return ! (this .x || this .y || this .z);
@@ -14052,53 +14104,6 @@ function ($, Vector3, Algorithm)
 
 	$.extend (Quaternion,
 	{
-		Matrix3: function (matrix)
-		{
-			var quat = Object .create (this .prototype);
-
-			var i;
-
-			// First, find largest diagonal in matrix:
-			if (matrix [0] > matrix [4])
-			{
-				i = matrix [0] > matrix [8] ? 0 : 2;
-			}
-			else
-			{
-				i = matrix [4] > matrix [8] ? 1 : 2;
-			}
-
-			var scalerow = matrix [0] + matrix [4] + matrix [8];
-
-			if (scalerow > matrix [i * 3 + i])
-			{
-				// Compute w first:
-				quat [3] = Math .sqrt (scalerow + 1) / 2;
-
-				// And compute other values:
-				var d = 4 * quat [3];
-				quat [0] = (matrix [5] - matrix [7]) / d;
-				quat [1] = (matrix [6] - matrix [2]) / d;
-				quat [2] = (matrix [1] - matrix [3]) / d;
-			}
-			else
-			{
-				// Compute x, y, or z first:
-				var j = (i + 1) % 3;
-				var k = (i + 2) % 3;
-
-				// Compute first value:
-				quat [i] = Math .sqrt (matrix [i * 3 + i] - matrix [j * 3 + j] - matrix [k * 3 + k] + 1) / 2;
-
-				// And the others:
-				var d = 4 * quat [i];
-				quat [j] = (matrix [i * 3 + j] + matrix [j * 3 + i]) / d;
-				quat [k] = (matrix [i * 3 + k] + matrix [k * 3 + i]) / d;
-				quat [3] = (matrix [j * 3 + k] - matrix [k * 3 + j]) / d;
-			}
-
-			return quat;
-		},
 		negate: function (vector)
 		{
 			var copy = Object .create (this .prototype);
@@ -14457,6 +14462,11 @@ function ($,
 
 			return this .value .imag .normalize ();
 		},
+		setMatrix: function (matrix)
+		{
+			this .value .setMatrix (matrix);
+			return this;
+		},
 		equals: function (rot)
 		{
 			return this .value .equals (rot .value);
@@ -14582,12 +14592,6 @@ function ($,
 	$.extend (Rotation4,
 	{
 		Identity: new Rotation4 (),
-		Matrix3: function (matrix)
-		{
-			var copy = Object .create (this .prototype);
-			copy .value = Quaternion .Matrix3 (matrix);
-			return copy;
-		},
 		inverse: function (rotation)
 		{
 			var copy = Object .create (this .prototype);
@@ -14650,7 +14654,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		dummyCenter           = new Vector3 (0, 0, 0),
 		rot                   = new Matrix3 (),
 		so                    = new Matrix3 (),
-		si                    = new Matrix3 ();
+		si                    = new Matrix3 (),
+		rotationMatrix        = new Matrix3 ();
 
 	function Matrix4 ()
 	{
@@ -14907,20 +14912,20 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				case 2:
 				{
 					this .factor (translation, rot, dummyScale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
+					rotation .setMatrix (rot);
 					break;
 				}
 				case 3:
 				{
 					this .factor (translation, rot, scale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
+					rotation .setMatrix (rot);
 					break;
 				}
 				case 4:
 				{
 					this .factor (translation, rot, scale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
-					scaleOrientation .assign (Rotation4 .Matrix3 (so));
+					rotation         .setMatrix (rot);
+					scaleOrientation .setMatrix (so);
 					break;
 				}
 				case 5:
@@ -15318,10 +15323,14 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [12] += this [ 0] * x + this [ 4] * y + this [ 8] * z;
 			this [13] += this [ 1] * x + this [ 5] * y + this [ 9] * z;
 			this [14] += this [ 2] * x + this [ 6] * y + this [10] * z;
+
+			return this;
 		},
 		rotate: function (rotation)
 		{
 			this .multLeft (Matrix4 .Quaternion (rotation .value));
+
+			return this;
 		},
 		scale: function (scale)
 		{
@@ -15341,6 +15350,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [ 2] *= x;
 			this [ 6] *= y;
 			this [10] *= z;
+
+			return this;
 		},
 		toString: function ()
 		{
@@ -32551,6 +32562,12 @@ function (Fields,
 		{
 			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 0;
 		},
+		getDepthSize: function ()
+		{
+			var gl = this .context;
+
+			return gl .getParameter (gl .DEPTH_BITS);
+		},
 		getColorDepth: function ()
 		{
 			var gl = this .context;
@@ -37486,9 +37503,9 @@ function ($,
 				if (colorNode)
 				{
 					if (colorPerVertex)
-						this .addColor (colorNode .getColor (index));
+						this .addColor (colorNode .get1Color (index));
 					else
-						this .addColor (colorNode .getColor (face));
+						this .addColor (colorNode .get1Color (face));
 				}
 
 				if (texCoordNode)
@@ -37497,13 +37514,13 @@ function ($,
 				if (normalNode)
 				{
 					if (normalPerVertex)
-						this .addNormal (normalNode .getVector (index));
+						this .addNormal (normalNode .get1Vector (index));
 
 					else
-						this .addNormal (normalNode .getVector (face));
+						this .addNormal (normalNode .get1Vector (face));
 				}
 
-				this .addVertex (coordNode .getPoint (index));
+				this .addVertex (coordNode .get1Point (index));
 			}
 		
 			// Autogenerate normal if not specified.
@@ -37572,13 +37589,13 @@ function ($,
 
 			var
 				normal = new Vector3 (0, 0, 0),
-				next   = coord .getPoint (this .getPolygonIndex (0));
+				next   = coord .get1Point (this .getPolygonIndex (0));
 
 			for (var i = 0; i < verticesPerPolygon; ++ i)
 			{
 				var
 					current = next,
-					next    = coord .getPoint (this .getPolygonIndex ((i + 1) % verticesPerPolygon));
+					next    = coord .get1Point (this .getPolygonIndex ((i + 1) % verticesPerPolygon));
 
 				normal .x += (current .y - next .y) * (current .z + next .z);
 				normal .y += (current .z - next .z) * (current .x + next .x);
@@ -37745,9 +37762,9 @@ function ($,
 					if (colorNode)
 					{
 						if (colorPerVertex)
-							this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
+							this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
 						else
-							this .addColor (colorNode .getColor (this .getColorIndex (face)));
+							this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 					}
 
 					if (texCoordNode)
@@ -37756,13 +37773,13 @@ function ($,
 					if (normalNode)
 					{
 						if (normalPerVertex)
-							this .addNormal (normalNode .getVector (this .getNormalPerVertexIndex (i)));
+							this .addNormal (normalNode .get1Vector (this .getNormalPerVertexIndex (i)));
 
 						else
-							this .addNormal (normalNode .getVector (this .getNormalIndex (face)));
+							this .addNormal (normalNode .get1Vector (this .getNormalIndex (face)));
 					}
 
-					this .addVertex (coordNode .getPoint (index));
+					this .addVertex (coordNode .get1Point (index));
 				}
 
 				++ face;
@@ -37878,7 +37895,7 @@ function ($,
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
 			{
-				var vertex = coord .getPoint (coordIndex [vertices [i]] .getValue ()) .copy ();
+				var vertex = coord .get1Point (coordIndex [vertices [i]] .getValue ()) .copy ();
 
 				vertex .index = i;
 
@@ -37994,13 +38011,13 @@ function ($,
 
 			var
 				normal = new Vector3 (0, 0, 0),
-				next   = coord .getPoint (coordIndex [vertices [0]] .getValue ());
+				next   = coord .get1Point (coordIndex [vertices [0]] .getValue ());
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
 			{
 				var
 					current = next,
-					next    = coord .getPoint (coordIndex [vertices [(i + 1) % length]] .getValue ());
+					next    = coord .get1Point (coordIndex [vertices [(i + 1) % length]] .getValue ());
 
 				normal .x += (current .y - next .y) * (current .z + next .z);
 				normal .y += (current .z - next .z) * (current .x + next .x);
@@ -38081,7 +38098,7 @@ function ($,
 		{
 			return this .point .length;
 		},
-		getPoint: function (index)
+		get1Point: function (index)
 		{
 			// The index cannot be less than 0.
 
@@ -41092,8 +41109,8 @@ function ($,
 
 			differenceMatrix .get (relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
-			relativePosition .subtract (this .position_ .getValue ());
-			relativeOrientation .assign (this .orientation_ .getValue () .copy () .inverse () .multRight (relativeOrientation));
+			relativePosition .subtract (this .getPosition ());
+			relativeOrientation .assign (this .getOrientation () .copy () .inverse () .multRight (relativeOrientation));
 		},
 		straightenHorizon: function (orientation)
 		{
@@ -41343,7 +41360,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "position",          new Fields .SFVec3f (0, 0, 10)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "orientation",       new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "centerOfRotation",  new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "fieldOfView",       new Fields .MFFloat ([ -1, -1, 1, 1 ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "fieldOfView",       new Fields .MFFloat (-1, -1, 1, 1)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "jump",              new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "retainUserOffsets", new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",           new Fields .SFBool ()),
@@ -41963,16 +41980,13 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		ROLL_TIME              = 0.2;
 
 	var
-		yAxis = new Vector3 (0, 1, 0),
-		zAxis = new Vector3 (0, 0, 1);
-
-	var
-		black = new Float32Array ([0, 0, 0]),
-		white = new Float32Array ([1, 1, 1]);
-
-	var
+		yAxis     = new Vector3 (0, 1, 0),
+		zAxis     = new Vector3 (0, 0, 1),
+		black     = new Float32Array ([0, 0, 0]),
+		white     = new Float32Array ([1, 1, 1]),
 		fromPoint = new Vector3 (0, 0, 0),
-		toPoint   = new Vector3 (0, 0, 0);
+		toPoint   = new Vector3 (0, 0, 0),
+		upVector  = new Vector3 (0, 0, 0);
 	
 	var
 		MOVE = 0,
@@ -42197,8 +42211,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var
 				navigationInfo = this .getNavigationInfo (),
-				viewpoint      = this .getActiveViewpoint (),
-				upVector       = viewpoint .getUpVector ();
+				viewpoint      = this .getActiveViewpoint ();
+
+			upVector .assign (viewpoint .getUpVector ());
 
 			// Rubberband values
 
@@ -42814,9 +42829,11 @@ function (Spheroid3)
 
 
 define ('standard/Geospatial/Geodetic',[
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Algorithm",
 ],
-function (Algorithm)
+function (Vector3,
+          Algorithm)
 {
 
 
@@ -42830,6 +42847,7 @@ function (Algorithm)
 		this .longitudeFirst = ! latitudeFirst;
       this .degrees        = ! radians;
       this .a              = spheroid .getSemiMajorAxis ();
+      this .c              = spheroid .getSemiMinorAxis ();
       this .c2a2           = Math .pow (spheroid .getSemiMinorAxis () / this .a, 2);
       this .ecc2           = 1 - this .c2a2;
 	}
@@ -42839,21 +42857,25 @@ function (Algorithm)
 		constructor: Geodetic,
 		convert: function (geodetic, result)
 		{
-			var
-				latitude  = geodetic .x,
-				longitude = geodetic .y,
-				elevation = geodetic .z;
-		
+			var elevation = geodetic .z;
+
 			if (this .longitudeFirst)
 			{
-				latitude  = geodetic .y;
-				longitude = geodetic .x;
+				var
+					latitude  = geodetic .y;
+					longitude = geodetic .x;
+			}
+			else
+			{
+				var
+					latitude  = geodetic .x,
+					longitude = geodetic .y;
 			}
 		
 			if (this .degrees)
 			{
-				latitude  = Algorithm .radians (latitude);
-				longitude = Algorithm .radians (longitude);
+				latitude  *= Math .PI / 180;
+				longitude *= Math .PI / 180;
 			}
 		
 			return this .convertRadians (latitude, longitude, elevation, result);
@@ -42877,8 +42899,8 @@ function (Algorithm)
 
 			if (this .degrees)
 			{
-				result .x = Algorithm .degrees (result .x); // latitude
-				result .y = Algorithm .degrees (result .y); // longitude
+				result .x *= 180 / Math .PI; // latitude
+				result .y *= 180 / Math .PI; // longitude
 			}
 
 			if (this .longitudeFirst)
@@ -42900,12 +42922,17 @@ function (Algorithm)
 		
 			var P = Math .sqrt (x * x + y * y);
 		
+			// Handle pole case.
+			if (P == 0)
+				return result .set (Math .PI, 0, z - this .c);
+
 			var
 				latitude  = 0,
 				longitude = Math .atan2 (y, x),
 				elevation = 0;
 		
 			var
+				a    = this .a,
 				N    = a,
 				ecc2 = this .ecc2;
 		
@@ -42945,6 +42972,74 @@ function (Algorithm)
 
 			return result .set (nx, ny, nz);
 		},
+		lerp: function (s, d, t)
+		{
+			var
+				source     =  this .source      .assign (s),
+				destination = this .destination .assign (d);
+
+			var
+				RANGE    = this .degrees ? 180 : M_PI,
+				RANGE1_2 = RANGE / 2,
+				RANGE2   = RANGE * 2;
+		
+			var range = 0;
+		
+			if (this .longitudeFirst)
+			{
+				source .x = Algorithm .interval (source .x, -RANGE,    RANGE);	
+				source .y = Algorithm .interval (source .y, -RANGE1_2, RANGE1_2);
+		
+				destination .x = Algorithm .interval (destination .x, -RANGE,    RANGE);	
+				destination .y = Algorithm .interval (destination .y, -RANGE1_2, RANGE1_2);
+		
+				range = Math .abs (destination .x - source .x);
+			}
+			else
+			{
+				source .x = Algorithm .interval (source .x, -RANGE1_2, RANGE1_2);
+				source .y = Algorithm .interval (source .y, -RANGE,    RANGE);
+		
+				destination .x = Algorithm .interval (destination .x, -RANGE1_2, RANGE1_2);
+				destination .y = Algorithm .interval (destination .y, -RANGE,    RANGE);
+		
+				range = Math .abs (destination .y - source .y);
+			}
+		
+			if (range <= RANGE)
+				return source .lerp (destination, t);
+		
+			var step = (RANGE2 - range) * t;
+		
+			if (this .longitudeFirst)
+			{
+				var longitude = source .x < destination .x ? source .x - step : source .x + step;
+		
+				if (longitude < -RANGE)
+					longitude += RANGE2;
+		
+				else if (longitude > RANGE)
+					longitude -= RANGE2;
+		
+				return source .set (longitude,
+				                    Algorithm .lerp (source .y, destination .y, t),
+				                    Algorithm .lerp (source .z, destination .z, t));
+			}
+
+			var longitude = source .y < destination .y ? source .y - step : source .y + step;
+	
+			if (longitude < -RANGE)
+				longitude += RANGE2;
+	
+			else if (longitude > RANGE)
+				longitude -= RANGE2;
+	
+			return source .set (Algorithm .lerp (source .x, destination .x, t),
+			                    longitude,
+			                    Algorithm .lerp (source .z, destination .z, t));
+		},
+		source: new Vector3 (0, 0, 0),
+		destination: new Vector3 (0, 0, 0),
 	};
 
 	return Geodetic;
@@ -42953,9 +43048,11 @@ function (Algorithm)
 
 define ('standard/Geospatial/UniversalTransverseMercator',[
 	"standard/Geospatial/Geodetic",
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Algorithm",
 ],
 function (Geodetic,
+          Vector3,
           Algorithm)
 {
 
@@ -43001,15 +43098,18 @@ function (Geodetic,
 		convert: function (utm, result)
 		{
 			// https://gist.github.com/duedal/840476
-
-			var
-				northing = utm .x,
-				easting  = utm .y;
 		
 			if (this .eastingFirst)
 			{
-				northing = utm .y;
-				easting  = utm .x;
+				var
+					northing = utm .y;
+					easting  = utm .x;
+			}
+			else
+			{
+				var
+					northing = utm .x,
+					easting  = utm .y;
 			}
 		
 			// Check for southern hemisphere and remove offset from easting.
@@ -43054,16 +43154,16 @@ function (Geodetic,
 		
 			var
 				latitude  = phi1 - (N1 * tanphi1 / R1) * (I * I / 2 - J + K),
-				longitude = longitude0 + (I - (1 + 2 * T2 + C1) * Math .pow (I, 3) / 6 + L) / cosphi1;
+				longitude = this .longitude0 + (I - (1 + 2 * T2 + C1) * Math .pow (I, 3) / 6 + L) / cosphi1;
 		
-			return geodeticConverter .convertRadians (latitude, longitude, utm .z, result);
+			return this .geodeticConverter .convertRadians (latitude, longitude, utm .z, result);
 		},
 		apply: function (geocentric, result)
 		{
 			// https://gist.github.com/duedal/840476
 
 			var
-				geodetic  = geodeticConverter .applyRadians (geocentric, result),
+				geodetic  = this .geodeticConverter .applyRadians (geocentric, result),
 				latitude  = geodetic .x,
 				longitude = geodetic .y;
 		
@@ -43077,7 +43177,7 @@ function (Geodetic,
 				T  = tanlat * tanlat,
 				T6 = T * T * T,
 				C  = EE * coslat * coslat,
-				A  = coslat * (longitude - longitude0);
+				A  = coslat * (longitude - this .longitude0);
 		
 			var M = this .a * (this .W * latitude
 			                   - this .X * Math .sin (2 * latitude)
@@ -43109,13 +43209,19 @@ function (Geodetic,
 		
 			return result .set (northing, easting, geodetic .z);
 		},
+		lerp: Vector3 .lerp,
 	};
 
 	return UniversalTransverseMercator;
 });
 
 
-define ('cobweb/Browser/Geospatial/Geocentric',[],function ()
+define ('cobweb/Browser/Geospatial/Geocentric',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function (Vector3,
+          Algorithm)
 {
 
 
@@ -43132,6 +43238,22 @@ define ('cobweb/Browser/Geospatial/Geocentric',[],function ()
 		{
 			return result .assign (geocentric);
 		},
+		lerp: function (source, destination, t)
+		{
+			this .source      .assign (s);
+			this .destination .assign (d);
+
+			var
+				sourceLength      = source      .abs ();
+				destinationLength = destination .abs ();
+			
+			source      .normalize ();
+			destination .normalize ();
+			
+			return source .slerp (destination, t) * Algorithm .lerp (sourceLength, destinationLength, t);
+		},
+		source: new Vector3 (0, 0, 0),
+		destination: new Vector3 (0, 0, 0),
 	};
 
 	return Geocentric;
@@ -43145,7 +43267,7 @@ define ('cobweb/Browser/Geospatial/Geospatial',[
 	"cobweb/Browser/Geospatial/Geocentric",
 ],
 function (ReferenceEllipsoids,
-          Geodedic,
+          Geodetic,
           UniversalTransverseMercator,
           Geocentric)
 {
@@ -43175,7 +43297,7 @@ function (ReferenceEllipsoids,
 		GC: GC,
 		getReferenceFrame: function (geoSystem, radians)
 		{
-			switch (getCoordinateSystem (geoSystem))
+			switch (this .getCoordinateSystem (geoSystem))
 			{
 				case GD:
 				{
@@ -43200,13 +43322,13 @@ function (ReferenceEllipsoids,
 		},
 		getElevationFrame: function (geoSystem, radians)
 		{
-			return new Geodetic (getEllipsoid (geoSystem), true, radians);
+			return new Geodetic (this .getEllipsoid (geoSystem), true, radians);
 		},
 		getCoordinateSystem: function (geoSystem)
 		{
 			for (var i = 0, length = geoSystem .length; i < length; ++ i)
 			{
-				var coordinateSystem = coordinateSystems [geoSystem [i]];
+				var coordinateSystem = CoordinateSystems [geoSystem [i]];
 
 				if (coordinateSystem !== undefined)
 					return coordinateSystem;
@@ -43312,19 +43434,20 @@ define ('cobweb/Components/Geospatial/X3DGeospatialObject',[
 	"cobweb/Browser/Geospatial/Geospatial",
 	"cobweb/Bits/X3DCast",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DConstants,
           Geospatial,
           X3DCast,
-          Vector3)
+          Vector3,
+          Matrix4)
 {
 
 
 	var
 		vector = new Vector3 (0, 0, 0),
 		result = new Vector3 (0, 0, 0),
-		p      = new Vector3 (0, 0, 0),
 		t      = new Vector3 (0, 0, 0),
 		x      = new Vector3 (0, 0, 0),
 		y      = new Vector3 (0, 0, 0),
@@ -43334,28 +43457,19 @@ function ($,
 	{
 		this .addType (X3DConstants .X3DGeospatialObject);
 
-		this .radians = true;
+		this .radians = false;
+		this .origin  = new Vector3 (0, 0, 0);
 	}
 
 	X3DGeospatialObject .prototype =
 	{
 		constructor: X3DGeospatialObject,
+		originMatrix: new Matrix4 (),
+		invOriginMatrix: new Matrix4 (),
 		initialize: function ()
 		{
 			this .geoSystem_ .addInterest (this, "set_geoSystem__");
 			this .geoOrigin_ .addInterest (this, "set_geoOrigin__");
-
-			switch (this .getExecutionContext () .specificationVersion)
-			{
-				case "2.0":
-				case "3.0":
-				case "3.1":
-				case "3.2":
-					this .radians = false;
-					break;
-				default:
-					break;
-			}
 
 			this .set_geoSystem__ ();
 			this .set_geoOrigin__ ();
@@ -43363,15 +43477,16 @@ function ($,
 		set_geoSystem__: function ()
 		{
 			this .coordinateSystem = Geospatial .getCoordinateSystem (this .geoSystem_);
-			this .referenceFrame   = Geospatial .getReferenceFrame (this .geoSystem_, this .radians);
-			this .elevationFrame   = Geospatial .getElevationFrame (this .geoSystem_, this .radians);
-			this .standardOrder    = Geospatial .isStandardOrder (this .geoSystem_);
+			this .referenceFrame   = Geospatial .getReferenceFrame   (this .geoSystem_, this .radians);
+			this .elevationFrame   = Geospatial .getElevationFrame   (this .geoSystem_, this .radians);
+			this .standardOrder    = Geospatial .isStandardOrder     (this .geoSystem_);
 		},
 		set_geoOrigin__: function ()
 		{
 			if (this .geoOriginNode)
 			{
 				this .geoOriginNode .removeInterest (this, "set_origin__");
+				this .geoOriginNode .removeInterest (this, "set_rotateYUp__");
 				this .geoOriginNode .removeInterest (this, "addNodeEvent");
 			}
 		
@@ -43380,67 +43495,461 @@ function ($,
 			if (this .geoOriginNode)
 			{
 				this .geoOriginNode .addInterest (this, "set_origin__");
+				this .geoOriginNode .addInterest (this, "set_rotateYUp__");
 				this .geoOriginNode .addInterest (this, "addNodeEvent");
 			}
 		
 			this .set_origin__ ();
+			this .set_rotateYUp__ ();
 		},
 		set_origin__: function ()
 		{
 			if (this .geoOriginNode)
-				this .origin = this .geoOriginNode .getOrigin ();
+				this .geoOriginNode .getOrigin (this .origin);
 			else
-				this .origin = new Vector3 (0, 0, 0);
+				this .origin .set (0, 0, 0);
+
+			this .set_originMatrix__ ();
 		},
-		getGeoCoord: function (point, result)
+		set_originMatrix__: function ()
 		{
-			return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);
+			try
+			{
+				if (this .geoOriginNode)
+				{
+					// Position
+					var t = this .origin;
+			
+					// Let's work out the orientation at that location in order
+					// to maintain a view where +Y is in the direction of gravitional
+					// up for that region of the planet's surface. This will be the
+					// value of the rotation matrix for the transform.
+				
+					this .elevationFrame .normal (t, y);
+			
+					x .set (0, 0, 1) .cross (y);
+			
+					// Handle pole cases.
+					if (x .equals (Vector3 .Zero))
+						x .set (1, 0, 0);
+				
+					z .assign (x) .cross (y);
+				
+					x .normalize ();
+					z .normalize ();
+				
+					this .originMatrix .set (x .x, x .y, x .z, 0,
+					                         y .x, y .y, y .z, 0,
+					                         z .x, z .y, z .z, 0,
+					                         t .x, t .y, t .z, 1);
+	
+					this .invOriginMatrix .assign (this .originMatrix) .inverse ();
+				}
+			}
+			catch (error)
+			{
+				/// ???
+			}
 		},
+		set_rotateYUp__: function ()
+		{
+			if (this .geoOriginNode && this .geoOriginNode .rotateYUp_ .getValue ())
+			{
+				this .getCoord          = getCoordRotateYUp;
+				this .getGeoCoord       = getGeoCoordRotateYUp;
+				this .getGeoUpVector    = getGeoUpVectorRotateYUp;
+				this .getLocationMatrix = getLocationMatrixRotateYUp;
+			}
+			else
+			{
+				this .getCoord          = getCoord;
+				this .getGeoCoord       = getGeoCoord;
+				this .getGeoUpVector    = getGeoUpVector;
+				this .getLocationMatrix = getLocationMatrix;
+			}
+		},
+		getReferenceFrame: function ()
+		{
+			return this .referenceFrame;
+		},
+		getStandardOrder: function ()
+		{
+			return this .standardOrder;
+		},
+		getCoord: getCoord,
+		getGeoCoord: getGeoCoord,
 		getElevation: function (point)
 		{
 			vector .assign (point) .add (this .origin);
 
-			return this .elevationFrame .applyRadians (vector .x, vector .y, vector .z, result) .z;
+			return this .elevationFrame .applyRadians (vector, result) .z;
 		},
-		getUpVector: function (point, result)
-		{
-			return this .elevationFrame .normal (vector .assign (point) .add (this .origin), result);
-		},
-		getCoord: function (geoPoint, result)
-		{
-			return this .referenceFrame .convert (geoPoint, result) .subtract (this .origin);
-		},
-		getLocationMatrix: function (geoPoint, result)
-		{
-			// Position
-			this .referenceFrame .convert (geoPoint, p);
-			t .assign (p) .subtract (this .origin);
-		
-			// Let's work out the orientation at that location in order
-			// to maintain a view where +Y is in the direction of gravitional
-			// up for that region of the planet's surface. This will be the
-			// value of the rotation matrix for the transform.
-		
-			this .elevationFrame .normal (p, y);
-			x .assign (0, 0, 1) .cross (y);
-
-			// Handle pole cases.
-			if (x .equals (Vector3 .Zero))
-				x .set (1, 0, 0);
-		
-			z .assign (x) .cross (y);
-		
-			x .normalize ();
-			z .normalize ();
-		
-			return result .set (x .x, x .y, x .z, 0,
-			                    y .x, y .y, y .z, 0,
-			                    z .x, z .y, z .z, 0,
-			                    t .x, t .y, t .z, 1);
-		},
+		getGeoUpVector: getGeoUpVector,
+		getLocationMatrix: getLocationMatrix,
 	};
 
+	function getCoord (geoPoint, result)
+	{
+		return this .referenceFrame .convert (geoPoint, result) .subtract (this .origin);
+	}
+
+	function getCoordRotateYUp (geoPoint, result)
+	{
+		return this .invOriginMatrix .multVecMatrix (this .referenceFrame .convert (geoPoint, result));
+	}
+
+	function getGeoCoord (point, result)
+	{
+		return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);
+	}
+
+	function getGeoCoordRotateYUp (point, result)
+	{
+		return this .referenceFrame .apply (this .originMatrix .multVecMatrix (vector .assign (point)), result);
+	}
+
+	function getGeoUpVector (point, result)
+	{
+		return this .elevationFrame .normal (vector .assign (point) .add (this .origin), result);
+	}
+
+	function getGeoUpVectorRotateYUp (point, result)
+	{
+		return this .invOriginMatrix .multDirMatrix (this .elevationFrame .normal (this .originMatrix .multVecMatrix (vector .assign (point)), result));
+	}
+
+	function getStandardLocationMatrix (geoPoint, result)
+	{
+		// Position
+		this .referenceFrame .convert (geoPoint, t);
+
+		// Let's work out the orientation at that location in order
+		// to maintain a view where +Y is in the direction of gravitional
+		// up for that region of the planet's surface. This will be the
+		// value of the rotation matrix for the transform.
+	
+		this .elevationFrame .normal (t, y);
+
+		x .set (0, 0, 1) .cross (y);
+
+		// Handle pole cases.
+		if (x .equals (Vector3 .Zero))
+			x .set (1, 0, 0);
+	
+		z .assign (x) .cross (y);
+	
+		x .normalize ();
+		z .normalize ();
+	
+		return result .set (x .x, x .y, x .z, 0,
+		                    y .x, y .y, y .z, 0,
+		                    z .x, z .y, z .z, 0,
+		                    t .x, t .y, t .z, 1);
+	}
+
+	function getLocationMatrix (geoPoint, result)
+	{
+		return getStandardLocationMatrix .call (this, geoPoint, result) .translate (this .origin);
+	}
+
+	function getLocationMatrixRotateYUp (geoPoint, result)
+	{
+		return getStandardLocationMatrix .call (this, geoPoint, result) .multRight (this .invOriginMatrix);
+	}
+
 	return X3DGeospatialObject;
+});
+
+
+
+
+define ('cobweb/Components/Navigation/NavigationInfo',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DBindableNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DBindableNode,
+          TraverseType,
+          X3DConstants)
+{
+
+
+	var TransitionType =
+	{
+		TELEPORT: true,
+		LINEAR:   true,
+		ANIMATE:  true,
+	};
+
+	function NavigationInfo (executionContext)
+	{
+		X3DBindableNode .call (this, executionContext);
+
+		this .addType (X3DConstants .NavigationInfo);
+				
+		this .addChildren ("availableViewers", new Fields .MFString (),
+		                   "viewer",           new Fields .SFString ("EXAMINE"));
+	}
+
+	NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
+	{
+		constructor: NavigationInfo,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_bind",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "type",               new Fields .MFString ("EXAMINE", "ANY")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "avatarSize",         new Fields .MFFloat (0.25, 1.6, 0.75)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "speed",              new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "headlight",          new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "visibilityLimit",    new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionType",     new Fields .MFString ("LINEAR")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionTime",     new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "transitionComplete", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "bindTime",           new Fields .SFTime ()),
+		]),
+		getTypeName: function ()
+		{
+			return "NavigationInfo";
+		},
+		getComponentName: function ()
+		{
+			return "Navigation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DBindableNode .prototype .initialize .call (this);
+
+			this .type_      .addInterest (this, "set_type__");
+			this .headlight_ .addInterest (this, "set_headlight__");
+
+			this .set_type__ ();
+			this .set_headlight__ ();
+		},
+		set_type__: function ()
+		{
+			this .availableViewers_ .length = 0;;
+
+			var
+				examineViewer = false,
+				walkViewer    = false,
+				flyViewer     = false,
+				planeViewer   = false,
+				noneViewer    = false,
+				lookAt        = false;
+
+			// Determine active viewer.
+
+			this .viewer_ = "EXAMINE";
+
+			for (var i = 0; i < this .type_ .length; ++ i)
+			{
+			   var string = this .type_ [i];
+			
+				switch (string)
+				{
+					case "EXAMINE":
+					case "WALK":
+					case "FLY":
+					case "LOOKAT":
+					case "PLANE":
+					case "NONE":
+						this .viewer_ = string;
+						break;
+					case "PLANE_create3000.de":
+						this .viewer_ = "PLANE";
+						break;
+					default:
+						continue;
+				}
+
+				// Leave for loop.
+				break;
+			}
+
+			// Determine available viewers.
+
+			if (! this .type_ .length)
+			{
+				examineViewer = true;
+				walkViewer    = true;
+				flyViewer     = true;
+				planeViewer   = true;
+				noneViewer    = true;
+				lookAt        = true;
+			}
+			else
+			{
+				for (var i = 0; i < this .type_ .length; ++ i)
+				{
+				   var string = this .type_ [i];
+
+					switch (string)
+					{
+						case "EXAMINE":
+							examineViewer = true;
+							continue;
+						case "WALK":
+							walkViewer = true;
+							continue;
+						case "FLY":
+							flyViewer = true;
+							continue;
+						case "LOOKAT":
+							lookAt = true;
+							continue;
+						case "PLANE":
+							planeViewer = true;
+							continue;
+						case "NONE":
+							noneViewer = true;
+							continue;
+					}
+
+					if (string == "ANY")
+					{
+						examineViewer = true;
+						walkViewer    = true;
+						flyViewer     = true;
+						planeViewer   = true;
+						noneViewer    = true;
+						lookAt        = true;
+
+						// Leave for loop.
+						break;
+					}
+
+					// Some string defaults to EXAMINE.
+					examineViewer = true;
+				}
+
+				if (examineViewer)
+					this .availableViewers_ .push ("EXAMINE");
+
+				if (walkViewer)
+					this .availableViewers_ .push ("WALK");
+
+				if (flyViewer)
+					this .availableViewers_ .push ("FLY");
+
+				if (planeViewer)
+					this .availableViewers_ .push ("PLANE");
+
+				if (lookAt)
+					this .availableViewers_ .push ("LOOKAT");
+
+				if (noneViewer)
+					this .availableViewers_ .push ("NONE");
+			}
+		},
+		set_headlight__: function ()
+		{
+			if (this .headlight_ .getValue ())
+				this .enable = enable;
+			else
+				delete this .enable;
+		},
+		bindToLayer: function (layer)
+		{
+			X3DBindableNode .prototype .bindToLayer .call (this, layer);
+		
+			layer .getNavigationInfoStack () .push (this);
+		},
+		unbindFromLayer: function (layer)
+		{
+			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
+
+			layer .getNavigationInfoStack () .pop (this);
+		},
+		removeFromLayer: function (layer)
+		{
+			layer .getNavigationInfoStack () .remove (this);
+		},
+		getViewer: function ()
+		{
+		   return this .viewer_ .getValue ();
+		},
+		getCollisionRadius: function ()
+		{
+			if (this .avatarSize_ .length > 0)
+			{
+				if (this .avatarSize_ [0] > 0)
+					return this .avatarSize_ [0];
+			}
+
+			return 0.25;
+		},
+		getAvatarHeight: function ()
+		{
+			if (this .avatarSize_ .length > 1)
+				return this .avatarSize_ [1];
+
+			return 1.6;
+		},
+		getStepHeight: function ()
+		{
+			if (this .avatarSize_ .length > 2)
+				return this .avatarSize_ [2];
+
+			return 0.75;
+		},
+		getNearPlane: function ()
+		{
+			var zNear = this .getCollisionRadius ();
+
+			if (zNear === 0)
+				return 1e-5;
+
+			else
+				return zNear / 2;
+		},
+		getFarPlane: function (viewpoint)
+		{
+			return this .visibilityLimit_ .getValue ()
+				    ? this .visibilityLimit_ .getValue ()
+				    : viewpoint .getMaxZFar ();
+		},
+		getTransitionType: function ()
+		{
+			for (var i = 0, length = this .transitionType_ .length; i < length; ++ i)
+			{
+				var
+					value          = this .transitionType_ [i],
+					transitionType = TransitionType [value];
+
+				if (transitionType)
+					return value;
+			}
+
+			return "LINEAR";
+		},
+		enable: function ()
+		{
+		},
+		traverse: function ()
+		{
+			this .getCurrentLayer () .getNavigationInfos () .push (this);
+		}
+	});
+
+	function enable ()
+	{
+		this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+	}
+
+	return NavigationInfo;
 });
 
 
@@ -43453,17 +43962,47 @@ define ('cobweb/Components/Geospatial/GeoViewpoint',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Navigation/X3DViewpointNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Components/Interpolation/ScalarInterpolator",
+	"cobweb/Components/Navigation/NavigationInfo",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DViewpointNode, 
-          X3DGeospatialObject, 
-          X3DConstants)
+          X3DGeospatialObject,
+          ScalarInterpolator,
+          NavigationInfo,
+          X3DConstants,
+          Camera,
+          Vector3,
+          Rotation4,
+          Matrix4)
 {
 
+
+	var
+		zAxis            = new Vector3 (0, 0, 1),
+		screenScale      = new Vector3 (0, 0, 0),
+		normalized       = new Vector3 (0, 0, 0),
+		coord            = new Vector3 (0, 0, 0),
+		upVector         = new Vector3 (0, 0, 0),
+		locationMatrix   = new Matrix4 (),
+		position         = new Vector3 (0, 0, 0),
+		orientation      = new Rotation4 (0, 0, 1, 0),
+		centerOfRotation = new Vector3 (0, 0, 0);
+
+	function traverse (type)
+	{
+		X3DViewpointNode .prototype .traverse .call (this .type);
+
+		this .navigationInfoNode .traverse (type);
+	}
 
 	function GeoViewpoint (executionContext)
 	{
@@ -43471,6 +44010,22 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoViewpoint);
+
+		this .navigationInfoNode      = new NavigationInfo (executionContext);
+		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
+		this .projectionMatrix        = new Matrix4 ();
+		this .coord                   = new Vector3 ();
+		this .elevation               = 0;
+
+		switch (executionContext .specificationVersion)
+		{
+			case "2.0":
+			case "3.0":
+			case "3.1":
+			case "3.2":
+				this .traverse = traverse;
+				break;
+		}
 	}
 
 	GeoViewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -43479,21 +44034,21 @@ function ($,
 		constructor: GeoViewpoint,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",         new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_bind",          new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "description",       new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",         new Fields .MFString ([ "GD", "WE" ])),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",          new Fields .SFVec3d (0, 0, 100000)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "orientation",       new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "centerOfRotation",  new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "fieldOfView",       new Fields .SFFloat (0.785398)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "jump",              new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "retainUserOffsets", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "navType",           new Fields .MFString ([ "EXAMINE", "ANY" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "navType",           new Fields .MFString ("EXAMINE", "ANY")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "headlight",         new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "speedFactor",       new Fields .SFFloat (1)),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "isBound",           new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "bindTime",          new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",         new Fields .SFNode ()),
 		]),
 		getTypeName: function ()
 		{
@@ -43506,6 +44061,129 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DViewpointNode    .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			this .position_       .addInterest (this, "set_position__");
+			this .positionOffset_ .addInterest (this, "set_position__");
+			this .navType_        .addFieldInterest (this .navigationInfoNode .type_);
+			this .headlight_      .addFieldInterest (this .navigationInfoNode .headlight_);
+		
+			this .navigationInfoNode .setup ();
+		
+			this .set_position__ ();
+
+			// Setup interpolators
+
+			this .fieldOfViewInterpolator .key_ = [ 0, 1 ];
+			this .fieldOfViewInterpolator .setup ();
+
+			this .getEaseInEaseOut () .modifiedFraction_changed_ .addFieldInterest (this .fieldOfViewInterpolator .set_fraction_);
+			this .fieldOfViewInterpolator .value_changed_ .addFieldInterest (this .fieldOfViewScale_);
+		},
+		setInterpolators: function (fromViewpoint)
+		{
+			if (fromViewpoint .getType () .indexOf (X3DConstants .GeoViewpoint) < 0)
+			{
+				this .fieldOfViewInterpolator .keyValue_ = [ this .fieldOfViewScale_ .getValue (), this .fieldOfViewScale_ .getValue () ];
+			}
+			else
+			{
+				var scale = fromViewpoint .getFieldOfView () / this .fieldOfView_ .getValue ();
+	
+				this .fieldOfViewInterpolator .keyValue_ = [ scale, this .fieldOfViewScale_ .getValue () ];
+	
+				this .fieldOfViewScale_ = scale;
+			}
+		},
+		setPosition: function (value)
+		{
+			this .position_ .setValue (this .getGeoCoord (value, position));
+		},
+		getPosition: function () 
+		{
+			return this .getCoord (this .position_ .getValue (), position);
+		},
+		set_position__: function ()
+		{
+			this .getCoord (this .position_ .getValue (), this .coord);
+
+			this .elevation = this .getElevation (coord .assign (this .coord) .add (this .positionOffset_ .getValue ()));
+		},
+		setOrientation: function (value)
+		{
+			///  Returns the resulting orientation for this viewpoint.
+
+			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
+
+			orientation .setMatrix (rotationMatrix);
+
+			this .orientation_ .setValue (orientation .inverse () .multLeft (value));
+		},
+		getOrientation: function ()
+		{
+			///  Returns the resulting orientation for this viewpoint.
+
+			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
+
+			orientation .setMatrix (rotationMatrix);
+		
+			return orientation .multLeft (this .orientation_ .getValue ());
+		},
+		getCenterOfRotation: function ()
+		{
+			return this .getCoord (this .centerOfRotation_ .getValue (), centerOfRotation);
+		},
+		getFieldOfView: function ()
+		{
+			var fov = this .fieldOfView_ * this .fieldOfViewScale_;
+
+			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
+		},
+		getUpVector: function ()
+		{
+			return this .getGeoUpVector .call (this, coord .assign (this .coord) .add (this .positionOffset_ .getValue ()), upVector);
+		},
+		getSpeedFactor: function ()
+		{
+			return (Math .max (this .elevation, 0.0) + 10) / 10 * this .speedFactor_ .getValue ();
+		},
+		getMaxZFar: function ()
+		{
+			return 1e9;
+		},
+		getScreenScale: function (point, viewport)
+		{
+		   // Returns the screen scale in meter/pixel for on pixel.
+
+			var
+				width  = viewport [2],
+				height = viewport [3],
+				size   = Math .tan (this .getFieldOfView () / 2) * 2 * point .abs (); // Assume we are on sphere.
+
+			size *= Math .abs (normalized .assign (point) .normalize () .dot (zAxis));
+
+			if (width > height)
+				size /= height;
+			else
+				size /= width;
+
+			return screenScale .set (size, size, size);
+		},
+		getLookAtDistance: function (bbox)
+		{
+			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
+		},
+		getProjectionMatrix: function (zNear, zFar, viewport)
+		{
+			var
+				geoZNear = zNear * Math .max (this .elevation / 100, 1),
+				geoZFar  = zFar;
+
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
 		},
 	});
 
@@ -55389,298 +56067,6 @@ function ($, X3DBaseNode)
 	return BindableList;
 });
 
-define ('cobweb/Components/Navigation/NavigationInfo',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DBindableNode",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DBindableNode,
-          TraverseType,
-          X3DConstants)
-{
-
-
-	var TransitionType =
-	{
-		TELEPORT: true,
-		LINEAR:   true,
-		ANIMATE:  true,
-	};
-
-	function NavigationInfo (executionContext)
-	{
-		X3DBindableNode .call (this, executionContext);
-
-		this .addType (X3DConstants .NavigationInfo);
-				
-		this .addChildren ("availableViewers", new Fields .MFString (),
-		                   "viewer",           new Fields .SFString ("EXAMINE"));
-	}
-
-	NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
-	{
-		constructor: NavigationInfo,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_bind",           new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "type",               new Fields .MFString ([ "EXAMINE", "ANY" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "avatarSize",         new Fields .MFFloat ([ 0.25, 1.6, 0.75 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "speed",              new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "headlight",          new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "visibilityLimit",    new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionType",     new Fields .MFString ("LINEAR")),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionTime",     new Fields .SFTime (1)),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "transitionComplete", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",            new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "bindTime",           new Fields .SFTime ()),
-		]),
-		getTypeName: function ()
-		{
-			return "NavigationInfo";
-		},
-		getComponentName: function ()
-		{
-			return "Navigation";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DBindableNode .prototype .initialize .call (this);
-
-			this .type_      .addInterest (this, "set_type__");
-			this .headlight_ .addInterest (this, "set_headlight__");
-
-			this .set_type__ ();
-			this .set_headlight__ ();
-		},
-		set_type__: function ()
-		{
-			this .availableViewers_ .length = 0;;
-
-			var
-				examineViewer = false,
-				walkViewer    = false,
-				flyViewer     = false,
-				planeViewer   = false,
-				noneViewer    = false,
-				lookAt        = false;
-
-			// Determine active viewer.
-
-			this .viewer_ = "EXAMINE";
-
-			for (var i = 0; i < this .type_ .length; ++ i)
-			{
-			   var string = this .type_ [i];
-			
-				switch (string)
-				{
-					case "EXAMINE":
-					case "WALK":
-					case "FLY":
-					case "LOOKAT":
-					case "PLANE":
-					case "NONE":
-						this .viewer_ = string;
-						break;
-					case "PLANE_create3000.de":
-						this .viewer_ = "PLANE";
-						break;
-					default:
-						continue;
-				}
-
-				// Leave for loop.
-				break;
-			}
-
-			// Determine available viewers.
-
-			if (! this .type_ .length)
-			{
-				examineViewer = true;
-				walkViewer    = true;
-				flyViewer     = true;
-				planeViewer   = true;
-				noneViewer    = true;
-				lookAt        = true;
-			}
-			else
-			{
-				for (var i = 0; i < this .type_ .length; ++ i)
-				{
-				   var string = this .type_ [i];
-
-					switch (string)
-					{
-						case "EXAMINE":
-							examineViewer = true;
-							continue;
-						case "WALK":
-							walkViewer = true;
-							continue;
-						case "FLY":
-							flyViewer = true;
-							continue;
-						case "LOOKAT":
-							lookAt = true;
-							continue;
-						case "PLANE":
-							planeViewer = true;
-							continue;
-						case "NONE":
-							noneViewer = true;
-							continue;
-					}
-
-					if (string == "ANY")
-					{
-						examineViewer = true;
-						walkViewer    = true;
-						flyViewer     = true;
-						planeViewer   = true;
-						noneViewer    = true;
-						lookAt        = true;
-
-						// Leave for loop.
-						break;
-					}
-
-					// Some string defaults to EXAMINE.
-					examineViewer = true;
-				}
-
-				if (examineViewer)
-					this .availableViewers_ .push ("EXAMINE");
-
-				if (walkViewer)
-					this .availableViewers_ .push ("WALK");
-
-				if (flyViewer)
-					this .availableViewers_ .push ("FLY");
-
-				if (planeViewer)
-					this .availableViewers_ .push ("PLANE");
-
-				if (lookAt)
-					this .availableViewers_ .push ("LOOKAT");
-
-				if (noneViewer)
-					this .availableViewers_ .push ("NONE");
-			}
-		},
-		set_headlight__: function ()
-		{
-			if (this .headlight_ .getValue ())
-				this .enable = enable;
-			else
-				delete this .enable;
-		},
-		bindToLayer: function (layer)
-		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
-			layer .getNavigationInfoStack () .push (this);
-		},
-		unbindFromLayer: function (layer)
-		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
-			layer .getNavigationInfoStack () .pop (this);
-		},
-		removeFromLayer: function (layer)
-		{
-			layer .getNavigationInfoStack () .remove (this);
-		},
-		getViewer: function ()
-		{
-		   return this .viewer_ .getValue ();
-		},
-		getCollisionRadius: function ()
-		{
-			if (this .avatarSize_ .length > 0)
-			{
-				if (this .avatarSize_ [0] > 0)
-					return this .avatarSize_ [0];
-			}
-
-			return 0.25;
-		},
-		getAvatarHeight: function ()
-		{
-			if (this .avatarSize_ .length > 1)
-				return this .avatarSize_ [1];
-
-			return 1.6;
-		},
-		getStepHeight: function ()
-		{
-			if (this .avatarSize_ .length > 2)
-				return this .avatarSize_ [2];
-
-			return 0.75;
-		},
-		getNearPlane: function ()
-		{
-			var zNear = this .getCollisionRadius ();
-
-			if (zNear === 0)
-				return 1e-5;
-
-			else
-				return zNear / 2;
-		},
-		getFarPlane: function (viewpoint)
-		{
-			return this .visibilityLimit_ .getValue ()
-				    ? this .visibilityLimit_ .getValue ()
-				    : viewpoint .getMaxZFar ();
-		},
-		getTransitionType: function ()
-		{
-			for (var i = 0, length = this .transitionType_ .length; i < length; ++ i)
-			{
-				var
-					value          = this .transitionType_ [i],
-					transitionType = TransitionType [value];
-
-				if (transitionType)
-					return value;
-			}
-
-			return "LINEAR";
-		},
-		enable: function ()
-		{
-		},
-		traverse: function ()
-		{
-			this .getCurrentLayer () .getNavigationInfos () .push (this);
-		}
-	});
-
-	function enable ()
-	{
-		this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
-	}
-
-	return NavigationInfo;
-});
-
-
-
-
 define ('cobweb/Components/EnvironmentalEffects/X3DFogObject',[
 	"jquery",
 	"cobweb/Bits/X3DConstants",
@@ -56323,7 +56709,7 @@ function ($,
 
 			// Rotate and scale background.
 
-			modelViewMatrix .multLeft (viewpoint .getInverseCameraSpaceMatrix ());
+			modelViewMatrix .multRight (viewpoint .getInverseCameraSpaceMatrix ());
 			modelViewMatrix .get (null, rotation);
 			modelViewMatrix .identity ();
 			modelViewMatrix .scale (scale);
@@ -58724,7 +59110,6 @@ define ("cobweb/Components/PointingDeviceSensor/TouchSensor",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
@@ -58733,10 +59118,11 @@ function ($,
           FieldDefinitionArray,
           X3DTouchSensorNode, 
           X3DConstants,
-          Vector2,
           Matrix4)
 {
 
+
+	var invModelViewMatrix = new Matrix4 ();
 
 	function TouchSensor (executionContext)
 	{
@@ -58780,9 +59166,10 @@ function ($,
 				if (this .isOver_ .getValue ())
 				{
 					var
-						intersection       = hit .intersection,
-						modelViewMatrix    = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix,
-						invModelViewMatrix = Matrix4 .inverse (modelViewMatrix);
+						intersection    = hit .intersection,
+						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+
+					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 					this .hitTexCoord_changed_ = intersection .texCoord;
 					this .hitNormal_changed_   = modelViewMatrix .multMatrixDir (intersection .normal .copy ()) .normalize ();
@@ -59742,6 +60129,10 @@ function ($,
 		{
 			return "children";
 		},
+		getBBox: function ()
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .matrix);
+		},
 		rotate: function (type)
 		{
 			try
@@ -60596,7 +60987,7 @@ function ($,
 
 
 
-define ('cobweb/Components/Grouping/X3DTransformMatrix4DNode',[
+define ('cobweb/Components/Grouping/X3DTransformMatrix3DNode',[
 	"jquery",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
@@ -60625,18 +61016,18 @@ function ($,
 		modelViewMatrix .pop ();
 	}
 
-	function X3DTransformMatrix4DNode (executionContext)
+	function X3DTransformMatrix3DNode (executionContext)
 	{
 		X3DGroupingNode .call (this, executionContext);
 
-		this .addType (X3DConstants .X3DTransformMatrix4DNode);
+		this .addType (X3DConstants .X3DTransformMatrix3DNode);
 
 		this .matrix = new Matrix4 ();
 	}
 
-	X3DTransformMatrix4DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+	X3DTransformMatrix3DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 	{
-		constructor: X3DTransformMatrix4DNode,
+		constructor: X3DTransformMatrix3DNode,
 		getBBox: function ()
 		{
 			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
@@ -60645,6 +61036,19 @@ function ($,
 				return bbox .multRight (this .matrix);
 
 			return bbox;
+		},
+		setMatrix: function (matrix)
+		{
+			if (matrix .equals (Matrix4 .Identity))
+			{
+				this .matrix .identity ();
+				this .traverse = X3DGroupingNode .prototype .traverse;
+			}
+			else
+			{
+			   this .matrix .assign (matrix);
+				this .traverse = traverse;
+			}
 		},
 		getMatrix: function ()
 		{
@@ -60665,7 +61069,7 @@ function ($,
 		},
 	});
 
-	return X3DTransformMatrix4DNode;
+	return X3DTransformMatrix3DNode;
 });
 
 
@@ -60673,28 +61077,28 @@ function ($,
 
 define ('cobweb/Components/Grouping/X3DTransformNode',[
 	"jquery",
-	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
-          X3DTransformMatrix4DNode, 
+          X3DTransformMatrix3DNode, 
           X3DConstants)
 {
 
 
 	function X3DTransformNode (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DTransformMatrix3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformNode);
 	}
 
-	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
 	{
 		constructor: X3DTransformNode,
 		initialize: function ()
 		{
-			X3DTransformMatrix4DNode .prototype .initialize .call (this);
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			
 			this .addInterest (this, "eventsProcessed");
 
@@ -60702,7 +61106,7 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			X3DTransformMatrix4DNode .prototype .eventsProcessed .call (this);
+			X3DTransformMatrix3DNode .prototype .eventsProcessed .call (this); // XXX, empty function call???
 			
 			this .setHidden (this .scale_ .x === 0 ||
 			                 this .scale_ .y === 0 ||
@@ -61177,7 +61581,7 @@ function ($,
 	X3DColorNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DColorNode,
-		getColor: function (index)
+		get1Color: function (index)
 		{
 			if (index >= 0 && index < this .color .length)
 				return this .color [index] .getValue ();
@@ -64173,9 +64577,9 @@ function ($,
 					if (colorNode)
 					{
 						if (colorPerVertex)
-							this .addColor (colorNode .getColor (index));
+							this .addColor (colorNode .get1Color (index));
 						else
-							this .addColor (colorNode .getColor (face));
+							this .addColor (colorNode .get1Color (face));
 					}
 						
 					if (texCoordNode)
@@ -64190,10 +64594,10 @@ function ($,
 					if (normalNode)
 					{
 						if (normalPerVertex)
-							this .addNormal (normalNode .getVector (index));
+							this .addNormal (normalNode .get1Vector (index));
 
 						else
-							this .addNormal (normalNode .getVector (face));
+							this .addNormal (normalNode .get1Vector (face));
 					}
 
 					this .addVertex (points [index]);
@@ -64724,6 +65128,8 @@ define ('cobweb/Components/Geospatial/GeoCoordinate',[
 	"cobweb/Components/Rendering/X3DCoordinateNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -64731,7 +65137,9 @@ function ($,
           FieldDefinitionArray,
           X3DCoordinateNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Triangle3,
+          Vector3)
 {
 
 
@@ -64741,6 +65149,9 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoCoordinate);
+
+		this .points = [ ];                   // Transformed points in GC.
+		this .origin = new Vector3 (0, 0, 0); // Origin of the reference frame.
 	}
 
 	GeoCoordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
@@ -64749,9 +65160,9 @@ function ($,
 		constructor: GeoCoordinate,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ([ "GD", "WE" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "point",     new Fields .MFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "point",     new Fields .MFVec3d ()),
 		]),
 		getTypeName: function ()
 		{
@@ -64765,6 +65176,34 @@ function ($,
 		{
 			return "coord";
 		},
+		initialize: function ()
+		{
+			X3DCoordinateNode   .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+		
+			this .addInterest (this, "eventsProcessed");
+		
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			var
+				point  = this .point_ .getValue (),
+				points = this .points;
+
+			for (var i = 0, length = Math .min (point .length, points .length); i < length; ++ i)
+				this .getCoord (point [i] .getValue (), points [i]);
+
+			for (var length = point .length; i < length; ++ i)
+			{
+				var p = points [i] = new Vector3 (0, 0, 0);
+				this .getCoord (point [i] .getValue (), p);
+			}
+		
+			points .length = length;
+
+			this .getCoord (Vector3 .Zero, this .origin);
+		},
 		isEmpty: function ()
 		{
 			return this .point_ .length == 0;
@@ -64772,6 +65211,48 @@ function ($,
 		getSize: function ()
 		{
 			return this .point_ .length;
+		},
+		get1Point: function (index)
+		{
+			// The index cannot be less than 0.
+
+			if (index < this .points .length)
+				return this .points [index];
+
+			return this .origin;
+		},
+		getNormal: function (index1, index2, index3)
+		{
+			// The index[1,2,3] cannot be less than 0.
+
+			var
+				points = this .points,
+				length = points .length;
+
+			if (index1 < length && index2 < length && index3 < length)
+				return Triangle3 .normal (points [index1],
+				                          points [index2],
+				                          points [index3],
+				                          new Vector3 (0, 0, 0));
+
+			return new Vector3 (0, 0, 0);
+		},
+		getQuadNormal: function (index1, index2, index3, index4)
+		{
+			// The index[1,2,3,4] cannot be less than 0.
+
+			var
+				points = this .points,
+				length = points .length;
+
+			if (index1 < length && index2 < length && index3 < length && index4 < length)
+				return Triangle3 .quadNormal (points [index1],
+				                              points [index2],
+				                              points [index3],
+				                              points [index4],
+				                              new Vector3 (0, 0, 0));
+
+			return new Vector3 (0, 0, 0);
 		},
 	});
 
@@ -64789,6 +65270,10 @@ define ('cobweb/Components/Geospatial/GeoElevationGrid',[
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -64796,7 +65281,11 @@ function ($,
           FieldDefinitionArray,
           X3DGeometryNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          X3DCast,
+          Triangle3,
+          Vector2,
+          Vector3)
 {
 
 
@@ -64806,6 +65295,10 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoElevationGrid);
+
+		this .colorNode    = null;
+		this .texCoordNode = null;
+		this .normalNode   = null;
 	}
 
 	GeoElevationGrid .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -64814,7 +65307,8 @@ function ($,
 		constructor: GeoElevationGrid,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",       new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",       new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoGridOrigin",   new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "xDimension",      new Fields .SFInt32 ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "zDimension",      new Fields .SFInt32 ()),
@@ -64830,7 +65324,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "height",          new Fields .MFDouble ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",       new Fields .SFNode ()),
 		]),
 		getTypeName: function ()
 		{
@@ -64844,11 +65337,499 @@ function ($,
 		{
 			return "geometry";
 		},
+		initialize: function ()
+		{
+			X3DGeometryNode     .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			this .color_    .addInterest (this, "set_color__");
+			this .texCoord_ .addInterest (this, "set_texCoord__");
+			this .normal_   .addInterest (this, "set_normal__");
+		
+			this .set_color__ ();
+			this .set_texCoord__ ();
+			this .set_normal__ ();
+		},
+		set_color__: function ()
+		{
+			if (this .colorNode)
+			{
+				this .colorNode .removeInterest (this, "addNodeEvent");
+				this .colorNode .removeInterest (this, "set_transparent__");
+			}
+
+			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
+
+			if (this .colorNode)
+			{
+				this .colorNode .addInterest (this, "addNodeEvent");
+				this .colorNode .addInterest (this, "set_transparent__");
+
+				this .set_transparent__ ();
+			}
+			else
+				this .transparent_ = false;
+		},
+		set_transparent__: function ()
+		{
+			this .transparent_ = this .colorNode .isTransparent ();
+		},
+		set_texCoord__: function ()
+		{
+			if (this .texCoordNode)
+				this .texCoordNode .removeInterest (this, "addNodeEvent");
+
+			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
+
+			if (this .texCoordNode)
+				this .texCoordNode .addInterest (this, "addNodeEvent");
+		},
+		set_normal__: function ()
+		{
+			if (this .normalNode)
+				this .normalNode .removeInterest (this, "addNodeEvent");
+
+			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
+
+			if (this .normalNode)
+				this .normalNode .addInterest (this, "addNodeEvent");
+		},
+		getAttrib: function ()
+		{
+			return this .attribNodes;
+		},
+		getColor: function ()
+		{
+			return this .colorNode;
+		},
+		getTexCoord: function ()
+		{
+			return this .texCoordNode;
+		},
+		getNormal: function ()
+		{
+			return this .normalNode;
+		},
+		getHeight: function (index)
+		{
+			if (index < this .height_ .length)
+				return this .height_ [index] * this .yScale_ .getValue ();
+
+			return 0;
+		},
+		createTexCoords: function ()
+		{
+			var
+				texCoords  = [ ],
+				xDimension = this .xDimension_ .getValue (),
+				zDimension = this .zDimension_ .getValue (),
+				xSize      = xDimension - 1,
+				zSize      = zDimension - 1;
+
+			for (var z = 0; z < zDimension; ++ z)
+			{
+				for (var x = 0; x < xDimension; ++ x)
+					texCoords .push (new Vector2 (x / xSize, z / zSize));
+			}
+
+			return texCoords;
+		},
+		createNormals: function (points, coordIndex, creaseAngle)
+		{
+			var
+				cw          = ! this .ccw_ .getValue (),
+				normalIndex = [ ],
+				normals     = [ ];
+
+			for (var p = 0; p < points .length; ++ p)
+				normalIndex [p] = [ ];
+
+			for (var c = 0; c < coordIndex .length; c += 3)
+			{
+				var
+					c0 = coordIndex [c],
+					c1 = coordIndex [c + 1],
+					c2 = coordIndex [c + 2];
+				
+				normalIndex [c0] .push (normals .length);
+				normalIndex [c1] .push (normals .length + 1);
+				normalIndex [c2] .push (normals .length + 2);
+
+				var normal = Triangle3 .normal (points [c0], points [c1], points [c2], new Vector3 (0, 0, 0));
+
+				if (cw)
+					normal .negate ();
+
+				normals .push (normal);
+				normals .push (normal);
+				normals .push (normal);
+			}
+
+			return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue ());
+		},
+		createCoordIndex: function ()
+		{
+			// p1 - p4 
+			//  | \ |
+			// p2 - p3
+
+			var
+				coordIndex = [ ],
+				xDimension = this .xDimension_ .getValue (),
+				zDimension = this .zDimension_ .getValue (),
+				xSize      = xDimension - 1,
+				zSize      = zDimension - 1;
+
+			for (var z = 0; z < zSize; ++ z)
+			{
+				for (var x = 0; x < xSize; ++ x)
+				{
+					var
+						i1 =       z * xDimension + x,
+						i2 = (z + 1) * xDimension + x,
+						i3 = (z + 1) * xDimension + (x + 1),
+						i4 =       z * xDimension + (x + 1);
+
+					coordIndex .push (i1); // p1
+					coordIndex .push (i3); // p3
+					coordIndex .push (i2); // p2
+
+					coordIndex .push (i1); // p1
+					coordIndex .push (i4); // p4
+					coordIndex .push (i3); // p3
+				}
+			}
+
+			return coordIndex;
+		},
+		createPoints: function ()
+		{
+			var
+				points     = [ ],
+				xDimension = this .xDimension_ .getValue (),
+				zDimension = this .zDimension_ .getValue (),
+				xSpacing   = this .xSpacing_ .getValue (),
+				zSpacing   = this .zSpacing_ .getValue ();
+
+			// When the geoSystem is "GD", xSpacing refers to the number of units of longitude in angle base units between
+			// adjacent height values and zSpacing refers to the number of units of latitude in angle base units between
+			// vertical height values.
+		
+			// When the geoSystem is "UTM", xSpacing refers to the number of eastings (length base units) between adjacent
+			// height values and zSpacing refers to the number of northings (length base units) between vertical height values.
+
+			if (this .getStandardOrder ())
+			{
+				for (var z = 0; z < zDimension; ++ z)
+				{
+					for (var x = 0; x < xDimension; ++ x)
+					{
+						var point = new Vector3 (zSpacing * z, // latitude, northing
+						                         xSpacing * x, // longitude, easting
+						                         this .getHeight (x + z * xDimension));
+	
+						point .add (this .geoGridOrigin_ .getValue ());
+
+						points .push (this .getCoord (point, point));
+					}
+				}
+			}
+			else
+			{
+				for (var z = 0; z < zDimension; ++ z)
+				{
+					for (var x = 0; x < xDimension; ++ x)
+					{
+						var point = new Vector3 (xSpacing * x, // longitude, easting
+						                         zSpacing * z, // latitude, northing
+						                         this .getHeight (x + z * xDimension));
+	
+						point .add (this .geoGridOrigin_ .getValue ());
+
+						points .push (this .getCoord (point, point));
+					}
+				}
+			}
+
+			return points;
+		},
+		build: function ()
+		{
+			if (this .xDimension_ .getValue () < 2 || this .zDimension_ .getValue () < 2)
+				return;
+
+			var
+				colorPerVertex  = this .colorPerVertex_ .getValue (),
+				normalPerVertex = this .normalPerVertex_ .getValue (),
+				coordIndex      = this .createCoordIndex (),
+				colorNode       = this .getColor (),
+				texCoordNode    = this .getTexCoord (),
+				normalNode      = this .getNormal (),
+				points          = this .createPoints (),
+				face            = 0;
+
+			// Vertex attribute
+
+			//std::vector <std::vector <float>> attribArrays (attribNodes .size ());
+
+			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
+			//	attribArrays [a] .reserve (coordIndex .size ());
+
+			if (texCoordNode)
+				texCoordNode .init (this .getTexCoords ());
+			else
+			{
+				var texCoords = this .createTexCoords ();
+				this .getTexCoords () .push ([ ]);
+			}
+
+			// Build geometry
+
+			for (var c = 0; c < coordIndex .length; ++ face)
+			{
+				for (var p = 0; p < 6; ++ p, ++ c)
+				{
+					var index = coordIndex [c];
+
+					//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
+					//	attribNodes [a] -> addValue (attribArrays [a], i);
+
+					if (colorNode)
+					{
+						if (colorPerVertex)
+							this .addColor (colorNode .get1Color (index));
+						else
+							this .addColor (colorNode .get1Color (face));
+					}
+						
+					if (texCoordNode)
+						texCoordNode .addTexCoord (this .getTexCoords (), index);
+
+					else
+					{
+						var t = texCoords [index];
+						this .getTexCoords () [0] .push (t .x, t .y, 0, 1);
+					}
+
+					if (normalNode)
+					{
+						if (normalPerVertex)
+							this .addNormal (normalNode .get1Vector (index));
+
+						else
+							this .addNormal (normalNode .get1Vector (face));
+					}
+
+					this .addVertex (points [index]);
+				}
+			}
+
+			// Add auto-generated normals if needed.
+
+			if (! normalNode)
+			{
+				var normals = this .createNormals (points, coordIndex);
+
+				for (var i = 0; i < normals .length; ++ i)
+					this .addNormal (normals [i]);
+			}
+
+			this .setSolid (this .solid_ .getValue ());
+			this .setCCW (this .ccw_ .getValue ());
+			this .setCurrentTexCoord (this .getTexCoord ());
+		},
 	});
 
 	return GeoElevationGrid;
 });
 
+
+
+
+define ('cobweb/Components/Networking/Inline',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Loader",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode,
+          X3DUrlObject,
+          X3DBoundedObject,
+          Group,
+          X3DConstants,
+          Loader)
+{
+
+
+	function Inline (executionContext)
+	{
+		X3DChildNode     .call (this, executionContext);
+		X3DUrlObject     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
+
+		this .addType (X3DConstants .Inline);
+		
+		this .addChildren ("buffer", new Fields .SFTime ());
+
+		this .scene    = this .getBrowser () .getDefaultScene ();
+		this .group    = new Group (executionContext);
+		this .getBBox  = this .group .getBBox  .bind (this .group);
+		this .traverse = this .group .traverse .bind (this .group);
+	}
+
+	Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DUrlObject .prototype,
+		X3DBoundedObject .prototype,
+	{
+		constructor: Inline,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "load",       new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",        new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Inline";
+		},
+		getComponentName: function ()
+		{
+			return "Networking";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode     .prototype .initialize .call (this);
+			X3DUrlObject     .prototype .initialize .call (this);
+			X3DBoundedObject .prototype .initialize .call (this);
+
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
+			this .group .setup ();
+			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+
+			this .load_   .addInterest (this, "set_load__");
+			this .url_    .addInterest (this, "set_url__");
+			this .buffer_ .addInterest (this, "set_buffer__");
+
+			this .requestAsyncLoad ();
+		},
+		set_live__: function ()
+		{
+			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
+			{
+				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
+
+				if (live)
+					this .scene .beginUpdate ();
+				else
+					this .scene .endUpdate ();
+			}
+		},
+		set_load__: function ()
+		{
+			if (this .load_ .getValue ())
+				this .buffer_ .addEvent ();
+
+			else
+				this .requestUnload ();
+		},
+		set_url__: function ()
+		{
+			this .buffer_ .addEvent ();
+		},
+		set_buffer__: function ()
+		{
+			if (! this .load_ .getValue ())
+				return;
+
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+
+			this .requestAsyncLoad ();
+		},
+		requestImmediateLoad: function ()
+		{
+			try
+			{
+				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
+			}
+			catch (error)
+			{
+				console .log (error);
+				this .setInternalScene (this .getBrowser () .getDefaultScene ());
+			}
+		},
+		requestAsyncLoad: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
+		},
+		requestUnload: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .NOT_STARTED_STATE || this .checkLoadState () === X3DConstants .FAILED_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+			this .setInternalScene (this .getBrowser () .getDefaultScene ());
+		},
+		setInternalSceneAsync: function (scene)
+		{
+			if (scene)
+			{
+				this .setLoadState (X3DConstants .COMPLETE_STATE);
+				this .setInternalScene (scene);
+			}
+			else
+			{
+				this .setLoadState (X3DConstants .FAILED_STATE);
+				this .setInternalScene (this .getBrowser () .getDefaultScene ());
+			}
+		},
+		setInternalScene: function (scene)
+		{
+			this .scene .endUpdate ();
+			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
+
+			// Set new scene.
+
+			this .scene = scene;
+			this .scene .setup ();
+
+			//this .scene .setExecutionContext (this .getExecutionContext ());
+			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
+			this .group .children_ = this .scene .rootNodes;
+
+			this .set_live__ ();
+
+			this .getBrowser () .addBrowserEvent ();
+		},
+		getInternalScene: function ()
+		{
+			return this .scene;
+		},
+	});
+
+	return Inline;
+});
 
 
 
@@ -64861,6 +65842,10 @@ define ('cobweb/Components/Geospatial/GeoLOD',[
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Components/Networking/Inline",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -64869,9 +65854,15 @@ function ($,
           X3DChildNode, 
           X3DBoundedObject, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Group,
+          Inline,
+          Vector3,
+          Matrix4)
 {
 
+
+	var center = new Vector3 (0, 0, 0);
 
 	function GeoLOD (executionContext)
 	{
@@ -64880,6 +65871,16 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoLOD);
+
+		this .rootGroup        = new Group (this .getBrowser () .getPrivateScene ());
+		this .rootInline       = new Inline (executionContext);
+		this .child1Inline     = new Inline (executionContext);
+		this .child2Inline     = new Inline (executionContext);
+		this .child3Inline     = new Inline (executionContext);
+		this .child4Inline     = new Inline (executionContext);
+		this .childrenLoaded   = false;
+		this .keepCurrentLevel = false;
+		this .modelViewMatrix  = new Matrix4 ();
 	}
 
 	GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -64889,7 +65890,8 @@ function ($,
 		constructor: GeoLOD,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",      new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootUrl",       new Fields .MFString ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "child1Url",     new Fields .MFString ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "child2Url",     new Fields .MFString ()),
@@ -64898,7 +65900,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "center",        new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "range",         new Fields .SFFloat (10)),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed", new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",     new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNode",      new Fields .MFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",      new Fields .SFVec3f (-1, -1, -1)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",    new Fields .SFVec3f ()),
@@ -64916,6 +65917,219 @@ function ($,
 		{
 			return "children";
 		},
+		initialize: function ()
+		{
+			X3DChildNode        .prototype .initialize .call (this);
+			X3DBoundedObject    .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			this .rootNode_ .addFieldInterest (this .rootGroup .children_);
+		
+			this .rootGroup .children_ = this .rootNode_;
+			this .rootGroup .setup ();
+		
+			this .rootInline   .loadState_ .addInterest (this, "set_rootLoadState__");
+			this .child1Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .child2Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .child3Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .child4Inline .loadState_ .addInterest (this, "set_childLoadState__");
+		
+			this .rootUrl_   .addFieldInterest (this .rootInline   .url_);
+			this .child1Url_ .addFieldInterest (this .child1Inline .url_);
+			this .child2Url_ .addFieldInterest (this .child2Inline .url_);
+			this .child3Url_ .addFieldInterest (this .child3Inline .url_);
+			this .child4Url_ .addFieldInterest (this .child4Inline .url_);
+		
+			this .rootInline   .load_ = true;
+			this .child1Inline .load_ = false;
+			this .child2Inline .load_ = false;
+			this .child3Inline .load_ = false;
+			this .child4Inline .load_ = false;
+		
+			this .rootInline   .url_ = this .rootUrl_;
+			this .child1Inline .url_ = this .child1Url_;
+			this .child2Inline .url_ = this .child2Url_;
+			this .child3Inline .url_ = this .child3Url_;
+			this .child4Inline .url_ = this .child4Url_;
+		
+			this .rootInline   .setup ();
+			this .child1Inline .setup ();
+			this .child2Inline .setup ();
+			this .child3Inline .setup ();
+			this .child4Inline .setup ();
+		},
+		getBBox: function () 
+		{
+			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
+			{
+				var level = this .level_changed_ .getValue ();
+				
+				switch (level)
+				{
+					case 0:
+					{
+						if (this .rootNode_ .length)
+							return this .rootGroup .getBBox ();
+
+						return this .rootInline .getBBox ();
+					}
+					case 1:
+					{
+						var bbox = new Box3 ();
+						
+						bbox .add (this .child1Inline .getBBox ());
+						bbox .add (this .child2Inline .getBBox ());
+						bbox .add (this .child3Inline .getBBox ());
+						bbox .add (this .child4Inline .getBBox ());
+		
+						return bbox;
+					}
+				}
+
+				return new Box3 ();
+			}
+
+			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+		},
+		set_rootLoadState__: function ()
+		{
+			if (this .level_changed_ .getValue () !== 0)
+				return;
+		
+			if (this .rootNode_ .length)
+				return;
+		
+			if (this .rootInline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				this .children_ = this .rootInline .getInternalScene () .getRootNodes ();
+		},
+		set_childLoadState__: function ()
+		{
+			if (this .level_changed_ .getValue () !== 1)
+				return;
+		
+			this .children_ .length = 0;
+	
+			var loaded = 0;
+
+			if (this .child1Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child1Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+	
+			if (this .child2Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child2Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+	
+			if (this .child3Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child3Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+	
+			if (this .child4Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child4Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+
+			this .childrenLoaded = loaded === 4;
+		},
+		getLevel: function (type)
+		{
+			var distance = this .getDistance (type);
+		
+			if (distance < this .range_ .getValue ())
+				return 1;
+		
+			return 0;
+		},
+		getDistance: function (type)
+		{
+			var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+
+			modelViewMatrix .translate (this .getCoord (this .center_ .getValue (), center));
+
+			return modelViewMatrix .origin .abs ();
+		},
+		traverse: function (type)
+		{
+			var level = this. getLevel (type);
+		
+			if (level !== this .level_changed_ .getValue ())
+			{
+				this .level_changed_ = level;
+		
+				switch (level)
+				{
+					case 0:
+					{
+						if (this .rootNode_ .length)
+							this .children_ = this .rootNode_;
+						else
+						{
+							if (this .rootInline .checkLoadState () == X3DConstants .COMPLETE_STATE)
+								this .children_ = this .rootInline .getInternalScene () .getRootNodes ();
+						}
+		
+						this .child1Inline .load_ = false;
+						this .child2Inline .load_ = false;
+						this .child3Inline .load_ = false;
+						this .child4Inline .load_ = false;
+
+						this .childrenLoaded = false;
+						break;
+					}
+					case 1:
+					{
+						this .child1Inline .load_ = true;
+						this .child2Inline .load_ = true;
+						this .child3Inline .load_ = true;
+						this .child4Inline .load_ = true;
+						break;
+					}
+				}
+			}
+
+			switch (this .childrenLoaded ? level : 0)
+			{
+				case 0:
+				{
+					if (this .rootNode_ .length)
+						this .rootGroup .traverse (type);
+					else
+						this .rootInline .traverse (type);
+		
+					break;
+				}
+				case 1:
+				{
+					this .child1Inline .traverse (type);
+					this .child2Inline .traverse (type);
+					this .child3Inline .traverse (type);
+					this .child4Inline .traverse (type);
+					break;
+				}
+			}
+		},
 	});
 
 	return GeoLOD;
@@ -64929,35 +66143,39 @@ define ('cobweb/Components/Geospatial/GeoLocation',[
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DTransformMatrix4DNode, 
+          X3DTransformMatrix3DNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 
 
+	var locationMatrix = new Matrix4 ();
+
 	function GeoLocation (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DTransformMatrix3DNode .call (this, executionContext);
 		X3DGeospatialObject      .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoLocation);
 	}
 
-	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
 		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoLocation,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",      new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",      new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords",      new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",      new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
@@ -64989,7 +66207,7 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			this .getLocationMatrix (this .geoCoords_ .getValue (), this .getMatrix ());
+			this .setMatrix (this .getLocationMatrix (this .geoCoords_ .getValue (), locationMatrix));
 		},
 	});
 
@@ -65088,13 +66306,15 @@ define ('cobweb/Components/Geospatial/GeoOrigin',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Geospatial/Geospatial",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DNode, 
-          X3DConstants)
+          X3DConstants,
+          Geospatial)
 {
 
 
@@ -65103,6 +66323,8 @@ function ($,
 		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoOrigin);
+
+		this .radians = false;
 	}
 
 	GeoOrigin .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -65110,9 +66332,9 @@ function ($,
 		constructor: GeoOrigin,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new Fields .SFBool ()),
 		]),
 		getTypeName: function ()
 		{
@@ -65125,6 +66347,22 @@ function ($,
 		getContainerField: function ()
 		{
 			return "geoOrigin";
+		},
+		initialize: function ()
+		{
+			X3DNode .prototype .initialize .call (this);
+
+			this .geoSystem_ .addInterest (this, "set_geoSystem__");
+
+			this .set_geoSystem__ ();
+		},
+		set_geoSystem__: function ()
+		{
+			this .referenceFrame = Geospatial .getReferenceFrame (this .geoSystem_, this .radians);
+		},
+		getOrigin: function (result)
+		{
+			return this .referenceFrame .convert (this .geoCoords_ .getValue (), result);
 		},
 	});
 
@@ -65142,6 +66380,7 @@ define ('cobweb/Components/Geospatial/GeoPositionInterpolator',[
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -65149,7 +66388,8 @@ function ($,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Vector3)
 {
 
 
@@ -65167,14 +66407,16 @@ function ($,
 		constructor: GeoPositionInterpolator,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ([ "GD", "WE" ])),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_fraction",     new Fields .SFFloat ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "key",              new Fields .MFFloat ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "keyValue",         new Fields .MFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",    new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "geovalue_changed", new Fields .SFVec3d ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",        new Fields .SFNode ()),
 		]),
+		geovalue: new Vector3 (0, 0, 0),
+		value: new Vector3 (0, 0, 0),
 		getTypeName: function ()
 		{
 			return "GeoPositionInterpolator";
@@ -65186,6 +66428,32 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		setup: function ()
+		{
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			X3DInterpolatorNode .prototype .setup .call (this);
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+
+			this .keyValue_ .addInterest (this, "set_keyValue__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFVec3f ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			this .geovalue_changed_ = this .getReferenceFrame () .lerp (this .keyValue_ [index0] .getValue (), this .keyValue_ [index1] .getValue (), weight, this .geovalue);
+			this .value_changed_    = this .getCoord (this .geovalue_changed_ .getValue (), this .value);
 		},
 	});
 
@@ -65283,6 +66551,255 @@ function ($,
 
 
 
+define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentalSensorNode, 
+          TraverseType,
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4,
+          Box3)
+{
+
+
+	var infinity = new Vector3 (-1, -1, -1);
+	
+	function ProximitySensor (executionContext)
+	{
+		X3DEnvironmentalSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ProximitySensor);
+
+		this .setCameraObject (true);
+
+		this .viewpoint              = null;
+		this .modelViewMatrix        = new Matrix4 ();
+		this .invModelViewMatrix     = new Matrix4 ();
+		this .centerOfRotationMatrix = new Matrix4 ();
+		this .position               = new Vector3 ();
+		this .orientation            = new Rotation4 ();
+		this .centerOfRotation       = new Vector3 ();
+		this .viewer                 = new Vector3 ();
+		this .inside                 = false;
+	}
+
+	ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+	{
+		constructor: ProximitySensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",                 new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",                  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",                     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "center",                   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",                new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",                 new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",                 new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed",      new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "centerOfRotation_changed", new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ProximitySensor";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalSensor";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+			
+			this .enabled_ .addInterest (this, "set_enabled__");
+			this .size_    .addInterest (this, "set_extents__");
+			this .center_  .addInterest (this, "set_extents__");
+
+			this .traversed_ .addFieldInterest (this .isCameraObject_);
+	
+			this .min = new Vector3 (0, 0, 0);
+			this .max = new Vector3 (0, 0, 0);
+			
+			this .set_enabled__ ();
+			this .set_extents__ ();
+		},
+		set_enabled__: function ()
+		{
+			this .setCameraObject (this .enabled_ .getValue ());
+			
+			if (this .enabled_ .getValue ())
+				this .traverse = traverse;
+			else
+				delete this .traverse;
+		},
+		set_extents__: function ()
+		{
+			var
+				s  = this .size_ .getValue (),
+				c  = this .center_ .getValue (),
+				sx = s .x / 2,
+				sy = s .y / 2,
+				sz = s .z / 2,
+				cx = c .x,
+				cy = c .y,
+				cz = c .z;
+
+			this .min .set (cx - sx, cy - sy, cz - sz);
+			this .max .set (cx + sx, cy + sy, cz + sz);
+		},
+		update: function ()
+		{
+			try
+			{
+				if (this .inside && this .getTraversed ())
+				{
+				   var
+				      modelViewMatrix        = this .modelViewMatrix,
+				      centerOfRotationMatrix = this .centerOfRotationMatrix;
+
+					centerOfRotationMatrix .assign (this .viewpoint .getTransformationMatrix ());
+					centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
+					centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
+
+					modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
+					modelViewMatrix .get (null, this .orientation);
+					modelViewMatrix .inverse ();
+
+					this .position .set (modelViewMatrix [12],
+					                     modelViewMatrix [13],
+					                     modelViewMatrix [14]);
+
+					this .orientation .inverse ();
+
+					this .centerOfRotation .set (centerOfRotationMatrix [12],
+					                             centerOfRotationMatrix [13],
+					                             centerOfRotationMatrix [14]);
+
+					if (this .isActive_ .getValue ())
+					{
+						if (! this .position_changed_ .getValue () .equals (this .position))
+							this .position_changed_ = this .position;
+
+						if (! this .orientation_changed_ .getValue () .equals (this .orientation))
+							this .orientation_changed_ = this .orientation;
+
+						if (! this .centerOfRotation_changed_ .getValue () .equals (this .centerOfRotation))
+							this .centerOfRotation_changed_ = this .centerOfRotation;
+					}
+					else
+					{
+						this .isActive_  = true;
+						this .enterTime_ = this .getBrowser () .getCurrentTime ();
+
+						this .position_changed_         = this .position;
+						this .orientation_changed_      = this .orientation;
+						this .centerOfRotation_changed_ = this .centerOfRotation;
+					}
+
+					this .inside = false;
+				}
+				else
+				{
+					if (this .isActive_ .getValue ())
+					{
+						this .isActive_ = false;
+						this .exitTime_ = this .getBrowser () .getCurrentTime ();
+					}
+				}
+			}
+			catch (error)
+			{
+				//console .log (error .message);
+			}
+
+			this .setTraversed (false);
+		},
+		traverse: function ()
+		{ },
+		intersectsPoint: function (point)
+		{
+			var
+				min = this .min,
+				max = this .max;
+
+			return min .x <= point .x &&
+			       max .x >= point .x &&
+			       min .y <= point .y &&
+			       max .y >= point .y &&
+			       min .z <= point .z &&
+			       max .z >= point .z;
+		},
+	});
+		
+	function traverse (type)
+	{
+		try
+		{
+			switch (type)
+			{
+				case TraverseType .CAMERA:
+				{
+					this .viewpoint = this .getCurrentViewpoint ();
+					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					return;
+				}
+				case TraverseType .DISPLAY:
+				{
+				   this .setTraversed (true);
+
+					if (this .inside)
+						return;
+
+					if (this .size_ .getValue () .equals (infinity))
+						this .inside = true;
+
+					else
+					{
+					   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
+
+						this .viewer .set (invModelViewMatrix [12],
+				                         invModelViewMatrix [13],
+				                         invModelViewMatrix [14]);
+
+						this .inside = this .intersectsPoint (this .viewer);
+					}
+
+					return;
+				}
+			}
+		}
+		catch (error)
+		{
+			//console .log (error);
+		}
+	}
+
+	return ProximitySensor;
+});
+
+
+
+
 define ('cobweb/Components/Geospatial/GeoProximitySensor',[
 	"jquery",
 	"cobweb/Fields",
@@ -65290,17 +66807,23 @@ define ('cobweb/Components/Geospatial/GeoProximitySensor',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Components/EnvironmentalSensor/ProximitySensor",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DEnvironmentalSensorNode, 
-          X3DGeospatialObject, 
-          X3DConstants)
+          X3DGeospatialObject,
+          ProximitySensor,
+          X3DConstants,
+          Vector3)
 {
 
+
+	var geoCoord = new Vector3 (0, 0, 0);
 
 	function GeoProximitySensor (executionContext)
 	{
@@ -65308,6 +66831,10 @@ function ($,
 		X3DGeospatialObject        .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoProximitySensor);
+
+		this .proximitySensor = new ProximitySensor (executionContext);
+
+		this .setCameraObject (this .proximitySensor .getCameraObject ());
 	}
 
 	GeoProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
@@ -65316,8 +66843,9 @@ function ($,
 		constructor: GeoProximitySensor,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",                 new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",                new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",                new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",                  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",                new Fields .MFString ([ "GD", "WE" ])),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "size",                     new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "center",                   new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",                 new Fields .SFBool ()),
@@ -65327,7 +66855,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "position_changed",         new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "orientation_changed",      new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "centerOfRotation_changed", new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",                new Fields .SFNode ()),
 		]),
 		getTypeName: function ()
 		{
@@ -65340,6 +66867,40 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+			X3DGeospatialObject        .prototype .initialize .call (this);
+
+			this .enabled_ .addFieldInterest (this .proximitySensor .enabled_);
+			this .size_    .addFieldInterest (this .proximitySensor .size_);
+			this .center_  .addFieldInterest (this .proximitySensor .center_);
+		
+			this .proximitySensor .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+		
+			this .proximitySensor .isActive_                 .addFieldInterest (this .isActive_);
+			this .proximitySensor .enterTime_                .addFieldInterest (this .enterTime_);
+			this .proximitySensor .exitTime_                 .addFieldInterest (this .exitTime_);
+			this .proximitySensor .position_changed_         .addFieldInterest (this .position_changed_);
+			this .proximitySensor .orientation_changed_      .addFieldInterest (this .orientation_changed_);
+			this .proximitySensor .centerOfRotation_changed_ .addFieldInterest (this .centerOfRotation_changed_);
+		
+			this .proximitySensor .position_changed_ .addInterest (this, "set_position__");
+		
+			this .proximitySensor .enabled_ = this .enabled_;
+			this .proximitySensor .size_    = this .size_;
+			this .proximitySensor .center_  = this .center_;
+		
+			this .proximitySensor .setup ();
+		},
+		set_position__: function (position)
+		{
+			this .geoCoord_changed_ = this .getGeoCoord (this .proximitySensor .position_changed_ .getValue (), geoCoord);
+		},
+		traverse: function (type)
+		{
+			this .proximitySensor .traverse (type);
 		},
 	});
 
@@ -65357,6 +66918,8 @@ define ('cobweb/Components/Geospatial/GeoTouchSensor',[
 	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -65364,9 +66927,15 @@ function ($,
           FieldDefinitionArray,
           X3DTouchSensorNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          Matrix4)
 {
 
+
+	var
+		invModelViewMatrix = new Matrix4 (),
+		geoCoords          = new Vector3 (0, 0, 0);
 
 	function GeoTouchSensor (executionContext)
 	{
@@ -65382,8 +66951,9 @@ function ($,
 		constructor: GeoTouchSensor,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",            new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",           new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",             new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",           new Fields .MFString ([ "GD", "WE" ])),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "description",         new Fields .SFString ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitTexCoord_changed", new Fields .SFVec2f ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitNormal_changed",   new Fields .SFVec3f ()),
@@ -65392,7 +66962,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "isOver",              new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",            new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "touchTime",           new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",           new Fields .SFNode ()),
 		]),
 		getTypeName: function ()
 		{
@@ -65405,6 +66974,36 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTouchSensorNode  .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+		},
+		set_over__: function (hit, value)
+		{
+			try
+			{
+				X3DTouchSensorNode .prototype .set_over__ .call (this, hit, value);
+
+				if (this .isOver_ .getValue ())
+				{
+					var
+						intersection    = hit .intersection,
+						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+
+					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+
+					this .hitTexCoord_changed_ = intersection .texCoord;
+					this .hitNormal_changed_   = modelViewMatrix .multMatrixDir (intersection .normal .copy ()) .normalize ();
+					this .hitPoint_changed_    = invModelViewMatrix .multVecMatrix (intersection .point .copy ());
+					this .hitGeoCoord_changed_ = this .getGeoCoord (this .hitPoint_changed_ .getValue (), geoCoords);
+				}
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 	});
 
@@ -65419,41 +67018,47 @@ define ('cobweb/Components/Geospatial/GeoTransform',[
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
-          X3DTransformMatrix4DNode, 
+          X3DTransformMatrix3DNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 
 
+	var
+		matrix         = new Matrix4 (),
+		locationMatrix = new Matrix4 ();
+
 	function GeoTransform (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DTransformMatrix3DNode .call (this, executionContext);
 		X3DGeospatialObject      .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoTransform);
 	}
 
-	GeoTransform .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+	GeoTransform .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
 		X3DGeospatialObject .prototype,
 	{
 		constructor: GeoTransform,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ([ "GD", "WE" ])),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "translation",      new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",         new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "scale",            new Fields .SFVec3f (1, 1, 1)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "scaleOrientation", new Fields .SFRotation ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCenter",        new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCenter",        new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",         new Fields .SFVec3f (-1, -1, -1)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",       new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",      new Fields .MFNode ()),
@@ -65471,6 +67076,38 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
+			X3DGeospatialObject      .prototype .initialize .call (this);
+		
+			this .addInterest (this, "eventsProcessed");
+		
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			try
+			{
+				this .setHidden (this .scale_ .x === 0 ||
+				                 this .scale_ .y === 0 ||
+				                 this .scale_ .z === 0);
+	
+				this .getLocationMatrix (this .geoCenter_ .getValue (), locationMatrix);
+	
+				matrix .set (this .translation_      .getValue (),
+				             this .rotation_         .getValue (),
+				             this .scale_            .getValue (),
+				             this .scaleOrientation_ .getValue ());
+	
+				this .setMatrix (matrix .multRight (locationMatrix) .multLeft (locationMatrix .inverse ()));
+			}
+			catch (error)
+			{
+				// Should normally not happen.
+				this .setHidden (true);
+			}
 		},
 	});
 
@@ -65692,12 +67329,12 @@ function ($,
 						if (colorNode)
 						{
 							if (colorPerVertex)
-								this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
+								this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
 							else
-								this .addColor (colorNode .getColor (this .getColorIndex (face)));
+								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 						}
 
-						this .addVertex (coordNode .getPoint (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .get1Point (coordIndex [i] .getValue ()));
 					}
 				}
 
@@ -66124,193 +67761,6 @@ function ($,
 	return IndexedTriangleStripSet;
 });
 
-
-
-
-define ('cobweb/Components/Networking/Inline',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Networking/X3DUrlObject",
-	"cobweb/Components/Grouping/X3DBoundedObject",
-	"cobweb/Components/Grouping/Group",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DChildNode,
-          X3DUrlObject,
-          X3DBoundedObject,
-          Group,
-          X3DConstants,
-          Loader)
-{
-
-
-	function Inline (executionContext)
-	{
-		X3DChildNode     .call (this, executionContext);
-		X3DUrlObject     .call (this, executionContext);
-		X3DBoundedObject .call (this, executionContext);
-
-		this .addType (X3DConstants .Inline);
-		
-		this .addChildren ("buffer", new Fields .SFTime ());
-
-		this .scene    = this .getBrowser () .getDefaultScene ();
-		this .group    = new Group (executionContext);
-		this .getBBox  = this .group .getBBox  .bind (this .group);
-		this .traverse = this .group .traverse .bind (this .group);
-	}
-
-	Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		X3DUrlObject .prototype,
-		X3DBoundedObject .prototype,
-	{
-		constructor: Inline,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "load",       new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",        new Fields .MFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new Fields .SFVec3f ()),
-		]),
-		getTypeName: function ()
-		{
-			return "Inline";
-		},
-		getComponentName: function ()
-		{
-			return "Networking";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DChildNode     .prototype .initialize .call (this);
-			X3DUrlObject     .prototype .initialize .call (this);
-			X3DBoundedObject .prototype .initialize .call (this);
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .group .setup ();
-			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
-
-			this .load_   .addInterest (this, "set_load__");
-			this .url_    .addInterest (this, "set_url__");
-			this .buffer_ .addInterest (this, "set_buffer__");
-
-			this .requestAsyncLoad ();
-		},
-		set_live__: function ()
-		{
-			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
-			{
-				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
-
-				if (live)
-					this .scene .beginUpdate ();
-				else
-					this .scene .endUpdate ();
-			}
-		},
-		set_load__: function ()
-		{
-			if (this .load_ .getValue ())
-				this .buffer_ .addEvent ();
-
-			else
-				this .requestUnload ();
-		},
-		set_url__: function ()
-		{
-			this .buffer_ .addEvent ();
-		},
-		set_buffer__: function ()
-		{
-			if (! this .load_ .getValue ())
-				return;
-
-			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
-
-			this .requestAsyncLoad ();
-		},
-		requestImmediateLoad: function ()
-		{
-			try
-			{
-				this .setScene (new Loader (this) .createX3DFromURL (this .url_));
-			}
-			catch (error)
-			{
-				console .log (error);
-				this .setScene (this .getBrowser () .getDefaultScene ());
-			}
-		},
-		requestAsyncLoad: function ()
-		{
-			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
-				return;
-
-			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-
-			new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
-		},
-		requestUnload: function ()
-		{
-			if (this .checkLoadState () === X3DConstants .NOT_STARTED_STATE || this .checkLoadState () === X3DConstants .FAILED_STATE)
-				return;
-
-			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
-			this .setScene (this .getBrowser () .getDefaultScene ());
-		},
-		setSceneAsync: function (scene)
-		{
-			if (scene)
-			{
-				this .setLoadState (X3DConstants .COMPLETE_STATE);
-				this .setScene (scene);
-			}
-			else
-			{
-				this .setLoadState (X3DConstants .FAILED_STATE);
-				this .setScene (this .getBrowser () .getDefaultScene ());
-			}
-		},
-		setScene: function (scene)
-		{
-			this .scene .endUpdate ();
-			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
-
-			// Set new scene.
-
-			this .scene = scene;
-			this .scene .setup ();
-
-			//this .scene .setExecutionContext (this .getExecutionContext ());
-			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
-			this .group .children_ = this .scene .rootNodes;
-
-			this .set_live__ ();
-
-			this .getBrowser () .addBrowserEvent ();
-		},
-		getScene: function ()
-		{
-			return this .scene;
-		},
-	});
-
-	return Inline;
-});
 
 
 
@@ -67642,6 +69092,7 @@ define ("cobweb/Components/Layout/LayoutGroup",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -67650,7 +69101,8 @@ function ($,
           X3DGroupingNode,
           X3DCast,
           TraverseType,
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 
 
@@ -67660,8 +69112,10 @@ function ($,
 
 		this .addType (X3DConstants .LayoutGroup);
 
-		this .viewportNode = null;
-		this .layoutNode   = null;
+		this .viewportNode    = null;
+		this .layoutNode      = null;
+		this .modelViewMatrix = new Matrix4 ();
+		this .screenMatrix    = new Matrix4 ();
 	}
 
 	LayoutGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
@@ -67707,6 +69161,24 @@ function ($,
 		{
 			this .layoutNode = X3DCast (X3DConstants .X3DLayoutNode, this .layout_);
 		},
+		getBBox: function ()
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .getMatrix ());
+		},
+		getMatrix: function ()
+		{
+			try
+			{
+				if (this .layoutNode)
+					this .matrix .assign (this .modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+				else
+					this .matrix .identity ();
+			}
+			catch (error)
+			{ }
+		
+			return this .matrix;
+		},
 		traverse: function (type)
 		{
 			switch (type)
@@ -67724,8 +69196,10 @@ function ($,
 							browser         = this .getBrowser (),
 							modelViewMatrix = browser .getModelViewMatrix ();
 
+						this .modelViewMatrix .assign (modelViewMatrix .get ());
+
 						modelViewMatrix .push ();
-						modelViewMatrix .set (this .layoutNode .transform (type));
+						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type)));
 						browser .getLayouts () .push (this .layoutNode);
 
 						X3DGroupingNode .prototype .traverse .call (this, type);
@@ -68043,9 +69517,9 @@ function ($,
 						//	attribNodes [a] -> addValue (attribArrays [a], index);
 
 						if (colorNode)
-							this .addColor (colorNode .getColor (index));
+							this .addColor (colorNode .get1Color (index));
 
-						this .addVertex (coordNode .getPoint (index));
+						this .addVertex (coordNode .get1Point (index));
 					}
 
 					++ index;
@@ -68930,7 +70404,7 @@ function ($,
 		{
 			return "normal";
 		},
-		getVector: function (index)
+		get1Vector: function (index)
 		{
 			if (index >= 0 && index < this .vector .length)
 				return this .vector [index] .getValue ();
@@ -69917,11 +71391,11 @@ function ($,
 			if (this .colorNode)
 			{
 				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
-					this .addColor (colorNode .getColor (i));
+					this .addColor (colorNode .get1Color (i));
 			}
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
-				this .addVertex (coordNode .getPoint (i));
+				this .addVertex (coordNode .get1Point (i));
 
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},
@@ -70414,255 +71888,6 @@ function ($,
 	});
 
 	return PositionInterpolator2D;
-});
-
-
-
-
-define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
-[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Box3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DEnvironmentalSensorNode, 
-          TraverseType,
-          X3DConstants,
-          Vector3,
-          Rotation4,
-          Matrix4,
-          Box3)
-{
-
-
-	var infinity = new Vector3 (-1, -1, -1);
-	
-	function ProximitySensor (executionContext)
-	{
-		X3DEnvironmentalSensorNode .call (this, executionContext);
-
-		this .addType (X3DConstants .ProximitySensor);
-
-		this .setCameraObject (true);
-
-		this .viewpoint              = null;
-		this .modelViewMatrix        = new Matrix4 ();
-		this .invModelViewMatrix     = new Matrix4 ();
-		this .centerOfRotationMatrix = new Matrix4 ();
-		this .position               = new Vector3 ();
-		this .orientation            = new Rotation4 ();
-		this .centerOfRotation       = new Vector3 ();
-		this .viewer                 = new Vector3 ();
-		this .inside                 = false;
-	}
-
-	ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
-	{
-		constructor: ProximitySensor,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",                 new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",                  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "size",                     new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "center",                   new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",                new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",                 new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",                 new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",         new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed",      new Fields .SFRotation ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "centerOfRotation_changed", new Fields .SFVec3f ()),
-		]),
-		getTypeName: function ()
-		{
-			return "ProximitySensor";
-		},
-		getComponentName: function ()
-		{
-			return "EnvironmentalSensor";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
-			
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .size_    .addInterest (this, "set_extents__");
-			this .center_  .addInterest (this, "set_extents__");
-
-			this .traversed_ .addFieldInterest (this .isCameraObject_);
-	
-			this .min = new Vector3 (0, 0, 0);
-			this .max = new Vector3 (0, 0, 0);
-			
-			this .set_enabled__ ();
-			this .set_extents__ ();
-		},
-		set_enabled__: function ()
-		{
-			this .setCameraObject (this .enabled_ .getValue ());
-			
-			if (this .enabled_ .getValue ())
-				this .traverse = traverse;
-			else
-				delete this .traverse;
-		},
-		set_extents__: function ()
-		{
-			var
-				s  = this .size_ .getValue (),
-				c  = this .center_ .getValue (),
-				sx = s .x / 2,
-				sy = s .y / 2,
-				sz = s .z / 2,
-				cx = c .x,
-				cy = c .y,
-				cz = c .z;
-
-			this .min .set (cx - sx, cy - sy, cz - sz);
-			this .max .set (cx + sx, cy + sy, cz + sz);
-		},
-		update: function ()
-		{
-			try
-			{
-				if (this .inside && this .getTraversed ())
-				{
-				   var
-				      modelViewMatrix        = this .modelViewMatrix,
-				      centerOfRotationMatrix = this .centerOfRotationMatrix;
-
-					centerOfRotationMatrix .assign (this .viewpoint .getTransformationMatrix ());
-					centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
-					centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
-
-					modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
-					modelViewMatrix .get (null, this .orientation);
-					modelViewMatrix .inverse ();
-
-					this .position .set (modelViewMatrix [12],
-					                     modelViewMatrix [13],
-					                     modelViewMatrix [14]);
-
-					this .orientation .inverse ();
-
-					this .centerOfRotation .set (centerOfRotationMatrix [12],
-					                             centerOfRotationMatrix [13],
-					                             centerOfRotationMatrix [14]);
-
-					if (this .isActive_ .getValue ())
-					{
-						if (! this .position_changed_ .getValue () .equals (this .position))
-							this .position_changed_ = this .position;
-
-						if (! this .orientation_changed_ .getValue () .equals (this .orientation))
-							this .orientation_changed_ = this .orientation;
-
-						if (! this .centerOfRotation_changed_ .getValue () .equals (this .centerOfRotation))
-							this .centerOfRotation_changed_ = this .centerOfRotation;
-					}
-					else
-					{
-						this .isActive_  = true;
-						this .enterTime_ = this .getBrowser () .getCurrentTime ();
-
-						this .position_changed_         = this .position;
-						this .orientation_changed_      = this .orientation;
-						this .centerOfRotation_changed_ = this .centerOfRotation;
-					}
-
-					this .inside = false;
-				}
-				else
-				{
-					if (this .isActive_ .getValue ())
-					{
-						this .isActive_ = false;
-						this .exitTime_ = this .getBrowser () .getCurrentTime ();
-					}
-				}
-			}
-			catch (error)
-			{
-				//console .log (error .message);
-			}
-
-			this .setTraversed (false);
-		},
-		traverse: function ()
-		{ },
-		intersectsPoint: function (point)
-		{
-			var
-				min = this .min,
-				max = this .max;
-
-			return min .x <= point .x &&
-			       max .x >= point .x &&
-			       min .y <= point .y &&
-			       max .y >= point .y &&
-			       min .z <= point .z &&
-			       max .z >= point .z;
-		},
-	});
-		
-	function traverse (type)
-	{
-		try
-		{
-			switch (type)
-			{
-				case TraverseType .CAMERA:
-				{
-					this .viewpoint = this .getCurrentViewpoint ();
-					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-					return;
-				}
-				case TraverseType .DISPLAY:
-				{
-				   this .setTraversed (true);
-
-					if (this .inside)
-						return;
-
-					if (this .size_ .getValue () .equals (infinity))
-						this .inside = true;
-
-					else
-					{
-					   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
-
-						this .viewer .set (invModelViewMatrix [12],
-				                         invModelViewMatrix [13],
-				                         invModelViewMatrix [14]);
-
-						this .inside = this .intersectsPoint (this .viewer);
-					}
-
-					return;
-				}
-			}
-		}
-		catch (error)
-		{
-			//console .log (error);
-		}
-	}
-
-	return ProximitySensor;
 });
 
 
@@ -71676,15 +72901,20 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-	
-			modelViewMatrix .push ();
+			try
+			{
+				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
 		
-			this .scale (type);
-		
-			X3DGroupingNode .prototype .traverse .call (this, type);
-		
-			modelViewMatrix .pop ();
+				modelViewMatrix .push ();
+			
+				this .scale (type);
+			
+				X3DGroupingNode .prototype .traverse .call (this, type);
+			
+				modelViewMatrix .pop ();
+			}
+			catch (error)
+			{ }
 		},
 	});
 
@@ -74074,6 +75304,9 @@ function ($,
 		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .StaticGroup);
+
+		this .group = new Group (this .getExecutionContext ());
+		this .bbox  = null;
 	}
 
 	StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -74100,16 +75333,32 @@ function ($,
 		},
 		initialize: function ()
 		{
-		   X3DChildNode .prototype .initialize .call (this);
-		   X3DBoundedObject .prototype .initialize .call (this);
+			X3DChildNode     .prototype .initialize .call (this);
+			X3DBoundedObject .prototype .initialize .call (this);
 
-		   this .group = new Group (this .getExecutionContext ());
+			this .bboxSize_   .addFieldInterest (this .group .bboxSize_);
+			this .bboxCenter_ .addFieldInterest (this .group .bboxCenter_);
+			this .children_   .addFieldInterest (this .group .children_);
 
-		   this .children_ .addFieldInterest (this .group .children_);
-		   this .group .children_ = this .children_;
+			this .group .bboxSize_   = this .bboxSize_;
+			this .group .bboxCenter_ = this .bboxCenter_;
+			this .group .children_   = this .children_;
 			this .group .setup ();
 
 			this .traverse = this .group .traverse .bind (this .group);
+
+			// Connect after Group setup.
+			this .group .children_ .addInterest (this, "set_children__");
+
+			this .set_children__ ();
+		},
+		getBBox: function ()
+		{
+			return this .bbox;
+		},
+		set_children__: function ()
+		{
+			this .bbox = this .group .getBBox ();
 		},
 	});
 
@@ -76744,6 +77993,7 @@ function ($,
 			                "                Shading language: " + this .getShadingLanguageVersion () + "\n" +
 			                "        Rendering Properties\n" +
 			                "                Antialiased: " + this .getAntialiased () + "\n" +
+			                "                Depth size: " + this .getDepthSize () + " bits\n" +
 			                "                Color depth: " + this .getColorDepth () + " bits\n" +
 			                "                Max clip planes: 6\n" +
 			                "                Max lights: 8\n" +

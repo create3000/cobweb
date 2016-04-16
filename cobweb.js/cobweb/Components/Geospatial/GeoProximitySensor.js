@@ -93,11 +93,11 @@ function ($,
 		
 			this .proximitySensor .setup ();
 		},
-		set_position__ (position)
+		set_position__: function (position)
 		{
 			this .geoCoord_changed_ = this .getGeoCoord (this .proximitySensor .position_changed_ .getValue (), geoCoord);
 		},
-		traverse (type)
+		traverse: function (type)
 		{
 			this .proximitySensor .traverse (type);
 		},
