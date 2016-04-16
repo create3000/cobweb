@@ -119,12 +119,12 @@ function ($,
 		{
 			try
 			{
-				this .setScene (new Loader (this) .createX3DFromURL (this .url_));
+				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
 			}
 			catch (error)
 			{
 				console .log (error);
-				this .setScene (this .getBrowser () .getDefaultScene ());
+				this .setInternalScene (this .getBrowser () .getDefaultScene ());
 			}
 		},
 		requestAsyncLoad: function ()
@@ -134,7 +134,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{
@@ -142,22 +142,22 @@ function ($,
 				return;
 
 			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
-			this .setScene (this .getBrowser () .getDefaultScene ());
+			this .setInternalScene (this .getBrowser () .getDefaultScene ());
 		},
-		setSceneAsync: function (scene)
+		setInternalSceneAsync: function (scene)
 		{
 			if (scene)
 			{
 				this .setLoadState (X3DConstants .COMPLETE_STATE);
-				this .setScene (scene);
+				this .setInternalScene (scene);
 			}
 			else
 			{
 				this .setLoadState (X3DConstants .FAILED_STATE);
-				this .setScene (this .getBrowser () .getDefaultScene ());
+				this .setInternalScene (this .getBrowser () .getDefaultScene ());
 			}
 		},
-		setScene: function (scene)
+		setInternalScene: function (scene)
 		{
 			this .scene .endUpdate ();
 			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
@@ -175,7 +175,7 @@ function ($,
 
 			this .getBrowser () .addBrowserEvent ();
 		},
-		getScene: function ()
+		getInternalScene: function ()
 		{
 			return this .scene;
 		},

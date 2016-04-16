@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Sat, 16 Apr 2016 03:08:26 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geospatial/GeoLOD.x3d'/>
+    <meta name='modified' content='Sat, 16 Apr 2016 04:05:23 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo
+        title='GeoLOD'>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='4.63945913314819, 6.37186431884766, 6.73359298706055'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.752038455961314, 0.63921920036136, 0.160738839876076, 0.875970352523691'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='0, 0, 0'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <Transform DEF='Cone' containerField='value'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                </Appearance>
+                <Cone/>
+              </Shape>
+            </Transform>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <NavigationInfo/>
+    <Background DEF='Gray'
+        skyColor='0.2 0.2 0.2'/>
+    <Viewpoint
+        description='Viewpoint'
+        position='4.63946 6.37186 6.73359'
+        orientation='-0.752038455961314 0.63921920036136 0.160738839876076 0.875970352523691'/>
+    <GeoLOD
+        geoSystem='"GC"'
+        rootUrl='"root.x3dv"'
+        child1Url='"child1.x3dv"'
+        child2Url='"child2.x3dv"'
+        child3Url='"child3.x3dv"'
+        child4Url='"child4.x3dv"'/>
+    <Transform USE='Cone'/>
+  </Scene>
+</X3D>

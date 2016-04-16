@@ -1165,6 +1165,12 @@
     <None Include="tests\Components\Geospatial\GeoViewpoint.x3d" />
     <None Include="tests\Components\Geospatial\GeoElevationGrid.UTM.x3d" />
     <None Include="tests\Components\images\earth.png" />
+    <None Include="tests\Components\Geospatial\GeoLOD.x3d" />
+    <None Include="tests\Components\Geospatial\child1.x3dv" />
+    <None Include="tests\Components\Geospatial\child2.x3dv" />
+    <None Include="tests\Components\Geospatial\child3.x3dv" />
+    <None Include="tests\Components\Geospatial\child4.x3dv" />
+    <None Include="tests\Components\Geospatial\root.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
