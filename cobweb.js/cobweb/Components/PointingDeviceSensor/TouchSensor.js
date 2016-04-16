@@ -7,7 +7,6 @@ define ("cobweb/Components/PointingDeviceSensor/TouchSensor",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
@@ -16,10 +15,11 @@ function ($,
           FieldDefinitionArray,
           X3DTouchSensorNode, 
           X3DConstants,
-          Vector2,
           Matrix4)
 {
 "use strict";
+
+	var invModelViewMatrix = new Matrix4 ();
 
 	function TouchSensor (executionContext)
 	{
@@ -63,9 +63,10 @@ function ($,
 				if (this .isOver_ .getValue ())
 				{
 					var
-						intersection       = hit .intersection,
-						modelViewMatrix    = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix,
-						invModelViewMatrix = Matrix4 .inverse (modelViewMatrix);
+						intersection    = hit .intersection,
+						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+
+					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 					this .hitTexCoord_changed_ = intersection .texCoord;
 					this .hitNormal_changed_   = modelViewMatrix .multMatrixDir (intersection .normal .copy ()) .normalize ();

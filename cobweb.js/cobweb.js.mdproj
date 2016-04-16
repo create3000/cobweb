@@ -1171,6 +1171,7 @@
     <None Include="tests\Components\Geospatial\child3.x3dv" />
     <None Include="tests\Components\Geospatial\child4.x3dv" />
     <None Include="tests\Components\Geospatial\root.x3dv" />
+    <None Include="tests\Components\Geospatial\GeoTouchSensor.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

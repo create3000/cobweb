@@ -7,6 +7,8 @@ define ([
 	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -14,9 +16,15 @@ function ($,
           FieldDefinitionArray,
           X3DTouchSensorNode, 
           X3DGeospatialObject, 
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          Matrix4)
 {
 "use strict";
+
+	var
+		invModelViewMatrix = new Matrix4 (),
+		geoCoords          = new Vector3 (0, 0, 0);
 
 	function GeoTouchSensor (executionContext)
 	{
@@ -60,6 +68,31 @@ function ($,
 		{
 			X3DTouchSensorNode  .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
+		},
+		set_over__: function (hit, value)
+		{
+			try
+			{
+				X3DTouchSensorNode .prototype .set_over__ .call (this, hit, value);
+
+				if (this .isOver_ .getValue ())
+				{
+					var
+						intersection    = hit .intersection,
+						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+
+					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+
+					this .hitTexCoord_changed_ = intersection .texCoord;
+					this .hitNormal_changed_   = modelViewMatrix .multMatrixDir (intersection .normal .copy ()) .normalize ();
+					this .hitPoint_changed_    = invModelViewMatrix .multVecMatrix (intersection .point .copy ());
+					this .hitGeoCoord_changed_ = this .getGeoCoord (this .hitPoint_changed_ .getValue (), geoCoords);
+				}
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 	});
 
