@@ -1,16 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/standard/Geospatial/Geodetic.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="20" Column="20" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/X3DGeospatialObject.js" Line="20" Column="20" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoPositionInterpolator.js" Line="13" Column="13" />
-      <File FileName="cobweb.js/cobweb/Components/Interpolation/PositionInterpolator.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Geospatial/Geodetic.js" Line="7" Column="7" />
-      <File FileName="cobweb.js/cobweb/Browser/Geospatial/Geocentric.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Interpolation/X3DInterpolatorNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoViewpoint.js" Line="40" Column="40" />
-      <File FileName="cobweb.js/cobweb/Components/Layout/ScreenGroup.js" Line="27" Column="27" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Geospatial/X3DGeospatialObject.js" Line="14" Column="14" />
+      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoViewpoint.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/tests/Components/Geospatial/GeoViewpoint.rotateYUp.x3d" Line="1" Column="1" />
+      <File FileName="cobweb.js/standard/Geospatial/Geodetic.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

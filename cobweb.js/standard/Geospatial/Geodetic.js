@@ -18,6 +18,7 @@ function (Vector3,
 		this .longitudeFirst = ! latitudeFirst;
       this .degrees        = ! radians;
       this .a              = spheroid .getSemiMajorAxis ();
+      this .c              = spheroid .getSemiMinorAxis ();
       this .c2a2           = Math .pow (spheroid .getSemiMinorAxis () / this .a, 2);
       this .ecc2           = 1 - this .c2a2;
 	}
@@ -92,6 +93,9 @@ function (Vector3,
 		
 			var P = Math .sqrt (x * x + y * y);
 		
+			if (P == 0)
+				return result .set (Math .PI, 0, z - this .c);
+
 			var
 				latitude  = 0,
 				longitude = Math .atan2 (y, x),

@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geospatial/GeoViewpoint.x3d'/>
-    <meta name='modified' content='Fri, 15 Apr 2016 14:01:59 GMT'/>
+    <meta name='modified' content='Sat, 16 Apr 2016 16:49:20 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='QuadSphere' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/QuadSphere.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/QuadSphere.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/QuadSphere.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/QuadSphere.x3d"'>
@@ -73,7 +73,7 @@
           <MetadataString DEF='type' containerField='value'
               name='type'
               reference='http://titania.create3000.de'
-              value='"WALK"'/>
+              value='"EXAMINE"'/>
         </MetadataSet>
         <MetadataSet DEF='Viewpoint' containerField='value'
             name='Viewpoint'
@@ -81,15 +81,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='10499162.6280508, 2309421.79600263, 16377720.7545053'/>
+              value='-5864705.5, -12192758, 14950343'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.188117825948205, 0.301543604713577, 0.934710189319055, 1.68755633869322'/>
+              value='0.845977058865622, -0.202573653148805, -0.493241047483904, 0.852878502831595'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='2139457.5, -1234729, 3767109.25'/>
+              value='97847.3125, -19995.66796875, -10046.90234375'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
@@ -160,14 +160,14 @@
     </Transform>
     <GeoViewpoint DEF='GeoViewpoint_1'
         description='GeoViewpoint 1'
-        position='56.7769155069588 12.4053681765644 13470160.5145594'
-        orientation='-0.992871285148625 -0.0768471920016416 -0.0911104835284063 1.6221148459812'
-        centerOfRotation='2139457.52483371 -1234729.05698232 3767109.12720618'/>
+        position='41.0969880880029 14.1819172011315 14712244.9629499'
+        orientation='-0.995248360440438 0.0699414029965301 0.0677414288858516 1.57758232005971'
+        centerOfRotation='-9.86098025956849 -11.5497015008554 -6277396.13213197'/>
     <GeoViewpoint
         description='GeoViewpoint 2'
-        position='46.5108695494412 -117.379055422218 14939310.9378064'
-        orientation='-0.999707454421456 0.0229228255949756 0.0077168413819463 1.59386841536365'
-        centerOfRotation='-3232703.76889543 -2257954.03604201 4465060.54631582'/>
+        position='47.9157101707611 -115.687512664307 13797224.8027491'
+        orientation='-0.999972635333939 0.00224162484352405 0.0070500852021773 1.56922872676272'
+        centerOfRotation='-9.86098025956761 -11.5497015008554 -6277396.13213197'/>
     <Viewpoint DEF='Viewpoint_1'
         description='Viewpoint'
         position='1.61556e+07 8.00619e+06 9.72771e+06'

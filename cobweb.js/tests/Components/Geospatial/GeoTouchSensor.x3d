@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geospatial/GeoTouchSensor.x3d'/>
-    <meta name='modified' content='Sat, 16 Apr 2016 04:39:17 GMT'/>
+    <meta name='modified' content='Sat, 16 Apr 2016 16:48:10 GMT'/>
   </head>
   <Scene>
     <Transform DEF='Earth'
@@ -72,7 +72,7 @@
           <MetadataString DEF='type' containerField='value'
               name='type'
               reference='http://titania.create3000.de'
-              value='"WALK"'/>
+              value='"EXAMINE"'/>
         </MetadataSet>
         <MetadataSet DEF='Viewpoint' containerField='value'
             name='Viewpoint'
@@ -80,15 +80,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='10074215.104358, 2209290.32398809, 16045284.5594992'/>
+              value='-3662007.21759235, -15147896.7992481, 13456788.2971683'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.185171301459632, 0.296279819583669, 0.936979112693135, 1.68636489812437'/>
+              value='0.927600906966675, -0.0564248747135446, -0.369286868041855, 0.928464370032671'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='2139457.5, -1234729, 3767109.25'/>
+              value='97847.3101945498, -19995.6673447722, -10046.9026310045'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
@@ -162,14 +162,14 @@ function set_hitGeoCoord (value)
     </Transform>
     <GeoViewpoint DEF='GeoViewpoint'
         description='GeoViewpoint 1'
-        position='56.7769155069588 12.4053681765644 13470160.5145594'
-        orientation='-0.992871285148625 -0.0768471920016416 -0.0911104835284063 1.6221148459812'
-        centerOfRotation='2139457.52483371 -1234729.05698232 3767109.12720618'/>
+        position='19.4693970951254 -14.9197295349252 13902516.9863945'
+        orientation='-0.999985715305148 0.00363425554498401 0.00391935865730099 1.57226207288696'
+        centerOfRotation='-9.86098025957482 -11.5497015008559 -6277396.13213197'/>
     <GeoViewpoint
         description='GeoViewpoint 2'
-        position='46.5108695494412 -117.379055422218 14939310.9378064'
-        orientation='-0.999707454421456 0.0229228255949756 0.0077168413819463 1.59386841536365'
-        centerOfRotation='-3232703.76889543 -2257954.03604201 4465060.54631582'/>
+        position='47.9138548923577 -115.695714628815 14209212.613793'
+        orientation='-0.999972368525851 0.0023428758114213 0.00705500657211948 1.56926067345995'
+        centerOfRotation='-9.86098025956761 -11.5497015008554 -6277396.13213197'/>
     <Viewpoint DEF='Viewpoint_1'
         description='Viewpoint'
         position='1.61556e+07 8.00619e+06 9.72771e+06'
