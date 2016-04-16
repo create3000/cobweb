@@ -74,6 +74,10 @@ function ($,
 			else
 				this .origin .set (0, 0, 0);
 		},
+		getReferenceFrame: function ()
+		{
+			return this .referenceFrame;
+		},
 		getStandardOrder: function ()
 		{
 			return this .standardOrder;

@@ -1,9 +1,11 @@
 
 define ([
 	"standard/Geospatial/Geodetic",
+	"standard/Math/Numbers/Vector3",
 	"standard/Math/Algorithm",
 ],
 function (Geodetic,
+          Vector3,
           Algorithm)
 {
 "use strict";
@@ -160,6 +162,7 @@ function (Geodetic,
 		
 			return result .set (northing, easting, geodetic .z);
 		},
+		lerp: Vector3 .lerp,
 	};
 
 	return UniversalTransverseMercator;
