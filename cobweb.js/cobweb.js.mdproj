@@ -1163,6 +1163,8 @@
     <None Include="tests\Components\Geospatial\GeoElevationGrid.x3d" />
     <None Include="tests\Components\Geospatial\GeoTransform.x3d" />
     <None Include="tests\Components\Geospatial\GeoViewpoint.x3d" />
+    <None Include="tests\Components\Geospatial\GeoElevationGrid.UTM.x3d" />
+    <None Include="tests\Components\images\earth.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

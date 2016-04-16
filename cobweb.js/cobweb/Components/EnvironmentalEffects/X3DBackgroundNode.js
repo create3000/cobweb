@@ -477,7 +477,7 @@ function ($,
 
 			// Rotate and scale background.
 
-			modelViewMatrix .multLeft (viewpoint .getInverseCameraSpaceMatrix ());
+			modelViewMatrix .multRight (viewpoint .getInverseCameraSpaceMatrix ());
 			modelViewMatrix .get (null, rotation);
 			modelViewMatrix .identity ();
 			modelViewMatrix .scale (scale);

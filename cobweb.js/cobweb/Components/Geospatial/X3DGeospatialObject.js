@@ -74,6 +74,10 @@ function ($,
 			else
 				this .origin .set (0, 0, 0);
 		},
+		getStandardOrder: function ()
+		{
+			return this .standardOrder;
+		},
 		getGeoCoord: function (point, result)
 		{
 			return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);

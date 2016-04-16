@@ -60,7 +60,7 @@
         <Appearance>
           <Material/>
           <ImageTexture
-              url='"../../../../../Titania/Library/Tests/images/earth.png", "file:///home/holger/Projekte/Titania/Library/Tests/images/earth.png"'/>
+              url='"../images/earth.png"'/>
         </Appearance>
         <GeoElevationGrid
             geoGridOrigin='-90 180 0'
