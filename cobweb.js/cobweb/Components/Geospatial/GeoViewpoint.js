@@ -39,13 +39,6 @@ function ($,
 		locationMatrix   = new Matrix4 (),
 		localOrientation = new Rotation4 (0, 0, 1, 0);
 
-	var
-		projectionScale = 1e-6,
-		scaleMatrix     = new Matrix4 (projectionScale, 0, 0, 0,
-	                                  0, projectionScale, 0, 0,
-	                                  0, 0, projectionScale, 0,
-	                                  0, 0, 0, 1);
-
 	function traverse (type)
 	{
 		X3DViewpointNode .prototype .traverse .call (this .type);
@@ -225,10 +218,10 @@ function ($,
 		getProjectionMatrix: function (zNear, zFar, viewport)
 		{
 			var
-				geoZNear = zNear * Math .max (this .elevation / 100, 1) * projectionScale,
+				geoZNear = zNear * Math .max (this .elevation / 100, 1),
 				geoZFar  = zFar;
 
-			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix) .multLeft (scaleMatrix);
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
 		},
 	});
 
