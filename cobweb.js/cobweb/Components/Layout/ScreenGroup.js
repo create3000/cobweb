@@ -115,15 +115,20 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-	
-			modelViewMatrix .push ();
+			try
+			{
+				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
 		
-			this .scale (type);
-		
-			X3DGroupingNode .prototype .traverse .call (this, type);
-		
-			modelViewMatrix .pop ();
+				modelViewMatrix .push ();
+			
+				this .scale (type);
+			
+				X3DGroupingNode .prototype .traverse .call (this, type);
+			
+				modelViewMatrix .pop ();
+			}
+			catch (error)
+			{ }
 		},
 	});
 

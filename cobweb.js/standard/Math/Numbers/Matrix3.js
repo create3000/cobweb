@@ -435,10 +435,14 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 
 			this [6] += this [0] * x + this [3] * y;
 			this [7] += this [1] * x + this [4] * y;
+
+			return this;
 		},
 		rotate: function (rotation)
 		{
 			this .multLeft (Matrix3 .Rotation (rotation));
+
+			return this;
 		},
 		scale: function (scale)
 		{
@@ -451,6 +455,8 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 
 			this [1] *= x;
 			this [4] *= y;
+
+			return this;
 		},
 		toString: function ()
 		{

@@ -1174,6 +1174,7 @@
     <None Include="tests\Components\Geospatial\GeoTouchSensor.x3d" />
     <None Include="tests\Components\Geospatial\GeoProximitySensor.x3d" />
     <None Include="tests\Components\Geospatial\GeoPositionInterpolator.x3d" />
+    <None Include="tests\Components\Geospatial\GeoViewpoint.rotateYUp.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

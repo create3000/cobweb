@@ -1,16 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Geospatial/GeoTouchSensor.js">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="42" Column="42" />
-      <File FileName="cobweb.js/cobweb/Components/Navigation/Viewpoint.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoElevationGrid.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DComposedGeometryNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geometry3D/ElevationGrid.js" Line="6" Column="6" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/X3DGeospatialObject.js" Line="19" Column="19" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoLOD.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Navigation/LOD.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoTouchSensor.js" Line="15" Column="15" />
+      <File FileName="cobweb.js/cobweb.html" Line="20" Column="20" />
+      <File FileName="cobweb.js/cobweb/Components/Geospatial/X3DGeospatialObject.js" Line="20" Column="20" />
+      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoPositionInterpolator.js" Line="13" Column="13" />
+      <File FileName="cobweb.js/cobweb/Components/Interpolation/PositionInterpolator.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/standard/Geospatial/Geodetic.js" Line="7" Column="7" />
+      <File FileName="cobweb.js/cobweb/Browser/Geospatial/Geocentric.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Interpolation/X3DInterpolatorNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoViewpoint.js" Line="40" Column="40" />
+      <File FileName="cobweb.js/cobweb/Components/Layout/ScreenGroup.js" Line="27" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

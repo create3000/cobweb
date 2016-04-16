@@ -37,7 +37,9 @@ function ($,
 		coord            = new Vector3 (0, 0, 0),
 		upVector         = new Vector3 (0, 0, 0),
 		locationMatrix   = new Matrix4 (),
-		localOrientation = new Rotation4 (0, 0, 1, 0);
+		position         = new Vector3 (0, 0, 0),
+		orientation      = new Rotation4 (0, 0, 1, 0),
+		centerOfRotation = new Vector3 (0, 0, 0);
 
 	function traverse (type)
 	{
@@ -143,11 +145,11 @@ function ($,
 		},
 		setPosition: function (value)
 		{
-			this .position_ .setValue (this .getGeoCoord (value, coord));
+			this .position_ .setValue (this .getGeoCoord (value, position));
 		},
 		getPosition: function () 
 		{
-			return this .getCoord (this .position_ .getValue (), coord);
+			return this .getCoord (this .position_ .getValue (), position);
 		},
 		set_position__: function ()
 		{
@@ -161,9 +163,9 @@ function ($,
 
 			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
 
-			Rotation4 .Matrix3 (rotationMatrix, localOrientation);
+			Rotation4 .Matrix3 (rotationMatrix, orientation);
 
-			this .orientation_ .setValue (localOrientation .inverse () .multLeft (value));
+			this .orientation_ .setValue (orientation .inverse () .multLeft (value));
 		},
 		getOrientation: function ()
 		{
@@ -171,9 +173,13 @@ function ($,
 
 			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
 
-			Rotation4 .Matrix3 (rotationMatrix, localOrientation);
+			Rotation4 .Matrix3 (rotationMatrix, orientation);
 		
-			return localOrientation .multLeft (this .orientation_ .getValue ());
+			return orientation .multLeft (this .orientation_ .getValue ());
+		},
+		getCenterOfRotation: function ()
+		{
+			return this .getCoord (this .centerOfRotation_ .getValue (), centerOfRotation);
 		},
 		getFieldOfView: function ()
 		{
@@ -183,7 +189,7 @@ function ($,
 		},
 		getUpVector: function ()
 		{
-			return X3DGeospatialObject .prototype .getUpVector .call (this, coord .assign (this .coord) .add (this .positionOffset_ .getValue ()), upVector);
+			return this .getGeoUpVector .call (this, coord .assign (this .coord) .add (this .positionOffset_ .getValue ()), upVector);
 		},
 		getSpeedFactor: function ()
 		{

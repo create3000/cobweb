@@ -688,10 +688,14 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [12] += this [ 0] * x + this [ 4] * y + this [ 8] * z;
 			this [13] += this [ 1] * x + this [ 5] * y + this [ 9] * z;
 			this [14] += this [ 2] * x + this [ 6] * y + this [10] * z;
+
+			return this;
 		},
 		rotate: function (rotation)
 		{
 			this .multLeft (Matrix4 .Quaternion (rotation .value));
+
+			return this;
 		},
 		scale: function (scale)
 		{
@@ -711,6 +715,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [ 2] *= x;
 			this [ 6] *= y;
 			this [10] *= z;
+
+			return this;
 		},
 		toString: function ()
 		{
