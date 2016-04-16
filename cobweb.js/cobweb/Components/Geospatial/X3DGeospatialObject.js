@@ -28,15 +28,15 @@ function ($,
 	{
 		this .addType (X3DConstants .X3DGeospatialObject);
 
-		this .radians = false;
-		this .origin  = new Vector3 (0, 0, 0);
+		this .radians         = false;
+		this .origin          = new Vector3 (0, 0, 0);
+		this .originMatrix    = new Matrix4 ();
+		this .invOriginMatrix = new Matrix4 ();
 	}
 
 	X3DGeospatialObject .prototype =
 	{
 		constructor: X3DGeospatialObject,
-		originMatrix: new Matrix4 (),
-		invOriginMatrix: new Matrix4 (),
 		initialize: function ()
 		{
 			this .geoSystem_ .addInterest (this, "set_geoSystem__");
