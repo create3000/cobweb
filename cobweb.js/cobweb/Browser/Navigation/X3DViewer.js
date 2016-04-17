@@ -80,6 +80,21 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 
 			return new Vector3 (x, y, tbProjectToSphere (0.5, x, y));
 		},
+		lookAt: function (x, y, straightenHorizon)
+		{
+			if (this .touch (x, y))
+			{
+				var hit = this .getBrowser () .getNearestHit ();
+
+				this .getActiveViewpoint () .lookAtPoint (hit .intersection .point, 2 - 1.618034, straightenHorizon);
+			}
+		},
+		touch: function (x, y)
+		{
+			this .getBrowser () .touch (x, y);
+		
+			return this .getBrowser () .getHits () .length;
+		},
 		dispose: function () { },
 	});
 

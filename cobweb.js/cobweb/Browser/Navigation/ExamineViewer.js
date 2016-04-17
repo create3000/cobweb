@@ -46,6 +46,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			canvas .bind ("mousedown.ExamineViewer",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.ExamineViewer",    this .mouseup    .bind (this));
+			canvas .bind ("dblclick.ExamineViewer",   this .dblclick  .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 		},
 		mousedown: function (event)
@@ -136,6 +137,17 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					break;
 				}
 			}
+		},
+		dblclick: function (event)
+		{
+			var
+				offset = this .getBrowser () .getCanvas () .offset (), 
+				x      = event .pageX - offset .left,
+				y      = this .getBrowser () .getCanvas () .height () - (event .pageY - offset .top);
+
+			event .preventDefault ();
+
+			this .lookAt (x, y);
 		},
 		mousemove: function (event)
 		{

@@ -79,21 +79,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				}
 			}
 		},
-		lookAt: function (x, y)
-		{
-			if (this .touch (x, y))
-			{
-				var hit = this .getBrowser () .getNearestHit ();
-
-				this .getActiveViewpoint () .lookAtPoint (hit .intersection .point, 2 - 1.618034);
-			}
-		},
-		touch: function (x, y)
-		{
-			this .getBrowser () .touch (x, y);
-		
-			return this .getBrowser () .getHits () .length;
-		},
 		dispose: function ()
 		{
 			this .getBrowser () .getCanvas () .unbind (".LookAtViewer");
