@@ -72,7 +72,7 @@ define (function ()
 			   {
 				   var
 				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375);
+				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4294967295);
 
 					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
 			   }

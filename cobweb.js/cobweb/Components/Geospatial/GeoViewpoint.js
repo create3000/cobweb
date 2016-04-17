@@ -233,7 +233,7 @@ function ($,
 			// Linear interpolate zNear and zFar
 
 			var
-				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 0.1),
+				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
 				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
 
 			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
