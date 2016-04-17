@@ -13,6 +13,7 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -26,20 +27,23 @@ function ($,
           Camera,
           Vector3,
           Rotation4,
-          Matrix4)
+          Matrix4,
+          Algorithm)
 {
 "use strict";
 
 	var
-		zAxis            = new Vector3 (0, 0, 1),
-		screenScale      = new Vector3 (0, 0, 0),
-		normalized       = new Vector3 (0, 0, 0),
-		coord            = new Vector3 (0, 0, 0),
-		upVector         = new Vector3 (0, 0, 0),
-		locationMatrix   = new Matrix4 (),
-		position         = new Vector3 (0, 0, 0),
-		orientation      = new Rotation4 (0, 0, 1, 0),
-		centerOfRotation = new Vector3 (0, 0, 0);
+		zAxis               = new Vector3 (0, 0, 1),
+		screenScale         = new Vector3 (0, 0, 0),
+		normalized          = new Vector3 (0, 0, 0),
+		upVector            = new Vector3 (0, 0, 0),
+		locationMatrix      = new Matrix4 (),
+		position            = new Vector3 (0, 0, 0),
+		orientation         = new Rotation4 (0, 0, 1, 0),
+		centerOfRotation    = new Vector3 (0, 0, 0),
+		geoPosition         = new Vector3 (0, 0, 0),
+		geoOrientation      = new Rotation4 (0, 0, 1, 0),
+		geoCenterOfRotation = new Vector3 (0, 0, 0);
 
 	function traverse (type)
 	{
@@ -58,7 +62,7 @@ function ($,
 		this .navigationInfoNode      = new NavigationInfo (executionContext);
 		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
 		this .projectionMatrix        = new Matrix4 ();
-		this .coord                   = new Vector3 ();
+		this .position                = new Vector3 ();
 		this .elevation               = 0;
 
 		switch (executionContext .specificationVersion)
@@ -145,7 +149,7 @@ function ($,
 		},
 		setPosition: function (value)
 		{
-			this .position_ .setValue (this .getGeoCoord (value, position));
+			this .position_ .setValue (this .getGeoCoord (value, geoPosition));
 		},
 		getPosition: function () 
 		{
@@ -153,9 +157,9 @@ function ($,
 		},
 		set_position__: function ()
 		{
-			this .getCoord (this .position_ .getValue (), this .coord);
+			this .getCoord (this .position_ .getValue (), this .position);
 
-			this .elevation = this .getElevation (coord .assign (this .coord) .add (this .positionOffset_ .getValue ()));
+			this .elevation = this .getGeoElevation (position .assign (this .position) .add (this .positionOffset_ .getValue ()));
 		},
 		setOrientation: function (value)
 		{
@@ -163,9 +167,9 @@ function ($,
 
 			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
 
-			orientation .setMatrix (rotationMatrix);
+			geoOrientation .setMatrix (rotationMatrix);
 
-			this .orientation_ .setValue (orientation .inverse () .multLeft (value));
+			this .orientation_ .setValue (geoOrientation .inverse () .multLeft (value));
 		},
 		getOrientation: function ()
 		{
@@ -189,7 +193,7 @@ function ($,
 		},
 		getUpVector: function ()
 		{
-			return this .getGeoUpVector .call (this, coord .assign (this .coord) .add (this .positionOffset_ .getValue ()), upVector);
+			return this .getGeoUpVector .call (this, position .assign (this .position) .add (this .positionOffset_ .getValue ()), upVector);
 		},
 		getSpeedFactor: function ()
 		{
@@ -223,9 +227,10 @@ function ($,
 		},
 		getProjectionMatrix: function (zNear, zFar, viewport)
 		{
+			// Linear interpolate zNear and zFar
 			var
-				geoZNear = zNear * Math .max (this .elevation / 100, 1),
-				geoZFar  = zFar;
+				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 0.1),
+				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
 
 			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
 		},

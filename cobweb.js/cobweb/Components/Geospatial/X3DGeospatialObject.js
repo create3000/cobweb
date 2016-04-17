@@ -149,11 +149,9 @@ function ($,
 		},
 		getCoord: getCoord,
 		getGeoCoord: getGeoCoord,
-		getElevation: function (point)
+		getGeoElevation: function (point)
 		{
-			vector .assign (point) .add (this .origin);
-
-			return this .elevationFrame .applyRadians (vector, result) .z;
+			return this .getGeoCoord (point, result) .z;
 		},
 		getGeoUpVector: getGeoUpVector,
 		getLocationMatrix: getLocationMatrix,
