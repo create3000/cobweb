@@ -43647,7 +43647,16 @@ function ($,
 
 	function getLocationMatrix (geoPoint, result)
 	{
-		return getStandardLocationMatrix .call (this, geoPoint, result) .translate (this .origin);
+		var
+			origin         = this .origin,
+			locationMatrix = getStandardLocationMatrix .call (this, geoPoint, result);
+
+		// translateRight (-origin)
+		locationMatrix [12] -= origin .x;
+		locationMatrix [13] -= origin .y;
+		locationMatrix [14] -= origin .z;
+
+		return locationMatrix;
 	}
 
 	function getLocationMatrixRotateYUp (geoPoint, result)
@@ -44001,7 +44010,7 @@ function ($,
 
 	function traverse (type)
 	{
-		X3DViewpointNode .prototype .traverse .call (this .type);
+		X3DViewpointNode .prototype .traverse .call (this, type);
 
 		this .navigationInfoNode .traverse (type);
 	}
@@ -44187,7 +44196,7 @@ function ($,
 			// Linear interpolate zNear and zFar
 
 			var
-				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 0.1),
+				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
 				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
 
 			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
@@ -54970,7 +54979,7 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 			   {
 				   var
 				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375);
+				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4294967295);
 
 					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
 			   }
