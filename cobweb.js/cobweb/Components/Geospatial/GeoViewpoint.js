@@ -225,9 +225,13 @@ function ($,
 		{
 			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
 		},
-		getProjectionMatrix: function (zNear, zFar, viewport)
+		getProjectionMatrix: function (zNear, zFar, viewport, limit)
 		{
+			if (limit)
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
+				
 			// Linear interpolate zNear and zFar
+
 			var
 				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 0.1),
 				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);

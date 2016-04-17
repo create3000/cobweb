@@ -473,7 +473,7 @@ function ($,
 
 			// Get projection matrix.
 
-			this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport));	
+			this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
 
 			// Rotate and scale background.
 
