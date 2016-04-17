@@ -47,7 +47,7 @@ function ($,
 
 	function traverse (type)
 	{
-		X3DViewpointNode .prototype .traverse .call (this .type);
+		X3DViewpointNode .prototype .traverse .call (this, type);
 
 		this .navigationInfoNode .traverse (type);
 	}

@@ -218,7 +218,16 @@ function ($,
 
 	function getLocationMatrix (geoPoint, result)
 	{
-		return getStandardLocationMatrix .call (this, geoPoint, result) .translate (this .origin);
+		var
+			origin         = this .origin,
+			locationMatrix = getStandardLocationMatrix .call (this, geoPoint, result);
+
+		// translateRight (-origin)
+		locationMatrix [12] -= origin .x;
+		locationMatrix [13] -= origin .y;
+		locationMatrix [14] -= origin .z;
+
+		return locationMatrix;
 	}
 
 	function getLocationMatrixRotateYUp (geoPoint, result)
