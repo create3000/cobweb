@@ -41,10 +41,10 @@ function ($,
 		this .modelViewMatrix        = new Matrix4 ();
 		this .invModelViewMatrix     = new Matrix4 ();
 		this .centerOfRotationMatrix = new Matrix4 ();
-		this .position               = new Vector3 ();
-		this .orientation            = new Rotation4 ();
-		this .centerOfRotation       = new Vector3 ();
-		this .viewer                 = new Vector3 ();
+		this .position               = new Vector3 (0, 0, 0);
+		this .orientation            = new Rotation4 (0, 0, 1, 0);
+		this .centerOfRotation       = new Vector3 (0, 0, 0);
+		this .viewer                 = new Vector3 (0, 0, 0);
 		this .inside                 = false;
 	}
 

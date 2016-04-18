@@ -1180,6 +1180,9 @@
     <None Include="tests\Components\Geospatial\YUp.x3d" />
     <None Include="standard\Math\Algorithms\SAT.js" />
     <None Include="tests\Components\Geospatial\Globe.png" />
+    <None Include="tests\Components\EnvironmentalSensor\ProximitySensor.x3d" />
+    <None Include="tests\Components\EnvironmentalSensor\TransformSensor.x3d" />
+    <None Include="tests\Components\EnvironmentalSensor\VisibilitySensor.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1245,5 +1248,6 @@
     <Folder Include="cobweb\Browser\Geospatial\" />
     <Folder Include="tests\Components\Geospatial\" />
     <Folder Include="tests\Components\Grouping\" />
+    <Folder Include="tests\Components\EnvironmentalSensor\" />
   </ItemGroup>
 </Project>

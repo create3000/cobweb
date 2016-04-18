@@ -12,32 +12,24 @@ define (function ()
 	 */
 	function SAT () { }
 
-	SAT .prototype =
+	SAT .isSeparated = function (axes, points1, points2)
 	{
-		///  Returns true if the object defined by @a points1 and the object defined by @a points2 are separated, otherwise
-		///  false.  You must provide suitable axes for this test to operate on.  This test only gives reasonable result for
-		///  convex objects.  For 2d objects it is sufficient to use the normal vectors of the edges as axes.  For 3d
-		///  objects, the axes are the normal vectors of the faces of each object and the cross product of each edge from one
-		///  object with each edge from the other object.  It is not needed to provide normalized axes.
-		isSeparated (axes, points1, points2)
-		{
-			// http://gamedev.stackexchange.com/questions/25397/obb-vs-obb-collision-detection
-	
-			for (var i = 0, length = axes .length; i < length; ++ i)
-			{
-				var axis = axes [i];
+		// http://gamedev.stackexchange.com/questions/25397/obb-vs-obb-collision-detection
 
-				project (points1, axis, extents1);
-				project (points2, axis, extents2);
-	
-				if (overlaps (extents1 .min, extents1 .max, extents2 .min, extents2 .max))
-					continue;
-	
-				return true;
-			}
-	
-			return false;
+		for (var i = 0, length = axes .length; i < length; ++ i)
+		{
+			var axis = axes [i];
+
+			project (points1, axis, extents1);
+			project (points2, axis, extents2);
+
+			if (overlaps (extents1 .min, extents1 .max, extents2 .min, extents2 .max))
+				continue;
+
+			return true;
 		}
+
+		return false;
 	};
 
 	///  Projects @a points to @a axis and returns the minimum and maximum bounds.
@@ -56,10 +48,10 @@ define (function ()
 
 			var dotVal = point .dot (axis);
 
-			if (dotVal < min)
+			if (dotVal < extents .min)
 				extents .min = dotVal;
 
-			if (dotVal > max)
+			if (dotVal > extents .max)
 				extents .max = dotVal;
 		}
 	}

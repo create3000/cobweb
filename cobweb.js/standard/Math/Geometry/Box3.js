@@ -61,6 +61,20 @@ function (Matrix4, Vector3, SAT)
 		new Vector3 (0, 0, 0),
 	];
 
+	var axes9 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
 	var planes = [
 		new Vector3 (0, 0, 0),
 		new Vector3 (0, 0, 0),
@@ -127,6 +141,10 @@ function (Matrix4, Vector3, SAT)
 		{
 			return this .matrix .equals (box .matrix);
 		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		set: function (size, center)
 		{
 			var m = this .matrix;
@@ -184,33 +202,6 @@ function (Matrix4, Vector3, SAT)
 			m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
 			m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
 			m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
-			return this;
-		},
-		isEmpty: function ()
-		{
-			return this .matrix [15] === 0;
-		},
-		add: function (box)
-		{
-			if (this .isEmpty ())
-				return this .assign (box);
-
-			if (box .isEmpty ())
-				return this;
-
-			this .getExtents (lhs_min, lhs_max);
-			box  .getExtents (rhs_min, rhs_max);
-
-			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
-		},
-		multLeft: function (matrix)
-		{
-			this .matrix .multLeft (matrix);
-			return this;
-		},
-		multRight: function (matrix)
-		{
-			this .matrix .multRight (matrix);
 			return this;
 		},
 		getExtents: function (min, max)
@@ -315,11 +306,38 @@ function (Matrix4, Vector3, SAT)
 		{
 			var m = this .matrix;
 
-			planes .set (m [0], m [1], m [2])  .cross (z);
-			planes .set (m [4], m [5], m [6])  .cross (x);
-			planes .set (m [8], m [9], m [10]) .cross (y);
+			planes [0] .set (m [0], m [1], m [2])  .cross (z);
+			planes [1] .set (m [4], m [5], m [6])  .cross (x);
+			planes [2] .set (m [8], m [9], m [10]) .cross (y);
 		
 			return planes;
+		},
+		isEmpty: function ()
+		{
+			return this .matrix [15] === 0;
+		},
+		add: function (box)
+		{
+			if (this .isEmpty ())
+				return this .assign (box);
+
+			if (box .isEmpty ())
+				return this;
+
+			this .getExtents (lhs_min, lhs_max);
+			box  .getExtents (rhs_min, rhs_max);
+
+			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
+		},
+		multLeft: function (matrix)
+		{
+			this .matrix .multLeft (matrix);
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			this .matrix .multRight (matrix);
+			return this;
 		},
 		intersectsPoint: function (point)
 		{
@@ -365,7 +383,7 @@ function (Matrix4, Vector3, SAT)
 			for (var i1 = 0; i1 < 3; ++ i1)
 			{
 				for (var i2 = 0; i2 < 3; ++ i2)
-					axes9 [i1 * length2 + i2] .assign (axis1) .cross (axis2);
+					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (axes2 [i2]);
 			}
 		
 			if (SAT .isSeparated (axes9, points1, points2))
