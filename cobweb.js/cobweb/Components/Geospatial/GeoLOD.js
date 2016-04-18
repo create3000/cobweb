@@ -45,6 +45,7 @@ function ($,
 		this .child3Inline     = new Inline (executionContext);
 		this .child4Inline     = new Inline (executionContext);
 		this .childrenLoaded   = false;
+		this .childBBox        = new Box3 ();
 		this .keepCurrentLevel = false;
 		this .modelViewMatrix  = new Matrix4 ();
 	}
@@ -124,7 +125,7 @@ function ($,
 			this .child3Inline .setup ();
 			this .child4Inline .setup ();
 		},
-		getBBox: function () 
+		getBBox: function (bbox) 
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
@@ -135,27 +136,27 @@ function ($,
 					case 0:
 					{
 						if (this .rootNode_ .length)
-							return this .rootGroup .getBBox ();
+							return this .rootGroup .getBBox (bbox);
 
-						return this .rootInline .getBBox ();
+						return this .rootInline .getBBox (bbox);
 					}
 					case 1:
 					{
-						var bbox = new Box3 ();
+						bbox .set ();
 						
-						bbox .add (this .child1Inline .getBBox ());
-						bbox .add (this .child2Inline .getBBox ());
-						bbox .add (this .child3Inline .getBBox ());
-						bbox .add (this .child4Inline .getBBox ());
+						bbox .add (this .child1Inline .getBBox (this .childBBox));
+						bbox .add (this .child2Inline .getBBox (this .childBBox));
+						bbox .add (this .child3Inline .getBBox (this .childBBox));
+						bbox .add (this .child4Inline .getBBox (this .childBBox));
 		
 						return bbox;
 					}
 				}
 
-				return new Box3 ();
+				return bbox .set ();
 			}
 
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		set_rootLoadState__: function ()
 		{

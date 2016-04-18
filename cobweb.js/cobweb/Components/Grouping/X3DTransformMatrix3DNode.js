@@ -40,9 +40,9 @@ function ($,
 	X3DTransformMatrix3DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 	{
 		constructor: X3DTransformMatrix3DNode,
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
+			var bbox = X3DGroupingNode .prototype .getBBox .call (this, bbox);
 
 			if (this .traverse === traverse)
 				return bbox .multRight (this .matrix);

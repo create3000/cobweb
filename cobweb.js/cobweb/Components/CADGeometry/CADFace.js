@@ -71,19 +71,19 @@ function ($,
 
 			this .set_shape__ ();
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .shape_);
 		
 				if (boundedObject)
-					return boundedObject .getBBox ();
+					return boundedObject .getBBox (bbox);
 		
-				return new Box3 ();
+				return bbox .set ();
 			}
 		
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		set_shape__: function ()
 		{

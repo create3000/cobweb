@@ -74,13 +74,13 @@ function ($,
 
 			this .set_children__ ();
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			return this .bbox;
+			return bbox .assign (this .bbox);
 		},
 		set_children__: function ()
 		{
-			this .bbox = this .group .getBBox ();
+			this .group .getBBox (this .bbox);
 		},
 	});
 

@@ -181,9 +181,9 @@ function ($,
 		{
 			return this .hitRay;
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			return this .groupNode .getBBox ();
+			return this .groupNode .getBBox (bbox);
 		},
 		set_viewport__: function ()
 		{

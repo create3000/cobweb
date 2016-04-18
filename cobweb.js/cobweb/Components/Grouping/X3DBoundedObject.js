@@ -17,6 +17,8 @@ function ($,
 	function X3DBoundedObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DBoundedObject);
+
+		this .childBBox = new Box3 ();
 	}
 
 	X3DBoundedObject .prototype =
@@ -24,24 +26,24 @@ function ($,
 		constructor: X3DBoundedObject,
 		defaultBBoxSize: new Vector3 (-1, -1, -1),
 		initialize: function () { },
-	};
-
-	X3DBoundedObject .getBBox = function (nodes)
-	{
-		var bbox = new Box3 ();
-
-		// Add bounding boxes
-
-		for (var i = 0, length = nodes .length; i < length; ++ i)
+		getBBox: function (nodes, bbox)
 		{
-			var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
-
-			if (boundedObject)
-				bbox .add (boundedObject .getBBox ());
-		}
-
-		return bbox;
+			bbox .set ();
+	
+			// Add bounding boxes
+	
+			for (var i = 0, length = nodes .length; i < length; ++ i)
+			{
+				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
+	
+				if (boundedObject)
+					bbox .add (boundedObject .getBBox (this .childBBox));
+			}
+	
+			return bbox;
+		},
 	};
+
 
 	return X3DBoundedObject;
 });

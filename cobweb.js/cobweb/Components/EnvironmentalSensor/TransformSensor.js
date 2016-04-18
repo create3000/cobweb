@@ -26,6 +26,7 @@ function ($,
 "use strict";
 
 	var
+		targetBox   = new Box3 (),
 		position    = new Vector3 (0, 0, 0),
 		orientation = new Rotation4 (0, 0, 1, 0),
 		infinity    = new Vector3 (-1, -1, -1);
@@ -36,6 +37,7 @@ function ($,
 
 		this .addType (X3DConstants .TransformSensor);
 
+		this .bbox             = new Box3 ();
 		this .targetObjectNode = null;
 	}
 
@@ -75,8 +77,11 @@ function ($,
 
 			this .enabled_      .addInterest (this, "set_enabled__");
 			this .size_         .addInterest (this, "set_enabled__");
+			this .size_         .addInterest (this, "set_bbox__");
+			this .center_       .addInterest (this, "set_bbox__");
 			this .targetObject_ .addInterest (this, "set_targetObject__");
 
+			this .set_bbox__ ();
 			this .set_targetObject__ ();
 		},
 		set_live__: function ()
@@ -98,6 +103,10 @@ function ($,
 				}
 			}
 		},
+		set_bbox__: function ()
+		{
+			this .bbox .set (this .size_ .getValue (), this .center_ .getValue ());
+		},
 		set_targetObject__: function ()
 		{
 			this .targetObjectNode = X3DCast (X3DConstants .X3DBoundedObject, this .targetObject_);
@@ -106,10 +115,9 @@ function ($,
 		},
 		update: function ()
 		{
-			var sourceBox = new Box3 (this .size_ .getValue (), this .center_ .getValue ());
-			var targetBox = this .targetObjectNode .getBBox ();
+			this .targetObjectNode .getBBox (targetBox);
 		
-			if (this .size_. getValue () .equals (infinity) || sourceBox .intersectsBox (targetBox))
+			if (this .size_. getValue () .equals (infinity) || this .bbox .intersectsBox (targetBox))
 			{
 				targetBox .getMatrix () .get (position, orientation);
 		

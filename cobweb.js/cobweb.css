@@ -151,8 +151,8 @@ X3D .cobweb-browser-timing tfoot td {
 
 X3D .cobweb-browser-timing button {
 	border: 0;
-	padding: 0;
-	background: rgba(0,0,0,0.5);
+	padding: 2px;
+	background: rgba(0,0,0,0.38196601);
 	color: white;
 	font-size: 9pt;
 	line-height: 1.1;

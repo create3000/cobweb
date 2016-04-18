@@ -22,6 +22,8 @@ function ($,
 		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DShapeNode);
+
+		this .bbox = new Box3 ();
 	}
 
 	X3DShapeNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -42,9 +44,9 @@ function ($,
 			this .set_geometry__ ();
 			this .set_bbox__ ();
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			return this .bbox;
+			return bbox .assign (this .bbox);
 		},
 		getBBoxSize: function ()
 		{
@@ -71,13 +73,13 @@ function ($,
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				if (this .getGeometry ())
-					this .bbox = this .getGeometry () .getBBox ();
+					this .bbox .assign (this .getGeometry () .getBBox ());
 
 				else
-					this .bbox = new Box3 ();
+					this .bbox .set ();
 			}
 			else
-				this .bbox = new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+				this .bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 			
 			this .bboxSize   = this .bbox .size;
 			this .bboxCenter = this .bbox .center;

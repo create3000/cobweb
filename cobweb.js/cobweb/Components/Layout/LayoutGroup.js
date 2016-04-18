@@ -78,9 +78,9 @@ function ($,
 		{
 			this .layoutNode = X3DCast (X3DConstants .X3DLayoutNode, this .layout_);
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .getMatrix ());
+			return X3DGroupingNode .prototype .getBBox .call (this, bbox) .multRight (this .getMatrix ());
 		},
 		getMatrix: function ()
 		{

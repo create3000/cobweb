@@ -81,19 +81,19 @@ function ($,
 			else
 				this .setCameraObject (false);
 		},
-		getBBox: function () 
+		getBBox: function (bbox) 
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .child);
 
 				if (boundedObject)
-					return boundedObject .getBBox ();
+					return boundedObject .getBBox (bbox);
 
-				return new Box3 ();
+				return bbox .set ();
 			}
 
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		getLevel: function (type)
 		{

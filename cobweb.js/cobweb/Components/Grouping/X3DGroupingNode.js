@@ -115,12 +115,12 @@ function ($,
 
 			this .set_children__ ();
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
-				return X3DBoundedObject .getBBox (this .children_ .getValue ());
+				return X3DBoundedObject .prototype .getBBox .call (this, this .children_ .getValue (), bbox);
 
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return box .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		setHidden: function (value)
 		{

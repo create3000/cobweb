@@ -67,9 +67,9 @@ function ($,
 		{
 			return "children";
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .getMatrix ());
+			return X3DGroupingNode .prototype .getBBox .call (this, bbox) .multRight (this .getMatrix ());
 		},
 		getMatrix: function ()
 		{
