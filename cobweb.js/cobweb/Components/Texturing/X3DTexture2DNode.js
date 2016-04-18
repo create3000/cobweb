@@ -101,12 +101,13 @@ function ($,
 
 			this .updateTextureProperties ();
 		},
-		updateTexture: function (data)
+		updateTexture: function (data, flipY)
 		{
 			this .data = data;
 
 			var gl = this .getBrowser () .getContext ();
 
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
 

@@ -193,7 +193,7 @@ function ($,
 		   var video = this .getMedia ();
 
 			if (video)
-				this .updateTexture (video [0]);
+				this .updateTexture (video [0], true);
 		},
 		traverse: X3DTexture2DNode .prototype .traverse,
 	});
