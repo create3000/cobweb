@@ -1,11 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/X3DGeospatialObject.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoViewpoint.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Math/Algorithms/SAT.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="2" Column="2" />
+      <File FileName="cobweb.js/standard/Math/Algorithms/SAT.js" Line="26" Column="26" />
+      <File FileName="cobweb.js/standard/Math/Geometry/Box3.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/ProximitySensor.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/TransformSensor.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

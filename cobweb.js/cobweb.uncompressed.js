@@ -17513,13 +17513,15 @@ function ($,
 {
 
 	
-	$.fn.textWidth = function ()
+	$.fn.textWidth = function (string)
 	{
-		var html_org = $(this) .html ();
-		var html_calc = '<span>' + html_org + '</span>';
-		$(this) .html (html_calc);
-		var width = $(this) .find('span:first') .width ();
-		$(this) .html (html_org);
+		var children = $(this) .children ();
+		var html     = $(this) .html ();
+		var span     = '<span>' + html + '</span>';
+		$(this) .html (span);
+		var width = $(this) .find ('span:first') .width ();
+		$(this) .empty ();
+		$(this) .append (children);
 		return width;
 	};
 
@@ -17542,6 +17544,8 @@ function ($,
 				.appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"))
 				.animate ({ width: 0 });
 
+			$("<span/>") .appendTo (this .element);
+
 			this .string_ .addInterest (this, "set_string__");
 		},
 		set_string__: function ()
@@ -17556,12 +17560,12 @@ function ($,
 			//	.animate ({ "delay": 1 }, 4000)
 			//	.fadeOut ();
 
-			this .element .text (this .string_ .getValue ());
+			this .element .children () .text (this .string_ .getValue ());
 
 			this .element 
 				.stop (true, true)
 				.fadeIn (0)
-				.animate ({ width: this .element .textWidth (this .string_ .getValue ()) })
+				.animate ({ width: this .element .textWidth () })
 				.animate ({ "delay": 1 }, 5000)
 				.animate ({ width: 0 })
 				.fadeOut (0);
@@ -33186,11 +33190,85 @@ function ($,
 });
 
 
+define ('standard/Math/Algorithms/SAT',[],function ()
+{
+
+
+	var
+		extents1 = { min: 0, max: 0 },
+		extents2 = { min: 0, max: 0 };
+
+	/**
+	 *  Class to represent the Separating Axis Theorem.
+	 */
+	function SAT () { }
+
+	SAT .isSeparated = function (axes, points1, points2)
+	{
+		// http://gamedev.stackexchange.com/questions/25397/obb-vs-obb-collision-detection
+
+		for (var i = 0, length = axes .length; i < length; ++ i)
+		{
+			var axis = axes [i];
+
+			project (points1, axis, extents1);
+			project (points2, axis, extents2);
+
+			if (overlaps (extents1 .min, extents1 .max, extents2 .min, extents2 .max))
+				continue;
+
+			return true;
+		}
+
+		return false;
+	};
+
+	///  Projects @a points to @a axis and returns the minimum and maximum bounds.
+	function project (points, axis, extents)
+	{
+		extents .min = Number .POSITIVE_INFINITY;
+		extents .max = Number .NEGATIVE_INFINITY;
+
+		for (var i = 0, length = points .length; i < length; ++ i)
+		{
+			var point = points [i];
+
+			// Just dot it to get the min and max along this axis.
+			// NOTE: the axis must be normalized to get accurate projections to calculate the MTV, but if it is only needed to
+			// know whether it overlaps, every axis can be used.
+
+			var dotVal = point .dot (axis);
+
+			if (dotVal < extents .min)
+				extents .min = dotVal;
+
+			if (dotVal > extents .max)
+				extents .max = dotVal;
+		}
+	}
+
+	///  Returns true if both ranges overlap, otherwise false.
+	function overlaps (min1, max1, min2, max2)
+	{
+		return is_between (min2, min1, max1) || is_between (min1, min2, max2);
+	}
+
+	///  Returns true if @a value is between @a lowerBound and @a upperBound, otherwise false.
+	function is_between (value, lowerBound, upperBound)
+	{
+		return lowerBound <= value && value <= upperBound;
+	}
+
+	return SAT;
+});
+
+
 define ('standard/Math/Geometry/Box3',[
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithms/SAT",
 ],
-function (Matrix4, Vector3)
+function (Matrix4, Vector3, SAT)
 {
 
 
@@ -33209,6 +33287,64 @@ function (Matrix4, Vector3)
 		lhs_max = new Vector3 (0, 0, 0),
 		rhs_min = new Vector3 (0, 0, 0),
 		rhs_max = new Vector3 (0, 0, 0);
+
+
+	var points1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var points2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes9 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var planes = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
 
 	function Box3 (size, center)
 	{
@@ -33269,6 +33405,10 @@ function (Matrix4, Vector3)
 		{
 			return this .matrix .equals (box .matrix);
 		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		set: function (size, center)
 		{
 			var m = this .matrix;
@@ -33328,33 +33468,6 @@ function (Matrix4, Vector3)
 			m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
 			return this;
 		},
-		isEmpty: function ()
-		{
-			return this .matrix [15] === 0;
-		},
-		add: function (box)
-		{
-			if (this .isEmpty ())
-				return this .assign (box);
-
-			if (box .isEmpty ())
-				return this;
-
-			this .getExtents (lhs_min, lhs_max);
-			box  .getExtents (rhs_min, rhs_max);
-
-			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
-		},
-		multLeft: function (matrix)
-		{
-			this .matrix .multLeft (matrix);
-			return this;
-		},
-		multRight: function (matrix)
-		{
-			this .matrix .multRight (matrix);
-			return this;
-		},
 		getExtents: function (min, max)
 		{
 			this .getAbsoluteExtents (min, max);
@@ -33364,7 +33477,7 @@ function (Matrix4, Vector3)
 		},
 		getAbsoluteExtents: function (min, max)
 		{
-		   var m = this .matrix;
+			var m = this .matrix;
 
 			x .set (m [0], m [1], m [2]);
 			y .set (m [4], m [5], m [6]);
@@ -33395,6 +33508,101 @@ function (Matrix4, Vector3)
 			min .min (p1, p2, p3, p4);
 			max .max (p1, p2, p3, p4);
 		},
+		getPoints: function (points)
+		{
+			/*
+			 * p6 ---------- p5
+			 * | \           | \
+			 * | p2------------ p1
+			 * |  |          |  |
+			 * |  |          |  |
+			 * p7 |_________ p8 |
+			 *  \ |           \ |
+			 *   \|            \|
+			 *    p3 ---------- p4
+			 */
+		
+			var m = this .matrix;
+
+			x .set (m [0], m [1], m [2]);
+			y .set (m [4], m [5], m [6]);
+			z .set (m [8], m [9], m [10]);
+		
+			r1 .assign (y) .add (z);
+
+			var r2 = z .subtract (y);
+		
+			points [0] .assign (x)  .add (r1);
+			points [1] .assign (r1) .subtract (x);
+			points [2] .assign (r2) .subtract (x);
+			points [3] .assign (x)  .add (r2);
+		
+			points [4] .assign (points [2]) .negate ();
+			points [5] .assign (points [3]) .negate ();
+			points [6] .assign (points [0]) .negate ();
+			points [7] .assign (points [1]) .negate ();
+		
+			var center = this .center;
+
+			points [0] .add (center);
+			points [1] .add (center);
+			points [2] .add (center);
+			points [3] .add (center);
+		
+			points [4] .add (center);
+			points [5] .add (center);
+			points [6] .add (center);
+			points [7] .add (center);
+		
+			return points;
+		},
+		getAxes: function (axes)
+		{
+			var m = this .matrix;
+
+			axes [0] .set (m [0], m [1], m [2]);
+			axes [1] .set (m [4], m [5], m [6]);
+			axes [2] .set (m [8], m [9], m [10]);
+
+			return axes;
+		},
+		getPlanes: function (planes)
+		{
+			var m = this .matrix;
+
+			planes [0] .set (m [0], m [1], m [2])  .cross (z);
+			planes [1] .set (m [4], m [5], m [6])  .cross (x);
+			planes [2] .set (m [8], m [9], m [10]) .cross (y);
+		
+			return planes;
+		},
+		isEmpty: function ()
+		{
+			return this .matrix [15] === 0;
+		},
+		add: function (box)
+		{
+			if (this .isEmpty ())
+				return this .assign (box);
+
+			if (box .isEmpty ())
+				return this;
+
+			this .getExtents (lhs_min, lhs_max);
+			box  .getExtents (rhs_min, rhs_max);
+
+			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
+		},
+		multLeft: function (matrix)
+		{
+			this .matrix .multLeft (matrix);
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			this .matrix .multRight (matrix);
+			return this;
+		},
 		intersectsPoint: function (point)
 		{
 			this .getExtents (min, max);
@@ -33405,6 +33613,49 @@ function (Matrix4, Vector3)
 			       max .y >= point .y &&
 			       min .z <= point .z &&
 			       max .z >= point .z;
+		},
+		intersectsBox: function (other)
+		{
+			// Test special cases.
+		
+			if (this .isEmpty ())
+				return false;
+		
+			if (other .isEmpty ())
+				return false;
+		
+			// Get points.
+		
+			this  .getPoints (points1);
+			other .getPoints (points2);
+		
+			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
+		
+			if (SAT .isSeparated (this .getPlanes (planes), points1, points2))
+				return false;
+		
+			// Test the three planes spanned by the normal vectors of the faces of the second parallelepiped.
+		
+			if (SAT .isSeparated (other .getPlanes (planes), points1, points2))
+				return false;
+
+			// Test the nine other planes spanned by the edges of each parallelepiped.
+		
+			this  .getAxes (axes1);
+			other .getAxes (axes2);
+
+			for (var i1 = 0; i1 < 3; ++ i1)
+			{
+				for (var i2 = 0; i2 < 3; ++ i2)
+					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (axes2 [i2]);
+			}
+		
+			if (SAT .isSeparated (axes9, points1, points2))
+				return false;
+		
+			// Both boxes intersect.
+		
+			return true;
 		},
 		toString: function ()
 		{
@@ -41576,6 +41827,21 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 
 			return new Vector3 (x, y, tbProjectToSphere (0.5, x, y));
 		},
+		lookAt: function (x, y, straightenHorizon)
+		{
+			if (this .touch (x, y))
+			{
+				var hit = this .getBrowser () .getNearestHit ();
+
+				this .getActiveViewpoint () .lookAtPoint (hit .intersection .point, 2 - 1.618034, straightenHorizon);
+			}
+		},
+		touch: function (x, y)
+		{
+			this .getBrowser () .touch (x, y);
+		
+			return this .getBrowser () .getHits () .length;
+		},
 		dispose: function () { },
 	});
 
@@ -41734,6 +42000,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			canvas .bind ("mousedown.ExamineViewer",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.ExamineViewer",    this .mouseup    .bind (this));
+			canvas .bind ("dblclick.ExamineViewer",   this .dblclick  .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 		},
 		mousedown: function (event)
@@ -41824,6 +42091,17 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					break;
 				}
 			}
+		},
+		dblclick: function (event)
+		{
+			var
+				offset = this .getBrowser () .getCanvas () .offset (), 
+				x      = event .pageX - offset .left,
+				y      = this .getBrowser () .getCanvas () .height () - (event .pageY - offset .top);
+
+			event .preventDefault ();
+
+			this .lookAt (x, y);
 		},
 		mousemove: function (event)
 		{
@@ -44492,21 +44770,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					break;
 				}
 			}
-		},
-		lookAt: function (x, y)
-		{
-			if (this .touch (x, y))
-			{
-				var hit = this .getBrowser () .getNearestHit ();
-
-				this .getActiveViewpoint () .lookAtPoint (hit .intersection .point, 2 - 1.618034);
-			}
-		},
-		touch: function (x, y)
-		{
-			this .getBrowser () .touch (x, y);
-		
-			return this .getBrowser () .getHits () .length;
 		},
 		dispose: function ()
 		{
@@ -66609,10 +66872,10 @@ function ($,
 		this .modelViewMatrix        = new Matrix4 ();
 		this .invModelViewMatrix     = new Matrix4 ();
 		this .centerOfRotationMatrix = new Matrix4 ();
-		this .position               = new Vector3 ();
-		this .orientation            = new Rotation4 ();
-		this .centerOfRotation       = new Vector3 ();
-		this .viewer                 = new Vector3 ();
+		this .position               = new Vector3 (0, 0, 0);
+		this .orientation            = new Rotation4 (0, 0, 1, 0);
+		this .centerOfRotation       = new Vector3 (0, 0, 0);
+		this .viewer                 = new Vector3 (0, 0, 0);
 		this .inside                 = false;
 	}
 
@@ -76288,6 +76551,154 @@ function ($,
 
 
 
+define ("cobweb/Components/EnvironmentalSensor/TransformSensor",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Box3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentalSensorNode, 
+          X3DConstants,
+          X3DCast,
+          Vector3,
+          Rotation4,
+          Box3)
+{
+
+
+	var
+		position    = new Vector3 (0, 0, 0),
+		orientation = new Rotation4 (0, 0, 1, 0),
+		infinity    = new Vector3 (-1, -1, -1);
+	
+	function TransformSensor (executionContext)
+	{
+		X3DEnvironmentalSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TransformSensor);
+
+		this .targetObjectNode = null;
+	}
+
+	TransformSensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+	{
+		constructor: TransformSensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",            new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",                new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "center",              new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",           new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",            new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "targetObject",        new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TransformSensor";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalSensor";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+		
+			this .getExecutionContext () .isLive () .addInterest (this, "set_enabled__");
+			this .isLive () .addInterest (this, "set_enabled__");
+
+			this .enabled_      .addInterest (this, "set_enabled__");
+			this .size_         .addInterest (this, "set_enabled__");
+			this .targetObject_ .addInterest (this, "set_targetObject__");
+
+			this .set_targetObject__ ();
+		},
+		set_live__: function ()
+		{ },
+		set_enabled__: function ()
+		{
+			if (this .targetObjectNode && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			{
+				this .getBrowser () .sensors () .addInterest (this, "update");
+			}
+			else
+			{
+				this .getBrowser () .sensors () .removeInterest (this, "update");
+					
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
+		},
+		set_targetObject__: function ()
+		{
+			this .targetObjectNode = X3DCast (X3DConstants .X3DBoundedObject, this .targetObject_);
+		
+			this .set_enabled__ ();
+		},
+		update: function ()
+		{
+			var sourceBox = new Box3 (this .size_ .getValue (), this .center_ .getValue ());
+			var targetBox = this .targetObjectNode .getBBox ();
+		
+			if (this .size_. getValue () .equals (infinity) || sourceBox .intersectsBox (targetBox))
+			{
+				targetBox .getMatrix () .get (position, orientation);
+		
+				if (this .isActive_ .getValue ())
+				{
+					if (! this .position_changed_ .getValue () .equals (position))
+						this .position_changed_ = position;
+	
+					if (! this .orientation_changed_ .getValue () .equals (orientation))
+						this .orientation_changed_ = orientation;
+				}
+				else
+				{
+					this .isActive_  = true;
+					this .enterTime_ = this .getBrowser () .getCurrentTime ();
+
+					this .position_changed_         = position;
+					this .orientation_changed_      = orientation;
+				}
+			}
+			else
+			{
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
+		},
+	});
+
+	return TransformSensor;
+});
+
+
+
+
 define ('cobweb/Components/Rendering/TriangleFanSet',[
 	"jquery",
 	"cobweb/Fields",
@@ -77442,7 +77853,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Titania/TouchGroup",
 	"cobweb/Components/PointingDeviceSensor/TouchSensor", // VRML
 	"cobweb/Components/Grouping/Transform", // VRML
-	//"cobweb/Components/EnvironmentalSensor/TransformSensor",
+	"cobweb/Components/EnvironmentalSensor/TransformSensor",
 	//"cobweb/Components/DIS/TransmitterPdu",
 	"cobweb/Components/Rendering/TriangleFanSet",
 	"cobweb/Components/Rendering/TriangleSet",
@@ -77664,7 +78075,7 @@ function (Anchor,
           //TouchGroup,
           TouchSensor,
           Transform,
-          //TransformSensor,
+          TransformSensor,
           //TransmitterPdu,
           TriangleFanSet,
           TriangleSet,
@@ -77893,7 +78304,7 @@ function (Anchor,
 		//TouchGroup:                   TouchGroup,
 		TouchSensor:                  TouchSensor,
 		Transform:                    Transform,
-		//TransformSensor:              TransformSensor,
+		TransformSensor:              TransformSensor,
 		//TransmitterPdu:               TransmitterPdu,
 		TriangleFanSet:               TriangleFanSet,
 		TriangleSet:                  TriangleSet,
