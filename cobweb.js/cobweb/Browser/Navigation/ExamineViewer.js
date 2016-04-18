@@ -70,7 +70,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -90,7 +90,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -114,7 +114,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getBrowser () .setCursor ("DEFAULT");
 
 					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && performance .now () - this .motionTime < SPIN_RELEASE_TIME)
@@ -132,7 +132,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				}
 				case 1:
 				{
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getBrowser () .setCursor ("DEFAULT");
 					break;
 				}
@@ -145,7 +145,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				x      = event .pageX - offset .left,
 				y      = this .getBrowser () .getCanvas () .height () - (event .pageY - offset .top);
 
-			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			this .lookAt (x, y);
 		},
@@ -180,7 +180,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				{
 					// Stop event propagation.
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 
 					// Move.
 
@@ -200,7 +200,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			// Determine scroll direction.
 

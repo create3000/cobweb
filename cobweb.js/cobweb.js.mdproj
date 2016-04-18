@@ -1183,6 +1183,7 @@
     <None Include="tests\Components\EnvironmentalSensor\ProximitySensor.x3d" />
     <None Include="tests\Components\EnvironmentalSensor\TransformSensor.x3d" />
     <None Include="tests\Components\EnvironmentalSensor\VisibilitySensor.x3d" />
+    <None Include="images\Time.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

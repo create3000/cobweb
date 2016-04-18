@@ -61,7 +61,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.PlaneViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.PlaneViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
@@ -95,7 +95,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 				{
 					// Stop event propagation.
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 
 					// Move.
 
@@ -115,7 +115,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),

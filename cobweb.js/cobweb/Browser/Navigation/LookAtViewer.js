@@ -47,7 +47,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					
 					$(document) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
 
 					break;
@@ -72,9 +72,9 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 
-					this .lookAt (x, y);
+					this .lookAt (x, y, true);
 					break;
 				}
 			}

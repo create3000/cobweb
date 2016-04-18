@@ -119,6 +119,10 @@ X3D .cobweb-browser-timing td {
 	text-align: left;
 }
 
+X3D .cobweb-browser-timing table {
+	background: url(images/Time.png) no-repeat;
+}
+
 X3D .cobweb-browser-timing tr,
 X3D .cobweb-browser-timing th,
 X3D .cobweb-browser-timing td {
@@ -126,6 +130,7 @@ X3D .cobweb-browser-timing td {
 }
 
 X3D .cobweb-browser-timing thead th {
+	padding-left: 20px;
 	padding-bottom: 5px;
 }
 

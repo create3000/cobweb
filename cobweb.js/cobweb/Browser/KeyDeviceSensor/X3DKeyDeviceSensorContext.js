@@ -52,6 +52,7 @@ function ($)
 			//console .log (event .which);
 
 			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			if (this .keyDeviceSensorNode)
 			   this .keyDeviceSensorNode .keydown (event);
@@ -176,6 +177,7 @@ function ($)
 			//console .log (event .which);
 
 			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			if (this .keyDeviceSensorNode)
 			   this .keyDeviceSensorNode .keyup (event);

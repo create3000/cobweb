@@ -26,6 +26,7 @@ function (jquery,
 
 			browser .getCanvas () .bind ("mousedown.PointingDevice", this .mousedown  .bind (this));
 			browser .getCanvas () .bind ("mouseup.PointingDevice",   this .mouseup    .bind (this));
+			browser .getCanvas () .bind ("dblclick.PointingDevice",  this .dblclick   .bind (this));
 			browser .getCanvas () .bind ("mousemove.PointingDevice", this .mousemove  .bind (this));
 			browser .getCanvas () .bind ("mouseout.PointingDevice",  this .onmouseout .bind (this));
 		},
@@ -84,6 +85,13 @@ function (jquery,
 
 				this .cursor = "DEFAULT";
 			}
+		},
+		dblclick: function (event)
+		{
+			event .preventDefault ();
+
+			if (this .isOver)
+				event .stopImmediatePropagation ();
 		},
 		mousemove: function (event)
 		{
