@@ -1179,6 +1179,7 @@
     <None Include="tests\Components\Geospatial\Globe.x3d" />
     <None Include="tests\Components\Geospatial\YUp.x3d" />
     <None Include="standard\Math\Algorithms\SAT.js" />
+    <None Include="tests\Components\Geospatial\Globe.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

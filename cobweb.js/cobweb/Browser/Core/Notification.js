@@ -10,13 +10,15 @@ function ($,
 {
 "use strict";
 	
-	$.fn.textWidth = function ()
+	$.fn.textWidth = function (string)
 	{
-		var html_org = $(this) .html ();
-		var html_calc = '<span>' + html_org + '</span>';
-		$(this) .html (html_calc);
-		var width = $(this) .find('span:first') .width ();
-		$(this) .html (html_org);
+		var children = $(this) .children ();
+		var html     = $(this) .html ();
+		var span     = '<span>' + html + '</span>';
+		$(this) .html (span);
+		var width = $(this) .find ('span:first') .width ();
+		$(this) .empty ();
+		$(this) .append (children);
 		return width;
 	};
 
@@ -39,6 +41,8 @@ function ($,
 				.appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"))
 				.animate ({ width: 0 });
 
+			$("<span/>") .appendTo (this .element);
+
 			this .string_ .addInterest (this, "set_string__");
 		},
 		set_string__: function ()
@@ -53,12 +57,12 @@ function ($,
 			//	.animate ({ "delay": 1 }, 4000)
 			//	.fadeOut ();
 
-			this .element .text (this .string_ .getValue ());
+			this .element .children () .text (this .string_ .getValue ());
 
 			this .element 
 				.stop (true, true)
 				.fadeIn (0)
-				.animate ({ width: this .element .textWidth (this .string_ .getValue ()) })
+				.animate ({ width: this .element .textWidth () })
 				.animate ({ "delay": 1 }, 5000)
 				.animate ({ width: 0 })
 				.fadeOut (0);
