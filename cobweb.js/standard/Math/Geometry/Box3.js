@@ -2,8 +2,9 @@
 define ([
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithms/SAT",
 ],
-function (Matrix4, Vector3)
+function (Matrix4, Vector3, SAT)
 {
 "use strict";
 
@@ -22,6 +23,50 @@ function (Matrix4, Vector3)
 		lhs_max = new Vector3 (0, 0, 0),
 		rhs_min = new Vector3 (0, 0, 0),
 		rhs_max = new Vector3 (0, 0, 0);
+
+
+	var points1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var points2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var planes = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
 
 	function Box3 (size, center)
 	{
@@ -177,7 +222,7 @@ function (Matrix4, Vector3)
 		},
 		getAbsoluteExtents: function (min, max)
 		{
-		   var m = this .matrix;
+			var m = this .matrix;
 
 			x .set (m [0], m [1], m [2]);
 			y .set (m [4], m [5], m [6]);
@@ -208,6 +253,74 @@ function (Matrix4, Vector3)
 			min .min (p1, p2, p3, p4);
 			max .max (p1, p2, p3, p4);
 		},
+		getPoints: function (points)
+		{
+			/*
+			 * p6 ---------- p5
+			 * | \           | \
+			 * | p2------------ p1
+			 * |  |          |  |
+			 * |  |          |  |
+			 * p7 |_________ p8 |
+			 *  \ |           \ |
+			 *   \|            \|
+			 *    p3 ---------- p4
+			 */
+		
+			var m = this .matrix;
+
+			x .set (m [0], m [1], m [2]);
+			y .set (m [4], m [5], m [6]);
+			z .set (m [8], m [9], m [10]);
+		
+			r1 .assign (y) .add (z);
+
+			var r2 = z .subtract (y);
+		
+			points [0] .assign (x)  .add (r1);
+			points [1] .assign (r1) .subtract (x);
+			points [2] .assign (r2) .subtract (x);
+			points [3] .assign (x)  .add (r2);
+		
+			points [4] .assign (points [2]) .negate ();
+			points [5] .assign (points [3]) .negate ();
+			points [6] .assign (points [0]) .negate ();
+			points [7] .assign (points [1]) .negate ();
+		
+			var center = this .center;
+
+			points [0] .add (center);
+			points [1] .add (center);
+			points [2] .add (center);
+			points [3] .add (center);
+		
+			points [4] .add (center);
+			points [5] .add (center);
+			points [6] .add (center);
+			points [7] .add (center);
+		
+			return points;
+		},
+		getAxes: function (axes)
+		{
+			var m = this .matrix;
+
+			axes [0] .set (m [0], m [1], m [2]);
+			axes [1] .set (m [4], m [5], m [6]);
+			axes [2] .set (m [8], m [9], m [10]);
+
+			return axes;
+		},
+		getPlanes: function (planes)
+		{
+			var m = this .matrix;
+
+			planes .set (m [0], m [1], m [2])  .cross (z);
+			planes .set (m [4], m [5], m [6])  .cross (x);
+			planes .set (m [8], m [9], m [10]) .cross (y);
+		
+			return planes;
+		},
 		intersectsPoint: function (point)
 		{
 			this .getExtents (min, max);
@@ -218,6 +331,49 @@ function (Matrix4, Vector3)
 			       max .y >= point .y &&
 			       min .z <= point .z &&
 			       max .z >= point .z;
+		},
+		intersectsBox: function (other)
+		{
+			// Test special cases.
+		
+			if (this .isEmpty ())
+				return false;
+		
+			if (other .isEmpty ())
+				return false;
+		
+			// Get points.
+		
+			this  .getPoints (points1);
+			other .getPoints (points2);
+		
+			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
+		
+			if (SAT .isSeparated (this .getPlanes (planes), points1, points2))
+				return false;
+		
+			// Test the three planes spanned by the normal vectors of the faces of the second parallelepiped.
+		
+			if (SAT .isSeparated (other .getPlanes (planes), points1, points2))
+				return false;
+
+			// Test the nine other planes spanned by the edges of each parallelepiped.
+		
+			this  .getAxes (axes1);
+			other .getAxes (axes2);
+
+			for (var i1 = 0; i1 < 3; ++ i1)
+			{
+				for (var i2 = 0; i2 < 3; ++ i2)
+					axes9 [i1 * length2 + i2] .assign (axis1) .cross (axis2);
+			}
+		
+			if (SAT .isSeparated (axes9, points1, points2))
+				return false;
+		
+			// Both boxes intersect.
+		
+			return true;
 		},
 		toString: function ()
 		{
