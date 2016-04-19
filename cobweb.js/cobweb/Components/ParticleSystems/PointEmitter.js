@@ -23,6 +23,8 @@ function ($,
 		X3DParticleEmitterNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointEmitter);
+
+		this .direction = new Vector3 (0, 0, 0);
 	}
 
 	PointEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
@@ -59,6 +61,12 @@ function ($,
 		},
 		set_direction__: function ()
 		{
+			this .direction .assign (this .direction_ .getValue ()) .normalize ();
+
+			if (this .direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
 		},
 		getRandomPosition: function (position)
 		{
@@ -66,14 +74,22 @@ function ($,
 		},
 		getRandomVelocity: function (velocity)
 		{
-			var direction = this .direction_ .getValue ();
+			var
+				direction = this .direction,
+				speed     = this .getRandomSpeed ();
 
-			if (direction .equals (Vector3 .Zero))
-				return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
 
-			return velocity .assign (direction) .normalize () .multiply (this .getRandomSpeed ());
-		},
+			return velocity;
+ 		},
 	});
+
+	function getSphericalRandomVelocity (velocity)
+	{
+		return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
+	}
 
 	return PointEmitter;
 });

@@ -14,13 +14,16 @@ function ($,
 {
 "use strict";
 
-	var rotation = new Rotation4 (0, 0, 1, 0);
+	var normal = new Vector3 (0, 0, 0);
+
 
 	function X3DParticleEmitterNode (executionContext)
 	{
 		X3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DParticleEmitterNode);
+
+		this .rotations = [ ];
 	}
 
 	X3DParticleEmitterNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -56,36 +59,29 @@ function ($,
 				phi   = Math .acos (cphi),
 				r     = Math .sin (phi);
 		
-			normal .set (Math .sin (theta) * r,
-			             Math .cos (theta) * r,
-			             cphi);
-		
-			return normal;
+			return normal .set (Math .sin (theta) * r,
+			                    Math .cos (theta) * r,
+			                    cphi);
 		},
-		getRandomNormalAngle: function (angle, normal)
+		getRandomNormalWithAngle: function (angle, normal)
 		{
 			var
-				theta = this .getRandomValue (-1, 1) * Math .PI,
+				theta = (Math .random () * 2 - 1) * Math .PI,
 				cphi  = this .getRandomValue (Math .cos (angle), 1),
 				phi   = Math .acos (cphi),
 				r     = Math .sin (phi);
 		
-			normal .set (Math .sin (theta) * r,
-			             Math .cos (theta) * r,
-			             cphi);
-		
-			return normal;
+			return normal .set (Math .sin (theta) * r,
+			                    Math .cos (theta) * r,
+			                    cphi);
 		},
-		getRandomNormalDirectionAngle: function (direction, angle, normal)
+		getRandomNormalWithDirectionAndAngle: function (direction, angle, normal)
 		{
 			rotation .setFromToVec (Vector3 .zAxis, direction);
 
 			return rotation .multVecRot (this .getRandomNormalAngle (angle, normal));
 		},
-		animate: function (position, velocity, deltaTime)
-		{
-		},
-		update: function (particleSystem)
+		animate: function (particleSystem)
 		{
 			var
 				particles         = particleSystem .getParticles (),
@@ -93,7 +89,18 @@ function ($,
 				numParticles      = particleSystem .getNumParticles (),
 				createParticles   = particleSystem .createParticles_ .getValue (),
 				particleLifetime  = particleSystem .particleLifetime_ .getValue (),
-				lifetimeVariation = particleSystem .lifetimeVariation_ .getValue ();
+				lifetimeVariation = particleSystem .lifetimeVariation_ .getValue (),
+				speeds            = particleSystem .speeds,
+				velocities        = particleSystem .velocities,
+				turbulences       = particleSystem .turbulences,
+				rotations         = this .rotations,
+				numForces         = particleSystem .numForces;
+
+			for (var i = rotations .length; i < numForces; ++ i)
+				rotations [i] = new Rotation4 (0, 0, 1, 0);
+
+			for (var i = 0; i < numForces; ++ i)
+				rotations [i] .setFromToVec (Vector3 .zAxis, velocities [i]);
 
 			for (var i = 0; i < numParticles; ++ i)
 			{
@@ -117,7 +124,12 @@ function ($,
 				{
 					var
 						position = particle .position,
-						velocity = particleSystem .getVelocity (particle .velocity);
+						velocity = particle .velocity;
+
+					for (var f = 0; f < numForces; ++ f)
+					{
+						velocity .add (rotations [f] .multVecRot (this .getRandomNormalWithAngle (turbulences [f], normal)) .multiply (speeds [f]));
+					}
 
 					//fromPosition .assign (position);
 		

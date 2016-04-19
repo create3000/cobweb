@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/PointEmitter.x3d'/>
-    <meta name='modified' content='Tue, 19 Apr 2016 07:46:43 GMT'/>
+    <meta name='modified' content='Tue, 19 Apr 2016 07:49:19 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Grid' url='"GridTool.x3dv#Grid", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/GridTool.x3dv#Grid"'>
@@ -59,11 +59,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-0.0502935003990903, 8.75909614749702, 16.2807207251829'/>
+              value='-0.0502935014665127, 8.75909614562988, 16.2807216644287'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.999766228092129, 0.0133086841030229, -0.0170401905471207, 0.476458054682997'/>
+              value='-0.999766228092129, 0.0133086841030229, -0.0170401905471207, 0.476458054682996'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -75,16 +75,13 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
     <Viewpoint
         description='Home'
-        position='-0.449618 4.36676 17.8828'
-        orientation='-0.99668141839176 -0.0661207075782914 -0.0474784399694772 0.224300406934645'
+        position='-0.0502935 8.7591 16.2807'
+        orientation='-0.999766228092129 0.0133086841030229 -0.0170401905471207 0.476458054682996'
         centerOfRotation='-0.198753 0.25226 -0.207125'/>
     <ParticleSystem DEF='Fountain'
         geometryType='POINTS'

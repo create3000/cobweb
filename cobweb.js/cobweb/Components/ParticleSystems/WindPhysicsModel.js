@@ -20,7 +20,7 @@ function ($,
 {
 "use strict";
 
-	var normal = new Vector3 (0, 0, 0);
+	var force = new Vector3 (0, 0, 0);
 
 	function WindPhysicsModel (executionContext)
 	{
@@ -71,11 +71,11 @@ function ($,
 					pressure    = Math .pow (10, 2 * Math .log (randomSpeed)) * 0.64615;
 		
 				if (this .direction_ .getValue () .equals (Vector3 .Zero))
-					emitterNode .getRandomNormal (normal);
+					emitterNode .getRandomNormal (force);
 				else
-					normal .assign (this .direction_ .getValue ()) .normalize ();
-		
-				forces      [i] = normal .multiply (surfaceArea * pressure) .copy ();
+					force .assign (this .direction_ .getValue ()) .normalize ();
+
+				forces [i] .assign (force .multiply (surfaceArea * pressure));
 				turbulences [i] = Math .PI * Algorithm .clamp (this .turbulence_ .getValue (), 0, 1);
 			}
 		},

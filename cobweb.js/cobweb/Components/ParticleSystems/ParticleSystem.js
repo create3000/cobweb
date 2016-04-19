@@ -40,8 +40,6 @@ function ($,
 		SPRITE:   SPRITE,
 	};
 
-	var normal = new Vector3 (0, 0, 0);
-
 	function ParticleSystem (executionContext)
 	{
 		X3DShapeNode .call (this, executionContext);
@@ -132,26 +130,6 @@ function ($,
 		getDeltaTime: function ()
 		{
 			return this .deltaTime;
-		},
-		getVelocity: function (velocity)
-		{
-			var
-				emitterNode = this .emitterNode,
-				speeds      = this .speeds,
-				velocities  = this .velocities,
-				turbulences = this .turbulences;
-
-			for (var i = 0, numForces = this .numForces; i < numForces; ++ i)
-			{
-				var speed = speeds [i];
-			
-				if (speed < 1e-7)
-					continue;
-		
-				velocity .add (emitterNode .getRandomNormalDirectionAngle (velocities [i], turbulences [i], normal) .multiply (speed));
-			}
-		
-			return velocity;
 		},
 		set_bbox__: function ()
 		{
@@ -250,7 +228,7 @@ function ($,
 		{
 			var particles = this .particles;
 
-			for (var i = 0, length = this .maxParticles_ .getValue (); i < length; ++ i)
+			for (var i = 0, length = Math .max (0, this .maxParticles_ .getValue ()); i < length; ++ i)
 			{
 				particles [i] = {
 					lifetime: -1,
@@ -259,6 +237,9 @@ function ($,
 					velocity: new Vector3 (0, 0, 0),
 				};
 			}
+
+			this .numParticles = 0;
+			this .creationTime = performance .now () / 1000;
 
 			this .set_geometryType__ ();
 		},
@@ -317,9 +298,11 @@ function ($,
 
 			this .deltaTime = ((DELAY - 1) * this .deltaTime + dt) / DELAY; // Moving average about DELAY frames.
 
-			// Determine particle position, velocity and color
+			// Determine particle position, velocity and colors
 
-			emitterNode .update (this);
+			emitterNode .animate (this);
+
+			// Apply forces.
 
 			if (emitterNode .mass_ .getValue ())
 			{
@@ -331,6 +314,9 @@ function ($,
 					deltaMass         = this .deltaTime / emitterNode .mass_ .getValue ();
 
 				// Collect forces in velocities and turbulences.
+
+				for (var i = velocities .length, length = physicsModelNodes .length; i < length; ++ i)
+					velocities [i] = new Vector3 (0, 0, 0);
 
 				for (var i = 0, length = physicsModelNodes .length; i < length; ++ i)
 					physicsModelNodes [i] .addForce (i, emitterNode, velocities, turbulences);

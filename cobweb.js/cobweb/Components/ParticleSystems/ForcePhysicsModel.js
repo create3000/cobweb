@@ -47,7 +47,7 @@ function ($,
 		{
 			if (this .enabled_ .getValue ())
 			{
-				forces      [i] = this .force_ .getValue () .copy ();
+				forces      [i] .assign (this .force_ .getValue ());
 				turbulences [i] = 0;
 			}
 		},
