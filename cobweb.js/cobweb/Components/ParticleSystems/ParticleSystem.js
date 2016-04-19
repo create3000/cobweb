@@ -154,8 +154,18 @@ function ($,
 		},
 		set_transparent__: function ()
 		{
-			this .transparent = (this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
-			                    (this .colorRampNode && this .colorRampNode .isTransparent ());
+			switch (this .geometryType)
+			{
+				case POINT:
+					this .setTransparent (true);
+					break;
+				default:
+				{
+					this .setTransparent ((this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
+					                      (this .colorRampNode && this .colorRampNode .isTransparent ()));
+					break;
+				}
+			}
 		},
 		set_live__: function ()
 		{

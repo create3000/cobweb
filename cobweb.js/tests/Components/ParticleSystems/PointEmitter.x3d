@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/PointEmitter.x3d'/>
-    <meta name='modified' content='Tue, 19 Apr 2016 14:09:34 GMT'/>
+    <meta name='modified' content='Tue, 19 Apr 2016 14:56:26 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Grid' url='"GridTool.x3dv#Grid", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/GridTool.x3dv#Grid"'>
@@ -99,7 +99,7 @@
         particleSize='0.1 0.2'
         colorKey='0, 0.1, 0.4, 1'>
       <PointEmitter
-          direction='1 3 0'
+          direction='0 0 0'
           speed='10'
           variation='0.01'
           mass='0.01'

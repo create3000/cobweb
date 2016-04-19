@@ -28,14 +28,6 @@ varying vec3 v; // point on geometry
 void
 clip ()
 {
- 	if (x3d_LinewidthScaleFactor >= 2.0)
-	{
-		float dist = distance (vec2 (0.5, 0.5), gl_PointCoord);
-	
-		if (dist > 0.5)
-			discard;
-	}
-
 	for (int i = 0; i < MAX_CLIP_PLANES; ++ i)
 	{
 		if (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))
@@ -72,7 +64,8 @@ main ()
 	clip ();
 
 	float f0 = getFogInterpolant ();
+	float t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * x3d_LinewidthScaleFactor - x3d_LinewidthScaleFactor + 0.50;
 
 	gl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);
-	gl_FragColor .a   = C .a;
+	gl_FragColor .a   = mix (C .a, 0.0, t);
 }

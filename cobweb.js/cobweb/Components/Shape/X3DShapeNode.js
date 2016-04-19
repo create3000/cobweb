@@ -64,6 +64,10 @@ function ($,
 		{
 			return this .geometryNode;
 		},
+		setTransparent: function (value)
+		{
+			this .transparent = value;
+		},
 		isTransparent: function ()
 		{
 			return this .transparent;

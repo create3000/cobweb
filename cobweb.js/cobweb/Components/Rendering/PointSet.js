@@ -111,7 +111,7 @@ function ($,
 		},
 		set_transparent__: function ()
 		{
-			this .transparent_ = this .colorNode .isTransparent ();
+			this .transparent_ = true;
 		},
 		set_coord__: function ()
 		{
