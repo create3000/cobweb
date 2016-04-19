@@ -103,10 +103,8 @@ function ($,
 
 			this .transparency = transparency;
 
-			var transparent = transparency > 0;
-
-			if (transparent != this .transparent_ .getValue ())
-				this .transparent_ = transparent;
+			if (transparency != this .transparent_ .getValue ())
+				this .transparent_ = transparency;
 		},
 	});
 
