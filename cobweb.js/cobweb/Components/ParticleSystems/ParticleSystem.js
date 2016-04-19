@@ -214,7 +214,6 @@ function ($,
 
 					this .isActive_ = true;
 					
-					this .set_maxParticles__ ();
 				}
 			}
 			else
@@ -227,6 +226,8 @@ function ($,
 
 				this .isActive_ = false;
 			}
+
+			this .set_maxParticles__ ();
 		},
 		set_geometryType__: function ()
 		{
@@ -239,7 +240,7 @@ function ($,
 
 			// Create buffers
 
-			var maxParticles = this .maxParticles_ .getValue ();
+			var maxParticles = Math .max (0, this .maxParticles_ .getValue ());
 
 			switch (this .geometryType)
 			{
@@ -255,12 +256,15 @@ function ($,
 					break;
 				}
 			}
+
 		},
 		set_maxParticles__: function ()
 		{
-			var particles = this .particles;
+			var
+				particles    = this .particles,
+				maxParticles = Math .max (0, this .maxParticles_ .getValue ());
 
-			for (var i = 0, length = Math .max (0, this .maxParticles_ .getValue ()); i < length; ++ i)
+			for (var i = particles .length, length = maxParticles; i < length; ++ i)
 			{
 				particles [i] = {
 					lifetime: -1,
@@ -271,8 +275,9 @@ function ($,
 				};
 			}
 
-			this .numParticles = 0;
 			this .creationTime = performance .now () / 1000;
+
+			this .numParticles = Math .min (this .numParticles, maxParticles);
 
 			this .set_geometryType__ ();
 		},
