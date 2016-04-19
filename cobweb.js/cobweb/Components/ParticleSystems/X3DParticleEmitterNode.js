@@ -173,14 +173,14 @@ function ($,
 		},
 		getColors: function (particles, colorKeys, colorRamp, numParticles)
 		{
-			var
-				length = colorKeys .length,
-				index0 = 0,
-				index1 = 0,
-				weight = 0;
-		
 			if (colorRamp .length)
 			{
+				var
+					length = colorKeys .length,
+					index0 = 0,
+					index1 = 0,
+					weight = 0;
+			
 				for (var i = 0; i < numParticles; ++ i)
 				{
 					var
@@ -227,10 +227,11 @@ function ($,
 						color0 = colorRamp [index0],
 						color1 = colorRamp [index1];
 		
-					color .x = Algorithm .lerp (color0 .r, color1 .r, weight);
-					color .y = Algorithm .lerp (color0 .g, color1 .g, weight);
-					color .z = Algorithm .lerp (color0 .b, color1 .b, weight);
-					color .w = Algorithm .lerp (color0 .a, color1 .a, weight);
+					// Algorithm .lerp (color0, color1, weight);
+					color .x = color0 .r + weight * (color1 .r - color0 .r);
+					color .y = color0 .g + weight * (color1 .g - color0 .g);
+					color .z = color0 .b + weight * (color1 .b - color0 .b);
+					color .w = color0 .a + weight * (color1 .a - color0 .a);
 				}
 			}
 		},
