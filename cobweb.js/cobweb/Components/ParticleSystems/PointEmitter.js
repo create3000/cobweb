@@ -6,15 +6,21 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DParticleEmitterNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          Rotation4)
 {
 "use strict";
+
+	var rotation = new Rotation4 (0, 0, 0);
 
 	function PointEmitter (executionContext)
 	{
@@ -46,6 +52,30 @@ function ($,
 		getContainerField: function ()
 		{
 			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .direction_ .addInterest (this, "set_direction__");
+
+			this .set_direction__ ();
+		},
+		set_direction__: function ()
+		{
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position_ .getValue ());
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var direction = this .direction_ .getValue ();
+
+			if (direction .equals (Vector3 .Zero))
+				return this .getRandomNormal (direction, velocity) .multiply (this .getRandomSpeed ());
+
+			return velocity .assign (direction) .multiply (this .getRandomSpeed ());
 		},
 	});
 

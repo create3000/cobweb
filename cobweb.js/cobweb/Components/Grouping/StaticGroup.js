@@ -8,6 +8,7 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -16,7 +17,8 @@ function ($,
           X3DChildNode, 
           X3DBoundedObject, 
           Group,
-          X3DConstants)
+          X3DConstants,
+          Box3)
 {
 "use strict";
 
@@ -28,7 +30,7 @@ function ($,
 		this .addType (X3DConstants .StaticGroup);
 
 		this .group = new Group (this .getExecutionContext ());
-		this .bbox  = null;
+		this .bbox  = new Box3 ();
 	}
 
 	StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),

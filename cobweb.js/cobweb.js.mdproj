@@ -1184,6 +1184,9 @@
     <None Include="tests\Components\EnvironmentalSensor\TransformSensor.x3d" />
     <None Include="tests\Components\EnvironmentalSensor\VisibilitySensor.x3d" />
     <None Include="images\Time.png" />
+    <None Include="tests\Components\ParticleSystems\PointEmitter.x3d" />
+    <None Include="tests\Components\ParticleSystems\GridTool.x3dv" />
+    <None Include="cobweb\Browser\ParticleSystems\X3DParticleSystemsContext.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1250,5 +1253,7 @@
     <Folder Include="tests\Components\Geospatial\" />
     <Folder Include="tests\Components\Grouping\" />
     <Folder Include="tests\Components\EnvironmentalSensor\" />
+    <Folder Include="tests\Components\ParticleSystems\" />
+    <Folder Include="cobweb\Browser\ParticleSystems\" />
   </ItemGroup>
 </Project>

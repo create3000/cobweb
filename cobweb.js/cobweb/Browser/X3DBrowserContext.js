@@ -23,6 +23,7 @@ define ([
 	"cobweb/Browser/Text/X3DTextContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
 	"cobweb/Browser/Time/X3DTimeContext",
+	"cobweb/Browser/ParticleSystems/X3DParticleSystemsContext",
 	"cobweb/Execution/World",
 	"cobweb/Bits/TraverseType",
 ],
@@ -49,6 +50,7 @@ function ($,
           X3DTextContext,
           X3DTexturingContext,
           X3DTimeContext,
+          X3DParticleSystemsContext,
           World,
           TraverseType)
 {
@@ -77,6 +79,7 @@ function ($,
 		X3DTextContext                 .call (this);
 		X3DTexturingContext            .call (this);
 		X3DTimeContext                 .call (this);
+		X3DParticleSystemsContext      .call (this);
 
 		this .addChildren ("initialized",   new SFTime (),
 		                   "shutdown",      new SFTime (),
@@ -116,6 +119,7 @@ function ($,
 		X3DTextContext .prototype,
 		X3DTexturingContext .prototype,
 		X3DTimeContext .prototype,
+		X3DParticleSystemsContext .prototype,
 	{
 		constructor: X3DBrowserContext,
 		initialize: function ()
@@ -141,6 +145,7 @@ function ($,
 			X3DTextContext                 .prototype .initialize .call (this);
 			X3DTexturingContext            .prototype .initialize .call (this);
 			X3DTimeContext                 .prototype .initialize .call (this);
+			X3DParticleSystemsContext      .prototype .initialize .call (this);
 		},
 		initialized: function ()
 		{
