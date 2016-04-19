@@ -62,7 +62,7 @@ define ([
 	"cobweb/Components/EnvironmentalEffects/Fog", // VRML
 	//"cobweb/Components/EnvironmentalEffects/FogCoordinate",
 	"cobweb/Components/Text/FontStyle", // VRML
-	//"cobweb/Components/ParticleSystems/ForcePhysicsModel",
+	"cobweb/Components/ParticleSystems/ForcePhysicsModel",
 	//"cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
 	"cobweb/Components/Geospatial/GeoCoordinate",
 	"cobweb/Components/Geospatial/GeoElevationGrid",
@@ -219,7 +219,7 @@ define ([
 	"cobweb/Components/EnvironmentalSensor/VisibilitySensor", // VRML
 	//"cobweb/Components/ParticleSystems/VolumeEmitter",
 	//"cobweb/Components/Picking/VolumePickSensor",
-	//"cobweb/Components/ParticleSystems/WindPhysicsModel",
+	"cobweb/Components/ParticleSystems/WindPhysicsModel",
 	"cobweb/Components/Core/WorldInfo", // VRML
 ],
 function (Anchor,
@@ -284,7 +284,7 @@ function (Anchor,
           Fog,
           //FogCoordinate,
           FontStyle,
-          //ForcePhysicsModel,
+          ForcePhysicsModel,
           //GeneratedCubeMapTexture,
           GeoCoordinate,
           GeoElevationGrid,
@@ -441,7 +441,7 @@ function (Anchor,
           VisibilitySensor,
           //VolumeEmitter,
           //VolumePickSensor,
-          //WindPhysicsModel,
+          WindPhysicsModel,
           WorldInfo)
 {
 "use strict";
@@ -513,7 +513,7 @@ function (Anchor,
 		Fog:                          Fog,
 		//FogCoordinate:                FogCoordinate,
 		FontStyle:                    FontStyle,
-		//ForcePhysicsModel:            ForcePhysicsModel,
+		ForcePhysicsModel:            ForcePhysicsModel,
 		//GeneratedCubeMapTexture:      GeneratedCubeMapTexture,
 		GeoCoordinate:                GeoCoordinate,
 		GeoElevationGrid:             GeoElevationGrid,
@@ -670,7 +670,7 @@ function (Anchor,
 		VisibilitySensor:             VisibilitySensor,
 		//VolumeEmitter:                VolumeEmitter,
 		//VolumePickSensor:             VolumePickSensor,
-		//WindPhysicsModel:             WindPhysicsModel,
+		WindPhysicsModel:             WindPhysicsModel,
 		WorldInfo:                    WorldInfo,
 	};
 

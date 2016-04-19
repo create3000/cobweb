@@ -7,7 +7,6 @@ define ([
 	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
@@ -15,12 +14,9 @@ function ($,
           FieldDefinitionArray,
           X3DParticleEmitterNode, 
           X3DConstants,
-          Vector3,
-          Rotation4)
+          Vector3)
 {
 "use strict";
-
-	var rotation = new Rotation4 (0, 0, 0);
 
 	function PointEmitter (executionContext)
 	{
@@ -73,9 +69,9 @@ function ($,
 			var direction = this .direction_ .getValue ();
 
 			if (direction .equals (Vector3 .Zero))
-				return this .getRandomNormal (direction, velocity) .multiply (this .getRandomSpeed ());
+				return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
 
-			return velocity .assign (direction) .multiply (this .getRandomSpeed ());
+			return velocity .assign (direction) .normalize () .multiply (this .getRandomSpeed ());
 		},
 	});
 

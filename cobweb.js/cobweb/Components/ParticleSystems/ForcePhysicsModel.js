@@ -43,6 +43,14 @@ function ($,
 		{
 			return "physics";
 		},
+		addForce: function (i, emitterNode, forces, turbulences)
+		{
+			if (this .enabled_ .getValue ())
+			{
+				forces      [i] = this .force_ .getValue () .copy ();
+				turbulences [i] = 0;
+			}
+		},
 	});
 
 	return ForcePhysicsModel;

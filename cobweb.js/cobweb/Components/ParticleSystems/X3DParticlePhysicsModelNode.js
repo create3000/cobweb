@@ -20,6 +20,8 @@ function ($,
 	X3DParticlePhysicsModelNode .prototype = $.extend (Object .create (X3DNode .prototype),
 	{
 		constructor: X3DParticlePhysicsModelNode,
+		addForce: function ()
+		{ },
 	});
 
 	return X3DParticlePhysicsModelNode;

@@ -3,12 +3,18 @@ define ([
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           X3DNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          Rotation4)
 {
 "use strict";
+
+	var rotation = new Rotation4 (0, 0, 1, 0);
 
 	function X3DParticleEmitterNode (executionContext)
 	{
@@ -42,31 +48,42 @@ function ($,
 		{
 			return Math .random () * (max - min) + min;
 		},
-		getRandomNormal: function (direction, normal)
+		getRandomNormal: function (normal)
 		{
 			var
-				theta = this .getRandomValue (-1, 1) * Math .PI;
-				cphi  = Math .pow (Math .random (), 1/3); // I don't why this, but its almost uniform.
-				phi   = Math .acos (cphi);
+				theta = this .getRandomValue (-1, 1) * Math .PI,
+				cphi  = this .getRandomValue (-1, 1),
+				phi   = Math .acos (cphi),
 				r     = Math .sin (phi);
 		
 			normal .set (Math .sin (theta) * r,
 			             Math .cos (theta) * r,
 			             cphi);
 		
+			return normal;
+		},
+		getRandomNormalAngle: function (angle, normal)
+		{
+			var
+				theta = this .getRandomValue (-1, 1) * Math .PI,
+				cphi  = this .getRandomValue (Math .cos (angle), 1),
+				phi   = Math .acos (cphi),
+				r     = Math .sin (phi);
+		
+			normal .set (Math .sin (theta) * r,
+			             Math .cos (theta) * r,
+			             cphi);
+		
+			return normal;
+		},
+		getRandomNormalDirectionAngle: function (direction, angle, normal)
+		{
 			rotation .setFromToVec (Vector3 .zAxis, direction);
 
-			return rotation .multRotVec (normal);
+			return rotation .multVecRot (this .getRandomNormalAngle (angle, normal));
 		},
 		animate: function (position, velocity, deltaTime)
 		{
-			//fromPosition .assign (position);
-
-			position .x += velocity .x * deltaTime;
-			position .y += velocity .y * deltaTime;
-			position .z += velocity .z * deltaTime;
-		
-			//bounce (fromPosition, position, velocity);
 		},
 		update: function (particleSystem)
 		{
@@ -98,7 +115,17 @@ function ($,
 				}
 				else
 				{
-					this .animate (particle .position, particle .velocity, deltaTime);
+					var
+						position = particle .position,
+						velocity = particleSystem .getVelocity (particle .velocity);
+
+					//fromPosition .assign (position);
+		
+					position .x += velocity .x * deltaTime;
+					position .y += velocity .y * deltaTime;
+					position .z += velocity .z * deltaTime;
+		
+					//bounce (fromPosition, position, velocity);
 			
 					particle .elapsedTime = elapsedTime;
 				}

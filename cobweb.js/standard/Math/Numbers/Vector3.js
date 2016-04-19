@@ -213,6 +213,9 @@ function ($, Algorithm)
 	{
 		Zero: new Vector3 (0, 0, 0),
 		One: new Vector3 (1, 1, 1),
+		xAxis: new Vector3 (1, 0, 0),
+		yAxis: new Vector3 (0, 1, 0),
+		zAxis: new Vector3 (0, 0, 1),
 		negate: function (vector)
 		{
 			var copy = Object .create (this .prototype);

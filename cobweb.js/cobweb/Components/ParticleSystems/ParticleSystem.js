@@ -40,6 +40,7 @@ function ($,
 		SPRITE:   SPRITE,
 	};
 
+	var normal = new Vector3 (0, 0, 0);
 
 	function ParticleSystem (executionContext)
 	{
@@ -47,14 +48,19 @@ function ($,
 
 		this .addType (X3DConstants .ParticleSystem);
 
-		this .particles    = [ ];
-		this .geometryType = POINT;
-		this .numParticles = 0;
-		this .emitterNode  = null;
-		this .creationTime = 0;
-		this .pauseTime    = 0;
-		this .deltaTime    = 0;
-		this .shader       = this .getBrowser () .getPointShader ();
+		this .particles          = [ ];
+		this .velocities         = [ ];
+		this .speeds             = [ ];
+		this .turbulences        = [ ];
+		this .geometryType       = POINT;
+		this .numParticles       = 0;
+		this .emitterNode        = null;
+		this .physicsModelNodes  = [ ];
+		this .creationTime       = 0;
+		this .pauseTime          = 0;
+		this .deltaTime          = 0;
+		this .numForces          = 0;
+		this .shader             = this .getBrowser () .getPointShader ();
 	}
 
 	ParticleSystem .prototype = $.extend (Object .create (X3DShapeNode .prototype),
@@ -99,16 +105,21 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
 			this .enabled_      .addInterest (this, "set_enabled__");
 			this .geometryType_ .addInterest (this, "set_geometryType__");
 			this .maxParticles_ .addInterest (this, "set_enabled__");
 			this .emitter_      .addInterest (this, "set_emitter__");
+			this .physics_      .addInterest (this, "set_physics__");
 
 			this .vertexBuffer = gl .createBuffer ();
 			this .vertexArray  = new Float32Array ();
 
 			this .set_enabled__ ();
 			this .set_emitter__ ();
+			this .set_physics__ ();
 		},
 		getParticles: function ()
 		{
@@ -121,6 +132,26 @@ function ($,
 		getDeltaTime: function ()
 		{
 			return this .deltaTime;
+		},
+		getVelocity: function (velocity)
+		{
+			var
+				emitterNode = this .emitterNode,
+				speeds      = this .speeds,
+				velocities  = this .velocities,
+				turbulences = this .turbulences;
+
+			for (var i = 0, numForces = this .numForces; i < numForces; ++ i)
+			{
+				var speed = speeds [i];
+			
+				if (speed < 1e-7)
+					continue;
+		
+				velocity .add (emitterNode .getRandomNormalDirectionAngle (velocities [i], turbulences [i], normal) .multiply (speed));
+			}
+		
+			return velocity;
 		},
 		set_bbox__: function ()
 		{
@@ -238,11 +269,29 @@ function ($,
 			if (! this .emitterNode)
 				this .emitterNode = this .getBrowser () .getDefaultEmitter ();
 		},
+		set_physics__: function ()
+		{
+			var
+				physics           = this .physics_ .getValue (),
+				physicsModelNodes = this .physicsModelNodes;
+
+			physicsModelNodes .length = 0;
+
+			for (var i = 0, length = physics .length; i < length; ++ i)
+			{
+				var physicsModelNode = X3DCast (X3DConstants .X3DParticlePhysicsModelNode, physics [i]);
+
+				if (physicsModelNode)
+					physicsModelNodes .push (physicsModelNode);
+			}
+		},
 		prepareEvents: function ()
 		{
+			var emitterNode = this .emitterNode;
+
 			// Determine numParticles
 
-			if (this .emitterNode .isExplosive ())
+			if (emitterNode .isExplosive ())
 			{
 			}
 			else
@@ -270,7 +319,34 @@ function ($,
 
 			// Determine particle position, velocity and color
 
-			this .emitterNode .update (this);
+			emitterNode .update (this);
+
+			if (emitterNode .mass_ .getValue ())
+			{
+				var
+					physicsModelNodes = this .physicsModelNodes,
+					velocities        = this .velocities,
+					speeds            = this .speeds,
+					turbulences       = this .turbulences,
+					deltaMass         = this .deltaTime / emitterNode .mass_ .getValue ();
+
+				// Collect forces in velocities and turbulences.
+
+				for (var i = 0, length = physicsModelNodes .length; i < length; ++ i)
+					physicsModelNodes [i] .addForce (i, emitterNode, velocities, turbulences);
+
+				for (var i = 0, length = velocities .length; i < length; ++ i)
+				{
+					velocities [i] .multiply (deltaMass);
+					speeds [i] = velocities [i] .abs ();
+				}
+
+				this .numForces = length;
+			}
+			else
+			{
+				this .numForces = 0;
+			}
 
 			this .getBrowser () .addBrowserEvent (this);
 		},
