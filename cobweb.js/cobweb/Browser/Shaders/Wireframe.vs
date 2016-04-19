@@ -6,6 +6,9 @@ precision mediump float;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
 
+uniform int x3d_GeometryType;
+// 1
+
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false
 uniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false
@@ -21,7 +24,7 @@ varying vec3 v; // point on geometry
 void
 main ()
 {
-	gl_PointSize = x3d_LinewidthScaleFactor;
+	gl_PointSize = x3d_GeometryType == 1 ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.5;
 
 	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
 

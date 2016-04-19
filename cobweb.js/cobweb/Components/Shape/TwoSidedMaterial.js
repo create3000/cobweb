@@ -159,7 +159,7 @@ function ($,
 		},
 		set_transparent__: function ()
 		{
-			var transparent = this .transparency_ .getValue () || this .backTransparency_ .getValue ();
+			var transparent = (this .transparency_ .getValue () || this .backTransparency_ .getValue ()) > 0;
 
 			if (transparent != this .transparent_ .getValue ())
 				this .transparent_ = transparent;

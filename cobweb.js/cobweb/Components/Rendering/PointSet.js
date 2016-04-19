@@ -29,6 +29,7 @@ function ($,
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
+		this .transparent_ = true;
 	}
 
 	PointSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -92,26 +93,12 @@ function ($,
 		set_color__: function ()
 		{
 			if (this .colorNode)
-			{
 				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
-			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
-			{
 				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
-
-				this .set_transparent__ ();
-			}
-			else
-				this .transparent_ = false;
-		},
-		set_transparent__: function ()
-		{
-			this .transparent_ = true;
 		},
 		set_coord__: function ()
 		{
