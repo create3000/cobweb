@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Rendering/X3DColorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Color4",
 ],
 function ($,
           Fields,
@@ -14,7 +15,8 @@ function ($,
           FieldDefinitionArray,
           X3DColorNode, 
           X3DConstants,
-          Color3)
+          Color3,
+          Color4)
 {
 "use strict";
 
@@ -25,8 +27,6 @@ function ($,
 		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Color);
-
-		this .color = this .color_ .getValue ();
 	}
 
 	Color .prototype = $.extend (Object .create (X3DColorNode .prototype),
@@ -55,6 +55,21 @@ function ($,
 		getWhite: function ()
 		{
 			return white;
+		},
+		getColors: function (colors)
+		{
+			var color = this .color_ .getValue ();
+
+			for (var i = 0, length = color .length; i < length; ++ i)
+			{
+				var c = color [i] .getValue ();
+
+				colors [i] = new Color4 (c .r, c .g, c .b, 1);
+			}
+
+			colors .length = length;
+
+			return colors;
 		},
 	});
 

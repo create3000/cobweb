@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/PointEmitter.x3d'/>
-    <meta name='modified' content='Tue, 19 Apr 2016 07:49:19 GMT'/>
+    <meta name='modified' content='Tue, 19 Apr 2016 14:09:34 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Grid' url='"GridTool.x3dv#Grid", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/GridTool.x3dv#Grid"'>
@@ -59,11 +59,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-0.0502935014665127, 8.75909614562988, 16.2807216644287'/>
+              value='4.11544224413097, 16.7303129020571, 7.14806914343407'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.999766228092129, 0.0133086841030229, -0.0170401905471207, 0.476458054682996'/>
+              value='-0.957865633080474, 0.283222233611247, 0.0477346347173502, 1.16467619451065'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -75,6 +75,14 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <WindPhysicsModel DEF='_1' containerField='value'
+                direction='0 0 -1'
+                speed='0.6'
+                gustiness='1'/>
+          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -85,7 +93,7 @@
         centerOfRotation='-0.198753 0.25226 -0.207125'/>
     <ParticleSystem DEF='Fountain'
         geometryType='POINTS'
-        maxParticles='10000'
+        maxParticles='30000'
         particleLifetime='2'
         lifetimeVariation='0.1'
         particleSize='0.1 0.2'
@@ -106,12 +114,9 @@
           force='0 -0.098 0'/>
       <WindPhysicsModel
           speed='0.8'
-          gustiness='0.2'
-          turbulence='1'/>
-      <WindPhysicsModel
-          direction='0 0 -1'
-          speed='0.6'
-          gustiness='1'/>
+          gustiness='0.8'
+          turbulence='2'/>
+      <WindPhysicsModel USE='_1'/>
     </ParticleSystem>
     <ProtoInstance name='Grid'/>
   </Scene>

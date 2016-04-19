@@ -54,6 +54,17 @@ function ($,
 		{
 			return white;
 		},
+		getColors: function (colors)
+		{
+			var color = this .color_ .getValue ();
+
+			for (var i = 0, length = color .length; i < length; ++ i)
+				colors [i] = color [i] .getValue () .copy ();
+
+			colors .length = length;
+
+			return colors;
+		},
 	});
 
 	return ColorRGBA;

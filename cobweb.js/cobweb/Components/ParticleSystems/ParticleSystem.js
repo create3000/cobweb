@@ -8,7 +8,9 @@ define ([
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Color4",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -18,7 +20,9 @@ function ($,
           TraverseType,
           X3DConstants,
           X3DCast,
-          Vector3)
+          Color4,
+          Vector3,
+          Vector4)
 {
 "use strict";
 
@@ -58,6 +62,8 @@ function ($,
 		this .pauseTime          = 0;
 		this .deltaTime          = 0;
 		this .numForces          = 0;
+		this .colorKeys          = [ ];
+		this .colorRamp          = [ ];
 		this .shader             = this .getBrowser () .getPointShader ();
 	}
 
@@ -79,9 +85,9 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",          new Fields .SFVec3f (-1, -1, -1)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",        new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "emitter",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "physics",           new Fields .MFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorRamp",         new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordRamp",      new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "physics",           new Fields .MFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance",        new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",          new Fields .SFNode ()),
 		]),
@@ -111,6 +117,10 @@ function ($,
 			this .maxParticles_ .addInterest (this, "set_enabled__");
 			this .emitter_      .addInterest (this, "set_emitter__");
 			this .physics_      .addInterest (this, "set_physics__");
+			this .colorRamp_    .addInterest (this, "set_colorRamp__");
+
+			this .colorBuffer = gl .createBuffer ();
+			this .colorArray  = new Float32Array ();
 
 			this .vertexBuffer = gl .createBuffer ();
 			this .vertexArray  = new Float32Array ();
@@ -118,6 +128,7 @@ function ($,
 			this .set_enabled__ ();
 			this .set_emitter__ ();
 			this .set_physics__ ();
+			this .set_colorRamp__ ();
 		},
 		getParticles: function ()
 		{
@@ -140,6 +151,11 @@ function ($,
 			
 			this .bboxSize   = this .bbox .size;
 			this .bboxCenter = this .bbox .center;
+		},
+		set_transparent__: function ()
+		{
+			this .transparent = (this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
+			                    (this .colorRampNode && this .colorRampNode .isTransparent ());
 		},
 		set_live__: function ()
 		{
@@ -218,10 +234,16 @@ function ($,
 			switch (this .geometryType)
 			{
 				case POINT:
+				{
+					this .colorArray  = new Float32Array (4 * maxParticles);
 					this .vertexArray = new Float32Array (4 * maxParticles);
+
+					this .colorArray  .fill (1);
 					this .vertexArray .fill (1);
+
 					this .shader = this .getBrowser () .getPointShader ()
 					break;
+				}
 			}
 		},
 		set_maxParticles__: function ()
@@ -235,6 +257,7 @@ function ($,
 					elapsedTime: 0,
 					position: new Vector3 (0, 0, 0),
 					velocity: new Vector3 (0, 0, 0),
+					color:    new Vector4 (1, 1, 1, 1),
 				};
 			}
 
@@ -265,6 +288,29 @@ function ($,
 				if (physicsModelNode)
 					physicsModelNodes .push (physicsModelNode);
 			}
+		},
+		set_colorRamp__: function ()
+		{
+			if (this .colorRampNode)
+				this .colorRampNode .removeInterest (this, "set_color__");
+
+			this .colorRampNode = X3DCast (X3DConstants .X3DColorNode, this .colorRamp_);
+
+			if (this .colorRampNode)
+				this .colorRampNode .addInterest (this, "set_color__");
+
+			this .set_color__ ();
+			this .set_transparent__ ();
+		},
+		set_color__: function ()
+		{
+			for (var i = 0, length = this .colorKey_ .length; i < length; ++ i)
+				this .colorKeys [i] = this .colorKey_ [i];
+
+			this .colorRampNode .getColors (this .colorRamp);
+
+			for (var i = this .colorRamp .length, length = this .colorKey_ .length; i < length; ++ i)
+				this .colorRamp [i] = new Color4 (1, 1, 1, 1);
 		},
 		prepareEvents: function ()
 		{
@@ -351,13 +397,35 @@ function ($,
 				gl           = this .getBrowser () .getContext (),
 				particles    = this .particles,
 				numParticles = this .numParticles,
+				colorArray   = this .colorArray,
 				vertexArray  = this .vertexArray;
+
+			// Colors
+
+			if (this .colorRamp .length)
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						color = particles [i] .color,
+						i4    = i * 4;
+	
+					colorArray [i4]     = color .x;
+					colorArray [i4 + 1] = color .y;
+					colorArray [i4 + 2] = color .z;
+					colorArray [i4 + 3] = color .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
+			}
+
+			// Vertices
 
 			for (var i = 0; i < numParticles; ++ i)
 			{
 				var
-					particle = particles [i],
-					position = particle .position,
+					position = particles [i] .position,
 					i4       = i * 4;
 
 				vertexArray [i4]     = position .x;
@@ -403,17 +471,17 @@ function ($,
 
 			// Setup shader.
 
-			context .colorMaterial = false && this .colors .length;
+			context .colorMaterial = this .colorRamp .length;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
-//			if (this .colors .length && shader .color >= 0)
-//			{
-//				gl .enableVertexAttribArray (shader .color);
-//				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-//				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
-//			}
+			if (this .colorRamp .length && shader .color >= 0)
+			{
+				gl .enableVertexAttribArray (shader .color);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
 
 			gl .enableVertexAttribArray (shader .vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);

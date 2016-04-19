@@ -501,8 +501,8 @@ function ($,
 		endUpdate: function ()
 		{
 			X3DBrowserContext .prototype .endUpdate .call (this);
-			// DEBUG
-			//this .getExecutionContext () .endUpdate ();
+
+			this .getExecutionContext () .endUpdate ();
 		},
 		print: function ()
 		{

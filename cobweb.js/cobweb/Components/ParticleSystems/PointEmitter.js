@@ -55,9 +55,15 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
+			this .position_  .addInterest (this, "set_position__");
 			this .direction_ .addInterest (this, "set_direction__");
 
+			this .set_position__ ();
 			this .set_direction__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
 		},
 		set_direction__: function ()
 		{
@@ -70,7 +76,7 @@ function ($,
 		},
 		getRandomPosition: function (position)
 		{
-			return position .assign (this .position_ .getValue ());
+			return position .assign (this .position);
 		},
 		getRandomVelocity: function (velocity)
 		{
