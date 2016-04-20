@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/PointEmitter.x3d'/>
-    <meta name='modified' content='Tue, 19 Apr 2016 18:22:44 GMT'/>
+    <meta name='modified' content='Wed, 20 Apr 2016 01:44:22 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Grid' url='"GridTool.x3dv#Grid", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/GridTool.x3dv#Grid"'>
@@ -59,15 +59,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0, 0, 10'/>
+              value='6.95441767781059, -10.9455192646649, 38.1205570962763'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='0.267526168119517, 0.886841256272589, -0.376752353070482, 0.231331896046484'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, 0, 0'/>
+              value='-0.49056801199913, -8.33930015563965, 1.86343002319336'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
@@ -78,39 +78,23 @@
           <MetadataSet DEF='children' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <Script DEF='NumParticlesyScript' containerField='value'>
-              <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
-              <field accessType='inputOutput' type='SFString' name='description' value='numParticles'/>
-              <field accessType='inputOutput' type='SFInt32' name='minValue'/>
-              <field accessType='inputOutput' type='SFInt32' name='maxValue' value='30000'/>
-              <field accessType='outputOnly' type='SFInt32' name='value_changed'/>
-              <field accessType='outputOnly' type='MFString' name='string_changed'/>
-              <field accessType='initializeOnly' type='SFInt32' name='currentValue'/>
-<![CDATA[ecmascript:
-
-function initialized ()
-{
-	set_value (value);
-}
-
-function set_translation (value)
-{
-	set_value (minValue + (value .x * (maxValue - minValue)));
-}
-
-function set_value (value)
-{
-	var rounded = value .toFixed (0);
-
-	if (rounded == currentValue)
-		return;
-
-	currentValue       = rounded;
-	string_changed [0] = description + " " + rounded;
-	value_changed      = rounded;
-}
-]]> 
-            </Script>
+            <Transform DEF='TransparencyText' containerField='value'
+                translation='1.675 -0.95 -3.49096e-06'
+                scale='0.0672307 0.0672307 0.0672307'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <Text DEF='_1'
+                    string='"numParticles 2337"'
+                    solid='true'>
+                  <FontStyle DEF='_2'
+                      family='"SANS"'
+                      justify='"END"'/>
+                </Text>
+              </Shape>
+            </Transform>
           </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='LayerSet' containerField='value'
@@ -119,11 +103,12 @@ function set_value (value)
           <MetadataInteger DEF='activeLayer' containerField='value'
               name='activeLayer'
               reference='http://titania.create3000.de'
-              value='3'/>
+              value='1'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
     <LayerSet
+        activeLayer='1'
         order='0, 1, 2, 3'>
       <Layer>
         <Viewpoint
@@ -132,11 +117,11 @@ function set_value (value)
             orientation='-0.589527441120123 0.804383826489013 0.0736481897214987 0.36678659778641'
             centerOfRotation='-0.490568 -8.3393 1.86343'/>
         <ParticleSystem DEF='Fountain'
-            geometryType='POINTS'
-            maxParticles='39324'
+            geometryType='SPRITE'
+            maxParticles='2337'
             particleLifetime='2'
             lifetimeVariation='0.1'
-            particleSize='0.1 0.2'
+            particleSize='1 1'
             colorKey='0, 0.1, 0.4, 1'
             bboxSize='65.18 52.41 52.41'
             bboxCenter='0 -16.74 0'>
@@ -146,12 +131,6 @@ function set_value (value)
               variation='0.01'
               mass='0.01'
               surfaceArea='0.1'/>
-          <ColorRGBA containerField='colorRamp'
-              color='0 0.38 1 0, 0.06 0.58 1 0.1, 0 0.37 1 0.2, 0 0.05 1 0.2'/>
-          <Appearance>
-            <LineProperties
-                linewidthScaleFactor='4'/>
-          </Appearance>
           <ForcePhysicsModel
               force='0 -0.098 0'/>
           <WindPhysicsModel
@@ -162,29 +141,19 @@ function set_value (value)
               direction='0 0 -1'
               speed='0.6'
               gustiness='1'/>
+          <ColorRGBA containerField='colorRamp'
+              color='0 0.38 1 0, 0.06 0.58 1 0.1, 0 0.37 1 0.2, 0 0.05 1 0.2'/>
+          <Appearance>
+            <LineProperties
+                linewidthScaleFactor='4'/>
+          </Appearance>
         </ParticleSystem>
         <ProtoInstance name='Grid'/>
       </Layer>
       <LayoutLayer/>
       <Layer>
         <OrthoViewpoint/>
-        <Transform DEF='TransparencyText'
-            translation='1.675 -0.95 -3.49096e-06'
-            scale='0.0672307 0.0672307 0.0672307'>
-          <Shape>
-            <Appearance>
-              <Material
-                  emissiveColor='1 1 1'/>
-            </Appearance>
-            <Text DEF='_1'
-                string='"numParticles 39325"'
-                solid='true'>
-              <FontStyle DEF='_2'
-                  family='"Ubuntu", "SANS"'
-                  justify='"END"'/>
-            </Text>
-          </Shape>
-        </Transform>
+        <Transform USE='TransparencyText'/>
         <Transform DEF='TransparancySlider'
             translation='0.025 -0.923 -3.49096e-06'
             center='0 -0.027 0'>
@@ -206,7 +175,7 @@ function set_value (value)
           </Transform>
           <Transform>
             <Transform DEF='Rectangle2D'
-                translation='0.98312 0 0'
+                translation='0.0584318 0 0'
                 scale='0.027 0.0267372 0.0267372'>
               <Shape>
                 <Appearance>
@@ -217,7 +186,7 @@ function set_value (value)
               </Shape>
             </Transform>
             <PlaneSensor DEF='_3'
-                offset='0.98312 0 0'
+                offset='0.0584318 0 0'
                 maxPosition='1 0'/>
           </Transform>
           <Group>
@@ -262,7 +231,39 @@ function set_value (value)
                 </MetadataSet>
               </PositionInterpolator>
             </Group>
-            <Script USE='NumParticlesyScript'/>
+            <Script DEF='NumParticlesyScript'>
+              <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+              <field accessType='inputOutput' type='SFString' name='description' value='numParticles'/>
+              <field accessType='inputOutput' type='SFInt32' name='minValue'/>
+              <field accessType='inputOutput' type='SFInt32' name='maxValue' value='40000'/>
+              <field accessType='outputOnly' type='SFInt32' name='value_changed'/>
+              <field accessType='outputOnly' type='MFString' name='string_changed'/>
+              <field accessType='initializeOnly' type='SFInt32' name='currentValue' value='2337'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (value);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (0);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+	value_changed      = rounded;
+}
+]]> 
+            </Script>
           </Group>
           <Switch>
             <Transform DEF='Rectangle2D_1'
