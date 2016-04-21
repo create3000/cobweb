@@ -72,49 +72,52 @@ function ($,
 		},
 		rotate: function (type)
 		{
-			try
+			// throws domain error
+
+			this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+
+			var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
+
+			if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 			{
-				this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+				inverseModelViewMatrix .multDirMatrix (viewerYAxis .assign (yAxis)) .normalize (); // Normalized to get work with Geo
 
-				var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
+				x .assign (viewerYAxis) .cross (billboardToViewer);
+				y .assign (billboardToViewer) .cross (x);
+				var z = billboardToViewer;
 
-				if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
-				{
-					inverseModelViewMatrix .multDirMatrix (viewerYAxis .assign (yAxis)) .normalize (); // Normalized to get work with Geo
+				// Compose rotation
 
-					x .assign (viewerYAxis) .cross (billboardToViewer);
-					y .assign (billboardToViewer) .cross (x);
-					var z = billboardToViewer;
+				x .normalize ();
+				y .normalize ();
 
-					// Compose rotation
-
-					x .normalize ();
-					y .normalize ();
-
-					this .matrix .set (x [0], x [1], x [2], 0,
-					                   y [0], y [1], y [2], 0,
-					                   z [0], z [1], z [2], 0,
-					                   0,     0,     0,     1);
-				}
-				else
-				{
-					N1 .assign (this .axisOfRotation_ .getValue ()) .cross (billboardToViewer); // Normal vector of plane as in specification
-					N2 .assign (this .axisOfRotation_ .getValue ()) .cross (zAxis);             // Normal vector of plane between axisOfRotation and zAxis
-
-					this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
-				}
-
-				this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);
+				this .matrix .set (x [0], x [1], x [2], 0,
+				                   y [0], y [1], y [2], 0,
+				                   z [0], z [1], z [2], 0,
+				                   0,     0,     0,     1);
 			}
-			catch (error)
-			{ }
+			else
+			{
+				N1 .assign (this .axisOfRotation_ .getValue ()) .cross (billboardToViewer); // Normal vector of plane as in specification
+				N2 .assign (this .axisOfRotation_ .getValue ()) .cross (zAxis);             // Normal vector of plane between axisOfRotation and zAxis
+
+				this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
+			}
+
+			this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);
 		},
 		traverse: function (type)
 		{
 			this .getBrowser () .getModelViewMatrix () .push ();
-			this .rotate (type);
 
-			X3DGroupingNode .prototype .traverse .call (this, type);
+			try
+			{
+				this .rotate (type);
+	
+				X3DGroupingNode .prototype .traverse .call (this, type);
+			}
+			catch (error)
+			{ }
 
 			this .getBrowser () .getModelViewMatrix () .pop ();
 		},

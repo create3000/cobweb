@@ -85,6 +85,8 @@ function ($,
 		},
 		scale: function (type)
 		{
+			// throws domain error
+
 			this .getModelViewMatrix (type, this .modelViewMatrix);
 			this .modelViewMatrix .get (translation, rotation, scale);
 		
@@ -115,20 +117,20 @@ function ($,
 		},
 		traverse: function (type)
 		{
+			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+	
+			modelViewMatrix .push ();
+			
 			try
 			{
-				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-		
-				modelViewMatrix .push ();
-			
 				this .scale (type);
 			
 				X3DGroupingNode .prototype .traverse .call (this, type);
-			
-				modelViewMatrix .pop ();
 			}
 			catch (error)
 			{ }
+			
+			modelViewMatrix .pop ();
 		},
 	});
 

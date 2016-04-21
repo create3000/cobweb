@@ -1,12 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Navigation/Billboard.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="16" Column="16" />
+      <File FileName="cobweb.js/cobweb.html" Line="15" Column="15" />
       <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js" Line="19" Column="19" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/PointEmitter.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowserContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Navigation/Billboard.js" Line="50" Column="50" />
+      <File FileName="cobweb.js/cobweb/Components/Layout/ScreenGroup.js" Line="2" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
