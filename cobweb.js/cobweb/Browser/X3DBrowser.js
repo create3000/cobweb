@@ -497,6 +497,7 @@ function ($,
 		{
 			X3DBrowserContext .prototype .beginUpdate .call (this);
 			this .getExecutionContext () .beginUpdate ();
+			this .advanceTime (performance .now ());
 		},
 		endUpdate: function ()
 		{

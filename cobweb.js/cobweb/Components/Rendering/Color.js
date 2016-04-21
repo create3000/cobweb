@@ -7,7 +7,7 @@ define ([
 	"cobweb/Components/Rendering/X3DColorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color3",
-	"standard/Math/Numbers/Color4",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -16,7 +16,7 @@ function ($,
           X3DColorNode, 
           X3DConstants,
           Color3,
-          Color4)
+          Vector4)
 {
 "use strict";
 
@@ -56,7 +56,7 @@ function ($,
 		{
 			return white;
 		},
-		getColors: function (colors)
+		getVectors: function (colors)
 		{
 			var color = this .color_ .getValue ();
 
@@ -64,7 +64,7 @@ function ($,
 			{
 				var c = color [i] .getValue ();
 
-				colors [i] = new Color4 (c .r, c .g, c .b, 1);
+				colors [i] = new Vector4 (c .r, c .g, c .b, 1);
 			}
 
 			colors .length = length;

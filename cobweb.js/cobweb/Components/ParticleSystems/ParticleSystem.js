@@ -12,6 +12,7 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function ($,
           Fields,
@@ -24,7 +25,8 @@ function ($,
           Color4,
           Vector3,
           Vector4,
-          Matrix4)
+          Matrix4,
+          QuickSort)
 {
 "use strict";
 
@@ -55,6 +57,8 @@ function ($,
 		y                  = new Vector3 (0, 0, 0),
 		z                  = new Vector3 (0, 0, 0);
 
+	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
+
 	function ParticleSystem (executionContext)
 	{
 		X3DShapeNode .call (this, executionContext);
@@ -66,6 +70,7 @@ function ($,
 		this .speeds             = [ ];
 		this .turbulences        = [ ];
 		this .geometryType       = POINT;
+		this .maxParticles       = 0;
 		this .numParticles       = 0;
 		this .emitterNode        = null;
 		this .physicsModelNodes  = [ ];
@@ -74,8 +79,17 @@ function ($,
 		this .deltaTime          = 0;
 		this .numForces          = 0;
 		this .colorKeys          = [ ];
+		this .colorRamppNode     = null;
 		this .colorRamp          = [ ];
+		this .colorMaterial      = false;
+		this .texCoordKeys       = [ ];
+		this .texCoordRampNode   = null;
+		this .texCoordRamp       = [ ];
+		this .vertexCount        = 0;
 		this .shader             = this .getBrowser () .getPointShader ();
+		this .modelViewMatrix    = new Matrix4 ();
+		this .particleSorter     = new QuickSort (this .particles, compareDistance);
+		this .sortParticles      = false;
 	}
 
 	ParticleSystem .prototype = $.extend (Object .create (X3DShapeNode .prototype),
@@ -126,9 +140,12 @@ function ($,
 			this .enabled_      .addInterest (this, "set_enabled__");
 			this .geometryType_ .addInterest (this, "set_geometryType__");
 			this .maxParticles_ .addInterest (this, "set_enabled__");
+			this .colorKey_     .addInterest (this, "set_colorKey__");
+			this .texCoordKey_  .addInterest (this, "set_texCoordKey__");
 			this .emitter_      .addInterest (this, "set_emitter__");
 			this .physics_      .addInterest (this, "set_physics__");
 			this .colorRamp_    .addInterest (this, "set_colorRamp__");
+			this .texCoordRamp_ .addInterest (this, "set_texCoordRamp__");
 
 			this .colorBuffer    = gl .createBuffer ();
 			this .texCoordBuffer = gl .createBuffer ();
@@ -140,10 +157,12 @@ function ($,
 			this .normalArray   = new Float32Array ();
 			this .vertexArray   = new Float32Array ();
 
+			// Call order is higly important at startup.
 			this .set_enabled__ ();
 			this .set_emitter__ ();
 			this .set_physics__ ();
 			this .set_colorRamp__ ();
+			this .set_texCoordRamp__ ();
 		},
 		getParticles: function ()
 		{
@@ -248,7 +267,7 @@ function ($,
 		{
 			var
 				gl           = this .getBrowser () .getContext (),
-				maxParticles = Math .max (0, this .maxParticles_ .getValue ());
+				maxParticles = this .maxParticles;
 
 			// geometryType
 
@@ -272,6 +291,7 @@ function ($,
 					this .vertexArray .fill (1);
 
 					this .primitiveType = gl .POINTS;
+					this .vertexCount   = 1;
 					this .shader        = this .getBrowser () .getPointShader ()
 					break;
 				}
@@ -286,6 +306,7 @@ function ($,
 					this .vertexArray .fill (1);
 
 					this .primitiveType = gl .LINES;
+					this .vertexCount   = 2;
 					this .shader        = this .getBrowser () .getLineShader ()
 					break;
 				}
@@ -368,12 +389,14 @@ function ($,
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
 					gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
 
+					this .vertexCount   = 6;
 					this .primitiveType = gl .TRIANGLES;
 					this .shader        = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 				case GEOMETRY:
 				{
+					this .vertexCount   = 0;
 					this .primitiveType = gl .TRIANGLES; // geomtry make each its own type
 					this .shader        = this .getBrowser () .getDefaultShader ()
 					break;
@@ -394,17 +417,26 @@ function ($,
 					position: new Vector3 (0, 0, 0),
 					velocity: new Vector3 (0, 0, 0),
 					color:    new Vector4 (1, 1, 1, 1),
+					distance: 0,
 				};
 			}
 
-			for (var i = this .numParticles, length = maxParticles; i < length; ++ i)
+			for (var i = this .numParticles; i < maxParticles; ++ i)
 				particles [i] .lifetime = -1;
 
+			this .maxParticles = maxParticles;
+			this .numParticles = Math .min (this .numParticles, maxParticles);
 			this .creationTime = performance .now () / 1000;
 
-			this .numParticles = Math .min (this .numParticles, maxParticles);
-
 			this .set_geometryType__ ();
+		},
+		set_colorKey__: function ()
+		{
+			this .set_color__ ();
+		},
+		set_texCoordKey__: function ()
+		{
+			this .set_texCoord__ ();
 		},
 		set_emitter__: function ()
 		{
@@ -444,13 +476,40 @@ function ($,
 		},
 		set_color__: function ()
 		{
-			for (var i = 0, length = this .colorKey_ .length; i < length; ++ i)
-				this .colorKeys [i] = this .colorKey_ [i];
+			var
+				colorKey  = this .colorKey_ .getValue (),
+				colorKeys = this .colorKeys,
+				colorRamp = this .colorRamp;
 
-			this .colorRampNode .getColors (this .colorRamp);
+			for (var i = 0, length = colorKey .length; i < length; ++ i)
+				colorKeys [i] = colorKey [i] .getValue ();
 
-			for (var i = this .colorRamp .length, length = this .colorKey_ .length; i < length; ++ i)
-				this .colorRamp [i] = new Color4 (1, 1, 1, 1);
+			colorKeys .length = length;
+
+			if (this .colorRampNode)
+				this .colorRampNode .getVectors (this .colorRamp);
+
+			for (var i = colorRamp .length, length = colorKey .length; i < length; ++ i)
+				colorRamp [i] = new Vector4 (1, 1, 1, 1);
+
+			colorRamp .length = length;
+
+			this .colorMaterial = Boolean (colorKeys .length && this .colorRampNode);
+		},
+		set_texCoordRamp__: function ()
+		{
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .removeInterest (this, "set_texCoord__");
+
+			this .texCoordRampNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoordRamp_);
+
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .addInterest (this, "set_texCoord__");
+
+			this .set_texCoord__ ();
+		},
+		set_texCoord__: function ()
+		{
 		},
 		prepareEvents: function ()
 		{
@@ -467,12 +526,12 @@ function ($,
 				{
 					var
 						now          = performance .now () / 1000,
-						newParticles = (now - this .creationTime) * this .maxParticles_ .getValue () / this .particleLifetime_ .getValue ();
+						newParticles = (now - this .creationTime) * this .maxParticles / this .particleLifetime_ .getValue ();
 	
 					if (newParticles)
 						this .creationTime = now;
 	
-					this .numParticles = Math .floor (Math .min (Math .max (0, this .maxParticles_ .getValue ()), this .numParticles + newParticles));
+					this .numParticles = Math .floor (Math .min (this .maxParticles, this .numParticles + newParticles));
 				}
 			}
 
@@ -499,13 +558,15 @@ function ($,
 					turbulences       = this .turbulences,
 					deltaMass         = this .deltaTime / emitterNode .mass_ .getValue ();
 
-				// Collect forces in velocities and turbulences.
+				// Collect forces in velocities and collect turbulences.
 
 				for (var i = velocities .length, length = physicsModelNodes .length; i < length; ++ i)
 					velocities [i] = new Vector3 (0, 0, 0);
 
 				for (var i = 0, length = physicsModelNodes .length; i < length; ++ i)
 					physicsModelNodes [i] .addForce (i, emitterNode, velocities, turbulences);
+
+				// Determine velocities from forces and determine speed.
 
 				for (var i = 0, length = velocities .length; i < length; ++ i)
 				{
@@ -553,7 +614,7 @@ function ($,
 
 			// Colors
 
-			if (this .colorRamp .length)
+			if (this .colorMaterial)
 			{
 				for (var i = 0; i < numParticles; ++ i)
 				{
@@ -600,7 +661,7 @@ function ($,
 
 			// Colors
 
-			if (this .colorRamp .length)
+			if (this .colorMaterial)
 			{
 				for (var i = 0; i < numParticles; ++ i)
 				{
@@ -646,18 +707,33 @@ function ($,
 		updateQuad: function ()
 		{
 			var
-				gl           = this .getBrowser () .getContext (),
-				particles    = this .particles,
-				maxParticles = Math .max (0, this .maxParticles_ .getValue ()),
-			   numParticles = this .numParticles,
-				colorArray   = this .colorArray,
-				vertexArray  = this .vertexArray,
-				sx1_2        = this .particleSize_ .x / 2,
-				sy1_2        = this .particleSize_ .y / 2;
+				gl              = this .getBrowser () .getContext (),
+				particles       = this .particles,
+				maxParticles    = this .maxParticles,
+			   numParticles    = this .numParticles,
+				colorArray      = this .colorArray,
+				vertexArray     = this .vertexArray,
+				sx1_2           = this .particleSize_ .x / 2,
+				sy1_2           = this .particleSize_ .y / 2,
+				modelViewMatrix = this .modelViewMatrix;
+
+			// Sort particles
+
+			if (this .sortParticles)
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var particle = particles [i];
+					particle .distance = modelViewMatrix .getDepth (particle .position);
+				}
+				
+				// Expensisive function!!!
+				this .particleSorter .sort (0, numParticles);
+			}
 
 			// Colors
 
-			if (this .colorRamp .length)
+			if (this .colorMaterial)
 			{
 				for (var i = 0; i < maxParticles; ++ i)
 				{
@@ -778,12 +854,14 @@ function ($,
 			{
 				case TraverseType .DISPLAY:
 				{
+					var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+
+					this .modelViewMatrix .assign (modelViewMatrix .get ());
+					
 					switch (this .geometryType)
 					{
 						case SPRITE:
 						{
-							var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-					
 							modelViewMatrix .push ();
 							modelViewMatrix .multLeft (this .getScreenAlignedRotation (modelViewMatrix .get ()));
 			
@@ -827,12 +905,13 @@ function ($,
 		},
 		display: function (context)
 		{
+			// Travese appearance before everything.
+			this .getAppearance () .traverse ();
+
 			var
 				browser = this .getBrowser (),
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
-
-			this .getAppearance () .traverse ();
 
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
@@ -842,12 +921,12 @@ function ($,
 
 			// Setup shader.
 
-			context .colorMaterial = this .colorRamp .length;
+			context .colorMaterial = this .colorMaterial;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
-			if (this .colorRamp .length && shader .color >= 0)
+			if (this .colorMaterial && shader .color >= 0)
 			{
 				gl .enableVertexAttribArray (shader .color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
@@ -865,7 +944,7 @@ function ($,
 			{
 				gl .enableVertexAttribArray (shader .normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .normal, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
 			gl .enableVertexAttribArray (shader .vertex);
@@ -877,7 +956,7 @@ function ($,
 			gl .enable (gl .CULL_FACE);
 			gl .cullFace (gl .BACK);
 
-			gl .drawArrays (this .primitiveType, 0, this .numParticles);
+			gl .drawArrays (this .primitiveType, 0, this .numParticles * this .vertexCount);
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);

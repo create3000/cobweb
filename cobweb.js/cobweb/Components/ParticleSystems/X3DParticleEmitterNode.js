@@ -169,70 +169,68 @@ function ($,
 				}
 			}
 
-			this .getColors (particles, colorKeys, colorRamp, numParticles);
+			if (particleSystem .colorMaterial)
+				this .getColors (particles, colorKeys, colorRamp, numParticles);
 		},
 		getColors: function (particles, colorKeys, colorRamp, numParticles)
 		{
-			if (colorRamp .length)
+			var
+				length = colorKeys .length,
+				index0 = 0,
+				index1 = 0,
+				weight = 0;
+		
+			for (var i = 0; i < numParticles; ++ i)
 			{
 				var
-					length = colorKeys .length,
-					index0 = 0,
-					index1 = 0,
-					weight = 0;
-			
-				for (var i = 0; i < numParticles; ++ i)
+					particle = particles [i],
+					fraction = particle .elapsedTime / particle .lifetime,
+					color    = particle .color;
+
+				if (length == 1 || fraction <= colorKeys [0])
 				{
-					var
-						particle = particles [i],
-						fraction = particle .elapsedTime / particle .lifetime,
-						color    = particle .color;
+					index0 = 0;
+					index1 = 0;
+					weight = 0;
+				}
+				else if (fraction >= colorKeys [length - 1])
+				{
+					index0 = length - 2;
+					index1 = length - 1;
+					weight = 1;
+				}
+				else
+				{
+					var index = Algorithm .upperBound (colorKeys, 0, length, fraction, Algorithm .less);
 	
-					if (length == 1 || fraction <= colorKeys [0])
+					if (index < length)
+					{
+						index1 = index;
+						index0 = index - 1;
+				
+						var
+							key0 = colorKeys [index0],
+							key1 = colorKeys [index1];
+				
+						weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+					}
+					else
 					{
 						index0 = 0;
 						index1 = 0;
 						weight = 0;
 					}
-					else if (fraction >= colorKeys [length - 1])
-					{
-						index0 = length - 2;
-						index1 = length - 1;
-						weight = 1;
-					}
-					else
-					{
-						var index = Algorithm .upperBound (colorKeys, 0, length, fraction, Algorithm .less);
-		
-						if (index < length)
-						{
-							index1 = index;
-							index0 = index - 1;
-					
-							var
-								key0 = colorKeys [index0],
-								key1 = colorKeys [index1];
-					
-							weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
-						}
-						else
-						{
-							index0 = 0;
-							index1 = 0;
-							weight = 0;
-						}
-					}
-		
-					var
-						color0 = colorRamp [index0],
-						color1 = colorRamp [index1];
-		
-					// Algorithm .lerp (color0, color1, weight);
-					color .x = color0 .r + weight * (color1 .r - color0 .r);
-					color .y = color0 .g + weight * (color1 .g - color0 .g);
-					color .z = color0 .b + weight * (color1 .b - color0 .b);
-					color .w = color0 .a + weight * (color1 .a - color0 .a);
 				}
+	
+				var
+					color0 = colorRamp [index0],
+					color1 = colorRamp [index1];
+	
+				// Algorithm .lerp (color0, color1, weight);
+				color .x = color0 .x + weight * (color1 .x - color0 .x);
+				color .y = color0 .y + weight * (color1 .y - color0 .y);
+				color .z = color0 .z + weight * (color1 .z - color0 .z);
+				color .w = color0 .w + weight * (color1 .w - color0 .w);
 			}
 		},
 	});
