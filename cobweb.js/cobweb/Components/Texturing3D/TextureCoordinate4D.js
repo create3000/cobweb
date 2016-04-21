@@ -56,6 +56,21 @@ function ($,
 			else
 				texCoords .push (0, 0, 0, 1);
 		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, p .z, p .w);
+			}
+
+			array .length = length;
+
+			return array;
+		},
 	});
 
 	return TextureCoordinate4D;

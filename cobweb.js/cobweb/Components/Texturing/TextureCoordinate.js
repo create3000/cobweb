@@ -6,13 +6,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DTextureCoordinateNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector4)
 {
 "use strict";
 
@@ -53,6 +55,21 @@ function ($,
 			else
 				texCoords .push (0, 0, 0, 1);
 
+		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, 0, 1);
+			}
+
+			array .length = length;
+
+			return array;
 		},
 	});
 

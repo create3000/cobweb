@@ -118,9 +118,7 @@ function ($,
 				velocities        = particleSystem .velocities,
 				turbulences       = particleSystem .turbulences,
 				rotations         = this .rotations,
-				numForces         = particleSystem .numForces,
-				colorKeys         = particleSystem .colorKeys,
-				colorRamp         = particleSystem .colorRamp;
+				numForces         = particleSystem .numForces;
 
 			for (var i = rotations .length; i < numForces; ++ i)
 				rotations [i] = new Rotation4 (0, 0, 1, 0);
@@ -170,7 +168,7 @@ function ($,
 			}
 
 			if (particleSystem .colorMaterial)
-				this .getColors (particles, colorKeys, colorRamp, numParticles);
+				this .getColors (particles, particleSystem .colorKeys, particleSystem .colorRamp, numParticles);
 		},
 		getColors: function (particles, colorKeys, colorRamp, numParticles)
 		{

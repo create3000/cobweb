@@ -42,6 +42,10 @@ function ($,
 		{
 			return "texCoord";
 		},
+		getTexCoord: function (array)
+		{
+			return array;
+		},
 	});
 
 	return MultiTextureCoordinate;

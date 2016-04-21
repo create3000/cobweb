@@ -56,7 +56,7 @@ function ($,
 		{
 			return white;
 		},
-		getVectors: function (colors)
+		getVectors: function (array)
 		{
 			var color = this .color_ .getValue ();
 
@@ -64,12 +64,12 @@ function ($,
 			{
 				var c = color [i] .getValue ();
 
-				colors [i] = new Vector4 (c .r, c .g, c .b, 1);
+				array [i] = new Vector4 (c .r, c .g, c .b, 1);
 			}
 
-			colors .length = length;
+			array .length = length;
 
-			return colors;
+			return array;
 		},
 	});
 

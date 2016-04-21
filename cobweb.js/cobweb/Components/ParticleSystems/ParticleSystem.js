@@ -13,6 +13,7 @@ define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -26,7 +27,8 @@ function ($,
           Vector3,
           Vector4,
           Matrix4,
-          QuickSort)
+          QuickSort,
+          Algorithm)
 {
 "use strict";
 
@@ -85,6 +87,7 @@ function ($,
 		this .texCoordKeys       = [ ];
 		this .texCoordRampNode   = null;
 		this .texCoordRamp       = [ ];
+		this .texCoordAnim       = false;
 		this .vertexCount        = 0;
 		this .shader             = this .getBrowser () .getPointShader ();
 		this .modelViewMatrix    = new Matrix4 ();
@@ -98,21 +101,21 @@ function ($,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geometryType",      new Fields .SFString ("QUAD")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "createParticles",   new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geometryType",      new Fields .SFString ("QUAD")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "maxParticles",      new Fields .SFInt32 (200)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "particleLifetime",  new Fields .SFFloat (5)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "lifetimeVariation", new Fields .SFFloat (0.25)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "particleSize",      new Fields .SFVec2f (0.02, 0.02)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "emitter",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "physics",           new Fields .MFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorKey",          new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorRamp",         new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordKey",       new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordRamp",      new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",          new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",          new Fields .SFVec3f (-1, -1, -1)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",        new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "emitter",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "physics",           new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorRamp",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordRamp",      new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance",        new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",          new Fields .SFNode ()),
 		]),
@@ -140,11 +143,11 @@ function ($,
 			this .enabled_      .addInterest (this, "set_enabled__");
 			this .geometryType_ .addInterest (this, "set_geometryType__");
 			this .maxParticles_ .addInterest (this, "set_enabled__");
-			this .colorKey_     .addInterest (this, "set_colorKey__");
-			this .texCoordKey_  .addInterest (this, "set_texCoordKey__");
 			this .emitter_      .addInterest (this, "set_emitter__");
 			this .physics_      .addInterest (this, "set_physics__");
+			this .colorKey_     .addInterest (this, "set_color__");
 			this .colorRamp_    .addInterest (this, "set_colorRamp__");
+			this .texCoordKey_  .addInterest (this, "set_texCoord__");
 			this .texCoordRamp_ .addInterest (this, "set_texCoordRamp__");
 
 			this .colorBuffer    = gl .createBuffer ();
@@ -291,6 +294,7 @@ function ($,
 					this .vertexArray .fill (1);
 
 					this .primitiveType = gl .POINTS;
+					this .texCoordCount = 0;
 					this .vertexCount   = 1;
 					this .shader        = this .getBrowser () .getPointShader ()
 					break;
@@ -306,6 +310,7 @@ function ($,
 					this .vertexArray .fill (1);
 
 					this .primitiveType = gl .LINES;
+					this .texCoordCount = 2;
 					this .vertexCount   = 2;
 					this .shader        = this .getBrowser () .getLineShader ()
 					break;
@@ -389,6 +394,7 @@ function ($,
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
 					gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
 
+					this .texCoordCount = 4;
 					this .vertexCount   = 6;
 					this .primitiveType = gl .TRIANGLES;
 					this .shader        = this .getBrowser () .getDefaultShader ()
@@ -396,6 +402,7 @@ function ($,
 				}
 				case GEOMETRY:
 				{
+					this .texCoordCount = 0;
 					this .vertexCount   = 0;
 					this .primitiveType = gl .TRIANGLES; // geomtry make each its own type
 					this .shader        = this .getBrowser () .getDefaultShader ()
@@ -429,14 +436,6 @@ function ($,
 			this .creationTime = performance .now () / 1000;
 
 			this .set_geometryType__ ();
-		},
-		set_colorKey__: function ()
-		{
-			this .set_color__ ();
-		},
-		set_texCoordKey__: function ()
-		{
-			this .set_texCoord__ ();
 		},
 		set_emitter__: function ()
 		{
@@ -510,6 +509,25 @@ function ($,
 		},
 		set_texCoord__: function ()
 		{
+			var
+				texCoordKey  = this .texCoordKey_ .getValue (),
+				texCoordKeys = this .texCoordKeys,
+				texCoordRamp = this .texCoordRamp;
+
+			for (var i = 0, length = texCoordKey .length; i < length; ++ i)
+				texCoordKeys [i] = texCoordKey [i] .getValue ();
+
+			texCoordKeys .length = length;
+
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .getTexCoord (texCoordRamp);
+
+			for (var i = texCoordRamp .length, length = texCoordKey .length * this .texCoordCount; i < length; ++ i)
+				texCoordRamp [i] = new Vector4 (0, 0, 0, 0);
+
+			texCoordRamp .length = length;
+
+			this .texCoordAnim = Boolean (texCoordKeys .length && this .texCoordRampNode);
 		},
 		prepareEvents: function ()
 		{
@@ -712,6 +730,7 @@ function ($,
 				maxParticles    = this .maxParticles,
 			   numParticles    = this .numParticles,
 				colorArray      = this .colorArray,
+				texCoordArray   = this .texCoordArray,
 				vertexArray     = this .vertexArray,
 				sx1_2           = this .particleSize_ .x / 2,
 				sy1_2           = this .particleSize_ .y / 2,
@@ -791,6 +810,101 @@ function ($,
 	
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
 				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
+			}
+
+			if (this .texCoordAnim && this .texCoordArray .length)
+			{
+				var
+					texCoordKeys = this .texCoordKeys,
+					texCoordRamp = this .texCoordRamp;
+
+				var
+					length = texCoordKeys .length,
+					index0 = 0;
+		
+				for (var i = 0; i < maxParticles; ++ i)
+				{
+					var
+						particle = particles [i],
+						fraction = particle .elapsedTime / particle .lifetime,
+						color    = particle .color;
+	
+					if (length == 1 || fraction <= texCoordKeys [0])
+					{
+						index0 = 0;
+					}
+					else if (fraction >= texCoordKeys [length - 1])
+					{
+						index0 = length - 2;
+					}
+					else
+					{
+						var index = Algorithm .upperBound (texCoordKeys, 0, length, fraction, Algorithm .less);
+
+						if (index < length)
+							index0 = index - 1;
+						else
+							index0 = 0;
+					}
+		
+					index0 *= this .texCoordCount;
+
+					var
+						texCoord1 = texCoordRamp [index0],
+						texCoord2 = texCoordRamp [index0 + 1],
+						texCoord3 = texCoordRamp [index0 + 2],
+						texCoord4 = texCoordRamp [index0 + 3];
+
+					//
+
+					var i24 = i * 24;
+
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+
+					// p1
+					texCoordArray [i24]     = texCoord1 .x;
+					texCoordArray [i24 + 1] = texCoord1 .y;
+					texCoordArray [i24 + 2] = texCoord1 .z;
+					texCoordArray [i24 + 3] = texCoord1 .w;
+
+					// p2
+					texCoordArray [i24 + 4] = texCoord2 .x;
+					texCoordArray [i24 + 5] = texCoord2 .y;
+					texCoordArray [i24 + 6] = texCoord2 .z;
+					texCoordArray [i24 + 7] = texCoord2 .w;
+
+					// p3
+					texCoordArray [i24 + 8]  = texCoord3 .x;
+					texCoordArray [i24 + 9]  = texCoord3 .y;
+					texCoordArray [i24 + 10] = texCoord3 .z;
+					texCoordArray [i24 + 11] = texCoord3 .w;
+
+					// p1
+					texCoordArray [i24 + 12] = texCoord1 .x;
+					texCoordArray [i24 + 13] = texCoord1 .y;
+					texCoordArray [i24 + 14] = texCoord1 .z;
+					texCoordArray [i24 + 15] = texCoord1 .w;
+
+					// p3
+					texCoordArray [i24 + 16] = texCoord3 .x;
+					texCoordArray [i24 + 17] = texCoord3 .y;
+					texCoordArray [i24 + 18] = texCoord3 .z;
+					texCoordArray [i24 + 19] = texCoord3 .w;
+
+					// p4
+					texCoordArray [i24 + 20] = texCoord4 .x;
+					texCoordArray [i24 + 21] = texCoord4 .y;
+					texCoordArray [i24 + 22] = texCoord4 .z;
+					texCoordArray [i24 + 23] = texCoord4 .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
 			}
 
 			// Vertices
