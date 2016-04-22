@@ -36,9 +36,11 @@ function ($,
 
 			this .speed_     .addInterest (this, "set_speed__");
 			this .variation_ .addInterest (this, "set_variation__");
+			this .mass_      .addInterest (this, "set_mass__");
 
 			this .set_speed__ ();
 			this .set_variation__ ();
+			this .set_mass__ ();
 		},
 		set_speed__: function ()
 		{
@@ -48,9 +50,17 @@ function ($,
 		{
 			this .variation = this .variation_ .getValue ();
 		},
+		set_mass__: function ()
+		{
+			this .mass = this .mass_ .getValue ();
+		},
 		isExplosive: function ()
 		{
 			return false;
+		},
+		getMass: function ()
+		{
+			return this .mass;
 		},
 		getRandomLifetime: function (particleLifetime, lifetimeVariation)
 		{
@@ -70,6 +80,10 @@ function ($,
 				max   = speed + v;
 		
 			return Math .random () * (max - min) + min;
+		},
+		getSphericalRandomVelocity: function (velocity)
+		{
+			return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
 		},
 		getRandomValue: function (min, max)
 		{
@@ -105,20 +119,19 @@ function ($,
 
 			return rotation .multVecRot (this .getRandomNormalAngle (angle, normal));
 		},
-		animate: function (particleSystem)
+		animate: function (particleSystem, deltaTime)
 		{
 			var
-				particles         = particleSystem .getParticles (),
-				deltaTime         = particleSystem .getDeltaTime (),
-				numParticles      = particleSystem .getNumParticles (),
-				createParticles   = particleSystem .createParticles_ .getValue (),
-				particleLifetime  = particleSystem .particleLifetime_ .getValue (),
-				lifetimeVariation = particleSystem .lifetimeVariation_ .getValue (),
-				speeds            = particleSystem .speeds,        // speed of velocities
-				velocities        = particleSystem .velocities,    // resulting velocities from forces
-				turbulences       = particleSystem .turbulences,   // turbulences
-				rotations         = this .rotations,               // rotation to direction of force
-				numForces         = particleSystem .numForces;     // number of forces
+				particles         = particleSystem .particles,
+				numParticles      = particleSystem .numParticles,
+				createParticles   = particleSystem .createParticles,
+				particleLifetime  = particleSystem .particleLifetime,
+				lifetimeVariation = particleSystem .lifetimeVariation,
+				speeds            = particleSystem .speeds,            // speed of velocities
+				velocities        = particleSystem .velocities,        // resulting velocities from forces
+				turbulences       = particleSystem .turbulences,       // turbulences
+				rotations         = this .rotations,                   // rotation to direction of force
+				numForces         = particleSystem .numForces;         // number of forces
 
 			for (var i = rotations .length; i < numForces; ++ i)
 				rotations [i] = new Rotation4 (0, 0, 1, 0);
@@ -140,11 +153,12 @@ function ($,
 					particle .elapsedTime = 0;
 
 					if (createParticles)
+					{
 						this .getRandomPosition (particle .position)
+						this .getRandomVelocity (particle .velocity);
+					}
 					else
 						particle .position .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
-
-					this .getRandomVelocity (particle .velocity);
 				}
 				else
 				{

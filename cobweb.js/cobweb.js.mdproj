@@ -1190,6 +1190,7 @@
     <None Include="tests\Components\ParticleSystems\ConeEmitter.x3d" />
     <None Include="tests\Components\ParticleSystems\Fire.x3d" />
     <None Include="tests\Components\ParticleSystems\Smoke.x3d" />
+    <None Include="tests\Components\ParticleSystems\ExplosionEmitter.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

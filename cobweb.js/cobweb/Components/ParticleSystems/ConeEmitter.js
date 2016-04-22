@@ -77,7 +77,7 @@ function ($,
 			this .rotation .setFromToVec (Vector3 .zAxis, direction);
 
 			if (direction .equals (Vector3 .Zero))
-				this .getRandomVelocity = getSphericalRandomVelocity;
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
 			else
 				delete this .getRandomVelocity;
 		},
@@ -94,11 +94,6 @@ function ($,
 			return this .rotation .multVecRot (this .getRandomNormalWithAngle (this .angle, velocity) .multiply (this .getRandomSpeed ()));
  		},
 	});
-
-	function getSphericalRandomVelocity (velocity)
-	{
-		return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
-	}
 
 	return ConeEmitter;
 });

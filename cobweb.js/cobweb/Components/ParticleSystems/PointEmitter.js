@@ -70,7 +70,7 @@ function ($,
 			this .direction .assign (this .direction_ .getValue ()) .normalize ();
 
 			if (this .direction .equals (Vector3 .Zero))
-				this .getRandomVelocity = getSphericalRandomVelocity;
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
 			else
 				delete this .getRandomVelocity;
 		},
@@ -91,11 +91,6 @@ function ($,
 			return velocity;
  		},
 	});
-
-	function getSphericalRandomVelocity (velocity)
-	{
-		return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
-	}
 
 	return PointEmitter;
 });

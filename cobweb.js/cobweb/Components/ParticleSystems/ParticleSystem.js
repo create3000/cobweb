@@ -67,6 +67,7 @@ function ($,
 
 		this .addType (X3DConstants .ParticleSystem);
 
+		this .createParticles    = true;
 		this .particles          = [ ];
 		this .velocities         = [ ];
 		this .speeds             = [ ];
@@ -74,6 +75,8 @@ function ($,
 		this .geometryType       = POINT;
 		this .maxParticles       = 0;
 		this .numParticles       = 0;
+		this .particleLifetime   = 0;
+		this .lifetimeVariation  = 0;
 		this .emitterNode        = null;
 		this .physicsModelNodes  = [ ];
 		this .creationTime       = 0;
@@ -140,15 +143,18 @@ function ($,
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
-			this .enabled_      .addInterest (this, "set_enabled__");
-			this .geometryType_ .addInterest (this, "set_geometryType__");
-			this .maxParticles_ .addInterest (this, "set_enabled__");
-			this .emitter_      .addInterest (this, "set_emitter__");
-			this .physics_      .addInterest (this, "set_physics__");
-			this .colorKey_     .addInterest (this, "set_color__");
-			this .colorRamp_    .addInterest (this, "set_colorRamp__");
-			this .texCoordKey_  .addInterest (this, "set_texCoord__");
-			this .texCoordRamp_ .addInterest (this, "set_texCoordRamp__");
+			this .enabled_           .addInterest (this, "set_enabled__");
+			this .createParticles_   .addInterest (this, "set_createParticles__");
+			this .geometryType_      .addInterest (this, "set_geometryType__");
+			this .maxParticles_      .addInterest (this, "set_enabled__");
+			this .particleLifetime_  .addInterest (this, "set_particleLifetime__");
+			this .lifetimeVariation_ .addInterest (this, "set_lifetimeVariation__");
+			this .emitter_           .addInterest (this, "set_emitter__");
+			this .physics_           .addInterest (this, "set_physics__");
+			this .colorKey_          .addInterest (this, "set_color__");
+			this .colorRamp_         .addInterest (this, "set_colorRamp__");
+			this .texCoordKey_       .addInterest (this, "set_texCoord__");
+			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
 
 			this .colorBuffer    = gl .createBuffer ();
 			this .texCoordBuffer = gl .createBuffer ();
@@ -161,23 +167,14 @@ function ($,
 			this .vertexArray   = new Float32Array ();
 
 			// Call order is higly important at startup.
-			this .set_enabled__ ();
 			this .set_emitter__ ();
+			this .set_enabled__ ();
+			this .set_createParticles__ ();
+			this .set_particleLifetime__ ();
+			this .set_lifetimeVariation__ ();
 			this .set_physics__ ();
 			this .set_colorRamp__ ();
 			this .set_texCoordRamp__ ();
-		},
-		getParticles: function ()
-		{
-			return this .particles;
-		},
-		getNumParticles: function ()
-		{
-			return this .numParticles;
-		},
-		getDeltaTime: function ()
-		{
-			return this .deltaTime;
 		},
 		set_bbox__: function ()
 		{
@@ -265,6 +262,10 @@ function ($,
 			}
 
 			this .set_maxParticles__ ();
+		},
+		set_createParticles__: function ()
+		{
+			this .createParticles = this .createParticles_ .getValue ();
 		},
 		set_geometryType__: function ()
 		{
@@ -421,9 +422,19 @@ function ($,
 
 			this .maxParticles = maxParticles;
 			this .numParticles = Math .min (this .numParticles, maxParticles);
-			this .creationTime = performance .now () / 1000;
+
+			if (! this .emitterNode .isExplosive ())
+				this .creationTime = performance .now () / 1000;
 
 			this .set_geometryType__ ();
+		},
+		set_particleLifetime__: function ()
+		{
+			this .particleLifetime = this .particleLifetime_ .getValue ();
+		},
+		set_lifetimeVariation__: function ()
+		{
+			this .lifetimeVariation = this .lifetimeVariation_ .getValue ();
 		},
 		set_emitter__: function ()
 		{
@@ -521,18 +532,39 @@ function ($,
 		{
 			var emitterNode = this .emitterNode;
 
+			// Determine delta time
+
+			var
+				DELAY = 15, // Delay in frames when dt full applys.
+				dt    = 1 / this .getBrowser () .getCurrentFrameRate ();
+
+			// var deltaTime is only for the emitter, this.deltaTime is for the forces.
+			var deltaTime = this .deltaTime = ((DELAY - 1) * this .deltaTime + dt) / DELAY; // Moving average about DELAY frames.
+
 			// Determine numParticles
 
 			if (emitterNode .isExplosive ())
 			{
+				var now = performance .now () / 1000;
+	
+				if (this .numParticles === 0 || now - this .creationTime > this .particleLifetime + this .particleLifetime * this .lifetimeVariation)
+				{
+					this .creationTime    = now;
+					this .numParticles    = this .maxParticles;
+					this .createParticles = this .createParticles_ .getValue ();
+
+					deltaTime = Number .POSITIVE_INFINITY; 
+				}
+				else
+					this .createParticles = false;
 			}
 			else
 			{
-				if (this .numParticles < this .maxParticles_ .getValue ())
+				if (this .numParticles < this .maxParticles)
 				{
 					var
 						now          = performance .now () / 1000,
-						newParticles = (now - this .creationTime) * this .maxParticles / this .particleLifetime_ .getValue ();
+						newParticles = (now - this .creationTime) * this .maxParticles / this .particleLifetime;
 	
 					if (newParticles)
 						this .creationTime = now;
@@ -541,28 +573,20 @@ function ($,
 				}
 			}
 
-			// Determine delta time
-
-			var
-				DELAY = 15, // Delay in frames when dt full applys.
-				dt    = 1 / this .getBrowser () .getCurrentFrameRate ();
-
-			this .deltaTime = ((DELAY - 1) * this .deltaTime + dt) / DELAY; // Moving average about DELAY frames.
-
 			// Determine particle position, velocity and colors
 
-			emitterNode .animate (this);
+			emitterNode .animate (this, deltaTime);
 
 			// Apply forces.
 
-			if (emitterNode .mass_ .getValue ())
+			if (emitterNode .getMass ())
 			{
 				var
 					physicsModelNodes = this .physicsModelNodes,
 					velocities        = this .velocities,
 					speeds            = this .speeds,
 					turbulences       = this .turbulences,
-					deltaMass         = this .deltaTime / emitterNode .mass_ .getValue ();
+					deltaMass         = this .deltaTime / emitterNode .getMass ();
 
 				// Collect forces in velocities and collect turbulences.
 

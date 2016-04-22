@@ -21,6 +21,8 @@ function ($,
 		X3DParticleEmitterNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ExplosionEmitter);
+
+		this .getRandomVelocity = this .getSphericalRandomVelocity;
 	}
 
 	ExplosionEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
@@ -45,6 +47,26 @@ function ($,
 		getContainerField: function ()
 		{
 			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .position_ .addInterest (this, "set_position__");
+
+			this .set_position__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
+		},
+		isExplosive: function ()
+		{
+			return true;
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position);
 		},
 	});
 
