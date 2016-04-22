@@ -1187,6 +1187,9 @@
     <None Include="tests\Components\ParticleSystems\PointEmitter.x3d" />
     <None Include="tests\Components\ParticleSystems\GridTool.x3dv" />
     <None Include="cobweb\Browser\ParticleSystems\X3DParticleSystemsContext.js" />
+    <None Include="tests\Components\ParticleSystems\ConeEmitter.x3d" />
+    <None Include="tests\Components\ParticleSystems\Fire.x3d" />
+    <None Include="tests\Components\ParticleSystems\Smoke.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
