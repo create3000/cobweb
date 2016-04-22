@@ -355,10 +355,10 @@ function ($,
 						// p1 ------ p2
 
 						// p1
-						texCoordArray [i24]     = 0;
-						texCoordArray [i24 + 1] = 0;
-						texCoordArray [i24 + 2] = 0;
-						texCoordArray [i24 + 3] = 1;
+						texCoordArray [i24]     = texCoordArray [i24 + 12] = 0;
+						texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = 0;
+						texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = 0;
+						texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = 1;
 
 						// p2
 						texCoordArray [i24 + 4] = 1;
@@ -367,22 +367,10 @@ function ($,
 						texCoordArray [i24 + 7] = 1;
 
 						// p3
-						texCoordArray [i24 + 8]  = 1;
-						texCoordArray [i24 + 9]  = 1;
-						texCoordArray [i24 + 10] = 0;
-						texCoordArray [i24 + 11] = 1;
-
-						// p1
-						texCoordArray [i24 + 12] = 0;
-						texCoordArray [i24 + 13] = 0;
-						texCoordArray [i24 + 14] = 0;
-						texCoordArray [i24 + 15] = 1;
-
-						// p3
-						texCoordArray [i24 + 16] = 1;
-						texCoordArray [i24 + 17] = 1;
-						texCoordArray [i24 + 18] = 0;
-						texCoordArray [i24 + 19] = 1;
+						texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = 1;
+						texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = 1;
+						texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = 0;
+						texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = 1;
 
 						// p4
 						texCoordArray [i24 + 20] = 0;
@@ -758,10 +746,6 @@ function ($,
 				{
 					var
 						color = particles [i] .color,
-						r     = color .x,
-						g     = color .y,
-						b     = color .z,
-						a     = color .w,
 						i24   = i * 24;
 
 					// p4 ------ p3
@@ -771,41 +755,11 @@ function ($,
 					// | /       |
 					// p1 ------ p2
 
-					// p1
-					colorArray [i24]     = r;
-					colorArray [i24 + 1] = g;
-					colorArray [i24 + 2] = b;
-					colorArray [i24 + 3] = a;
-
-					// p2
-					colorArray [i24 + 4] = r;
-					colorArray [i24 + 5] = g;
-					colorArray [i24 + 6] = b;
-					colorArray [i24 + 7] = a;
-
-					// p3
-					colorArray [i24 + 8]  = r;
-					colorArray [i24 + 9]  = g;
-					colorArray [i24 + 10] = b;
-					colorArray [i24 + 11] = a;
-
-					// p1
-					colorArray [i24 + 12] = r;
-					colorArray [i24 + 13] = g;
-					colorArray [i24 + 14] = b;
-					colorArray [i24 + 15] = a;
-
-					// p3
-					colorArray [i24 + 16] = r;
-					colorArray [i24 + 17] = g;
-					colorArray [i24 + 18] = b;
-					colorArray [i24 + 19] = a;
-
-					// p4
-					colorArray [i24 + 20] = r;
-					colorArray [i24 + 21] = g;
-					colorArray [i24 + 22] = b;
-					colorArray [i24 + 23] = a;
+					// p1, p2, p3; p1, p3, p4
+					colorArray [i24]     = colorArray [i24 + 4] = colorArray [i24 + 8]  = colorArray [i24 + 12] = colorArray [i24 + 16] = colorArray [i24 + 20] = color .x;
+					colorArray [i24 + 1] = colorArray [i24 + 5] = colorArray [i24 + 9]  = colorArray [i24 + 13] = colorArray [i24 + 17] = colorArray [i24 + 21] = color .y;
+					colorArray [i24 + 2] = colorArray [i24 + 6] = colorArray [i24 + 10] = colorArray [i24 + 14] = colorArray [i24 + 18] = colorArray [i24 + 22] = color .z;
+					colorArray [i24 + 3] = colorArray [i24 + 7] = colorArray [i24 + 11] = colorArray [i24 + 15] = colorArray [i24 + 19] = colorArray [i24 + 23] = color .w;
 				}
 	
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
@@ -824,6 +778,8 @@ function ($,
 		
 				for (var i = 0; i < maxParticles; ++ i)
 				{
+					// Determine index0.
+		
 					var
 						particle = particles [i],
 						fraction = particle .elapsedTime / particle .lifetime,
@@ -846,6 +802,8 @@ function ($,
 						else
 							index0 = 0;
 					}
+
+					// Set texCoord.
 		
 					index0 *= this .texCoordCount;
 
@@ -853,11 +811,8 @@ function ($,
 						texCoord1 = texCoordRamp [index0],
 						texCoord2 = texCoordRamp [index0 + 1],
 						texCoord3 = texCoordRamp [index0 + 2],
-						texCoord4 = texCoordRamp [index0 + 3];
-
-					//
-
-					var i24 = i * 24;
+						texCoord4 = texCoordRamp [index0 + 3],
+						i24 = i * 24;
 
 					// p4 ------ p3
 					// |       / |
@@ -867,10 +822,10 @@ function ($,
 					// p1 ------ p2
 
 					// p1
-					texCoordArray [i24]     = texCoord1 .x;
-					texCoordArray [i24 + 1] = texCoord1 .y;
-					texCoordArray [i24 + 2] = texCoord1 .z;
-					texCoordArray [i24 + 3] = texCoord1 .w;
+					texCoordArray [i24]     = texCoordArray [i24 + 12] = texCoord1 .x;
+					texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = texCoord1 .y;
+					texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = texCoord1 .z;
+					texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = texCoord1 .w;
 
 					// p2
 					texCoordArray [i24 + 4] = texCoord2 .x;
@@ -879,22 +834,10 @@ function ($,
 					texCoordArray [i24 + 7] = texCoord2 .w;
 
 					// p3
-					texCoordArray [i24 + 8]  = texCoord3 .x;
-					texCoordArray [i24 + 9]  = texCoord3 .y;
-					texCoordArray [i24 + 10] = texCoord3 .z;
-					texCoordArray [i24 + 11] = texCoord3 .w;
-
-					// p1
-					texCoordArray [i24 + 12] = texCoord1 .x;
-					texCoordArray [i24 + 13] = texCoord1 .y;
-					texCoordArray [i24 + 14] = texCoord1 .z;
-					texCoordArray [i24 + 15] = texCoord1 .w;
-
-					// p3
-					texCoordArray [i24 + 16] = texCoord3 .x;
-					texCoordArray [i24 + 17] = texCoord3 .y;
-					texCoordArray [i24 + 18] = texCoord3 .z;
-					texCoordArray [i24 + 19] = texCoord3 .w;
+					texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = texCoord3 .x;
+					texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = texCoord3 .y;
+					texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = texCoord3 .z;
+					texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = texCoord3 .w;
 
 					// p4
 					texCoordArray [i24 + 20] = texCoord4 .x;

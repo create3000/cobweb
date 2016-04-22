@@ -114,11 +114,11 @@ function ($,
 				createParticles   = particleSystem .createParticles_ .getValue (),
 				particleLifetime  = particleSystem .particleLifetime_ .getValue (),
 				lifetimeVariation = particleSystem .lifetimeVariation_ .getValue (),
-				speeds            = particleSystem .speeds,
-				velocities        = particleSystem .velocities,
-				turbulences       = particleSystem .turbulences,
-				rotations         = this .rotations,
-				numForces         = particleSystem .numForces;
+				speeds            = particleSystem .speeds,        // speed of velocities
+				velocities        = particleSystem .velocities,    // resulting velocities from forces
+				turbulences       = particleSystem .turbulences,   // turbulences
+				rotations         = this .rotations,               // rotation to direction of force
+				numForces         = particleSystem .numForces;     // number of forces
 
 			for (var i = rotations .length; i < numForces; ++ i)
 				rotations [i] = new Rotation4 (0, 0, 1, 0);
@@ -134,6 +134,8 @@ function ($,
 		
 				if (elapsedTime > particle .lifetime)
 				{
+					// Create new particle or hide particle.
+
 					particle .lifetime    = this .getRandomLifetime (particleLifetime, lifetimeVariation);
 					particle .elapsedTime = 0;
 
@@ -146,6 +148,8 @@ function ($,
 				}
 				else
 				{
+					// Animate particle.
+
 					var
 						position = particle .position,
 						velocity = particle .velocity;
@@ -167,6 +171,8 @@ function ($,
 				}
 			}
 
+			// Animate color if needed.
+
 			if (particleSystem .colorMaterial)
 				this .getColors (particles, particleSystem .colorKeys, particleSystem .colorRamp, numParticles);
 		},
@@ -180,6 +186,8 @@ function ($,
 		
 			for (var i = 0; i < numParticles; ++ i)
 			{
+				// Determine index0, index1 and weight.
+
 				var
 					particle = particles [i],
 					fraction = particle .elapsedTime / particle .lifetime,
@@ -220,6 +228,8 @@ function ($,
 					}
 				}
 	
+				// Interpolate and set color.
+
 				var
 					color0 = colorRamp [index0],
 					color1 = colorRamp [index1];

@@ -6,13 +6,17 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DParticleEmitterNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector3,
+          Rotation4)
 {
 "use strict";
 
@@ -21,6 +25,8 @@ function ($,
 		X3DParticleEmitterNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ConeEmitter);
+
+		this .rotation = new Rotation4 (0, 0, 1, 0);
 	}
 
 	ConeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
@@ -48,7 +54,51 @@ function ($,
 		{
 			return "emitter";
 		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .position_  .addInterest (this, "set_position__");
+			this .direction_ .addInterest (this, "set_direction__");
+			this .angle_     .addInterest (this, "set_angle__");
+
+			this .set_position__ ();
+			this .set_direction__ ();
+			this .set_angle__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
+		},
+		set_direction__: function ()
+		{
+			var direction = this .direction_ .getValue ();
+
+			this .rotation .setFromToVec (Vector3 .zAxis, direction);
+
+			if (direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		set_angle__: function ()
+		{
+			this .angle = this .angle_ .getValue ()
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position);
+		},
+		getRandomVelocity: function (velocity)
+		{
+			return this .rotation .multVecRot (this .getRandomNormalWithAngle (this .angle, velocity) .multiply (this .getRandomSpeed ()));
+ 		},
 	});
+
+	function getSphericalRandomVelocity (velocity)
+	{
+		return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
+	}
 
 	return ConeEmitter;
 });
