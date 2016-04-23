@@ -55,6 +55,7 @@ function ($,
 		matrix             = new Matrix4 (),
 		billboardToScreen  = new Vector3 (0, 0, 0),
 		viewerYAxis        = new Vector3 (0, 0, 0),
+		normal             = new Vector3 (0, 0, 0),
 		x                  = new Vector3 (0, 0, 0),
 		y                  = new Vector3 (0, 0, 0),
 		z                  = new Vector3 (0, 0, 0);
@@ -233,32 +234,33 @@ function ($,
 		{
 			if (this .enabled_ .getValue () && this .maxParticles_ .getValue ())
 			{
-				if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+				if (! this .isActive_ .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
-					this .getBrowser () .sensors ()       .addInterest (this, "update");
-		
-					if (this .pauseTime)
+					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .creationTime += performance .now () / 1000 - this .pauseTime;
-						this .pauseTime     = 0;
+						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+						this .getBrowser () .sensors ()       .addInterest (this, "update");
+			
+						this .pauseTime = 0;
 					}
 					else
 						this .pauseTime = performance .now () / 1000;
 
 					this .isActive_ = true;
-					
 				}
 			}
 			else
 			{
-				if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+				if (this .isActive_ .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
-					this .getBrowser () .sensors ()       .removeInterest (this, "update");
+					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					{
+						this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+						this .getBrowser () .sensors ()       .removeInterest (this, "update");
+					}
+	
+					this .isActive_ = false;
 				}
-
-				this .isActive_ = false;
 			}
 
 			this .set_maxParticles__ ();
@@ -545,9 +547,11 @@ function ($,
 
 			if (emitterNode .isExplosive ())
 			{
-				var now = performance .now () / 1000;
+				var
+					now              = performance .now () / 1000,
+					particleLifetime = this .particleLifetime + this .particleLifetime * this .lifetimeVariation;
 	
-				if (this .numParticles === 0 || now - this .creationTime > this .particleLifetime + this .particleLifetime * this .lifetimeVariation)
+				if (this .numParticles === 0 || now - this .creationTime > particleLifetime)
 				{
 					this .creationTime    = now;
 					this .numParticles    = this .maxParticles;
@@ -719,16 +723,19 @@ function ($,
 			for (var i = 0; i < numParticles; ++ i)
 			{
 				var
-					position = particles [i] .position,
+					particle = particles [i],
+					position = particle .position,
 					i8       = i * 8;
 
-				vertexArray [i8]     = position .x;
-				vertexArray [i8 + 1] = position .y;
-				vertexArray [i8 + 2] = position .z - sy1_2;
+				normal .assign (particle .velocity) .normalize ();
 
-				vertexArray [i8 + 4] = position .x;
-				vertexArray [i8 + 5] = position .y;
-				vertexArray [i8 + 6] = position .z + sy1_2;
+				vertexArray [i8]     = position .x - normal .x * sy1_2;
+				vertexArray [i8 + 1] = position .y - normal .y * sy1_2;
+				vertexArray [i8 + 2] = position .z - normal .z * sy1_2;
+
+				vertexArray [i8 + 4] = position .x + normal .x * sy1_2;
+				vertexArray [i8 + 5] = position .y + normal .y * sy1_2;
+				vertexArray [i8 + 6] = position .z + normal .z * sy1_2;
 			}
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);

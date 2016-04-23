@@ -177,6 +177,36 @@ function ($,
 
 			return polylines;
 		},
+		getPolylines: function (polylines)
+		{
+			// Polyline map
+
+			polylines .length = 0;
+		
+			if (! this .coordNode || this .coordNode .isEmpty ())
+				return polylines;
+		
+			var
+				polylineIndices = this .getPolylineIndices (),
+				coordIndex      = this .coordIndex_. getValue ();
+
+			for (var p = 0; p < polylineIndices .length; ++ p)
+			{
+				var polyline = polylineIndices [p];
+
+				// Create two vertices for each line.
+		
+				for (var line = 0, endL = polyline .length - 1; line < endL; ++ line)
+				{
+					for (var index = line, endI = line + 2; index < endI; ++ index)
+					{
+						polylines .push (this .coordNode .get1Point (coordIndex [polyline [index]] .getValue ()));
+					}
+				}
+			}
+		
+			return polylines;
+		},
 		build: function ()
 		{
 			if (! this .coordNode || this .coordNode .isEmpty ())

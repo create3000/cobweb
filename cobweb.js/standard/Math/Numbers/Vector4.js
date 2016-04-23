@@ -149,10 +149,10 @@ function ($, Algorithm)
 		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
-			this .z = Algorithm .lerp (this .z, dest .z, t);
-			this .w = Algorithm .lerp (this .w, dest .w, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
+			this .z = this .z + t * (dest .z - this .z);
+			this .w = this .w + t * (dest .w - this .w);
 			return this;
 		},
 		min: function (vector)

@@ -115,8 +115,8 @@ function ($, Algorithm)
 		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
 			return this;
 		},
 		min: function (vector)
