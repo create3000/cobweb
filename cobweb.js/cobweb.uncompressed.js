@@ -11640,8 +11640,8 @@ function ($, Algorithm)
 		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
 			return this;
 		},
 		min: function (vector)
@@ -12044,9 +12044,9 @@ function ($, Algorithm)
 		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
-			this .z = Algorithm .lerp (this .z, dest .z, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
+			this .z = this .z + t * (dest .z - this .z);
 			return this;
 		},
 		slerp: function (destination, t)
@@ -13492,10 +13492,10 @@ function ($, Algorithm)
 		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
-			this .z = Algorithm .lerp (this .z, dest .z, t);
-			this .w = Algorithm .lerp (this .w, dest .w, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
+			this .z = this .z + t * (dest .z - this .z);
+			this .w = this .w + t * (dest .w - this .w);
 			return this;
 		},
 		min: function (vector)
@@ -15355,6 +15355,16 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [10] *= z;
 
 			return this;
+		},
+		getDepth: function (vector)
+		{
+			var
+				x = vector .x,
+				y = vector .y,
+				z = vector .z,
+				w = 1 / (x * this [3] + y * this [7] + z * this [11] + this [15]);
+
+			return (x * this [2] + y * this [6] + z * this [10] + this [14]) * w;
 		},
 		toString: function ()
 		{
@@ -32403,9 +32413,9 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat lw = x3d_LinewidthScaleFactor + 1.5;\n\tfloat f0 = getFogInterpolant ();\n\tfloat t  = (distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0) / 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_GeometryType == 1 ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.5;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
@@ -38497,13 +38507,15 @@ define ('cobweb/Components/Texturing/TextureCoordinate',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DTextureCoordinateNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector4)
 {
 
 
@@ -38544,6 +38556,21 @@ function ($,
 			else
 				texCoords .push (0, 0, 0, 1);
 
+		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, 0, 1);
+			}
+
+			array .length = length;
+
+			return array;
 		},
 	});
 
@@ -55221,9 +55248,11 @@ function ($,
 
 			this .speed_     .addInterest (this, "set_speed__");
 			this .variation_ .addInterest (this, "set_variation__");
+			this .mass_      .addInterest (this, "set_mass__");
 
 			this .set_speed__ ();
 			this .set_variation__ ();
+			this .set_mass__ ();
 		},
 		set_speed__: function ()
 		{
@@ -55233,9 +55262,17 @@ function ($,
 		{
 			this .variation = this .variation_ .getValue ();
 		},
+		set_mass__: function ()
+		{
+			this .mass = this .mass_ .getValue ();
+		},
 		isExplosive: function ()
 		{
 			return false;
+		},
+		getMass: function ()
+		{
+			return this .mass;
 		},
 		getRandomLifetime: function (particleLifetime, lifetimeVariation)
 		{
@@ -55255,6 +55292,10 @@ function ($,
 				max   = speed + v;
 		
 			return Math .random () * (max - min) + min;
+		},
+		getSphericalRandomVelocity: function (velocity)
+		{
+			return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
 		},
 		getRandomValue: function (min, max)
 		{
@@ -55290,22 +55331,19 @@ function ($,
 
 			return rotation .multVecRot (this .getRandomNormalAngle (angle, normal));
 		},
-		animate: function (particleSystem)
+		animate: function (particleSystem, deltaTime)
 		{
 			var
-				particles         = particleSystem .getParticles (),
-				deltaTime         = particleSystem .getDeltaTime (),
-				numParticles      = particleSystem .getNumParticles (),
-				createParticles   = particleSystem .createParticles_ .getValue (),
-				particleLifetime  = particleSystem .particleLifetime_ .getValue (),
-				lifetimeVariation = particleSystem .lifetimeVariation_ .getValue (),
-				speeds            = particleSystem .speeds,
-				velocities        = particleSystem .velocities,
-				turbulences       = particleSystem .turbulences,
-				rotations         = this .rotations,
-				numForces         = particleSystem .numForces,
-				colorKeys         = particleSystem .colorKeys,
-				colorRamp         = particleSystem .colorRamp;
+				particles         = particleSystem .particles,
+				numParticles      = particleSystem .numParticles,
+				createParticles   = particleSystem .createParticles,
+				particleLifetime  = particleSystem .particleLifetime,
+				lifetimeVariation = particleSystem .lifetimeVariation,
+				speeds            = particleSystem .speeds,            // speed of velocities
+				velocities        = particleSystem .velocities,        // resulting velocities from forces
+				turbulences       = particleSystem .turbulences,       // turbulences
+				rotations         = this .rotations,                   // rotation to direction of force
+				numForces         = particleSystem .numForces;         // number of forces
 
 			for (var i = rotations .length; i < numForces; ++ i)
 				rotations [i] = new Rotation4 (0, 0, 1, 0);
@@ -55321,18 +55359,23 @@ function ($,
 		
 				if (elapsedTime > particle .lifetime)
 				{
+					// Create new particle or hide particle.
+
 					particle .lifetime    = this .getRandomLifetime (particleLifetime, lifetimeVariation);
 					particle .elapsedTime = 0;
 
 					if (createParticles)
+					{
 						this .getRandomPosition (particle .position)
+						this .getRandomVelocity (particle .velocity);
+					}
 					else
 						particle .position .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
-
-					this .getRandomVelocity (particle .velocity);
 				}
 				else
 				{
+					// Animate particle.
+
 					var
 						position = particle .position,
 						velocity = particle .velocity;
@@ -55354,70 +55397,74 @@ function ($,
 				}
 			}
 
-			this .getColors (particles, colorKeys, colorRamp, numParticles);
+			// Animate color if needed.
+
+			if (particleSystem .colorMaterial)
+				this .getColors (particles, particleSystem .colorKeys, particleSystem .colorRamp, numParticles);
 		},
 		getColors: function (particles, colorKeys, colorRamp, numParticles)
 		{
-			if (colorRamp .length)
+			var
+				length = colorKeys .length,
+				index0 = 0,
+				index1 = 0,
+				weight = 0;
+		
+			for (var i = 0; i < numParticles; ++ i)
 			{
+				// Determine index0, index1 and weight.
+
 				var
-					length = colorKeys .length,
-					index0 = 0,
-					index1 = 0,
-					weight = 0;
-			
-				for (var i = 0; i < numParticles; ++ i)
+					particle = particles [i],
+					fraction = particle .elapsedTime / particle .lifetime,
+					color    = particle .color;
+
+				if (length == 1 || fraction <= colorKeys [0])
 				{
-					var
-						particle = particles [i],
-						fraction = particle .elapsedTime / particle .lifetime,
-						color    = particle .color;
+					index0 = 0;
+					index1 = 0;
+					weight = 0;
+				}
+				else if (fraction >= colorKeys [length - 1])
+				{
+					index0 = length - 2;
+					index1 = length - 1;
+					weight = 1;
+				}
+				else
+				{
+					var index = Algorithm .upperBound (colorKeys, 0, length, fraction, Algorithm .less);
 	
-					if (length == 1 || fraction <= colorKeys [0])
+					if (index < length)
+					{
+						index1 = index;
+						index0 = index - 1;
+				
+						var
+							key0 = colorKeys [index0],
+							key1 = colorKeys [index1];
+				
+						weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+					}
+					else
 					{
 						index0 = 0;
 						index1 = 0;
 						weight = 0;
 					}
-					else if (fraction >= colorKeys [length - 1])
-					{
-						index0 = length - 2;
-						index1 = length - 1;
-						weight = 1;
-					}
-					else
-					{
-						var index = Algorithm .upperBound (colorKeys, 0, length, fraction, Algorithm .less);
-		
-						if (index < length)
-						{
-							index1 = index;
-							index0 = index - 1;
-					
-							var
-								key0 = colorKeys [index0],
-								key1 = colorKeys [index1];
-					
-							weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
-						}
-						else
-						{
-							index0 = 0;
-							index1 = 0;
-							weight = 0;
-						}
-					}
-		
-					var
-						color0 = colorRamp [index0],
-						color1 = colorRamp [index1];
-		
-					// Algorithm .lerp (color0, color1, weight);
-					color .x = color0 .r + weight * (color1 .r - color0 .r);
-					color .y = color0 .g + weight * (color1 .g - color0 .g);
-					color .z = color0 .b + weight * (color1 .b - color0 .b);
-					color .w = color0 .a + weight * (color1 .a - color0 .a);
 				}
+	
+				// Interpolate and set color.
+
+				var
+					color0 = colorRamp [index0],
+					color1 = colorRamp [index1];
+	
+				// Algorithm .lerp (color0, color1, weight);
+				color .x = color0 .x + weight * (color1 .x - color0 .x);
+				color .y = color0 .y + weight * (color1 .y - color0 .y);
+				color .z = color0 .z + weight * (color1 .z - color0 .z);
+				color .w = color0 .w + weight * (color1 .w - color0 .w);
 			}
 		},
 	});
@@ -55499,7 +55546,7 @@ function ($,
 			this .direction .assign (this .direction_ .getValue ()) .normalize ();
 
 			if (this .direction .equals (Vector3 .Zero))
-				this .getRandomVelocity = getSphericalRandomVelocity;
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
 			else
 				delete this .getRandomVelocity;
 		},
@@ -55520,11 +55567,6 @@ function ($,
 			return velocity;
  		},
 	});
-
-	function getSphericalRandomVelocity (velocity)
-	{
-		return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
-	}
 
 	return PointEmitter;
 });
@@ -60811,49 +60853,52 @@ function ($,
 		},
 		rotate: function (type)
 		{
-			try
+			// throws domain error
+
+			this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+
+			var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
+
+			if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 			{
-				this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+				inverseModelViewMatrix .multDirMatrix (viewerYAxis .assign (yAxis)) .normalize (); // Normalized to get work with Geo
 
-				var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
+				x .assign (viewerYAxis) .cross (billboardToViewer);
+				y .assign (billboardToViewer) .cross (x);
+				var z = billboardToViewer;
 
-				if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
-				{
-					inverseModelViewMatrix .multDirMatrix (viewerYAxis .assign (yAxis)) .normalize (); // Normalized to get work with Geo
+				// Compose rotation
 
-					x .assign (viewerYAxis) .cross (billboardToViewer);
-					y .assign (billboardToViewer) .cross (x);
-					var z = billboardToViewer;
+				x .normalize ();
+				y .normalize ();
 
-					// Compose rotation
-
-					x .normalize ();
-					y .normalize ();
-
-					this .matrix .set (x [0], x [1], x [2], 0,
-					                   y [0], y [1], y [2], 0,
-					                   z [0], z [1], z [2], 0,
-					                   0,     0,     0,     1);
-				}
-				else
-				{
-					N1 .assign (this .axisOfRotation_ .getValue ()) .cross (billboardToViewer); // Normal vector of plane as in specification
-					N2 .assign (this .axisOfRotation_ .getValue ()) .cross (zAxis);             // Normal vector of plane between axisOfRotation and zAxis
-
-					this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
-				}
-
-				this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);
+				this .matrix .set (x [0], x [1], x [2], 0,
+				                   y [0], y [1], y [2], 0,
+				                   z [0], z [1], z [2], 0,
+				                   0,     0,     0,     1);
 			}
-			catch (error)
-			{ }
+			else
+			{
+				N1 .assign (this .axisOfRotation_ .getValue ()) .cross (billboardToViewer); // Normal vector of plane as in specification
+				N2 .assign (this .axisOfRotation_ .getValue ()) .cross (zAxis);             // Normal vector of plane between axisOfRotation and zAxis
+
+				this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
+			}
+
+			this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);
 		},
 		traverse: function (type)
 		{
 			this .getBrowser () .getModelViewMatrix () .push ();
-			this .rotate (type);
 
-			X3DGroupingNode .prototype .traverse .call (this, type);
+			try
+			{
+				this .rotate (type);
+	
+				X3DGroupingNode .prototype .traverse .call (this, type);
+			}
+			catch (error)
+			{ }
 
 			this .getBrowser () .getModelViewMatrix () .pop ();
 		},
@@ -62283,7 +62328,7 @@ define ('cobweb/Components/Rendering/Color',[
 	"cobweb/Components/Rendering/X3DColorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color3",
-	"standard/Math/Numbers/Color4",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -62292,7 +62337,7 @@ function ($,
           X3DColorNode, 
           X3DConstants,
           Color3,
-          Color4)
+          Vector4)
 {
 
 
@@ -62332,7 +62377,7 @@ function ($,
 		{
 			return white;
 		},
-		getColors: function (colors)
+		getVectors: function (array)
 		{
 			var color = this .color_ .getValue ();
 
@@ -62340,12 +62385,12 @@ function ($,
 			{
 				var c = color [i] .getValue ();
 
-				colors [i] = new Color4 (c .r, c .g, c .b, 1);
+				array [i] = new Vector4 (c .r, c .g, c .b, 1);
 			}
 
-			colors .length = length;
+			array .length = length;
 
-			return colors;
+			return array;
 		},
 	});
 
@@ -63086,6 +63131,7 @@ define ('cobweb/Components/Rendering/ColorRGBA',[
 	"cobweb/Components/Rendering/X3DColorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color4",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -63093,7 +63139,8 @@ function ($,
           FieldDefinitionArray,
           X3DColorNode, 
           X3DConstants,
-          Color4)
+          Color4,
+          Vector4)
 {
 
 
@@ -63133,16 +63180,20 @@ function ($,
 		{
 			return white;
 		},
-		getColors: function (colors)
+		getVectors: function (array)
 		{
 			var color = this .color_ .getValue ();
 
 			for (var i = 0, length = color .length; i < length; ++ i)
-				colors [i] = color [i] .getValue () .copy ();
+			{
+				var c = color [i] .getValue ();
 
-			colors .length = length;
+				array [i] = new Vector4 (c .r, c .g, c .b, c .a);
+			}
 
-			return colors;
+			array .length = length;
+
+			return array;
 		},
 	});
 
@@ -63574,6 +63625,108 @@ function ($,
 	});
 
 	return Cone;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/ConeEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode, 
+          X3DConstants,
+          Vector3,
+          Rotation4)
+{
+
+
+	function ConeEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ConeEmitter);
+
+		this .rotation = new Rotation4 (0, 0, 1, 0);
+	}
+
+	ConeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: ConeEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "angle",       new Fields .SFFloat (0.785398)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ConeEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .position_  .addInterest (this, "set_position__");
+			this .direction_ .addInterest (this, "set_direction__");
+			this .angle_     .addInterest (this, "set_angle__");
+
+			this .set_position__ ();
+			this .set_direction__ ();
+			this .set_angle__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
+		},
+		set_direction__: function ()
+		{
+			var direction = this .direction_ .getValue ();
+
+			this .rotation .setFromToVec (Vector3 .zAxis, direction);
+
+			if (direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		set_angle__: function ()
+		{
+			this .angle = this .angle_ .getValue ()
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position);
+		},
+		getRandomVelocity: function (velocity)
+		{
+			return this .rotation .multVecRot (this .getRandomNormalWithAngle (this .angle, velocity) .multiply (this .getRandomSpeed ()));
+ 		},
+	});
+
+	return ConeEmitter;
 });
 
 
@@ -65323,6 +65476,83 @@ function ($,
 	});
 
 	return ElevationGrid;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/ExplosionEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode, 
+          X3DConstants)
+{
+
+
+	function ExplosionEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ExplosionEmitter);
+
+		this .getRandomVelocity = this .getSphericalRandomVelocity;
+	}
+
+	ExplosionEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: ExplosionEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ExplosionEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .position_ .addInterest (this, "set_position__");
+
+			this .set_position__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
+		},
+		isExplosive: function ()
+		{
+			return true;
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position);
+		},
+	});
+
+	return ExplosionEmitter;
 });
 
 
@@ -68087,6 +68317,36 @@ function ($,
 				}
 			}
 
+			return polylines;
+		},
+		getPolylines: function (polylines)
+		{
+			// Polyline map
+
+			polylines .length = 0;
+		
+			if (! this .coordNode || this .coordNode .isEmpty ())
+				return polylines;
+		
+			var
+				polylineIndices = this .getPolylineIndices (),
+				coordIndex      = this .coordIndex_. getValue ();
+
+			for (var p = 0; p < polylineIndices .length; ++ p)
+			{
+				var polyline = polylineIndices [p];
+
+				// Create two vertices for each line.
+		
+				for (var line = 0, endL = polyline .length - 1; line < endL; ++ line)
+				{
+					for (var index = line, endI = line + 2; index < endI; ++ index)
+					{
+						polylines .push (this .coordNode .get1Point (coordIndex [polyline [index]] .getValue ()));
+					}
+				}
+			}
+		
 			return polylines;
 		},
 		build: function ()
@@ -71534,6 +71794,10 @@ function ($,
 		{
 			return this .geometryNode;
 		},
+		setTransparent: function (value)
+		{
+			this .transparent = value;
+		},
 		isTransparent: function ()
 		{
 			return this .transparent;
@@ -71613,6 +71877,9 @@ define ('cobweb/Components/ParticleSystems/ParticleSystem',[
 	"standard/Math/Numbers/Color4",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -71624,7 +71891,10 @@ function ($,
           X3DCast,
           Color4,
           Vector3,
-          Vector4)
+          Vector4,
+          Matrix4,
+          QuickSort,
+          Algorithm)
 {
 
 
@@ -71646,18 +71916,34 @@ function ($,
 		SPRITE:   SPRITE,
 	};
 
+	var
+		invModelViewMatrix = new Matrix4 (),
+		matrix             = new Matrix4 (),
+		billboardToScreen  = new Vector3 (0, 0, 0),
+		viewerYAxis        = new Vector3 (0, 0, 0),
+		normal             = new Vector3 (0, 0, 0),
+		x                  = new Vector3 (0, 0, 0),
+		y                  = new Vector3 (0, 0, 0),
+		z                  = new Vector3 (0, 0, 0);
+
+	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
+
 	function ParticleSystem (executionContext)
 	{
 		X3DShapeNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ParticleSystem);
 
+		this .createParticles    = true;
 		this .particles          = [ ];
 		this .velocities         = [ ];
 		this .speeds             = [ ];
 		this .turbulences        = [ ];
 		this .geometryType       = POINT;
+		this .maxParticles       = 0;
 		this .numParticles       = 0;
+		this .particleLifetime   = 0;
+		this .lifetimeVariation  = 0;
 		this .emitterNode        = null;
 		this .physicsModelNodes  = [ ];
 		this .creationTime       = 0;
@@ -71665,8 +71951,18 @@ function ($,
 		this .deltaTime          = 0;
 		this .numForces          = 0;
 		this .colorKeys          = [ ];
+		this .colorRamppNode     = null;
 		this .colorRamp          = [ ];
+		this .colorMaterial      = false;
+		this .texCoordKeys       = [ ];
+		this .texCoordRampNode   = null;
+		this .texCoordRamp       = [ ];
+		this .texCoordAnim       = false;
+		this .vertexCount        = 0;
 		this .shader             = this .getBrowser () .getPointShader ();
+		this .modelViewMatrix    = new Matrix4 ();
+		this .particleSorter     = new QuickSort (this .particles, compareDistance);
+		this .sortParticles      = false;
 	}
 
 	ParticleSystem .prototype = $.extend (Object .create (X3DShapeNode .prototype),
@@ -71675,21 +71971,21 @@ function ($,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geometryType",      new Fields .SFString ("QUAD")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "createParticles",   new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geometryType",      new Fields .SFString ("QUAD")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "maxParticles",      new Fields .SFInt32 (200)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "particleLifetime",  new Fields .SFFloat (5)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "lifetimeVariation", new Fields .SFFloat (0.25)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "particleSize",      new Fields .SFVec2f (0.02, 0.02)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "emitter",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "physics",           new Fields .MFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorKey",          new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorRamp",         new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordKey",       new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordRamp",      new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",          new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",          new Fields .SFVec3f (-1, -1, -1)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",        new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "emitter",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "physics",           new Fields .MFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorRamp",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordRamp",      new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance",        new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",          new Fields .SFNode ()),
 		]),
@@ -71714,35 +72010,38 @@ function ($,
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
-			this .enabled_      .addInterest (this, "set_enabled__");
-			this .geometryType_ .addInterest (this, "set_geometryType__");
-			this .maxParticles_ .addInterest (this, "set_enabled__");
-			this .emitter_      .addInterest (this, "set_emitter__");
-			this .physics_      .addInterest (this, "set_physics__");
-			this .colorRamp_    .addInterest (this, "set_colorRamp__");
+			this .enabled_           .addInterest (this, "set_enabled__");
+			this .createParticles_   .addInterest (this, "set_createParticles__");
+			this .geometryType_      .addInterest (this, "set_geometryType__");
+			this .maxParticles_      .addInterest (this, "set_enabled__");
+			this .particleLifetime_  .addInterest (this, "set_particleLifetime__");
+			this .lifetimeVariation_ .addInterest (this, "set_lifetimeVariation__");
+			this .emitter_           .addInterest (this, "set_emitter__");
+			this .physics_           .addInterest (this, "set_physics__");
+			this .colorKey_          .addInterest (this, "set_color__");
+			this .colorRamp_         .addInterest (this, "set_colorRamp__");
+			this .texCoordKey_       .addInterest (this, "set_texCoord__");
+			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
 
-			this .colorBuffer = gl .createBuffer ();
-			this .colorArray  = new Float32Array ();
+			this .colorBuffer    = gl .createBuffer ();
+			this .texCoordBuffer = gl .createBuffer ();
+			this .normalBuffer   = gl .createBuffer ();
+			this .vertexBuffer   = gl .createBuffer ();
 
-			this .vertexBuffer = gl .createBuffer ();
-			this .vertexArray  = new Float32Array ();
+			this .colorArray    = new Float32Array ();
+			this .texCoordArray = new Float32Array ();
+			this .normalArray   = new Float32Array ();
+			this .vertexArray   = new Float32Array ();
 
-			this .set_enabled__ ();
+			// Call order is higly important at startup.
 			this .set_emitter__ ();
+			this .set_enabled__ ();
+			this .set_createParticles__ ();
+			this .set_particleLifetime__ ();
+			this .set_lifetimeVariation__ ();
 			this .set_physics__ ();
 			this .set_colorRamp__ ();
-		},
-		getParticles: function ()
-		{
-			return this .particles;
-		},
-		getNumParticles: function ()
-		{
-			return this .numParticles;
-		},
-		getDeltaTime: function ()
-		{
-			return this .deltaTime;
+			this .set_texCoordRamp__ ();
 		},
 		set_bbox__: function ()
 		{
@@ -71756,8 +72055,18 @@ function ($,
 		},
 		set_transparent__: function ()
 		{
-			this .transparent = (this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
-			                    (this .colorRampNode && this .colorRampNode .isTransparent ());
+			switch (this .geometryType)
+			{
+				case POINT:
+					this .setTransparent (true);
+					break;
+				default:
+				{
+					this .setTransparent ((this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
+					                      (this .colorRampNode && this .colorRampNode .isTransparent ()));
+					break;
+				}
+			}
 		},
 		set_live__: function ()
 		{
@@ -71791,37 +72100,47 @@ function ($,
 		{
 			if (this .enabled_ .getValue () && this .maxParticles_ .getValue ())
 			{
-				if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+				if (! this .isActive_ .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
-					this .getBrowser () .sensors ()       .addInterest (this, "update");
-		
-					if (this .pauseTime)
+					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .creationTime += performance .now () / 1000 - this .pauseTime;
-						this .pauseTime     = 0;
+						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+						this .getBrowser () .sensors ()       .addInterest (this, "update");
+			
+						this .pauseTime = 0;
 					}
 					else
 						this .pauseTime = performance .now () / 1000;
 
 					this .isActive_ = true;
-					
-					this .set_maxParticles__ ();
 				}
 			}
 			else
 			{
-				if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+				if (this .isActive_ .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
-					this .getBrowser () .sensors ()       .removeInterest (this, "update");
+					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					{
+						this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+						this .getBrowser () .sensors ()       .removeInterest (this, "update");
+					}
+	
+					this .isActive_ = false;
 				}
-
-				this .isActive_ = false;
 			}
+
+			this .set_maxParticles__ ();
+		},
+		set_createParticles__: function ()
+		{
+			this .createParticles = this .createParticles_ .getValue ();
 		},
 		set_geometryType__: function ()
 		{
+			var
+				gl           = this .getBrowser () .getContext (),
+				maxParticles = this .maxParticles;
+
 			// geometryType
 
 			this .geometryType = GeometryTypes [this .geometryType_ .getValue ()]
@@ -71831,28 +72150,130 @@ function ($,
 
 			// Create buffers
 
-			var maxParticles = this .maxParticles_ .getValue ();
-
 			switch (this .geometryType)
 			{
 				case POINT:
 				{
-					this .colorArray  = new Float32Array (4 * maxParticles);
-					this .vertexArray = new Float32Array (4 * maxParticles);
+					this .colorArray    = new Float32Array (4 * maxParticles);
+					this .texCoordArray = new Float32Array ();
+					this .normalArray   = new Float32Array ();
+					this .vertexArray   = new Float32Array (4 * maxParticles);
 
 					this .colorArray  .fill (1);
 					this .vertexArray .fill (1);
 
-					this .shader = this .getBrowser () .getPointShader ()
+					this .primitiveType = gl .POINTS;
+					this .texCoordCount = 0;
+					this .vertexCount   = 1;
+					this .shader        = this .getBrowser () .getPointShader ()
+					break;
+				}
+				case LINE:
+				{
+					this .colorArray    = new Float32Array (2 * 4 * maxParticles);
+					this .texCoordArray = new Float32Array ();
+					this .normalArray   = new Float32Array ();
+					this .vertexArray   = new Float32Array (2 * 4 * maxParticles);
+
+					this .colorArray  .fill (1);
+					this .vertexArray .fill (1);
+
+					this .primitiveType = gl .LINES;
+					this .texCoordCount = 2;
+					this .vertexCount   = 2;
+					this .shader        = this .getBrowser () .getLineShader ()
+					break;
+				}
+				case TRIANGLE:
+				case QUAD:
+				case SPRITE:
+				{
+					this .colorArray    = new Float32Array (6 * 4 * maxParticles);
+					this .texCoordArray = new Float32Array (6 * 4 * maxParticles);
+					this .normalArray   = new Float32Array (6 * 3 * maxParticles);
+					this .vertexArray   = new Float32Array (6 * 4 * maxParticles);
+
+					this .colorArray  .fill (1);
+					this .vertexArray .fill (1);
+
+					var
+						texCoordArray = this .texCoordArray,
+						normalArray   = this .normalArray;
+
+					for (var i = 0; i < maxParticles; ++ i)
+					{
+						var i3 = i * 3;
+
+						normalArray [i3]     = 0;
+						normalArray [i3 + 1] = 0;
+						normalArray [i3 + 2] = 1;
+					}
+
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+					gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
+
+					for (var i = 0; i < maxParticles; ++ i)
+					{
+						var i24 = i * 24;
+
+						// p4 ------ p3
+						// |       / |
+						// |     /   |
+						// |   /     |
+						// | /       |
+						// p1 ------ p2
+
+						// p1
+						texCoordArray [i24]     = texCoordArray [i24 + 12] = 0;
+						texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = 0;
+						texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = 0;
+						texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = 1;
+
+						// p2
+						texCoordArray [i24 + 4] = 1;
+						texCoordArray [i24 + 5] = 0;
+						texCoordArray [i24 + 6] = 0;
+						texCoordArray [i24 + 7] = 1;
+
+						// p3
+						texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = 1;
+						texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = 1;
+						texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = 0;
+						texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = 1;
+
+						// p4
+						texCoordArray [i24 + 20] = 0;
+						texCoordArray [i24 + 21] = 1;
+						texCoordArray [i24 + 22] = 0;
+						texCoordArray [i24 + 23] = 1;
+					}
+
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+					gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
+
+					this .texCoordCount = 4;
+					this .vertexCount   = 6;
+					this .primitiveType = gl .TRIANGLES;
+					this .shader        = this .getBrowser () .getDefaultShader ()
+					break;
+				}
+				case GEOMETRY:
+				{
+					this .texCoordCount = 0;
+					this .vertexCount   = 0;
+					this .primitiveType = gl .TRIANGLES; // geomtry make each its own type
+					this .shader        = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 			}
 		},
 		set_maxParticles__: function ()
 		{
-			var particles = this .particles;
+			var
+				particles    = this .particles,
+				maxParticles = Math .max (0, this .maxParticles_ .getValue ());
 
-			for (var i = 0, length = Math .max (0, this .maxParticles_ .getValue ()); i < length; ++ i)
+			for (var i = particles .length, length = maxParticles; i < length; ++ i)
 			{
 				particles [i] = {
 					lifetime: -1,
@@ -71860,13 +72281,28 @@ function ($,
 					position: new Vector3 (0, 0, 0),
 					velocity: new Vector3 (0, 0, 0),
 					color:    new Vector4 (1, 1, 1, 1),
+					distance: 0,
 				};
 			}
 
-			this .numParticles = 0;
-			this .creationTime = performance .now () / 1000;
+			for (var i = this .numParticles; i < maxParticles; ++ i)
+				particles [i] .lifetime = -1;
+
+			this .maxParticles = maxParticles;
+			this .numParticles = Math .min (this .numParticles, maxParticles);
+
+			if (! this .emitterNode .isExplosive ())
+				this .creationTime = performance .now () / 1000;
 
 			this .set_geometryType__ ();
+		},
+		set_particleLifetime__: function ()
+		{
+			this .particleLifetime = this .particleLifetime_ .getValue ();
+		},
+		set_lifetimeVariation__: function ()
+		{
+			this .lifetimeVariation = this .lifetimeVariation_ .getValue ();
 		},
 		set_emitter__: function ()
 		{
@@ -71906,37 +72342,63 @@ function ($,
 		},
 		set_color__: function ()
 		{
-			for (var i = 0, length = this .colorKey_ .length; i < length; ++ i)
-				this .colorKeys [i] = this .colorKey_ [i];
+			var
+				colorKey  = this .colorKey_ .getValue (),
+				colorKeys = this .colorKeys,
+				colorRamp = this .colorRamp;
 
-			this .colorRampNode .getColors (this .colorRamp);
+			for (var i = 0, length = colorKey .length; i < length; ++ i)
+				colorKeys [i] = colorKey [i] .getValue ();
 
-			for (var i = this .colorRamp .length, length = this .colorKey_ .length; i < length; ++ i)
-				this .colorRamp [i] = new Color4 (1, 1, 1, 1);
+			colorKeys .length = length;
+
+			if (this .colorRampNode)
+				this .colorRampNode .getVectors (this .colorRamp);
+
+			for (var i = colorRamp .length, length = colorKey .length; i < length; ++ i)
+				colorRamp [i] = new Vector4 (1, 1, 1, 1);
+
+			colorRamp .length = length;
+
+			this .colorMaterial = Boolean (colorKeys .length && this .colorRampNode);
+		},
+		set_texCoordRamp__: function ()
+		{
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .removeInterest (this, "set_texCoord__");
+
+			this .texCoordRampNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoordRamp_);
+
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .addInterest (this, "set_texCoord__");
+
+			this .set_texCoord__ ();
+		},
+		set_texCoord__: function ()
+		{
+			var
+				texCoordKey  = this .texCoordKey_ .getValue (),
+				texCoordKeys = this .texCoordKeys,
+				texCoordRamp = this .texCoordRamp;
+
+			for (var i = 0, length = texCoordKey .length; i < length; ++ i)
+				texCoordKeys [i] = texCoordKey [i] .getValue ();
+
+			texCoordKeys .length = length;
+
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .getTexCoord (texCoordRamp);
+
+			for (var i = texCoordRamp .length, length = texCoordKey .length * this .texCoordCount; i < length; ++ i)
+				texCoordRamp [i] = new Vector4 (0, 0, 0, 0);
+
+			texCoordRamp .length = length;
+
+			this .texCoordAnim = Boolean (texCoordKeys .length && this .texCoordRampNode);
 		},
 		prepareEvents: function ()
 		{
 			var emitterNode = this .emitterNode;
-
-			// Determine numParticles
-
-			if (emitterNode .isExplosive ())
-			{
-			}
-			else
-			{
-				if (this .numParticles < this .maxParticles_ .getValue ())
-				{
-					var
-						now          = performance .now () / 1000,
-						newParticles = (now - this .creationTime) * this .maxParticles_ .getValue () / this .particleLifetime_ .getValue ();
-	
-					if (newParticles)
-						this .creationTime = now;
-	
-					this .numParticles = Math .floor (Math .min (Math .max (0, this .maxParticles_ .getValue ()), this .numParticles + newParticles));
-				}
-			}
 
 			// Determine delta time
 
@@ -71944,30 +72406,67 @@ function ($,
 				DELAY = 15, // Delay in frames when dt full applys.
 				dt    = 1 / this .getBrowser () .getCurrentFrameRate ();
 
-			this .deltaTime = ((DELAY - 1) * this .deltaTime + dt) / DELAY; // Moving average about DELAY frames.
+			// var deltaTime is only for the emitter, this.deltaTime is for the forces.
+			var deltaTime = this .deltaTime = ((DELAY - 1) * this .deltaTime + dt) / DELAY; // Moving average about DELAY frames.
+
+			// Determine numParticles
+
+			if (emitterNode .isExplosive ())
+			{
+				var
+					now              = performance .now () / 1000,
+					particleLifetime = this .particleLifetime + this .particleLifetime * this .lifetimeVariation;
+	
+				if (this .numParticles === 0 || now - this .creationTime > particleLifetime)
+				{
+					this .creationTime    = now;
+					this .numParticles    = this .maxParticles;
+					this .createParticles = this .createParticles_ .getValue ();
+
+					deltaTime = Number .POSITIVE_INFINITY; 
+				}
+				else
+					this .createParticles = false;
+			}
+			else
+			{
+				if (this .numParticles < this .maxParticles)
+				{
+					var
+						now          = performance .now () / 1000,
+						newParticles = (now - this .creationTime) * this .maxParticles / this .particleLifetime;
+	
+					if (newParticles)
+						this .creationTime = now;
+	
+					this .numParticles = Math .floor (Math .min (this .maxParticles, this .numParticles + newParticles));
+				}
+			}
 
 			// Determine particle position, velocity and colors
 
-			emitterNode .animate (this);
+			emitterNode .animate (this, deltaTime);
 
 			// Apply forces.
 
-			if (emitterNode .mass_ .getValue ())
+			if (emitterNode .getMass ())
 			{
 				var
 					physicsModelNodes = this .physicsModelNodes,
 					velocities        = this .velocities,
 					speeds            = this .speeds,
 					turbulences       = this .turbulences,
-					deltaMass         = this .deltaTime / emitterNode .mass_ .getValue ();
+					deltaMass         = this .deltaTime / emitterNode .getMass ();
 
-				// Collect forces in velocities and turbulences.
+				// Collect forces in velocities and collect turbulences.
 
 				for (var i = velocities .length, length = physicsModelNodes .length; i < length; ++ i)
 					velocities [i] = new Vector3 (0, 0, 0);
 
 				for (var i = 0, length = physicsModelNodes .length; i < length; ++ i)
 					physicsModelNodes [i] .addForce (i, emitterNode, velocities, turbulences);
+
+				// Determine velocities from forces and determine speed.
 
 				for (var i = 0, length = velocities .length; i < length; ++ i)
 				{
@@ -71991,6 +72490,17 @@ function ($,
 				case POINT:
 					this .updatePoint ();
 					break;
+				case LINE:
+					this .updateLine ();
+					break;
+				case TRIANGLE:
+				case QUAD:
+				case SPRITE:
+					this .updateQuad ();
+					break;
+				case GEOMETRY:
+					this .updateGeometry ();
+					break;
 			}
 		},
 		updatePoint: function ()
@@ -72004,7 +72514,7 @@ function ($,
 
 			// Colors
 
-			if (this .colorRamp .length)
+			if (this .colorMaterial)
 			{
 				for (var i = 0; i < numParticles; ++ i)
 				{
@@ -72038,28 +72548,320 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 		},
+		updateLine: function ()
+		{
+			var
+				gl           = this .getBrowser () .getContext (),
+				particles    = this .particles,
+				numParticles = this .numParticles,
+				colorArray   = this .colorArray,
+				vertexArray  = this .vertexArray,
+				sx1_2        = this .particleSize_ .x / 2,
+				sy1_2        = this .particleSize_ .y / 2;
+
+			// Colors
+
+			if (this .colorMaterial)
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						color = particles [i] .color,
+						i8    = i * 8;
+	
+					colorArray [i8]     = color .x;
+					colorArray [i8 + 1] = color .y;
+					colorArray [i8 + 2] = color .z;
+					colorArray [i8 + 3] = color .w;
+
+					colorArray [i8 + 4] = color .x;
+					colorArray [i8 + 5] = color .y;
+					colorArray [i8 + 6] = color .z;
+					colorArray [i8 + 7] = color .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
+			}
+
+			// Vertices
+
+			for (var i = 0; i < numParticles; ++ i)
+			{
+				var
+					particle = particles [i],
+					position = particle .position,
+					i8       = i * 8;
+
+				normal .assign (particle .velocity) .normalize ();
+
+				vertexArray [i8]     = position .x - normal .x * sy1_2;
+				vertexArray [i8 + 1] = position .y - normal .y * sy1_2;
+				vertexArray [i8 + 2] = position .z - normal .z * sy1_2;
+
+				vertexArray [i8 + 4] = position .x + normal .x * sy1_2;
+				vertexArray [i8 + 5] = position .y + normal .y * sy1_2;
+				vertexArray [i8 + 6] = position .z + normal .z * sy1_2;
+			}
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+		},
+		updateQuad: function ()
+		{
+			var
+				gl              = this .getBrowser () .getContext (),
+				particles       = this .particles,
+				maxParticles    = this .maxParticles,
+			   numParticles    = this .numParticles,
+				colorArray      = this .colorArray,
+				texCoordArray   = this .texCoordArray,
+				vertexArray     = this .vertexArray,
+				sx1_2           = this .particleSize_ .x / 2,
+				sy1_2           = this .particleSize_ .y / 2,
+				modelViewMatrix = this .modelViewMatrix;
+
+			// Sort particles
+
+			if (this .sortParticles)
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var particle = particles [i];
+					particle .distance = modelViewMatrix .getDepth (particle .position);
+				}
+				
+				// Expensisive function!!!
+				this .particleSorter .sort (0, numParticles);
+			}
+
+			// Colors
+
+			if (this .colorMaterial)
+			{
+				for (var i = 0; i < maxParticles; ++ i)
+				{
+					var
+						color = particles [i] .color,
+						i24   = i * 24;
+
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+
+					// p1, p2, p3; p1, p3, p4
+					colorArray [i24]     = colorArray [i24 + 4] = colorArray [i24 + 8]  = colorArray [i24 + 12] = colorArray [i24 + 16] = colorArray [i24 + 20] = color .x;
+					colorArray [i24 + 1] = colorArray [i24 + 5] = colorArray [i24 + 9]  = colorArray [i24 + 13] = colorArray [i24 + 17] = colorArray [i24 + 21] = color .y;
+					colorArray [i24 + 2] = colorArray [i24 + 6] = colorArray [i24 + 10] = colorArray [i24 + 14] = colorArray [i24 + 18] = colorArray [i24 + 22] = color .z;
+					colorArray [i24 + 3] = colorArray [i24 + 7] = colorArray [i24 + 11] = colorArray [i24 + 15] = colorArray [i24 + 19] = colorArray [i24 + 23] = color .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
+			}
+
+			if (this .texCoordAnim && this .texCoordArray .length)
+			{
+				var
+					texCoordKeys = this .texCoordKeys,
+					texCoordRamp = this .texCoordRamp;
+
+				var
+					length = texCoordKeys .length,
+					index0 = 0;
+		
+				for (var i = 0; i < maxParticles; ++ i)
+				{
+					// Determine index0.
+		
+					var
+						particle = particles [i],
+						fraction = particle .elapsedTime / particle .lifetime,
+						color    = particle .color;
+	
+					if (length == 1 || fraction <= texCoordKeys [0])
+					{
+						index0 = 0;
+					}
+					else if (fraction >= texCoordKeys [length - 1])
+					{
+						index0 = length - 2;
+					}
+					else
+					{
+						var index = Algorithm .upperBound (texCoordKeys, 0, length, fraction, Algorithm .less);
+
+						if (index < length)
+							index0 = index - 1;
+						else
+							index0 = 0;
+					}
+
+					// Set texCoord.
+		
+					index0 *= this .texCoordCount;
+
+					var
+						texCoord1 = texCoordRamp [index0],
+						texCoord2 = texCoordRamp [index0 + 1],
+						texCoord3 = texCoordRamp [index0 + 2],
+						texCoord4 = texCoordRamp [index0 + 3],
+						i24 = i * 24;
+
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+
+					// p1
+					texCoordArray [i24]     = texCoordArray [i24 + 12] = texCoord1 .x;
+					texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = texCoord1 .y;
+					texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = texCoord1 .z;
+					texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = texCoord1 .w;
+
+					// p2
+					texCoordArray [i24 + 4] = texCoord2 .x;
+					texCoordArray [i24 + 5] = texCoord2 .y;
+					texCoordArray [i24 + 6] = texCoord2 .z;
+					texCoordArray [i24 + 7] = texCoord2 .w;
+
+					// p3
+					texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = texCoord3 .x;
+					texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = texCoord3 .y;
+					texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = texCoord3 .z;
+					texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = texCoord3 .w;
+
+					// p4
+					texCoordArray [i24 + 20] = texCoord4 .x;
+					texCoordArray [i24 + 21] = texCoord4 .y;
+					texCoordArray [i24 + 22] = texCoord4 .z;
+					texCoordArray [i24 + 23] = texCoord4 .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
+			}
+
+			// Vertices
+
+			for (var i = 0; i < numParticles; ++ i)
+			{
+				var
+					position = particles [i] .position,
+					x        = position .x,
+					y        = position .y,
+					z        = position .z,
+					i24      = i * 24;
+
+				// p4 ------ p3
+				// |       / |
+				// |     /   |
+				// |   /     |
+				// | /       |
+				// p1 ------ p2
+
+				// p1
+				vertexArray [i24]     = x - sx1_2;
+				vertexArray [i24 + 1] = y - sy1_2;
+				vertexArray [i24 + 2] = z;
+
+				// p2
+				vertexArray [i24 + 4] = x + sx1_2;
+				vertexArray [i24 + 5] = y - sy1_2;
+				vertexArray [i24 + 6] = z;
+
+				// p3
+				vertexArray [i24 + 8]  = x + sx1_2;
+				vertexArray [i24 + 9]  = y + sy1_2;
+				vertexArray [i24 + 10] = z;
+
+				// p1
+				vertexArray [i24 + 12] = x - sx1_2;
+				vertexArray [i24 + 13] = y - sy1_2;
+				vertexArray [i24 + 14] = z;
+
+				// p3
+				vertexArray [i24 + 16] = x + sx1_2;
+				vertexArray [i24 + 17] = y + sy1_2;
+				vertexArray [i24 + 18] = z;
+
+				// p4
+				vertexArray [i24 + 20] = x - sx1_2;
+				vertexArray [i24 + 21] = y + sy1_2;
+				vertexArray [i24 + 22] = z;
+			}
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+		},
+		updateGeometry: function ()
+		{
+		},
 		traverse: function (type)
 		{
 			switch (type)
 			{
 				case TraverseType .DISPLAY:
-					this .getCurrentLayer () .addShape (this);
+				{
+					var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+
+					this .modelViewMatrix .assign (modelViewMatrix .get ());
+					
+					switch (this .geometryType)
+					{
+						case SPRITE:
+						{
+							modelViewMatrix .push ();
+							modelViewMatrix .multLeft (this .getScreenAlignedRotation (modelViewMatrix .get ()));
+			
+							this .getCurrentLayer () .addShape (this);
+			
+							modelViewMatrix .pop ();
+							break;
+						}
+						default:
+						{
+							this .getCurrentLayer () .addShape (this);
+							break;
+						}
+					}
+
 					break;
+				}
 			}
+		},
+		getScreenAlignedRotation: function (modelViewMatrix)
+		{
+			invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+		
+			invModelViewMatrix .multDirMatrix (billboardToScreen .assign (Vector3 .zAxis));
+			invModelViewMatrix .multDirMatrix (viewerYAxis .assign (Vector3 .yAxis));
+		
+			x .assign (viewerYAxis) .cross (billboardToScreen);
+			y .assign (billboardToScreen) .cross (x);
+			var z = billboardToScreen;
+		
+			// Compose rotation
+		
+			x .normalize ();
+			y .normalize ();
+			z .normalize ();
+		
+			return matrix .set (x [0], x [1], x [2], 0,
+			                    y [0], y [1], y [2], 0,
+			                    z [0], z [1], z [2], 0,
+                             0, 0, 0, 1);
 		},
 		display: function (context)
 		{
+			// Travese appearance before everything.
 			this .getAppearance () .traverse ();
 
-			switch (this .geometryType)
-			{
-				case POINT:
-					this .displayPoint (context);
-					break;
-			}
-		},
-		displayPoint: function (context)
-		{
 			var
 				browser = this .getBrowser (),
 				gl      = browser .getContext (),
@@ -72068,21 +72870,35 @@ function ($,
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .vertex < 0 || this .numParticles === 0)
 				return;
 
 			// Setup shader.
 
-			context .colorMaterial = this .colorRamp .length;
+			context .colorMaterial = this .colorMaterial;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
-			if (this .colorRamp .length && shader .color >= 0)
+			if (this .colorMaterial && shader .color >= 0)
 			{
 				gl .enableVertexAttribArray (shader .color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
 				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			if (this .texCoordArray .length && shader .texCoord >= 0)
+			{
+				gl .enableVertexAttribArray (shader .texCoord);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			if (this .normalArray .length && shader .normal >= 0)
+			{
+				gl .enableVertexAttribArray (shader .normal);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
 			gl .enableVertexAttribArray (shader .vertex);
@@ -72091,7 +72907,10 @@ function ($,
 
 			// Wireframes are always solid so only one drawing call is needed.
 
-			gl .drawArrays (gl .POINTS, 0, this .numParticles);
+			gl .enable (gl .CULL_FACE);
+			gl .cullFace (gl .BACK);
+
+			gl .drawArrays (this .primitiveType, 0, this .numParticles * this .vertexCount);
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);
@@ -72706,6 +73525,7 @@ function ($,
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
+		this .transparent_ = true;
 	}
 
 	PointSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -72769,26 +73589,12 @@ function ($,
 		set_color__: function ()
 		{
 			if (this .colorNode)
-			{
 				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
-			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
-			{
 				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
-
-				this .set_transparent__ ();
-			}
-			else
-				this .transparent_ = false;
-		},
-		set_transparent__: function ()
-		{
-			this .transparent_ = this .colorNode .isTransparent ();
 		},
 		set_coord__: function ()
 		{
@@ -72904,6 +73710,205 @@ function ($,
 	});
 
 	return Polyline2D;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/PolylineEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Components/Rendering/IndexedLineSet",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode,
+          IndexedLineSet,
+          X3DConstants,
+          Vector3,
+          Algorithm)
+{
+
+
+	var vector = new Vector3 (0, 0, 0);
+
+	function PolylineEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .PolylineEmitter);
+
+		this .direction        = new Vector3 (0, 0, 0);
+		this .polylineNode     = new IndexedLineSet (executionContext);
+		this .polylines        = [ ];
+		this .lengthSoFarArray = [ 0 ];
+	}
+
+	PolylineEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: PolylineEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coordIndex",  new Fields .MFInt32 (-1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",       new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PolylineEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .direction_ .addInterest (this, "set_direction__");
+
+			this .coordIndex_ .addFieldInterest (this .polylineNode .coordIndex_);
+			this .coord_      .addFieldInterest (this .polylineNode .coord_);
+		
+			this .polylineNode .coordIndex_ = this .coordIndex_;
+			this .polylineNode .coord_      = this .coord_;
+
+			this .polylineNode .addInterest (this, "set_polyline");
+			this .polylineNode .setup ();
+
+			this .set_direction__ ();
+			this .set_polyline ();
+		},
+		set_direction__: function ()
+		{
+			this .direction .assign (this .direction_ .getValue ()) .normalize ();
+
+			if (this .direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		set_polyline: function ()
+		{
+			var polylines = this .polylineNode .getPolylines (this .polylines);
+
+			if (polylines .length)
+			{
+				delete this .getRandomPosition;
+
+				var
+					lengthSoFar      = 0,
+					lengthSoFarArray = this .lengthSoFarArray;
+		
+				lengthSoFarArray .length = 1;
+
+				for (var i = 0, length = polylines .length; i < length; i += 2)
+				{
+					lengthSoFar += vector .assign (polylines [i + 1]) .subtract (polylines [i]) .abs ();
+					lengthSoFarArray .push (lengthSoFar);
+				}
+			}
+			else
+			{
+				this .getRandomPosition = getPosition;
+			}
+		},
+		getRandomPosition: function (position)
+		{
+			// Determine index0 and weight.
+
+			var
+				lengthSoFarArray = this .lengthSoFarArray,
+				length           = lengthSoFarArray .length,
+				fraction         = Math .random () * lengthSoFarArray [length - 1],
+				index0           = 0,
+				index1           = 0,
+				weight           = 0;
+
+			if (length == 1 || fraction <= lengthSoFarArray [0])
+			{
+				index0 = 0;
+				weight = 0;
+			}
+			else if (fraction >= lengthSoFarArray [length - 1])
+			{
+				index0 = length - 2;
+				weight = 1;
+			}
+			else
+			{
+				var index = Algorithm .upperBound (lengthSoFarArray, 0, length, fraction, Algorithm .less);
+
+				if (index < length)
+				{
+					index1 = index;
+					index0 = index - 1;
+			
+					var
+						key0 = lengthSoFarArray [index0],
+						key1 = lengthSoFarArray [index1];
+			
+					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+				}
+				else
+				{
+					index0 = 0;
+					weight = 0;
+				}
+			}
+
+			// Interpolate and set position.
+
+			index0 *= 2;
+			index1  = index0 + 1;
+
+			var
+				vertex1 = this .polylines [index0],
+				vertex2 = this .polylines [index1];
+	
+			position .x = vertex1 .x + weight * (vertex2 .x - vertex1 .x);
+			position .y = vertex1 .y + weight * (vertex2 .y - vertex1 .y);
+			position .z = vertex1 .z + weight * (vertex2 .z - vertex1 .z);
+			position .w = vertex1 .w + weight * (vertex2 .w - vertex1 .w);
+
+			return position;
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var
+				direction = this .direction,
+				speed     = this .getRandomSpeed ();
+
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
+
+			return velocity;
+ 		},
+	});
+
+	function getPosition (position)
+	{
+		return this .position .set (0, 0, 0);
+	}
+
+	return PolylineEmitter;
 });
 
 
@@ -74300,6 +75305,8 @@ function ($,
 		},
 		scale: function (type)
 		{
+			// throws domain error
+
 			this .getModelViewMatrix (type, this .modelViewMatrix);
 			this .modelViewMatrix .get (translation, rotation, scale);
 		
@@ -74330,20 +75337,20 @@ function ($,
 		},
 		traverse: function (type)
 		{
+			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+	
+			modelViewMatrix .push ();
+			
 			try
 			{
-				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-		
-				modelViewMatrix .push ();
-			
 				this .scale (type);
 			
 				X3DGroupingNode .prototype .traverse .call (this, type);
-			
-				modelViewMatrix .pop ();
 			}
 			catch (error)
 			{ }
+			
+			modelViewMatrix .pop ();
 		},
 	});
 
@@ -77216,6 +78223,21 @@ function ($,
 			else
 				texCoords .push (0, 0, 0, 1);
 		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, p .z, 1);
+			}
+
+			array .length = length;
+
+			return array;
+		},
 	});
 
 	return TextureCoordinate3D;
@@ -77280,6 +78302,21 @@ function ($,
 			}
 			else
 				texCoords .push (0, 0, 0, 1);
+		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, p .z, p .w);
+			}
+
+			array .length = length;
+
+			return array;
 		},
 	});
 
@@ -78801,7 +79838,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Shaders/ComposedShader",
 	//"cobweb/Components/Texturing3D/ComposedTexture3D",
 	"cobweb/Components/Geometry3D/Cone", // VRML
-	//"cobweb/Components/ParticleSystems/ConeEmitter",
+	"cobweb/Components/ParticleSystems/ConeEmitter",
 	//"cobweb/Components/RigidBodyPhysics/Contact",
 	//"cobweb/Components/NURBS/Contour2D",
 	//"cobweb/Components/NURBS/ContourPolyline2D",
@@ -78821,7 +79858,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Interpolation/EaseInEaseOut",
 	"cobweb/Components/Geometry3D/ElevationGrid", // VRML
 	//"cobweb/Components/DIS/EspduTransform",
-	//"cobweb/Components/ParticleSystems/ExplosionEmitter",
+	"cobweb/Components/ParticleSystems/ExplosionEmitter",
 	"cobweb/Components/Geometry3D/Extrusion", // VRML
 	//"cobweb/Components/Shape/FillProperties",
 	//"cobweb/Components/Shaders/FloatVertexAttribute",
@@ -78914,7 +79951,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Picking/PointPickSensor",
 	"cobweb/Components/Rendering/PointSet", // VRML
 	"cobweb/Components/Geometry2D/Polyline2D",
-	//"cobweb/Components/ParticleSystems/PolylineEmitter",
+	"cobweb/Components/ParticleSystems/PolylineEmitter",
 	"cobweb/Components/Geometry2D/Polypoint2D",
 	"cobweb/Components/Followers/PositionChaser",
 	"cobweb/Components/Followers/PositionChaser2D",
@@ -79023,7 +80060,7 @@ function (Anchor,
           ComposedShader,
           //ComposedTexture3D,
           Cone,
-          //ConeEmitter,
+          ConeEmitter,
           //Contact,
           //Contour2D,
           //ContourPolyline2D,
@@ -79043,7 +80080,7 @@ function (Anchor,
           EaseInEaseOut,
           ElevationGrid,
           //EspduTransform,
-          //ExplosionEmitter,
+          ExplosionEmitter,
           Extrusion,
           //FillProperties,
           //FloatVertexAttribute,
@@ -79136,7 +80173,7 @@ function (Anchor,
           //PointPickSensor,
           PointSet,
           Polyline2D,
-          //PolylineEmitter,
+          PolylineEmitter,
           Polypoint2D,
           PositionChaser,
           PositionChaser2D,
@@ -79252,7 +80289,7 @@ function (Anchor,
 		ComposedShader:               ComposedShader,
 		//ComposedTexture3D:            ComposedTexture3D,
 		Cone:                         Cone,
-		//ConeEmitter:                  ConeEmitter,
+		ConeEmitter:                  ConeEmitter,
 		//Contact:                      Contact,
 		//Contour2D:                    Contour2D,
 		//ContourPolyline2D:            ContourPolyline2D,
@@ -79272,7 +80309,7 @@ function (Anchor,
 		EaseInEaseOut:                EaseInEaseOut,
 		ElevationGrid:                ElevationGrid,
 		//EspduTransform:               EspduTransform,
-		//ExplosionEmitter:             ExplosionEmitter,
+		ExplosionEmitter:             ExplosionEmitter,
 		Extrusion:                    Extrusion,
 		//FillProperties:               FillProperties,
 		//FloatVertexAttribute:         FloatVertexAttribute,
@@ -79365,7 +80402,7 @@ function (Anchor,
 		//PointPickSensor:              PointPickSensor,
 		PointSet:                     PointSet,
 		Polyline2D:                   Polyline2D,
-		//PolylineEmitter:              PolylineEmitter,
+		PolylineEmitter:              PolylineEmitter,
 		Polypoint2D:                  Polypoint2D,
 		PositionChaser:               PositionChaser,
 		PositionChaser2D:             PositionChaser2D,
@@ -79973,6 +81010,7 @@ function ($,
 		{
 			X3DBrowserContext .prototype .beginUpdate .call (this);
 			this .getExecutionContext () .beginUpdate ();
+			this .advanceTime (performance .now ());
 		},
 		endUpdate: function ()
 		{

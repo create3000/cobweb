@@ -1,14 +1,13 @@
-﻿<Properties>
+﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="42" Column="42" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="5" Column="5" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js" Line="36" Column="36" />
+      <File FileName="cobweb.js/cobweb.html" Line="27" Column="2" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="20" Column="20" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ConeEmitter.js" Line="45" Column="45" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/PolylineEmitter.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/ParticleSystems/PointEmitter.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ExplosionEmitter.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
