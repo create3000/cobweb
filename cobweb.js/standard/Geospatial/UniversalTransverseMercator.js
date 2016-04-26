@@ -162,7 +162,7 @@ function (Geodetic,
 		
 			return result .set (northing, easting, geodetic .z);
 		},
-		lerp: Vector3 .lerp,
+		//lerp: Vector3 .lerp,
 	};
 
 	return UniversalTransverseMercator;

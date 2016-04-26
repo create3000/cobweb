@@ -145,6 +145,9 @@ function ($,
 
 					destfield .setSet (sourceField .getSet ());
 
+					//if (sourceField .getAccessType () === destfield .getAccessType () and sourceField .getType () === destfield .getType ())
+					//{
+
 					if (sourceField .hasReferences ())
 					{
 						var references = sourceField .getReferences ();

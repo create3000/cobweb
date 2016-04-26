@@ -143,6 +143,7 @@ function (Vector3,
 
 			return result .set (nx, ny, nz);
 		},
+		/*
 		lerp: function (s, d, t)
 		{
 			var
@@ -211,6 +212,7 @@ function (Vector3,
 		},
 		source: new Vector3 (0, 0, 0),
 		destination: new Vector3 (0, 0, 0),
+		*/
 	};
 
 	return Geodetic;

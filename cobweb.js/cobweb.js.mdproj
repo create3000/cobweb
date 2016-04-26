@@ -1194,6 +1194,7 @@
     <None Include="tests\Components\ParticleSystems\Earth.x3d" />
     <None Include="tests\Components\ParticleSystems\PolylineEmitter.x3d" />
     <None Include="tests\Components\ParticleSystems\Waterfall.x3d" />
+    <None Include="tests\Components\PROTO\27cubes.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

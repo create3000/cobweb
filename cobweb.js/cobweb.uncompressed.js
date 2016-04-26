@@ -12075,7 +12075,7 @@ function ($, Algorithm)
 		},
 		slerp: function (destination, t)
 		{
-			return Algorithm .slerp (this, tmp .assign (destination), t);
+			return Algorithm .simpleSlerp (this, tmp .assign (destination), t);
 		},
 		min: function (vector)
 		{
@@ -12244,7 +12244,7 @@ function ($, Algorithm)
 		},
 		slerp: function (source, destination, t)
 		{
-			return Algorithm .slerp (source .copy (), tmp .assign (destination), t);
+			return Algorithm .simpleSlerp (source .copy (), tmp .assign (destination), t);
 		},
 		min: function (lhs, rhs)
 		{
@@ -16938,6 +16938,9 @@ function ($,
 						destfield   = copy .getField (name);
 
 					destfield .setSet (sourceField .getSet ());
+
+					//if (sourceField .getAccessType () === destfield .getAccessType () and sourceField .getType () === destfield .getType ())
+					//{
 
 					if (sourceField .hasReferences ())
 					{
@@ -28410,6 +28413,9 @@ function ($,
 			{
 				var value = element .getAttribute ("value");
 
+				if (field instanceof X3DArrayField)
+					field .length = 0;
+
 				if (value !== null)
 				{
 					this .parser .setInput (value);
@@ -28442,6 +28448,9 @@ function ($,
 				if (accessType & X3DConstants .initializeOnly)
 				{
 					var value = element .getAttribute ("value");
+
+					if (field instanceof X3DArrayField)
+						field .length = 0;
 
 					if (value !== null)
 					{
@@ -32437,9 +32446,9 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat lw = x3d_LinewidthScaleFactor + 1.5;\n\tfloat f0 = getFogInterpolant ();\n\tfloat t  = (distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0) / 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat lw = x3d_LinewidthScaleFactor / 2.0;\n\tfloat f0 = getFogInterpolant ();\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_GeometryType == 1 ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.5;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n//uniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
@@ -43314,6 +43323,7 @@ function (Vector3,
 
 			return result .set (nx, ny, nz);
 		},
+		/*
 		lerp: function (s, d, t)
 		{
 			var
@@ -43382,6 +43392,7 @@ function (Vector3,
 		},
 		source: new Vector3 (0, 0, 0),
 		destination: new Vector3 (0, 0, 0),
+		*/
 	};
 
 	return Geodetic;
@@ -43551,7 +43562,7 @@ function (Geodetic,
 		
 			return result .set (northing, easting, geodetic .z);
 		},
-		lerp: Vector3 .lerp,
+		//lerp: Vector3 .lerp,
 	};
 
 	return UniversalTransverseMercator;

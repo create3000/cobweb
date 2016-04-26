@@ -557,6 +557,9 @@ function ($,
 			{
 				var value = element .getAttribute ("value");
 
+				if (field instanceof X3DArrayField)
+					field .length = 0;
+
 				if (value !== null)
 				{
 					this .parser .setInput (value);
@@ -589,6 +592,9 @@ function ($,
 				if (accessType & X3DConstants .initializeOnly)
 				{
 					var value = element .getAttribute ("value");
+
+					if (field instanceof X3DArrayField)
+						field .length = 0;
 
 					if (value !== null)
 					{
