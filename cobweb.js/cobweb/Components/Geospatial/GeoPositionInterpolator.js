@@ -6,6 +6,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Browser/Geospatial/Geocentric",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -14,7 +15,8 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DGeospatialObject, 
+          X3DGeospatialObject,
+          Geocentric,
           X3DConstants,
           Vector3)
 {
@@ -26,6 +28,8 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoPositionInterpolator);
+
+		this .geocentric = new Geocentric ();
 	}
 
 	GeoPositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
@@ -42,6 +46,8 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",    new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "geovalue_changed", new Fields .SFVec3d ()),
 		]),
+		keyValue0: new Vector3 (0, 0, 0),
+		keyValue1: new Vector3 (0, 0, 0),
 		geovalue: new Vector3 (0, 0, 0),
 		value: new Vector3 (0, 0, 0),
 		getTypeName: function ()
@@ -79,8 +85,18 @@ function ($,
 		},
 		interpolate: function (index0, index1, weight)
 		{
-			this .geovalue_changed_ = this .getReferenceFrame () .lerp (this .keyValue_ [index0] .getValue (), this .keyValue_ [index1] .getValue (), weight, this .geovalue);
-			this .value_changed_    = this .getCoord (this .geovalue_changed_ .getValue (), this .value);
+			try
+			{
+				this .getCoord (this .keyValue_ [index0] .getValue (), this .keyValue0);
+				this .getCoord (this .keyValue_ [index1] .getValue (), this .keyValue1);
+	
+				var coord = this .geocentric .slerp (this .keyValue0, this .keyValue1, weight);
+	
+				this .geovalue_changed_ = this .getGeoCoord (coord, this .geovalue);
+				this .value_changed_    = coord;
+			}
+			catch (error)
+			{ }
 		},
 	});
 

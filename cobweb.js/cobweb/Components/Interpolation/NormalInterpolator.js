@@ -37,7 +37,8 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .MFVec3f ()),
 		]),
-		keyValue: new Vector3 (0, 0, 0),
+		keyValue0: new Vector3 (0, 0, 0),
+		keyValue1: new Vector3 (0, 0, 0),
 		getTypeName: function ()
 		{
 			return "NormalInterpolator";
@@ -73,9 +74,9 @@ function ($,
 			{
 				try
 				{
-					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-					                                       .slerp (keyValue [index1 + i] .getValue (),
-					                                               weight));
+					value_changed [i] .set (Algorithm .simpleSlerp (this .keyValue0 .assign (keyValue [index0 + i] .getValue ()),
+					                                                this .keyValue1 .assign (keyValue [index1 + i] .getValue ()),
+					                                                weight));
 				}
 				catch (error)
 				{ }

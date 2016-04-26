@@ -67,6 +67,30 @@ define (function ()
 
 			return source;
 		},
+		simpleSlerp: function (source, destination, t)
+		{
+			var cosom = source .dot (destination);
+
+			if (cosom <= -1)
+				throw new Error ("slerp is not possible: vectors are inverse collinear.");
+
+			if (cosom >= 1) // both normal vectors are equal
+				return source;
+
+			var
+				omega = Math .acos (cosom),
+				sinom = Math .sin  (omega),
+
+				scale0 = Math .sin ((1 - t) * omega) / sinom,
+				scale1 = Math .sin (t * omega) / sinom;
+
+			source .x = source .x * scale0 + destination .x * scale1;
+			source .y = source .y * scale0 + destination .y * scale1;
+			source .z = source .z * scale0 + destination .z * scale1;
+			source .w = source .w * scale0 + destination .w * scale1;
+
+			return source;
+		},
 		isPowerOfTwo: function (n)
 		{
 			return ((n - 1) & n) === 0;
