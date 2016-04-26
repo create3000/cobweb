@@ -10532,6 +10532,30 @@ define ('standard/Math/Algorithm',[],function ()
 
 			return source;
 		},
+		simpleSlerp: function (source, destination, t)
+		{
+			var cosom = source .dot (destination);
+
+			if (cosom <= -1)
+				throw new Error ("slerp is not possible: vectors are inverse collinear.");
+
+			if (cosom >= 1) // both normal vectors are equal
+				return source;
+
+			var
+				omega = Math .acos (cosom),
+				sinom = Math .sin  (omega),
+
+				scale0 = Math .sin ((1 - t) * omega) / sinom,
+				scale1 = Math .sin (t * omega) / sinom;
+
+			source .x = source .x * scale0 + destination .x * scale1;
+			source .y = source .y * scale0 + destination .y * scale1;
+			source .z = source .z * scale0 + destination .z * scale1;
+			source .w = source .w * scale0 + destination .w * scale1;
+
+			return source;
+		},
 		isPowerOfTwo: function (n)
 		{
 			return ((n - 1) & n) === 0;
@@ -43556,22 +43580,17 @@ function (Vector3,
 		{
 			return result .assign (geocentric);
 		},
-		lerp: function (source, destination, t)
+		slerp: function (source, destination, t)
 		{
-			this .source      .assign (s);
-			this .destination .assign (d);
-
 			var
-				sourceLength      = source      .abs ();
+				sourceLength      = source      .abs (),
 				destinationLength = destination .abs ();
 			
 			source      .normalize ();
 			destination .normalize ();
 			
-			return source .slerp (destination, t) * Algorithm .lerp (sourceLength, destinationLength, t);
+			return Algorithm .simpleSlerp (source, destination, t) .multiply (Algorithm .lerp (sourceLength, destinationLength, t));
 		},
-		source: new Vector3 (0, 0, 0),
-		destination: new Vector3 (0, 0, 0),
 	};
 
 	return Geocentric;
@@ -67403,6 +67422,7 @@ define ('cobweb/Components/Geospatial/GeoPositionInterpolator',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Browser/Geospatial/Geocentric",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 ],
@@ -67411,7 +67431,8 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DGeospatialObject, 
+          X3DGeospatialObject,
+          Geocentric,
           X3DConstants,
           Vector3)
 {
@@ -67423,6 +67444,8 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoPositionInterpolator);
+
+		this .geocentric = new Geocentric ();
 	}
 
 	GeoPositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
@@ -67439,6 +67462,8 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",    new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "geovalue_changed", new Fields .SFVec3d ()),
 		]),
+		keyValue0: new Vector3 (0, 0, 0),
+		keyValue1: new Vector3 (0, 0, 0),
 		geovalue: new Vector3 (0, 0, 0),
 		value: new Vector3 (0, 0, 0),
 		getTypeName: function ()
@@ -67476,8 +67501,18 @@ function ($,
 		},
 		interpolate: function (index0, index1, weight)
 		{
-			this .geovalue_changed_ = this .getReferenceFrame () .lerp (this .keyValue_ [index0] .getValue (), this .keyValue_ [index1] .getValue (), weight, this .geovalue);
-			this .value_changed_    = this .getCoord (this .geovalue_changed_ .getValue (), this .value);
+			try
+			{
+				this .getCoord (this .keyValue_ [index0] .getValue (), this .keyValue0);
+				this .getCoord (this .keyValue_ [index1] .getValue (), this .keyValue1);
+	
+				var coord = this .geocentric .slerp (this .keyValue0, this .keyValue1, weight);
+	
+				this .geovalue_changed_ = this .getGeoCoord (coord, this .geovalue);
+				this .value_changed_    = coord;
+			}
+			catch (error)
+			{ }
 		},
 	});
 
@@ -71511,7 +71546,8 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .MFVec3f ()),
 		]),
-		keyValue: new Vector3 (0, 0, 0),
+		keyValue0: new Vector3 (0, 0, 0),
+		keyValue1: new Vector3 (0, 0, 0),
 		getTypeName: function ()
 		{
 			return "NormalInterpolator";
@@ -71547,9 +71583,9 @@ function ($,
 			{
 				try
 				{
-					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-					                                       .slerp (keyValue [index1 + i] .getValue (),
-					                                               weight));
+					value_changed [i] .set (Algorithm .simpleSlerp (this .keyValue0 .assign (keyValue [index0 + i] .getValue ()),
+					                                                this .keyValue1 .assign (keyValue [index1 + i] .getValue ()),
+					                                                weight));
 				}
 				catch (error)
 				{ }
