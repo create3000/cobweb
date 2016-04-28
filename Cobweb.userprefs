@@ -1,15 +1,13 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="254" Column="35" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/ParticleSystems/PolylineEmitter.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/ParticleSystems/PointEmitter.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoPositionInterpolator.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Geospatial/Geocentric.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
