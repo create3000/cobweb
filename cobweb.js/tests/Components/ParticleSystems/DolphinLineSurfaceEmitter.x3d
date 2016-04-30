@@ -7,7 +7,7 @@
     <meta name='creator' content='holger'/>
     <meta name='generator' content='Titania V1.4.2, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/DolphinLineSurfaceEmitter.x3d'/>
-    <meta name='modified' content='Sat, 30 Apr 2016 05:19:12 GMT'/>
+    <meta name='modified' content='Sat, 30 Apr 2016 09:24:34 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Dolphin' url='"Dolphin.x3d#Dolphin", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/Dolphin.x3d#Dolphin"'>
@@ -48,7 +48,7 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='209.085708082835, -284.29430947471, 251.209627042776'/>
+              value='209.085708618164, -284.294311523438, 251.209625244141'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
@@ -69,7 +69,7 @@
               reference='http://titania.create3000.de'>
             <ParticleSystem DEF='_1' containerField='value'
                 geometryType='LINE'
-                maxParticles='2000'
+                maxParticles='20000'
                 particleSize='6 6'>
               <SurfaceEmitter
                   speed='2'

@@ -72127,8 +72127,8 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
-					this .getBrowser () .sensors ()       .addInterest (this, "update");
+					this .getBrowser () .sensors () .addInterest (this, "animate");
+					this .getBrowser () .sensors () .addInterest (this, "update");
 		
 					if (this .pauseTime)
 					{
@@ -72141,8 +72141,8 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
-					this .getBrowser () .sensors ()       .removeInterest (this, "update");
+					this .getBrowser () .sensors () .removeInterest (this, "animate");
+					this .getBrowser () .sensors () .removeInterest (this, "update");
 		
 					if (this .pauseTime === 0)
 						this .pauseTime = performance .now () / 1000;
@@ -72157,8 +72157,8 @@ function ($,
 				{
 					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
-						this .getBrowser () .sensors ()       .addInterest (this, "update");
+						this .getBrowser () .sensors () .addInterest (this, "animate");
+						this .getBrowser () .sensors () .addInterest (this, "update");
 			
 						this .pauseTime = 0;
 					}
@@ -72174,8 +72174,8 @@ function ($,
 				{
 					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
-						this .getBrowser () .sensors ()       .removeInterest (this, "update");
+						this .getBrowser () .sensors () .removeInterest (this, "animate");
+						this .getBrowser () .sensors () .removeInterest (this, "update");
 					}
 	
 					this .isActive_ = false;
@@ -72470,7 +72470,7 @@ function ($,
 
 			this .texCoordAnim = Boolean (texCoordKeys .length && this .texCoordRampNode);
 		},
-		prepareEvents: function ()
+		animate: function ()
 		{
 			var emitterNode = this .emitterNode;
 
