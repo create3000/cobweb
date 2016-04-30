@@ -6,8 +6,8 @@
     <meta name='created' content='Sat, 30 Apr 2016 02:18:39 GMT'/>
     <meta name='creator' content='holger'/>
     <meta name='generator' content='Titania V1.4.2, http://titania.create3000.de'/>
-    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/DolphinLineSurfaceEmitter.x3d'/>
-    <meta name='modified' content='Sat, 30 Apr 2016 05:19:12 GMT'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/DolphinQuadSurfaceEmitter.x3d'/>
+    <meta name='modified' content='Sat, 30 Apr 2016 05:18:07 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Dolphin' url='"Dolphin.x3d#Dolphin", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/Dolphin.x3d#Dolphin"'>
@@ -48,11 +48,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='209.085708082835, -284.29430947471, 251.209627042776'/>
+              value='235.025071476927, -304.458621000077, 206.56081891202'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.832041258895059, 0.311619716372351, 0.458912296484134, 1.01485308574234'/>
+              value='0.838011514790101, 0.301117702286433, 0.455043767619048, 1.16040551972849'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -68,7 +68,7 @@
               name='children'
               reference='http://titania.create3000.de'>
             <ParticleSystem DEF='_1' containerField='value'
-                geometryType='LINE'
+                geometryType='POINT'
                 maxParticles='2000'
                 particleSize='6 6'>
               <SurfaceEmitter
@@ -78,9 +78,12 @@
                 <ProtoInstance name='Dolphin' DEF='_2' containerField='surface'/>
               </SurfaceEmitter>
               <Appearance>
+                <LineProperties DEF='_3'
+                    linewidthScaleFactor='6.66'/>
                 <Material DEF='Rococo17'
                     ambientIntensity='0.187004'
-                    diffuseColor='0 0 0'
+                    diffuseColor='0.640987 0.460097 0.748016'
+                    specularColor='0.251984 0.251984 0.251984'
                     emissiveColor='0.640987 0.460097 0.748016'
                     shininess='0.612121'/>
               </Appearance>
@@ -96,7 +99,7 @@
         position='179.724 -295.826 258.352'
         orientation='0.851609192029354 0.229794819966725 0.47112219727749 0.997756545817209'
         centerOfRotation='17.6319 -9.29713 -18.6252'/>
-    <TimeSensor DEF='_3'
+    <TimeSensor DEF='_4'
         cycleInterval='10'
         loop='true'/>
     <Transform DEF='Box'>
@@ -111,6 +114,6 @@
     <ParticleSystem USE='_1'/>
     <Background DEF='Gray'
         skyColor='0.2 0.2 0.2'/>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
+    <ROUTE fromNode='_4' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
   </Scene>
 </X3D>

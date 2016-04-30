@@ -32446,9 +32446,9 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat lw = x3d_LinewidthScaleFactor / 2.0;\n\tfloat f0 = getFogInterpolant ();\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\tfloat lw = (x3d_LinewidthScaleFactor + 1.0) / 2.0;\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n//uniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\t// If we are points, make the gl_PointSize one pixel larger.\n\tgl_PointSize = x3d_GeometryType == 1 ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.0;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
@@ -36724,7 +36724,7 @@ function (Vector3,
 	return {
 	   area: function (a, b, c)
 	   {
-	      return A .assign (v2) .subtract (v1) .cross (B .assign (v3) .subtract (v1)) .abs () / 2;
+	      return B .assign (b) .subtract (a) .cross (C .assign (c) .subtract (a)) .abs () / 2;
 	   },
 		normal: function (v1, v2, v3, normal)
 		{
@@ -71925,6 +71925,7 @@ define ('cobweb/Components/ParticleSystems/ParticleSystem',[
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Matrix3",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Algorithm",
 ],
@@ -71940,6 +71941,7 @@ function ($,
           Vector3,
           Vector4,
           Matrix4,
+          Matrix3,
           QuickSort,
           Algorithm)
 {
@@ -71965,10 +71967,13 @@ function ($,
 
 	var
 		invModelViewMatrix = new Matrix4 (),
-		matrix             = new Matrix4 (),
 		billboardToScreen  = new Vector3 (0, 0, 0),
 		viewerYAxis        = new Vector3 (0, 0, 0),
 		normal             = new Vector3 (0, 0, 0),
+		s1                 = new Vector3 (0, 0, 0),
+		s2                 = new Vector3 (0, 0, 0),
+		s3                 = new Vector3 (0, 0, 0),
+		s4                 = new Vector3 (0, 0, 0),
 		x                  = new Vector3 (0, 0, 0),
 		y                  = new Vector3 (0, 0, 0),
 		z                  = new Vector3 (0, 0, 0);
@@ -72008,6 +72013,7 @@ function ($,
 		this .vertexCount        = 0;
 		this .shader             = this .getBrowser () .getPointShader ();
 		this .modelViewMatrix    = new Matrix4 ();
+		this .rotation           = new Matrix3 ();
 		this .particleSorter     = new QuickSort (this .particles, compareDistance);
 		this .sortParticles      = false;
 	}
@@ -72209,10 +72215,8 @@ function ($,
 					this .colorArray  .fill (1);
 					this .vertexArray .fill (1);
 
-					this .primitiveType = gl .POINTS;
 					this .texCoordCount = 0;
 					this .vertexCount   = 1;
-					this .shader        = this .getBrowser () .getPointShader ()
 					break;
 				}
 				case LINE:
@@ -72225,7 +72229,6 @@ function ($,
 					this .colorArray  .fill (1);
 					this .vertexArray .fill (1);
 
-					this .primitiveType = gl .LINES;
 					this .texCoordCount = 2;
 					this .vertexCount   = 2;
 					this .shader        = this .getBrowser () .getLineShader ()
@@ -72247,13 +72250,11 @@ function ($,
 						texCoordArray = this .texCoordArray,
 						normalArray   = this .normalArray;
 
-					for (var i = 0; i < maxParticles; ++ i)
+					for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
 					{
-						var i3 = i * 3;
-
-						normalArray [i3]     = 0;
-						normalArray [i3 + 1] = 0;
-						normalArray [i3 + 2] = 1;
+						normalArray [i]     = 0;
+						normalArray [i + 1] = 0;
+						normalArray [i + 2] = 1;
 					}
 
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
@@ -72300,16 +72301,42 @@ function ($,
 
 					this .texCoordCount = 4;
 					this .vertexCount   = 6;
-					this .primitiveType = gl .TRIANGLES;
-					this .shader        = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 				case GEOMETRY:
 				{
 					this .texCoordCount = 0;
 					this .vertexCount   = 0;
-					this .primitiveType = gl .TRIANGLES; // geomtry make each its own type
-					this .shader        = this .getBrowser () .getDefaultShader ()
+					break;
+				}
+			}
+
+			this .set_shader__ ();
+		},
+		set_shader__: function ()
+		{
+			switch (this .geometryType)
+			{
+				case POINT:
+				{
+					this .shader = this .getBrowser () .getPointShader ()
+					break;
+				}
+				case LINE:
+				{
+					this .shader = this .getBrowser () .getLineShader ()
+					break;
+				}
+				case TRIANGLE:
+				case QUAD:
+				case SPRITE:
+				{
+					this .shader = this .getBrowser () .getDefaultShader ()
+					break;
+				}
+				case GEOMETRY:
+				{
+					this .shader = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 			}
@@ -72663,6 +72690,7 @@ function ($,
 			   numParticles    = this .numParticles,
 				colorArray      = this .colorArray,
 				texCoordArray   = this .texCoordArray,
+				normalArray     = this .normalArray,
 				vertexArray     = this .vertexArray,
 				sx1_2           = this .particleSize_ .x / 2,
 				sy1_2           = this .particleSize_ .y / 2,
@@ -72796,51 +72824,114 @@ function ($,
 
 			// Vertices
 
-			for (var i = 0; i < numParticles; ++ i)
+			if (this .geometryType === SPRITE)
 			{
+				// Normals
+
 				var
-					position = particles [i] .position,
-					x        = position .x,
-					y        = position .y,
-					z        = position .z,
-					i24      = i * 24;
+					rotation = this .getScreenAlignedRotation (this .modelViewMatrix),
+					nx       = rotation [6],
+					ny       = rotation [7],
+					nz       = rotation [8];
 
-				// p4 ------ p3
-				// |       / |
-				// |     /   |
-				// |   /     |
-				// | /       |
-				// p1 ------ p2
+				for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
+				{
+					normalArray [i]     = nx;
+					normalArray [i + 1] = ny;
+					normalArray [i + 2] = nz;
+				}
 
-				// p1
-				vertexArray [i24]     = x - sx1_2;
-				vertexArray [i24 + 1] = y - sy1_2;
-				vertexArray [i24 + 2] = z;
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
 
-				// p2
-				vertexArray [i24 + 4] = x + sx1_2;
-				vertexArray [i24 + 5] = y - sy1_2;
-				vertexArray [i24 + 6] = z;
+				// Vertices
 
-				// p3
-				vertexArray [i24 + 8]  = x + sx1_2;
-				vertexArray [i24 + 9]  = y + sy1_2;
-				vertexArray [i24 + 10] = z;
+				s1 .set (-sx1_2, -sy1_2, 0);
+				s2 .set ( sx1_2, -sy1_2, 0);
+				s3 .set ( sx1_2,  sy1_2, 0);
+				s4 .set (-sx1_2,  sy1_2, 0);
 
-				// p1
-				vertexArray [i24 + 12] = x - sx1_2;
-				vertexArray [i24 + 13] = y - sy1_2;
-				vertexArray [i24 + 14] = z;
+				rotation .multVecMatrix (s1);
+				rotation .multVecMatrix (s2);
+				rotation .multVecMatrix (s3);
+				rotation .multVecMatrix (s4);
 
-				// p3
-				vertexArray [i24 + 16] = x + sx1_2;
-				vertexArray [i24 + 17] = y + sy1_2;
-				vertexArray [i24 + 18] = z;
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						position = particles [i] .position,
+						x        = position .x,
+						y        = position .y,
+						z        = position .z,
+						i24      = i * 24;
+	
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+	
 
-				// p4
-				vertexArray [i24 + 20] = x - sx1_2;
-				vertexArray [i24 + 21] = y + sy1_2;
-				vertexArray [i24 + 22] = z;
+					// p1
+					vertexArray [i24]     = vertexArray [i24 + 12] = x + s1 .x;
+					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y + s1 .y;
+					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z + s1 .z;
+	
+					// p2
+					vertexArray [i24 + 4] = x + s2 .x;
+					vertexArray [i24 + 5] = y + s2 .y;
+					vertexArray [i24 + 6] = z + s2 .z;
+	
+					// p3
+					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + s3 .x;
+					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + s3 .y;
+					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z + s3 .z;
+	
+					// p4
+					vertexArray [i24 + 20] = x + s4 .x;
+					vertexArray [i24 + 21] = y + s4 .y;
+					vertexArray [i24 + 22] = z + s4 .z;
+				}
+			}
+			else
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						position = particles [i] .position,
+						x        = position .x,
+						y        = position .y,
+						z        = position .z,
+						i24      = i * 24;
+	
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+	
+					// p1
+					vertexArray [i24]     = vertexArray [i24 + 12] = x - sx1_2;
+					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y - sy1_2;
+					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z;
+	
+					// p2
+					vertexArray [i24 + 4] = x + sx1_2;
+					vertexArray [i24 + 5] = y - sy1_2;
+					vertexArray [i24 + 6] = z;
+	
+					// p3
+					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + sx1_2;
+					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + sy1_2;
+					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z;
+	
+					// p4
+					vertexArray [i24 + 20] = x - sx1_2;
+					vertexArray [i24 + 21] = y + sy1_2;
+					vertexArray [i24 + 22] = z;
+				}
 			}
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
@@ -72855,29 +72946,9 @@ function ($,
 			{
 				case TraverseType .DISPLAY:
 				{
-					var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-
-					this .modelViewMatrix .assign (modelViewMatrix .get ());
-					
-					switch (this .geometryType)
-					{
-						case SPRITE:
-						{
-							modelViewMatrix .push ();
-							modelViewMatrix .multLeft (this .getScreenAlignedRotation (modelViewMatrix .get ()));
-			
-							this .getCurrentLayer () .addShape (this);
-			
-							modelViewMatrix .pop ();
-							break;
-						}
-						default:
-						{
-							this .getCurrentLayer () .addShape (this);
-							break;
-						}
-					}
-
+					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+		
+					this .getCurrentLayer () .addShape (this);
 					break;
 				}
 			}
@@ -72899,10 +72970,9 @@ function ($,
 			y .normalize ();
 			z .normalize ();
 		
-			return matrix .set (x [0], x [1], x [2], 0,
-			                    y [0], y [1], y [2], 0,
-			                    z [0], z [1], z [2], 0,
-                             0, 0, 0, 1);
+			return this .rotation .set (x .x, x .y, x .z,
+			                            y .x, y .y, y .z,
+			                            z .x, z .y, z .z);
 		},
 		display: function (context)
 		{
@@ -72954,10 +73024,15 @@ function ($,
 
 			// Wireframes are always solid so only one drawing call is needed.
 
+			var
+				positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0,
+			   frontFace     = gl .CCW;
+
+			gl .frontFace (positiveScale ? frontFace : (frontFace === gl .CCW ? gl .CW : gl .CCW));
 			gl .enable (gl .CULL_FACE);
 			gl .cullFace (gl .BACK);
 
-			gl .drawArrays (this .primitiveType, 0, this .numParticles * this .vertexCount);
+			gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);
@@ -73932,7 +74007,6 @@ function ($,
 			position .x = vertex1 .x + weight * (vertex2 .x - vertex1 .x);
 			position .y = vertex1 .y + weight * (vertex2 .y - vertex1 .y);
 			position .z = vertex1 .z + weight * (vertex2 .z - vertex1 .z);
-			position .w = vertex1 .w + weight * (vertex2 .w - vertex1 .w);
 
 			return position;
 		},
@@ -77723,6 +77797,223 @@ function ($,
 
 
 
+define ('cobweb/Components/ParticleSystems/SurfaceEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode, 
+          X3DConstants,
+          X3DCast,
+          Triangle3,
+          Vector3,
+          Algorithm)
+{
+
+
+	var
+		vertex1  = new Vector3 (0, 0, 0),
+		vertex2  = new Vector3 (0, 0, 0),
+		vertex3  = new Vector3 (0, 0, 0),
+		direction = new Vector3 (0, 0, 0);
+
+	function SurfaceEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .SurfaceEmitter);
+
+		this .surfaceNode    = null;
+		this .areaSoFarArray = [ 0 ];
+	}
+
+	SurfaceEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: SurfaceEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surface",     new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SurfaceEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .surface_ .addInterest (this, "set_surface__");
+
+			this .set_surface__ ();
+		},
+		set_surface__: function ()
+		{
+			if (this .surfaceNode)
+				this .surfaceNode .removeInterest (this, "set_geometry__");
+
+			this .surfaceNode = X3DCast (X3DConstants .X3DGeometryNode, this .surface_);
+
+			if (this .surfaceNode)
+				this .surfaceNode .addInterest (this, "set_geometry__");
+
+			this .set_geometry__ ();
+		},
+		set_geometry__: function ()
+		{
+			if (this .surfaceNode)
+			{		
+				delete this .getRandomPosition;
+				delete this .getRandomVelocity;
+
+				var
+					areaSoFar      = 0,
+					areaSoFarArray = this .areaSoFarArray,
+					vertices       = this .surfaceNode .getVertices ();
+		
+				areaSoFarArray .length = 1;
+
+				for (var i = 0, length = vertices .length; i < length; i += 12)
+				{
+					vertex1 .set (vertices [i + 0], vertices [i + 1], vertices [i + 2]);
+					vertex2 .set (vertices [i + 4], vertices [i + 5], vertices [i + 6]);
+					vertex3 .set (vertices [i + 8], vertices [i + 9], vertices [i + 10]);
+
+					areaSoFar += Triangle3 .area (vertex1, vertex2, vertex3);
+					areaSoFarArray .push (areaSoFar);
+				}
+			}
+			else
+			{
+				this .getRandomPosition = getPosition;
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+
+				direction .set (0, 0, 0);
+			}
+		},
+		getRandomPosition: function (position)
+		{
+			// Determine index0 and weight.
+
+			var
+				areaSoFarArray = this .areaSoFarArray,
+				length         = areaSoFarArray .length,
+				fraction       = Math .random () * areaSoFarArray [length - 1],
+				index0         = 0,
+				index1         = 0,
+				weight         = 0;
+
+			if (length == 1 || fraction <= areaSoFarArray [0])
+			{
+				index0 = 0;
+				weight = 0;
+			}
+			else if (fraction >= areaSoFarArray [length - 1])
+			{
+				index0 = length - 2;
+				weight = 1;
+			}
+			else
+			{
+				var index = Algorithm .upperBound (areaSoFarArray, 0, length, fraction, Algorithm .less);
+
+				if (index < length)
+				{
+					index1 = index;
+					index0 = index - 1;
+			
+					var
+						key0 = areaSoFarArray [index0],
+						key1 = areaSoFarArray [index1];
+			
+					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+				}
+				else
+				{
+					index0 = 0;
+					weight = 0;
+				}
+			}
+
+			// Interpolate and set position.
+
+			var
+				i        = index0 * 12,
+				vertices = this .surfaceNode .getVertices ();
+
+			// Random barycentric coordinates.
+
+			var
+				u = Math .random (),
+				v = Math .random ();
+		
+			if (u + v > 1)
+			{
+				u = 1 - u;
+				v = 1 - v;
+			}
+
+			var t = 1 - u - v;
+
+			position .x = u * vertices [i + 0] + v * vertices [i + 4] + t * vertices [i + 8];
+			position .y = u * vertices [i + 1] + v * vertices [i + 5] + t * vertices [i + 9];
+			position .z = u * vertices [i + 2] + v * vertices [i + 6] + t * vertices [i + 10];
+
+			var
+				i       = index0 * 9,
+				normals = this .surfaceNode .getNormals ();
+
+			direction .x = u * normals [i + 0] + v * normals [i + 3] + t * normals [i + 6];
+			direction .y = u * normals [i + 1] + v * normals [i + 4] + t * normals [i + 7];
+			direction .z = u * normals [i + 2] + v * normals [i + 5] + t * normals [i + 8];
+
+			return position;
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var speed = this .getRandomSpeed ();
+
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
+
+			return velocity;
+ 		},
+	});
+
+	function getPosition (position)
+	{
+		return this .position .set (0, 0, 0);
+	}
+
+	return SurfaceEmitter;
+});
+
+
+
+
 define ('cobweb/Components/Grouping/Switch',[
 	"jquery",
 	"cobweb/Fields",
@@ -80036,7 +80327,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Interpolation/SquadOrientationInterpolator",
 	"cobweb/Components/Grouping/StaticGroup",
 	//"cobweb/Components/KeyDeviceSensor/StringSensor",
-	//"cobweb/Components/ParticleSystems/SurfaceEmitter",
+	"cobweb/Components/ParticleSystems/SurfaceEmitter",
 	"cobweb/Components/Grouping/Switch", // VRML
 	"cobweb/Components/Followers/TexCoordChaser2D",
 	"cobweb/Components/Followers/TexCoordDamper2D",
@@ -80258,7 +80549,7 @@ function (Anchor,
           SquadOrientationInterpolator,
           StaticGroup,
           //StringSensor,
-          //SurfaceEmitter,
+          SurfaceEmitter,
           Switch,
           TexCoordChaser2D,
           TexCoordDamper2D,
@@ -80487,7 +80778,7 @@ function (Anchor,
 		SquadOrientationInterpolator: SquadOrientationInterpolator,
 		StaticGroup:                  StaticGroup,
 		//StringSensor:                 StringSensor,
-		//SurfaceEmitter:               SurfaceEmitter,
+		SurfaceEmitter:               SurfaceEmitter,
 		Switch:                       Switch,
 		TexCoordChaser2D:             TexCoordChaser2D,
 		TexCoordDamper2D:             TexCoordDamper2D,
