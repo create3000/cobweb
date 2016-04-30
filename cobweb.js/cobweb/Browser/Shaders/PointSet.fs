@@ -63,8 +63,8 @@ main ()
 {
 	clip ();
 
-	float lw = x3d_LinewidthScaleFactor / 2.0;
 	float f0 = getFogInterpolant ();
+	float lw = (x3d_LinewidthScaleFactor + 1.0) / 2.0;
 	float t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;
 
 	gl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);

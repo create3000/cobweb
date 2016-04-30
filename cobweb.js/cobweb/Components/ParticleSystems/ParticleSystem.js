@@ -12,6 +12,7 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Matrix3",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Algorithm",
 ],
@@ -27,6 +28,7 @@ function ($,
           Vector3,
           Vector4,
           Matrix4,
+          Matrix3,
           QuickSort,
           Algorithm)
 {
@@ -52,10 +54,13 @@ function ($,
 
 	var
 		invModelViewMatrix = new Matrix4 (),
-		matrix             = new Matrix4 (),
 		billboardToScreen  = new Vector3 (0, 0, 0),
 		viewerYAxis        = new Vector3 (0, 0, 0),
 		normal             = new Vector3 (0, 0, 0),
+		s1                 = new Vector3 (0, 0, 0),
+		s2                 = new Vector3 (0, 0, 0),
+		s3                 = new Vector3 (0, 0, 0),
+		s4                 = new Vector3 (0, 0, 0),
 		x                  = new Vector3 (0, 0, 0),
 		y                  = new Vector3 (0, 0, 0),
 		z                  = new Vector3 (0, 0, 0);
@@ -95,6 +100,7 @@ function ($,
 		this .vertexCount        = 0;
 		this .shader             = this .getBrowser () .getPointShader ();
 		this .modelViewMatrix    = new Matrix4 ();
+		this .rotation           = new Matrix3 ();
 		this .particleSorter     = new QuickSort (this .particles, compareDistance);
 		this .sortParticles      = false;
 	}
@@ -296,10 +302,8 @@ function ($,
 					this .colorArray  .fill (1);
 					this .vertexArray .fill (1);
 
-					this .primitiveType = gl .POINTS;
 					this .texCoordCount = 0;
 					this .vertexCount   = 1;
-					this .shader        = this .getBrowser () .getPointShader ()
 					break;
 				}
 				case LINE:
@@ -312,7 +316,6 @@ function ($,
 					this .colorArray  .fill (1);
 					this .vertexArray .fill (1);
 
-					this .primitiveType = gl .LINES;
 					this .texCoordCount = 2;
 					this .vertexCount   = 2;
 					this .shader        = this .getBrowser () .getLineShader ()
@@ -334,13 +337,11 @@ function ($,
 						texCoordArray = this .texCoordArray,
 						normalArray   = this .normalArray;
 
-					for (var i = 0; i < maxParticles; ++ i)
+					for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
 					{
-						var i3 = i * 3;
-
-						normalArray [i3]     = 0;
-						normalArray [i3 + 1] = 0;
-						normalArray [i3 + 2] = 1;
+						normalArray [i]     = 0;
+						normalArray [i + 1] = 0;
+						normalArray [i + 2] = 1;
 					}
 
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
@@ -387,16 +388,42 @@ function ($,
 
 					this .texCoordCount = 4;
 					this .vertexCount   = 6;
-					this .primitiveType = gl .TRIANGLES;
-					this .shader        = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 				case GEOMETRY:
 				{
 					this .texCoordCount = 0;
 					this .vertexCount   = 0;
-					this .primitiveType = gl .TRIANGLES; // geomtry make each its own type
-					this .shader        = this .getBrowser () .getDefaultShader ()
+					break;
+				}
+			}
+
+			this .set_shader__ ();
+		},
+		set_shader__: function ()
+		{
+			switch (this .geometryType)
+			{
+				case POINT:
+				{
+					this .shader = this .getBrowser () .getPointShader ()
+					break;
+				}
+				case LINE:
+				{
+					this .shader = this .getBrowser () .getLineShader ()
+					break;
+				}
+				case TRIANGLE:
+				case QUAD:
+				case SPRITE:
+				{
+					this .shader = this .getBrowser () .getDefaultShader ()
+					break;
+				}
+				case GEOMETRY:
+				{
+					this .shader = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 			}
@@ -750,6 +777,7 @@ function ($,
 			   numParticles    = this .numParticles,
 				colorArray      = this .colorArray,
 				texCoordArray   = this .texCoordArray,
+				normalArray     = this .normalArray,
 				vertexArray     = this .vertexArray,
 				sx1_2           = this .particleSize_ .x / 2,
 				sy1_2           = this .particleSize_ .y / 2,
@@ -883,51 +911,114 @@ function ($,
 
 			// Vertices
 
-			for (var i = 0; i < numParticles; ++ i)
+			if (this .geometryType === SPRITE)
 			{
+				// Normals
+
 				var
-					position = particles [i] .position,
-					x        = position .x,
-					y        = position .y,
-					z        = position .z,
-					i24      = i * 24;
+					rotation = this .getScreenAlignedRotation (this .modelViewMatrix),
+					nx       = rotation [6],
+					ny       = rotation [7],
+					nz       = rotation [8];
 
-				// p4 ------ p3
-				// |       / |
-				// |     /   |
-				// |   /     |
-				// | /       |
-				// p1 ------ p2
+				for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
+				{
+					normalArray [i]     = nx;
+					normalArray [i + 1] = ny;
+					normalArray [i + 2] = nz;
+				}
 
-				// p1
-				vertexArray [i24]     = x - sx1_2;
-				vertexArray [i24 + 1] = y - sy1_2;
-				vertexArray [i24 + 2] = z;
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
 
-				// p2
-				vertexArray [i24 + 4] = x + sx1_2;
-				vertexArray [i24 + 5] = y - sy1_2;
-				vertexArray [i24 + 6] = z;
+				// Vertices
 
-				// p3
-				vertexArray [i24 + 8]  = x + sx1_2;
-				vertexArray [i24 + 9]  = y + sy1_2;
-				vertexArray [i24 + 10] = z;
+				s1 .set (-sx1_2, -sy1_2, 0);
+				s2 .set ( sx1_2, -sy1_2, 0);
+				s3 .set ( sx1_2,  sy1_2, 0);
+				s4 .set (-sx1_2,  sy1_2, 0);
 
-				// p1
-				vertexArray [i24 + 12] = x - sx1_2;
-				vertexArray [i24 + 13] = y - sy1_2;
-				vertexArray [i24 + 14] = z;
+				rotation .multVecMatrix (s1);
+				rotation .multVecMatrix (s2);
+				rotation .multVecMatrix (s3);
+				rotation .multVecMatrix (s4);
 
-				// p3
-				vertexArray [i24 + 16] = x + sx1_2;
-				vertexArray [i24 + 17] = y + sy1_2;
-				vertexArray [i24 + 18] = z;
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						position = particles [i] .position,
+						x        = position .x,
+						y        = position .y,
+						z        = position .z,
+						i24      = i * 24;
+	
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+	
 
-				// p4
-				vertexArray [i24 + 20] = x - sx1_2;
-				vertexArray [i24 + 21] = y + sy1_2;
-				vertexArray [i24 + 22] = z;
+					// p1
+					vertexArray [i24]     = vertexArray [i24 + 12] = x + s1 .x;
+					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y + s1 .y;
+					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z + s1 .z;
+	
+					// p2
+					vertexArray [i24 + 4] = x + s2 .x;
+					vertexArray [i24 + 5] = y + s2 .y;
+					vertexArray [i24 + 6] = z + s2 .z;
+	
+					// p3
+					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + s3 .x;
+					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + s3 .y;
+					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z + s3 .z;
+	
+					// p4
+					vertexArray [i24 + 20] = x + s4 .x;
+					vertexArray [i24 + 21] = y + s4 .y;
+					vertexArray [i24 + 22] = z + s4 .z;
+				}
+			}
+			else
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						position = particles [i] .position,
+						x        = position .x,
+						y        = position .y,
+						z        = position .z,
+						i24      = i * 24;
+	
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+	
+					// p1
+					vertexArray [i24]     = vertexArray [i24 + 12] = x - sx1_2;
+					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y - sy1_2;
+					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z;
+	
+					// p2
+					vertexArray [i24 + 4] = x + sx1_2;
+					vertexArray [i24 + 5] = y - sy1_2;
+					vertexArray [i24 + 6] = z;
+	
+					// p3
+					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + sx1_2;
+					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + sy1_2;
+					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z;
+	
+					// p4
+					vertexArray [i24 + 20] = x - sx1_2;
+					vertexArray [i24 + 21] = y + sy1_2;
+					vertexArray [i24 + 22] = z;
+				}
 			}
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
@@ -942,29 +1033,9 @@ function ($,
 			{
 				case TraverseType .DISPLAY:
 				{
-					var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-
-					this .modelViewMatrix .assign (modelViewMatrix .get ());
-					
-					switch (this .geometryType)
-					{
-						case SPRITE:
-						{
-							modelViewMatrix .push ();
-							modelViewMatrix .multLeft (this .getScreenAlignedRotation (modelViewMatrix .get ()));
-			
-							this .getCurrentLayer () .addShape (this);
-			
-							modelViewMatrix .pop ();
-							break;
-						}
-						default:
-						{
-							this .getCurrentLayer () .addShape (this);
-							break;
-						}
-					}
-
+					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+		
+					this .getCurrentLayer () .addShape (this);
 					break;
 				}
 			}
@@ -986,10 +1057,9 @@ function ($,
 			y .normalize ();
 			z .normalize ();
 		
-			return matrix .set (x [0], x [1], x [2], 0,
-			                    y [0], y [1], y [2], 0,
-			                    z [0], z [1], z [2], 0,
-                             0, 0, 0, 1);
+			return this .rotation .set (x .x, x .y, x .z,
+			                            y .x, y .y, y .z,
+			                            z .x, z .y, z .z);
 		},
 		display: function (context)
 		{
@@ -1041,10 +1111,15 @@ function ($,
 
 			// Wireframes are always solid so only one drawing call is needed.
 
+			var
+				positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0,
+			   frontFace     = gl .CCW;
+
+			gl .frontFace (positiveScale ? frontFace : (frontFace === gl .CCW ? gl .CW : gl .CCW));
 			gl .enable (gl .CULL_FACE);
 			gl .cullFace (gl .BACK);
 
-			gl .drawArrays (this .primitiveType, 0, this .numParticles * this .vertexCount);
+			gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);

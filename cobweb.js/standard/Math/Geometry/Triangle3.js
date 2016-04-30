@@ -22,7 +22,7 @@ function (Vector3,
 	return {
 	   area: function (a, b, c)
 	   {
-	      return A .assign (v2) .subtract (v1) .cross (B .assign (v3) .subtract (v1)) .abs () / 2;
+	      return B .assign (b) .subtract (a) .cross (C .assign (c) .subtract (a)) .abs () / 2;
 	   },
 		normal: function (v1, v2, v3, normal)
 		{

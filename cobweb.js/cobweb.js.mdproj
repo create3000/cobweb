@@ -1195,6 +1195,11 @@
     <None Include="tests\Components\ParticleSystems\PolylineEmitter.x3d" />
     <None Include="tests\Components\ParticleSystems\Waterfall.x3d" />
     <None Include="tests\Components\PROTO\27cubes.x3d" />
+    <None Include="tests\Components\ParticleSystems\Dolphin.x3d" />
+    <None Include="tests\Components\ParticleSystems\DolphinLineSurfaceEmitter.x3d" />
+    <None Include="tests\Components\ParticleSystems\DolphinQuadSurfaceEmitter.x3d" />
+    <None Include="tests\Components\ParticleSystems\DolphinSurfaceEmitter.x3d" />
+    <None Include="tests\Components\ParticleSystems\SurfaceEmitter.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

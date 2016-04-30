@@ -169,7 +169,6 @@ function ($,
 			position .x = vertex1 .x + weight * (vertex2 .x - vertex1 .x);
 			position .y = vertex1 .y + weight * (vertex2 .y - vertex1 .y);
 			position .z = vertex1 .z + weight * (vertex2 .z - vertex1 .z);
-			position .w = vertex1 .w + weight * (vertex2 .w - vertex1 .w);
 
 			return position;
 		},
