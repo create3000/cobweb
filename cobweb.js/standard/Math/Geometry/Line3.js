@@ -8,7 +8,7 @@ function (Vector3)
 
 	function Line3 (point, direction)
 	{
-		this .point     = point .copy ();
+		this .point     = point     .copy ();
 		this .direction = direction .copy ();
 	}
 
@@ -30,6 +30,12 @@ function (Vector3)
 		{
 			this .point     .assign (line .point);
 			this .direction .assign (line .direction);
+			return this;
+		},
+		set: function (point, direction)
+		{
+			this .point     .assign (point);
+			this .direction .assign (direction);
 			return this;
 		},
 		multMatrixLine: function (matrix)

@@ -7,7 +7,7 @@
     <meta name='creator' content='holger'/>
     <meta name='generator' content='Titania V1.4.2, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/DolphinSurfaceEmitter.x3d'/>
-    <meta name='modified' content='Sat, 30 Apr 2016 05:01:10 GMT'/>
+    <meta name='modified' content='Sat, 30 Apr 2016 11:54:15 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Dolphin' url='"Dolphin.x3d#Dolphin", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/Dolphin.x3d#Dolphin"'>
@@ -70,10 +70,10 @@
             <Transform DEF='Box' containerField='value'>
               <Shape>
                 <Appearance>
-                  <Material DEF='_1'
+                  <Material
                       transparency='0.884393'/>
                 </Appearance>
-                <ProtoInstance name='Dolphin' DEF='_2' containerField='geometry'/>
+                <ProtoInstance name='Dolphin' DEF='_1' containerField='geometry'/>
               </Shape>
             </Transform>
           </MetadataSet>
@@ -87,19 +87,20 @@
         position='179.724 -295.826 258.352'
         orientation='0.851609192029354 0.229794819966725 0.47112219727749 0.997756545817209'
         centerOfRotation='17.6319 -9.29713 -18.6252'/>
-    <TimeSensor DEF='_3'
+    <TimeSensor DEF='_2'
         cycleInterval='10'
         loop='true'/>
     <Transform USE='Box'/>
     <ParticleSystem
         geometryType='SPRITE'
         maxParticles='2000'
+        particleLifetime='1'
         particleSize='6 6'>
       <SurfaceEmitter
           speed='2'
           mass='0.01'
           surfaceArea='0.01'>
-        <ProtoInstance name='Dolphin' USE='_2' containerField='surface'/>
+        <ProtoInstance name='Dolphin' USE='_1' containerField='surface'/>
       </SurfaceEmitter>
       <Appearance>
         <Material DEF='Rococo17'
@@ -111,6 +112,6 @@
     </ParticleSystem>
     <Background DEF='Gray'
         skyColor='0.2 0.2 0.2'/>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='_1' toField='set_fraction'/>
   </Scene>
 </X3D>

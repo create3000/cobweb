@@ -1201,6 +1201,8 @@
     <None Include="tests\Components\ParticleSystems\DolphinSurfaceEmitter.x3d" />
     <None Include="tests\Components\ParticleSystems\SurfaceEmitter.x3d" />
     <None Include="tests\Components\ParticleSystems\DolphinPointSurfaceEmitter.x3d" />
+    <None Include="standard\Math\Utility\BVH.js" />
+    <None Include="tests\Components\ParticleSystems\VolumeEmitter.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -188,7 +188,7 @@ function ($,
 
 	function getPosition (position)
 	{
-		return this .position .set (0, 0, 0);
+		return position .set (0, 0, 0);
 	}
 
 	return PolylineEmitter;

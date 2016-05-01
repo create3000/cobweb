@@ -668,16 +668,16 @@ function ($,
 		   // front
 			if (planes [0] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .y >= 	minY && intersection .y <=	maxY)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
 					return true;
 			}
 
 			// back
 			if (planes [1] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .y >= 	minY && intersection .y <=	maxY)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
 					return true;
 			}
 
@@ -692,16 +692,16 @@ function ($,
 			// bottom
 			if (planes [3] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .z >= 	minZ && intersection .z <= maxZ)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
 					return true;
 			}
 
 			// right
 			if (planes [4] .intersectsLine (line, intersection))
 			{
-				if (intersection .y >= 	minY && intersection .y <=	maxY &&
-				    intersection .z >= 	minZ && intersection .z <= maxZ)
+				if (intersection .y >= minY && intersection .y <= maxY &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
 					return true;
 			}
 

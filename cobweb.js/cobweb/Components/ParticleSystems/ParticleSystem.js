@@ -150,6 +150,8 @@ function ($,
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
+			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
+
 			this .enabled_           .addInterest (this, "set_enabled__");
 			this .createParticles_   .addInterest (this, "set_createParticles__");
 			this .geometryType_      .addInterest (this, "set_geometryType__");
@@ -434,6 +436,9 @@ function ($,
 				particles    = this .particles,
 				maxParticles = Math .max (0, this .maxParticles_ .getValue ());
 
+			for (var i = this .numParticles, length = Math .min (particles .length, maxParticles); i < length; ++ i)
+				particles [i] .lifetime = -1;
+
 			for (var i = particles .length, length = maxParticles; i < length; ++ i)
 			{
 				particles [i] = {
@@ -445,9 +450,6 @@ function ($,
 					distance: 0,
 				};
 			}
-
-			for (var i = this .numParticles; i < maxParticles; ++ i)
-				particles [i] .lifetime = -1;
 
 			this .maxParticles = maxParticles;
 			this .numParticles = Math .min (this .numParticles, maxParticles);
@@ -595,11 +597,11 @@ function ($,
 				{
 					var
 						now          = performance .now () / 1000,
-						newParticles = (now - this .creationTime) * this .maxParticles / this .particleLifetime;
+						newParticles = Math .ceil ((now - this .creationTime) * this .maxParticles / this .particleLifetime);
 	
 					if (newParticles)
 						this .creationTime = now;
-	
+
 					this .numParticles = Math .floor (Math .min (this .maxParticles, this .numParticles + newParticles));
 				}
 			}
@@ -1040,27 +1042,6 @@ function ($,
 				}
 			}
 		},
-		getScreenAlignedRotation: function (modelViewMatrix)
-		{
-			invModelViewMatrix .assign (modelViewMatrix) .inverse ();
-		
-			invModelViewMatrix .multDirMatrix (billboardToScreen .assign (Vector3 .zAxis));
-			invModelViewMatrix .multDirMatrix (viewerYAxis .assign (Vector3 .yAxis));
-		
-			x .assign (viewerYAxis) .cross (billboardToScreen);
-			y .assign (billboardToScreen) .cross (x);
-			var z = billboardToScreen;
-		
-			// Compose rotation
-		
-			x .normalize ();
-			y .normalize ();
-			z .normalize ();
-		
-			return this .rotation .set (x .x, x .y, x .z,
-			                            y .x, y .y, y .z,
-			                            z .x, z .y, z .z);
-		},
 		display: function (context)
 		{
 			// Travese appearance before everything.
@@ -1123,6 +1104,27 @@ function ($,
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);
+		},
+		getScreenAlignedRotation: function (modelViewMatrix)
+		{
+			invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+		
+			invModelViewMatrix .multDirMatrix (billboardToScreen .assign (Vector3 .zAxis));
+			invModelViewMatrix .multDirMatrix (viewerYAxis .assign (Vector3 .yAxis));
+		
+			x .assign (viewerYAxis) .cross (billboardToScreen);
+			y .assign (billboardToScreen) .cross (x);
+			var z = billboardToScreen;
+		
+			// Compose rotation
+		
+			x .normalize ();
+			y .normalize ();
+			z .normalize ();
+		
+			return this .rotation .set (x .x, x .y, x .z,
+			                            y .x, y .y, y .z,
+			                            z .x, z .y, z .z);
 		},
 	});
 

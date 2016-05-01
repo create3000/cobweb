@@ -159,12 +159,6 @@ function ($,
 				}
 			}
 
-			// Interpolate and set position.
-
-			var
-				i        = index0 * 12,
-				vertices = this .surfaceNode .getVertices ();
-
 			// Random barycentric coordinates.
 
 			var
@@ -176,6 +170,12 @@ function ($,
 				u = 1 - u;
 				v = 1 - v;
 			}
+
+			// Interpolate and set position.
+
+			var
+				i        = index0 * 12,
+				vertices = this .surfaceNode .getVertices ();
 
 			var t = 1 - u - v;
 
@@ -207,7 +207,7 @@ function ($,
 
 	function getPosition (position)
 	{
-		return this .position .set (0, 0, 0);
+		return position .set (0, 0, 0);
 	}
 
 	return SurfaceEmitter;

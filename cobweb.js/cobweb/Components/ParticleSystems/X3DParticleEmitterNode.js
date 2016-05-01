@@ -119,6 +119,18 @@ function ($,
 
 			return rotation .multVecRot (this .getRandomNormalAngle (angle, normal));
 		},
+		getRandomSurfaceNormal: function (normal)
+		{
+			var
+				theta = this .getRandomValue (-1, 1) * Math .PI,
+				cphi  = Math .pow (Math .random (), 1/3),
+				phi   = Math .acos (cphi),
+				r     = Math .sin (phi);
+		
+			return normal .set (Math .sin (theta) * r,
+			                    Math .cos (theta) * r,
+			                    cphi);
+		},
 		animate: function (particleSystem, deltaTime)
 		{
 			var
