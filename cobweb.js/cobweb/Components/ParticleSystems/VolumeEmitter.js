@@ -93,7 +93,7 @@ function ($,
 			this .coordIndex_ .addFieldInterest (this .surfaceNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .surfaceNode .coord_);
 	
-			this .surfaceNode .creaseAngle_ = 0;
+			this .surfaceNode .creaseAngle_ = Math .PI;
 			this .surfaceNode .convex_      = false;
 			this .surfaceNode .coordIndex_  = this .coordIndex_;
 			this .surfaceNode .coord_       = this .coord_;
@@ -212,26 +212,31 @@ function ($,
 			normal .y = u * normals [i + 1] + v * normals [i + 4] + t * normals [i + 7];
 			normal .z = u * normals [i + 2] + v * normals [i + 5] + t * normals [i + 8];
 
-			normal .normalize ();
-
 			rotation .setFromToVec (Vector3 .zAxis, normal);
 			rotation .multVecRot (this .getRandomSurfaceNormal (normal));
+
+			// Setup random line throu volume for intersection text
+			// and a plane corresponding to the line for intersection sorting.
 
 			line  .set (point, normal);
 			plane .set (point, normal);
 	
 			// Find random point in volume.
 
-			var points = this .points;
+			var
+				points           = this .points,
+				numIntersections = this .bvh .getIntersections (line, points, this .normals);
 
-			var numIntersections = this .bvh .getIntersections (line, points, this .normals);
-
-			if (numIntersections) // and even
+			if (numIntersections && ! (numIntersections % 2)) // and even
 			{
+				// Sort intersections along line with a little help from the plane.
+
 				this .sorter .sort (0, numIntersections);
-	
+
+				// Select random intersection pair.
+
 				var
-					index  = Math .floor (Math .round (this .getRandomValue (0, numIntersections / 2 - 1))) * 2, // Select random intersection.
+					index  = Math .round (this .getRandomValue (0, numIntersections / 2 - 1)) * 2,
 					point0 = points [index],
 					point1 = points [index + 1],
 					t      = Math .random ();
@@ -242,6 +247,8 @@ function ($,
 	
 				return position;
 			}
+
+			// Discard point.
 
 			return position .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
 		},

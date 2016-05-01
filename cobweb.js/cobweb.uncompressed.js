@@ -80077,7 +80077,7 @@ function (Vector3,
 
 	Triangle .prototype =
 	{
-		getIntersections: function (line, points, normals)
+		getIntersections: function (line, intersections, intersectionNormals)
 		{
 			var
 				vertices = this .vertices,
@@ -80100,18 +80100,22 @@ function (Vector3,
 
 				// Determine vectors for X3DPointingDeviceSensors.
 
-				var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
-				                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
-				                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+				var i = intersections .size ++;
+
+				if (i >= intersections .length)
+				{
+					intersections       .push (new Vector3 (0, 0, 0));
+					intersectionNormals .push (new Vector3 (0, 0, 0));
+				}
+
+				intersections [i] .set (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
+				                        t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+				                        t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
 
 
-				points .push (point);
-
-				var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
-				                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
-				                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
-
-				normals .push (normal);
+				intersectionNormals [i] .set (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
+				                              t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
+				                              t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
 			}
 		},
 	};
@@ -80186,12 +80190,12 @@ function (Vector3,
 	}
 
 	Node .prototype = {
-		getIntersections: function (line, points, normals)
+		getIntersections: function (line, intersections, intersectionNormals)
 		{
 			if (this .intersectsBBox (line))
 			{
-				this .left  .getIntersections (line, points, normals);
-				this .right .getIntersections (line, points, normals);
+				this .left  .getIntersections (line, intersections, intersectionNormals);
+				this .right .getIntersections (line, intersections, intersectionNormals);
 			}
 		},
 		intersectsBBox: function (line)
@@ -80307,14 +80311,14 @@ function (Vector3,
 	BVH .prototype =
 	{
 		constructor: BVH,
-		getIntersections: function (line, points, normals)
+		getIntersections: function (line, intersections, intersectionNormals)
 		{
-			points .length = 0;
+			intersections .size = 0;
 
 			if (this .root)
 			{
-				this .root .getIntersections (line, points, normals);
-				return points .length;
+				this .root .getIntersections (line, intersections, intersectionNormals);
+				return intersections .size;
 			}
 
 			return 0;
@@ -80419,7 +80423,7 @@ function ($,
 			this .coordIndex_ .addFieldInterest (this .surfaceNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .surfaceNode .coord_);
 	
-			this .surfaceNode .creaseAngle_ = 0;
+			this .surfaceNode .creaseAngle_ = Math .PI;
 			this .surfaceNode .convex_      = false;
 			this .surfaceNode .coordIndex_  = this .coordIndex_;
 			this .surfaceNode .coord_       = this .coord_;
@@ -80538,26 +80542,31 @@ function ($,
 			normal .y = u * normals [i + 1] + v * normals [i + 4] + t * normals [i + 7];
 			normal .z = u * normals [i + 2] + v * normals [i + 5] + t * normals [i + 8];
 
-			normal .normalize ();
-
 			rotation .setFromToVec (Vector3 .zAxis, normal);
 			rotation .multVecRot (this .getRandomSurfaceNormal (normal));
+
+			// Setup random line throu volume for intersection text
+			// and a plane corresponding to the line for intersection sorting.
 
 			line  .set (point, normal);
 			plane .set (point, normal);
 	
 			// Find random point in volume.
 
-			var points = this .points;
+			var
+				points           = this .points,
+				numIntersections = this .bvh .getIntersections (line, points, this .normals);
 
-			var numIntersections = this .bvh .getIntersections (line, points, this .normals);
-
-			if (numIntersections) // and even
+			if (numIntersections && ! (numIntersections % 2)) // and even
 			{
+				// Sort intersections along line with a little help from the plane.
+
 				this .sorter .sort (0, numIntersections);
-	
+
+				// Select random intersection pair.
+
 				var
-					index  = Math .floor (Math .round (this .getRandomValue (0, numIntersections / 2 - 1))) * 2, // Select random intersection.
+					index  = Math .round (this .getRandomValue (0, numIntersections / 2 - 1)) * 2,
 					point0 = points [index],
 					point1 = points [index + 1],
 					t      = Math .random ();
@@ -80568,6 +80577,8 @@ function ($,
 	
 				return position;
 			}
+
+			// Discard point.
 
 			return position .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
 		},

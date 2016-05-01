@@ -56,7 +56,7 @@ function (Vector3,
 
 	Triangle .prototype =
 	{
-		getIntersections: function (line, points, normals)
+		getIntersections: function (line, intersections, intersectionNormals)
 		{
 			var
 				vertices = this .vertices,
@@ -79,18 +79,22 @@ function (Vector3,
 
 				// Determine vectors for X3DPointingDeviceSensors.
 
-				var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
-				                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
-				                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+				var i = intersections .size ++;
+
+				if (i >= intersections .length)
+				{
+					intersections       .push (new Vector3 (0, 0, 0));
+					intersectionNormals .push (new Vector3 (0, 0, 0));
+				}
+
+				intersections [i] .set (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
+				                        t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+				                        t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
 
 
-				points .push (point);
-
-				var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
-				                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
-				                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
-
-				normals .push (normal);
+				intersectionNormals [i] .set (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
+				                              t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
+				                              t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
 			}
 		},
 	};
@@ -165,12 +169,12 @@ function (Vector3,
 	}
 
 	Node .prototype = {
-		getIntersections: function (line, points, normals)
+		getIntersections: function (line, intersections, intersectionNormals)
 		{
 			if (this .intersectsBBox (line))
 			{
-				this .left  .getIntersections (line, points, normals);
-				this .right .getIntersections (line, points, normals);
+				this .left  .getIntersections (line, intersections, intersectionNormals);
+				this .right .getIntersections (line, intersections, intersectionNormals);
 			}
 		},
 		intersectsBBox: function (line)
@@ -286,14 +290,14 @@ function (Vector3,
 	BVH .prototype =
 	{
 		constructor: BVH,
-		getIntersections: function (line, points, normals)
+		getIntersections: function (line, intersections, intersectionNormals)
 		{
-			points .length = 0;
+			intersections .size = 0;
 
 			if (this .root)
 			{
-				this .root .getIntersections (line, points, normals);
-				return points .length;
+				this .root .getIntersections (line, intersections, intersectionNormals);
+				return intersections .size;
 			}
 
 			return 0;
