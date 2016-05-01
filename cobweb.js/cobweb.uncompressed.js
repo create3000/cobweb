@@ -37536,16 +37536,16 @@ function ($,
 		   // front
 			if (planes [0] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .y >= 	minY && intersection .y <=	maxY)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
 					return true;
 			}
 
 			// back
 			if (planes [1] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .y >= 	minY && intersection .y <=	maxY)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
 					return true;
 			}
 
@@ -37560,16 +37560,16 @@ function ($,
 			// bottom
 			if (planes [3] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .z >= 	minZ && intersection .z <= maxZ)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
 					return true;
 			}
 
 			// right
 			if (planes [4] .intersectsLine (line, intersection))
 			{
-				if (intersection .y >= 	minY && intersection .y <=	maxY &&
-				    intersection .z >= 	minZ && intersection .z <= maxZ)
+				if (intersection .y >= minY && intersection .y <= maxY &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
 					return true;
 			}
 
@@ -39409,7 +39409,7 @@ function (Vector3)
 
 	function Line3 (point, direction)
 	{
-		this .point     = point .copy ();
+		this .point     = point     .copy ();
 		this .direction = direction .copy ();
 	}
 
@@ -39431,6 +39431,12 @@ function (Vector3)
 		{
 			this .point     .assign (line .point);
 			this .direction .assign (line .direction);
+			return this;
+		},
+		set: function (point, direction)
+		{
+			this .point     .assign (point);
+			this .direction .assign (direction);
 			return this;
 		},
 		multMatrixLine: function (matrix)
@@ -55360,6 +55366,18 @@ function ($,
 			rotation .setFromToVec (Vector3 .zAxis, direction);
 
 			return rotation .multVecRot (this .getRandomNormalAngle (angle, normal));
+		},
+		getRandomSurfaceNormal: function (normal)
+		{
+			var
+				theta = this .getRandomValue (-1, 1) * Math .PI,
+				cphi  = Math .pow (Math .random (), 1/3),
+				phi   = Math .acos (cphi),
+				r     = Math .sin (phi);
+		
+			return normal .set (Math .sin (theta) * r,
+			                    Math .cos (theta) * r,
+			                    cphi);
 		},
 		animate: function (particleSystem, deltaTime)
 		{
@@ -72063,6 +72081,8 @@ function ($,
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
+			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
+
 			this .enabled_           .addInterest (this, "set_enabled__");
 			this .createParticles_   .addInterest (this, "set_createParticles__");
 			this .geometryType_      .addInterest (this, "set_geometryType__");
@@ -72347,6 +72367,9 @@ function ($,
 				particles    = this .particles,
 				maxParticles = Math .max (0, this .maxParticles_ .getValue ());
 
+			for (var i = this .numParticles, length = Math .min (particles .length, maxParticles); i < length; ++ i)
+				particles [i] .lifetime = -1;
+
 			for (var i = particles .length, length = maxParticles; i < length; ++ i)
 			{
 				particles [i] = {
@@ -72358,9 +72381,6 @@ function ($,
 					distance: 0,
 				};
 			}
-
-			for (var i = this .numParticles; i < maxParticles; ++ i)
-				particles [i] .lifetime = -1;
 
 			this .maxParticles = maxParticles;
 			this .numParticles = Math .min (this .numParticles, maxParticles);
@@ -72508,11 +72528,11 @@ function ($,
 				{
 					var
 						now          = performance .now () / 1000,
-						newParticles = (now - this .creationTime) * this .maxParticles / this .particleLifetime;
+						newParticles = Math .ceil ((now - this .creationTime) * this .maxParticles / this .particleLifetime);
 	
 					if (newParticles)
 						this .creationTime = now;
-	
+
 					this .numParticles = Math .floor (Math .min (this .maxParticles, this .numParticles + newParticles));
 				}
 			}
@@ -72953,27 +72973,6 @@ function ($,
 				}
 			}
 		},
-		getScreenAlignedRotation: function (modelViewMatrix)
-		{
-			invModelViewMatrix .assign (modelViewMatrix) .inverse ();
-		
-			invModelViewMatrix .multDirMatrix (billboardToScreen .assign (Vector3 .zAxis));
-			invModelViewMatrix .multDirMatrix (viewerYAxis .assign (Vector3 .yAxis));
-		
-			x .assign (viewerYAxis) .cross (billboardToScreen);
-			y .assign (billboardToScreen) .cross (x);
-			var z = billboardToScreen;
-		
-			// Compose rotation
-		
-			x .normalize ();
-			y .normalize ();
-			z .normalize ();
-		
-			return this .rotation .set (x .x, x .y, x .z,
-			                            y .x, y .y, y .z,
-			                            z .x, z .y, z .z);
-		},
 		display: function (context)
 		{
 			// Travese appearance before everything.
@@ -73036,6 +73035,27 @@ function ($,
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);
+		},
+		getScreenAlignedRotation: function (modelViewMatrix)
+		{
+			invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+		
+			invModelViewMatrix .multDirMatrix (billboardToScreen .assign (Vector3 .zAxis));
+			invModelViewMatrix .multDirMatrix (viewerYAxis .assign (Vector3 .yAxis));
+		
+			x .assign (viewerYAxis) .cross (billboardToScreen);
+			y .assign (billboardToScreen) .cross (x);
+			var z = billboardToScreen;
+		
+			// Compose rotation
+		
+			x .normalize ();
+			y .normalize ();
+			z .normalize ();
+		
+			return this .rotation .set (x .x, x .y, x .z,
+			                            y .x, y .y, y .z,
+			                            z .x, z .y, z .z);
 		},
 	});
 
@@ -74026,7 +74046,7 @@ function ($,
 
 	function getPosition (position)
 	{
-		return this .position .set (0, 0, 0);
+		return position .set (0, 0, 0);
 	}
 
 	return PolylineEmitter;
@@ -77957,12 +77977,6 @@ function ($,
 				}
 			}
 
-			// Interpolate and set position.
-
-			var
-				i        = index0 * 12,
-				vertices = this .surfaceNode .getVertices ();
-
 			// Random barycentric coordinates.
 
 			var
@@ -77974,6 +77988,12 @@ function ($,
 				u = 1 - u;
 				v = 1 - v;
 			}
+
+			// Interpolate and set position.
+
+			var
+				i        = index0 * 12,
+				vertices = this .surfaceNode .getVertices ();
 
 			var t = 1 - u - v;
 
@@ -78005,7 +78025,7 @@ function ($,
 
 	function getPosition (position)
 	{
-		return this .position .set (0, 0, 0);
+		return position .set (0, 0, 0);
 	}
 
 	return SurfaceEmitter;
@@ -80000,6 +80020,577 @@ function ($,
 
 
 
+define ('standard/Math/Utility/BVH',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Algorithms/QuickSort",
+],
+function (Vector3,
+          Plane3,
+          QuickSort)
+{
+
+
+	var
+		size   = new Vector3 (0, 0, 0),
+		vertex = new Vector3 (0, 0, 0),
+		v0     = new Vector3 (0, 0, 0),
+		v1     = new Vector3 (0, 0, 0),
+		v2     = new Vector3 (0, 0, 0),
+		uvt    = { u: 0, v: 0, t: 0 };
+
+	// Box normals for bbox / line intersection.
+	var boxNormals = [
+		new Vector3 (0,  0,  1), // front
+		new Vector3 (0,  0, -1), // back
+		new Vector3 (0,  1,  0), // top
+		new Vector3 (0, -1,  0), // bottom
+		new Vector3 (1,  0,  0)  // right
+		// left: We do not have to test for left.
+	];
+
+	function SortComparator (tree, axis)
+	{
+		function compare (a, b)
+		{
+			var
+				vertices = compare .vertices;
+				axis     = compare .axis;
+
+			return Math .min (vertices [a + axis], vertices [a + 4 + axis], vertices [a + 8 + axis]) <
+			       Math .min (vertices [b + axis], vertices [b + 4 + axis], vertices [b + 8 + axis]);
+		}
+
+		compare .vertices = tree .vertices;
+		compare .axis     = axis;
+
+		return compare;
+	}
+
+	function Triangle (tree, triangle)
+	{
+		this .vertices = tree .vertices;
+		this .normals  = tree .normals;
+		this .i4       = triangle * 12;
+		this .i3       = triangle * 9;
+	}
+
+	Triangle .prototype =
+	{
+		getIntersections: function (line, points, normals)
+		{
+			var
+				vertices = this .vertices,
+				normals  = this .normals,
+				i4       = this .i4,
+				i3       = this .i3;
+
+			v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+			v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+			v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+
+			if (line .intersectsTriangle (v0, v1, v2, uvt))
+			{
+				// Get barycentric coordinates.
+
+				var
+					u = uvt .u,
+					v = uvt .v,
+					t = 1 - u - v;
+
+				// Determine vectors for X3DPointingDeviceSensors.
+
+				var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
+				                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+				                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+
+
+				points .push (point);
+
+				var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
+				                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
+				                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
+
+				normals .push (normal);
+			}
+		},
+	};
+
+	function Node (tree, triangles, first, size)
+	{
+
+		this .tree         = tree;
+		this .min          = new Vector3 (0, 0, 0);
+		this .max          = new Vector3 (0, 0, 0);
+		this .planes       = [ ];
+		this .intersection = new Vector3 (0, 0, 0);
+
+		var
+			vertices = tree .vertices,
+			min      = this .min,
+			max      = this .max,
+			last     = first + size,
+			t        = triangles [first] * 12;
+
+		// Calculate bbox
+
+		min .set (vertices [t], vertices [t + 1], vertices [t + 2]);
+		max .assign (min);
+
+		for (var i = first; i < last; ++ i)
+		{
+			t = triangles [i] * 12;
+
+			v0 .set (vertices [t + 0], vertices [t + 1], vertices [t + 2]);
+			v1 .set (vertices [t + 4], vertices [t + 5], vertices [t + 6]);
+			v2 .set (vertices [t + 8], vertices [t + 9], vertices [t + 10]);
+
+			min .min (v0, v1, v2);
+			max .max (v0, v1, v2);
+		}
+
+		for (var i = 0; i < 5; ++ i)
+			this .planes [i] = new Plane3 (i % 2 ? min : max, boxNormals [i]);
+
+		// Sort and split array
+
+		if (size > 2)
+		{
+			// Sort array
+
+			tree .sorter .compare .axis = this .getLongestAxis (min, max);
+			tree .sorter .sort (first, last);
+
+			// Split array
+
+			var leftSize = size >>> 1;
+		}
+		else
+			var leftSize = 1;
+
+		// Split array
+
+		var rightSize = size - leftSize;
+
+		// Construct left and right node
+
+		if (leftSize > 1)
+			this .left = new Node (tree, triangles, first, leftSize);
+		else
+			this .left = new Triangle (tree, triangles [first]);
+
+		if (rightSize > 1)
+			this .right = new Node (tree, triangles, first + leftSize, rightSize);
+		else
+			this .right = new Triangle (tree, triangles [first + leftSize]);
+	}
+
+	Node .prototype = {
+		getIntersections: function (line, points, normals)
+		{
+			if (this .intersectsBBox (line))
+			{
+				this .left  .getIntersections (line, points, normals);
+				this .right .getIntersections (line, points, normals);
+			}
+		},
+		intersectsBBox: function (line)
+		{
+			var
+				planes       = this .planes,
+				min          = this .min,
+				max          = this .max,
+				minX         = min .x,
+				maxX         = max .x,
+				maxZ         = max .x,
+				minY         = min .y,
+				maxY         = max .y,
+				minZ         = min .z,
+				maxZ         = max .z,
+				intersection = this .intersection;
+
+		   // front
+			if (planes [0] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// back
+			if (planes [1] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// top
+			if (planes [2] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// bottom
+			if (planes [3] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// right
+			if (planes [4] .intersectsLine (line, intersection))
+			{
+				if (intersection .y >= minY && intersection .y <= maxY &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			return false;
+		},
+		getLongestAxis: function (min, max)
+		{
+			size .assign (max) .subtract (min);
+	
+			if (size .x < size .y)
+			{
+				if (size .y < size .z)
+					return 2;
+
+				return 1;
+			}
+			else
+			{
+				if (size .x < size .z)
+					return 2;
+
+				return 0;
+			}
+		},
+	};
+
+	function BVH (vertices, normals)
+	{
+		this .vertices = vertices;
+		this .normals  = normals;
+
+		var numTriangles = vertices .length / 12;
+	
+		switch (numTriangles)
+		{
+			case 0:
+				this .root = null;
+				break;
+			case 1:
+			{
+				this .root = new Triangle (this, 0);
+				break;
+			}
+			default:
+			{
+				var triangles = [ ];
+
+				for (var i = 0; i < numTriangles; ++ i)
+					triangles .push (i);
+
+				this .sorter = new QuickSort (triangles, SortComparator (this, 0));
+
+				this .root = new Node (this, triangles, 0, numTriangles);
+				break;
+			}
+		}
+	}
+
+	BVH .prototype =
+	{
+		constructor: BVH,
+		getIntersections: function (line, points, normals)
+		{
+			points .length = 0;
+
+			if (this .root)
+			{
+				this .root .getIntersections (line, points, normals);
+				return points .length;
+			}
+
+			return 0;
+		},
+	};
+
+	return BVH;
+});
+
+
+define ('cobweb/Components/ParticleSystems/VolumeEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Components/Geometry3D/IndexedFaceSet",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Algorithm",
+	"standard/Math/Utility/BVH",
+	"standard/Math/Algorithms/QuickSort",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode,
+          IndexedFaceSet,
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Line3,
+          Plane3,
+          Triangle3,
+          Algorithm,
+          BVH,
+          QuickSort)
+{
+
+
+	var
+		vertex1  = new Vector3 (0, 0, 0),
+		vertex2  = new Vector3 (0, 0, 0),
+		vertex3  = new Vector3 (0, 0, 0),
+		point    = new Vector3 (0, 0, 0),
+		normal   = new Vector3 (0, 0, 0),
+		rotation = new Rotation4 (0, 0, 1, 0),
+		line     = new Line3 (Vector3 .Zero, Vector3 .zAxis),
+		plane    = new Plane3 (Vector3 .Zero, Vector3 .zAxis);
+
+	function VolumeEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .VolumeEmitter);
+
+		this .direction      = new Vector3 (0, 0, 0);
+		this .surfaceNode    = new IndexedFaceSet (executionContext);
+		this .areaSoFarArray = [ 0 ];
+		this .points         = [ ];
+		this .normals        = [ ];
+		this .sorter         = new QuickSort (this .points, function (a, b) { return plane .getDistanceToPoint (a) < plane .getDistanceToPoint (b); });
+	}
+
+	VolumeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: VolumeEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "internal",    new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coordIndex",  new Fields .MFInt32 (-1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",       new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "VolumeEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .direction_ .addInterest (this, "set_direction__");
+
+			this .coordIndex_ .addFieldInterest (this .surfaceNode .coordIndex_);
+			this .coord_      .addFieldInterest (this .surfaceNode .coord_);
+	
+			this .surfaceNode .creaseAngle_ = 0;
+			this .surfaceNode .convex_      = false;
+			this .surfaceNode .coordIndex_  = this .coordIndex_;
+			this .surfaceNode .coord_       = this .coord_;
+
+			this .surfaceNode .addInterest (this, "set_geometry__");
+			this .surfaceNode .setup ();
+
+			this .set_geometry__ ();
+		},
+		set_direction__: function ()
+		{
+			this .direction .assign (this .direction_ .getValue ()) .normalize ();
+
+			if (this .direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		set_geometry__: function ()
+		{
+			var
+				areaSoFar      = 0,
+				areaSoFarArray = this .areaSoFarArray,
+				vertices       = this .surfaceNode .getVertices (),
+				normals        = this .surfaceNode .getNormals ();
+	
+			areaSoFarArray .length = 1;
+
+			for (var i = 0, length = vertices .length; i < length; i += 12)
+			{
+				vertex1 .set (vertices [i + 0], vertices [i + 1], vertices [i + 2]);
+				vertex2 .set (vertices [i + 4], vertices [i + 5], vertices [i + 6]);
+				vertex3 .set (vertices [i + 8], vertices [i + 9], vertices [i + 10]);
+
+				areaSoFar += Triangle3 .area (vertex1, vertex2, vertex3);
+				areaSoFarArray .push (areaSoFar);
+			}
+
+			this .bvh = new BVH (vertices, normals);
+		},
+		getRandomPosition: function (position)
+		{
+			// Get random point on surface
+
+			// Determine index0 and weight.
+
+			var
+				areaSoFarArray = this .areaSoFarArray,
+				length         = areaSoFarArray .length,
+				fraction       = Math .random () * areaSoFarArray [length - 1],
+				index0         = 0,
+				index1         = 0,
+				weight         = 0;
+
+			if (length == 1 || fraction <= areaSoFarArray [0])
+			{
+				index0 = 0;
+				weight = 0;
+			}
+			else if (fraction >= areaSoFarArray [length - 1])
+			{
+				index0 = length - 2;
+				weight = 1;
+			}
+			else
+			{
+				var index = Algorithm .upperBound (areaSoFarArray, 0, length, fraction, Algorithm .less);
+
+				if (index < length)
+				{
+					index1 = index;
+					index0 = index - 1;
+			
+					var
+						key0 = areaSoFarArray [index0],
+						key1 = areaSoFarArray [index1];
+			
+					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+				}
+				else
+				{
+					index0 = 0;
+					weight = 0;
+				}
+			}
+
+			// Random barycentric coordinates.
+
+			var
+				u = Math .random (),
+				v = Math .random ();
+		
+			if (u + v > 1)
+			{
+				u = 1 - u;
+				v = 1 - v;
+			}
+
+			var t = 1 - u - v;
+
+			// Interpolate and determine random point on surface and normal.
+
+			var
+				i        = index0 * 12,
+				vertices = this .surfaceNode .getVertices ();
+
+			point .x = u * vertices [i + 0] + v * vertices [i + 4] + t * vertices [i + 8];
+			point .y = u * vertices [i + 1] + v * vertices [i + 5] + t * vertices [i + 9];
+			point .z = u * vertices [i + 2] + v * vertices [i + 6] + t * vertices [i + 10];
+
+			var
+				i       = index0 * 9,
+				normals = this .surfaceNode .getNormals ();
+
+			normal .x = u * normals [i + 0] + v * normals [i + 3] + t * normals [i + 6];
+			normal .y = u * normals [i + 1] + v * normals [i + 4] + t * normals [i + 7];
+			normal .z = u * normals [i + 2] + v * normals [i + 5] + t * normals [i + 8];
+
+			normal .normalize ();
+
+			rotation .setFromToVec (Vector3 .zAxis, normal);
+			rotation .multVecRot (this .getRandomSurfaceNormal (normal));
+
+			line  .set (point, normal);
+			plane .set (point, normal);
+	
+			// Find random point in volume.
+
+			var points = this .points;
+
+			var numIntersections = this .bvh .getIntersections (line, points, this .normals);
+
+			if (numIntersections) // and even
+			{
+				this .sorter .sort (0, numIntersections);
+	
+				var
+					index  = Math .floor (Math .round (this .getRandomValue (0, numIntersections / 2 - 1))) * 2, // Select random intersection.
+					point0 = points [index],
+					point1 = points [index + 1],
+					t      = Math .random ();
+	
+				position .x = point0 .x + (point1 .x - point0 .x) * t;
+				position .y = point0 .y + (point1 .y - point0 .y) * t;
+				position .z = point0 .z + (point1 .z - point0 .z) * t;
+	
+				return position;
+			}
+
+			return position .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var
+				direction = this .direction,
+				speed     = this .getRandomSpeed ();
+
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
+
+			return velocity;
+ 		},
+	});
+
+	return VolumeEmitter;
+});
+
+
+
+
 define ('cobweb/Components/ParticleSystems/WindPhysicsModel',[
 	"jquery",
 	"cobweb/Fields",
@@ -80358,7 +80949,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Navigation/ViewpointGroup",
 	"cobweb/Components/Layering/Viewport",
 	"cobweb/Components/EnvironmentalSensor/VisibilitySensor", // VRML
-	//"cobweb/Components/ParticleSystems/VolumeEmitter",
+	"cobweb/Components/ParticleSystems/VolumeEmitter",
 	//"cobweb/Components/Picking/VolumePickSensor",
 	"cobweb/Components/ParticleSystems/WindPhysicsModel",
 	"cobweb/Components/Core/WorldInfo", // VRML
@@ -80580,7 +81171,7 @@ function (Anchor,
           ViewpointGroup,
           Viewport,
           VisibilitySensor,
-          //VolumeEmitter,
+          VolumeEmitter,
           //VolumePickSensor,
           WindPhysicsModel,
           WorldInfo)
@@ -80809,7 +81400,7 @@ function (Anchor,
 		ViewpointGroup:               ViewpointGroup,
 		Viewport:                     Viewport,
 		VisibilitySensor:             VisibilitySensor,
-		//VolumeEmitter:                VolumeEmitter,
+		VolumeEmitter:                VolumeEmitter,
 		//VolumePickSensor:             VolumePickSensor,
 		WindPhysicsModel:             WindPhysicsModel,
 		WorldInfo:                    WorldInfo,
