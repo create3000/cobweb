@@ -15,6 +15,7 @@ define ([
 	"standard/Math/Numbers/Matrix3",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Algorithm",
+	"standard/Math/Utility/BVH",
 ],
 function ($,
           Fields,
@@ -30,7 +31,8 @@ function ($,
           Matrix4,
           Matrix3,
           QuickSort,
-          Algorithm)
+          Algorithm,
+          BVH)
 {
 "use strict";
 
@@ -73,36 +75,40 @@ function ($,
 
 		this .addType (X3DConstants .ParticleSystem);
 
-		this .createParticles    = true;
-		this .particles          = [ ];
-		this .velocities         = [ ];
-		this .speeds             = [ ];
-		this .turbulences        = [ ];
-		this .geometryType       = POINT;
-		this .maxParticles       = 0;
-		this .numParticles       = 0;
-		this .particleLifetime   = 0;
-		this .lifetimeVariation  = 0;
-		this .emitterNode        = null;
-		this .physicsModelNodes  = [ ];
-		this .creationTime       = 0;
-		this .pauseTime          = 0;
-		this .deltaTime          = 0;
-		this .numForces          = 0;
-		this .colorKeys          = [ ];
-		this .colorRamppNode     = null;
-		this .colorRamp          = [ ];
-		this .colorMaterial      = false;
-		this .texCoordKeys       = [ ];
-		this .texCoordRampNode   = null;
-		this .texCoordRamp       = [ ];
-		this .texCoordAnim       = false;
-		this .vertexCount        = 0;
-		this .shader             = this .getBrowser () .getPointShader ();
-		this .modelViewMatrix    = new Matrix4 ();
-		this .rotation           = new Matrix3 ();
-		this .particleSorter     = new QuickSort (this .particles, compareDistance);
-		this .sortParticles      = false;
+		this .createParticles          = true;
+		this .particles                = [ ];
+		this .velocities               = [ ];
+		this .speeds                   = [ ];
+		this .turbulences              = [ ];
+		this .geometryType             = POINT;
+		this .maxParticles             = 0;
+		this .numParticles             = 0;
+		this .particleLifetime         = 0;
+		this .lifetimeVariation        = 0;
+		this .emitterNode              = null;
+		this .forcePhysicsModelNodes   = [ ];
+		this .boundedPhysicsModelNodes = [ ];
+		this .boundedNormals           = [ ];
+		this .boundedVertices          = [ ];
+		this .boundedVolume            = null;
+		this .creationTime             = 0;
+		this .pauseTime                = 0;
+		this .deltaTime                = 0;
+		this .numForces                = 0;
+		this .colorKeys                = [ ];
+		this .colorRamppNode           = null;
+		this .colorRamp                = [ ];
+		this .colorMaterial            = false;
+		this .texCoordKeys             = [ ];
+		this .texCoordRampNode         = null;
+		this .texCoordRamp             = [ ];
+		this .texCoordAnim             = false;
+		this .vertexCount              = 0;
+		this .shader                   = this .getBrowser () .getPointShader ();
+		this .modelViewMatrix          = new Matrix4 ();
+		this .rotation                 = new Matrix3 ();
+		this .particleSorter           = new QuickSort (this .particles, compareDistance);
+		this .sortParticles            = false;
 	}
 
 	ParticleSystem .prototype = $.extend (Object .create (X3DShapeNode .prototype),
@@ -477,18 +483,69 @@ function ($,
 		set_physics__: function ()
 		{
 			var
-				physics           = this .physics_ .getValue (),
-				physicsModelNodes = this .physicsModelNodes;
+				physics                  = this .physics_ .getValue (),
+				forcePhysicsModelNodes   = this .forcePhysicsModelNodes,
+				boundedPhysicsModelNodes = this .boundedPhysicsModelNodes;
 
-			physicsModelNodes .length = 0;
+			for (var i = 0, length = boundedPhysicsModelNodes .length; i < length; ++ i)
+				boundedPhysicsModelNodes [i] .removeInterest (this, "set_boundedPhysics__");
+
+			forcePhysicsModelNodes   .length = 0;
+			boundedPhysicsModelNodes .length = 0;
 
 			for (var i = 0, length = physics .length; i < length; ++ i)
 			{
-				var physicsModelNode = X3DCast (X3DConstants .X3DParticlePhysicsModelNode, physics [i]);
+				try
+				{
+					var
+						innerNode = physics [i] .getValue () .getInnerNode (),
+						type      = innerNode .getType ();
 
-				if (physicsModelNode)
-					physicsModelNodes .push (physicsModelNode);
+					for (var t = type .length - 1; t >= 0; -- t)
+					{
+						switch (type [t])
+						{
+							case X3DConstants .ForcePhysicsModel:
+							case X3DConstants .WindPhysicsModel:
+							{
+								forcePhysicsModelNodes .push (innerNode);
+								break;
+							}
+							case X3DConstants .BoundedPhysicsModel:
+							{
+								innerNode .addInterest (this, "set_boundedPhysics__");
+								boundedPhysicsModelNodes .push (innerNode);
+								break;
+							}
+							default:
+								continue;
+						}
+
+						break;
+					}
+				}
+				catch (error)
+				{ }
 			}
+
+			this .set_boundedPhysics__ ();
+		},
+		set_boundedPhysics__: function ()
+		{
+			var
+				boundedPhysicsModelNodes = this .boundedPhysicsModelNodes,
+				boundedNormals           = this .boundedNormals,
+				boundedVertices          = this .boundedVertices;
+
+			boundedNormals  .length = 0;
+			boundedVertices .length = 0;
+
+			for (var i = 0, length = boundedPhysicsModelNodes .length; i < length; ++ i)
+			{
+				boundedPhysicsModelNodes [i] .addGeometry (boundedNormals, boundedVertices);
+			}
+
+			this .boundedVolume = new BVH (boundedVertices, boundedNormals);
 		},
 		set_colorRamp__: function ()
 		{
@@ -615,19 +672,19 @@ function ($,
 			if (emitterNode .getMass ())
 			{
 				var
-					physicsModelNodes = this .physicsModelNodes,
-					velocities        = this .velocities,
-					speeds            = this .speeds,
-					turbulences       = this .turbulences,
-					deltaMass         = this .deltaTime / emitterNode .getMass ();
+					forcePhysicsModelNodes = this .forcePhysicsModelNodes,
+					velocities             = this .velocities,
+					speeds                 = this .speeds,
+					turbulences            = this .turbulences,
+					deltaMass              = this .deltaTime / emitterNode .getMass ();
 
 				// Collect forces in velocities and collect turbulences.
 
-				for (var i = velocities .length, length = physicsModelNodes .length; i < length; ++ i)
+				for (var i = velocities .length, length = forcePhysicsModelNodes .length; i < length; ++ i)
 					velocities [i] = new Vector3 (0, 0, 0);
 
-				for (var i = 0, length = physicsModelNodes .length; i < length; ++ i)
-					physicsModelNodes [i] .addForce (i, emitterNode, velocities, turbulences);
+				for (var i = 0, length = forcePhysicsModelNodes .length; i < length; ++ i)
+					forcePhysicsModelNodes [i] .addForce (i, emitterNode, velocities, turbulences);
 
 				// Determine velocities from forces and determine speed.
 

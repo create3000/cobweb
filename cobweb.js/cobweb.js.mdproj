@@ -1205,6 +1205,7 @@
     <None Include="tests\Components\ParticleSystems\VolumeEmitter.x3d" />
     <None Include="tests\Components\ParticleSystems\VolumeEmitter-U.x3d" />
     <None Include="tests\Components\ParticleSystems\DolphinPointVolumeEmitter.x3d" />
+    <None Include="tests\Components\ParticleSystems\BoundedPhysicsModel.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -44,18 +44,23 @@ function ($,
 		line     = new Line3 (Vector3 .Zero, Vector3 .zAxis),
 		plane    = new Plane3 (Vector3 .Zero, Vector3 .zAxis);
 
+	function PlaneCompare (a, b)
+	{
+		return plane .getDistanceToPoint (a) < plane .getDistanceToPoint (b);
+	}
+
 	function VolumeEmitter (executionContext)
 	{
 		X3DParticleEmitterNode .call (this, executionContext);
 
 		this .addType (X3DConstants .VolumeEmitter);
 
-		this .direction      = new Vector3 (0, 0, 0);
-		this .surfaceNode    = new IndexedFaceSet (executionContext);
-		this .areaSoFarArray = [ 0 ];
-		this .points         = [ ];
-		this .normals        = [ ];
-		this .sorter         = new QuickSort (this .points, function (a, b) { return plane .getDistanceToPoint (a) < plane .getDistanceToPoint (b); });
+		this .direction           = new Vector3 (0, 0, 0);
+		this .volumeNode          = new IndexedFaceSet (executionContext);
+		this .areaSoFarArray      = [ 0 ];
+		this .intersections       = [ ];
+		this .intersectionNormals = [ ];
+		this .sorter              = new QuickSort (this .intersections, PlaneCompare);
 	}
 
 	VolumeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
@@ -90,16 +95,16 @@ function ($,
 
 			this .direction_ .addInterest (this, "set_direction__");
 
-			this .coordIndex_ .addFieldInterest (this .surfaceNode .coordIndex_);
-			this .coord_      .addFieldInterest (this .surfaceNode .coord_);
+			this .coordIndex_ .addFieldInterest (this .volumeNode .coordIndex_);
+			this .coord_      .addFieldInterest (this .volumeNode .coord_);
 	
-			this .surfaceNode .creaseAngle_ = Math .PI;
-			this .surfaceNode .convex_      = false;
-			this .surfaceNode .coordIndex_  = this .coordIndex_;
-			this .surfaceNode .coord_       = this .coord_;
+			this .volumeNode .creaseAngle_ = Math .PI;
+			this .volumeNode .convex_      = false;
+			this .volumeNode .coordIndex_  = this .coordIndex_;
+			this .volumeNode .coord_       = this .coord_;
 
-			this .surfaceNode .addInterest (this, "set_geometry__");
-			this .surfaceNode .setup ();
+			this .volumeNode .addInterest (this, "set_geometry__");
+			this .volumeNode .setup ();
 
 			this .set_geometry__ ();
 		},
@@ -117,8 +122,8 @@ function ($,
 			var
 				areaSoFar      = 0,
 				areaSoFarArray = this .areaSoFarArray,
-				vertices       = this .surfaceNode .getVertices (),
-				normals        = this .surfaceNode .getNormals ();
+				vertices       = this .volumeNode .getVertices (),
+				normals        = this .volumeNode .getNormals ();
 	
 			areaSoFarArray .length = 1;
 
@@ -198,7 +203,7 @@ function ($,
 
 			var
 				i        = index0 * 12,
-				vertices = this .surfaceNode .getVertices ();
+				vertices = this .volumeNode .getVertices ();
 
 			point .x = u * vertices [i + 0] + v * vertices [i + 4] + t * vertices [i + 8];
 			point .y = u * vertices [i + 1] + v * vertices [i + 5] + t * vertices [i + 9];
@@ -206,7 +211,7 @@ function ($,
 
 			var
 				i       = index0 * 9,
-				normals = this .surfaceNode .getNormals ();
+				normals = this .volumeNode .getNormals ();
 
 			normal .x = u * normals [i + 0] + v * normals [i + 3] + t * normals [i + 6];
 			normal .y = u * normals [i + 1] + v * normals [i + 4] + t * normals [i + 7];
@@ -224,8 +229,8 @@ function ($,
 			// Find random point in volume.
 
 			var
-				points           = this .points,
-				numIntersections = this .bvh .getIntersections (line, points, this .normals);
+				intersections    = this .intersections,
+				numIntersections = this .bvh .intersectsLine (line, intersections, this .intersectionNormals);
 
 			if (numIntersections && ! (numIntersections % 2)) // and even
 			{
@@ -237,8 +242,8 @@ function ($,
 
 				var
 					index  = Math .round (this .getRandomValue (0, numIntersections / 2 - 1)) * 2,
-					point0 = points [index],
-					point1 = points [index + 1],
+					point0 = intersections [index],
+					point1 = intersections [index + 1],
 					t      = Math .random ();
 	
 				position .x = point0 .x + (point1 .x - point0 .x) * t;

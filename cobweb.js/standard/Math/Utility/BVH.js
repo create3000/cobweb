@@ -11,7 +11,6 @@ function (Vector3,
 "use strict";
 
 	var
-		size   = new Vector3 (0, 0, 0),
 		vertex = new Vector3 (0, 0, 0),
 		v0     = new Vector3 (0, 0, 0),
 		v1     = new Vector3 (0, 0, 0),
@@ -28,7 +27,7 @@ function (Vector3,
 		// left: We do not have to test for left.
 	];
 
-	function SortComparator (tree, axis)
+	function SortComparator (vertices, axis)
 	{
 		function compare (a, b)
 		{
@@ -40,7 +39,7 @@ function (Vector3,
 			       Math .min (vertices [b + axis], vertices [b + 4 + axis], vertices [b + 8 + axis]);
 		}
 
-		compare .vertices = tree .vertices;
+		compare .vertices = vertices;
 		compare .axis     = axis;
 
 		return compare;
@@ -56,7 +55,7 @@ function (Vector3,
 
 	Triangle .prototype =
 	{
-		getIntersections: function (line, intersections, intersectionNormals)
+		intersectsLine: function (line, intersections, intersectionNormals)
 		{
 			var
 				vertices = this .vertices,
@@ -101,8 +100,6 @@ function (Vector3,
 
 	function Node (tree, triangles, first, size)
 	{
-
-		this .tree         = tree;
 		this .min          = new Vector3 (0, 0, 0);
 		this .max          = new Vector3 (0, 0, 0);
 		this .planes       = [ ];
@@ -168,13 +165,14 @@ function (Vector3,
 			this .right = new Triangle (tree, triangles [first + leftSize]);
 	}
 
-	Node .prototype = {
-		getIntersections: function (line, intersections, intersectionNormals)
+	Node .prototype =
+	{
+		intersectsLine: function (line, intersections, intersectionNormals)
 		{
 			if (this .intersectsBBox (line))
 			{
-				this .left  .getIntersections (line, intersections, intersectionNormals);
-				this .right .getIntersections (line, intersections, intersectionNormals);
+				this .left  .intersectsLine (line, intersections, intersectionNormals);
+				this .right .intersectsLine (line, intersections, intersectionNormals);
 			}
 		},
 		intersectsBBox: function (line)
@@ -236,18 +234,21 @@ function (Vector3,
 		},
 		getLongestAxis: function (min, max)
 		{
-			size .assign (max) .subtract (min);
+			var
+				x = max .x - min .x,
+				y = max .y - min .y,
+				z = max .z - min .z;
 	
-			if (size .x < size .y)
+			if (x < y)
 			{
-				if (size .y < size .z)
+				if (y < z)
 					return 2;
 
 				return 1;
 			}
 			else
 			{
-				if (size .x < size .z)
+				if (x < z)
 					return 2;
 
 				return 0;
@@ -279,7 +280,7 @@ function (Vector3,
 				for (var i = 0; i < numTriangles; ++ i)
 					triangles .push (i);
 
-				this .sorter = new QuickSort (triangles, SortComparator (this, 0));
+				this .sorter = new QuickSort (triangles, SortComparator (vertices, 0));
 
 				this .root = new Node (this, triangles, 0, numTriangles);
 				break;
@@ -290,13 +291,14 @@ function (Vector3,
 	BVH .prototype =
 	{
 		constructor: BVH,
-		getIntersections: function (line, intersections, intersectionNormals)
+		
+		intersectsLine: function (line, intersections, intersectionNormals)
 		{
 			intersections .size = 0;
 
 			if (this .root)
 			{
-				this .root .getIntersections (line, intersections, intersectionNormals);
+				this .root .intersectsLine (line, intersections, intersectionNormals);
 				return intersections .size;
 			}
 

@@ -140,6 +140,17 @@ function ($, Algorithm)
 			                   this .y * this .y +
 			                   this .z * this .z);
 		},
+		distance: function (vector)
+		{
+			var
+				x = this .x - vector .x,
+				y = this .y - vector .y,
+				z = this .z - vector .z;
+
+			return Math .sqrt (x * x +
+			                   y * y +
+			                   z * z);
+		},
 		lerp: function (dest, t)
 		{
 			this .x = this .x + t * (dest .x - this .x);

@@ -113,6 +113,15 @@ function ($, Algorithm)
 			return Math .sqrt (this .x * this .x +
 			                   this .y * this .y);
 		},
+		distance: function (vector)
+		{
+			var
+				x = this .x - vector .x,
+				y = this .y - vector .y;
+
+			return Math .sqrt (x * x +
+			                   y * y);
+		},
 		lerp: function (dest, t)
 		{
 			this .x = this .x + t * (dest .x - this .x);

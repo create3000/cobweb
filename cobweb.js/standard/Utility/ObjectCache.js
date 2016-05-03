@@ -14,9 +14,9 @@ define (function ()
 				{
 					var object = this .stack [this .last];
 				
-					object .set .apply (object, arguments);
-
 					this .last --;
+
+					object .set .apply (object, arguments);
 				}
 				else
 				{
