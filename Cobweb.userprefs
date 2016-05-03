@@ -1,16 +1,15 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="42" Column="42" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js" Line="25" Column="25" />
+      <File FileName="cobweb.js/cobweb.html" Line="31" Column="31" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="5" Column="5" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/SurfaceEmitter.js" Line="17" Column="17" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/VolumeEmitter.js" Line="65" Column="65" />
-      <File FileName="cobweb.js/standard/Math/Utility/BVH.js" Line="3" Column="3" />
-      <File FileName="cobweb.js/standard/Math/Algorithms/QuickSort.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Utility/ObjectCache.js" Line="44" Column="44" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/SurfaceEmitter.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/VolumeEmitter.js" Line="97" Column="97" />
+      <File FileName="cobweb.js/standard/Math/Utility/BVH.js" Line="48" Column="48" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/BoundedPhysicsModel.js" Line="14" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
