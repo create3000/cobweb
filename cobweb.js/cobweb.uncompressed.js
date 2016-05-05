@@ -22593,6 +22593,18 @@ function ($,
 								location .array = new Int32Array (3 + field .array .length);
 								break;
 							}
+							case X3DConstants .SFMatrix3d:
+							case X3DConstants .SFMatrix3f:
+							{
+								location .array = new Float32Array (9);
+								break;
+							}
+							case X3DConstants .SFMatrix4d:
+							case X3DConstants .SFMatrix4f:
+							{
+								location .array = new Float32Array (16);
+								break;
+							}
 							case X3DConstants .MFBool:
 							case X3DConstants .MFInt32:
 							{
@@ -22774,15 +22786,21 @@ function ($,
 				case X3DConstants .SFMatrix3d:
 				case X3DConstants .SFMatrix3f:
 				{
-					this .matrix3f .set (field .getValue ());
-					gl .uniformMatrix3fv (field ._uniformLocation, false, this .matrix3f);
+					var location = field ._uniformLocation;
+
+					location .array .set (field .getValue ());
+
+					gl .uniformMatrix3fv (location, false, location .array);
 					return;
 				}
 				case X3DConstants .SFMatrix4d:
 				case X3DConstants .SFMatrix4f:
 				{
-					this .matrix4f .set (field .getValue ());
-					gl .uniformMatrix4fv (field ._uniformLocation, false, this .matrix4f);
+					var location = field ._uniformLocation;
+
+					location .array .set (field .getValue ());
+
+					gl .uniformMatrix4fv (location, false, location .array);
 					return;
 				}
 				case X3DConstants .SFNode:
@@ -32703,7 +32721,8 @@ function (Fields,
 			shader .setCustom (false);
 			shader .setup ();
 
-			this .getLoadSensor () .watchList_ = shader .parts_;
+			this .getLoadSensor () .watchList_ .push (vertexShader);
+			this .getLoadSensor () .watchList_ .push (fragmentShader);
 
 			return shader;
 		},
@@ -67123,6 +67142,7 @@ define ('cobweb/Components/Geospatial/GeoLOD',[
 	"cobweb/Components/Networking/Inline",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -67135,7 +67155,8 @@ function ($,
           Group,
           Inline,
           Vector3,
-          Matrix4)
+          Matrix4,
+          Box3)
 {
 
 
@@ -73111,10 +73132,6 @@ function ($,
 				}
 			}
 
-			// Determine particle position, velocity and colors
-
-			emitterNode .animate (this, deltaTime);
-
 			// Apply forces.
 
 			if (emitterNode .getMass ())
@@ -73148,6 +73165,10 @@ function ($,
 			{
 				this .numForces = 0;
 			}
+
+			// Determine particle position, velocity and colors
+
+			emitterNode .animate (this, deltaTime);
 
 			this .getBrowser () .addBrowserEvent (this);
 		},
@@ -73549,7 +73570,7 @@ function ($,
 		},
 		display: function (context)
 		{
-			// Travese appearance before everything.
+			// Traverse appearance before everything.
 			this .getAppearance () .traverse ();
 
 			var
