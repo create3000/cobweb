@@ -663,10 +663,6 @@ function ($,
 				}
 			}
 
-			// Determine particle position, velocity and colors
-
-			emitterNode .animate (this, deltaTime);
-
 			// Apply forces.
 
 			if (emitterNode .getMass ())
@@ -700,6 +696,10 @@ function ($,
 			{
 				this .numForces = 0;
 			}
+
+			// Determine particle position, velocity and colors
+
+			emitterNode .animate (this, deltaTime);
 
 			this .getBrowser () .addBrowserEvent (this);
 		},
@@ -1101,7 +1101,7 @@ function ($,
 		},
 		display: function (context)
 		{
-			// Travese appearance before everything.
+			// Traverse appearance before everything.
 			this .getAppearance () .traverse ();
 
 			var

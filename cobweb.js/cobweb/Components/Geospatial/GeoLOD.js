@@ -12,6 +12,7 @@ define ([
 	"cobweb/Components/Networking/Inline",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -24,7 +25,8 @@ function ($,
           Group,
           Inline,
           Vector3,
-          Matrix4)
+          Matrix4,
+          Box3)
 {
 "use strict";
 

@@ -70,6 +70,18 @@ function ($,
 								location .array = new Int32Array (3 + field .array .length);
 								break;
 							}
+							case X3DConstants .SFMatrix3d:
+							case X3DConstants .SFMatrix3f:
+							{
+								location .array = new Float32Array (9);
+								break;
+							}
+							case X3DConstants .SFMatrix4d:
+							case X3DConstants .SFMatrix4f:
+							{
+								location .array = new Float32Array (16);
+								break;
+							}
 							case X3DConstants .MFBool:
 							case X3DConstants .MFInt32:
 							{
@@ -251,15 +263,21 @@ function ($,
 				case X3DConstants .SFMatrix3d:
 				case X3DConstants .SFMatrix3f:
 				{
-					this .matrix3f .set (field .getValue ());
-					gl .uniformMatrix3fv (field ._uniformLocation, false, this .matrix3f);
+					var location = field ._uniformLocation;
+
+					location .array .set (field .getValue ());
+
+					gl .uniformMatrix3fv (location, false, location .array);
 					return;
 				}
 				case X3DConstants .SFMatrix4d:
 				case X3DConstants .SFMatrix4f:
 				{
-					this .matrix4f .set (field .getValue ());
-					gl .uniformMatrix4fv (field ._uniformLocation, false, this .matrix4f);
+					var location = field ._uniformLocation;
+
+					location .array .set (field .getValue ());
+
+					gl .uniformMatrix4fv (location, false, location .array);
 					return;
 				}
 				case X3DConstants .SFNode:

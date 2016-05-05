@@ -152,7 +152,8 @@ function (Fields,
 			shader .setCustom (false);
 			shader .setup ();
 
-			this .getLoadSensor () .watchList_ = shader .parts_;
+			this .getLoadSensor () .watchList_ .push (vertexShader);
+			this .getLoadSensor () .watchList_ .push (fragmentShader);
 
 			return shader;
 		},
