@@ -57,7 +57,7 @@
             <field accessType='initializeOnly' type='SFMatrix4f' name='sfmatrix4f'/>
             <field accessType='initializeOnly' type='SFNode' name='sfnode'>
               <ImageTexture DEF='_1'
-                  url='"file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/images/ubuntu.png"'/>
+                  url='"../images/ubuntu.png"'/>
             </field>
             <field accessType='initializeOnly' type='SFRotation' name='sfrotation'/>
             <field accessType='initializeOnly' type='SFString' name='sfstring'/>
@@ -118,15 +118,108 @@ main ()
 
 precision mediump float;
 
+uniform int       sfbool;
+uniform vec3      sfcolor;
+uniform vec4      sfcolorrgba;
+uniform float     sfdouble;
+uniform float     sffloat;
+uniform int       sfimage [18];
+uniform int       sfint32;
+uniform mat3      sfmatrix3d;
+uniform mat3      sfmatrix3f;
+uniform mat4      sfmatrix4d;
+uniform mat4      sfmatrix4f;
+uniform sampler2D sfnode;
+uniform vec4      sfrotation;
+uniform float     sftime;
+uniform vec2      sfvec2d;
+uniform vec2      sfvec2f;
+uniform vec3      sfvec3d;
+uniform vec3      sfvec3f;
+uniform vec4      sfvec4d;
+uniform vec4      sfvec4f;
+uniform int       mfbool [2];
+uniform vec3      mfcolor [2];
+uniform vec4      mfcolorrgba [2];
+uniform float     mfdouble [2];
+uniform float     mffloat [2];
+uniform int       mfimage [36];
+uniform int       mfint32 [2];
+uniform mat3      mfmatrix3d [2];
+uniform mat3      mfmatrix3f [2];
+uniform mat4      mfmatrix4d [2];
+uniform mat4      mfmatrix4f [2];
 uniform sampler2D mfnode [2];
+uniform vec4      mfrotation [2];
+uniform vec4      mfstring [2];
+uniform float     mftime [2];
+uniform vec2      mfvec2d [2];
+uniform vec2      mfvec2f [2];
+uniform vec3      mfvec3d [2];
+uniform vec3      mfvec3f [2];
+uniform vec4      mfvec4d [2];
+uniform vec4      mfvec4f [2];
+
+
+
+
+
 
 varying vec4 texCoord;
 
 void
 main ()
 {
+	float x = 0.0;
+
+	x += float (sfbool);
+	x += sfcolor .r;
+	x += sfcolorrgba .r;
+	x += sfdouble;
+	x += sffloat;
+	x += float (sfimage [0]);
+	x += float (sfint32);
+	x += sfmatrix3d [0] .x;
+	x += sfmatrix3f [0] .x;
+	x += sfmatrix4d [0] .x;
+	x += sfmatrix4f [0] .x;
+	x += texture2D (sfnode, vec2 (0, 0)) .r;
+	x += sfrotation [0];
+	x += sftime;
+	x += sfvec2d [0];
+	x += sfvec2f [0];
+	x += sfvec3d [0];
+	x += sfvec3f [0];
+	x += sfvec4d [0];
+	x += sfvec4f [0];
+	x += float (mfbool [0]);
+	x += mfcolor [0] .r;
+	x += mfcolorrgba [0] .r;
+	x += mfdouble [0];
+	x += mffloat [0];
+	x += float (mfimage [0]);
+	x += float (mfint32 [0]);
+	x += mfmatrix3d [0] [0] .x;
+	x += mfmatrix3f [0] [0] .x;
+	x += mfmatrix4d [0] [0] .x;
+	x += mfmatrix4f [0] [0] .x;
+	x += texture2D (mfnode [0], vec2 (0, 0)) .r;
+	x += mfrotation [0] [0];
+	x += mftime [0];
+	x += mfvec2d [0] [0];
+	x += mfvec2f [0] [0];
+	x += mfvec3d [0] [0];
+	x += mfvec3f [0] [0];
+	x += mfvec4d [0] [0];
+	x += mfvec4f [0] [0];
+
+
+	x *= 0.00001;
+
+
+
 	vec3 color   = vec3 (texture2D (mfnode [0], texCoord .st));
-	gl_FragColor = vec4 (color, 1.0);
+	gl_FragColor = vec4 (color, 1.0 + x);
 }
 ]]> 
             </ShaderPart>

@@ -16,7 +16,8 @@ function (BrowserOptions,
 	
 	function getContext (canvas)
 	{
-		var context = canvas .getContext ("webgl") || canvas .getContext ("experimental-webgl");
+		var context = canvas .getContext ("webgl") ||
+                    canvas .getContext ("experimental-webgl");
 
 		if (context)
 			return context;
