@@ -1155,7 +1155,23 @@ function ($,
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
 	
-				if (shader .wireframe)
+				var testWireframe = false;
+
+				switch (this .geometryType)
+				{
+					case POINT:
+					case LINE:
+						break;
+					case TRIANGLE:
+					case QUAD:
+					case SPRITE:
+						testWireframe = true;
+						break;
+					case GEOMETRY:
+						break;
+				}
+
+				if (shader .wireframe && testWireframe)
 				{
 					// Wireframes are always solid so only one drawing call is needed.
 	
