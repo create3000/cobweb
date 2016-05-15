@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sat, 23 Apr 2016 03:14:27 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.4.2, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V1.4.4, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/Waterfall.x3d'/>
-    <meta name='modified' content='Mon, 02 May 2016 10:43:52 GMT'/>
+    <meta name='modified' content='Fri, 13 May 2016 01:00:23 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Grid' url='"GridTool.x3dv#Grid", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/GridTool.x3dv#Grid"'>
@@ -75,6 +75,9 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -89,7 +92,7 @@
         geometryType='LINE'
         maxParticles='10000'
         particleLifetime='10'
-        lifetimeVariation='0.01'
+        lifetimeVariation='0.1'
         particleSize='0.1 0.1'
         colorKey='0, 0.1, 0.4, 1'>
       <PolylineEmitter

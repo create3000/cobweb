@@ -1102,65 +1102,84 @@ function ($,
 		display: function (context)
 		{
 			// Traverse appearance before everything.
+
 			this .getAppearance () .traverse ();
 
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+			// Display geometry.
 
-			if (shader === browser .getDefaultShader ())
-				shader = this .shader;
-
-			if (shader .vertex < 0 || this .numParticles === 0)
-				return;
-
-			// Setup shader.
-
-			context .colorMaterial = this .colorMaterial;
-			shader .setLocalUniforms (context);
-
-			// Setup vertex attributes.
-
-			if (this .colorMaterial && shader .color >= 0)
+			if (this .geometryType === GEOMETRY)
 			{
-				gl .enableVertexAttribArray (shader .color);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
-			}
+				var geometryNode = this .getGeometry ();
 
-			if (this .texCoordArray .length && shader .texCoord >= 0)
+				if (geometryNode)
+					geometryNode .displayParticles (context, this .particles, this .numParticles);
+			}
+			else
 			{
-				gl .enableVertexAttribArray (shader .texCoord);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				var
+					browser = this .getBrowser (),
+					gl      = browser .getContext (),
+					shader  = browser .getShader ();
+	
+				if (shader === browser .getDefaultShader ())
+					shader = this .shader;
+	
+				if (shader .vertex < 0 || this .numParticles === 0)
+					return;
+	
+				// Setup shader.
+	
+				context .colorMaterial = this .colorMaterial;
+				shader .setLocalUniforms (context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colorMaterial && shader .color >= 0)
+				{
+					gl .enableVertexAttribArray (shader .color);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				}
+	
+				if (this .texCoordArray .length && shader .texCoord >= 0)
+				{
+					gl .enableVertexAttribArray (shader .texCoord);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				}
+	
+				if (this .normalArray .length && shader .normal >= 0)
+				{
+					gl .enableVertexAttribArray (shader .normal);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				}
+	
+				gl .enableVertexAttribArray (shader .vertex);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+	
+				if (shader .wireframe)
+				{
+					// Wireframes are always solid so only one drawing call is needed.
+	
+					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+				}
+				else
+				{
+					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+		
+					gl .frontFace (positiveScale ? gl .CCW : gl .CW);
+					gl .enable (gl .CULL_FACE);
+					gl .cullFace (gl .BACK);
+		
+					gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
+				}
+	
+				if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
+				gl .disableVertexAttribArray (shader .vertex);
 			}
-
-			if (this .normalArray .length && shader .normal >= 0)
-			{
-				gl .enableVertexAttribArray (shader .normal);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
-			}
-
-			gl .enableVertexAttribArray (shader .vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
-
-			// Wireframes are always solid so only one drawing call is needed.
-
-			var
-				positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0,
-			   frontFace     = gl .CCW;
-
-			gl .frontFace (positiveScale ? frontFace : (frontFace === gl .CCW ? gl .CW : gl .CCW));
-			gl .enable (gl .CULL_FACE);
-			gl .cullFace (gl .BACK);
-
-			gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
-
-			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)
 		{
