@@ -719,7 +719,6 @@ function ($,
 					this .updateQuad ();
 					break;
 				case GEOMETRY:
-					this .updateGeometry ();
 					break;
 			}
 		},
@@ -1082,9 +1081,6 @@ function ($,
 
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
-		},
-		updateGeometry: function ()
-		{
 		},
 		traverse: function (type)
 		{

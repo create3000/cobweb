@@ -36923,6 +36923,7 @@ define ("cobweb/Components/Rendering/X3DGeometryNode",
 	"standard/Math/Numbers/Color3",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/Plane3",
@@ -36936,6 +36937,7 @@ function ($,
           Color3,
           Vector2,
           Vector3,
+          Matrix3,
           Matrix4,
           Box3,
           Plane3,
@@ -37473,6 +37475,159 @@ function ($,
 						gl .disable (gl .CULL_FACE);
 
 					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+				}
+			}
+
+			if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
+			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
+			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
+			gl .disableVertexAttribArray (shader .vertex);
+		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getShader ();
+
+			if (shader .vertex < 0 || this .vertexCount === 0)
+				return;
+
+			// Setup shader.
+
+			context .colorMaterial = this .colors .length;
+			shader .setLocalUniforms (context);
+
+			// Setup vertex attributes.
+
+			if (this .colors .length && shader .color >= 0)
+			{
+				gl .enableVertexAttribArray (shader .color);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			if (shader .texCoord >= 0)
+			{
+				gl .enableVertexAttribArray (shader .texCoord);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
+				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			if (shader .normal >= 0)
+			{
+				gl .enableVertexAttribArray (shader .normal);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+			}
+
+			gl .enableVertexAttribArray (shader .vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+			// Draw depending on wireframe, solid and transparent.
+
+			var
+				materialNode    = browser .getAppearance () .getMaterial (),
+				normalMatrix    = shader .normalMatrixArray,
+				modelViewMatrix = context .modelViewMatrix,
+				x               = modelViewMatrix [12],
+				y               = modelViewMatrix [13],
+				z               = modelViewMatrix [14];
+
+			if (shader .wireframe)
+			{
+				// Wireframes are always solid so only one drawing call is needed.
+
+				for (var p = 0; p < numParticles; ++ p)
+				{
+					modelViewMatrix [12] = x;
+					modelViewMatrix [13] = y;
+					modelViewMatrix [14] = z;
+	
+					Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+	
+					if (materialNode || shader .getCustom ())
+					{
+						// Set normal matrix.
+						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+						Matrix3 .prototype .inverse .call (normalMatrix);
+						gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+					}
+	
+					gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+	
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+				}
+			}
+			else
+			{
+				var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+
+				gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
+
+				if (context .transparent && ! this .solid)
+				{
+					for (var p = 0; p < numParticles; ++ p)
+					{
+						modelViewMatrix [12] = x;
+						modelViewMatrix [13] = y;
+						modelViewMatrix [14] = z;
+
+						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+						if (materialNode || shader .getCustom ())
+						{
+							// Set normal matrix.
+							normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+							Matrix3 .prototype .inverse .call (normalMatrix);
+							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+						}
+
+						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+
+						gl .enable (gl .CULL_FACE);
+						gl .cullFace (gl .FRONT);
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+	
+						gl .cullFace (gl .BACK);
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+					}	
+				}
+				else
+				{
+					if (this .solid)
+						gl .enable (gl .CULL_FACE);
+					else
+						gl .disable (gl .CULL_FACE);
+
+					for (var p = 0; p < numParticles; ++ p)
+					{
+						modelViewMatrix [12] = x;
+						modelViewMatrix [13] = y;
+						modelViewMatrix [14] = z;
+
+						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+						if (materialNode || shader .getCustom ())
+						{
+							// Set normal matrix.
+							normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+							Matrix3 .prototype .inverse .call (normalMatrix);
+							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+						}
+
+						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+					}
 				}
 			}
 
@@ -60241,10 +60396,12 @@ define ('cobweb/Components/Rendering/X3DLineGeometryNode',[
 	"jquery",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DGeometryNode,
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 
 
@@ -60302,6 +60459,62 @@ function ($,
 			// Wireframes are always solid so only one drawing call is needed.
 
 			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
+
+			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
+			gl .disableVertexAttribArray (shader .vertex);
+		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getShader ();
+
+			if (shader === browser .getDefaultShader ())
+				shader = this .shader;
+
+			if (shader .vertex < 0 || this .vertexCount === 0)
+				return;
+
+			// Setup shader.
+
+			context .colorMaterial = this .colors .length;
+			shader .setLocalUniforms (context);
+
+			// Setup vertex attributes.
+
+			if (this .colors .length && shader .color >= 0)
+			{
+				gl .enableVertexAttribArray (shader .color);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			gl .enableVertexAttribArray (shader .vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+			// Wireframes are always solid so only one drawing call is needed.
+
+			var
+				modelViewMatrix = context .modelViewMatrix,
+				x               = modelViewMatrix [12],
+				y               = modelViewMatrix [13],
+				z               = modelViewMatrix [14],
+				primitiveMode   = shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
+
+			for (var p = 0; p < numParticles; ++ p)
+			{
+				modelViewMatrix [12] = x;
+				modelViewMatrix [13] = y;
+				modelViewMatrix [14] = z;
+
+				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+				gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+	
+				gl .drawArrays (primitiveMode, 0, this .vertexCount);
+			}
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);
@@ -73183,7 +73396,6 @@ function ($,
 					this .updateQuad ();
 					break;
 				case GEOMETRY:
-					this .updateGeometry ();
 					break;
 			}
 		},
@@ -73547,9 +73759,6 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 		},
-		updateGeometry: function ()
-		{
-		},
 		traverse: function (type)
 		{
 			switch (type)
@@ -73566,65 +73775,84 @@ function ($,
 		display: function (context)
 		{
 			// Traverse appearance before everything.
+
 			this .getAppearance () .traverse ();
 
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+			// Display geometry.
 
-			if (shader === browser .getDefaultShader ())
-				shader = this .shader;
-
-			if (shader .vertex < 0 || this .numParticles === 0)
-				return;
-
-			// Setup shader.
-
-			context .colorMaterial = this .colorMaterial;
-			shader .setLocalUniforms (context);
-
-			// Setup vertex attributes.
-
-			if (this .colorMaterial && shader .color >= 0)
+			if (this .geometryType === GEOMETRY)
 			{
-				gl .enableVertexAttribArray (shader .color);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
-			}
+				var geometryNode = this .getGeometry ();
 
-			if (this .texCoordArray .length && shader .texCoord >= 0)
+				if (geometryNode)
+					geometryNode .displayParticles (context, this .particles, this .numParticles);
+			}
+			else
 			{
-				gl .enableVertexAttribArray (shader .texCoord);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				var
+					browser = this .getBrowser (),
+					gl      = browser .getContext (),
+					shader  = browser .getShader ();
+	
+				if (shader === browser .getDefaultShader ())
+					shader = this .shader;
+	
+				if (shader .vertex < 0 || this .numParticles === 0)
+					return;
+	
+				// Setup shader.
+	
+				context .colorMaterial = this .colorMaterial;
+				shader .setLocalUniforms (context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colorMaterial && shader .color >= 0)
+				{
+					gl .enableVertexAttribArray (shader .color);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				}
+	
+				if (this .texCoordArray .length && shader .texCoord >= 0)
+				{
+					gl .enableVertexAttribArray (shader .texCoord);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				}
+	
+				if (this .normalArray .length && shader .normal >= 0)
+				{
+					gl .enableVertexAttribArray (shader .normal);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				}
+	
+				gl .enableVertexAttribArray (shader .vertex);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+	
+				if (shader .wireframe)
+				{
+					// Wireframes are always solid so only one drawing call is needed.
+	
+					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+				}
+				else
+				{
+					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+		
+					gl .frontFace (positiveScale ? gl .CCW : gl .CW);
+					gl .enable (gl .CULL_FACE);
+					gl .cullFace (gl .BACK);
+		
+					gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
+				}
+	
+				if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
+				gl .disableVertexAttribArray (shader .vertex);
 			}
-
-			if (this .normalArray .length && shader .normal >= 0)
-			{
-				gl .enableVertexAttribArray (shader .normal);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
-			}
-
-			gl .enableVertexAttribArray (shader .vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
-
-			// Wireframes are always solid so only one drawing call is needed.
-
-			var
-				positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0,
-			   frontFace     = gl .CCW;
-
-			gl .frontFace (positiveScale ? frontFace : (frontFace === gl .CCW ? gl .CW : gl .CCW));
-			gl .enable (gl .CULL_FACE);
-			gl .cullFace (gl .BACK);
-
-			gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
-
-			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)
 		{
