@@ -9776,7 +9776,7 @@ define ('cobweb/Bits/X3DConstants',[],function ()
 		X3DTextureTransformNode:      nodeType ++,
 		X3DTimeDependentNode:         nodeType ++,
 		X3DTouchSensorNode:           nodeType ++,
-		X3DTransformMatrix4DNode:     nodeType ++,
+		X3DTransformMatrix3DNode:     nodeType ++,
 		X3DTransformNode:             nodeType ++,
 		X3DTriggerNode:               nodeType ++,
 		X3DUrlObject:                 nodeType ++,
@@ -10145,9 +10145,6 @@ function ($, X3DField, X3DConstants, Generator)
 	{
 		get: function (target, key)
 		{
-			if ((typeof key) === "symbol")
-				console .log (typeof key, key);
-
 			try
 			{
 				if (key in target)
@@ -10166,6 +10163,10 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 			catch (error)
 			{
+				// Don't know what to do with symbols, but it seem not to affect anything.
+				if ((typeof key) === "symbol")
+					return;
+
 				// if target not instance of X3DArrayField, then the constuctor is called as function.
 				console .log (target, typeof key, key, error);
 			}
@@ -10516,6 +10517,30 @@ define ('standard/Math/Algorithm',[],function ()
 				cosom = -cosom;
 				destination .negate ();
 			}				
+
+			var
+				omega = Math .acos (cosom),
+				sinom = Math .sin  (omega),
+
+				scale0 = Math .sin ((1 - t) * omega) / sinom,
+				scale1 = Math .sin (t * omega) / sinom;
+
+			source .x = source .x * scale0 + destination .x * scale1;
+			source .y = source .y * scale0 + destination .y * scale1;
+			source .z = source .z * scale0 + destination .z * scale1;
+			source .w = source .w * scale0 + destination .w * scale1;
+
+			return source;
+		},
+		simpleSlerp: function (source, destination, t)
+		{
+			var cosom = source .dot (destination);
+
+			if (cosom <= -1)
+				throw new Error ("slerp is not possible: vectors are inverse collinear.");
+
+			if (cosom >= 1) // both normal vectors are equal
+				return source;
 
 			var
 				omega = Math .acos (cosom),
@@ -11637,10 +11662,19 @@ function ($, Algorithm)
 			return Math .sqrt (this .x * this .x +
 			                   this .y * this .y);
 		},
+		distance: function (vector)
+		{
+			var
+				x = this .x - vector .x,
+				y = this .y - vector .y;
+
+			return Math .sqrt (x * x +
+			                   y * y);
+		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
 			return this;
 		},
 		min: function (vector)
@@ -12041,16 +12075,27 @@ function ($, Algorithm)
 			                   this .y * this .y +
 			                   this .z * this .z);
 		},
+		distance: function (vector)
+		{
+			var
+				x = this .x - vector .x,
+				y = this .y - vector .y,
+				z = this .z - vector .z;
+
+			return Math .sqrt (x * x +
+			                   y * y +
+			                   z * z);
+		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
-			this .z = Algorithm .lerp (this .z, dest .z, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
+			this .z = this .z + t * (dest .z - this .z);
 			return this;
 		},
 		slerp: function (destination, t)
 		{
-			return Algorithm .slerp (this, tmp .assign (destination), t);
+			return Algorithm .simpleSlerp (this, tmp .assign (destination), t);
 		},
 		min: function (vector)
 		{
@@ -12114,6 +12159,9 @@ function ($, Algorithm)
 	{
 		Zero: new Vector3 (0, 0, 0),
 		One: new Vector3 (1, 1, 1),
+		xAxis: new Vector3 (1, 0, 0),
+		yAxis: new Vector3 (0, 1, 0),
+		zAxis: new Vector3 (0, 0, 1),
 		negate: function (vector)
 		{
 			var copy = Object .create (this .prototype);
@@ -12216,7 +12264,7 @@ function ($, Algorithm)
 		},
 		slerp: function (source, destination, t)
 		{
-			return Algorithm .slerp (source .copy (), tmp .assign (destination), t);
+			return Algorithm .simpleSlerp (source .copy (), tmp .assign (destination), t);
 		},
 		min: function (lhs, rhs)
 		{
@@ -12962,10 +13010,14 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 
 			this [6] += this [0] * x + this [3] * y;
 			this [7] += this [1] * x + this [4] * y;
+
+			return this;
 		},
 		rotate: function (rotation)
 		{
 			this .multLeft (Matrix3 .Rotation (rotation));
+
+			return this;
 		},
 		scale: function (scale)
 		{
@@ -12978,6 +13030,8 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 
 			this [1] *= x;
 			this [4] *= y;
+
+			return this;
 		},
 		toString: function ()
 		{
@@ -13480,12 +13534,25 @@ function ($, Algorithm)
 			                   this .z * this .z +
 			                   this .w * this .w);
 		},
+		distance: function (vector)
+		{
+			var
+				x = this .x - vector .x,
+				y = this .y - vector .y,
+				z = this .z - vector .z,
+				w = this .w - vector .w;
+
+			return Math .sqrt (x * x +
+			                   y * y +
+			                   z * z +
+			                   w * w);
+		},
 		lerp: function (dest, t)
 		{
-			this .x = Algorithm .lerp (this .x, dest .x, t);
-			this .y = Algorithm .lerp (this .y, dest .y, t);
-			this .z = Algorithm .lerp (this .z, dest .z, t);
-			this .w = Algorithm .lerp (this .w, dest .w, t);
+			this .x = this .x + t * (dest .x - this .x);
+			this .y = this .y + t * (dest .y - this .y);
+			this .z = this .z + t * (dest .z - this .z);
+			this .w = this .w + t * (dest .w - this .w);
 			return this;
 		},
 		min: function (vector)
@@ -13756,6 +13823,51 @@ function ($, Vector3, Algorithm)
 			this .y = y;
 			this .z = z;
 			this .w = w;
+			return this;
+		},
+		setMatrix: function (matrix)
+		{
+			var i;
+
+			// First, find largest diagonal in matrix:
+			if (matrix [0] > matrix [4])
+			{
+				i = matrix [0] > matrix [8] ? 0 : 2;
+			}
+			else
+			{
+				i = matrix [4] > matrix [8] ? 1 : 2;
+			}
+
+			var scalerow = matrix [0] + matrix [4] + matrix [8];
+
+			if (scalerow > matrix [i * 3 + i])
+			{
+				// Compute w first:
+				this [3] = Math .sqrt (scalerow + 1) / 2;
+
+				// And compute other values:
+				var d = 4 * this [3];
+				this [0] = (matrix [5] - matrix [7]) / d;
+				this [1] = (matrix [6] - matrix [2]) / d;
+				this [2] = (matrix [1] - matrix [3]) / d;
+			}
+			else
+			{
+				// Compute x, y, or z first:
+				var j = (i + 1) % 3;
+				var k = (i + 2) % 3;
+
+				// Compute first value:
+				this [i] = Math .sqrt (matrix [i * 3 + i] - matrix [j * 3 + j] - matrix [k * 3 + k] + 1) / 2;
+
+				// And the others:
+				var d = 4 * this [i];
+				this [j] = (matrix [i * 3 + j] + matrix [j * 3 + i]) / d;
+				this [k] = (matrix [i * 3 + k] + matrix [k * 3 + i]) / d;
+				this [3] = (matrix [j * 3 + k] - matrix [k * 3 + j]) / d;
+			}
+
 			return this;
 		},
 		isReal: function ()
@@ -14052,53 +14164,6 @@ function ($, Vector3, Algorithm)
 
 	$.extend (Quaternion,
 	{
-		Matrix3: function (matrix)
-		{
-			var quat = Object .create (this .prototype);
-
-			var i;
-
-			// First, find largest diagonal in matrix:
-			if (matrix [0] > matrix [4])
-			{
-				i = matrix [0] > matrix [8] ? 0 : 2;
-			}
-			else
-			{
-				i = matrix [4] > matrix [8] ? 1 : 2;
-			}
-
-			var scalerow = matrix [0] + matrix [4] + matrix [8];
-
-			if (scalerow > matrix [i * 3 + i])
-			{
-				// Compute w first:
-				quat [3] = Math .sqrt (scalerow + 1) / 2;
-
-				// And compute other values:
-				var d = 4 * quat [3];
-				quat [0] = (matrix [5] - matrix [7]) / d;
-				quat [1] = (matrix [6] - matrix [2]) / d;
-				quat [2] = (matrix [1] - matrix [3]) / d;
-			}
-			else
-			{
-				// Compute x, y, or z first:
-				var j = (i + 1) % 3;
-				var k = (i + 2) % 3;
-
-				// Compute first value:
-				quat [i] = Math .sqrt (matrix [i * 3 + i] - matrix [j * 3 + j] - matrix [k * 3 + k] + 1) / 2;
-
-				// And the others:
-				var d = 4 * quat [i];
-				quat [j] = (matrix [i * 3 + j] + matrix [j * 3 + i]) / d;
-				quat [k] = (matrix [i * 3 + k] + matrix [k * 3 + i]) / d;
-				quat [3] = (matrix [j * 3 + k] - matrix [k * 3 + j]) / d;
-			}
-
-			return quat;
-		},
 		negate: function (vector)
 		{
 			var copy = Object .create (this .prototype);
@@ -14457,6 +14522,11 @@ function ($,
 
 			return this .value .imag .normalize ();
 		},
+		setMatrix: function (matrix)
+		{
+			this .value .setMatrix (matrix);
+			return this;
+		},
 		equals: function (rot)
 		{
 			return this .value .equals (rot .value);
@@ -14582,12 +14652,6 @@ function ($,
 	$.extend (Rotation4,
 	{
 		Identity: new Rotation4 (),
-		Matrix3: function (matrix)
-		{
-			var copy = Object .create (this .prototype);
-			copy .value = Quaternion .Matrix3 (matrix);
-			return copy;
-		},
 		inverse: function (rotation)
 		{
 			var copy = Object .create (this .prototype);
@@ -14650,7 +14714,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		dummyCenter           = new Vector3 (0, 0, 0),
 		rot                   = new Matrix3 (),
 		so                    = new Matrix3 (),
-		si                    = new Matrix3 ();
+		si                    = new Matrix3 (),
+		rotationMatrix        = new Matrix3 ();
 
 	function Matrix4 ()
 	{
@@ -14907,20 +14972,20 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				case 2:
 				{
 					this .factor (translation, rot, dummyScale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
+					rotation .setMatrix (rot);
 					break;
 				}
 				case 3:
 				{
 					this .factor (translation, rot, scale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
+					rotation .setMatrix (rot);
 					break;
 				}
 				case 4:
 				{
 					this .factor (translation, rot, scale, so);
-					rotation .assign (Rotation4 .Matrix3 (rot));
-					scaleOrientation .assign (Rotation4 .Matrix3 (so));
+					rotation         .setMatrix (rot);
+					scaleOrientation .setMatrix (so);
 					break;
 				}
 				case 5:
@@ -15318,10 +15383,14 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [12] += this [ 0] * x + this [ 4] * y + this [ 8] * z;
 			this [13] += this [ 1] * x + this [ 5] * y + this [ 9] * z;
 			this [14] += this [ 2] * x + this [ 6] * y + this [10] * z;
+
+			return this;
 		},
 		rotate: function (rotation)
 		{
 			this .multLeft (Matrix4 .Quaternion (rotation .value));
+
+			return this;
 		},
 		scale: function (scale)
 		{
@@ -15341,6 +15410,18 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			this [ 2] *= x;
 			this [ 6] *= y;
 			this [10] *= z;
+
+			return this;
+		},
+		getDepth: function (vector)
+		{
+			var
+				x = vector .x,
+				y = vector .y,
+				z = vector .z,
+				w = 1 / (x * this [3] + y * this [7] + z * this [11] + this [15]);
+
+			return (x * this [2] + y * this [6] + z * this [10] + this [14]) * w;
 		},
 		toString: function ()
 		{
@@ -16664,7 +16745,7 @@ function ($,
 
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.24";
+	return "1.25";
 });
 
 
@@ -16890,6 +16971,9 @@ function ($,
 						destfield   = copy .getField (name);
 
 					destfield .setSet (sourceField .getSet ());
+
+					//if (sourceField .getAccessType () === destfield .getAccessType () and sourceField .getType () === destfield .getType ())
+					//{
 
 					if (sourceField .hasReferences ())
 					{
@@ -17502,13 +17586,15 @@ function ($,
 {
 
 	
-	$.fn.textWidth = function ()
+	$.fn.textWidth = function (string)
 	{
-		var html_org = $(this) .html ();
-		var html_calc = '<span>' + html_org + '</span>';
-		$(this) .html (html_calc);
-		var width = $(this) .find('span:first') .width ();
-		$(this) .html (html_org);
+		var children = $(this) .children ();
+		var html     = $(this) .html ();
+		var span     = '<span>' + html + '</span>';
+		$(this) .html (span);
+		var width = $(this) .find ('span:first') .width ();
+		$(this) .empty ();
+		$(this) .append (children);
 		return width;
 	};
 
@@ -17531,6 +17617,8 @@ function ($,
 				.appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"))
 				.animate ({ width: 0 });
 
+			$("<span/>") .appendTo (this .element);
+
 			this .string_ .addInterest (this, "set_string__");
 		},
 		set_string__: function ()
@@ -17545,12 +17633,12 @@ function ($,
 			//	.animate ({ "delay": 1 }, 4000)
 			//	.fadeOut ();
 
-			this .element .text (this .string_ .getValue ());
+			this .element .children () .text (this .string_ .getValue ());
 
 			this .element 
 				.stop (true, true)
 				.fadeIn (0)
-				.animate ({ width: this .element .textWidth (this .string_ .getValue ()) })
+				.animate ({ width: this .element .textWidth () })
 				.animate ({ "delay": 1 }, 5000)
 				.animate ({ width: 0 })
 				.fadeOut (0);
@@ -20332,7 +20420,8 @@ function (BrowserOptions,
 	
 	function getContext (canvas)
 	{
-		var context = canvas .getContext ("webgl") || canvas .getContext ("experimental-webgl");
+		var context = canvas .getContext ("webgl") ||
+                    canvas .getContext ("experimental-webgl");
 
 		if (context)
 			return context;
@@ -22505,6 +22594,18 @@ function ($,
 								location .array = new Int32Array (3 + field .array .length);
 								break;
 							}
+							case X3DConstants .SFMatrix3d:
+							case X3DConstants .SFMatrix3f:
+							{
+								location .array = new Float32Array (9);
+								break;
+							}
+							case X3DConstants .SFMatrix4d:
+							case X3DConstants .SFMatrix4f:
+							{
+								location .array = new Float32Array (16);
+								break;
+							}
 							case X3DConstants .MFBool:
 							case X3DConstants .MFInt32:
 							{
@@ -22631,382 +22732,382 @@ function ($,
 		{
 			var
 				gl       = this .getBrowser () .getContext (),
-				program  = this .getProgram ();
+				program  = this .getProgram (),
+				location = field ._uniformLocation;
 
-			this .use ();
-
-			switch (field .getType ())
+			if (location)
 			{
-				case X3DConstants .SFBool:
-				case X3DConstants .SFInt32:
+				this .use ();
+	
+				switch (field .getType ())
 				{
-					gl .uniform1i (field ._uniformLocation, field .getValue ());
-					return;
-				}
-				case X3DConstants .SFColor:
-				{
-					var value = field .getValue ();
-					gl .uniform3f (field ._uniformLocation, value .r, value .g, value .b);
-					return;
-				}
-				case X3DConstants .SFColorRGBA:
-				{
-					var value = field .getValue ();
-					gl .uniform4f (field ._uniformLocation, value .r, value .g, value .b, value .a);
-					return;
-				}
-				case X3DConstants .SFDouble:
-				case X3DConstants .SFFloat:
-				case X3DConstants .SFTime:
-				{
-					gl .uniform1f (field ._uniformLocation, field .getValue ());
-					return;
-				}
-				case X3DConstants .SFImage:
-				{
-					var
-						location = field ._uniformLocation,
-						array    = location .array,
-						pixels   = field .array .getValue (),
-						length   = 3 + pixels .length;
-
-					if (length !== array .length)
-						array = location .array = new Int32Array (length);
-
-					array [0] = field .width;
-					array [1] = field .height;
-					array [2] = field .comp;
-
-					for (var a = 3, p = 0, length = pixels .length; p < length; ++ p)
-						array [a ++] = pixels [p] .getValue ();
-
-					gl .uniform1iv (location, array);
-					return;
-				}
-				case X3DConstants .SFMatrix3d:
-				case X3DConstants .SFMatrix3f:
-				{
-					this .matrix3f .set (field .getValue ());
-					gl .uniformMatrix3fv (field ._uniformLocation, false, this .matrix3f);
-					return;
-				}
-				case X3DConstants .SFMatrix4d:
-				case X3DConstants .SFMatrix4f:
-				{
-					this .matrix4f .set (field .getValue ());
-					gl .uniformMatrix4fv (field ._uniformLocation, false, this .matrix4f);
-					return;
-				}
-				case X3DConstants .SFNode:
-				{
-					var location = field ._uniformLocation;
-
-					this .setNode (gl, program, location, field);
-					return;
-				}
-				case X3DConstants .SFRotation:
-				{
-					var quat = field .getValue () .quat;
-					gl .uniform4f (field ._uniformLocation, quat .x, quat .y, quat .z, quat .w);
-					return;
-				}
-				case X3DConstants .SFString:
-				{
-					return;
-				}
-				case X3DConstants .SFVec2d:
-				case X3DConstants .SFVec2f:
-				{
-					var value = field .getValue ();
-					gl .uniform2f (field ._uniformLocation, value .x, value .y);
-					return;
-				}
-				case X3DConstants .SFVec3d:
-				case X3DConstants .SFVec3f:
-				{
-					var value = field .getValue ();
-					gl .uniform3f (field ._uniformLocation, value .x, value .y, value .z);
-					return;
-				}
-				case X3DConstants .SFVec4d:
-				case X3DConstants .SFVec4f:
-				{
-					var value = field .getValue ();
-					gl .uniform4f (field ._uniformLocation, value .x, value .y, value .z, value .w);
-					return;
-				}
-				case X3DConstants .MFBool:
-				case X3DConstants .MFInt32:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, length = value .length; i < length; ++ i)
-						array [i] = value [i] .getValue ();
-
-					for (var length = array .length; i < length; ++ i)
-						array [i] = 0;
-
-					gl .uniform1iv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFColor:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFBool:
+					case X3DConstants .SFInt32:
 					{
-						var color = value [i] .getValue ();
-
-						array [k++] = color .r;
-						array [k++] = color .g;
-						array [k++] = color .b;
+						gl .uniform1i (location, field .getValue ());
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniform3fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFColorRGBA:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFColor:
 					{
-						var color = value [i] .getValue ();
-
-						array [k++] = color .r;
-						array [k++] = color .g;
-						array [k++] = color .b;
-						array [k++] = color .a;
+						var value = field .getValue ();
+						gl .uniform3f (location, value .r, value .g, value .b);
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniform4fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFDouble:
-				case X3DConstants .MFFloat:
-				case X3DConstants .MFTime:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, length = value .length; i < length; ++ i)
-						array [i] = value [i] .getValue ();
-
-					for (var length = array .length; i < length; ++ i)
-						array [i] = 0;
-
-					gl .uniform1fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFImage:
-				{
-					var
-						value    = field .getValue (),
-						location = field ._uniformLocation,
-						array    = location .array,
-						length   = this .getImagesLength (field);
-
-					if (length !== array .length)
-						array = location .array = new Int32Array (length);
-
-					for (var i = 0, a = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFColorRGBA:
+					{
+						var value = field .getValue ();
+						gl .uniform4f (location, value .r, value .g, value .b, value .a);
+						return;
+					}
+					case X3DConstants .SFDouble:
+					case X3DConstants .SFFloat:
+					case X3DConstants .SFTime:
+					{
+						gl .uniform1f (location, field .getValue ());
+						return;
+					}
+					case X3DConstants .SFImage:
 					{
 						var
-							value  = field [i],
-							pixels = value .array;
-
-						array [a ++] = value .width;
-						array [a ++] = value .height;
-						array [a ++] = value .comp;
-
-						for (var p = 0, length = pixels .length; p < length; ++ p)
+							array  = location .array,
+							pixels = field .array .getValue (),
+							length = 3 + pixels .length;
+	
+						if (length !== array .length)
+							array = location .array = new Int32Array (length);
+	
+						array [0] = field .width;
+						array [1] = field .height;
+						array [2] = field .comp;
+	
+						for (var a = 3, p = 0, length = pixels .length; p < length; ++ p)
 							array [a ++] = pixels [p] .getValue ();
+	
+						gl .uniform1iv (location, array);
+						return;
 					}
-
-					gl .uniform1iv (location, array);
-					return;
-				}
-				case X3DConstants .MFMatrix3d:
-				case X3DConstants .MFMatrix3f:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFMatrix3d:
+					case X3DConstants .SFMatrix3f:
 					{
-						var matrix = value [i] .getValue ();
-
-						array [k++] = matrix [0];
-						array [k++] = matrix [1];
-						array [k++] = matrix [2];
-						array [k++] = matrix [3];
-						array [k++] = matrix [4];
-						array [k++] = matrix [5];
-						array [k++] = matrix [6];
-						array [k++] = matrix [7];
-						array [k++] = matrix [8];
+						location .array .set (field .getValue ());
+	
+						gl .uniformMatrix3fv (location, false, location .array);
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniformMatrix3fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFMatrix4d:
-				case X3DConstants .MFMatrix4f:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFMatrix4d:
+					case X3DConstants .SFMatrix4f:
 					{
-						var matrix = value [i] .getValue ();
-
-						array [k++] = matrix [ 0];
-						array [k++] = matrix [ 1];
-						array [k++] = matrix [ 2];
-						array [k++] = matrix [ 3];
-						array [k++] = matrix [ 4];
-						array [k++] = matrix [ 5];
-						array [k++] = matrix [ 6];
-						array [k++] = matrix [ 7];
-						array [k++] = matrix [ 8];
-						array [k++] = matrix [ 9];
-						array [k++] = matrix [10];
-						array [k++] = matrix [11];
-						array [k++] = matrix [12];
-						array [k++] = matrix [13];
-						array [k++] = matrix [14];
-						array [k++] = matrix [15];
+						location .array .set (field .getValue ());
+	
+						gl .uniformMatrix4fv (location, false, location .array);
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniformMatrix4fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFNode:
-				{
-					var
-						value     = field .getValue (),
-						locations = field ._uniformLocation;
-
-					for (var i = 0, length = value .length; i < length; ++ i)
-						this .setNode (gl, program, locations [i], value [i]);
-
-					for (var length = locations .length; i < length; ++ i)
-						this .setNode (gl, program, locations [i], NULL);
-
-					return;
-				}
-				case X3DConstants .MFRotation:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFNode:
 					{
-						var quat = value [i] .getValue () .quat;
-
-						array [k++] = quat .x;
-						array [k++] = quat .y;
-						array [k++] = quat .z;
-						array [k++] = quat .w;
+						this .setNode (gl, program, location, field);
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniform4fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFString:
-				{
-					return;
-				}
-				case X3DConstants .MFVec2d:
-				case X3DConstants .MFVec2f:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFRotation:
 					{
-						var vector = value [i] .getValue ();
-
-						array [k++] = vector .x;
-						array [k++] = vector .y;
+						var quat = field .getValue () .value;
+						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniform2fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFVec3d:
-				case X3DConstants .MFVec3f:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFString:
 					{
-						var vector = value [i] .getValue ();
-
-						array [k++] = vector .x;
-						array [k++] = vector .y;
-						array [k++] = vector .z;
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniform3fv (field ._uniformLocation, array);
-					return;
-				}
-				case X3DConstants .MFVec4d:
-				case X3DConstants .MFVec4f:
-				{
-					var
-						value = field .getValue (),
-						array = field ._uniformLocation .array;
-
-					for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+					case X3DConstants .SFVec2d:
+					case X3DConstants .SFVec2f:
 					{
-						var vector = value [i] .getValue ();
-
-						array [k++] = vector .x;
-						array [k++] = vector .y;
-						array [k++] = vector .z;
-						array [k++] = vector .w;
+						var value = field .getValue ();
+						gl .uniform2f (location, value .x, value .y);
+						return;
 					}
-
-					for (var length = array .length; k < length; ++ k)
-						array [k] = 0;
-
-					gl .uniform4fv (field ._uniformLocation, array);
-					return;
+					case X3DConstants .SFVec3d:
+					case X3DConstants .SFVec3f:
+					{
+						var value = field .getValue ();
+						gl .uniform3f (location, value .x, value .y, value .z);
+						return;
+					}
+					case X3DConstants .SFVec4d:
+					case X3DConstants .SFVec4f:
+					{
+						var value = field .getValue ();
+						gl .uniform4f (location, value .x, value .y, value .z, value .w);
+						return;
+					}
+					case X3DConstants .MFBool:
+					case X3DConstants .MFInt32:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, length = value .length; i < length; ++ i)
+							array [i] = value [i] .getValue ();
+	
+						for (var length = array .length; i < length; ++ i)
+							array [i] = 0;
+	
+						gl .uniform1iv (location, array);
+						return;
+					}
+					case X3DConstants .MFColor:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var color = value [i] .getValue ();
+	
+							array [k++] = color .r;
+							array [k++] = color .g;
+							array [k++] = color .b;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform3fv (location, array);
+						return;
+					}
+					case X3DConstants .MFColorRGBA:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var color = value [i] .getValue ();
+	
+							array [k++] = color .r;
+							array [k++] = color .g;
+							array [k++] = color .b;
+							array [k++] = color .a;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform4fv (location, array);
+						return;
+					}
+					case X3DConstants .MFDouble:
+					case X3DConstants .MFFloat:
+					case X3DConstants .MFTime:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, length = value .length; i < length; ++ i)
+							array [i] = value [i] .getValue ();
+	
+						for (var length = array .length; i < length; ++ i)
+							array [i] = 0;
+	
+						gl .uniform1fv (location, array);
+						return;
+					}
+					case X3DConstants .MFImage:
+					{
+						var
+							images = field .getValue (),
+							array  = location .array,
+							length = this .getImagesLength (field);
+	
+						if (length !== array .length)
+							array = location .array = new Int32Array (length);
+	
+						for (var i = 0, a = 0, length = images .length; i < length; ++ i)
+						{
+							var
+								value  = images [i],
+								pixels = value .array .getValue ();
+	
+							array [a ++] = value .width;
+							array [a ++] = value .height;
+							array [a ++] = value .comp;
+	
+							for (var p = 0, plength = pixels .length; p < plength; ++ p)
+								array [a ++] = pixels [p] .getValue ();
+						}
+	
+						gl .uniform1iv (location, array);
+						return;
+					}
+					case X3DConstants .MFMatrix3d:
+					case X3DConstants .MFMatrix3f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var matrix = value [i] .getValue ();
+	
+							array [k++] = matrix [0];
+							array [k++] = matrix [1];
+							array [k++] = matrix [2];
+							array [k++] = matrix [3];
+							array [k++] = matrix [4];
+							array [k++] = matrix [5];
+							array [k++] = matrix [6];
+							array [k++] = matrix [7];
+							array [k++] = matrix [8];
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniformMatrix3fv (location, false, array);
+						return;
+					}
+					case X3DConstants .MFMatrix4d:
+					case X3DConstants .MFMatrix4f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var matrix = value [i] .getValue ();
+	
+							array [k++] = matrix [ 0];
+							array [k++] = matrix [ 1];
+							array [k++] = matrix [ 2];
+							array [k++] = matrix [ 3];
+							array [k++] = matrix [ 4];
+							array [k++] = matrix [ 5];
+							array [k++] = matrix [ 6];
+							array [k++] = matrix [ 7];
+							array [k++] = matrix [ 8];
+							array [k++] = matrix [ 9];
+							array [k++] = matrix [10];
+							array [k++] = matrix [11];
+							array [k++] = matrix [12];
+							array [k++] = matrix [13];
+							array [k++] = matrix [14];
+							array [k++] = matrix [15];
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniformMatrix4fv (location, false, array);
+						return;
+					}
+					case X3DConstants .MFNode:
+					{
+						var value = field .getValue ();
+	
+						for (var i = 0, length = value .length; i < length; ++ i)
+							this .setNode (gl, program, location [i], value [i]);
+	
+						for (var length = location .length; i < length; ++ i)
+							this .setNode (gl, program, location [i], NULL);
+	
+						return;
+					}
+					case X3DConstants .MFRotation:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var quat = value [i] .getValue () .value;
+	
+							array [k++] = quat .x;
+							array [k++] = quat .y;
+							array [k++] = quat .z;
+							array [k++] = quat .w;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform4fv (location, array);
+						return;
+					}
+					case X3DConstants .MFString:
+					{
+						return;
+					}
+					case X3DConstants .MFVec2d:
+					case X3DConstants .MFVec2f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var vector = value [i] .getValue ();
+	
+							array [k++] = vector .x;
+							array [k++] = vector .y;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform2fv (location, array);
+						return;
+					}
+					case X3DConstants .MFVec3d:
+					case X3DConstants .MFVec3f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var vector = value [i] .getValue ();
+	
+							array [k++] = vector .x;
+							array [k++] = vector .y;
+							array [k++] = vector .z;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform3fv (location, array);
+						return;
+					}
+					case X3DConstants .MFVec4d:
+					case X3DConstants .MFVec4f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var vector = value [i] .getValue ();
+	
+							array [k++] = vector .x;
+							array [k++] = vector .y;
+							array [k++] = vector .z;
+							array [k++] = vector .w;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform4fv (location, array);
+						return;
+					}
 				}
 			}
 		},
@@ -28358,6 +28459,9 @@ function ($,
 			{
 				var value = element .getAttribute ("value");
 
+				if (field instanceof X3DArrayField)
+					field .length = 0;
+
 				if (value !== null)
 				{
 					this .parser .setInput (value);
@@ -28390,6 +28494,9 @@ function ($,
 				if (accessType & X3DConstants .initializeOnly)
 				{
 					var value = element .getAttribute ("value");
+
+					if (field instanceof X3DArrayField)
+						field .length = 0;
 
 					if (value !== null)
 					{
@@ -32385,9 +32492,9 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n \tif (x3d_LinewidthScaleFactor >= 2.0)\n\t{\n\t\tfloat dist = distance (vec2 (0.5, 0.5), gl_PointCoord);\n\t\n\t\tif (dist > 0.5)\n\t\t\tdiscard;\n\t}\n\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\tfloat lw = (x3d_LinewidthScaleFactor + 1.0) / 2.0;\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\t// If we are points, make the gl_PointSize one pixel larger.\n\tgl_PointSize = x3d_GeometryType == 1 ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.0;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
@@ -32551,6 +32658,12 @@ function (Fields,
 		{
 			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 0;
 		},
+		getDepthSize: function ()
+		{
+			var gl = this .context;
+
+			return gl .getParameter (gl .DEPTH_BITS);
+		},
 		getColorDepth: function ()
 		{
 			var gl = this .context;
@@ -32603,7 +32716,8 @@ function (Fields,
 			shader .setCustom (false);
 			shader .setup ();
 
-			this .getLoadSensor () .watchList_ = shader .parts_;
+			this .getLoadSensor () .watchList_ .push (vertexShader);
+			this .getLoadSensor () .watchList_ .push (fragmentShader);
 
 			return shader;
 		},
@@ -33169,11 +33283,85 @@ function ($,
 });
 
 
+define ('standard/Math/Algorithms/SAT',[],function ()
+{
+
+
+	var
+		extents1 = { min: 0, max: 0 },
+		extents2 = { min: 0, max: 0 };
+
+	/**
+	 *  Class to represent the Separating Axis Theorem.
+	 */
+	function SAT () { }
+
+	SAT .isSeparated = function (axes, points1, points2)
+	{
+		// http://gamedev.stackexchange.com/questions/25397/obb-vs-obb-collision-detection
+
+		for (var i = 0, length = axes .length; i < length; ++ i)
+		{
+			var axis = axes [i];
+
+			project (points1, axis, extents1);
+			project (points2, axis, extents2);
+
+			if (overlaps (extents1 .min, extents1 .max, extents2 .min, extents2 .max))
+				continue;
+
+			return true;
+		}
+
+		return false;
+	};
+
+	///  Projects @a points to @a axis and returns the minimum and maximum bounds.
+	function project (points, axis, extents)
+	{
+		extents .min = Number .POSITIVE_INFINITY;
+		extents .max = Number .NEGATIVE_INFINITY;
+
+		for (var i = 0, length = points .length; i < length; ++ i)
+		{
+			var point = points [i];
+
+			// Just dot it to get the min and max along this axis.
+			// NOTE: the axis must be normalized to get accurate projections to calculate the MTV, but if it is only needed to
+			// know whether it overlaps, every axis can be used.
+
+			var dotVal = point .dot (axis);
+
+			if (dotVal < extents .min)
+				extents .min = dotVal;
+
+			if (dotVal > extents .max)
+				extents .max = dotVal;
+		}
+	}
+
+	///  Returns true if both ranges overlap, otherwise false.
+	function overlaps (min1, max1, min2, max2)
+	{
+		return is_between (min2, min1, max1) || is_between (min1, min2, max2);
+	}
+
+	///  Returns true if @a value is between @a lowerBound and @a upperBound, otherwise false.
+	function is_between (value, lowerBound, upperBound)
+	{
+		return lowerBound <= value && value <= upperBound;
+	}
+
+	return SAT;
+});
+
+
 define ('standard/Math/Geometry/Box3',[
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithms/SAT",
 ],
-function (Matrix4, Vector3)
+function (Matrix4, Vector3, SAT)
 {
 
 
@@ -33192,6 +33380,64 @@ function (Matrix4, Vector3)
 		lhs_max = new Vector3 (0, 0, 0),
 		rhs_min = new Vector3 (0, 0, 0),
 		rhs_max = new Vector3 (0, 0, 0);
+
+
+	var points1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var points2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes9 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var planes = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
 
 	function Box3 (size, center)
 	{
@@ -33252,6 +33498,10 @@ function (Matrix4, Vector3)
 		{
 			return this .matrix .equals (box .matrix);
 		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		set: function (size, center)
 		{
 			var m = this .matrix;
@@ -33311,33 +33561,6 @@ function (Matrix4, Vector3)
 			m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
 			return this;
 		},
-		isEmpty: function ()
-		{
-			return this .matrix [15] === 0;
-		},
-		add: function (box)
-		{
-			if (this .isEmpty ())
-				return this .assign (box);
-
-			if (box .isEmpty ())
-				return this;
-
-			this .getExtents (lhs_min, lhs_max);
-			box  .getExtents (rhs_min, rhs_max);
-
-			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
-		},
-		multLeft: function (matrix)
-		{
-			this .matrix .multLeft (matrix);
-			return this;
-		},
-		multRight: function (matrix)
-		{
-			this .matrix .multRight (matrix);
-			return this;
-		},
 		getExtents: function (min, max)
 		{
 			this .getAbsoluteExtents (min, max);
@@ -33347,7 +33570,7 @@ function (Matrix4, Vector3)
 		},
 		getAbsoluteExtents: function (min, max)
 		{
-		   var m = this .matrix;
+			var m = this .matrix;
 
 			x .set (m [0], m [1], m [2]);
 			y .set (m [4], m [5], m [6]);
@@ -33378,6 +33601,101 @@ function (Matrix4, Vector3)
 			min .min (p1, p2, p3, p4);
 			max .max (p1, p2, p3, p4);
 		},
+		getPoints: function (points)
+		{
+			/*
+			 * p6 ---------- p5
+			 * | \           | \
+			 * | p2------------ p1
+			 * |  |          |  |
+			 * |  |          |  |
+			 * p7 |_________ p8 |
+			 *  \ |           \ |
+			 *   \|            \|
+			 *    p3 ---------- p4
+			 */
+		
+			var m = this .matrix;
+
+			x .set (m [0], m [1], m [2]);
+			y .set (m [4], m [5], m [6]);
+			z .set (m [8], m [9], m [10]);
+		
+			r1 .assign (y) .add (z);
+
+			var r2 = z .subtract (y);
+		
+			points [0] .assign (x)  .add (r1);
+			points [1] .assign (r1) .subtract (x);
+			points [2] .assign (r2) .subtract (x);
+			points [3] .assign (x)  .add (r2);
+		
+			points [4] .assign (points [2]) .negate ();
+			points [5] .assign (points [3]) .negate ();
+			points [6] .assign (points [0]) .negate ();
+			points [7] .assign (points [1]) .negate ();
+		
+			var center = this .center;
+
+			points [0] .add (center);
+			points [1] .add (center);
+			points [2] .add (center);
+			points [3] .add (center);
+		
+			points [4] .add (center);
+			points [5] .add (center);
+			points [6] .add (center);
+			points [7] .add (center);
+		
+			return points;
+		},
+		getAxes: function (axes)
+		{
+			var m = this .matrix;
+
+			axes [0] .set (m [0], m [1], m [2]);
+			axes [1] .set (m [4], m [5], m [6]);
+			axes [2] .set (m [8], m [9], m [10]);
+
+			return axes;
+		},
+		getPlanes: function (planes)
+		{
+			var m = this .matrix;
+
+			planes [0] .set (m [0], m [1], m [2])  .cross (z);
+			planes [1] .set (m [4], m [5], m [6])  .cross (x);
+			planes [2] .set (m [8], m [9], m [10]) .cross (y);
+		
+			return planes;
+		},
+		isEmpty: function ()
+		{
+			return this .matrix [15] === 0;
+		},
+		add: function (box)
+		{
+			if (this .isEmpty ())
+				return this .assign (box);
+
+			if (box .isEmpty ())
+				return this;
+
+			this .getExtents (lhs_min, lhs_max);
+			box  .getExtents (rhs_min, rhs_max);
+
+			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
+		},
+		multLeft: function (matrix)
+		{
+			this .matrix .multLeft (matrix);
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			this .matrix .multRight (matrix);
+			return this;
+		},
 		intersectsPoint: function (point)
 		{
 			this .getExtents (min, max);
@@ -33388,6 +33706,49 @@ function (Matrix4, Vector3)
 			       max .y >= point .y &&
 			       min .z <= point .z &&
 			       max .z >= point .z;
+		},
+		intersectsBox: function (other)
+		{
+			// Test special cases.
+		
+			if (this .isEmpty ())
+				return false;
+		
+			if (other .isEmpty ())
+				return false;
+		
+			// Get points.
+		
+			this  .getPoints (points1);
+			other .getPoints (points2);
+		
+			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
+		
+			if (SAT .isSeparated (this .getPlanes (planes), points1, points2))
+				return false;
+		
+			// Test the three planes spanned by the normal vectors of the faces of the second parallelepiped.
+		
+			if (SAT .isSeparated (other .getPlanes (planes), points1, points2))
+				return false;
+
+			// Test the nine other planes spanned by the edges of each parallelepiped.
+		
+			this  .getAxes (axes1);
+			other .getAxes (axes2);
+
+			for (var i1 = 0; i1 < 3; ++ i1)
+			{
+				for (var i2 = 0; i2 < 3; ++ i2)
+					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (axes2 [i2]);
+			}
+		
+			if (SAT .isSeparated (axes9, points1, points2))
+				return false;
+		
+			// Both boxes intersect.
+		
+			return true;
 		},
 		toString: function ()
 		{
@@ -36410,7 +36771,7 @@ function (Vector3,
 	return {
 	   area: function (a, b, c)
 	   {
-	      return A .assign (v2) .subtract (v1) .cross (B .assign (v3) .subtract (v1)) .abs () / 2;
+	      return B .assign (b) .subtract (a) .cross (C .assign (c) .subtract (a)) .abs () / 2;
 	   },
 		normal: function (v1, v2, v3, normal)
 		{
@@ -36562,6 +36923,7 @@ define ("cobweb/Components/Rendering/X3DGeometryNode",
 	"standard/Math/Numbers/Color3",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/Plane3",
@@ -36575,6 +36937,7 @@ function ($,
           Color3,
           Vector2,
           Vector3,
+          Matrix3,
           Matrix4,
           Box3,
           Plane3,
@@ -37120,6 +37483,160 @@ function ($,
 			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
 			gl .disableVertexAttribArray (shader .vertex);
 		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getShader ();
+
+			if (shader .vertex < 0 || this .vertexCount === 0)
+				return;
+
+			// Setup shader.
+
+			context .colorMaterial = this .colors .length;
+			shader .setLocalUniforms (context);
+
+			// Setup vertex attributes.
+
+			if (this .colors .length && shader .color >= 0)
+			{
+				gl .enableVertexAttribArray (shader .color);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			if (shader .texCoord >= 0)
+			{
+				gl .enableVertexAttribArray (shader .texCoord);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
+				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			if (shader .normal >= 0)
+			{
+				gl .enableVertexAttribArray (shader .normal);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+			}
+
+			gl .enableVertexAttribArray (shader .vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+			// Draw depending on wireframe, solid and transparent.
+
+			var
+				materialNode    = browser .getAppearance () .getMaterial (),
+				lighting        = materialNode || shader .getCustom (),
+				normalMatrix    = shader .normalMatrixArray,
+				modelViewMatrix = context .modelViewMatrix,
+				x               = modelViewMatrix [12],
+				y               = modelViewMatrix [13],
+				z               = modelViewMatrix [14];
+
+			if (shader .wireframe)
+			{
+				// Wireframes are always solid so only one drawing call is needed.
+
+				for (var p = 0; p < numParticles; ++ p)
+				{
+					modelViewMatrix [12] = x;
+					modelViewMatrix [13] = y;
+					modelViewMatrix [14] = z;
+	
+					Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+	
+					if (lighting)
+					{
+						// Set normal matrix.
+						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+						Matrix3 .prototype .inverse .call (normalMatrix);
+						gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+					}
+	
+					gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+	
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+				}
+			}
+			else
+			{
+				var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+
+				gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
+
+				if (context .transparent && ! this .solid)
+				{
+					for (var p = 0; p < numParticles; ++ p)
+					{
+						modelViewMatrix [12] = x;
+						modelViewMatrix [13] = y;
+						modelViewMatrix [14] = z;
+
+						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+						if (lighting)
+						{
+							// Set normal matrix.
+							normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+							Matrix3 .prototype .inverse .call (normalMatrix);
+							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+						}
+
+						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+
+						gl .enable (gl .CULL_FACE);
+						gl .cullFace (gl .FRONT);
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+	
+						gl .cullFace (gl .BACK);
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+					}	
+				}
+				else
+				{
+					if (this .solid)
+						gl .enable (gl .CULL_FACE);
+					else
+						gl .disable (gl .CULL_FACE);
+
+					for (var p = 0; p < numParticles; ++ p)
+					{
+						modelViewMatrix [12] = x;
+						modelViewMatrix [13] = y;
+						modelViewMatrix [14] = z;
+
+						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+						if (materialNode || shader .getCustom ())
+						{
+							// Set normal matrix.
+							normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+							Matrix3 .prototype .inverse .call (normalMatrix);
+							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+						}
+
+						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+
+						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+					}
+				}
+			}
+
+			if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
+			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
+			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
+			gl .disableVertexAttribArray (shader .vertex);
+		},
 		collision: function (shader)
 		{
 			var
@@ -37222,16 +37739,16 @@ function ($,
 		   // front
 			if (planes [0] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .y >= 	minY && intersection .y <=	maxY)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
 					return true;
 			}
 
 			// back
 			if (planes [1] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .y >= 	minY && intersection .y <=	maxY)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
 					return true;
 			}
 
@@ -37246,16 +37763,16 @@ function ($,
 			// bottom
 			if (planes [3] .intersectsLine (line, intersection))
 			{
-				if (intersection .x >= 	minX && intersection .x <= maxX &&
-				    intersection .z >= 	minZ && intersection .z <= maxZ)
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
 					return true;
 			}
 
 			// right
 			if (planes [4] .intersectsLine (line, intersection))
 			{
-				if (intersection .y >= 	minY && intersection .y <=	maxY &&
-				    intersection .z >= 	minZ && intersection .z <= maxZ)
+				if (intersection .y >= minY && intersection .y <= maxY &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
 					return true;
 			}
 
@@ -37486,9 +38003,9 @@ function ($,
 				if (colorNode)
 				{
 					if (colorPerVertex)
-						this .addColor (colorNode .getColor (index));
+						this .addColor (colorNode .get1Color (index));
 					else
-						this .addColor (colorNode .getColor (face));
+						this .addColor (colorNode .get1Color (face));
 				}
 
 				if (texCoordNode)
@@ -37497,13 +38014,13 @@ function ($,
 				if (normalNode)
 				{
 					if (normalPerVertex)
-						this .addNormal (normalNode .getVector (index));
+						this .addNormal (normalNode .get1Vector (index));
 
 					else
-						this .addNormal (normalNode .getVector (face));
+						this .addNormal (normalNode .get1Vector (face));
 				}
 
-				this .addVertex (coordNode .getPoint (index));
+				this .addVertex (coordNode .get1Point (index));
 			}
 		
 			// Autogenerate normal if not specified.
@@ -37572,13 +38089,13 @@ function ($,
 
 			var
 				normal = new Vector3 (0, 0, 0),
-				next   = coord .getPoint (this .getPolygonIndex (0));
+				next   = coord .get1Point (this .getPolygonIndex (0));
 
 			for (var i = 0; i < verticesPerPolygon; ++ i)
 			{
 				var
 					current = next,
-					next    = coord .getPoint (this .getPolygonIndex ((i + 1) % verticesPerPolygon));
+					next    = coord .get1Point (this .getPolygonIndex ((i + 1) % verticesPerPolygon));
 
 				normal .x += (current .y - next .y) * (current .z + next .z);
 				normal .y += (current .z - next .z) * (current .x + next .x);
@@ -37745,9 +38262,9 @@ function ($,
 					if (colorNode)
 					{
 						if (colorPerVertex)
-							this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
+							this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
 						else
-							this .addColor (colorNode .getColor (this .getColorIndex (face)));
+							this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 					}
 
 					if (texCoordNode)
@@ -37756,13 +38273,13 @@ function ($,
 					if (normalNode)
 					{
 						if (normalPerVertex)
-							this .addNormal (normalNode .getVector (this .getNormalPerVertexIndex (i)));
+							this .addNormal (normalNode .get1Vector (this .getNormalPerVertexIndex (i)));
 
 						else
-							this .addNormal (normalNode .getVector (this .getNormalIndex (face)));
+							this .addNormal (normalNode .get1Vector (this .getNormalIndex (face)));
 					}
 
-					this .addVertex (coordNode .getPoint (index));
+					this .addVertex (coordNode .get1Point (index));
 				}
 
 				++ face;
@@ -37878,7 +38395,7 @@ function ($,
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
 			{
-				var vertex = coord .getPoint (coordIndex [vertices [i]] .getValue ()) .copy ();
+				var vertex = coord .get1Point (coordIndex [vertices [i]] .getValue ()) .copy ();
 
 				vertex .index = i;
 
@@ -37994,13 +38511,13 @@ function ($,
 
 			var
 				normal = new Vector3 (0, 0, 0),
-				next   = coord .getPoint (coordIndex [vertices [0]] .getValue ());
+				next   = coord .get1Point (coordIndex [vertices [0]] .getValue ());
 
 			for (var i = 0, length = vertices .length; i < length; ++ i)
 			{
 				var
 					current = next,
-					next    = coord .getPoint (coordIndex [vertices [(i + 1) % length]] .getValue ());
+					next    = coord .get1Point (coordIndex [vertices [(i + 1) % length]] .getValue ());
 
 				normal .x += (current .y - next .y) * (current .z + next .z);
 				normal .y += (current .z - next .z) * (current .x + next .x);
@@ -38081,7 +38598,7 @@ function ($,
 		{
 			return this .point .length;
 		},
-		getPoint: function (index)
+		get1Point: function (index)
 		{
 			// The index cannot be less than 0.
 
@@ -38226,13 +38743,15 @@ define ('cobweb/Components/Texturing/TextureCoordinate',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DTextureCoordinateNode, 
-          X3DConstants)
+          X3DConstants,
+          Vector4)
 {
 
 
@@ -38273,6 +38792,21 @@ function ($,
 			else
 				texCoords .push (0, 0, 0, 1);
 
+		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, 0, 1);
+			}
+
+			array .length = length;
+
+			return array;
 		},
 	});
 
@@ -38940,6 +39474,7 @@ function (jquery,
 
 			browser .getCanvas () .bind ("mousedown.PointingDevice", this .mousedown  .bind (this));
 			browser .getCanvas () .bind ("mouseup.PointingDevice",   this .mouseup    .bind (this));
+			browser .getCanvas () .bind ("dblclick.PointingDevice",  this .dblclick   .bind (this));
 			browser .getCanvas () .bind ("mousemove.PointingDevice", this .mousemove  .bind (this));
 			browser .getCanvas () .bind ("mouseout.PointingDevice",  this .onmouseout .bind (this));
 		},
@@ -38998,6 +39533,13 @@ function (jquery,
 
 				this .cursor = "DEFAULT";
 			}
+		},
+		dblclick: function (event)
+		{
+			event .preventDefault ();
+
+			if (this .isOver)
+				event .stopImmediatePropagation ();
 		},
 		mousemove: function (event)
 		{
@@ -39070,7 +39612,7 @@ function (Vector3)
 
 	function Line3 (point, direction)
 	{
-		this .point     = point .copy ();
+		this .point     = point     .copy ();
 		this .direction = direction .copy ();
 	}
 
@@ -39092,6 +39634,12 @@ function (Vector3)
 		{
 			this .point     .assign (line .point);
 			this .direction .assign (line .direction);
+			return this;
+		},
+		set: function (point, direction)
+		{
+			this .point     .assign (point);
+			this .direction .assign (direction);
 			return this;
 		},
 		multMatrixLine: function (matrix)
@@ -39767,6 +40315,7 @@ function ($)
 			//console .log (event .which);
 
 			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			if (this .keyDeviceSensorNode)
 			   this .keyDeviceSensorNode .keydown (event);
@@ -39891,6 +40440,7 @@ function ($)
 			//console .log (event .which);
 
 			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			if (this .keyDeviceSensorNode)
 			   this .keyDeviceSensorNode .keyup (event);
@@ -41092,8 +41642,8 @@ function ($,
 
 			differenceMatrix .get (relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
-			relativePosition .subtract (this .position_ .getValue ());
-			relativeOrientation .assign (this .orientation_ .getValue () .copy () .inverse () .multRight (relativeOrientation));
+			relativePosition .subtract (this .getPosition ());
+			relativeOrientation .assign (this .getOrientation () .copy () .inverse () .multRight (relativeOrientation));
 		},
 		straightenHorizon: function (orientation)
 		{
@@ -41343,7 +41893,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "position",          new Fields .SFVec3f (0, 0, 10)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "orientation",       new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "centerOfRotation",  new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "fieldOfView",       new Fields .MFFloat ([ -1, -1, 1, 1 ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "fieldOfView",       new Fields .MFFloat (-1, -1, 1, 1)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "jump",              new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "retainUserOffsets", new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",           new Fields .SFBool ()),
@@ -41559,6 +42109,21 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 
 			return new Vector3 (x, y, tbProjectToSphere (0.5, x, y));
 		},
+		lookAt: function (x, y, straightenHorizon)
+		{
+			if (this .touch (x, y))
+			{
+				var hit = this .getBrowser () .getNearestHit ();
+
+				this .getActiveViewpoint () .lookAtPoint (hit .intersection .point, 2 - 1.618034, straightenHorizon);
+			}
+		},
+		touch: function (x, y)
+		{
+			this .getBrowser () .touch (x, y);
+		
+			return this .getBrowser () .getHits () .length;
+		},
 		dispose: function () { },
 	});
 
@@ -41717,6 +42282,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			canvas .bind ("mousedown.ExamineViewer",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.ExamineViewer",    this .mouseup    .bind (this));
+			canvas .bind ("dblclick.ExamineViewer",   this .dblclick  .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 		},
 		mousedown: function (event)
@@ -41740,7 +42306,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -41760,7 +42326,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -41784,7 +42350,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getBrowser () .setCursor ("DEFAULT");
 
 					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && performance .now () - this .motionTime < SPIN_RELEASE_TIME)
@@ -41802,11 +42368,22 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				}
 				case 1:
 				{
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getBrowser () .setCursor ("DEFAULT");
 					break;
 				}
 			}
+		},
+		dblclick: function (event)
+		{
+			var
+				offset = this .getBrowser () .getCanvas () .offset (), 
+				x      = event .pageX - offset .left,
+				y      = this .getBrowser () .getCanvas () .height () - (event .pageY - offset .top);
+
+			event .stopImmediatePropagation ();
+
+			this .lookAt (x, y);
 		},
 		mousemove: function (event)
 		{
@@ -41839,7 +42416,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				{
 					// Stop event propagation.
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 
 					// Move.
 
@@ -41859,7 +42436,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			// Determine scroll direction.
 
@@ -41963,16 +42540,13 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		ROLL_TIME              = 0.2;
 
 	var
-		yAxis = new Vector3 (0, 1, 0),
-		zAxis = new Vector3 (0, 0, 1);
-
-	var
-		black = new Float32Array ([0, 0, 0]),
-		white = new Float32Array ([1, 1, 1]);
-
-	var
+		yAxis     = new Vector3 (0, 1, 0),
+		zAxis     = new Vector3 (0, 0, 1),
+		black     = new Float32Array ([0, 0, 0]),
+		white     = new Float32Array ([1, 1, 1]),
 		fromPoint = new Vector3 (0, 0, 0),
-		toPoint   = new Vector3 (0, 0, 0);
+		toPoint   = new Vector3 (0, 0, 0),
+		upVector  = new Vector3 (0, 0, 0);
 	
 	var
 		MOVE = 0,
@@ -42035,7 +42609,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -42068,7 +42642,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -42142,7 +42716,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				case 1:
 				{
 					// Pan
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 
 					this .toVector  .set (x, -y, 0);
 					this .direction .assign (this .toVector) .subtract (this .fromVector);
@@ -42155,7 +42729,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			// Determine scroll direction.
 
@@ -42197,8 +42771,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var
 				navigationInfo = this .getNavigationInfo (),
-				viewpoint      = this .getActiveViewpoint (),
-				upVector       = viewpoint .getUpVector ();
+				viewpoint      = this .getActiveViewpoint ();
+
+			upVector .assign (viewpoint .getUpVector ());
 
 			// Rubberband values
 
@@ -42713,27 +43288,1232 @@ function ($,
 
 
 
+define ('standard/Math/Geometry/Spheroid3',[],function ()
+{
+
+
+	function Spheroid3 (semiMajorAxis, semiMinorAxis)
+	{
+		switch (arguments .length)
+		{
+			case 0:
+				this .semiMajorAxis = 0; // a
+				this .semiMinorAxis = 0; // c
+				break;
+			case 2:
+				this .semiMajorAxis = semiMajorAxis; // a
+				this .semiMinorAxis = semiMinorAxis; // c
+				break;
+			case 3:
+				var f_1 = arguments [1];
+				this .semiMajorAxis = semiMajorAxis;                 // a
+				this .semiMinorAxis = semiMajorAxis * (1 - 1 / f_1); // c
+				break;
+		}
+	}
+
+	Spheroid3 .prototype =
+	{
+		constructor: Spheroid3,
+		getSemiMajorAxis: function ()
+		{
+			// Returns the semi-major axis (a)
+			return this .semiMajorAxis; // a
+		},
+		getSemiMinorAxis: function ()
+		{
+			// Returns the semi-minor axis (c)
+			return this .semiMinorAxis; // c
+		},
+		toString: function ()
+		{
+			return this .semiMajorAxis + " " + this .semiMinorAxis;
+		},
+	};
+
+	return Spheroid3;
+});
+
+
+define ('standard/Geospatial/ReferenceEllipsoids',[
+	"standard/Math/Geometry/Spheroid3",
+],
+function (Spheroid3)
+{
+
+
+	var ReferenceEllipsoids =
+	{
+		// Earth
+		// X3D Specification
+		AA: new Spheroid3 (6377563.396, 299.3249646,   true), // Airy 1830
+		AM: new Spheroid3 (6377340.189, 299.3249646,   true), // Modified Airy
+		AN: new Spheroid3 (6378160,     298.25,        true), // Australian National
+		BN: new Spheroid3 (6377483.865, 299.1528128,   true), // Bessel 1841 (Namibia)
+		BR: new Spheroid3 (6377397.155, 299.1528128,   true), // Bessel 1841 (Ethiopia Indonesia...)
+		CC: new Spheroid3 (6378206.4,   294.9786982,   true), // Clarke 1866
+		CD: new Spheroid3 (6378249.145, 293.465,       true), // Clarke 1880
+		EA: new Spheroid3 (6377276.345, 300.8017,      true), // Everest (India 1830)
+		EB: new Spheroid3 (6377298.556, 300.8017,      true), // Everest (Sabah & Sarawak)
+		EC: new Spheroid3 (6377301.243, 300.8017,      true), // Everest (India 1956)
+		ED: new Spheroid3 (6377295.664, 300.8017,      true), // Everest (W. Malaysia 1969)
+		EE: new Spheroid3 (6377304.063, 300.8017,      true), // Everest (W. Malaysia & Singapore 1948)
+		EF: new Spheroid3 (6377309.613, 300.8017,      true), // Everest (Pakistan)
+		FA: new Spheroid3 (6378155,     298.3,         true), // Modified Fischer 1960
+		HE: new Spheroid3 (6378200,     298.3,         true), // Helmert 1906
+		HO: new Spheroid3 (6378270,     297,           true), // Hough 1960
+		ID: new Spheroid3 (6378160,     298.247,       true), // Indonesian 1974
+		IN: new Spheroid3 (6378388,     297,           true), // International 1924
+		KA: new Spheroid3 (6378245,     298.3,         true), // Krassovsky 1940
+		RF: new Spheroid3 (6378137,     298.257222101, true), // Geodetic Reference System 1980 (GRS 80)
+		SA: new Spheroid3 (6378160,     298.25,        true), // South American 1969
+		WD: new Spheroid3 (6378135,     298.26,        true), // WGS 72
+		WE: new Spheroid3 (6378137,     298.257223563, true), // WGS 84
+		// Solar System
+		// http://en.wikipedia.de
+		// Can someone give me more accurate parameters.
+		SUN:     new Spheroid3 (696342000, 1 / 9e-6, true),
+		MERCURY: new Spheroid3 (2439700,  2439700),
+		VENUS:   new Spheroid3 (6051800,  6051800),
+		MOON:    new Spheroid3 (1738140,  1735970),
+		MARS:    new Spheroid3 (3395428,  3377678), // http://adsabs.harvard.edu/abs/2010EM%26P..106....1A
+		JUPITER: new Spheroid3 (71492000, 66854000),
+		SATURN:  new Spheroid3 (60268000, 54364000),
+		URANUS:  new Spheroid3 (2555000,  24973000),
+		NEPTUNE: new Spheroid3 (24764000, 24341000),
+		PLUTO:   new Spheroid3 (1153000,  1153000),
+	};
+
+	return ReferenceEllipsoids;
+});
+
+
+define ('standard/Geospatial/Geodetic',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function (Vector3,
+          Algorithm)
+{
+
+
+	var
+		EPS_H = 1e-3,
+		EPS_P = 1e-10,
+		IMAX  = 30;
+		
+	function Geodetic (spheroid, latitudeFirst, radians)
+	{
+		this .longitudeFirst = ! latitudeFirst;
+      this .degrees        = ! radians;
+      this .a              = spheroid .getSemiMajorAxis ();
+      this .c              = spheroid .getSemiMinorAxis ();
+      this .c2a2           = Math .pow (spheroid .getSemiMinorAxis () / this .a, 2);
+      this .ecc2           = 1 - this .c2a2;
+	}
+
+	Geodetic .prototype =
+	{
+		constructor: Geodetic,
+		convert: function (geodetic, result)
+		{
+			var elevation = geodetic .z;
+
+			if (this .longitudeFirst)
+			{
+				var
+					latitude  = geodetic .y;
+					longitude = geodetic .x;
+			}
+			else
+			{
+				var
+					latitude  = geodetic .x,
+					longitude = geodetic .y;
+			}
+		
+			if (this .degrees)
+			{
+				latitude  *= Math .PI / 180;
+				longitude *= Math .PI / 180;
+			}
+		
+			return this .convertRadians (latitude, longitude, elevation, result);
+		},
+		convertRadians: function (latitude, longitude, elevation, result)
+		{
+			var
+				slat  = Math .sin (latitude),
+				slat2 = Math .pow (slat, 2),
+				clat  = Math .cos (latitude),
+				N     = this .a / Math .sqrt (1 - this .ecc2 * slat2),
+				Nhl   = (N + elevation) * clat;
+
+			return result .set (Nhl * Math .cos (longitude),
+			                    Nhl * Math .sin (longitude),
+			                    (N * this .c2a2 + elevation) * slat);
+		},
+		apply: function (geocentric, result)
+		{
+			this .applyRadians (geocentric, result);
+
+			if (this .degrees)
+			{
+				result .x *= 180 / Math .PI; // latitude
+				result .y *= 180 / Math .PI; // longitude
+			}
+
+			if (this .longitudeFirst)
+			{
+				var tmp = result .x;
+
+				result .x = result .y; // latitude
+				result .y = tmp;       // longitude
+			}
+
+			return result;
+		},
+		applyRadians: function (geocentric, result)
+		{
+			var
+				x = geocentric .x,
+				y = geocentric .y,
+				z = geocentric .z;
+		
+			var P = Math .sqrt (x * x + y * y);
+		
+			// Handle pole case.
+			if (P == 0)
+				return result .set (Math .PI, 0, z - this .c);
+
+			var
+				latitude  = 0,
+				longitude = Math .atan2 (y, x),
+				elevation = 0;
+		
+			var
+				a    = this .a,
+				N    = a,
+				ecc2 = this .ecc2;
+		
+			for (var i = 0; i < IMAX; ++ i)
+			{
+				var
+					h0 = elevation,
+					b0 = latitude;
+		
+				latitude = Math .atan (z / P / (1 - ecc2 * N / (N + elevation)));
+		
+				var sin_p = Math .sin (latitude);
+		
+				N         = a / Math .sqrt (1 - ecc2 * sin_p * sin_p);
+				elevation = P / Math .cos (latitude) - N;
+		
+				if (Math .abs (elevation - h0) < EPS_H && Math .abs (latitude - b0) < EPS_P)
+					break;
+			}
+
+			return result .set (latitude, longitude, elevation);
+		},
+		normal: function (geocentric, result)
+		{
+			var geodetic = this .applyRadians (geocentric, result);
+
+			var
+				latitude  = geodetic .x,
+				longitude = geodetic .y;
+
+			var clat = Math .cos (latitude);
+
+			var
+				nx = Math .cos (longitude) * clat,
+				ny = Math .sin (longitude) * clat,
+				nz = Math .sin (latitude);
+
+			return result .set (nx, ny, nz);
+		},
+		/*
+		lerp: function (s, d, t)
+		{
+			var
+				source     =  this .source      .assign (s),
+				destination = this .destination .assign (d);
+
+			var
+				RANGE    = this .degrees ? 180 : M_PI,
+				RANGE1_2 = RANGE / 2,
+				RANGE2   = RANGE * 2;
+		
+			var range = 0;
+		
+			if (this .longitudeFirst)
+			{
+				source .x = Algorithm .interval (source .x, -RANGE,    RANGE);	
+				source .y = Algorithm .interval (source .y, -RANGE1_2, RANGE1_2);
+		
+				destination .x = Algorithm .interval (destination .x, -RANGE,    RANGE);	
+				destination .y = Algorithm .interval (destination .y, -RANGE1_2, RANGE1_2);
+		
+				range = Math .abs (destination .x - source .x);
+			}
+			else
+			{
+				source .x = Algorithm .interval (source .x, -RANGE1_2, RANGE1_2);
+				source .y = Algorithm .interval (source .y, -RANGE,    RANGE);
+		
+				destination .x = Algorithm .interval (destination .x, -RANGE1_2, RANGE1_2);
+				destination .y = Algorithm .interval (destination .y, -RANGE,    RANGE);
+		
+				range = Math .abs (destination .y - source .y);
+			}
+		
+			if (range <= RANGE)
+				return source .lerp (destination, t);
+		
+			var step = (RANGE2 - range) * t;
+		
+			if (this .longitudeFirst)
+			{
+				var longitude = source .x < destination .x ? source .x - step : source .x + step;
+		
+				if (longitude < -RANGE)
+					longitude += RANGE2;
+		
+				else if (longitude > RANGE)
+					longitude -= RANGE2;
+		
+				return source .set (longitude,
+				                    Algorithm .lerp (source .y, destination .y, t),
+				                    Algorithm .lerp (source .z, destination .z, t));
+			}
+
+			var longitude = source .y < destination .y ? source .y - step : source .y + step;
+	
+			if (longitude < -RANGE)
+				longitude += RANGE2;
+	
+			else if (longitude > RANGE)
+				longitude -= RANGE2;
+	
+			return source .set (Algorithm .lerp (source .x, destination .x, t),
+			                    longitude,
+			                    Algorithm .lerp (source .z, destination .z, t));
+		},
+		source: new Vector3 (0, 0, 0),
+		destination: new Vector3 (0, 0, 0),
+		*/
+	};
+
+	return Geodetic;
+});
+
+
+define ('standard/Geospatial/UniversalTransverseMercator',[
+	"standard/Geospatial/Geodetic",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function (Geodetic,
+          Vector3,
+          Algorithm)
+{
+
+
+	var
+		N0 = 1.0e7,
+		E0 = 5.0e5,
+		k0 = 0.9996;
+
+	function UniversalTransverseMercator (spheroid, zone, northernHemisphere, northingFirst)
+	{
+		var
+			a    = spheroid .getSemiMajorAxis (),
+			ecc2 = 1 - Math .pow (spheroid .getSemiMinorAxis () / a, 2),
+			EE   = ecc2 / (1 - ecc2),
+			e1   = (1 - Math .sqrt (1 - ecc2)) / (1 + Math .sqrt (1 - ecc2));
+
+		this .southernHemisphere = ! northernHemisphere;
+		this .eastingFirst       = ! northingFirst;
+		this .a                  = a;
+		this .ecc2               = ecc2;
+		this .EE                 = EE;
+		this .E8                 = 8 * EE;
+		this .E9                 = 9 * EE;
+		this .E252               = 252 * EE;
+		this .e1                 = e1;
+		this .A                  = k0 * (a * (1 - ecc2 / 4 - 3 * ecc2 * ecc2 / 64 - 5 * ecc2 * ecc2 * ecc2 / 256));
+		this .B                  = 3 * e1 / 2 - 7 * e1 * e1 * e1 / 32;
+		this .C                  = 21 * e1 * e1 / 16 - 55 * e1 * e1 * e1 * e1 / 32;
+		this .D                  = 151 * e1 * e1 * e1 / 96;
+		this .E                  = a * (1 - ecc2);
+		this .W                  = 1 - ecc2 / 4 - 3 * ecc2 * ecc2 / 64 - 5 * ecc2 * ecc2 * ecc2 / 256;
+		this .X                  = 3 * ecc2 / 8 + 3 * ecc2 * ecc2 / 32 + 45 * ecc2 * ecc2 * ecc2 / 1024;
+		this .Y                  = 15 * ecc2 * ecc2 / 256 + 45 * ecc2 * ecc2 * ecc2 / 1024;
+		this .Z                  = 35 * ecc2 * ecc2 * ecc2 / 3072;
+		this .longitude0         = Algorithm .radians (zone * 6 - 183);
+		this .geodeticConverter  = new Geodetic (spheroid, true, true);
+	}
+
+	UniversalTransverseMercator .prototype =
+	{
+		constructor: UniversalTransverseMercator,
+		convert: function (utm, result)
+		{
+			// https://gist.github.com/duedal/840476
+		
+			if (this .eastingFirst)
+			{
+				var
+					northing = utm .y;
+					easting  = utm .x;
+			}
+			else
+			{
+				var
+					northing = utm .x,
+					easting  = utm .y;
+			}
+		
+			// Check for southern hemisphere and remove offset from easting.
+		
+			var S = this .southernHemisphere;
+		
+			if (northing < 0)
+			{
+				S        = ! this .southernHemisphere;
+				northing = -northing;
+			}
+		
+			if (S)
+				northing -= N0;
+		
+			easting -= E0;
+		
+			// Begin calculation.
+		
+			var
+				mu   = northing / this .A,
+				phi1 = mu + this .B * Math .sin (2 * mu) + this .C * Math .sin (4 * mu) + this .D * Math .sin (6 * mu);
+		
+			var
+				sinphi1 = Math .pow (Math .sin (phi1), 2),
+				cosphi1 = Math .cos (phi1),
+				tanphi1 = Math .tan (phi1);
+		
+			var
+				N1 = this .a / Math .sqrt (1 - this .ecc2 * sinphi1),
+				T2 = Math .pow (tanphi1, 2),
+				T8 = Math .pow (tanphi1, 8),
+				C1 = this .EE * T2,
+				C2 = C1 * C1,
+				R1 = this .E / Math .pow (1 - this .ecc2 * sinphi1, 1.5),
+				I  = easting / (N1 * k0);
+		
+			var
+				J = (5 + 3 * T2 + 10 * C1 - 4 * C2 - this .E9) * Math .pow (I, 4) / 24,
+				K = (61 + 90 * T2 + 298 * C1 + 45 * T8 - this .E252 - 3 * C2) * Math .pow (I, 6) / 720,
+				L = (5 - 2 * C1 + 28 * T2 - 3 * C2 + this .E8 + 24 * T8) * Math .pow (I, 5) / 120;
+		
+			var
+				latitude  = phi1 - (N1 * tanphi1 / R1) * (I * I / 2 - J + K),
+				longitude = this .longitude0 + (I - (1 + 2 * T2 + C1) * Math .pow (I, 3) / 6 + L) / cosphi1;
+		
+			return this .geodeticConverter .convertRadians (latitude, longitude, utm .z, result);
+		},
+		apply: function (geocentric, result)
+		{
+			// https://gist.github.com/duedal/840476
+
+			var
+				geodetic  = this .geodeticConverter .applyRadians (geocentric, result),
+				latitude  = geodetic .x,
+				longitude = geodetic .y;
+		
+			var
+				tanlat = Math .tan (latitude),
+				coslat = Math .cos (latitude);
+		
+			var
+				EE = this .EE,
+				N  = this .a / Math .sqrt (1 - this .ecc2 * Math .pow (Math .sin (latitude), 2)),
+				T  = tanlat * tanlat,
+				T6 = T * T * T,
+				C  = EE * coslat * coslat,
+				A  = coslat * (longitude - this .longitude0);
+		
+			var M = this .a * (this .W * latitude
+			                   - this .X * Math .sin (2 * latitude)
+			                   + this .Y * Math .sin (4 * latitude)
+			                   - this .Z * Math .sin (6 * latitude));
+		
+			var easting = k0 * N * (A + (1 - T + C) * Math .pow (A, 3) / 6
+			                        + (5 - 18 * T6 + 72 * C - 58 * EE) * Math .pow (A, 5) / 120)
+			              + E0;
+		
+			var northing = k0 * (M + N * tanlat * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * Math .pow (A, 4) / 24
+			                                       + (61 - 58 * T6 + 600 * C - 330 * EE) * Math .pow (A, 6) / 720));
+		
+			if (latitude < 0)
+			{
+				northing += N0;
+				
+				if (! this .southernHemisphere)
+					northing = -northing;
+			}
+			else
+			{
+				if (this .southernHemisphere)
+					northing = -northing;		
+			}
+		
+			if (this .eastingFirst)
+				return result .set (easting, northing, geodetic .z);
+		
+			return result .set (northing, easting, geodetic .z);
+		},
+		//lerp: Vector3 .lerp,
+	};
+
+	return UniversalTransverseMercator;
+});
+
+
+define ('cobweb/Browser/Geospatial/Geocentric',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function (Vector3,
+          Algorithm)
+{
+
+
+	function Geocentric () { }
+
+	Geocentric .prototype =
+	{
+		constructor: Geocentric,
+		convert: function (geocentric, result)
+		{
+			return result .assign (geocentric);
+		},
+		apply: function (geocentric, result)
+		{
+			return result .assign (geocentric);
+		},
+		slerp: function (source, destination, t)
+		{
+			var
+				sourceLength      = source      .abs (),
+				destinationLength = destination .abs ();
+			
+			source      .normalize ();
+			destination .normalize ();
+			
+			return Algorithm .simpleSlerp (source, destination, t) .multiply (Algorithm .lerp (sourceLength, destinationLength, t));
+		},
+	};
+
+	return Geocentric;
+});
+
+
+define ('cobweb/Browser/Geospatial/Geospatial',[
+	"standard/Geospatial/ReferenceEllipsoids",
+	"standard/Geospatial/Geodetic",
+	"standard/Geospatial/UniversalTransverseMercator",
+	"cobweb/Browser/Geospatial/Geocentric",
+],
+function (ReferenceEllipsoids,
+          Geodetic,
+          UniversalTransverseMercator,
+          Geocentric)
+{
+
+
+	var
+		i   = 0,
+		GD  = i ++,
+		UTM = i ++,
+		GC  = i ++;
+
+	var CoordinateSystems = {
+		GD:  GD,
+		GDC: GD,
+		UTM: UTM,
+		GC:  GC,
+		GCC: GC,
+		GS:  GC,
+	};
+	
+	var Zone = /^Z(\d+)$/;
+
+	var Geospatial =
+	{
+		GD: GD,
+		UTM: UTM,
+		GC: GC,
+		getReferenceFrame: function (geoSystem, radians)
+		{
+			switch (this .getCoordinateSystem (geoSystem))
+			{
+				case GD:
+				{
+					return new Geodetic (this .getEllipsoid (geoSystem),
+					                     this .getLatitudeFirst (geoSystem),
+					                     radians);
+				}
+				case UTM:
+				{
+					return new UniversalTransverseMercator (this .getEllipsoid (geoSystem),
+					                                        this .getZone (geoSystem),
+					                                        this .getNorthernHemisphere (geoSystem),
+					                                        this .getNorthingFirst (geoSystem));
+				}
+				case GC:
+				{
+					return new Geocentric ();
+				}
+			}
+
+			return new Geodetic (ReferenceEllipsoids .WE, true, radians);
+		},
+		getElevationFrame: function (geoSystem, radians)
+		{
+			return new Geodetic (this .getEllipsoid (geoSystem), true, radians);
+		},
+		getCoordinateSystem: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var coordinateSystem = CoordinateSystems [geoSystem [i]];
+
+				if (coordinateSystem !== undefined)
+					return coordinateSystem;
+			}
+		
+			return GD;
+		},
+		getEllipsoid: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var ellipsoid = ReferenceEllipsoids [geoSystem [i]];
+
+				if (ellipsoid !== undefined)
+					return ellipsoid;
+			}
+		
+			return ReferenceEllipsoids .WE;
+		},
+		getEllipsoidString: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var ellipsoid = ReferenceEllipsoids [geoSystem [i]];
+
+				if (ellipsoid !== undefined)
+					return geoSystem [i];
+			}
+
+			return "WE";
+		},
+		isStandardOrder: function (geoSystem)
+		{
+			switch (this .getCoordinateSystem (geoSystem))
+			{
+				case GD:
+				{
+					return this .getLatitudeFirst (geoSystem);
+				}
+				case UTM:
+				{
+					return this .getNorthingFirst (geoSystem);
+				}
+				case GC:
+				{
+					return true;
+				}
+			}
+		
+			return this .getLatitudeFirst (geoSystem);
+		},
+		getLatitudeFirst: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				if (geoSystem [i] === "longitude_first")
+					return false;
+			}
+
+			return true;
+		},
+		getNorthingFirst: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				if (geoSystem [i] === "easting_first")
+					return false;
+			}
+		
+			return true;
+		},
+		getZone: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				var match = geoSystem [i] .match (Zone);
+
+				if (match)
+					return parseInt (match [1]);
+			}
+		
+			return 1;
+		},
+		getNorthernHemisphere: function (geoSystem)
+		{
+			for (var i = 0, length = geoSystem .length; i < length; ++ i)
+			{
+				if (geoSystem [i] === "S")
+					return false;
+			}
+
+			return true;
+		},
+	};
+	
+	return Geospatial;
+});
+
+
 define ('cobweb/Components/Geospatial/X3DGeospatialObject',[
 	"jquery",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Geospatial/Geospatial",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
-          X3DConstants)
+          X3DConstants,
+          Geospatial,
+          X3DCast,
+          Vector3,
+          Matrix4)
 {
 
+
+	var
+		vector = new Vector3 (0, 0, 0),
+		result = new Vector3 (0, 0, 0),
+		t      = new Vector3 (0, 0, 0),
+		x      = new Vector3 (0, 0, 0),
+		y      = new Vector3 (0, 0, 0),
+		z      = new Vector3 (0, 0, 0);
 
 	function X3DGeospatialObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DGeospatialObject);
+
+		this .radians         = false;
+		this .origin          = new Vector3 (0, 0, 0);
+		this .originMatrix    = new Matrix4 ();
+		this .invOriginMatrix = new Matrix4 ();
 	}
 
 	X3DGeospatialObject .prototype =
 	{
 		constructor: X3DGeospatialObject,
-		initialize: function () { },
+		initialize: function ()
+		{
+			this .geoSystem_ .addInterest (this, "set_geoSystem__");
+			this .geoOrigin_ .addInterest (this, "set_geoOrigin__");
+
+			this .set_geoSystem__ ();
+			this .set_geoOrigin__ ();
+		},
+		set_geoSystem__: function ()
+		{
+			this .coordinateSystem = Geospatial .getCoordinateSystem (this .geoSystem_);
+			this .referenceFrame   = Geospatial .getReferenceFrame   (this .geoSystem_, this .radians);
+			this .elevationFrame   = Geospatial .getElevationFrame   (this .geoSystem_, this .radians);
+			this .standardOrder    = Geospatial .isStandardOrder     (this .geoSystem_);
+		},
+		set_geoOrigin__: function ()
+		{
+			if (this .geoOriginNode)
+			{
+				this .geoOriginNode .removeInterest (this, "set_origin__");
+				this .geoOriginNode .removeInterest (this, "set_rotateYUp__");
+				this .geoOriginNode .removeInterest (this, "addNodeEvent");
+			}
+		
+			this .geoOriginNode = X3DCast (X3DConstants .GeoOrigin, this .geoOrigin_);
+		
+			if (this .geoOriginNode)
+			{
+				this .geoOriginNode .addInterest (this, "set_origin__");
+				this .geoOriginNode .addInterest (this, "set_rotateYUp__");
+				this .geoOriginNode .addInterest (this, "addNodeEvent");
+			}
+		
+			this .set_origin__ ();
+			this .set_rotateYUp__ ();
+		},
+		set_origin__: function ()
+		{
+			if (this .geoOriginNode)
+				this .geoOriginNode .getOrigin (this .origin);
+			else
+				this .origin .set (0, 0, 0);
+
+			this .set_originMatrix__ ();
+		},
+		set_originMatrix__: function ()
+		{
+			try
+			{
+				if (this .geoOriginNode)
+				{
+					// Position
+					var t = this .origin;
+			
+					// Let's work out the orientation at that location in order
+					// to maintain a view where +Y is in the direction of gravitional
+					// up for that region of the planet's surface. This will be the
+					// value of the rotation matrix for the transform.
+				
+					this .elevationFrame .normal (t, y);
+			
+					x .set (0, 0, 1) .cross (y);
+			
+					// Handle pole cases.
+					if (x .equals (Vector3 .Zero))
+						x .set (1, 0, 0);
+				
+					z .assign (x) .cross (y);
+				
+					x .normalize ();
+					z .normalize ();
+				
+					this .originMatrix .set (x .x, x .y, x .z, 0,
+					                         y .x, y .y, y .z, 0,
+					                         z .x, z .y, z .z, 0,
+					                         t .x, t .y, t .z, 1);
+	
+					this .invOriginMatrix .assign (this .originMatrix) .inverse ();
+				}
+			}
+			catch (error)
+			{
+				/// ???
+			}
+		},
+		set_rotateYUp__: function ()
+		{
+			if (this .geoOriginNode && this .geoOriginNode .rotateYUp_ .getValue ())
+			{
+				this .getCoord          = getCoordRotateYUp;
+				this .getGeoCoord       = getGeoCoordRotateYUp;
+				this .getGeoUpVector    = getGeoUpVectorRotateYUp;
+				this .getLocationMatrix = getLocationMatrixRotateYUp;
+			}
+			else
+			{
+				this .getCoord          = getCoord;
+				this .getGeoCoord       = getGeoCoord;
+				this .getGeoUpVector    = getGeoUpVector;
+				this .getLocationMatrix = getLocationMatrix;
+			}
+		},
+		getReferenceFrame: function ()
+		{
+			return this .referenceFrame;
+		},
+		getStandardOrder: function ()
+		{
+			return this .standardOrder;
+		},
+		getCoord: getCoord,
+		getGeoCoord: getGeoCoord,
+		getGeoElevation: function (point)
+		{
+			return this .getGeoCoord (point, result) .z;
+		},
+		getGeoUpVector: getGeoUpVector,
+		getLocationMatrix: getLocationMatrix,
 	};
 
+	function getCoord (geoPoint, result)
+	{
+		return this .referenceFrame .convert (geoPoint, result) .subtract (this .origin);
+	}
+
+	function getCoordRotateYUp (geoPoint, result)
+	{
+		return this .invOriginMatrix .multVecMatrix (this .referenceFrame .convert (geoPoint, result));
+	}
+
+	function getGeoCoord (point, result)
+	{
+		return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);
+	}
+
+	function getGeoCoordRotateYUp (point, result)
+	{
+		return this .referenceFrame .apply (this .originMatrix .multVecMatrix (vector .assign (point)), result);
+	}
+
+	function getGeoUpVector (point, result)
+	{
+		return this .elevationFrame .normal (vector .assign (point) .add (this .origin), result);
+	}
+
+	function getGeoUpVectorRotateYUp (point, result)
+	{
+		return this .invOriginMatrix .multDirMatrix (this .elevationFrame .normal (this .originMatrix .multVecMatrix (vector .assign (point)), result));
+	}
+
+	function getStandardLocationMatrix (geoPoint, result)
+	{
+		// Position
+		this .referenceFrame .convert (geoPoint, t);
+
+		// Let's work out the orientation at that location in order
+		// to maintain a view where +Y is in the direction of gravitional
+		// up for that region of the planet's surface. This will be the
+		// value of the rotation matrix for the transform.
+	
+		this .elevationFrame .normal (t, y);
+
+		x .set (0, 0, 1) .cross (y);
+
+		// Handle pole cases.
+		if (x .equals (Vector3 .Zero))
+			x .set (1, 0, 0);
+	
+		z .assign (x) .cross (y);
+	
+		x .normalize ();
+		z .normalize ();
+	
+		return result .set (x .x, x .y, x .z, 0,
+		                    y .x, y .y, y .z, 0,
+		                    z .x, z .y, z .z, 0,
+		                    t .x, t .y, t .z, 1);
+	}
+
+	function getLocationMatrix (geoPoint, result)
+	{
+		var
+			origin         = this .origin,
+			locationMatrix = getStandardLocationMatrix .call (this, geoPoint, result);
+
+		// translateRight (-origin)
+		locationMatrix [12] -= origin .x;
+		locationMatrix [13] -= origin .y;
+		locationMatrix [14] -= origin .z;
+
+		return locationMatrix;
+	}
+
+	function getLocationMatrixRotateYUp (geoPoint, result)
+	{
+		return getStandardLocationMatrix .call (this, geoPoint, result) .multRight (this .invOriginMatrix);
+	}
+
 	return X3DGeospatialObject;
+});
+
+
+
+
+define ('cobweb/Components/Navigation/NavigationInfo',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DBindableNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DBindableNode,
+          TraverseType,
+          X3DConstants)
+{
+
+
+	var TransitionType =
+	{
+		TELEPORT: true,
+		LINEAR:   true,
+		ANIMATE:  true,
+	};
+
+	function NavigationInfo (executionContext)
+	{
+		X3DBindableNode .call (this, executionContext);
+
+		this .addType (X3DConstants .NavigationInfo);
+				
+		this .addChildren ("availableViewers", new Fields .MFString (),
+		                   "viewer",           new Fields .SFString ("EXAMINE"));
+	}
+
+	NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
+	{
+		constructor: NavigationInfo,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_bind",           new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "type",               new Fields .MFString ("EXAMINE", "ANY")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "avatarSize",         new Fields .MFFloat (0.25, 1.6, 0.75)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "speed",              new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "headlight",          new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "visibilityLimit",    new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionType",     new Fields .MFString ("LINEAR")),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionTime",     new Fields .SFTime (1)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "transitionComplete", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "bindTime",           new Fields .SFTime ()),
+		]),
+		getTypeName: function ()
+		{
+			return "NavigationInfo";
+		},
+		getComponentName: function ()
+		{
+			return "Navigation";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DBindableNode .prototype .initialize .call (this);
+
+			this .type_      .addInterest (this, "set_type__");
+			this .headlight_ .addInterest (this, "set_headlight__");
+
+			this .set_type__ ();
+			this .set_headlight__ ();
+		},
+		set_type__: function ()
+		{
+			this .availableViewers_ .length = 0;;
+
+			var
+				examineViewer = false,
+				walkViewer    = false,
+				flyViewer     = false,
+				planeViewer   = false,
+				noneViewer    = false,
+				lookAt        = false;
+
+			// Determine active viewer.
+
+			this .viewer_ = "EXAMINE";
+
+			for (var i = 0; i < this .type_ .length; ++ i)
+			{
+			   var string = this .type_ [i];
+			
+				switch (string)
+				{
+					case "EXAMINE":
+					case "WALK":
+					case "FLY":
+					case "LOOKAT":
+					case "PLANE":
+					case "NONE":
+						this .viewer_ = string;
+						break;
+					case "PLANE_create3000.de":
+						this .viewer_ = "PLANE";
+						break;
+					default:
+						continue;
+				}
+
+				// Leave for loop.
+				break;
+			}
+
+			// Determine available viewers.
+
+			if (! this .type_ .length)
+			{
+				examineViewer = true;
+				walkViewer    = true;
+				flyViewer     = true;
+				planeViewer   = true;
+				noneViewer    = true;
+				lookAt        = true;
+			}
+			else
+			{
+				for (var i = 0; i < this .type_ .length; ++ i)
+				{
+				   var string = this .type_ [i];
+
+					switch (string)
+					{
+						case "EXAMINE":
+							examineViewer = true;
+							continue;
+						case "WALK":
+							walkViewer = true;
+							continue;
+						case "FLY":
+							flyViewer = true;
+							continue;
+						case "LOOKAT":
+							lookAt = true;
+							continue;
+						case "PLANE":
+							planeViewer = true;
+							continue;
+						case "NONE":
+							noneViewer = true;
+							continue;
+					}
+
+					if (string == "ANY")
+					{
+						examineViewer = true;
+						walkViewer    = true;
+						flyViewer     = true;
+						planeViewer   = true;
+						noneViewer    = true;
+						lookAt        = true;
+
+						// Leave for loop.
+						break;
+					}
+
+					// Some string defaults to EXAMINE.
+					examineViewer = true;
+				}
+
+				if (examineViewer)
+					this .availableViewers_ .push ("EXAMINE");
+
+				if (walkViewer)
+					this .availableViewers_ .push ("WALK");
+
+				if (flyViewer)
+					this .availableViewers_ .push ("FLY");
+
+				if (planeViewer)
+					this .availableViewers_ .push ("PLANE");
+
+				if (lookAt)
+					this .availableViewers_ .push ("LOOKAT");
+
+				if (noneViewer)
+					this .availableViewers_ .push ("NONE");
+			}
+		},
+		set_headlight__: function ()
+		{
+			if (this .headlight_ .getValue ())
+				this .enable = enable;
+			else
+				delete this .enable;
+		},
+		bindToLayer: function (layer)
+		{
+			X3DBindableNode .prototype .bindToLayer .call (this, layer);
+		
+			layer .getNavigationInfoStack () .push (this);
+		},
+		unbindFromLayer: function (layer)
+		{
+			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
+
+			layer .getNavigationInfoStack () .pop (this);
+		},
+		removeFromLayer: function (layer)
+		{
+			layer .getNavigationInfoStack () .remove (this);
+		},
+		getViewer: function ()
+		{
+		   return this .viewer_ .getValue ();
+		},
+		getCollisionRadius: function ()
+		{
+			if (this .avatarSize_ .length > 0)
+			{
+				if (this .avatarSize_ [0] > 0)
+					return this .avatarSize_ [0];
+			}
+
+			return 0.25;
+		},
+		getAvatarHeight: function ()
+		{
+			if (this .avatarSize_ .length > 1)
+				return this .avatarSize_ [1];
+
+			return 1.6;
+		},
+		getStepHeight: function ()
+		{
+			if (this .avatarSize_ .length > 2)
+				return this .avatarSize_ [2];
+
+			return 0.75;
+		},
+		getNearPlane: function ()
+		{
+			var zNear = this .getCollisionRadius ();
+
+			if (zNear === 0)
+				return 1e-5;
+
+			else
+				return zNear / 2;
+		},
+		getFarPlane: function (viewpoint)
+		{
+			return this .visibilityLimit_ .getValue ()
+				    ? this .visibilityLimit_ .getValue ()
+				    : viewpoint .getMaxZFar ();
+		},
+		getTransitionType: function ()
+		{
+			for (var i = 0, length = this .transitionType_ .length; i < length; ++ i)
+			{
+				var
+					value          = this .transitionType_ [i],
+					transitionType = TransitionType [value];
+
+				if (transitionType)
+					return value;
+			}
+
+			return "LINEAR";
+		},
+		enable: function ()
+		{
+		},
+		traverse: function ()
+		{
+			this .getCurrentLayer () .getNavigationInfos () .push (this);
+		}
+	});
+
+	function enable ()
+	{
+		this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+	}
+
+	return NavigationInfo;
 });
 
 
@@ -42746,17 +44526,51 @@ define ('cobweb/Components/Geospatial/GeoViewpoint',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Navigation/X3DViewpointNode",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Components/Interpolation/ScalarInterpolator",
+	"cobweb/Components/Navigation/NavigationInfo",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DViewpointNode, 
-          X3DGeospatialObject, 
-          X3DConstants)
+          X3DGeospatialObject,
+          ScalarInterpolator,
+          NavigationInfo,
+          X3DConstants,
+          Camera,
+          Vector3,
+          Rotation4,
+          Matrix4,
+          Algorithm)
 {
 
+
+	var
+		zAxis               = new Vector3 (0, 0, 1),
+		screenScale         = new Vector3 (0, 0, 0),
+		normalized          = new Vector3 (0, 0, 0),
+		upVector            = new Vector3 (0, 0, 0),
+		locationMatrix      = new Matrix4 (),
+		position            = new Vector3 (0, 0, 0),
+		orientation         = new Rotation4 (0, 0, 1, 0),
+		centerOfRotation    = new Vector3 (0, 0, 0),
+		geoPosition         = new Vector3 (0, 0, 0),
+		geoOrientation      = new Rotation4 (0, 0, 1, 0),
+		geoCenterOfRotation = new Vector3 (0, 0, 0);
+
+	function traverse (type)
+	{
+		X3DViewpointNode .prototype .traverse .call (this, type);
+
+		this .navigationInfoNode .traverse (type);
+	}
 
 	function GeoViewpoint (executionContext)
 	{
@@ -42764,6 +44578,22 @@ function ($,
 		X3DGeospatialObject .call (this, executionContext);
 
 		this .addType (X3DConstants .GeoViewpoint);
+
+		this .navigationInfoNode      = new NavigationInfo (executionContext);
+		this .fieldOfViewInterpolator = new ScalarInterpolator (this .getBrowser () .getPrivateScene ());
+		this .projectionMatrix        = new Matrix4 ();
+		this .position                = new Vector3 ();
+		this .elevation               = 0;
+
+		switch (executionContext .specificationVersion)
+		{
+			case "2.0":
+			case "3.0":
+			case "3.1":
+			case "3.2":
+				this .traverse = traverse;
+				break;
+		}
 	}
 
 	GeoViewpoint .prototype = $.extend (Object .create (X3DViewpointNode .prototype),
@@ -42772,21 +44602,21 @@ function ($,
 		constructor: GeoViewpoint,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",         new Fields .MFString ("GD", "WE")),
 			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_bind",          new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "description",       new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",         new Fields .MFString ([ "GD", "WE" ])),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",          new Fields .SFVec3d (0, 0, 100000)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "orientation",       new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "centerOfRotation",  new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "fieldOfView",       new Fields .SFFloat (0.785398)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "jump",              new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "retainUserOffsets", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "navType",           new Fields .MFString ([ "EXAMINE", "ANY" ])),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "navType",           new Fields .MFString ("EXAMINE", "ANY")),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "headlight",         new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "speedFactor",       new Fields .SFFloat (1)),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "isBound",           new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,     "bindTime",          new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",         new Fields .SFNode ()),
 		]),
 		getTypeName: function ()
 		{
@@ -42799,6 +44629,134 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		initialize: function ()
+		{
+			X3DViewpointNode    .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			this .position_       .addInterest (this, "set_position__");
+			this .positionOffset_ .addInterest (this, "set_position__");
+			this .navType_        .addFieldInterest (this .navigationInfoNode .type_);
+			this .headlight_      .addFieldInterest (this .navigationInfoNode .headlight_);
+		
+			this .navigationInfoNode .setup ();
+		
+			this .set_position__ ();
+
+			// Setup interpolators
+
+			this .fieldOfViewInterpolator .key_ = [ 0, 1 ];
+			this .fieldOfViewInterpolator .setup ();
+
+			this .getEaseInEaseOut () .modifiedFraction_changed_ .addFieldInterest (this .fieldOfViewInterpolator .set_fraction_);
+			this .fieldOfViewInterpolator .value_changed_ .addFieldInterest (this .fieldOfViewScale_);
+		},
+		setInterpolators: function (fromViewpoint)
+		{
+			if (fromViewpoint .getType () .indexOf (X3DConstants .GeoViewpoint) < 0)
+			{
+				this .fieldOfViewInterpolator .keyValue_ = [ this .fieldOfViewScale_ .getValue (), this .fieldOfViewScale_ .getValue () ];
+			}
+			else
+			{
+				var scale = fromViewpoint .getFieldOfView () / this .fieldOfView_ .getValue ();
+	
+				this .fieldOfViewInterpolator .keyValue_ = [ scale, this .fieldOfViewScale_ .getValue () ];
+	
+				this .fieldOfViewScale_ = scale;
+			}
+		},
+		setPosition: function (value)
+		{
+			this .position_ .setValue (this .getGeoCoord (value, geoPosition));
+		},
+		getPosition: function () 
+		{
+			return this .getCoord (this .position_ .getValue (), position);
+		},
+		set_position__: function ()
+		{
+			this .getCoord (this .position_ .getValue (), this .position);
+
+			this .elevation = this .getGeoElevation (position .assign (this .position) .add (this .positionOffset_ .getValue ()));
+		},
+		setOrientation: function (value)
+		{
+			///  Returns the resulting orientation for this viewpoint.
+
+			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
+
+			geoOrientation .setMatrix (rotationMatrix);
+
+			this .orientation_ .setValue (geoOrientation .inverse () .multLeft (value));
+		},
+		getOrientation: function ()
+		{
+			///  Returns the resulting orientation for this viewpoint.
+
+			var rotationMatrix = this .getLocationMatrix (this .position_ .getValue (), locationMatrix) .submatrix;
+
+			orientation .setMatrix (rotationMatrix);
+		
+			return orientation .multLeft (this .orientation_ .getValue ());
+		},
+		getCenterOfRotation: function ()
+		{
+			return this .getCoord (this .centerOfRotation_ .getValue (), centerOfRotation);
+		},
+		getFieldOfView: function ()
+		{
+			var fov = this .fieldOfView_ * this .fieldOfViewScale_;
+
+			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
+		},
+		getUpVector: function ()
+		{
+			return this .getGeoUpVector .call (this, position .assign (this .position) .add (this .positionOffset_ .getValue ()), upVector);
+		},
+		getSpeedFactor: function ()
+		{
+			return (Math .max (this .elevation, 0.0) + 10) / 10 * this .speedFactor_ .getValue ();
+		},
+		getMaxZFar: function ()
+		{
+			return 1e9;
+		},
+		getScreenScale: function (point, viewport)
+		{
+		   // Returns the screen scale in meter/pixel for on pixel.
+
+			var
+				width  = viewport [2],
+				height = viewport [3],
+				size   = Math .tan (this .getFieldOfView () / 2) * 2 * point .abs (); // Assume we are on sphere.
+
+			size *= Math .abs (normalized .assign (point) .normalize () .dot (zAxis));
+
+			if (width > height)
+				size /= height;
+			else
+				size /= width;
+
+			return screenScale .set (size, size, size);
+		},
+		getLookAtDistance: function (bbox)
+		{
+			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
+		},
+		getProjectionMatrix: function (zNear, zFar, viewport, limit)
+		{
+			if (limit)
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
+				
+			// Linear interpolate zNear and zFar
+
+			var
+				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
+				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
+
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
 		},
 	});
 
@@ -42870,7 +44828,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.PlaneViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.PlaneViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
@@ -42904,7 +44862,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 				{
 					// Stop event propagation.
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 
 					// Move.
 
@@ -42924,7 +44882,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault ();
+			event .stopImmediatePropagation ();
 
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
@@ -43060,7 +45018,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					
 					$(document) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
 
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
 
 					break;
@@ -43085,27 +45043,12 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
-					event .preventDefault ();
+					event .stopImmediatePropagation ();
 
-					this .lookAt (x, y);
+					this .lookAt (x, y, true);
 					break;
 				}
 			}
-		},
-		lookAt: function (x, y)
-		{
-			if (this .touch (x, y))
-			{
-				var hit = this .getBrowser () .getNearestHit ();
-
-				this .getActiveViewpoint () .lookAtPoint (hit .intersection .point, 2 - 1.618034);
-			}
-		},
-		touch: function (x, y)
-		{
-			this .getBrowser () .touch (x, y);
-		
-			return this .getBrowser () .getHits () .length;
 		},
 		dispose: function ()
 		{
@@ -43185,9 +45128,9 @@ define ('standard/Utility/ObjectCache',[],function ()
 				{
 					var object = this .stack [this .last];
 				
-					object .set .apply (object, arguments);
-
 					this .last --;
+
+					object .set .apply (object, arguments);
 				}
 				else
 				{
@@ -43510,6 +45453,8 @@ function ($,
 	function X3DBoundedObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DBoundedObject);
+
+		this .childBBox = new Box3 ();
 	}
 
 	X3DBoundedObject .prototype =
@@ -43517,24 +45462,24 @@ function ($,
 		constructor: X3DBoundedObject,
 		defaultBBoxSize: new Vector3 (-1, -1, -1),
 		initialize: function () { },
-	};
-
-	X3DBoundedObject .getBBox = function (nodes)
-	{
-		var bbox = new Box3 ();
-
-		// Add bounding boxes
-
-		for (var i = 0, length = nodes .length; i < length; ++ i)
+		getBBox: function (nodes, bbox)
 		{
-			var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
-
-			if (boundedObject)
-				bbox .add (boundedObject .getBBox ());
-		}
-
-		return bbox;
+			bbox .set ();
+	
+			// Add bounding boxes
+	
+			for (var i = 0, length = nodes .length; i < length; ++ i)
+			{
+				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
+	
+				if (boundedObject)
+					bbox .add (boundedObject .getBBox (this .childBBox));
+			}
+	
+			return bbox;
+		},
 	};
+
 
 	return X3DBoundedObject;
 });
@@ -43658,12 +45603,12 @@ function ($,
 
 			this .set_children__ ();
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
-				return X3DBoundedObject .getBBox (this .children_ .getValue ());
+				return X3DBoundedObject .prototype .getBBox .call (this, this .children_ .getValue (), bbox);
 
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return box .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		setHidden: function (value)
 		{
@@ -53505,6 +55450,561 @@ function (Vector3)
 });
 
 
+define ('standard/Math/Algorithms/QuickSort',[],function ()
+{
+
+
+	function QuickSort (array, compare)
+	{
+		this .array = array;
+		
+		if (compare)
+			this .compare = compare;
+	}
+
+	QuickSort .prototype =
+	{
+		compare: function (lhs, rhs)
+		{
+			return lhs < rhs;
+		},
+		sort: function (first, last)
+		{
+			if (last - first > 1)
+				this .quicksort (first, last - 1);
+		},
+		quicksort: function (lo, hi)
+		{
+			var
+				i = lo,
+				j = hi,
+				array   = this .array,
+				compare = this .compare;
+
+			// Vergleichs­element x
+			var x = array [(lo + hi) >>> 1];
+
+			for (;;)
+			{
+				while (compare (array [i], x)) ++ i;
+				while (compare (x, array [j])) -- j;
+
+				if (i < j)
+				{
+					// Exchange
+					
+					var t = array [i];
+					array [i] = array [j];
+					array [j] = t;
+
+					i ++; j --;
+				}
+				else
+				{
+					if (i === j) ++ i, -- j;
+					break;
+				}
+			}
+
+			// Rekursion
+			if (lo < j) this .quicksort (lo, j);
+			if (i < hi) this .quicksort (i, hi);
+		},
+	};
+
+	return QuickSort;
+});
+
+
+define ('cobweb/Components/ParticleSystems/X3DParticleEmitterNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Algorithm",
+	"standard/Math/Algorithms/QuickSort",
+],
+function ($,
+          X3DNode, 
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Line3,
+          Plane3,
+          Algorithm,
+          QuickSort)
+{
+
+
+	var
+		normal       = new Vector3 (0, 0, 0),
+		fromPosition = new Vector3 (0, 0, 0),
+		translation  = new Vector3 (0, 0, 0),
+		line         = new Line3 (Vector3 .Zero, Vector3 .zAxis),
+		plane        = new Plane3 (Vector3 .Zero, Vector3 .zAxis);
+
+	function PlaneCompare (a, b)
+	{
+		return plane .getDistanceToPoint (a) < plane .getDistanceToPoint (b);
+	}
+
+	function PlaneCompareValue (a, b)
+	{
+		return a < plane .getDistanceToPoint (b);
+	}
+
+	function X3DParticleEmitterNode (executionContext)
+	{
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DParticleEmitterNode);
+
+		this .rotations           = [ ];
+		this .intersections       = [ ];
+		this .intersectionNormals = [ ];
+		this .sorter              = new QuickSort (this .intersections, PlaneCompare);
+	}
+
+	X3DParticleEmitterNode .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: X3DParticleEmitterNode,
+		initialize: function ()
+		{
+			X3DNode .prototype .initialize .call (this);
+
+			this .speed_     .addInterest (this, "set_speed__");
+			this .variation_ .addInterest (this, "set_variation__");
+			this .mass_      .addInterest (this, "set_mass__");
+
+			this .set_speed__ ();
+			this .set_variation__ ();
+			this .set_mass__ ();
+		},
+		set_speed__: function ()
+		{
+			this .speed = this .speed_ .getValue ();
+		},
+		set_variation__: function ()
+		{
+			this .variation = this .variation_ .getValue ();
+		},
+		set_mass__: function ()
+		{
+			this .mass = this .mass_ .getValue ();
+		},
+		isExplosive: function ()
+		{
+			return false;
+		},
+		getMass: function ()
+		{
+			return this .mass;
+		},
+		getRandomLifetime: function (particleLifetime, lifetimeVariation)
+		{
+			var
+				v   = particleLifetime * lifetimeVariation,
+				min = Math .max (0, particleLifetime - v),
+				max = particleLifetime + v;
+		
+			return Math .random () * (max - min) + min;
+		},
+		getRandomSpeed: function ()
+		{
+			var
+				speed = this .speed,
+				v     = speed * this .variation,
+				min   = Math .max (0, speed - v),
+				max   = speed + v;
+		
+			return Math .random () * (max - min) + min;
+		},
+		getSphericalRandomVelocity: function (velocity)
+		{
+			return this .getRandomNormal (velocity) .multiply (this .getRandomSpeed ());
+		},
+		getRandomValue: function (min, max)
+		{
+			return Math .random () * (max - min) + min;
+		},
+		getRandomNormal: function (normal)
+		{
+			var
+				theta = this .getRandomValue (-1, 1) * Math .PI,
+				cphi  = this .getRandomValue (-1, 1),
+				phi   = Math .acos (cphi),
+				r     = Math .sin (phi);
+		
+			return normal .set (Math .sin (theta) * r,
+			                    Math .cos (theta) * r,
+			                    cphi);
+		},
+		getRandomNormalWithAngle: function (angle, normal)
+		{
+			var
+				theta = (Math .random () * 2 - 1) * Math .PI,
+				cphi  = this .getRandomValue (Math .cos (angle), 1),
+				phi   = Math .acos (cphi),
+				r     = Math .sin (phi);
+		
+			return normal .set (Math .sin (theta) * r,
+			                    Math .cos (theta) * r,
+			                    cphi);
+		},
+		getRandomNormalWithDirectionAndAngle: function (direction, angle, normal)
+		{
+			rotation .setFromToVec (Vector3 .zAxis, direction);
+
+			return rotation .multVecRot (this .getRandomNormalAngle (angle, normal));
+		},
+		getRandomSurfaceNormal: function (normal)
+		{
+			var
+				theta = this .getRandomValue (-1, 1) * Math .PI,
+				cphi  = Math .pow (Math .random (), 1/3),
+				phi   = Math .acos (cphi),
+				r     = Math .sin (phi);
+		
+			return normal .set (Math .sin (theta) * r,
+			                    Math .cos (theta) * r,
+			                    cphi);
+		},
+		animate: function (particleSystem, deltaTime)
+		{
+			var
+				particles         = particleSystem .particles,
+				numParticles      = particleSystem .numParticles,
+				createParticles   = particleSystem .createParticles,
+				particleLifetime  = particleSystem .particleLifetime,
+				lifetimeVariation = particleSystem .lifetimeVariation,
+				speeds            = particleSystem .speeds,            // speed of velocities
+				velocities        = particleSystem .velocities,        // resulting velocities from forces
+				turbulences       = particleSystem .turbulences,       // turbulences
+				rotations         = this .rotations,                   // rotation to direction of force
+				numForces         = particleSystem .numForces,         // number of forces
+				boundedPhysics    = particleSystem .boundedVertices .length,
+				boundedVolume     = particleSystem .boundedVolume;
+
+			for (var i = rotations .length; i < numForces; ++ i)
+				rotations [i] = new Rotation4 (0, 0, 1, 0);
+
+			for (var i = 0; i < numForces; ++ i)
+				rotations [i] .setFromToVec (Vector3 .zAxis, velocities [i]);
+
+			for (var i = 0; i < numParticles; ++ i)
+			{
+				var
+					particle    = particles [i],
+					elapsedTime = particle .elapsedTime + deltaTime;
+		
+				if (elapsedTime > particle .lifetime)
+				{
+					// Create new particle or hide particle.
+
+					particle .lifetime    = this .getRandomLifetime (particleLifetime, lifetimeVariation);
+					particle .elapsedTime = 0;
+
+					if (createParticles)
+					{
+						this .getRandomPosition (particle .position)
+						this .getRandomVelocity (particle .velocity);
+					}
+					else
+						particle .position .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
+				}
+				else
+				{
+					// Animate particle.
+
+					var
+						position = particle .position,
+						velocity = particle .velocity;
+
+					for (var f = 0; f < numForces; ++ f)
+					{
+						velocity .add (rotations [f] .multVecRot (this .getRandomNormalWithAngle (turbulences [f], normal)) .multiply (speeds [f]));
+					}
+
+					if (boundedPhysics)
+					{
+						fromPosition .x = position .x;
+						fromPosition .y = position .y;
+						fromPosition .z = position .z;
+
+						position .x += velocity .x * deltaTime;
+						position .y += velocity .y * deltaTime;
+						position .z += velocity .z * deltaTime;
+			
+						this .bounce (boundedVolume, fromPosition, position, velocity);
+					}
+					else
+					{
+						position .x += velocity .x * deltaTime;
+						position .y += velocity .y * deltaTime;
+						position .z += velocity .z * deltaTime;
+					}
+				
+					particle .elapsedTime = elapsedTime;
+				}
+			}
+
+			// Animate color if needed.
+
+			if (particleSystem .colorMaterial)
+				this .getColors (particles, particleSystem .colorKeys, particleSystem .colorRamp, numParticles);
+		},
+		bounce: function (boundedVolume, fromPosition, toPosition, velocity)
+		{
+			normal .assign (velocity) .normalize ();
+
+			line .set (fromPosition, normal);
+		
+			var
+				intersections       = this .intersections,
+				intersectionNormals = this .intersectionNormals,
+				numIntersections    = boundedVolume .intersectsLine (line, intersections, intersectionNormals);
+
+			if (numIntersections)
+			{
+				for (var i = 0; i < numIntersections; ++ i)
+					intersections [i] .index = i;
+
+				plane .set (fromPosition, normal);
+		
+				this .sorter .sort (0, numIntersections);
+
+				var index = Algorithm .upperBound (intersections, 0, numIntersections, 0, PlaneCompareValue);
+				
+				if (index < numIntersections)
+				{
+					var
+						intersection       = intersections [index],
+						intersectionNormal = intersectionNormals [intersection .index];
+
+					plane .set (intersection, intersectionNormal);
+		
+					if (plane .getDistanceToPoint (fromPosition) * plane .getDistanceToPoint (toPosition) < 0)
+					{
+						var dot2 = 2 * intersectionNormal .dot (velocity);
+
+						velocity .x -= intersectionNormal .x * dot2;
+						velocity .y -= intersectionNormal .y * dot2;
+						velocity .z -= intersectionNormal .z * dot2;
+
+						normal .assign (velocity) .normalize ();
+
+						var distance = intersection .distance (fromPosition);
+
+						toPosition .x = intersection .x + normal .x * distance;
+						toPosition .y = intersection .y + normal .y * distance;
+						toPosition .z = intersection .z + normal .z * distance;
+					}
+				}
+			}
+		},
+		getColors: function (particles, colorKeys, colorRamp, numParticles)
+		{
+			var
+				length = colorKeys .length,
+				index0 = 0,
+				index1 = 0,
+				weight = 0;
+		
+			for (var i = 0; i < numParticles; ++ i)
+			{
+				// Determine index0, index1 and weight.
+
+				var
+					particle = particles [i],
+					fraction = particle .elapsedTime / particle .lifetime,
+					color    = particle .color;
+
+				if (length == 1 || fraction <= colorKeys [0])
+				{
+					index0 = 0;
+					index1 = 0;
+					weight = 0;
+				}
+				else if (fraction >= colorKeys [length - 1])
+				{
+					index0 = length - 2;
+					index1 = length - 1;
+					weight = 1;
+				}
+				else
+				{
+					var index = Algorithm .upperBound (colorKeys, 0, length, fraction, Algorithm .less);
+	
+					if (index < length)
+					{
+						index1 = index;
+						index0 = index - 1;
+				
+						var
+							key0 = colorKeys [index0],
+							key1 = colorKeys [index1];
+				
+						weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+					}
+					else
+					{
+						index0 = 0;
+						index1 = 0;
+						weight = 0;
+					}
+				}
+	
+				// Interpolate and set color.
+
+				var
+					color0 = colorRamp [index0],
+					color1 = colorRamp [index1];
+	
+				// Algorithm .lerp (color0, color1, weight);
+				color .x = color0 .x + weight * (color1 .x - color0 .x);
+				color .y = color0 .y + weight * (color1 .y - color0 .y);
+				color .z = color0 .z + weight * (color1 .z - color0 .z);
+				color .w = color0 .w + weight * (color1 .w - color0 .w);
+			}
+		},
+	});
+
+	return X3DParticleEmitterNode;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/PointEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode, 
+          X3DConstants,
+          Vector3)
+{
+
+
+	function PointEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .PointEmitter);
+
+		this .direction = new Vector3 (0, 0, 0);
+	}
+
+	PointEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: PointEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PointEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .position_  .addInterest (this, "set_position__");
+			this .direction_ .addInterest (this, "set_direction__");
+
+			this .set_position__ ();
+			this .set_direction__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
+		},
+		set_direction__: function ()
+		{
+			this .direction .assign (this .direction_ .getValue ()) .normalize ();
+
+			if (this .direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position);
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var
+				direction = this .direction,
+				speed     = this .getRandomSpeed ();
+
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
+
+			return velocity;
+ 		},
+	});
+
+	return PointEmitter;
+});
+
+
+
+
+define ('cobweb/Browser/ParticleSystems/X3DParticleSystemsContext',[
+	"cobweb/Components/ParticleSystems/PointEmitter",
+],
+function (PointEmitter)
+{
+
+	
+	function X3DParticleSystemsContext ()
+	{
+		this .defaultEmitter = new PointEmitter (this);
+	}
+
+	X3DParticleSystemsContext .prototype =
+	{
+		initialize: function ()
+		{
+			this .defaultEmitter .setup ();
+		},
+		getDefaultEmitter: function ()
+		{
+			return this .defaultEmitter;
+		},
+	};
+
+	return X3DParticleSystemsContext;
+});
+
+
 define ('cobweb/Rendering/DepthBuffer',[],function ()
 {
 
@@ -53578,7 +56078,7 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 			   {
 				   var
 				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375);
+				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4294967295);
 
 					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
 			   }
@@ -53606,72 +56106,6 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 	};
 
 	return DepthBuffer;
-});
-
-
-define ('standard/Math/Algorithms/QuickSort',[],function ()
-{
-
-
-	function QuickSort (array, compare)
-	{
-		this .array = array;
-		
-		if (compare)
-			this .compare = compare;
-	}
-
-	QuickSort .prototype =
-	{
-		compare: function (lhs, rhs)
-		{
-			return lhs < rhs;
-		},
-		sort: function (first, last)
-		{
-			if (last - first > 1)
-				this .quicksort (first, last - 1);
-		},
-		quicksort: function (lo, hi)
-		{
-			var
-				i = lo,
-				j = hi,
-				array   = this .array,
-				compare = this .compare;
-
-			// Vergleichs­element x
-			var x = array [(lo + hi) >>> 1];
-
-			for (;;)
-			{
-				while (compare (array [i], x)) ++ i;
-				while (compare (x, array [j])) -- j;
-
-				if (i < j)
-				{
-					// Exchange
-					
-					var t = array [i];
-					array [i] = array [j];
-					array [j] = t;
-
-					i ++; j --;
-				}
-				else
-				{
-					if (i === j) ++ i, -- j;
-					break;
-				}
-			}
-
-			// Rekursion
-			if (lo < j) this .quicksort (lo, j);
-			if (i < hi) this .quicksort (i, hi);
-		},
-	};
-
-	return QuickSort;
 });
 
 
@@ -54682,298 +57116,6 @@ function ($, X3DBaseNode)
 	return BindableList;
 });
 
-define ('cobweb/Components/Navigation/NavigationInfo',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DBindableNode",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DBindableNode,
-          TraverseType,
-          X3DConstants)
-{
-
-
-	var TransitionType =
-	{
-		TELEPORT: true,
-		LINEAR:   true,
-		ANIMATE:  true,
-	};
-
-	function NavigationInfo (executionContext)
-	{
-		X3DBindableNode .call (this, executionContext);
-
-		this .addType (X3DConstants .NavigationInfo);
-				
-		this .addChildren ("availableViewers", new Fields .MFString (),
-		                   "viewer",           new Fields .SFString ("EXAMINE"));
-	}
-
-	NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
-	{
-		constructor: NavigationInfo,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",           new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_bind",           new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "type",               new Fields .MFString ([ "EXAMINE", "ANY" ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "avatarSize",         new Fields .MFFloat ([ 0.25, 1.6, 0.75 ])),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "speed",              new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "headlight",          new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "visibilityLimit",    new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionType",     new Fields .MFString ("LINEAR")),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "transitionTime",     new Fields .SFTime (1)),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "transitionComplete", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",            new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "bindTime",           new Fields .SFTime ()),
-		]),
-		getTypeName: function ()
-		{
-			return "NavigationInfo";
-		},
-		getComponentName: function ()
-		{
-			return "Navigation";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DBindableNode .prototype .initialize .call (this);
-
-			this .type_      .addInterest (this, "set_type__");
-			this .headlight_ .addInterest (this, "set_headlight__");
-
-			this .set_type__ ();
-			this .set_headlight__ ();
-		},
-		set_type__: function ()
-		{
-			this .availableViewers_ .length = 0;;
-
-			var
-				examineViewer = false,
-				walkViewer    = false,
-				flyViewer     = false,
-				planeViewer   = false,
-				noneViewer    = false,
-				lookAt        = false;
-
-			// Determine active viewer.
-
-			this .viewer_ = "EXAMINE";
-
-			for (var i = 0; i < this .type_ .length; ++ i)
-			{
-			   var string = this .type_ [i];
-			
-				switch (string)
-				{
-					case "EXAMINE":
-					case "WALK":
-					case "FLY":
-					case "LOOKAT":
-					case "PLANE":
-					case "NONE":
-						this .viewer_ = string;
-						break;
-					case "PLANE_create3000.de":
-						this .viewer_ = "PLANE";
-						break;
-					default:
-						continue;
-				}
-
-				// Leave for loop.
-				break;
-			}
-
-			// Determine available viewers.
-
-			if (! this .type_ .length)
-			{
-				examineViewer = true;
-				walkViewer    = true;
-				flyViewer     = true;
-				planeViewer   = true;
-				noneViewer    = true;
-				lookAt        = true;
-			}
-			else
-			{
-				for (var i = 0; i < this .type_ .length; ++ i)
-				{
-				   var string = this .type_ [i];
-
-					switch (string)
-					{
-						case "EXAMINE":
-							examineViewer = true;
-							continue;
-						case "WALK":
-							walkViewer = true;
-							continue;
-						case "FLY":
-							flyViewer = true;
-							continue;
-						case "LOOKAT":
-							lookAt = true;
-							continue;
-						case "PLANE":
-							planeViewer = true;
-							continue;
-						case "NONE":
-							noneViewer = true;
-							continue;
-					}
-
-					if (string == "ANY")
-					{
-						examineViewer = true;
-						walkViewer    = true;
-						flyViewer     = true;
-						planeViewer   = true;
-						noneViewer    = true;
-						lookAt        = true;
-
-						// Leave for loop.
-						break;
-					}
-
-					// Some string defaults to EXAMINE.
-					examineViewer = true;
-				}
-
-				if (examineViewer)
-					this .availableViewers_ .push ("EXAMINE");
-
-				if (walkViewer)
-					this .availableViewers_ .push ("WALK");
-
-				if (flyViewer)
-					this .availableViewers_ .push ("FLY");
-
-				if (planeViewer)
-					this .availableViewers_ .push ("PLANE");
-
-				if (lookAt)
-					this .availableViewers_ .push ("LOOKAT");
-
-				if (noneViewer)
-					this .availableViewers_ .push ("NONE");
-			}
-		},
-		set_headlight__: function ()
-		{
-			if (this .headlight_ .getValue ())
-				this .enable = enable;
-			else
-				delete this .enable;
-		},
-		bindToLayer: function (layer)
-		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
-			layer .getNavigationInfoStack () .push (this);
-		},
-		unbindFromLayer: function (layer)
-		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
-			layer .getNavigationInfoStack () .pop (this);
-		},
-		removeFromLayer: function (layer)
-		{
-			layer .getNavigationInfoStack () .remove (this);
-		},
-		getViewer: function ()
-		{
-		   return this .viewer_ .getValue ();
-		},
-		getCollisionRadius: function ()
-		{
-			if (this .avatarSize_ .length > 0)
-			{
-				if (this .avatarSize_ [0] > 0)
-					return this .avatarSize_ [0];
-			}
-
-			return 0.25;
-		},
-		getAvatarHeight: function ()
-		{
-			if (this .avatarSize_ .length > 1)
-				return this .avatarSize_ [1];
-
-			return 1.6;
-		},
-		getStepHeight: function ()
-		{
-			if (this .avatarSize_ .length > 2)
-				return this .avatarSize_ [2];
-
-			return 0.75;
-		},
-		getNearPlane: function ()
-		{
-			var zNear = this .getCollisionRadius ();
-
-			if (zNear === 0)
-				return 1e-5;
-
-			else
-				return zNear / 2;
-		},
-		getFarPlane: function (viewpoint)
-		{
-			return this .visibilityLimit_ .getValue ()
-				    ? this .visibilityLimit_ .getValue ()
-				    : viewpoint .getMaxZFar ();
-		},
-		getTransitionType: function ()
-		{
-			for (var i = 0, length = this .transitionType_ .length; i < length; ++ i)
-			{
-				var
-					value          = this .transitionType_ [i],
-					transitionType = TransitionType [value];
-
-				if (transitionType)
-					return value;
-			}
-
-			return "LINEAR";
-		},
-		enable: function ()
-		{
-		},
-		traverse: function ()
-		{
-			this .getCurrentLayer () .getNavigationInfos () .push (this);
-		}
-	});
-
-	function enable ()
-	{
-		this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
-	}
-
-	return NavigationInfo;
-});
-
-
-
-
 define ('cobweb/Components/EnvironmentalEffects/X3DFogObject',[
 	"jquery",
 	"cobweb/Bits/X3DConstants",
@@ -55612,11 +57754,11 @@ function ($,
 
 			// Get projection matrix.
 
-			this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport));	
+			this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
 
 			// Rotate and scale background.
 
-			modelViewMatrix .multLeft (viewpoint .getInverseCameraSpaceMatrix ());
+			modelViewMatrix .multRight (viewpoint .getInverseCameraSpaceMatrix ());
 			modelViewMatrix .get (null, rotation);
 			modelViewMatrix .identity ();
 			modelViewMatrix .scale (scale);
@@ -55979,12 +58121,13 @@ function ($,
 
 			this .updateTextureProperties ();
 		},
-		updateTexture: function (data)
+		updateTexture: function (data, flipY)
 		{
 			this .data = data;
 
 			var gl = this .getBrowser () .getContext ();
 
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
 
@@ -56554,9 +58697,9 @@ function ($,
 		{
 			return this .hitRay;
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			return this .groupNode .getBBox ();
+			return this .groupNode .getBBox (bbox);
 		},
 		set_viewport__: function ()
 		{
@@ -57119,6 +59262,7 @@ define ('cobweb/Browser/X3DBrowserContext',[
 	"cobweb/Browser/Text/X3DTextContext",
 	"cobweb/Browser/Texturing/X3DTexturingContext",
 	"cobweb/Browser/Time/X3DTimeContext",
+	"cobweb/Browser/ParticleSystems/X3DParticleSystemsContext",
 	"cobweb/Execution/World",
 	"cobweb/Bits/TraverseType",
 ],
@@ -57145,6 +59289,7 @@ function ($,
           X3DTextContext,
           X3DTexturingContext,
           X3DTimeContext,
+          X3DParticleSystemsContext,
           World,
           TraverseType)
 {
@@ -57173,6 +59318,7 @@ function ($,
 		X3DTextContext                 .call (this);
 		X3DTexturingContext            .call (this);
 		X3DTimeContext                 .call (this);
+		X3DParticleSystemsContext      .call (this);
 
 		this .addChildren ("initialized",   new SFTime (),
 		                   "shutdown",      new SFTime (),
@@ -57212,6 +59358,7 @@ function ($,
 		X3DTextContext .prototype,
 		X3DTexturingContext .prototype,
 		X3DTimeContext .prototype,
+		X3DParticleSystemsContext .prototype,
 	{
 		constructor: X3DBrowserContext,
 		initialize: function ()
@@ -57237,6 +59384,7 @@ function ($,
 			X3DTextContext                 .prototype .initialize .call (this);
 			X3DTexturingContext            .prototype .initialize .call (this);
 			X3DTimeContext                 .prototype .initialize .call (this);
+			X3DParticleSystemsContext      .prototype .initialize .call (this);
 		},
 		initialized: function ()
 		{
@@ -58017,7 +60165,6 @@ define ("cobweb/Components/PointingDeviceSensor/TouchSensor",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
@@ -58026,10 +60173,11 @@ function ($,
           FieldDefinitionArray,
           X3DTouchSensorNode, 
           X3DConstants,
-          Vector2,
           Matrix4)
 {
 
+
+	var invModelViewMatrix = new Matrix4 ();
 
 	function TouchSensor (executionContext)
 	{
@@ -58073,9 +60221,10 @@ function ($,
 				if (this .isOver_ .getValue ())
 				{
 					var
-						intersection       = hit .intersection,
-						modelViewMatrix    = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix,
-						invModelViewMatrix = Matrix4 .inverse (modelViewMatrix);
+						intersection    = hit .intersection,
+						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+
+					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 					this .hitTexCoord_changed_ = intersection .texCoord;
 					this .hitNormal_changed_   = modelViewMatrix .multMatrixDir (intersection .normal .copy ()) .normalize ();
@@ -58248,10 +60397,12 @@ define ('cobweb/Components/Rendering/X3DLineGeometryNode',[
 	"jquery",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DGeometryNode,
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 
 
@@ -58309,6 +60460,62 @@ function ($,
 			// Wireframes are always solid so only one drawing call is needed.
 
 			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
+
+			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
+			gl .disableVertexAttribArray (shader .vertex);
+		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext (),
+				shader  = browser .getShader ();
+
+			if (shader === browser .getDefaultShader ())
+				shader = this .shader;
+
+			if (shader .vertex < 0 || this .vertexCount === 0)
+				return;
+
+			// Setup shader.
+
+			context .colorMaterial = this .colors .length;
+			shader .setLocalUniforms (context);
+
+			// Setup vertex attributes.
+
+			if (this .colors .length && shader .color >= 0)
+			{
+				gl .enableVertexAttribArray (shader .color);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			}
+
+			gl .enableVertexAttribArray (shader .vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+
+			// Wireframes are always solid so only one drawing call is needed.
+
+			var
+				modelViewMatrix = context .modelViewMatrix,
+				x               = modelViewMatrix [12],
+				y               = modelViewMatrix [13],
+				z               = modelViewMatrix [14],
+				primitiveMode   = shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
+
+			for (var p = 0; p < numParticles; ++ p)
+			{
+				modelViewMatrix [12] = x;
+				modelViewMatrix [13] = y;
+				modelViewMatrix [14] = z;
+
+				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+				gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+	
+				gl .drawArrays (primitiveMode, 0, this .vertexCount);
+			}
 
 			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
 			gl .disableVertexAttribArray (shader .vertex);
@@ -59035,51 +61242,58 @@ function ($,
 		{
 			return "children";
 		},
+		getBBox: function (bbox)
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this, bbox) .multRight (this .matrix);
+		},
 		rotate: function (type)
 		{
-			try
+			// throws domain error
+
+			this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+
+			var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
+
+			if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
 			{
-				this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+				inverseModelViewMatrix .multDirMatrix (viewerYAxis .assign (yAxis)) .normalize (); // Normalized to get work with Geo
 
-				var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
+				x .assign (viewerYAxis) .cross (billboardToViewer);
+				y .assign (billboardToViewer) .cross (x);
+				var z = billboardToViewer;
 
-				if (this .axisOfRotation_ .getValue () .equals (Vector3 .Zero))
-				{
-					inverseModelViewMatrix .multDirMatrix (viewerYAxis .assign (yAxis)) .normalize (); // Normalized to get work with Geo
+				// Compose rotation
 
-					x .assign (viewerYAxis) .cross (billboardToViewer);
-					y .assign (billboardToViewer) .cross (x);
-					var z = billboardToViewer;
+				x .normalize ();
+				y .normalize ();
 
-					// Compose rotation
-
-					x .normalize ();
-					y .normalize ();
-
-					this .matrix .set (x [0], x [1], x [2], 0,
-					                   y [0], y [1], y [2], 0,
-					                   z [0], z [1], z [2], 0,
-					                   0,     0,     0,     1);
-				}
-				else
-				{
-					N1 .assign (this .axisOfRotation_ .getValue ()) .cross (billboardToViewer); // Normal vector of plane as in specification
-					N2 .assign (this .axisOfRotation_ .getValue ()) .cross (zAxis);             // Normal vector of plane between axisOfRotation and zAxis
-
-					this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
-				}
-
-				this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);
+				this .matrix .set (x [0], x [1], x [2], 0,
+				                   y [0], y [1], y [2], 0,
+				                   z [0], z [1], z [2], 0,
+				                   0,     0,     0,     1);
 			}
-			catch (error)
-			{ }
+			else
+			{
+				N1 .assign (this .axisOfRotation_ .getValue ()) .cross (billboardToViewer); // Normal vector of plane as in specification
+				N2 .assign (this .axisOfRotation_ .getValue ()) .cross (zAxis);             // Normal vector of plane between axisOfRotation and zAxis
+
+				this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
+			}
+
+			this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);
 		},
 		traverse: function (type)
 		{
 			this .getBrowser () .getModelViewMatrix () .push ();
-			this .rotate (type);
 
-			X3DGroupingNode .prototype .traverse .call (this, type);
+			try
+			{
+				this .rotate (type);
+	
+				X3DGroupingNode .prototype .traverse .call (this, type);
+			}
+			catch (error)
+			{ }
 
 			this .getBrowser () .getModelViewMatrix () .pop ();
 		},
@@ -59500,6 +61714,124 @@ function ($,
 
 
 
+define ('cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DNode, 
+          X3DConstants)
+{
+
+
+	function X3DParticlePhysicsModelNode (executionContext)
+	{
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DParticlePhysicsModelNode);
+	}
+
+	X3DParticlePhysicsModelNode .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: X3DParticlePhysicsModelNode,
+		addForce: function ()
+		{ },
+	});
+
+	return X3DParticlePhysicsModelNode;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/BoundedPhysicsModel',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticlePhysicsModelNode, 
+          X3DConstants,
+          X3DCast)
+{
+
+
+	function BoundedPhysicsModel (executionContext)
+	{
+		X3DParticlePhysicsModelNode .call (this, executionContext);
+
+		this .addType (X3DConstants .BoundedPhysicsModel);
+	}
+
+	BoundedPhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
+	{
+		constructor: BoundedPhysicsModel,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "geometry", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "BoundedPhysicsModel";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "physics";
+		},
+		initialize: function ()
+		{
+			X3DParticlePhysicsModelNode .prototype .initialize .call (this);
+
+			this .geometry_ .addInterest (this, "set_geometry__");
+
+			this .set_geometry__ ();
+		},
+		set_geometry__: function ()
+		{
+			if (this .geometryNode)
+				this .geometryNode .removeInterest (this, "addNodeEvent");
+
+			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
+
+			if (this .geometryNode)
+				this .geometryNode .addInterest (this, "addNodeEvent");
+		},
+		addGeometry: function (boundedNormals, boundedVertices)
+		{
+			if (this .geometryNode)
+			{
+				var
+					normals  = this .geometryNode .getNormals (),
+					vertices = this .geometryNode .getVertices ();
+	
+				for (var i = 0, length = normals .length; i < length; ++ i)
+					boundedNormals .push (normals [i]);
+	
+				for (var i = 0, length = vertices .length; i < length; ++ i)
+					boundedVertices .push (vertices [i]);
+			}
+		},
+	});
+
+	return BoundedPhysicsModel;
+});
+
+
+
+
 define ("cobweb/Components/Geometry3D/Box",
 [
 	"jquery",
@@ -59761,19 +62093,19 @@ function ($,
 
 			this .set_shape__ ();
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .shape_);
 		
 				if (boundedObject)
-					return boundedObject .getBBox ();
+					return boundedObject .getBBox (bbox);
 		
-				return new Box3 ();
+				return bbox .set ();
 			}
 		
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		set_shape__: function ()
 		{
@@ -59889,7 +62221,7 @@ function ($,
 
 
 
-define ('cobweb/Components/Grouping/X3DTransformMatrix4DNode',[
+define ('cobweb/Components/Grouping/X3DTransformMatrix3DNode',[
 	"jquery",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
@@ -59918,26 +62250,43 @@ function ($,
 		modelViewMatrix .pop ();
 	}
 
-	function X3DTransformMatrix4DNode (executionContext)
+	function X3DTransformMatrix3DNode (executionContext)
 	{
 		X3DGroupingNode .call (this, executionContext);
 
-		this .addType (X3DConstants .X3DTransformMatrix4DNode);
+		this .addType (X3DConstants .X3DTransformMatrix3DNode);
 
 		this .matrix = new Matrix4 ();
 	}
 
-	X3DTransformMatrix4DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
+	X3DTransformMatrix3DNode .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
 	{
-		constructor: X3DTransformMatrix4DNode,
-		getBBox: function ()
+		constructor: X3DTransformMatrix3DNode,
+		getBBox: function (bbox)
 		{
-			var bbox = X3DGroupingNode .prototype .getBBox .call (this);
+			var bbox = X3DGroupingNode .prototype .getBBox .call (this, bbox);
 
 			if (this .traverse === traverse)
 				return bbox .multRight (this .matrix);
 
 			return bbox;
+		},
+		setMatrix: function (matrix)
+		{
+			if (matrix .equals (Matrix4 .Identity))
+			{
+				this .matrix .identity ();
+				this .traverse = X3DGroupingNode .prototype .traverse;
+			}
+			else
+			{
+			   this .matrix .assign (matrix);
+				this .traverse = traverse;
+			}
+		},
+		getMatrix: function ()
+		{
+			return this .matrix;
 		},
 		setTransform: function (t, r, s, so, c)
 		{
@@ -59954,7 +62303,7 @@ function ($,
 		},
 	});
 
-	return X3DTransformMatrix4DNode;
+	return X3DTransformMatrix3DNode;
 });
 
 
@@ -59962,28 +62311,28 @@ function ($,
 
 define ('cobweb/Components/Grouping/X3DTransformNode',[
 	"jquery",
-	"cobweb/Components/Grouping/X3DTransformMatrix4DNode",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
-          X3DTransformMatrix4DNode, 
+          X3DTransformMatrix3DNode, 
           X3DConstants)
 {
 
 
 	function X3DTransformNode (executionContext)
 	{
-		X3DTransformMatrix4DNode .call (this, executionContext);
+		X3DTransformMatrix3DNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DTransformNode);
 	}
 
-	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix4DNode .prototype),
+	X3DTransformNode .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
 	{
 		constructor: X3DTransformNode,
 		initialize: function ()
 		{
-			X3DTransformMatrix4DNode .prototype .initialize .call (this);
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			
 			this .addInterest (this, "eventsProcessed");
 
@@ -59991,7 +62340,7 @@ function ($,
 		},
 		eventsProcessed: function ()
 		{
-			X3DTransformMatrix4DNode .prototype .eventsProcessed .call (this);
+			X3DTransformMatrix3DNode .prototype .eventsProcessed .call (this); // XXX, empty function call???
 			
 			this .setHidden (this .scale_ .x === 0 ||
 			                 this .scale_ .y === 0 ||
@@ -60466,7 +62815,7 @@ function ($,
 	X3DColorNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
 	{
 		constructor: X3DColorNode,
-		getColor: function (index)
+		get1Color: function (index)
 		{
 			if (index >= 0 && index < this .color .length)
 				return this .color [index] .getValue ();
@@ -60492,6 +62841,7 @@ define ('cobweb/Components/Rendering/Color',[
 	"cobweb/Components/Rendering/X3DColorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -60499,7 +62849,8 @@ function ($,
           FieldDefinitionArray,
           X3DColorNode, 
           X3DConstants,
-          Color3)
+          Color3,
+          Vector4)
 {
 
 
@@ -60510,8 +62861,6 @@ function ($,
 		X3DColorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Color);
-
-		this .color = this .color_ .getValue ();
 	}
 
 	Color .prototype = $.extend (Object .create (X3DColorNode .prototype),
@@ -60540,6 +62889,21 @@ function ($,
 		getWhite: function ()
 		{
 			return white;
+		},
+		getVectors: function (array)
+		{
+			var color = this .color_ .getValue ();
+
+			for (var i = 0, length = color .length; i < length; ++ i)
+			{
+				var c = color [i] .getValue ();
+
+				array [i] = new Vector4 (c .r, c .g, c .b, 1);
+			}
+
+			array .length = length;
+
+			return array;
 		},
 	});
 
@@ -61280,6 +63644,7 @@ define ('cobweb/Components/Rendering/ColorRGBA',[
 	"cobweb/Components/Rendering/X3DColorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color4",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -61287,7 +63652,8 @@ function ($,
           FieldDefinitionArray,
           X3DColorNode, 
           X3DConstants,
-          Color4)
+          Color4,
+          Vector4)
 {
 
 
@@ -61326,6 +63692,21 @@ function ($,
 		getWhite: function ()
 		{
 			return white;
+		},
+		getVectors: function (array)
+		{
+			var color = this .color_ .getValue ();
+
+			for (var i = 0, length = color .length; i < length; ++ i)
+			{
+				var c = color [i] .getValue ();
+
+				array [i] = new Vector4 (c .r, c .g, c .b, c .a);
+			}
+
+			array .length = length;
+
+			return array;
 		},
 	});
 
@@ -61757,6 +64138,108 @@ function ($,
 	});
 
 	return Cone;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/ConeEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode, 
+          X3DConstants,
+          Vector3,
+          Rotation4)
+{
+
+
+	function ConeEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ConeEmitter);
+
+		this .rotation = new Rotation4 (0, 0, 1, 0);
+	}
+
+	ConeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: ConeEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "angle",       new Fields .SFFloat (0.785398)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ConeEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .position_  .addInterest (this, "set_position__");
+			this .direction_ .addInterest (this, "set_direction__");
+			this .angle_     .addInterest (this, "set_angle__");
+
+			this .set_position__ ();
+			this .set_direction__ ();
+			this .set_angle__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
+		},
+		set_direction__: function ()
+		{
+			var direction = this .direction_ .getValue ();
+
+			this .rotation .setFromToVec (Vector3 .zAxis, direction);
+
+			if (direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		set_angle__: function ()
+		{
+			this .angle = this .angle_ .getValue ()
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position);
+		},
+		getRandomVelocity: function (velocity)
+		{
+			return this .rotation .multVecRot (this .getRandomNormalWithAngle (this .angle, velocity) .multiply (this .getRandomSpeed ()));
+ 		},
+	});
+
+	return ConeEmitter;
 });
 
 
@@ -63462,9 +65945,9 @@ function ($,
 					if (colorNode)
 					{
 						if (colorPerVertex)
-							this .addColor (colorNode .getColor (index));
+							this .addColor (colorNode .get1Color (index));
 						else
-							this .addColor (colorNode .getColor (face));
+							this .addColor (colorNode .get1Color (face));
 					}
 						
 					if (texCoordNode)
@@ -63479,10 +65962,10 @@ function ($,
 					if (normalNode)
 					{
 						if (normalPerVertex)
-							this .addNormal (normalNode .getVector (index));
+							this .addNormal (normalNode .get1Vector (index));
 
 						else
-							this .addNormal (normalNode .getVector (face));
+							this .addNormal (normalNode .get1Vector (face));
 					}
 
 					this .addVertex (points [index]);
@@ -63506,6 +65989,83 @@ function ($,
 	});
 
 	return ElevationGrid;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/ExplosionEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode, 
+          X3DConstants)
+{
+
+
+	function ExplosionEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ExplosionEmitter);
+
+		this .getRandomVelocity = this .getSphericalRandomVelocity;
+	}
+
+	ExplosionEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: ExplosionEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ExplosionEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .position_ .addInterest (this, "set_position__");
+
+			this .set_position__ ();
+		},
+		set_position__: function ()
+		{
+			this .position = this .position_ .getValue ()
+		},
+		isExplosive: function ()
+		{
+			return true;
+		},
+		getRandomPosition: function (position)
+		{
+			return position .assign (this .position);
+		},
+	});
+
+	return ExplosionEmitter;
 });
 
 
@@ -64005,6 +66565,2082 @@ function ($,
 
 
 
+define ('cobweb/Components/ParticleSystems/ForcePhysicsModel',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticlePhysicsModelNode, 
+          X3DConstants)
+{
+
+
+	function ForcePhysicsModel (executionContext)
+	{
+		X3DParticlePhysicsModelNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ForcePhysicsModel);
+	}
+
+	ForcePhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
+	{
+		constructor: ForcePhysicsModel,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "force",    new Fields .SFVec3f (0, -9.8, 0)),
+		]),
+		getTypeName: function ()
+		{
+			return "ForcePhysicsModel";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "physics";
+		},
+		addForce: function (i, emitterNode, forces, turbulences)
+		{
+			if (this .enabled_ .getValue ())
+			{
+				forces      [i] .assign (this .force_ .getValue ());
+				turbulences [i] = 0;
+			}
+		},
+	});
+
+	return ForcePhysicsModel;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoCoordinate',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DCoordinateNode, 
+          X3DGeospatialObject, 
+          X3DConstants,
+          Triangle3,
+          Vector3)
+{
+
+
+	function GeoCoordinate (executionContext)
+	{
+		X3DCoordinateNode   .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoCoordinate);
+
+		this .points = [ ];                   // Transformed points in GC.
+		this .origin = new Vector3 (0, 0, 0); // Origin of the reference frame.
+	}
+
+	GeoCoordinate .prototype = $.extend (Object .create (X3DCoordinateNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoCoordinate,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "point",     new Fields .MFVec3d ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoCoordinate";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "coord";
+		},
+		initialize: function ()
+		{
+			X3DCoordinateNode   .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+		
+			this .addInterest (this, "eventsProcessed");
+		
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			var
+				point  = this .point_ .getValue (),
+				points = this .points;
+
+			for (var i = 0, length = Math .min (point .length, points .length); i < length; ++ i)
+				this .getCoord (point [i] .getValue (), points [i]);
+
+			for (var length = point .length; i < length; ++ i)
+			{
+				var p = points [i] = new Vector3 (0, 0, 0);
+				this .getCoord (point [i] .getValue (), p);
+			}
+		
+			points .length = length;
+
+			this .getCoord (Vector3 .Zero, this .origin);
+		},
+		isEmpty: function ()
+		{
+			return this .point_ .length == 0;
+		},
+		getSize: function ()
+		{
+			return this .point_ .length;
+		},
+		get1Point: function (index)
+		{
+			// The index cannot be less than 0.
+
+			if (index < this .points .length)
+				return this .points [index];
+
+			return this .origin;
+		},
+		getNormal: function (index1, index2, index3)
+		{
+			// The index[1,2,3] cannot be less than 0.
+
+			var
+				points = this .points,
+				length = points .length;
+
+			if (index1 < length && index2 < length && index3 < length)
+				return Triangle3 .normal (points [index1],
+				                          points [index2],
+				                          points [index3],
+				                          new Vector3 (0, 0, 0));
+
+			return new Vector3 (0, 0, 0);
+		},
+		getQuadNormal: function (index1, index2, index3, index4)
+		{
+			// The index[1,2,3,4] cannot be less than 0.
+
+			var
+				points = this .points,
+				length = points .length;
+
+			if (index1 < length && index2 < length && index3 < length && index4 < length)
+				return Triangle3 .quadNormal (points [index1],
+				                              points [index2],
+				                              points [index3],
+				                              points [index4],
+				                              new Vector3 (0, 0, 0));
+
+			return new Vector3 (0, 0, 0);
+		},
+	});
+
+	return GeoCoordinate;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoElevationGrid',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DGeometryNode, 
+          X3DGeospatialObject, 
+          X3DConstants,
+          X3DCast,
+          Triangle3,
+          Vector2,
+          Vector3)
+{
+
+
+	function GeoElevationGrid (executionContext)
+	{
+		X3DGeometryNode     .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoElevationGrid);
+
+		this .colorNode    = null;
+		this .texCoordNode = null;
+		this .normalNode   = null;
+	}
+
+	GeoElevationGrid .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoElevationGrid,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",       new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoGridOrigin",   new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "xDimension",      new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "zDimension",      new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "xSpacing",        new Fields .SFDouble (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "zSpacing",        new Fields .SFDouble (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "yScale",          new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "ccw",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "creaseAngle",     new Fields .SFDouble ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorPerVertex",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "normalPerVertex", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "height",          new Fields .MFDouble ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoElevationGrid";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "geometry";
+		},
+		initialize: function ()
+		{
+			X3DGeometryNode     .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			this .color_    .addInterest (this, "set_color__");
+			this .texCoord_ .addInterest (this, "set_texCoord__");
+			this .normal_   .addInterest (this, "set_normal__");
+		
+			this .set_color__ ();
+			this .set_texCoord__ ();
+			this .set_normal__ ();
+		},
+		set_color__: function ()
+		{
+			if (this .colorNode)
+			{
+				this .colorNode .removeInterest (this, "addNodeEvent");
+				this .colorNode .removeInterest (this, "set_transparent__");
+			}
+
+			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
+
+			if (this .colorNode)
+			{
+				this .colorNode .addInterest (this, "addNodeEvent");
+				this .colorNode .addInterest (this, "set_transparent__");
+
+				this .set_transparent__ ();
+			}
+			else
+				this .transparent_ = false;
+		},
+		set_transparent__: function ()
+		{
+			this .transparent_ = this .colorNode .isTransparent ();
+		},
+		set_texCoord__: function ()
+		{
+			if (this .texCoordNode)
+				this .texCoordNode .removeInterest (this, "addNodeEvent");
+
+			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
+
+			if (this .texCoordNode)
+				this .texCoordNode .addInterest (this, "addNodeEvent");
+		},
+		set_normal__: function ()
+		{
+			if (this .normalNode)
+				this .normalNode .removeInterest (this, "addNodeEvent");
+
+			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
+
+			if (this .normalNode)
+				this .normalNode .addInterest (this, "addNodeEvent");
+		},
+		getAttrib: function ()
+		{
+			return this .attribNodes;
+		},
+		getColor: function ()
+		{
+			return this .colorNode;
+		},
+		getTexCoord: function ()
+		{
+			return this .texCoordNode;
+		},
+		getNormal: function ()
+		{
+			return this .normalNode;
+		},
+		getHeight: function (index)
+		{
+			if (index < this .height_ .length)
+				return this .height_ [index] * this .yScale_ .getValue ();
+
+			return 0;
+		},
+		createTexCoords: function ()
+		{
+			var
+				texCoords  = [ ],
+				xDimension = this .xDimension_ .getValue (),
+				zDimension = this .zDimension_ .getValue (),
+				xSize      = xDimension - 1,
+				zSize      = zDimension - 1;
+
+			for (var z = 0; z < zDimension; ++ z)
+			{
+				for (var x = 0; x < xDimension; ++ x)
+					texCoords .push (new Vector2 (x / xSize, z / zSize));
+			}
+
+			return texCoords;
+		},
+		createNormals: function (points, coordIndex, creaseAngle)
+		{
+			var
+				cw          = ! this .ccw_ .getValue (),
+				normalIndex = [ ],
+				normals     = [ ];
+
+			for (var p = 0; p < points .length; ++ p)
+				normalIndex [p] = [ ];
+
+			for (var c = 0; c < coordIndex .length; c += 3)
+			{
+				var
+					c0 = coordIndex [c],
+					c1 = coordIndex [c + 1],
+					c2 = coordIndex [c + 2];
+				
+				normalIndex [c0] .push (normals .length);
+				normalIndex [c1] .push (normals .length + 1);
+				normalIndex [c2] .push (normals .length + 2);
+
+				var normal = Triangle3 .normal (points [c0], points [c1], points [c2], new Vector3 (0, 0, 0));
+
+				if (cw)
+					normal .negate ();
+
+				normals .push (normal);
+				normals .push (normal);
+				normals .push (normal);
+			}
+
+			return this .refineNormals (normalIndex, normals, this .creaseAngle_ .getValue ());
+		},
+		createCoordIndex: function ()
+		{
+			// p1 - p4 
+			//  | \ |
+			// p2 - p3
+
+			var
+				coordIndex = [ ],
+				xDimension = this .xDimension_ .getValue (),
+				zDimension = this .zDimension_ .getValue (),
+				xSize      = xDimension - 1,
+				zSize      = zDimension - 1;
+
+			for (var z = 0; z < zSize; ++ z)
+			{
+				for (var x = 0; x < xSize; ++ x)
+				{
+					var
+						i1 =       z * xDimension + x,
+						i2 = (z + 1) * xDimension + x,
+						i3 = (z + 1) * xDimension + (x + 1),
+						i4 =       z * xDimension + (x + 1);
+
+					coordIndex .push (i1); // p1
+					coordIndex .push (i3); // p3
+					coordIndex .push (i2); // p2
+
+					coordIndex .push (i1); // p1
+					coordIndex .push (i4); // p4
+					coordIndex .push (i3); // p3
+				}
+			}
+
+			return coordIndex;
+		},
+		createPoints: function ()
+		{
+			var
+				points     = [ ],
+				xDimension = this .xDimension_ .getValue (),
+				zDimension = this .zDimension_ .getValue (),
+				xSpacing   = this .xSpacing_ .getValue (),
+				zSpacing   = this .zSpacing_ .getValue ();
+
+			// When the geoSystem is "GD", xSpacing refers to the number of units of longitude in angle base units between
+			// adjacent height values and zSpacing refers to the number of units of latitude in angle base units between
+			// vertical height values.
+		
+			// When the geoSystem is "UTM", xSpacing refers to the number of eastings (length base units) between adjacent
+			// height values and zSpacing refers to the number of northings (length base units) between vertical height values.
+
+			if (this .getStandardOrder ())
+			{
+				for (var z = 0; z < zDimension; ++ z)
+				{
+					for (var x = 0; x < xDimension; ++ x)
+					{
+						var point = new Vector3 (zSpacing * z, // latitude, northing
+						                         xSpacing * x, // longitude, easting
+						                         this .getHeight (x + z * xDimension));
+	
+						point .add (this .geoGridOrigin_ .getValue ());
+
+						points .push (this .getCoord (point, point));
+					}
+				}
+			}
+			else
+			{
+				for (var z = 0; z < zDimension; ++ z)
+				{
+					for (var x = 0; x < xDimension; ++ x)
+					{
+						var point = new Vector3 (xSpacing * x, // longitude, easting
+						                         zSpacing * z, // latitude, northing
+						                         this .getHeight (x + z * xDimension));
+	
+						point .add (this .geoGridOrigin_ .getValue ());
+
+						points .push (this .getCoord (point, point));
+					}
+				}
+			}
+
+			return points;
+		},
+		build: function ()
+		{
+			if (this .xDimension_ .getValue () < 2 || this .zDimension_ .getValue () < 2)
+				return;
+
+			var
+				colorPerVertex  = this .colorPerVertex_ .getValue (),
+				normalPerVertex = this .normalPerVertex_ .getValue (),
+				coordIndex      = this .createCoordIndex (),
+				colorNode       = this .getColor (),
+				texCoordNode    = this .getTexCoord (),
+				normalNode      = this .getNormal (),
+				points          = this .createPoints (),
+				face            = 0;
+
+			// Vertex attribute
+
+			//std::vector <std::vector <float>> attribArrays (attribNodes .size ());
+
+			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
+			//	attribArrays [a] .reserve (coordIndex .size ());
+
+			if (texCoordNode)
+				texCoordNode .init (this .getTexCoords ());
+			else
+			{
+				var texCoords = this .createTexCoords ();
+				this .getTexCoords () .push ([ ]);
+			}
+
+			// Build geometry
+
+			for (var c = 0; c < coordIndex .length; ++ face)
+			{
+				for (var p = 0; p < 6; ++ p, ++ c)
+				{
+					var index = coordIndex [c];
+
+					//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
+					//	attribNodes [a] -> addValue (attribArrays [a], i);
+
+					if (colorNode)
+					{
+						if (colorPerVertex)
+							this .addColor (colorNode .get1Color (index));
+						else
+							this .addColor (colorNode .get1Color (face));
+					}
+						
+					if (texCoordNode)
+						texCoordNode .addTexCoord (this .getTexCoords (), index);
+
+					else
+					{
+						var t = texCoords [index];
+						this .getTexCoords () [0] .push (t .x, t .y, 0, 1);
+					}
+
+					if (normalNode)
+					{
+						if (normalPerVertex)
+							this .addNormal (normalNode .get1Vector (index));
+
+						else
+							this .addNormal (normalNode .get1Vector (face));
+					}
+
+					this .addVertex (points [index]);
+				}
+			}
+
+			// Add auto-generated normals if needed.
+
+			if (! normalNode)
+			{
+				var normals = this .createNormals (points, coordIndex);
+
+				for (var i = 0; i < normals .length; ++ i)
+					this .addNormal (normals [i]);
+			}
+
+			this .setSolid (this .solid_ .getValue ());
+			this .setCCW (this .ccw_ .getValue ());
+			this .setCurrentTexCoord (this .getTexCoord ());
+		},
+	});
+
+	return GeoElevationGrid;
+});
+
+
+
+
+define ('cobweb/Components/Networking/Inline',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Loader",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode,
+          X3DUrlObject,
+          X3DBoundedObject,
+          Group,
+          X3DConstants,
+          Loader)
+{
+
+
+	function Inline (executionContext)
+	{
+		X3DChildNode     .call (this, executionContext);
+		X3DUrlObject     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
+
+		this .addType (X3DConstants .Inline);
+		
+		this .addChildren ("buffer", new Fields .SFTime ());
+
+		this .scene    = this .getBrowser () .getDefaultScene ();
+		this .group    = new Group (executionContext);
+		this .getBBox  = this .group .getBBox  .bind (this .group);
+		this .traverse = this .group .traverse .bind (this .group);
+	}
+
+	Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DUrlObject .prototype,
+		X3DBoundedObject .prototype,
+	{
+		constructor: Inline,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "load",       new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",        new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Inline";
+		},
+		getComponentName: function ()
+		{
+			return "Networking";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode     .prototype .initialize .call (this);
+			X3DUrlObject     .prototype .initialize .call (this);
+			X3DBoundedObject .prototype .initialize .call (this);
+
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
+			this .group .setup ();
+			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+
+			this .load_   .addInterest (this, "set_load__");
+			this .url_    .addInterest (this, "set_url__");
+			this .buffer_ .addInterest (this, "set_buffer__");
+
+			this .requestAsyncLoad ();
+		},
+		set_live__: function ()
+		{
+			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
+			{
+				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
+
+				if (live)
+					this .scene .beginUpdate ();
+				else
+					this .scene .endUpdate ();
+			}
+		},
+		set_load__: function ()
+		{
+			if (this .load_ .getValue ())
+				this .buffer_ .addEvent ();
+
+			else
+				this .requestUnload ();
+		},
+		set_url__: function ()
+		{
+			this .buffer_ .addEvent ();
+		},
+		set_buffer__: function ()
+		{
+			if (! this .load_ .getValue ())
+				return;
+
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+
+			this .requestAsyncLoad ();
+		},
+		requestImmediateLoad: function ()
+		{
+			try
+			{
+				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
+			}
+			catch (error)
+			{
+				console .log (error);
+				this .setInternalScene (this .getBrowser () .getDefaultScene ());
+			}
+		},
+		requestAsyncLoad: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
+		},
+		requestUnload: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .NOT_STARTED_STATE || this .checkLoadState () === X3DConstants .FAILED_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+			this .setInternalScene (this .getBrowser () .getDefaultScene ());
+		},
+		setInternalSceneAsync: function (scene)
+		{
+			if (scene)
+			{
+				this .setLoadState (X3DConstants .COMPLETE_STATE);
+				this .setInternalScene (scene);
+			}
+			else
+			{
+				this .setLoadState (X3DConstants .FAILED_STATE);
+				this .setInternalScene (this .getBrowser () .getDefaultScene ());
+			}
+		},
+		setInternalScene: function (scene)
+		{
+			this .scene .endUpdate ();
+			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
+
+			// Set new scene.
+
+			this .scene = scene;
+			this .scene .setup ();
+
+			//this .scene .setExecutionContext (this .getExecutionContext ());
+			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
+			this .group .children_ = this .scene .rootNodes;
+
+			this .set_live__ ();
+
+			this .getBrowser () .addBrowserEvent ();
+		},
+		getInternalScene: function ()
+		{
+			return this .scene;
+		},
+	});
+
+	return Inline;
+});
+
+
+
+define ('cobweb/Components/Geospatial/GeoLOD',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Components/Networking/Inline",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DChildNode, 
+          X3DBoundedObject, 
+          X3DGeospatialObject, 
+          X3DConstants,
+          Group,
+          Inline,
+          Vector3,
+          Matrix4,
+          Box3)
+{
+
+
+	var center = new Vector3 (0, 0, 0);
+
+	function GeoLOD (executionContext)
+	{
+		X3DChildNode        .call (this, executionContext);
+		X3DBoundedObject    .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoLOD);
+
+		this .rootGroup        = new Group (this .getBrowser () .getPrivateScene ());
+		this .rootInline       = new Inline (executionContext);
+		this .child1Inline     = new Inline (executionContext);
+		this .child2Inline     = new Inline (executionContext);
+		this .child3Inline     = new Inline (executionContext);
+		this .child4Inline     = new Inline (executionContext);
+		this .childrenLoaded   = false;
+		this .childBBox        = new Box3 ();
+		this .keepCurrentLevel = false;
+		this .modelViewMatrix  = new Matrix4 ();
+	}
+
+	GeoLOD .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DBoundedObject .prototype,
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoLOD,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",     new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",     new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootUrl",       new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child1Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child2Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child3Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "child4Url",     new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "center",        new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "range",         new Fields .SFFloat (10)),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed", new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNode",      new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",      new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "children",      new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoLOD";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DChildNode        .prototype .initialize .call (this);
+			X3DBoundedObject    .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			this .rootNode_ .addFieldInterest (this .rootGroup .children_);
+		
+			this .rootGroup .children_ = this .rootNode_;
+			this .rootGroup .setup ();
+		
+			this .rootInline   .loadState_ .addInterest (this, "set_rootLoadState__");
+			this .child1Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .child2Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .child3Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .child4Inline .loadState_ .addInterest (this, "set_childLoadState__");
+		
+			this .rootUrl_   .addFieldInterest (this .rootInline   .url_);
+			this .child1Url_ .addFieldInterest (this .child1Inline .url_);
+			this .child2Url_ .addFieldInterest (this .child2Inline .url_);
+			this .child3Url_ .addFieldInterest (this .child3Inline .url_);
+			this .child4Url_ .addFieldInterest (this .child4Inline .url_);
+		
+			this .rootInline   .load_ = true;
+			this .child1Inline .load_ = false;
+			this .child2Inline .load_ = false;
+			this .child3Inline .load_ = false;
+			this .child4Inline .load_ = false;
+		
+			this .rootInline   .url_ = this .rootUrl_;
+			this .child1Inline .url_ = this .child1Url_;
+			this .child2Inline .url_ = this .child2Url_;
+			this .child3Inline .url_ = this .child3Url_;
+			this .child4Inline .url_ = this .child4Url_;
+		
+			this .rootInline   .setup ();
+			this .child1Inline .setup ();
+			this .child2Inline .setup ();
+			this .child3Inline .setup ();
+			this .child4Inline .setup ();
+		},
+		getBBox: function (bbox) 
+		{
+			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
+			{
+				var level = this .level_changed_ .getValue ();
+				
+				switch (level)
+				{
+					case 0:
+					{
+						if (this .rootNode_ .length)
+							return this .rootGroup .getBBox (bbox);
+
+						return this .rootInline .getBBox (bbox);
+					}
+					case 1:
+					{
+						bbox .set ();
+						
+						bbox .add (this .child1Inline .getBBox (this .childBBox));
+						bbox .add (this .child2Inline .getBBox (this .childBBox));
+						bbox .add (this .child3Inline .getBBox (this .childBBox));
+						bbox .add (this .child4Inline .getBBox (this .childBBox));
+		
+						return bbox;
+					}
+				}
+
+				return bbox .set ();
+			}
+
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+		},
+		set_rootLoadState__: function ()
+		{
+			if (this .level_changed_ .getValue () !== 0)
+				return;
+		
+			if (this .rootNode_ .length)
+				return;
+		
+			if (this .rootInline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				this .children_ = this .rootInline .getInternalScene () .getRootNodes ();
+		},
+		set_childLoadState__: function ()
+		{
+			if (this .level_changed_ .getValue () !== 1)
+				return;
+		
+			this .children_ .length = 0;
+	
+			var loaded = 0;
+
+			if (this .child1Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child1Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+	
+			if (this .child2Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child2Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+	
+			if (this .child3Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child3Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+	
+			if (this .child4Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
+			{
+				var rootNodes = this .child4Inline .getInternalScene () .getRootNodes ();
+
+				for (var i = 0, length = rootNodes .length; i < length; ++ i)
+					this .children_ .push (rootNodes [i]);
+
+				++ loaded;
+			}
+
+			this .childrenLoaded = loaded === 4;
+		},
+		getLevel: function (type)
+		{
+			var distance = this .getDistance (type);
+		
+			if (distance < this .range_ .getValue ())
+				return 1;
+		
+			return 0;
+		},
+		getDistance: function (type)
+		{
+			var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+
+			modelViewMatrix .translate (this .getCoord (this .center_ .getValue (), center));
+
+			return modelViewMatrix .origin .abs ();
+		},
+		traverse: function (type)
+		{
+			var level = this. getLevel (type);
+		
+			if (level !== this .level_changed_ .getValue ())
+			{
+				this .level_changed_ = level;
+		
+				switch (level)
+				{
+					case 0:
+					{
+						if (this .rootNode_ .length)
+							this .children_ = this .rootNode_;
+						else
+						{
+							if (this .rootInline .checkLoadState () == X3DConstants .COMPLETE_STATE)
+								this .children_ = this .rootInline .getInternalScene () .getRootNodes ();
+						}
+		
+						this .child1Inline .load_ = false;
+						this .child2Inline .load_ = false;
+						this .child3Inline .load_ = false;
+						this .child4Inline .load_ = false;
+
+						this .childrenLoaded = false;
+						break;
+					}
+					case 1:
+					{
+						this .child1Inline .load_ = true;
+						this .child2Inline .load_ = true;
+						this .child3Inline .load_ = true;
+						this .child4Inline .load_ = true;
+						break;
+					}
+				}
+			}
+
+			switch (this .childrenLoaded ? level : 0)
+			{
+				case 0:
+				{
+					if (this .rootNode_ .length)
+						this .rootGroup .traverse (type);
+					else
+						this .rootInline .traverse (type);
+		
+					break;
+				}
+				case 1:
+				{
+					this .child1Inline .traverse (type);
+					this .child2Inline .traverse (type);
+					this .child3Inline .traverse (type);
+					this .child4Inline .traverse (type);
+					break;
+				}
+			}
+		},
+	});
+
+	return GeoLOD;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoLocation',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTransformMatrix3DNode, 
+          X3DGeospatialObject, 
+          X3DConstants,
+          Matrix4)
+{
+
+
+	var locationMatrix = new Matrix4 ();
+
+	function GeoLocation (executionContext)
+	{
+		X3DTransformMatrix3DNode .call (this, executionContext);
+		X3DGeospatialObject      .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoLocation);
+	}
+
+	GeoLocation .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoLocation,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",       new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",      new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords",      new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",       new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",    new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren", new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",       new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoLocation";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
+			X3DGeospatialObject      .prototype .initialize .call (this);
+		
+			this .addInterest (this, "eventsProcessed");
+		
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			this .setMatrix (this .getLocationMatrix (this .geoCoords_ .getValue (), locationMatrix));
+		},
+	});
+
+	return GeoLocation;
+});
+
+
+
+
+define ('cobweb/Components/Core/X3DInfoNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DInfoNode (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DInfoNode);
+	}
+
+	X3DInfoNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DInfoNode,
+	});
+
+	return X3DInfoNode;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoMetadata',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DInfoNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInfoNode, 
+          X3DConstants)
+{
+
+
+	function GeoMetadata (executionContext)
+	{
+		X3DInfoNode .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoMetadata);
+	}
+
+	GeoMetadata .prototype = $.extend (Object .create (X3DInfoNode .prototype),
+	{
+		constructor: GeoMetadata,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "url",      new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "summary",  new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "data",     new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoMetadata";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+	});
+
+	return GeoMetadata;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoOrigin',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Geospatial/Geospatial",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DNode, 
+          X3DConstants,
+          Geospatial)
+{
+
+
+	function GeoOrigin (executionContext)
+	{
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoOrigin);
+
+		this .radians = false;
+	}
+
+	GeoOrigin .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: GeoOrigin,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem", new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCoords", new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "rotateYUp", new Fields .SFBool ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoOrigin";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "geoOrigin";
+		},
+		initialize: function ()
+		{
+			X3DNode .prototype .initialize .call (this);
+
+			this .geoSystem_ .addInterest (this, "set_geoSystem__");
+
+			this .set_geoSystem__ ();
+		},
+		set_geoSystem__: function ()
+		{
+			this .referenceFrame = Geospatial .getReferenceFrame (this .geoSystem_, this .radians);
+		},
+		getOrigin: function (result)
+		{
+			return this .referenceFrame .convert (this .geoCoords_ .getValue (), result);
+		},
+	});
+
+	return GeoOrigin;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoPositionInterpolator',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Browser/Geospatial/Geocentric",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DInterpolatorNode, 
+          X3DGeospatialObject,
+          Geocentric,
+          X3DConstants,
+          Vector3)
+{
+
+
+	function GeoPositionInterpolator (executionContext)
+	{
+		X3DInterpolatorNode .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoPositionInterpolator);
+
+		this .geocentric = new Geocentric ();
+	}
+
+	GeoPositionInterpolator .prototype = $.extend (Object .create (X3DInterpolatorNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoPositionInterpolator,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "set_fraction",     new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "key",              new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "keyValue",         new Fields .MFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "value_changed",    new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "geovalue_changed", new Fields .SFVec3d ()),
+		]),
+		keyValue0: new Vector3 (0, 0, 0),
+		keyValue1: new Vector3 (0, 0, 0),
+		geovalue: new Vector3 (0, 0, 0),
+		value: new Vector3 (0, 0, 0),
+		getTypeName: function ()
+		{
+			return "GeoPositionInterpolator";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		setup: function ()
+		{
+			X3DGeospatialObject .prototype .initialize .call (this);
+
+			X3DInterpolatorNode .prototype .setup .call (this);
+		},
+		initialize: function ()
+		{
+			X3DInterpolatorNode .prototype .initialize .call (this);
+
+			this .keyValue_ .addInterest (this, "set_keyValue__");
+		},
+		set_keyValue__: function ()
+		{
+			var
+				key      = this .key_,
+				keyValue = this .keyValue_;
+
+			if (keyValue .length < key .length)
+				keyValue .resize (key .length, keyValue .length ? keyValue [keyValue .length - 1] : new Fields .SFVec3f ());
+		},
+		interpolate: function (index0, index1, weight)
+		{
+			try
+			{
+				this .getCoord (this .keyValue_ [index0] .getValue (), this .keyValue0);
+				this .getCoord (this .keyValue_ [index1] .getValue (), this .keyValue1);
+	
+				var coord = this .geocentric .slerp (this .keyValue0, this .keyValue1, weight);
+	
+				this .geovalue_changed_ = this .getGeoCoord (coord, this .geovalue);
+				this .value_changed_    = coord;
+			}
+			catch (error)
+			{ }
+		},
+	});
+
+	return GeoPositionInterpolator;
+});
+
+
+
+
+define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DSensorNode, 
+          X3DConstants,
+          Vector3)
+{
+
+
+	function X3DEnvironmentalSensorNode (executionContext)
+	{
+		X3DSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
+
+		this .addChildren ("traversed", new Fields .SFBool (true));
+
+		this .currentTraversed = true;
+	}
+
+	X3DEnvironmentalSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
+	{
+		constructor: X3DEnvironmentalSensorNode,
+		initialize: function ()
+		{
+			X3DSensorNode .prototype .initialize .call (this);
+
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
+			this .enabled_   .addInterest (this, "set_live__");
+			this .size_      .addInterest (this, "set_live__");
+			this .traversed_ .addInterest (this, "set_live__");
+
+			this .set_live__ ();
+		},
+		setTraversed: function (value)
+		{
+		   if (value)
+			{
+				if (this .traversed_ .getValue () === false)
+					this .traversed_ = true;
+			}
+			else
+			{
+				if (this .currentTraversed !== this .traversed_ .getValue ())
+					this .traversed_ = this .currentTraversed;
+			}
+
+		   this .currentTraversed = value;
+		},
+		getTraversed: function ()
+		{
+		   return this .currentTraversed;
+		},
+		set_live__: function ()
+		{
+			if (this .traversed_ .getValue () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			{
+				this .getBrowser () .sensors () .addInterest (this, "update");
+			}
+			else
+			{
+				this .getBrowser () .sensors () .removeInterest (this, "update");
+				
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
+		},
+		update: function () { },
+	});
+
+	return X3DEnvironmentalSensorNode;
+});
+
+
+
+
+define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentalSensorNode, 
+          TraverseType,
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Matrix4,
+          Box3)
+{
+
+
+	var infinity = new Vector3 (-1, -1, -1);
+	
+	function ProximitySensor (executionContext)
+	{
+		X3DEnvironmentalSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ProximitySensor);
+
+		this .setCameraObject (true);
+
+		this .viewpoint              = null;
+		this .modelViewMatrix        = new Matrix4 ();
+		this .invModelViewMatrix     = new Matrix4 ();
+		this .centerOfRotationMatrix = new Matrix4 ();
+		this .position               = new Vector3 (0, 0, 0);
+		this .orientation            = new Rotation4 (0, 0, 1, 0);
+		this .centerOfRotation       = new Vector3 (0, 0, 0);
+		this .viewer                 = new Vector3 (0, 0, 0);
+		this .inside                 = false;
+	}
+
+	ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+	{
+		constructor: ProximitySensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",                 new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",                  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",                     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "center",                   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",                new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",                 new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",                 new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed",      new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "centerOfRotation_changed", new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ProximitySensor";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalSensor";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+			
+			this .enabled_ .addInterest (this, "set_enabled__");
+			this .size_    .addInterest (this, "set_extents__");
+			this .center_  .addInterest (this, "set_extents__");
+
+			this .traversed_ .addFieldInterest (this .isCameraObject_);
+	
+			this .min = new Vector3 (0, 0, 0);
+			this .max = new Vector3 (0, 0, 0);
+			
+			this .set_enabled__ ();
+			this .set_extents__ ();
+		},
+		set_enabled__: function ()
+		{
+			this .setCameraObject (this .enabled_ .getValue ());
+			
+			if (this .enabled_ .getValue ())
+				this .traverse = traverse;
+			else
+				delete this .traverse;
+		},
+		set_extents__: function ()
+		{
+			var
+				s  = this .size_ .getValue (),
+				c  = this .center_ .getValue (),
+				sx = s .x / 2,
+				sy = s .y / 2,
+				sz = s .z / 2,
+				cx = c .x,
+				cy = c .y,
+				cz = c .z;
+
+			this .min .set (cx - sx, cy - sy, cz - sz);
+			this .max .set (cx + sx, cy + sy, cz + sz);
+		},
+		update: function ()
+		{
+			try
+			{
+				if (this .inside && this .getTraversed ())
+				{
+				   var
+				      modelViewMatrix        = this .modelViewMatrix,
+				      centerOfRotationMatrix = this .centerOfRotationMatrix;
+
+					centerOfRotationMatrix .assign (this .viewpoint .getTransformationMatrix ());
+					centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
+					centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
+
+					modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
+					modelViewMatrix .get (null, this .orientation);
+					modelViewMatrix .inverse ();
+
+					this .position .set (modelViewMatrix [12],
+					                     modelViewMatrix [13],
+					                     modelViewMatrix [14]);
+
+					this .orientation .inverse ();
+
+					this .centerOfRotation .set (centerOfRotationMatrix [12],
+					                             centerOfRotationMatrix [13],
+					                             centerOfRotationMatrix [14]);
+
+					if (this .isActive_ .getValue ())
+					{
+						if (! this .position_changed_ .getValue () .equals (this .position))
+							this .position_changed_ = this .position;
+
+						if (! this .orientation_changed_ .getValue () .equals (this .orientation))
+							this .orientation_changed_ = this .orientation;
+
+						if (! this .centerOfRotation_changed_ .getValue () .equals (this .centerOfRotation))
+							this .centerOfRotation_changed_ = this .centerOfRotation;
+					}
+					else
+					{
+						this .isActive_  = true;
+						this .enterTime_ = this .getBrowser () .getCurrentTime ();
+
+						this .position_changed_         = this .position;
+						this .orientation_changed_      = this .orientation;
+						this .centerOfRotation_changed_ = this .centerOfRotation;
+					}
+
+					this .inside = false;
+				}
+				else
+				{
+					if (this .isActive_ .getValue ())
+					{
+						this .isActive_ = false;
+						this .exitTime_ = this .getBrowser () .getCurrentTime ();
+					}
+				}
+			}
+			catch (error)
+			{
+				//console .log (error .message);
+			}
+
+			this .setTraversed (false);
+		},
+		traverse: function ()
+		{ },
+		intersectsPoint: function (point)
+		{
+			var
+				min = this .min,
+				max = this .max;
+
+			return min .x <= point .x &&
+			       max .x >= point .x &&
+			       min .y <= point .y &&
+			       max .y >= point .y &&
+			       min .z <= point .z &&
+			       max .z >= point .z;
+		},
+	});
+		
+	function traverse (type)
+	{
+		try
+		{
+			switch (type)
+			{
+				case TraverseType .CAMERA:
+				{
+					this .viewpoint = this .getCurrentViewpoint ();
+					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					return;
+				}
+				case TraverseType .DISPLAY:
+				{
+				   this .setTraversed (true);
+
+					if (this .inside)
+						return;
+
+					if (this .size_ .getValue () .equals (infinity))
+						this .inside = true;
+
+					else
+					{
+					   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
+
+						this .viewer .set (invModelViewMatrix [12],
+				                         invModelViewMatrix [13],
+				                         invModelViewMatrix [14]);
+
+						this .inside = this .intersectsPoint (this .viewer);
+					}
+
+					return;
+				}
+			}
+		}
+		catch (error)
+		{
+			//console .log (error);
+		}
+	}
+
+	return ProximitySensor;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoProximitySensor',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Components/EnvironmentalSensor/ProximitySensor",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentalSensorNode, 
+          X3DGeospatialObject,
+          ProximitySensor,
+          X3DConstants,
+          Vector3)
+{
+
+
+	var geoCoord = new Vector3 (0, 0, 0);
+
+	function GeoProximitySensor (executionContext)
+	{
+		X3DEnvironmentalSensorNode .call (this, executionContext);
+		X3DGeospatialObject        .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoProximitySensor);
+
+		this .proximitySensor = new ProximitySensor (executionContext);
+
+		this .setCameraObject (this .proximitySensor .getCameraObject ());
+	}
+
+	GeoProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoProximitySensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",                 new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",                new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",                new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",                  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "size",                     new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "center",                   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",                 new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "enterTime",                new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "exitTime",                 new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "geoCoord_changed",         new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "position_changed",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "orientation_changed",      new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "centerOfRotation_changed", new Fields .SFVec3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoProximitySensor";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+			X3DGeospatialObject        .prototype .initialize .call (this);
+
+			this .enabled_ .addFieldInterest (this .proximitySensor .enabled_);
+			this .size_    .addFieldInterest (this .proximitySensor .size_);
+			this .center_  .addFieldInterest (this .proximitySensor .center_);
+		
+			this .proximitySensor .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+		
+			this .proximitySensor .isActive_                 .addFieldInterest (this .isActive_);
+			this .proximitySensor .enterTime_                .addFieldInterest (this .enterTime_);
+			this .proximitySensor .exitTime_                 .addFieldInterest (this .exitTime_);
+			this .proximitySensor .position_changed_         .addFieldInterest (this .position_changed_);
+			this .proximitySensor .orientation_changed_      .addFieldInterest (this .orientation_changed_);
+			this .proximitySensor .centerOfRotation_changed_ .addFieldInterest (this .centerOfRotation_changed_);
+		
+			this .proximitySensor .position_changed_ .addInterest (this, "set_position__");
+		
+			this .proximitySensor .enabled_ = this .enabled_;
+			this .proximitySensor .size_    = this .size_;
+			this .proximitySensor .center_  = this .center_;
+		
+			this .proximitySensor .setup ();
+		},
+		set_position__: function (position)
+		{
+			this .geoCoord_changed_ = this .getGeoCoord (this .proximitySensor .position_changed_ .getValue (), geoCoord);
+		},
+		traverse: function (type)
+		{
+			this .proximitySensor .traverse (type);
+		},
+	});
+
+	return GeoProximitySensor;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoTouchSensor',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTouchSensorNode, 
+          X3DGeospatialObject, 
+          X3DConstants,
+          Vector3,
+          Matrix4)
+{
+
+
+	var
+		invModelViewMatrix = new Matrix4 (),
+		geoCoords          = new Vector3 (0, 0, 0);
+
+	function GeoTouchSensor (executionContext)
+	{
+		X3DTouchSensorNode  .call (this, executionContext);
+		X3DGeospatialObject .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoTouchSensor);
+	}
+
+	GeoTouchSensor .prototype = $.extend (Object .create (X3DTouchSensorNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoTouchSensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",            new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",           new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "description",         new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitTexCoord_changed", new Fields .SFVec2f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitNormal_changed",   new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitPoint_changed",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "hitGeoCoord_changed", new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isOver",              new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "touchTime",           new Fields .SFTime ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoTouchSensor";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTouchSensorNode  .prototype .initialize .call (this);
+			X3DGeospatialObject .prototype .initialize .call (this);
+		},
+		set_over__: function (hit, value)
+		{
+			try
+			{
+				X3DTouchSensorNode .prototype .set_over__ .call (this, hit, value);
+
+				if (this .isOver_ .getValue ())
+				{
+					var
+						intersection    = hit .intersection,
+						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+
+					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+
+					this .hitTexCoord_changed_ = intersection .texCoord;
+					this .hitNormal_changed_   = modelViewMatrix .multMatrixDir (intersection .normal .copy ()) .normalize ();
+					this .hitPoint_changed_    = invModelViewMatrix .multVecMatrix (intersection .point .copy ());
+					this .hitGeoCoord_changed_ = this .getGeoCoord (this .hitPoint_changed_ .getValue (), geoCoords);
+				}
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
+		},
+	});
+
+	return GeoTouchSensor;
+});
+
+
+
+
+define ('cobweb/Components/Geospatial/GeoTransform',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DTransformMatrix3DNode, 
+          X3DGeospatialObject, 
+          X3DConstants,
+          Matrix4)
+{
+
+
+	var
+		matrix         = new Matrix4 (),
+		locationMatrix = new Matrix4 ();
+
+	function GeoTransform (executionContext)
+	{
+		X3DTransformMatrix3DNode .call (this, executionContext);
+		X3DGeospatialObject      .call (this, executionContext);
+
+		this .addType (X3DConstants .GeoTransform);
+	}
+
+	GeoTransform .prototype = $.extend (Object .create (X3DTransformMatrix3DNode .prototype),
+		X3DGeospatialObject .prototype,
+	{
+		constructor: GeoTransform,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "translation",      new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "rotation",         new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "scale",            new Fields .SFVec3f (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "scaleOrientation", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoOrigin",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geoSystem",        new Fields .MFString ("GD", "WE")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geoCenter",        new Fields .SFVec3d ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",         new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",       new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "addChildren",      new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "removeChildren",   new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "children",         new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeoTransform";
+		},
+		getComponentName: function ()
+		{
+			return "Geospatial";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DTransformMatrix3DNode .prototype .initialize .call (this);
+			X3DGeospatialObject      .prototype .initialize .call (this);
+		
+			this .addInterest (this, "eventsProcessed");
+		
+			this .eventsProcessed ();
+		},
+		eventsProcessed: function ()
+		{
+			try
+			{
+				this .setHidden (this .scale_ .x === 0 ||
+				                 this .scale_ .y === 0 ||
+				                 this .scale_ .z === 0);
+	
+				this .getLocationMatrix (this .geoCenter_ .getValue (), locationMatrix);
+	
+				matrix .set (this .translation_      .getValue (),
+				             this .rotation_         .getValue (),
+				             this .scale_            .getValue (),
+				             this .scaleOrientation_ .getValue ());
+	
+				this .setMatrix (matrix .multRight (locationMatrix) .multLeft (locationMatrix .inverse ()));
+			}
+			catch (error)
+			{
+				// Should normally not happen.
+				this .setHidden (true);
+			}
+		},
+	});
+
+	return GeoTransform;
+});
+
+
+
+
 define ('cobweb/Components/Rendering/IndexedLineSet',[
 	"jquery",
 	"cobweb/Fields",
@@ -64183,6 +68819,36 @@ function ($,
 
 			return polylines;
 		},
+		getPolylines: function (polylines)
+		{
+			// Polyline map
+
+			polylines .length = 0;
+		
+			if (! this .coordNode || this .coordNode .isEmpty ())
+				return polylines;
+		
+			var
+				polylineIndices = this .getPolylineIndices (),
+				coordIndex      = this .coordIndex_. getValue ();
+
+			for (var p = 0; p < polylineIndices .length; ++ p)
+			{
+				var polyline = polylineIndices [p];
+
+				// Create two vertices for each line.
+		
+				for (var line = 0, endL = polyline .length - 1; line < endL; ++ line)
+				{
+					for (var index = line, endI = line + 2; index < endI; ++ index)
+					{
+						polylines .push (this .coordNode .get1Point (coordIndex [polyline [index]] .getValue ()));
+					}
+				}
+			}
+		
+			return polylines;
+		},
 		build: function ()
 		{
 			if (! this .coordNode || this .coordNode .isEmpty ())
@@ -64217,12 +68883,12 @@ function ($,
 						if (colorNode)
 						{
 							if (colorPerVertex)
-								this .addColor (colorNode .getColor (this .getColorPerVertexIndex (i)));
+								this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
 							else
-								this .addColor (colorNode .getColor (this .getColorIndex (face)));
+								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 						}
 
-						this .addVertex (coordNode .getPoint (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .get1Point (coordIndex [i] .getValue ()));
 					}
 				}
 
@@ -64649,193 +69315,6 @@ function ($,
 	return IndexedTriangleStripSet;
 });
 
-
-
-
-define ('cobweb/Components/Networking/Inline',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Networking/X3DUrlObject",
-	"cobweb/Components/Grouping/X3DBoundedObject",
-	"cobweb/Components/Grouping/Group",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DChildNode,
-          X3DUrlObject,
-          X3DBoundedObject,
-          Group,
-          X3DConstants,
-          Loader)
-{
-
-
-	function Inline (executionContext)
-	{
-		X3DChildNode     .call (this, executionContext);
-		X3DUrlObject     .call (this, executionContext);
-		X3DBoundedObject .call (this, executionContext);
-
-		this .addType (X3DConstants .Inline);
-		
-		this .addChildren ("buffer", new Fields .SFTime ());
-
-		this .scene    = this .getBrowser () .getDefaultScene ();
-		this .group    = new Group (executionContext);
-		this .getBBox  = this .group .getBBox  .bind (this .group);
-		this .traverse = this .group .traverse .bind (this .group);
-	}
-
-	Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		X3DUrlObject .prototype,
-		X3DBoundedObject .prototype,
-	{
-		constructor: Inline,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "load",       new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",        new Fields .MFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",   new Fields .SFVec3f (-1, -1, -1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter", new Fields .SFVec3f ()),
-		]),
-		getTypeName: function ()
-		{
-			return "Inline";
-		},
-		getComponentName: function ()
-		{
-			return "Networking";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DChildNode     .prototype .initialize .call (this);
-			X3DUrlObject     .prototype .initialize .call (this);
-			X3DBoundedObject .prototype .initialize .call (this);
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .group .setup ();
-			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
-
-			this .load_   .addInterest (this, "set_load__");
-			this .url_    .addInterest (this, "set_url__");
-			this .buffer_ .addInterest (this, "set_buffer__");
-
-			this .requestAsyncLoad ();
-		},
-		set_live__: function ()
-		{
-			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
-			{
-				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
-
-				if (live)
-					this .scene .beginUpdate ();
-				else
-					this .scene .endUpdate ();
-			}
-		},
-		set_load__: function ()
-		{
-			if (this .load_ .getValue ())
-				this .buffer_ .addEvent ();
-
-			else
-				this .requestUnload ();
-		},
-		set_url__: function ()
-		{
-			this .buffer_ .addEvent ();
-		},
-		set_buffer__: function ()
-		{
-			if (! this .load_ .getValue ())
-				return;
-
-			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
-
-			this .requestAsyncLoad ();
-		},
-		requestImmediateLoad: function ()
-		{
-			try
-			{
-				this .setScene (new Loader (this) .createX3DFromURL (this .url_));
-			}
-			catch (error)
-			{
-				console .log (error);
-				this .setScene (this .getBrowser () .getDefaultScene ());
-			}
-		},
-		requestAsyncLoad: function ()
-		{
-			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
-				return;
-
-			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-
-			new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
-		},
-		requestUnload: function ()
-		{
-			if (this .checkLoadState () === X3DConstants .NOT_STARTED_STATE || this .checkLoadState () === X3DConstants .FAILED_STATE)
-				return;
-
-			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
-			this .setScene (this .getBrowser () .getDefaultScene ());
-		},
-		setSceneAsync: function (scene)
-		{
-			if (scene)
-			{
-				this .setLoadState (X3DConstants .COMPLETE_STATE);
-				this .setScene (scene);
-			}
-			else
-			{
-				this .setLoadState (X3DConstants .FAILED_STATE);
-				this .setScene (this .getBrowser () .getDefaultScene ());
-			}
-		},
-		setScene: function (scene)
-		{
-			this .scene .endUpdate ();
-			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
-
-			// Set new scene.
-
-			this .scene = scene;
-			this .scene .setup ();
-
-			//this .scene .setExecutionContext (this .getExecutionContext ());
-			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
-			this .group .children_ = this .scene .rootNodes;
-
-			this .set_live__ ();
-
-			this .getBrowser () .addBrowserEvent ();
-		},
-		getScene: function ()
-		{
-			return this .scene;
-		},
-	});
-
-	return Inline;
-});
 
 
 
@@ -65417,19 +69896,19 @@ function ($,
 			else
 				this .setCameraObject (false);
 		},
-		getBBox: function () 
+		getBBox: function (bbox) 
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .child);
 
 				if (boundedObject)
-					return boundedObject .getBBox ();
+					return boundedObject .getBBox (bbox);
 
-				return new Box3 ();
+				return bbox .set ();
 			}
 
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		getLevel: function (type)
 		{
@@ -66167,6 +70646,7 @@ define ("cobweb/Components/Layout/LayoutGroup",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -66175,7 +70655,8 @@ function ($,
           X3DGroupingNode,
           X3DCast,
           TraverseType,
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 
 
@@ -66185,8 +70666,10 @@ function ($,
 
 		this .addType (X3DConstants .LayoutGroup);
 
-		this .viewportNode = null;
-		this .layoutNode   = null;
+		this .viewportNode    = null;
+		this .layoutNode      = null;
+		this .modelViewMatrix = new Matrix4 ();
+		this .screenMatrix    = new Matrix4 ();
 	}
 
 	LayoutGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
@@ -66232,6 +70715,24 @@ function ($,
 		{
 			this .layoutNode = X3DCast (X3DConstants .X3DLayoutNode, this .layout_);
 		},
+		getBBox: function (bbox)
+		{
+			return X3DGroupingNode .prototype .getBBox .call (this, bbox) .multRight (this .getMatrix ());
+		},
+		getMatrix: function ()
+		{
+			try
+			{
+				if (this .layoutNode)
+					this .matrix .assign (this .modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+				else
+					this .matrix .identity ();
+			}
+			catch (error)
+			{ }
+		
+			return this .matrix;
+		},
 		traverse: function (type)
 		{
 			switch (type)
@@ -66249,8 +70750,10 @@ function ($,
 							browser         = this .getBrowser (),
 							modelViewMatrix = browser .getModelViewMatrix ();
 
+						this .modelViewMatrix .assign (modelViewMatrix .get ());
+
 						modelViewMatrix .push ();
-						modelViewMatrix .set (this .layoutNode .transform (type));
+						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type)));
 						browser .getLayouts () .push (this .layoutNode);
 
 						X3DGroupingNode .prototype .traverse .call (this, type);
@@ -66568,9 +71071,9 @@ function ($,
 						//	attribNodes [a] -> addValue (attribArrays [a], index);
 
 						if (colorNode)
-							this .addColor (colorNode .getColor (index));
+							this .addColor (colorNode .get1Color (index));
 
-						this .addVertex (coordNode .getPoint (index));
+						this .addVertex (coordNode .get1Point (index));
 					}
 
 					++ index;
@@ -67368,7 +71871,7 @@ function ($,
 		   var video = this .getMedia ();
 
 			if (video)
-				this .updateTexture (video [0]);
+				this .updateTexture (video [0], true);
 		},
 		traverse: X3DTexture2DNode .prototype .traverse,
 	});
@@ -67455,7 +71958,7 @@ function ($,
 		{
 			return "normal";
 		},
-		getVector: function (index)
+		get1Vector: function (index)
 		{
 			if (index >= 0 && index < this .vector .length)
 				return this .vector [index] .getValue ();
@@ -67508,7 +72011,8 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "keyValue",      new Fields .MFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "value_changed", new Fields .MFVec3f ()),
 		]),
-		keyValue: new Vector3 (0, 0, 0),
+		keyValue0: new Vector3 (0, 0, 0),
+		keyValue1: new Vector3 (0, 0, 0),
 		getTypeName: function ()
 		{
 			return "NormalInterpolator";
@@ -67544,9 +72048,9 @@ function ($,
 			{
 				try
 				{
-					value_changed [i] .set (this .keyValue .assign (keyValue [index0 + i] .getValue ())
-					                                       .slerp (keyValue [index1 + i] .getValue (),
-					                                               weight));
+					value_changed [i] .set (Algorithm .simpleSlerp (this .keyValue0 .assign (keyValue [index0 + i] .getValue ()),
+					                                                this .keyValue1 .assign (keyValue [index1 + i] .getValue ()),
+					                                                weight));
 				}
 				catch (error)
 				{ }
@@ -67721,6 +72225,1676 @@ function ($,
 	});
 
 	return OrientationDamper;
+});
+
+
+
+
+define ('cobweb/Components/Shape/X3DShapeNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+],
+function ($,
+          X3DChildNode, 
+          X3DBoundedObject,
+          X3DCast,
+          X3DConstants,
+          Box3)
+{
+
+
+	function X3DShapeNode (executionContext)
+	{
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DShapeNode);
+
+		this .bbox = new Box3 ();
+	}
+
+	X3DShapeNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DBoundedObject .prototype,
+	{
+		constructor: X3DShapeNode,
+		initialize: function ()
+		{
+			X3DChildNode     .prototype .initialize .call (this);
+			X3DBoundedObject .prototype .initialize .call (this);
+
+			this .bboxSize_   .addInterest (this, "set_bbox__");
+			this .bboxCenter_ .addInterest (this, "set_bbox__");
+			this .appearance_ .addInterest (this, "set_apparance__");
+			this .geometry_   .addInterest (this, "set_geometry__");
+
+			this .set_apparance__ ();
+			this .set_geometry__ ();
+			this .set_bbox__ ();
+		},
+		getBBox: function (bbox)
+		{
+			return bbox .assign (this .bbox);
+		},
+		getBBoxSize: function ()
+		{
+			return this .bboxSize;
+		},
+		getBBoxCenter: function ()
+		{
+			return this .bboxCenter;
+		},
+		getAppearance: function ()
+		{
+			return this .apparanceNode;
+		},
+		getGeometry: function ()
+		{
+			return this .geometryNode;
+		},
+		setTransparent: function (value)
+		{
+			this .transparent = value;
+		},
+		isTransparent: function ()
+		{
+			return this .transparent;
+		},
+		set_bbox__: function ()
+		{
+			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
+			{
+				if (this .getGeometry ())
+					this .bbox .assign (this .getGeometry () .getBBox ());
+
+				else
+					this .bbox .set ();
+			}
+			else
+				this .bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			
+			this .bboxSize   = this .bbox .size;
+			this .bboxCenter = this .bbox .center;
+		},
+		set_apparance__: function ()
+		{
+			if (this .apparanceNode)
+				this .apparanceNode .removeInterest (this, "set_transparent__");
+
+			this .apparanceNode = X3DCast (X3DConstants .X3DAppearanceNode, this .appearance_);
+
+			if (this .apparanceNode)
+				this .apparanceNode .addInterest (this, "set_transparent__");
+
+			else
+				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
+
+			this .set_transparent__ ();
+		},
+		set_geometry__: function ()
+		{
+			if (this .geometryNode)
+			{
+				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
+				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+			}
+
+			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
+
+			if (this .geometryNode)
+			{
+				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
+				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+			}
+
+			this .set_transparent__ ();
+			this .set_bbox__ ();
+		},
+		set_transparent__: function ()
+		{
+			this .transparent = (this .apparanceNode && this .apparanceNode .transparent_ .getValue ()) ||
+			                    (this .geometryNode && this .geometryNode .transparent_ .getValue ());
+		},
+	});
+
+	return X3DShapeNode;
+});
+
+
+
+
+define ('standard/Math/Utility/BVH',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Algorithms/QuickSort",
+],
+function (Vector3,
+          Plane3,
+          QuickSort)
+{
+
+
+	var
+		vertex = new Vector3 (0, 0, 0),
+		v0     = new Vector3 (0, 0, 0),
+		v1     = new Vector3 (0, 0, 0),
+		v2     = new Vector3 (0, 0, 0),
+		uvt    = { u: 0, v: 0, t: 0 };
+
+	// Box normals for bbox / line intersection.
+	var boxNormals = [
+		new Vector3 (0,  0,  1), // front
+		new Vector3 (0,  0, -1), // back
+		new Vector3 (0,  1,  0), // top
+		new Vector3 (0, -1,  0), // bottom
+		new Vector3 (1,  0,  0)  // right
+		// left: We do not have to test for left.
+	];
+
+	function SortComparator (vertices, axis)
+	{
+		function compare (a, b)
+		{
+			var
+				vertices = compare .vertices;
+				axis     = compare .axis;
+
+			return Math .min (vertices [a + axis], vertices [a + 4 + axis], vertices [a + 8 + axis]) <
+			       Math .min (vertices [b + axis], vertices [b + 4 + axis], vertices [b + 8 + axis]);
+		}
+
+		compare .vertices = vertices;
+		compare .axis     = axis;
+
+		return compare;
+	}
+
+	function Triangle (tree, triangle)
+	{
+		this .vertices = tree .vertices;
+		this .normals  = tree .normals;
+		this .i4       = triangle * 12;
+		this .i3       = triangle * 9;
+	}
+
+	Triangle .prototype =
+	{
+		intersectsLine: function (line, intersections, intersectionNormals)
+		{
+			var
+				vertices = this .vertices,
+				normals  = this .normals,
+				i4       = this .i4,
+				i3       = this .i3;
+
+			v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+			v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+			v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+
+			if (line .intersectsTriangle (v0, v1, v2, uvt))
+			{
+				// Get barycentric coordinates.
+
+				var
+					u = uvt .u,
+					v = uvt .v,
+					t = 1 - u - v;
+
+				// Determine vectors for X3DPointingDeviceSensors.
+
+				var i = intersections .size ++;
+
+				if (i >= intersections .length)
+				{
+					intersections       .push (new Vector3 (0, 0, 0));
+					intersectionNormals .push (new Vector3 (0, 0, 0));
+				}
+
+				intersections [i] .set (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
+				                        t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+				                        t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+
+
+				intersectionNormals [i] .set (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
+				                              t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
+				                              t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
+			}
+		},
+	};
+
+	function Node (tree, triangles, first, size)
+	{
+		this .min          = new Vector3 (0, 0, 0);
+		this .max          = new Vector3 (0, 0, 0);
+		this .planes       = [ ];
+		this .intersection = new Vector3 (0, 0, 0);
+
+		var
+			vertices = tree .vertices,
+			min      = this .min,
+			max      = this .max,
+			last     = first + size,
+			t        = triangles [first] * 12;
+
+		// Calculate bbox
+
+		min .set (vertices [t], vertices [t + 1], vertices [t + 2]);
+		max .assign (min);
+
+		for (var i = first; i < last; ++ i)
+		{
+			t = triangles [i] * 12;
+
+			v0 .set (vertices [t + 0], vertices [t + 1], vertices [t + 2]);
+			v1 .set (vertices [t + 4], vertices [t + 5], vertices [t + 6]);
+			v2 .set (vertices [t + 8], vertices [t + 9], vertices [t + 10]);
+
+			min .min (v0, v1, v2);
+			max .max (v0, v1, v2);
+		}
+
+		for (var i = 0; i < 5; ++ i)
+			this .planes [i] = new Plane3 (i % 2 ? min : max, boxNormals [i]);
+
+		// Sort and split array
+
+		if (size > 2)
+		{
+			// Sort array
+
+			tree .sorter .compare .axis = this .getLongestAxis (min, max);
+			tree .sorter .sort (first, last);
+
+			// Split array
+
+			var leftSize = size >>> 1;
+		}
+		else
+			var leftSize = 1;
+
+		// Split array
+
+		var rightSize = size - leftSize;
+
+		// Construct left and right node
+
+		if (leftSize > 1)
+			this .left = new Node (tree, triangles, first, leftSize);
+		else
+			this .left = new Triangle (tree, triangles [first]);
+
+		if (rightSize > 1)
+			this .right = new Node (tree, triangles, first + leftSize, rightSize);
+		else
+			this .right = new Triangle (tree, triangles [first + leftSize]);
+	}
+
+	Node .prototype =
+	{
+		intersectsLine: function (line, intersections, intersectionNormals)
+		{
+			if (this .intersectsBBox (line))
+			{
+				this .left  .intersectsLine (line, intersections, intersectionNormals);
+				this .right .intersectsLine (line, intersections, intersectionNormals);
+			}
+		},
+		intersectsBBox: function (line)
+		{
+			var
+				planes       = this .planes,
+				min          = this .min,
+				max          = this .max,
+				minX         = min .x,
+				maxX         = max .x,
+				maxZ         = max .x,
+				minY         = min .y,
+				maxY         = max .y,
+				minZ         = min .z,
+				maxZ         = max .z,
+				intersection = this .intersection;
+
+		   // front
+			if (planes [0] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// back
+			if (planes [1] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// top
+			if (planes [2] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// bottom
+			if (planes [3] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// right
+			if (planes [4] .intersectsLine (line, intersection))
+			{
+				if (intersection .y >= minY && intersection .y <= maxY &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			return false;
+		},
+		getLongestAxis: function (min, max)
+		{
+			var
+				x = max .x - min .x,
+				y = max .y - min .y,
+				z = max .z - min .z;
+	
+			if (x < y)
+			{
+				if (y < z)
+					return 2;
+
+				return 1;
+			}
+			else
+			{
+				if (x < z)
+					return 2;
+
+				return 0;
+			}
+		},
+	};
+
+	function BVH (vertices, normals)
+	{
+		this .vertices = vertices;
+		this .normals  = normals;
+
+		var numTriangles = vertices .length / 12;
+	
+		switch (numTriangles)
+		{
+			case 0:
+				this .root = null;
+				break;
+			case 1:
+			{
+				this .root = new Triangle (this, 0);
+				break;
+			}
+			default:
+			{
+				var triangles = [ ];
+
+				for (var i = 0; i < numTriangles; ++ i)
+					triangles .push (i);
+
+				this .sorter = new QuickSort (triangles, SortComparator (vertices, 0));
+
+				this .root = new Node (this, triangles, 0, numTriangles);
+				break;
+			}
+		}
+	}
+
+	BVH .prototype =
+	{
+		constructor: BVH,
+		
+		intersectsLine: function (line, intersections, intersectionNormals)
+		{
+			intersections .size = 0;
+
+			if (this .root)
+			{
+				this .root .intersectsLine (line, intersections, intersectionNormals);
+				return intersections .size;
+			}
+
+			return 0;
+		},
+	};
+
+	return BVH;
+});
+
+
+define ('cobweb/Components/ParticleSystems/ParticleSystem',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DShapeNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Color4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithm",
+	"standard/Math/Utility/BVH",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DShapeNode,
+          TraverseType,
+          X3DConstants,
+          X3DCast,
+          Color4,
+          Vector3,
+          Vector4,
+          Matrix4,
+          Matrix3,
+          QuickSort,
+          Algorithm,
+          BVH)
+{
+
+
+	var
+		i        = 0,
+		POINT    = i ++,
+		LINE     = i ++,
+		TRIANGLE = i ++,
+		QUAD     = i ++,
+		GEOMETRY = i ++,
+		SPRITE   = i ++;
+
+	var GeometryTypes = {
+		POINT:    POINT,
+		LINE:     LINE,
+		TRIANGLE: TRIANGLE,
+		QUAD:     QUAD,
+		GEOMETRY: GEOMETRY,
+		SPRITE:   SPRITE,
+	};
+
+	var
+		invModelViewMatrix = new Matrix4 (),
+		billboardToScreen  = new Vector3 (0, 0, 0),
+		viewerYAxis        = new Vector3 (0, 0, 0),
+		normal             = new Vector3 (0, 0, 0),
+		s1                 = new Vector3 (0, 0, 0),
+		s2                 = new Vector3 (0, 0, 0),
+		s3                 = new Vector3 (0, 0, 0),
+		s4                 = new Vector3 (0, 0, 0),
+		x                  = new Vector3 (0, 0, 0),
+		y                  = new Vector3 (0, 0, 0),
+		z                  = new Vector3 (0, 0, 0);
+
+	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
+
+	function ParticleSystem (executionContext)
+	{
+		X3DShapeNode .call (this, executionContext);
+
+		this .addType (X3DConstants .ParticleSystem);
+
+		this .createParticles          = true;
+		this .particles                = [ ];
+		this .velocities               = [ ];
+		this .speeds                   = [ ];
+		this .turbulences              = [ ];
+		this .geometryType             = POINT;
+		this .maxParticles             = 0;
+		this .numParticles             = 0;
+		this .particleLifetime         = 0;
+		this .lifetimeVariation        = 0;
+		this .emitterNode              = null;
+		this .forcePhysicsModelNodes   = [ ];
+		this .boundedPhysicsModelNodes = [ ];
+		this .boundedNormals           = [ ];
+		this .boundedVertices          = [ ];
+		this .boundedVolume            = null;
+		this .creationTime             = 0;
+		this .pauseTime                = 0;
+		this .deltaTime                = 0;
+		this .numForces                = 0;
+		this .colorKeys                = [ ];
+		this .colorRamppNode           = null;
+		this .colorRamp                = [ ];
+		this .colorMaterial            = false;
+		this .texCoordKeys             = [ ];
+		this .texCoordRampNode         = null;
+		this .texCoordRamp             = [ ];
+		this .texCoordAnim             = false;
+		this .vertexCount              = 0;
+		this .shader                   = this .getBrowser () .getPointShader ();
+		this .modelViewMatrix          = new Matrix4 ();
+		this .rotation                 = new Matrix3 ();
+		this .particleSorter           = new QuickSort (this .particles, compareDistance);
+		this .sortParticles            = false;
+	}
+
+	ParticleSystem .prototype = $.extend (Object .create (X3DShapeNode .prototype),
+	{
+		constructor: ParticleSystem,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "enabled",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "createParticles",   new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "geometryType",      new Fields .SFString ("QUAD")),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "maxParticles",      new Fields .SFInt32 (200)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "particleLifetime",  new Fields .SFFloat (5)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "lifetimeVariation", new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "particleSize",      new Fields .SFVec2f (0.02, 0.02)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "emitter",           new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "physics",           new Fields .MFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorKey",          new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "colorRamp",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordKey",       new Fields .MFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "texCoordRamp",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isActive",          new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",          new Fields .SFVec3f (-1, -1, -1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",        new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance",        new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",          new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ParticleSystem";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DShapeNode .prototype .initialize .call (this);
+
+			var gl = this .getBrowser () .getContext ();
+
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
+			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
+
+			this .enabled_           .addInterest (this, "set_enabled__");
+			this .createParticles_   .addInterest (this, "set_createParticles__");
+			this .geometryType_      .addInterest (this, "set_geometryType__");
+			this .maxParticles_      .addInterest (this, "set_enabled__");
+			this .particleLifetime_  .addInterest (this, "set_particleLifetime__");
+			this .lifetimeVariation_ .addInterest (this, "set_lifetimeVariation__");
+			this .emitter_           .addInterest (this, "set_emitter__");
+			this .physics_           .addInterest (this, "set_physics__");
+			this .colorKey_          .addInterest (this, "set_color__");
+			this .colorRamp_         .addInterest (this, "set_colorRamp__");
+			this .texCoordKey_       .addInterest (this, "set_texCoord__");
+			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
+
+			this .colorBuffer    = gl .createBuffer ();
+			this .texCoordBuffer = gl .createBuffer ();
+			this .normalBuffer   = gl .createBuffer ();
+			this .vertexBuffer   = gl .createBuffer ();
+
+			this .colorArray    = new Float32Array ();
+			this .texCoordArray = new Float32Array ();
+			this .normalArray   = new Float32Array ();
+			this .vertexArray   = new Float32Array ();
+
+			// Call order is higly important at startup.
+			this .set_emitter__ ();
+			this .set_enabled__ ();
+			this .set_createParticles__ ();
+			this .set_particleLifetime__ ();
+			this .set_lifetimeVariation__ ();
+			this .set_physics__ ();
+			this .set_colorRamp__ ();
+			this .set_texCoordRamp__ ();
+		},
+		set_bbox__: function ()
+		{
+			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
+				this .bbox .set ();
+			else
+				this .bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			
+			this .bboxSize   = this .bbox .size;
+			this .bboxCenter = this .bbox .center;
+		},
+		set_transparent__: function ()
+		{
+			switch (this .geometryType)
+			{
+				case POINT:
+					this .setTransparent (true);
+					break;
+				default:
+				{
+					this .setTransparent ((this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
+					                      (this .colorRampNode && this .colorRampNode .isTransparent ()));
+					break;
+				}
+			}
+		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+			{
+				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
+				{
+					this .getBrowser () .sensors () .addInterest (this, "animate");
+					this .getBrowser () .sensors () .addInterest (this, "update");
+		
+					if (this .pauseTime)
+					{
+						this .creationTime += performance .now () / 1000 - this .pauseTime;
+						this .pauseTime     = 0;
+					}
+				}
+			}
+			else
+			{
+				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
+				{
+					this .getBrowser () .sensors () .removeInterest (this, "animate");
+					this .getBrowser () .sensors () .removeInterest (this, "update");
+		
+					if (this .pauseTime === 0)
+						this .pauseTime = performance .now () / 1000;
+				}
+			}
+		},
+		set_enabled__: function ()
+		{
+			if (this .enabled_ .getValue () && this .maxParticles_ .getValue ())
+			{
+				if (! this .isActive_ .getValue ())
+				{
+					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					{
+						this .getBrowser () .sensors () .addInterest (this, "animate");
+						this .getBrowser () .sensors () .addInterest (this, "update");
+			
+						this .pauseTime = 0;
+					}
+					else
+						this .pauseTime = performance .now () / 1000;
+
+					this .isActive_ = true;
+				}
+			}
+			else
+			{
+				if (this .isActive_ .getValue ())
+				{
+					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					{
+						this .getBrowser () .sensors () .removeInterest (this, "animate");
+						this .getBrowser () .sensors () .removeInterest (this, "update");
+					}
+	
+					this .isActive_ = false;
+				}
+			}
+
+			this .set_maxParticles__ ();
+		},
+		set_createParticles__: function ()
+		{
+			this .createParticles = this .createParticles_ .getValue ();
+		},
+		set_geometryType__: function ()
+		{
+			var
+				gl           = this .getBrowser () .getContext (),
+				maxParticles = this .maxParticles;
+
+			// geometryType
+
+			this .geometryType = GeometryTypes [this .geometryType_ .getValue ()]
+
+			if (! this .geometryType)
+				this .geometryType = POINT;
+
+			// Create buffers
+
+			switch (this .geometryType)
+			{
+				case POINT:
+				{
+					this .colorArray    = new Float32Array (4 * maxParticles);
+					this .texCoordArray = new Float32Array ();
+					this .normalArray   = new Float32Array ();
+					this .vertexArray   = new Float32Array (4 * maxParticles);
+
+					this .colorArray  .fill (1);
+					this .vertexArray .fill (1);
+
+					this .texCoordCount = 0;
+					this .vertexCount   = 1;
+					break;
+				}
+				case LINE:
+				{
+					this .colorArray    = new Float32Array (2 * 4 * maxParticles);
+					this .texCoordArray = new Float32Array ();
+					this .normalArray   = new Float32Array ();
+					this .vertexArray   = new Float32Array (2 * 4 * maxParticles);
+
+					this .colorArray  .fill (1);
+					this .vertexArray .fill (1);
+
+					this .texCoordCount = 2;
+					this .vertexCount   = 2;
+					this .shader        = this .getBrowser () .getLineShader ()
+					break;
+				}
+				case TRIANGLE:
+				case QUAD:
+				case SPRITE:
+				{
+					this .colorArray    = new Float32Array (6 * 4 * maxParticles);
+					this .texCoordArray = new Float32Array (6 * 4 * maxParticles);
+					this .normalArray   = new Float32Array (6 * 3 * maxParticles);
+					this .vertexArray   = new Float32Array (6 * 4 * maxParticles);
+
+					this .colorArray  .fill (1);
+					this .vertexArray .fill (1);
+
+					var
+						texCoordArray = this .texCoordArray,
+						normalArray   = this .normalArray;
+
+					for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
+					{
+						normalArray [i]     = 0;
+						normalArray [i + 1] = 0;
+						normalArray [i + 2] = 1;
+					}
+
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+					gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
+
+					for (var i = 0; i < maxParticles; ++ i)
+					{
+						var i24 = i * 24;
+
+						// p4 ------ p3
+						// |       / |
+						// |     /   |
+						// |   /     |
+						// | /       |
+						// p1 ------ p2
+
+						// p1
+						texCoordArray [i24]     = texCoordArray [i24 + 12] = 0;
+						texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = 0;
+						texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = 0;
+						texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = 1;
+
+						// p2
+						texCoordArray [i24 + 4] = 1;
+						texCoordArray [i24 + 5] = 0;
+						texCoordArray [i24 + 6] = 0;
+						texCoordArray [i24 + 7] = 1;
+
+						// p3
+						texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = 1;
+						texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = 1;
+						texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = 0;
+						texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = 1;
+
+						// p4
+						texCoordArray [i24 + 20] = 0;
+						texCoordArray [i24 + 21] = 1;
+						texCoordArray [i24 + 22] = 0;
+						texCoordArray [i24 + 23] = 1;
+					}
+
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+					gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
+
+					this .texCoordCount = 4;
+					this .vertexCount   = 6;
+					break;
+				}
+				case GEOMETRY:
+				{
+					this .texCoordCount = 0;
+					this .vertexCount   = 0;
+					break;
+				}
+			}
+
+			this .set_shader__ ();
+		},
+		set_shader__: function ()
+		{
+			switch (this .geometryType)
+			{
+				case POINT:
+				{
+					this .shader = this .getBrowser () .getPointShader ()
+					break;
+				}
+				case LINE:
+				{
+					this .shader = this .getBrowser () .getLineShader ()
+					break;
+				}
+				case TRIANGLE:
+				case QUAD:
+				case SPRITE:
+				{
+					this .shader = this .getBrowser () .getDefaultShader ()
+					break;
+				}
+				case GEOMETRY:
+				{
+					this .shader = this .getBrowser () .getDefaultShader ()
+					break;
+				}
+			}
+		},
+		set_maxParticles__: function ()
+		{
+			var
+				particles    = this .particles,
+				maxParticles = Math .max (0, this .maxParticles_ .getValue ());
+
+			for (var i = this .numParticles, length = Math .min (particles .length, maxParticles); i < length; ++ i)
+				particles [i] .lifetime = -1;
+
+			for (var i = particles .length, length = maxParticles; i < length; ++ i)
+			{
+				particles [i] = {
+					lifetime: -1,
+					elapsedTime: 0,
+					position: new Vector3 (0, 0, 0),
+					velocity: new Vector3 (0, 0, 0),
+					color:    new Vector4 (1, 1, 1, 1),
+					distance: 0,
+				};
+			}
+
+			this .maxParticles = maxParticles;
+			this .numParticles = Math .min (this .numParticles, maxParticles);
+
+			if (! this .emitterNode .isExplosive ())
+				this .creationTime = performance .now () / 1000;
+
+			this .set_geometryType__ ();
+		},
+		set_particleLifetime__: function ()
+		{
+			this .particleLifetime = this .particleLifetime_ .getValue ();
+		},
+		set_lifetimeVariation__: function ()
+		{
+			this .lifetimeVariation = this .lifetimeVariation_ .getValue ();
+		},
+		set_emitter__: function ()
+		{
+			this .emitterNode = X3DCast (X3DConstants .X3DParticleEmitterNode, this .emitter_);
+
+			if (! this .emitterNode)
+				this .emitterNode = this .getBrowser () .getDefaultEmitter ();
+		},
+		set_physics__: function ()
+		{
+			var
+				physics                  = this .physics_ .getValue (),
+				forcePhysicsModelNodes   = this .forcePhysicsModelNodes,
+				boundedPhysicsModelNodes = this .boundedPhysicsModelNodes;
+
+			for (var i = 0, length = boundedPhysicsModelNodes .length; i < length; ++ i)
+				boundedPhysicsModelNodes [i] .removeInterest (this, "set_boundedPhysics__");
+
+			forcePhysicsModelNodes   .length = 0;
+			boundedPhysicsModelNodes .length = 0;
+
+			for (var i = 0, length = physics .length; i < length; ++ i)
+			{
+				try
+				{
+					var
+						innerNode = physics [i] .getValue () .getInnerNode (),
+						type      = innerNode .getType ();
+
+					for (var t = type .length - 1; t >= 0; -- t)
+					{
+						switch (type [t])
+						{
+							case X3DConstants .ForcePhysicsModel:
+							case X3DConstants .WindPhysicsModel:
+							{
+								forcePhysicsModelNodes .push (innerNode);
+								break;
+							}
+							case X3DConstants .BoundedPhysicsModel:
+							{
+								innerNode .addInterest (this, "set_boundedPhysics__");
+								boundedPhysicsModelNodes .push (innerNode);
+								break;
+							}
+							default:
+								continue;
+						}
+
+						break;
+					}
+				}
+				catch (error)
+				{ }
+			}
+
+			this .set_boundedPhysics__ ();
+		},
+		set_boundedPhysics__: function ()
+		{
+			var
+				boundedPhysicsModelNodes = this .boundedPhysicsModelNodes,
+				boundedNormals           = this .boundedNormals,
+				boundedVertices          = this .boundedVertices;
+
+			boundedNormals  .length = 0;
+			boundedVertices .length = 0;
+
+			for (var i = 0, length = boundedPhysicsModelNodes .length; i < length; ++ i)
+			{
+				boundedPhysicsModelNodes [i] .addGeometry (boundedNormals, boundedVertices);
+			}
+
+			this .boundedVolume = new BVH (boundedVertices, boundedNormals);
+		},
+		set_colorRamp__: function ()
+		{
+			if (this .colorRampNode)
+				this .colorRampNode .removeInterest (this, "set_color__");
+
+			this .colorRampNode = X3DCast (X3DConstants .X3DColorNode, this .colorRamp_);
+
+			if (this .colorRampNode)
+				this .colorRampNode .addInterest (this, "set_color__");
+
+			this .set_color__ ();
+			this .set_transparent__ ();
+		},
+		set_color__: function ()
+		{
+			var
+				colorKey  = this .colorKey_ .getValue (),
+				colorKeys = this .colorKeys,
+				colorRamp = this .colorRamp;
+
+			for (var i = 0, length = colorKey .length; i < length; ++ i)
+				colorKeys [i] = colorKey [i] .getValue ();
+
+			colorKeys .length = length;
+
+			if (this .colorRampNode)
+				this .colorRampNode .getVectors (this .colorRamp);
+
+			for (var i = colorRamp .length, length = colorKey .length; i < length; ++ i)
+				colorRamp [i] = new Vector4 (1, 1, 1, 1);
+
+			colorRamp .length = length;
+
+			this .colorMaterial = Boolean (colorKeys .length && this .colorRampNode);
+		},
+		set_texCoordRamp__: function ()
+		{
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .removeInterest (this, "set_texCoord__");
+
+			this .texCoordRampNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoordRamp_);
+
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .addInterest (this, "set_texCoord__");
+
+			this .set_texCoord__ ();
+		},
+		set_texCoord__: function ()
+		{
+			var
+				texCoordKey  = this .texCoordKey_ .getValue (),
+				texCoordKeys = this .texCoordKeys,
+				texCoordRamp = this .texCoordRamp;
+
+			for (var i = 0, length = texCoordKey .length; i < length; ++ i)
+				texCoordKeys [i] = texCoordKey [i] .getValue ();
+
+			texCoordKeys .length = length;
+
+			if (this .texCoordRampNode)
+				this .texCoordRampNode .getTexCoord (texCoordRamp);
+
+			for (var i = texCoordRamp .length, length = texCoordKey .length * this .texCoordCount; i < length; ++ i)
+				texCoordRamp [i] = new Vector4 (0, 0, 0, 0);
+
+			texCoordRamp .length = length;
+
+			this .texCoordAnim = Boolean (texCoordKeys .length && this .texCoordRampNode);
+		},
+		animate: function ()
+		{
+			var emitterNode = this .emitterNode;
+
+			// Determine delta time
+
+			var
+				DELAY = 15, // Delay in frames when dt full applys.
+				dt    = 1 / this .getBrowser () .getCurrentFrameRate ();
+
+			// var deltaTime is only for the emitter, this.deltaTime is for the forces.
+			var deltaTime = this .deltaTime = ((DELAY - 1) * this .deltaTime + dt) / DELAY; // Moving average about DELAY frames.
+
+			// Determine numParticles
+
+			if (emitterNode .isExplosive ())
+			{
+				var
+					now              = performance .now () / 1000,
+					particleLifetime = this .particleLifetime + this .particleLifetime * this .lifetimeVariation;
+	
+				if (this .numParticles === 0 || now - this .creationTime > particleLifetime)
+				{
+					this .creationTime    = now;
+					this .numParticles    = this .maxParticles;
+					this .createParticles = this .createParticles_ .getValue ();
+
+					deltaTime = Number .POSITIVE_INFINITY; 
+				}
+				else
+					this .createParticles = false;
+			}
+			else
+			{
+				if (this .numParticles < this .maxParticles)
+				{
+					var
+						now          = performance .now () / 1000,
+						newParticles = Math .ceil ((now - this .creationTime) * this .maxParticles / this .particleLifetime);
+	
+					if (newParticles)
+						this .creationTime = now;
+
+					this .numParticles = Math .floor (Math .min (this .maxParticles, this .numParticles + newParticles));
+				}
+			}
+
+			// Apply forces.
+
+			if (emitterNode .getMass ())
+			{
+				var
+					forcePhysicsModelNodes = this .forcePhysicsModelNodes,
+					velocities             = this .velocities,
+					speeds                 = this .speeds,
+					turbulences            = this .turbulences,
+					deltaMass              = this .deltaTime / emitterNode .getMass ();
+
+				// Collect forces in velocities and collect turbulences.
+
+				for (var i = velocities .length, length = forcePhysicsModelNodes .length; i < length; ++ i)
+					velocities [i] = new Vector3 (0, 0, 0);
+
+				for (var i = 0, length = forcePhysicsModelNodes .length; i < length; ++ i)
+					forcePhysicsModelNodes [i] .addForce (i, emitterNode, velocities, turbulences);
+
+				// Determine velocities from forces and determine speed.
+
+				for (var i = 0, length = velocities .length; i < length; ++ i)
+				{
+					velocities [i] .multiply (deltaMass);
+					speeds [i] = velocities [i] .abs ();
+				}
+
+				this .numForces = length;
+			}
+			else
+			{
+				this .numForces = 0;
+			}
+
+			// Determine particle position, velocity and colors
+
+			emitterNode .animate (this, deltaTime);
+
+			this .getBrowser () .addBrowserEvent (this);
+		},
+		update: function ()
+		{
+			switch (this .geometryType)
+			{
+				case POINT:
+					this .updatePoint ();
+					break;
+				case LINE:
+					this .updateLine ();
+					break;
+				case TRIANGLE:
+				case QUAD:
+				case SPRITE:
+					this .updateQuad ();
+					break;
+				case GEOMETRY:
+					break;
+			}
+		},
+		updatePoint: function ()
+		{
+			var
+				gl           = this .getBrowser () .getContext (),
+				particles    = this .particles,
+				numParticles = this .numParticles,
+				colorArray   = this .colorArray,
+				vertexArray  = this .vertexArray;
+
+			// Colors
+
+			if (this .colorMaterial)
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						color = particles [i] .color,
+						i4    = i * 4;
+	
+					colorArray [i4]     = color .x;
+					colorArray [i4 + 1] = color .y;
+					colorArray [i4 + 2] = color .z;
+					colorArray [i4 + 3] = color .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
+			}
+
+			// Vertices
+
+			for (var i = 0; i < numParticles; ++ i)
+			{
+				var
+					position = particles [i] .position,
+					i4       = i * 4;
+
+				vertexArray [i4]     = position .x;
+				vertexArray [i4 + 1] = position .y;
+				vertexArray [i4 + 2] = position .z;
+			}
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+		},
+		updateLine: function ()
+		{
+			var
+				gl           = this .getBrowser () .getContext (),
+				particles    = this .particles,
+				numParticles = this .numParticles,
+				colorArray   = this .colorArray,
+				vertexArray  = this .vertexArray,
+				sx1_2        = this .particleSize_ .x / 2,
+				sy1_2        = this .particleSize_ .y / 2;
+
+			// Colors
+
+			if (this .colorMaterial)
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						color = particles [i] .color,
+						i8    = i * 8;
+	
+					colorArray [i8]     = color .x;
+					colorArray [i8 + 1] = color .y;
+					colorArray [i8 + 2] = color .z;
+					colorArray [i8 + 3] = color .w;
+
+					colorArray [i8 + 4] = color .x;
+					colorArray [i8 + 5] = color .y;
+					colorArray [i8 + 6] = color .z;
+					colorArray [i8 + 7] = color .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
+			}
+
+			// Vertices
+
+			for (var i = 0; i < numParticles; ++ i)
+			{
+				var
+					particle = particles [i],
+					position = particle .position,
+					i8       = i * 8;
+
+				normal .assign (particle .velocity) .normalize ();
+
+				vertexArray [i8]     = position .x - normal .x * sy1_2;
+				vertexArray [i8 + 1] = position .y - normal .y * sy1_2;
+				vertexArray [i8 + 2] = position .z - normal .z * sy1_2;
+
+				vertexArray [i8 + 4] = position .x + normal .x * sy1_2;
+				vertexArray [i8 + 5] = position .y + normal .y * sy1_2;
+				vertexArray [i8 + 6] = position .z + normal .z * sy1_2;
+			}
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+		},
+		updateQuad: function ()
+		{
+			var
+				gl              = this .getBrowser () .getContext (),
+				particles       = this .particles,
+				maxParticles    = this .maxParticles,
+			   numParticles    = this .numParticles,
+				colorArray      = this .colorArray,
+				texCoordArray   = this .texCoordArray,
+				normalArray     = this .normalArray,
+				vertexArray     = this .vertexArray,
+				sx1_2           = this .particleSize_ .x / 2,
+				sy1_2           = this .particleSize_ .y / 2,
+				modelViewMatrix = this .modelViewMatrix;
+
+			// Sort particles
+
+			if (this .sortParticles)
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var particle = particles [i];
+					particle .distance = modelViewMatrix .getDepth (particle .position);
+				}
+				
+				// Expensisive function!!!
+				this .particleSorter .sort (0, numParticles);
+			}
+
+			// Colors
+
+			if (this .colorMaterial)
+			{
+				for (var i = 0; i < maxParticles; ++ i)
+				{
+					var
+						color = particles [i] .color,
+						i24   = i * 24;
+
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+
+					// p1, p2, p3; p1, p3, p4
+					colorArray [i24]     = colorArray [i24 + 4] = colorArray [i24 + 8]  = colorArray [i24 + 12] = colorArray [i24 + 16] = colorArray [i24 + 20] = color .x;
+					colorArray [i24 + 1] = colorArray [i24 + 5] = colorArray [i24 + 9]  = colorArray [i24 + 13] = colorArray [i24 + 17] = colorArray [i24 + 21] = color .y;
+					colorArray [i24 + 2] = colorArray [i24 + 6] = colorArray [i24 + 10] = colorArray [i24 + 14] = colorArray [i24 + 18] = colorArray [i24 + 22] = color .z;
+					colorArray [i24 + 3] = colorArray [i24 + 7] = colorArray [i24 + 11] = colorArray [i24 + 15] = colorArray [i24 + 19] = colorArray [i24 + 23] = color .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
+			}
+
+			if (this .texCoordAnim && this .texCoordArray .length)
+			{
+				var
+					texCoordKeys = this .texCoordKeys,
+					texCoordRamp = this .texCoordRamp;
+
+				var
+					length = texCoordKeys .length,
+					index0 = 0;
+		
+				for (var i = 0; i < maxParticles; ++ i)
+				{
+					// Determine index0.
+		
+					var
+						particle = particles [i],
+						fraction = particle .elapsedTime / particle .lifetime,
+						color    = particle .color;
+	
+					if (length == 1 || fraction <= texCoordKeys [0])
+					{
+						index0 = 0;
+					}
+					else if (fraction >= texCoordKeys [length - 1])
+					{
+						index0 = length - 2;
+					}
+					else
+					{
+						var index = Algorithm .upperBound (texCoordKeys, 0, length, fraction, Algorithm .less);
+
+						if (index < length)
+							index0 = index - 1;
+						else
+							index0 = 0;
+					}
+
+					// Set texCoord.
+		
+					index0 *= this .texCoordCount;
+
+					var
+						texCoord1 = texCoordRamp [index0],
+						texCoord2 = texCoordRamp [index0 + 1],
+						texCoord3 = texCoordRamp [index0 + 2],
+						texCoord4 = texCoordRamp [index0 + 3],
+						i24 = i * 24;
+
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+
+					// p1
+					texCoordArray [i24]     = texCoordArray [i24 + 12] = texCoord1 .x;
+					texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = texCoord1 .y;
+					texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = texCoord1 .z;
+					texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = texCoord1 .w;
+
+					// p2
+					texCoordArray [i24 + 4] = texCoord2 .x;
+					texCoordArray [i24 + 5] = texCoord2 .y;
+					texCoordArray [i24 + 6] = texCoord2 .z;
+					texCoordArray [i24 + 7] = texCoord2 .w;
+
+					// p3
+					texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = texCoord3 .x;
+					texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = texCoord3 .y;
+					texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = texCoord3 .z;
+					texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = texCoord3 .w;
+
+					// p4
+					texCoordArray [i24 + 20] = texCoord4 .x;
+					texCoordArray [i24 + 21] = texCoord4 .y;
+					texCoordArray [i24 + 22] = texCoord4 .z;
+					texCoordArray [i24 + 23] = texCoord4 .w;
+				}
+	
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
+			}
+
+			// Vertices
+
+			if (this .geometryType === SPRITE)
+			{
+				// Normals
+
+				var
+					rotation = this .getScreenAlignedRotation (this .modelViewMatrix),
+					nx       = rotation [6],
+					ny       = rotation [7],
+					nz       = rotation [8];
+
+				for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
+				{
+					normalArray [i]     = nx;
+					normalArray [i + 1] = ny;
+					normalArray [i + 2] = nz;
+				}
+
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+				gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
+
+				// Vertices
+
+				s1 .set (-sx1_2, -sy1_2, 0);
+				s2 .set ( sx1_2, -sy1_2, 0);
+				s3 .set ( sx1_2,  sy1_2, 0);
+				s4 .set (-sx1_2,  sy1_2, 0);
+
+				rotation .multVecMatrix (s1);
+				rotation .multVecMatrix (s2);
+				rotation .multVecMatrix (s3);
+				rotation .multVecMatrix (s4);
+
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						position = particles [i] .position,
+						x        = position .x,
+						y        = position .y,
+						z        = position .z,
+						i24      = i * 24;
+	
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+	
+
+					// p1
+					vertexArray [i24]     = vertexArray [i24 + 12] = x + s1 .x;
+					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y + s1 .y;
+					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z + s1 .z;
+	
+					// p2
+					vertexArray [i24 + 4] = x + s2 .x;
+					vertexArray [i24 + 5] = y + s2 .y;
+					vertexArray [i24 + 6] = z + s2 .z;
+	
+					// p3
+					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + s3 .x;
+					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + s3 .y;
+					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z + s3 .z;
+	
+					// p4
+					vertexArray [i24 + 20] = x + s4 .x;
+					vertexArray [i24 + 21] = y + s4 .y;
+					vertexArray [i24 + 22] = z + s4 .z;
+				}
+			}
+			else
+			{
+				for (var i = 0; i < numParticles; ++ i)
+				{
+					var
+						position = particles [i] .position,
+						x        = position .x,
+						y        = position .y,
+						z        = position .z,
+						i24      = i * 24;
+	
+					// p4 ------ p3
+					// |       / |
+					// |     /   |
+					// |   /     |
+					// | /       |
+					// p1 ------ p2
+	
+					// p1
+					vertexArray [i24]     = vertexArray [i24 + 12] = x - sx1_2;
+					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y - sy1_2;
+					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z;
+	
+					// p2
+					vertexArray [i24 + 4] = x + sx1_2;
+					vertexArray [i24 + 5] = y - sy1_2;
+					vertexArray [i24 + 6] = z;
+	
+					// p3
+					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + sx1_2;
+					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + sy1_2;
+					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z;
+	
+					// p4
+					vertexArray [i24 + 20] = x - sx1_2;
+					vertexArray [i24 + 21] = y + sy1_2;
+					vertexArray [i24 + 22] = z;
+				}
+			}
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+		},
+		traverse: function (type)
+		{
+			switch (type)
+			{
+				case TraverseType .DISPLAY:
+				{
+					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+		
+					this .getCurrentLayer () .addShape (this);
+					break;
+				}
+			}
+		},
+		display: function (context)
+		{
+			// Traverse appearance before everything.
+
+			this .getAppearance () .traverse ();
+
+			// Display geometry.
+
+			if (this .geometryType === GEOMETRY)
+			{
+				var geometryNode = this .getGeometry ();
+
+				if (geometryNode)
+					geometryNode .displayParticles (context, this .particles, this .numParticles);
+			}
+			else
+			{
+				var
+					browser = this .getBrowser (),
+					gl      = browser .getContext (),
+					shader  = browser .getShader ();
+	
+				if (shader === browser .getDefaultShader ())
+					shader = this .shader;
+	
+				if (shader .vertex < 0 || this .numParticles === 0)
+					return;
+	
+				// Setup shader.
+	
+				context .colorMaterial = this .colorMaterial;
+				shader .setLocalUniforms (context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colorMaterial && shader .color >= 0)
+				{
+					gl .enableVertexAttribArray (shader .color);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				}
+	
+				if (this .texCoordArray .length && shader .texCoord >= 0)
+				{
+					gl .enableVertexAttribArray (shader .texCoord);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				}
+	
+				if (this .normalArray .length && shader .normal >= 0)
+				{
+					gl .enableVertexAttribArray (shader .normal);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				}
+	
+				gl .enableVertexAttribArray (shader .vertex);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+	
+				var testWireframe = false;
+
+				switch (this .geometryType)
+				{
+					case POINT:
+					case LINE:
+						break;
+					case TRIANGLE:
+					case QUAD:
+					case SPRITE:
+						testWireframe = true;
+						break;
+					case GEOMETRY:
+						break;
+				}
+
+				if (shader .wireframe && testWireframe)
+				{
+					// Wireframes are always solid so only one drawing call is needed.
+	
+					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shader .primitiveMode, i, 3);
+				}
+				else
+				{
+					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+		
+					gl .frontFace (positiveScale ? gl .CCW : gl .CW);
+					gl .enable (gl .CULL_FACE);
+					gl .cullFace (gl .BACK);
+		
+					gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
+				}
+	
+				if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
+				gl .disableVertexAttribArray (shader .vertex);
+			}
+		},
+		getScreenAlignedRotation: function (modelViewMatrix)
+		{
+			invModelViewMatrix .assign (modelViewMatrix) .inverse ();
+		
+			invModelViewMatrix .multDirMatrix (billboardToScreen .assign (Vector3 .zAxis));
+			invModelViewMatrix .multDirMatrix (viewerYAxis .assign (Vector3 .yAxis));
+		
+			x .assign (viewerYAxis) .cross (billboardToScreen);
+			y .assign (billboardToScreen) .cross (x);
+			var z = billboardToScreen;
+		
+			// Compose rotation
+		
+			x .normalize ();
+			y .normalize ();
+			z .normalize ();
+		
+			return this .rotation .set (x .x, x .y, x .z,
+			                            y .x, y .y, y .z,
+			                            z .x, z .y, z .z);
+		},
+	});
+
+	return ParticleSystem;
 });
 
 
@@ -68328,6 +74502,7 @@ function ($,
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
+		this .transparent_ = true;
 	}
 
 	PointSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -68391,26 +74566,12 @@ function ($,
 		set_color__: function ()
 		{
 			if (this .colorNode)
-			{
 				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
-			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
-			{
 				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
-
-				this .set_transparent__ ();
-			}
-			else
-				this .transparent_ = false;
-		},
-		set_transparent__: function ()
-		{
-			this .transparent_ = this .colorNode .isTransparent ();
 		},
 		set_coord__: function ()
 		{
@@ -68442,11 +74603,11 @@ function ($,
 			if (this .colorNode)
 			{
 				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
-					this .addColor (colorNode .getColor (i));
+					this .addColor (colorNode .get1Color (i));
 			}
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
-				this .addVertex (coordNode .getPoint (i));
+				this .addVertex (coordNode .get1Point (i));
 
 			//this .setAttribs (this .attribNodes, attribArrays);
 		},
@@ -68526,6 +74687,204 @@ function ($,
 	});
 
 	return Polyline2D;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/PolylineEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Components/Rendering/IndexedLineSet",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode,
+          IndexedLineSet,
+          X3DConstants,
+          Vector3,
+          Algorithm)
+{
+
+
+	var vector = new Vector3 (0, 0, 0);
+
+	function PolylineEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .PolylineEmitter);
+
+		this .direction        = new Vector3 (0, 0, 0);
+		this .polylineNode     = new IndexedLineSet (executionContext);
+		this .polylines        = [ ];
+		this .lengthSoFarArray = [ 0 ];
+	}
+
+	PolylineEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: PolylineEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coordIndex",  new Fields .MFInt32 (-1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",       new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "PolylineEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .direction_ .addInterest (this, "set_direction__");
+
+			this .coordIndex_ .addFieldInterest (this .polylineNode .coordIndex_);
+			this .coord_      .addFieldInterest (this .polylineNode .coord_);
+		
+			this .polylineNode .coordIndex_ = this .coordIndex_;
+			this .polylineNode .coord_      = this .coord_;
+
+			this .polylineNode .addInterest (this, "set_polyline");
+			this .polylineNode .setup ();
+
+			this .set_direction__ ();
+			this .set_polyline ();
+		},
+		set_direction__: function ()
+		{
+			this .direction .assign (this .direction_ .getValue ()) .normalize ();
+
+			if (this .direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		set_polyline: function ()
+		{
+			var polylines = this .polylineNode .getPolylines (this .polylines);
+
+			if (polylines .length)
+			{
+				delete this .getRandomPosition;
+
+				var
+					lengthSoFar      = 0,
+					lengthSoFarArray = this .lengthSoFarArray;
+		
+				lengthSoFarArray .length = 1;
+
+				for (var i = 0, length = polylines .length; i < length; i += 2)
+				{
+					lengthSoFar += vector .assign (polylines [i + 1]) .subtract (polylines [i]) .abs ();
+					lengthSoFarArray .push (lengthSoFar);
+				}
+			}
+			else
+			{
+				this .getRandomPosition = getPosition;
+			}
+		},
+		getRandomPosition: function (position)
+		{
+			// Determine index0 and weight.
+
+			var
+				lengthSoFarArray = this .lengthSoFarArray,
+				length           = lengthSoFarArray .length,
+				fraction         = Math .random () * lengthSoFarArray [length - 1],
+				index0           = 0,
+				index1           = 0,
+				weight           = 0;
+
+			if (length == 1 || fraction <= lengthSoFarArray [0])
+			{
+				index0 = 0;
+				weight = 0;
+			}
+			else if (fraction >= lengthSoFarArray [length - 1])
+			{
+				index0 = length - 2;
+				weight = 1;
+			}
+			else
+			{
+				var index = Algorithm .upperBound (lengthSoFarArray, 0, length, fraction, Algorithm .less);
+
+				if (index < length)
+				{
+					index1 = index;
+					index0 = index - 1;
+			
+					var
+						key0 = lengthSoFarArray [index0],
+						key1 = lengthSoFarArray [index1];
+			
+					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+				}
+				else
+				{
+					index0 = 0;
+					weight = 0;
+				}
+			}
+
+			// Interpolate and set position.
+
+			index0 *= 2;
+			index1  = index0 + 1;
+
+			var
+				vertex1 = this .polylines [index0],
+				vertex2 = this .polylines [index1];
+	
+			position .x = vertex1 .x + weight * (vertex2 .x - vertex1 .x);
+			position .y = vertex1 .y + weight * (vertex2 .y - vertex1 .y);
+			position .z = vertex1 .z + weight * (vertex2 .z - vertex1 .z);
+
+			return position;
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var
+				direction = this .direction,
+				speed     = this .getRandomSpeed ();
+
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
+
+			return velocity;
+ 		},
+	});
+
+	function getPosition (position)
+	{
+		return position .set (0, 0, 0);
+	}
+
+	return PolylineEmitter;
 });
 
 
@@ -68939,343 +75298,6 @@ function ($,
 	});
 
 	return PositionInterpolator2D;
-});
-
-
-
-
-define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
-[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DSensorNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-],
-function ($,
-          Fields,
-          X3DSensorNode, 
-          X3DConstants,
-          Vector3)
-{
-
-
-	function X3DEnvironmentalSensorNode (executionContext)
-	{
-		X3DSensorNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
-
-		this .addChildren ("traversed", new Fields .SFBool (true));
-
-		this .currentTraversed = true;
-	}
-
-	X3DEnvironmentalSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
-	{
-		constructor: X3DEnvironmentalSensorNode,
-		initialize: function ()
-		{
-			X3DSensorNode .prototype .initialize .call (this);
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .enabled_   .addInterest (this, "set_live__");
-			this .size_      .addInterest (this, "set_live__");
-			this .traversed_ .addInterest (this, "set_live__");
-
-			this .set_live__ ();
-		},
-		setTraversed: function (value)
-		{
-		   if (value)
-			{
-				if (this .traversed_ .getValue () === false)
-					this .traversed_ = true;
-			}
-			else
-			{
-				if (this .currentTraversed !== this .traversed_ .getValue ())
-					this .traversed_ = this .currentTraversed;
-			}
-
-		   this .currentTraversed = value;
-		},
-		getTraversed: function ()
-		{
-		   return this .currentTraversed;
-		},
-		set_live__: function ()
-		{
-			if (this .traversed_ .getValue () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
-			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
-			}
-			else
-			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
-				
-				if (this .isActive_ .getValue ())
-				{
-					this .isActive_ = false;
-					this .exitTime_ = this .getBrowser () .getCurrentTime ();
-				}
-			}
-		},
-		update: function () { },
-	});
-
-	return X3DEnvironmentalSensorNode;
-});
-
-
-
-
-define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
-[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Box3",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DEnvironmentalSensorNode, 
-          TraverseType,
-          X3DConstants,
-          Vector3,
-          Rotation4,
-          Matrix4,
-          Box3)
-{
-
-
-	var infinity = new Vector3 (-1, -1, -1);
-	
-	function ProximitySensor (executionContext)
-	{
-		X3DEnvironmentalSensorNode .call (this, executionContext);
-
-		this .addType (X3DConstants .ProximitySensor);
-
-		this .setCameraObject (true);
-
-		this .viewpoint              = null;
-		this .modelViewMatrix        = new Matrix4 ();
-		this .invModelViewMatrix     = new Matrix4 ();
-		this .centerOfRotationMatrix = new Matrix4 ();
-		this .position               = new Vector3 ();
-		this .orientation            = new Rotation4 ();
-		this .centerOfRotation       = new Vector3 ();
-		this .viewer                 = new Vector3 ();
-		this .inside                 = false;
-	}
-
-	ProximitySensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
-	{
-		constructor: ProximitySensor,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",                 new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",                  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "size",                     new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "center",                   new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",                new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",                 new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",                 new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",         new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed",      new Fields .SFRotation ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "centerOfRotation_changed", new Fields .SFVec3f ()),
-		]),
-		getTypeName: function ()
-		{
-			return "ProximitySensor";
-		},
-		getComponentName: function ()
-		{
-			return "EnvironmentalSensor";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
-			
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .size_    .addInterest (this, "set_extents__");
-			this .center_  .addInterest (this, "set_extents__");
-
-			this .traversed_ .addFieldInterest (this .isCameraObject_);
-	
-			this .min = new Vector3 (0, 0, 0);
-			this .max = new Vector3 (0, 0, 0);
-			
-			this .set_enabled__ ();
-			this .set_extents__ ();
-		},
-		set_enabled__: function ()
-		{
-			this .setCameraObject (this .enabled_ .getValue ());
-			
-			if (this .enabled_ .getValue ())
-				this .traverse = traverse;
-			else
-				delete this .traverse;
-		},
-		set_extents__: function ()
-		{
-			var
-				s  = this .size_ .getValue (),
-				c  = this .center_ .getValue (),
-				sx = s .x / 2,
-				sy = s .y / 2,
-				sz = s .z / 2,
-				cx = c .x,
-				cy = c .y,
-				cz = c .z;
-
-			this .min .set (cx - sx, cy - sy, cz - sz);
-			this .max .set (cx + sx, cy + sy, cz + sz);
-		},
-		update: function ()
-		{
-			try
-			{
-				if (this .inside && this .getTraversed ())
-				{
-				   var
-				      modelViewMatrix        = this .modelViewMatrix,
-				      centerOfRotationMatrix = this .centerOfRotationMatrix;
-
-					centerOfRotationMatrix .assign (this .viewpoint .getTransformationMatrix ());
-					centerOfRotationMatrix .translate (this .viewpoint .getUserCenterOfRotation ());
-					centerOfRotationMatrix .multRight (this .invModelViewMatrix .assign (modelViewMatrix) .inverse ());
-
-					modelViewMatrix .multRight (this .viewpoint .getInverseCameraSpaceMatrix ());
-					modelViewMatrix .get (null, this .orientation);
-					modelViewMatrix .inverse ();
-
-					this .position .set (modelViewMatrix [12],
-					                     modelViewMatrix [13],
-					                     modelViewMatrix [14]);
-
-					this .orientation .inverse ();
-
-					this .centerOfRotation .set (centerOfRotationMatrix [12],
-					                             centerOfRotationMatrix [13],
-					                             centerOfRotationMatrix [14]);
-
-					if (this .isActive_ .getValue ())
-					{
-						if (! this .position_changed_ .getValue () .equals (this .position))
-							this .position_changed_ = this .position;
-
-						if (! this .orientation_changed_ .getValue () .equals (this .orientation))
-							this .orientation_changed_ = this .orientation;
-
-						if (! this .centerOfRotation_changed_ .getValue () .equals (this .centerOfRotation))
-							this .centerOfRotation_changed_ = this .centerOfRotation;
-					}
-					else
-					{
-						this .isActive_  = true;
-						this .enterTime_ = this .getBrowser () .getCurrentTime ();
-
-						this .position_changed_         = this .position;
-						this .orientation_changed_      = this .orientation;
-						this .centerOfRotation_changed_ = this .centerOfRotation;
-					}
-
-					this .inside = false;
-				}
-				else
-				{
-					if (this .isActive_ .getValue ())
-					{
-						this .isActive_ = false;
-						this .exitTime_ = this .getBrowser () .getCurrentTime ();
-					}
-				}
-			}
-			catch (error)
-			{
-				//console .log (error .message);
-			}
-
-			this .setTraversed (false);
-		},
-		traverse: function ()
-		{ },
-		intersectsPoint: function (point)
-		{
-			var
-				min = this .min,
-				max = this .max;
-
-			return min .x <= point .x &&
-			       max .x >= point .x &&
-			       min .y <= point .y &&
-			       max .y >= point .y &&
-			       min .z <= point .z &&
-			       max .z >= point .z;
-		},
-	});
-		
-	function traverse (type)
-	{
-		try
-		{
-			switch (type)
-			{
-				case TraverseType .CAMERA:
-				{
-					this .viewpoint = this .getCurrentViewpoint ();
-					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-					return;
-				}
-				case TraverseType .DISPLAY:
-				{
-				   this .setTraversed (true);
-
-					if (this .inside)
-						return;
-
-					if (this .size_ .getValue () .equals (infinity))
-						this .inside = true;
-
-					else
-					{
-					   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
-
-						this .viewer .set (invModelViewMatrix [12],
-				                         invModelViewMatrix [13],
-				                         invModelViewMatrix [14]);
-
-						this .inside = this .intersectsPoint (this .viewer);
-					}
-
-					return;
-				}
-			}
-		}
-		catch (error)
-		{
-			//console .log (error);
-		}
-	}
-
-	return ProximitySensor;
 });
 
 
@@ -70241,9 +76263,9 @@ function ($,
 		{
 			return "children";
 		},
-		getBBox: function ()
+		getBBox: function (bbox)
 		{
-			return X3DGroupingNode .prototype .getBBox .call (this) .multRight (this .getMatrix ());
+			return X3DGroupingNode .prototype .getBBox .call (this, bbox) .multRight (this .getMatrix ());
 		},
 		getMatrix: function ()
 		{
@@ -70259,6 +76281,8 @@ function ($,
 		},
 		scale: function (type)
 		{
+			// throws domain error
+
 			this .getModelViewMatrix (type, this .modelViewMatrix);
 			this .modelViewMatrix .get (translation, rotation, scale);
 		
@@ -70292,11 +76316,16 @@ function ($,
 			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
 	
 			modelViewMatrix .push ();
-		
-			this .scale (type);
-		
-			X3DGroupingNode .prototype .traverse .call (this, type);
-		
+			
+			try
+			{
+				this .scale (type);
+			
+				X3DGroupingNode .prototype .traverse .call (this, type);
+			}
+			catch (error)
+			{ }
+			
 			modelViewMatrix .pop ();
 		},
 	});
@@ -71009,136 +77038,6 @@ function ($,
 
 	return Script;
 });
-
-
-
-define ('cobweb/Components/Shape/X3DShapeNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Grouping/X3DBoundedObject",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Box3",
-],
-function ($,
-          X3DChildNode, 
-          X3DBoundedObject,
-          X3DCast,
-          X3DConstants,
-          Box3)
-{
-
-
-	function X3DShapeNode (executionContext)
-	{
-		X3DChildNode     .call (this, executionContext);
-		X3DBoundedObject .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DShapeNode);
-	}
-
-	X3DShapeNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		X3DBoundedObject .prototype,
-	{
-		constructor: X3DShapeNode,
-		initialize: function ()
-		{
-			X3DChildNode     .prototype .initialize .call (this);
-			X3DBoundedObject .prototype .initialize .call (this);
-
-			this .bboxSize_   .addInterest (this, "set_bbox__");
-			this .bboxCenter_ .addInterest (this, "set_bbox__");
-			this .appearance_ .addInterest (this, "set_apparance__");
-			this .geometry_   .addInterest (this, "set_geometry__");
-
-			this .set_apparance__ ();
-			this .set_geometry__ ();
-			this .set_bbox__ ();
-		},
-		getBBox: function ()
-		{
-			return this .bbox;
-		},
-		getBBoxSize: function ()
-		{
-			return this .bboxSize;
-		},
-		getBBoxCenter: function ()
-		{
-			return this .bboxCenter;
-		},
-		getAppearance: function ()
-		{
-			return this .apparanceNode;
-		},
-		getGeometry: function ()
-		{
-			return this .geometryNode;
-		},
-		isTransparent: function ()
-		{
-			return this .transparent;
-		},
-		set_bbox__: function ()
-		{
-			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
-			{
-				if (this .getGeometry ())
-					this .bbox = this .getGeometry () .getBBox ();
-
-				else
-					this .bbox = new Box3 ();
-			}
-			else
-				this .bbox = new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
-			
-			this .bboxSize   = this .bbox .size;
-			this .bboxCenter = this .bbox .center;
-		},
-		set_apparance__: function ()
-		{
-			if (this .apparanceNode)
-				this .apparanceNode .removeInterest (this, "set_transparent__");
-
-			this .apparanceNode = X3DCast (X3DConstants .X3DAppearanceNode, this .appearance_);
-
-			if (this .apparanceNode)
-				this .apparanceNode .addInterest (this, "set_transparent__");
-
-			else
-				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
-
-			this .set_transparent__ ();
-		},
-		set_geometry__: function ()
-		{
-			if (this .geometryNode)
-			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
-			}
-
-			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
-
-			if (this .geometryNode)
-			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
-			}
-
-			this .set_transparent__ ();
-			this .set_bbox__ ();
-		},
-		set_transparent__: function ()
-		{
-			this .transparent = (this .apparanceNode && this .apparanceNode .transparent_ .getValue ()) ||
-			                    (this .geometryNode && this .geometryNode .transparent_ .getValue ());
-		},
-	});
-
-	return X3DShapeNode;
-});
-
 
 
 
@@ -72669,6 +78568,7 @@ define ('cobweb/Components/Grouping/StaticGroup',[
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -72677,7 +78577,8 @@ function ($,
           X3DChildNode, 
           X3DBoundedObject, 
           Group,
-          X3DConstants)
+          X3DConstants,
+          Box3)
 {
 
 
@@ -72687,6 +78588,9 @@ function ($,
 		X3DBoundedObject .call (this, executionContext);
 
 		this .addType (X3DConstants .StaticGroup);
+
+		this .group = new Group (this .getExecutionContext ());
+		this .bbox  = new Box3 ();
 	}
 
 	StaticGroup .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -72713,20 +78617,253 @@ function ($,
 		},
 		initialize: function ()
 		{
-		   X3DChildNode .prototype .initialize .call (this);
-		   X3DBoundedObject .prototype .initialize .call (this);
+			X3DChildNode     .prototype .initialize .call (this);
+			X3DBoundedObject .prototype .initialize .call (this);
 
-		   this .group = new Group (this .getExecutionContext ());
+			this .bboxSize_   .addFieldInterest (this .group .bboxSize_);
+			this .bboxCenter_ .addFieldInterest (this .group .bboxCenter_);
+			this .children_   .addFieldInterest (this .group .children_);
 
-		   this .children_ .addFieldInterest (this .group .children_);
-		   this .group .children_ = this .children_;
+			this .group .bboxSize_   = this .bboxSize_;
+			this .group .bboxCenter_ = this .bboxCenter_;
+			this .group .children_   = this .children_;
 			this .group .setup ();
 
 			this .traverse = this .group .traverse .bind (this .group);
+
+			// Connect after Group setup.
+			this .group .children_ .addInterest (this, "set_children__");
+
+			this .set_children__ ();
+		},
+		getBBox: function (bbox)
+		{
+			return bbox .assign (this .bbox);
+		},
+		set_children__: function ()
+		{
+			this .group .getBBox (this .bbox);
 		},
 	});
 
 	return StaticGroup;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/SurfaceEmitter',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode, 
+          X3DConstants,
+          X3DCast,
+          Triangle3,
+          Vector3,
+          Algorithm)
+{
+
+
+	var
+		vertex1  = new Vector3 (0, 0, 0),
+		vertex2  = new Vector3 (0, 0, 0),
+		vertex3  = new Vector3 (0, 0, 0),
+		direction = new Vector3 (0, 0, 0);
+
+	function SurfaceEmitter (executionContext)
+	{
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .SurfaceEmitter);
+
+		this .surfaceNode    = null;
+		this .areaSoFarArray = [ 0 ];
+	}
+
+	SurfaceEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: SurfaceEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surface",     new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "SurfaceEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .surface_ .addInterest (this, "set_surface__");
+
+			this .set_surface__ ();
+		},
+		set_surface__: function ()
+		{
+			if (this .surfaceNode)
+				this .surfaceNode .removeInterest (this, "set_geometry__");
+
+			this .surfaceNode = X3DCast (X3DConstants .X3DGeometryNode, this .surface_);
+
+			if (this .surfaceNode)
+				this .surfaceNode .addInterest (this, "set_geometry__");
+
+			this .set_geometry__ ();
+		},
+		set_geometry__: function ()
+		{
+			if (this .surfaceNode)
+			{		
+				delete this .getRandomPosition;
+				delete this .getRandomVelocity;
+
+				var
+					areaSoFar      = 0,
+					areaSoFarArray = this .areaSoFarArray,
+					vertices       = this .surfaceNode .getVertices ();
+		
+				areaSoFarArray .length = 1;
+
+				for (var i = 0, length = vertices .length; i < length; i += 12)
+				{
+					vertex1 .set (vertices [i + 0], vertices [i + 1], vertices [i + 2]);
+					vertex2 .set (vertices [i + 4], vertices [i + 5], vertices [i + 6]);
+					vertex3 .set (vertices [i + 8], vertices [i + 9], vertices [i + 10]);
+
+					areaSoFar += Triangle3 .area (vertex1, vertex2, vertex3);
+					areaSoFarArray .push (areaSoFar);
+				}
+			}
+			else
+			{
+				this .getRandomPosition = getPosition;
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+
+				direction .set (0, 0, 0);
+			}
+		},
+		getRandomPosition: function (position)
+		{
+			// Determine index0 and weight.
+
+			var
+				areaSoFarArray = this .areaSoFarArray,
+				length         = areaSoFarArray .length,
+				fraction       = Math .random () * areaSoFarArray [length - 1],
+				index0         = 0,
+				index1         = 0,
+				weight         = 0;
+
+			if (length == 1 || fraction <= areaSoFarArray [0])
+			{
+				index0 = 0;
+				weight = 0;
+			}
+			else if (fraction >= areaSoFarArray [length - 1])
+			{
+				index0 = length - 2;
+				weight = 1;
+			}
+			else
+			{
+				var index = Algorithm .upperBound (areaSoFarArray, 0, length, fraction, Algorithm .less);
+
+				if (index < length)
+				{
+					index1 = index;
+					index0 = index - 1;
+			
+					var
+						key0 = areaSoFarArray [index0],
+						key1 = areaSoFarArray [index1];
+			
+					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+				}
+				else
+				{
+					index0 = 0;
+					weight = 0;
+				}
+			}
+
+			// Random barycentric coordinates.
+
+			var
+				u = Math .random (),
+				v = Math .random ();
+		
+			if (u + v > 1)
+			{
+				u = 1 - u;
+				v = 1 - v;
+			}
+
+			// Interpolate and set position.
+
+			var
+				i        = index0 * 12,
+				vertices = this .surfaceNode .getVertices ();
+
+			var t = 1 - u - v;
+
+			position .x = u * vertices [i + 0] + v * vertices [i + 4] + t * vertices [i + 8];
+			position .y = u * vertices [i + 1] + v * vertices [i + 5] + t * vertices [i + 9];
+			position .z = u * vertices [i + 2] + v * vertices [i + 6] + t * vertices [i + 10];
+
+			var
+				i       = index0 * 9,
+				normals = this .surfaceNode .getNormals ();
+
+			direction .x = u * normals [i + 0] + v * normals [i + 3] + t * normals [i + 6];
+			direction .y = u * normals [i + 1] + v * normals [i + 4] + t * normals [i + 7];
+			direction .z = u * normals [i + 2] + v * normals [i + 5] + t * normals [i + 8];
+
+			return position;
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var speed = this .getRandomSpeed ();
+
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
+
+			return velocity;
+ 		},
+	});
+
+	function getPosition (position)
+	{
+		return position .set (0, 0, 0);
+	}
+
+	return SurfaceEmitter;
 });
 
 
@@ -72794,19 +78931,19 @@ function ($,
 			
 			this .set_whichChoice__ ();
 		},
-		getBBox: function () 
+		getBBox: function (bbox) 
 		{
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, this .child);
 
 				if (boundedObject)
-					return boundedObject .getBBox ();
+					return boundedObject .getBBox (bbox);
 
-				return new Box3 ();
+				return bbox .set ();
 			}
 
-			return new Box3 (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
 		set_whichChoice__: function ()
 		{
@@ -73279,6 +79416,21 @@ function ($,
 			else
 				texCoords .push (0, 0, 0, 1);
 		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, p .z, 1);
+			}
+
+			array .length = length;
+
+			return array;
+		},
 	});
 
 	return TextureCoordinate3D;
@@ -73343,6 +79495,21 @@ function ($,
 			}
 			else
 				texCoords .push (0, 0, 0, 1);
+		},
+		getTexCoord: function (array)
+		{
+			var point = this .point_ .getValue ();
+
+			for (var i = 0, length = point .length; i < length; ++ i)
+			{
+				var p = point[i] .getValue ();
+
+				array [i] = new Vector4 (p .x, p .y, p .z, p .w);
+			}
+
+			array .length = length;
+
+			return array;
 		},
 	});
 
@@ -73631,6 +79798,162 @@ function ($,
 	});
 
 	return Transform;
+});
+
+
+
+
+define ("cobweb/Components/EnvironmentalSensor/TransformSensor",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Box3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentalSensorNode, 
+          X3DConstants,
+          X3DCast,
+          Vector3,
+          Rotation4,
+          Box3)
+{
+
+
+	var
+		targetBox   = new Box3 (),
+		position    = new Vector3 (0, 0, 0),
+		orientation = new Rotation4 (0, 0, 1, 0),
+		infinity    = new Vector3 (-1, -1, -1);
+	
+	function TransformSensor (executionContext)
+	{
+		X3DEnvironmentalSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .TransformSensor);
+
+		this .bbox             = new Box3 ();
+		this .targetObjectNode = null;
+	}
+
+	TransformSensor .prototype = $.extend (Object .create (X3DEnvironmentalSensorNode .prototype),
+	{
+		constructor: TransformSensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",            new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",             new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "size",                new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "center",              new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "enterTime",           new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "exitTime",            new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",            new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "position_changed",    new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "orientation_changed", new Fields .SFRotation ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "targetObject",        new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "TransformSensor";
+		},
+		getComponentName: function ()
+		{
+			return "EnvironmentalSensor";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
+		
+			this .getExecutionContext () .isLive () .addInterest (this, "set_enabled__");
+			this .isLive () .addInterest (this, "set_enabled__");
+
+			this .enabled_      .addInterest (this, "set_enabled__");
+			this .size_         .addInterest (this, "set_enabled__");
+			this .size_         .addInterest (this, "set_bbox__");
+			this .center_       .addInterest (this, "set_bbox__");
+			this .targetObject_ .addInterest (this, "set_targetObject__");
+
+			this .set_bbox__ ();
+			this .set_targetObject__ ();
+		},
+		set_live__: function ()
+		{ },
+		set_enabled__: function ()
+		{
+			if (this .targetObjectNode && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			{
+				this .getBrowser () .sensors () .addInterest (this, "update");
+			}
+			else
+			{
+				this .getBrowser () .sensors () .removeInterest (this, "update");
+					
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
+		},
+		set_bbox__: function ()
+		{
+			this .bbox .set (this .size_ .getValue (), this .center_ .getValue ());
+		},
+		set_targetObject__: function ()
+		{
+			this .targetObjectNode = X3DCast (X3DConstants .X3DBoundedObject, this .targetObject_);
+		
+			this .set_enabled__ ();
+		},
+		update: function ()
+		{
+			this .targetObjectNode .getBBox (targetBox);
+		
+			if (this .size_. getValue () .equals (infinity) || this .bbox .intersectsBox (targetBox))
+			{
+				targetBox .getMatrix () .get (position, orientation);
+		
+				if (this .isActive_ .getValue ())
+				{
+					if (! this .position_changed_ .getValue () .equals (position))
+						this .position_changed_ = position;
+	
+					if (! this .orientation_changed_ .getValue () .equals (orientation))
+						this .orientation_changed_ = orientation;
+				}
+				else
+				{
+					this .isActive_  = true;
+					this .enterTime_ = this .getBrowser () .getCurrentTime ();
+
+					this .position_changed_         = position;
+					this .orientation_changed_      = orientation;
+				}
+			}
+			else
+			{
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
+		},
+	});
+
+	return TransformSensor;
 });
 
 
@@ -74532,30 +80855,367 @@ function ($,
 
 
 
-define ('cobweb/Components/Core/X3DInfoNode',[
+define ('cobweb/Components/ParticleSystems/VolumeEmitter',[
 	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Components/Geometry3D/IndexedFaceSet",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Algorithm",
+	"standard/Math/Utility/BVH",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function ($,
-          X3DChildNode, 
-          X3DConstants)
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticleEmitterNode,
+          IndexedFaceSet,
+          X3DConstants,
+          Vector3,
+          Rotation4,
+          Line3,
+          Plane3,
+          Triangle3,
+          Algorithm,
+          BVH,
+          QuickSort)
 {
 
 
-	function X3DInfoNode (executionContext)
-	{
-		X3DChildNode .call (this, executionContext);
+	var
+		vertex1  = new Vector3 (0, 0, 0),
+		vertex2  = new Vector3 (0, 0, 0),
+		vertex3  = new Vector3 (0, 0, 0),
+		point    = new Vector3 (0, 0, 0),
+		normal   = new Vector3 (0, 0, 0),
+		rotation = new Rotation4 (0, 0, 1, 0),
+		line     = new Line3 (Vector3 .Zero, Vector3 .zAxis),
+		plane    = new Plane3 (Vector3 .Zero, Vector3 .zAxis);
 
-		this .addType (X3DConstants .X3DInfoNode);
+	function PlaneCompare (a, b)
+	{
+		return plane .getDistanceToPoint (a) < plane .getDistanceToPoint (b);
 	}
 
-	X3DInfoNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	function VolumeEmitter (executionContext)
 	{
-		constructor: X3DInfoNode,
+		X3DParticleEmitterNode .call (this, executionContext);
+
+		this .addType (X3DConstants .VolumeEmitter);
+
+		this .direction           = new Vector3 (0, 0, 0);
+		this .volumeNode          = new IndexedFaceSet (executionContext);
+		this .areaSoFarArray      = [ 0 ];
+		this .intersections       = [ ];
+		this .intersectionNormals = [ ];
+		this .sorter              = new QuickSort (this .intersections, PlaneCompare);
+	}
+
+	VolumeEmitter .prototype = $.extend (Object .create (X3DParticleEmitterNode .prototype),
+	{
+		constructor: VolumeEmitter,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "internal",    new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "surfaceArea", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coordIndex",  new Fields .MFInt32 (-1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "coord",       new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "VolumeEmitter";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "emitter";
+		},
+		initialize: function ()
+		{
+			X3DParticleEmitterNode .prototype .initialize .call (this);
+
+			this .direction_ .addInterest (this, "set_direction__");
+
+			this .coordIndex_ .addFieldInterest (this .volumeNode .coordIndex_);
+			this .coord_      .addFieldInterest (this .volumeNode .coord_);
+	
+			this .volumeNode .creaseAngle_ = Math .PI;
+			this .volumeNode .convex_      = false;
+			this .volumeNode .coordIndex_  = this .coordIndex_;
+			this .volumeNode .coord_       = this .coord_;
+
+			this .volumeNode .addInterest (this, "set_geometry__");
+			this .volumeNode .setup ();
+
+			this .set_geometry__ ();
+		},
+		set_direction__: function ()
+		{
+			this .direction .assign (this .direction_ .getValue ()) .normalize ();
+
+			if (this .direction .equals (Vector3 .Zero))
+				this .getRandomVelocity = this .getSphericalRandomVelocity;
+			else
+				delete this .getRandomVelocity;
+		},
+		set_geometry__: function ()
+		{
+			var
+				areaSoFar      = 0,
+				areaSoFarArray = this .areaSoFarArray,
+				vertices       = this .volumeNode .getVertices (),
+				normals        = this .volumeNode .getNormals ();
+	
+			areaSoFarArray .length = 1;
+
+			for (var i = 0, length = vertices .length; i < length; i += 12)
+			{
+				vertex1 .set (vertices [i + 0], vertices [i + 1], vertices [i + 2]);
+				vertex2 .set (vertices [i + 4], vertices [i + 5], vertices [i + 6]);
+				vertex3 .set (vertices [i + 8], vertices [i + 9], vertices [i + 10]);
+
+				areaSoFar += Triangle3 .area (vertex1, vertex2, vertex3);
+				areaSoFarArray .push (areaSoFar);
+			}
+
+			this .bvh = new BVH (vertices, normals);
+		},
+		getRandomPosition: function (position)
+		{
+			// Get random point on surface
+
+			// Determine index0 and weight.
+
+			var
+				areaSoFarArray = this .areaSoFarArray,
+				length         = areaSoFarArray .length,
+				fraction       = Math .random () * areaSoFarArray [length - 1],
+				index0         = 0,
+				index1         = 0,
+				weight         = 0;
+
+			if (length == 1 || fraction <= areaSoFarArray [0])
+			{
+				index0 = 0;
+				weight = 0;
+			}
+			else if (fraction >= areaSoFarArray [length - 1])
+			{
+				index0 = length - 2;
+				weight = 1;
+			}
+			else
+			{
+				var index = Algorithm .upperBound (areaSoFarArray, 0, length, fraction, Algorithm .less);
+
+				if (index < length)
+				{
+					index1 = index;
+					index0 = index - 1;
+			
+					var
+						key0 = areaSoFarArray [index0],
+						key1 = areaSoFarArray [index1];
+			
+					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
+				}
+				else
+				{
+					index0 = 0;
+					weight = 0;
+				}
+			}
+
+			// Random barycentric coordinates.
+
+			var
+				u = Math .random (),
+				v = Math .random ();
+		
+			if (u + v > 1)
+			{
+				u = 1 - u;
+				v = 1 - v;
+			}
+
+			var t = 1 - u - v;
+
+			// Interpolate and determine random point on surface and normal.
+
+			var
+				i        = index0 * 12,
+				vertices = this .volumeNode .getVertices ();
+
+			point .x = u * vertices [i + 0] + v * vertices [i + 4] + t * vertices [i + 8];
+			point .y = u * vertices [i + 1] + v * vertices [i + 5] + t * vertices [i + 9];
+			point .z = u * vertices [i + 2] + v * vertices [i + 6] + t * vertices [i + 10];
+
+			var
+				i       = index0 * 9,
+				normals = this .volumeNode .getNormals ();
+
+			normal .x = u * normals [i + 0] + v * normals [i + 3] + t * normals [i + 6];
+			normal .y = u * normals [i + 1] + v * normals [i + 4] + t * normals [i + 7];
+			normal .z = u * normals [i + 2] + v * normals [i + 5] + t * normals [i + 8];
+
+			rotation .setFromToVec (Vector3 .zAxis, normal);
+			rotation .multVecRot (this .getRandomSurfaceNormal (normal));
+
+			// Setup random line throu volume for intersection text
+			// and a plane corresponding to the line for intersection sorting.
+
+			line  .set (point, normal);
+			plane .set (point, normal);
+	
+			// Find random point in volume.
+
+			var
+				intersections    = this .intersections,
+				numIntersections = this .bvh .intersectsLine (line, intersections, this .intersectionNormals);
+
+			if (numIntersections && ! (numIntersections % 2)) // and even
+			{
+				// Sort intersections along line with a little help from the plane.
+
+				this .sorter .sort (0, numIntersections);
+
+				// Select random intersection pair.
+
+				var
+					index  = Math .round (this .getRandomValue (0, numIntersections / 2 - 1)) * 2,
+					point0 = intersections [index],
+					point1 = intersections [index + 1],
+					t      = Math .random ();
+	
+				position .x = point0 .x + (point1 .x - point0 .x) * t;
+				position .y = point0 .y + (point1 .y - point0 .y) * t;
+				position .z = point0 .z + (point1 .z - point0 .z) * t;
+	
+				return position;
+			}
+
+			// Discard point.
+
+			return position .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
+		},
+		getRandomVelocity: function (velocity)
+		{
+			var
+				direction = this .direction,
+				speed     = this .getRandomSpeed ();
+
+			velocity .x = direction .x * speed;
+			velocity .y = direction .y * speed;
+			velocity .z = direction .z * speed;
+
+			return velocity;
+ 		},
 	});
 
-	return X3DInfoNode;
+	return VolumeEmitter;
+});
+
+
+
+
+define ('cobweb/Components/ParticleSystems/WindPhysicsModel',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DParticlePhysicsModelNode, 
+          X3DConstants,
+          Vector3,
+          Algorithm)
+{
+
+
+	var force = new Vector3 (0, 0, 0);
+
+	function WindPhysicsModel (executionContext)
+	{
+		X3DParticlePhysicsModelNode .call (this, executionContext);
+
+		this .addType (X3DConstants .WindPhysicsModel);
+	}
+
+	WindPhysicsModel .prototype = $.extend (Object .create (X3DParticlePhysicsModelNode .prototype),
+	{
+		constructor: WindPhysicsModel,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",    new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "direction",  new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "speed",      new Fields .SFFloat (0.1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "gustiness",  new Fields .SFFloat (0.1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "turbulence", new Fields .SFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "WindPhysicsModel";
+		},
+		getComponentName: function ()
+		{
+			return "ParticleSystems";
+		},
+		getContainerField: function ()
+		{
+			return "physics";
+		},
+		getRandomSpeed: function (emitterNode)
+		{
+			var
+				speed     = Math .max (0, this .speed_ .getValue ()),
+				variation = speed * Math .max (0, this .gustiness_ .getValue ());
+		
+			return emitterNode .getRandomValue (Math .max (0, speed - variation), speed + variation);
+		},
+		addForce: function (i, emitterNode, forces, turbulences)
+		{
+			var surfaceArea = emitterNode .surfaceArea_ .getValue ()
+
+			if (this .enabled_ .getValue ())
+			{
+				var
+					randomSpeed = this .getRandomSpeed (emitterNode),
+					pressure    = Math .pow (10, 2 * Math .log (randomSpeed)) * 0.64615;
+		
+				if (this .direction_ .getValue () .equals (Vector3 .Zero))
+					emitterNode .getRandomNormal (force);
+				else
+					force .assign (this .direction_ .getValue ()) .normalize ();
+
+				forces [i] .assign (force .multiply (surfaceArea * pressure));
+				turbulences [i] = Math .PI * Algorithm .clamp (this .turbulence_ .getValue (), 0, 1);
+			}
+		},
+	});
+
+	return WindPhysicsModel;
 });
 
 
@@ -74626,7 +81286,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/EventUtilities/BooleanSequencer",
 	"cobweb/Components/EventUtilities/BooleanToggle",
 	"cobweb/Components/EventUtilities/BooleanTrigger",
-	//"cobweb/Components/ParticleSystems/BoundedPhysicsModel",
+	"cobweb/Components/ParticleSystems/BoundedPhysicsModel",
 	"cobweb/Components/Geometry3D/Box", // VRML
 	"cobweb/Components/CADGeometry/CADAssembly",
 	"cobweb/Components/CADGeometry/CADFace",
@@ -74649,7 +81309,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Shaders/ComposedShader",
 	//"cobweb/Components/Texturing3D/ComposedTexture3D",
 	"cobweb/Components/Geometry3D/Cone", // VRML
-	//"cobweb/Components/ParticleSystems/ConeEmitter",
+	"cobweb/Components/ParticleSystems/ConeEmitter",
 	//"cobweb/Components/RigidBodyPhysics/Contact",
 	//"cobweb/Components/NURBS/Contour2D",
 	//"cobweb/Components/NURBS/ContourPolyline2D",
@@ -74669,26 +81329,26 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Interpolation/EaseInEaseOut",
 	"cobweb/Components/Geometry3D/ElevationGrid", // VRML
 	//"cobweb/Components/DIS/EspduTransform",
-	//"cobweb/Components/ParticleSystems/ExplosionEmitter",
+	"cobweb/Components/ParticleSystems/ExplosionEmitter",
 	"cobweb/Components/Geometry3D/Extrusion", // VRML
 	//"cobweb/Components/Shape/FillProperties",
 	//"cobweb/Components/Shaders/FloatVertexAttribute",
 	"cobweb/Components/EnvironmentalEffects/Fog", // VRML
 	//"cobweb/Components/EnvironmentalEffects/FogCoordinate",
 	"cobweb/Components/Text/FontStyle", // VRML
-	//"cobweb/Components/ParticleSystems/ForcePhysicsModel",
+	"cobweb/Components/ParticleSystems/ForcePhysicsModel",
 	//"cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
-	//"cobweb/Components/Geospatial/GeoCoordinate",
-	//"cobweb/Components/Geospatial/GeoElevationGrid",
-	//"cobweb/Components/Geospatial/GeoLOD",
-	//"cobweb/Components/Geospatial/GeoLocation",
-	//"cobweb/Components/Geospatial/GeoMetadata",
-	//"cobweb/Components/Geospatial/GeoOrigin",
-	//"cobweb/Components/Geospatial/GeoPositionInterpolator",
-	//"cobweb/Components/Geospatial/GeoProximitySensor",
-	//"cobweb/Components/Geospatial/GeoTouchSensor",
-	//"cobweb/Components/Geospatial/GeoTransform",
-	//"cobweb/Components/Geospatial/GeoViewpoint",
+	"cobweb/Components/Geospatial/GeoCoordinate",
+	"cobweb/Components/Geospatial/GeoElevationGrid",
+	"cobweb/Components/Geospatial/GeoLOD",
+	"cobweb/Components/Geospatial/GeoLocation",
+	"cobweb/Components/Geospatial/GeoMetadata",
+	"cobweb/Components/Geospatial/GeoOrigin",
+	"cobweb/Components/Geospatial/GeoPositionInterpolator",
+	"cobweb/Components/Geospatial/GeoProximitySensor",
+	"cobweb/Components/Geospatial/GeoTouchSensor",
+	"cobweb/Components/Geospatial/GeoTransform",
+	"cobweb/Components/Geospatial/GeoViewpoint",
 	"cobweb/Components/Grouping/Group", // VRML
 	//"cobweb/Components/H-Anim/HAnimDisplacer",
 	//"cobweb/Components/H-Anim/HAnimHumanoid",
@@ -74752,17 +81412,17 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Interpolation/OrientationInterpolator", // VRML
 	"cobweb/Components/Navigation/OrthoViewpoint",
 	//"cobweb/Components/Shaders/PackagedShader",
-	//"cobweb/Components/ParticleSystems/ParticleSystem",
+	"cobweb/Components/ParticleSystems/ParticleSystem",
 	//"cobweb/Components/Picking/PickableGroup",
 	"cobweb/Components/Texturing/PixelTexture", // VRML
 	//"cobweb/Components/Texturing3D/PixelTexture3D",
 	"cobweb/Components/PointingDeviceSensor/PlaneSensor", // VRML
-	//"cobweb/Components/ParticleSystems/PointEmitter",
+	"cobweb/Components/ParticleSystems/PointEmitter",
 	"cobweb/Components/Lighting/PointLight", // VRML
 	//"cobweb/Components/Picking/PointPickSensor",
 	"cobweb/Components/Rendering/PointSet", // VRML
 	"cobweb/Components/Geometry2D/Polyline2D",
-	//"cobweb/Components/ParticleSystems/PolylineEmitter",
+	"cobweb/Components/ParticleSystems/PolylineEmitter",
 	"cobweb/Components/Geometry2D/Polypoint2D",
 	"cobweb/Components/Followers/PositionChaser",
 	"cobweb/Components/Followers/PositionChaser2D",
@@ -74800,7 +81460,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Interpolation/SquadOrientationInterpolator",
 	"cobweb/Components/Grouping/StaticGroup",
 	//"cobweb/Components/KeyDeviceSensor/StringSensor",
-	//"cobweb/Components/ParticleSystems/SurfaceEmitter",
+	"cobweb/Components/ParticleSystems/SurfaceEmitter",
 	"cobweb/Components/Grouping/Switch", // VRML
 	"cobweb/Components/Followers/TexCoordChaser2D",
 	"cobweb/Components/Followers/TexCoordDamper2D",
@@ -74819,7 +81479,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/Titania/TouchGroup",
 	"cobweb/Components/PointingDeviceSensor/TouchSensor", // VRML
 	"cobweb/Components/Grouping/Transform", // VRML
-	//"cobweb/Components/EnvironmentalSensor/TransformSensor",
+	"cobweb/Components/EnvironmentalSensor/TransformSensor",
 	//"cobweb/Components/DIS/TransmitterPdu",
 	"cobweb/Components/Rendering/TriangleFanSet",
 	"cobweb/Components/Rendering/TriangleSet",
@@ -74831,9 +81491,9 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Navigation/ViewpointGroup",
 	"cobweb/Components/Layering/Viewport",
 	"cobweb/Components/EnvironmentalSensor/VisibilitySensor", // VRML
-	//"cobweb/Components/ParticleSystems/VolumeEmitter",
+	"cobweb/Components/ParticleSystems/VolumeEmitter",
 	//"cobweb/Components/Picking/VolumePickSensor",
-	//"cobweb/Components/ParticleSystems/WindPhysicsModel",
+	"cobweb/Components/ParticleSystems/WindPhysicsModel",
 	"cobweb/Components/Core/WorldInfo", // VRML
 ],
 function (Anchor,
@@ -74848,7 +81508,7 @@ function (Anchor,
           BooleanSequencer,
           BooleanToggle,
           BooleanTrigger,
-          //BoundedPhysicsModel,
+          BoundedPhysicsModel,
           Box,
           CADAssembly,
           CADFace,
@@ -74871,7 +81531,7 @@ function (Anchor,
           ComposedShader,
           //ComposedTexture3D,
           Cone,
-          //ConeEmitter,
+          ConeEmitter,
           //Contact,
           //Contour2D,
           //ContourPolyline2D,
@@ -74891,26 +81551,26 @@ function (Anchor,
           EaseInEaseOut,
           ElevationGrid,
           //EspduTransform,
-          //ExplosionEmitter,
+          ExplosionEmitter,
           Extrusion,
           //FillProperties,
           //FloatVertexAttribute,
           Fog,
           //FogCoordinate,
           FontStyle,
-          //ForcePhysicsModel,
+          ForcePhysicsModel,
           //GeneratedCubeMapTexture,
-          //GeoCoordinate,
-          //GeoElevationGrid,
-          //GeoLOD,
-          //GeoLocation,
-          //GeoMetadata,
-          //GeoOrigin,
-          //GeoPositionInterpolator,
-          //GeoProximitySensor,
-          //GeoTouchSensor,
-          //GeoTransform,
-          //GeoViewpoint,
+          GeoCoordinate,
+          GeoElevationGrid,
+          GeoLOD,
+          GeoLocation,
+          GeoMetadata,
+          GeoOrigin,
+          GeoPositionInterpolator,
+          GeoProximitySensor,
+          GeoTouchSensor,
+          GeoTransform,
+          GeoViewpoint,
           Group,
           //HAnimDisplacer,
           //HAnimHumanoid,
@@ -74974,17 +81634,17 @@ function (Anchor,
           OrientationInterpolator,
           OrthoViewpoint,
           //PackagedShader,
-          //ParticleSystem,
+          ParticleSystem,
           //PickableGroup,
           PixelTexture,
           //PixelTexture3D,
           PlaneSensor,
-          //PointEmitter,
+          PointEmitter,
           PointLight,
           //PointPickSensor,
           PointSet,
           Polyline2D,
-          //PolylineEmitter,
+          PolylineEmitter,
           Polypoint2D,
           PositionChaser,
           PositionChaser2D,
@@ -75022,7 +81682,7 @@ function (Anchor,
           SquadOrientationInterpolator,
           StaticGroup,
           //StringSensor,
-          //SurfaceEmitter,
+          SurfaceEmitter,
           Switch,
           TexCoordChaser2D,
           TexCoordDamper2D,
@@ -75041,7 +81701,7 @@ function (Anchor,
           //TouchGroup,
           TouchSensor,
           Transform,
-          //TransformSensor,
+          TransformSensor,
           //TransmitterPdu,
           TriangleFanSet,
           TriangleSet,
@@ -75053,9 +81713,9 @@ function (Anchor,
           ViewpointGroup,
           Viewport,
           VisibilitySensor,
-          //VolumeEmitter,
+          VolumeEmitter,
           //VolumePickSensor,
-          //WindPhysicsModel,
+          WindPhysicsModel,
           WorldInfo)
 {
 
@@ -75077,7 +81737,7 @@ function (Anchor,
 		BooleanSequencer:             BooleanSequencer,
 		BooleanToggle:                BooleanToggle,
 		BooleanTrigger:               BooleanTrigger,
-		//BoundedPhysicsModel:          BoundedPhysicsModel,
+		BoundedPhysicsModel:          BoundedPhysicsModel,
 		Box:                          Box,
 		CADAssembly:                  CADAssembly,
 		CADFace:                      CADFace,
@@ -75100,7 +81760,7 @@ function (Anchor,
 		ComposedShader:               ComposedShader,
 		//ComposedTexture3D:            ComposedTexture3D,
 		Cone:                         Cone,
-		//ConeEmitter:                  ConeEmitter,
+		ConeEmitter:                  ConeEmitter,
 		//Contact:                      Contact,
 		//Contour2D:                    Contour2D,
 		//ContourPolyline2D:            ContourPolyline2D,
@@ -75120,26 +81780,26 @@ function (Anchor,
 		EaseInEaseOut:                EaseInEaseOut,
 		ElevationGrid:                ElevationGrid,
 		//EspduTransform:               EspduTransform,
-		//ExplosionEmitter:             ExplosionEmitter,
+		ExplosionEmitter:             ExplosionEmitter,
 		Extrusion:                    Extrusion,
 		//FillProperties:               FillProperties,
 		//FloatVertexAttribute:         FloatVertexAttribute,
 		Fog:                          Fog,
 		//FogCoordinate:                FogCoordinate,
 		FontStyle:                    FontStyle,
-		//ForcePhysicsModel:            ForcePhysicsModel,
+		ForcePhysicsModel:            ForcePhysicsModel,
 		//GeneratedCubeMapTexture:      GeneratedCubeMapTexture,
-		//GeoCoordinate:                GeoCoordinate,
-		//GeoElevationGrid:             GeoElevationGrid,
-		//GeoLOD:                       GeoLOD,
-		//GeoLocation:                  GeoLocation,
-		//GeoMetadata:                  GeoMetadata,
-		//GeoOrigin:                    GeoOrigin,
-		//GeoPositionInterpolator:      GeoPositionInterpolator,
-		//GeoProximitySensor:           GeoProximitySensor,
-		//GeoTouchSensor:               GeoTouchSensor,
-		//GeoTransform:                 GeoTransform,
-		//GeoViewpoint:                 GeoViewpoint,
+		GeoCoordinate:                GeoCoordinate,
+		GeoElevationGrid:             GeoElevationGrid,
+		GeoLOD:                       GeoLOD,
+		GeoLocation:                  GeoLocation,
+		GeoMetadata:                  GeoMetadata,
+		GeoOrigin:                    GeoOrigin,
+		GeoPositionInterpolator:      GeoPositionInterpolator,
+		GeoProximitySensor:           GeoProximitySensor,
+		GeoTouchSensor:               GeoTouchSensor,
+		GeoTransform:                 GeoTransform,
+		GeoViewpoint:                 GeoViewpoint,
 		Group:                        Group,
 		//HAnimDisplacer:               HAnimDisplacer,
 		//HAnimHumanoid:                HAnimHumanoid,
@@ -75203,17 +81863,17 @@ function (Anchor,
 		OrientationInterpolator:      OrientationInterpolator,
 		OrthoViewpoint:               OrthoViewpoint,
 		//PackagedShader:               PackagedShader,
-		//ParticleSystem:               ParticleSystem,
+		ParticleSystem:               ParticleSystem,
 		//PickableGroup:                PickableGroup,
 		PixelTexture:                 PixelTexture,
 		//PixelTexture3D:               PixelTexture3D,
 		PlaneSensor:                  PlaneSensor,
-		//PointEmitter:                 PointEmitter,
+		PointEmitter:                 PointEmitter,
 		PointLight:                   PointLight,
 		//PointPickSensor:              PointPickSensor,
 		PointSet:                     PointSet,
 		Polyline2D:                   Polyline2D,
-		//PolylineEmitter:              PolylineEmitter,
+		PolylineEmitter:              PolylineEmitter,
 		Polypoint2D:                  Polypoint2D,
 		PositionChaser:               PositionChaser,
 		PositionChaser2D:             PositionChaser2D,
@@ -75251,7 +81911,7 @@ function (Anchor,
 		SquadOrientationInterpolator: SquadOrientationInterpolator,
 		StaticGroup:                  StaticGroup,
 		//StringSensor:                 StringSensor,
-		//SurfaceEmitter:               SurfaceEmitter,
+		SurfaceEmitter:               SurfaceEmitter,
 		Switch:                       Switch,
 		TexCoordChaser2D:             TexCoordChaser2D,
 		TexCoordDamper2D:             TexCoordDamper2D,
@@ -75270,7 +81930,7 @@ function (Anchor,
 		//TouchGroup:                   TouchGroup,
 		TouchSensor:                  TouchSensor,
 		Transform:                    Transform,
-		//TransformSensor:              TransformSensor,
+		TransformSensor:              TransformSensor,
 		//TransmitterPdu:               TransmitterPdu,
 		TriangleFanSet:               TriangleFanSet,
 		TriangleSet:                  TriangleSet,
@@ -75282,9 +81942,9 @@ function (Anchor,
 		ViewpointGroup:               ViewpointGroup,
 		Viewport:                     Viewport,
 		VisibilitySensor:             VisibilitySensor,
-		//VolumeEmitter:                VolumeEmitter,
+		VolumeEmitter:                VolumeEmitter,
 		//VolumePickSensor:             VolumePickSensor,
-		//WindPhysicsModel:             WindPhysicsModel,
+		WindPhysicsModel:             WindPhysicsModel,
 		WorldInfo:                    WorldInfo,
 	};
 
@@ -75386,6 +82046,7 @@ function ($,
 			                "                Shading language: " + this .getShadingLanguageVersion () + "\n" +
 			                "        Rendering Properties\n" +
 			                "                Antialiased: " + this .getAntialiased () + "\n" +
+			                "                Depth size: " + this .getDepthSize () + " bits\n" +
 			                "                Color depth: " + this .getColorDepth () + " bits\n" +
 			                "                Max clip planes: 6\n" +
 			                "                Max lights: 8\n" +
@@ -75820,12 +82481,13 @@ function ($,
 		{
 			X3DBrowserContext .prototype .beginUpdate .call (this);
 			this .getExecutionContext () .beginUpdate ();
+			this .advanceTime (performance .now ());
 		},
 		endUpdate: function ()
 		{
 			X3DBrowserContext .prototype .endUpdate .call (this);
-			// DEBUG
-			//this .getExecutionContext () .endUpdate ();
+
+			this .getExecutionContext () .endUpdate ();
 		},
 		print: function ()
 		{

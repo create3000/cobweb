@@ -55,10 +55,10 @@ function ($,
 		getRandomSpeed: function (emitterNode)
 		{
 			var
-				s           = Math .max (0, this .speed_ .getValue ()),
-				variation   = s * Math .max (0, this .gustiness_ .getValue ());
+				speed     = Math .max (0, this .speed_ .getValue ()),
+				variation = speed * Math .max (0, this .gustiness_ .getValue ());
 		
-			return emitterNode .getRandomValue (Math .max (0, s - variation), s + variation);
+			return emitterNode .getRandomValue (Math .max (0, speed - variation), speed + variation);
 		},
 		addForce: function (i, emitterNode, forces, turbulences)
 		{

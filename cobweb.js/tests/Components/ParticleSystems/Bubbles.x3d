@@ -6,8 +6,8 @@
     <meta name='created' content='Sun, 15 May 2016 00:16:04 GMT'/>
     <meta name='creator' content='holger'/>
     <meta name='generator' content='Titania V1.4.3, http://titania.create3000.de'/>
-    <meta name='identifier' content='file:///home/holger/Projekte/Titania/Library/Tests/ParticleSystems/Bubbles.wrl'/>
-    <meta name='modified' content='Sun, 15 May 2016 00:16:04 GMT'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/Bubbles.x3d'/>
+    <meta name='modified' content='Sun, 15 May 2016 01:29:24 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -42,12 +42,42 @@
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
             reference='http://titania.create3000.de'>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'/>
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <ParticleSystem DEF='_1' containerField='value'
+                geometryType='GEOMETRY'
+                maxParticles='500'
+                particleLifetime='8'
+                lifetimeVariation='0.8'
+                particleSize='1 1'>
+              <PointEmitter
+                  direction='0 0 0'
+                  speed='0.5'
+                  variation='0.5'
+                  mass='0.1'
+                  surfaceArea='0.1'/>
+              <WindPhysicsModel
+                  direction='0 1 0'
+                  speed='0.6'
+                  gustiness='1.7'
+                  turbulence='0.3'/>
+              <WindPhysicsModel
+                  speed='1'
+                  gustiness='1.5'/>
+              <Appearance>
+                <Material DEF='_2'
+                    ambientIntensity='0.25'
+                    diffuseColor='1 0.520125 0.73699'
+                    specularColor='0.951515 0.951515 0.951515'
+                    shininess='0.557576'/>
+              </Appearance>
+              <Sphere/>
+            </ParticleSystem>
+          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -56,36 +86,7 @@
     <Viewpoint
         description='Viewpoint'
         position='0 20 55'/>
-    <ParticleSystem
-        geometryType='GEOMETRY'
-        maxParticles='500'
-        particleLifetime='8'
-        lifetimeVariation='0.8'
-        particleSize='1 1'>
-      <PointEmitter
-          direction='0 0 0'
-          speed='0.5'
-          variation='0.5'
-          mass='0.1'
-          surfaceArea='0.1'/>
-      <WindPhysicsModel
-          direction='0 1 0'
-          speed='0.6'
-          gustiness='1.7'
-          turbulence='0.3'/>
-      <WindPhysicsModel
-          speed='1'
-          gustiness='1.5'/>
-      <Appearance>
-        <Material
-            ambientIntensity='0.25'
-            diffuseColor='1 0.520125 0.73699'
-            specularColor='0.951515 0.951515 0.951515'
-            shininess='0.557576'
-            transparency='0.58'/>
-      </Appearance>
-      <Sphere/>
-    </ParticleSystem>
+    <ParticleSystem USE='_1'/>
     <Transform DEF='IndexedLineSet'>
       <Shape>
         <IndexedLineSet
