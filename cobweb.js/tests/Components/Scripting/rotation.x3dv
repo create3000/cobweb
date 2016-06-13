@@ -5,7 +5,7 @@ META "created" "Sun, 10 Jan 2016 23:26:54 GMT"
 META "creator" "Holger Seelig"
 META "generator" "Titania V1.4.5, http://titania.create3000.de"
 META "identifier" "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/rotation.x3dv"
-META "modified" "Mon, 13 Jun 2016 11:51:43 GMT"
+META "modified" "Mon, 13 Jun 2016 12:30:29 GMT"
 
 WorldInfo {
   metadata DEF Titania MetadataSet {
@@ -58,16 +58,10 @@ WorldInfo {
       DEF Selection MetadataSet {
         name "Selection"
         reference "http://titania.create3000.de"
-        value [
-          DEF previous MetadataSet {
-            name "previous"
-            reference "http://titania.create3000.de"
-          }
-          DEF children MetadataSet {
-            name "children"
-            reference "http://titania.create3000.de"
-          }
-        ]
+        value DEF previous MetadataSet {
+          name "previous"
+          reference "http://titania.create3000.de"
+        }
       }
     ]
   }

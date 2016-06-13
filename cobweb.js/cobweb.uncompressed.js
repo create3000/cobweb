@@ -12351,6 +12351,7 @@ function ($, Algorithm)
 			this [1] = matrix [1];
 			this [2] = matrix [2];
 			this [3] = matrix [3];
+			return this;
 		},
 		equals: function (matrix)
 		{
@@ -12385,6 +12386,68 @@ function ($, Algorithm)
 					break;
 				}
 			}
+		},
+		determinant1: function ()
+		{
+			return this [0];
+		},
+		determinant: function ()
+		{
+			return this [0] * this [3] -
+			       this [1] * this [2];
+		},
+		transpose: function ()
+		{
+			var tmp = this [1];
+
+			this [1] = this [2];
+			this [2] = tmp;
+
+			return this;
+		},
+		inverse: function ()
+		{
+			var d = this .determinant ();
+		
+			if (d === 0)
+				throw new Error ("Matrix2 .inverse: determinant is 0.");
+
+			this [0] =  array [0] / d;
+			this [1] = -array [1] / d;
+			this [2] = -array [2] / d;
+			this [3] =  array [3] / d;
+
+			return this;
+		},
+		multLeft: function (matrix)
+		{
+			var
+				a0 = this [0], a1 = this [1],
+				a2 = this [2], a3 = this [3],
+				b0 = matrix [0], b1 = matrix [1],
+				b2 = matrix [2], b3 = matrix [3];
+
+	      this [0] = a0 * b0 + a2 * b1;
+	      this [1] = a1 * b0 + a3 * b1;
+	      this [2] = a0 * b2 + a2 * b3;
+	      this [3] = a1 * b2 + a3 * b3;
+
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			var
+				a0 = this [0], a1 = this [1],
+				a2 = this [2], a3 = this [3],
+				b0 = matrix [0], b1 = matrix [1],
+				b2 = matrix [2], b3 = matrix [3];
+
+	      this [0] = b0 * a0 + b2 * a1;
+	      this [1] = b1 * a0 + b3 * a1;
+	      this [2] = b0 * a2 + b2 * a3;
+	      this [3] = b1 * a2 + b3 * a3;
+
+			return this;
 		},
 		identity: function ()
 		{
@@ -12590,7 +12653,13 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 		dummyRotation         = new Vector3 (0, 0, 0),
 		dummyScale            = new Vector2 (0, 0),
 		dummyScaleOrientation = new Vector3 (0, 0, 0),
-		dummyCenter           = new Vector2 (0, 0);
+		dummyCenter           = new Vector2 (0, 0),
+		si                    = new Matrix2 (),
+		sosi                  = new Matrix2 (),
+		rotMatrix             = new Matrix2 (),
+		soMatrix              = new Matrix2 (),
+		c                     = new Vector2 (0, 0),
+		b                     = new Matrix2 ();
 								
 	function Matrix3 ()
 	{
@@ -12688,27 +12757,27 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 				case 2:
 				{
 					if (translation === null) translation = Vector2 .Zero;
-					if (rotation    === null) rotation    = Vector3 .Zero;
+					if (rotation    === null) rotation    = 0;
 
 					this .identity ();
 					this .translate (translation);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					break;
 				}
 				case 3:
 				{
 					if (translation === null) translation = Vector2 .Zero;
-					if (rotation    === null) rotation    = Vector3 .Zero;
+					if (rotation    === null) rotation    = 0;
 					if (scale       === null) scale       = Vector2 .One;
 
 					this .identity ();
 					this .translate (translation);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					if (! scale .equals (Vector2 .One))
 						this .scale  (scale);
@@ -12718,25 +12787,25 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 				case 4:
 				{
 					if (translation      === null) translation      = Vector2 .Zero;
-					if (rotation         === null) rotation         = Vector3 .Zero;
+					if (rotation         === null) rotation         = 0;
 					if (scale            === null) scale            = Vector2 .One;
-					if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
+					if (scaleOrientation === null) scaleOrientation = 0;
 
 					this .identity ();
 					this .translate (translation);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					if (! scale .equals (Vector2 .One))
 					{
-						var hasScaleOrientation = scaleOrientation [2] !== 0;
+						var hasScaleOrientation = scaleOrientation !== 0;
 
 						if (hasScaleOrientation)
 						{
-							this .rotate (scaleOrientation [2]);
+							this .rotate (scaleOrientation);
 							this .scale (scale);
-							this .rotate (-scaleOrientation [2]);
+							this .rotate (-scaleOrientation);
 						}
 						else
 							this .scale (scale);
@@ -12747,9 +12816,9 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 				case 5:
 				{
 					if (translation      === null) translation      = Vector2 .Zero;
-					if (rotation         === null) rotation         = Vector3 .Zero;
+					if (rotation         === null) rotation         = 0;
 					if (scale            === null) scale            = Vector2 .One;
-					if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
+					if (scaleOrientation === null) scaleOrientation = 0;
 					if (center           === null) center           = Vector2 .Zero;
 
 					// P' = T * C * R * SR * S * -SR * -C * P
@@ -12761,16 +12830,16 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 					if (hasCenter)
 						this .translate (center);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					if (! scale .equals (Vector2 .One))
 					{
-						if (scaleOrientation [2] !== 0)
+						if (scaleOrientation !== 0)
 						{
-							this .rotate (scaleOrientation [2]);
+							this .rotate (scaleOrientation);
 							this .scale (scale);
-							this .rotate (-scaleOrientation [2]);
+							this .rotate (-scaleOrientation);
 						}
 						else
 							this .scale (scale);
@@ -12805,6 +12874,95 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 			if (scale            === null) scale            = dummyScale;
 			if (scaleOrientation === null) scaleOrientation = dummyScaleOrientation;
 			if (center           === null) center           = dummyCenter;
+
+			switch (arguments .length)
+			{
+				case 1:
+				{
+					translation .set (this [6], this [7]);
+					break;
+				}
+				case 2:
+				{
+					this .factor (translation, rotMatrix, dummyScale, soMatrix);
+
+					rotation [0] = rotMatrix [0];
+					rotation [1] = rotMatrix [1];
+					rotation [2] = Math .atan2 (rotMatrix [1], rotMatrix [0]);
+					break;
+				}
+				case 3:
+				{
+					this .factor (translation, rotMatrix, scale, soMatrix);
+
+					rotation [0] = rotMatrix [0];
+					rotation [1] = rotMatrix [1];
+					rotation [2] = Math .atan2 (rotMatrix [1], rotMatrix [0]);
+					break;
+				}
+				case 4:
+				{
+					this .factor (translation, rotMatrix, scale, soMatrix);
+
+					rotation [0] = rotMatrix [0];
+					rotation [1] = rotMatrix [1];
+					rotation [2] = Math .atan2 (rotMatrix [1], rotMatrix [0]);
+
+					scaleOrientation [0] = soMatrix [0];
+					scaleOrientation [1] = soMatrix [1];
+					scaleOrientation [2] = Math .atan2 (soMatrix [1], soMatrix [0]);
+					break;
+				}
+				case 5:
+				{
+					var m = new Matrix3 ();
+
+					m .set (c .assign (center) .negate ());
+					m .multLeft (this);
+					m .translate (center);
+
+					m .get (translation, rotation, scale, scaleOrientation);
+					break;
+				}
+			}
+		},
+		factor: function (translation, rotation, scale, scaleOrientation)
+		{
+			// (1) Get translation.
+			translation .set (this [6], this [7]);
+
+			// (2) Create 3x3 matrix.
+			var a = this .submatrix;
+
+			// (3) Compute det A. If negative, set sign = -1, else sign = 1
+			var det      = a .determinant ();
+			var det_sign = det < 0 ? -1 : 1;
+
+			if (det_sign * det === 0)
+				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+
+			// (4) B = A * !A  (here !A means A transpose)
+			b .assign (a) .transpose () .multLeft (a);
+			var e = eigendecomposition (b);
+
+			// Find min / max eigenvalues and do ratio test to determine singularity.
+
+			scaleOrientation .set (e .vectors [0] [0], e .vectors [0] [1],
+			                       e .vectors [1] [0], e .vectors [1] [1]);
+
+			// Compute s = sqrt(evalues), with sign. Set si = s-inverse
+
+			scale .x = det_sign * Math .sqrt (e .values [0]);
+			scale .y = det_sign * Math .sqrt (e .values [1]);
+
+			si [0] = 1 / scale .x;
+			si [3] = 1 / scale .y;
+
+			// (5) Compute U = !R ~S R A.
+			rotation .assign (sosi .assign (scaleOrientation) .multRight (si) .transpose () .multLeft (scaleOrientation) .multRight (a));
+
+			scaleOrientation .transpose ();
+			return true;
 		},
 		determinant2: function ()
 		{
@@ -13244,6 +13402,16 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
 			getType: function ()
 			{
 				return Type;
+			},
+			setTransform: function (translation, rotation, scale, scaleOrientation, center)
+			{
+				translation      = translation      ? translation      .getValue () : null;
+				rotation         = rotation         ? rotation                      : 0;
+				scale            = scale            ? scale            .getValue () : null;
+				scaleOrientation = scaleOrientation ? scaleOrientation              : 0;
+				center           = center           ? center           .getValue () : null;
+	
+				this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
 			},
 		});
 	
@@ -14715,7 +14883,10 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		rot                   = new Matrix3 (),
 		so                    = new Matrix3 (),
 		si                    = new Matrix3 (),
-		rotationMatrix        = new Matrix3 ();
+		sosi                  = new Matrix3 (),
+		rotationMatrix        = new Matrix3 (),
+		c                     = new Vector3 (0, 0, 0),
+		b                     = new Matrix3 ();
 
 	function Matrix4 ()
 	{
@@ -14992,7 +15163,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				{
 					var m = new Matrix4 ();
 
-					m .set (Vector3 .negate (center));
+					m .set (c .assign (center) .negate ());
 					m .multLeft (this);
 					m .translate (center);
 
@@ -15057,9 +15228,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
-			var
-				b = Matrix3 .transpose (a) .multLeft (a),
-				e = eigendecomposition (b);
+			b .assign (a) .transpose () .multLeft (a);
+			var e = eigendecomposition (b);
 
 			// Find min / max eigenvalues and do ratio test to determine singularity.
 
@@ -15078,7 +15248,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			si [8] = 1 / scale .z;
 
 			// (5) Compute U = !R ~S R A.
-			rotation .assign (Matrix3 .multRight (scaleOrientation, si) .transpose () .multLeft (scaleOrientation) .multRight (a));
+			rotation .assign (sosi .assign (scaleOrientation) .multRight (si) .transpose () .multLeft (scaleOrientation) .multRight (a));
 
 			scaleOrientation .transpose ();
 			return true;
@@ -16745,7 +16915,7 @@ function ($,
 
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.25";
+	return "1.26a";
 });
 
 
@@ -16847,16 +17017,16 @@ function ($,
 
 	function X3DBaseNode (executionContext)
 	{
-		if (this .hasOwnProperty ("executionContext"))
+		if (this .hasOwnProperty ("_executionContext"))
 			return;
 
 		X3DEventObject .call (this, executionContext .getBrowser ());
 
-		this .executionContext  = executionContext;
-		this .type              = [ X3DConstants .X3DBaseNode ];
-		this .fields            = { };
-		this .predefinedFields  = { };
-		this .userDefinedFields = { };
+		this ._executionContext  = executionContext;
+		this ._type              = [ X3DConstants .X3DBaseNode ];
+		this ._fields            = { };
+		this ._predefinedFields  = { };
+		this ._userDefinedFields = { };
 
 		// Setup fields.
 
@@ -16880,7 +17050,7 @@ function ($,
 		_initialized: false,
 		getScene: function ()
 		{
-			var executionContext = this .executionContext;
+			var executionContext = this ._executionContext;
 
 			while (! executionContext .isRootContext ())
 				executionContext = executionContext .getExecutionContext ();
@@ -16889,15 +17059,15 @@ function ($,
 		},
 		getExecutionContext: function ()
 		{
-			return this .executionContext;
+			return this ._executionContext;
 		},
 		addType: function (value)
 		{
-			this .type .push (value);
+			this ._type .push (value);
 		},
 		getType: function ()
 		{
-			return this .type;
+			return this ._type;
 		},
 		getInnerNode: function ()
 		{
@@ -16922,7 +17092,7 @@ function ($,
 
 			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
-				var field = this .fields [fieldDefinitions [i] .name];
+				var field = this ._fields [fieldDefinitions [i] .name];
 				field .updateReferences ();
 				field .setTainted (false);
 			}
@@ -17094,19 +17264,19 @@ function ($,
 		{
 			if (field .getAccessType () === X3DConstants .inputOutput)
 			{
-				this .fields ["set_" + name]     = field;
-				this .fields [name + "_changed"] = field;
+				this ._fields ["set_" + name]     = field;
+				this ._fields [name + "_changed"] = field;
 			}
 
-			this .fields [name] = field;
+			this ._fields [name] = field;
 
 			if (userDefined)
 			{
-				this .userDefinedFields [name] = field;
+				this ._userDefinedFields [name] = field;
 				return;
 			}
 
-			this .predefinedFields [name] = field;
+			this ._predefinedFields [name] = field;
 
 			Object .defineProperty (this, name + "_",
 			{
@@ -17118,16 +17288,16 @@ function ($,
 		},
 		removeField: function (name /*, completely */)
 		{
-			var field = this .fields [name];
+			var field = this ._fields [name];
 
 			//if (completely && field .getAccessType () === X3DConstants .inputOutput)
 			//{
-			//	delete this .fields ["set_" + field .getName ()];
-			//	delete this .fields [field .getName () + "_changed"];
+			//	delete this ._fields ["set_" + field .getName ()];
+			//	delete this ._fields [field .getName () + "_changed"];
 			//}
 
-			delete this .fields [name];
-			delete this .userDefinedFields [name];
+			delete this ._fields [name];
+			delete this ._userDefinedFields [name];
 
 			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
@@ -17142,7 +17312,7 @@ function ($,
 		},
 		getField: function (name)
 		{
-			var field = this .fields [name];
+			var field = this ._fields [name];
 			
 			if (field)
 				return field;
@@ -17159,7 +17329,7 @@ function ($,
 		},
 		addUserDefinedField: function (accessType, name, field)
 		{
-			if (this .fields [name])
+			if (this ._fields [name])
 				this .removeField (name);
 
 			field .setTainted (true);
@@ -17173,15 +17343,15 @@ function ($,
 		},
 		getUserDefinedFields: function ()
 		{
-			return this .userDefinedFields;
+			return this ._userDefinedFields;
 		},
 		getPredefinedFields: function ()
 		{
-			return this .predefinedFields;
+			return this ._predefinedFields;
 		},
 		getFields: function ()
 		{
-			return this .fields;
+			return this ._fields;
 		},
 		getCDATA: function ()
 		{
@@ -24574,7 +24744,7 @@ function ($,
 
 		this .getScene () .addLoadCount (this);
 
-		if (protoNode .isExternProto ())
+		if (protoNode .isExternProto)
 			protoNode .requestAsyncLoad (this .construct .bind (this));
 
 		else
@@ -24613,7 +24783,7 @@ function ($,
 			
 				this .metadata_ = proto .metadata_;
 
-				if (this .protoNode .isExternProto ())
+				if (this .protoNode .isExternProto)
 				{
 					var fieldDefinitions = proto .getFieldDefinitions ();
 
@@ -24816,7 +24986,7 @@ function ($,
 		},
 		createInstance: function (executionContext, setup)
 		{
-			var instance = new X3DPrototypeInstance (executionContext ? executionContext : this .getExecutionContext (), this);
+			var instance = new X3DPrototypeInstance (executionContext, this);
 			
 			if (setup === false)
 				return instance;
@@ -24824,6 +24994,10 @@ function ($,
 			instance .setup ();
 
 			return new Fields .SFNode (instance);
+		},
+		newInstance: function ()
+		{
+			return this .createInstance (this .getExecutionContext ());
 		},
 	});
 
@@ -24901,10 +25075,6 @@ function ($,
 					this .scene .endUpdate ();
 			}
 		},
-		isExternProto: function ()
-		{
-			return true;
-		},
 		setProtoDeclaration: function (value)
 		{
 			this .proto = value;
@@ -24969,6 +25139,44 @@ function ($,
 
 			this .deferred .resolve ();
 		},
+		loadNow: function ()
+		{
+		},
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "name",
+	{
+		get: function () { return this .getName (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "fields",
+	{
+		get: function () { return this .getFieldDefinitions (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "isExternProto",
+	{
+		get: function () { return true; },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "urls",
+	{
+		get: function () { return this .url_ .copy (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "loadState",
+	{
+		get: function () { return this .checkLoadState (); },
+		enumerable: true,
+		configurable: false
 	});
 
 	return X3DExternProtoDeclaration;
@@ -25030,10 +25238,6 @@ function ($,
 
 			this .loadState_ = X3DConstants .COMPLETE_STATE;
 		},
-		isExternProto: function ()
-		{
-			return false;
-		},
 		getURL: function ()
 		{
 			return this .getExecutionContext () .getURL ();
@@ -25046,6 +25250,27 @@ function ($,
 		{
 			return this .loadState_ .getValue ();
 		},
+	});
+
+	Object .defineProperty (X3DProtoDeclaration .prototype, "name",
+	{
+		get: function () { return this .getName (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DProtoDeclaration .prototype, "fields",
+	{
+		get: function () { return this .getFieldDefinitions (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DProtoDeclaration .prototype, "isExternProto",
+	{
+		get: function () { return false; },
+		enumerable: true,
+		configurable: false
 	});
 
 	return X3DProtoDeclaration;
@@ -32314,14 +32539,19 @@ function ($,
 		},
 		error: function (exception)
 		{
-			if (this .URL .scheme !== "data")
-				console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
+			if (this .URL .scheme === "data")
+				return;
+
+			console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
+
+			if (DEBUG)
+				console .log (exception);
 		},
 		transform: function (sURL)
 		{
 			var URL = this .getReferer () .transform (new URI (sURL));
 
-			if (URL .isLocal ())
+			if (URL .isLocal () || URL .host === "localhost")
 				URL = this .browser .getLocation () .getRelativePath (URL);
 			else
 			{
@@ -36966,6 +37196,8 @@ function ($,
 			
 		this .addChildren ("transparent",  new Fields .SFBool ());
 		this .addChildren ("bbox_changed", new Fields .SFTime ());
+
+		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate ();
 	}
 
 	X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -37027,8 +37259,6 @@ function ($,
 				for (var i = 0; i < 5; ++ i)
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
-
-			this .setCurrentTexCoord (null);
 
 			this .set_live__ ();
 		},
@@ -37940,6 +38170,8 @@ function ($,
 
 			if (this .texCoordNode)
 				this .texCoordNode .addInterest (this, "addNodeEvent");
+
+			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
@@ -38030,7 +38262,6 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
-			this .setCurrentTexCoord (this .getTexCoord ());
 		},
 		buildNormals: function (verticesPerPolygon, polygonsSize, trianglesSize)
 		{
@@ -38292,7 +38523,6 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
-			this .setCurrentTexCoord (this .getTexCoord ());
 		},
 		triangulate: function ()
 		{
@@ -51641,7 +51871,7 @@ function ($,
 	
 			var URL = this .URL .toString ();
 
-			if (! this .URL .isLocal ())
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
 			{
 				if (! URL .match (urls .fallbackExpression))
 					this .familyStack .unshift (urls .fallbackUrl + URL);
@@ -58315,7 +58545,7 @@ function ($,
 		{
 			var URL = this .URL .toString ();
 
-			if (! this .URL .isLocal ())
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
 			{
 				if (! URL .match (urls .fallbackExpression))
 					this .urlStack .unshift (urls .fallbackUrl + URL);
@@ -60645,7 +60875,6 @@ function ($,
 			this .getMax () .set ( radius,  radius, 0);	
 	
 			this .setSolid (false);
-			this .setCurrentTexCoord (null);
 		},
 	});
 
@@ -60820,7 +61049,6 @@ function ($,
 			this .getMax () .set ( radius,  radius, 0);	
 	
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 		display: function (context)
 		{
@@ -61146,7 +61374,7 @@ function ($,
 		{
 			var URL = this .URL .toString ();
 
-			if (! this .URL .isLocal ())
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
 			{
 				if (! URL .match (urls .fallbackExpression))
 					this .urlStack .unshift (urls .fallbackUrl + URL);
@@ -61923,7 +62151,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 	});
 
@@ -64108,7 +64335,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 			this .setNormals (normals);
 			this .setExtents ();
 		},
@@ -64957,7 +65183,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 			this .setNormals (normals);
 			this .setExtents ();
 		},
@@ -65548,7 +65773,6 @@ function ($,
 				this .getMax () .set ( radius,  radius, 0);
 		
 				this .setSolid (this .solid_ .getValue ());
-				this .setCurrentTexCoord (null);
 
 				this .lineGeometry = false;
 				return;
@@ -65593,7 +65817,6 @@ function ($,
 			this .getMax () .set ( maxRadius,  maxRadius, 0);
 	
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 
 			this .lineGeometry = false;
 		},
@@ -65763,6 +65986,8 @@ function ($,
 
 			if (this .texCoordNode)
 				this .texCoordNode .addInterest (this, "addNodeEvent");
+
+			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
@@ -65986,7 +66211,6 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
-			this .setCurrentTexCoord (this .getTexCoord ());
 		},
 	});
 
@@ -66532,7 +66756,6 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 		addCap: function (texCoords, normal, vertices, triangles)
 		{
@@ -66890,6 +67113,8 @@ function ($,
 
 			if (this .texCoordNode)
 				this .texCoordNode .addInterest (this, "addNodeEvent");
+
+			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
@@ -67143,7 +67368,6 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
-			this .setCurrentTexCoord (this .getTexCoord ());
 		},
 	});
 
@@ -71814,7 +72038,7 @@ function ($,
 		{
 			var URL = this .URL .toString ();
 
-			if (! this .URL .isLocal ())
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
 			{
 				if (! URL .match (urls .fallbackExpression))
 					this .urlStack .unshift (urls .fallbackUrl + URL);
@@ -75493,7 +75717,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 		display: function (context)
 		{
@@ -76295,9 +76518,9 @@ function ($,
 				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
 				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
 		
-			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
-		                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
-		                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
+		                                                               screenScale .y * (scale .y < 0 ? -1 : 1),
+		                                                               screenScale .z * (scale .z < 0 ? -1 : 1)));
 
 			// Snap to whole pixel
 
@@ -76357,6 +76580,13 @@ function ($)
 	$.extend (UnitInfo .prototype,
 	{
 		constructor: UnitInfo,
+	});
+
+	Object .defineProperty (UnitInfo .prototype, "conversion_factor",
+	{
+		get: function () { return this .conversionFactor; },
+		enumerable: true,
+		configurable: false
 	});
 
 	return UnitInfo;
@@ -77499,7 +77729,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 	});
 
@@ -82337,9 +82566,19 @@ function ($,
 		},
 		addBrowserListener: function (callback, object)
 		{
+			// The string describes the name of the callback function to be called within the current ECMAScript context. 
 		},
 		removeBrowserListener: function (callback)
+		{
+			// The string describes the name of the callback function to be called within the current ECMAScript context.
+		},
+		addBrowserCallback: function (callback, object)
+		{
+			// Probably to be implemented like addFieldCallback.
+		},
+		removeBrowserCallback: function (callback)
 		{	
+			// Probably to be implemented like removeFieldCallback.
 		},
 		importDocument: function (dom)
 		{
