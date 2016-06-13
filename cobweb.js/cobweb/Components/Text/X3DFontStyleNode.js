@@ -235,7 +235,7 @@ function ($,
 	
 			var URL = this .URL .toString ();
 
-			if (! this .URL .isLocal ())
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
 			{
 				if (! URL .match (urls .fallbackExpression))
 					this .familyStack .unshift (urls .fallbackUrl + URL);

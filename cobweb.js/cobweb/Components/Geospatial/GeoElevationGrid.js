@@ -120,6 +120,8 @@ function ($,
 
 			if (this .texCoordNode)
 				this .texCoordNode .addInterest (this, "addNodeEvent");
+
+			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
@@ -373,7 +375,6 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
-			this .setCurrentTexCoord (this .getTexCoord ());
 		},
 	});
 

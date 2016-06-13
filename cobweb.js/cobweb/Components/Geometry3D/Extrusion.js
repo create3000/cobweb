@@ -458,7 +458,6 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 			this .setCCW (this .ccw_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 		addCap: function (texCoords, normal, vertices, triangles)
 		{

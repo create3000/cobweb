@@ -53,10 +53,6 @@ function ($,
 
 			this .loadState_ = X3DConstants .COMPLETE_STATE;
 		},
-		isExternProto: function ()
-		{
-			return false;
-		},
 		getURL: function ()
 		{
 			return this .getExecutionContext () .getURL ();
@@ -69,6 +65,27 @@ function ($,
 		{
 			return this .loadState_ .getValue ();
 		},
+	});
+
+	Object .defineProperty (X3DProtoDeclaration .prototype, "name",
+	{
+		get: function () { return this .getName (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DProtoDeclaration .prototype, "fields",
+	{
+		get: function () { return this .getFieldDefinitions (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DProtoDeclaration .prototype, "isExternProto",
+	{
+		get: function () { return false; },
+		enumerable: true,
+		configurable: false
 	});
 
 	return X3DProtoDeclaration;

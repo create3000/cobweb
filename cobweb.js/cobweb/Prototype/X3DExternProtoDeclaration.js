@@ -69,10 +69,6 @@ function ($,
 					this .scene .endUpdate ();
 			}
 		},
-		isExternProto: function ()
-		{
-			return true;
-		},
 		setProtoDeclaration: function (value)
 		{
 			this .proto = value;
@@ -137,6 +133,44 @@ function ($,
 
 			this .deferred .resolve ();
 		},
+		loadNow: function ()
+		{
+		},
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "name",
+	{
+		get: function () { return this .getName (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "fields",
+	{
+		get: function () { return this .getFieldDefinitions (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "isExternProto",
+	{
+		get: function () { return true; },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "urls",
+	{
+		get: function () { return this .url_ .copy (); },
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (X3DExternProtoDeclaration .prototype, "loadState",
+	{
+		get: function () { return this .checkLoadState (); },
+		enumerable: true,
+		configurable: false
 	});
 
 	return X3DExternProtoDeclaration;

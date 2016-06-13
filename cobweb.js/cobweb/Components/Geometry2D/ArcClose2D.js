@@ -164,7 +164,6 @@ function ($,
 			this .getMax () .set ( radius,  radius, 0);	
 	
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 		display: function (context)
 		{

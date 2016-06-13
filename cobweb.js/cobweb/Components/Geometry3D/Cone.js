@@ -169,7 +169,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 			this .setNormals (normals);
 			this .setExtents ();
 		},

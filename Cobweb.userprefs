@@ -1,11 +1,18 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.release.html">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="262" Column="59" />
       <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="2" Column="7" />
+      <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserOptions.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/EnvironmentalSensor/TransformSensor.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="362" Column="45" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DScene.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="413" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="70" Column="41" />
+      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="355" Column="12" />
+      <File FileName="cobweb.js/tests/Components/Scripting/test.x3d" Line="18" Column="48" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -30,7 +30,7 @@ function ($,
 		},
 		createInstance: function (executionContext, setup)
 		{
-			var instance = new X3DPrototypeInstance (executionContext ? executionContext : this .getExecutionContext (), this);
+			var instance = new X3DPrototypeInstance (executionContext, this);
 			
 			if (setup === false)
 				return instance;
@@ -38,6 +38,10 @@ function ($,
 			instance .setup ();
 
 			return new Fields .SFNode (instance);
+		},
+		newInstance: function ()
+		{
+			return this .createInstance (this .getExecutionContext ());
 		},
 	});
 

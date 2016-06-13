@@ -349,9 +349,19 @@ function ($,
 		},
 		addBrowserListener: function (callback, object)
 		{
+			// The string describes the name of the callback function to be called within the current ECMAScript context. 
 		},
 		removeBrowserListener: function (callback)
+		{
+			// The string describes the name of the callback function to be called within the current ECMAScript context.
+		},
+		addBrowserCallback: function (callback, object)
+		{
+			// Probably to be implemented like addFieldCallback.
+		},
+		removeBrowserCallback: function (callback)
 		{	
+			// Probably to be implemented like removeFieldCallback.
 		},
 		importDocument: function (dom)
 		{

@@ -18,5 +18,12 @@ function ($)
 		constructor: UnitInfo,
 	});
 
+	Object .defineProperty (UnitInfo .prototype, "conversion_factor",
+	{
+		get: function () { return this .conversionFactor; },
+		enumerable: true,
+		configurable: false
+	});
+
 	return UnitInfo;
 });

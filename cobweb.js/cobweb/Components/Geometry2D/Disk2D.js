@@ -127,7 +127,6 @@ function ($,
 				this .getMax () .set ( radius,  radius, 0);
 		
 				this .setSolid (this .solid_ .getValue ());
-				this .setCurrentTexCoord (null);
 
 				this .lineGeometry = false;
 				return;
@@ -172,7 +171,6 @@ function ($,
 			this .getMax () .set ( maxRadius,  maxRadius, 0);
 	
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 
 			this .lineGeometry = false;
 		},

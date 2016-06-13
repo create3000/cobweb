@@ -51,6 +51,8 @@ function ($,
 			
 		this .addChildren ("transparent",  new Fields .SFBool ());
 		this .addChildren ("bbox_changed", new Fields .SFTime ());
+
+		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate ();
 	}
 
 	X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -112,8 +114,6 @@ function ($,
 				for (var i = 0; i < 5; ++ i)
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
-
-			this .setCurrentTexCoord (null);
 
 			this .set_live__ ();
 		},

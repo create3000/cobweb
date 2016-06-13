@@ -114,7 +114,6 @@ function ($,
 			this .getMax () .set ( radius,  radius, 0);	
 	
 			this .setSolid (false);
-			this .setCurrentTexCoord (null);
 		},
 	});
 

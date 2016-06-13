@@ -33,7 +33,7 @@ function ($,
 
 		this .getScene () .addLoadCount (this);
 
-		if (protoNode .isExternProto ())
+		if (protoNode .isExternProto)
 			protoNode .requestAsyncLoad (this .construct .bind (this));
 
 		else
@@ -72,7 +72,7 @@ function ($,
 			
 				this .metadata_ = proto .metadata_;
 
-				if (this .protoNode .isExternProto ())
+				if (this .protoNode .isExternProto)
 				{
 					var fieldDefinitions = proto .getFieldDefinitions ();
 

@@ -357,14 +357,19 @@ function ($,
 		},
 		error: function (exception)
 		{
-			if (this .URL .scheme !== "data")
-				console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
+			if (this .URL .scheme === "data")
+				return;
+
+			console .warn ("Couldn't load URL '" + this .URL + "':", exception .message);
+
+			if (DEBUG)
+				console .log (exception);
 		},
 		transform: function (sURL)
 		{
 			var URL = this .getReferer () .transform (new URI (sURL));
 
-			if (URL .isLocal ())
+			if (URL .isLocal () || URL .host === "localhost")
 				URL = this .browser .getLocation () .getRelativePath (URL);
 			else
 			{

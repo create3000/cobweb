@@ -20,16 +20,16 @@ function ($,
 
 	function X3DBaseNode (executionContext)
 	{
-		if (this .hasOwnProperty ("executionContext"))
+		if (this .hasOwnProperty ("_executionContext"))
 			return;
 
 		X3DEventObject .call (this, executionContext .getBrowser ());
 
-		this .executionContext  = executionContext;
-		this .type              = [ X3DConstants .X3DBaseNode ];
-		this .fields            = { };
-		this .predefinedFields  = { };
-		this .userDefinedFields = { };
+		this ._executionContext  = executionContext;
+		this ._type              = [ X3DConstants .X3DBaseNode ];
+		this ._fields            = { };
+		this ._predefinedFields  = { };
+		this ._userDefinedFields = { };
 
 		// Setup fields.
 
@@ -53,7 +53,7 @@ function ($,
 		_initialized: false,
 		getScene: function ()
 		{
-			var executionContext = this .executionContext;
+			var executionContext = this ._executionContext;
 
 			while (! executionContext .isRootContext ())
 				executionContext = executionContext .getExecutionContext ();
@@ -62,15 +62,15 @@ function ($,
 		},
 		getExecutionContext: function ()
 		{
-			return this .executionContext;
+			return this ._executionContext;
 		},
 		addType: function (value)
 		{
-			this .type .push (value);
+			this ._type .push (value);
 		},
 		getType: function ()
 		{
-			return this .type;
+			return this ._type;
 		},
 		getInnerNode: function ()
 		{
@@ -95,7 +95,7 @@ function ($,
 
 			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			{
-				var field = this .fields [fieldDefinitions [i] .name];
+				var field = this ._fields [fieldDefinitions [i] .name];
 				field .updateReferences ();
 				field .setTainted (false);
 			}
@@ -267,19 +267,19 @@ function ($,
 		{
 			if (field .getAccessType () === X3DConstants .inputOutput)
 			{
-				this .fields ["set_" + name]     = field;
-				this .fields [name + "_changed"] = field;
+				this ._fields ["set_" + name]     = field;
+				this ._fields [name + "_changed"] = field;
 			}
 
-			this .fields [name] = field;
+			this ._fields [name] = field;
 
 			if (userDefined)
 			{
-				this .userDefinedFields [name] = field;
+				this ._userDefinedFields [name] = field;
 				return;
 			}
 
-			this .predefinedFields [name] = field;
+			this ._predefinedFields [name] = field;
 
 			Object .defineProperty (this, name + "_",
 			{
@@ -291,16 +291,16 @@ function ($,
 		},
 		removeField: function (name /*, completely */)
 		{
-			var field = this .fields [name];
+			var field = this ._fields [name];
 
 			//if (completely && field .getAccessType () === X3DConstants .inputOutput)
 			//{
-			//	delete this .fields ["set_" + field .getName ()];
-			//	delete this .fields [field .getName () + "_changed"];
+			//	delete this ._fields ["set_" + field .getName ()];
+			//	delete this ._fields [field .getName () + "_changed"];
 			//}
 
-			delete this .fields [name];
-			delete this .userDefinedFields [name];
+			delete this ._fields [name];
+			delete this ._userDefinedFields [name];
 
 			var fieldDefinitions = this .fieldDefinitions .getValue ();
 
@@ -315,7 +315,7 @@ function ($,
 		},
 		getField: function (name)
 		{
-			var field = this .fields [name];
+			var field = this ._fields [name];
 			
 			if (field)
 				return field;
@@ -332,7 +332,7 @@ function ($,
 		},
 		addUserDefinedField: function (accessType, name, field)
 		{
-			if (this .fields [name])
+			if (this ._fields [name])
 				this .removeField (name);
 
 			field .setTainted (true);
@@ -346,15 +346,15 @@ function ($,
 		},
 		getUserDefinedFields: function ()
 		{
-			return this .userDefinedFields;
+			return this ._userDefinedFields;
 		},
 		getPredefinedFields: function ()
 		{
-			return this .predefinedFields;
+			return this ._predefinedFields;
 		},
 		getFields: function ()
 		{
-			return this .fields;
+			return this ._fields;
 		},
 		getCDATA: function ()
 		{

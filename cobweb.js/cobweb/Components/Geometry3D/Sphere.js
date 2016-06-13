@@ -91,7 +91,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-			this .setCurrentTexCoord (null);
 		},
 	});
 
