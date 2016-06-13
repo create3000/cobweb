@@ -15,7 +15,13 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 		dummyRotation         = new Vector3 (0, 0, 0),
 		dummyScale            = new Vector2 (0, 0),
 		dummyScaleOrientation = new Vector3 (0, 0, 0),
-		dummyCenter           = new Vector2 (0, 0);
+		dummyCenter           = new Vector2 (0, 0),
+		si                    = new Matrix2 (),
+		sosi                  = new Matrix2 (),
+		rotMatrix             = new Matrix2 (),
+		soMatrix              = new Matrix2 (),
+		c                     = new Vector2 (0, 0),
+		b                     = new Matrix2 ();
 								
 	function Matrix3 ()
 	{
@@ -113,27 +119,27 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 				case 2:
 				{
 					if (translation === null) translation = Vector2 .Zero;
-					if (rotation    === null) rotation    = Vector3 .Zero;
+					if (rotation    === null) rotation    = 0;
 
 					this .identity ();
 					this .translate (translation);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					break;
 				}
 				case 3:
 				{
 					if (translation === null) translation = Vector2 .Zero;
-					if (rotation    === null) rotation    = Vector3 .Zero;
+					if (rotation    === null) rotation    = 0;
 					if (scale       === null) scale       = Vector2 .One;
 
 					this .identity ();
 					this .translate (translation);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					if (! scale .equals (Vector2 .One))
 						this .scale  (scale);
@@ -143,25 +149,25 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 				case 4:
 				{
 					if (translation      === null) translation      = Vector2 .Zero;
-					if (rotation         === null) rotation         = Vector3 .Zero;
+					if (rotation         === null) rotation         = 0;
 					if (scale            === null) scale            = Vector2 .One;
-					if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
+					if (scaleOrientation === null) scaleOrientation = 0;
 
 					this .identity ();
 					this .translate (translation);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					if (! scale .equals (Vector2 .One))
 					{
-						var hasScaleOrientation = scaleOrientation [2] !== 0;
+						var hasScaleOrientation = scaleOrientation !== 0;
 
 						if (hasScaleOrientation)
 						{
-							this .rotate (scaleOrientation [2]);
+							this .rotate (scaleOrientation);
 							this .scale (scale);
-							this .rotate (-scaleOrientation [2]);
+							this .rotate (-scaleOrientation);
 						}
 						else
 							this .scale (scale);
@@ -172,9 +178,9 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 				case 5:
 				{
 					if (translation      === null) translation      = Vector2 .Zero;
-					if (rotation         === null) rotation         = Vector3 .Zero;
+					if (rotation         === null) rotation         = 0;
 					if (scale            === null) scale            = Vector2 .One;
-					if (scaleOrientation === null) scaleOrientation = Vector3 .Zero;
+					if (scaleOrientation === null) scaleOrientation = 0;
 					if (center           === null) center           = Vector2 .Zero;
 
 					// P' = T * C * R * SR * S * -SR * -C * P
@@ -186,16 +192,16 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 					if (hasCenter)
 						this .translate (center);
 
-					if (rotation [2] !== 0)
-						this .rotate (rotation [2]);
+					if (rotation !== 0)
+						this .rotate (rotation);
 
 					if (! scale .equals (Vector2 .One))
 					{
-						if (scaleOrientation [2] !== 0)
+						if (scaleOrientation !== 0)
 						{
-							this .rotate (scaleOrientation [2]);
+							this .rotate (scaleOrientation);
 							this .scale (scale);
-							this .rotate (-scaleOrientation [2]);
+							this .rotate (-scaleOrientation);
 						}
 						else
 							this .scale (scale);
@@ -230,6 +236,95 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 			if (scale            === null) scale            = dummyScale;
 			if (scaleOrientation === null) scaleOrientation = dummyScaleOrientation;
 			if (center           === null) center           = dummyCenter;
+
+			switch (arguments .length)
+			{
+				case 1:
+				{
+					translation .set (this [6], this [7]);
+					break;
+				}
+				case 2:
+				{
+					this .factor (translation, rotMatrix, dummyScale, soMatrix);
+
+					rotation [0] = rotMatrix [0];
+					rotation [1] = rotMatrix [1];
+					rotation [2] = Math .atan2 (rotMatrix [1], rotMatrix [0]);
+					break;
+				}
+				case 3:
+				{
+					this .factor (translation, rotMatrix, scale, soMatrix);
+
+					rotation [0] = rotMatrix [0];
+					rotation [1] = rotMatrix [1];
+					rotation [2] = Math .atan2 (rotMatrix [1], rotMatrix [0]);
+					break;
+				}
+				case 4:
+				{
+					this .factor (translation, rotMatrix, scale, soMatrix);
+
+					rotation [0] = rotMatrix [0];
+					rotation [1] = rotMatrix [1];
+					rotation [2] = Math .atan2 (rotMatrix [1], rotMatrix [0]);
+
+					scaleOrientation [0] = soMatrix [0];
+					scaleOrientation [1] = soMatrix [1];
+					scaleOrientation [2] = Math .atan2 (soMatrix [1], soMatrix [0]);
+					break;
+				}
+				case 5:
+				{
+					var m = new Matrix3 ();
+
+					m .set (c .assign (center) .negate ());
+					m .multLeft (this);
+					m .translate (center);
+
+					m .get (translation, rotation, scale, scaleOrientation);
+					break;
+				}
+			}
+		},
+		factor: function (translation, rotation, scale, scaleOrientation)
+		{
+			// (1) Get translation.
+			translation .set (this [6], this [7]);
+
+			// (2) Create 3x3 matrix.
+			var a = this .submatrix;
+
+			// (3) Compute det A. If negative, set sign = -1, else sign = 1
+			var det      = a .determinant ();
+			var det_sign = det < 0 ? -1 : 1;
+
+			if (det_sign * det === 0)
+				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+
+			// (4) B = A * !A  (here !A means A transpose)
+			b .assign (a) .transpose () .multLeft (a);
+			var e = eigendecomposition (b);
+
+			// Find min / max eigenvalues and do ratio test to determine singularity.
+
+			scaleOrientation .set (e .vectors [0] [0], e .vectors [0] [1],
+			                       e .vectors [1] [0], e .vectors [1] [1]);
+
+			// Compute s = sqrt(evalues), with sign. Set si = s-inverse
+
+			scale .x = det_sign * Math .sqrt (e .values [0]);
+			scale .y = det_sign * Math .sqrt (e .values [1]);
+
+			si [0] = 1 / scale .x;
+			si [3] = 1 / scale .y;
+
+			// (5) Compute U = !R ~S R A.
+			rotation .assign (sosi .assign (scaleOrientation) .multRight (si) .transpose () .multLeft (scaleOrientation) .multRight (a));
+
+			scaleOrientation .transpose ();
+			return true;
 		},
 		determinant2: function ()
 		{

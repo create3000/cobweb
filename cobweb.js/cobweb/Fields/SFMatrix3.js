@@ -43,6 +43,16 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
 			{
 				return Type;
 			},
+			setTransform: function (translation, rotation, scale, scaleOrientation, center)
+			{
+				translation      = translation      ? translation      .getValue () : null;
+				rotation         = rotation         ? rotation                      : 0;
+				scale            = scale            ? scale            .getValue () : null;
+				scaleOrientation = scaleOrientation ? scaleOrientation              : 0;
+				center           = center           ? center           .getValue () : null;
+	
+				this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
+			},
 		});
 	
 		function defineProperty (i)

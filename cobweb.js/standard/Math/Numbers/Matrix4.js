@@ -20,7 +20,10 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		rot                   = new Matrix3 (),
 		so                    = new Matrix3 (),
 		si                    = new Matrix3 (),
-		rotationMatrix        = new Matrix3 ();
+		sosi                  = new Matrix3 (),
+		rotationMatrix        = new Matrix3 (),
+		c                     = new Vector3 (0, 0, 0),
+		b                     = new Matrix3 ();
 
 	function Matrix4 ()
 	{
@@ -297,7 +300,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				{
 					var m = new Matrix4 ();
 
-					m .set (Vector3 .negate (center));
+					m .set (c .assign (center) .negate ());
 					m .multLeft (this);
 					m .translate (center);
 
@@ -362,9 +365,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
-			var
-				b = Matrix3 .transpose (a) .multLeft (a),
-				e = eigendecomposition (b);
+			b .assign (a) .transpose () .multLeft (a);
+			var e = eigendecomposition (b);
 
 			// Find min / max eigenvalues and do ratio test to determine singularity.
 
@@ -383,7 +385,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			si [8] = 1 / scale .z;
 
 			// (5) Compute U = !R ~S R A.
-			rotation .assign (Matrix3 .multRight (scaleOrientation, si) .transpose () .multLeft (scaleOrientation) .multRight (a));
+			rotation .assign (sosi .assign (scaleOrientation) .multRight (si) .transpose () .multLeft (scaleOrientation) .multRight (a));
 
 			scaleOrientation .transpose ();
 			return true;

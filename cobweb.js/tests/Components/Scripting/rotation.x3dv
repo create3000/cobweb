@@ -1,10 +1,11 @@
-#X3D V3.3 utf8 Titania V1.2.2
+#X3D V3.3 utf8 Titania V1.4.5
 
 META "comment" "World of Titania"
 META "created" "Sun, 10 Jan 2016 23:26:54 GMT"
 META "creator" "Holger Seelig"
-META "generator" "Titania V1.2.2, http://titania.create3000.de"
-META "modified" "Sun, 10 Jan 2016 23:26:54 GMT"
+META "generator" "Titania V1.4.5, http://titania.create3000.de"
+META "identifier" "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/rotation.x3dv"
+META "modified" "Mon, 13 Jun 2016 11:51:43 GMT"
 
 WorldInfo {
   metadata DEF Titania MetadataSet {
@@ -54,6 +55,20 @@ WorldInfo {
           }
         ]
       }
+      DEF Selection MetadataSet {
+        name "Selection"
+        reference "http://titania.create3000.de"
+        value [
+          DEF previous MetadataSet {
+            name "previous"
+            reference "http://titania.create3000.de"
+          }
+          DEF children MetadataSet {
+            name "children"
+            reference "http://titania.create3000.de"
+          }
+        ]
+      }
     ]
   }
 }
@@ -75,5 +90,29 @@ function initialize ()
 	//b:     0.3713906763541037 0.5570860145311556 0.7427813527082074 5
 	//a * b: -0.26592817455420725 -0.5950036244205548 -0.7584542787173597 3.558116575687694
 	//b * a: -0.3211364397440548 -0.4845870940408597 -0.8136625439072073 3.558116575687694
+
+	var m = new SFMatrix3f ();
+	
+	m .setTransform (new SFVec2f (1, 2),
+	                 Math .PI,
+	                 new SFVec2f (2, 3),
+	                 Math .PI);
+
+	print (\"identity: \",  m);
+	print (\"transpose: \", m .transpose ());
+	print (\"inverse: \",   m .inverse ());
+	
+	var
+		t  = new SFVec2f (),
+		r  = new SFVec3f (),
+		s  = new SFVec2f (),
+		so = new SFVec3f ();
+
+	m .getTransform (t, r, s, so);
+	
+	print (\"translation: \", t);
+	print (\"rotation: \",r);
+	print (\"scale: \",s);
+	print (\"scaleOritation: \",so);
 }"
 }

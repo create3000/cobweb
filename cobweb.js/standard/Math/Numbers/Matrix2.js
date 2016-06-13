@@ -40,6 +40,7 @@ function ($, Algorithm)
 			this [1] = matrix [1];
 			this [2] = matrix [2];
 			this [3] = matrix [3];
+			return this;
 		},
 		equals: function (matrix)
 		{
@@ -74,6 +75,68 @@ function ($, Algorithm)
 					break;
 				}
 			}
+		},
+		determinant1: function ()
+		{
+			return this [0];
+		},
+		determinant: function ()
+		{
+			return this [0] * this [3] -
+			       this [1] * this [2];
+		},
+		transpose: function ()
+		{
+			var tmp = this [1];
+
+			this [1] = this [2];
+			this [2] = tmp;
+
+			return this;
+		},
+		inverse: function ()
+		{
+			var d = this .determinant ();
+		
+			if (d === 0)
+				throw new Error ("Matrix2 .inverse: determinant is 0.");
+
+			this [0] =  array [0] / d;
+			this [1] = -array [1] / d;
+			this [2] = -array [2] / d;
+			this [3] =  array [3] / d;
+
+			return this;
+		},
+		multLeft: function (matrix)
+		{
+			var
+				a0 = this [0], a1 = this [1],
+				a2 = this [2], a3 = this [3],
+				b0 = matrix [0], b1 = matrix [1],
+				b2 = matrix [2], b3 = matrix [3];
+
+	      this [0] = a0 * b0 + a2 * b1;
+	      this [1] = a1 * b0 + a3 * b1;
+	      this [2] = a0 * b2 + a2 * b3;
+	      this [3] = a1 * b2 + a3 * b3;
+
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			var
+				a0 = this [0], a1 = this [1],
+				a2 = this [2], a3 = this [3],
+				b0 = matrix [0], b1 = matrix [1],
+				b2 = matrix [2], b3 = matrix [3];
+
+	      this [0] = b0 * a0 + b2 * a1;
+	      this [1] = b1 * a0 + b3 * a1;
+	      this [2] = b0 * a2 + b2 * a3;
+	      this [3] = b1 * a2 + b3 * a3;
+
+			return this;
 		},
 		identity: function ()
 		{
