@@ -322,6 +322,10 @@ function ($,
 				numCrossSection_1 = crossSection .length - 1,
 				numSpine_1        = spine .length - 1;
 
+			var
+				indexLeft  = INDEX (0, 0),
+				indexRight = INDEX (0, closedCrossSection ? 0 : numCrossSection_1);
+
 			for (var n = 0; n < numSpine_1; ++ n)
 			{
 				for (var k = 0; k < numCrossSection_1; ++ k)
@@ -361,6 +365,30 @@ function ($,
 						var
 							normal1 = Triangle3 .normal (p1, p2, p3, new Vector3 (0, 0, 0)),
 							normal2 = Triangle3 .normal (p1, p3, p4, new Vector3 (0, 0, 0));
+					}
+
+					// Merge points on the left and right side if spine is coincident for better normal generation.
+		
+					if (k == 0)
+					{
+						if (l2)
+							indexLeft = i1;
+						else
+						{
+							i1 = indexLeft;
+							p1 = points [i1];
+						}
+					}
+		
+					if (k == crossSection .length - 2)
+					{
+						if (l1)
+							indexRight = i2;
+						else
+						{
+							i3 = indexRight;
+							p3 = points [i3];
+						}
 					}
 
 					// If there are coincident spine points then one length can be zero.
