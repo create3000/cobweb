@@ -2,23 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclarationNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Configuration/ProfileInfo.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Configuration/ComponentInfo.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Configuration/UnitInfo.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Fields/SFMatrix3.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Fields/SFMatrixPrototypeTemplate.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/tests/Components/Scripting/rotation.x3dv" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Math/Numbers/Matrix3.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Math/Numbers/Matrix4.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Math/Numbers/Matrix2.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="156" Column="82" />
+      <File FileName="cobweb.js/cobweb/Components/Geometry3D/Extrusion.js" Line="264" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

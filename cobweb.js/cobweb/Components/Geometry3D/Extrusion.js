@@ -346,7 +346,9 @@ function ($,
 						p1 = points [i1],
 						p2 = points [i2],
 						p3 = points [i3],
-						p4 = points [i4];
+						p4 = points [i4],
+						l1 = p2 .distance (p3),
+						l2 = p4 .distance (p1);
 
 					if (cw)
 					{
@@ -363,43 +365,67 @@ function ($,
 
 					// Triangle one
 
-					// p1
-					texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
-					normalIndex [i1] .push (normals .length);
-					normals .push (normal1);
-					this .addVertex (p1);
+					if (l1)
+					{
+						// p1
+						if (l2)
+							texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
+						else
+						{
+							// Cone case:
+							var y = (n / numSpine_1 + (n + 1) / numSpine_1) / 2;
 
-					// p2
-					texCoords .push ((k + 1) / numCrossSection_1, n / numSpine_1, 0, 1);
-					normalIndex [i2] .push (normals .length);
-					normals .push (normal1);
-					this .addVertex (p2);
+							texCoords .push (k / numCrossSection_1, y, 0, 1);
+						}
 
-					// p3
-					texCoords .push ((k + 1) / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
-					normalIndex [i3] .push (normals .length);
-					normals .push (normal1);
-					this .addVertex (p3);
+						normalIndex [i1] .push (normals .length);
+						normals .push (normal1);
+						this .addVertex (p1);
+	
+						// p2
+						texCoords .push ((k + 1) / numCrossSection_1, n / numSpine_1, 0, 1);
+						normalIndex [i2] .push (normals .length);
+						normals .push (normal1);
+						this .addVertex (p2);
+	
+						// p3
+						texCoords .push ((k + 1) / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
+						normalIndex [i3] .push (normals .length);
+						normals .push (normal1);
+						this .addVertex (p3);
+					}
 
 					// Triangle two
 
-					// p1
-					texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
-					normalIndex [i1] .push (normals .length);
-					normals .push (normal2);
-					this .addVertex (p1);
+					if (l2)
+					{
+						// p1
+						texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
+						normalIndex [i1] .push (normals .length);
+						normals .push (normal2);
+						this .addVertex (p1);
+	
+						// p3
+						if (l1)
+							texCoords .push ((k + 1) / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
+						else
+						{
+							// Cone case:
+							var y = ((n + 1) / numSpine_1 + n / numSpine_1) / 2;
 
-					// p3
-					texCoords .push ((k + 1) / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
-					normalIndex [i3] .push (normals .length);
-					normals .push (normal2);
-					this .addVertex (p3);
+							texCoords .push ((k + 1) / numCrossSection_1, y, 0, 1);
+						}
 
-					// p4
-					texCoords .push (k / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
-					normalIndex [i4] .push (normals .length);
-					normals .push (normal2);
-					this .addVertex (p4);
+						normalIndex [i3] .push (normals .length);
+						normals .push (normal2);
+						this .addVertex (p3);
+	
+						// p4
+						texCoords .push (k / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
+						normalIndex [i4] .push (normals .length);
+						normals .push (normal2);
+						this .addVertex (p4);
+					}
 				}
 			}
 
