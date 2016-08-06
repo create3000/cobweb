@@ -772,9 +772,9 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		get: function ()
 		{
 			var matrix = Object .create (Matrix3 .prototype);
-			matrix [0] = this [ 0]; matrix [1] = this [ 1]; matrix [2] = this [ 2];
-			matrix [3] = this [ 4]; matrix [4] = this [ 5]; matrix [5] = this [ 6];
-			matrix [6] = this [ 8]; matrix [7] = this [ 9]; matrix [8] = this [10];
+			matrix [0] = this [0]; matrix [1] = this [1]; matrix [2] = this [ 2];
+			matrix [3] = this [4]; matrix [4] = this [5]; matrix [5] = this [ 6];
+			matrix [6] = this [8]; matrix [7] = this [9]; matrix [8] = this [10];
 			return matrix;
 		},
 		enumerable: false,

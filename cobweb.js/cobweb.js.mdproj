@@ -1211,6 +1211,7 @@
     <None Include="tests\Components\ParticleSystems\GeometryLine.x3d" />
     <None Include="tests\Components\Scripting\Proto.x3d" />
     <None Include="tests\Components\Scripting\ExternProto.x3d" />
+    <None Include="tests\Components\Geometry3D\Extrusion\Rotations.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

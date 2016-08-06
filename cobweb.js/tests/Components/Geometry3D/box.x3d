@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 04 Sep 2015 10:01:40 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V1.4.8, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geometry3D/box.x3d'/>
-    <meta name='modified' content='Wed, 23 Mar 2016 16:36:32 GMT'/>
+    <meta name='modified' content='Wed, 27 Jul 2016 04:17:50 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -62,11 +62,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='1.69585561752319, 1.38257205486298, 1.67447638511658'/>
+              value='1.93247723579407, 1.14236581325531, 1.62229800224304'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.657876651099645, -0.751404509262263, 0.0508878708363078, 5.57616175370202'/>
+              value='0.0381748969524162, -0.665694256695067, -0.745247498382836, 5.14184345423998'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'

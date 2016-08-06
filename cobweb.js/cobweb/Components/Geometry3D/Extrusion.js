@@ -66,6 +66,21 @@ function ($,
 		{
 			return "geometry";
 		},
+		getClosedOrientation: function ()
+		{
+			var orientation = this .orientation_ .getValue ();
+
+			if (orientation .length)
+			{
+				var
+					firstOrientation = orientation [0] .getValue (),
+					lastOrientation  = orientation [orientation .length - 1] .getValue ();
+
+				return firstOrientation .equals (lastOrientation);
+			}
+
+			return true;
+		},
 		createPoints: function ()
 		{
 			var
@@ -115,13 +130,15 @@ function ($,
 				numSpines   = spine .length,
 				firstSpine  = spine [0] .getValue (),
 				lastSpine   = spine [spine .length - 1] .getValue (),
-				closedSpine = firstSpine .equals (lastSpine);
+				closedSpine = firstSpine .equals (lastSpine) && this .getClosedOrientation ();
 
+			// Extend or shrink static rotations array:
 			for (var i = rotations .length; i < numSpines; ++ i)
 				rotations [i] = new Matrix4 ();
 
 			rotations .length = numSpines;
 
+			// SCP axes:
 			var
 				SCPxAxis,
 				SCPyAxis,
@@ -151,6 +168,10 @@ function ($,
 				}
 			}
 
+			// The entire spine is coincident:
+			if (SCPyAxis .equals (Vector3 .Zero))
+				SCPyAxis .set (0, 1, 0);
+
 			// The entire spine is collinear:
 			if (SCPzAxis .equals (Vector3 .Zero))
 				SCPzAxis = new Rotation4 (new Vector3 (0, 1, 0), SCPyAxis) .multVecRot (new Vector3 (0, 0, 1));
@@ -165,7 +186,9 @@ function ($,
 
 			// For all points other than the first or last:
 
-			var SCPzAxisPrevious = SCPzAxis;
+			var
+				SCPyAxisPrevious = SCPyAxis,
+				SCPzAxisPrevious = SCPzAxis;
 
 			for (var i = 1, length = spine .length - 1; i < length; ++ i)
 			{
@@ -177,6 +200,12 @@ function ($,
 				// g.
 				if (SCPzAxisPrevious .dot (SCPzAxis) < 0)
 					SCPzAxis .negate ();
+
+				// The two points used in computing the Y-axis are coincident.
+				if (SCPyAxis .equals (Vector3 .Zero))
+					SCPyAxis = SCPyAxisPrevious;
+				else
+					SCPyAxisPrevious = SCPyAxis;
 
 				// The three points used in computing the Z-axis are collinear.
 				if (SCPzAxis .equals (Vector3 .Zero))
@@ -214,6 +243,10 @@ function ($,
 				if (SCPzAxisPrevious .dot (SCPzAxis) < 0)
 					SCPzAxis .negate ();
 
+				// The two points used in computing the Y-axis are coincident.
+				if (SCPyAxis .equals (Vector3 .Zero))
+					SCPyAxis = SCPyAxisPrevious;
+
 				// The three points used in computing the Z-axis are collinear.
 				if (SCPzAxis .equals (Vector3 .Zero))
 					SCPzAxis = SCPzAxisPrevious;
@@ -249,7 +282,7 @@ function ($,
 			var
 				firstSpine  = spine [0] .getValue (),
 				lastSpine   = spine [spine .length - 1] .getValue (),
-				closedSpine = firstSpine .equals (lastSpine);
+				closedSpine = firstSpine .equals (lastSpine) && this .getClosedOrientation ();
 
 			var
 				firstCrossSection  = crossSection [0] .getValue (),
