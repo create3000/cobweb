@@ -347,8 +347,8 @@ function ($,
 						p2 = points [i2],
 						p3 = points [i3],
 						p4 = points [i4],
-						l1 = p2 .distance (p3),
-						l2 = p4 .distance (p1);
+						l1 = p2 .distance (p3) >= 1e-7,
+						l2 = p4 .distance (p1) >= 1e-7;
 
 					if (cw)
 					{
@@ -363,6 +363,8 @@ function ($,
 							normal2 = Triangle3 .normal (p1, p3, p4, new Vector3 (0, 0, 0));
 					}
 
+					// If there are coincident spine points then one length can be zero.
+
 					// Triangle one
 
 					if (l1)
@@ -372,7 +374,7 @@ function ($,
 							texCoords .push (k / numCrossSection_1, n / numSpine_1, 0, 1);
 						else
 						{
-							// Cone case:
+							// Cone case: ((texCoord1 + texCoord4) / 2)
 							var y = (n / numSpine_1 + (n + 1) / numSpine_1) / 2;
 
 							texCoords .push (k / numCrossSection_1, y, 0, 1);
@@ -410,7 +412,7 @@ function ($,
 							texCoords .push ((k + 1) / numCrossSection_1, (n + 1) / numSpine_1, 0, 1);
 						else
 						{
-							// Cone case:
+							// Cone case: ((texCoord3 + texCoord2) / 2)
 							var y = ((n + 1) / numSpine_1 + n / numSpine_1) / 2;
 
 							texCoords .push ((k + 1) / numCrossSection_1, y, 0, 1);
