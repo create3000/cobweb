@@ -96,8 +96,15 @@ function ($)
 			}
 
 		},
+		isRelative: function ()
+		{
+			return ! this .value .length || this .value [0] == "..";
+		},
 		getRelativePath: function (descendant)
 		{
+			if (this .isRelative ())
+				return descendant;
+		
 			var path = new Path ([ ], "/", false, false);
 
 			var basePath       = this .removeDotSegments () .base;
