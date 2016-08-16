@@ -1,5 +1,5 @@
 ﻿
 define (function ()
 {
-	return "1.26";
+	return "1.27a";
 });
