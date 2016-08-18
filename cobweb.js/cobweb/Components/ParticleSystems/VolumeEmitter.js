@@ -232,7 +232,9 @@ function ($,
 				intersections    = this .intersections,
 				numIntersections = this .bvh .intersectsLine (line, intersections, this .intersectionNormals);
 
-			if (numIntersections && ! (numIntersections % 2)) // and even
+			numIntersections -= numIntersections % 2; // We need an even count of intersections.
+
+			if (numIntersections)
 			{
 				// Sort intersections along line with a little help from the plane.
 
