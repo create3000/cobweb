@@ -80,12 +80,21 @@ function ($,
 
 			if (innerRadius === outerRadius)
 			{
-				// Circle
-
 				var
 					radius          = Math .abs (outerRadius),
 					defaultVertices = options .getCircleVertices (),
 					vertices        = this .getVertices ();
+
+				// Point
+
+				//if (radius === 0)
+				//{
+				//	this .addVertex (Vector3 .Zero);
+				//	this .setGeometryType (GeometryType .GEOMETRY_POINTS);
+				//	return;
+				//}
+
+				// Circle
 
 				if (radius === 1)
 					this .setVertices (defaultVertices);

@@ -47,7 +47,7 @@ function ($,
 
 			// Setup shader.
 
-			context .colorMaterial = this .colors .length;
+			context .colorMaterial = this .getColors () .length;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.

@@ -48,9 +48,11 @@ function (TextureProperties,
 				textureUnits         = this .textureUnits,
 				combinedTextureUnits = this .combinedTextureUnits;
 
+			// For single and multi texturing
 			for (var i = this .maxTextureUnits - 1; i >= 0; -- i)
 				textureUnits .push (i);
 
+			// For shaders
 			for (var i = this .maxTextureUnits, length = this .maxCombinedTextureUnits; i < length; ++ i)
 				combinedTextureUnits .push (i);
 

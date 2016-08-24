@@ -5,7 +5,7 @@ precision mediump float;
 
 // 225 uniforms
 
-uniform mat4 x3d_TextureMatrix;
+uniform mat4 x3d_TextureMatrix [1];
 uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
@@ -22,7 +22,7 @@ uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwis
 #define POINT_LIGHT       2
 #define SPOT_LIGHT        3
 
-uniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
+uniform int   x3d_LightType [MAX_LIGHTS];
 uniform bool  x3d_LightOn [MAX_LIGHTS];
 uniform vec3  x3d_LightColor [MAX_LIGHTS];
 uniform float x3d_LightIntensity [MAX_LIGHTS];
@@ -115,7 +115,7 @@ getMaterial (vec3 N,
 				vec3 H = normalize (L + V); // specular term
 	
 				vec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);
-				float specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;
+				float specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;
 				vec3  specularTerm   = x3d_SpecularColor * specularFactor;
 	
 				float attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
@@ -158,7 +158,7 @@ main ()
 
 	vec4 p = x3d_ModelViewMatrix * x3d_Vertex;
 
-	t = x3d_TextureMatrix * x3d_TexCoord;
+	t = x3d_TextureMatrix [0] * x3d_TexCoord;
 	v = p .xyz;
 
 	gl_Position = x3d_ProjectionMatrix * p;

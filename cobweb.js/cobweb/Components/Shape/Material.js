@@ -95,7 +95,7 @@ function ($,
 		},
 		set_shininess__: function ()
 		{
-			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1) * 128;
+			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1);
 		},
 		set_transparency__: function ()
 		{

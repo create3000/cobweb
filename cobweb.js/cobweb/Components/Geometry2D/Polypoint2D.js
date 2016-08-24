@@ -26,8 +26,6 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polypoint2D);
-
-		this .transparent_ = true;
 	}
 
 	Polypoint2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),

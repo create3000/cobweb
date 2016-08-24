@@ -120,7 +120,7 @@ function ($,
 		},
 		set_shininess__: function ()
 		{
-			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1) * 128;
+			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1);
 		},
 		set_transparency__: function ()
 		{
@@ -149,7 +149,7 @@ function ($,
 		},
 		set_backShininess__: function ()
 		{
-			this .backShininess = Algorithm .clamp (this .backShininess_ .getValue (), 0, 1) * 128;
+			this .backShininess = Algorithm .clamp (this .backShininess_ .getValue (), 0, 1);
 		},
 		set_backTransparency__: function ()
 		{

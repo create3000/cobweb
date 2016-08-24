@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 24 Dec 2015 04:06:48 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 02 Feb 2016 11:35:40 GMT'/>
+    <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ComposedCubeMapTexture/ComposedCubeMapTexture.x3d'/>
+    <meta name='modified' content='Wed, 24 Aug 2016 08:09:20 GMT'/>
     <meta name='title' content='ComposedCubeMapTexture'/>
   </head>
   <Scene>
@@ -16,46 +17,6 @@
       </ProtoInterface>
       <ProtoBody>
         <Appearance>
-          <ComposedShader DEF='TitaniaShader'
-              language='GLSL'>
-            <field accessType='inputOutput' type='SFNode' name='texture'/>
-            <IS>
-              <connect nodeField='texture' protoField='texture'/>
-            </IS>
-            <ShaderPart DEF='TitaniaVertex'>
-<![CDATA[data:text/plain,
-
-precision mediump float;
-
-varying vec3 texCoord;
-
-void
-main ()
-{
-	gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex;
-
-	texCoord = gl_Vertex .xyz / gl_Vertex .w;
-}]]> 
-            </ShaderPart>
-            <ShaderPart DEF='TitaniaFragment'
-                type='FRAGMENT'>
-<![CDATA[data:text/plain,
-
-precision mediump float;
-
-uniform samplerCube texture;
-
-varying vec3 texCoord;
-
-void
-main ()
-{
-	vec3 color   = vec3 (textureCube (texture, texCoord));
-	gl_FragColor = vec4 (color, 1.0);
-}
-]]> 
-            </ShaderPart>
-          </ComposedShader>
           <ComposedShader DEF='CobwebShader'
               language='GLSL'>
             <field accessType='inputOutput' type='SFNode' name='texture'/>
@@ -123,15 +84,15 @@ main ()
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='17.7661304473877, 9.09024333953857, 3.49293088912964'/>
+              value='0, 0, 15.1566638946533'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.0446286052465439, 0.843445599079132, 0.535357594490051, 1.52768504619598'/>
+              value='0, 0, 1, 0'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0.662348091602325, -0.854691863059998, -3.12815403938293'/>
+              value='0, 0, 0'/>
         </MetadataSet>
         <MetadataSet DEF='AngleGrid' containerField='value'
             name='AngleGrid'
@@ -152,6 +113,13 @@ main ()
               name='rotation'
               reference='http://titania.create3000.de'
               value='1, 0, 0, 1.5708'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>

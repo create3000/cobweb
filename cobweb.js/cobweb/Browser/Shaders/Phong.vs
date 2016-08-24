@@ -3,7 +3,7 @@ data:text/plain;charset=utf-8,
 
 precision mediump float;
 
-uniform mat4 x3d_TextureMatrix;
+uniform mat4 x3d_TextureMatrix [1];
 uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
@@ -33,7 +33,7 @@ main ()
 	if (x3d_Lighting)
 		vN = normalize (x3d_NormalMatrix * x3d_Normal);
 
-	t = x3d_TextureMatrix * x3d_TexCoord;
+	t = x3d_TextureMatrix [0] * x3d_TexCoord;
 	C = x3d_Color;
 	v = p .xyz;
 

@@ -255,6 +255,8 @@ function ($,
 			gl .useProgram (this .program);
 			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 
+			// Set global lights
+
 			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
 
 			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
@@ -337,8 +339,8 @@ function ($,
 				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
-				if (i < this .maxLights)
-					gl .uniform1i (this .lightType [i], 0);
+				if (numLights < this .maxLights)
+					gl .uniform1i (this .lightType [numLights], 0);
 
 				// Material
 

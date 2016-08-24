@@ -35,7 +35,7 @@ uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwis
 #define POINT_LIGHT       2
 #define SPOT_LIGHT        3
 
-uniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight
+uniform int   x3d_LightType [MAX_LIGHTS];
 uniform bool  x3d_LightOn [MAX_LIGHTS];
 uniform vec3  x3d_LightColor [MAX_LIGHTS];
 uniform float x3d_LightIntensity [MAX_LIGHTS];
@@ -212,7 +212,7 @@ main ()
 					vec3 H = normalize (L + V); // specular term
 	
 					vec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);
-					float specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;
+					float specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;
 					vec3  specularTerm   = specularColor * specularFactor;
 	
 					float attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);

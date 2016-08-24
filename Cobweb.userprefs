@@ -1,11 +1,14 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Shaders/X3DShaderNode.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="159" Column="36" />
-      <File FileName="cobweb.js/cobweb/Components/Geometry3D/Extrusion.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="6" Column="1" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="208" Column="56" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="276" Column="1" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="189" Column="6" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/X3DShaderNode.js" Line="55" Column="5" />
+      <File FileName="cobweb.js/cobweb/Browser/Shaders/X3DShadersContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/Appearance.js" Line="188" Column="26" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

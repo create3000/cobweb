@@ -46,7 +46,6 @@ function ($,
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
 			gl .uniform1f (shader .lightIntensity [i],        this .intensity);        // clamp
 			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
-			gl .uniform3f (shader .lightAttenuation [i],      1, 0, 0);
 			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
 		recycle: function ()

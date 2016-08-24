@@ -1214,6 +1214,7 @@
     <None Include="tests\Components\Geometry3D\Extrusion\Rotations.x3d" />
     <None Include="tests\Components\Geometry3D\Extrusion\HalfSpheres.x3d" />
     <None Include="tests\Components\Lighting\MadFlat.x3d" />
+    <None Include="tests\Components\ParticleSystems\OpenVolume.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -571,9 +571,9 @@ function ($,
 
 			// Render opaque objects first
 
+			gl .enable (gl .BLEND);
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);
-			gl .disable (gl .BLEND);
 
 			gl .clear (gl .DEPTH_BUFFER_BIT);
 
@@ -594,7 +594,6 @@ function ($,
 			// Render transparent objects
 
 			gl .depthMask (false);
-			gl .enable (gl .BLEND);
 
 			this .transparencySorter .sort (0, this .numTransparentShapes);
 

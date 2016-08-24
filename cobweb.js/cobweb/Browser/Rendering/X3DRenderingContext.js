@@ -77,10 +77,6 @@ function (Fields,
 			this .lineShader  .setGeometryType (1);
 
 			this .setShading ("GOURAUD");
-			this .setShader (this .getDefaultShader ());
-
-			this .lineShader .use ();
-			gl .uniform1i (this .lineShader .dimension, 1);
 		},
 		getVendor: function ()
 		{
@@ -163,75 +159,29 @@ function (Fields,
 
 			switch (type)
 			{
-				case "POINTSET":
-				{
-					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
-
-					this .defaultShader = this .gouraudShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .POINTS;
-					
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
-					break;
-				}
-				case "WIREFRAME":
-				{
-					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
-
-					this .defaultShader = this .gouraudShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .LINES;
-					
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
-					break;
-				}
 				case "PHONG":
 				{
 					if (! this .phongShader)
 						this .phongShader = this .createShader (this, "PhongShader", phongVS, phongFS);
 
 					this .defaultShader = this .phongShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .LINES;
-
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
 					break;
 				}
 				default:
 				{
-					// case "GOURAUD":
-
 					if (! this .gouraudShader)
 						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .LINES;
-
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
 					break;
 				}
 			}
 
 			// Configure custom shaders
+
+			this .pointShader   .setShading (type);
+			this .lineShader    .setShading (type);
+			this .defaultShader .setShading (type);
 
 			var shaders = this .getShaders ();
 
