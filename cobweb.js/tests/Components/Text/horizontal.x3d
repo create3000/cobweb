@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Text/horizontal.x3d'/>
-    <meta name='modified' content='Tue, 30 Aug 2016 02:14:28 GMT'/>
+    <meta name='modified' content='Tue, 30 Aug 2016 04:07:18 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -67,7 +67,7 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0.228690134392748, -0.0604688685350869, 1.7164117405298'/>
+              value='0.228690132498741, -0.0604688674211502, 1.71641170978546'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
@@ -83,30 +83,6 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'>
-            <Transform DEF='Text' containerField='value'>
-              <Shape>
-                <Appearance>
-                  <Material
-                      diffuseColor='1 0 0'
-                      emissiveColor='1 1 1'/>
-                  <ImageTexture
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "http://rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "https://rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg"'/>
-                </Appearance>
-                <Text DEF='Text_1'
-                    string='"Bgre", "good old", "Texts", "today!"'
-                    length='1.66694, 2.95728, 1.82503, 2.17687'
-                    maxExtent='4.477'>
-                  <FontStyle DEF='_1'
-                      family='"Ubuntu", "SANS"'
-                      style='BOLDITALIC'
-                      justify='"MIDDLE", "FIRST"'/>
-                </Text>
-              </Shape>
-            </Transform>
-          </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='AngleGrid' containerField='value'
             name='AngleGrid'
@@ -123,6 +99,10 @@
               name='enabled'
               reference='http://titania.create3000.de'
               value='true'/>
+          <MetadataFloat DEF='rotation' containerField='value'
+              name='rotation'
+              reference='http://titania.create3000.de'
+              value='1, 0, 0, 1.5708'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -133,7 +113,26 @@
         position='0.365518 -0.30449 8.30129'
         orientation='0.872291021747068 0.488929089099191 0.00753121584411764 0.0424616187810779'
         centerOfRotation='0.192952 0.0032672 -0.000781742'/>
-    <Transform USE='Text'/>
+    <Transform DEF='Text'>
+      <Shape>
+        <Appearance>
+          <Material
+              diffuseColor='1 0 0'
+              emissiveColor='1 1 1'/>
+          <ImageTexture
+              url='"http://cdn.rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "http://rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "https://rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg"'/>
+        </Appearance>
+        <Text DEF='Text_1'
+            string='"Bgre", "good old", "Texts", "today!"'
+            length='1.66694, 2.95728, 1.82503, 2.17687'
+            maxExtent='4.477'>
+          <FontStyle
+              family='"Ubuntu", "SANS"'
+              style='BOLDITALIC'
+              justify='"MIDDLE", "FIRST"'/>
+        </Text>
+      </Shape>
+    </Transform>
     <Transform DEF='RedBox'
         translation='-0.5 0.5 0'>
       <Shape>
@@ -186,7 +185,7 @@
     <Transform DEF='LineBounds'
         translation='-1.47864 0.700938 0'>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0.645172 0 0'/>
+        <fieldValue name='translation' value='0.64517 0 0'/>
         <fieldValue name='scale' value='1.66694 0.889938 1'/>
         <fieldValue name='color' value='1 0 1'/>
       </ProtoInstance>
@@ -201,7 +200,7 @@
         <fieldValue name='color' value='0 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0.390203 -2.88994 0'/>
+        <fieldValue name='translation' value='0.390205 -2.88994 0'/>
         <fieldValue name='scale' value='2.17687 1 1'/>
         <fieldValue name='color' value='1 1 0'/>
       </ProtoInstance>

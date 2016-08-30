@@ -72,7 +72,8 @@ function ($,
 			this .traverse = this .group .traverse .bind (this .group);
 
 			// Connect after Group setup.
-			this .group .children_ .addInterest (this, "set_children__");
+			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+			this .group .children_       .addInterest (this, "set_children__");
 
 			this .set_children__ ();
 		},
