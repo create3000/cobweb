@@ -57,6 +57,8 @@ function ($,
 				translations     = this .getTranslations (),
 				charSpacings     = this .getCharSpacings (),
 				size             = fontStyle .getScale (),
+				spacing          = fontStyle .spacing_ .getValue (),
+				origin           = text .origin_ .getValue (),
 				sizeUnitsPerEm   = size / font .unitsPerEm,
 				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
 				texCoords        = this .texCoords,
@@ -92,9 +94,9 @@ function ($,
 								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
 								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
 		
+							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
 							normals   .push (0, 0, 1);
 							vertices  .push (x, y, 0, 1);
-							texCoords .push (x / size, y / size, 0, 1);
 						}
 		
 						// Calculate advanceWidth.
@@ -139,9 +141,9 @@ function ($,
 								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x,
 								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
 			
+							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
 							normals   .push (0, 0, 1);
 							vertices  .push (x, y, 0, 1);
-							texCoords .push (x / size, y / size, 0, 1);
 						}
 					}
 				}
@@ -393,11 +395,11 @@ function ($,
 			switch (primitiveQuality)
 			{
 				case PrimitiveQuality .LOW:
-					return 2;
-				case PrimitiveQuality .HIGH:
-					return 5;
-				default:
 					return 3;
+				case PrimitiveQuality .HIGH:
+					return 7;
+				default:
+					return 5;
 			}
 		},
 		getCurveOrientation: function (curve)

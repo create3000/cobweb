@@ -265,14 +265,14 @@ function ($,
 		setLocalUniforms: function (context)
 		{
 			var
-				browser         = this .getBrowser (),
-				gl              = browser .getContext (),
-				appearance      = browser .getAppearance (),
-				lineProperties  = appearance .getLineProperties (),
-				material        = appearance .getMaterial (),
-				texture         = browser .getTexture (),
-				modelViewMatrix = context .modelViewMatrix,
-				clipPlanes      = context .clipPlanes;
+				browser          = this .getBrowser (),
+				gl               = browser .getContext (),
+				lineProperties   = browser .getLineProperties (),
+				material         = browser .getMaterial (),
+				texture          = browser .getTexture (),
+				textureTransform = browser .getTextureTransform (),
+				modelViewMatrix  = context .modelViewMatrix,
+				clipPlanes       = context .clipPlanes;
 
 			if (this !== shader)
 			{
@@ -365,19 +365,7 @@ function ($,
 				else
 					gl .uniform1i (this .separateBackColor, false);
 
-				// Set normal matrix.
-				var normalMatrix = this .normalMatrixArray;
-				normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-				normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-				normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-				Matrix3 .prototype .inverse .call (normalMatrix);
-				gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
-			}
-			else
-			{
-				gl .uniform1i (this .lighting, false);
-
-				if (this .getCustom ())
+				try
 				{
 					// Set normal matrix.
 					var normalMatrix = this .normalMatrixArray;
@@ -387,12 +375,38 @@ function ($,
 					Matrix3 .prototype .inverse .call (normalMatrix);
 					gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
 				}
+				catch (error)
+				{
+					gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+				}
+			}
+			else
+			{
+				gl .uniform1i (this .lighting, false);
+
+				if (this .getCustom ())
+				{
+					try
+					{
+						// Set normal matrix.
+						var normalMatrix = this .normalMatrixArray;
+						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+						Matrix3 .prototype .inverse .call (normalMatrix);
+						gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
+					}
+					catch (error)
+					{
+						gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+					}
+				}
 			}
 
 			if (texture)
 			{
-				texture .traverse (gl, this, 0)
-				appearance .getTextureTransform () .traverse ();
+				texture .traverse (gl, this, 0);
+				textureTransform [0] .traverse ();
 
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 			}
@@ -403,7 +417,7 @@ function ($,
 
 				if (this .getCustom ())
 				{
-					appearance .getTextureTransform () .traverse ();
+					textureTransform .traverse ();
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 				}
 			}

@@ -422,6 +422,7 @@ function ($,
 			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
 
 		   this .getBrowser () .setTexture (this .texture);
+		   this .getBrowser () .getTextureTransform () [0] = this .getBrowser () .getDefaultTextureTransform ();
 		},
 		getMatrix: function ()
 		{

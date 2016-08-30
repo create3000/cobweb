@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 11 Sep 2015 17:20:16 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Thu, 07 Jan 2016 14:03:05 GMT'/>
+    <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Text/horizontal.x3d'/>
+    <meta name='modified' content='Tue, 30 Aug 2016 02:14:28 GMT'/>
     <meta name='title' content='Text'/>
   </head>
   <Scene>
@@ -66,15 +67,62 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='1.51616454124451, -0.891363441944122, 7.30037832260132'/>
+              value='0.228690134392748, -0.0604688685350869, 1.7164117405298'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.872291028499603, 0.488929092884064, 0.0075312159024179, 0.0424616187810898'/>
+              value='0.872291021747068, 0.488929089099191, 0.00753121584411764, 0.0424616187810779'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='1.36341178417206, -0.618941903114319, -0.0481606088578701'/>
+              value='0.192951887845993, 0.00326720159500837, -0.000781742099206895'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <Transform DEF='Text' containerField='value'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      diffuseColor='1 0 0'
+                      emissiveColor='1 1 1'/>
+                  <ImageTexture
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "http://rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg", "https://rawgit.com/create3000/Library/master/Textures/Miscellaneous/lena.jpg"'/>
+                </Appearance>
+                <Text DEF='Text_1'
+                    string='"Bgre", "good old", "Texts", "today!"'
+                    length='1.66694, 2.95728, 1.82503, 2.17687'
+                    maxExtent='4.477'>
+                  <FontStyle DEF='_1'
+                      family='"Ubuntu", "SANS"'
+                      style='BOLDITALIC'
+                      justify='"MIDDLE", "FIRST"'/>
+                </Text>
+              </Shape>
+            </Transform>
+          </MetadataSet>
+        </MetadataSet>
+        <MetadataSet DEF='AngleGrid' containerField='value'
+            name='AngleGrid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet DEF='Grid' containerField='value'
+            name='Grid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled_1' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='true'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -82,35 +130,17 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Viewpoint'
-        position='1.51616 -0.891363 7.30038'
-        orientation='0.872291 0.488929 0.00753122 0.0424616'
-        centerOfRotation='1.36341 -0.618942 -0.0481606'/>
-    <Transform DEF='Text'>
-      <Shape>
-        <Appearance>
-          <Material
-              diffuseColor='1 0 0'/>
-        </Appearance>
-        <Text DEF='Text_1'
-            string='"Read more", "good old", "Texts", "today!"'
-            length='3.47492, 2.90563, 1.79102, 2.14547'
-            maxExtent='3.15'>
-          <FontStyle
-              family='"Ubuntu", "SANS"'
-              style='BOLDITALIC'
-              size='0.5'
-              spacing='2'
-              justify='"BEGIN", "FIRST"'/>
-        </Text>
-      </Shape>
-    </Transform>
+        position='0.365518 -0.30449 8.30129'
+        orientation='0.872291021747068 0.488929089099191 0.00753121584411764 0.0424616187810779'
+        centerOfRotation='0.192952 0.0032672 -0.000781742'/>
+    <Transform USE='Text'/>
     <Transform DEF='RedBox'
         translation='-0.5 0.5 0'>
       <Shape>
         <Appearance>
           <Material
               diffuseColor='1 0 0'
-              transparency='0.5'/>
+              transparency='0.854167'/>
         </Appearance>
         <Box
             size='1 1 1'/>
@@ -122,7 +152,7 @@
         <Appearance>
           <Material
               diffuseColor='0 1 0'
-              transparency='0.5'/>
+              transparency='0.916667'/>
         </Appearance>
         <Box
             size='1 1 1'/>
@@ -154,30 +184,31 @@
       </Shape>
     </Transform>
     <Transform DEF='LineBounds'
-        translation='0 0.387969 0'>
+        translation='-1.47864 0.700938 0'>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='scale' value='3.15 0.482469 1'/>
+        <fieldValue name='translation' value='0.645172 0 0'/>
+        <fieldValue name='scale' value='1.66694 0.889938 1'/>
         <fieldValue name='color' value='1 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -0.482469 0'/>
-        <fieldValue name='scale' value='2.90563 1 1'/>
+        <fieldValue name='translation' value='0 -0.889938 0'/>
+        <fieldValue name='scale' value='2.95728 1 1'/>
         <fieldValue name='color' value='0 1 0'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -1.48247 0'/>
-        <fieldValue name='scale' value='1.79102 1 1'/>
+        <fieldValue name='translation' value='0.566125 -1.88994 0'/>
+        <fieldValue name='scale' value='1.82503 1 1'/>
         <fieldValue name='color' value='0 0 1'/>
       </ProtoInstance>
       <ProtoInstance name='BBox2'>
-        <fieldValue name='translation' value='0 -2.48247 0'/>
-        <fieldValue name='scale' value='2.14547 1 1'/>
+        <fieldValue name='translation' value='0.390203 -2.88994 0'/>
+        <fieldValue name='scale' value='2.17687 1 1'/>
         <fieldValue name='color' value='1 1 0'/>
       </ProtoInstance>
     </Transform>
     <Transform DEF='TextBounds'
-        translation='0 0.387969 0'
-        scale='3.15 3.48047 1'>
+        translation='-1.47864 0.700938 0'
+        scale='2.95728 3.88594 1'>
       <ProtoInstance name='BBox2'/>
     </Transform>
     <Script DEF='Bounds'>

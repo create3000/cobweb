@@ -54,14 +54,22 @@ function ($,
 		},
 		set: function (clipPlane)
 		{
-			var
-				plane  = this .plane,
-				plane_ = clipPlane .plane;
+			try
+			{
+				var
+					plane  = this .plane,
+					plane_ = clipPlane .plane;
 
-			plane .normal .assign (plane_);
-			plane .distanceFromOrigin = -plane_ .w;
+				plane .normal .assign (plane_);
+				plane .distanceFromOrigin = -plane_ .w;
 
-			plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
+				plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
+			}
+			catch (error)
+			{
+				plane .normal .set (0, 1, 0);
+				plane .distanceFromOrigin = 0;
+			}
 		},
 		use: function (gl, shader, i)
 		{

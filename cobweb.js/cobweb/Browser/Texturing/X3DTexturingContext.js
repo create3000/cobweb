@@ -19,11 +19,11 @@ function (TextureProperties,
 		this .textureUnits             = [ ];
 		this .combinedTextureUnits     = [ ];
 		this .textureStages            = 1;
-		this .textureTransform         = [ ];
-		this .texture                  = null;
 		this .defaultTextureProperties = new TextureProperties (this);
 		this .defaultTextureTransform  = new TextureTransform (this);
 		this .defaultTextureCoordinate = new TextureCoordinate (this);
+		this .texture                  = null;
+		this .textureTransform         = [ ];
 	}
 
 	X3DTexturingContext .prototype =
@@ -84,18 +84,6 @@ function (TextureProperties,
 		{
 			return this .combinedTextureUnits;
 		},
-		getTextureTransform: function ()
-		{
-			return this .textureTransform;
-		},
-		setTexture: function (value)
-		{
-			this .texture = value;
-		},
-		getTexture: function ()
-		{
-			return this .texture;
-		},
 		getDefaultTextureProperties: function ()
 		{
 			return this .defaultTextureProperties;
@@ -107,6 +95,18 @@ function (TextureProperties,
 		getDefaultTextureCoordinate: function ()
 		{
 			return this .defaultTextureCoordinate;
+		},
+		setTexture: function (value)
+		{
+			this .texture = value;
+		},
+		getTexture: function ()
+		{
+			return this .texture;
+		},
+		getTextureTransform: function ()
+		{
+			return this .textureTransform;
 		},
 	};
 

@@ -200,8 +200,10 @@ function ($,
 		{
 			var browser = this .getBrowser ();
 
-			browser .setAppearance (this);
+			browser .setLineProperties (this .linePropertiesNode);
+			browser .setMaterial (this .materialNode);
 			browser .setTexture (this .textureNode);
+			browser .getTextureTransform () [0] = this .textureTransformNode;
 			browser .setShader (this .shaderNode || browser .getDefaultShader ());
 		},
 	});
