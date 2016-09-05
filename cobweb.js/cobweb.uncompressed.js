@@ -16915,7 +16915,7 @@ function ($,
 
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.26";
+	return "1.27a";
 });
 
 
@@ -17782,12 +17782,12 @@ function ($,
 
 			this .addChildren ("string", new SFString ());
 
-			this .element = $("<div/>")
+			this .element = $("<div></div>")
 				.addClass ("cobweb-notification")
 				.appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"))
 				.animate ({ width: 0 });
 
-			$("<span/>") .appendTo (this .element);
+			$("<span></span>") .appendTo (this .element);
 
 			this .string_ .addInterest (this, "set_string__");
 		},
@@ -18264,12 +18264,12 @@ function ($,
 			this .startTime     = 0;
 			this .frames        = 0;
 
-			this .element = $("<div>") .addClass ("cobweb-browser-timing") .appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"));
-			this .table   = $("<table>") .appendTo (this .element);
-			this .header  = $("<thead>") .append ($("<tr>") .append ($("<th colspan=2>"))) .appendTo (this .table);
-			this .body    = $("<tbody>") .appendTo (this .table);
-			this .footer  = $("<tfoot>") .append ($("<tr>") .append ($("<td colspan=2>"))) .appendTo (this .table);
-			this .button  = $("<button>") .click (this .set_type__ .bind (this)) .appendTo (this .footer .find ("td"));
+			this .element = $("<div></div>") .addClass ("cobweb-browser-timing") .appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"));
+			this .table   = $("<table></table>") .appendTo (this .element);
+			this .header  = $("<thead></thead>") .append ($("<tr></tr>") .append ($("<th colspan='2'></th>"))) .appendTo (this .table);
+			this .body    = $("<tbody></tbody>") .appendTo (this .table);
+			this .footer  = $("<tfoot></tfoot>") .append ($("<tr></tr>") .append ($("<td colspan='2'></td>"))) .appendTo (this .table);
+			this .button  = $("<button></button>") .click (this .set_type__ .bind (this)) .appendTo (this .footer .find ("td"));
 			this .rows    = [ ];
 
 			this .set_button__ ();
@@ -18336,8 +18336,8 @@ function ($,
 				rows        = this .rows,
 				r           = 0;
 			
-			rows [r++] = $("<tr>") .append ($("<td>") .text (_("Frame rate") + ":")) .append ($("<td>") .text (f2(this .frames / (currentTime - this .startTime)) .toLocaleString (language, fixed) + " " + _("fps")));
-			rows [r++] = $("<tr>") .append ($("<td>") .text (_("Speed")      + ":")) .append ($("<td>") .text (f2(browser .currentSpeed)                          .toLocaleString (language, fixed) + " " + _("m/s")));
+			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Frame rate") + ":")) .append ($("<td></td>") .text (f2(this .frames / (currentTime - this .startTime)) .toLocaleString (language, fixed) + " " + _("fps")));
+			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Speed")      + ":")) .append ($("<td></td>") .text (f2(browser .currentSpeed)                          .toLocaleString (language, fixed) + " " + _("m/s")));
 
 			if (this .type === "MORE")
 			{
@@ -18362,15 +18362,15 @@ function ($,
 
 			   rows [1] .addClass ("cobweb-more");
 
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Browser")   + ":")) .append ($("<td>") .text (f2(systemTime)           .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("X3D")       + ":")) .append ($("<td>") .text (f2(browser .browserTime) .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Routing")   + ":")) .append ($("<td>") .text (f2(routingTime)          .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Picking")   + ":")) .append ($("<td>") .text (f2(browser .pickingTime) .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Camera")    + ":")) .append ($("<td>") .text (f2(browser .cameraTime)  .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Collision") + ":")) .append ($("<td>") .text (f2(collisionTime)        .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Display")   + ":")) .append ($("<td>") .text (f2(browser .displayTime) .toLocaleString (language, fixed) + " " + _("ms")));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Shapes")    + ":")) .append ($("<td>") .text (opaqueShapes + " + " + transparentShapes));
-				rows [r++] = $("<tr>") .append ($("<td>") .text (_("Sensors")   + ":")) .append ($("<td>") .text (prepareEvents + sensors));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Browser")   + ":")) .append ($("<td></td>") .text (f2(systemTime)           .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("X3D")       + ":")) .append ($("<td></td>") .text (f2(browser .browserTime) .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Routing")   + ":")) .append ($("<td></td>") .text (f2(routingTime)          .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Picking")   + ":")) .append ($("<td></td>") .text (f2(browser .pickingTime) .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Camera")    + ":")) .append ($("<td></td>") .text (f2(browser .cameraTime)  .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Collision") + ":")) .append ($("<td></td>") .text (f2(collisionTime)        .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Display")   + ":")) .append ($("<td></td>") .text (f2(browser .displayTime) .toLocaleString (language, fixed) + " " + _("ms")));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Shapes")    + ":")) .append ($("<td></td>") .text (opaqueShapes + " + " + transparentShapes));
+				rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Sensors")   + ":")) .append ($("<td></td>") .text (prepareEvents + sensors));
 			}
 
 			rows .length = r;
@@ -20605,20 +20605,20 @@ function (BrowserOptions,
 
 		// Get canvas & context.
 
-		var browser  = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .element);
-		var loading  = $("<div/>") .addClass ("cobweb-loading")  .appendTo (browser);
-		var spinner  = $("<div/>") .addClass ("cobweb-spinner")  .appendTo (loading);
-		var progress = $("<div/>") .addClass ("cobweb-progress") .appendTo (loading);
-		var canvas   = $("<div/>") .addClass ("cobweb-surface")  .appendTo (browser);
+		var browser  = $("<div></div>") .addClass ("cobweb-browser") .prependTo (this .element);
+		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
+		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
+		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
+		var canvas   = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
 
-		$("<div/>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
-		$("<div/>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div/>"));
+		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
+		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
 		this .loading = loading;
-		this .canvas  = $("<canvas/>") .prependTo (canvas);
+		this .canvas  = $("<canvas></canvas>") .prependTo (canvas);
 		this .context = getContext (this .canvas [0]);
 
 		this .browserOptions      = new BrowserOptions (this);
@@ -22517,14 +22517,16 @@ function ($,
 		set_transparent__: function ()
 		{
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
-			                     (this .textureNode && this .textureNode .transparent_ .getValue ());
+			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
 		},
 		traverse: function ()
 		{
 			var browser = this .getBrowser ();
 
-			browser .setAppearance (this);
+			browser .setLineProperties (this .linePropertiesNode);
+			browser .setMaterial (this .materialNode);
 			browser .setTexture (this .textureNode);
+			browser .getTextureTransform () [0] = this .textureTransformNode;
 			browser .setShader (this .shaderNode || browser .getDefaultShader ());
 		},
 	});
@@ -22545,8 +22547,8 @@ function (Appearance)
 	function X3DShapeContext ()
 	{
 		this .defaultAppearance = new Appearance (this);
-		this .appearance        = null;
 		this .lineProperties    = null;
+		this .material          = null;
 	}
 
 	X3DShapeContext .prototype =
@@ -22559,14 +22561,6 @@ function (Appearance)
 		{
 			return this .defaultAppearance;
 		},
-		setAppearance: function (value)
-		{
-			this .appearance = value;
-		},
-		getAppearance: function ()
-		{
-			return this .appearance;
-		},
 		setLineProperties: function (value)
 		{
 			this .lineProperties = value;
@@ -22574,6 +22568,14 @@ function (Appearance)
 		getLineProperties: function ()
 		{
 			return this .lineProperties;
+		},
+		setMaterial: function (value)
+		{
+			this .material = value;
+		},
+		getMaterial: function ()
+		{
+			return this .material;
 		},
 	};
 
@@ -22631,10 +22633,8 @@ function ($,
 	X3DShaderNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
 	{
 		constructor: X3DShaderNode,
-		pointsValue: false,
-		geometryTypeValue: 3,
 		custom: true,
-		shading: "GOURAUD",
+		geometryTypeValue: 3,
 		setCustom: function (value)
 		{
 			this .custom = value;
@@ -22649,6 +22649,8 @@ function ($,
 
 			this .use ();
 			this .getBrowser () .getContext () .uniform1i (this .geometryType, value);
+
+			this .setShading (this .getBrowser () .getBrowserOptions () .Shading_ .getValue ());
 		},
 		getGeometryType: function ()
 		{
@@ -22658,39 +22660,103 @@ function ($,
 		{
 			var gl = this .getBrowser () .getContext ();
 
-			this .shading = shading;
-
-			switch (shading)
+			switch (this .geometryTypeValue)
 			{
-				case "POINTSET":
+				case 0:
 				{
-					this .primitiveMode = gl .POINTS;
-					this .wireframe     = true;
+					switch (shading)
+					{
+						case "POINT":
+						case "POINTSET":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						case "WIREFRAME":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						default:
+						{
+							// case FLAT:
+							// case GOURAUD:
+							// case PHONG:
+		
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+					}
+
 					break;
 				}
-				case "WIREFRAME":
+				case 1:
 				{
-					this .primitiveMode = gl .LINE_LOOP;
-					this .wireframe     = true;
+					switch (shading)
+					{
+						case "POINT":
+						case "POINTSET":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						case "WIREFRAME":
+						{
+							this .primitiveMode = gl .LINES;
+							this .wireframe     = true;
+							break;
+						}
+						default:
+						{
+							// case FLAT:
+							// case GOURAUD:
+							// case PHONG:
+
+							this .primitiveMode = gl .LINES;
+							this .wireframe     = true;
+							break;
+						}
+					}
+
 					break;
 				}
-				case "PHONG":
+				case 2:
+				case 3:
 				{
-					this .primitiveMode = gl .TRIANGLES;
-					this .wireframe     = false;
-					break;
-				}
-				default:
-				{
-					this .primitiveMode = gl .TRIANGLES;
-					this .wireframe     = false;
+					switch (shading)
+					{
+						case "POINT":
+						case "POINTSET":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						case "WIREFRAME":
+						{
+							this .primitiveMode = gl .LINE_LOOP;
+							this .wireframe     = true;
+							break;
+						}
+						default:
+						{
+							// case FLAT:
+							// case GOURAUD:
+							// case PHONG:
+		
+							this .primitiveMode = gl .TRIANGLES;
+							this .wireframe     = false;
+							break;
+						}
+					}	
+
 					break;
 				}
 			}
-		},
-		getShading: function ()
-		{
-			return this .shading;
 		},
 	});
 
@@ -23624,6 +23690,8 @@ function ($,
 			gl .useProgram (this .program);
 			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
 
+			// Set global lights
+
 			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
 
 			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
@@ -23632,14 +23700,14 @@ function ($,
 		setLocalUniforms: function (context)
 		{
 			var
-				browser         = this .getBrowser (),
-				gl              = browser .getContext (),
-				appearance      = browser .getAppearance (),
-				lineProperties  = appearance .getLineProperties (),
-				material        = appearance .getMaterial (),
-				texture         = browser .getTexture (),
-				modelViewMatrix = context .modelViewMatrix,
-				clipPlanes      = context .clipPlanes;
+				browser          = this .getBrowser (),
+				gl               = browser .getContext (),
+				lineProperties   = browser .getLineProperties (),
+				material         = browser .getMaterial (),
+				texture          = browser .getTexture (),
+				textureTransform = browser .getTextureTransform (),
+				modelViewMatrix  = context .modelViewMatrix,
+				clipPlanes       = context .clipPlanes;
 
 			if (this !== shader)
 			{
@@ -23706,8 +23774,8 @@ function ($,
 				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .use (gl, this, i);
 
-				if (i < this .maxLights)
-					gl .uniform1i (this .lightType [i], 0);
+				if (numLights < this .maxLights)
+					gl .uniform1i (this .lightType [numLights], 0);
 
 				// Material
 
@@ -23732,19 +23800,7 @@ function ($,
 				else
 					gl .uniform1i (this .separateBackColor, false);
 
-				// Set normal matrix.
-				var normalMatrix = this .normalMatrixArray;
-				normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-				normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-				normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-				Matrix3 .prototype .inverse .call (normalMatrix);
-				gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
-			}
-			else
-			{
-				gl .uniform1i (this .lighting, false);
-
-				if (this .getCustom ())
+				try
 				{
 					// Set normal matrix.
 					var normalMatrix = this .normalMatrixArray;
@@ -23754,12 +23810,38 @@ function ($,
 					Matrix3 .prototype .inverse .call (normalMatrix);
 					gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
 				}
+				catch (error)
+				{
+					gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+				}
+			}
+			else
+			{
+				gl .uniform1i (this .lighting, false);
+
+				if (this .getCustom ())
+				{
+					try
+					{
+						// Set normal matrix.
+						var normalMatrix = this .normalMatrixArray;
+						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+						Matrix3 .prototype .inverse .call (normalMatrix);
+						gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
+					}
+					catch (error)
+					{
+						gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+					}
+				}
 			}
 
 			if (texture)
 			{
-				texture .traverse (gl, this, 0)
-				appearance .getTextureTransform () .traverse ();
+				texture .traverse (gl, this, 0);
+				textureTransform [0] .traverse ();
 
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 			}
@@ -23770,7 +23852,7 @@ function ($,
 
 				if (this .getCustom ())
 				{
-					appearance .getTextureTransform () .traverse ();
+					textureTransform .traverse ();
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 				}
 			}
@@ -32735,17 +32817,17 @@ define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:
 
 define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n// 225 uniforms\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 3 * 16 + 9\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n// 19 * MAX_LIGHTS\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterial (vec3 N,\n             vec3 v,\n             float x3d_AmbientIntensity,\n             vec3  x3d_DiffuseColor,\n             vec3  x3d_SpecularColor,\n             vec3  x3d_EmissiveColor,\n             float x3d_Shininess,\n             float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != NO_LIGHT)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == DIRECTIONAL_LIGHT;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == SPOT_LIGHT)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterial (N, v,\n\t\t                          ambientIntensity,\n\t\t                          diffuseColor,\n\t\t                          specularColor,\n\t\t                          emissiveColor,\n\t\t                          shininess,\n\t\t                          transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\t\t\t\n\t\tbackColor = getMaterial (-N, v,\n\t\t                         ambientIntensity,\n\t\t                         diffuseColor,\n\t\t                         specularColor,\n\t\t                         emissiveColor,\n\t\t                         shininess,\n\t\t                         transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n// 225 uniforms\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 3 * 16 + 9\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS];\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n// 19 * MAX_LIGHTS\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterialColor (in vec3 N,\n                  in vec3 v,\n                  in float x3d_AmbientIntensity,\n                  in vec3  x3d_DiffuseColor,\n                  in vec3  x3d_SpecularColor,\n                  in vec3  x3d_EmissiveColor,\n                  in float x3d_Shininess,\n                  in float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != NO_LIGHT)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == DIRECTIONAL_LIGHT;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = bool (x3d_Shininess) ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == SPOT_LIGHT)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterialColor (N, v,\n\t\t                               ambientIntensity,\n\t\t                               diffuseColor,\n\t\t                               specularColor,\n\t\t                               emissiveColor,\n\t\t                               shininess,\n\t\t                               transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\n\t\tbackColor = getMaterialColor (-N, v,\n\t\t                              ambientIntensity,\n\t\t                              diffuseColor,\n\t\t                              specularColor,\n\t\t                              emissiveColor,\n\t\t                              shininess,\n\t\t                              transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // NO_TEXTURE, TEXTURE_2D or TEXTURE_CUBE\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix;\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n#define MAX_TEXTURES 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\n#define MAX_TEXTURES 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS]; // 0: DirectionalLight, 1: PointLight, 2: SpotLight\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define GEOMETRY_2D 2\n#define GEOMETRY_3D 3\n\nuniform int x3d_GeometryType;\n// 1\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\n#define NO_FOG           0\n#define LINEAR_FOG       1\n#define EXPONENTIAL_FOG  2\n#define EXPONENTIAL2_FOG 3\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\n#define MAX_LIGHTS        8\n#define NO_LIGHT          0\n#define DIRECTIONAL_LIGHT 1\n#define POINT_LIGHT       2\n#define SPOT_LIGHT        3\n\nuniform int   x3d_LightType [MAX_LIGHTS];\nuniform bool  x3d_LightOn [MAX_LIGHTS];\nuniform vec3  x3d_LightColor [MAX_LIGHTS];\nuniform float x3d_LightIntensity [MAX_LIGHTS];\nuniform float x3d_LightAmbientIntensity [MAX_LIGHTS];\nuniform vec3  x3d_LightAttenuation [MAX_LIGHTS];\nuniform vec3  x3d_LightLocation [MAX_LIGHTS];\nuniform vec3  x3d_LightDirection [MAX_LIGHTS];\nuniform float x3d_LightRadius [MAX_LIGHTS];\nuniform float x3d_LightBeamWidth [MAX_LIGHTS];\nuniform float x3d_LightCutOffAngle [MAX_LIGHTS];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\n#define MAX_TEXTURES 1\n#define NO_TEXTURE   0\n#define TEXTURE_2D   2\n#define TEXTURE_CUBE 4\n\nuniform int         x3d_TextureType [MAX_TEXTURES]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture [MAX_TEXTURES];\nuniform samplerCube x3d_CubeMapTexture [MAX_TEXTURES];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == NO_FOG)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == LINEAR_FOG)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == EXPONENTIAL_FOG)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == TEXTURE_2D)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture [0], vec2 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == TEXTURE_CUBE)\n\t{\n\t\tif (x3d_GeometryType == GEOMETRY_3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is GEOMETRY_2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < MAX_LIGHTS; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != NO_LIGHT)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == DIRECTIONAL_LIGHT;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = bool (shininess) ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == SPOT_LIGHT)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != NO_TEXTURE)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n\nprecision mediump float;\n\n#define MAX_CLIP_PLANES 6\n\nuniform vec4 x3d_ClipPlane [MAX_CLIP_PLANES];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < MAX_CLIP_PLANES; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (in float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
 
 
 define ('standard/Math/Utility/MatrixStack',[
@@ -32878,10 +32960,6 @@ function (Fields,
 			this .lineShader  .setGeometryType (1);
 
 			this .setShading ("GOURAUD");
-			this .setShader (this .getDefaultShader ());
-
-			this .lineShader .use ();
-			gl .uniform1i (this .lineShader .dimension, 1);
 		},
 		getVendor: function ()
 		{
@@ -32913,6 +32991,10 @@ function (Fields,
 
 			return colorDepth;
 		},
+		getViewport: function ()
+		{
+			return this .viewport_;
+		},
 		setProjectionMatrix: function (value)
 		{
 			this .projectionMatrix = value;
@@ -32929,10 +33011,6 @@ function (Fields,
 		getModelViewMatrix: function ()
 		{
 			return this .modelViewMatrix;
-		},
-		getViewport: function ()
-		{
-			return this .viewport_;
 		},
 		createShader: function (executionContext, name, vs, fs)
 		{
@@ -32964,75 +33042,29 @@ function (Fields,
 
 			switch (type)
 			{
-				case "POINTSET":
-				{
-					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
-
-					this .defaultShader = this .gouraudShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .POINTS;
-					
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
-					break;
-				}
-				case "WIREFRAME":
-				{
-					if (! this .gouraudShader)
-						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
-
-					this .defaultShader = this .gouraudShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .LINES;
-					
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
-					break;
-				}
 				case "PHONG":
 				{
 					if (! this .phongShader)
 						this .phongShader = this .createShader (this, "PhongShader", phongVS, phongFS);
 
 					this .defaultShader = this .phongShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .LINES;
-
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
 					break;
 				}
 				default:
 				{
-					// case "GOURAUD":
-
 					if (! this .gouraudShader)
 						this .gouraudShader = this .createShader (this, "GouraudShader", gouraudVS, gouraudFS);
 
 					this .defaultShader = this .gouraudShader;
-
-					this .pointShader .primitiveMode = gl .POINTS;
-					this .lineShader  .primitiveMode = gl .LINES;
-
-					this .pointShader .wireframe = true;
-					this .lineShader  .wireframe = true;
-
-					this .defaultShader .setShading (type);
 					break;
 				}
 			}
 
 			// Configure custom shaders
+
+			this .pointShader   .setShading (type);
+			this .lineShader    .setShading (type);
+			this .defaultShader .setShading (type);
 
 			var shaders = this .getShaders ();
 
@@ -33085,7 +33117,7 @@ function (Fields,
 			{
 				this .viewport_ .setValue ([0, 0, width, height]);
 				this .context .viewport (0, 0, width, height);
-				this .context .scissor (0, 0, width, height);
+				this .context .scissor  (0, 0, width, height);
 
 				canvas .width  = width;
 				canvas .height = height;
@@ -45305,11 +45337,13 @@ define ('cobweb/Components/Lighting/X3DLightNode',[
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode,
           TraverseType,
-          X3DConstants)
+          X3DConstants,
+          Algorithm)
 {
 
 
@@ -45323,6 +45357,14 @@ function ($,
 	X3DLightNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLightNode,
+		getAmbientIntensity: function ()
+		{
+			return Algorithm .clamp (this .ambientIntensity_ .getValue (), 0, 1);
+		},
+		getIntensity: function ()
+		{
+			return Algorithm .clamp (this .intensity_ .getValue (), 0, 1);
+		},
 		push: function ()
 		{
 			if (this .on_ .getValue ())
@@ -45431,9 +45473,9 @@ function ($,
 		constructor: DirectionalLightContainer,
 		set: function (light)
 		{
-			this .color            = light .color_            .getValue ();
-			this .intensity        = light .intensity_        .getValue ();
-			this .ambientIntensity = light .ambientIntensity_ .getValue ();
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .getIntensity ();
+			this .ambientIntensity = light .getAmbientIntensity ();
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
 		},
@@ -45441,9 +45483,8 @@ function ($,
 		{
 			gl .uniform1i (shader .lightType [i],             1);
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);        // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
-			gl .uniform3f (shader .lightAttenuation [i],      1, 0, 0);
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
 			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
 		recycle: function ()
@@ -46325,7 +46366,7 @@ function ($,
 			var
 			   currentLayer = this .getCurrentLayer (),
 				viewVolumes  = currentLayer .getViewVolumes (),
-				viewport     = viewVolumes .length ? viewVolumes [0] .getViewport () : this .rectangle;
+				viewport     = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : this .rectangle;
 
 			currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
 			                                                         viewport,
@@ -46547,7 +46588,7 @@ function ($, TextureProperties)
 
 			this .screenTextureProperties .setup ();
 
-			var div = $("<div>");
+			var div = $("<div></div>");
 			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .css ("display", "none") .height () / 72;
 			div .remove ();
 		},
@@ -52352,8 +52393,8 @@ function (TextAlignment,
 					size .x      = length / scale;
 				}
 
-				this .charSpacings [l] = charSpacing 
-				text .lineBounds_ [l]  = lineBound;
+				this .charSpacings [ll] = charSpacing 
+				text .lineBounds_ [l]   = lineBound;
 
 				// Calculate line translation.
 
@@ -54689,6 +54730,8 @@ function ($,
 				translations     = this .getTranslations (),
 				charSpacings     = this .getCharSpacings (),
 				size             = fontStyle .getScale (),
+				spacing          = fontStyle .spacing_ .getValue (),
+				origin           = text .origin_ .getValue (),
 				sizeUnitsPerEm   = size / font .unitsPerEm,
 				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
 				texCoords        = this .texCoords,
@@ -54724,9 +54767,9 @@ function ($,
 								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
 								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
 		
+							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
 							normals   .push (0, 0, 1);
 							vertices  .push (x, y, 0, 1);
-							texCoords .push (x / size, y / size, 0, 1);
 						}
 		
 						// Calculate advanceWidth.
@@ -54771,9 +54814,9 @@ function ($,
 								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x,
 								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
 			
+							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
 							normals   .push (0, 0, 1);
 							vertices  .push (x, y, 0, 1);
-							texCoords .push (x / size, y / size, 0, 1);
 						}
 					}
 				}
@@ -55025,11 +55068,11 @@ function ($,
 			switch (primitiveQuality)
 			{
 				case PrimitiveQuality .LOW:
-					return 2;
-				case PrimitiveQuality .HIGH:
-					return 5;
-				default:
 					return 3;
+				case PrimitiveQuality .HIGH:
+					return 7;
+				default:
+					return 5;
 			}
 		},
 		getCurveOrientation: function (curve)
@@ -55545,11 +55588,11 @@ function (TextureProperties,
 		this .textureUnits             = [ ];
 		this .combinedTextureUnits     = [ ];
 		this .textureStages            = 1;
-		this .textureTransform         = [ ];
-		this .texture                  = null;
 		this .defaultTextureProperties = new TextureProperties (this);
 		this .defaultTextureTransform  = new TextureTransform (this);
 		this .defaultTextureCoordinate = new TextureCoordinate (this);
+		this .texture                  = null;
+		this .textureTransform         = [ ];
 	}
 
 	X3DTexturingContext .prototype =
@@ -55574,9 +55617,11 @@ function (TextureProperties,
 				textureUnits         = this .textureUnits,
 				combinedTextureUnits = this .combinedTextureUnits;
 
+			// For single and multi texturing
 			for (var i = this .maxTextureUnits - 1; i >= 0; -- i)
 				textureUnits .push (i);
 
+			// For shaders
 			for (var i = this .maxTextureUnits, length = this .maxCombinedTextureUnits; i < length; ++ i)
 				combinedTextureUnits .push (i);
 
@@ -55608,18 +55653,6 @@ function (TextureProperties,
 		{
 			return this .combinedTextureUnits;
 		},
-		getTextureTransform: function ()
-		{
-			return this .textureTransform;
-		},
-		setTexture: function (value)
-		{
-			this .texture = value;
-		},
-		getTexture: function ()
-		{
-			return this .texture;
-		},
 		getDefaultTextureProperties: function ()
 		{
 			return this .defaultTextureProperties;
@@ -55631,6 +55664,18 @@ function (TextureProperties,
 		getDefaultTextureCoordinate: function ()
 		{
 			return this .defaultTextureCoordinate;
+		},
+		setTexture: function (value)
+		{
+			this .texture = value;
+		},
+		getTexture: function ()
+		{
+			return this .texture;
+		},
+		getTextureTransform: function ()
+		{
+			return this .textureTransform;
 		},
 	};
 
@@ -57030,7 +57075,7 @@ function ($,
 			var
 				browser           = this .getBrowser (),
 				gl                = browser .getContext (),
-				viewport          = this .currentViewport .getRectangle (),
+				viewport          = this .getViewVolume () .getViewport (),
 				opaqueShapes      = this .opaqueShapes,
 				transparentShapes = this .transparentShapes,
 				shaders           = browser .getShaders ();
@@ -57060,11 +57105,11 @@ function ($,
 
 			// Render opaque objects first
 
+			gl .clear (gl .DEPTH_BUFFER_BIT);
+
+			gl .enable (gl .BLEND);
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);
-			gl .disable (gl .BLEND);
-
-			gl .clear (gl .DEPTH_BUFFER_BIT);
 
 			for (var i = 0, length = this .numOpaqueShapes; i < length; ++ i)
 			{
@@ -57083,7 +57128,6 @@ function ($,
 			// Render transparent objects
 
 			gl .depthMask (false);
-			gl .enable (gl .BLEND);
 
 			this .transparencySorter .sort (0, this .numTransparentShapes);
 
@@ -58505,9 +58549,9 @@ function ($,
 
 			this .url_ .addInterest (this, "set_url__");
 
-			this .canvas = $("<canvas>");
+			this .canvas = $("<canvas></canvas>");
 
-			this .image = $("<img>");
+			this .image = $("<img></img>");
 			this .image .load (this .setImage .bind (this));
 			this .image .error (this .setError .bind (this));
 			this .image .bind ("abort", this .setError .bind (this));
@@ -60680,7 +60724,7 @@ function ($,
 
 			// Setup shader.
 
-			context .colorMaterial = this .colors .length;
+			context .colorMaterial = this .getColors () .length;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
@@ -61333,7 +61377,7 @@ function ($,
 
 			this .url_ .addInterest (this, "set_url__");
 
-			this .audio = $("<audio>");
+			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));
 			this .audio .bind ("abort", this .setError .bind (this));
 			this .audio .attr ("preload", "auto");
@@ -62809,14 +62853,22 @@ function ($,
 		},
 		set: function (clipPlane)
 		{
-			var
-				plane  = this .plane,
-				plane_ = clipPlane .plane;
+			try
+			{
+				var
+					plane  = this .plane,
+					plane_ = clipPlane .plane;
 
-			plane .normal .assign (plane_);
-			plane .distanceFromOrigin = -plane_ .w;
+				plane .normal .assign (plane_);
+				plane .distanceFromOrigin = -plane_ .w;
 
-			plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
+				plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
+			}
+			catch (error)
+			{
+				plane .normal .set (0, 1, 0);
+				plane .distanceFromOrigin = 0;
+			}
 		},
 		use: function (gl, shader, i)
 		{
@@ -65733,12 +65785,21 @@ function ($,
 
 			if (innerRadius === outerRadius)
 			{
-				// Circle
-
 				var
 					radius          = Math .abs (outerRadius),
 					defaultVertices = options .getCircleVertices (),
 					vertices        = this .getVertices ();
+
+				// Point
+
+				//if (radius === 0)
+				//{
+				//	this .addVertex (Vector3 .Zero);
+				//	this .setGeometryType (GeometryType .GEOMETRY_POINTS);
+				//	return;
+				//}
+
+				// Circle
 
 				if (radius === 1)
 					this .setVertices (defaultVertices);
@@ -71612,7 +71673,7 @@ function ($,
 		},
 		set_shininess__: function ()
 		{
-			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1) * 128;
+			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1);
 		},
 		set_transparency__: function ()
 		{
@@ -72083,9 +72144,9 @@ function ($,
 
 			this .url_ .addInterest (this, "set_url__");
 
-			this .canvas = $("<canvas>");
+			this .canvas = $("<canvas></canvas>");
 
-			this .video = $("<video>");
+			this .video = $("<video></video>");
 			this .video .error (this .setError .bind (this));
 			this .video .bind ("abort", this .setError .bind (this));
 			this .video .attr ("preload", "auto");
@@ -74384,8 +74445,8 @@ function ($,
 				else
 				{
 					var
-						canvas1   = $("<canvas/>") [0],
-						canvas2   = $("<canvas/>") [0],
+						canvas1   = $("<canvas></canvas>") [0],
+						canvas2   = $("<canvas></canvas>") [0],
 						cx1       = canvas1 .getContext("2d"),
 						cx2       = canvas2 .getContext("2d"),
 						imageData = cx1 .createImageData (width, height);
@@ -74721,11 +74782,11 @@ function ($,
 		constructor: PointLightContainer,
 	   set: function (light)
 	   {
-			this .color            = light .color_            .getValue ();
-			this .intensity        = light .intensity_        .getValue ();
-			this .ambientIntensity = light .ambientIntensity_ .getValue ();
-			this .attenuation      = light .attenuation_      .getValue ();
-			this .radius           = light .radius_           .getValue ();
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .getIntensity ();
+			this .ambientIntensity = light .getAmbientIntensity ();
+			this .attenuation      = light .attenuation_ .getValue ();
+			this .radius           = light .getRadius ();
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 	   },
@@ -74733,8 +74794,8 @@ function ($,
 		{
 			gl .uniform1i (shader .lightType [i],             2);
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity); // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
 			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
 			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
 			gl .uniform1f (shader .lightRadius [i],           this .radius);
@@ -74782,6 +74843,10 @@ function ($,
 		{
 			return "children";
 		},
+		getRadius: function ()
+		{
+			return Math .max (0, this .radius_ .getValue ());
+		},
 		getLights: function ()
 		{
 			return PointLights;
@@ -74824,7 +74889,6 @@ function ($,
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
-		this .transparent_ = true;
 	}
 
 	PointSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -74888,12 +74952,26 @@ function ($,
 		set_color__: function ()
 		{
 			if (this .colorNode)
+			{
 				this .colorNode .removeInterest (this, "addNodeEvent");
+				this .colorNode .removeInterest (this, "set_transparent__");
+			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
+			{
 				this .colorNode .addInterest (this, "addNodeEvent");
+				this .colorNode .addInterest (this, "set_transparent__");
+
+				this .set_transparent__ ();
+			}
+			else
+				this .transparent_ = false;
+		},
+		set_transparent__: function ()
+		{
+			this .transparent_ = this .colorNode .isTransparent ();
 		},
 		set_coord__: function ()
 		{
@@ -75239,8 +75317,6 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polypoint2D);
-
-		this .transparent_ = true;
 	}
 
 	Polypoint2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -76049,7 +76125,7 @@ function ($,
 
 		this .texCoords    = [ ];
 		this .texture      = new PixelTexture (text .getExecutionContext ());
-		this .canvas       = $("<canvas>");
+		this .canvas       = $("<canvas></canvas>");
 		this .context      = this .canvas [0] .getContext ("2d");
 		this .screenMatrix = new Matrix4 ();
 		this .matrix       = new Matrix4 ();
@@ -76427,6 +76503,7 @@ function ($,
 			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
 
 		   this .getBrowser () .setTexture (this .texture);
+		   this .getBrowser () .getTextureTransform () [0] = this .getBrowser () .getDefaultTextureTransform ();
 		},
 		getMatrix: function ()
 		{
@@ -78620,6 +78697,7 @@ define ('cobweb/Components/Lighting/SpotLight',[
 	"cobweb/Components/Lighting/X3DLightNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
 function ($,
@@ -78629,6 +78707,7 @@ function ($,
           X3DLightNode, 
           X3DConstants,
           Vector3,
+          Algorithm,
           ObjectCache)
 {
 
@@ -78650,13 +78729,13 @@ function ($,
 	   {
 			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
 	
-			this .color            = light .color_            .getValue ();
-			this .intensity        = light .intensity_        .getValue ();
-			this .ambientIntensity = light .ambientIntensity_ .getValue ();
-			this .attenuation      = light .attenuation_      .getValue ();
-			this .beamWidth        = light .beamWidth_        .getValue ();
-			this .cutOffAngle      = light .cutOffAngle_      .getValue ();
-			this .radius           = light .radius_           .getValue ();
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .getIntensity ();
+			this .ambientIntensity = light .getAmbientIntensity ();
+			this .attenuation      = light .attenuation_ .getValue ();
+			this .radius           = light .getRadius ();
+			this .beamWidth        = light .getBeamWidth ();
+			this .cutOffAngle      = light .getCutOffAngle ();
 	
 			modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
@@ -78665,14 +78744,14 @@ function ($,
 		{
 			gl .uniform1i (shader .lightType [i],             3);
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);                                                  // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);                                           // clamp
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
 			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
 			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
 			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
-			gl .uniform1f (shader .lightBeamWidth [i],        this .beamWidth);                                                  // clamp
-			gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);                                                // clamp
-			gl .uniform1f (shader .lightRadius [i],           this .radius);                                                     // max
+			gl .uniform1f (shader .lightRadius [i],           this .radius);
+			gl .uniform1f (shader .lightBeamWidth [i],        this .beamWidth);
+			gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);
 		},
 		recycle: function ()
 		{
@@ -78715,6 +78794,27 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getRadius: function ()
+		{
+			return Math .max (0, this .radius_ .getValue ());
+		},
+		getBeamWidth: function ()
+		{
+			// If the beamWidth is greater than the cutOffAngle, beamWidth is defined to be equal to the cutOffAngle.
+
+			var
+				beamWidth   = this .beamWidth_ .getValue (),
+				cutOffAngle = this .getCutOffAngle ();
+
+			if (beamWidth > cutOffAngle)
+				return cutOffAngle;
+
+			return Algorithm .clamp (beamWidth, 0, Math .PI / 2);
+		},
+		getCutOffAngle: function ()
+		{
+			return Algorithm .clamp (this .cutOffAngle_ .getValue (), 0, Math .PI / 2);
 		},
 		getLights: function ()
 		{
@@ -78961,7 +79061,8 @@ function ($,
 			this .traverse = this .group .traverse .bind (this .group);
 
 			// Connect after Group setup.
-			this .group .children_ .addInterest (this, "set_children__");
+			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
+			this .group .children_       .addInterest (this, "set_children__");
 
 			this .set_children__ ();
 		},
@@ -80792,7 +80893,7 @@ function ($,
 		},
 		set_shininess__: function ()
 		{
-			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1) * 128;
+			this .shininess = Algorithm .clamp (this .shininess_ .getValue (), 0, 1);
 		},
 		set_transparency__: function ()
 		{
@@ -80821,7 +80922,7 @@ function ($,
 		},
 		set_backShininess__: function ()
 		{
-			this .backShininess = Algorithm .clamp (this .backShininess_ .getValue (), 0, 1) * 128;
+			this .backShininess = Algorithm .clamp (this .backShininess_ .getValue (), 0, 1);
 		},
 		set_backTransparency__: function ()
 		{
@@ -81417,7 +81518,9 @@ function ($,
 				intersections    = this .intersections,
 				numIntersections = this .bvh .intersectsLine (line, intersections, this .intersectionNormals);
 
-			if (numIntersections && ! (numIntersections % 2)) // and even
+			numIntersections -= numIntersections % 2; // We need an even count of intersections.
+
+			if (numIntersections)
 			{
 				// Sort intersections along line with a little help from the plane.
 
