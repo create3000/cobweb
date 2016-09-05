@@ -34,11 +34,11 @@ function ($,
 		constructor: PointLightContainer,
 	   set: function (light)
 	   {
-			this .color            = light .color_            .getValue ();
-			this .intensity        = light .intensity_        .getValue ();
-			this .ambientIntensity = light .ambientIntensity_ .getValue ();
-			this .attenuation      = light .attenuation_      .getValue ();
-			this .radius           = light .radius_           .getValue ();
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .getIntensity ();
+			this .ambientIntensity = light .getAmbientIntensity ();
+			this .attenuation      = light .attenuation_ .getValue ();
+			this .radius           = light .getRadius ();
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 	   },
@@ -46,8 +46,8 @@ function ($,
 		{
 			gl .uniform1i (shader .lightType [i],             2);
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity); // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
 			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
 			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
 			gl .uniform1f (shader .lightRadius [i],           this .radius);
@@ -94,6 +94,10 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getRadius: function ()
+		{
+			return Math .max (0, this .radius_ .getValue ());
 		},
 		getLights: function ()
 		{

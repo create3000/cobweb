@@ -541,7 +541,7 @@ function ($,
 			var
 				browser           = this .getBrowser (),
 				gl                = browser .getContext (),
-				viewport          = this .currentViewport .getRectangle (),
+				viewport          = this .getViewVolume () .getViewport (),
 				opaqueShapes      = this .opaqueShapes,
 				transparentShapes = this .transparentShapes,
 				shaders           = browser .getShaders ();
@@ -571,11 +571,11 @@ function ($,
 
 			// Render opaque objects first
 
+			gl .clear (gl .DEPTH_BUFFER_BIT);
+
 			gl .enable (gl .BLEND);
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);
-
-			gl .clear (gl .DEPTH_BUFFER_BIT);
 
 			for (var i = 0, length = this .numOpaqueShapes; i < length; ++ i)
 			{

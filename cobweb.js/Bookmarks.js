@@ -84,7 +84,7 @@ var Bookmarks = (function ()
 				{
 					for (var i = 0; i < item .url .length; ++ i)
 					{
-						$("<a/>")
+						$("<a></a>")
 							.attr ("href", item .url [i])
 							.attr ("title", item .url [i])
 							.click (this .loadURL .bind (this, item .url [i]))
@@ -95,7 +95,7 @@ var Bookmarks = (function ()
 				}
 				else
 				{
-					$("<a/>")
+					$("<a></a>")
 						.attr ("href", item .url [0])
 						.attr ("title", item .url [0])
 						.click (this .loadURL .bind (this, item .url))
@@ -110,7 +110,7 @@ var Bookmarks = (function ()
 				
 			this .element .append ("<br/>");
 
-			$("<a/>")
+			$("<a></a>")
 				.attr ("href", "random")
 				.attr ("title", "Random World")
 				.click (this .random .bind (this))
@@ -120,7 +120,7 @@ var Bookmarks = (function ()
 			this .element .append ("<br/>");
 			this .element .append ("<br/>");
 	
-			$("<a/>")
+			$("<a></a>")
 				.attr ("href", "previous")
 				.attr ("title", "Previous Page")
 				.click (this .next .bind (this, -1))
@@ -129,7 +129,7 @@ var Bookmarks = (function ()
 
 			this .element .append (document .createTextNode (" Page " + (this .index + 1) + " "));
 	
-			$("<a/>")
+			$("<a></a>")
 				.attr ("href", "next")
 				.attr ("title", "Next Page")
 				.click (this .next .bind (this, 1))

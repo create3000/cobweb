@@ -34,9 +34,9 @@ function ($,
 		constructor: DirectionalLightContainer,
 		set: function (light)
 		{
-			this .color            = light .color_            .getValue ();
-			this .intensity        = light .intensity_        .getValue ();
-			this .ambientIntensity = light .ambientIntensity_ .getValue ();
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .getIntensity ();
+			this .ambientIntensity = light .getAmbientIntensity ();
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
 		},
@@ -44,8 +44,8 @@ function ($,
 		{
 			gl .uniform1i (shader .lightType [i],             1);
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);        // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity); // clamp
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
 			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
 		recycle: function ()

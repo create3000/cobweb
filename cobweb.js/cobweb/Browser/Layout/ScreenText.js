@@ -44,7 +44,7 @@ function ($,
 
 		this .texCoords    = [ ];
 		this .texture      = new PixelTexture (text .getExecutionContext ());
-		this .canvas       = $("<canvas>");
+		this .canvas       = $("<canvas></canvas>");
 		this .context      = this .canvas [0] .getContext ("2d");
 		this .screenMatrix = new Matrix4 ();
 		this .matrix       = new Matrix4 ();

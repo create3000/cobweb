@@ -67,14 +67,14 @@ varying vec3  v;          // point on geometry
 // 15, max 16
 
 vec4
-getMaterial (vec3 N,
-             vec3 v,
-             float x3d_AmbientIntensity,
-             vec3  x3d_DiffuseColor,
-             vec3  x3d_SpecularColor,
-             vec3  x3d_EmissiveColor,
-             float x3d_Shininess,
-             float x3d_Transparency)
+getMaterialColor (in vec3 N,
+                  in vec3 v,
+                  in float x3d_AmbientIntensity,
+                  in vec3  x3d_DiffuseColor,
+                  in vec3  x3d_SpecularColor,
+                  in vec3  x3d_EmissiveColor,
+                  in float x3d_Shininess,
+                  in float x3d_Transparency)
 {  
 	vec3 V = normalize (-v); // normalized vector from point on geometry to viewer's position
 
@@ -174,13 +174,13 @@ main ()
 		float shininess        = x3d_Shininess;
 		float transparency     = x3d_Transparency;
 
-		frontColor = getMaterial (N, v,
-		                          ambientIntensity,
-		                          diffuseColor,
-		                          specularColor,
-		                          emissiveColor,
-		                          shininess,
-		                          transparency);
+		frontColor = getMaterialColor (N, v,
+		                               ambientIntensity,
+		                               diffuseColor,
+		                               specularColor,
+		                               emissiveColor,
+		                               shininess,
+		                               transparency);
 
 		if (x3d_SeparateBackColor)
 		{
@@ -191,14 +191,14 @@ main ()
 			shininess        = x3d_BackShininess;
 			transparency     = x3d_BackTransparency;
 		}
-			
-		backColor = getMaterial (-N, v,
-		                         ambientIntensity,
-		                         diffuseColor,
-		                         specularColor,
-		                         emissiveColor,
-		                         shininess,
-		                         transparency);
+
+		backColor = getMaterialColor (-N, v,
+		                              ambientIntensity,
+		                              diffuseColor,
+		                              specularColor,
+		                              emissiveColor,
+		                              shininess,
+		                              transparency);
 	}
 	else
 	{

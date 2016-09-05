@@ -108,6 +108,10 @@ function (Fields,
 
 			return colorDepth;
 		},
+		getViewport: function ()
+		{
+			return this .viewport_;
+		},
 		setProjectionMatrix: function (value)
 		{
 			this .projectionMatrix = value;
@@ -124,10 +128,6 @@ function (Fields,
 		getModelViewMatrix: function ()
 		{
 			return this .modelViewMatrix;
-		},
-		getViewport: function ()
-		{
-			return this .viewport_;
 		},
 		createShader: function (executionContext, name, vs, fs)
 		{
@@ -234,7 +234,7 @@ function (Fields,
 			{
 				this .viewport_ .setValue ([0, 0, width, height]);
 				this .context .viewport (0, 0, width, height);
-				this .context .scissor (0, 0, width, height);
+				this .context .scissor  (0, 0, width, height);
 
 				canvas .width  = width;
 				canvas .height = height;

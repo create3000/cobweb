@@ -24,7 +24,7 @@ clip ()
 }
 
 vec3
-pack (float f)
+pack (in float f)
 {
 	vec3 color;
 

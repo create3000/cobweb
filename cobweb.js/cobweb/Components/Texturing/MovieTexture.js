@@ -83,9 +83,9 @@ function ($,
 
 			this .url_ .addInterest (this, "set_url__");
 
-			this .canvas = $("<canvas>");
+			this .canvas = $("<canvas></canvas>");
 
-			this .video = $("<video>");
+			this .video = $("<video></video>");
 			this .video .error (this .setError .bind (this));
 			this .video .bind ("abort", this .setError .bind (this));
 			this .video .attr ("preload", "auto");

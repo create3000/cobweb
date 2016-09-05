@@ -75,7 +75,7 @@ function ($,
 
 			this .url_ .addInterest (this, "set_url__");
 
-			this .audio = $("<audio>");
+			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));
 			this .audio .bind ("abort", this .setError .bind (this));
 			this .audio .attr ("preload", "auto");

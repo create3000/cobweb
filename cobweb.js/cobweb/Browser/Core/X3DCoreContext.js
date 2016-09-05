@@ -31,20 +31,20 @@ function (BrowserOptions,
 
 		// Get canvas & context.
 
-		var browser  = $("<div/>") .addClass ("cobweb-browser") .prependTo (this .element);
-		var loading  = $("<div/>") .addClass ("cobweb-loading")  .appendTo (browser);
-		var spinner  = $("<div/>") .addClass ("cobweb-spinner")  .appendTo (loading);
-		var progress = $("<div/>") .addClass ("cobweb-progress") .appendTo (loading);
-		var canvas   = $("<div/>") .addClass ("cobweb-surface")  .appendTo (browser);
+		var browser  = $("<div></div>") .addClass ("cobweb-browser") .prependTo (this .element);
+		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
+		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
+		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
+		var canvas   = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
 
-		$("<div/>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
-		$("<div/>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
-		$("<div/>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div/>"));
+		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
+		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
 		this .loading = loading;
-		this .canvas  = $("<canvas/>") .prependTo (canvas);
+		this .canvas  = $("<canvas></canvas>") .prependTo (canvas);
 		this .context = getContext (this .canvas [0]);
 
 		this .browserOptions      = new BrowserOptions (this);

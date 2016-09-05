@@ -66,9 +66,9 @@ function ($,
 
 			this .url_ .addInterest (this, "set_url__");
 
-			this .canvas = $("<canvas>");
+			this .canvas = $("<canvas></canvas>");
 
-			this .image = $("<img>");
+			this .image = $("<img></img>");
 			this .image .load (this .setImage .bind (this));
 			this .image .error (this .setError .bind (this));
 			this .image .bind ("abort", this .setError .bind (this));

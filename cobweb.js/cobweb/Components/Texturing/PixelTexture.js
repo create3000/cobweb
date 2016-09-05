@@ -161,8 +161,8 @@ function ($,
 				else
 				{
 					var
-						canvas1   = $("<canvas/>") [0],
-						canvas2   = $("<canvas/>") [0],
+						canvas1   = $("<canvas></canvas>") [0],
+						canvas2   = $("<canvas></canvas>") [0],
 						cx1       = canvas1 .getContext("2d"),
 						cx2       = canvas2 .getContext("2d"),
 						imageData = cx1 .createImageData (width, height);

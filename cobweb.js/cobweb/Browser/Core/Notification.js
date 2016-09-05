@@ -36,12 +36,12 @@ function ($,
 
 			this .addChildren ("string", new SFString ());
 
-			this .element = $("<div/>")
+			this .element = $("<div></div>")
 				.addClass ("cobweb-notification")
 				.appendTo (this .getBrowser () .getElement () .find (".cobweb-surface"))
 				.animate ({ width: 0 });
 
-			$("<span/>") .appendTo (this .element);
+			$("<span></span>") .appendTo (this .element);
 
 			this .string_ .addInterest (this, "set_string__");
 		},

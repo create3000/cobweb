@@ -7,6 +7,7 @@ define ([
 	"cobweb/Components/Lighting/X3DLightNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
 function ($,
@@ -16,6 +17,7 @@ function ($,
           X3DLightNode, 
           X3DConstants,
           Vector3,
+          Algorithm,
           ObjectCache)
 {
 "use strict";
@@ -37,13 +39,13 @@ function ($,
 	   {
 			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
 	
-			this .color            = light .color_            .getValue ();
-			this .intensity        = light .intensity_        .getValue ();
-			this .ambientIntensity = light .ambientIntensity_ .getValue ();
-			this .attenuation      = light .attenuation_      .getValue ();
-			this .beamWidth        = light .beamWidth_        .getValue ();
-			this .cutOffAngle      = light .cutOffAngle_      .getValue ();
-			this .radius           = light .radius_           .getValue ();
+			this .color            = light .color_ .getValue ();
+			this .intensity        = light .getIntensity ();
+			this .ambientIntensity = light .getAmbientIntensity ();
+			this .attenuation      = light .attenuation_ .getValue ();
+			this .radius           = light .getRadius ();
+			this .beamWidth        = light .getBeamWidth ();
+			this .cutOffAngle      = light .getCutOffAngle ();
 	
 			modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
@@ -52,14 +54,14 @@ function ($,
 		{
 			gl .uniform1i (shader .lightType [i],             3);
 			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);                                                  // clamp
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);                                           // clamp
+			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
 			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
 			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
 			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
-			gl .uniform1f (shader .lightBeamWidth [i],        this .beamWidth);                                                  // clamp
-			gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);                                                // clamp
-			gl .uniform1f (shader .lightRadius [i],           this .radius);                                                     // max
+			gl .uniform1f (shader .lightRadius [i],           this .radius);
+			gl .uniform1f (shader .lightBeamWidth [i],        this .beamWidth);
+			gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);
 		},
 		recycle: function ()
 		{
@@ -102,6 +104,27 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getRadius: function ()
+		{
+			return Math .max (0, this .radius_ .getValue ());
+		},
+		getBeamWidth: function ()
+		{
+			// If the beamWidth is greater than the cutOffAngle, beamWidth is defined to be equal to the cutOffAngle.
+
+			var
+				beamWidth   = this .beamWidth_ .getValue (),
+				cutOffAngle = this .getCutOffAngle ();
+
+			if (beamWidth > cutOffAngle)
+				return cutOffAngle;
+
+			return Algorithm .clamp (beamWidth, 0, Math .PI / 2);
+		},
+		getCutOffAngle: function ()
+		{
+			return Algorithm .clamp (this .cutOffAngle_ .getValue (), 0, Math .PI / 2);
 		},
 		getLights: function ()
 		{

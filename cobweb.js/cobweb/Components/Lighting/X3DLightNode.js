@@ -4,11 +4,13 @@ define ([
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode,
           TraverseType,
-          X3DConstants)
+          X3DConstants,
+          Algorithm)
 {
 "use strict";
 
@@ -22,6 +24,14 @@ function ($,
 	X3DLightNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLightNode,
+		getAmbientIntensity: function ()
+		{
+			return Algorithm .clamp (this .ambientIntensity_ .getValue (), 0, 1);
+		},
+		getIntensity: function ()
+		{
+			return Algorithm .clamp (this .intensity_ .getValue (), 0, 1);
+		},
 		push: function ()
 		{
 			if (this .on_ .getValue ())
