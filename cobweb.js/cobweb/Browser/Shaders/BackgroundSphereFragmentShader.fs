@@ -3,9 +3,7 @@ data:text/plain;charset=utf-8,
 
 precision mediump float;
 
-#define X3D_MAX_CLIP_PLANES 6
-
-uniform vec4 x3d_ClipPlane [X3D_MAX_CLIP_PLANES];
+uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
 // 24
 
 varying vec4 C; // color
@@ -14,7 +12,7 @@ varying vec3 v; // point on geometry
 void
 clip ()
 {
-	for (int i = 0; i < X3D_MAX_CLIP_PLANES; ++ i)
+	for (int i = 0; i < x3d_MaxClipPlanes; ++ i)
 	{
 		if (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))
 			break;

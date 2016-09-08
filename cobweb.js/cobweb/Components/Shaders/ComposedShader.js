@@ -225,8 +225,10 @@ function ($,
 			this .backTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
 
 			this .textureType    = gl .getUniformLocation (program, "x3d_TextureType");
-			this .texture        = gl .getUniformLocation (program, "x3d_Texture");
+			this .texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
 			this .cubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
+
+			this .texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
 
 			this .textureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 			this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
@@ -241,7 +243,8 @@ function ($,
 			gl .uniform1i  (this .geometryType,         this .getGeometryType ());
 			gl .uniform1f  (this .linewidthScaleFactor, 1);
 			gl .uniform1iv (this .textureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .texture,              new Int32Array ([0])); // Set texture to active texture unit 0.
+			gl .uniform1iv (this .texture,              new Int32Array ([0])); // depreciated
+			gl .uniform1iv (this .texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
 			gl .uniform1iv (this .cubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
 		},
 		setGlobalUniforms: function ()

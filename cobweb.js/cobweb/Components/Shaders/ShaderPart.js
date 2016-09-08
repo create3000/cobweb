@@ -4,6 +4,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Browser/Shaders/Shader",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/InputOutput/Loader",
@@ -13,6 +14,7 @@ function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
+          Shader,
           X3DNode, 
           X3DUrlObject,
           Loader,
@@ -114,7 +116,7 @@ function ($,
 				{
 					var gl = this .getBrowser () .getContext ();
 
-					gl .shaderSource (this .shader, data);
+					gl .shaderSource (this .shader, Shader .getShaderSource (data));
 					gl .compileShader (this .shader);
 	
 					this .valid = gl .getShaderParameter (this .shader, gl .COMPILE_STATUS);
