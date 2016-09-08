@@ -33,6 +33,9 @@
     <None Include="..\AUTHORS.md">
       <Link>AUTHORS.md</Link>
     </None>
+    <None Include="..\LICENSE.md">
+      <Link>LICENSE.md</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="logo\" />
