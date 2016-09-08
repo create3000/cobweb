@@ -30,6 +30,9 @@
     <None Include="resources\SupportedComponents.js" />
     <None Include="resources\SupportedNodes.js" />
     <None Include="resources\SupportedNodes.VRML.js" />
+    <None Include="..\AUTHORS.md">
+      <Link>AUTHORS.md</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="logo\" />
