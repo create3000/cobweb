@@ -314,6 +314,7 @@ function ($,
 					scissor    = context .scissor,
 					clipPlanes = context .clipPlanes;
 
+				// TODO: viewport must not be the browser or layer viewport.
 				gl .scissor (scissor .x,
 				             scissor .y,
 				             scissor .z,

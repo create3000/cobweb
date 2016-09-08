@@ -122,6 +122,8 @@ function ($,
 		},
 		getProjectionMatrix: function (zNear, zFar, viewport)
 		{
+			Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
+
 			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
 		},
 	});

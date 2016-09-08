@@ -8,7 +8,7 @@
     <meta name='creator' content='holger'/>
     <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/MadFlat.x3d'/>
-    <meta name='modified' content='Sun, 04 Sep 2016 14:37:06 GMT'/>
+    <meta name='modified' content='Wed, 07 Sep 2016 12:29:47 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -41,7 +41,7 @@
           <MetadataString DEF='type' containerField='value'
               name='type'
               reference='http://titania.create3000.de'
-              value='"EXAMINE"'/>
+              value='"WALK"'/>
         </MetadataSet>
         <MetadataSet DEF='Viewpoint' containerField='value'
             name='Viewpoint'
@@ -49,15 +49,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-11.1128072738647, 21.7163887023926, 59.6808853149414'/>
+              value='-0.239923179149628, 1.59658002853394, 13.8563985824585'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.686751960164386, -0.715535614735518, -0.127986441685979, 0.50958851758724'/>
+              value='-0.863723791643251, 0.503845531689344, 0.0109950873615177, 0.0505200768215745'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='9.89208793640137, 0.166808620095253, 5.28394556045532'/>
+              value='9.89208984375, 0.166808992624283, 5.28394985198975'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
@@ -104,6 +104,7 @@
       </MetadataSet>
     </WorldInfo>
     <NavigationInfo
+        type='"WALK", "ANY"'
         headlight='false'
         transitionType='"ANIMATE"'/>
     <Background DEF='Gray'
@@ -313,9 +314,9 @@
       <ViewpointGroup>
         <Viewpoint
             description='Home'
-            position='-6.60721 12.2413 28.3428'
-            orientation='-0.686751960164386 -0.715535614735518 -0.127986441685979 0.50958851758724'
-            centerOfRotation='3.50818 1.8636 2.14667'
+            position='-0.239923 1.59658 13.8564'
+            orientation='-0.863723791643251 0.503845531689344 0.0109950873615177 0.0505200768215745'
+            centerOfRotation='9.89209 0.166809 5.28395'
             fieldOfView='0.584871'/>
       </ViewpointGroup>
     </Transform>
