@@ -1,2 +1,2 @@
-Holger Seelig <holger.seelig@yahoo.de>
-Andeas Plesch <andreasplesch@gmail.com>
+* Holger Seelig <holger.seelig@yahoo.de>
+* Andeas Plesch <andreasplesch@gmail.com>

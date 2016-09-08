@@ -10,4 +10,4 @@ For more information and live preview please visit [http://titania.create3000.de
 
 Authors
 --------------------------------------
-All authors contributes to this project can be found in the [list of authors](AUTHORS.md)
+All authors contributes to this project can be found in the [list of authors](AUTHORS.md).
