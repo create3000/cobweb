@@ -70,6 +70,7 @@ function ($,
 		maxClipPlanes: MAX_CLIP_PLANES,
 		noClipPlane: new Float32Array (4),
 		fogNode: null,
+		linePropertiesNode: null,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
 		textureTypeArray: new Int32Array (MAX_TEXTURES),
@@ -268,28 +269,27 @@ function ($,
 		setLocalUniforms: function (context)
 		{
 			var
-				browser          = this .getBrowser (),
-				gl               = browser .getContext (),
-				lineProperties   = browser .getLineProperties (),
-				material         = browser .getMaterial (),
-				texture          = browser .getTexture (),
-				textureTransform = browser .getTextureTransform (),
-				modelViewMatrix  = context .modelViewMatrix,
-				clipPlanes       = context .clipPlanes;
+				browser              = this .getBrowser (),
+				gl                   = browser .getContext (),
+				linePropertiesNode   = browser .getLineProperties (),
+				materialNode         = browser .getMaterial (),
+				textureNode          = browser .getTexture (),
+				textureTransformNode = browser .getTextureTransform (),
+				modelViewMatrix      = context .modelViewMatrix,
+				clipPlaneNodes       = context .clipPlanes;
 
 			if (this !== shader)
 			{
 				shader = this;
 				gl .useProgram (this .program);
-				browser .setLineProperties (undefined);
 			}
 
 			// Clip planes
 
-			if (clipPlanes .length)
+			if (clipPlaneNodes .length)
 			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .use (gl, this, i);
+				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
+					clipPlaneNodes [i] .use (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
 					gl .uniform4fv (this .clipPlane [i], this .noClipPlane);
@@ -309,13 +309,13 @@ function ($,
 
 			// LineProperties
 
-			if (lineProperties !== browser .getLineProperties ())
+			if (linePropertiesNode !== this .linePropertiesNode)
 			{
-				browser .setLineProperties (lineProperties);
+				this .linePropertiesNode = linePropertiesNode;
 
-				if (lineProperties && lineProperties .applied_ .getValue ())
+				if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
 				{
-					var linewidthScaleFactor = lineProperties .getLinewidthScaleFactor ();
+					var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
 
 					gl .lineWidth (linewidthScaleFactor);
 					gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);
@@ -331,7 +331,7 @@ function ($,
 
 			gl .uniform1i (this .colorMaterial, context .colorMaterial);
 
-			if (material)
+			if (materialNode)
 			{
 				// Lights
 
@@ -348,22 +348,22 @@ function ($,
 				// Material
 
 				gl .uniform1i  (this .lighting,         true);
-				gl .uniform1f  (this .ambientIntensity, material .ambientIntensity);
-				gl .uniform3fv (this .diffuseColor,     material .diffuseColor);
-				gl .uniform3fv (this .specularColor,    material .specularColor);
-				gl .uniform3fv (this .emissiveColor,    material .emissiveColor);
-				gl .uniform1f  (this .shininess,        material .shininess);
-				gl .uniform1f  (this .transparency,     material .transparency);
+				gl .uniform1f  (this .ambientIntensity, materialNode .ambientIntensity);
+				gl .uniform3fv (this .diffuseColor,     materialNode .diffuseColor);
+				gl .uniform3fv (this .specularColor,    materialNode .specularColor);
+				gl .uniform3fv (this .emissiveColor,    materialNode .emissiveColor);
+				gl .uniform1f  (this .shininess,        materialNode .shininess);
+				gl .uniform1f  (this .transparency,     materialNode .transparency);
 
-				if (material .getSeparateBackColor ())
+				if (materialNode .getSeparateBackColor ())
 				{
 					gl .uniform1i  (this .separateBackColor,    true);
-					gl .uniform1f  (this .backAmbientIntensity, material .backAmbientIntensity);
-					gl .uniform3fv (this .backDiffuseColor,     material .backDiffuseColor);
-					gl .uniform3fv (this .backSpecularColor,    material .backSpecularColor);
-					gl .uniform3fv (this .backEmissiveColor,    material .backEmissiveColor);
-					gl .uniform1f  (this .backShininess,        material .backShininess);
-					gl .uniform1f  (this .backTransparency,     material .backTransparency);
+					gl .uniform1f  (this .backAmbientIntensity, materialNode .backAmbientIntensity);
+					gl .uniform3fv (this .backDiffuseColor,     materialNode .backDiffuseColor);
+					gl .uniform3fv (this .backSpecularColor,    materialNode .backSpecularColor);
+					gl .uniform3fv (this .backEmissiveColor,    materialNode .backEmissiveColor);
+					gl .uniform1f  (this .backShininess,        materialNode .backShininess);
+					gl .uniform1f  (this .backTransparency,     materialNode .backTransparency);
 				}
 				else
 					gl .uniform1i (this .separateBackColor, false);
@@ -406,10 +406,10 @@ function ($,
 				}
 			}
 
-			if (texture)
+			if (textureNode)
 			{
-				texture .traverse (gl, this, 0);
-				textureTransform [0] .traverse ();
+				textureNode .traverse (gl, this, 0);
+				textureTransformNode [0] .traverse ();
 
 				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 			}
@@ -420,7 +420,7 @@ function ($,
 
 				if (this .getCustom ())
 				{
-					textureTransform .traverse ();
+					textureTransformNode .traverse ();
 					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
 				}
 			}

@@ -574,9 +574,9 @@ function ($,
 
 			gl .clear (gl .DEPTH_BUFFER_BIT);
 
-			gl .enable (gl .BLEND);
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);
+			gl .disable (gl .BLEND);
 
 			for (var i = 0, length = this .numOpaqueShapes; i < length; ++ i)
 			{
@@ -595,6 +595,7 @@ function ($,
 			// Render transparent objects
 
 			gl .depthMask (false);
+			gl .enable (gl .BLEND);
 
 			this .transparencySorter .sort (0, this .numTransparentShapes);
 
