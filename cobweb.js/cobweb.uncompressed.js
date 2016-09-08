@@ -1,3 +1,51 @@
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
 (function () {
 /**
  * almond 0.2.5 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
@@ -9192,7 +9240,7 @@ define("jquery/dist/jquery", function(){});
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -9283,7 +9331,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -9353,7 +9401,7 @@ define ('cobweb/Basic/X3DFieldDefinition',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -9450,7 +9498,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -9580,7 +9628,7 @@ function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -9678,7 +9726,7 @@ function ($, X3DObject)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -10111,7 +10159,7 @@ define ('cobweb/Bits/X3DConstants',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -10225,7 +10273,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -10514,7 +10562,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -10589,7 +10637,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -10919,7 +10967,7 @@ function ($, X3DField, X3DConstants, Generator)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -11018,7 +11066,7 @@ function ($, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -11270,7 +11318,7 @@ define ('standard/Math/Algorithm',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -11525,7 +11573,7 @@ function ($, Algorithm)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -11697,7 +11745,7 @@ function ($, Color3, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -11873,7 +11921,7 @@ function ($, Color3, Algorithm)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -12047,7 +12095,7 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -12142,7 +12190,7 @@ function ($, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -12237,7 +12285,7 @@ function ($, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -12332,7 +12380,7 @@ function ($, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -12469,7 +12517,7 @@ function ($, X3DField)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -12582,7 +12630,7 @@ function ($, X3DField)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -12929,7 +12977,7 @@ function ($, Algorithm)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -13064,7 +13112,7 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector2)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -13488,7 +13536,7 @@ function ($, Algorithm)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -13719,7 +13767,7 @@ function ($, Algorithm)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -13911,7 +13959,7 @@ define ('standard/Math/Algorithms/eigendecomposition',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -14681,7 +14729,7 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -14816,7 +14864,7 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -14972,7 +15020,7 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector3)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -15411,7 +15459,7 @@ function ($, Algorithm)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -16020,7 +16068,7 @@ function ($, Vector3, Algorithm)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -16424,7 +16472,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -17425,7 +17473,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -17552,7 +17600,7 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec3, X3DConstants, Matrix4)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -17753,7 +17801,7 @@ function ($, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -17966,7 +18014,7 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -18087,7 +18135,7 @@ function ($, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -18182,7 +18230,7 @@ function ($, X3DField, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -18351,7 +18399,7 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector4)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -18561,7 +18609,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -18832,7 +18880,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -18955,7 +19003,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -19009,7 +19057,7 @@ define ('cobweb/Browser/VERSION',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -19134,7 +19182,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -19572,7 +19620,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -19641,7 +19689,7 @@ define ('cobweb/Browser/Core/PrimitiveQuality',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -19710,7 +19758,7 @@ define ('cobweb/Browser/Core/TextureQuality',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -19801,7 +19849,7 @@ define ('lib/dataStorage',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -20088,7 +20136,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -20171,7 +20219,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -20608,7 +20656,7 @@ define('text!locale/fr.po',[],function () { return 'msgid ""\nmsgstr ""\n"Projec
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -20736,7 +20784,7 @@ function (de, fr)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -22784,7 +22832,7 @@ e.webkitCancelFullScreen?(f="webkitfullscreenchange",g="webkitfullscreenerror"):
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23191,7 +23239,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23346,7 +23394,7 @@ function (BrowserOptions,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23466,7 +23514,7 @@ function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23544,7 +23592,7 @@ function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23614,7 +23662,7 @@ define ('cobweb/Bits/TraverseType',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23717,7 +23765,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23810,7 +23858,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23887,7 +23935,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -23964,7 +24012,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -24042,7 +24090,7 @@ define ('cobweb/Bits/X3DCast',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -24301,7 +24349,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -25195,7 +25243,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -25295,7 +25343,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -25480,7 +25528,7 @@ function (Fields,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -25575,7 +25623,7 @@ define ('cobweb/Browser/Shaders/X3DShadersContext',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -25660,7 +25708,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -25923,7 +25971,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -26017,7 +26065,7 @@ function (Appearance)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -26094,7 +26142,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -26296,7 +26344,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -27012,7 +27060,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -27503,7 +27551,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -27597,7 +27645,7 @@ define ('cobweb/Browser/Shaders/Shader',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -27695,7 +27743,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -27802,7 +27850,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -27881,7 +27929,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -27966,7 +28014,7 @@ function ($, X3DInfoArray, ComponentInfo)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -28175,7 +28223,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -28245,7 +28293,7 @@ function ($, X3DInfoArray)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -28315,7 +28363,7 @@ function ($, X3DInfoArray)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -28405,7 +28453,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -28538,7 +28586,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -29002,7 +29050,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -29295,7 +29343,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -29393,7 +29441,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -29620,7 +29668,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -29762,7 +29810,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -32658,7 +32706,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -33606,7 +33654,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -36798,7 +36846,7 @@ exports.ungzip  = inflate;
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -36857,7 +36905,7 @@ function (VERSION)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -37311,7 +37359,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -37470,23 +37518,23 @@ function ($,
 });
 
 
-define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\tfloat lw = (x3d_LinewidthScaleFactor + 1.0) / 2.0;\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\tfloat lw = (x3d_LinewidthScaleFactor + 1.0) / 2.0;\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\t// If we are points, make the gl_PointSize one pixel larger.\n\tgl_PointSize = x3d_GeometryType == x3d_GeometryLines ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.0;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\t// If we are points, make the gl_PointSize one pixel larger.\n\tgl_PointSize = x3d_GeometryType == x3d_GeometryLines ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.0;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n// 2\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n// 5\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\n// 225 uniforms\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 3 * 16 + 9\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n// 19 * x3d_MaxLights\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterialColor (in vec3 N,\n                  in vec3 v,\n                  in float x3d_AmbientIntensity,\n                  in vec3  x3d_DiffuseColor,\n                  in vec3  x3d_SpecularColor,\n                  in vec3  x3d_EmissiveColor,\n                  in float x3d_Shininess,\n                  in float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != x3d_NoLight)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = x3d_Shininess > 0.0 ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == x3d_SpotLight)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterialColor (N, v,\n\t\t                               ambientIntensity,\n\t\t                               diffuseColor,\n\t\t                               specularColor,\n\t\t                               emissiveColor,\n\t\t                               shininess,\n\t\t                               transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\n\t\tbackColor = getMaterialColor (-N, v,\n\t\t                              ambientIntensity,\n\t\t                              diffuseColor,\n\t\t                              specularColor,\n\t\t                              emissiveColor,\n\t\t                              shininess,\n\t\t                              transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\n// 225 uniforms\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n// 3 * 16 + 9\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n// 19 * x3d_MaxLights\n\nuniform bool x3d_SeparateBackColor;\n// 1\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n// 12\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n// 12\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n// 15, max 16\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n// 15, max 16\n\nvec4\ngetMaterialColor (in vec3 N,\n                  in vec3 v,\n                  in float x3d_AmbientIntensity,\n                  in vec3  x3d_DiffuseColor,\n                  in vec3  x3d_SpecularColor,\n                  in vec3  x3d_EmissiveColor,\n                  in float x3d_Shininess,\n                  in float x3d_Transparency)\n{  \n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != x3d_NoLight)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = x3d_Shininess > 0.0 ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == x3d_SpotLight)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterialColor (N, v,\n\t\t                               ambientIntensity,\n\t\t                               diffuseColor,\n\t\t                               specularColor,\n\t\t                               emissiveColor,\n\t\t                               shininess,\n\t\t                               transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\n\t\tbackColor = getMaterialColor (-N, v,\n\t\t                              ambientIntensity,\n\t\t                              diffuseColor,\n\t\t                              specularColor,\n\t\t                              emissiveColor,\n\t\t                              shininess,\n\t\t                              transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n// 3\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n// 15, max 16\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != x3d_NoLight)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == x3d_DirectionalLight;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == x3d_SpotLight)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != x3d_NoLight)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == x3d_DirectionalLight;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == x3d_SpotLight)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (in float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (in float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -37515,7 +37563,7 @@ define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -37615,7 +37663,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -37912,7 +37960,7 @@ function (Fields,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -37999,7 +38047,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -38086,7 +38134,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -38297,7 +38345,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -38415,7 +38463,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -38573,7 +38621,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -38694,7 +38742,7 @@ define ('standard/Math/Algorithms/SAT',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -39170,7 +39218,7 @@ function (Matrix4, Vector3, SAT)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -42182,7 +42230,7 @@ module.exports = {
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -42396,7 +42444,7 @@ function (Vector3,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -43352,7 +43400,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -43691,7 +43739,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44160,7 +44208,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44237,7 +44285,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44370,7 +44418,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44469,7 +44517,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44554,7 +44602,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44682,7 +44730,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44815,7 +44863,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -44922,7 +44970,7 @@ function (Arc2DOptions,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -45066,7 +45114,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -45154,7 +45202,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -45242,7 +45290,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -45548,7 +45596,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -45649,7 +45697,7 @@ function (BoxOptions,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -45853,7 +45901,7 @@ function (jquery,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -46050,7 +46098,7 @@ function (Vector3)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -46281,7 +46329,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -46391,7 +46439,7 @@ define ('standard/Math/Algorithms/MergeSort',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -46704,7 +46752,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -46965,7 +47013,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -47079,7 +47127,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -47448,7 +47496,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -47625,7 +47673,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -47764,7 +47812,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -47912,7 +47960,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -48036,7 +48084,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -48165,7 +48213,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -48650,7 +48698,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -48767,7 +48815,7 @@ function (Matrix4)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -48998,7 +49046,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -49253,7 +49301,7 @@ define('jquery-mousewheel', ['jquery-mousewheel/jquery.mousewheel'], function (m
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -49583,7 +49631,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -50112,7 +50160,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -50210,7 +50258,7 @@ function (X3DFlyViewer, Vector3, Rotation4, _)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -50292,7 +50340,7 @@ function (X3DFlyViewer, _)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -50415,7 +50463,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -50598,7 +50646,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -50693,7 +50741,7 @@ define ('standard/Math/Geometry/Spheroid3',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -50794,7 +50842,7 @@ function (Spheroid3)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -51062,7 +51110,7 @@ function (Vector3,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -51280,7 +51328,7 @@ function (Geodetic,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -51367,7 +51415,7 @@ function (Vector3,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -51583,7 +51631,7 @@ function (ReferenceEllipsoids,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -51873,7 +51921,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -52213,7 +52261,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -52508,7 +52556,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -52737,7 +52785,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -52808,7 +52856,7 @@ function ($, X3DViewer, _)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -52947,7 +52995,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -53057,7 +53105,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -53149,7 +53197,7 @@ define ('standard/Utility/ObjectCache',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -53295,7 +53343,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -53522,7 +53570,7 @@ function (Fields,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -53622,7 +53670,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54097,7 +54145,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54174,7 +54222,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54383,7 +54431,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54464,7 +54512,7 @@ function (Viewport)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54655,7 +54703,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54730,9 +54778,9 @@ function ($, TextureProperties)
 	return X3DLayoutContext;
 });
 
-define('text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -54761,7 +54809,7 @@ define('text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],functi
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54856,7 +54904,7 @@ function (ComposedShader,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -54934,7 +54982,7 @@ function (Viewport)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -55025,7 +55073,7 @@ function (Fields,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -60018,7 +60066,7 @@ exports.sizeOf = sizeOf;
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -60351,7 +60399,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -60630,7 +60678,7 @@ function (Matrix3, Vector2)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -61284,7 +61332,7 @@ function (TextAlignment,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -63199,7 +63247,7 @@ function Node(i) {
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -63837,7 +63885,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -63954,7 +64002,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -64078,7 +64126,7 @@ function (FontStyle)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -64176,7 +64224,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -64335,7 +64383,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -64498,7 +64546,7 @@ function (TextureProperties,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -64597,7 +64645,7 @@ function (Vector3)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -64711,7 +64759,7 @@ define ('standard/Math/Algorithms/QuickSort',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -65121,7 +65169,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -65268,7 +65316,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -65344,7 +65392,7 @@ function (PointEmitter)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -65496,7 +65544,7 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -65684,7 +65732,7 @@ function (Vector3)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -66382,7 +66430,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -66548,7 +66596,7 @@ function ($, X3DBaseNode)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -66696,7 +66744,7 @@ function ($, X3DBaseNode)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -66821,7 +66869,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -66956,7 +67004,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -67640,7 +67688,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -67791,7 +67839,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -68019,7 +68067,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -68269,7 +68317,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -68431,7 +68479,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -68784,7 +68832,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -68887,7 +68935,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -68997,7 +69045,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -69225,7 +69273,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -69394,7 +69442,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -69683,7 +69731,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -69758,7 +69806,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -69828,7 +69876,7 @@ function ($, X3DInfoArray)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -70059,7 +70107,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -70418,7 +70466,7 @@ function ($, ComponentInfoArray, urls)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -70564,7 +70612,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -70649,7 +70697,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -70784,7 +70832,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -70981,7 +71029,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -71164,7 +71212,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -71336,7 +71384,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -71572,7 +71620,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -71798,7 +71846,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72001,7 +72049,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72179,7 +72227,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72300,7 +72348,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72456,7 +72504,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72575,7 +72623,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72687,7 +72735,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72765,7 +72813,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72876,7 +72924,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -72955,7 +73003,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73090,7 +73138,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73235,7 +73283,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73313,7 +73361,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73422,7 +73470,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73602,7 +73650,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73718,7 +73766,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73854,7 +73902,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -73953,7 +74001,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -74071,7 +74119,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -74207,7 +74255,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -74404,7 +74452,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -74585,7 +74633,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -74674,7 +74722,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -74802,7 +74850,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -74941,7 +74989,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -75194,7 +75242,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -75348,7 +75396,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -75532,7 +75580,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -75682,7 +75730,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -75813,7 +75861,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -75941,7 +75989,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -76019,7 +76067,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -76257,7 +76305,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -76511,7 +76559,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -76661,7 +76709,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -76796,7 +76844,7 @@ function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -76890,7 +76938,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -77012,7 +77060,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -77136,7 +77184,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -77235,7 +77283,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -77360,7 +77408,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -77484,7 +77532,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -77797,7 +77845,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -77877,7 +77925,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -78049,7 +78097,7 @@ function (Vector3,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -78361,7 +78409,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -78622,7 +78670,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -79041,7 +79089,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -79166,7 +79214,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -79796,7 +79844,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -79904,7 +79952,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -80094,7 +80142,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -80527,7 +80575,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -80762,7 +80810,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -81118,7 +81166,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -81245,7 +81293,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -81322,7 +81370,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -81423,7 +81471,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -81544,7 +81592,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -81699,7 +81747,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -81835,7 +81883,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -82132,7 +82180,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -82290,7 +82338,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -82441,7 +82489,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -82593,7 +82641,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -82905,7 +82953,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -83058,7 +83106,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -83220,7 +83268,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -83337,7 +83385,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -83510,7 +83558,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -83629,7 +83677,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -83741,7 +83789,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -83883,7 +83931,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -84198,7 +84246,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -84415,7 +84463,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -84493,7 +84541,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -85164,7 +85212,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -85355,7 +85403,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -85475,7 +85523,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -85592,7 +85640,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -85812,7 +85860,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -85933,7 +85981,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86010,7 +86058,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86173,7 +86221,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86247,7 +86295,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86352,7 +86400,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86457,7 +86505,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86562,7 +86610,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86667,7 +86715,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86772,7 +86820,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -86877,7 +86925,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -87130,7 +87178,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -87207,7 +87255,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -87317,7 +87365,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -87458,7 +87506,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -87590,7 +87638,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -87718,7 +87766,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -87902,7 +87950,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -88261,7 +88309,7 @@ function (Vector3,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -89532,7 +89580,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -89782,7 +89830,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -90092,7 +90140,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -90252,7 +90300,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -90445,7 +90493,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -90568,7 +90616,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -90814,7 +90862,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -90941,7 +90989,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91053,7 +91101,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91165,7 +91213,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91279,7 +91327,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91393,7 +91441,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91517,7 +91565,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91661,7 +91709,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91820,7 +91868,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -91956,7 +92004,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -92086,7 +92134,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -92579,7 +92627,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -92697,7 +92745,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -92886,7 +92934,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -92963,7 +93011,7 @@ function ($)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -93033,7 +93081,7 @@ function ($, X3DInfoArray)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -93117,7 +93165,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -93277,7 +93325,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -93338,7 +93386,7 @@ function ()
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -93420,7 +93468,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -93934,7 +93982,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -94145,7 +94193,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -94222,7 +94270,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -94440,7 +94488,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -94589,7 +94637,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -94836,7 +94884,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95024,7 +95072,7 @@ function (Vector4,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95140,7 +95188,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95201,7 +95249,7 @@ function (CatmullRomSplineInterpolatorTemplate,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95346,7 +95394,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95407,7 +95455,7 @@ function (CatmullRomSplineInterpolatorTemplate,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95552,7 +95600,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95654,7 +95702,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95799,7 +95847,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -95986,7 +96034,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -96105,7 +96153,7 @@ function (Rotation4)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -96242,7 +96290,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -96384,7 +96432,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -96649,7 +96697,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -96799,7 +96847,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -96921,7 +96969,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -97045,7 +97093,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -97223,7 +97271,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -97379,7 +97427,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -97507,7 +97555,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -97635,7 +97683,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -97783,7 +97831,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -97892,7 +97940,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -98003,7 +98051,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -98111,7 +98159,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -98315,7 +98363,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -98464,7 +98512,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -98583,7 +98631,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -98737,7 +98785,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -98890,7 +98938,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -99111,7 +99159,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -99363,7 +99411,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -99547,7 +99595,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -99875,7 +99923,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -100011,7 +100059,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -100111,7 +100159,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -100844,7 +100892,7 @@ function (Anchor,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -100917,7 +100965,7 @@ function (X3DScene)
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -101547,7 +101595,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *
@@ -101768,7 +101816,7 @@ function ($,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
- * Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
  *
  * This file is part of the Cobweb Project.
  *

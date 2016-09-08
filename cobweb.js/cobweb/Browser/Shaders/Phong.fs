@@ -25,7 +25,7 @@ data:text/plain;charset=utf-8,
 // 
 //  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 // 
-//  Copyright 1999, 2012 Holger Seelig <holger.seelig@yahoo.de>.
+//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
 // 
 //  This file is part of the Cobweb Project.
 // 

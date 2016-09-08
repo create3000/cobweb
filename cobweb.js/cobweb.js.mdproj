@@ -1216,6 +1216,8 @@
     <None Include="tests\Components\Lighting\MadFlat.x3d" />
     <None Include="tests\Components\ParticleSystems\OpenVolume.x3d" />
     <None Include="cobweb\Browser\Shaders\Shader.js" />
+    <None Include="license.txt" />
+    <None Include="license.pl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

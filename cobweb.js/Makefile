@@ -12,6 +12,8 @@ all:
 	uglifyjs -m -c -- cobweb.uncompressed.js > cobweb.ugly.js
 	mv cobweb.ugly.js cobweb.min.js
 
+	perl license.pl
+
 	cp cobweb.html cobweb.min.html
 	perl -pi -e 's|\s*<script src="jam/require.js"></script>\n||sg' cobweb.min.html
 	perl -pi -e 's|"cobweb.js"|"cobweb.min.js"|sg' cobweb.min.html
