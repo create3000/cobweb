@@ -249,6 +249,7 @@ function ($,
 
 			this .getWorld () .bind ();
 			this .setBrowserLoading (false);
+			this .addBrowserEvent ();
 		},
 		createVrmlFromString: function (vrmlSyntax)
 		{

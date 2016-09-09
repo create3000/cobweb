@@ -661,7 +661,7 @@ function ($,
 			// Draw depending on wireframe, solid and transparent.
 
 			var
-				materialNode    = browser .getAppearance () .getMaterial (),
+				materialNode    = browser .getMaterial (),
 				lighting        = materialNode || shader .getCustom (),
 				normalMatrix    = shader .normalMatrixArray,
 				modelViewMatrix = context .modelViewMatrix,
