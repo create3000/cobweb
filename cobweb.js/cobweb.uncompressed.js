@@ -27488,7 +27488,7 @@ function ($,
 				textureNode .traverse (gl, this, 0);
 				textureTransformNode [0] .traverse ();
 
-				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
+				gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 			}
 			else
 			{
@@ -27497,8 +27497,8 @@ function ($,
 
 				if (this .getCustom ())
 				{
-					textureTransformNode .traverse ();
-					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
+					textureTransformNode [0] .traverse ();
+					gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 				}
 			}
 
@@ -43074,7 +43074,7 @@ function ($,
 			// Draw depending on wireframe, solid and transparent.
 
 			var
-				materialNode    = browser .getAppearance () .getMaterial (),
+				materialNode    = browser .getMaterial (),
 				lighting        = materialNode || shader .getCustom (),
 				normalMatrix    = shader .normalMatrixArray,
 				modelViewMatrix = context .modelViewMatrix,
@@ -66308,6 +66308,8 @@ function ($,
 			             viewport [2],
 			             viewport [3]);
 
+			gl .clear (gl .DEPTH_BUFFER_BIT);
+
 			this .getBackground () .display (viewport);
 
 			// Sorted blend
@@ -66320,8 +66322,6 @@ function ($,
 				shaders [id] .setGlobalUniforms ();
 
 			// Render opaque objects first
-
-			gl .clear (gl .DEPTH_BUFFER_BIT);
 
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);

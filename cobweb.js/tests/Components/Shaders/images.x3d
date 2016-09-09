@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 01 Jan 2016 20:19:39 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 02 Jan 2016 04:27:35 GMT'/>
+    <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/images.x3d'/>
+    <meta name='modified' content='Fri, 09 Sep 2016 16:48:11 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -27,11 +28,11 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0, 0, 12.1850681304932'/>
+              value='-0.0952446129997221, 0.0808769601024098, 12.1844271109654'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='-0.647260223783024, -0.762264916596723, -0.00252974981798655, 0.0102546044282238'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -57,6 +58,16 @@
               reference='http://titania.create3000.de'
               value='1, 0, 0, 1.5708'/>
         </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
       </MetadataSet>
     </WorldInfo>
     <Viewpoint
@@ -66,7 +77,7 @@
       <Shape>
         <Appearance>
           <ComposedShader>
-            <field accessType='inputOutput' type='SFImage' name='image' value='3 5 2 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0xffff 0 0 0xffff 0xffff 0xffff 0xffff'/>
+            <field accessType='inputOutput' type='SFImage' name='image' value='2 2 4 0x800000ff 0xff00ff 0xffff 0x80808080'/>
             <ShaderPart DEF='SFImageVertexShader'>
 <![CDATA[data:text/plain,
 
@@ -95,17 +106,47 @@ main ()
 
 precision mediump float;
 
-uniform int image [18];
+uniform int image [7]; // SFImage (2 2 4 ...)
 
 varying vec4 texCoord;
+
+float
+pixel (in int x, in int y)
+{
+	int index = 3 + (y * 2 + x);
+
+	for (int i = 0; i < 7; ++ i)
+	{
+		if (i == index)
+		{
+			float p = float (image [i]);
+			
+			if (p < 0.0)
+				return (4294967295.0 + p) / 4294967295.0;
+
+			return p / 4294967295.0;
+		}
+	}
+	
+	return 0.0;
+}
 
 void
 main ()
 {
-	float pixel = float (image [4 + 0] / 256) / 255.0;
-	
+	int x = int (texCoord .x + 0.5);
+	int y = int (texCoord .y + 0.5);
 
-	gl_FragColor = vec4 (pixel, 1.0, 1.0, 1.0);
+	float p = pixel (x, y);
+	float r = p * 256.0;
+	float g = fract (r) * 256.0;
+	float b = fract (g) * 256.0;
+	float a = fract (b) * 256.0;
+
+	gl_FragColor = vec4 (floor (r) / 256.0,
+	                     floor (g) / 256.0,
+	                     floor (b) / 256.0,
+	                     floor (a) / 256.0);
 }]]> 
             </ShaderPart>
           </ComposedShader>
@@ -289,5 +330,7 @@ main ()
         </IndexedFaceSet>
       </Shape>
     </Transform>
+    <Background DEF='Gray'
+        skyColor='0.2 0.2 0.2'/>
   </Scene>
 </X3D>
