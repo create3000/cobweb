@@ -453,7 +453,7 @@ function ($,
 				textureNode .traverse (gl, this, 0);
 				textureTransformNode [0] .traverse ();
 
-				gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
+				gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 			}
 			else
 			{
@@ -462,8 +462,8 @@ function ($,
 
 				if (this .getCustom ())
 				{
-					textureTransformNode .traverse ();
-					gl .uniformMatrix4fv (this .textureMatrix, false, browser .getTextureTransform () [0] .getMatrixArray ());
+					textureTransformNode [0] .traverse ();
+					gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 				}
 			}
 
