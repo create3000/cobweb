@@ -118,7 +118,6 @@ function ($,
 		maxClipPlanes: MAX_CLIP_PLANES,
 		noClipPlane: new Float32Array (4),
 		fogNode: null,
-		linePropertiesNode: null,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
 		textureTypeArray: new Int32Array (MAX_TEXTURES),
@@ -357,24 +356,19 @@ function ($,
 
 			// LineProperties
 
-			if (linePropertiesNode !== this .linePropertiesNode)
+			if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
 			{
-				this .linePropertiesNode = linePropertiesNode;
+				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
 
-				if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
-				{
-					var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
-
-					gl .lineWidth (linewidthScaleFactor);
-					gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);
-				}
-				else
-				{
-					gl .lineWidth (1);
-					gl .uniform1f (this .linewidthScaleFactor, 1);
-				}
+				gl .lineWidth (linewidthScaleFactor);
+				gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);
 			}
-
+			else
+			{
+				gl .lineWidth (1);
+				gl .uniform1f (this .linewidthScaleFactor, 1);
+			}
+	
 			// Material
 
 			gl .uniform1i (this .colorMaterial, context .colorMaterial);
