@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/SpotLight.x3d'/>
-    <meta name='modified' content='Wed, 07 Sep 2016 10:02:20 GMT'/>
+    <meta name='modified' content='Fri, 09 Sep 2016 11:30:53 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -30,15 +30,15 @@
           <MetadataDouble containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='-3.65617895126343, 5.91018533706665, 12.550479888916'/>
+              value='-2.82277321815491, 6.1587119102478, 10.1246852874756'/>
           <MetadataDouble containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.834381797409213, -0.533155595382438, -0.139828921416742, 0.609092339683518'/>
+              value='-0.905459211247959, -0.394126244193452, -0.157505937679146, 0.831290939533641'/>
           <MetadataDouble containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0.944455206394196, -2.03870987892151, -0.790388107299805'/>
+              value='0.684962391853333, -3.72172021865845, 0.34726020693779'/>
         </MetadataSet>
         <MetadataSet DEF='LayerSet' containerField='value'
             name='LayerSet'
@@ -60,7 +60,7 @@
             <SpotLight DEF='Blue' containerField='value'
                 global='false'
                 color='0 0 1'
-                direction='0.199139 -0.874441 0.444845'
+                direction='0.418474 -0.797565 0.435633'
                 beamWidth='1.1508'
                 cutOffAngle='1.2708'
                 shadowColor='0 0 0.1'
@@ -130,9 +130,9 @@ function initialize ()
             headlight='false'/>
         <Viewpoint
             description='Perspective'
-            position='-0.210916 8.18122 0.841244'
-            orientation='-0.243809929819945 -0.666116754053398 -0.704872462287014 2.54198232446922'
-            centerOfRotation='-0.205999 -2.84087 -0.690514'/>
+            position='-2.82277 6.15871 10.1247'
+            orientation='-0.905459211247959 -0.394126244193452 -0.157505937679146 0.831290939533641'
+            centerOfRotation='0.684962 -3.72172 0.34726'/>
         <Group>
           <Group DEF='SpotAnim'>
             <MetadataSet
@@ -211,14 +211,14 @@ function initialize ()
               translation='0.5 0.854373 0'>
             <SpotLight DEF='Red'
                 color='1 0 0'
-                direction='-0.0620946 -0.980669 0.172981'
+                direction='0.417418 -0.797667 0.435176'
                 beamWidth='0.875398'
                 cutOffAngle='1.0308'
                 shadowColor='0.1 0 0'
                 shadowIntensity='1'
                 shadowDiffusion='0.02'/>
             <Transform DEF='_2'
-                rotation='0.998001384781616 -0.0631920562569137 0 1.39654381529869'>
+                rotation='0.886017550411123 0.463651701564303 -0 1.12053573164294'>
               <Switch>
                 <Transform DEF='Cone'
                     rotation='-0.999999999993436 -3.62331999997622e-06 8.16271999994642e-11 1.5708'
@@ -252,14 +252,14 @@ function set_direction (value)
               translation='-1 0.800923 1'>
             <SpotLight DEF='Green'
                 color='0 1 0'
-                direction='0.426463 -0.906718 -0.011385'
+                direction='0.418187 -0.798059 0.434099'
                 beamWidth='0.415398'
                 cutOffAngle='0.790796'
                 shadowColor='0 0.1 0'
                 shadowIntensity='1'
                 shadowDiffusion='0.03'/>
             <Transform DEF='_5'
-                rotation='0.904906253842463 0.425610939423319 -0 1.58215806613858'>
+                rotation='0.885760448895824 0.464142679756848 -0 1.12181170589948'>
               <Switch>
                 <Transform DEF='Cone_1'
                     rotation='0.999999999993436 3.62331999997622e-06 -8.16268999994642e-11 4.71239'
@@ -288,7 +288,7 @@ function set_direction (value)
           <Transform
               translation='9.70404e-15 0.166353 0'>
             <Transform DEF='_7'
-                rotation='0.975035720672949 0.222048065543889 -0 1.110338198459'
+                rotation='0.885511238396026 0.464617957761359 -0 1.12029800062702'
                 scaleOrientation='0.901298633096723 0.105533957038929 0.420146828965403 0.854599'>
               <Switch>
                 <Transform DEF='Cone_2'
@@ -365,7 +365,7 @@ function set_direction (value)
               </Shape>
             </Transform>
             <Transform DEF='Sphere'
-                translation='-1.91612 -1 -2.71533'
+                translation='-0.233303 -1 -2.68122'
                 scale='0.5 0.5 0.5'>
               <Group DEF='SphereAnimation'>
                 <MetadataSet DEF='Animation'

@@ -607,6 +607,8 @@ function ($,
 			             viewport [2],
 			             viewport [3]);
 
+			gl .clear (gl .DEPTH_BUFFER_BIT);
+
 			this .getBackground () .display (viewport);
 
 			// Sorted blend
@@ -619,8 +621,6 @@ function ($,
 				shaders [id] .setGlobalUniforms ();
 
 			// Render opaque objects first
-
-			gl .clear (gl .DEPTH_BUFFER_BIT);
 
 			gl .enable (gl .DEPTH_TEST);
 			gl .depthMask (true);

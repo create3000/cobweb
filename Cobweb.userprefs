@@ -3,8 +3,12 @@
   <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/license.txt" Line="26" Column="54" />
-      <File FileName="cobweb.js/Bookmarks.js" Line="18" Column="3" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="624" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="115" Column="6" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/Appearance.js" Line="144" Column="28" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/Shape.js" Line="196" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="252" Column="27" />
+      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="677" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
