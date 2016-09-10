@@ -6,8 +6,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 30 Dec 2015 21:55:07 GMT'/>
+    <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/water/water.x3d'/>
+    <meta name='modified' content='Sat, 10 Sep 2016 10:12:58 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
@@ -34,15 +35,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0, 0, 10'/>
+              value='68.8916015625, 46.8921012878418, 120.146003723145'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0, 0, 1, 0'/>
+              value='-0.761608797557173, 0.627576833184138, 0.161552957057695, 0.65188'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, 0, 0'/>
+              value='28.846700668335, -7.49610996246338, 30'/>
         </MetadataSet>
         <MetadataSet DEF='AngleGrid' containerField='value'
             name='AngleGrid'
@@ -71,6 +72,24 @@
               name='dimension'
               reference='http://titania.create3000.de'
               value='100, 10, 50'/>
+        </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='-1'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -118,7 +137,7 @@
             <MetadataBoolean DEF='enabled_3' containerField='value'
                 name='enabled'
                 reference='http://titania.create3000.de'
-                value='true'/>
+                value='false'/>
             <MetadataInteger DEF='dimension_1' containerField='value'
                 name='dimension'
                 reference='http://titania.create3000.de'
@@ -133,12 +152,12 @@
           <Viewpoint DEF='Oblique'
               description='Oblique View'
               position='68.8916 46.8921 120.146'
-              orientation='-0.761609 0.627577 0.161553 0.65188'
+              orientation='-0.761608797557173 0.627576833184138 0.161552957057695 0.65188'
               centerOfRotation='28.8467 -7.49611 30'/>
           <Viewpoint DEF='Front'
               description='Front'
               position='31.7947 54.1093 117.689'
-              orientation='0.99961 -0.0279344 0.000151179 5.6517'
+              orientation='0.999609747269474 -0.02793439293737 0.000151178961777545 5.6517'
               centerOfRotation='30 -10 30'/>
           <Viewpoint DEF='Top'
               description='Top'
@@ -187,9 +206,9 @@
           </Transform>
           <Transform DEF='Rectangle2D_1'
               translation='30.0042 5.00002 61.25'
-              rotation='-0.577352 0.577346 0.577353 2.09439'
+              rotation='-0.577351935847832 0.577345935848499 0.577352935847721 2.09439'
               scale='1.25 30.0042 1.25'
-              scaleOrientation='1.37574e-06 -1 5.70146e-07 0.785052'>
+              scaleOrientation='1.37573999999847e-06 -0.999999999998891 5.70145999999368e-07 0.785052'>
             <Shape>
               <Appearance USE='_1'/>
               <IndexedFaceSet
@@ -204,9 +223,9 @@
           </Transform>
           <Transform DEF='Rectangle2D_2'
               translation='30 5 -1.25'
-              rotation='-0.577352 0.577346 0.577353 2.09439'
+              rotation='-0.577351935847832 0.577345935848499 0.577352935847721 2.09439'
               scale='1.25 30.0042 1.25'
-              scaleOrientation='3.78908e-07 1 6.79482e-07 0.553375'>
+              scaleOrientation='3.78907999999885e-07 0.999999999999697 6.79481999999794e-07 0.553375'>
             <Shape>
               <Appearance USE='_1'/>
               <IndexedFaceSet
@@ -221,7 +240,7 @@
           </Transform>
           <Transform DEF='Rectangle2D_3'
               translation='61.25 5 30'
-              rotation='1 3.8063e-06 2.27045e-07 4.71239'
+              rotation='0.99999999999273 3.80629999997233e-06 2.27044999998349e-07 4.71239'
               scale='1.25 32.5084 1.25'>
             <Shape>
               <Appearance USE='_1'/>
@@ -237,7 +256,7 @@
           </Transform>
           <Transform DEF='Rectangle2D_4'
               translation='-1.24988 5 30.008'
-              rotation='1 3.8063e-06 2.27045e-07 4.71239'
+              rotation='0.99999999999273 3.80629999997233e-06 2.27044999998349e-07 4.71239'
               scale='1.25 32.5084 1.25'>
             <Shape>
               <Appearance USE='_1'/>
@@ -276,7 +295,7 @@
                 <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.222428, 0.164404, 0.096708, 0.096708, 0.096708'/>
                 <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.6395, 1.45984, 0.64099, 0.551695, 0.432567'/>
                 <field accessType='inputOutput' type='MFFloat' name='speed' value='2.18808, 2.18808, 2.18808, 2.18808, 2.18808'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.872785 0.690181, 0.577615 0.607014, 0.00125058 0.251584, 0.493479 0.909703, 0.295259 0.282825'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.882667 0.11112, 0.678751 0.182917, 0.450011 0.643528, 0.496523 0.398465, 0.357832 0.00919326'/>
                 <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.204778'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture DEF='_4'>
@@ -294,113 +313,6 @@
                         url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg"'/>
                   </ComposedCubeMapTexture>
                 </field>
-                <ShaderPart DEF='TitaniaWaterVertex'>
-<![CDATA[data:text/plain,
-#version 120
-
-precision mediump float;
-
-#define WAVE_MAX 8
-
-uniform float set_time;
-uniform vec3  position;
-uniform int   numWaves;
-uniform float amplitude [WAVE_MAX];
-uniform float frequency [WAVE_MAX];
-uniform float speed [WAVE_MAX];
-uniform vec2  direction [WAVE_MAX];
-
-varying vec3 texCoord;
-
-float
-getHeight (int i, vec2 vertex)
-{
-	float theta = -dot (vertex, normalize (direction [i]));
-
-	return amplitude [i] * sin (theta * frequency [i] + set_time * speed [i]);
-}
-
-float
-getWaveHeight (vec2 vertex)
-{
-	float height = 0.0;
-
-	for (int i = 0; i < numWaves; ++i)
-	{
-		if (amplitude [i] == 0.0)
-			continue;
-
-		height += getHeight (i, vertex);
-	}
-
-	return height;
-}
-
-float
-getNormalHeight (int i, vec2 vertex)
-{
-	float theta = -dot (vertex, normalize (direction [i]));
-
-	return amplitude [i] * cos (theta * frequency [i] + set_time * speed [i]);
-}
-
-vec3
-getWaveNormal (vec2 vertex)
-{
-	int  waves  = 0;
-	vec3 normal = vec3 (0.0, 0.0, 0.0);
-
-	for (int i = 0; i < numWaves; ++ i)
-	{
-		if (amplitude [i] == 0.0)
-			continue;
-
-		++ waves;
-
-		float h = getNormalHeight (i, vertex);
-		vec2  d = normalize (direction [i]);
-		vec3  s = vec3 (d .x, h, d .y);
-		vec3  n = cross (vec3 (-d .y, 0, d .x), s);
-
-		normal += normalize (n);
-	}
-
-	return waves != 0 ? normalize (normal) : vec3 (0.0, 1.0, 0.0);
-}
-
-void
-main ()
-{
-	vec4 vertex = gl_Vertex;
-	vertex .y   = getWaveHeight (vec2 (vertex .x, vertex .z));
-	gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * vertex;
-
-	vec3 eye    = position - vertex .xyz / vertex .w;
-	vec3 normal = getWaveNormal (vec2 (vertex .x, vertex .z));
-	texCoord    = -reflect (eye, normal);
-}
-]]> 
-                </ShaderPart>
-                <ShaderPart DEF='TitaniaWaterFragment'
-                    type='FRAGMENT'>
-<![CDATA[data:text/plain,
-#version 120
-
-precision mediump float;
-
-uniform float       transparency;
-uniform samplerCube texture;
-
-varying vec3 texCoord;
-
-void
-main ()
-{
-	vec3 color   = vec3 (textureCube (texture, texCoord));
-	gl_FragColor = vec4 (color, 1.0 - transparency);
-}
-]]> 
-                </ShaderPart>
               </ComposedShader>
               <ComposedShader DEF='CobwebWaterShader'
                   language='GLSL'>
@@ -408,7 +320,7 @@ main ()
                 <field accessType='inputOutput' type='SFVec3f' name='position' value='68.8916 46.8921 120.146'/>
                 <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.222428, 0.164404, 0.096708, 0.096708, 0.096708'/>
                 <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.6395, 1.45984, 0.64099, 0.551695, 0.432567'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.872785 0.690181, 0.577615 0.607014, 0.00125058 0.251584, 0.493479 0.909703, 0.295259 0.282825'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.882667 0.11112, 0.678751 0.182917, 0.450011 0.643528, 0.496523 0.398465, 0.357832 0.00919326'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture USE='_4'/>
                 </field>

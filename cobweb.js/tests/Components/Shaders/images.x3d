@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/images.x3d'/>
-    <meta name='modified' content='Fri, 09 Sep 2016 16:48:11 GMT'/>
+    <meta name='modified' content='Sat, 10 Sep 2016 10:08:37 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -66,19 +66,14 @@
               reference='http://titania.create3000.de'/>
           <MetadataSet DEF='children' containerField='value'
               name='children'
-              reference='http://titania.create3000.de'/>
-        </MetadataSet>
-      </MetadataSet>
-    </WorldInfo>
-    <Viewpoint
-        position='0 0 12.1851'/>
-    <Transform DEF='Rectangle2D'
-        translation='-5 0 0'>
-      <Shape>
-        <Appearance>
-          <ComposedShader>
-            <field accessType='inputOutput' type='SFImage' name='image' value='2 2 4 0x800000ff 0xff00ff 0xffff 0x80808080'/>
-            <ShaderPart DEF='SFImageVertexShader'>
+              reference='http://titania.create3000.de'>
+            <Transform DEF='Rectangle2D' containerField='value'
+                translation='-5 0 0'>
+              <Shape>
+                <Appearance>
+                  <ComposedShader>
+                    <field accessType='inputOutput' type='SFImage' name='image' value='2 2 4 0x800000ff 0xff00ff 0xffff 0x80808080'/>
+                    <ShaderPart DEF='SFImageVertexShader'>
 <![CDATA[data:text/plain,
 
 precision mediump float;
@@ -99,9 +94,9 @@ main ()
 	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * x3d_Vertex;
 }
 ]]> 
-            </ShaderPart>
-            <ShaderPart DEF='SFImageFragmentShader'
-                type='FRAGMENT'>
+                    </ShaderPart>
+                    <ShaderPart DEF='SFImageFragmentShader'
+                        type='FRAGMENT'>
 <![CDATA[data:text/plain,
 
 precision mediump float;
@@ -148,12 +143,19 @@ main ()
 	                     floor (b) / 256.0,
 	                     floor (a) / 256.0);
 }]]> 
-            </ShaderPart>
-          </ComposedShader>
-        </Appearance>
-        <Rectangle2D/>
-      </Shape>
-    </Transform>
+                    </ShaderPart>
+                  </ComposedShader>
+                </Appearance>
+                <Rectangle2D/>
+              </Shape>
+            </Transform>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Viewpoint
+        position='0 0 12.1851'/>
+    <Transform USE='Rectangle2D'/>
     <Transform DEF='Rectangle2D_1'
         translation='-2 0 0'>
       <Shape>
@@ -332,5 +334,20 @@ main ()
     </Transform>
     <Background DEF='Gray'
         skyColor='0.2 0.2 0.2'/>
+    <Transform DEF='Rectangle2D_3'
+        translation='0 -3 -1.086e-05'>
+      <Shape>
+        <IndexedFaceSet
+            texCoordIndex='0, 1, 2, 3, -1'
+            coordIndex='0, 1, 2, 3, -1'>
+          <Color
+              color='1 0 0'/>
+          <TextureCoordinate
+              point='0 0, 1 0, 1 1, 0 1'/>
+          <Coordinate
+              point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+        </IndexedFaceSet>
+      </Shape>
+    </Transform>
   </Scene>
 </X3D>
