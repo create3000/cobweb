@@ -294,7 +294,7 @@ function ($,
 			this .collisionTime += performance .now () - t0;
 			return translation;
 		},
-		getDistance: function (translation)
+		getDistance: function (direction)
 		{
 			try
 			{
@@ -315,10 +315,10 @@ function ($,
 
 				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, zNear, zFar, projectionMatrix);
 
-				// Translate camera to user position and to look in the direction of the translation.
+				// Translate camera to user position and to look in the direction of the direction.
 
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
-				rotation .setFromToVec (zAxis, vector .assign (translation) .negate ()) .multRight (localOrientation);
+				rotation .setFromToVec (zAxis, vector .assign (direction) .negate ()) .multRight (localOrientation);
 				//viewpoint .straightenHorizon (rotation);
 
 				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());

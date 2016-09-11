@@ -72,6 +72,8 @@ function ($,
 
 		this .addType (X3DConstants .IndexedLineSet);
 
+		this .setGeometryType (1);
+
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;

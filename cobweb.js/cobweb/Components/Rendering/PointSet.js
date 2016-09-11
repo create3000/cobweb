@@ -74,6 +74,8 @@ function ($,
 
 		this .addType (X3DConstants .PointSet);
 
+		this .setGeometryType (0);
+
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;

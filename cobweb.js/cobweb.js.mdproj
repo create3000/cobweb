@@ -1218,6 +1218,7 @@
     <None Include="cobweb\Browser\Shaders\Shader.js" />
     <None Include="license.txt" />
     <None Include="license.pl" />
+    <None Include="tests\Components\Navigation\Depth.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

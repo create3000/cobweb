@@ -144,7 +144,7 @@ function ($,
 			{
 				var geometry = this .getGeometry ();
 
-				if (geometry .isLineGeometry ())
+				if (geometry .getGeometryType () < 2)
 					return;
 
 				var

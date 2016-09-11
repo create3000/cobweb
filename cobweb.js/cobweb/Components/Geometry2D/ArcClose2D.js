@@ -78,6 +78,8 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ArcClose2D);
+
+		this .setGeometryType (2);
 	}
 
 	ArcClose2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -212,20 +214,6 @@ function ($,
 			this .getMax () .set ( radius,  radius, 0);	
 	
 			this .setSolid (this .solid_ .getValue ());
-		},
-		display: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .display .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
 		},
 	});
 

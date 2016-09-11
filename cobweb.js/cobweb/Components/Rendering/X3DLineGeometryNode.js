@@ -72,10 +72,6 @@ function ($,
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 	{
 		constructor: X3DLineGeometryNode,
-		isLineGeometry: function ()
-		{
-			return true;
-		},
 		setShader: function (value)
 		{
 			this .shader = value;
@@ -95,6 +91,7 @@ function ($,
 
 			// Setup shader.
 
+			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .getColors () .length;
 			shader .setLocalUniforms (context);
 
@@ -133,6 +130,7 @@ function ($,
 
 			// Setup shader.
 
+			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .colors .length;
 			shader .setLocalUniforms (context);
 

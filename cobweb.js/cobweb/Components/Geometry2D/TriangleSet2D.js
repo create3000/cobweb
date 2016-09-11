@@ -76,6 +76,8 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleSet2D);
+
+		this .setGeometryType (2);
 	}
 
 	TriangleSet2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -130,20 +132,6 @@ function ($,
 				                 0,
 				                 1);
 			}
-		},
-		display: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .display .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
 		},
 	});
 

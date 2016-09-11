@@ -69,7 +69,6 @@ function ($,
 	{
 		constructor: X3DShaderNode,
 		custom: true,
-		geometryTypeValue: 3,
 		setCustom: function (value)
 		{
 			this .custom = value;
@@ -80,22 +79,13 @@ function ($,
 		},
 		setGeometryType: function (value)
 		{
-			this .geometryTypeValue = value;
-
-			this .use ();
-			this .getBrowser () .getContext () .uniform1i (this .geometryType, value);
-
-			this .setShading (this .getBrowser () .getBrowserOptions () .Shading_ .getValue ());
+			this .setShading (value, this .getBrowser () .getBrowserOptions () .Shading_ .getValue ());
 		},
-		getGeometryType: function ()
-		{
-			return this .geometryTypeValue;
-		},
-		setShading: function (shading)
+		setShading: function (geometryType, shading)
 		{
 			var gl = this .getBrowser () .getContext ();
 
-			switch (this .geometryTypeValue)
+			switch (geometryType)
 			{
 				case 0:
 				{

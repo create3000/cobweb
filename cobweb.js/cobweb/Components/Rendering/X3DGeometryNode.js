@@ -100,6 +100,7 @@ function ($,
 		this .addChildren ("transparent",  new Fields .SFBool ());
 		this .addChildren ("bbox_changed", new Fields .SFTime ());
 
+		this .geometryType        = 3;
 		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate ();
 	}
 
@@ -157,7 +158,7 @@ function ($,
 			this .vertexArray     = new Float32Array ();
 			this .planes          = [ ];
 
-			if (! this .isLineGeometry ())
+			if (this .geometryType > 1)
 			{
 				for (var i = 0; i < 5; ++ i)
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
@@ -169,9 +170,13 @@ function ($,
 		{
 			return false;
 		},
-		isLineGeometry: function ()
+		setGeometryType: function (value)
 		{
-			return false;
+			this .geometryType = value;
+		},
+		getGeometryType: function ()
+		{
+			return this .geometryType;
 		},
 		getBBox: function ()
 		{
@@ -393,7 +398,7 @@ function ($,
 		},
 		set_shading__: function (shading)
 		{
-			if (this .isLineGeometry ())
+			if (this .geometryType < 2)
 				return;
 			
 			var flatShading = shading .getValue () === "FLAT";
@@ -456,7 +461,7 @@ function ($,
 
 			this .bbox_changed_ .addEvent ();
 
-			if (! this .isLineGeometry ())
+			if (this .geometryType > 1)
 			{
 				var
 					min = this .min,
@@ -546,6 +551,7 @@ function ($,
 
 			// Setup shader.
 
+			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
 			shader .setLocalUniforms (context);
 
@@ -628,6 +634,7 @@ function ($,
 
 			// Setup shader.
 
+			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
 			shader .setLocalUniforms (context);
 

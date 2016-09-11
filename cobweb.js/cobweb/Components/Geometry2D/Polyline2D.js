@@ -74,6 +74,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polyline2D);
+
+		this .setGeometryType (1);
 	}
 
 	Polyline2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),

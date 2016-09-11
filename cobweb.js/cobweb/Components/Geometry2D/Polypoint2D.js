@@ -75,6 +75,8 @@ function ($,
 
 		this .addType (X3DConstants .Polypoint2D);
 
+		this .setGeometryType (0);
+
 		this .transparent_ = true;
 	}
 

@@ -462,24 +462,28 @@ function ($,
 			{
 				case POINT:
 				{
-					this .shader = this .getBrowser () .getPointShader ()
+					this .shaderGeometryType = 0;
+					this .shader             = this .getBrowser () .getPointShader ()
 					break;
 				}
 				case LINE:
 				{
-					this .shader = this .getBrowser () .getLineShader ()
+					this .shaderGeometryType = 1;
+					this .shader             = this .getBrowser () .getLineShader ()
 					break;
 				}
 				case TRIANGLE:
 				case QUAD:
 				case SPRITE:
 				{
-					this .shader = this .getBrowser () .getDefaultShader ()
+					this .shaderGeometryType = 3;
+					this .shader             = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 				case GEOMETRY:
 				{
-					this .shader = this .getBrowser () .getDefaultShader ()
+					this .shaderGeometryType = 3; // determine from geometry node.
+					this .shader             = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 			}
@@ -1172,7 +1176,8 @@ function ($,
 					return;
 	
 				// Setup shader.
-	
+
+				context .geometryType  = this .shaderGeometryType;
 				context .colorMaterial = this .colorMaterial;
 				shader .setLocalUniforms (context);
 	

@@ -227,9 +227,9 @@ function (Fields,
 
 			// Configure custom shaders
 
-			this .pointShader   .setShading (type);
-			this .lineShader    .setShading (type);
-			this .defaultShader .setShading (type);
+			this .pointShader   .setGeometryType (0);
+			this .lineShader    .setGeometryType (1);
+			this .defaultShader .setGeometryType (3);
 
 			var shaders = this .getShaders ();
 

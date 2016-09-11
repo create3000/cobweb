@@ -74,8 +74,6 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Disk2D);
-
-		this .lineGeometry = false;
 	}
 
 	Disk2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -115,10 +113,6 @@ function ($,
 			else
 				this .getBrowser () .getDisk2DOptions () .removeInterest (this, "eventsProcessed");
 		},
-		isLineGeometry: function ()
-		{
-			return this .lineGeometry;
-		},
 		build: function ()
 		{
 			var
@@ -155,7 +149,7 @@ function ($,
 				this .getMin () .set (-radius, -radius, 0);
 				this .getMax () .set ( radius,  radius, 0);
 
-				this .lineGeometry = true;
+				this .setGeometryType (1);
 				return;
 			}
 
@@ -182,12 +176,14 @@ function ($,
 
 				this .getMin () .set (-radius, -radius, 0);
 				this .getMax () .set ( radius,  radius, 0);
-		
+
+				this .setGeometryType (2);
 				this .setSolid (this .solid_ .getValue ());
 
-				this .lineGeometry = false;
 				return;
 			}
+
+			// Disk with hole
 
 			var
 				maxRadius  = Math .abs (Math .max (innerRadius, outerRadius)),
@@ -227,29 +223,18 @@ function ($,
 			this .getMin () .set (-maxRadius, -maxRadius, 0);
 			this .getMax () .set ( maxRadius,  maxRadius, 0);
 	
+			this .setGeometryType (2);
 			this .setSolid (this .solid_ .getValue ());
-
-			this .lineGeometry = false;
 		},
 		display: function (context)
 		{
-			if (this .isLineGeometry ())
+			if (this .getGeometryType () === 1)
 			{
 				X3DLineGeometryNode .prototype .display .call (this, context);
 			}
 			else
 			{
-				var
-					browser = this .getBrowser (),
-					gl      = browser .getContext (),
-					shader  = browser .getShader ();
-	
-				shader .use ();
-				gl .uniform1i (shader .geometryType, 2);
-	
 				X3DGeometryNode .prototype .display .call (this, context);
-	
-				gl .uniform1i (shader .geometryType, 3);
 			}
 		},
 	});

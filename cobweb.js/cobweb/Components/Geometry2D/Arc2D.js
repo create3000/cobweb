@@ -76,6 +76,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Arc2D);
+
+		this .setGeometryType (1);
 	}
 
 	Arc2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),

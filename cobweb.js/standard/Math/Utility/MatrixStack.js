@@ -76,6 +76,15 @@ function ($)
 				else
 					this [top] = this [top - 1] .copy ();
 			},
+			pushMatrix: function (matrix)
+			{
+				var top = ++ this .top;
+
+				if (top < this .length)
+					this [top] .assign (matrix);
+				else
+					this [top] = matrix .copy ();
+			},
 			pop: function ()
 			{
 				-- this .top;
