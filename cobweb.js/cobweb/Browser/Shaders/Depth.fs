@@ -45,7 +45,7 @@ data:text/plain;charset=utf-8,
 //  For Silvio, Joy and Adi.
 
 
-precision mediump float;
+precision highp float;
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
 // 24
@@ -65,10 +65,10 @@ clip ()
 	}
 }
 
-vec3
+vec4
 pack (in float f)
 {
-	vec3 color;
+	vec4 color;
 
 	f *= 255.0;
 	color .r = floor (f);
@@ -81,6 +81,10 @@ pack (in float f)
 	f *= 255.0;
 	color .b = floor (f);
 
+	f -= color .b;
+	f *= 255.0;
+	color .a = floor (f);
+
 	return color / 255.0;
 }
 
@@ -89,5 +93,5 @@ main ()
 {
 	clip ();
 
-	gl_FragColor .rgb = pack (gl_FragCoord .z);
+	gl_FragColor = pack (gl_FragCoord .z);
 }

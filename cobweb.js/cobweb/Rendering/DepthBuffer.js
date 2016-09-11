@@ -62,7 +62,8 @@ define (function ()
 
 		// The frame buffer.
 
-		this .buffer = gl .createFramebuffer ();
+		this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
+		this .buffer     = gl .createFramebuffer ();
 
 		gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
 
@@ -93,7 +94,7 @@ define (function ()
 		if (gl .checkFramebufferStatus (gl .FRAMEBUFFER) !== gl .FRAMEBUFFER_COMPLETE)
 			throw new Error ("Couldn't create frame buffer.");
 
-		gl .bindFramebuffer (gl .FRAMEBUFFER, null);
+		gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
 	}
 
 	DepthBuffer .prototype =
@@ -101,16 +102,15 @@ define (function ()
 		constructor: DepthBuffer,
 		getDistance: function (radius, zNear, zFar)
 		{
-			var gl = this .browser .getContext ();
-
-			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, this .array);
-
 			var
+				gl       = this .browser .getContext (),
 				array    = this .array,
 				distance = Number .POSITIVE_INFINITY,
 				w1       = 2 / (this .width  - 1),
 				h1       = 2 / (this .height - 1),
 				zWidth   = zFar - zNear;
+
+			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, array);
 
 			for (var py = 0, i = 0; py < this .height; ++ py)
 			{
@@ -120,7 +120,7 @@ define (function ()
 			   {
 				   var
 				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4294967295);
+				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625);
 
 					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
 			   }
@@ -131,6 +131,8 @@ define (function ()
 		bind: function ()
 		{
 			var gl = this .browser .getContext ();
+
+			this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
 
 			gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
 
@@ -143,7 +145,7 @@ define (function ()
 		unbind: function ()
 		{
 			var gl = this .browser .getContext ();
-			gl .bindFramebuffer (gl .FRAMEBUFFER, null);
+			gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
 		},
 	};
 
