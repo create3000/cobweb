@@ -546,7 +546,7 @@ function ($,
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
@@ -557,30 +557,30 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .texCoord >= 0)
+			if (shader .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .texCoord);
+				gl .enableVertexAttribArray (shader .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .normal >= 0)
+			if (shader .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .normal);
+				gl .enableVertexAttribArray (shader .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -617,10 +617,10 @@ function ($,
 				}
 			}
 
-			if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
-			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
-			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
+			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -629,7 +629,7 @@ function ($,
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
@@ -640,30 +640,30 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .texCoord >= 0)
+			if (shader .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .texCoord);
+				gl .enableVertexAttribArray (shader .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .normal >= 0)
+			if (shader .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .normal);
+				gl .enableVertexAttribArray (shader .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -695,10 +695,10 @@ function ($,
 						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+						gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
 					}
 	
-					gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+					gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 					for (var i = 0, length = this .vertexCount; i < length; i += 3)
 						gl .drawArrays (shader .primitiveMode, i, 3);
@@ -727,10 +727,10 @@ function ($,
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 
 						gl .enable (gl .CULL_FACE);
 						gl .cullFace (gl .FRONT);
@@ -762,20 +762,20 @@ function ($,
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 
 						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
 					}
 				}
 			}
 
-			if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
-			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
-			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
+			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		collision: function (shader)
 		{
@@ -785,13 +785,13 @@ function ($,
 
 			// Setup vertex attributes.
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{

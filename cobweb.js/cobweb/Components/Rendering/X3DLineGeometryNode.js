@@ -86,7 +86,7 @@ function ($,
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
@@ -97,23 +97,23 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
 			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
 
-			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -125,7 +125,7 @@ function ($,
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
@@ -136,16 +136,16 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
@@ -164,13 +164,13 @@ function ($,
 
 				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
 
-				gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 				gl .drawArrays (primitiveMode, 0, this .vertexCount);
 			}
 
-			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 	});
 

@@ -86,19 +86,19 @@ function ($,
 
 		this .addType (X3DConstants .ComposedShader);
 
-		this .loadSensor            = new LoadSensor (executionContext);
-		this .clipPlane             = [ ];
-		this .lightType             = [ ];
-		this .lightOn               = [ ];
-		this .lightColor            = [ ];
-		this .lightIntensity        = [ ];
-		this .lightAmbientIntensity = [ ];
-		this .lightAttenuation      = [ ];
-		this .lightLocation         = [ ];
-		this .lightDirection        = [ ];
-		this .lightBeamWidth        = [ ];
-		this .lightCutOffAngle      = [ ];
-		this .lightRadius           = [ ];
+		this .loadSensor                = new LoadSensor (executionContext);
+		this .x3d_ClipPlane             = [ ];
+		this .x3d_LightType             = [ ];
+		this .x3d_LightOn               = [ ];
+		this .x3d_LightColor            = [ ];
+		this .x3d_LightIntensity        = [ ];
+		this .x3d_LightAmbientIntensity = [ ];
+		this .x3d_LightAttenuation      = [ ];
+		this .x3d_LightLocation         = [ ];
+		this .x3d_LightDirection        = [ ];
+		this .x3d_LightBeamWidth        = [ ];
+		this .x3d_LightCutOffAngle      = [ ];
+		this .x3d_LightRadius           = [ ];
 	}
 
 	ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
@@ -231,68 +231,68 @@ function ($,
 			this .x3D_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
-				this .clipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
+				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
 
-			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
-			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
-			this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
+			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
+			this .x3d_FogColor           = gl .getUniformLocation (program, "x3d_FogColor");
+			this .x3d_FogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
 
-			this .linewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
+			this .x3d_LinewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
 
-			this .lighting      = gl .getUniformLocation (program, "x3d_Lighting");
-			this .colorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
+			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
+			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
 
 			for (var i = 0; i < this .maxLights; ++ i)
 			{
-				this .lightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
-				this .lightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
-				this .lightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
-				this .lightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
-				this .lightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
-				this .lightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
-				this .lightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
-				this .lightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
-				this .lightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
-				this .lightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
+				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
+				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
+				this .x3d_LightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
+				this .x3d_LightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
+				this .x3d_LightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
+				this .x3d_LightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
+				this .x3d_LightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
+				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
+				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
+				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
 			}
 
-			this .separateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
+			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
 
-			this .ambientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
-			this .diffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
-			this .specularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
-			this .emissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
-			this .shininess        = gl .getUniformLocation (program, "x3d_Shininess");
-			this .transparency     = gl .getUniformLocation (program, "x3d_Transparency");
+			this .x3d_AmbientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
+			this .x3d_DiffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
+			this .x3d_SpecularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
+			this .x3d_EmissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
+			this .x3d_Shininess        = gl .getUniformLocation (program, "x3d_Shininess");
+			this .x3d_Transparency     = gl .getUniformLocation (program, "x3d_Transparency");
 
-			this .backAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
-			this .backDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
-			this .backSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
-			this .backEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
-			this .backShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
-			this .backTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
+			this .x3d_BackAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
+			this .x3d_BackDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
+			this .x3d_BackSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
+			this .x3d_BackEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
+			this .x3d_BackShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
+			this .x3d_BackTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
 
-			this .textureType    = gl .getUniformLocation (program, "x3d_TextureType");
-			this .texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
-			this .cubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
+			this .x3d_TextureType    = gl .getUniformLocation (program, "x3d_TextureType");
+			this .x3d_Texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
+			this .x3d_CubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
 
-			this .texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
+			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
 
-			this .textureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
-			this .projectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
-			this .modelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
+			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
+			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
+			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
 			
-			this .color    = gl .getAttribLocation (program, "x3d_Color");
-			this .texCoord = gl .getAttribLocation (program, "x3d_TexCoord");
-			this .normal   = gl .getAttribLocation (program, "x3d_Normal");
-			this .vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
+			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
+			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
+			this .x3d_Normal   = gl .getAttribLocation (program, "x3d_Normal");
+			this .x3d_Vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
 
-			gl .uniform1f  (this .linewidthScaleFactor, 1);
-			gl .uniform1iv (this .textureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .texture,              new Int32Array ([0])); // depreciated
-			gl .uniform1iv (this .texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
-			gl .uniform1iv (this .cubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
+			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
+			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
+			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
+			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
+			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
 		},
 		setGlobalUniforms: function ()
 		{
@@ -303,7 +303,7 @@ function ($,
 
 			shader = this;
 			gl .useProgram (this .program);
-			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, browser .getProjectionMatrixArray ());
 
 			// Set global lights
 
@@ -342,11 +342,11 @@ function ($,
 					clipPlaneNodes [i] .use (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .clipPlane [i], this .noClipPlane);
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
 			}
 			else
 			{
-				gl .uniform4fv (this .clipPlane [0], this .noClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
 			}
 
 			// Fog, there is always one
@@ -364,17 +364,17 @@ function ($,
 				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
 
 				gl .lineWidth (linewidthScaleFactor);
-				gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, linewidthScaleFactor);
 			}
 			else
 			{
 				gl .lineWidth (1);
-				gl .uniform1f (this .linewidthScaleFactor, 1);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, 1);
 			}
 	
 			// Material
 
-			gl .uniform1i (this .colorMaterial, context .colorMaterial);
+			gl .uniform1i (this .x3d_ColorMaterial, context .colorMaterial);
 
 			if (materialNode)
 			{
@@ -388,30 +388,30 @@ function ($,
 					localLights [l] .use (gl, this, i);
 
 				if (numLights < this .maxLights)
-					gl .uniform1i (this .lightType [numLights], 0);
+					gl .uniform1i (this .x3d_LightType [numLights], 0);
 
 				// Material
 
-				gl .uniform1i  (this .lighting,         true);
-				gl .uniform1f  (this .ambientIntensity, materialNode .ambientIntensity);
-				gl .uniform3fv (this .diffuseColor,     materialNode .diffuseColor);
-				gl .uniform3fv (this .specularColor,    materialNode .specularColor);
-				gl .uniform3fv (this .emissiveColor,    materialNode .emissiveColor);
-				gl .uniform1f  (this .shininess,        materialNode .shininess);
-				gl .uniform1f  (this .transparency,     materialNode .transparency);
+				gl .uniform1i  (this .x3d_Lighting,         true);
+				gl .uniform1f  (this .x3d_AmbientIntensity, materialNode .ambientIntensity);
+				gl .uniform3fv (this .x3d_DiffuseColor,     materialNode .diffuseColor);
+				gl .uniform3fv (this .x3d_SpecularColor,    materialNode .specularColor);
+				gl .uniform3fv (this .x3d_EmissiveColor,    materialNode .emissiveColor);
+				gl .uniform1f  (this .x3d_Shininess,        materialNode .shininess);
+				gl .uniform1f  (this .x3d_Transparency,     materialNode .transparency);
 
 				if (materialNode .getSeparateBackColor ())
 				{
-					gl .uniform1i  (this .separateBackColor,    true);
-					gl .uniform1f  (this .backAmbientIntensity, materialNode .backAmbientIntensity);
-					gl .uniform3fv (this .backDiffuseColor,     materialNode .backDiffuseColor);
-					gl .uniform3fv (this .backSpecularColor,    materialNode .backSpecularColor);
-					gl .uniform3fv (this .backEmissiveColor,    materialNode .backEmissiveColor);
-					gl .uniform1f  (this .backShininess,        materialNode .backShininess);
-					gl .uniform1f  (this .backTransparency,     materialNode .backTransparency);
+					gl .uniform1i  (this .x3d_SeparateBackColor,    true);
+					gl .uniform1f  (this .x3d_BackAmbientIntensity, materialNode .backAmbientIntensity);
+					gl .uniform3fv (this .x3d_BackDiffuseColor,     materialNode .backDiffuseColor);
+					gl .uniform3fv (this .x3d_BackSpecularColor,    materialNode .backSpecularColor);
+					gl .uniform3fv (this .x3d_BackEmissiveColor,    materialNode .backEmissiveColor);
+					gl .uniform1f  (this .x3d_BackShininess,        materialNode .backShininess);
+					gl .uniform1f  (this .x3d_BackTransparency,     materialNode .backTransparency);
 				}
 				else
-					gl .uniform1i (this .separateBackColor, false);
+					gl .uniform1i (this .x3d_SeparateBackColor, false);
 
 				try
 				{
@@ -421,16 +421,16 @@ function ($,
 					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 					Matrix3 .prototype .inverse .call (normalMatrix);
-					gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
 				}
 				catch (error)
 				{
-					gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
 				}
 			}
 			else
 			{
-				gl .uniform1i (this .lighting, false);
+				gl .uniform1i (this .x3d_Lighting, false);
 
 				if (this .getCustom ())
 				{
@@ -442,11 +442,11 @@ function ($,
 						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
 					}
 					catch (error)
 					{
-						gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
 					}
 				}
 			}
@@ -456,21 +456,21 @@ function ($,
 				textureNode .traverse (gl, this, 0);
 				textureTransformNode [0] .traverse ();
 
-				gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
+				gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 			}
 			else
 			{
 				this .textureTypeArray [0] = 0;
-				gl .uniform1iv (this .textureType, this .textureTypeArray);
+				gl .uniform1iv (this .x3d_TextureType, this .textureTypeArray);
 
 				if (this .getCustom ())
 				{
 					textureTransformNode [0] .traverse ();
-					gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
+					gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 				}
 			}
 
-			gl .uniformMatrix4fv (this .modelViewMatrix, false, modelViewMatrix);
+			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
 		use: function ()
 		{

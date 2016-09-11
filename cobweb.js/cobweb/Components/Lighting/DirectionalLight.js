@@ -90,11 +90,11 @@ function ($,
 		},
 		use: function (gl, shader, i)
 		{
-			gl .uniform1i (shader .lightType [i],             1);
-			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform1i (shader .x3d_LightType [i],             1);
+			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shader .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
 		recycle: function ()
 		{

@@ -228,7 +228,7 @@ function ($,
 		},
 		display: function (context)
 		{
-			if (this .getGeometryType () === 1)
+			if (this .getGeometryType () < 2)
 			{
 				X3DLineGeometryNode .prototype .display .call (this, context);
 			}

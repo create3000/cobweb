@@ -1172,7 +1172,7 @@ function ($,
 				if (shader === browser .getDefaultShader ())
 					shader = this .shader;
 	
-				if (shader .vertex < 0 || this .numParticles === 0)
+				if (shader .x3d_Vertex < 0 || this .numParticles === 0)
 					return;
 	
 				// Setup shader.
@@ -1183,30 +1183,30 @@ function ($,
 	
 				// Setup vertex attributes.
 	
-				if (this .colorMaterial && shader .color >= 0)
+				if (this .colorMaterial && shader .x3d_Color >= 0)
 				{
-					gl .enableVertexAttribArray (shader .color);
+					gl .enableVertexAttribArray (shader .x3d_Color);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .texCoordArray .length && shader .texCoord >= 0)
+				if (this .texCoordArray .length && shader .x3d_TexCoord >= 0)
 				{
-					gl .enableVertexAttribArray (shader .texCoord);
+					gl .enableVertexAttribArray (shader .x3d_TexCoord);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .normalArray .length && shader .normal >= 0)
+				if (this .normalArray .length && shader .x3d_Normal >= 0)
 				{
-					gl .enableVertexAttribArray (shader .normal);
+					gl .enableVertexAttribArray (shader .x3d_Normal);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 				}
 	
-				gl .enableVertexAttribArray (shader .vertex);
+				gl .enableVertexAttribArray (shader .x3d_Vertex);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 	
 				var testWireframe = false;
 
@@ -1242,8 +1242,8 @@ function ($,
 					gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
 				}
 	
-				if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-				gl .disableVertexAttribArray (shader .vertex);
+				if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+				gl .disableVertexAttribArray (shader .x3d_Vertex);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)

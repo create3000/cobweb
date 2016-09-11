@@ -346,7 +346,7 @@ function ($,
 				collisionShapes = this .collisionShapes;
 			
 			shader .use ();
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, browser .getProjectionMatrixArray ());
 
 			this .depthBuffer .bind ();
 
@@ -376,14 +376,14 @@ function ($,
 						clipPlanes [c] .use (gl, shader, c);
 	
 					if (c < shader .maxClipPlanes)
-						gl .uniform4fv (shader .clipPlane [c], shader .noClipPlane);
+						gl .uniform4fv (shader .x3d_ClipPlane [c], shader .noClipPlane);
 				}
 				else
-					gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+					gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
 				// modelViewMatrix
 	
-				gl .uniformMatrix4fv (shader .modelViewMatrix, false, context .modelViewMatrix);
+				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, context .modelViewMatrix);
 
 				// Draw
 	

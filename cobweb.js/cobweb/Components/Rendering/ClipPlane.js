@@ -125,7 +125,7 @@ function ($,
 				plane  = this .plane,
 				normal = plane .normal;
 
-			gl .uniform4f (shader .clipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+			gl .uniform4f (shader .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
 		recycle: function ()
 		{

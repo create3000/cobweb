@@ -563,15 +563,15 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
+					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Setup context.
 	
@@ -582,13 +582,13 @@ function ($,
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .color);
+			gl .enableVertexAttribArray (shader .x3d_Color);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw.
 
@@ -596,8 +596,8 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_Color);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		drawCube: function ()
 		{
@@ -617,30 +617,30 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
+					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
-			gl .uniform1i (shader .fogType,       0);
-			gl .uniform1i (shader .colorMaterial, false);
-			gl .uniform1i (shader .lighting,      false);
+			gl .uniform1i (shader .x3d_FogType,       0);
+			gl .uniform1i (shader .x3d_ColorMaterial, false);
+			gl .uniform1i (shader .x3d_Lighting,      false);
 			gl .uniform1i (shader .texturing,     true);
-			gl .uniform1i (shader .textureType,   2);
+			gl .uniform1i (shader .x3d_TextureType,   2);
 
-			gl .uniformMatrix4fv (shader .textureMatrix,    false, this .textureMatrixArray);
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_TextureMatrix,    false, this .textureMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .texCoord);
+			gl .enableVertexAttribArray (shader .x3d_TexCoord);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
-			gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 
 			// Draw.
 
@@ -653,8 +653,8 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .texCoord);
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_TexCoord);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		drawRectangle: function (gl, shader, texture, buffer)
 		{
@@ -668,7 +668,7 @@ function ($,
 					gl .disable (gl .BLEND);
 
 				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 				// Draw.
 

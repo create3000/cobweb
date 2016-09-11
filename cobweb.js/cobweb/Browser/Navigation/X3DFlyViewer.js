@@ -450,14 +450,14 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			shader .use ();
 
-			gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+			gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
-			gl .uniform1i (shader .fogType,       0);
-			gl .uniform1i (shader .colorMaterial, false);
-			gl .uniform1i (shader .lighting,      true);
+			gl .uniform1i (shader .x3d_FogType,       0);
+			gl .uniform1i (shader .x3d_ColorMaterial, false);
+			gl .uniform1i (shader .x3d_Lighting,      true);
 
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 			
 			gl .disable (gl .DEPTH_TEST);
 
@@ -466,16 +466,16 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			gl .uniform3fv (shader .emissiveColor, black);
 			gl .uniform1f  (shader .transparency,  0);
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .lineBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 
 			gl .lineWidth (1);
 			gl .uniform3fv (shader .emissiveColor, white);
 
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 			gl .enable (gl .DEPTH_TEST);
 
 			gl .lineWidth (lineWidth);
