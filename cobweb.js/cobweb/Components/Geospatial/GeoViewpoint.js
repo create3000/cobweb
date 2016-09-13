@@ -276,7 +276,7 @@ function ($,
 		getProjectionMatrix: function (zNear, zFar, viewport, limit)
 		{
 			if (limit)
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
 				
 			// Linear interpolate zNear and zFar
 
@@ -284,7 +284,7 @@ function ($,
 				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
 				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
 
-			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport [2], viewport [3], this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
 		},
 	});
 

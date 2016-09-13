@@ -48711,9 +48711,12 @@ define ('standard/Math/Geometry/Camera',[],function ()
 			                    A, B, C, -1,
 			                    0, 0, D, 0);
 		},
-		perspective: function (fieldOfView, zNear, zFar, width, height, matrix)
+		perspective: function (fieldOfView, zNear, zFar, viewport, matrix)
 		{
-			var ratio  = Math .tan (fieldOfView / 2) * zNear;
+			var
+				width  = viewport [2] - viewport [0],
+				height = viewport [3] - viewport [1],
+				ratio  = Math .tan (fieldOfView / 2) * zNear;
 
 			if (width > height)
 			{
@@ -50568,7 +50571,7 @@ function ($,
 		},
 		getProjectionMatrix: function (zNear, zFar, viewport)
 		{
-			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
 		},
 	});
 
@@ -52470,7 +52473,7 @@ function ($,
 		getProjectionMatrix: function (zNear, zFar, viewport, limit)
 		{
 			if (limit)
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
 				
 			// Linear interpolate zNear and zFar
 
@@ -52478,7 +52481,7 @@ function ($,
 				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
 				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
 
-			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport [2], viewport [3], this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
 		},
 	});
 
