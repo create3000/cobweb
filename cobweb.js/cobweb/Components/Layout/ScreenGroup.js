@@ -59,7 +59,6 @@ define ("cobweb/Components/Layout/ScreenGroup",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/ViewVolume",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -70,8 +69,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
-          ViewVolume,
-          Algorithm)
+          ViewVolume)
 {
 "use strict";
 

@@ -51,14 +51,10 @@ define ([
 	"cobweb/Components/Texturing/TextureProperties",
 	"cobweb/Components/Texturing/TextureTransform",
 	"cobweb/Components/Texturing/TextureCoordinate",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Utility/MatrixStack",
 ],
 function (TextureProperties,
           TextureTransform,
-          TextureCoordinate,
-          Matrix4,
-          MatrixStack)
+          TextureCoordinate)
 {
 "use strict";
 

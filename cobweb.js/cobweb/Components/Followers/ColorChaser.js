@@ -57,7 +57,6 @@ define ("cobweb/Components/Followers/ColorChaser",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color3",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -66,8 +65,7 @@ function ($,
           X3DChaserNode, 
           X3DConstants,
           Color3,
-          Vector3,
-          Algorithm)
+          Vector3)
 {
 "use strict";
 

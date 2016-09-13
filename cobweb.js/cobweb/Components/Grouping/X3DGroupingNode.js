@@ -54,15 +54,13 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
 	       Fields,
           X3DChildNode, 
           X3DBoundedObject, 
           TraverseType,
-          X3DConstants,
-          Box3)
+          X3DConstants)
 {
 "use strict";
 

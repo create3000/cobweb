@@ -47,10 +47,7 @@
  ******************************************************************************/
 
 
-define ([
-	"standard/Math/Numbers/Matrix4",
-],
-function (Matrix4)
+define (function ()
 {
 "use strict";
 
@@ -75,12 +72,9 @@ function (Matrix4)
 			                    A, B, C, -1,
 			                    0, 0, D, 0);
 		},
-		perspective: function (fieldOfView, zNear, zFar, viewport, matrix)
+		perspective: function (fieldOfView, zNear, zFar, width, height, matrix)
 		{
-			var
-				width  = viewport [2],
-				height = viewport [3],
-				ratio  = Math .tan (fieldOfView / 2) * zNear;
+			var ratio  = Math .tan (fieldOfView / 2) * zNear;
 
 			if (width > height)
 			{

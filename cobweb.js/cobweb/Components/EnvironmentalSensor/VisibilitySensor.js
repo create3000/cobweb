@@ -58,7 +58,6 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -68,8 +67,7 @@ function ($,
           TraverseType,
           X3DConstants,
           Vector3,
-          Matrix4,
-          Box3)
+          Matrix4)
 {
 "use strict";
 

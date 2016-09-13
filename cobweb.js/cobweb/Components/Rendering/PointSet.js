@@ -55,7 +55,6 @@ define ([
 	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Color4",
 ],
 function ($,
           Fields,
@@ -63,8 +62,7 @@ function ($,
           FieldDefinitionArray,
           X3DLineGeometryNode,
           X3DCast,
-          X3DConstants,
-          Color4)
+          X3DConstants)
 {
 "use strict";
 

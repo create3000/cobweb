@@ -58,7 +58,6 @@ define ("cobweb/Components/CADGeometry/CADFace",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -67,8 +66,7 @@ function ($,
           X3DProductStructureChildNode, 
           X3DBoundedObject,
           X3DCast,
-          X3DConstants,
-          Box3)
+          X3DConstants)
 {
 "use strict";
 

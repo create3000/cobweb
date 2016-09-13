@@ -55,15 +55,13 @@ define ("cobweb/Components/Geometry3D/Sphere",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGeometryNode, 
-          X3DConstants,
-          Vector3)
+          X3DConstants)
 {
 "use strict";
 

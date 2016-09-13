@@ -54,15 +54,13 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DConstants,
-          Vector2)
+          X3DConstants)
 {
 "use strict";
 

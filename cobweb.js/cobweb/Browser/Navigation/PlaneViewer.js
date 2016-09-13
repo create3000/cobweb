@@ -53,11 +53,10 @@ define ([
 	"cobweb/Components/Navigation/Viewpoint",
 	"cobweb/Components/Geospatial/GeoViewpoint",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
 	"lib/gettext",
 	"jquery-mousewheel",
 ],
-function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
+function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 {
 "use strict";
 	

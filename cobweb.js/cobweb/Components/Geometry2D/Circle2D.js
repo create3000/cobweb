@@ -55,15 +55,13 @@ define ("cobweb/Components/Geometry2D/Circle2D",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLineGeometryNode, 
-          X3DConstants,
-          Vector3)
+          X3DConstants)
 {
 "use strict";
 

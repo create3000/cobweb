@@ -57,7 +57,6 @@ define ([
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
-	"standard/Math/Geometry/Camera",
 ],
 function ($,
           X3DBindableNode,
@@ -67,8 +66,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
-          Algorithm,
-          Camera)
+          Algorithm)
 {
 "use strict";
 

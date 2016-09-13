@@ -55,7 +55,6 @@ define ([
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -63,8 +62,7 @@ function ($,
           FieldDefinitionArray,
           X3DGroupingNode, 
           X3DCast,
-          X3DConstants,
-          Box3)
+          X3DConstants)
 {
 "use strict";
 

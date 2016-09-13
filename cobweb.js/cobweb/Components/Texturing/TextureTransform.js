@@ -56,7 +56,6 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Matrix3",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -65,8 +64,7 @@ function ($,
           X3DTextureTransformNode, 
           X3DConstants,
           Vector2,
-          Matrix3,
-          Matrix4)
+          Matrix3)
 {
 "use strict";
 

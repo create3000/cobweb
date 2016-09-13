@@ -25927,15 +25927,13 @@ function ($,
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
 			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
 		},
-		traverse: function ()
+		traverse: function (context)
 		{
-			var browser = this .getBrowser ();
-
-			browser .setLineProperties (this .linePropertiesNode);
-			browser .setMaterial (this .materialNode);
-			browser .setTexture (this .textureNode);
-			browser .getTextureTransform () [0] = this .textureTransformNode;
-			browser .setShader (this .shaderNode || browser .getDefaultShader ());
+			context .linePropertiesNode   = this .linePropertiesNode;
+			context .materialNode         = this .materialNode;
+			context .textureNode          = this .textureNode;
+			context .textureTransformNode = this .textureTransformNode;
+			context .shaderNode           = this .shaderNode || this .getBrowser () .getDefaultShader ();
 		},
 	});
 
@@ -26003,8 +26001,6 @@ function (Appearance)
 	function X3DShapeContext ()
 	{
 		this .defaultAppearance = new Appearance (this);
-		this .lineProperties    = null;
-		this .material          = null;
 	}
 
 	X3DShapeContext .prototype =
@@ -26016,22 +26012,6 @@ function (Appearance)
 		getDefaultAppearance: function ()
 		{
 			return this .defaultAppearance;
-		},
-		setLineProperties: function (value)
-		{
-			this .lineProperties = value;
-		},
-		getLineProperties: function ()
-		{
-			return this .lineProperties;
-		},
-		setMaterial: function (value)
-		{
-			this .material = value;
-		},
-		getMaterial: function ()
-		{
-			return this .material;
 		},
 	};
 
@@ -26361,11 +26341,13 @@ define ('cobweb/Components/Shaders/X3DProgrammableShaderObject',[
 	"cobweb/Fields",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
           X3DCast,
-          X3DConstants)
+          X3DConstants,
+          Matrix3)
 {
 
 
@@ -26374,28 +26356,110 @@ function ($,
 	function X3DProgrammableShaderObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DProgrammableShaderObject);
+
+		this .x3d_ClipPlane             = [ ];
+		this .x3d_LightType             = [ ];
+		this .x3d_LightOn               = [ ];
+		this .x3d_LightColor            = [ ];
+		this .x3d_LightIntensity        = [ ];
+		this .x3d_LightAmbientIntensity = [ ];
+		this .x3d_LightAttenuation      = [ ];
+		this .x3d_LightLocation         = [ ];
+		this .x3d_LightDirection        = [ ];
+		this .x3d_LightBeamWidth        = [ ];
+		this .x3d_LightCutOffAngle      = [ ];
+		this .x3d_LightRadius           = [ ];
 	}
 
 	X3DProgrammableShaderObject .prototype =
 	{
 		constructor: X3DProgrammableShaderObject,
 		initialize: function ()
-		{
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
-			//Must not call set_live__.
-		},
-		set_live__: function ()
-		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				this .addShaderFields ();
-			else
-				this .removeShaderFields ();
-		},
+		{ },
 		hasUserDefinedFields: function ()
 		{
 			return true;
+		},
+		bindAttributeLocations: function (gl, program)
+		{
+			gl .bindAttribLocation (program, 3, "x3d_Color");
+			gl .bindAttribLocation (program, 2, "x3d_TexCoord");
+			gl .bindAttribLocation (program, 1, "x3d_Normal");
+			gl .bindAttribLocation (program, 0, "x3d_Vertex");
+		},
+		getDefaultUniforms: function ()
+		{
+			// Get uniforms and attributes.
+
+			var
+				gl      = this .getBrowser () .getContext (),
+				program = this .getProgram ();
+
+			this .x3d_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
+
+			for (var i = 0; i < this .maxClipPlanes; ++ i)
+				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
+
+			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
+			this .x3d_FogColor           = gl .getUniformLocation (program, "x3d_FogColor");
+			this .x3d_FogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
+
+			this .x3d_LinewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
+
+			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
+			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
+
+			for (var i = 0; i < this .maxLights; ++ i)
+			{
+				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
+				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
+				this .x3d_LightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
+				this .x3d_LightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
+				this .x3d_LightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
+				this .x3d_LightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
+				this .x3d_LightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
+				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
+				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
+				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
+			}
+
+			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
+
+			this .x3d_AmbientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
+			this .x3d_DiffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
+			this .x3d_SpecularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
+			this .x3d_EmissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
+			this .x3d_Shininess        = gl .getUniformLocation (program, "x3d_Shininess");
+			this .x3d_Transparency     = gl .getUniformLocation (program, "x3d_Transparency");
+
+			this .x3d_BackAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
+			this .x3d_BackDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
+			this .x3d_BackSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
+			this .x3d_BackEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
+			this .x3d_BackShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
+			this .x3d_BackTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
+
+			this .x3d_TextureType    = gl .getUniformLocation (program, "x3d_TextureType");
+			this .x3d_Texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
+			this .x3d_CubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
+
+			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
+
+			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
+			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
+			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
+			
+			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
+			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
+			this .x3d_Normal   = gl .getAttribLocation (program, "x3d_Normal");
+			this .x3d_Vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
+
+			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
+			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
+			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
+			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
+			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
 		},
 		addShaderFields: function ()
 		{
@@ -26405,8 +26469,6 @@ function ($,
 					gl                = this .getBrowser () .getContext (),
 					program           = this .getProgram (),
 					userDefinedFields = this .getUserDefinedFields ();
-	
-				this .use ();
 	
 				for (var name in userDefinedFields)
 				{
@@ -26522,8 +26584,6 @@ function ($,
 					program           = this .getProgram (),
 					userDefinedFields = this .getUserDefinedFields ();
 
-				this .use ();
-
 				for (var name in userDefinedFields)
 				{
 					var field = userDefinedFields [name];
@@ -26570,8 +26630,8 @@ function ($,
 
 			if (location)
 			{
-				this .use ();
-	
+				this .use (); // TODO: only in ComposedShader possible.
+
 				switch (field .getType ())
 				{
 					case X3DConstants .SFBool:
@@ -27016,6 +27076,153 @@ function ($,
 
 			return i;
 		},
+		setGlobalUniforms: function (gl, projectionMatrixArray)
+		{
+			var globalLights = this .getBrowser () .getGlobalLights ();
+
+			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
+
+			// Set global lights
+
+			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
+
+			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
+				globalLights [i] .setShaderUniforms (gl, this, i);
+		},
+		setLocalUniforms: function (gl, context)
+		{
+			var
+				linePropertiesNode   = context .linePropertiesNode,
+				materialNode         = context .materialNode,
+				textureNode          = context .textureNode,
+				textureTransformNode = context .textureTransformNode,
+				modelViewMatrix      = context .modelViewMatrix,
+				clipPlaneNodes       = context .clipPlanes;
+
+			// Geometry type
+
+			gl .uniform1i (this .x3d_GeometryType, context .geometryType);
+
+			// Clip planes
+
+			if (clipPlaneNodes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
+					clipPlaneNodes [i] .setShaderUniforms (gl, this, i);
+	
+				if (i < this .maxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
+			}
+			else
+			{
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+			}
+
+			// Fog, there is always one
+
+			if (context .fogNode !== this .fogNode)
+			{
+				this .fogNode = context .fogNode;
+				context .fogNode .setShaderUniforms (gl, this);
+			}
+
+			// LineProperties
+
+			if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
+			{
+				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
+
+				gl .lineWidth (linewidthScaleFactor);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, linewidthScaleFactor);
+			}
+			else
+			{
+				gl .lineWidth (1);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, 1);
+			}
+	
+			// Material
+
+			gl .uniform1i (this .x3d_ColorMaterial, context .colorMaterial);
+
+			if (materialNode)
+			{
+				// Lights
+
+				gl .uniform1i  (this .x3d_Lighting, true);
+
+				var
+					localLights = context .localLights,
+					numLights   = Math .min (this .maxLights, this .numGlobalLights + localLights .length);
+
+				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
+					localLights [l] .setShaderUniforms (gl, this, i);
+
+				if (numLights < this .maxLights)
+					gl .uniform1i (this .x3d_LightType [numLights], 0);
+
+				// Material
+
+				materialNode .setShaderUniforms (gl, this);
+
+				// Normal matrix
+
+				try
+				{
+					// Set normal matrix.
+					var normalMatrix = this .normalMatrixArray;
+					normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+					Matrix3 .prototype .inverse .call (normalMatrix);
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
+				}
+				catch (error)
+				{
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
+				}
+			}
+			else
+			{
+				gl .uniform1i (this .x3d_Lighting, false);
+
+				if (this .getCustom ())
+				{
+					try
+					{
+						// Set normal matrix.
+						var normalMatrix = this .normalMatrixArray;
+						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+						Matrix3 .prototype .inverse .call (normalMatrix);
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
+					}
+					catch (error)
+					{
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
+					}
+				}
+			}
+
+			if (textureNode)
+			{
+				textureNode .setShaderUniforms (gl, this, 0);
+				textureTransformNode .setShaderUniforms (gl, this);
+			}
+			else
+			{
+				this .textureTypeArray [0] = 0;
+				gl .uniform1iv (this .x3d_TextureType, this .textureTypeArray);
+
+				if (this .getCustom ())
+				{
+					textureTransformNode .setShaderUniforms (gl, this);
+				}
+			}
+
+			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
+		},
 	};
 
 	return X3DProgrammableShaderObject;
@@ -27082,7 +27289,6 @@ define ('cobweb/Components/Shaders/ComposedShader',[
 	"cobweb/Components/Networking/LoadSensor",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -27092,8 +27298,7 @@ function ($,
           X3DProgrammableShaderObject, 
           LoadSensor,
           X3DCast,
-          X3DConstants,
-          Matrix3)
+          X3DConstants)
 {
 
 
@@ -27111,19 +27316,7 @@ function ($,
 
 		this .addType (X3DConstants .ComposedShader);
 
-		this .loadSensor                = new LoadSensor (executionContext);
-		this .x3d_ClipPlane             = [ ];
-		this .x3d_LightType             = [ ];
-		this .x3d_LightOn               = [ ];
-		this .x3d_LightColor            = [ ];
-		this .x3d_LightIntensity        = [ ];
-		this .x3d_LightAmbientIntensity = [ ];
-		this .x3d_LightAttenuation      = [ ];
-		this .x3d_LightLocation         = [ ];
-		this .x3d_LightDirection        = [ ];
-		this .x3d_LightBeamWidth        = [ ];
-		this .x3d_LightCutOffAngle      = [ ];
-		this .x3d_LightRadius           = [ ];
+		this .loadSensor = new LoadSensor (executionContext);
 	}
 
 	ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
@@ -27167,16 +27360,34 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
 			this .activate_ .addInterest (this, "set_activate__");
 			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
 
 			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
 			this .loadSensor .watchList_ = this .parts_;
 			this .loadSensor .setup ();
+
+			//Must not call set_live__.
 		},
 		getProgram: function ()
 		{
 			return this .program;
+		},
+		set_live__: function ()
+		{
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			{
+				this .use ();
+				this .addShaderFields ();
+			}
+			else
+			{
+				this .use ();
+				this .removeShaderFields ();
+			}
 		},
 		set_activate__: function ()
 		{
@@ -27211,7 +27422,7 @@ function ($,
 	
 				if (valid)
 				{
-					this .bindAttribLocations (gl, program);
+					this .bindAttributeLocations (gl, program);
 
 					gl .linkProgram (program);
 
@@ -27220,9 +27431,12 @@ function ($,
 	
 				if (valid != this .isValid_ .getValue ())
 					this .isValid_ = valid;
-	
+
 				if (valid)
 				{
+					// Initialize uniform variables
+					this .use ();
+
 					this .getDefaultUniforms ();
 					this .addShaderFields ();
 				}
@@ -27235,276 +27449,36 @@ function ($,
 					this .isValid_ = false;
 			}
 		},
-		bindAttribLocations: function (gl, program)
+		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
-			gl .bindAttribLocation (program, 3, "x3d_Color");
-			gl .bindAttribLocation (program, 2, "x3d_TexCoord");
-			gl .bindAttribLocation (program, 1, "x3d_Normal");
-			gl .bindAttribLocation (program, 0, "x3d_Vertex");
-		},
-		getDefaultUniforms: function ()
-		{
-			// Get uniforms and attributes.
-
-			var
-				gl      = this .getBrowser () .getContext (),
-				program = this .program;
-
-			shader = this;
-			gl .useProgram (program);
-
-			this .x3D_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
-
-			for (var i = 0; i < this .maxClipPlanes; ++ i)
-				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
-
-			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
-			this .x3d_FogColor           = gl .getUniformLocation (program, "x3d_FogColor");
-			this .x3d_FogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
-
-			this .x3d_LinewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
-
-			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
-			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
-
-			for (var i = 0; i < this .maxLights; ++ i)
-			{
-				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
-				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
-				this .x3d_LightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
-				this .x3d_LightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
-				this .x3d_LightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
-				this .x3d_LightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
-				this .x3d_LightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
-				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
-				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
-				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
-			}
-
-			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
-
-			this .x3d_AmbientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
-			this .x3d_DiffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
-			this .x3d_SpecularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
-			this .x3d_EmissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
-			this .x3d_Shininess        = gl .getUniformLocation (program, "x3d_Shininess");
-			this .x3d_Transparency     = gl .getUniformLocation (program, "x3d_Transparency");
-
-			this .x3d_BackAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
-			this .x3d_BackDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
-			this .x3d_BackSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
-			this .x3d_BackEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
-			this .x3d_BackShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
-			this .x3d_BackTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
-
-			this .x3d_TextureType    = gl .getUniformLocation (program, "x3d_TextureType");
-			this .x3d_Texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
-			this .x3d_CubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
-
-			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
-
-			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
-			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
-			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
-			
-			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
-			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
-			this .x3d_Normal   = gl .getAttribLocation (program, "x3d_Normal");
-			this .x3d_Vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
-
-			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
-			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
-			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
-			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
-		},
-		setGlobalUniforms: function (projectionMatrixArray)
-		{
-			var
-				browser      = this .getBrowser (),
-				gl           = browser .getContext (),
-				globalLights = browser .getGlobalLights ();
-
-			shader = this;
-			gl .useProgram (this .program);
-			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
-
-			// Set global lights
-
-			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
-
-			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
-				globalLights [i] .use (gl, this, i);
-		},
-		setLocalUniforms: function (context)
-		{
-			var
-				browser              = this .getBrowser (),
-				gl                   = browser .getContext (),
-				linePropertiesNode   = browser .getLineProperties (),
-				materialNode         = browser .getMaterial (),
-				textureNode          = browser .getTexture (),
-				textureTransformNode = browser .getTextureTransform (),
-				modelViewMatrix      = context .modelViewMatrix,
-				clipPlaneNodes       = context .clipPlanes;
-
 			if (this !== shader)
 			{
 				shader = this;
+
+				gl .useProgram (this .program);
+			}
+			
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, gl, projectionMatrixArray);
+		},
+		setLocalUniforms: function (gl, context)
+		{
+			if (this !== shader)
+			{
+				shader = this;
+
 				gl .useProgram (this .program);
 			}
 
-			// Geometry type
-
-			gl .uniform1i (this .geometryType, context .geometryType);
-
-			// Clip planes
-
-			if (clipPlaneNodes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
-					clipPlaneNodes [i] .use (gl, this, i);
-	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
-			}
-			else
-			{
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
-			}
-
-			// Fog, there is always one
-
-			if (context .fogNode !== this .fogNode)
-			{
-				this .fogNode = context .fogNode;
-				context .fogNode .use (gl, this);
-			}
-
-			// LineProperties
-
-			if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
-			{
-				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
-
-				gl .lineWidth (linewidthScaleFactor);
-				gl .uniform1f (this .x3d_LinewidthScaleFactor, linewidthScaleFactor);
-			}
-			else
-			{
-				gl .lineWidth (1);
-				gl .uniform1f (this .x3d_LinewidthScaleFactor, 1);
-			}
-	
-			// Material
-
-			gl .uniform1i (this .x3d_ColorMaterial, context .colorMaterial);
-
-			if (materialNode)
-			{
-				// Lights
-
-				var
-					localLights = context .localLights,
-					numLights   = Math .min (this .maxLights, this .numGlobalLights + localLights .length);
-
-				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
-					localLights [l] .use (gl, this, i);
-
-				if (numLights < this .maxLights)
-					gl .uniform1i (this .x3d_LightType [numLights], 0);
-
-				// Material
-
-				gl .uniform1i  (this .x3d_Lighting,         true);
-				gl .uniform1f  (this .x3d_AmbientIntensity, materialNode .ambientIntensity);
-				gl .uniform3fv (this .x3d_DiffuseColor,     materialNode .diffuseColor);
-				gl .uniform3fv (this .x3d_SpecularColor,    materialNode .specularColor);
-				gl .uniform3fv (this .x3d_EmissiveColor,    materialNode .emissiveColor);
-				gl .uniform1f  (this .x3d_Shininess,        materialNode .shininess);
-				gl .uniform1f  (this .x3d_Transparency,     materialNode .transparency);
-
-				if (materialNode .getSeparateBackColor ())
-				{
-					gl .uniform1i  (this .x3d_SeparateBackColor,    true);
-					gl .uniform1f  (this .x3d_BackAmbientIntensity, materialNode .backAmbientIntensity);
-					gl .uniform3fv (this .x3d_BackDiffuseColor,     materialNode .backDiffuseColor);
-					gl .uniform3fv (this .x3d_BackSpecularColor,    materialNode .backSpecularColor);
-					gl .uniform3fv (this .x3d_BackEmissiveColor,    materialNode .backEmissiveColor);
-					gl .uniform1f  (this .x3d_BackShininess,        materialNode .backShininess);
-					gl .uniform1f  (this .x3d_BackTransparency,     materialNode .backTransparency);
-				}
-				else
-					gl .uniform1i (this .x3d_SeparateBackColor, false);
-
-				try
-				{
-					// Set normal matrix.
-					var normalMatrix = this .normalMatrixArray;
-					normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-					Matrix3 .prototype .inverse .call (normalMatrix);
-					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
-				}
-				catch (error)
-				{
-					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
-				}
-			}
-			else
-			{
-				gl .uniform1i (this .x3d_Lighting, false);
-
-				if (this .getCustom ())
-				{
-					try
-					{
-						// Set normal matrix.
-						var normalMatrix = this .normalMatrixArray;
-						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
-					}
-					catch (error)
-					{
-						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
-					}
-				}
-			}
-
-			if (textureNode)
-			{
-				textureNode .traverse (gl, this, 0);
-				textureTransformNode [0] .traverse ();
-
-				gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
-			}
-			else
-			{
-				this .textureTypeArray [0] = 0;
-				gl .uniform1iv (this .x3d_TextureType, this .textureTypeArray);
-
-				if (this .getCustom ())
-				{
-					textureTransformNode [0] .traverse ();
-					gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
-				}
-			}
-
-			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
+			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
 		},
 		use: function ()
 		{
-			if (this === shader)
-				return;
+			if (this !== shader)
+			{
+				shader = this;
 
-			shader = this;
-
-			this .getBrowser () .getContext () .useProgram (this .program);
+				this .getBrowser () .getContext () .useProgram (this .program);
+			}
 		},
 	});
 
@@ -37877,14 +37851,6 @@ function (Fields,
 			// There must always be a gouraud shader available.
 			return this .gouraudShader;
 		},
-		setShader: function (value)
-		{
-			this .shader = value;
-		},
-		getShader: function ()
-		{
-			return this .shader;
-		},
 		getDepthShader: function ()
 		{
 			return this .depthShader;
@@ -42947,54 +42913,54 @@ function ($,
 		display: function (context)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_TexCoord >= 0)
+			if (shaderNode .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_TexCoord);
+				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_Normal >= 0)
+			if (shaderNode .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Normal);
+				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
-			if (shader .wireframe)
+			if (shaderNode .wireframe)
 			{
 				// Wireframes are always solid so only one drawing call is needed.
 
 				for (var i = 0, length = this .vertexCount; i < length; i += 3)
-					gl .drawArrays (shader .primitiveMode, i, 3);
+					gl .drawArrays (shaderNode .primitiveMode, i, 3);
 			}
 			else
 			{
@@ -43006,10 +42972,10 @@ function ($,
 				{
 					gl .enable (gl .CULL_FACE);
 					gl .cullFace (gl .FRONT);
-					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
+					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
 
 					gl .cullFace (gl .BACK);
-					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
+					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
 				}
 				else
 				{
@@ -43018,70 +42984,70 @@ function ($,
 					else
 						gl .disable (gl .CULL_FACE);
 
-					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 				}
 			}
 
-			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
-			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
+			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_TexCoord >= 0)
+			if (shaderNode .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_TexCoord);
+				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_Normal >= 0)
+			if (shaderNode .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Normal);
+				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
 			var
-				materialNode    = browser .getMaterial (),
-				lighting        = materialNode || shader .getCustom (),
-				normalMatrix    = shader .normalMatrixArray,
+				materialNode    = context .materialNode,
+				lighting        = materialNode || shaderNode .getCustom (),
+				normalMatrix    = shaderNode .normalMatrixArray,
 				modelViewMatrix = context .modelViewMatrix,
 				x               = modelViewMatrix [12],
 				y               = modelViewMatrix [13],
 				z               = modelViewMatrix [14];
 
-			if (shader .wireframe)
+			if (shaderNode .wireframe)
 			{
 				// Wireframes are always solid so only one drawing call is needed.
 
@@ -43100,13 +43066,13 @@ function ($,
 						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
+						gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
 					}
 	
-					gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+					gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
+						gl .drawArrays (shaderNode .primitiveMode, i, 3);
 				}
 			}
 			else
@@ -43132,17 +43098,17 @@ function ($,
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 
 						gl .enable (gl .CULL_FACE);
 						gl .cullFace (gl .FRONT);
-						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 	
 						gl .cullFace (gl .BACK);
-						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 					}	
 				}
 				else
@@ -43160,29 +43126,29 @@ function ($,
 
 						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
 
-						if (materialNode || shader .getCustom ())
+						if (materialNode || shaderNode .getCustom ())
 						{
 							// Set normal matrix.
 							normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 
-						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 					}
 				}
 			}
 
-			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
-			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
+			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
-		collision: function (shader)
+		collision: function (shaderNode)
 		{
 			var
 				browser = this .getBrowser (),
@@ -43190,13 +43156,13 @@ function ($,
 
 			// Setup vertex attributes.
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{
@@ -45955,6 +45921,12 @@ function (Vector3)
 			this .direction .assign (direction);
 			return this;
 		},
+		setPoints: function (point1, point2)
+		{
+			this .point .assign (point1);
+			this .direction .assign (point2) .subtract (point1) .normalize ();
+			return this;
+		},
 		multMatrixLine: function (matrix)
 		{
 			matrix .multMatrixVec (this .point);
@@ -45967,13 +45939,13 @@ function (Vector3)
 			matrix .multDirMatrix (this .direction) .normalize ();
 			return this;
 		},
-		getClosestPointToPoint: function (point)
+		getClosestPointToPoint: function (point, result)
 		{
 			var
-				r = point .copy () .subtract (this .point),
+				r = result .assign (point) .subtract (this .point),
 				d = r .dot (this .direction);
 
-			return r .assign (this .direction) .multiply (d) .add (this .point);
+			return result .assign (this .direction) .multiply (d) .add (this .point);
 		},
 		getClosestPointToLine: function (line, point)
 		{
@@ -46256,14 +46228,14 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			return point .set (vin .x * d, vin .y * d, vin .z * d);
 		},
-		unProjectLine: function (winx, winy, modelview, projection, viewport)
+		unProjectRay: function (winx, winy, modelview, projection, viewport, result)
 		{
 			matrix .assign (modelview) .multRight (projection) .inverse ();
 
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport, near);
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport, far);
 
-			return new Line3 .Points (near, far);
+			return result .setPoints (near, far);
 		},
 		projectPoint: function (point, modelview, projection, viewport, vout)
 		{
@@ -46280,7 +46252,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			                  (vin .y * d + 0.5) * viewport [3] + viewport [1],
 			                  (vin .z * d + 0.5));
 		},
-		projectLine: function (line, modelview, projection, viewport)
+		projectLine: function (line, modelview, projection, viewport, result)
 		{
 			ViewVolume .projectPoint (line .point, modelview, projection, viewport, near);
 			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelview, projection, viewport, far);
@@ -46288,7 +46260,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			near .z = 0;
 			far  .z = 0;
 
-			return new Line3 .Points (near, far);
+			return result .setPoints (near, far);
 		},
 	});
 
@@ -46481,13 +46453,14 @@ function ($,
 {
 
 	
-	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+	var line = new Line3 (Vector3 .Zero, Vector3 .Zero);
 
 	function X3DPointingDeviceSensorContext ()
 	{
 		this .pointingDevice = new PointingDevice (this);
 
 		this .pointer        = new Vector2 (0, 0);
+		this .hitRay         = new Line3 (Vector3 .Zero, Vector3 .Zero);
 		this .hits           = [ ];
 		this .enabledSensors = [{ }];
 		this .selectedLayer  = null;
@@ -46561,11 +46534,11 @@ function ($,
 		{
 			try
 			{
-				this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport);
+				ViewVolume .unProjectRay (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport, this .hitRay);
 			}
 			catch (error)
 			{
-				this .hitRay = line;
+				this .hitRay .set (Vector3 .Zero, Vector3 .Zero);
 			}
 		},
 		getHitRay: function ()
@@ -48713,10 +48686,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Camera',[
-	"standard/Math/Numbers/Matrix4",
-],
-function (Matrix4)
+define ('standard/Math/Geometry/Camera',[],function ()
 {
 
 
@@ -48741,12 +48711,9 @@ function (Matrix4)
 			                    A, B, C, -1,
 			                    0, 0, D, 0);
 		},
-		perspective: function (fieldOfView, zNear, zFar, viewport, matrix)
+		perspective: function (fieldOfView, zNear, zFar, width, height, matrix)
 		{
-			var
-				width  = viewport [2],
-				height = viewport [3],
-				ratio  = Math .tan (fieldOfView / 2) * zNear;
+			var ratio  = Math .tan (fieldOfView / 2) * zNear;
 
 			if (width > height)
 			{
@@ -50601,9 +50568,7 @@ function ($,
 		},
 		getProjectionMatrix: function (zNear, zFar, viewport)
 		{
-			Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
-
-			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
 		},
 	});
 
@@ -52505,7 +52470,7 @@ function ($,
 		getProjectionMatrix: function (zNear, zFar, viewport, limit)
 		{
 			if (limit)
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
 				
 			// Linear interpolate zNear and zFar
 
@@ -52513,7 +52478,7 @@ function ($,
 				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
 				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
 
-			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport [2], viewport [3], this .projectionMatrix);
 		},
 	});
 
@@ -52577,11 +52542,10 @@ define ('cobweb/Browser/Navigation/PlaneViewer',[
 	"cobweb/Components/Navigation/Viewpoint",
 	"cobweb/Components/Geospatial/GeoViewpoint",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
 	"lib/gettext",
 	"jquery-mousewheel",
 ],
-function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, Rotation4, _)
+function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 {
 
 	
@@ -52874,12 +52838,10 @@ function ($, X3DViewer, _)
 define ('cobweb/Browser/Navigation/LookAtViewer',[
 	"jquery",
 	"cobweb/Browser/Navigation/X3DViewer",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
 	"lib/gettext",
 	"jquery-mousewheel",
 ],
-function ($, X3DViewer, Vector3, Rotation4, _)
+function ($, X3DViewer, _)
 {
 
 
@@ -53253,13 +53215,13 @@ function ($,
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
 		},
-		use: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			gl .uniform1i (shader .x3d_LightType [i],             1);
-			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform1i (shaderObject .x3d_LightType [i],             1);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shaderObject .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
 		recycle: function ()
 		{
@@ -53692,15 +53654,13 @@ define ('cobweb/Components/Grouping/X3DGroupingNode',[
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
 	       Fields,
           X3DChildNode, 
           X3DBoundedObject, 
           TraverseType,
-          X3DConstants,
-          Box3)
+          X3DConstants)
 {
 
 
@@ -64175,13 +64135,9 @@ function ($,
 		{
 			return this .matrix;
 		},
-		getMatrixArray: function ()
+		setShaderUniforms: function (gl, shaderObject)
 		{
-			return this .matrixArray;
-		},
-		traverse: function ()
-		{
-			this .getBrowser () .getTextureTransform () [0] = this;
+			gl .uniformMatrix4fv (shaderObject .x3d_TextureMatrix, false, this .matrixArray);
 		},
 	});
 
@@ -64248,7 +64204,6 @@ define ('cobweb/Components/Texturing/TextureTransform',[
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Matrix3",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -64257,8 +64212,7 @@ function ($,
           X3DTextureTransformNode, 
           X3DConstants,
           Vector2,
-          Matrix3,
-          Matrix4)
+          Matrix3)
 {
 
 
@@ -64402,14 +64356,10 @@ define ('cobweb/Browser/Texturing/X3DTexturingContext',[
 	"cobweb/Components/Texturing/TextureProperties",
 	"cobweb/Components/Texturing/TextureTransform",
 	"cobweb/Components/Texturing/TextureCoordinate",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Utility/MatrixStack",
 ],
 function (TextureProperties,
           TextureTransform,
-          TextureCoordinate,
-          Matrix4,
-          MatrixStack)
+          TextureCoordinate)
 {
 
 
@@ -64421,8 +64371,6 @@ function (TextureProperties,
 		this .defaultTextureProperties = new TextureProperties (this);
 		this .defaultTextureTransform  = new TextureTransform (this);
 		this .defaultTextureCoordinate = new TextureCoordinate (this);
-		this .texture                  = null;
-		this .textureTransform         = [ ];
 	}
 
 	X3DTexturingContext .prototype =
@@ -64494,18 +64442,6 @@ function (TextureProperties,
 		getDefaultTextureCoordinate: function ()
 		{
 			return this .defaultTextureCoordinate;
-		},
-		setTexture: function (value)
-		{
-			this .texture = value;
-		},
-		getTexture: function ()
-		{
-			return this .texture;
-		},
-		getTextureTransform: function ()
-		{
-			return this .textureTransform;
 		},
 	};
 
@@ -65861,6 +65797,23 @@ function ($,
 
 			this .localFog = this .localFogs [this .localFogs .length - 1];
 		},
+		createShapeContext: function (transparent)
+		{
+			return {
+				transparent: true,
+				modelViewMatrix: new Float32Array (16),
+				scissor: new Vector4 (0, 0, 0, 0),
+				clipPlanes: [ ],
+				localLights: [ ],
+				geometryType: 3,
+				colorMaterial: false,
+				linePropertiesNode: null,
+				materialNode: null,
+				textureNode: null,
+				textureTransformNode: null,
+				shaderNode: null,
+			};
+		},
 		addShape: function (shapeNode)
 		{
 			var
@@ -65876,7 +65829,7 @@ function ($,
 				if (shapeNode .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], });
+						this .transparentShapes .push (this .createShapeContext (true));
 
 					var context = this .transparentShapes [this .numTransparentShapes];
 
@@ -65885,7 +65838,7 @@ function ($,
 				else
 				{
 					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push ({ transparent: false, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], });
+						this .opaqueShapes .push (this .createShapeContext (false));
 
 					var context = this .opaqueShapes [this .numOpaqueShapes];
 
@@ -65921,7 +65874,7 @@ function ($,
 				destLights .length = sourceLights .length;
 			}
 		},
-		addCollision: function (shapeNode)
+		addCollisionShape: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
@@ -66083,7 +66036,7 @@ function ($,
 				if (clipPlanes .length)
 				{
 					for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
-						clipPlanes [c] .use (gl, shader, c);
+						clipPlanes [c] .setShaderUniforms (gl, shader, c);
 	
 					if (c < shader .maxClipPlanes)
 						gl .uniform4fv (shader .x3d_ClipPlane [c], shader .noClipPlane);
@@ -66327,12 +66280,12 @@ function ($,
 
 			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
 
-			browser .getPointShader ()   .setGlobalUniforms (projectionMatrixArray);
-			browser .getLineShader ()    .setGlobalUniforms (projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (projectionMatrixArray);
+			browser .getPointShader ()   .setGlobalUniforms (gl, projectionMatrixArray);
+			browser .getLineShader ()    .setGlobalUniforms (gl, projectionMatrixArray);
+			browser .getDefaultShader () .setGlobalUniforms (gl, projectionMatrixArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (gl, projectionMatrixArray);
 
 			// Render opaque objects first
 
@@ -66823,10 +66776,10 @@ function ($,
 		{
 			return this .hidden;
 		},
-		use: function (gl, shader)
+		setShaderUniforms: function (gl, shaderObject)
 		{
 			if (this .hidden)
-				gl .uniform1i (shader .x3d_FogType, 0); // NO_FOG
+				gl .uniform1i (shaderObject .x3d_FogType, 0); // NO_FOG
 
 			else
 			{
@@ -66837,9 +66790,9 @@ function ($,
 				if (visibilityRange === 0)
 					visibilityRange = this .getCurrentNavigationInfo () .getFarPlane (this .getCurrentViewpoint ());
 
-				gl .uniform1i (shader .x3d_FogType,            this .fogType);
-				gl .uniform3f (shader .x3d_FogColor,           color .r, color .g, color .b);
-				gl .uniform1f (shader .x3d_FogVisibilityRange, visibilityRange);
+				gl .uniform1i (shaderObject .x3d_FogType,            this .fogType);
+				gl .uniform3f (shaderObject .x3d_FogColor,           color .r, color .g, color .b);
+				gl .uniform1f (shaderObject .x3d_FogVisibilityRange, visibilityRange);
 			}
 		},
 	};
@@ -67043,7 +66996,6 @@ define ('cobweb/Components/EnvironmentalEffects/X3DBackgroundNode',[
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
-	"standard/Math/Geometry/Camera",
 ],
 function ($,
           X3DBindableNode,
@@ -67053,8 +67005,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
-          Algorithm,
-          Camera)
+          Algorithm)
 {
 
 
@@ -67546,7 +67497,7 @@ function ($,
 			if (clipPlanes .length)
 			{
 				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .use (gl, shader, i);
+					clipPlanes [i] .setShaderUniforms (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
 					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
@@ -67600,7 +67551,7 @@ function ($,
 			if (clipPlanes .length)
 			{
 				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .use (gl, shader, i);
+					clipPlanes [i] .setShaderUniforms (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
 					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
@@ -68033,12 +67984,12 @@ function ($,
 
 			return output;
 		},
-		traverse: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			shader .textureTypeArray [i] = 2;
+			shaderObject .textureTypeArray [i] = 2;
 			gl .activeTexture (gl .TEXTURE0);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .uniform1iv (shader .x3d_TextureType, shader .textureTypeArray);
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
 		},
 	});
 
@@ -71072,7 +71023,7 @@ function ($,
 
 		//this .addType (X3DConstants .X3DLineGeometryNode);
 
-		this .shader = this .getBrowser () .getLineShader ();
+		this .shaderNode = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -71080,78 +71031,78 @@ function ($,
 		constructor: X3DLineGeometryNode,
 		setShader: function (value)
 		{
-			this .shader = value;
+			this .shaderNode = value;
 		},
 		display: function (context)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader === browser .getDefaultShader ())
-				shader = this .shader;
+			if (shaderNode === browser .getDefaultShader ())
+				shaderNode = this .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .getColors () .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
-			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
+			gl .drawArrays (shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
 
-			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader === browser .getDefaultShader ())
-				shader = this .shader;
+			if (shaderNode === browser .getDefaultShader ())
+				shaderNode = this .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
@@ -71160,7 +71111,7 @@ function ($,
 				x               = modelViewMatrix [12],
 				y               = modelViewMatrix [13],
 				z               = modelViewMatrix [14],
-				primitiveMode   = shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
+				primitiveMode   = shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
 
 			for (var p = 0; p < numParticles; ++ p)
 			{
@@ -71170,13 +71121,13 @@ function ($,
 
 				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
 
-				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+				gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 				gl .drawArrays (primitiveMode, 0, this .vertexCount);
 			}
 
-			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 	});
 
@@ -73493,7 +73444,6 @@ define ("cobweb/Components/CADGeometry/CADFace",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -73502,8 +73452,7 @@ function ($,
           X3DProductStructureChildNode, 
           X3DBoundedObject,
           X3DCast,
-          X3DConstants,
-          Box3)
+          X3DConstants)
 {
 
 
@@ -74139,15 +74088,13 @@ define ("cobweb/Components/Geometry2D/Circle2D",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLineGeometryNode, 
-          X3DConstants,
-          Vector3)
+          X3DConstants)
 {
 
 
@@ -74341,13 +74288,13 @@ function ($,
 				plane .distanceFromOrigin = 0;
 			}
 		},
-		use: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			var
 				plane  = this .plane,
 				normal = plane .normal;
 
-			gl .uniform4f (shader .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+			gl .uniform4f (shaderObject .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
 		recycle: function ()
 		{
@@ -75266,7 +75213,6 @@ define ("cobweb/Components/Followers/ColorChaser",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Color3",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -75275,8 +75221,7 @@ function ($,
           X3DChaserNode, 
           X3DConstants,
           Color3,
-          Vector3,
-          Algorithm)
+          Vector3)
 {
 
 
@@ -77429,15 +77374,13 @@ define ('cobweb/Components/Interpolation/CoordinateInterpolator2D',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Interpolation/X3DInterpolatorNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DInterpolatorNode, 
-          X3DConstants,
-          Vector2)
+          X3DConstants)
 {
 
 
@@ -81894,7 +81837,6 @@ define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -81905,8 +81847,7 @@ function ($,
           X3DConstants,
           Vector3,
           Rotation4,
-          Matrix4,
-          Box3)
+          Matrix4)
 {
 
 
@@ -86135,10 +86076,6 @@ function ($,
 			this .set_shininess__ ();
 			this .set_transparency__ ();
 		},
-		getSeparateBackColor: function ()
-		{
-		   return false;
-		},
 		set_ambientIntensity__: function ()
 		{
 			this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
@@ -86167,6 +86104,16 @@ function ($,
 
 			if (transparency != this .transparent_ .getValue ())
 				this .transparent_ = transparency;
+		},
+		setShaderUniforms: function (gl, shaderObject)
+		{
+			gl .uniform1i  (shaderObject .x3d_SeparateBackColor, false);
+			gl .uniform1f  (shaderObject .x3d_AmbientIntensity,  this .ambientIntensity);
+			gl .uniform3fv (shaderObject .x3d_DiffuseColor,      this .diffuseColor);
+			gl .uniform3fv (shaderObject .x3d_SpecularColor,     this .specularColor);
+			gl .uniform3fv (shaderObject .x3d_EmissiveColor,     this .emissiveColor);
+			gl .uniform1f  (shaderObject .x3d_Shininess,         this .shininess);
+			gl .uniform1f  (shaderObject .x3d_Transparency,      this .transparency);
 		},
 	});
 
@@ -88417,7 +88364,7 @@ function ($,
 		this .texCoordRamp             = [ ];
 		this .texCoordAnim             = false;
 		this .vertexCount              = 0;
-		this .shader                   = this .getBrowser () .getPointShader ();
+		this .shaderNode               = this .getBrowser () .getPointShader ();
 		this .modelViewMatrix          = new Matrix4 ();
 		this .rotation                 = new Matrix3 ();
 		this .particleSorter           = new QuickSort (this .particles, compareDistance);
@@ -88639,7 +88586,7 @@ function ($,
 
 					this .texCoordCount = 2;
 					this .vertexCount   = 2;
-					this .shader        = this .getBrowser () .getLineShader ()
+					this .shaderNode    = this .getBrowser () .getLineShader ()
 					break;
 				}
 				case TRIANGLE:
@@ -88728,13 +88675,13 @@ function ($,
 				case POINT:
 				{
 					this .shaderGeometryType = 0;
-					this .shader             = this .getBrowser () .getPointShader ()
+					this .shaderNode         = this .getBrowser () .getPointShader ()
 					break;
 				}
 				case LINE:
 				{
 					this .shaderGeometryType = 1;
-					this .shader             = this .getBrowser () .getLineShader ()
+					this .shaderNode         = this .getBrowser () .getLineShader ()
 					break;
 				}
 				case TRIANGLE:
@@ -88742,13 +88689,13 @@ function ($,
 				case SPRITE:
 				{
 					this .shaderGeometryType = 3;
-					this .shader             = this .getBrowser () .getDefaultShader ()
+					this .shaderNode         = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 				case GEOMETRY:
 				{
 					this .shaderGeometryType = 3; // determine from geometry node.
-					this .shader             = this .getBrowser () .getDefaultShader ()
+					this .shaderNode         = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 			}
@@ -89416,7 +89363,7 @@ function ($,
 		{
 			// Traverse appearance before everything.
 
-			this .getAppearance () .traverse ();
+			this .getAppearance () .traverse (context);
 
 			// Display geometry.
 
@@ -89430,48 +89377,48 @@ function ($,
 			else
 			{
 				var
-					browser = this .getBrowser (),
-					gl      = browser .getContext (),
-					shader  = browser .getShader ();
+					browser    = this .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
 	
-				if (shader === browser .getDefaultShader ())
-					shader = this .shader;
+				if (shaderNode === browser .getDefaultShader ())
+					shaderNode = this .shaderNode;
 	
-				if (shader .x3d_Vertex < 0 || this .numParticles === 0)
+				if (shaderNode .x3d_Vertex < 0 || this .numParticles === 0)
 					return;
 	
 				// Setup shader.
 
 				context .geometryType  = this .shaderGeometryType;
 				context .colorMaterial = this .colorMaterial;
-				shader .setLocalUniforms (context);
+				shaderNode .setLocalUniforms (gl, context);
 	
 				// Setup vertex attributes.
 	
-				if (this .colorMaterial && shader .x3d_Color >= 0)
+				if (this .colorMaterial && shaderNode .x3d_Color >= 0)
 				{
-					gl .enableVertexAttribArray (shader .x3d_Color);
+					gl .enableVertexAttribArray (shaderNode .x3d_Color);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-					gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .texCoordArray .length && shader .x3d_TexCoord >= 0)
+				if (this .texCoordArray .length && shaderNode .x3d_TexCoord >= 0)
 				{
-					gl .enableVertexAttribArray (shader .x3d_TexCoord);
+					gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-					gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .normalArray .length && shader .x3d_Normal >= 0)
+				if (this .normalArray .length && shaderNode .x3d_Normal >= 0)
 				{
-					gl .enableVertexAttribArray (shader .x3d_Normal);
+					gl .enableVertexAttribArray (shaderNode .x3d_Normal);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-					gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 				}
 	
-				gl .enableVertexAttribArray (shader .x3d_Vertex);
+				gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 	
 				var testWireframe = false;
 
@@ -89489,12 +89436,12 @@ function ($,
 						break;
 				}
 
-				if (shader .wireframe && testWireframe)
+				if (shaderNode .wireframe && testWireframe)
 				{
 					// Wireframes are always solid so only one drawing call is needed.
 	
 					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
+						gl .drawArrays (shaderNode .primitiveMode, i, 3);
 				}
 				else
 				{
@@ -89504,11 +89451,11 @@ function ($,
 					gl .enable (gl .CULL_FACE);
 					gl .cullFace (gl .BACK);
 		
-					gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
+					gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
 				}
 	
-				if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-				gl .disableVertexAttribArray (shader .x3d_Vertex);
+				if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+				gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)
@@ -89872,6 +89819,11 @@ function ($,
 {
 
 
+	var
+		screenLine     = new Line3 (Vector3 .Zero, Vector3 .Zero),
+		trackPoint1    = new Vector3 (0, 0, 0),
+		trackPointLine = new Line3 (Vector3 .Zero, Vector3 .Zero);
+
 	function PlaneSensor (executionContext)
 	{
 		X3DDragSensorNode .call (this, executionContext);
@@ -89925,10 +89877,9 @@ function ($,
 		},
 		getLineTrackPoint: function (hit, line, trackPoint)
 		{
-			var
-				screenLine     = ViewVolume .projectLine (line, this .modelViewMatrix, this .projectionMatrix, this .viewport),
-				trackPoint1    = screenLine .getClosestPointToPoint (new Vector3 (hit .pointer .x, hit .pointer .y, 0)),
-				trackPointLine = ViewVolume .unProjectLine (trackPoint1 .x, trackPoint1 .y, this .modelViewMatrix, this .projectionMatrix, this .viewport);
+			ViewVolume .projectLine (line, this .modelViewMatrix, this .projectionMatrix, this .viewport, screenLine);
+			screenLine .getClosestPointToPoint (new Vector3 (hit .pointer .x, hit .pointer .y, 0), trackPoint1);
+			ViewVolume .unProjectRay (trackPoint1 .x, trackPoint1 .y, this .modelViewMatrix, this .projectionMatrix, this .viewport, trackPointLine);
 
 			return line .getClosestPointToLine (trackPointLine, trackPoint);
 		},
@@ -90191,15 +90142,15 @@ function ($,
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 	   },
-		use: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			gl .uniform1i (shader .x3d_LightType [i],             2);
-			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shader .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform1f (shader .x3d_LightRadius [i],           this .radius);
+			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
+			gl .uniform3f (shaderObject .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
+			gl .uniform1f (shaderObject .x3d_LightRadius [i],           this .radius);
 	
 			// For correct results the radius must be transform by the modelViewMatrix. This can only be done in the shader.
 			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|
@@ -90316,7 +90267,6 @@ define ('cobweb/Components/Rendering/PointSet',[
 	"cobweb/Components/Rendering/X3DLineGeometryNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Color4",
 ],
 function ($,
           Fields,
@@ -90324,8 +90274,7 @@ function ($,
           FieldDefinitionArray,
           X3DLineGeometryNode,
           X3DCast,
-          X3DConstants,
-          Color4)
+          X3DConstants)
 {
 
 
@@ -92193,6 +92142,11 @@ function ($,
 	ScreenText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
 	{
 		constructor: ScreenText,
+		modelViewMatrix: new Matrix4 (),
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		update: function ()
 		{
 			X3DTextGeometry .prototype .update .call (this);
@@ -92499,20 +92453,22 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		transform: function (modelViewMatrix)
+		traverse: function (type)
 		{
 			try
 			{
+				var
+					fontStyle        = this .getFontStyle (),
+					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
+					modelViewMatrix  = fontStyle .getModelViewMatrix (type, this .modelViewMatrix),
+					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
+
 				// Same as in ScreenGroup
 
 				this .screenMatrix .assign (modelViewMatrix);
 				this .screenMatrix .get (translation, rotation, scale);
 
-				var
-					fontStyle        = this .getFontStyle (),
-					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
-					screenScale      = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+				var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
 
 				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
@@ -92550,20 +92506,12 @@ function ($,
 			catch (error)
 			{ }
 		},
-		traverse: function (type)
-		{
-			this .transform (this .getBrowser () .getModelViewMatrix () .get ());
-		},
 		display: function (context)
 		{
 			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
 
-		   this .getBrowser () .setTexture (this .texture);
-		   this .getBrowser () .getTextureTransform () [0] = this .getBrowser () .getDefaultTextureTransform ();
-		},
-		getMatrix: function ()
-		{
-			return this .matrix;
+		   context .textureNode          = this .texture;
+		   context .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
 		},
 		transformLine: function (line)
 		{
@@ -92759,7 +92707,6 @@ define ("cobweb/Components/Layout/ScreenGroup",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Geometry/ViewVolume",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -92770,8 +92717,7 @@ function ($,
           Vector3,
           Rotation4,
           Matrix4,
-          ViewVolume,
-          Algorithm)
+          ViewVolume)
 {
 
 
@@ -93998,7 +93944,6 @@ define ('cobweb/Components/Shape/Shape',[
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithms/QuickSort",
-	"standard/Math/Geometry/ViewVolume",
 ],
 function ($,
           Fields,
@@ -94011,8 +93956,7 @@ function ($,
           Line3,
           Vector3,
           Matrix4,
-          QuickSort,
-          ViewVolume)
+          QuickSort)
 {
 
 
@@ -94067,7 +94011,7 @@ function ($,
 						break;
 
 					case TraverseType .COLLISION:
-						this .getCurrentLayer () .addCollision (this);
+						this .getCurrentLayer () .addCollisionShape (this);
 						break;
 
 					case TraverseType .DISPLAY:
@@ -94129,7 +94073,7 @@ function ($,
 		},
 		display: function (context)
 		{
-			this .getAppearance () .traverse ();
+			this .getAppearance () .traverse (context);
 			this .getGeometry ()   .display (context);
 		},
 		collision: function (shader)
@@ -94499,15 +94443,13 @@ define ("cobweb/Components/Geometry3D/Sphere",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Rendering/X3DGeometryNode",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGeometryNode, 
-          X3DConstants,
-          Vector3)
+          X3DConstants)
 {
 
 
@@ -95901,18 +95843,18 @@ function ($,
 			modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
 	   },
-		use: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			gl .uniform1i (shader .x3d_LightType [i],             3);
-			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shader .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform3f (shader .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
-			gl .uniform1f (shader .x3d_LightRadius [i],           this .radius);
-			gl .uniform1f (shader .x3d_LightBeamWidth [i],        this .beamWidth);
-			gl .uniform1f (shader .x3d_LightCutOffAngle [i],      this .cutOffAngle);
+			gl .uniform1i (shaderObject .x3d_LightType [i],             3);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
+			gl .uniform3f (shaderObject .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
+			gl .uniform3f (shaderObject .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform1f (shaderObject .x3d_LightRadius [i],           this .radius);
+			gl .uniform1f (shaderObject .x3d_LightBeamWidth [i],        this .beamWidth);
+			gl .uniform1f (shaderObject .x3d_LightCutOffAngle [i],      this .cutOffAngle);
 		},
 		recycle: function ()
 		{
@@ -96708,7 +96650,6 @@ define ('cobweb/Components/Grouping/Switch',[
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -96716,8 +96657,7 @@ function ($,
           FieldDefinitionArray,
           X3DGroupingNode, 
           X3DCast,
-          X3DConstants,
-          Box3)
+          X3DConstants)
 {
 
 
@@ -97695,7 +97635,6 @@ define ('cobweb/Components/Texturing3D/TextureTransform3D',[
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -97704,8 +97643,7 @@ function ($,
           X3DTextureTransformNode, 
           X3DConstants,
           Vector3,
-          Rotation4,
-          Matrix4)
+          Rotation4)
 {
 
 
@@ -99028,10 +98966,6 @@ function ($,
 			this .set_backShininess__ ();
 			this .set_backTransparency__ ();
 		},
-		getSeparateBackColor: function ()
-		{
-		   return this .separateBackColor_ .getValue ();
-		},
 		set_ambientIntensity__: function ()
 		{
 			this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
@@ -99093,6 +99027,30 @@ function ($,
 
 			if (transparent != this .transparent_ .getValue ())
 				this .transparent_ = transparent;
+		},
+		setShaderUniforms: function (gl, shaderObject)
+		{
+			gl .uniform1f  (shaderObject .x3d_AmbientIntensity, this .ambientIntensity);
+			gl .uniform3fv (shaderObject .x3d_DiffuseColor,     this .diffuseColor);
+			gl .uniform3fv (shaderObject .x3d_SpecularColor,    this .specularColor);
+			gl .uniform3fv (shaderObject .x3d_EmissiveColor,    this .emissiveColor);
+			gl .uniform1f  (shaderObject .x3d_Shininess,        this .shininess);
+			gl .uniform1f  (shaderObject .x3d_Transparency,     this .transparency);
+
+			if (this .separateBackColor_ .getValue ())
+			{
+				gl .uniform1i  (shaderObject .x3d_SeparateBackColor,    true);
+				gl .uniform1f  (shaderObject .x3d_BackAmbientIntensity, this .backAmbientIntensity);
+				gl .uniform3fv (shaderObject .x3d_BackDiffuseColor,     this .backDiffuseColor);
+				gl .uniform3fv (shaderObject .x3d_BackSpecularColor,    this .backSpecularColor);
+				gl .uniform3fv (shaderObject .x3d_BackEmissiveColor,    this .backEmissiveColor);
+				gl .uniform1f  (shaderObject .x3d_BackShininess,        this .backShininess);
+				gl .uniform1f  (shaderObject .x3d_BackTransparency,     this .backTransparency);
+			}
+			else
+			{
+				gl .uniform1i  (shaderObject .x3d_SeparateBackColor, false);
+			}
 		},
 	});
 
@@ -99413,7 +99371,6 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -99423,8 +99380,7 @@ function ($,
           TraverseType,
           X3DConstants,
           Vector3,
-          Matrix4,
-          Box3)
+          Matrix4)
 {
 
 

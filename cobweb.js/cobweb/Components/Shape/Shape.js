@@ -60,7 +60,6 @@ define ([
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithms/QuickSort",
-	"standard/Math/Geometry/ViewVolume",
 ],
 function ($,
           Fields,
@@ -73,8 +72,7 @@ function ($,
           Line3,
           Vector3,
           Matrix4,
-          QuickSort,
-          ViewVolume)
+          QuickSort)
 {
 "use strict";
 

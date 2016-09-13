@@ -59,7 +59,6 @@ define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -70,8 +69,7 @@ function ($,
           X3DConstants,
           Vector3,
           Rotation4,
-          Matrix4,
-          Box3)
+          Matrix4)
 {
 "use strict";
 

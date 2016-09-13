@@ -104,6 +104,11 @@ function ($,
 	ScreenText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
 	{
 		constructor: ScreenText,
+		modelViewMatrix: new Matrix4 (),
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		update: function ()
 		{
 			X3DTextGeometry .prototype .update .call (this);
@@ -410,20 +415,22 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		transform: function (modelViewMatrix)
+		traverse: function (type)
 		{
 			try
 			{
+				var
+					fontStyle        = this .getFontStyle (),
+					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
+					modelViewMatrix  = fontStyle .getModelViewMatrix (type, this .modelViewMatrix),
+					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
+
 				// Same as in ScreenGroup
 
 				this .screenMatrix .assign (modelViewMatrix);
 				this .screenMatrix .get (translation, rotation, scale);
 
-				var
-					fontStyle        = this .getFontStyle (),
-					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
-					screenScale      = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+				var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
 
 				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
@@ -461,20 +468,12 @@ function ($,
 			catch (error)
 			{ }
 		},
-		traverse: function (type)
-		{
-			this .transform (this .getBrowser () .getModelViewMatrix () .get ());
-		},
 		display: function (context)
 		{
 			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
 
-		   this .getBrowser () .setTexture (this .texture);
-		   this .getBrowser () .getTextureTransform () [0] = this .getBrowser () .getDefaultTextureTransform ();
-		},
-		getMatrix: function ()
-		{
-			return this .matrix;
+		   context .textureNode          = this .texture;
+		   context .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
 		},
 		transformLine: function (line)
 		{
