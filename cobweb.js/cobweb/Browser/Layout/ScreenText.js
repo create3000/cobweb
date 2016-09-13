@@ -421,7 +421,7 @@ function ($,
 
 				var
 					fontStyle        = this .getFontStyle (),
-					projectionMatrix = this .getBrowser () .getProjectionMatrix (),
+					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
 					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
 					screenScale      = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
 

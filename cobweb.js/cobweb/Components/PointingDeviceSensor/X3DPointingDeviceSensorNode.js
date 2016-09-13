@@ -132,9 +132,9 @@ function ($,
 
 				var matrices = this .matrices [currentLayer .getId ()];
 
-				matrices .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-				matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix ());
-				matrices .viewport .assign (currentLayer .getViewport () .getRectangle ());
+				matrices .modelViewMatrix  .assign (this .getBrowser () .getModelViewMatrix  () .get ());
+				matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix () .get ());
+				matrices .viewport         .assign (currentLayer .getViewport () .getRectangle ());
 			}
 		},
 	});

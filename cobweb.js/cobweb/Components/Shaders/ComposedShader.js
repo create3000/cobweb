@@ -294,7 +294,7 @@ function ($,
 			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
 			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
 		},
-		setGlobalUniforms: function ()
+		setGlobalUniforms: function (projectionMatrixArray)
 		{
 			var
 				browser      = this .getBrowser (),
@@ -303,7 +303,7 @@ function ($,
 
 			shader = this;
 			gl .useProgram (this .program);
-			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Set global lights
 

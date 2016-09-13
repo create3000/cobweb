@@ -19027,7 +19027,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.27";
+	return "1.28a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -26186,7 +26186,6 @@ function ($,
 	{
 		constructor: X3DShaderNode,
 		custom: true,
-		geometryTypeValue: 3,
 		setCustom: function (value)
 		{
 			this .custom = value;
@@ -26197,22 +26196,13 @@ function ($,
 		},
 		setGeometryType: function (value)
 		{
-			this .geometryTypeValue = value;
-
-			this .use ();
-			this .getBrowser () .getContext () .uniform1i (this .geometryType, value);
-
-			this .setShading (this .getBrowser () .getBrowserOptions () .Shading_ .getValue ());
+			this .setShading (value, this .getBrowser () .getBrowserOptions () .Shading_ .getValue ());
 		},
-		getGeometryType: function ()
-		{
-			return this .geometryTypeValue;
-		},
-		setShading: function (shading)
+		setShading: function (geometryType, shading)
 		{
 			var gl = this .getBrowser () .getContext ();
 
-			switch (this .geometryTypeValue)
+			switch (geometryType)
 			{
 				case 0:
 				{
@@ -27121,19 +27111,19 @@ function ($,
 
 		this .addType (X3DConstants .ComposedShader);
 
-		this .loadSensor            = new LoadSensor (executionContext);
-		this .clipPlane             = [ ];
-		this .lightType             = [ ];
-		this .lightOn               = [ ];
-		this .lightColor            = [ ];
-		this .lightIntensity        = [ ];
-		this .lightAmbientIntensity = [ ];
-		this .lightAttenuation      = [ ];
-		this .lightLocation         = [ ];
-		this .lightDirection        = [ ];
-		this .lightBeamWidth        = [ ];
-		this .lightCutOffAngle      = [ ];
-		this .lightRadius           = [ ];
+		this .loadSensor                = new LoadSensor (executionContext);
+		this .x3d_ClipPlane             = [ ];
+		this .x3d_LightType             = [ ];
+		this .x3d_LightOn               = [ ];
+		this .x3d_LightColor            = [ ];
+		this .x3d_LightIntensity        = [ ];
+		this .x3d_LightAmbientIntensity = [ ];
+		this .x3d_LightAttenuation      = [ ];
+		this .x3d_LightLocation         = [ ];
+		this .x3d_LightDirection        = [ ];
+		this .x3d_LightBeamWidth        = [ ];
+		this .x3d_LightCutOffAngle      = [ ];
+		this .x3d_LightRadius           = [ ];
 	}
 
 	ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
@@ -27263,74 +27253,73 @@ function ($,
 			shader = this;
 			gl .useProgram (program);
 
-			this .geometryType = gl .getUniformLocation (program, "x3d_GeometryType");
+			this .x3D_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
 			for (var i = 0; i < this .maxClipPlanes; ++ i)
-				this .clipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
+				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
 
-			this .fogType            = gl .getUniformLocation (program, "x3d_FogType");
-			this .fogColor           = gl .getUniformLocation (program, "x3d_FogColor");
-			this .fogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
+			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
+			this .x3d_FogColor           = gl .getUniformLocation (program, "x3d_FogColor");
+			this .x3d_FogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
 
-			this .linewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
+			this .x3d_LinewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
 
-			this .lighting      = gl .getUniformLocation (program, "x3d_Lighting");
-			this .colorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
+			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
+			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
 
 			for (var i = 0; i < this .maxLights; ++ i)
 			{
-				this .lightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
-				this .lightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
-				this .lightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
-				this .lightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
-				this .lightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
-				this .lightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
-				this .lightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
-				this .lightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
-				this .lightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
-				this .lightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
+				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
+				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
+				this .x3d_LightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
+				this .x3d_LightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
+				this .x3d_LightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
+				this .x3d_LightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
+				this .x3d_LightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
+				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
+				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
+				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
 			}
 
-			this .separateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
+			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
 
-			this .ambientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
-			this .diffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
-			this .specularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
-			this .emissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
-			this .shininess        = gl .getUniformLocation (program, "x3d_Shininess");
-			this .transparency     = gl .getUniformLocation (program, "x3d_Transparency");
+			this .x3d_AmbientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
+			this .x3d_DiffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
+			this .x3d_SpecularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
+			this .x3d_EmissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
+			this .x3d_Shininess        = gl .getUniformLocation (program, "x3d_Shininess");
+			this .x3d_Transparency     = gl .getUniformLocation (program, "x3d_Transparency");
 
-			this .backAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
-			this .backDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
-			this .backSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
-			this .backEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
-			this .backShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
-			this .backTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
+			this .x3d_BackAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
+			this .x3d_BackDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
+			this .x3d_BackSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
+			this .x3d_BackEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
+			this .x3d_BackShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
+			this .x3d_BackTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
 
-			this .textureType    = gl .getUniformLocation (program, "x3d_TextureType");
-			this .texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
-			this .cubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
+			this .x3d_TextureType    = gl .getUniformLocation (program, "x3d_TextureType");
+			this .x3d_Texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
+			this .x3d_CubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
 
-			this .texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
+			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
 
-			this .textureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .normalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
-			this .projectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
-			this .modelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
+			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
+			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
+			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
 			
-			this .color    = gl .getAttribLocation (program, "x3d_Color");
-			this .texCoord = gl .getAttribLocation (program, "x3d_TexCoord");
-			this .normal   = gl .getAttribLocation (program, "x3d_Normal");
-			this .vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
+			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
+			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
+			this .x3d_Normal   = gl .getAttribLocation (program, "x3d_Normal");
+			this .x3d_Vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
 
-			gl .uniform1i  (this .geometryType,         this .getGeometryType ());
-			gl .uniform1f  (this .linewidthScaleFactor, 1);
-			gl .uniform1iv (this .textureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .texture,              new Int32Array ([0])); // depreciated
-			gl .uniform1iv (this .texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
-			gl .uniform1iv (this .cubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
+			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
+			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
+			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
+			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
+			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
 		},
-		setGlobalUniforms: function ()
+		setGlobalUniforms: function (projectionMatrixArray)
 		{
 			var
 				browser      = this .getBrowser (),
@@ -27339,7 +27328,7 @@ function ($,
 
 			shader = this;
 			gl .useProgram (this .program);
-			gl .uniformMatrix4fv (this .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Set global lights
 
@@ -27366,6 +27355,10 @@ function ($,
 				gl .useProgram (this .program);
 			}
 
+			// Geometry type
+
+			gl .uniform1i (this .geometryType, context .geometryType);
+
 			// Clip planes
 
 			if (clipPlaneNodes .length)
@@ -27374,11 +27367,11 @@ function ($,
 					clipPlaneNodes [i] .use (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .clipPlane [i], this .noClipPlane);
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
 			}
 			else
 			{
-				gl .uniform4fv (this .clipPlane [0], this .noClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
 			}
 
 			// Fog, there is always one
@@ -27396,17 +27389,17 @@ function ($,
 				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
 
 				gl .lineWidth (linewidthScaleFactor);
-				gl .uniform1f (this .linewidthScaleFactor, linewidthScaleFactor);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, linewidthScaleFactor);
 			}
 			else
 			{
 				gl .lineWidth (1);
-				gl .uniform1f (this .linewidthScaleFactor, 1);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, 1);
 			}
 	
 			// Material
 
-			gl .uniform1i (this .colorMaterial, context .colorMaterial);
+			gl .uniform1i (this .x3d_ColorMaterial, context .colorMaterial);
 
 			if (materialNode)
 			{
@@ -27420,30 +27413,30 @@ function ($,
 					localLights [l] .use (gl, this, i);
 
 				if (numLights < this .maxLights)
-					gl .uniform1i (this .lightType [numLights], 0);
+					gl .uniform1i (this .x3d_LightType [numLights], 0);
 
 				// Material
 
-				gl .uniform1i  (this .lighting,         true);
-				gl .uniform1f  (this .ambientIntensity, materialNode .ambientIntensity);
-				gl .uniform3fv (this .diffuseColor,     materialNode .diffuseColor);
-				gl .uniform3fv (this .specularColor,    materialNode .specularColor);
-				gl .uniform3fv (this .emissiveColor,    materialNode .emissiveColor);
-				gl .uniform1f  (this .shininess,        materialNode .shininess);
-				gl .uniform1f  (this .transparency,     materialNode .transparency);
+				gl .uniform1i  (this .x3d_Lighting,         true);
+				gl .uniform1f  (this .x3d_AmbientIntensity, materialNode .ambientIntensity);
+				gl .uniform3fv (this .x3d_DiffuseColor,     materialNode .diffuseColor);
+				gl .uniform3fv (this .x3d_SpecularColor,    materialNode .specularColor);
+				gl .uniform3fv (this .x3d_EmissiveColor,    materialNode .emissiveColor);
+				gl .uniform1f  (this .x3d_Shininess,        materialNode .shininess);
+				gl .uniform1f  (this .x3d_Transparency,     materialNode .transparency);
 
 				if (materialNode .getSeparateBackColor ())
 				{
-					gl .uniform1i  (this .separateBackColor,    true);
-					gl .uniform1f  (this .backAmbientIntensity, materialNode .backAmbientIntensity);
-					gl .uniform3fv (this .backDiffuseColor,     materialNode .backDiffuseColor);
-					gl .uniform3fv (this .backSpecularColor,    materialNode .backSpecularColor);
-					gl .uniform3fv (this .backEmissiveColor,    materialNode .backEmissiveColor);
-					gl .uniform1f  (this .backShininess,        materialNode .backShininess);
-					gl .uniform1f  (this .backTransparency,     materialNode .backTransparency);
+					gl .uniform1i  (this .x3d_SeparateBackColor,    true);
+					gl .uniform1f  (this .x3d_BackAmbientIntensity, materialNode .backAmbientIntensity);
+					gl .uniform3fv (this .x3d_BackDiffuseColor,     materialNode .backDiffuseColor);
+					gl .uniform3fv (this .x3d_BackSpecularColor,    materialNode .backSpecularColor);
+					gl .uniform3fv (this .x3d_BackEmissiveColor,    materialNode .backEmissiveColor);
+					gl .uniform1f  (this .x3d_BackShininess,        materialNode .backShininess);
+					gl .uniform1f  (this .x3d_BackTransparency,     materialNode .backTransparency);
 				}
 				else
-					gl .uniform1i (this .separateBackColor, false);
+					gl .uniform1i (this .x3d_SeparateBackColor, false);
 
 				try
 				{
@@ -27453,16 +27446,16 @@ function ($,
 					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 					Matrix3 .prototype .inverse .call (normalMatrix);
-					gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
 				}
 				catch (error)
 				{
-					gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
 				}
 			}
 			else
 			{
-				gl .uniform1i (this .lighting, false);
+				gl .uniform1i (this .x3d_Lighting, false);
 
 				if (this .getCustom ())
 				{
@@ -27474,11 +27467,11 @@ function ($,
 						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (this .normalMatrix, false, normalMatrix);
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
 					}
 					catch (error)
 					{
-						gl .uniformMatrix3fv (this .normalMatrix, false, new Float32Array (Matrix3 .Identity));
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
 					}
 				}
 			}
@@ -27488,21 +27481,21 @@ function ($,
 				textureNode .traverse (gl, this, 0);
 				textureTransformNode [0] .traverse ();
 
-				gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
+				gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 			}
 			else
 			{
 				this .textureTypeArray [0] = 0;
-				gl .uniform1iv (this .textureType, this .textureTypeArray);
+				gl .uniform1iv (this .x3d_TextureType, this .textureTypeArray);
 
 				if (this .getCustom ())
 				{
 					textureTransformNode [0] .traverse ();
-					gl .uniformMatrix4fv (this .textureMatrix, false, textureTransformNode [0] .getMatrixArray ());
+					gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
 				}
 			}
 
-			gl .uniformMatrix4fv (this .modelViewMatrix, false, modelViewMatrix);
+			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
 		use: function ()
 		{
@@ -37526,9 +37519,9 @@ define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text
 
 define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != x3d_NoLight)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == x3d_DirectionalLight;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == x3d_SpotLight)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision highp float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec3\npack (in float f)\n{\n\tvec3 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor .rgb = pack (gl_FragCoord .z);\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision highp float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\npack (in float f)\n{\n\tvec4 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\tf -= color .b;\n\tf *= 255.0;\n\tcolor .a = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = pack (gl_FragCoord .z);\n}\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -37607,6 +37600,15 @@ function ($)
 					this [top] .assign (this [top - 1]);
 				else
 					this [top] = this [top - 1] .copy ();
+			},
+			pushMatrix: function (matrix)
+			{
+				var top = ++ this .top;
+
+				if (top < this .length)
+					this [top] .assign (matrix);
+				else
+					this [top] = matrix .copy ();
 			},
 			pop: function ()
 			{
@@ -37720,10 +37722,9 @@ function (Fields,
 	{
 		this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
 
-		this .projectionMatrix      = new Matrix4 ();
-		this .projectionMatrixArray = new Float32Array (16);
-		this .modelViewMatrix       = new MatrixStack (Matrix4);
-		this .clipPlanes            = [ ];
+		this .projectionMatrix = new MatrixStack (Matrix4);
+		this .modelViewMatrix  = new MatrixStack (Matrix4);
+		this .clipPlanes       = [ ];
 	}
 
 	X3DRenderingContext .prototype =
@@ -37792,18 +37793,9 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
-		setProjectionMatrix: function (value)
-		{
-			this .projectionMatrix = value;
-			this .projectionMatrixArray .set (value);
-		},
 		getProjectionMatrix: function ()
 		{
 			return this .projectionMatrix;
-		},
-		getProjectionMatrixArray: function ()
-		{
-			return this .projectionMatrixArray;
 		},
 		getModelViewMatrix: function ()
 		{
@@ -37859,9 +37851,9 @@ function (Fields,
 
 			// Configure custom shaders
 
-			this .pointShader   .setShading (type);
-			this .lineShader    .setShading (type);
-			this .defaultShader .setShading (type);
+			this .pointShader   .setGeometryType (0);
+			this .lineShader    .setGeometryType (1);
+			this .defaultShader .setGeometryType (3);
 
 			var shaders = this .getShaders ();
 
@@ -42513,6 +42505,7 @@ function ($,
 		this .addChildren ("transparent",  new Fields .SFBool ());
 		this .addChildren ("bbox_changed", new Fields .SFTime ());
 
+		this .geometryType        = 3;
 		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate ();
 	}
 
@@ -42570,7 +42563,7 @@ function ($,
 			this .vertexArray     = new Float32Array ();
 			this .planes          = [ ];
 
-			if (! this .isLineGeometry ())
+			if (this .geometryType > 1)
 			{
 				for (var i = 0; i < 5; ++ i)
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
@@ -42582,9 +42575,13 @@ function ($,
 		{
 			return false;
 		},
-		isLineGeometry: function ()
+		setGeometryType: function (value)
 		{
-			return false;
+			this .geometryType = value;
+		},
+		getGeometryType: function ()
+		{
+			return this .geometryType;
 		},
 		getBBox: function ()
 		{
@@ -42806,7 +42803,7 @@ function ($,
 		},
 		set_shading__: function (shading)
 		{
-			if (this .isLineGeometry ())
+			if (this .geometryType < 2)
 				return;
 			
 			var flatShading = shading .getValue () === "FLAT";
@@ -42869,7 +42866,7 @@ function ($,
 
 			this .bbox_changed_ .addEvent ();
 
-			if (! this .isLineGeometry ())
+			if (this .geometryType > 1)
 			{
 				var
 					min = this .min,
@@ -42954,40 +42951,41 @@ function ($,
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
+			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .texCoord >= 0)
+			if (shader .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .texCoord);
+				gl .enableVertexAttribArray (shader .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .normal >= 0)
+			if (shader .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .normal);
+				gl .enableVertexAttribArray (shader .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -43024,10 +43022,10 @@ function ($,
 				}
 			}
 
-			if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
-			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
-			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
+			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -43036,40 +43034,41 @@ function ($,
 				gl      = browser .getContext (),
 				shader  = browser .getShader ();
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
+			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .texCoord >= 0)
+			if (shader .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .texCoord);
+				gl .enableVertexAttribArray (shader .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .normal >= 0)
+			if (shader .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .normal);
+				gl .enableVertexAttribArray (shader .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -43101,10 +43100,10 @@ function ($,
 						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+						gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
 					}
 	
-					gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+					gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 					for (var i = 0, length = this .vertexCount; i < length; i += 3)
 						gl .drawArrays (shader .primitiveMode, i, 3);
@@ -43133,10 +43132,10 @@ function ($,
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 
 						gl .enable (gl .CULL_FACE);
 						gl .cullFace (gl .FRONT);
@@ -43168,20 +43167,20 @@ function ($,
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .normalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 
 						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
 					}
 				}
 			}
 
-			if (shader .color    >= 0) gl .disableVertexAttribArray (shader .color);
-			if (shader .texCoord >= 0) gl .disableVertexAttribArray (shader .texCoord);
-			if (shader .normal   >= 0) gl .disableVertexAttribArray (shader .normal);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
+			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		collision: function (shader)
 		{
@@ -43191,13 +43190,13 @@ function ($,
 
 			// Setup vertex attributes.
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{
@@ -46562,11 +46561,11 @@ function ($,
 		{
 			try
 			{
-				return this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix (), viewport);
+				this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport);
 			}
 			catch (error)
 			{
-				return this .hitRay = line;
+				this .hitRay = line;
 			}
 		},
 		getHitRay: function ()
@@ -46665,7 +46664,7 @@ function ($,
 				var nearestHit = this .hits [this .hits .length - 1];
 			else
 			{
-				var hitRay = this .selectedLayer ? this .selectedLayer .getHitRay () : line;
+				var hitRay = this .selectedLayer ? this .hitRay : line;
 
 				var nearestHit = {
 					pointer:         this .pointer,
@@ -48628,7 +48627,7 @@ function ($,
                                                            navigationInfo .getFarPlane (this),
                                                            this .getCurrentViewport () .getRectangle ());
 
-			this .getBrowser () .setProjectionMatrix (projectionMatrix);
+			this .getBrowser () .getProjectionMatrix () .set (projectionMatrix);
 		},
 		transform: function ()
 		{
@@ -50050,32 +50049,32 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			shader .use ();
 
-			gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+			gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
-			gl .uniform1i (shader .fogType,       0);
-			gl .uniform1i (shader .colorMaterial, false);
-			gl .uniform1i (shader .lighting,      true);
+			gl .uniform1i (shader .x3d_FogType,       0);
+			gl .uniform1i (shader .x3d_ColorMaterial, false);
+			gl .uniform1i (shader .x3d_Lighting,      true);
 
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 			
 			gl .disable (gl .DEPTH_TEST);
 
 			// Draw a black and a white line.
 			gl .lineWidth (2);
-			gl .uniform3fv (shader .emissiveColor, black);
-			gl .uniform1f  (shader .transparency,  0);
+			gl .uniform3fv (shader .x3d_EmissiveColor, black);
+			gl .uniform1f  (shader .x3d_Transparency,  0);
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .lineBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 
 			gl .lineWidth (1);
-			gl .uniform3fv (shader .emissiveColor, white);
+			gl .uniform3fv (shader .x3d_EmissiveColor, white);
 
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 			gl .enable (gl .DEPTH_TEST);
 
 			gl .lineWidth (lineWidth);
@@ -53256,11 +53255,11 @@ function ($,
 		},
 		use: function (gl, shader, i)
 		{
-			gl .uniform1i (shader .lightType [i],             1);
-			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform1i (shader .x3d_LightType [i],             1);
+			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shader .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
 		recycle: function ()
 		{
@@ -54383,7 +54382,7 @@ function ($,
 				viewVolumes  = currentLayer .getViewVolumes (),
 				viewport     = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : this .rectangle;
 
-			currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
+			currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix () .get (),
 			                                                         viewport,
 			                                                         this .rectangle));
 		},
@@ -65423,7 +65422,8 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 
 		// The frame buffer.
 
-		this .buffer = gl .createFramebuffer ();
+		this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
+		this .buffer     = gl .createFramebuffer ();
 
 		gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
 
@@ -65454,7 +65454,7 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 		if (gl .checkFramebufferStatus (gl .FRAMEBUFFER) !== gl .FRAMEBUFFER_COMPLETE)
 			throw new Error ("Couldn't create frame buffer.");
 
-		gl .bindFramebuffer (gl .FRAMEBUFFER, null);
+		gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
 	}
 
 	DepthBuffer .prototype =
@@ -65462,16 +65462,15 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 		constructor: DepthBuffer,
 		getDistance: function (radius, zNear, zFar)
 		{
-			var gl = this .browser .getContext ();
-
-			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, this .array);
-
 			var
+				gl       = this .browser .getContext (),
 				array    = this .array,
 				distance = Number .POSITIVE_INFINITY,
 				w1       = 2 / (this .width  - 1),
 				h1       = 2 / (this .height - 1),
 				zWidth   = zFar - zNear;
+
+			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, array);
 
 			for (var py = 0, i = 0; py < this .height; ++ py)
 			{
@@ -65481,7 +65480,7 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 			   {
 				   var
 				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4294967295);
+				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625);
 
 					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
 			   }
@@ -65492,6 +65491,8 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 		bind: function ()
 		{
 			var gl = this .browser .getContext ();
+
+			this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
 
 			gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
 
@@ -65504,7 +65505,7 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 		unbind: function ()
 		{
 			var gl = this .browser .getContext ();
-			gl .bindFramebuffer (gl .FRAMEBUFFER, null);
+			gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
 		},
 	};
 
@@ -65776,15 +65777,16 @@ function ($,
 
 
 	var
-		DEPTH_BUFFER_WIDTH  = 16,
-		DEPTH_BUFFER_HEIGHT = 16,
-		projectionMatrix    = new Matrix4 (),
-		modelViewMatrix     = new Matrix4 (),
-		localOrientation    = new Rotation4 (0, 0, 1, 0),
-		yAxis               = new Vector3 (0, 1, 0),
-		zAxis               = new Vector3 (0, 0, 1),
-		vector              = new Vector3 (0, 0, 0),
-		rotation            = new Rotation4 (0, 0, 1, 0);
+		DEPTH_BUFFER_WIDTH    = 16,
+		DEPTH_BUFFER_HEIGHT   = 16,
+		projectionMatrix      = new Matrix4 (),
+		projectionMatrixArray = new Float32Array (16),
+		modelViewMatrix       = new Matrix4 (),
+		localOrientation      = new Rotation4 (0, 0, 1, 0),
+		yAxis                 = new Vector3 (0, 1, 0),
+		zAxis                 = new Vector3 (0, 0, 1),
+		vector                = new Vector3 (0, 0, 0),
+		rotation              = new Rotation4 (0, 0, 1, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -65995,7 +65997,7 @@ function ($,
 			this .collisionTime += performance .now () - t0;
 			return translation;
 		},
-		getDistance: function (translation)
+		getDistance: function (direction)
 		{
 			try
 			{
@@ -66016,10 +66018,10 @@ function ($,
 
 				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, zNear, zFar, projectionMatrix);
 
-				// Translate camera to user position and to look in the direction of the translation.
+				// Translate camera to user position and to look in the direction of the direction.
 
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
-				rotation .setFromToVec (zAxis, vector .assign (translation) .negate ()) .multRight (localOrientation);
+				rotation .setFromToVec (zAxis, vector .assign (direction) .negate ()) .multRight (localOrientation);
 				//viewpoint .straightenHorizon (rotation);
 
 				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
@@ -66027,9 +66029,13 @@ function ($,
 				modelViewMatrix .rotate (rotation);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
-				return this .getDepth ();
+				var depth = this .getDepth ();
+
+				this .getBrowser () .getProjectionMatrix () .pop ();
+
+				return depth;
 			}
 			catch (error)
 			{
@@ -66045,9 +66051,12 @@ function ($,
 				gl              = browser .getContext (),
 				shader          = browser .getDepthShader (),
 				collisionShapes = this .collisionShapes;
-			
+
 			shader .use ();
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, browser .getProjectionMatrixArray ());
+			
+			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			this .depthBuffer .bind ();
 
@@ -66077,14 +66086,14 @@ function ($,
 						clipPlanes [c] .use (gl, shader, c);
 	
 					if (c < shader .maxClipPlanes)
-						gl .uniform4fv (shader .clipPlane [c], shader .noClipPlane);
+						gl .uniform4fv (shader .x3d_ClipPlane [c], shader .noClipPlane);
 				}
 				else
-					gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+					gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
 				// modelViewMatrix
 	
-				gl .uniformMatrix4fv (shader .modelViewMatrix, false, context .modelViewMatrix);
+				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, context .modelViewMatrix);
 
 				// Draw
 	
@@ -66217,9 +66226,11 @@ function ($,
 				modelViewMatrix .rotate (down);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
 				var distance = this .getDepth ();
+
+				this .getBrowser () .getProjectionMatrix () .pop ();
 
 				// Gravite or step up
 
@@ -66314,12 +66325,14 @@ function ($,
 
 			// Sorted blend
 
-			browser .getPointShader ()   .setGlobalUniforms ();
-			browser .getLineShader ()    .setGlobalUniforms ();
-			browser .getDefaultShader () .setGlobalUniforms ();
+			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+
+			browser .getPointShader ()   .setGlobalUniforms (projectionMatrixArray);
+			browser .getLineShader ()    .setGlobalUniforms (projectionMatrixArray);
+			browser .getDefaultShader () .setGlobalUniforms (projectionMatrixArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms ();
+				shaders [id] .setGlobalUniforms (projectionMatrixArray);
 
 			// Render opaque objects first
 
@@ -66813,7 +66826,7 @@ function ($,
 		use: function (gl, shader)
 		{
 			if (this .hidden)
-				gl .uniform1i (shader .fogType, 0); // NO_FOG
+				gl .uniform1i (shader .x3d_FogType, 0); // NO_FOG
 
 			else
 			{
@@ -66824,9 +66837,9 @@ function ($,
 				if (visibilityRange === 0)
 					visibilityRange = this .getCurrentNavigationInfo () .getFarPlane (this .getCurrentViewpoint ());
 
-				gl .uniform1i (shader .fogType,            this .fogType);
-				gl .uniform3f (shader .fogColor,           color .r, color .g, color .b);
-				gl .uniform1f (shader .fogVisibilityRange, visibilityRange);
+				gl .uniform1i (shader .x3d_FogType,            this .fogType);
+				gl .uniform3f (shader .x3d_FogColor,           color .r, color .g, color .b);
+				gl .uniform1f (shader .x3d_FogVisibilityRange, visibilityRange);
 			}
 		},
 	};
@@ -67536,15 +67549,15 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
+					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Setup context.
 	
@@ -67555,13 +67568,13 @@ function ($,
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .color);
+			gl .enableVertexAttribArray (shader .x3d_Color);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw.
 
@@ -67569,8 +67582,8 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_Color);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		drawCube: function ()
 		{
@@ -67590,30 +67603,30 @@ function ($,
 					clipPlanes [i] .use (gl, shader, i);
 	
 				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .clipPlane [i], shader .noClipPlane);
+					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
 			}
 			else
-				gl .uniform4fv (shader .clipPlane [0], shader .noClipPlane);
+				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
 
 			// Uniforms
 
-			gl .uniform1i (shader .fogType,       0);
-			gl .uniform1i (shader .colorMaterial, false);
-			gl .uniform1i (shader .lighting,      false);
+			gl .uniform1i (shader .x3d_FogType,       0);
+			gl .uniform1i (shader .x3d_ColorMaterial, false);
+			gl .uniform1i (shader .x3d_Lighting,      false);
 			gl .uniform1i (shader .texturing,     true);
-			gl .uniform1i (shader .textureType,   2);
+			gl .uniform1i (shader .x3d_TextureType,   2);
 
-			gl .uniformMatrix4fv (shader .textureMatrix,    false, this .textureMatrixArray);
-			gl .uniformMatrix4fv (shader .projectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .modelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_TextureMatrix,    false, this .textureMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .texCoord);
+			gl .enableVertexAttribArray (shader .x3d_TexCoord);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
-			gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 
 			// Draw.
 
@@ -67626,8 +67639,8 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .texCoord);
-			gl .disableVertexAttribArray (shader .vertex);
+			gl .disableVertexAttribArray (shader .x3d_TexCoord);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		drawRectangle: function (gl, shader, texture, buffer)
 		{
@@ -67641,7 +67654,7 @@ function ($,
 					gl .disable (gl .BLEND);
 
 				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 				// Draw.
 
@@ -68025,7 +68038,7 @@ function ($,
 			shader .textureTypeArray [i] = 2;
 			gl .activeTexture (gl .TEXTURE0);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .uniform1iv (shader .textureType, shader .textureTypeArray);
+			gl .uniform1iv (shader .x3d_TextureType, shader .textureTypeArray);
 		},
 	});
 
@@ -68508,8 +68521,8 @@ define ('cobweb/Components/Layering/X3DLayerNode',[
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Line3",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DNode,
@@ -68523,12 +68536,10 @@ function ($,
           X3DCast,
           TraverseType,
           X3DConstants,
-          Line3,
-          Vector3)
+          Vector3,
+          Matrix4)
 {
 
-
-	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
 	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
@@ -68558,7 +68569,6 @@ function ($,
 		this .defaultBackground .setHidden (true);
 		this .defaultFog        .setHidden (true);
 
-		this .hitRay        = line;
 		this .collisionTime = 0;
 	}
 
@@ -68673,10 +68683,6 @@ function ($,
 		{
 			return this .viewpointStack;
 		},
-		getHitRay: function ()
-		{
-			return this .hitRay;
-		},
 		getBBox: function (bbox)
 		{
 			return this .groupNode .getBBox (bbox);
@@ -68704,6 +68710,8 @@ function ($,
 		   var browser = this .getBrowser ();
 
 			browser .getLayers () .push (this);
+			browser .getProjectionMatrix () .pushMatrix (Matrix4 .Identity);
+			browser .getModelViewMatrix  () .pushMatrix (Matrix4 .Identity);
 
 			switch (type)
 			{
@@ -68721,6 +68729,8 @@ function ($,
 					break;
 			}
 
+			browser .getModelViewMatrix  () .pop ()
+			browser .getProjectionMatrix () .pop ()
 			browser .getLayers () .pop ();
 		},
 		pointer: function ()
@@ -68743,7 +68753,7 @@ function ($,
 				this .getViewpoint () .reshape ();
 				this .getViewpoint () .transform ();
 
-				this .hitRay = this .getBrowser () .setHitRay (viewport);
+				this .getBrowser () .setHitRay (viewport);
 
 				this .currentViewport .push ();
 				this .collect (TraverseType .POINTER);
@@ -68753,7 +68763,6 @@ function ($,
 		camera: function ()
 		{
 			this .getViewpoint () .reshape ();
-			this .getBrowser () .getModelViewMatrix () .identity ();
 
 			this .currentViewport .push ();
 			this .collect (TraverseType .CAMERA);
@@ -68771,7 +68780,6 @@ function ($,
 			this .collisionTime = 0;
 
 			this .getViewpoint () .reshape ();
-			this .getBrowser () .getModelViewMatrix () .identity ();
 
 			// Render
 			this .currentViewport .push ();
@@ -70567,9 +70575,9 @@ function ($,
 
 				var matrices = this .matrices [currentLayer .getId ()];
 
-				matrices .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-				matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix ());
-				matrices .viewport .assign (currentLayer .getViewport () .getRectangle ());
+				matrices .modelViewMatrix  .assign (this .getBrowser () .getModelViewMatrix  () .get ());
+				matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix () .get ());
+				matrices .viewport         .assign (currentLayer .getViewport () .getRectangle ());
 			}
 		},
 	});
@@ -71070,10 +71078,6 @@ function ($,
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 	{
 		constructor: X3DLineGeometryNode,
-		isLineGeometry: function ()
-		{
-			return true;
-		},
 		setShader: function (value)
 		{
 			this .shader = value;
@@ -71088,33 +71092,34 @@ function ($,
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
+			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .getColors () .length;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
 			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
 
-			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -71126,26 +71131,27 @@ function ($,
 			if (shader === browser .getDefaultShader ())
 				shader = this .shader;
 
-			if (shader .vertex < 0 || this .vertexCount === 0)
+			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
+			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .colors .length;
 			shader .setLocalUniforms (context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .color >= 0)
+			if (this .colors .length && shader .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .color);
+				gl .enableVertexAttribArray (shader .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .vertex);
+			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
@@ -71164,13 +71170,13 @@ function ($,
 
 				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
 
-				gl .uniformMatrix4fv (shader .modelViewMatrix, false, modelViewMatrix);
+				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 				gl .drawArrays (primitiveMode, 0, this .vertexCount);
 			}
 
-			if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-			gl .disableVertexAttribArray (shader .vertex);
+			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+			gl .disableVertexAttribArray (shader .x3d_Vertex);
 		},
 	});
 
@@ -71257,6 +71263,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Arc2D);
+
+		this .setGeometryType (1);
 	}
 
 	Arc2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -71431,6 +71439,8 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .ArcClose2D);
+
+		this .setGeometryType (2);
 	}
 
 	ArcClose2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -71565,20 +71575,6 @@ function ($,
 			this .getMax () .set ( radius,  radius, 0);	
 	
 			this .setSolid (this .solid_ .getValue ());
-		},
-		display: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .display .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
 		},
 	});
 
@@ -74160,6 +74156,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Circle2D);
+
+		this .setGeometryType (1);
 	}
 
 	Circle2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -74349,7 +74347,7 @@ function ($,
 				plane  = this .plane,
 				normal = plane .normal;
 
-			gl .uniform4f (shader .clipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+			gl .uniform4f (shader .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
 		recycle: function ()
 		{
@@ -76263,7 +76261,7 @@ function ($,
 			shader .textureTypeArray [i] = 4;
 			gl .activeTexture (gl .TEXTURE1);
 			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-			gl .uniform1iv (shader .textureType, shader .textureTypeArray);
+			gl .uniform1iv (shader .x3d_TextureType, shader .textureTypeArray);
 		},
 	});
 
@@ -78452,8 +78450,6 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Disk2D);
-
-		this .lineGeometry = false;
 	}
 
 	Disk2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -78493,10 +78489,6 @@ function ($,
 			else
 				this .getBrowser () .getDisk2DOptions () .removeInterest (this, "eventsProcessed");
 		},
-		isLineGeometry: function ()
-		{
-			return this .lineGeometry;
-		},
 		build: function ()
 		{
 			var
@@ -78533,7 +78525,7 @@ function ($,
 				this .getMin () .set (-radius, -radius, 0);
 				this .getMax () .set ( radius,  radius, 0);
 
-				this .lineGeometry = true;
+				this .setGeometryType (1);
 				return;
 			}
 
@@ -78560,12 +78552,14 @@ function ($,
 
 				this .getMin () .set (-radius, -radius, 0);
 				this .getMax () .set ( radius,  radius, 0);
-		
+
+				this .setGeometryType (2);
 				this .setSolid (this .solid_ .getValue ());
 
-				this .lineGeometry = false;
 				return;
 			}
+
+			// Disk with hole
 
 			var
 				maxRadius  = Math .abs (Math .max (innerRadius, outerRadius)),
@@ -78605,29 +78599,18 @@ function ($,
 			this .getMin () .set (-maxRadius, -maxRadius, 0);
 			this .getMax () .set ( maxRadius,  maxRadius, 0);
 	
+			this .setGeometryType (2);
 			this .setSolid (this .solid_ .getValue ());
-
-			this .lineGeometry = false;
 		},
 		display: function (context)
 		{
-			if (this .isLineGeometry ())
+			if (this .getGeometryType () < 2)
 			{
 				X3DLineGeometryNode .prototype .display .call (this, context);
 			}
 			else
 			{
-				var
-					browser = this .getBrowser (),
-					gl      = browser .getContext (),
-					shader  = browser .getShader ();
-	
-				shader .use ();
-				gl .uniform1i (shader .geometryType, 2);
-	
 				X3DGeometryNode .prototype .display .call (this, context);
-	
-				gl .uniform1i (shader .geometryType, 3);
 			}
 		},
 	});
@@ -82682,6 +82665,8 @@ function ($,
 
 		this .addType (X3DConstants .IndexedLineSet);
 
+		this .setGeometryType (1);
+
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
@@ -85680,6 +85665,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .LineSet);
+
+		this .setGeometryType (1);
 
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
@@ -88740,24 +88727,28 @@ function ($,
 			{
 				case POINT:
 				{
-					this .shader = this .getBrowser () .getPointShader ()
+					this .shaderGeometryType = 0;
+					this .shader             = this .getBrowser () .getPointShader ()
 					break;
 				}
 				case LINE:
 				{
-					this .shader = this .getBrowser () .getLineShader ()
+					this .shaderGeometryType = 1;
+					this .shader             = this .getBrowser () .getLineShader ()
 					break;
 				}
 				case TRIANGLE:
 				case QUAD:
 				case SPRITE:
 				{
-					this .shader = this .getBrowser () .getDefaultShader ()
+					this .shaderGeometryType = 3;
+					this .shader             = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 				case GEOMETRY:
 				{
-					this .shader = this .getBrowser () .getDefaultShader ()
+					this .shaderGeometryType = 3; // determine from geometry node.
+					this .shader             = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 			}
@@ -89446,40 +89437,41 @@ function ($,
 				if (shader === browser .getDefaultShader ())
 					shader = this .shader;
 	
-				if (shader .vertex < 0 || this .numParticles === 0)
+				if (shader .x3d_Vertex < 0 || this .numParticles === 0)
 					return;
 	
 				// Setup shader.
-	
+
+				context .geometryType  = this .shaderGeometryType;
 				context .colorMaterial = this .colorMaterial;
 				shader .setLocalUniforms (context);
 	
 				// Setup vertex attributes.
 	
-				if (this .colorMaterial && shader .color >= 0)
+				if (this .colorMaterial && shader .x3d_Color >= 0)
 				{
-					gl .enableVertexAttribArray (shader .color);
+					gl .enableVertexAttribArray (shader .x3d_Color);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-					gl .vertexAttribPointer (shader .color, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .texCoordArray .length && shader .texCoord >= 0)
+				if (this .texCoordArray .length && shader .x3d_TexCoord >= 0)
 				{
-					gl .enableVertexAttribArray (shader .texCoord);
+					gl .enableVertexAttribArray (shader .x3d_TexCoord);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-					gl .vertexAttribPointer (shader .texCoord, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .normalArray .length && shader .normal >= 0)
+				if (this .normalArray .length && shader .x3d_Normal >= 0)
 				{
-					gl .enableVertexAttribArray (shader .normal);
+					gl .enableVertexAttribArray (shader .x3d_Normal);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-					gl .vertexAttribPointer (shader .normal, 3, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 				}
 	
-				gl .enableVertexAttribArray (shader .vertex);
+				gl .enableVertexAttribArray (shader .x3d_Vertex);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-				gl .vertexAttribPointer (shader .vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 	
 				var testWireframe = false;
 
@@ -89515,8 +89507,8 @@ function ($,
 					gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
 				}
 	
-				if (shader .color >= 0) gl .disableVertexAttribArray (shader .color);
-				gl .disableVertexAttribArray (shader .vertex);
+				if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
+				gl .disableVertexAttribArray (shader .x3d_Vertex);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)
@@ -90201,13 +90193,13 @@ function ($,
 	   },
 		use: function (gl, shader, i)
 		{
-			gl .uniform1i (shader .lightType [i],             2);
-			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform1f (shader .lightRadius [i],           this .radius);
+			gl .uniform1i (shader .x3d_LightType [i],             2);
+			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shader .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
+			gl .uniform3f (shader .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
+			gl .uniform1f (shader .x3d_LightRadius [i],           this .radius);
 	
 			// For correct results the radius must be transform by the modelViewMatrix. This can only be done in the shader.
 			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|
@@ -90342,6 +90334,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .PointSet);
+
+		this .setGeometryType (0);
 
 		this .attribNodes  = [ ];
 		this .colorNode    = null;
@@ -90536,6 +90530,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polyline2D);
+
+		this .setGeometryType (1);
 	}
 
 	Polyline2D .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -90905,6 +90901,8 @@ function ($,
 		X3DLineGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Polypoint2D);
+
+		this .setGeometryType (0);
 
 		this .transparent_ = true;
 	}
@@ -91754,6 +91752,8 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .Rectangle2D);
+
+		this .setGeometryType (2);
 	}
 
 	Rectangle2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -91815,20 +91815,6 @@ function ($,
 			}
 
 			this .setSolid (this .solid_ .getValue ());
-		},
-		display: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .display .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
 		},
 	});
 
@@ -92524,7 +92510,7 @@ function ($,
 
 				var
 					fontStyle        = this .getFontStyle (),
-					projectionMatrix = this .getBrowser () .getProjectionMatrix (),
+					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
 					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport (),
 					screenScale      = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
 
@@ -92853,7 +92839,8 @@ function ($,
 			this .modelViewMatrix .get (translation, rotation, scale);
 		
 			var
-				projectionMatrix = this .getBrowser () .getProjectionMatrix (),
+				browser          = this .getBrowser (),
+				projectionMatrix = browser .getProjectionMatrix () .get (),
 				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
 				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
 		
@@ -92875,7 +92862,7 @@ function ($,
 
 			// Assign modelViewMatrix
 
-			this .getBrowser () .getModelViewMatrix () .set (this .screenMatrix);
+			browser .getModelViewMatrix () .set (this .screenMatrix);
 		},
 		traverse: function (type)
 		{
@@ -94095,7 +94082,7 @@ function ($,
 			{
 				var geometry = this .getGeometry ();
 
-				if (geometry .isLineGeometry ())
+				if (geometry .getGeometryType () < 2)
 					return;
 
 				var
@@ -95916,16 +95903,16 @@ function ($,
 	   },
 		use: function (gl, shader, i)
 		{
-			gl .uniform1i (shader .lightType [i],             3);
-			gl .uniform3f (shader .lightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .lightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .lightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .lightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shader .lightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform3f (shader .lightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
-			gl .uniform1f (shader .lightRadius [i],           this .radius);
-			gl .uniform1f (shader .lightBeamWidth [i],        this .beamWidth);
-			gl .uniform1f (shader .lightCutOffAngle [i],      this .cutOffAngle);
+			gl .uniform1i (shader .x3d_LightType [i],             3);
+			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shader .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
+			gl .uniform3f (shader .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
+			gl .uniform3f (shader .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform1f (shader .x3d_LightRadius [i],           this .radius);
+			gl .uniform1f (shader .x3d_LightBeamWidth [i],        this .beamWidth);
+			gl .uniform1f (shader .x3d_LightCutOffAngle [i],      this .cutOffAngle);
 		},
 		recycle: function ()
 		{
@@ -98676,6 +98663,8 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		this .addType (X3DConstants .TriangleSet2D);
+
+		this .setGeometryType (2);
 	}
 
 	TriangleSet2D .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -98730,20 +98719,6 @@ function ($,
 				                 0,
 				                 1);
 			}
-		},
-		display: function (context)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
-
-			shader .use ();
-			gl .uniform1i (shader .geometryType, 2);
-
-			X3DGeometryNode .prototype .display .call (this, context);
-
-			gl .uniform1i (shader .geometryType, 3);
 		},
 	});
 

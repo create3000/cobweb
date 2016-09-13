@@ -154,11 +154,11 @@ function ($,
 		{
 			try
 			{
-				return this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix (), viewport);
+				this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport);
 			}
 			catch (error)
 			{
-				return this .hitRay = line;
+				this .hitRay = line;
 			}
 		},
 		getHitRay: function ()
@@ -257,7 +257,7 @@ function ($,
 				var nearestHit = this .hits [this .hits .length - 1];
 			else
 			{
-				var hitRay = this .selectedLayer ? this .selectedLayer .getHitRay () : line;
+				var hitRay = this .selectedLayer ? this .hitRay : line;
 
 				var nearestHit = {
 					pointer:         this .pointer,

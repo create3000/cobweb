@@ -88,10 +88,9 @@ function (Fields,
 	{
 		this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
 
-		this .projectionMatrix      = new Matrix4 ();
-		this .projectionMatrixArray = new Float32Array (16);
-		this .modelViewMatrix       = new MatrixStack (Matrix4);
-		this .clipPlanes            = [ ];
+		this .projectionMatrix = new MatrixStack (Matrix4);
+		this .modelViewMatrix  = new MatrixStack (Matrix4);
+		this .clipPlanes       = [ ];
 	}
 
 	X3DRenderingContext .prototype =
@@ -160,18 +159,9 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
-		setProjectionMatrix: function (value)
-		{
-			this .projectionMatrix = value;
-			this .projectionMatrixArray .set (value);
-		},
 		getProjectionMatrix: function ()
 		{
 			return this .projectionMatrix;
-		},
-		getProjectionMatrixArray: function ()
-		{
-			return this .projectionMatrixArray;
 		},
 		getModelViewMatrix: function ()
 		{

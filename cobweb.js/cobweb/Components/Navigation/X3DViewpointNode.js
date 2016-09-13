@@ -446,7 +446,7 @@ function ($,
                                                            navigationInfo .getFarPlane (this),
                                                            this .getCurrentViewport () .getRectangle ());
 
-			this .getBrowser () .setProjectionMatrix (projectionMatrix);
+			this .getBrowser () .getProjectionMatrix () .set (projectionMatrix);
 		},
 		transform: function ()
 		{

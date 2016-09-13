@@ -139,7 +139,8 @@ function ($,
 			this .modelViewMatrix .get (translation, rotation, scale);
 		
 			var
-				projectionMatrix = this .getBrowser () .getProjectionMatrix (),
+				browser          = this .getBrowser (),
+				projectionMatrix = browser .getProjectionMatrix () .get (),
 				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
 				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
 		
@@ -161,7 +162,7 @@ function ($,
 
 			// Assign modelViewMatrix
 
-			this .getBrowser () .getModelViewMatrix () .set (this .screenMatrix);
+			browser .getModelViewMatrix () .set (this .screenMatrix);
 		},
 		traverse: function (type)
 		{

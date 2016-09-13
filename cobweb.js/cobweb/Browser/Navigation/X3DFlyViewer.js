@@ -463,8 +463,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			// Draw a black and a white line.
 			gl .lineWidth (2);
-			gl .uniform3fv (shader .emissiveColor, black);
-			gl .uniform1f  (shader .transparency,  0);
+			gl .uniform3fv (shader .x3d_EmissiveColor, black);
+			gl .uniform1f  (shader .x3d_Transparency,  0);
 
 			gl .enableVertexAttribArray (shader .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .lineBuffer);
@@ -472,7 +472,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 
 			gl .lineWidth (1);
-			gl .uniform3fv (shader .emissiveColor, white);
+			gl .uniform3fv (shader .x3d_EmissiveColor, white);
 
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 			gl .disableVertexAttribArray (shader .x3d_Vertex);

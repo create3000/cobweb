@@ -60,8 +60,8 @@ define ([
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Line3",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DNode,
@@ -75,12 +75,10 @@ function ($,
           X3DCast,
           TraverseType,
           X3DConstants,
-          Line3,
-          Vector3)
+          Vector3,
+          Matrix4)
 {
 "use strict";
-
-	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
 
 	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
@@ -110,7 +108,6 @@ function ($,
 		this .defaultBackground .setHidden (true);
 		this .defaultFog        .setHidden (true);
 
-		this .hitRay        = line;
 		this .collisionTime = 0;
 	}
 
@@ -225,10 +222,6 @@ function ($,
 		{
 			return this .viewpointStack;
 		},
-		getHitRay: function ()
-		{
-			return this .hitRay;
-		},
 		getBBox: function (bbox)
 		{
 			return this .groupNode .getBBox (bbox);
@@ -256,6 +249,8 @@ function ($,
 		   var browser = this .getBrowser ();
 
 			browser .getLayers () .push (this);
+			browser .getProjectionMatrix () .pushMatrix (Matrix4 .Identity);
+			browser .getModelViewMatrix  () .pushMatrix (Matrix4 .Identity);
 
 			switch (type)
 			{
@@ -273,6 +268,8 @@ function ($,
 					break;
 			}
 
+			browser .getModelViewMatrix  () .pop ()
+			browser .getProjectionMatrix () .pop ()
 			browser .getLayers () .pop ();
 		},
 		pointer: function ()
@@ -295,7 +292,7 @@ function ($,
 				this .getViewpoint () .reshape ();
 				this .getViewpoint () .transform ();
 
-				this .hitRay = this .getBrowser () .setHitRay (viewport);
+				this .getBrowser () .setHitRay (viewport);
 
 				this .currentViewport .push ();
 				this .collect (TraverseType .POINTER);
@@ -305,7 +302,6 @@ function ($,
 		camera: function ()
 		{
 			this .getViewpoint () .reshape ();
-			this .getBrowser () .getModelViewMatrix () .identity ();
 
 			this .currentViewport .push ();
 			this .collect (TraverseType .CAMERA);
@@ -323,7 +319,6 @@ function ($,
 			this .collisionTime = 0;
 
 			this .getViewpoint () .reshape ();
-			this .getBrowser () .getModelViewMatrix () .identity ();
 
 			// Render
 			this .currentViewport .push ();

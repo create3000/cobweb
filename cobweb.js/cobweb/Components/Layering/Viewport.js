@@ -192,7 +192,7 @@ function ($,
 				viewVolumes  = currentLayer .getViewVolumes (),
 				viewport     = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : this .rectangle;
 
-			currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix (),
+			currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix () .get (),
 			                                                         viewport,
 			                                                         this .rectangle));
 		},

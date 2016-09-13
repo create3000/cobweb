@@ -75,15 +75,16 @@ function ($,
 "use strict";
 
 	var
-		DEPTH_BUFFER_WIDTH  = 16,
-		DEPTH_BUFFER_HEIGHT = 16,
-		projectionMatrix    = new Matrix4 (),
-		modelViewMatrix     = new Matrix4 (),
-		localOrientation    = new Rotation4 (0, 0, 1, 0),
-		yAxis               = new Vector3 (0, 1, 0),
-		zAxis               = new Vector3 (0, 0, 1),
-		vector              = new Vector3 (0, 0, 0),
-		rotation            = new Rotation4 (0, 0, 1, 0);
+		DEPTH_BUFFER_WIDTH    = 16,
+		DEPTH_BUFFER_HEIGHT   = 16,
+		projectionMatrix      = new Matrix4 (),
+		projectionMatrixArray = new Float32Array (16),
+		modelViewMatrix       = new Matrix4 (),
+		localOrientation      = new Rotation4 (0, 0, 1, 0),
+		yAxis                 = new Vector3 (0, 1, 0),
+		zAxis                 = new Vector3 (0, 0, 1),
+		vector                = new Vector3 (0, 0, 0),
+		rotation              = new Rotation4 (0, 0, 1, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -326,9 +327,13 @@ function ($,
 				modelViewMatrix .rotate (rotation);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
-				return this .getDepth ();
+				var depth = this .getDepth ();
+
+				this .getBrowser () .getProjectionMatrix () .pop ();
+
+				return depth;
 			}
 			catch (error)
 			{
@@ -344,9 +349,12 @@ function ($,
 				gl              = browser .getContext (),
 				shader          = browser .getDepthShader (),
 				collisionShapes = this .collisionShapes;
-			
+
 			shader .use ();
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, browser .getProjectionMatrixArray ());
+			
+			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			this .depthBuffer .bind ();
 
@@ -516,9 +524,11 @@ function ($,
 				modelViewMatrix .rotate (down);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .setProjectionMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
 				var distance = this .getDepth ();
+
+				this .getBrowser () .getProjectionMatrix () .pop ();
 
 				// Gravite or step up
 
@@ -613,12 +623,14 @@ function ($,
 
 			// Sorted blend
 
-			browser .getPointShader ()   .setGlobalUniforms ();
-			browser .getLineShader ()    .setGlobalUniforms ();
-			browser .getDefaultShader () .setGlobalUniforms ();
+			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+
+			browser .getPointShader ()   .setGlobalUniforms (projectionMatrixArray);
+			browser .getLineShader ()    .setGlobalUniforms (projectionMatrixArray);
+			browser .getDefaultShader () .setGlobalUniforms (projectionMatrixArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms ();
+				shaders [id] .setGlobalUniforms (projectionMatrixArray);
 
 			// Render opaque objects first
 
