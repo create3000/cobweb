@@ -934,6 +934,19 @@ function ($,
 
 			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
+		setClipPlanes: function (gl, clipPlanes)
+		{
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .setShaderUniforms (gl, this, i);
+	
+				if (i < this .maxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
+			}
+			else
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+		}
 	};
 
 	return X3DProgrammableShaderObject;

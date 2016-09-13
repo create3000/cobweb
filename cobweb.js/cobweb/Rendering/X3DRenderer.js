@@ -383,9 +383,8 @@ function ($,
 			for (var s = 0, ls = this .numCollisionShapes; s < ls; ++ s)
 			{
 				var
-					context    = collisionShapes [s],
-					scissor    = context .scissor,
-					clipPlanes = context .clipPlanes;
+					context = collisionShapes [s],
+					scissor = context .scissor;
 
 				// TODO: viewport must not be the browser or layer viewport.
 				gl .scissor (scissor .x,
@@ -395,16 +394,7 @@ function ($,
 
 				// Clip planes
 
-				if (clipPlanes .length)
-				{
-					for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
-						clipPlanes [c] .setShaderUniforms (gl, shader, c);
-	
-					if (c < shader .maxClipPlanes)
-						gl .uniform4fv (shader .x3d_ClipPlane [c], shader .noClipPlane);
-				}
-				else
-					gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
+				shader .setClipPlanes (gl, context .clipPlanes);
 
 				// modelViewMatrix
 	

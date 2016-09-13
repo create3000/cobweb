@@ -548,28 +548,18 @@ function ($,
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shader     = browser .getBackgroundSphereShader (),
-				clipPlanes = this .clipPlanes;
+				shaderNode     = browser .getBackgroundSphereShader ();
 
-			shader .use ();
+			shaderNode .use ();
 
 			// Clip planes
 
-			if (clipPlanes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .setShaderUniforms (gl, shader, i);
-	
-				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
-			}
-			else
-				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
+			shaderNode .setClipPlanes (gl, this .clipPlanes);
 
 			// Uniforms
 
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Setup context.
 	
@@ -580,13 +570,13 @@ function ($,
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .x3d_Color);
+			gl .enableVertexAttribArray (shaderNode .x3d_Color);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw.
 
@@ -594,71 +584,61 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .x3d_Color);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		drawCube: function ()
 		{
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shader     = browser .getGouraudShader (),
-				clipPlanes = this .clipPlanes;
+				shaderNode     = browser .getGouraudShader ();
 
-			shader .use ();
+			shaderNode .use ();
 
 			// Clip planes
 
-			if (clipPlanes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .setShaderUniforms (gl, shader, i);
-	
-				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
-			}
-			else
-				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
+			shaderNode .setClipPlanes (gl, this .clipPlanes);
 
 			// Uniforms
 
-			gl .uniform1i (shader .x3d_FogType,       0);
-			gl .uniform1i (shader .x3d_ColorMaterial, false);
-			gl .uniform1i (shader .x3d_Lighting,      false);
-			gl .uniform1i (shader .texturing,     true);
-			gl .uniform1i (shader .x3d_TextureType,   2);
+			gl .uniform1i (shaderNode .x3d_FogType,       0);
+			gl .uniform1i (shaderNode .x3d_ColorMaterial, false);
+			gl .uniform1i (shaderNode .x3d_Lighting,      false);
+			gl .uniform1i (shaderNode .texturing,     true);
+			gl .uniform1i (shaderNode .x3d_TextureType,   2);
 
-			gl .uniformMatrix4fv (shader .x3d_TextureMatrix,    false, this .textureMatrixArray);
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_TextureMatrix,    false, this .textureMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .x3d_TexCoord);
+			gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
-			gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 
 			// Draw.
 
-			this .drawRectangle (gl, shader, this .frontTexture,  this .frontBuffer);
-			this .drawRectangle (gl, shader, this .backTexture,   this .backBuffer);
-			this .drawRectangle (gl, shader, this .leftTexture,   this .leftBuffer);
-			this .drawRectangle (gl, shader, this .rightTexture,  this .rightBuffer);
-			this .drawRectangle (gl, shader, this .topTexture,    this .topBuffer);
-			this .drawRectangle (gl, shader, this .bottomTexture, this .bottomBuffer);
+			this .drawRectangle (gl, shaderNode, this .frontTexture,  this .frontBuffer);
+			this .drawRectangle (gl, shaderNode, this .backTexture,   this .backBuffer);
+			this .drawRectangle (gl, shaderNode, this .leftTexture,   this .leftBuffer);
+			this .drawRectangle (gl, shaderNode, this .rightTexture,  this .rightBuffer);
+			this .drawRectangle (gl, shaderNode, this .topTexture,    this .topBuffer);
+			this .drawRectangle (gl, shaderNode, this .bottomTexture, this .bottomBuffer);
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .x3d_TexCoord);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
-		drawRectangle: function (gl, shader, texture, buffer)
+		drawRectangle: function (gl, shaderNode, texture, buffer)
 		{
 			if (texture && texture .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				texture .traverse (gl, shader, 0);
+				texture .traverse (gl, shaderNode, 0);
 
 				if (texture .transparent_ .getValue ())
 					gl .enable (gl .BLEND);
@@ -666,7 +646,7 @@ function ($,
 					gl .disable (gl .BLEND);
 
 				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 				// Draw.
 
