@@ -244,15 +244,13 @@ function ($,
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
 			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
 		},
-		traverse: function ()
+		traverse: function (context)
 		{
-			var browser = this .getBrowser ();
-
-			browser .setLineProperties (this .linePropertiesNode);
-			browser .setMaterial (this .materialNode);
-			browser .setTexture (this .textureNode);
-			browser .getTextureTransform () [0] = this .textureTransformNode;
-			browser .setShader (this .shaderNode || browser .getDefaultShader ());
+			context .linePropertiesNode   = this .linePropertiesNode;
+			context .materialNode         = this .materialNode;
+			context .textureNode          = this .textureNode;
+			context .textureTransformNode = this .textureTransformNode;
+			context .shaderNode           = this .shaderNode || this .getBrowser () .getDefaultShader ();
 		},
 	});
 

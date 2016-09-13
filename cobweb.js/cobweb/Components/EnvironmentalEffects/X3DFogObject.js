@@ -97,10 +97,10 @@ function ($,
 		{
 			return this .hidden;
 		},
-		use: function (gl, shader)
+		setShaderUniforms: function (gl, shaderObject)
 		{
 			if (this .hidden)
-				gl .uniform1i (shader .x3d_FogType, 0); // NO_FOG
+				gl .uniform1i (shaderObject .x3d_FogType, 0); // NO_FOG
 
 			else
 			{
@@ -111,9 +111,9 @@ function ($,
 				if (visibilityRange === 0)
 					visibilityRange = this .getCurrentNavigationInfo () .getFarPlane (this .getCurrentViewpoint ());
 
-				gl .uniform1i (shader .x3d_FogType,            this .fogType);
-				gl .uniform3f (shader .x3d_FogColor,           color .r, color .g, color .b);
-				gl .uniform1f (shader .x3d_FogVisibilityRange, visibilityRange);
+				gl .uniform1i (shaderObject .x3d_FogType,            this .fogType);
+				gl .uniform3f (shaderObject .x3d_FogColor,           color .r, color .g, color .b);
+				gl .uniform1f (shaderObject .x3d_FogVisibilityRange, visibilityRange);
 			}
 		},
 	};

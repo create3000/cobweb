@@ -243,14 +243,6 @@ function (Fields,
 			// There must always be a gouraud shader available.
 			return this .gouraudShader;
 		},
-		setShader: function (value)
-		{
-			this .shader = value;
-		},
-		getShader: function ()
-		{
-			return this .shader;
-		},
 		getDepthShader: function ()
 		{
 			return this .depthShader;

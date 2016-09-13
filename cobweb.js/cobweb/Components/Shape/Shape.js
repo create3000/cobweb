@@ -129,7 +129,7 @@ function ($,
 						break;
 
 					case TraverseType .COLLISION:
-						this .getCurrentLayer () .addCollision (this);
+						this .getCurrentLayer () .addCollisionShape (this);
 						break;
 
 					case TraverseType .DISPLAY:
@@ -191,7 +191,7 @@ function ($,
 		},
 		display: function (context)
 		{
-			this .getAppearance () .traverse ();
+			this .getAppearance () .traverse (context);
 			this .getGeometry ()   .display (context);
 		},
 		collision: function (shader)

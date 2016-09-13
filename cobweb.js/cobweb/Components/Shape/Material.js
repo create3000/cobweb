@@ -121,10 +121,6 @@ function ($,
 			this .set_shininess__ ();
 			this .set_transparency__ ();
 		},
-		getSeparateBackColor: function ()
-		{
-		   return false;
-		},
 		set_ambientIntensity__: function ()
 		{
 			this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
@@ -153,6 +149,16 @@ function ($,
 
 			if (transparency != this .transparent_ .getValue ())
 				this .transparent_ = transparency;
+		},
+		setShaderUniforms: function (gl, shaderObject)
+		{
+			gl .uniform1i  (shaderObject .x3d_SeparateBackColor, false);
+			gl .uniform1f  (shaderObject .x3d_AmbientIntensity,  this .ambientIntensity);
+			gl .uniform3fv (shaderObject .x3d_DiffuseColor,      this .diffuseColor);
+			gl .uniform3fv (shaderObject .x3d_SpecularColor,     this .specularColor);
+			gl .uniform3fv (shaderObject .x3d_EmissiveColor,     this .emissiveColor);
+			gl .uniform1f  (shaderObject .x3d_Shininess,         this .shininess);
+			gl .uniform1f  (shaderObject .x3d_Transparency,      this .transparency);
 		},
 	});
 

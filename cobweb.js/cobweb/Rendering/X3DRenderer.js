@@ -159,6 +159,23 @@ function ($,
 
 			this .localFog = this .localFogs [this .localFogs .length - 1];
 		},
+		createShapeContext: function (transparent)
+		{
+			return {
+				transparent: true,
+				modelViewMatrix: new Float32Array (16),
+				scissor: new Vector4 (0, 0, 0, 0),
+				clipPlanes: [ ],
+				localLights: [ ],
+				geometryType: 3,
+				colorMaterial: false,
+				linePropertiesNode: null,
+				materialNode: null,
+				textureNode: null,
+				textureTransformNode: null,
+				shaderNode: null,
+			};
+		},
 		addShape: function (shapeNode)
 		{
 			var
@@ -174,7 +191,7 @@ function ($,
 				if (shapeNode .isTransparent ())
 				{
 					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push ({ transparent: true, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], });
+						this .transparentShapes .push (this .createShapeContext (true));
 
 					var context = this .transparentShapes [this .numTransparentShapes];
 
@@ -183,7 +200,7 @@ function ($,
 				else
 				{
 					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push ({ transparent: false, modelViewMatrix: new Float32Array (16), scissor: new Vector4 (0, 0, 0, 0), clipPlanes: [ ], localLights: [ ], });
+						this .opaqueShapes .push (this .createShapeContext (false));
 
 					var context = this .opaqueShapes [this .numOpaqueShapes];
 
@@ -219,7 +236,7 @@ function ($,
 				destLights .length = sourceLights .length;
 			}
 		},
-		addCollision: function (shapeNode)
+		addCollisionShape: function (shapeNode)
 		{
 			var
 				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
@@ -381,7 +398,7 @@ function ($,
 				if (clipPlanes .length)
 				{
 					for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
-						clipPlanes [c] .use (gl, shader, c);
+						clipPlanes [c] .setShaderUniforms (gl, shader, c);
 	
 					if (c < shader .maxClipPlanes)
 						gl .uniform4fv (shader .x3d_ClipPlane [c], shader .noClipPlane);
@@ -625,12 +642,12 @@ function ($,
 
 			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
 
-			browser .getPointShader ()   .setGlobalUniforms (projectionMatrixArray);
-			browser .getLineShader ()    .setGlobalUniforms (projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (projectionMatrixArray);
+			browser .getPointShader ()   .setGlobalUniforms (gl, projectionMatrixArray);
+			browser .getLineShader ()    .setGlobalUniforms (gl, projectionMatrixArray);
+			browser .getDefaultShader () .setGlobalUniforms (gl, projectionMatrixArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (gl, projectionMatrixArray);
 
 			// Render opaque objects first
 

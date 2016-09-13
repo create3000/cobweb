@@ -66,7 +66,7 @@ function ($,
 
 		//this .addType (X3DConstants .X3DLineGeometryNode);
 
-		this .shader = this .getBrowser () .getLineShader ();
+		this .shaderNode = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
@@ -74,78 +74,78 @@ function ($,
 		constructor: X3DLineGeometryNode,
 		setShader: function (value)
 		{
-			this .shader = value;
+			this .shaderNode = value;
 		},
 		display: function (context)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader === browser .getDefaultShader ())
-				shader = this .shader;
+			if (shaderNode === browser .getDefaultShader ())
+				shaderNode = this .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .getColors () .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
-			gl .drawArrays (shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
+			gl .drawArrays (shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
 
-			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader === browser .getDefaultShader ())
-				shader = this .shader;
+			if (shaderNode === browser .getDefaultShader ())
+				shaderNode = this .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .getGeometryType ();
 			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Wireframes are always solid so only one drawing call is needed.
 
@@ -154,7 +154,7 @@ function ($,
 				x               = modelViewMatrix [12],
 				y               = modelViewMatrix [13],
 				z               = modelViewMatrix [14],
-				primitiveMode   = shader .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
+				primitiveMode   = shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
 
 			for (var p = 0; p < numParticles; ++ p)
 			{
@@ -164,13 +164,13 @@ function ($,
 
 				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
 
-				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+				gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 				gl .drawArrays (primitiveMode, 0, this .vertexCount);
 			}
 
-			if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 	});
 

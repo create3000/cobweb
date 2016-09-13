@@ -57,8 +57,6 @@ function (Appearance)
 	function X3DShapeContext ()
 	{
 		this .defaultAppearance = new Appearance (this);
-		this .lineProperties    = null;
-		this .material          = null;
 	}
 
 	X3DShapeContext .prototype =
@@ -70,22 +68,6 @@ function (Appearance)
 		getDefaultAppearance: function ()
 		{
 			return this .defaultAppearance;
-		},
-		setLineProperties: function (value)
-		{
-			this .lineProperties = value;
-		},
-		getLineProperties: function ()
-		{
-			return this .lineProperties;
-		},
-		setMaterial: function (value)
-		{
-			this .material = value;
-		},
-		getMaterial: function ()
-		{
-			return this .material;
 		},
 	};
 

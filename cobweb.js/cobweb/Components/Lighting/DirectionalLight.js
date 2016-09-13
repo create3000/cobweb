@@ -88,13 +88,13 @@ function ($,
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
 		},
-		use: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			gl .uniform1i (shader .x3d_LightType [i],             1);
-			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform1i (shaderObject .x3d_LightType [i],             1);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shaderObject .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
 		},
 		recycle: function ()
 		{

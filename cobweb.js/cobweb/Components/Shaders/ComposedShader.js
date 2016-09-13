@@ -57,7 +57,6 @@ define ([
 	"cobweb/Components/Networking/LoadSensor",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -67,8 +66,7 @@ function ($,
           X3DProgrammableShaderObject, 
           LoadSensor,
           X3DCast,
-          X3DConstants,
-          Matrix3)
+          X3DConstants)
 {
 "use strict";
 
@@ -86,19 +84,7 @@ function ($,
 
 		this .addType (X3DConstants .ComposedShader);
 
-		this .loadSensor                = new LoadSensor (executionContext);
-		this .x3d_ClipPlane             = [ ];
-		this .x3d_LightType             = [ ];
-		this .x3d_LightOn               = [ ];
-		this .x3d_LightColor            = [ ];
-		this .x3d_LightIntensity        = [ ];
-		this .x3d_LightAmbientIntensity = [ ];
-		this .x3d_LightAttenuation      = [ ];
-		this .x3d_LightLocation         = [ ];
-		this .x3d_LightDirection        = [ ];
-		this .x3d_LightBeamWidth        = [ ];
-		this .x3d_LightCutOffAngle      = [ ];
-		this .x3d_LightRadius           = [ ];
+		this .loadSensor = new LoadSensor (executionContext);
 	}
 
 	ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
@@ -142,16 +128,34 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
+			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
+
 			this .activate_ .addInterest (this, "set_activate__");
 			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
 
 			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
 			this .loadSensor .watchList_ = this .parts_;
 			this .loadSensor .setup ();
+
+			//Must not call set_live__.
 		},
 		getProgram: function ()
 		{
 			return this .program;
+		},
+		set_live__: function ()
+		{
+			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			{
+				this .use ();
+				this .addShaderFields ();
+			}
+			else
+			{
+				this .use ();
+				this .removeShaderFields ();
+			}
 		},
 		set_activate__: function ()
 		{
@@ -186,7 +190,7 @@ function ($,
 	
 				if (valid)
 				{
-					this .bindAttribLocations (gl, program);
+					this .bindAttributeLocations (gl, program);
 
 					gl .linkProgram (program);
 
@@ -195,9 +199,12 @@ function ($,
 	
 				if (valid != this .isValid_ .getValue ())
 					this .isValid_ = valid;
-	
+
 				if (valid)
 				{
+					// Initialize uniform variables
+					this .use ();
+
 					this .getDefaultUniforms ();
 					this .addShaderFields ();
 				}
@@ -210,276 +217,36 @@ function ($,
 					this .isValid_ = false;
 			}
 		},
-		bindAttribLocations: function (gl, program)
+		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
-			gl .bindAttribLocation (program, 3, "x3d_Color");
-			gl .bindAttribLocation (program, 2, "x3d_TexCoord");
-			gl .bindAttribLocation (program, 1, "x3d_Normal");
-			gl .bindAttribLocation (program, 0, "x3d_Vertex");
-		},
-		getDefaultUniforms: function ()
-		{
-			// Get uniforms and attributes.
-
-			var
-				gl      = this .getBrowser () .getContext (),
-				program = this .program;
-
-			shader = this;
-			gl .useProgram (program);
-
-			this .x3D_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
-
-			for (var i = 0; i < this .maxClipPlanes; ++ i)
-				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
-
-			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
-			this .x3d_FogColor           = gl .getUniformLocation (program, "x3d_FogColor");
-			this .x3d_FogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
-
-			this .x3d_LinewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
-
-			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
-			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
-
-			for (var i = 0; i < this .maxLights; ++ i)
-			{
-				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
-				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
-				this .x3d_LightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
-				this .x3d_LightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
-				this .x3d_LightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
-				this .x3d_LightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
-				this .x3d_LightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
-				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
-				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
-				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
-			}
-
-			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
-
-			this .x3d_AmbientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
-			this .x3d_DiffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
-			this .x3d_SpecularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
-			this .x3d_EmissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
-			this .x3d_Shininess        = gl .getUniformLocation (program, "x3d_Shininess");
-			this .x3d_Transparency     = gl .getUniformLocation (program, "x3d_Transparency");
-
-			this .x3d_BackAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
-			this .x3d_BackDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
-			this .x3d_BackSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
-			this .x3d_BackEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
-			this .x3d_BackShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
-			this .x3d_BackTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
-
-			this .x3d_TextureType    = gl .getUniformLocation (program, "x3d_TextureType");
-			this .x3d_Texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
-			this .x3d_CubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
-
-			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
-
-			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
-			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
-			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
-			
-			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
-			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
-			this .x3d_Normal   = gl .getAttribLocation (program, "x3d_Normal");
-			this .x3d_Vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
-
-			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
-			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
-			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
-			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
-		},
-		setGlobalUniforms: function (projectionMatrixArray)
-		{
-			var
-				browser      = this .getBrowser (),
-				gl           = browser .getContext (),
-				globalLights = browser .getGlobalLights ();
-
-			shader = this;
-			gl .useProgram (this .program);
-			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
-
-			// Set global lights
-
-			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
-
-			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
-				globalLights [i] .use (gl, this, i);
-		},
-		setLocalUniforms: function (context)
-		{
-			var
-				browser              = this .getBrowser (),
-				gl                   = browser .getContext (),
-				linePropertiesNode   = browser .getLineProperties (),
-				materialNode         = browser .getMaterial (),
-				textureNode          = browser .getTexture (),
-				textureTransformNode = browser .getTextureTransform (),
-				modelViewMatrix      = context .modelViewMatrix,
-				clipPlaneNodes       = context .clipPlanes;
-
 			if (this !== shader)
 			{
 				shader = this;
+
+				gl .useProgram (this .program);
+			}
+			
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, gl, projectionMatrixArray);
+		},
+		setLocalUniforms: function (gl, context)
+		{
+			if (this !== shader)
+			{
+				shader = this;
+
 				gl .useProgram (this .program);
 			}
 
-			// Geometry type
-
-			gl .uniform1i (this .geometryType, context .geometryType);
-
-			// Clip planes
-
-			if (clipPlaneNodes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
-					clipPlaneNodes [i] .use (gl, this, i);
-	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
-			}
-			else
-			{
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
-			}
-
-			// Fog, there is always one
-
-			if (context .fogNode !== this .fogNode)
-			{
-				this .fogNode = context .fogNode;
-				context .fogNode .use (gl, this);
-			}
-
-			// LineProperties
-
-			if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
-			{
-				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
-
-				gl .lineWidth (linewidthScaleFactor);
-				gl .uniform1f (this .x3d_LinewidthScaleFactor, linewidthScaleFactor);
-			}
-			else
-			{
-				gl .lineWidth (1);
-				gl .uniform1f (this .x3d_LinewidthScaleFactor, 1);
-			}
-	
-			// Material
-
-			gl .uniform1i (this .x3d_ColorMaterial, context .colorMaterial);
-
-			if (materialNode)
-			{
-				// Lights
-
-				var
-					localLights = context .localLights,
-					numLights   = Math .min (this .maxLights, this .numGlobalLights + localLights .length);
-
-				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
-					localLights [l] .use (gl, this, i);
-
-				if (numLights < this .maxLights)
-					gl .uniform1i (this .x3d_LightType [numLights], 0);
-
-				// Material
-
-				gl .uniform1i  (this .x3d_Lighting,         true);
-				gl .uniform1f  (this .x3d_AmbientIntensity, materialNode .ambientIntensity);
-				gl .uniform3fv (this .x3d_DiffuseColor,     materialNode .diffuseColor);
-				gl .uniform3fv (this .x3d_SpecularColor,    materialNode .specularColor);
-				gl .uniform3fv (this .x3d_EmissiveColor,    materialNode .emissiveColor);
-				gl .uniform1f  (this .x3d_Shininess,        materialNode .shininess);
-				gl .uniform1f  (this .x3d_Transparency,     materialNode .transparency);
-
-				if (materialNode .getSeparateBackColor ())
-				{
-					gl .uniform1i  (this .x3d_SeparateBackColor,    true);
-					gl .uniform1f  (this .x3d_BackAmbientIntensity, materialNode .backAmbientIntensity);
-					gl .uniform3fv (this .x3d_BackDiffuseColor,     materialNode .backDiffuseColor);
-					gl .uniform3fv (this .x3d_BackSpecularColor,    materialNode .backSpecularColor);
-					gl .uniform3fv (this .x3d_BackEmissiveColor,    materialNode .backEmissiveColor);
-					gl .uniform1f  (this .x3d_BackShininess,        materialNode .backShininess);
-					gl .uniform1f  (this .x3d_BackTransparency,     materialNode .backTransparency);
-				}
-				else
-					gl .uniform1i (this .x3d_SeparateBackColor, false);
-
-				try
-				{
-					// Set normal matrix.
-					var normalMatrix = this .normalMatrixArray;
-					normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-					Matrix3 .prototype .inverse .call (normalMatrix);
-					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
-				}
-				catch (error)
-				{
-					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
-				}
-			}
-			else
-			{
-				gl .uniform1i (this .x3d_Lighting, false);
-
-				if (this .getCustom ())
-				{
-					try
-					{
-						// Set normal matrix.
-						var normalMatrix = this .normalMatrixArray;
-						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
-					}
-					catch (error)
-					{
-						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
-					}
-				}
-			}
-
-			if (textureNode)
-			{
-				textureNode .traverse (gl, this, 0);
-				textureTransformNode [0] .traverse ();
-
-				gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
-			}
-			else
-			{
-				this .textureTypeArray [0] = 0;
-				gl .uniform1iv (this .x3d_TextureType, this .textureTypeArray);
-
-				if (this .getCustom ())
-				{
-					textureTransformNode [0] .traverse ();
-					gl .uniformMatrix4fv (this .x3d_TextureMatrix, false, textureTransformNode [0] .getMatrixArray ());
-				}
-			}
-
-			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
+			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
 		},
 		use: function ()
 		{
-			if (this === shader)
-				return;
+			if (this !== shader)
+			{
+				shader = this;
 
-			shader = this;
-
-			this .getBrowser () .getContext () .useProgram (this .program);
+				this .getBrowser () .getContext () .useProgram (this .program);
+			}
 		},
 	});
 

@@ -212,12 +212,12 @@ function ($,
 
 			return output;
 		},
-		traverse: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			shader .textureTypeArray [i] = 2;
+			shaderObject .textureTypeArray [i] = 2;
 			gl .activeTexture (gl .TEXTURE0);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .uniform1iv (shader .x3d_TextureType, shader .textureTypeArray);
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
 		},
 	});
 

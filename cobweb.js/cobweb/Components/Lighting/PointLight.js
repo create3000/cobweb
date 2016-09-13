@@ -90,15 +90,15 @@ function ($,
 	
 			light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (light .location_ .getValue ()));
 	   },
-		use: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			gl .uniform1i (shader .x3d_LightType [i],             2);
-			gl .uniform3f (shader .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shader .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shader .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shader .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shader .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform1f (shader .x3d_LightRadius [i],           this .radius);
+			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
+			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
+			gl .uniform3f (shaderObject .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
+			gl .uniform1f (shaderObject .x3d_LightRadius [i],           this .radius);
 	
 			// For correct results the radius must be transform by the modelViewMatrix. This can only be done in the shader.
 			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|

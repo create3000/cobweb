@@ -146,10 +146,6 @@ function ($,
 			this .set_backShininess__ ();
 			this .set_backTransparency__ ();
 		},
-		getSeparateBackColor: function ()
-		{
-		   return this .separateBackColor_ .getValue ();
-		},
 		set_ambientIntensity__: function ()
 		{
 			this .ambientIntensity = Math .max (this .ambientIntensity_ .getValue (), 0);
@@ -211,6 +207,30 @@ function ($,
 
 			if (transparent != this .transparent_ .getValue ())
 				this .transparent_ = transparent;
+		},
+		setShaderUniforms: function (gl, shaderObject)
+		{
+			gl .uniform1f  (shaderObject .x3d_AmbientIntensity, this .ambientIntensity);
+			gl .uniform3fv (shaderObject .x3d_DiffuseColor,     this .diffuseColor);
+			gl .uniform3fv (shaderObject .x3d_SpecularColor,    this .specularColor);
+			gl .uniform3fv (shaderObject .x3d_EmissiveColor,    this .emissiveColor);
+			gl .uniform1f  (shaderObject .x3d_Shininess,        this .shininess);
+			gl .uniform1f  (shaderObject .x3d_Transparency,     this .transparency);
+
+			if (this .separateBackColor_ .getValue ())
+			{
+				gl .uniform1i  (shaderObject .x3d_SeparateBackColor,    true);
+				gl .uniform1f  (shaderObject .x3d_BackAmbientIntensity, this .backAmbientIntensity);
+				gl .uniform3fv (shaderObject .x3d_BackDiffuseColor,     this .backDiffuseColor);
+				gl .uniform3fv (shaderObject .x3d_BackSpecularColor,    this .backSpecularColor);
+				gl .uniform3fv (shaderObject .x3d_BackEmissiveColor,    this .backEmissiveColor);
+				gl .uniform1f  (shaderObject .x3d_BackShininess,        this .backShininess);
+				gl .uniform1f  (shaderObject .x3d_BackTransparency,     this .backTransparency);
+			}
+			else
+			{
+				gl .uniform1i  (shaderObject .x3d_SeparateBackColor, false);
+			}
 		},
 	});
 

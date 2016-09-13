@@ -119,13 +119,13 @@ function ($,
 				plane .distanceFromOrigin = 0;
 			}
 		},
-		use: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			var
 				plane  = this .plane,
 				normal = plane .normal;
 
-			gl .uniform4f (shader .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
+			gl .uniform4f (shaderObject .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
 		recycle: function ()
 		{

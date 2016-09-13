@@ -70,8 +70,6 @@ function (TextureProperties,
 		this .defaultTextureProperties = new TextureProperties (this);
 		this .defaultTextureTransform  = new TextureTransform (this);
 		this .defaultTextureCoordinate = new TextureCoordinate (this);
-		this .texture                  = null;
-		this .textureTransform         = [ ];
 	}
 
 	X3DTexturingContext .prototype =
@@ -143,18 +141,6 @@ function (TextureProperties,
 		getDefaultTextureCoordinate: function ()
 		{
 			return this .defaultTextureCoordinate;
-		},
-		setTexture: function (value)
-		{
-			this .texture = value;
-		},
-		getTexture: function ()
-		{
-			return this .texture;
-		},
-		getTextureTransform: function ()
-		{
-			return this .textureTransform;
 		},
 	};
 

@@ -81,13 +81,9 @@ function ($,
 		{
 			return this .matrix;
 		},
-		getMatrixArray: function ()
+		setShaderUniforms: function (gl, shaderObject)
 		{
-			return this .matrixArray;
-		},
-		traverse: function ()
-		{
-			this .getBrowser () .getTextureTransform () [0] = this;
+			gl .uniformMatrix4fv (shaderObject .x3d_TextureMatrix, false, this .matrixArray);
 		},
 	});
 

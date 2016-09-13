@@ -152,7 +152,7 @@ function ($,
 		this .texCoordRamp             = [ ];
 		this .texCoordAnim             = false;
 		this .vertexCount              = 0;
-		this .shader                   = this .getBrowser () .getPointShader ();
+		this .shaderNode               = this .getBrowser () .getPointShader ();
 		this .modelViewMatrix          = new Matrix4 ();
 		this .rotation                 = new Matrix3 ();
 		this .particleSorter           = new QuickSort (this .particles, compareDistance);
@@ -374,7 +374,7 @@ function ($,
 
 					this .texCoordCount = 2;
 					this .vertexCount   = 2;
-					this .shader        = this .getBrowser () .getLineShader ()
+					this .shaderNode    = this .getBrowser () .getLineShader ()
 					break;
 				}
 				case TRIANGLE:
@@ -463,13 +463,13 @@ function ($,
 				case POINT:
 				{
 					this .shaderGeometryType = 0;
-					this .shader             = this .getBrowser () .getPointShader ()
+					this .shaderNode         = this .getBrowser () .getPointShader ()
 					break;
 				}
 				case LINE:
 				{
 					this .shaderGeometryType = 1;
-					this .shader             = this .getBrowser () .getLineShader ()
+					this .shaderNode         = this .getBrowser () .getLineShader ()
 					break;
 				}
 				case TRIANGLE:
@@ -477,13 +477,13 @@ function ($,
 				case SPRITE:
 				{
 					this .shaderGeometryType = 3;
-					this .shader             = this .getBrowser () .getDefaultShader ()
+					this .shaderNode         = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 				case GEOMETRY:
 				{
 					this .shaderGeometryType = 3; // determine from geometry node.
-					this .shader             = this .getBrowser () .getDefaultShader ()
+					this .shaderNode         = this .getBrowser () .getDefaultShader ()
 					break;
 				}
 			}
@@ -1151,7 +1151,7 @@ function ($,
 		{
 			// Traverse appearance before everything.
 
-			this .getAppearance () .traverse ();
+			this .getAppearance () .traverse (context);
 
 			// Display geometry.
 
@@ -1165,48 +1165,48 @@ function ($,
 			else
 			{
 				var
-					browser = this .getBrowser (),
-					gl      = browser .getContext (),
-					shader  = browser .getShader ();
+					browser    = this .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
 	
-				if (shader === browser .getDefaultShader ())
-					shader = this .shader;
+				if (shaderNode === browser .getDefaultShader ())
+					shaderNode = this .shaderNode;
 	
-				if (shader .x3d_Vertex < 0 || this .numParticles === 0)
+				if (shaderNode .x3d_Vertex < 0 || this .numParticles === 0)
 					return;
 	
 				// Setup shader.
 
 				context .geometryType  = this .shaderGeometryType;
 				context .colorMaterial = this .colorMaterial;
-				shader .setLocalUniforms (context);
+				shaderNode .setLocalUniforms (gl, context);
 	
 				// Setup vertex attributes.
 	
-				if (this .colorMaterial && shader .x3d_Color >= 0)
+				if (this .colorMaterial && shaderNode .x3d_Color >= 0)
 				{
-					gl .enableVertexAttribArray (shader .x3d_Color);
+					gl .enableVertexAttribArray (shaderNode .x3d_Color);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-					gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .texCoordArray .length && shader .x3d_TexCoord >= 0)
+				if (this .texCoordArray .length && shaderNode .x3d_TexCoord >= 0)
 				{
-					gl .enableVertexAttribArray (shader .x3d_TexCoord);
+					gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-					gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 				}
 	
-				if (this .normalArray .length && shader .x3d_Normal >= 0)
+				if (this .normalArray .length && shaderNode .x3d_Normal >= 0)
 				{
-					gl .enableVertexAttribArray (shader .x3d_Normal);
+					gl .enableVertexAttribArray (shaderNode .x3d_Normal);
 					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-					gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+					gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 				}
 	
-				gl .enableVertexAttribArray (shader .x3d_Vertex);
+				gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 	
 				var testWireframe = false;
 
@@ -1224,12 +1224,12 @@ function ($,
 						break;
 				}
 
-				if (shader .wireframe && testWireframe)
+				if (shaderNode .wireframe && testWireframe)
 				{
 					// Wireframes are always solid so only one drawing call is needed.
 	
 					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
+						gl .drawArrays (shaderNode .primitiveMode, i, 3);
 				}
 				else
 				{
@@ -1239,11 +1239,11 @@ function ($,
 					gl .enable (gl .CULL_FACE);
 					gl .cullFace (gl .BACK);
 		
-					gl .drawArrays (this .shader .primitiveMode, 0, this .numParticles * this .vertexCount);
+					gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
 				}
 	
-				if (shader .x3d_Color >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-				gl .disableVertexAttribArray (shader .x3d_Vertex);
+				if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+				gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)

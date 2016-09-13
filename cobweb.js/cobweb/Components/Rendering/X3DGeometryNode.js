@@ -542,54 +542,54 @@ function ($,
 		display: function (context)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_TexCoord >= 0)
+			if (shaderNode .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_TexCoord);
+				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_Normal >= 0)
+			if (shaderNode .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Normal);
+				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
-			if (shader .wireframe)
+			if (shaderNode .wireframe)
 			{
 				// Wireframes are always solid so only one drawing call is needed.
 
 				for (var i = 0, length = this .vertexCount; i < length; i += 3)
-					gl .drawArrays (shader .primitiveMode, i, 3);
+					gl .drawArrays (shaderNode .primitiveMode, i, 3);
 			}
 			else
 			{
@@ -601,10 +601,10 @@ function ($,
 				{
 					gl .enable (gl .CULL_FACE);
 					gl .cullFace (gl .FRONT);
-					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
+					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
 
 					gl .cullFace (gl .BACK);
-					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);		
+					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
 				}
 				else
 				{
@@ -613,70 +613,70 @@ function ($,
 					else
 						gl .disable (gl .CULL_FACE);
 
-					gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 				}
 			}
 
-			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
-			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
+			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
 			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext (),
-				shader  = browser .getShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				shaderNode = context .shaderNode;
 
-			if (shader .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
 				return;
 
 			// Setup shader.
 
 			context .geometryType  = this .geometryType;
 			context .colorMaterial = this .colors .length;
-			shader .setLocalUniforms (context);
+			shaderNode .setLocalUniforms (gl, context);
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shader .x3d_Color >= 0)
+			if (this .colors .length && shaderNode .x3d_Color >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Color);
+				gl .enableVertexAttribArray (shaderNode .x3d_Color);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_TexCoord >= 0)
+			if (shaderNode .x3d_TexCoord >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_TexCoord);
+				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 			}
 
-			if (shader .x3d_Normal >= 0)
+			if (shaderNode .x3d_Normal >= 0)
 			{
-				gl .enableVertexAttribArray (shader .x3d_Normal);
+				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
 				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shader .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
 			}
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw depending on wireframe, solid and transparent.
 
 			var
-				materialNode    = browser .getMaterial (),
-				lighting        = materialNode || shader .getCustom (),
-				normalMatrix    = shader .normalMatrixArray,
+				materialNode    = context .materialNode,
+				lighting        = materialNode || shaderNode .getCustom (),
+				normalMatrix    = shaderNode .normalMatrixArray,
 				modelViewMatrix = context .modelViewMatrix,
 				x               = modelViewMatrix [12],
 				y               = modelViewMatrix [13],
 				z               = modelViewMatrix [14];
 
-			if (shader .wireframe)
+			if (shaderNode .wireframe)
 			{
 				// Wireframes are always solid so only one drawing call is needed.
 
@@ -695,13 +695,13 @@ function ($,
 						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
+						gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
 					}
 	
-					gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+					gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 	
 					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shader .primitiveMode, i, 3);
+						gl .drawArrays (shaderNode .primitiveMode, i, 3);
 				}
 			}
 			else
@@ -727,17 +727,17 @@ function ($,
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 
 						gl .enable (gl .CULL_FACE);
 						gl .cullFace (gl .FRONT);
-						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 	
 						gl .cullFace (gl .BACK);
-						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 					}	
 				}
 				else
@@ -755,29 +755,29 @@ function ($,
 
 						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
 
-						if (materialNode || shader .getCustom ())
+						if (materialNode || shaderNode .getCustom ())
 						{
 							// Set normal matrix.
 							normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
 							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
 							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
 							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shader .x3d_NormalMatrix, false, normalMatrix);
+							gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
 						}
 
-						gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, modelViewMatrix);
+						gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
 
-						gl .drawArrays (shader .primitiveMode, 0, this .vertexCount);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 					}
 				}
 			}
 
-			if (shader .x3d_Color    >= 0) gl .disableVertexAttribArray (shader .x3d_Color);
-			if (shader .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shader .x3d_TexCoord);
-			if (shader .x3d_Normal   >= 0) gl .disableVertexAttribArray (shader .x3d_Normal);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
+			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
-		collision: function (shader)
+		collision: function (shaderNode)
 		{
 			var
 				browser = this .getBrowser (),
@@ -785,13 +785,13 @@ function ($,
 
 			// Setup vertex attributes.
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{
