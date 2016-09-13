@@ -81,6 +81,11 @@ function ($,
 {
 "use strict";
 
+	var
+		screenLine     = new Line3 (Vector3 .Zero, Vector3 .Zero),
+		trackPoint1    = new Vector3 (0, 0, 0),
+		trackPointLine = new Line3 (Vector3 .Zero, Vector3 .Zero);
+
 	function PlaneSensor (executionContext)
 	{
 		X3DDragSensorNode .call (this, executionContext);
@@ -134,10 +139,9 @@ function ($,
 		},
 		getLineTrackPoint: function (hit, line, trackPoint)
 		{
-			var
-				screenLine     = ViewVolume .projectLine (line, this .modelViewMatrix, this .projectionMatrix, this .viewport),
-				trackPoint1    = screenLine .getClosestPointToPoint (new Vector3 (hit .pointer .x, hit .pointer .y, 0)),
-				trackPointLine = ViewVolume .unProjectLine (trackPoint1 .x, trackPoint1 .y, this .modelViewMatrix, this .projectionMatrix, this .viewport);
+			ViewVolume .projectLine (line, this .modelViewMatrix, this .projectionMatrix, this .viewport, screenLine);
+			screenLine .getClosestPointToPoint (new Vector3 (hit .pointer .x, hit .pointer .y, 0), trackPoint1);
+			ViewVolume .unProjectRay (trackPoint1 .x, trackPoint1 .y, this .modelViewMatrix, this .projectionMatrix, this .viewport, trackPointLine);
 
 			return line .getClosestPointToLine (trackPointLine, trackPoint);
 		},

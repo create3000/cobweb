@@ -190,14 +190,14 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			return point .set (vin .x * d, vin .y * d, vin .z * d);
 		},
-		unProjectLine: function (winx, winy, modelview, projection, viewport)
+		unProjectRay: function (winx, winy, modelview, projection, viewport, result)
 		{
 			matrix .assign (modelview) .multRight (projection) .inverse ();
 
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport, near);
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport, far);
 
-			return new Line3 .Points (near, far);
+			return result .setPoints (near, far);
 		},
 		projectPoint: function (point, modelview, projection, viewport, vout)
 		{
@@ -214,7 +214,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			                  (vin .y * d + 0.5) * viewport [3] + viewport [1],
 			                  (vin .z * d + 0.5));
 		},
-		projectLine: function (line, modelview, projection, viewport)
+		projectLine: function (line, modelview, projection, viewport, result)
 		{
 			ViewVolume .projectPoint (line .point, modelview, projection, viewport, near);
 			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelview, projection, viewport, far);
@@ -222,7 +222,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			near .z = 0;
 			far  .z = 0;
 
-			return new Line3 .Points (near, far);
+			return result .setPoints (near, far);
 		},
 	});
 

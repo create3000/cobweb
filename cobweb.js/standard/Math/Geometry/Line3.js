@@ -86,6 +86,12 @@ function (Vector3)
 			this .direction .assign (direction);
 			return this;
 		},
+		setPoints: function (point1, point2)
+		{
+			this .point .assign (point1);
+			this .direction .assign (point2) .subtract (point1) .normalize ();
+			return this;
+		},
 		multMatrixLine: function (matrix)
 		{
 			matrix .multMatrixVec (this .point);
@@ -98,13 +104,13 @@ function (Vector3)
 			matrix .multDirMatrix (this .direction) .normalize ();
 			return this;
 		},
-		getClosestPointToPoint: function (point)
+		getClosestPointToPoint: function (point, result)
 		{
 			var
-				r = point .copy () .subtract (this .point),
+				r = result .assign (point) .subtract (this .point),
 				d = r .dot (this .direction);
 
-			return r .assign (this .direction) .multiply (d) .add (this .point);
+			return result .assign (this .direction) .multiply (d) .add (this .point);
 		},
 		getClosestPointToLine: function (line, point)
 		{

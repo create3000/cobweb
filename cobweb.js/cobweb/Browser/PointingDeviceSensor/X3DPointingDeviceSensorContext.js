@@ -74,13 +74,14 @@ function ($,
 {
 "use strict";
 	
-	var line = new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0));
+	var line = new Line3 (Vector3 .Zero, Vector3 .Zero);
 
 	function X3DPointingDeviceSensorContext ()
 	{
 		this .pointingDevice = new PointingDevice (this);
 
 		this .pointer        = new Vector2 (0, 0);
+		this .hitRay         = new Line3 (Vector3 .Zero, Vector3 .Zero);
 		this .hits           = [ ];
 		this .enabledSensors = [{ }];
 		this .selectedLayer  = null;
@@ -154,11 +155,11 @@ function ($,
 		{
 			try
 			{
-				this .hitRay = ViewVolume .unProjectLine (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport);
+				ViewVolume .unProjectRay (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport, this .hitRay);
 			}
 			catch (error)
 			{
-				this .hitRay = line;
+				this .hitRay .set (Vector3 .Zero, Vector3 .Zero);
 			}
 		},
 		getHitRay: function ()
