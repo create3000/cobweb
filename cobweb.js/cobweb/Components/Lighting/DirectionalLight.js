@@ -118,7 +118,7 @@ function ($,
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (browser.getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
 
 			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
 			{
