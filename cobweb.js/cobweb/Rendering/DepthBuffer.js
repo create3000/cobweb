@@ -135,12 +135,6 @@ define (function ()
 			this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
 
 			gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
-
-			gl .viewport (0, 0, this .width, this .height);
-			gl .scissor  (0, 0, this .width, this .height);
-
-			gl .clearColor (1, 0, 0, 0);
-			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);
 		},
 		unbind: function ()
 		{

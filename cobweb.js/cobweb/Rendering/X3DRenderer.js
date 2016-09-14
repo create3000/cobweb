@@ -54,6 +54,7 @@ define ([
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Sphere3",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
@@ -66,6 +67,7 @@ function ($,
           QuickSort,
           Camera,
           Sphere3,
+          ViewVolume,
           Vector3,
           Vector4,
           Rotation4,
@@ -84,7 +86,9 @@ function ($,
 		yAxis                 = new Vector3 (0, 1, 0),
 		zAxis                 = new Vector3 (0, 0, 1),
 		vector                = new Vector3 (0, 0, 0),
-		rotation              = new Rotation4 (0, 0, 1, 0);
+		rotation              = new Rotation4 (0, 0, 1, 0),
+		depthBufferViewport   = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
+		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -94,15 +98,18 @@ function ($,
 		this .clipPlanes           = [ ];
 		this .localLights          = [ ];
 		this .localFogs            = [ ];
+		this .lights               = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
+		this .numDepthShapes       = 0;
 		this .opaqueShapes         = [ ];
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, compareDistance);
 		this .collisionShapes      = [ ];
 		this .activeCollisions     = { };
 		this .collisionSphere      = new Sphere3 (0, Vector3 .Zero);
+		this .depthShapes          = [ ];
 		this .invModelViewMatrix   = new Matrix4 ();
 		this .speed                = 0;
 
@@ -143,6 +150,10 @@ function ($,
 		{
 			return this .localLights;
 		},
+		getLights: function ()
+		{
+			return this .lights;
+		},
 		setGlobalFog: function (fog)
 		{
 			this .localFog = this .localFogs [0] = fog;
@@ -158,6 +169,73 @@ function ($,
 			this .localFogs .pop ();
 
 			this .localFog = this .localFogs [this .localFogs .length - 1];
+		},
+		addCollisionShape: function (shapeNode)
+		{
+			var
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
+
+				if (this .numCollisionShapes === this .collisionShapes .length)
+					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+
+				var context = this .collisionShapes [this .numCollisionShapes];
+
+				++ this .numCollisionShapes;
+
+				context .modelViewMatrix .set (modelViewMatrix);
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
+
+				// Collisions
+
+				var
+					sourceCollisions = this .getBrowser () .getCollisions (),
+					destCollisions   = context .collisions;
+
+				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+				   destCollisions [i] = sourceCollisions [i];
+				
+				destCollisions .length = sourceCollisions .length;
+
+				// Clip planes
+
+				var
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
+
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+					destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
+		},
+		addDepthShape: function (shapeNode)
+		{
+			var
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
+
+				if (this .numDepthShapes === this .depthShapes .length)
+					this .depthShapes .push ({ modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
+
+				var context = this .depthShapes [this .numDepthShapes];
+
+				++ this .numDepthShapes;
+
+				context .modelViewMatrix .set (modelViewMatrix);
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
+
+				// Clip planes
+
+				var
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
+
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+					destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
 		},
 		createShapeContext: function (transparent)
 		{
@@ -235,45 +313,6 @@ function ($,
 				
 				destLights .length = sourceLights .length;
 			}
-		},
-		addCollisionShape: function (shapeNode)
-		{
-			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
-
-				if (this .numCollisionShapes === this .collisionShapes .length)
-					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
-
-				var context = this .collisionShapes [this .numCollisionShapes];
-
-				++ this .numCollisionShapes;
-
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
-
-				// Collisions
-
-				var
-					sourceCollisions = this .getBrowser () .getCollisions (),
-					destCollisions   = context .collisions;
-
-				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
-				   destCollisions [i] = sourceCollisions [i];
-				
-				destCollisions .length = sourceCollisions .length;
-
-				// Clip planes
-
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
-
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
 		},
 		constrainTranslation: function (translation)
 		{
@@ -359,58 +398,18 @@ function ($,
 		},
 		getDepth: function ()
 		{
-			// Render all objects
-
-			var
-				browser         = this .getBrowser (),
-				gl              = browser .getContext (),
-				shader          = browser .getDepthShader (),
-				collisionShapes = this .collisionShapes;
-
-			shader .use ();
-			
-			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
-
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, projectionMatrixArray);
-
-			this .depthBuffer .bind ();
-
-			gl .enable (gl .DEPTH_TEST);
-			gl .depthMask (true);
-			gl .disable (gl .BLEND);
-			gl .disable (gl .CULL_FACE);
-
-			for (var s = 0, ls = this .numCollisionShapes; s < ls; ++ s)
-			{
-				var
-					context = collisionShapes [s],
-					scissor = context .scissor;
-
-				// TODO: viewport must not be the browser or layer viewport.
-				gl .scissor (scissor .x,
-				             scissor .y,
-				             scissor .z,
-				             scissor .w);
-
-				// Clip planes
-
-				shader .setClipPlanes (gl, context .clipPlanes);
-
-				// modelViewMatrix
-	
-				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, context .modelViewMatrix);
-
-				// Draw
-	
-				context .shapeNode .collision (shader);
-			}
-
 			var
 				navigationInfo = this .getNavigationInfo (),
 				viewpoint      = this .getViewpoint (),
 				zNear          = navigationInfo .getNearPlane (),
 				zFar           = navigationInfo .getFarPlane (viewpoint),
 				radius         = navigationInfo .getCollisionRadius ();
+
+			this .depthBuffer .bind ();
+
+			this .viewVolumes .push (depthBufferViewVolume);
+			this .depth (this .collisionShapes, this .numCollisionShapes);
+			this .viewVolumes .pop ();	
 
 			var distance = this .depthBuffer .getDistance (radius, zNear, zFar);
 
@@ -432,6 +431,14 @@ function ($,
 					this .gravite ();
 					break;
 				}
+				case TraverseType .DEPTH:
+				{
+					this .numDepthShapes = 0;
+
+					this .collect (type);
+					this .depth ();
+					break;
+				}
 				case TraverseType .DISPLAY:
 				{
 					this .numOpaqueShapes      = 0;
@@ -443,6 +450,14 @@ function ($,
 					break;
 				}
 			}
+		},
+		renderDepth: function (group)
+		{
+			this .numDepthShapes = 0;
+
+			group .traverse (TraverseType .DEPTH);
+
+			this .depth ();
 		},
 		collide: function ()
 		{
@@ -600,6 +615,69 @@ function ($,
 			catch (error)
 			{
 			   console .log (error);
+			}
+		},
+		depth: function (shapes, numShapes)
+		{
+			var
+				browser  = this .getBrowser (),
+				gl       = browser .getContext (),
+				viewport = this .getViewVolume () .getViewport (),
+				shader   = browser .getDepthShader ();
+
+			// Configure shader
+
+			shader .use ();
+			
+			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, projectionMatrixArray);
+
+			// Configure viewport and background
+
+			gl .viewport (viewport [0],
+			              viewport [1],
+			              viewport [2],
+			              viewport [3]);
+
+			gl .scissor (viewport [0],
+			             viewport [1],
+			             viewport [2],
+			             viewport [3]);
+
+			gl .clearColor (1, 0, 0, 0);
+			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);
+
+			// Render all objects
+
+			gl .enable (gl .DEPTH_TEST);
+			gl .depthMask (true);
+			gl .disable (gl .BLEND);
+			gl .disable (gl .CULL_FACE);
+
+			for (var s = 0; s < numShapes; ++ s)
+			{
+				var
+					context = shapes [s],
+					scissor = context .scissor;
+
+				// TODO: viewport must not be the browser or layer viewport.
+				gl .scissor (scissor .x,
+				             scissor .y,
+				             scissor .z,
+				             scissor .w);
+
+				// Clip planes
+
+				shader .setClipPlanes (gl, context .clipPlanes);
+
+				// modelViewMatrix
+	
+				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, context .modelViewMatrix);
+
+				// Draw
+	
+				context .shapeNode .depth (shader);
 			}
 		},
 		draw: function ()

@@ -87,7 +87,7 @@ function ($,
 	   {
 			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
 	
-			this .color            = light .color_ .getValue ();
+			this .color            = light .getColor ();
 			this .intensity        = light .getIntensity ();
 			this .ambientIntensity = light .getAmbientIntensity ();
 			this .attenuation      = light .attenuation_ .getValue ();
@@ -95,7 +95,7 @@ function ($,
 			this .beamWidth        = light .getBeamWidth ();
 			this .cutOffAngle      = light .getCutOffAngle ();
 	
-			modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
+			modelViewMatrix .multVecMatrix (this .location  .assign (light .location_  .getValue ()));
 			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
 	   },
 		setShaderUniforms: function (gl, shaderObject, i)
@@ -140,6 +140,11 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "radius",           new Fields .SFFloat (100)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "beamWidth",        new Fields .SFFloat (0.785398)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "cutOffAngle",      new Fields .SFFloat (1.5708)),
+
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowColor",      new  Fields .SFColor ()),        // Color of shadow.
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowIntensity",  new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowDiffusion",  new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowMapSize",    new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
 		]),
 		getTypeName: function ()
 		{

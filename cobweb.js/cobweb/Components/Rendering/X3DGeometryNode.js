@@ -539,6 +539,22 @@ function ($,
 	  	},
 		traverse: function (type)
 		{ },
+		depth: function (shaderNode)
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext ();
+
+			// Setup vertex attributes.
+
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+
+			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
+
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
+		},
 		display: function (context)
 		{
 			var
@@ -775,22 +791,6 @@ function ($,
 			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
 			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
 			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
-		},
-		collision: function (shaderNode)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext ();
-
-			// Setup vertex attributes.
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-
-			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
-
 			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)

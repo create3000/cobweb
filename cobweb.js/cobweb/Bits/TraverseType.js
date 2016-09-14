@@ -58,6 +58,7 @@ define (function ()
 		POINTER:   i ++,
 		CAMERA:    i ++,
 		COLLISION: i ++,
+		DEPTH:     i ++,
 		DISPLAY:   i ++,
 	};
 

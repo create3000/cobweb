@@ -53,6 +53,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
 	"standard/Utility/ObjectCache",
@@ -62,6 +63,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLightNode,
+          DepthBuffer,
           X3DConstants,
           Vector3,
           ObjectCache)
@@ -82,7 +84,7 @@ function ($,
 		constructor: DirectionalLightContainer,
 		set: function (light)
 		{
-			this .color            = light .color_ .getValue ();
+			this .color            = light .getColor ();
 			this .intensity        = light .getIntensity ();
 			this .ambientIntensity = light .getAmbientIntensity ();
 	
@@ -120,6 +122,11 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "intensity",        new Fields .SFFloat (1)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity", new Fields .SFFloat ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "direction",        new Fields .SFVec3f (0, 0, -1)),
+
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowColor",     new  Fields .SFColor ()),        // Color of shadow.
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowIntensity", new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowDiffusion", new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowMapSize",   new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
 		]),
 		getTypeName: function ()
 		{

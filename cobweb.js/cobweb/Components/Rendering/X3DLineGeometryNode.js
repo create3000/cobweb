@@ -76,6 +76,8 @@ function ($,
 		{
 			this .shaderNode = value;
 		},
+		depth: function (shaderNode)
+		{ },
 		display: function (context)
 		{
 			var

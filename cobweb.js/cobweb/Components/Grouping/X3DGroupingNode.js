@@ -415,6 +415,7 @@ function ($,
 					return;
 				}
 				case TraverseType .COLLISION:
+				case TraverseType .DEPTH:
 				{					
 					var
 						clipPlanes = this .clipPlanes,

@@ -1136,8 +1136,25 @@ function ($,
 		},
 		traverse: function (type)
 		{
+			if (! this .isActive_ .getValue ())
+				return;
+
 			switch (type)
 			{
+				case TraverseType .POINTER:
+				{
+					break;
+				}
+				case TraverseType .COLLISION:
+				{
+					// TODO: to be implemented.
+					break;
+				}
+				case TraverseType .DEPTH:
+				{
+					// TODO: to be implemented.
+					break;
+				}
 				case TraverseType .DISPLAY:
 				{
 					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());

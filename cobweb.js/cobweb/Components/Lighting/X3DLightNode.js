@@ -72,6 +72,10 @@ function ($,
 	X3DLightNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLightNode,
+		getColor: function ()
+		{
+			return this .color_ .getValue ();
+		},
 		getAmbientIntensity: function ()
 		{
 			return Algorithm .clamp (this .ambientIntensity_ .getValue (), 0, 1);
@@ -79,6 +83,22 @@ function ($,
 		getIntensity: function ()
 		{
 			return Algorithm .clamp (this .intensity_ .getValue (), 0, 1);
+		},
+		getShadowColor: function ()
+		{
+			return this .shadowColor_ .getValue ();
+		},
+		getShadowIntensity: function ()
+		{
+			return Algorithm .clamp (this .shadowIntensity_ .getValue (), 0, 1);
+		},
+		getShadowDiffusion: function ()
+		{
+			return Math .max (this .shadowDiffusion_ .getValue (), 0);
+		},
+		getShadowMapSize: function ()
+		{
+			return Math .min (this .shadowMapSize_ .getValue (), this .getBrowser () .getMaxTextureSize ());
 		},
 		push: function ()
 		{

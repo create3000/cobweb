@@ -150,6 +150,7 @@ function ($,
 			{
 				case TraverseType .POINTER:
 				case TraverseType .CAMERA:
+				case TraverseType .DEPTH:
 				case TraverseType .DISPLAY:
 				{
 					if (this .viewportNode)

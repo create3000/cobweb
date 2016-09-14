@@ -130,6 +130,10 @@ function ($,
 						this .getCurrentLayer () .addCollisionShape (this);
 						break;
 
+					case TraverseType .DEPTH:
+						this .getCurrentLayer () .addDepthShape (this);
+						break;
+
 					case TraverseType .DISPLAY:
 						this .getCurrentLayer () .addShape (this);
 						break;
@@ -192,9 +196,9 @@ function ($,
 			this .getAppearance () .traverse (context);
 			this .getGeometry ()   .display (context);
 		},
-		collision: function (shader)
+		depth: function (shaderNode)
 		{
-			this .getGeometry () .collision (shader);
+			this .getGeometry () .depth (shaderNode);
 		},
 		intersectsSphere: function (sphere)
 		{

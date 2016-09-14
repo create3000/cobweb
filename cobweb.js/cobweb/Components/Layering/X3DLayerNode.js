@@ -263,8 +263,11 @@ function ($,
 				case TraverseType .COLLISION:
 					this .collision ();
 					break;
+				case TraverseType .DEPTH:
+					this .display (type);
+					break;
 				case TraverseType .DISPLAY:
-					this .display ();
+					this .display (type);
 					break;
 			}
 
@@ -332,7 +335,7 @@ function ($,
 			this .getViewpoint ()      .transform ();
 
 			this .currentViewport .push ();
-			this .render (TraverseType .DISPLAY);
+			this .render (type);
 			this .currentViewport .pop ();
 		},
 		collect: function (type)

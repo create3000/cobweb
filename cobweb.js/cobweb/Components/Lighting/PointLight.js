@@ -82,7 +82,7 @@ function ($,
 		constructor: PointLightContainer,
 	   set: function (light)
 	   {
-			this .color            = light .color_ .getValue ();
+			this .color            = light .getColor ();
 			this .intensity        = light .getIntensity ();
 			this .ambientIntensity = light .getAmbientIntensity ();
 			this .attenuation      = light .attenuation_ .getValue ();
@@ -130,6 +130,11 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "attenuation",      new Fields .SFVec3f (1, 0, 0)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "location",         new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "radius",           new Fields .SFFloat (100)),
+
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowColor",      new  Fields .SFColor ()),        // Color of shadow.
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowIntensity",  new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowDiffusion",  new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowMapSize",    new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
 		]),
 		getTypeName: function ()
 		{
