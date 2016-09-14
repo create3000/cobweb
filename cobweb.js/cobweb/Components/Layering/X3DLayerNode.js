@@ -123,7 +123,6 @@ function ($,
 
 			this .groupNode .children_ = this .children_;
 			this .groupNode .setup ();
-			this .collect = this .groupNode .traverse .bind (this .groupNode);
 
 			this .defaultNavigationInfo .setup ();
 			this .defaultBackground     .setup ();
@@ -255,13 +254,13 @@ function ($,
 			switch (type)
 			{
 				case TraverseType .POINTER:
-					this .pointer ();
+					this .pointer (type);
 					break;
 				case TraverseType .CAMERA:
-					this .camera ();
+					this .camera (type);
 					break;
 				case TraverseType .COLLISION:
-					this .collision ();
+					this .collision (type);
 					break;
 				case TraverseType .DEPTH:
 					this .display (type);
@@ -275,7 +274,7 @@ function ($,
 			browser .getProjectionMatrix () .pop ()
 			browser .getLayers () .pop ();
 		},
-		pointer: function ()
+		pointer: function (type)
 		{
 			if (this .isPickable_ .getValue ())
 			{
@@ -298,16 +297,16 @@ function ($,
 				this .getBrowser () .setHitRay (viewport);
 
 				this .currentViewport .push ();
-				this .collect (TraverseType .POINTER);
+				this .groupNode .traverse (type);
 				this .currentViewport .pop ();
 			}
 		},
-		camera: function ()
+		camera: function (type)
 		{
 			this .getViewpoint () .reshape ();
 
 			this .currentViewport .push ();
-			this .collect (TraverseType .CAMERA);
+			this .groupNode .traverse (type);
 			this .currentViewport .pop ();
 
 			this .navigationInfos .update ();
@@ -317,7 +316,7 @@ function ($,
 
 			this .getViewpoint () .update ();
 		},
-		collision: function ()
+		collision: function (type)
 		{
 			this .collisionTime = 0;
 
@@ -325,7 +324,7 @@ function ($,
 
 			// Render
 			this .currentViewport .push ();
-			this .render (TraverseType .COLLISION);
+			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
 		},
 		display: function (type)
@@ -335,12 +334,8 @@ function ($,
 			this .getViewpoint ()      .transform ();
 
 			this .currentViewport .push ();
-			this .render (type);
+			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
-		},
-		collect: function (type)
-		{
-			// Taken from group.traverse.
 		},
 	});
 
