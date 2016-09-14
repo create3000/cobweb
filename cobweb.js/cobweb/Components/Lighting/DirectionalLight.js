@@ -111,34 +111,38 @@ function ($,
 		set: function (lightNode, groupNode)
 		{
 			var
-				browser = lightNode .getBrowser (),
-				gl      = browser .getContext ();
+				browser       = lightNode .getBrowser (),
+				gl            = browser .getContext (),
+				shadowMapSize = lightNode .getShadowMapSize ();
 
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
 			this .modelViewMatrix .assign (browser.getModelViewMatrix () .get ());
- 
-			var shadowMapSize = lightNode .getShadowMapSize ();
 
 			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
 			{
 				this .shadowBuffer = browser .popShadowBuffer (shadowMapSize);
-			}
-			else
-				this .shadowBuffer = null;
 
-			if (this .shadowBuffer && browser .getCombinedTextureUnits () .length)
-			{
-				this .textureUnit = browser .getCombinedTextureUnits () .pop ();
+				if (this .shadowBuffer)
+				{
+					if (browser .getCombinedTextureUnits () .length)
+					{
+						this .textureUnit = browser .getCombinedTextureUnits () .pop ();
 
-				gl .activeTexture (gl .TEXTURE0 + this .textureUnit);
-				gl .bindTexture (gl .TEXTURE_2D, this .shadowBuffer .getDepthTexture ());
-				gl .activeTexture (gl .TEXTURE0);
-			}
-			else
-			{
-				this .textureUnit = 0;
+						gl .activeTexture (gl .TEXTURE0 + this .textureUnit);
+						gl .bindTexture (gl .TEXTURE_2D, this .shadowBuffer .getDepthTexture ());
+						gl .activeTexture (gl .TEXTURE0);
+					}
+					else
+					{
+						console .warn ("Not enough combined texture units for shadow map available.");
+					}
+				}
+				else
+				{
+					console .warn ("Couldn't create shadow buffer.");
+				}
 			}
 		},
 		renderShadowMap: function ()
@@ -225,6 +229,9 @@ function ($,
 			{
 				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
 				this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+
+				this .shadowBuffer = null;
+				this .textureUnit  = 0;
 			}
 
 		   DirectionalLights .push (this);
