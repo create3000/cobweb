@@ -743,7 +743,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		rotate: function (rotation)
 		{
-			this .multLeft (Matrix4 .Quaternion (rotation .value));
+			this .multLeft (rotateMatrix .setQuaternion (rotation .value));
 
 			return this;
 		},
@@ -995,6 +995,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			return copy;
 		},
 	});
+
+	var rotateMatrix = new Matrix4 ();
 
 	return Matrix4;
 });

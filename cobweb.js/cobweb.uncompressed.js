@@ -17190,7 +17190,7 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		},
 		rotate: function (rotation)
 		{
-			this .multLeft (Matrix4 .Quaternion (rotation .value));
+			this .multLeft (rotateMatrix .setQuaternion (rotation .value));
 
 			return this;
 		},
@@ -17442,6 +17442,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			return copy;
 		},
 	});
+
+	var rotateMatrix = new Matrix4 ();
 
 	return Matrix4;
 });
@@ -23625,6 +23627,7 @@ define ('cobweb/Bits/TraverseType',[],function ()
 		POINTER:   i ++,
 		CAMERA:    i ++,
 		COLLISION: i ++,
+		DEPTH:     i ++,
 		DISPLAY:   i ++,
 	};
 
@@ -26369,6 +26372,11 @@ function ($,
 		this .x3d_LightBeamWidth        = [ ];
 		this .x3d_LightCutOffAngle      = [ ];
 		this .x3d_LightRadius           = [ ];
+		this .x3d_ShadowIntensity       = [ ];
+		this .x3d_ShadowDiffusion       = [ ];
+		this .x3d_ShadowColor           = [ ];
+		this .x3d_ShadowMatrix          = [ ];
+		this .x3d_ShadowMap             = [ ];
 	}
 
 	X3DProgrammableShaderObject .prototype =
@@ -26421,6 +26429,12 @@ function ($,
 				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
 				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
 				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
+
+				this .x3d_ShadowIntensity [i] = gl .getUniformLocation (program, "x3d_ShadowIntensity[" + i + "]");
+				this .x3d_ShadowDiffusion [i] = gl .getUniformLocation (program, "x3d_ShadowDiffusion[" + i + "]");
+				this .x3d_ShadowColor [i]     = gl .getUniformLocation (program, "x3d_ShadowColor[" + i + "]");
+				this .x3d_ShadowMatrix [i]    = gl .getUniformLocation (program, "x3d_ShadowMatrix[" + i + "]");
+				this .x3d_ShadowMap [i]       = gl .getUniformLocation (program, "x3d_ShadowMap[" + i + "]");
 			}
 
 			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
@@ -27078,7 +27092,7 @@ function ($,
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
-			var globalLights = this .getBrowser () .getGlobalLights ();
+			var globalLights = this .getCurrentLayer () .getGlobalLights ();
 
 			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
@@ -27223,6 +27237,19 @@ function ($,
 
 			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
+		setClipPlanes: function (gl, clipPlanes)
+		{
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .setShaderUniforms (gl, this, i);
+	
+				if (i < this .maxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
+			}
+			else
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+		}
 	};
 
 	return X3DProgrammableShaderObject;
@@ -27485,6 +27512,12 @@ function ($,
 	return ComposedShader;
 });
 
+define('text!cobweb/Browser/Shaders/Bits/Line3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n/* Line */\n\nstruct Line3 {\n\tvec3 point;\n\tvec3 direction;\n};\n\nLine3\nline3 (in vec3 point1, in vec3 point2)\n{\n\treturn Line3 (point1, normalize (point2 - point1));\n}\n';});
+
+define('text!cobweb/Browser/Shaders/Bits/Plane3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n#pragma X3D include "Line3.h"\n\n/* Plane */\n\nstruct Plane3\n{\n\tvec3  normal;\n\tfloat distanceFromOrigin;\n};\n\nPlane3\nplane3 (in vec3 point, in vec3 normal)\n{\n\treturn Plane3 (normal, dot (normal, point));\n}\n\n/* Plane intersect line */\nbool\nintersects (in Plane3 plane, in Line3 line, out vec3 point)\n{\n\tpoint = vec3 (0.0);\n\n\t// Check if the line is parallel to the plane.\n\tfloat theta = dot (line .direction, plane .normal);\n\n\t// Plane and line are parallel.\n\tif (theta == 0.0)\n\t\treturn false;\n\n\t// Plane and line are not parallel. The intersection point can be calculated now.\n\tfloat t = (plane .distanceFromOrigin - dot (plane .normal, line .point)) / theta;\n\n\tpoint = line .point + line .direction * t;\n\n\treturn true;\n}\n\n///  Returns the closest point on the plane to a given point @a point.\nvec3\nclosest_point (in Plane3 plane, in vec3 point)\n{\n\tvec3 closest_point;\n\tintersects (plane, Line3 (point, plane .normal), closest_point);\n\treturn closest_point;\n}\n';});
+
+define('text!cobweb/Browser/Shaders/Bits/Random.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\nconst int RAND_MAX = int (0x7fffffff);\nconst int RAND_MIN = int (0x80000000);\n\nint seedValue = 0;\n\nvoid\nseed (in int value)\n{\n\tseedValue = value;\n}\n\n// Return a uniform distributed random floating point number in the interval [-1, 1].\nfloat\nrandom1 ()\n{\n\treturn float (seedValue = seedValue * 1103515245 + 12345) / float (RAND_MAX);\n}\n\nvec2\nrandom2 ()\n{\n\treturn vec2 (random1 (), random1 ());\n}\n\nvec3\nrandom3 ()\n{\n\treturn vec3 (random1 (), random1 (), random1 ());\n}\n';});
+
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
  *
@@ -27534,14 +27567,38 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Shaders/Shader',[],function ()
+define ('cobweb/Browser/Shaders/Shader',[
+	"text!cobweb/Browser/Shaders/Bits/Line3.h",
+	"text!cobweb/Browser/Shaders/Bits/Plane3.h",
+	"text!cobweb/Browser/Shaders/Bits/Random.h",
+],
+function (Line3,
+          Plane3,
+          Random)
 {
 
+
+	var includes = {
+		Line3: Line3,
+		Plane3: Plane3,
+		Random: Random,
+	};
+
+	var
+		include  = /#pragma\s+X3D\s+include\s+".*?([^\/]+).h"/,
+		newLines = /\n/g;
 
 	var Shader =
 	{
 		getShaderSource: function (source)
 		{
+			var includeMatch = null;
+
+			while (includeMatch = source .match (include))
+			{
+				source = source .replace (includeMatch [0], includes [includeMatch [1]]);
+			}
+
 			var constants = "";
 
 			constants += "#define x3d_GeometryPoints  0\n";
@@ -37491,7 +37548,7 @@ define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:te
 
 define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint t = x3d_LightType [i];\n\n\t\t\tif (t != x3d_NoLight)\n\t\t\t{\n\t\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\t\tfloat dL = length (vL);\n\t\t\t\tbool  di = t == x3d_DirectionalLight;\n\n\t\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t\t{\n\t\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\t\n\t\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\t\tif (t == x3d_SpotLight)\n\t\t\t\t\t{\n\t\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\t\n\t\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t\t}\n\t\n\t\t\t\t\tfinalColor += (attenuation * spot) * x3d_LightColor [i] *\n\t\t\t\t\t              (x3d_LightAmbientIntensity [i] * ambientTerm +\n\t\t\t\t\t               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t\tbreak;\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\tgl_FragColor = vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\tgl_FragColor = finalColor;\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n// 19 * x3d_MaxLights\n\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n// 22 * x3d_MaxLights = 176\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in float angle)\n{\n\tPlane3 plane = plane3 (v, vN);\n\n\tif (lightType == x3d_PointLight)\n\t{\n/*\n\t\t// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.\n\t\tmat4 projectionBias = mat4 (0.144337567297406, 0.0, 0.0, 0.0, 0.0, 0.0962250448649377, 0.0, 0.0, -0.25, -0.166666666666667, -1.00012501562695, -1.0, 0.0, 0.0, -0.125015626953369, 0.0); // fov: 120deg, 1000m\n\n\t\t// Normals of the point light cube.\n\t\tmat4 rotations [6];\n\t\trotations [0] = mat4 ( 0.0, 0.0,  1.0, 0.0, 0.0, 1.0,  0.0, 0.0, -1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // left\n\t\trotations [1] = mat4 ( 0.0, 0.0, -1.0, 0.0, 0.0, 1.0,  0.0, 0.0,  1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // right\n\t\trotations [2] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0,  1.0, 0.0,  0.0, -1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // bottom\n\t\trotations [3] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0, -1.0, 0.0,  0.0,  1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // top\n\t\trotations [4] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0,  1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // back\n\t\trotations [5] = mat4 (-1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // front\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0, 0.0);\n\t\toffsets [1] = vec2 (0.5, 0.0);\n\t\toffsets [2] = vec2 (0.0, 1.0 / 3.0);\n\t\toffsets [3] = vec2 (0.5, 1.0 / 3.0);\n\t\toffsets [4] = vec2 (0.0, 2.0 / 3.0);\n\t\toffsets [5] = vec2 (0.5, 2.0 / 3.0);\n\n\t\tint value = 0;\n\n\t\tfor (int m = 0, s = 0; m < 6 && s < x3d_ShadowSamples; ++ m)\n\t\t{\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < 0.0 || shadowCoord .x > 1.0 / 2.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < 0.0 || shadowCoord .y > 1.0 / 3.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ s;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);\n*/\n\n\t\treturn 0.0;\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy)) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3  d = x3d_LightDirection [i];\n\t\t\t\tvec3  c = x3d_LightAttenuation [i];\n\t\t\t\tvec3  L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3  H = normalize (L + V);             // Specular term\n\t\t\t\tfloat a = dot (N, L);                    // Angle between normal and light ray.\n\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (a, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuation          = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot                 = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tvec3  lightColor           = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3  ambientColor         = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  diffuseSpecularColor = diffuseTerm + specularTerm;\n\t\t\t\tvec3  color                = lightColor * (ambientColor + x3d_LightIntensity [i] * diffuseSpecularColor);\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], a);\n\t\t\t\t\tvec3  shadowColor     = lightColor * ambientColor + diffuseSpecularColor * x3d_ShadowColor [i];\n\t\n\t\t\t\t\tfinalColor += mix (color, shadowColor, shadowIntensity);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += color;\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision highp float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
@@ -37698,7 +37755,7 @@ function (Fields,
 
 		this .projectionMatrix = new MatrixStack (Matrix4);
 		this .modelViewMatrix  = new MatrixStack (Matrix4);
-		this .clipPlanes       = [ ];
+		this .clipPlanes       = [ ]; // Clip planes dumpster
 	}
 
 	X3DRenderingContext .prototype =
@@ -42910,6 +42967,22 @@ function ($,
 	  	},
 		traverse: function (type)
 		{ },
+		depth: function (shaderNode)
+		{
+			var
+				browser = this .getBrowser (),
+				gl      = browser .getContext ();
+
+			// Setup vertex attributes.
+
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+
+			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
+
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
+		},
 		display: function (context)
 		{
 			var
@@ -43146,22 +43219,6 @@ function ($,
 			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
 			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
 			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
-		},
-		collision: function (shaderNode)
-		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext ();
-
-			// Setup vertex attributes.
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-
-			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
-
 			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
@@ -46167,6 +46224,8 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 				this .valid = false;
 				console .log (error);
 			}
+
+			return this;
 		},
 		getViewport: function ()
 		{
@@ -48686,9 +48745,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Camera',[],function ()
+define ('standard/Math/Geometry/Camera',[
+	"standard/Math/Numbers/Vector3",
+],
+function (Vector3)
 {
 
+
+	var
+		min = new Vector3 (0, 0, 0),
+		max = new Vector3 (0, 0, 0);
 
 	return {
 		frustum: function (l, r, b, t, n, f, matrix)
@@ -48711,12 +48777,9 @@ define ('standard/Math/Geometry/Camera',[],function ()
 			                    A, B, C, -1,
 			                    0, 0, D, 0);
 		},
-		perspective: function (fieldOfView, zNear, zFar, viewport, matrix)
+		perspective: function (fieldOfView, zNear, zFar, width, height, matrix)
 		{
-			var
-				width  = viewport [2] - viewport [0],
-				height = viewport [3] - viewport [1],
-				ratio  = Math .tan (fieldOfView / 2) * zNear;
+			var ratio = Math .tan (fieldOfView / 2) * zNear;
 
 			if (width > height)
 			{
@@ -48747,6 +48810,12 @@ define ('standard/Math/Geometry/Camera',[],function ()
 			                    0, B, 0, 0,
 			                    0, 0, C, 0,
 			                    D, E, F, 1);
+		},
+		orthoBox: function (box, matrix)
+		{
+			box .getExtents (min, max);
+
+			return this .ortho (min .x, max .x, min .y, max .y, -max .z, -min .z, matrix);
 		},
 	};
 });
@@ -50571,7 +50640,7 @@ function ($,
 		},
 		getProjectionMatrix: function (zNear, zFar, viewport)
 		{
-			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
 		},
 	});
 
@@ -52187,7 +52256,7 @@ function ($,
 
 	function enable ()
 	{
-		this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+		this .getCurrentLayer () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
 	}
 
 	return NavigationInfo;
@@ -52473,7 +52542,7 @@ function ($,
 		getProjectionMatrix: function (zNear, zFar, viewport, limit)
 		{
 			if (limit)
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport, this .projectionMatrix);
+				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
 				
 			// Linear interpolate zNear and zFar
 
@@ -52481,7 +52550,7 @@ function ($,
 				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
 				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
 
-			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport, this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport [2], viewport [3], this .projectionMatrix);
 		},
 	});
 
@@ -52980,15 +53049,22 @@ define ('cobweb/Components/Lighting/X3DLightNode',[
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode,
           TraverseType,
           X3DConstants,
+          Matrix4,
           Algorithm)
 {
 
+
+	var biasMatrix = new Matrix4 (0.5, 0.0, 0.0, 0.0,
+		                           0.0, 0.5, 0.0, 0.0,
+		                           0.0, 0.0, 0.5, 0.0,
+		                           0.5, 0.5, 0.5, 1.0);
 
 	function X3DLightNode (executionContext)
 	{
@@ -53000,23 +53076,64 @@ function ($,
 	X3DLightNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLightNode,
-		getAmbientIntensity: function ()
+		getGlobal: function ()
 		{
-			return Algorithm .clamp (this .ambientIntensity_ .getValue (), 0, 1);
+			return this .global_ .getValue ();
+		},
+		getColor: function ()
+		{
+			return this .color_ .getValue ();
 		},
 		getIntensity: function ()
 		{
 			return Algorithm .clamp (this .intensity_ .getValue (), 0, 1);
 		},
-		push: function ()
+		getAmbientIntensity: function ()
+		{
+			return Algorithm .clamp (this .ambientIntensity_ .getValue (), 0, 1);
+		},
+		getDirection: function ()
+		{
+			return this .direction_ .getValue ();
+		},
+		getShadowColor: function ()
+		{
+			return this .shadowColor_ .getValue ();
+		},
+		getShadowIntensity: function ()
+		{
+			return Algorithm .clamp (this .shadowIntensity_ .getValue (), 0, 1);
+		},
+		getShadowDiffusion: function ()
+		{
+			return Math .max (this .shadowDiffusion_ .getValue (), 0);
+		},
+		getShadowMapSize: function ()
+		{
+			return Math .min (this .shadowMapSize_ .getValue (), this .getBrowser () .getMaxTextureSize ());
+		},
+		getBiasMatrix: function ()
+		{
+			return biasMatrix;
+		},
+		push: function (group)
 		{
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
-					this .getBrowser () .getGlobalLights () .push (this .getLights () .pop (this));
+				{
+					var lightContainer = this .getLights () .pop (this, this .getCurrentLayer () .getGroup ());
 
+					this .getCurrentLayer () .getGlobalLights () .push (lightContainer);
+					this .getCurrentLayer () .getLights ()       .push (lightContainer);
+				}
 				else
-					this .getCurrentLayer () .getLocalLights () .push (this .getLights () .pop (this));
+				{
+					var lightContainer = this .getLights () .pop (this, group);
+
+					this .getCurrentLayer () .getLocalLights () .push (lightContainer);
+					this .getCurrentLayer () .getLights ()      .push (lightContainer);
+				}
 			}
 		},
 		pop: function ()
@@ -53032,6 +53149,586 @@ function ($,
 	});
 
 	return X3DLightNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Grouping/X3DBoundedObject',[
+	"jquery",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Box3",
+],
+function ($,
+          X3DCast,
+          X3DConstants,
+          Vector3,
+          Box3)
+{
+
+
+	function X3DBoundedObject (executionContext)
+	{
+		this .addType (X3DConstants .X3DBoundedObject);
+
+		this .childBBox = new Box3 ();
+	}
+
+	X3DBoundedObject .prototype =
+	{
+		constructor: X3DBoundedObject,
+		defaultBBoxSize: new Vector3 (-1, -1, -1),
+		initialize: function () { },
+		getBBox: function (nodes, bbox)
+		{
+			bbox .set ();
+	
+			// Add bounding boxes
+	
+			for (var i = 0, length = nodes .length; i < length; ++ i)
+			{
+				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
+	
+				if (boundedObject)
+					bbox .add (boundedObject .getBBox (this .childBBox));
+			}
+	
+			return bbox;
+		},
+	};
+
+
+	return X3DBoundedObject;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Grouping/X3DGroupingNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
+],
+function ($,
+	       Fields,
+          X3DChildNode, 
+          X3DBoundedObject, 
+          TraverseType,
+          X3DConstants,
+          Matrix4)
+{
+
+
+	function remove (array, first, last, range, rfirst, rlast, getId)
+	{
+		if (! getId)
+			getId = remove .getId ;
+
+		var set = { };
+
+		for (var i = rfirst; i < rlast; ++ i)
+			set [getId (range [i])] = true;
+
+		return remove_impl (array, first, last, set, getId);
+	}
+
+	function remove_impl (array, first, last, set, getId)
+	{
+		if ($.isEmptyObject (set))
+			return last;
+
+		var count = 0;
+
+		for (; first !== last; ++ first)
+		{
+			if (set [getId (array [first])])
+			{
+				++ count;
+				break;
+			}
+		}
+
+		LOOP:
+		for (; ;)
+		{
+			var second = first + count;
+
+			for (; second !== last; ++ first, ++ second)
+			{
+				if (set [getId (array [second])])
+				{
+					++ count;
+					continue LOOP;
+				}
+
+				array [first] = array [second];
+			}
+
+			break;
+		}
+
+		for (var second = first + count; second !== last; ++ first, ++ second)
+		{
+			array [first] = array [second];
+		}
+
+		return first;
+	}
+
+	remove .getId = function (value) { return value; };
+
+	//
+
+	//function getId (value) { return value ? value .getId () : -1; };
+	function getNodeId (value) { return value ? value .getValue () .getId () : -1; }
+
+	var visible = new Fields .MFBool ();
+
+	function X3DGroupingNode (executionContext)
+	{
+		X3DChildNode     .call (this, executionContext);
+		X3DBoundedObject .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DGroupingNode);
+	               
+		this .hidden                = false;
+		this .pointingDeviceSensors = [ ];
+		this .maybeCameraObjects    = [ ];
+		this .cameraObjects         = [ ];
+		this .clipPlanes            = [ ];
+		this .localFogs             = [ ];
+		this .lights                = [ ];
+		this .childNodes            = [ ];
+	}
+
+	X3DGroupingNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+		X3DBoundedObject .prototype,
+	{
+		constructor: X3DGroupingNode,
+		initialize: function ()
+		{
+			X3DChildNode     .prototype .initialize .call (this);
+			X3DBoundedObject .prototype .initialize .call (this);
+
+			this .addChildren_    .addInterest (this, "set_addChildren__");
+			this .removeChildren_ .addInterest (this, "set_removeChildren__");
+			this .children_       .addInterest (this, "set_children__");
+
+			this .set_children__ ();
+		},
+		getBBox: function (bbox)
+		{
+			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
+				return X3DBoundedObject .prototype .getBBox .call (this, this .children_ .getValue (), bbox);
+
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+		},
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
+		setHidden: function (value)
+		{
+			if (value !== this .hidden)
+			{
+				this .hidden = value;
+
+				this .set_children__ ();
+			}
+		},
+		getVisible: function ()
+		{
+			return visible;
+		},
+		getChild: function (index)
+		{
+			// Used in LOD and Switch.
+			
+			try
+			{
+				if (index >= 0 && index < this .children_ .length)
+				{
+					var child = this .children_ [index];
+
+					if (child)
+						return child .getValue () .getInnerNode ();
+				}
+			}
+			catch (error)
+			{ }
+
+			return null;
+		},
+		set_addChildren__: function ()
+		{
+			if (this .addChildren_ .length === 0)
+				return;
+
+			this .addChildren_ .setTainted (true);
+			this .addChildren_ .erase (remove (this .addChildren_, 0, this .addChildren_ .length,
+			                                   this .children_,    0, this .children_    .length,
+			                                   getNodeId),
+			                           this .addChildren_ .length);
+
+			if (! this .children_ .getTainted ())
+			{
+				this .children_ .removeInterest (this, "set_children__");
+				this .children_ .addInterest (this, "connectChildren");
+			}
+
+			this .children_ .insert (this .children_ .length, this .addChildren_, 0, this .addChildren_ .length);
+			this .add (this .addChildren_);
+
+			this .addChildren_ .set ([ ]);
+			this .addChildren_ .setTainted (false);
+		},
+		set_removeChildren__: function ()
+		{
+			if (this .removeChildren_ .length === 0)
+				return;
+
+			if (this .children_ .length === 0)
+				return;
+
+			if (! this .children_ .getTainted ())
+			{
+				this .children_ .removeInterest (this, "set_children__");
+				this .children_ .addInterest (this, "connectChildren");
+			}
+
+			this .children_ .erase (remove (this .children_,       0, this .children_ .length,
+			                                this .removeChildren_, 0, this .removeChildren_ .length,
+			                                getNodeId),
+			                        this .children_ .length);
+
+			this .removeChildren_ .set ([ ]);
+			
+			this .set_children__ ();
+		},
+		set_children__: function ()
+		{
+			this .clear ();
+			this .add (this .children_);
+		},
+		connectChildren: function ()
+		{
+			this .children_ .removeInterest (this, "connectChildren");
+			this .children_ .addInterest (this, "set_children__");
+		},
+		add: function (children)
+		{
+			if (this .hidden)
+				return;
+
+			var
+				visible    = this .getVisible (),
+				numVisible = visible .length;
+
+			for (var i = 0, length = children .length; i < length; ++ i)
+			{
+				var child = children [i];
+
+				if (child && (i >= numVisible || visible [i]))
+				{
+					try
+					{
+						var
+							innerNode = child .getValue () .getInnerNode (),
+							type      = innerNode .getType ();
+
+						for (var t = type .length - 1; t >= 0; -- t)
+						{
+							switch (type [t])
+							{
+								case X3DConstants .X3DPointingDeviceSensorNode:
+								{
+									this .pointingDeviceSensors .push (innerNode);
+									break;
+								}
+								case X3DConstants .ClipPlane:
+								{
+									this .clipPlanes .push (innerNode);
+									break;
+								}
+								case X3DConstants .LocalFog:
+								{
+									this .localFogs .push (innerNode);
+									break;
+								}
+								case X3DConstants .X3DLightNode:
+								{
+									this .lights .push (innerNode);
+									break;
+								}
+								case X3DConstants .X3DBindableNode:
+								{
+									this .maybeCameraObjects .push (innerNode);
+									break;				
+								}
+								case X3DConstants .X3DBackgroundNode:
+								case X3DConstants .X3DChildNode:
+								{
+									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
+
+									this .maybeCameraObjects .push (innerNode);
+									this .childNodes .push (innerNode);
+									break;
+								}
+								case X3DConstants .BooleanFilter:
+								case X3DConstants .BooleanToggle:
+								case X3DConstants .NurbsOrientationInterpolator:
+								case X3DConstants .NurbsPositionInterpolator:
+								case X3DConstants .NurbsSurfaceInterpolator:
+								case X3DConstants .TimeSensor:
+								case X3DConstants .X3DFollowerNode:
+								case X3DConstants .X3DInfoNode:
+								case X3DConstants .X3DInterpolatorNode:
+								case X3DConstants .X3DLayoutNode:
+								case X3DConstants .X3DScriptNode:
+								case X3DConstants .X3DSequencerNode:
+								case X3DConstants .X3DTriggerNode:
+									break;
+								default:
+									continue;
+							}
+
+							break;
+						}
+					}
+					catch (error)
+					{ }
+				}
+			}
+
+			this .set_cameraObjects__ ();
+		},
+		clear: function ()
+		{
+			for (var i = 0, length = this .childNodes .length; i < length; ++ i)
+				this .childNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
+			
+			this .pointingDeviceSensors .length = 0;
+			this .maybeCameraObjects    .length = 0;
+			this .cameraObjects         .length = 0;
+			this .clipPlanes            .length = 0;
+			this .localFogs             .length = 0;
+			this .lights                .length = 0;
+			this .childNodes            .length = 0;
+		},
+		set_cameraObjects__: function ()
+		{
+			this .cameraObjects .length = 0;
+
+			for (var i = 0, length = this .maybeCameraObjects .length; i < length; ++ i)
+			{
+				var childNode = this .maybeCameraObjects [i];
+
+				if (childNode .getCameraObject ())
+					this .cameraObjects .push (childNode);
+			}
+
+			this .setCameraObject (this .cameraObjects .length);
+		},
+		traverse: function (type)
+		{
+			switch (type)
+			{
+				case TraverseType .POINTER:
+				{
+					var
+						pointingDeviceSensors = this .pointingDeviceSensors,
+						clipPlanes            = this .clipPlanes,
+						childNodes            = this .childNodes;
+
+					if (pointingDeviceSensors .length)
+					{
+						var sensors = { };
+						
+						this .getBrowser () .getSensors () .push (sensors);
+					
+						for (var i = 0, length = pointingDeviceSensors .length; i < length; ++ i)
+							pointingDeviceSensors [i] .traverse (sensors);
+					}
+
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .push ();
+
+					for (var i = 0, length = childNodes .length; i < length; ++ i)
+						childNodes [i] .traverse (type);
+
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .pop ();
+
+					if (pointingDeviceSensors .length)
+						this .getBrowser () .getSensors () .pop ();
+
+					return;
+				}
+				case TraverseType .CAMERA:
+				{
+					var cameraObjects = this .cameraObjects;
+
+					for (var i = 0, length = cameraObjects .length; i < length; ++ i)
+						cameraObjects [i] .traverse (type);
+
+					return;
+				}
+				case TraverseType .COLLISION:
+				case TraverseType .DEPTH:
+				{					
+					var
+						clipPlanes = this .clipPlanes,
+						childNodes = this .childNodes;
+
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .push ();
+
+					for (var i = 0, length = childNodes .length; i < length; ++ i)
+						childNodes [i] .traverse (type);
+
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .pop ();
+					
+					return;
+				}
+				case TraverseType .DISPLAY:
+				{
+					var
+						clipPlanes = this .clipPlanes,
+						localFogs  = this .localFogs,
+						lights     = this .lights,
+						childNodes = this .childNodes;
+
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .push ();
+
+					for (var i = 0, length = localFogs .length; i < length; ++ i)
+						localFogs [i] .push ();
+
+					for (var i = 0, length = lights .length; i < length; ++ i)
+						lights [i] .push (this);
+
+					for (var i = 0, length = childNodes .length; i < length; ++ i)
+						childNodes [i] .traverse (type);
+					
+					for (var i = 0, length = lights .length; i < length; ++ i)
+						lights [i] .pop ();
+
+					for (var i = 0, length = localFogs .length; i < length; ++ i)
+						localFogs [i] .pop ();
+
+					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
+						clipPlanes [i] .pop ();
+
+					return;
+				}
+			}
+		},
+	});
+
+	return X3DGroupingNode;
 });
 
 
@@ -53183,8 +53880,16 @@ define ('cobweb/Components/Lighting/DirectionalLight',[
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Utility/ObjectCache",
 ],
 function ($,
@@ -53192,42 +53897,163 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLightNode,
+          X3DGroupingNode,
+          TraverseType,
           X3DConstants,
+          Box3,
+          Camera,
+          ViewVolume,
           Vector3,
+          Vector4,
+          Rotation4,
+          Matrix4,
           ObjectCache)
 {
 
 
 	var DirectionalLights = ObjectCache (DirectionalLightContainer);
 	
-	function DirectionalLightContainer (light)
+	function DirectionalLightContainer (lightNode, groupNode)
 	{
-		this .direction = new Vector3 (0, 0, 0);
+		this .direction            = new Vector3 (0, 0, 0);
+		this .shadowBuffer         = null;
+		this .bbox                 = new Box3 ();
+		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewport             = new Vector4 (0, 0, 0, 0);
+		this .projectionMatrix     = new Matrix4 ();
+		this .modelViewMatrix      = new Matrix4 ();
+		this .transformationMatrix = new Matrix4 ();
+		this .invLightSpaceMatrix  = new Matrix4 ();
+		this .shadowMatrix         = new Matrix4 ();
+		this .shadowMatrixArray    = new Float32Array (16);
+		this .rotation             = new Rotation4 ();
+		this .textureUnit          = 0;
 	
-		this .set (light);
+		this .set (lightNode, groupNode);
 	}
 
 	DirectionalLightContainer .prototype =
 	{
 		constructor: DirectionalLightContainer,
-		set: function (light)
+		set: function (lightNode, groupNode)
 		{
-			this .color            = light .color_ .getValue ();
-			this .intensity        = light .getIntensity ();
-			this .ambientIntensity = light .getAmbientIntensity ();
+			var
+				browser = lightNode .getBrowser (),
+				gl      = browser .getContext ();
+
+			this .lightNode = lightNode;
+			this .groupNode = groupNode;
+
+			this .modelViewMatrix .assign (browser.getModelViewMatrix () .get ());
+ 
+			var shadowMapSize = lightNode .getShadowMapSize ();
+
+			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
+			{
+				this .shadowBuffer = browser .popShadowBuffer (shadowMapSize);
+			}
+			else
+				this .shadowBuffer = null;
+
+			if (this .shadowBuffer && browser .getCombinedTextureUnits () .length)
+			{
+				this .textureUnit = browser .getCombinedTextureUnits () .pop ();
+
+				gl .activeTexture (gl .TEXTURE0 + this .textureUnit);
+				gl .bindTexture (gl .TEXTURE_2D, this .shadowBuffer .getDepthTexture ());
+				gl .activeTexture (gl .TEXTURE0);
+			}
+			else
+			{
+				this .textureUnit = 0;
+			}
+		},
+		renderShadowMap: function ()
+		{
+			try
+			{
+				if (! this .shadowBuffer)
+					return;
+
+				var
+					lightNode            = this .lightNode,
+					browser              = lightNode .getBrowser (),
+					layerNode            = lightNode .getCurrentLayer (),
+					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
+
+				invLightSpaceMatrix .rotate (this .rotation .setFromToVec (Vector3 .zAxis, this .direction .assign (lightNode .getDirection ()) .negate ()));
+				invLightSpaceMatrix .inverse ();
+
+				var
+					groupBBox        = X3DGroupingNode .prototype .getBBox .call (this .groupNode, this .bbox), // Group bbox.
+					lightBBox        = groupBBox .multRight (invLightSpaceMatrix),                              // Group bbox from the perspective of the light.
+					shadowMapSize    = lightNode .getShadowMapSize (),
+					viewport         = this .viewport .set (0, 0, shadowMapSize, shadowMapSize),
+					projectionMatrix = Camera .orthoBox (lightBBox, this .projectionMatrix);
+
+				this .shadowBuffer .bind ();
+
+				layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+				browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
+				browser .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
+				browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+
+				layerNode .render (this .groupNode, TraverseType .DEPTH);
+
+				browser .getModelViewMatrix  () .pop ();
+				browser .getProjectionMatrix () .pop ();
+				layerNode .getViewVolumes () .pop ();
+
+				this .shadowBuffer .unbind ();
 	
-			light .getBrowser () .getModelViewMatrix () .get () .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();	      
+				if (! lightNode .getGlobal ())
+					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
+
+				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
+			}
+			catch (error)
+			{
+				// Catch error from matrix inverse.
+				console .log (error);
+			}
 		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
+			var
+				lightNode   = this .lightNode,
+				color       = lightNode .getColor (),
+				direction   = this .modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .getDirection ())) .normalize (),
+				shadowColor = lightNode .getShadowColor ();
+
 			gl .uniform1i (shaderObject .x3d_LightType [i],             1);
-			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shaderObject .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            color .r, color .g, color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        lightNode .getIntensity ());
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], lightNode .getAmbientIntensity ());
+			gl .uniform3f (shaderObject .x3d_LightDirection [i],        direction .x, direction .y, direction .z);
+
+			if (this .textureUnit)
+			{
+				this .shadowMatrixArray .set (this .shadowMatrix);
+
+				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
+				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
+				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
+				gl .uniformMatrix4fv (shaderObject .x3d_ShadowMatrix [i], false, this .shadowMatrixArray);
+				gl .uniform1i        (shaderObject .x3d_ShadowMap [i],           this .textureUnit);
+			}
+			else
+				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
 		recycle: function ()
 		{
+			if (this .textureUnit)
+			{
+				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+				this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			}
+
 		   DirectionalLights .push (this);
 		},
 	};
@@ -53243,13 +54069,18 @@ function ($,
 	{
 		constructor: DirectionalLight,
 		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "global",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "on",               new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "color",            new Fields .SFColor (1, 1, 1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "intensity",        new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity", new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "direction",        new Fields .SFVec3f (0, 0, -1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "global",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "on",               new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",            new Fields .SFColor (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "intensity",        new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "ambientIntensity", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",        new Fields .SFVec3f (0, 0, -1)),
+
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowColor",     new  Fields .SFColor ()),        // Color of shadow.
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowIntensity", new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowDiffusion", new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "shadowMapSize",   new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
 		]),
 		getTypeName: function ()
 		{
@@ -53500,579 +54331,6 @@ function (Fields,
 
 	return X3DNavigationContext;
 });
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Grouping/X3DBoundedObject',[
-	"jquery",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Geometry/Box3",
-],
-function ($,
-          X3DCast,
-          X3DConstants,
-          Vector3,
-          Box3)
-{
-
-
-	function X3DBoundedObject (executionContext)
-	{
-		this .addType (X3DConstants .X3DBoundedObject);
-
-		this .childBBox = new Box3 ();
-	}
-
-	X3DBoundedObject .prototype =
-	{
-		constructor: X3DBoundedObject,
-		defaultBBoxSize: new Vector3 (-1, -1, -1),
-		initialize: function () { },
-		getBBox: function (nodes, bbox)
-		{
-			bbox .set ();
-	
-			// Add bounding boxes
-	
-			for (var i = 0, length = nodes .length; i < length; ++ i)
-			{
-				var boundedObject = X3DCast (X3DConstants .X3DBoundedObject, nodes [i]);
-	
-				if (boundedObject)
-					bbox .add (boundedObject .getBBox (this .childBBox));
-			}
-	
-			return bbox;
-		},
-	};
-
-
-	return X3DBoundedObject;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Grouping/X3DGroupingNode',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Grouping/X3DBoundedObject",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-	       Fields,
-          X3DChildNode, 
-          X3DBoundedObject, 
-          TraverseType,
-          X3DConstants)
-{
-
-
-	function remove (array, first, last, range, rfirst, rlast, getId)
-	{
-		if (! getId)
-			getId = remove .getId ;
-
-		var set = { };
-
-		for (var i = rfirst; i < rlast; ++ i)
-			set [getId (range [i])] = true;
-
-		return remove_impl (array, first, last, set, getId);
-	}
-
-	function remove_impl (array, first, last, set, getId)
-	{
-		if ($.isEmptyObject (set))
-			return last;
-
-		var count = 0;
-
-		for (; first !== last; ++ first)
-		{
-			if (set [getId (array [first])])
-			{
-				++ count;
-				break;
-			}
-		}
-
-		LOOP:
-		for (; ;)
-		{
-			var second = first + count;
-
-			for (; second !== last; ++ first, ++ second)
-			{
-				if (set [getId (array [second])])
-				{
-					++ count;
-					continue LOOP;
-				}
-
-				array [first] = array [second];
-			}
-
-			break;
-		}
-
-		for (var second = first + count; second !== last; ++ first, ++ second)
-		{
-			array [first] = array [second];
-		}
-
-		return first;
-	}
-
-	remove .getId = function (value) { return value; };
-
-	//
-
-	//function getId (value) { return value ? value .getId () : -1; };
-	function getNodeId (value) { return value ? value .getValue () .getId () : -1; }
-
-	var visible = new Fields .MFBool ();
-
-	function X3DGroupingNode (executionContext)
-	{
-		X3DChildNode     .call (this, executionContext);
-		X3DBoundedObject .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DGroupingNode);
-	               
-		this .hidden                = false;
-		this .pointingDeviceSensors = [ ];
-		this .maybeCameraObjects    = [ ];
-		this .cameraObjects         = [ ];
-		this .clipPlanes            = [ ];
-		this .localFogs             = [ ];
-		this .lights                = [ ];
-		this .childNodes            = [ ];
-	}
-
-	X3DGroupingNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-		X3DBoundedObject .prototype,
-	{
-		constructor: X3DGroupingNode,
-		initialize: function ()
-		{
-			X3DChildNode     .prototype .initialize .call (this);
-			X3DBoundedObject .prototype .initialize .call (this);
-
-			this .addChildren_    .addInterest (this, "set_addChildren__");
-			this .removeChildren_ .addInterest (this, "set_removeChildren__");
-			this .children_       .addInterest (this, "set_children__");
-
-			this .set_children__ ();
-		},
-		getBBox: function (bbox)
-		{
-			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
-				return X3DBoundedObject .prototype .getBBox .call (this, this .children_ .getValue (), bbox);
-
-			return box .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
-		},
-		setHidden: function (value)
-		{
-			if (value !== this .hidden)
-			{
-				this .hidden = value;
-
-				this .set_children__ ();
-			}
-		},
-		getVisible: function ()
-		{
-			return visible;
-		},
-		getChild: function (index)
-		{
-			// Used in LOD and Switch.
-			
-			try
-			{
-				if (index >= 0 && index < this .children_ .length)
-				{
-					var child = this .children_ [index];
-
-					if (child)
-						return child .getValue () .getInnerNode ();
-				}
-			}
-			catch (error)
-			{ }
-
-			return null;
-		},
-		set_addChildren__: function ()
-		{
-			if (this .addChildren_ .length === 0)
-				return;
-
-			this .addChildren_ .setTainted (true);
-			this .addChildren_ .erase (remove (this .addChildren_, 0, this .addChildren_ .length,
-			                                   this .children_,    0, this .children_    .length,
-			                                   getNodeId),
-			                           this .addChildren_ .length);
-
-			if (! this .children_ .getTainted ())
-			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
-			}
-
-			this .children_ .insert (this .children_ .length, this .addChildren_, 0, this .addChildren_ .length);
-			this .add (this .addChildren_);
-
-			this .addChildren_ .set ([ ]);
-			this .addChildren_ .setTainted (false);
-		},
-		set_removeChildren__: function ()
-		{
-			if (this .removeChildren_ .length === 0)
-				return;
-
-			if (this .children_ .length === 0)
-				return;
-
-			if (! this .children_ .getTainted ())
-			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
-			}
-
-			this .children_ .erase (remove (this .children_,       0, this .children_ .length,
-			                                this .removeChildren_, 0, this .removeChildren_ .length,
-			                                getNodeId),
-			                        this .children_ .length);
-
-			this .removeChildren_ .set ([ ]);
-			
-			this .set_children__ ();
-		},
-		set_children__: function ()
-		{
-			this .clear ();
-			this .add (this .children_);
-		},
-		connectChildren: function ()
-		{
-			this .children_ .removeInterest (this, "connectChildren");
-			this .children_ .addInterest (this, "set_children__");
-		},
-		add: function (children)
-		{
-			if (this .hidden)
-				return;
-
-			var
-				visible    = this .getVisible (),
-				numVisible = visible .length;
-
-			for (var i = 0, length = children .length; i < length; ++ i)
-			{
-				var child = children [i];
-
-				if (child && (i >= numVisible || visible [i]))
-				{
-					try
-					{
-						var
-							innerNode = child .getValue () .getInnerNode (),
-							type      = innerNode .getType ();
-
-						for (var t = type .length - 1; t >= 0; -- t)
-						{
-							switch (type [t])
-							{
-								case X3DConstants .X3DPointingDeviceSensorNode:
-								{
-									this .pointingDeviceSensors .push (innerNode);
-									break;
-								}
-								case X3DConstants .ClipPlane:
-								{
-									this .clipPlanes .push (innerNode);
-									break;
-								}
-								case X3DConstants .LocalFog:
-								{
-									this .localFogs .push (innerNode);
-									break;
-								}
-								case X3DConstants .X3DLightNode:
-								{
-									this .lights .push (innerNode);
-									break;
-								}
-								case X3DConstants .X3DBindableNode:
-								{
-									this .maybeCameraObjects .push (innerNode);
-									break;				
-								}
-								case X3DConstants .X3DBackgroundNode:
-								case X3DConstants .X3DChildNode:
-								{
-									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
-
-									this .maybeCameraObjects .push (innerNode);
-									this .childNodes .push (innerNode);
-									break;
-								}
-								case X3DConstants .BooleanFilter:
-								case X3DConstants .BooleanToggle:
-								case X3DConstants .NurbsOrientationInterpolator:
-								case X3DConstants .NurbsPositionInterpolator:
-								case X3DConstants .NurbsSurfaceInterpolator:
-								case X3DConstants .TimeSensor:
-								case X3DConstants .X3DFollowerNode:
-								case X3DConstants .X3DInfoNode:
-								case X3DConstants .X3DInterpolatorNode:
-								case X3DConstants .X3DLayoutNode:
-								case X3DConstants .X3DScriptNode:
-								case X3DConstants .X3DSequencerNode:
-								case X3DConstants .X3DTriggerNode:
-									break;
-								default:
-									continue;
-							}
-
-							break;
-						}
-					}
-					catch (error)
-					{ }
-				}
-			}
-
-			this .set_cameraObjects__ ();
-		},
-		clear: function ()
-		{
-			for (var i = 0, length = this .childNodes .length; i < length; ++ i)
-				this .childNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
-			
-			this .pointingDeviceSensors .length = 0;
-			this .maybeCameraObjects    .length = 0;
-			this .cameraObjects         .length = 0;
-			this .clipPlanes            .length = 0;
-			this .localFogs             .length = 0;
-			this .lights                .length = 0;
-			this .childNodes            .length = 0;
-		},
-		set_cameraObjects__: function ()
-		{
-			this .cameraObjects .length = 0;
-
-			for (var i = 0, length = this .maybeCameraObjects .length; i < length; ++ i)
-			{
-				var childNode = this .maybeCameraObjects [i];
-
-				if (childNode .getCameraObject ())
-					this .cameraObjects .push (childNode);
-			}
-
-			this .setCameraObject (this .cameraObjects .length);
-		},
-		traverse: function (type)
-		{
-			switch (type)
-			{
-				case TraverseType .POINTER:
-				{
-					var
-						pointingDeviceSensors = this .pointingDeviceSensors,
-						clipPlanes            = this .clipPlanes,
-						childNodes            = this .childNodes;
-
-					if (pointingDeviceSensors .length)
-					{
-						var sensors = { };
-						
-						this .getBrowser () .getSensors () .push (sensors);
-					
-						for (var i = 0, length = pointingDeviceSensors .length; i < length; ++ i)
-							pointingDeviceSensors [i] .traverse (sensors);
-					}
-
-					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
-
-					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
-
-					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
-
-					if (pointingDeviceSensors .length)
-						this .getBrowser () .getSensors () .pop ();
-
-					return;
-				}
-				case TraverseType .CAMERA:
-				{
-					var cameraObjects = this .cameraObjects;
-
-					for (var i = 0, length = cameraObjects .length; i < length; ++ i)
-						cameraObjects [i] .traverse (type);
-
-					return;
-				}
-				case TraverseType .COLLISION:
-				{					
-					var
-						clipPlanes = this .clipPlanes,
-						childNodes = this .childNodes;
-
-					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
-
-					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
-
-					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
-					
-					return;
-				}
-				case TraverseType .DISPLAY:
-				{
-					var
-						clipPlanes = this .clipPlanes,
-						localFogs  = this .localFogs,
-						lights     = this .lights,
-						childNodes = this .childNodes;
-
-					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
-
-					for (var i = 0, length = localFogs .length; i < length; ++ i)
-						localFogs [i] .push ();
-
-					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .push ();
-
-					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
-					
-					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .pop ();
-
-					for (var i = 0, length = localFogs .length; i < length; ++ i)
-						localFogs [i] .pop ();
-
-					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
-
-					return;
-				}
-			}
-		},
-	});
-
-	return X3DGroupingNode;
-});
-
-
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -54882,29 +55140,214 @@ function (ComposedShader,
  ******************************************************************************/
 
 
+define ('cobweb/Rendering/DepthBuffer',[],function ()
+{
+
+
+	function DepthBuffer (browser, width, height)
+	{
+		var gl = browser .getContext ();
+
+		this .browser = browser;
+		this .width   = width;
+		this .height  = height;
+		this .array   = new Uint8Array (width * height * 4);
+
+		// The frame buffer.
+
+		this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
+		this .buffer     = gl .createFramebuffer ();
+
+		gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
+
+		// The depth texture
+
+		this .depthTexture = gl .createTexture ();
+
+		gl .bindTexture (gl .TEXTURE_2D, this .depthTexture);
+		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_WRAP_S,     gl .CLAMP_TO_EDGE);
+		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_WRAP_T,     gl .CLAMP_TO_EDGE);
+		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_MIN_FILTER, gl .LINEAR);
+		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_MAG_FILTER, gl .LINEAR);
+		gl .texImage2D (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, null);
+
+		gl .framebufferTexture2D (gl .FRAMEBUFFER, gl .COLOR_ATTACHMENT0, gl .TEXTURE_2D, this .depthTexture, 0);
+		gl .bindTexture (gl .TEXTURE_2D, null);
+
+		// The depth buffer
+
+		var depthBuffer = gl .createRenderbuffer ();
+
+		gl .bindRenderbuffer (gl .RENDERBUFFER, depthBuffer);
+		gl .renderbufferStorage (gl .RENDERBUFFER, gl .DEPTH_COMPONENT16, width, height);
+		gl .framebufferRenderbuffer (gl .FRAMEBUFFER, gl .DEPTH_ATTACHMENT, gl .RENDERBUFFER, depthBuffer);
+
+		// Always check that our framebuffer is ok
+
+		if (gl .checkFramebufferStatus (gl .FRAMEBUFFER) !== gl .FRAMEBUFFER_COMPLETE)
+			throw new Error ("Couldn't create frame buffer.");
+
+		gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
+	}
+
+	DepthBuffer .prototype =
+	{
+		constructor: DepthBuffer,
+		getWidth: function ()
+		{
+			return this .width;
+		},
+		getHeight: function ()
+		{
+			return this .height;
+		},
+		getDepthTexture: function ()
+		{
+			return this .depthTexture;
+		},
+		getDistance: function (radius, zNear, zFar)
+		{
+			var
+				gl       = this .browser .getContext (),
+				array    = this .array,
+				distance = Number .POSITIVE_INFINITY,
+				w1       = 2 / (this .width  - 1),
+				h1       = 2 / (this .height - 1),
+				zWidth   = zFar - zNear;
+
+			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, array);
+
+			for (var py = 0, i = 0; py < this .height; ++ py)
+			{
+				var y2 = Math .pow ((py * h1 - 1) * radius, 2);
+
+			   for (var px = 0; px < this .width; ++ px, i += 4)
+			   {
+				   var
+				      x = (px * w1 - 1) * radius,
+				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625);
+
+					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
+			   }
+			}
+
+			return distance;
+		},
+		bind: function ()
+		{
+			var gl = this .browser .getContext ();
+
+			this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
+
+			gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
+		},
+		unbind: function ()
+		{
+			var gl = this .browser .getContext ();
+			gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
+		},
+	};
+
+	return DepthBuffer;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('cobweb/Browser/Lighting/X3DLightingContext',[
-	"cobweb/Components/Layering/Viewport",
+	"cobweb/Rendering/DepthBuffer",
 ],
-function (Viewport)
+function (DepthBuffer)
 {
 
 	
 	function X3DLightingContext ()
 	{
-		this .globalLights = [ ]; // Global light array
-		this .localLights  = [ ]; // Local light dumpster
+		this .localLights   = [ ]; // Local light dumpster
+		this .shadowBuffers = [ ]; // Shadow buffer cache
 	}
 
 	X3DLightingContext .prototype =
 	{
 		initialize: function () { },
-		getGlobalLights: function ()
-		{
-			return this .globalLights;
-		},
 		getLocalLights: function ()
 		{
 			return this .localLights;
+		},
+		popShadowBuffer: function (shadowMapSize)
+		{
+			try
+			{
+				var shadowBuffers = this .shadowBuffers [shadowMapSize];
+	
+				if (shadowBuffers)
+				{
+					if (shadowBuffers .length)
+						return shadowBuffers .pop ();
+				}
+				else
+					this .shadowBuffers [shadowMapSize] = [ ];
+	
+				return new DepthBuffer (this, shadowMapSize, shadowMapSize);
+			}
+			catch (error)
+			{
+				// Couldn't create texture buffer.
+				console .log (error);
+
+				return null;
+			}
+		},
+		pushShadowBuffer: function (buffer)
+		{
+			if (buffer)
+				this .shadowBuffers [buffer .getWidth ()] .push (buffer);
 		},
 	};
 
@@ -65346,160 +65789,6 @@ function (PointEmitter)
  ******************************************************************************/
 
 
-define ('cobweb/Rendering/DepthBuffer',[],function ()
-{
-
-
-	function DepthBuffer (browser, width, height)
-	{
-		var gl = browser .getContext ();
-
-		this .browser = browser;
-		this .width   = width;
-		this .height  = height;
-		this .array   = new Uint8Array (width * height * 4);
-
-		// The frame buffer.
-
-		this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
-		this .buffer     = gl .createFramebuffer ();
-
-		gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
-
-		// The depth texture
-
-		this .depthTexture = gl .createTexture ();
-
-		gl .bindTexture (gl .TEXTURE_2D, this .depthTexture);
-		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_WRAP_S,     gl .CLAMP_TO_EDGE);
-		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_WRAP_T,     gl .CLAMP_TO_EDGE);
-		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_MIN_FILTER, gl .LINEAR);
-		gl .texParameteri (gl .TEXTURE_2D, gl .TEXTURE_MAG_FILTER, gl .LINEAR);
-		gl .texImage2D (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, null);
-
-		gl .framebufferTexture2D (gl .FRAMEBUFFER, gl .COLOR_ATTACHMENT0, gl .TEXTURE_2D, this .depthTexture, 0);
-		gl .bindTexture (gl .TEXTURE_2D, null);
-
-		// The depth buffer
-
-		var depthBuffer = gl .createRenderbuffer ();
-
-		gl .bindRenderbuffer (gl .RENDERBUFFER, depthBuffer);
-		gl .renderbufferStorage (gl .RENDERBUFFER, gl .DEPTH_COMPONENT16, width, height);
-		gl .framebufferRenderbuffer (gl .FRAMEBUFFER, gl .DEPTH_ATTACHMENT, gl .RENDERBUFFER, depthBuffer);
-
-		// Always check that our framebuffer is ok
-
-		if (gl .checkFramebufferStatus (gl .FRAMEBUFFER) !== gl .FRAMEBUFFER_COMPLETE)
-			throw new Error ("Couldn't create frame buffer.");
-
-		gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
-	}
-
-	DepthBuffer .prototype =
-	{
-		constructor: DepthBuffer,
-		getDistance: function (radius, zNear, zFar)
-		{
-			var
-				gl       = this .browser .getContext (),
-				array    = this .array,
-				distance = Number .POSITIVE_INFINITY,
-				w1       = 2 / (this .width  - 1),
-				h1       = 2 / (this .height - 1),
-				zWidth   = zFar - zNear;
-
-			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, array);
-
-			for (var py = 0, i = 0; py < this .height; ++ py)
-			{
-				var y2 = Math .pow ((py * h1 - 1) * radius, 2);
-
-			   for (var px = 0; px < this .width; ++ px, i += 4)
-			   {
-				   var
-				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625);
-
-					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
-			   }
-			}
-
-			return distance;
-		},
-		bind: function ()
-		{
-			var gl = this .browser .getContext ();
-
-			this .lastBuffer = gl .getParameter (gl .FRAMEBUFFER_BINDING);
-
-			gl .bindFramebuffer (gl .FRAMEBUFFER, this .buffer);
-
-			gl .viewport (0, 0, this .width, this .height);
-			gl .scissor  (0, 0, this .width, this .height);
-
-			gl .clearColor (1, 0, 0, 0);
-			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);
-		},
-		unbind: function ()
-		{
-			var gl = this .browser .getContext ();
-			gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
-		},
-	};
-
-	return DepthBuffer;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('standard/Math/Geometry/Sphere3',[
 	"standard/Math/Numbers/Vector3",
 ],
@@ -65695,6 +65984,7 @@ define ('cobweb/Rendering/X3DRenderer',[
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Sphere3",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
@@ -65707,6 +65997,7 @@ function ($,
           QuickSort,
           Camera,
           Sphere3,
+          ViewVolume,
           Vector3,
           Vector4,
           Rotation4,
@@ -65725,7 +66016,9 @@ function ($,
 		yAxis                 = new Vector3 (0, 1, 0),
 		zAxis                 = new Vector3 (0, 0, 1),
 		vector                = new Vector3 (0, 0, 0),
-		rotation              = new Rotation4 (0, 0, 1, 0);
+		rotation              = new Rotation4 (0, 0, 1, 0),
+		depthBufferViewport   = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
+		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -65733,17 +66026,21 @@ function ($,
 	{
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
+		this .globalLights         = [ ];
 		this .localLights          = [ ];
+		this .lights               = [ ];
 		this .localFogs            = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
+		this .numDepthShapes       = 0;
 		this .opaqueShapes         = [ ];
 		this .transparentShapes    = [ ];
 		this .transparencySorter   = new QuickSort (this .transparentShapes, compareDistance);
 		this .collisionShapes      = [ ];
 		this .activeCollisions     = { };
 		this .collisionSphere      = new Sphere3 (0, Vector3 .Zero);
+		this .depthShapes          = [ ];
 		this .invModelViewMatrix   = new Matrix4 ();
 		this .speed                = 0;
 
@@ -65780,9 +66077,17 @@ function ($,
 		{
 			return this .clipPlanes;
 		},
+		getGlobalLights: function ()
+		{
+			return this .globalLights;
+		},
 		getLocalLights: function ()
 		{
 			return this .localLights;
+		},
+		getLights: function ()
+		{
+			return this .lights;
 		},
 		setGlobalFog: function (fog)
 		{
@@ -65799,6 +66104,73 @@ function ($,
 			this .localFogs .pop ();
 
 			this .localFog = this .localFogs [this .localFogs .length - 1];
+		},
+		addCollisionShape: function (shapeNode)
+		{
+			var
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
+
+				if (this .numCollisionShapes === this .collisionShapes .length)
+					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+
+				var context = this .collisionShapes [this .numCollisionShapes];
+
+				++ this .numCollisionShapes;
+
+				context .modelViewMatrix .set (modelViewMatrix);
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
+
+				// Collisions
+
+				var
+					sourceCollisions = this .getBrowser () .getCollisions (),
+					destCollisions   = context .collisions;
+
+				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+				   destCollisions [i] = sourceCollisions [i];
+				
+				destCollisions .length = sourceCollisions .length;
+
+				// Clip planes
+
+				var
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
+
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+					destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
+		},
+		addDepthShape: function (shapeNode)
+		{
+			var
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
+
+				if (this .numDepthShapes === this .depthShapes .length)
+					this .depthShapes .push ({ modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
+
+				var context = this .depthShapes [this .numDepthShapes];
+
+				++ this .numDepthShapes;
+
+				context .modelViewMatrix .set (modelViewMatrix);
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
+
+				// Clip planes
+
+				var
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
+
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+					destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
 		},
 		createShapeContext: function (transparent)
 		{
@@ -65876,45 +66248,6 @@ function ($,
 				
 				destLights .length = sourceLights .length;
 			}
-		},
-		addCollisionShape: function (shapeNode)
-		{
-			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
-
-				if (this .numCollisionShapes === this .collisionShapes .length)
-					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
-
-				var context = this .collisionShapes [this .numCollisionShapes];
-
-				++ this .numCollisionShapes;
-
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
-
-				// Collisions
-
-				var
-					sourceCollisions = this .getBrowser () .getCollisions (),
-					destCollisions   = context .collisions;
-
-				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
-				   destCollisions [i] = sourceCollisions [i];
-				
-				destCollisions .length = sourceCollisions .length;
-
-				// Clip planes
-
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
-
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
 		},
 		constrainTranslation: function (translation)
 		{
@@ -66000,62 +66333,6 @@ function ($,
 		},
 		getDepth: function ()
 		{
-			// Render all objects
-
-			var
-				browser         = this .getBrowser (),
-				gl              = browser .getContext (),
-				shader          = browser .getDepthShader (),
-				collisionShapes = this .collisionShapes;
-
-			shader .use ();
-			
-			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
-
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, projectionMatrixArray);
-
-			this .depthBuffer .bind ();
-
-			gl .enable (gl .DEPTH_TEST);
-			gl .depthMask (true);
-			gl .disable (gl .BLEND);
-			gl .disable (gl .CULL_FACE);
-
-			for (var s = 0, ls = this .numCollisionShapes; s < ls; ++ s)
-			{
-				var
-					context    = collisionShapes [s],
-					scissor    = context .scissor,
-					clipPlanes = context .clipPlanes;
-
-				// TODO: viewport must not be the browser or layer viewport.
-				gl .scissor (scissor .x,
-				             scissor .y,
-				             scissor .z,
-				             scissor .w);
-
-				// Clip planes
-
-				if (clipPlanes .length)
-				{
-					for (var c = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); c < numClipPlanes; ++ c)
-						clipPlanes [c] .setShaderUniforms (gl, shader, c);
-	
-					if (c < shader .maxClipPlanes)
-						gl .uniform4fv (shader .x3d_ClipPlane [c], shader .noClipPlane);
-				}
-				else
-					gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
-
-				// modelViewMatrix
-	
-				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, context .modelViewMatrix);
-
-				// Draw
-	
-				context .shapeNode .collision (shader);
-			}
-
 			var
 				navigationInfo = this .getNavigationInfo (),
 				viewpoint      = this .getViewpoint (),
@@ -66063,13 +66340,19 @@ function ($,
 				zFar           = navigationInfo .getFarPlane (viewpoint),
 				radius         = navigationInfo .getCollisionRadius ();
 
+			this .depthBuffer .bind ();
+
+			this .viewVolumes .push (depthBufferViewVolume);
+			this .depth (this .collisionShapes, this .numCollisionShapes);
+			this .viewVolumes .pop ();	
+
 			var distance = this .depthBuffer .getDistance (radius, zNear, zFar);
 
 			this .depthBuffer .unbind ();
 
 			return distance;
 		},
-		render: function (type)
+		render: function (group, type)
 		{
 			switch (type)
 			{
@@ -66078,9 +66361,17 @@ function ($,
 					// Collect for collide and gravite
 					this .numCollisionShapes = 0;
 
-					this .collect (type);
+					group .traverse (type);
 					this .collide ();
 					this .gravite ();
+					break;
+				}
+				case TraverseType .DEPTH:
+				{
+					this .numDepthShapes = 0;
+
+					group .traverse (type);
+					this .depth (this .depthShapes, this .numDepthShapes);
 					break;
 				}
 				case TraverseType .DISPLAY:
@@ -66089,7 +66380,7 @@ function ($,
 					this .numTransparentShapes = 0;
 	
 					this .setGlobalFog (this .getFog ());
-					this .collect (type);
+					group .traverse (type);
 					this .draw ();
 					break;
 				}
@@ -66253,6 +66544,69 @@ function ($,
 			   console .log (error);
 			}
 		},
+		depth: function (shapes, numShapes)
+		{
+			var
+				browser  = this .getBrowser (),
+				gl       = browser .getContext (),
+				viewport = this .getViewVolume () .getViewport (),
+				shader   = browser .getDepthShader ();
+
+			// Configure shader
+
+			shader .use ();
+			
+			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+
+			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, projectionMatrixArray);
+
+			// Configure viewport and background
+
+			gl .viewport (viewport [0],
+			              viewport [1],
+			              viewport [2],
+			              viewport [3]);
+
+			gl .scissor (viewport [0],
+			             viewport [1],
+			             viewport [2],
+			             viewport [3]);
+
+			gl .clearColor (1, 0, 0, 0);
+			gl .clear (gl .COLOR_BUFFER_BIT | gl .DEPTH_BUFFER_BIT);
+
+			// Render all objects
+
+			gl .enable (gl .DEPTH_TEST);
+			gl .depthMask (true);
+			gl .disable (gl .BLEND);
+			gl .disable (gl .CULL_FACE);
+
+			for (var s = 0; s < numShapes; ++ s)
+			{
+				var
+					context = shapes [s],
+					scissor = context .scissor;
+
+				// TODO: viewport must not be the browser or layer viewport.
+				gl .scissor (scissor .x,
+				             scissor .y,
+				             scissor .z,
+				             scissor .w);
+
+				// Clip planes
+
+				shader .setClipPlanes (gl, context .clipPlanes);
+
+				// modelViewMatrix
+	
+				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, context .modelViewMatrix);
+
+				// Draw
+	
+				context .shapeNode .depth (shader);
+			}
+		},
 		draw: function ()
 		{
 			var
@@ -66262,6 +66616,13 @@ function ($,
 				opaqueShapes      = this .opaqueShapes,
 				transparentShapes = this .transparentShapes,
 				shaders           = browser .getShaders ();
+
+			// Render shadow maps.
+		
+			var lights = this .lights;
+
+			for (var i = 0, length = lights .length; i < length; ++ i)
+				lights [i] .renderShadowMap ();
 
 			// Configure viewport and background
 
@@ -66345,7 +66706,7 @@ function ($,
 
 			// Recycle global lights.
 
-			var lights = this .getBrowser () .getGlobalLights ();
+			var lights = this .getGlobalLights ();
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
 			   lights [i] .recycle ();
@@ -66360,12 +66721,15 @@ function ($,
 			   lights [i] .recycle ();
 
 			lights .length = 0;
+
+			// Clear lights.
+
+			this .lights .length = 0;
 		},
 	};
 
 	return X3DRenderer;
 });
-
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
  *
@@ -67490,28 +67854,18 @@ function ($,
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shader     = browser .getBackgroundSphereShader (),
-				clipPlanes = this .clipPlanes;
+				shaderNode     = browser .getBackgroundSphereShader ();
 
-			shader .use ();
+			shaderNode .use ();
 
 			// Clip planes
 
-			if (clipPlanes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .setShaderUniforms (gl, shader, i);
-	
-				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
-			}
-			else
-				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
+			shaderNode .setClipPlanes (gl, this .clipPlanes);
 
 			// Uniforms
 
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Setup context.
 	
@@ -67522,13 +67876,13 @@ function ($,
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .x3d_Color);
+			gl .enableVertexAttribArray (shaderNode .x3d_Color);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .vertexAttribPointer (shader .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			// Draw.
 
@@ -67536,71 +67890,61 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .x3d_Color);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		drawCube: function ()
 		{
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shader     = browser .getGouraudShader (),
-				clipPlanes = this .clipPlanes;
+				shaderNode     = browser .getGouraudShader ();
 
-			shader .use ();
+			shaderNode .use ();
 
 			// Clip planes
 
-			if (clipPlanes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (shader .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .setShaderUniforms (gl, shader, i);
-	
-				if (i < shader .maxClipPlanes)
-					gl .uniform4fv (shader .x3d_ClipPlane [i], shader .noClipPlane);
-			}
-			else
-				gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
+			shaderNode .setClipPlanes (gl, this .clipPlanes);
 
 			// Uniforms
 
-			gl .uniform1i (shader .x3d_FogType,       0);
-			gl .uniform1i (shader .x3d_ColorMaterial, false);
-			gl .uniform1i (shader .x3d_Lighting,      false);
-			gl .uniform1i (shader .texturing,     true);
-			gl .uniform1i (shader .x3d_TextureType,   2);
+			gl .uniform1i (shaderNode .x3d_FogType,       0);
+			gl .uniform1i (shaderNode .x3d_ColorMaterial, false);
+			gl .uniform1i (shaderNode .x3d_Lighting,      false);
+			gl .uniform1i (shaderNode .texturing,     true);
+			gl .uniform1i (shaderNode .x3d_TextureType,   2);
 
-			gl .uniformMatrix4fv (shader .x3d_TextureMatrix,    false, this .textureMatrixArray);
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_TextureMatrix,    false, this .textureMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shader .x3d_TexCoord);
+			gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
-			gl .vertexAttribPointer (shader .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+			gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
+			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
 
 			// Draw.
 
-			this .drawRectangle (gl, shader, this .frontTexture,  this .frontBuffer);
-			this .drawRectangle (gl, shader, this .backTexture,   this .backBuffer);
-			this .drawRectangle (gl, shader, this .leftTexture,   this .leftBuffer);
-			this .drawRectangle (gl, shader, this .rightTexture,  this .rightBuffer);
-			this .drawRectangle (gl, shader, this .topTexture,    this .topBuffer);
-			this .drawRectangle (gl, shader, this .bottomTexture, this .bottomBuffer);
+			this .drawRectangle (gl, shaderNode, this .frontTexture,  this .frontBuffer);
+			this .drawRectangle (gl, shaderNode, this .backTexture,   this .backBuffer);
+			this .drawRectangle (gl, shaderNode, this .leftTexture,   this .leftBuffer);
+			this .drawRectangle (gl, shaderNode, this .rightTexture,  this .rightBuffer);
+			this .drawRectangle (gl, shaderNode, this .topTexture,    this .topBuffer);
+			this .drawRectangle (gl, shaderNode, this .bottomTexture, this .bottomBuffer);
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shader .x3d_TexCoord);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
+			gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
+			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
-		drawRectangle: function (gl, shader, texture, buffer)
+		drawRectangle: function (gl, shaderNode, texture, buffer)
 		{
 			if (texture && texture .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				texture .traverse (gl, shader, 0);
+				texture .traverse (gl, shaderNode, 0);
 
 				if (texture .transparent_ .getValue ())
 					gl .enable (gl .BLEND);
@@ -67608,7 +67952,7 @@ function ($,
 					gl .disable (gl .BLEND);
 
 				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-				gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 				// Draw.
 
@@ -68538,7 +68882,6 @@ function ($,
 
 			this .groupNode .children_ = this .children_;
 			this .groupNode .setup ();
-			this .collect = this .groupNode .traverse .bind (this .groupNode);
 
 			this .defaultNavigationInfo .setup ();
 			this .defaultBackground     .setup ();
@@ -68670,16 +69013,19 @@ function ($,
 			switch (type)
 			{
 				case TraverseType .POINTER:
-					this .pointer ();
+					this .pointer (type);
 					break;
 				case TraverseType .CAMERA:
-					this .camera ();
+					this .camera (type);
 					break;
 				case TraverseType .COLLISION:
-					this .collision ();
+					this .collision (type);
+					break;
+				case TraverseType .DEPTH:
+					this .display (type);
 					break;
 				case TraverseType .DISPLAY:
-					this .display ();
+					this .display (type);
 					break;
 			}
 
@@ -68687,7 +69033,7 @@ function ($,
 			browser .getProjectionMatrix () .pop ()
 			browser .getLayers () .pop ();
 		},
-		pointer: function ()
+		pointer: function (type)
 		{
 			if (this .isPickable_ .getValue ())
 			{
@@ -68710,16 +69056,16 @@ function ($,
 				this .getBrowser () .setHitRay (viewport);
 
 				this .currentViewport .push ();
-				this .collect (TraverseType .POINTER);
+				this .groupNode .traverse (type);
 				this .currentViewport .pop ();
 			}
 		},
-		camera: function ()
+		camera: function (type)
 		{
 			this .getViewpoint () .reshape ();
 
 			this .currentViewport .push ();
-			this .collect (TraverseType .CAMERA);
+			this .groupNode .traverse (type);
 			this .currentViewport .pop ();
 
 			this .navigationInfos .update ();
@@ -68729,7 +69075,7 @@ function ($,
 
 			this .getViewpoint () .update ();
 		},
-		collision: function ()
+		collision: function (type)
 		{
 			this .collisionTime = 0;
 
@@ -68737,7 +69083,7 @@ function ($,
 
 			// Render
 			this .currentViewport .push ();
-			this .render (TraverseType .COLLISION);
+			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
 		},
 		display: function (type)
@@ -68747,12 +69093,8 @@ function ($,
 			this .getViewpoint ()      .transform ();
 
 			this .currentViewport .push ();
-			this .render (TraverseType .DISPLAY);
+			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
-		},
-		collect: function (type)
-		{
-			// Taken from group.traverse.
 		},
 	});
 
@@ -71036,6 +71378,8 @@ function ($,
 		{
 			this .shaderNode = value;
 		},
+		depth: function (shaderNode)
+		{ },
 		display: function (context)
 		{
 			var
@@ -72085,6 +72429,10 @@ function ($,
 		getBBox: function (bbox)
 		{
 			return X3DGroupingNode .prototype .getBBox .call (this, bbox) .multRight (this .matrix);
+		},
+		getMatrix: function ()
+		{
+			return this .matrix;
 		},
 		rotate: function (type)
 		{
@@ -85260,6 +85608,7 @@ function ($,
 			{
 				case TraverseType .POINTER:
 				case TraverseType .CAMERA:
+				case TraverseType .DEPTH:
 				case TraverseType .DISPLAY:
 				{
 					if (this .viewportNode)
@@ -89351,8 +89700,25 @@ function ($,
 		},
 		traverse: function (type)
 		{
+			if (! this .isActive_ .getValue ())
+				return;
+
 			switch (type)
 			{
+				case TraverseType .POINTER:
+				{
+					break;
+				}
+				case TraverseType .COLLISION:
+				{
+					// TODO: to be implemented.
+					break;
+				}
+				case TraverseType .DEPTH:
+				{
+					// TODO: to be implemented.
+					break;
+				}
 				case TraverseType .DISPLAY:
 				{
 					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
@@ -90125,26 +90491,31 @@ function ($,
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
-	function PointLightContainer (light)
+	function PointLightContainer (lightNode, groupNode)
 	{
 		this .location = new Vector3 (0, 0, 0);
 	
-		this .set (light);
+		this .set (lightNode, groupNode);
 	}
 
 	PointLightContainer .prototype =
 	{
 		constructor: PointLightContainer,
-	   set: function (light)
+	   set: function (lightNode, groupNode)
 	   {
-			this .color            = light .color_ .getValue ();
-			this .intensity        = light .getIntensity ();
-			this .ambientIntensity = light .getAmbientIntensity ();
-			this .attenuation      = light .attenuation_ .getValue ();
-			this .radius           = light .getRadius ();
+			this .groupNode        = groupNode;
+			this .color            = lightNode .getColor ();
+			this .intensity        = lightNode .getIntensity ();
+			this .ambientIntensity = lightNode .getAmbientIntensity ();
+			this .attenuation      = lightNode .attenuation_ .getValue ();
+			this .radius           = lightNode .getRadius ();
 	
-			light .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (light .location_ .getValue ()));
+			lightNode .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (lightNode .location_ .getValue ()));
 	   },
+		renderShadowMap: function ()
+		{
+
+		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
@@ -90176,15 +90547,20 @@ function ($,
 	{
 		constructor: PointLight,
 		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "global",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "on",               new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "color",            new Fields .SFColor (1, 1, 1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "intensity",        new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity", new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "attenuation",      new Fields .SFVec3f (1, 0, 0)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "location",         new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "radius",           new Fields .SFFloat (100)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "global",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "on",               new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",            new Fields .SFColor (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "intensity",        new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "ambientIntensity", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "attenuation",      new Fields .SFVec3f (1, 0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "location",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "radius",           new Fields .SFFloat (100)),
+																				   
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowColor",      new  Fields .SFColor ()),        // Color of shadow.
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowIntensity",  new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowDiffusion",  new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "shadowMapSize",    new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
 		]),
 		getTypeName: function ()
 		{
@@ -94017,6 +94393,10 @@ function ($,
 						this .getCurrentLayer () .addCollisionShape (this);
 						break;
 
+					case TraverseType .DEPTH:
+						this .getCurrentLayer () .addDepthShape (this);
+						break;
+
 					case TraverseType .DISPLAY:
 						this .getCurrentLayer () .addShape (this);
 						break;
@@ -94079,9 +94459,9 @@ function ($,
 			this .getAppearance () .traverse (context);
 			this .getGeometry ()   .display (context);
 		},
-		collision: function (shader)
+		depth: function (shaderNode)
 		{
-			this .getGeometry () .collision (shader);
+			this .getGeometry () .depth (shaderNode);
 		},
 		intersectsSphere: function (sphere)
 		{
@@ -95820,32 +96200,37 @@ function ($,
 
 	var SpotLights = ObjectCache (SpotLightContainer);
 	
-	function SpotLightContainer (light)
+	function SpotLightContainer (lightNode, groupNode)
 	{
 		this .location  = new Vector3 (0, 0, 0);
 		this .direction = new Vector3 (0, 0, 0);
 
-	   this .set (light);
+	   this .set (lightNode, groupNode);
 	}
 
 	SpotLightContainer .prototype =
 	{
 		constructor: SpotLightContainer,
-	   set: function (light)
+	   set: function (lightNode, groupNode)
 	   {
-			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
+			var modelViewMatrix = lightNode .getBrowser () .getModelViewMatrix () .get ();
 	
-			this .color            = light .color_ .getValue ();
-			this .intensity        = light .getIntensity ();
-			this .ambientIntensity = light .getAmbientIntensity ();
-			this .attenuation      = light .attenuation_ .getValue ();
-			this .radius           = light .getRadius ();
-			this .beamWidth        = light .getBeamWidth ();
-			this .cutOffAngle      = light .getCutOffAngle ();
+			this .groupNode        = groupNode;
+			this .color            = lightNode .getColor ();
+			this .intensity        = lightNode .getIntensity ();
+			this .ambientIntensity = lightNode .getAmbientIntensity ();
+			this .attenuation      = lightNode .attenuation_ .getValue ();
+			this .radius           = lightNode .getRadius ();
+			this .beamWidth        = lightNode .getBeamWidth ();
+			this .cutOffAngle      = lightNode .getCutOffAngle ();
 	
-			modelViewMatrix .multVecMatrix (this .location .assign (light .location_ .getValue ()));
-			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
+			modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ()));
+			modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .direction_ .getValue ())) .normalize ();
 	   },
+		renderShadowMap: function ()
+		{
+
+		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			gl .uniform1i (shaderObject .x3d_LightType [i],             3);
@@ -95876,18 +96261,23 @@ function ($,
 	{
 		constructor: SpotLight,
 		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "global",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "on",               new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "color",            new Fields .SFColor (1, 1, 1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "intensity",        new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity", new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "attenuation",      new Fields .SFVec3f (1, 0, 0)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "location",         new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "direction",        new Fields .SFVec3f (0, 0, -1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "radius",           new Fields .SFFloat (100)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "beamWidth",        new Fields .SFFloat (0.785398)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "cutOffAngle",      new Fields .SFFloat (1.5708)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "global",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "on",               new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",            new Fields .SFColor (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "intensity",        new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "ambientIntensity", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "attenuation",      new Fields .SFVec3f (1, 0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "location",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",        new Fields .SFVec3f (0, 0, -1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "radius",           new Fields .SFFloat (100)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "beamWidth",        new Fields .SFFloat (0.785398)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "cutOffAngle",      new Fields .SFFloat (1.5708)),
+																				   
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowColor",      new  Fields .SFColor ()),        // Color of shadow.
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowIntensity",  new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowDiffusion",  new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "shadowMapSize",    new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
 		]),
 		getTypeName: function ()
 		{

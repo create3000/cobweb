@@ -96,9 +96,10 @@ function ($,
 	{
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
+		this .globalLights         = [ ];
 		this .localLights          = [ ];
-		this .localFogs            = [ ];
 		this .lights               = [ ];
+		this .localFogs            = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -145,6 +146,10 @@ function ($,
 		getClipPlanes: function ()
 		{
 			return this .clipPlanes;
+		},
+		getGlobalLights: function ()
+		{
+			return this .globalLights;
 		},
 		getLocalLights: function ()
 		{
@@ -436,7 +441,7 @@ function ($,
 					this .numDepthShapes = 0;
 
 					group .traverse (type);
-					this .depth ();
+					this .depth (this .depthShapes, this .numDepthShapes);
 					break;
 				}
 				case TraverseType .DISPLAY:
@@ -682,6 +687,13 @@ function ($,
 				transparentShapes = this .transparentShapes,
 				shaders           = browser .getShaders ();
 
+			// Render shadow maps.
+		
+			var lights = this .lights;
+
+			for (var i = 0, length = lights .length; i < length; ++ i)
+				lights [i] .renderShadowMap ();
+
 			// Configure viewport and background
 
 			gl .viewport (viewport [0],
@@ -764,7 +776,7 @@ function ($,
 
 			// Recycle global lights.
 
-			var lights = this .getBrowser () .getGlobalLights ();
+			var lights = this .getGlobalLights ();
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
 			   lights [i] .recycle ();
@@ -779,6 +791,10 @@ function ($,
 			   lights [i] .recycle ();
 
 			lights .length = 0;
+
+			// Clear lights.
+
+			this .lights .length = 0;
 		},
 	};
 

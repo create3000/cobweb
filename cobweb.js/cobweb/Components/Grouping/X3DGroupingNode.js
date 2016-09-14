@@ -54,13 +54,15 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
 	       Fields,
           X3DChildNode, 
           X3DBoundedObject, 
           TraverseType,
-          X3DConstants)
+          X3DConstants,
+          Matrix4)
 {
 "use strict";
 
@@ -166,7 +168,11 @@ function ($,
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 				return X3DBoundedObject .prototype .getBBox .call (this, this .children_ .getValue (), bbox);
 
-			return box .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
+		},
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
 		},
 		setHidden: function (value)
 		{
@@ -447,7 +453,7 @@ function ($,
 						localFogs [i] .push ();
 
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .push ();
+						lights [i] .push (this);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
 						childNodes [i] .traverse (type);

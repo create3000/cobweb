@@ -47,14 +47,38 @@
  ******************************************************************************/
 
 
-define (function ()
+define ([
+	"text!cobweb/Browser/Shaders/Bits/Line3.h",
+	"text!cobweb/Browser/Shaders/Bits/Plane3.h",
+	"text!cobweb/Browser/Shaders/Bits/Random.h",
+],
+function (Line3,
+          Plane3,
+          Random)
 {
 "use strict";
+
+	var includes = {
+		Line3: Line3,
+		Plane3: Plane3,
+		Random: Random,
+	};
+
+	var
+		include  = /#pragma\s+X3D\s+include\s+".*?([^\/]+).h"/,
+		newLines = /\n/g;
 
 	var Shader =
 	{
 		getShaderSource: function (source)
 		{
+			var includeMatch = null;
+
+			while (includeMatch = source .match (include))
+			{
+				source = source .replace (includeMatch [0], includes [includeMatch [1]]);
+			}
+
 			var constants = "";
 
 			constants += "#define x3d_GeometryPoints  0\n";

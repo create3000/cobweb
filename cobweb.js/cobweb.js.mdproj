@@ -1219,6 +1219,9 @@
     <None Include="license.txt" />
     <None Include="license.pl" />
     <None Include="tests\Components\Navigation\Depth.x3d" />
+    <None Include="cobweb\Browser\Shaders\Bits\Line3.h" />
+    <None Include="cobweb\Browser\Shaders\Bits\Plane3.h" />
+    <None Include="cobweb\Browser\Shaders\Bits\Random.h" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1287,5 +1290,6 @@
     <Folder Include="tests\Components\EnvironmentalSensor\" />
     <Folder Include="tests\Components\ParticleSystems\" />
     <Folder Include="cobweb\Browser\ParticleSystems\" />
+    <Folder Include="cobweb\Browser\Shaders\Bits\" />
   </ItemGroup>
 </Project>

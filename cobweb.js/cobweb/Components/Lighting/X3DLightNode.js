@@ -52,15 +52,22 @@ define ([
 	"cobweb/Components/Core/X3DChildNode",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode,
           TraverseType,
           X3DConstants,
+          Matrix4,
           Algorithm)
 {
 "use strict";
+
+	var biasMatrix = new Matrix4 (0.5, 0.0, 0.0, 0.0,
+		                           0.0, 0.5, 0.0, 0.0,
+		                           0.0, 0.0, 0.5, 0.0,
+		                           0.5, 0.5, 0.5, 1.0);
 
 	function X3DLightNode (executionContext)
 	{
@@ -72,17 +79,25 @@ function ($,
 	X3DLightNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DLightNode,
+		getGlobal: function ()
+		{
+			return this .global_ .getValue ();
+		},
 		getColor: function ()
 		{
 			return this .color_ .getValue ();
+		},
+		getIntensity: function ()
+		{
+			return Algorithm .clamp (this .intensity_ .getValue (), 0, 1);
 		},
 		getAmbientIntensity: function ()
 		{
 			return Algorithm .clamp (this .ambientIntensity_ .getValue (), 0, 1);
 		},
-		getIntensity: function ()
+		getDirection: function ()
 		{
-			return Algorithm .clamp (this .intensity_ .getValue (), 0, 1);
+			return this .direction_ .getValue ();
 		},
 		getShadowColor: function ()
 		{
@@ -100,15 +115,28 @@ function ($,
 		{
 			return Math .min (this .shadowMapSize_ .getValue (), this .getBrowser () .getMaxTextureSize ());
 		},
-		push: function ()
+		getBiasMatrix: function ()
+		{
+			return biasMatrix;
+		},
+		push: function (group)
 		{
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
-					this .getBrowser () .getGlobalLights () .push (this .getLights () .pop (this));
+				{
+					var lightContainer = this .getLights () .pop (this, this .getCurrentLayer () .getGroup ());
 
+					this .getCurrentLayer () .getGlobalLights () .push (lightContainer);
+					this .getCurrentLayer () .getLights ()       .push (lightContainer);
+				}
 				else
-					this .getCurrentLayer () .getLocalLights () .push (this .getLights () .pop (this));
+				{
+					var lightContainer = this .getLights () .pop (this, group);
+
+					this .getCurrentLayer () .getLocalLights () .push (lightContainer);
+					this .getCurrentLayer () .getLights ()      .push (lightContainer);
+				}
 			}
 		},
 		pop: function ()

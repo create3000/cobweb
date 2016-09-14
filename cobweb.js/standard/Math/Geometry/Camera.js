@@ -47,9 +47,16 @@
  ******************************************************************************/
 
 
-define (function ()
+define ([
+	"standard/Math/Numbers/Vector3",
+],
+function (Vector3)
 {
 "use strict";
+
+	var
+		min = new Vector3 (0, 0, 0),
+		max = new Vector3 (0, 0, 0);
 
 	return {
 		frustum: function (l, r, b, t, n, f, matrix)
@@ -105,6 +112,12 @@ define (function ()
 			                    0, B, 0, 0,
 			                    0, 0, C, 0,
 			                    D, E, F, 1);
+		},
+		orthoBox: function (box, matrix)
+		{
+			box .getExtents (min, max);
+
+			return this .ortho (min .x, max .x, min .y, max .y, -max .z, -min .z, matrix);
 		},
 	};
 });

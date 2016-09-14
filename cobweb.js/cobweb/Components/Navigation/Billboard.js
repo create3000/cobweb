@@ -118,6 +118,10 @@ function ($,
 		{
 			return X3DGroupingNode .prototype .getBBox .call (this, bbox) .multRight (this .matrix);
 		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
 		rotate: function (type)
 		{
 			// throws domain error

@@ -90,7 +90,7 @@ function (Fields,
 
 		this .projectionMatrix = new MatrixStack (Matrix4);
 		this .modelViewMatrix  = new MatrixStack (Matrix4);
-		this .clipPlanes       = [ ];
+		this .clipPlanes       = [ ]; // Clip planes dumpster
 	}
 
 	X3DRenderingContext .prototype =

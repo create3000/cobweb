@@ -74,6 +74,14 @@ uniform vec3  x3d_LightDirection [x3d_MaxLights];
 uniform float x3d_LightRadius [x3d_MaxLights];
 uniform float x3d_LightBeamWidth [x3d_MaxLights];
 uniform float x3d_LightCutOffAngle [x3d_MaxLights];
+// 19 * x3d_MaxLights
+
+uniform vec3      x3d_ShadowColor [x3d_MaxLights];
+uniform float     x3d_ShadowIntensity [x3d_MaxLights];
+uniform float     x3d_ShadowDiffusion [x3d_MaxLights];
+uniform mat4      x3d_ShadowMatrix [x3d_MaxLights];
+uniform sampler2D x3d_ShadowMap [x3d_MaxLights];
+// 22 * x3d_MaxLights = 176
 
 uniform bool x3d_SeparateBackColor;
 
@@ -100,6 +108,9 @@ varying vec4 t;  // texCoord
 varying vec3 vN; // normalized normal vector at this point on geometry
 varying vec3 v;  // point on geometry
 
+#pragma X3D include "Bits/Random.h"
+#pragma X3D include "Bits/Plane3.h"
+
 void
 clip ()
 {
@@ -111,26 +122,6 @@ clip ()
 		if (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)
 			discard;
 	}
-}
-
-float
-getFogInterpolant ()
-{
-	if (x3d_FogType == x3d_NoFog)
-		return 1.0;
-
-	float dV = length (v);
-
-	if (dV >= x3d_FogVisibilityRange)
-		return 0.0;
-
-	if (x3d_FogType == x3d_LinearFog)
-		return (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;
-
-	if (x3d_FogType == x3d_ExponentialFog)
-		return exp (-dV / (x3d_FogVisibilityRange - dV));
-
-	return 1.0;
 }
 
 vec4
@@ -157,13 +148,116 @@ getTextureColor ()
 	return vec4 (1.0, 1.0, 1.0, 1.0);
 }
 
-void
-main ()
+float
+getSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)
 {
-	clip ();
+	float spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));
+	
+	if (spotAngle >= cutOffAngle)
+		return 0.0;
+	else if (spotAngle <= beamWidth)
+		return 1.0;
 
-	float f0 = getFogInterpolant ();
+	return (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);
+}
 
+float
+unpack (in vec4 color)
+{
+	return color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;
+}
+
+float
+getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in float angle)
+{
+	Plane3 plane = plane3 (v, vN);
+
+	if (lightType == x3d_PointLight)
+	{
+/*
+		// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.
+		mat4 projectionBias = mat4 (0.144337567297406, 0.0, 0.0, 0.0, 0.0, 0.0962250448649377, 0.0, 0.0, -0.25, -0.166666666666667, -1.00012501562695, -1.0, 0.0, 0.0, -0.125015626953369, 0.0); // fov: 120deg, 1000m
+
+		// Normals of the point light cube.
+		mat4 rotations [6];
+		rotations [0] = mat4 ( 0.0, 0.0,  1.0, 0.0, 0.0, 1.0,  0.0, 0.0, -1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // left
+		rotations [1] = mat4 ( 0.0, 0.0, -1.0, 0.0, 0.0, 1.0,  0.0, 0.0,  1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // right
+		rotations [2] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0,  1.0, 0.0,  0.0, -1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // bottom
+		rotations [3] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0, -1.0, 0.0,  0.0,  1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // top
+		rotations [4] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0,  1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // back
+		rotations [5] = mat4 (-1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // front
+
+		// Offsets to the shadow map.
+		vec2 offsets [6];
+		offsets [0] = vec2 (0.0, 0.0);
+		offsets [1] = vec2 (0.5, 0.0);
+		offsets [2] = vec2 (0.0, 1.0 / 3.0);
+		offsets [3] = vec2 (0.5, 1.0 / 3.0);
+		offsets [4] = vec2 (0.0, 2.0 / 3.0);
+		offsets [5] = vec2 (0.5, 2.0 / 3.0);
+
+		int value = 0;
+
+		for (int m = 0, s = 0; m < 6 && s < x3d_ShadowSamples; ++ m)
+		{
+			for (int i = 0; i < x3d_ShadowSamples; ++ i)
+			{
+				vec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);
+				vec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);
+				float bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;
+
+				shadowCoord .xyz /= shadowCoord .w;
+
+				if (shadowCoord .x < 0.0 || shadowCoord .x > 1.0 / 2.0)
+					continue;
+
+				if (shadowCoord .y < 0.0 || shadowCoord .y > 1.0 / 3.0)
+					continue;
+
+				if (shadowCoord .z >= 1.0)
+					continue;
+
+				if (unpack (texture2D (shadowMap, shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)
+				{
+					++ value;
+				}
+
+				// We definitely have a shadow sample.
+				++ s;
+			}
+		}
+
+		return shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);
+*/
+
+		return 0.0;
+	}
+
+	int value = 0;
+
+	for (int i = 0; i < x3d_ShadowSamples; ++ i)
+	{
+		vec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);
+		vec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);
+		float bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;
+
+		shadowCoord .xyz /= shadowCoord .w;
+
+		if (shadowCoord .z >= 1.0)
+			continue;
+
+		if (unpack (texture2D (shadowMap, shadowCoord .xy)) < shadowCoord .z - bias)
+		{
+			++ value;
+		}
+	}
+
+	return shadowIntensity * float (value) / float (x3d_ShadowSamples);
+}
+
+vec4
+getMaterialColor ()
+{
 	if (x3d_Lighting)
 	{
 		vec3  N  = normalize (gl_FrontFacing ? vN : -vN);
@@ -219,54 +313,49 @@ main ()
 
 		for (int i = 0; i < x3d_MaxLights; ++ i)
 		{
-			int t = x3d_LightType [i];
+			int lightType = x3d_LightType [i];
 
-			if (t != x3d_NoLight)
-			{
-				vec3  vL = x3d_LightLocation [i] - v;
-				float dL = length (vL);
-				bool  di = t == x3d_DirectionalLight;
-
-				if (di || dL <= x3d_LightRadius [i])
-				{
-					vec3 d = x3d_LightDirection [i];
-					vec3 c = x3d_LightAttenuation [i];
-					vec3 L = di ? -d : normalize (vL);
-					vec3 H = normalize (L + V); // specular term
-	
-					vec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);
-					float specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;
-					vec3  specularTerm   = specularColor * specularFactor;
-	
-					float attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
-					float spot        = 1.0;
-	
-					if (t == x3d_SpotLight)
-					{
-						float spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));
-						float cutOffAngle = x3d_LightCutOffAngle [i];
-						float beamWidth   = x3d_LightBeamWidth [i];
-						
-						if (spotAngle >= cutOffAngle)
-							spot = 0.0;
-						else if (spotAngle <= beamWidth)
-							spot = 1.0;
-						else
-							spot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);
-					}
-	
-					finalColor += (attenuation * spot) * x3d_LightColor [i] *
-					              (x3d_LightAmbientIntensity [i] * ambientTerm +
-					               x3d_LightIntensity [i] * (diffuseTerm + specularTerm));
-				}
-			}
-			else
+			if (lightType == x3d_NoLight)
 				break;
+
+			vec3  vL = x3d_LightLocation [i] - v;
+			float dL = length (vL);
+			bool  di = lightType == x3d_DirectionalLight;
+
+			if (di || dL <= x3d_LightRadius [i])
+			{
+				vec3  d = x3d_LightDirection [i];
+				vec3  c = x3d_LightAttenuation [i];
+				vec3  L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.
+				vec3  H = normalize (L + V);             // Specular term
+				float a = dot (N, L);                    // Angle between normal and light ray.
+
+				vec3  diffuseTerm    = diffuseFactor * clamp (a, 0.0, 1.0);
+				float specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;
+				vec3  specularTerm   = specularColor * specularFactor;
+
+				float attenuation          = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
+				float spot                 = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;
+				vec3  lightColor           = (attenuation * spot) * x3d_LightColor [i];
+				vec3  ambientColor         = x3d_LightAmbientIntensity [i] * ambientTerm;
+				vec3  diffuseSpecularColor = diffuseTerm + specularTerm;
+				vec3  color                = lightColor * (ambientColor + x3d_LightIntensity [i] * diffuseSpecularColor);
+
+				if (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)
+				{
+					float shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], a);
+					vec3  shadowColor     = lightColor * ambientColor + diffuseSpecularColor * x3d_ShadowColor [i];
+	
+					finalColor += mix (color, shadowColor, shadowIntensity);
+				}
+				else
+					finalColor += color;
+			}
 		}
 
 		finalColor += emissiveColor;
 
-		gl_FragColor = vec4 (finalColor, alpha);
+		return vec4 (finalColor, alpha);
 	}
 	else
 	{
@@ -289,8 +378,38 @@ main ()
 				finalColor = getTextureColor ();
 		}
 
-		gl_FragColor = finalColor;
+		return finalColor;
 	}
+}
 
-	gl_FragColor .rgb = mix (x3d_FogColor, gl_FragColor .rgb, f0);
+vec3
+getFogColor (in vec3 color)
+{
+	if (x3d_FogType == x3d_NoFog)
+		return color;
+
+	float dV = length (v);
+
+	if (dV >= x3d_FogVisibilityRange)
+		return x3d_FogColor;
+
+	if (x3d_FogType == x3d_LinearFog)
+		return mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);
+
+	if (x3d_FogType == x3d_ExponentialFog)
+		return mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));
+
+	return color;
+}
+
+void
+main ()
+{
+	seed (int (fract (dot (v, v)) * float (RAND_MAX)));
+
+	clip ();
+
+	gl_FragColor = getMaterialColor ();
+
+	gl_FragColor .rgb = getFogColor (gl_FragColor .rgb);
 }

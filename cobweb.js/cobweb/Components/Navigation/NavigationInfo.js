@@ -330,7 +330,7 @@ function ($,
 
 	function enable ()
 	{
-		this .getBrowser () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+		this .getCurrentLayer () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
 	}
 
 	return NavigationInfo;

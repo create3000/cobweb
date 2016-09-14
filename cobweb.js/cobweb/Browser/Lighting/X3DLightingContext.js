@@ -48,28 +48,53 @@
 
 
 define ([
-	"cobweb/Components/Layering/Viewport",
+	"cobweb/Rendering/DepthBuffer",
 ],
-function (Viewport)
+function (DepthBuffer)
 {
 "use strict";
 	
 	function X3DLightingContext ()
 	{
-		this .globalLights = [ ]; // Global light array
-		this .localLights  = [ ]; // Local light dumpster
+		this .localLights   = [ ]; // Local light dumpster
+		this .shadowBuffers = [ ]; // Shadow buffer cache
 	}
 
 	X3DLightingContext .prototype =
 	{
 		initialize: function () { },
-		getGlobalLights: function ()
-		{
-			return this .globalLights;
-		},
 		getLocalLights: function ()
 		{
 			return this .localLights;
+		},
+		popShadowBuffer: function (shadowMapSize)
+		{
+			try
+			{
+				var shadowBuffers = this .shadowBuffers [shadowMapSize];
+	
+				if (shadowBuffers)
+				{
+					if (shadowBuffers .length)
+						return shadowBuffers .pop ();
+				}
+				else
+					this .shadowBuffers [shadowMapSize] = [ ];
+	
+				return new DepthBuffer (this, shadowMapSize, shadowMapSize);
+			}
+			catch (error)
+			{
+				// Couldn't create texture buffer.
+				console .log (error);
+
+				return null;
+			}
+		},
+		pushShadowBuffer: function (buffer)
+		{
+			if (buffer)
+				this .shadowBuffers [buffer .getWidth ()] .push (buffer);
 		},
 	};
 

@@ -100,6 +100,18 @@ define (function ()
 	DepthBuffer .prototype =
 	{
 		constructor: DepthBuffer,
+		getWidth: function ()
+		{
+			return this .width;
+		},
+		getHeight: function ()
+		{
+			return this .height;
+		},
+		getDepthTexture: function ()
+		{
+			return this .depthTexture;
+		},
 		getDistance: function (radius, zNear, zFar)
 		{
 			var

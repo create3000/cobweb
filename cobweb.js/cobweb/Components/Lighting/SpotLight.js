@@ -72,32 +72,37 @@ function ($,
 
 	var SpotLights = ObjectCache (SpotLightContainer);
 	
-	function SpotLightContainer (light)
+	function SpotLightContainer (lightNode, groupNode)
 	{
 		this .location  = new Vector3 (0, 0, 0);
 		this .direction = new Vector3 (0, 0, 0);
 
-	   this .set (light);
+	   this .set (lightNode, groupNode);
 	}
 
 	SpotLightContainer .prototype =
 	{
 		constructor: SpotLightContainer,
-	   set: function (light)
+	   set: function (lightNode, groupNode)
 	   {
-			var modelViewMatrix = light .getBrowser () .getModelViewMatrix () .get ();
+			var modelViewMatrix = lightNode .getBrowser () .getModelViewMatrix () .get ();
 	
-			this .color            = light .getColor ();
-			this .intensity        = light .getIntensity ();
-			this .ambientIntensity = light .getAmbientIntensity ();
-			this .attenuation      = light .attenuation_ .getValue ();
-			this .radius           = light .getRadius ();
-			this .beamWidth        = light .getBeamWidth ();
-			this .cutOffAngle      = light .getCutOffAngle ();
+			this .groupNode        = groupNode;
+			this .color            = lightNode .getColor ();
+			this .intensity        = lightNode .getIntensity ();
+			this .ambientIntensity = lightNode .getAmbientIntensity ();
+			this .attenuation      = lightNode .attenuation_ .getValue ();
+			this .radius           = lightNode .getRadius ();
+			this .beamWidth        = lightNode .getBeamWidth ();
+			this .cutOffAngle      = lightNode .getCutOffAngle ();
 	
-			modelViewMatrix .multVecMatrix (this .location  .assign (light .location_  .getValue ()));
-			modelViewMatrix .multDirMatrix (this .direction .assign (light .direction_ .getValue ())) .normalize ();
+			modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ()));
+			modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .direction_ .getValue ())) .normalize ();
 	   },
+		renderShadowMap: function ()
+		{
+
+		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			gl .uniform1i (shaderObject .x3d_LightType [i],             3);
@@ -128,23 +133,23 @@ function ($,
 	{
 		constructor: SpotLight,
 		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "global",           new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "on",               new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "color",            new Fields .SFColor (1, 1, 1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "intensity",        new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "ambientIntensity", new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "attenuation",      new Fields .SFVec3f (1, 0, 0)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "location",         new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "direction",        new Fields .SFVec3f (0, 0, -1)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "radius",           new Fields .SFFloat (100)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "beamWidth",        new Fields .SFFloat (0.785398)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "cutOffAngle",      new Fields .SFFloat (1.5708)),
-
-			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowColor",      new  Fields .SFColor ()),        // Color of shadow.
-			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowIntensity",  new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
-			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowDiffusion",  new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
-			new X3DFieldDefinition (X3DConstants .inputOutput, "shadowMapSize",    new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "global",           new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "on",               new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",            new Fields .SFColor (1, 1, 1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "intensity",        new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "ambientIntensity", new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "attenuation",      new Fields .SFVec3f (1, 0, 0)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "location",         new Fields .SFVec3f ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",        new Fields .SFVec3f (0, 0, -1)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "radius",           new Fields .SFFloat (100)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "beamWidth",        new Fields .SFFloat (0.785398)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "cutOffAngle",      new Fields .SFFloat (1.5708)),
+																				   
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowColor",      new  Fields .SFColor ()),        // Color of shadow.
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowIntensity",  new  Fields .SFFloat ()),        // Intensity of shadow color in the range (0, 1).
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "shadowDiffusion",  new  Fields .SFFloat ()),        // Diffusion of the shadow in length units in the range (0, inf).
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "shadowMapSize",    new  Fields .SFInt32 (1024)),    // Size of the shadow map in pixels in the range (0, inf).
 		]),
 		getTypeName: function ()
 		{

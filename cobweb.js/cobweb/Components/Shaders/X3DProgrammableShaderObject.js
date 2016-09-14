@@ -80,6 +80,11 @@ function ($,
 		this .x3d_LightBeamWidth        = [ ];
 		this .x3d_LightCutOffAngle      = [ ];
 		this .x3d_LightRadius           = [ ];
+		this .x3d_ShadowIntensity       = [ ];
+		this .x3d_ShadowDiffusion       = [ ];
+		this .x3d_ShadowColor           = [ ];
+		this .x3d_ShadowMatrix          = [ ];
+		this .x3d_ShadowMap             = [ ];
 	}
 
 	X3DProgrammableShaderObject .prototype =
@@ -132,6 +137,12 @@ function ($,
 				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
 				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
 				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
+
+				this .x3d_ShadowIntensity [i] = gl .getUniformLocation (program, "x3d_ShadowIntensity[" + i + "]");
+				this .x3d_ShadowDiffusion [i] = gl .getUniformLocation (program, "x3d_ShadowDiffusion[" + i + "]");
+				this .x3d_ShadowColor [i]     = gl .getUniformLocation (program, "x3d_ShadowColor[" + i + "]");
+				this .x3d_ShadowMatrix [i]    = gl .getUniformLocation (program, "x3d_ShadowMatrix[" + i + "]");
+				this .x3d_ShadowMap [i]       = gl .getUniformLocation (program, "x3d_ShadowMap[" + i + "]");
 			}
 
 			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
@@ -789,7 +800,7 @@ function ($,
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
-			var globalLights = this .getBrowser () .getGlobalLights ();
+			var globalLights = this .getCurrentLayer () .getGlobalLights ();
 
 			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
