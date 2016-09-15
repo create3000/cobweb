@@ -8,7 +8,7 @@
     <meta name='creator' content='holger'/>
     <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/MadFlat.x3d'/>
-    <meta name='modified' content='Thu, 15 Sep 2016 03:47:31 GMT'/>
+    <meta name='modified' content='Thu, 15 Sep 2016 08:18:35 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -84,107 +84,6 @@
                   <Coordinate
                       point='-0.63976 1.80874 -0.84201, -1.02729 1.68315 -0.708863, -1.29178 1.59744 -0.351693, -1.34926 1.57881 0.116099, -1.18148 1.63318 0.545994, -0.841705 1.74329 0.801503, -0.437817 1.87418 0.801503, -0.0980444 1.98429 0.545995, 0.069737 2.03866 0.1161, 0.0122581 2.02003 -0.351692, -0.252232 1.93432 -0.708862, -0 -1 -1, -1.03819 -0.191264 -0.708862, -1.31011 -0.191264 -0.351693, -0.989821 -1 0.142315, -0.75575 -1 0.654861, -0.281733 -1 0.959493, 0.281733 -1 0.959493, 0.75575 -1 0.654861, 0.989821 -1 0.142315, 0.909632 -1 -0.415415, 0.540641 -1 -0.841254, -1.37515 2.78827 -0.499079, -1.64169 2.66269 -0.421496, -1.82361 2.57698 -0.213379, -1.86315 2.55835 0.0591972, -1.74775 2.61272 0.309691, -1.51405 2.72283 0.458572, -1.23625 2.85372 0.458572, -1.00255 2.96383 0.309691, -0.88715 3.0182 0.059198, -0.926685 2.99957 -0.213378, -1.1086 2.91386 -0.421495, -3.65848 3.74384 -1.51821, -3.85509 3.65121 -1.46098, -3.98928 3.58798 -1.30747, -4.01845 3.57424 -1.1064, -3.93332 3.61435 -0.921629, -3.76093 3.69557 -0.811807, -3.55602 3.79212 -0.811807, -3.38363 3.87334 -0.921628, -3.29851 3.91345 -1.1064, -3.32767 3.89971 -1.30747, -3.46186 3.83648 -1.46098, -9.14685 4.74977 -1.39439, -9.20798 4.7198 -1.3786, -9.23942 4.69808 -1.29323, -9.2312 4.69151 -1.16539, -9.18592 4.70217 -1.03567, -9.11796 4.72668 -0.945244, -9.0489 4.75726 -0.922834, -9.00066 4.78419 -0.975549, -8.98856 4.79894 -1.08665, -9.01644 4.79681 -1.22087, -9.07545 4.77848 -1.33559, -11.7532 5.18594 -4.29176, -11.8123 5.17532 -4.27583, -11.8526 5.16808 -4.23312, -11.8614 5.16651 -4.17718, -11.8358 5.1711 -4.12577, -11.784 5.18041 -4.09522, -11.7225 5.19147 -4.09522, -11.6707 5.20077 -4.12577, -11.6451 5.20537 -4.17718, -11.6538 5.20379 -4.23312, -11.6942 5.19655 -4.27583'/>
                 </IndexedFaceSet>
-              </Shape>
-            </Transform>
-          </MetadataSet>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'>
-            <Transform DEF='Text' containerField='value'
-                translation='6.95202 -3.5181 -9.77397e-06'>
-              <Shape>
-                <Appearance>
-                  <Material DEF='_1'
-                      diffuseColor='0 0 0'/>
-                </Appearance>
-                <Text
-                    string='"Walk"'
-                    solid='true'>
-                  <FontStyle DEF='_2'
-                      family='"SANS"'
-                      size='0.3'
-                      justify='"END"'/>
-                </Text>
-              </Shape>
-            </Transform>
-            <Transform DEF='Rectangle2D' containerField='value'
-                translation='6 -3.4 -9.77397e-06'
-                scale='1 0.2 1'>
-              <Shape>
-                <Appearance>
-                  <Material DEF='_3'
-                      transparency='1'/>
-                </Appearance>
-                <Rectangle2D/>
-              </Shape>
-            </Transform>
-            <Transform DEF='Text_1' containerField='value'
-                translation='6.95202 -3.9 -9.77397e-06'>
-              <Shape>
-                <Appearance>
-                  <Material
-                      diffuseColor='0 0 0'/>
-                </Appearance>
-                <Text
-                    string='"Animation"'
-                    solid='true'>
-                  <FontStyle
-                      family='"SANS"'
-                      size='0.3'
-                      justify='"END"'/>
-                </Text>
-              </Shape>
-            </Transform>
-            <Transform DEF='Rectangle2D_1' containerField='value'
-                translation='6 -3.8 -9.77397e-06'
-                scale='1 0.2 1'>
-              <Shape>
-                <Appearance>
-                  <Material
-                      transparency='1'/>
-                </Appearance>
-                <Rectangle2D/>
-              </Shape>
-            </Transform>
-            <Transform DEF='Text_2' containerField='value'
-                translation='6.95202 -3.1 -9.77397e-06'>
-              <Shape>
-                <Appearance>
-                  <Material USE='_1'/>
-                </Appearance>
-                <Text
-                    string='"Examine"'
-                    solid='true'>
-                  <FontStyle USE='_2'/>
-                </Text>
-              </Shape>
-            </Transform>
-            <Transform DEF='Rectangle2D_2' containerField='value'
-                translation='6 -3 -9.77397e-06'
-                scale='1 0.2 1'>
-              <Shape>
-                <Appearance>
-                  <Material USE='_3'/>
-                </Appearance>
-                <Rectangle2D/>
-              </Shape>
-            </Transform>
-            <Transform DEF='Text_3' containerField='value'
-                translation='6.95202 -2.7 -9.77397e-06'>
-              <Shape>
-                <Appearance>
-                  <Material
-                      diffuseColor='0 0 0'/>
-                </Appearance>
-                <Text
-                    string='"Navigation"'
-                    solid='true'>
-                  <FontStyle DEF='_4'
-                      family='"SANS"'
-                      style='BOLD'
-                      size='0.2'
-                      justify='"END"'/>
-                </Text>
               </Shape>
             </Transform>
           </MetadataSet>
@@ -378,7 +277,7 @@
                 rotation='7.59645273311306e-07 0.70710554159042 0.707108020780093 3.1415946429126'
                 scale='0.00416539 0.00416539 0.0041654'
                 scaleOrientation='-0.911943866057035 -0.248582292232151 -0.326443301584759 0.811044950355051'>
-              <Shape DEF='_5'>
+              <Shape DEF='_1'>
                 <Appearance>
                   <Material DEF='MA__1_-_Default'
                       ambientIntensity='0.333'
@@ -399,19 +298,19 @@
             </Transform>
           </StaticGroup>
           <ViewpointGroup>
-            <Viewpoint DEF='_6'
+            <Viewpoint DEF='_2'
                 description='Examine'
                 position='-19.9654 18.5225 27.1586'
                 orientation='-0.460003737313017 -0.867256230429619 -0.190428969537369 0.89070522315271'
                 centerOfRotation='8.12904 0.182928 -0.95897'
                 fieldOfView='0.584871'/>
-            <Viewpoint DEF='_7'
+            <Viewpoint DEF='_3'
                 description='Walk'
                 position='-2.66861 1.59583 20.6487'
                 orientation='-0.274221340211492 -0.96145213777611 -0.020308701050562 0.153754017056679'
                 centerOfRotation='10.0673 22.6927 -1.25789'
                 fieldOfView='0.584871'/>
-            <Viewpoint DEF='_8'
+            <Viewpoint DEF='_4'
                 description='Animation'
                 position='-23.5658 44.8584 -5.47852'
                 orientation='-0.366587283410435 -0.81748065745575 -0.444228700476987 1.95463889251664'
@@ -445,7 +344,7 @@ function initialize ()
             rotation='0.577350309523403 -0.577350167994229 -0.577350330051232 2.09439464771789'
             scale='0.00416539 0.00416539 0.0041654'
             scaleOrientation='-0.69946314595179 -0.343190459913703 -0.626874481598546 0.9981192015881'>
-          <Shape USE='_5'/>
+          <Shape USE='_1'/>
         </Transform>
       </Layer>
       <Layer DEF='HUD'>
@@ -481,7 +380,7 @@ function initialize ()
                 value='166, 10, 108'/>
           </MetadataSet>
         </MetadataSet>
-        <Transform DEF='Rectangle2D_3'
+        <Transform DEF='Rectangle2D'
             translation='7.80951 -0.0725722 -1'
             scale='2.04752 5.13808 1'>
           <Shape>
@@ -494,35 +393,170 @@ function initialize ()
             <Rectangle2D/>
           </Shape>
         </Transform>
-        <Transform USE='Text_3'/>
+        <Transform DEF='Text'
+            translation='6.95202 -2.7 -9.77397e-06'>
+          <Shape>
+            <Appearance>
+              <Material
+                  diffuseColor='0 0 0'/>
+            </Appearance>
+            <Text
+                string='"Navigation"'
+                solid='true'>
+              <FontStyle
+                  family='"SANS"'
+                  style='BOLD'
+                  size='0.2'
+                  justify='"END"'/>
+            </Text>
+          </Shape>
+        </Transform>
         <Group>
-          <Transform USE='Text_2'/>
-          <Transform USE='Rectangle2D_2'/>
-          <TouchSensor DEF='_9'/>
-          <BooleanTrigger DEF='_10'/>
+          <Transform DEF='Text_1'
+              translation='6.95202 -3.1 -9.77397e-06'>
+            <Shape>
+              <Appearance>
+                <Material DEF='_5'
+                    diffuseColor='0 0 0'/>
+              </Appearance>
+              <Text
+                  string='"Examine"'
+                  solid='true'>
+                <FontStyle DEF='_6'
+                    family='"SANS"'
+                    size='0.3'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_1'
+              translation='6 -3 -9.77397e-06'
+              scale='1 0.2 1'>
+            <Shape>
+              <Appearance>
+                <Material DEF='_7'
+                    transparency='1'/>
+              </Appearance>
+              <Rectangle2D/>
+            </Shape>
+          </Transform>
+          <TouchSensor DEF='_8'/>
+          <BooleanTrigger DEF='_9'/>
         </Group>
         <Group>
-          <Transform USE='Text'/>
-          <Transform USE='Rectangle2D'/>
-          <TouchSensor DEF='_11'/>
-          <BooleanTrigger DEF='_12'/>
+          <Transform DEF='Text_2'
+              translation='6.95202 -3.5181 -9.77397e-06'>
+            <Shape>
+              <Appearance>
+                <Material USE='_5'/>
+              </Appearance>
+              <Text
+                  string='"Walk"'
+                  solid='true'>
+                <FontStyle USE='_6'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_2'
+              translation='6 -3.4 -9.77397e-06'
+              scale='1 0.2 1'>
+            <Shape>
+              <Appearance>
+                <Material USE='_7'/>
+              </Appearance>
+              <Rectangle2D/>
+            </Shape>
+          </Transform>
+          <TouchSensor DEF='_10'/>
+          <BooleanTrigger DEF='_11'/>
         </Group>
         <Group>
-          <Transform USE='Text_1'/>
-          <Transform USE='Rectangle2D_1'/>
-          <TouchSensor DEF='_13'/>
-          <BooleanTrigger DEF='_14'/>
+          <Transform DEF='Text_3'
+              translation='6.95202 -3.9 -9.77397e-06'>
+            <Shape>
+              <Appearance>
+                <Material
+                    diffuseColor='0 0 0'/>
+              </Appearance>
+              <Text
+                  string='"Animation"'
+                  solid='true'>
+                <FontStyle
+                    family='"SANS"'
+                    size='0.3'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_3'
+              translation='6 -3.8 -9.77397e-06'
+              scale='1 0.2 1'>
+            <Shape>
+              <Appearance>
+                <Material
+                    transparency='1'/>
+              </Appearance>
+              <Rectangle2D/>
+            </Shape>
+          </Transform>
+          <TouchSensor DEF='_12'/>
+          <BooleanTrigger DEF='_13'/>
         </Group>
+        <Transform DEF='Rectangle2D_4'
+            translation='6 -3 -9.77397e-06'
+            scale='1 0.2 1'>
+          <Shape>
+            <Appearance>
+              <Material
+                  transparency='1'/>
+            </Appearance>
+            <Rectangle2D/>
+          </Shape>
+        </Transform>
+        <Transform DEF='Text_4'
+            translation='-7 3.53315 1.279e-05'>
+          <Shape>
+            <Appearance>
+              <Material
+                  diffuseColor='0 0 0'/>
+            </Appearance>
+            <Text
+                string='"Mad Flat"'
+                solid='true'>
+              <FontStyle
+                  family='"SANS"'
+                  style='BOLD'
+                  size='0.5'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='Text_5'
+            translation='-7 3.3 1.1946e-05'>
+          <Shape>
+            <Appearance>
+              <Material
+                  diffuseColor='0 0 0'/>
+            </Appearance>
+            <Text
+                string='"Dynamic Shadow Demonstration"'
+                solid='true'>
+              <FontStyle DEF='_14'
+                  family='"SANS"'
+                  style='BOLD'
+                  size='0.2'/>
+            </Text>
+          </Shape>
+        </Transform>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_6' fromField='isBound' toNode='Examine' toField='set_bind'/>
-    <ROUTE fromNode='_7' fromField='isBound' toNode='Walk' toField='set_bind'/>
-    <ROUTE fromNode='_9' fromField='touchTime' toNode='_10' toField='set_triggerTime'/>
-    <ROUTE fromNode='_10' fromField='triggerTrue' toNode='_6' toField='set_bind'/>
-    <ROUTE fromNode='_11' fromField='touchTime' toNode='_12' toField='set_triggerTime'/>
-    <ROUTE fromNode='_12' fromField='triggerTrue' toNode='_7' toField='set_bind'/>
-    <ROUTE fromNode='_13' fromField='touchTime' toNode='_14' toField='set_triggerTime'/>
-    <ROUTE fromNode='_14' fromField='triggerTrue' toNode='_8' toField='set_bind'/>
-    <ROUTE fromNode='_8' fromField='isBound' toNode='Animation' toField='set_bind'/>
+    <ROUTE fromNode='_2' fromField='isBound' toNode='Examine' toField='set_bind'/>
+    <ROUTE fromNode='_3' fromField='isBound' toNode='Walk' toField='set_bind'/>
+    <ROUTE fromNode='_8' fromField='touchTime' toNode='_9' toField='set_triggerTime'/>
+    <ROUTE fromNode='_9' fromField='triggerTrue' toNode='_2' toField='set_bind'/>
+    <ROUTE fromNode='_10' fromField='touchTime' toNode='_11' toField='set_triggerTime'/>
+    <ROUTE fromNode='_11' fromField='triggerTrue' toNode='_3' toField='set_bind'/>
+    <ROUTE fromNode='_12' fromField='touchTime' toNode='_13' toField='set_triggerTime'/>
+    <ROUTE fromNode='_13' fromField='triggerTrue' toNode='_4' toField='set_bind'/>
+    <ROUTE fromNode='_4' fromField='isBound' toNode='Animation' toField='set_bind'/>
   </Scene>
 </X3D>
