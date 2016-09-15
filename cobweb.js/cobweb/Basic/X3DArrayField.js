@@ -151,6 +151,22 @@ function ($, X3DField, X3DConstants, Generator)
 
 			return copy;
 		},
+		equals: function (array)
+		{
+			var
+				a      = this .getValue (),
+				b      = array .getValue (),
+				length = a .length;
+
+			if (length !== b .length)
+				return false;
+
+			for (var i = 0; i < length; ++ i)
+				if (! a [i] .equals (b [i]))
+					return false;
+
+			return true;
+		},
 		setValue: function (value)
 		{
 			this .set (value instanceof X3DArrayField ? value .getValue () : value);

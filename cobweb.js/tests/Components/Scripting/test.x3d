@@ -118,6 +118,16 @@ function initialize ()
 
 	console .log (a .toString ());
 
+
+
+	var a = new MFBool (true,false,true,false,true,true);
+	var b = new MFBool (true,false,true,false,true,false);
+
+
+	console .log (a .equals (b));
+
+
+
 }
 ]]> 
             </Script>

@@ -123,10 +123,6 @@ function ($, X3DField, X3DConstants)
 	SFNode .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFNode,
-		equals: function (node)
-		{
-			return this .getValue () === node .getValue ();
-		},
 		clone: function ()
 		{
 			return new SFNode (this .getValue ());
@@ -147,6 +143,10 @@ function ($, X3DField, X3DConstants)
 		getType: function ()
 		{
 			return X3DConstants .SFNode;
+		},
+		equals: function (node)
+		{
+			return this .getValue () === node .getValue ();
 		},
 		set: function (value)
 		{
