@@ -2,16 +2,14 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="202" Column="76" />
+      <File FileName="cobweb.js/cobweb.html" Line="194" Column="74" />
       <File FileName="cobweb.js/cobweb/Rendering/X3DRenderer.js" Line="444" Column="36" />
       <File FileName="cobweb.js/cobweb/Components/Lighting/X3DLightNode.js" Line="119" Column="4" />
-      <File FileName="cobweb.js/cobweb/Components/Lighting/DirectionalLight.js" Line="171" Column="88" />
-      <File FileName="cobweb.js/cobweb/Components/Shaders/X3DProgrammableShaderObject.js" Line="140" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Shaders/Shader.js" Line="80" Column="5" />
-      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.fs" Line="409" Column="1" />
-      <File FileName="cobweb.js/cobweb/Rendering/DepthBuffer.js" Line="106" Column="5" />
-      <File FileName="cobweb.js/cobweb/Browser/Lighting/X3DLightingContext.js" Line="84" Column="33" />
-      <File FileName="cobweb.js/standard/Math/Geometry/ViewVolume.js" Line="133" Column="16" />
+      <File FileName="cobweb.js/cobweb/Components/Lighting/DirectionalLight.js" Line="127" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/X3DProgrammableShaderObject.js" Line="744" Column="117" />
+      <File FileName="cobweb.js/cobweb/Browser/Shaders/Shader.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.fs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Rendering/DepthBuffer.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
