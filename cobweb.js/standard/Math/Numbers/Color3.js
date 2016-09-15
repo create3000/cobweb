@@ -99,9 +99,9 @@ function ($, Algorithm)
 		},
 		equals: function (color)
 		{
-			return this .r_ === vector .r_ &&
-			       this .g_ === vector .g_ &&
-			       this .b_ === vector .b_;
+			return this .r_ === color .r_ &&
+			       this .g_ === color .g_ &&
+			       this .b_ === color .b_;
 		},
 		getHSV: function (result)
 		{

@@ -233,6 +233,35 @@ function ($, X3DField, X3DConstants, Generator)
 
 			this .addEvent ();
 		},
+		find: function (first, last, value)
+		{
+			var values = this .getValue ();
+
+			for (var i = first; i < last; ++ i)
+			{
+				if (values [i] .equals (value))
+					return i;
+			}
+
+			return last;
+		},
+		remove (first, last, value)
+		{
+			var values = this .getValue ();
+
+			first = this .find (first, last, value);
+
+			if (first !== last)
+			{
+				for (var i = first; ++ i < last; )
+				{
+					if (! values [i] .equals (value))
+						values [first ++] = values [i];
+				}
+			}
+
+			return first;
+		},
 		erase: function (first, last)
 		{
 			var values = this .getValue () .splice (first, last - first);

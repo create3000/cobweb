@@ -76,7 +76,48 @@ function initialize ()
 {
 	print ("initialize");
 	
-	print (Browser .currentScene .routes);
+	var n1 = Browser .currentScene .createNode ("Transform");
+	var n2 = Browser .currentScene .createNode ("Group");
+	var n3 = Browser .currentScene .createNode ("Switch");
+
+	var a = new MFNode (n1,n2,n3,n1,n1,n2,n3);
+
+	console .log (a .toString ());
+
+	a .erase (a .remove (0, a .length, n1), a .length);
+
+	console .log (a .toString ());
+
+
+
+	var a = new MFInt32 (1,2,3,1,1,2,3);
+
+	console .log (a .toString ());
+
+	a .erase (a .remove (0, a .length, 1), a .length);
+
+	console .log (a .toString ());
+
+
+
+	var a = new MFBool (true,false,true,false,true,true);
+
+	console .log (a .toString ());
+
+	a .erase (a .remove (0, a .length, true), a .length);
+
+	console .log (a .toString ());
+
+
+
+	var a = new MFColor (new SFColor (0.1,0.1,0.1),new SFColor (0.2,0.2,0.2),new SFColor (0.3,0.3,0.3),new SFColor (0.1,0.1,0.1),new SFColor (0.1,0.1,0.1),new SFColor (0.2,0.2,0.2),new SFColor (0.3,0.3,0.3));
+
+	console .log (a .toString ());
+
+	a .erase (a .remove (0, a .length, new SFColor (0.1,0.1,0.1)), a .length);
+
+	console .log (a .toString ());
+
 }
 ]]> 
             </Script>
