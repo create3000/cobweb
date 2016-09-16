@@ -174,7 +174,7 @@ function ($,
 		{
 			this .hits .push ({
 				pointer:         this .pointer,
-				hitRay:          this .hitRay,
+				hitRay:          this .hitRay .copy (),
 				intersection:    intersection,
 				sensors:         this .enabledSensors [this .enabledSensors .length - 1],
 				layer:           layer,

@@ -86,27 +86,36 @@ function ($,
 {
 "use strict";
 
+	var biasMatrix = new Matrix4 (1.0 / 6.0, 0.0,  0.0, 0.0,
+	                              0.0,  0.25, 0.0, 0.0,
+	                              0.0,  0.0,  0.5, 0.0,
+	                              1.0 / 6.0, 0.25, 0.5, 1.0);
+
 	// Negated directions
 	var directions = [
 		new Vector3 ( 1,  0,  0), // left
 		new Vector3 (-1,  0,  0), // right
-		new Vector3 ( 0,  1,  0), // bottom
-		new Vector3 ( 0, -1,  0), // top
 		new Vector3 ( 0,  0,  1), // back
 		new Vector3 ( 0,  0, -1), // front
+		new Vector3 ( 0,  1,  0), // bottom
+		new Vector3 ( 0, -1,  0), // top
 	];
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
 	function PointLightContainer (lightNode, groupNode)
 	{
+		var
+			nearValue        = 0.125,
+			farValue         = 1000,
+			projectionMatrix = Camera .perspective (Algorithm .radians (120), nearValue, farValue, 1, 1, new Matrix4 ());
+
 		this .location             = new Vector3 (0, 0, 0);
 		this .direction            = new Vector3 (0, 0, 0);
 		this .shadowBuffer         = null;
-		this .bbox                 = new Box3 ();
 		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
 		this .viewport             = new Vector4 (0, 0, 0, 0);
-		this .projectionMatrix     = new Matrix4 ();
+		this .projectionMatrix     = projectionMatrix;
 		this .modelViewMatrix      = new Matrix4 ();
 		this .transformationMatrix = new Matrix4 ();
 		this .invLightSpaceMatrix  = new Matrix4 ();
@@ -182,27 +191,22 @@ function ($,
 				invLightSpaceMatrix .inverse ();
 
 				var
-					groupBBox        = X3DGroupingNode .prototype .getBBox .call (this .groupNode, this .bbox), // Group bbox.
-					lightBBox        = groupBBox .multRight (invLightSpaceMatrix),                              // Group bbox from the perspective of the light.
 					shadowMapSize1_2 = lightNode .getShadowMapSize () / 2,
 					shadowMapSize1_3 = lightNode .getShadowMapSize () / 3,
-					nearValue        = 0.125,
-					farValue         = 1000,
-					aspect           = Math .tan (Algorithm .radians (120) / 2) * nearValue,
-					projectionMatrix = Camera .frustum (-aspect, aspect, -aspect, aspect, nearValue, farValue, this .projectionMatrix);
+					projectionMatrix = this .projectionMatrix;
 
 				this .shadowBuffer .bind ();
+				browser .getProjectionMatrix () .pushMatrix (this .projectionMatrix);
 
-				for (var y = 0; y < 3; ++ y)
+				for (var y = 0; y < 2; ++ y)
 				{
-					for (var x = 0; x < 2; ++ x)
+					for (var x = 0; x < 3; ++ x)
 					{
 						var
-							rotation = this .rotation .setFromToVec (this .direction .assign (directions [y * 2 + x]), Vector3 .zAxis), // inversed rotation
-							viewport = this .viewport .set (x * shadowMapSize1_2, y * shadowMapSize1_3, shadowMapSize1_2, shadowMapSize1_3);
+							rotation = this .rotation .setFromToVec (this .direction .assign (directions [y * 3 + x]), Vector3 .zAxis), // inversed rotation
+							viewport = this .viewport .set (x * shadowMapSize1_3, y * shadowMapSize1_2, shadowMapSize1_3, shadowMapSize1_2);
 		
 						layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
-						browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
 
 						browser .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
 						browser .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
@@ -211,11 +215,11 @@ function ($,
 						layerNode .render (this .groupNode, TraverseType .DEPTH);
 		
 						browser .getModelViewMatrix  () .pop ();
-						browser .getProjectionMatrix () .pop ();
 						layerNode .getViewVolumes () .pop ();
 					}
 				}
 
+				browser .getProjectionMatrix () .pop ();
 				this .shadowBuffer .unbind ();
 	
 				if (! lightNode .getGlobal ())
@@ -330,6 +334,10 @@ function ($,
 		getRadius: function ()
 		{
 			return Math .max (0, this .radius_ .getValue ());
+		},
+		getBiasMatrix: function ()
+		{
+			return biasMatrix;
 		},
 		getLights: function ()
 		{

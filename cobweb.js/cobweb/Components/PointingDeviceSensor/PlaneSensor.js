@@ -188,33 +188,35 @@ function ($,
 						this .plane       = new Plane3 (hitPoint, axisRotation .multVecRot (new Vector3 (0, 0, 1)));
 					}
 
-					var trackPoint = new Vector3 (0, 0, 0);
-
 					if (this .planeSensor)
 					{
-						this .plane .intersectsLine (hitRay, this .startPoint);
+						if (this .plane .intersectsLine (hitRay, this .startPoint))
+						{
+							this .trackStart (this .startPoint);
+						}
 
 //						new Plane3 (new Vector3 (0, 0, 0), this .plane .normal) .intersectsLine (hitRay, trackPoint);
 					}
 					else
 					{
-						this .getLineTrackPoint (hit, this .line, this .startPoint);
-
-						try
+						if (this .getLineTrackPoint (hit, this .line, this .startPoint))
 						{
-							this .getLineTrackPoint (hit, new Line3 (this .line .direction, this .line .direction), trackPoint);
-						}
-						catch (error)
-						{
-							//console .log (error);
+							var trackPoint = new Vector3 (0, 0, 0);
+	
+							try
+							{
+								this .getLineTrackPoint (hit, new Line3 (this .line .direction, this .line .direction), trackPoint);
+							}
+							catch (error)
+							{
+								//console .log (error);
+	
+								trackPoint = this .startPoint;
+							}
 
-							trackPoint = this .startPoint;
+							this .trackStart (trackPoint);
 						}
 					}
-
-					this .startOffset          .assign (this .offset_ .getValue ());
-					this .trackPoint_changed_  .set (trackPoint);
-					this .translation_changed_ .set (this .offset_ .getValue ());
 				}
 				else
 				{
@@ -227,23 +229,26 @@ function ($,
 				console .log (error);
 			}
 		},
+		trackStart: function (trackPoint)
+		{
+			this .startOffset .assign (this .offset_ .getValue ());
+
+			this .trackPoint_changed_  = trackPoint;
+			this .translation_changed_ = this .offset_ .getValue ();
+		},
 		set_motion__: function (hit)
 		{
 			try
 			{
 				if (this .planeSensor)
 				{
-					var hitRay = hit .hitRay .copy () .multLineMatrix (this .invModelViewMatrix);
-
 					var
-						endPoint   = new Vector3 (0, 0, 0),
-						trackPoint = new Vector3 (0, 0, 0);
+						hitRay   = hit .hitRay .copy () .multLineMatrix (this .invModelViewMatrix),
+						endPoint = new Vector3 (0, 0, 0);
 
 					if (this .plane .intersectsLine (hitRay, endPoint))
 					{
-						new Plane3 (new Vector3 (0, 0, 0), this .plane .normal) .intersectsLine (hitRay, trackPoint);
-
-						this .track (endPoint, trackPoint);
+						this .track (endPoint, endPoint .copy ());
 					}
 					else
 						throw new Error ("Plane and line are parallel.");
@@ -262,9 +267,7 @@ function ($,
 						}
 						catch (error)
 						{
-							//console .log (error);
-
-							trackPoint = endPoint;
+							trackPoint .assign (endPoint);
 						}
 					
 						this .track (endPoint, trackPoint);
