@@ -325,6 +325,9 @@ function ($,
 
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
+				//AP: attach node to DOM element for access from DOM.
+            element .x3dnode = node;
+
 				this .DEF (element, node);
 				this .addNode (element, node);
 				this .pushParent (node);
