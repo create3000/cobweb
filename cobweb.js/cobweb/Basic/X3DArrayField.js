@@ -277,7 +277,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 			return last;
 		},
-		remove (first, last, value)
+		remove: function (first, last, value)
 		{
 			if ($.isFunction (value))
 			{

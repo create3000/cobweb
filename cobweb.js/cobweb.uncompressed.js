@@ -9694,6 +9694,15 @@ function ($, X3DObject)
 		{
 			return this ._parents;
 		},
+		dispose: function ()
+		{
+//			var parents = this ._parents;
+//
+//			for (var key in parents)
+//				delete parents [key];
+
+			X3DObject .prototype .dispose .call (this);
+		},
 	});
 
 	return X3DChildObject;
@@ -10763,6 +10772,25 @@ function ($, X3DField, X3DConstants, Generator)
 
 			return copy;
 		},
+		equals: function (array)
+		{
+			var
+				a      = this .getValue (),
+				b      = array .getValue (),
+				length = a .length;
+
+			if (a === b)
+				return true;
+
+			if (length !== b .length)
+				return false;
+
+			for (var i = 0; i < length; ++ i)
+				if (! a [i] .equals (b [i]))
+					return false;
+
+			return true;
+		},
 		setValue: function (value)
 		{
 			this .set (value instanceof X3DArrayField ? value .getValue () : value);
@@ -10845,6 +10873,80 @@ function ($, X3DField, X3DConstants, Generator)
 
 			this .addEvent ();
 		},
+		find: function (first, last, value)
+		{
+			if ($.isFunction (value))
+			{
+				var values = this .getValue ();
+	
+				for (var i = first; i < last; ++ i)
+				{
+					if (value (values [i] .valueOf ()))
+						return i;
+				}
+	
+				return last;
+			}
+
+			var values = this .getValue ();
+
+			for (var i = first; i < last; ++ i)
+			{
+				if (values [i] .equals (value))
+					return i;
+			}
+
+			return last;
+		},
+		remove: function (first, last, value)
+		{
+			if ($.isFunction (value))
+			{
+				var values = this .getValue ();
+	
+				first = this .find (first, last, value);
+	
+				if (first !== last)
+				{
+					for (var i = first; ++ i < last; )
+					{
+						var current = values [i];
+
+						if (! value (current .valueOf ()))
+						{
+							var tmp = values [first];
+	
+							values [first ++] = current;
+							values [i]        = tmp;
+						}
+					}
+				}
+	
+				return first;
+			}
+
+			var values = this .getValue ();
+
+			first = this .find (first, last, value);
+
+			if (first !== last)
+			{
+				for (var i = first; ++ i < last; )
+				{
+					var current = values [i];
+
+					if (! current .equals (value))
+					{
+						var tmp = values [first];
+
+						values [first ++] = current;
+						values [i]        = tmp;
+					}
+				}
+			}
+
+			return first;
+		},
 		erase: function (first, last)
 		{
 			var values = this .getValue () .splice (first, last - first);
@@ -10926,6 +11028,11 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 
 			return string;
+		},
+		dispose: function ()
+		{
+			this .erase (0, this .length);
+			X3DField .prototype .dispose .call (this);
 		},
 	});
 
@@ -11392,9 +11499,9 @@ function ($, Algorithm)
 		},
 		equals: function (color)
 		{
-			return this .r_ === vector .r_ &&
-			       this .g_ === vector .g_ &&
-			       this .b_ === vector .b_;
+			return this .r_ === color .r_ &&
+			       this .g_ === color .g_ &&
+			       this .b_ === color .b_;
 		},
 		getHSV: function (result)
 		{
@@ -17721,6 +17828,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFNode;
 		},
+		equals: function (node)
+		{
+			return this .getValue () === node .getValue ();
+		},
 		set: function (value)
 		{
 			var current = this .getValue ();
@@ -17770,6 +17881,11 @@ function ($, X3DField, X3DConstants)
 		{
 			var node = this .getValue ();
 			return node ? node .toXMLString () : "<!-- NULL -->";
+		},
+		dispose: function ()
+		{
+			this .set (null);
+			X3DField .prototype .dispose .call (this);
 		},
 	});
 
@@ -19587,6 +19703,51 @@ function ($,
 		toString: function ()
 		{
 			return this .getTypeName () + " { }";
+		},
+		dispose: function ()
+		{
+			// TODO: remove named node if any. (do this in NamedNode)
+			// TODO: remove improted node if any. (do this in ImportedNode)
+			// TODO: remove exported node if any. (do this in ExportedNode)
+			// TODO: remove routes from and to node if any. (do this in Route)
+
+			var
+				predefinedFields  = this .getPredefinedFields (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in predefinedFields)
+				predefinedFields [name] .dispose ();
+
+			for (var name in userDefinedFields)
+				userDefinedFields [name] .dispose ();
+
+			// Remove node from entire scene graph.
+
+			var firstParents = this .getParents ();
+
+			for (var firstId in firstParents)
+			{
+				var firstParent = firstParents [firstId];
+
+				if (firstParent instanceof Fields .SFNode)
+				{
+					var secondParents = firstParent .getParents ();
+
+					for (var secondId in secondParents)
+					{
+						var secondParent = secondParents [secondId];
+
+						if (secondParent instanceof Fields .MFNode)
+						{
+							var length = secondParent .length;
+
+							secondParent .erase (secondParent .remove (0, length, firstParent), length);
+						}
+					}
+
+					firstParent .setValue (null);
+				}
+			}
 		},
 	});
 
@@ -27625,6 +27786,7 @@ function (Line3,
 			constants += "#define x3d_TextureType3D              3\n";
 			constants += "#define x3d_TextureTypeCubeMapTexture  4\n";
 		
+			constants += "#define X3D_SHADOW\n";
 			constants += "#define x3d_ShadowSamples  8\n";
 
 			constants += "#line 1\n";
@@ -33024,6 +33186,9 @@ function ($,
 
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
+				//AP: attach node to DOM element for access from DOM.
+            element .x3dnode = node;
+
 				this .DEF (element, node);
 				this .addNode (element, node);
 				this .pushParent (node);
@@ -37548,7 +37713,7 @@ define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:te
 
 define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n// 19 * x3d_MaxLights\n\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n// 22 * x3d_MaxLights = 176\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in float angle)\n{\n\tPlane3 plane = plane3 (v, vN);\n\n\tif (lightType == x3d_PointLight)\n\t{\n/*\n\t\t// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.\n\t\tmat4 projectionBias = mat4 (0.144337567297406, 0.0, 0.0, 0.0, 0.0, 0.0962250448649377, 0.0, 0.0, -0.25, -0.166666666666667, -1.00012501562695, -1.0, 0.0, 0.0, -0.125015626953369, 0.0); // fov: 120deg, 1000m\n\n\t\t// Normals of the point light cube.\n\t\tmat4 rotations [6];\n\t\trotations [0] = mat4 ( 0.0, 0.0,  1.0, 0.0, 0.0, 1.0,  0.0, 0.0, -1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // left\n\t\trotations [1] = mat4 ( 0.0, 0.0, -1.0, 0.0, 0.0, 1.0,  0.0, 0.0,  1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // right\n\t\trotations [2] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0,  1.0, 0.0,  0.0, -1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // bottom\n\t\trotations [3] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0, -1.0, 0.0,  0.0,  1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // top\n\t\trotations [4] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0,  1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // back\n\t\trotations [5] = mat4 (-1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // front\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0, 0.0);\n\t\toffsets [1] = vec2 (0.5, 0.0);\n\t\toffsets [2] = vec2 (0.0, 1.0 / 3.0);\n\t\toffsets [3] = vec2 (0.5, 1.0 / 3.0);\n\t\toffsets [4] = vec2 (0.0, 2.0 / 3.0);\n\t\toffsets [5] = vec2 (0.5, 2.0 / 3.0);\n\n\t\tint value = 0;\n\n\t\tfor (int m = 0, s = 0; m < 6 && s < x3d_ShadowSamples; ++ m)\n\t\t{\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < 0.0 || shadowCoord .x > 1.0 / 2.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < 0.0 || shadowCoord .y > 1.0 / 3.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ s;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);\n*/\n\n\t\treturn 0.0;\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy)) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3  d = x3d_LightDirection [i];\n\t\t\t\tvec3  c = x3d_LightAttenuation [i];\n\t\t\t\tvec3  L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3  H = normalize (L + V);             // Specular term\n\t\t\t\tfloat a = dot (N, L);                    // Angle between normal and light ray.\n\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (a, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuation          = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot                 = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tvec3  lightColor           = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3  ambientColor         = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  diffuseSpecularColor = diffuseTerm + specularTerm;\n\t\t\t\tvec3  color                = lightColor * (ambientColor + x3d_LightIntensity [i] * diffuseSpecularColor);\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], a);\n\t\t\t\t\tvec3  shadowColor     = lightColor * ambientColor + diffuseSpecularColor * x3d_ShadowColor [i];\n\t\n\t\t\t\t\tfinalColor += mix (color, shadowColor, shadowIntensity);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += color;\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n// 19 * x3d_MaxLights\n\n#ifdef X3D_SHADOW\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n// 22 * x3d_MaxLights = 176\n#endif\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\n#ifdef X3D_SHADOW\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in Plane3 plane, in float angle)\n{\n\tif (lightType == x3d_PointLight)\n\t{\n\t\t// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.\n\t\tmat4 projectionBias = mat4 (0.144337567297406, 0.0, 0.0, 0.0, 0.0, 0.0962250448649377, 0.0, 0.0, -0.25, -0.166666666666667, -1.00012501562695, -1.0, 0.0, 0.0, -0.125015626953369, 0.0); // fov: 120deg, 1000m\n\n\t\t// Normals of the point light cube.\n\t\tmat4 rotations [6];\n\t\trotations [0] = mat4 ( 0.0, 0.0,  1.0, 0.0, 0.0, 1.0,  0.0, 0.0, -1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // left\n\t\trotations [1] = mat4 ( 0.0, 0.0, -1.0, 0.0, 0.0, 1.0,  0.0, 0.0,  1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // right\n\t\trotations [2] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0,  1.0, 0.0,  0.0, -1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // bottom\n\t\trotations [3] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0, -1.0, 0.0,  0.0,  1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // top\n\t\trotations [4] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0,  1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // back\n\t\trotations [5] = mat4 (-1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // front\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0, 0.0);\n\t\toffsets [1] = vec2 (0.5, 0.0);\n\t\toffsets [2] = vec2 (0.0, 1.0 / 3.0);\n\t\toffsets [3] = vec2 (0.5, 1.0 / 3.0);\n\t\toffsets [4] = vec2 (0.0, 2.0 / 3.0);\n\t\toffsets [5] = vec2 (0.5, 2.0 / 3.0);\n\n\t\tint value   = 0;\n\t\tint samples = 0;\n\n\t\tfor (int m = 0; m < 6; ++ m)\n\t\t{\n\t\t\tif (samples >= x3d_ShadowSamples)\n\t\t\t\tbreak;\n\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < 0.0 || shadowCoord .x > 1.0 / 2.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < 0.0 || shadowCoord .y > 1.0 / 3.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ samples;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = (0.001 + 0.004 * pow (angle, 3.0)) / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy)) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n#endif\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tPlane3 plane = plane3 (v, vN);\n\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3  d = x3d_LightDirection [i];\n\t\t\t\tvec3  c = x3d_LightAttenuation [i];\n\t\t\t\tvec3  L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3  H = normalize (L + V);             // Specular term\n\t\t\t\tfloat a = dot (N, L);                    // Angle between normal and light ray.\n\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (a, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\t#ifdef X3D_SHADOW\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], plane, a);\n\t\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#else\n\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#endif\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision highp float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
@@ -53321,68 +53486,19 @@ function ($,
 {
 
 
-	function remove (array, first, last, range, rfirst, rlast, getId)
-	{
-		if (! getId)
-			getId = remove .getId ;
+	function getId (value) { return value ? value .getValue () .getId () : -1; }
 
+	function remove (array, first, last, range, rfirst, rlast)
+	{
 		var set = { };
 
 		for (var i = rfirst; i < rlast; ++ i)
 			set [getId (range [i])] = true;
 
-		return remove_impl (array, first, last, set, getId);
+		function compare (value) { return set [getId (value)]; }
+
+		return array .remove (first, last, compare);
 	}
-
-	function remove_impl (array, first, last, set, getId)
-	{
-		if ($.isEmptyObject (set))
-			return last;
-
-		var count = 0;
-
-		for (; first !== last; ++ first)
-		{
-			if (set [getId (array [first])])
-			{
-				++ count;
-				break;
-			}
-		}
-
-		LOOP:
-		for (; ;)
-		{
-			var second = first + count;
-
-			for (; second !== last; ++ first, ++ second)
-			{
-				if (set [getId (array [second])])
-				{
-					++ count;
-					continue LOOP;
-				}
-
-				array [first] = array [second];
-			}
-
-			break;
-		}
-
-		for (var second = first + count; second !== last; ++ first, ++ second)
-		{
-			array [first] = array [second];
-		}
-
-		return first;
-	}
-
-	remove .getId = function (value) { return value; };
-
-	//
-
-	//function getId (value) { return value ? value .getId () : -1; };
-	function getNodeId (value) { return value ? value .getValue () .getId () : -1; }
 
 	var visible = new Fields .MFBool ();
 
@@ -53468,8 +53584,7 @@ function ($,
 
 			this .addChildren_ .setTainted (true);
 			this .addChildren_ .erase (remove (this .addChildren_, 0, this .addChildren_ .length,
-			                                   this .children_,    0, this .children_    .length,
-			                                   getNodeId),
+			                                   this .children_,    0, this .children_    .length),
 			                           this .addChildren_ .length);
 
 			if (! this .children_ .getTainted ())
@@ -53499,8 +53614,7 @@ function ($,
 			}
 
 			this .children_ .erase (remove (this .children_,       0, this .children_ .length,
-			                                this .removeChildren_, 0, this .removeChildren_ .length,
-			                                getNodeId),
+			                                this .removeChildren_, 0, this .removeChildren_ .length),
 			                        this .children_ .length);
 
 			this .removeChildren_ .set ([ ]);
@@ -53947,6 +54061,8 @@ function ($,
 
 			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
 
+			// Get shadow buffer from browser.
+
 			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
 			{
 				this .shadowBuffer = browser .popShadowBuffer (shadowMapSize);
@@ -54052,14 +54168,17 @@ function ($,
 		},
 		recycle: function ()
 		{
-			if (this .textureUnit)
-			{
-				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
-				this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			// Return shadowBuffer and textureUnit.
 
-				this .shadowBuffer = null;
-				this .textureUnit  = 0;
-			}
+			if (this .textureUnit)
+				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+
+			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+
+			this .shadowBuffer = null;
+			this .textureUnit  = 0;
+
+			// Return container
 
 		   DirectionalLights .push (this);
 		},
@@ -90481,8 +90600,17 @@ define ('cobweb/Components/Lighting/PointLight',[
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
 function ($,
@@ -90490,17 +90618,50 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLightNode, 
+          X3DGroupingNode, 
+          TraverseType,
           X3DConstants,
+          Box3,
+          Camera,
+          ViewVolume,
           Vector3,
+          Vector4,
+          Rotation4,
+          Matrix4,
+          Algorithm,
           ObjectCache)
 {
 
+
+	// Negated directions
+	var directions = [
+		new Vector3 ( 1,  0,  0), // left
+		new Vector3 (-1,  0,  0), // right
+		new Vector3 ( 0,  1,  0), // bottom
+		new Vector3 ( 0, -1,  0), // top
+		new Vector3 ( 0,  0,  1), // back
+		new Vector3 ( 0,  0, -1), // front
+	];
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
 	function PointLightContainer (lightNode, groupNode)
 	{
-		this .location = new Vector3 (0, 0, 0);
+		this .location             = new Vector3 (0, 0, 0);
+		this .direction            = new Vector3 (0, 0, 0);
+		this .shadowBuffer         = null;
+		this .bbox                 = new Box3 ();
+		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewport             = new Vector4 (0, 0, 0, 0);
+		this .projectionMatrix     = new Matrix4 ();
+		this .modelViewMatrix      = new Matrix4 ();
+		this .transformationMatrix = new Matrix4 ();
+		this .invLightSpaceMatrix  = new Matrix4 ();
+		this .shadowMatrix         = new Matrix4 ();
+		this .shadowMatrixArray    = new Float32Array (16);
+		this .rotation             = new Rotation4 ();
+		this .rotationMatrix       = new Matrix4 ();
+		this .textureUnit          = 0;
 	
 		this .set (lightNode, groupNode);
 	}
@@ -90510,35 +90671,159 @@ function ($,
 		constructor: PointLightContainer,
 	   set: function (lightNode, groupNode)
 	   {
-			this .groupNode        = groupNode;
-			this .color            = lightNode .getColor ();
-			this .intensity        = lightNode .getIntensity ();
-			this .ambientIntensity = lightNode .getAmbientIntensity ();
-			this .attenuation      = lightNode .attenuation_ .getValue ();
-			this .radius           = lightNode .getRadius ();
+			var
+				browser       = lightNode .getBrowser (),
+				gl            = browser .getContext (),
+				shadowMapSize = lightNode .getShadowMapSize ();
+
+			var modelViewMatrix = browser .getModelViewMatrix () .get ();
 	
-			lightNode .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (lightNode .location_ .getValue ()));
+			this .lightNode = lightNode;
+			this .groupNode = groupNode;
+
+			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+
+			// Get shadow buffer from browser.
+
+			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
+			{
+				this .shadowBuffer = browser .popShadowBuffer (shadowMapSize);
+
+				if (this .shadowBuffer)
+				{
+					if (browser .getCombinedTextureUnits () .length)
+					{
+						this .textureUnit = browser .getCombinedTextureUnits () .pop ();
+
+						gl .activeTexture (gl .TEXTURE0 + this .textureUnit);
+						gl .bindTexture (gl .TEXTURE_2D, this .shadowBuffer .getDepthTexture ());
+						gl .activeTexture (gl .TEXTURE0);
+					}
+					else
+					{
+						console .warn ("Not enough combined texture units for shadow map available.");
+					}
+				}
+				else
+				{
+					console .warn ("Couldn't create shadow buffer.");
+				}
+			}
 	   },
 		renderShadowMap: function ()
 		{
+			try
+			{
+				if (! this .shadowBuffer)
+					return;
 
+				var
+					lightNode            = this .lightNode,
+					browser              = lightNode .getBrowser (),
+					layerNode            = lightNode .getCurrentLayer (),
+					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
+
+				invLightSpaceMatrix .translate (lightNode .getLocation ());
+				invLightSpaceMatrix .inverse ();
+
+				var
+					groupBBox        = X3DGroupingNode .prototype .getBBox .call (this .groupNode, this .bbox), // Group bbox.
+					lightBBox        = groupBBox .multRight (invLightSpaceMatrix),                              // Group bbox from the perspective of the light.
+					shadowMapSize1_2 = lightNode .getShadowMapSize () / 2,
+					shadowMapSize1_3 = lightNode .getShadowMapSize () / 3,
+					nearValue        = 0.125,
+					farValue         = 1000,
+					aspect           = Math .tan (Algorithm .radians (120) / 2) * nearValue,
+					projectionMatrix = Camera .frustum (-aspect, aspect, -aspect, aspect, nearValue, farValue, this .projectionMatrix);
+
+				this .shadowBuffer .bind ();
+
+				for (var y = 0; y < 3; ++ y)
+				{
+					for (var x = 0; x < 2; ++ x)
+					{
+						var
+							rotation = this .rotation .setFromToVec (this .direction .assign (directions [y * 2 + x]), Vector3 .zAxis), // inversed rotation
+							viewport = this .viewport .set (x * shadowMapSize1_2, y * shadowMapSize1_3, shadowMapSize1_2, shadowMapSize1_3);
+		
+						layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+						browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
+
+						browser .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
+						browser .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
+						browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+		
+						layerNode .render (this .groupNode, TraverseType .DEPTH);
+		
+						browser .getModelViewMatrix  () .pop ();
+						browser .getProjectionMatrix () .pop ();
+						layerNode .getViewVolumes () .pop ();
+					}
+				}
+
+				this .shadowBuffer .unbind ();
+	
+				if (! lightNode .getGlobal ())
+					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
+
+				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix);
+			}
+			catch (error)
+			{
+				// Catch error from matrix inverse.
+				console .log (error);
+			}
 		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
-			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shaderObject .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform1f (shaderObject .x3d_LightRadius [i],           this .radius);
-	
 			// For correct results the radius must be transform by the modelViewMatrix. This can only be done in the shader.
 			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|
 			// distanceOfLightToFragmentInLightSpace can then be compared with radius.
+
+			var 
+				lightNode   = this .lightNode,
+				color       = lightNode .getColor (),
+				attenuation = lightNode .getAttenuation (),
+				location    = this .modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ())),
+				shadowColor = lightNode .getShadowColor ();
+
+			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            color .r, color .g, color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        lightNode .getIntensity ());
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], lightNode .getAmbientIntensity ());
+			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      Math .max (0, attenuation .x), Math .max (0, attenuation .y), Math .max (0, attenuation .z));
+			gl .uniform3f (shaderObject .x3d_LightLocation [i],         location .x, location .y, location .z);
+			gl .uniform1f (shaderObject .x3d_LightRadius [i],           lightNode .getRadius ());
+
+			if (this .textureUnit)
+			{
+				this .shadowMatrixArray .set (this .shadowMatrix);
+
+				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
+				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
+				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
+				gl .uniformMatrix4fv (shaderObject .x3d_ShadowMatrix [i], false, this .shadowMatrixArray);
+				gl .uniform1i        (shaderObject .x3d_ShadowMap [i],           this .textureUnit);
+			}
+			else
+				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
 		recycle: function ()
 		{
+			// Return shadowBuffer and textureUnit.
+
+			if (this .textureUnit)
+				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+
+			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+
+			this .shadowBuffer = null;
+			this .textureUnit  = 0;
+
+			// Return container
+
 		   PointLights .push (this);
 		},
 	};
@@ -90580,6 +90865,14 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getAttenuation: function ()
+		{
+			return this .attenuation_ .getValue ();
+		},
+		getLocation: function ()
+		{
+			return this .location_ .getValue ();
 		},
 		getRadius: function ()
 		{
@@ -93602,6 +93895,27 @@ function ($,
 
 			throw new Error ("Exported node '" + exportedName + "' not found.");
 		},
+		addRootNode: function (node)
+		{
+			if (! (node instanceof Fields .SFNode || node === null))
+				throw new Error ("Couldn't add root node: node must be of type SFNode.");
+
+			//if (node && node .getValue () && node .getValue () .getExecutionContext () !== this)
+			//	throw new Error ("Couldn't add root node: node does not belong to this execution context.");
+
+			this .getRootNodes () .push (node);
+		},
+		removeRootNode: function (node)
+		{
+			if (! (node instanceof Fields .SFNode || node === null))
+				throw new Error ("Couldn't remove root node: node must be of type SFNode.");
+
+			var
+				rootNodes = this .getRootNodes (),
+				length    = rootNodes .length;
+
+			rootNodes .erase (rootNodes .remove (0, length, node), length);
+		},
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
@@ -96188,8 +96502,16 @@ define ('cobweb/Components/Lighting/SpotLight',[
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
@@ -96198,8 +96520,16 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLightNode, 
+          X3DGroupingNode, 
+          TraverseType,
           X3DConstants,
+          Box3,
+          Camera,
+          ViewVolume,
           Vector3,
+          Vector4,
+          Rotation4,
+          Matrix4,
           Algorithm,
           ObjectCache)
 {
@@ -96209,8 +96539,23 @@ function ($,
 	
 	function SpotLightContainer (lightNode, groupNode)
 	{
-		this .location  = new Vector3 (0, 0, 0);
-		this .direction = new Vector3 (0, 0, 0);
+		this .location             = new Vector3 (0, 0, 0);
+		this .direction            = new Vector3 (0, 0, 0);
+		this .renderShadow         = true; 
+		this .shadowBuffer         = null;
+		this .bbox                 = new Box3 ();
+		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewport             = new Vector4 (0, 0, 0, 0);
+		this .projectionMatrix     = new Matrix4 ();
+		this .modelViewMatrix      = new Matrix4 ();
+		this .transformationMatrix = new Matrix4 ();
+		this .invLightSpaceMatrix  = new Matrix4 ();
+		this .shadowMatrix         = new Matrix4 ();
+		this .shadowMatrixArray    = new Float32Array (16);
+		this .rotation             = new Rotation4 ();
+		this .lightBBoxMin         = new Vector3 (0, 0, 0);
+		this .lightBBoxMax         = new Vector3 (0, 0, 0);
+		this .textureUnit          = 0;
 
 	   this .set (lightNode, groupNode);
 	}
@@ -96220,39 +96565,149 @@ function ($,
 		constructor: SpotLightContainer,
 	   set: function (lightNode, groupNode)
 	   {
-			var modelViewMatrix = lightNode .getBrowser () .getModelViewMatrix () .get ();
+			var
+				browser       = lightNode .getBrowser (),
+				gl            = browser .getContext (),
+				shadowMapSize = lightNode .getShadowMapSize ();
+
+			var modelViewMatrix = browser .getModelViewMatrix () .get ();
 	
-			this .groupNode        = groupNode;
-			this .color            = lightNode .getColor ();
-			this .intensity        = lightNode .getIntensity ();
-			this .ambientIntensity = lightNode .getAmbientIntensity ();
-			this .attenuation      = lightNode .attenuation_ .getValue ();
-			this .radius           = lightNode .getRadius ();
-			this .beamWidth        = lightNode .getBeamWidth ();
-			this .cutOffAngle      = lightNode .getCutOffAngle ();
-	
-			modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ()));
-			modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .direction_ .getValue ())) .normalize ();
+			this .lightNode = lightNode;
+			this .groupNode = groupNode;
+
+			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+
+			// Get shadow buffer from browser.
+
+			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
+			{
+				this .shadowBuffer = browser .popShadowBuffer (shadowMapSize);
+
+				if (this .shadowBuffer)
+				{
+					if (browser .getCombinedTextureUnits () .length)
+					{
+						this .textureUnit = browser .getCombinedTextureUnits () .pop ();
+
+						gl .activeTexture (gl .TEXTURE0 + this .textureUnit);
+						gl .bindTexture (gl .TEXTURE_2D, this .shadowBuffer .getDepthTexture ());
+						gl .activeTexture (gl .TEXTURE0);
+					}
+					else
+					{
+						console .warn ("Not enough combined texture units for shadow map available.");
+					}
+				}
+				else
+				{
+					console .warn ("Couldn't create shadow buffer.");
+				}
+			}
 	   },
 		renderShadowMap: function ()
 		{
+			try
+			{
+				if (! this .shadowBuffer)
+					return;
 
+				var
+					lightNode            = this .lightNode,
+					browser              = lightNode .getBrowser (),
+					layerNode            = lightNode .getCurrentLayer (),
+					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
+
+				invLightSpaceMatrix .translate (lightNode .getLocation ());
+				invLightSpaceMatrix .rotate (this .rotation .setFromToVec (Vector3 .zAxis, this .direction .assign (lightNode .getDirection ()) .negate ()));
+				invLightSpaceMatrix .inverse ();
+
+				var
+					groupBBox        = X3DGroupingNode .prototype .getBBox .call (this .groupNode, this .bbox), // Group bbox.
+					lightBBox        = groupBBox .multRight (invLightSpaceMatrix),                              // Group bbox from the perspective of the light.
+					shadowMapSize    = lightNode .getShadowMapSize (),
+					lightBBoxExtents = lightBBox .getExtents (this .lightBBoxMin, this .lightBBoxMax),
+					farValue         = Math .min (lightNode .getRadius (), -this .lightBBoxMin .z),
+					viewport         = this .viewport .set (0, 0, shadowMapSize, shadowMapSize),
+					projectionMatrix = Camera .perspective (lightNode .getCutOffAngle () * 2, 0.125, farValue, shadowMapSize, shadowMapSize, this .projectionMatrix);
+
+				this .renderShadow = farValue > 0;
+
+				this .shadowBuffer .bind ();
+
+				layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+				browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
+				browser .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
+				browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+
+				layerNode .render (this .groupNode, TraverseType .DEPTH);
+
+				browser .getModelViewMatrix  () .pop ();
+				browser .getProjectionMatrix () .pop ();
+				layerNode .getViewVolumes () .pop ();
+
+				this .shadowBuffer .unbind ();
+	
+				if (! lightNode .getGlobal ())
+					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
+
+				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
+			}
+			catch (error)
+			{
+				// Catch error from matrix inverse.
+				console .log (error);
+			}
 		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
+			var 
+				lightNode   = this .lightNode,
+				color       = lightNode .getColor (),
+				attenuation = lightNode .getAttenuation (),
+				location    = this .modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ())),
+				direction   = this .modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .direction_ .getValue ())) .normalize (),
+				shadowColor = lightNode .getShadowColor ();
+
 			gl .uniform1i (shaderObject .x3d_LightType [i],             3);
-			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shaderObject .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform3f (shaderObject .x3d_LightDirection [i],        this .direction .x, this .direction .y, this .direction .z);
-			gl .uniform1f (shaderObject .x3d_LightRadius [i],           this .radius);
-			gl .uniform1f (shaderObject .x3d_LightBeamWidth [i],        this .beamWidth);
-			gl .uniform1f (shaderObject .x3d_LightCutOffAngle [i],      this .cutOffAngle);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            color .r, color .g, color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        lightNode .getIntensity ());
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], lightNode .getAmbientIntensity ());
+			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      Math .max (0, attenuation .x), Math .max (0, attenuation .y), Math .max (0, attenuation .z));
+			gl .uniform3f (shaderObject .x3d_LightLocation [i],         location .x, location .y, location .z);
+			gl .uniform3f (shaderObject .x3d_LightDirection [i],        direction .x, direction .y, direction .z);
+			gl .uniform1f (shaderObject .x3d_LightRadius [i],           lightNode .getRadius ());
+			gl .uniform1f (shaderObject .x3d_LightBeamWidth [i],        lightNode .getBeamWidth ());
+			gl .uniform1f (shaderObject .x3d_LightCutOffAngle [i],      lightNode .getCutOffAngle ());
+
+			if (this .renderShadow && this .textureUnit)
+			{
+				this .shadowMatrixArray .set (this .shadowMatrix);
+
+				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
+				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
+				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
+				gl .uniformMatrix4fv (shaderObject .x3d_ShadowMatrix [i], false, this .shadowMatrixArray);
+				gl .uniform1i        (shaderObject .x3d_ShadowMap [i],           this .textureUnit);
+			}
+			else
+				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
 		recycle: function ()
 		{
+			// Return shadowBuffer and textureUnit.
+
+			if (this .textureUnit)
+				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+
+			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+
+			this .shadowBuffer = null;
+			this .textureUnit  = 0;
+
+			// Return container
+
 		   SpotLights .push (this);
 		},
 	};
@@ -96297,6 +96752,14 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getAttenuation: function ()
+		{
+			return this .attenuation_ .getValue ();
+		},
+		getLocation: function ()
+		{
+			return this .location_ .getValue ();
 		},
 		getRadius: function ()
 		{
