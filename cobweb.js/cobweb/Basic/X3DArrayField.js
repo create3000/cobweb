@@ -204,7 +204,7 @@ function ($, X3DField, X3DConstants, Generator)
 			if (array .length)
 			{
 				var field = array .shift ();
-				field .dispose ();
+				field .removeParent (this);
 				this .addEvent ();
 				return field .valueOf ();
 			}
@@ -229,7 +229,7 @@ function ($, X3DField, X3DConstants, Generator)
 			if (array .length)
 			{
 				var field = array .pop ();
-				field .dispose ();
+				field .removeParent (this);
 				this .addEvent ();
 				return field .valueOf ();
 			}
@@ -331,7 +331,7 @@ function ($, X3DField, X3DConstants, Generator)
 			var values = this .getValue () .splice (first, last - first);
 				
 			for (var i = 0, length = values .length; i < length; ++ i)
-				values [i] .dispose ();
+				values [i] .removeParent (this);
 			
 			this .addEvent ();
 		},
@@ -342,7 +342,7 @@ function ($, X3DField, X3DConstants, Generator)
 			if (size < array .length)
 			{
 				for (var i = size, length = array .length; i < length; ++ i)
-					array [i] .dispose ();
+					array [i] .removeParent (this);
 
 				array .length = size;
 
@@ -411,6 +411,7 @@ function ($, X3DField, X3DConstants, Generator)
 		dispose: function ()
 		{
 			this .erase (0, this .length);
+			X3DField .prototype .dispose .call (this);
 		},
 	});
 

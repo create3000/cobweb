@@ -91,6 +91,15 @@ function ($, X3DObject)
 		{
 			return this ._parents;
 		},
+		dispose: function ()
+		{
+//			var parents = this ._parents;
+//
+//			for (var key in parents)
+//				delete parents [key];
+
+			X3DObject .prototype .dispose .call (this);
+		},
 	});
 
 	return X3DChildObject;
