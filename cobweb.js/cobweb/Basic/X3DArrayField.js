@@ -158,6 +158,9 @@ function ($, X3DField, X3DConstants, Generator)
 				b      = array .getValue (),
 				length = a .length;
 
+			if (a === b)
+				return true;
+
 			if (length !== b .length)
 				return false;
 
@@ -271,8 +274,15 @@ function ($, X3DField, X3DConstants, Generator)
 			{
 				for (var i = first; ++ i < last; )
 				{
-					if (! values [i] .equals (value))
-						values [first ++] = values [i];
+					var current = values [i];
+
+					if (! current .equals (value))
+					{
+						var tmp = values [first];
+
+						values [first ++] = current;
+						values [i]        = tmp;
+					}
 				}
 			}
 
