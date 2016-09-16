@@ -136,6 +136,14 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		{
 			return this .array;
 		},
+		dispose: function ()
+		{
+			this .width  = 0;
+			this .height = 0;
+			this .comp   = 0;
+
+			this .array .length = 0;	
+		},
 	};
 
 	/*
@@ -196,6 +204,11 @@ function ($, X3DField, ArrayFields, X3DConstants)
 				string += " " + array [i];
 
 			return string;
+		},
+		dispose: function ()
+		{
+			this .getValue () .dispose ();
+			this .addEvent ();
 		},
 	});
 

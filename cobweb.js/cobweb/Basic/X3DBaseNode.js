@@ -429,6 +429,34 @@ function ($,
 		{
 			return this .getTypeName () + " { }";
 		},
+		dispose: function ()
+		{
+			var firstParents = this .getParents ();
+
+			for (var firstId in firstParents)
+			{
+				var firstParent = firstParents [firstId];
+
+				if (firstParent instanceof Fields .SFNode)
+				{
+					var secondParents = firstParent .getParents ();
+
+					for (var secondId in secondParents)
+					{
+						var secondParent = secondParents [secondId];
+
+						if (secondParent instanceof Fields .MFNode)
+						{
+							var length = secondParent .length;
+
+							secondParent .erase (secondParent .remove (0, length, firstParent), length);
+						}
+					}
+
+					firstParent .setValue (null);
+				}
+			}
+		},
 	});
 
 	X3DBaseNode .prototype .addAlias = X3DBaseNode .prototype .setField;

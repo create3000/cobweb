@@ -101,6 +101,11 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
 	
 				this .getValue () .set (translation, rotation, scale, scaleOrientation, center);
 			},
+			dispose: function ()
+			{
+				this .getValue () .identity ();
+				this .addEvent ();
+			},
 		});
 	
 		function defineProperty (i)

@@ -198,6 +198,10 @@ function ($, X3DField, X3DConstants)
 			var node = this .getValue ();
 			return node ? node .toXMLString () : "<!-- NULL -->";
 		},
+		dispose: function ()
+		{
+			this .setValue (null);
+		},
 	});
 
 	return SFNode;

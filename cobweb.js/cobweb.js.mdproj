@@ -1225,6 +1225,7 @@
     <None Include="tests\Components\Grouping\StaticGroup.x3d" />
     <None Include="tests\Components\Grouping\AddRemoveChildren.x3dv" />
     <None Include="tests\Components\Scripting\AddRemoveRootNode.x3d" />
+    <None Include="tests\Components\Scripting\BaseNodeDispose.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -104,6 +104,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return '"'+ SFString .escape (this .getValue ()) + '"';
 		},
+		dispose: function ()
+		{
+			this .setValue ("");
+		},
 	});
 
 	Object .defineProperty (SFString .prototype, "length",

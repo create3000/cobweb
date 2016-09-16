@@ -408,6 +408,10 @@ function ($, X3DField, X3DConstants, Generator)
 
 			return string;
 		},
+		dispose: function ()
+		{
+			this .erase (0, this .length);
+		},
 	});
 
 	Object .defineProperty (X3DArrayField .prototype, "length",

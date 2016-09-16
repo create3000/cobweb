@@ -92,6 +92,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () ? "TRUE" : "FALSE";
 		},
+		dispose: function ()
+		{
+			this .setValue (false);
+		},
 	});
 
 	return SFBool;
