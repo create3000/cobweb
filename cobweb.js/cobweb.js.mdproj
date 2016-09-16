@@ -1222,6 +1222,8 @@
     <None Include="cobweb\Browser\Shaders\Bits\Line3.h" />
     <None Include="cobweb\Browser\Shaders\Bits\Plane3.h" />
     <None Include="cobweb\Browser\Shaders\Bits\Random.h" />
+    <None Include="tests\Components\Grouping\StaticGroup.x3d" />
+    <None Include="tests\Components\Grouping\AddRemoveChildren.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

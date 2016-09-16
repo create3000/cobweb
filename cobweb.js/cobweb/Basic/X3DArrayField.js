@@ -254,6 +254,19 @@ function ($, X3DField, X3DConstants, Generator)
 		},
 		find: function (first, last, value)
 		{
+			if ($.isFunction (value))
+			{
+				var values = this .getValue ();
+	
+				for (var i = first; i < last; ++ i)
+				{
+					if (value (values [i] .valueOf ()))
+						return i;
+				}
+	
+				return last;
+			}
+
 			var values = this .getValue ();
 
 			for (var i = first; i < last; ++ i)
@@ -266,6 +279,31 @@ function ($, X3DField, X3DConstants, Generator)
 		},
 		remove (first, last, value)
 		{
+			if ($.isFunction (value))
+			{
+				var values = this .getValue ();
+	
+				first = this .find (first, last, value);
+	
+				if (first !== last)
+				{
+					for (var i = first; ++ i < last; )
+					{
+						var current = values [i];
+
+						if (! value (current .valueOf ()))
+						{
+							var tmp = values [first];
+	
+							values [first ++] = current;
+							values [i]        = tmp;
+						}
+					}
+				}
+	
+				return first;
+			}
+
 			var values = this .getValue ();
 
 			first = this .find (first, last, value);

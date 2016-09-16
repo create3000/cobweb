@@ -66,68 +66,19 @@ function ($,
 {
 "use strict";
 
-	function remove (array, first, last, range, rfirst, rlast, getId)
-	{
-		if (! getId)
-			getId = remove .getId ;
+	function getId (value) { return value ? value .getValue () .getId () : -1; }
 
+	function remove (array, first, last, range, rfirst, rlast)
+	{
 		var set = { };
 
 		for (var i = rfirst; i < rlast; ++ i)
 			set [getId (range [i])] = true;
 
-		return remove_impl (array, first, last, set, getId);
+		function compare (value) { return set [getId (value)]; }
+
+		return array .remove (first, last, compare);
 	}
-
-	function remove_impl (array, first, last, set, getId)
-	{
-		if ($.isEmptyObject (set))
-			return last;
-
-		var count = 0;
-
-		for (; first !== last; ++ first)
-		{
-			if (set [getId (array [first])])
-			{
-				++ count;
-				break;
-			}
-		}
-
-		LOOP:
-		for (; ;)
-		{
-			var second = first + count;
-
-			for (; second !== last; ++ first, ++ second)
-			{
-				if (set [getId (array [second])])
-				{
-					++ count;
-					continue LOOP;
-				}
-
-				array [first] = array [second];
-			}
-
-			break;
-		}
-
-		for (var second = first + count; second !== last; ++ first, ++ second)
-		{
-			array [first] = array [second];
-		}
-
-		return first;
-	}
-
-	remove .getId = function (value) { return value; };
-
-	//
-
-	//function getId (value) { return value ? value .getId () : -1; };
-	function getNodeId (value) { return value ? value .getValue () .getId () : -1; }
 
 	var visible = new Fields .MFBool ();
 
@@ -213,8 +164,7 @@ function ($,
 
 			this .addChildren_ .setTainted (true);
 			this .addChildren_ .erase (remove (this .addChildren_, 0, this .addChildren_ .length,
-			                                   this .children_,    0, this .children_    .length,
-			                                   getNodeId),
+			                                   this .children_,    0, this .children_    .length),
 			                           this .addChildren_ .length);
 
 			if (! this .children_ .getTainted ())
@@ -244,8 +194,7 @@ function ($,
 			}
 
 			this .children_ .erase (remove (this .children_,       0, this .children_ .length,
-			                                this .removeChildren_, 0, this .removeChildren_ .length,
-			                                getNodeId),
+			                                this .removeChildren_, 0, this .removeChildren_ .length),
 			                        this .children_ .length);
 
 			this .removeChildren_ .set ([ ]);

@@ -80,11 +80,17 @@ function initialize ()
 	var n2 = Browser .currentScene .createNode ("Group");
 	var n3 = Browser .currentScene .createNode ("Switch");
 
+	var s = {};
+	s [n1 .getValue () .getId ()] = true;
+	s [n2 .getValue () .getId ()] = true;
+
+	function compare (value) { return s [value .getValue () .getId ()]; }
+
 	var a = new MFNode (n1,n2,n3,n1,n1,n2,n3);
 
 	console .log (a .toString ());
 
-	a .erase (a .remove (0, a .length, n1), a .length);
+	a .erase (a .remove (0, a .length, compare), a .length);
 
 	console .log (a .toString ());
 
