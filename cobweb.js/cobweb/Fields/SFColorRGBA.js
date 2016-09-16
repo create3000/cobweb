@@ -96,11 +96,6 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 		getHSV: SFColor .getHSV,
 		setHSV: SFColor .setHSV,
 		toString: SFColor .toString,
-		dispose: function ()
-		{
-			this .getValue () .set (0, 0, 0, 0);
-			this .addEvent ();
-		},
 	});
 
 	var r = {

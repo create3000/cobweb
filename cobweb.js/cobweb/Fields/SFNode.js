@@ -200,7 +200,8 @@ function ($, X3DField, X3DConstants)
 		},
 		dispose: function ()
 		{
-			this .setValue (null);
+			this .set (null);
+			X3DField .prototype .dispose .call (this);
 		},
 	});
 

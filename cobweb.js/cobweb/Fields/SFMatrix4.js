@@ -92,11 +92,6 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec3, X3DConstants, Matrix4)
 			{
 				return Type;
 			},
-			dispose: function ()
-			{
-				this .getValue () .identity ();
-				this .addEvent ();
-			},
 		});
 	
 		function defineProperty (i)

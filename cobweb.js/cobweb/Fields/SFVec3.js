@@ -89,11 +89,6 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector3)
 			{
 				return new (this .constructor) (Vector3 .cross (this .getValue (), vector .getValue ()));
 			},
-			dispose: function ()
-			{
-				this .getValue () .set (0, 0, 0);
-				this .addEvent ();
-			},
 		});
 	
 		var x = {

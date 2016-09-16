@@ -85,11 +85,6 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector4)
 			{
 				return Type;
 			},
-			dispose: function ()
-			{
-				this .getValue () .set (0, 0, 0, 0);
-				this .addEvent ();
-			},
 		});
 	
 		var x = {

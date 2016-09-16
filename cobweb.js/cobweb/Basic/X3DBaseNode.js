@@ -431,6 +431,23 @@ function ($,
 		},
 		dispose: function ()
 		{
+			// TODO: remove named node if any. (do this in NamedNode)
+			// TODO: remove improted node if any. (do this in ImportedNode)
+			// TODO: remove exported node if any. (do this in ExportedNode)
+			// TODO: remove routes from and to node if any. (do this in Route)
+
+			var
+				predefinedFields  = this .getPredefinedFields (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in predefinedFields)
+				predefinedFields [name] .dispose ();
+
+			for (var name in userDefinedFields)
+				userDefinedFields [name] .dispose ();
+
+			// Remove node from entire scene graph.
+
 			var firstParents = this .getParents ();
 
 			for (var firstId in firstParents)

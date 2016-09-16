@@ -88,10 +88,6 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
-		dispose: function ()
-		{
-			this .setValue (0);
-		},
 	});
 
 	return SFDouble;

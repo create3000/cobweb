@@ -111,11 +111,6 @@ function ($, Color3, X3DField, X3DConstants)
 		{
 			return this .getValue () .toString ();
 		},
-		dispose: function ()
-		{
-			this .getValue () .set (0, 0, 0);
-			this .addEvent ();
-		},
 	});
 
 	var r = {
