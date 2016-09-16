@@ -120,6 +120,8 @@ function ($,
 
 			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
 
+			// Get shadow buffer from browser.
+
 			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
 			{
 				this .shadowBuffer = browser .popShadowBuffer (shadowMapSize);
@@ -225,14 +227,17 @@ function ($,
 		},
 		recycle: function ()
 		{
-			if (this .textureUnit)
-			{
-				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
-				this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			// Return shadowBuffer and textureUnit.
 
-				this .shadowBuffer = null;
-				this .textureUnit  = 0;
-			}
+			if (this .textureUnit)
+				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+
+			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+
+			this .shadowBuffer = null;
+			this .textureUnit  = 0;
+
+			// Return container
 
 		   DirectionalLights .push (this);
 		},
