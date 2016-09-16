@@ -53,8 +53,17 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
 function ($,
@@ -62,17 +71,50 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DLightNode, 
+          X3DGroupingNode, 
+          TraverseType,
           X3DConstants,
+          Box3,
+          Camera,
+          ViewVolume,
           Vector3,
+          Vector4,
+          Rotation4,
+          Matrix4,
+          Algorithm,
           ObjectCache)
 {
 "use strict";
+
+	// Negated directions
+	var directions = [
+		new Vector3 ( 1,  0,  0), // left
+		new Vector3 (-1,  0,  0), // right
+		new Vector3 ( 0,  1,  0), // bottom
+		new Vector3 ( 0, -1,  0), // top
+		new Vector3 ( 0,  0,  1), // back
+		new Vector3 ( 0,  0, -1), // front
+	];
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
 	function PointLightContainer (lightNode, groupNode)
 	{
-		this .location = new Vector3 (0, 0, 0);
+		this .location             = new Vector3 (0, 0, 0);
+		this .direction            = new Vector3 (0, 0, 0);
+		this .shadowBuffer         = null;
+		this .bbox                 = new Box3 ();
+		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewport             = new Vector4 (0, 0, 0, 0);
+		this .projectionMatrix     = new Matrix4 ();
+		this .modelViewMatrix      = new Matrix4 ();
+		this .transformationMatrix = new Matrix4 ();
+		this .invLightSpaceMatrix  = new Matrix4 ();
+		this .shadowMatrix         = new Matrix4 ();
+		this .shadowMatrixArray    = new Float32Array (16);
+		this .rotation             = new Rotation4 ();
+		this .rotationMatrix       = new Matrix4 ();
+		this .textureUnit          = 0;
 	
 		this .set (lightNode, groupNode);
 	}
@@ -82,35 +124,159 @@ function ($,
 		constructor: PointLightContainer,
 	   set: function (lightNode, groupNode)
 	   {
-			this .groupNode        = groupNode;
-			this .color            = lightNode .getColor ();
-			this .intensity        = lightNode .getIntensity ();
-			this .ambientIntensity = lightNode .getAmbientIntensity ();
-			this .attenuation      = lightNode .attenuation_ .getValue ();
-			this .radius           = lightNode .getRadius ();
+			var
+				browser       = lightNode .getBrowser (),
+				gl            = browser .getContext (),
+				shadowMapSize = lightNode .getShadowMapSize ();
+
+			var modelViewMatrix = browser .getModelViewMatrix () .get ();
 	
-			lightNode .getBrowser () .getModelViewMatrix () .get () .multVecMatrix (this .location .assign (lightNode .location_ .getValue ()));
+			this .lightNode = lightNode;
+			this .groupNode = groupNode;
+
+			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+
+			// Get shadow buffer from browser.
+
+			if (lightNode .getShadowIntensity () > 0 && shadowMapSize > 0)
+			{
+				this .shadowBuffer = browser .popShadowBuffer (shadowMapSize);
+
+				if (this .shadowBuffer)
+				{
+					if (browser .getCombinedTextureUnits () .length)
+					{
+						this .textureUnit = browser .getCombinedTextureUnits () .pop ();
+
+						gl .activeTexture (gl .TEXTURE0 + this .textureUnit);
+						gl .bindTexture (gl .TEXTURE_2D, this .shadowBuffer .getDepthTexture ());
+						gl .activeTexture (gl .TEXTURE0);
+					}
+					else
+					{
+						console .warn ("Not enough combined texture units for shadow map available.");
+					}
+				}
+				else
+				{
+					console .warn ("Couldn't create shadow buffer.");
+				}
+			}
 	   },
 		renderShadowMap: function ()
 		{
+			try
+			{
+				if (! this .shadowBuffer)
+					return;
 
+				var
+					lightNode            = this .lightNode,
+					browser              = lightNode .getBrowser (),
+					layerNode            = lightNode .getCurrentLayer (),
+					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
+
+				invLightSpaceMatrix .translate (lightNode .getLocation ());
+				invLightSpaceMatrix .inverse ();
+
+				var
+					groupBBox        = X3DGroupingNode .prototype .getBBox .call (this .groupNode, this .bbox), // Group bbox.
+					lightBBox        = groupBBox .multRight (invLightSpaceMatrix),                              // Group bbox from the perspective of the light.
+					shadowMapSize1_2 = lightNode .getShadowMapSize () / 2,
+					shadowMapSize1_3 = lightNode .getShadowMapSize () / 3,
+					nearValue        = 0.125,
+					farValue         = 1000,
+					aspect           = Math .tan (Algorithm .radians (120) / 2) * nearValue,
+					projectionMatrix = Camera .frustum (-aspect, aspect, -aspect, aspect, nearValue, farValue, this .projectionMatrix);
+
+				this .shadowBuffer .bind ();
+
+				for (var y = 0; y < 3; ++ y)
+				{
+					for (var x = 0; x < 2; ++ x)
+					{
+						var
+							rotation = this .rotation .setFromToVec (this .direction .assign (directions [y * 2 + x]), Vector3 .zAxis), // inversed rotation
+							viewport = this .viewport .set (x * shadowMapSize1_2, y * shadowMapSize1_3, shadowMapSize1_2, shadowMapSize1_3);
+		
+						layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+						browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
+
+						browser .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
+						browser .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
+						browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+		
+						layerNode .render (this .groupNode, TraverseType .DEPTH);
+		
+						browser .getModelViewMatrix  () .pop ();
+						browser .getProjectionMatrix () .pop ();
+						layerNode .getViewVolumes () .pop ();
+					}
+				}
+
+				this .shadowBuffer .unbind ();
+	
+				if (! lightNode .getGlobal ())
+					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
+
+				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix);
+			}
+			catch (error)
+			{
+				// Catch error from matrix inverse.
+				console .log (error);
+			}
 		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
-			gl .uniform3f (shaderObject .x3d_LightColor [i],            this .color .r, this .color .g, this .color .b);
-			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        this .intensity);
-			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], this .ambientIntensity);
-			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      this .attenuation .x, this .attenuation .y, this .attenuation .z); // max
-			gl .uniform3f (shaderObject .x3d_LightLocation [i],         this .location .x, this .location .y, this .location .z);
-			gl .uniform1f (shaderObject .x3d_LightRadius [i],           this .radius);
-	
 			// For correct results the radius must be transform by the modelViewMatrix. This can only be done in the shader.
 			// distanceOfLightToFragmentInLightSpace = |(FragmentPosition - LightPosition) * inverseModelViewMatrixOfLight|
 			// distanceOfLightToFragmentInLightSpace can then be compared with radius.
+
+			var 
+				lightNode   = this .lightNode,
+				color       = lightNode .getColor (),
+				attenuation = lightNode .getAttenuation (),
+				location    = this .modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ())),
+				shadowColor = lightNode .getShadowColor ();
+
+			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
+			gl .uniform3f (shaderObject .x3d_LightColor [i],            color .r, color .g, color .b);
+			gl .uniform1f (shaderObject .x3d_LightIntensity [i],        lightNode .getIntensity ());
+			gl .uniform1f (shaderObject .x3d_LightAmbientIntensity [i], lightNode .getAmbientIntensity ());
+			gl .uniform3f (shaderObject .x3d_LightAttenuation [i],      Math .max (0, attenuation .x), Math .max (0, attenuation .y), Math .max (0, attenuation .z));
+			gl .uniform3f (shaderObject .x3d_LightLocation [i],         location .x, location .y, location .z);
+			gl .uniform1f (shaderObject .x3d_LightRadius [i],           lightNode .getRadius ());
+
+			if (this .textureUnit)
+			{
+				this .shadowMatrixArray .set (this .shadowMatrix);
+
+				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
+				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
+				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
+				gl .uniformMatrix4fv (shaderObject .x3d_ShadowMatrix [i], false, this .shadowMatrixArray);
+				gl .uniform1i        (shaderObject .x3d_ShadowMap [i],           this .textureUnit);
+			}
+			else
+				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
 		recycle: function ()
 		{
+			// Return shadowBuffer and textureUnit.
+
+			if (this .textureUnit)
+				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+
+			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+
+			this .shadowBuffer = null;
+			this .textureUnit  = 0;
+
+			// Return container
+
 		   PointLights .push (this);
 		},
 	};
@@ -152,6 +318,14 @@ function ($,
 		getContainerField: function ()
 		{
 			return "children";
+		},
+		getAttenuation: function ()
+		{
+			return this .attenuation_ .getValue ();
+		},
+		getLocation: function ()
+		{
+			return this .location_ .getValue ();
 		},
 		getRadius: function ()
 		{

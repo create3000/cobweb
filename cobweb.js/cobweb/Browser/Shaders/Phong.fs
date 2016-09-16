@@ -171,13 +171,10 @@ unpack (in vec4 color)
 }
 
 float
-getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in float angle)
+getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in Plane3 plane, in float angle)
 {
-	Plane3 plane = plane3 (v, vN);
-
 	if (lightType == x3d_PointLight)
 	{
-/*
 		// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.
 		mat4 projectionBias = mat4 (0.144337567297406, 0.0, 0.0, 0.0, 0.0, 0.0962250448649377, 0.0, 0.0, -0.25, -0.166666666666667, -1.00012501562695, -1.0, 0.0, 0.0, -0.125015626953369, 0.0); // fov: 120deg, 1000m
 
@@ -199,10 +196,14 @@ getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowD
 		offsets [4] = vec2 (0.0, 2.0 / 3.0);
 		offsets [5] = vec2 (0.5, 2.0 / 3.0);
 
-		int value = 0;
+		int value   = 0;
+		int samples = 0;
 
-		for (int m = 0, s = 0; m < 6 && s < x3d_ShadowSamples; ++ m)
+		for (int m = 0; m < 6; ++ m)
 		{
+			if (samples >= x3d_ShadowSamples)
+				break;
+
 			for (int i = 0; i < x3d_ShadowSamples; ++ i)
 			{
 				vec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);
@@ -226,14 +227,11 @@ getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowD
 				}
 
 				// We definitely have a shadow sample.
-				++ s;
+				++ samples;
 			}
 		}
 
 		return shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);
-*/
-
-		return 0.0;
 	}
 
 	int value = 0;
@@ -264,6 +262,8 @@ getMaterialColor ()
 {
 	if (x3d_Lighting)
 	{
+		Plane3 plane = plane3 (v, vN);
+
 		vec3  N  = normalize (gl_FrontFacing ? vN : -vN);
 		vec3  V  = normalize (-v); // normalized vector from point on geometry to viewer's position
 		float dV = length (v);
@@ -348,7 +348,7 @@ getMaterialColor ()
 
 				if (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)
 				{
-					float shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], a);
+					float shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], plane, a);
 	
 					finalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);
 				}
