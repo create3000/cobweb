@@ -149,6 +149,27 @@ function ($,
 
 			throw new Error ("Exported node '" + exportedName + "' not found.");
 		},
+		addRootNode: function (node)
+		{
+			if (! (node instanceof Fields .SFNode || node === null))
+				throw new Error ("Couldn't add root node: node must be of type SFNode.");
+
+			//if (node && node .getValue () && node .getValue () .getExecutionContext () !== this)
+			//	throw new Error ("Couldn't add root node: node does not belong to this execution context.");
+
+			this .getRootNodes () .push (node);
+		},
+		removeRootNode: function (node)
+		{
+			if (! (node instanceof Fields .SFNode || node === null))
+				throw new Error ("Couldn't remove root node: node must be of type SFNode.");
+
+			var
+				rootNodes = this .getRootNodes (),
+				length    = rootNodes .length;
+
+			rootNodes .erase (rootNodes .remove (0, length, node), length);
+		},
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
