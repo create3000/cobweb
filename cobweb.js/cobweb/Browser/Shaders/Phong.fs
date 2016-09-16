@@ -338,28 +338,26 @@ getMaterialColor ()
 				float specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;
 				vec3  specularTerm   = specularColor * specularFactor;
 
-				float attenuation                 = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
-				float spot                        = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;
-				vec3  lightColor                  = (attenuation * spot) * x3d_LightColor [i];
+				float attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);
+				float spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;
+				float attenuationSpotFactor       = attenuationFactor * spotFactor;
 				vec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;
 				vec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);
-				vec3  color                       = lightColor * ambientDiffuseSpecularColor;
 
 				#ifdef X3D_SHADOW
 
 				if (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)
 				{
 					float shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], a);
-					vec3  shadowColor     = x3d_ShadowColor [i] * ambientDiffuseSpecularColor;
 	
-					finalColor += mix (color, shadowColor, shadowIntensity);
+					finalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);
 				}
 				else
-					finalColor += color;
+					finalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);
 
 				#else
 
-					finalColor += color;
+					finalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);
 
 				#endif
 			}
