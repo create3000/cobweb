@@ -173,10 +173,14 @@ unpack (in vec4 color)
 float
 getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in Plane3 plane, in float angle)
 {
+	#define SHADOW_TEXTURE_EPS 0.01
+	#define SHADOW_BIAS_OFFSET 0.002
+	#define SHADOW_BIAS_FACTOR 0.004
+		
+	float shadowBias = SHADOW_BIAS_OFFSET + SHADOW_BIAS_FACTOR * (1.0 - abs (angle));
+
 	if (lightType == x3d_PointLight)
 	{
-		#define SHADOW_TEXTURE_EPS 0.01
-
 		// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.
 		mat4 projectionBias = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.0, 0.1443375672974065, 0.0, 0.0, -0.16666666666666666, -0.25, -1.0001250156269532, -1.0, 0.0, 0.0, -0.12501562695336918, 0.0); // fov: 120deg, 1000m
 
@@ -210,7 +214,7 @@ getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowD
 			{
 				vec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);
 				vec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);
-				float bias        = (0.001 + 0.004 * (1.0 - abs (angle))) / shadowCoord .w; // 0.005 / shadowCoord .w;
+				float bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;
 
 				shadowCoord .xyz /= shadowCoord .w;
 
@@ -242,7 +246,7 @@ getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowD
 	{
 		vec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);
 		vec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);
-		float bias        = (0.001 + 0.004 * (1.0 - abs (angle))) / shadowCoord .w; // 0.005 / shadowCoord .w;
+		float bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;
 
 		shadowCoord .xyz /= shadowCoord .w;
 
