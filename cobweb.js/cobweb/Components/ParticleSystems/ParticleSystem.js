@@ -1189,7 +1189,7 @@ function ($,
 				if (shaderNode === browser .getDefaultShader ())
 					shaderNode = this .shaderNode;
 	
-				if (shaderNode .x3d_Vertex < 0 || this .numParticles === 0)
+				if (this .numParticles === 0)
 					return;
 	
 				// Setup shader.

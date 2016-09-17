@@ -194,6 +194,13 @@ function ($,
 			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([2])); // depreciated
 			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([2])); // Set texture to active texture unit 2.
 			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
+
+			// Return true if valid, otherwise false.
+
+			if (this .x3d_Vertex < 0)
+				return false;
+
+			return true;
 		},
 		addShaderFields: function ()
 		{

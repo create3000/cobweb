@@ -582,9 +582,6 @@ function ($,
 				gl         = browser .getContext (),
 				shaderNode = context .shaderNode;
 
-			if (shaderNode .x3d_Vertex < 0)
-				return;
-
 			// Setup shader.
 
 			context .geometryType  = this .geometryType;
@@ -663,9 +660,6 @@ function ($,
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = context .shaderNode;
-
-			if (shaderNode .x3d_Vertex < 0)
-				return;
 
 			// Setup shader.
 

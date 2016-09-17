@@ -169,7 +169,7 @@ function ($,
 					program = gl .createProgram (),
 					parts   = this .parts_ .getValue (),
 					valid   = 0;
-				
+
 				if (this .getValid ())
 					this .removeShaderFields ();
 	
@@ -194,23 +194,28 @@ function ($,
 
 					valid = valid && gl .getProgramParameter (program, gl .LINK_STATUS);
 				}
-	
-				if (valid != this .isValid_ .getValue ())
-					this .isValid_ = valid;
 
 				if (valid)
 				{
-					// Initialize uniform variables
 					this .use ();
 
-					this .getDefaultUniforms ();
-					this .addShaderFields ();
+					// Initialize uniform variables and attributes
+					if (this .getDefaultUniforms ())
+					{
+						// Setup user-defined fields. 
+						this .addShaderFields ();
+					}
+					else
+						valid = false;
 
 					// Debug
 					// this .printProgramInfo ();
 				}
 				else
 					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
+	
+				if (valid != this .isValid_ .getValue ())
+					this .isValid_ = valid;
 			}
 			else
 			{

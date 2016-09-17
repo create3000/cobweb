@@ -88,9 +88,6 @@ function ($,
 			if (shaderNode === browser .getDefaultShader ())
 				shaderNode = this .shaderNode;
 
-			if (shaderNode .x3d_Vertex < 0)
-				return;
-
 			// Setup shader.
 
 			context .geometryType  = this .getGeometryType ();
@@ -125,9 +122,6 @@ function ($,
 
 			if (shaderNode === browser .getDefaultShader ())
 				shaderNode = this .shaderNode;
-
-			if (shaderNode .x3d_Vertex < 0)
-				return;
 
 			// Setup shader.
 
