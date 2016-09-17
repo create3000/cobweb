@@ -88,7 +88,7 @@ function ($,
 			if (shaderNode === browser .getDefaultShader ())
 				shaderNode = this .shaderNode;
 
-			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0)
 				return;
 
 			// Setup shader.
@@ -127,7 +127,7 @@ function ($,
 			if (shaderNode === browser .getDefaultShader ())
 				shaderNode = this .shaderNode;
 
-			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0)
 				return;
 
 			// Setup shader.
