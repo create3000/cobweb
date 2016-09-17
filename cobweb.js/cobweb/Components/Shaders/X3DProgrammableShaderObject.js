@@ -975,8 +975,8 @@ function ($,
 					attributeCount: 0,
 					uniformCount: 0,
 				},
-				activeUniforms   = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS),
-				activeAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+				activeUniforms   = gl .getProgramParameter (program, gl.ACTIVE_UNIFORMS),
+				activeAttributes = gl .getProgramParameter (program, gl.ACTIVE_ATTRIBUTES);
 
 			// Taken from the WebGl spec:
 			// http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14
