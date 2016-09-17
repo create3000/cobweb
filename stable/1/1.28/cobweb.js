@@ -37795,7 +37795,7 @@ define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:te
 
 define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n// 19 * x3d_MaxLights\n\n#ifdef X3D_SHADOW\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n// 22 * x3d_MaxLights = 176\n#endif\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\n#ifdef X3D_SHADOW\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in Plane3 plane, in float angle)\n{\n\t#define SHADOW_TEXTURE_EPS 0.01\n\t#define SHADOW_BIAS_OFFSET 0.002\n\t#define SHADOW_BIAS_FACTOR 0.004\n\t\t\n\tfloat shadowBias = SHADOW_BIAS_OFFSET + SHADOW_BIAS_FACTOR * (1.0 - abs (angle));\n\n\tif (lightType == x3d_PointLight)\n\t{\n\t\t// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.\n\t\tmat4 projectionBias = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.0, 0.1443375672974065, 0.0, 0.0, -0.16666666666666666, -0.25, -1.0001250156269532, -1.0, 0.0, 0.0, -0.12501562695336918, 0.0); // fov: 120deg, 1000m\n\n\t\t// Normals of the point light cube.\n\t\tmat4 rotations [6];\n\t\trotations [0] = mat4 ( 0.0, 0.0,  1.0, 0.0, 0.0, 1.0,  0.0, 0.0, -1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // left\n\t\trotations [1] = mat4 ( 0.0, 0.0, -1.0, 0.0, 0.0, 1.0,  0.0, 0.0,  1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // right\n\t\trotations [2] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0,  1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // back\n\t\trotations [3] = mat4 (-1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // front\n\t\trotations [4] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0,  1.0, 0.0,  0.0, -1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // bottom\n\t\trotations [5] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0, -1.0, 0.0,  0.0,  1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // top\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0,       0.0);\n\t\toffsets [1] = vec2 (1.0 / 3.0, 0.0);\n\t\toffsets [2] = vec2 (2.0 / 3.0, 0.0);\n\t\toffsets [3] = vec2 (0.0,       0.5);\n\t\toffsets [4] = vec2 (1.0 / 3.0, 0.5);\n\t\toffsets [5] = vec2 (2.0 / 3.0, 0.5);\n\n\t\tint value   = 0;\n\t\tint samples = 0;\n\n\t\tfor (int m = 0; m < 6; ++ m)\n\t\t{\n\t\t\tif (samples >= x3d_ShadowSamples)\n\t\t\t\tbreak;\n\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < SHADOW_TEXTURE_EPS || shadowCoord .x > 1.0 / 3.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < SHADOW_TEXTURE_EPS || shadowCoord .y > 1.0 / 2.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ samples;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (unpack (texture2D (shadowMap, shadowCoord .xy)) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n#endif\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tPlane3 plane = plane3 (v, vN);\n\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3  d = x3d_LightDirection [i];\n\t\t\t\tvec3  c = x3d_LightAttenuation [i];\n\t\t\t\tvec3  L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3  H = normalize (L + V);             // Specular term\n\t\t\t\tfloat a = dot (N, L);                    // Angle between normal and light ray.\n\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (a, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\t#ifdef X3D_SHADOW\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], plane, a);\n\t\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#else\n\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#endif\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n// 1\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n// 24\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n// 5\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n// 3\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n// 19 * x3d_MaxLights\n\n#ifdef X3D_SHADOW\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n// 22 * x3d_MaxLights = 176\n#endif\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\n#ifdef X3D_SHADOW\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowDepth (in int index, in vec2 shadowCoord)\n{\n\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t{\n\t\tif (i == index)\n\t\t{\n\t\t\treturn unpack (texture2D (x3d_ShadowMap [i], shadowCoord));\n\t\t}\n\t}\n\n\treturn 0.0;\n}\n\nfloat\ngetShadowIntensity (in int index, in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in Plane3 plane, in float angle)\n{\n\t#define SHADOW_TEXTURE_EPS 0.01\n\t#define SHADOW_BIAS_OFFSET 0.002\n\t#define SHADOW_BIAS_FACTOR 0.004\n\t\t\n\tfloat shadowBias = SHADOW_BIAS_OFFSET + SHADOW_BIAS_FACTOR * (1.0 - abs (angle));\n\n\tif (lightType == x3d_PointLight)\n\t{\n\t\t// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.\n\t\tmat4 projectionBias = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.0, 0.1443375672974065, 0.0, 0.0, -0.16666666666666666, -0.25, -1.0001250156269532, -1.0, 0.0, 0.0, -0.12501562695336918, 0.0); // fov: 120deg, 1000m\n\n\t\t// Normals of the point light cube.\n\t\tmat4 rotations [6];\n\t\trotations [0] = mat4 ( 0.0, 0.0,  1.0, 0.0, 0.0, 1.0,  0.0, 0.0, -1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // left\n\t\trotations [1] = mat4 ( 0.0, 0.0, -1.0, 0.0, 0.0, 1.0,  0.0, 0.0,  1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // right\n\t\trotations [2] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0,  1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // back\n\t\trotations [3] = mat4 (-1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // front\n\t\trotations [4] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0,  1.0, 0.0,  0.0, -1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // bottom\n\t\trotations [5] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0, -1.0, 0.0,  0.0,  1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // top\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0,       0.0);\n\t\toffsets [1] = vec2 (1.0 / 3.0, 0.0);\n\t\toffsets [2] = vec2 (2.0 / 3.0, 0.0);\n\t\toffsets [3] = vec2 (0.0,       0.5);\n\t\toffsets [4] = vec2 (1.0 / 3.0, 0.5);\n\t\toffsets [5] = vec2 (2.0 / 3.0, 0.5);\n\n\t\tint value   = 0;\n\t\tint samples = 0;\n\n\t\tfor (int m = 0; m < 6; ++ m)\n\t\t{\n\t\t\tif (samples >= x3d_ShadowSamples)\n\t\t\t\tbreak;\n\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < SHADOW_TEXTURE_EPS || shadowCoord .x > 1.0 / 3.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < SHADOW_TEXTURE_EPS || shadowCoord .y > 1.0 / 2.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (getShadowDepth (index, shadowCoord .xy + offsets [m]) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ samples;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (getShadowDepth (index, shadowCoord .xy) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n#endif\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tPlane3 plane = plane3 (v, vN);\n\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3  d = x3d_LightDirection [i];\n\t\t\t\tvec3  c = x3d_LightAttenuation [i];\n\t\t\t\tvec3  L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3  H = normalize (L + V);             // Specular term\n\t\t\t\tfloat a = dot (N, L);                    // Angle between normal and light ray.\n\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (a, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\t#ifdef X3D_SHADOW\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (i, lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], plane, a);\n\t\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#else\n\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#endif\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision highp float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
@@ -55746,6 +55746,3909 @@ define ('cobweb/Browser/Text/TextAlignment',[],function ()
 	return TextAlignment;
 });
 
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Text/X3DFontStyleNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Browser/Text/TextAlignment",
+	"cobweb/InputOutput/Loader",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+],
+function ($,
+          Fields,
+          X3DNode,
+          X3DUrlObject,
+          TextAlignment,
+          Loader,
+          X3DConstants,
+          urls,
+          URI)
+{
+
+
+   /*
+    * Font paths for default SERIF, SANS and TYPWRITER families.
+    */
+
+	var FontDirectories = [
+		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
+		"https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+		"http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+		"https://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+		"http://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
+	];
+
+	var Fonts =
+	{
+	   SERIF: {
+	      PLAIN:      "DroidSerif-Regular.ttf",
+	      ITALIC:     "DroidSerif-Italic.ttf",
+	      BOLD:       "DroidSerif-Bold.ttf",
+	      BOLDITALIC: "DroidSerif-BoldItalic.ttf",
+	   },
+	   SANS: {
+	      PLAIN:      "Ubuntu-R.ttf",
+	      ITALIC:     "Ubuntu-RI.ttf",
+	      BOLD:       "Ubuntu-B.ttf",
+	      BOLDITALIC: "Ubuntu-BI.ttf",
+	   },
+	   TYPEWRITER: {
+	      PLAIN:      "UbuntuMono-R.ttf",
+	      ITALIC:     "UbuntuMono-RI.ttf",
+	      BOLD:       "UbuntuMono-B.ttf",
+	      BOLDITALIC: "UbuntuMono-BI.ttf",
+	   },
+	};
+
+	function X3DFontStyleNode (executionContext)
+	{
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DFontStyleNode);
+		
+		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+
+		this .familyStack = [ ];
+		this .alignments  = [ ];
+		this .loader      = new Loader (this);
+	}
+
+	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: X3DFontStyleNode,
+		initialize: function ()
+		{
+			X3DNode .prototype .initialize .call (this);
+
+			this .style_   .addInterest (this, "set_style__");
+			this .justify_ .addInterest (this, "set_justify__");
+
+			this .font        = null;
+			this .familyIndex = 0;
+
+			this .set_justify__ ();
+			this .set_style__ ();
+
+			this .requestAsyncLoad ();
+		},
+		setLoadState: X3DUrlObject .prototype .setLoadState,
+		checkLoadState: X3DUrlObject .prototype .checkLoadState,
+		getMajorAlignment: function ()
+		{
+			return this .alignments [0];
+		},
+		getMinorAlignment: function ()
+		{
+			return this .alignments [1];
+		},
+		set_style__: function ()
+		{
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+
+			this .requestAsyncLoad ();
+		},
+		set_justify__: function ()
+		{
+			var majorNormal = this .horizontal_ .getValue () ? this .leftToRight_ .getValue () : this .topToBottom_ .getValue ();
+
+			this .alignments [0] = this .justify_ .length > 0
+			                       ? this .getAlignment (0, majorNormal)
+								        : majorNormal ? TextAlignment .BEGIN : TextAlignment .END;
+
+			var minorNormal = this .horizontal_ .getValue () ? this .topToBottom_ .getValue () : this .leftToRight_ .getValue ();
+
+			this .alignments [1] = this .justify_ .length > 1
+			                       ? this .getAlignment (1, minorNormal)
+								        : minorNormal ? TextAlignment .FIRST : TextAlignment .END;
+		},
+		getAlignment: function (index, normal)
+		{
+			if (normal)
+			{
+				// Return for west-european normal alignment.
+
+				switch (this .justify_ [index])
+				{
+					case "FIRST":  return TextAlignment .FIRST;
+					case "BEGIN":  return TextAlignment .BEGIN;
+					case "MIDDLE": return TextAlignment .MIDDLE;
+					case "END":    return TextAlignment .END;
+				}
+			}
+			else
+			{
+				// Return appropriate alignment if topToBottom or leftToRight are FALSE.
+
+				switch (this .justify_ [index])
+				{
+					case "FIRST":  return TextAlignment .END;
+					case "BEGIN":  return TextAlignment .END;
+					case "MIDDLE": return TextAlignment .MIDDLE;
+					case "END":    return TextAlignment .BEGIN;
+				}
+			}
+
+			return index ? TextAlignment .FIRST : TextAlignment .BEGIN;
+		},
+		requestAsyncLoad: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			// Add default font to family array.
+
+			var family = this .family_ .copy ();
+
+			family .push ("SERIF");
+
+			// Build family stack.
+
+			this .familyStack .length = 0;
+
+			for (var i = 0, length = family .length; i < length; ++ i)
+			{
+			   var
+			      familyName  = family [i],
+			      defaultFont = this .getDefaultFont (familyName);
+			   
+				if (defaultFont)
+				{
+				   for (var d = 0; d < FontDirectories .length; ++ d)
+				      this .familyStack .push (FontDirectories [d] + defaultFont);
+				}
+				else
+					this .familyStack .push (familyName);
+			}
+
+			this .loadNext ();
+		},
+		getDefaultFont: function (familyName)
+		{
+		   var family = Fonts [familyName];
+
+		   if (family)
+		   {
+		      var style = family [this .style_ .getValue ()];
+
+		      if (style)
+		         return style;
+
+		      return family .PLAIN;
+		   }
+
+		   return;
+		},
+		loadNext: function ()
+		{
+			try
+			{
+				if (this .familyStack .length === 0)
+				{
+					this .setLoadState (X3DConstants .FAILED_STATE);
+					this .font = null;
+					return;
+				}
+
+				this .family = this .familyStack .shift ();
+				this .URL    = this .loader .transform (this .family);
+
+				this .getBrowser () .getFont (this .URL, this .setFont .bind (this), this .setError .bind (this));
+			}
+			catch (error)
+			{
+				this .setError (error .message);
+			}
+		},
+		setError: function (error)
+		{
+			var URL = this .URL .toString ();
+
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
+			{
+				if (! URL .match (urls .fallbackExpression))
+					this .familyStack .unshift (urls .fallbackUrl + URL);
+			}
+
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading font '" + this .URL .toString () + "':", error);
+
+			this .loadNext ();
+		},
+		setFont: function (font)
+		{
+			this .font = font;
+
+			this .setLoadState (X3DConstants .COMPLETE_STATE);
+			this .addNodeEvent ();
+		},
+		getFont: function ()
+		{
+		   return this .font;
+		},
+	});
+
+	return X3DFontStyleNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('standard/Math/Geometry/Box2',[
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Numbers/Vector2",
+],
+function (Matrix3, Vector2)
+{
+;
+
+	var
+		x   = new Vector2 (0, 0),
+		y   = new Vector2 (0, 0),
+		min = new Vector2 (0, 0),
+		max = new Vector2 (0, 0),
+		p1  = new Vector2 (0, 0);
+
+	var
+		lhs_min = new Vector2 (0, 0),
+		lhs_max = new Vector2 (0, 0),
+		rhs_min = new Vector2 (0, 0),
+		rhs_max = new Vector2 (0, 0);
+
+	function Box2 (size, center)
+	{
+		switch (arguments .length)
+		{
+			case 0:
+			{
+				this .matrix = new Matrix3 (0.5, 0,   0,
+				                            0,   0.5, 0,
+				                            0,   0,   0);
+				return;
+			}
+			case 2:
+			{
+				this .matrix = new Matrix3 (size .x / 2, 0, 0,
+				                            0, size .y / 2, 0,
+				                            center .x, center .y, 1);
+				return;
+			}
+			case 3:
+			{
+				var
+					min = arguments [0],
+					max = arguments [1],
+					sx  = (max .x - min .x) / 2,
+					sy  = (max .y - min .y) / 2,
+					cx  = (max .x + min .x) / 2,
+					cy  = (max .y + min .y) / 2;
+
+				this .matrix = new Matrix3 (sx, 0,  0,
+				                            0,  sy, 0,
+				                            cx, cy, 1);
+				return;
+			}
+		}
+	}
+
+	Box2 .prototype =
+	{
+		constructor: Box2,
+		copy: function ()
+		{
+			var copy = Object .create (Box2 .prototype);
+			copy .matrix = this .matrix .copy ();
+			return copy;
+		},
+		assign: function (box)
+		{
+			this .matrix .assign (box .matrix);
+			return this;
+		},
+		equals: function (box)
+		{
+			return this .matrix .equals (box .matrix);
+		},
+		set: function (size, center)
+		{
+			var m = this .matrix;
+			m [0] = size .x / 2; m [1] = 0;           m [2] = 0;
+			m [3] = 0;           m [4] = size .y / 2; m [5] = 0;
+			m [6] = center .x;   m [7] = center .y;   m [8] = 1;
+			return this;
+		},
+		set: function (size, center)
+		{
+			var m = this .matrix;
+		
+			switch (arguments .length)
+			{
+				case 0:
+				{
+					m [0] = 0.5; m [1] = 0;   m [2] = 0;
+					m [3] = 0;   m [4] = 0.5; m [5] = 0;
+					m [6] = 0;   m [7] = 0;   m [8] = 0;
+					return this;
+				}
+				case 2:
+				{
+					m [0] = size .x / 2; m [1] = 0;           m [2] = 0;
+					m [3] = 0;           m [4] = size .y / 2; m [5] = 0;
+					m [6] = center .x;   m [7] = center .y;   m [8] = 1;
+					return this;
+				}
+				case 3:
+				{
+					var
+						min = arguments [0],
+						max = arguments [1],
+						sx  = (max .x - min .x) / 2,
+						sy  = (max .y - min .y) / 2,
+						cx  = (max .x + min .x) / 2,
+						cy  = (max .y + min .y) / 2;
+
+					m [0] = sx; m [1] = 0;  m [2] = 0;
+					m [3] = 0;  m [4] = sy; m [5] = 0;
+					m [6] = cx; m [7] = cy; m [8] = 1;
+					return this;
+				}
+			}
+		},
+		setExtents: function (min, max)
+		{
+			var
+				m  = this .matrix,
+				sx = (max .x - min .x) / 2,
+				sy = (max .y - min .y) / 2,
+				cx = (max .x + min .x) / 2,
+				cy = (max .y + min .y) / 2;
+
+			m [0] = sx; m [1] = 0;  m [2] = 0;
+			m [3] = 0;  m [4] = sy; m [5] = 0;
+			m [6] = cx; m [7] = cy; m [8] = 1;
+			return this;
+		},
+		isEmpty: function ()
+		{
+			return this .matrix [8] === 0;
+		},
+		add: function (box)
+		{
+			if (this .isEmpty ())
+				return this .assign (box);
+
+			if (box .isEmpty ())
+				return this;
+
+			this .getExtents (lhs_min, lhs_max);
+			box  .getExtents (rhs_min, rhs_max);
+
+			return this .assign (new Box2 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
+		},
+		multLeft: function (matrix)
+		{
+			this .matrix .multLeft (matrix);
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			this .matrix .multRight (matrix);
+			return this;
+		},
+		getExtents: function (min, max)
+		{
+			this .getAbsoluteExtents (min, max);
+
+			min .add (this .center);
+			max .add (this .center);
+		},
+		getAbsoluteExtents: function (min, max)
+		{
+		   var m = this .matrix;
+
+			x .set (m [0], m [1]);
+			y .set (m [3], m [4]);
+
+			p1 .assign (x) .add (y);
+
+			var p2 = y .subtract (x);
+
+			min .assign (p1) .min (p2);
+			max .assign (p1) .max (p2);
+
+			p1 .negate ();
+			p2 .negate ();
+
+			min .min (p1, p2);
+			max .max (p1, p2);
+		},
+		intersectsPoint: function (point)
+		{
+			this .getExtents (min, max);
+
+			return min .x <= point .x &&
+			       max .x >= point .x &&
+			       min .y <= point .y &&
+			       max .y >= point .y;
+		},
+		toString: function ()
+		{
+			return this .size + ", " + this .center;
+		},
+	};
+
+	Object .defineProperty (Box2 .prototype, "size",
+	{
+		get: function ()
+		{
+			var max = new Vector2 (0, 0);
+			
+			this .getAbsoluteExtents (min, max);
+
+			return max .subtract (min);
+		},
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (Box2 .prototype, "center",
+	{
+		get: function ()
+		{
+			return this .matrix .origin;
+		},
+		enumerable: true,
+		configurable: false
+	});
+
+	return Box2;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Text/X3DTextGeometry',[
+	"cobweb/Browser/Text/TextAlignment",
+	"standard/Math/Geometry/Box2",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+],
+function (TextAlignment,
+          Box2,
+          Box3,
+          Vector2,
+          Vector3)
+{
+
+
+	var
+		glyphCache  = { },
+		bbox        = new Box2 (),
+		lineBBox    = new Box2 (),
+		min         = new Vector2 (0, 0),
+		max         = new Vector2 (0, 0),
+		glyphMin    = new Vector2 (0, 0),
+		glyphMax    = new Vector2 (0, 0),
+		min3        = new Vector3 (0, 0, 0),
+		max3        = new Vector3 (0, 0, 0),
+		size        = new Vector2 (0, 0),
+		center      = new Vector2 (0, 0),
+		size1_2     = new Vector2 (0, 0),
+		translation = new Vector2 (0, 0),
+		lineBound   = new Vector2 (0, 0),
+		origin      = new Vector3 (0, 0, 0),
+		vector      = new Vector2 (0, 0),
+		box2        = new Box2 (),
+		zero2       = new Vector2 (0, 0),
+		zero3       = new Vector3 (0, 0, 0);
+
+	function X3DTextGeometry (text, fontStyle)
+	{
+		this .text           = text;
+		this .fontStyle      = fontStyle;
+		this .glyphs         = [ ];
+		this .minorAlignment = new Vector2 (0, 0);
+		this .translations   = [ ];
+		this .charSpacings   = [ ];
+		this .bearing        = new Vector2 (0, 0);
+		this .yPad           = [ ];
+		this .bbox           = new Box3 ();
+	}
+
+	X3DTextGeometry .prototype =
+	{
+		constructor: X3DTextGeometry,
+		getBrowser: function ()
+		{
+			return this .text .getBrowser ();
+		},
+		getText: function ()
+		{
+			return this .text;
+		},
+		getFontStyle: function ()
+		{
+			return this .fontStyle;
+		},
+		getGlyphs: function ()
+		{
+			return this .glyphs;
+		},
+		getMinorAlignment: function ()
+		{
+			return this .minorAlignment;
+		},
+		getTranslations: function ()
+		{
+			return this .translations;
+		},
+		getCharSpacings: function ()
+		{
+			return this .charSpacings;
+		},
+		getBearing: function ()
+		{
+			return this .bearing;
+		},
+		getBBox: function ()
+		{
+			return this .bbox;
+		},
+		update: function ()
+		{
+			var
+				text      = this .text,
+				fontStyle = this .fontStyle,
+				numLines  = text .string_ .length;
+			
+			text .lineBounds_ .length = numLines;
+			this .glyphs      .length = 0;
+
+			if (numLines === 0 || ! fontStyle .getFont ())
+			{
+				text .origin_     .setValue (zero3);
+				text .textBounds_ .setValue (zero2);
+
+				this .bbox .set ();
+				return;
+			}
+
+			if (fontStyle .horizontal_ .getValue ())
+			{
+				this .resizeArray (this .translations, numLines);
+				this .resizeArray (this .charSpacings, numLines);
+
+				this .horizontal (text, fontStyle);
+			}
+			else
+			{
+				var
+					string   = text .string_ .getValue (),
+					numChars = 0;
+			
+				for (var i = 0, length = string .length; i < length; ++ i)
+					numChars += string [i] .length;
+
+				this .resizeArray (this .translations, numChars);
+				this .resizeArray (this .charSpacings, numChars);
+
+				this .vertical (text, fontStyle);
+			}
+		},
+		resizeArray: function (array, size)
+		{
+			// Resize array in grow only fashion.
+
+			for (var i = array .length; i < size; ++ i)
+				array .push (new Vector2 (0, 0));
+
+			array .length = size;
+		},
+		horizontal: function (text, fontStyle)
+		{
+			var
+				font        = fontStyle .getFont (),
+				string      = text .string_ .getValue (),
+				numLines    = string .length,
+				maxExtent   = Math .max (0, text .maxExtent_ .getValue ()),
+				topToBottom = fontStyle .topToBottom_ .getValue (),
+				scale       = fontStyle .getScale (),
+				spacing     = fontStyle .spacing_ .getValue ();
+			
+			bbox .set ();
+
+			// Calculate bboxes.
+
+			var
+				first = topToBottom ? 0 : numLines - 1,
+				last  = topToBottom ? numLines : -1,
+				step  = topToBottom ? 1 : -1;
+
+			for (var l = first, ll = 0; l !== last; l += step, ++ ll)
+			{
+				var line = string [l];
+
+				// Get line extents.
+
+				var glyphs = this .getHorizontalLineExtents (fontStyle, line, min, max, ll);
+
+				size .assign (max) .subtract (min);
+
+				// Calculate charSpacing and lineBounds.
+
+				var lineNumber = topToBottom ? l : numLines - l - 1;
+
+				var
+					charSpacing = 0,
+					length      = text .getLength (l);
+	
+				lineBound .set (size .x, lineNumber == 0 ? max .y - font .descender / font .unitsPerEm : spacing) .multiply (scale);
+
+				if (maxExtent)
+				{
+					if (length)
+						length = Math .min (maxExtent, length);
+
+					else
+						length = Math .min (maxExtent, size .x * scale);
+				}
+
+				if (length)
+				{
+					charSpacing  = (length - lineBound .x) / (glyphs .length - 1);
+					lineBound .x = length;
+					size .x      = length / scale;
+				}
+
+				this .charSpacings [ll] = charSpacing 
+				text .lineBounds_ [l]   = lineBound;
+
+				// Calculate line translation.
+
+				switch (fontStyle .getMajorAlignment ())
+				{
+					case TextAlignment .BEGIN:
+					case TextAlignment .FIRST:
+						this .translations [ll] .set (0, -ll * spacing);
+						break;
+					case TextAlignment .MIDDLE:
+						this .translations [ll] .set (-min .x - size .x / 2, -ll * spacing);
+						break;
+					case TextAlignment .END:
+						this .translations [ll] .set (-min .x - size .x, -ll * spacing);
+						break;
+				}
+
+				this .translations [ll] .multiply (scale);
+
+				// Calculate center.
+
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
+
+				// Add bbox.
+
+				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [ll])));
+			}
+
+			//console .log ("size", bbox .size, "center", bbox .center);
+
+			// Get text extents.
+
+			bbox .getExtents (min, max);
+
+			size .assign (max) .subtract (min);
+
+			// Calculate text position
+
+			text .textBounds_ = size;
+			this .bearing .set (0, -max .y);
+
+			switch (fontStyle .getMinorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+					this .minorAlignment .assign (this .bearing);
+					break;
+				case TextAlignment .FIRST:
+					this .minorAlignment .set (0, 0);
+					break;
+				case TextAlignment .MIDDLE:
+					this .minorAlignment .set (0, size .y / 2 - max .y);
+					break;
+				case TextAlignment .END:
+					this .minorAlignment .set (0, (numLines - 1) * spacing * scale);
+					break;
+			}
+
+			// Translate bbox by minorAlignment.
+
+			min .add (this .minorAlignment);
+			max .add (this .minorAlignment);
+
+			// The value of the origin field represents the upper left corner of the textBounds.
+
+			text .origin_ .setValue (origin .set (min .x, max .y, 0));
+
+			this .bbox .setExtents (min3 .set (min .x, min .y, 0),
+			                        max3 .set (max .x, max .y, 0));
+		},
+		vertical: function (text, fontStyle)
+		{		
+			var
+				font             = fontStyle .getFont (),
+				string           = text .string_ .getValue (),
+				numLines         = string .length,
+				maxExtent        = Math .max (0, text .maxExtent_ .getValue ()),
+				leftToRight      = fontStyle .leftToRight_ .getValue (),
+				topToBottom      = fontStyle .topToBottom_ .getValue (),
+				scale            = fontStyle .getScale (),
+				spacing          = fontStyle .spacing_ .getValue (),
+				yPad             = this .yPad,
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
+	
+			bbox .set ();
+		
+			// Calculate bboxes.
+
+			var
+				firstL = leftToRight ? 0 : numLines - 1,
+				lastL  = leftToRight ? numLines : -1,
+				stepL  = leftToRight ? 1 : -1,
+				t      = 0; // Translation index
+
+			for (var l = firstL; l !== lastL; l += stepL)
+			{
+				var glyphs = this .stringToGlyphs (font, string [l], true, l);
+
+				var
+					t0       = t,
+					numChars = glyphs .length;
+
+				// Calculate line bbox
+		
+				lineBBox .set ();
+		
+				var
+					firstG = topToBottom ? 0 : numChars - 1,
+					lastG  = topToBottom ? numChars : -1,
+					stepG  = topToBottom ? 1 : -1;
+
+				for (var g = firstG; g !== lastG; g += stepG, ++ t)
+				{
+					var glyph = glyphs [g];
+
+					// Get glyph extents.
+
+					this .getGlyphExtents (glyph, primitiveQuality, min, max);
+		
+					size .assign (max) .subtract (min);
+					
+					// Calculate glyph translation
+					
+					var glyphNumber = topToBottom ? g : numChars - g - 1;
+
+					this .translations [t] .set ((spacing - size .x - min .x) / 2, -glyphNumber);
+
+					// Calculate center.
+
+					center .assign (min) .add (size1_2 .assign (size) .divide (2)) .add (this .translations [t]);
+		
+					// Add bbox.
+		
+					lineBBox .add (box2 .set (size, center));
+				}
+							
+				// Get line extents.
+		
+				lineBBox .getExtents (min, max);
+		
+				size .assign (max) .subtract (min);
+	
+				// Calculate charSpacing and lineBounds.
+
+				var
+					lineNumber  = leftToRight ? l : numLines - l - 1,
+					padding     = (spacing - size .x) / 2,
+					charSpacing = 0,
+					length      = text .getLength (l);
+
+				lineBound .set (l === 0 ? spacing - padding: spacing, size .y) .multiply (scale);
+
+				if (maxExtent)
+				{
+					if (length)
+						length = Math .min (maxExtent, length);
+		
+					else
+						length = Math .min (maxExtent, size .y * scale);
+				}
+		
+				if (length)
+				{
+					charSpacing  = (length - lineBound .y) / (glyphs .length - 1) / scale;
+					lineBound .y = length;
+					size .y      = length / scale;
+					min .y       = max .y  - size .y;
+				}
+		
+				text .lineBounds_ [l] = lineBound;
+	
+				// Calculate line translation.
+				
+				switch (fontStyle .getMajorAlignment ())
+				{
+					case TextAlignment .BEGIN:
+					case TextAlignment .FIRST:
+						translation .set (lineNumber * spacing, -1);
+						break;
+					case TextAlignment .MIDDLE:
+						translation .set (lineNumber * spacing, (size .y / 2 - max .y));
+						break;
+					case TextAlignment .END:
+					{
+						// This is needed to make maxExtend and charSpacing work.
+						this .getGlyphExtents (glyphs [topToBottom ? numChars - 1 : 0] , primitiveQuality, glyphMin, vector);
+
+						translation .set (lineNumber * spacing, (size .y - max .y + glyphMin .y));
+						break;
+					}
+				}
+		
+				// Calculate glyph translation		
+		
+				var space = 0;
+		
+				for (var tt = t0; tt < t; ++ tt)
+				{
+					this .translations [tt] .add (translation);
+
+					this .translations [tt] .y -= space;
+
+					this .translations [tt] .multiply (scale);
+
+					space += charSpacing;
+				}
+		
+				// Calculate ypad to extend line bounds.
+
+				switch (fontStyle .getMajorAlignment ())
+				{
+					case TextAlignment .BEGIN:
+					case TextAlignment .FIRST:
+						yPad [l] = max .y + translation .y;
+						break;
+					case TextAlignment .MIDDLE:
+						yPad [l] = 0;
+						break;
+					case TextAlignment .END:
+						yPad [l] = min .y + translation .y;
+						break;
+				}
+
+				// Calculate center.
+
+				center .assign (min) .add (size1_2 .assign (size) .divide (2));
+		
+				// Add bbox.
+					
+				bbox .add (box2 .set (size .multiply (scale), center .add (translation) .multiply (scale)));
+			}
+
+			// Get text extents.
+		
+			bbox .getExtents (min, max);
+		
+			size .assign (max) .subtract (min);
+			
+			// Extend lineBounds.
+		
+			switch (fontStyle .getMajorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+				{
+					var lineBounds = text .lineBounds_ .getValue ();
+
+					for (var i = 0, length = lineBounds .length; i < length; ++ i)
+						lineBounds [i] .y += max .y - yPad [i] * scale;
+		
+					break;
+				}
+				case TextAlignment .MIDDLE:
+					break;
+				case TextAlignment .END:
+				{
+					var lineBounds = text .lineBounds_ .getValue ();
+
+					for (var i = 0, length = lineBounds .length; i < length; ++ i)
+						lineBounds [i].y += yPad [i] * scale - min .y;
+		
+					break;
+				}
+			}
+	
+			// Calculate text position
+		
+			text .textBounds_ = size;
+		
+			switch (fontStyle .getMajorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					this .bearing .set (-min .x, max .y);
+					break;
+				case TextAlignment .MIDDLE:
+					this .bearing .set (-min .x, 0);
+					break;
+				case TextAlignment .END:
+					this .bearing .set (-min .x, min .y);
+					break;
+			}
+		
+			switch (fontStyle .getMinorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					this .minorAlignment .set (-min .x, 0);
+					break;
+				case TextAlignment .MIDDLE:
+					this .minorAlignment .set (-min .x - size .x / 2, 0);
+					break;
+				case TextAlignment .END:
+					this .minorAlignment .set (-min .x - size .x, 0);
+					break;
+			}
+		
+			// Translate bbox by minorAlignment.
+		
+			min .add (this .minorAlignment);
+			max .add (this .minorAlignment);
+
+			// The value of the origin field represents the upper left corner of the textBounds.
+
+			text .origin_ .setValue (origin .set (min .x, max .y, 0));
+
+			this .bbox .set (min3 .set (min .x, min .y, 0),
+			                 max3 .set (max .x, max .y, 0),
+			                 true);
+		},
+		stringToGlyphs: function (font, line, normal, lineNumber)
+		{
+			line = line .getValue ();
+
+			var
+				fontGlyphCache = glyphCache [font .fontName],
+				glypes         = this .glyphs [lineNumber];
+
+			if (! fontGlyphCache)
+				fontGlyphCache = glyphCache [font .fontName] = [ ];
+
+			if (! glypes)
+				glypes = this .glyphs [lineNumber] = [ ];
+
+			glypes .length = line .length;
+
+			var
+				first = normal ? 0 : line .length - 1,
+				last  = normal ? line .length : -1,
+				step  = normal ? 1 : -1;
+
+			for (var c = first, g = 0; c !== last; c += step, ++ g)
+			{
+				var
+					charCode = line .charCodeAt (c),
+					glyph     = null;
+				
+				if (glyph = fontGlyphCache [charCode])
+					;
+				else
+				{
+					glyph = font .stringToGlyphs (line [c]) [0];
+
+					fontGlyphCache [charCode] = glyph;
+
+					glyph .extents = { };
+				}
+
+				glypes [g] = glyph;
+			}
+
+			return glypes;
+		},
+		getHorizontalLineExtents: function (fontStyle, line, min, max, lineNumber)
+		{
+			var
+				font             = fontStyle .getFont (),
+				normal           = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
+				glyphs           = this .stringToGlyphs (font, line, normal, lineNumber),
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+				xMin             = 0,
+				xMax             = 0,
+				yMin             = Number .POSITIVE_INFINITY,
+				yMax             = Number .NEGATIVE_INFINITY;
+
+			for (var g = 0, length = glyphs .length; g < length; ++ g)
+			{
+				var
+					glyph   = glyphs [g],
+					kerning = g + 1 < length ? font .getKerningValue (glyph, glyphs [g + 1]) : 0;
+
+				this .getGlyphExtents (glyph, primitiveQuality, glyphMin, glyphMax);
+
+				var advanceWidth = g + 1 < length ? glyph .advanceWidth : glyphMax .x * font .unitsPerEm;
+
+				xMax += advanceWidth + kerning;
+				yMin  = Math .min (yMin, glyphMin .y);
+				yMax  = Math .max (yMax, glyphMax .y);
+			}
+
+			if (glyphs .length)
+			{
+				this .getGlyphExtents (glyphs [0], primitiveQuality, glyphMin, glyphMax);
+
+				xMin  = glyphMin .x;
+			}
+			else
+			{
+				yMin = 0;
+				yMax = 0;
+			}
+
+			min .set (xMin, yMin);
+			max .set (xMax / font .unitsPerEm, yMax);
+
+			switch (fontStyle .getMajorAlignment ())
+			{
+				case TextAlignment .BEGIN:
+				case TextAlignment .FIRST:
+					min .x = 0;
+					break;
+			}
+
+			return glyphs;
+		},
+	};
+
+	return X3DTextGeometry;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+﻿
+define ('standard/Math/Geometry/Triangle2',[],function ()
+{
+
+
+	return {
+		isPointInTriangle: function (a, b, c, point)
+		{
+		   // https://en.wikipedia.org/wiki/Barycentric_coordinate_system
+
+		   var det = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
+
+		   var u = ((b.y - c.y) * (point .x - c.x) + (c.x - b.x) * (point .y - c.y)) / det;
+
+		   if (u < 0 || u > 1)
+		      return false;
+
+		   var v = ((c.y - a.y) * (point .x - c.x) + (a.x - c.x) * (point .y - c.y)) / det;
+
+		   if (v < 0 || v > 1)
+		      return false;
+
+		   var t = 1 - u - v;
+
+		   if (t < 0 || t > 1)
+		      return false;
+		   
+			return true;
+		},
+	};
+});
+
+//(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Bezier = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/**
+  A javascript Bezier curve library by Pomax.
+
+  Based on http://pomax.github.io/bezierinfo
+
+  This code is MIT licensed.
+**/
+//(function() {
+
+define ('lib/bezierjs/bezier.js',[],function ()
+{
+  
+
+  // Math functions. I hate the Math namespace with a passion.
+  var abs = Math.abs,
+      min = Math.min,
+      max = Math.max,
+      cos = Math.cos,
+      sin = Math.sin,
+      acos = Math.acos,
+      asin = Math.asin,
+      atan2 = Math.atan2,
+      sqrt = Math.sqrt,
+      // cube root function yielding real roots
+      crt = function(v) { if(v<0) return -Math.pow(-v,1/3); return Math.pow(v,1/3); },
+      pi = Math.PI,
+      tau = 2*pi,
+      quart = pi/2;
+
+  // a zero coordinate, which is surprisingly useful
+  var ZERO = {x:0,y:0,z:0};
+
+  // Bezier utility functions
+  var utils = {
+    // Legendre-Gauss abscissae with n=24 (x_i values, defined at i=n as the roots of the nth order Legendre polynomial Pn(x))
+    Tvalues: [
+      -0.0640568928626056260850430826247450385909,
+       0.0640568928626056260850430826247450385909,
+      -0.1911188674736163091586398207570696318404,
+       0.1911188674736163091586398207570696318404,
+      -0.3150426796961633743867932913198102407864,
+       0.3150426796961633743867932913198102407864,
+      -0.4337935076260451384870842319133497124524,
+       0.4337935076260451384870842319133497124524,
+      -0.5454214713888395356583756172183723700107,
+       0.5454214713888395356583756172183723700107,
+      -0.6480936519369755692524957869107476266696,
+       0.6480936519369755692524957869107476266696,
+      -0.7401241915785543642438281030999784255232,
+       0.7401241915785543642438281030999784255232,
+      -0.8200019859739029219539498726697452080761,
+       0.8200019859739029219539498726697452080761,
+      -0.8864155270044010342131543419821967550873,
+       0.8864155270044010342131543419821967550873,
+      -0.9382745520027327585236490017087214496548,
+       0.9382745520027327585236490017087214496548,
+      -0.9747285559713094981983919930081690617411,
+       0.9747285559713094981983919930081690617411,
+      -0.9951872199970213601799974097007368118745,
+       0.9951872199970213601799974097007368118745
+    ],
+
+    // Legendre-Gauss weights with n=24 (w_i values, defined by a function linked to in the Bezier primer article)
+    Cvalues: [
+      0.1279381953467521569740561652246953718517,
+      0.1279381953467521569740561652246953718517,
+      0.1258374563468282961213753825111836887264,
+      0.1258374563468282961213753825111836887264,
+      0.1216704729278033912044631534762624256070,
+      0.1216704729278033912044631534762624256070,
+      0.1155056680537256013533444839067835598622,
+      0.1155056680537256013533444839067835598622,
+      0.1074442701159656347825773424466062227946,
+      0.1074442701159656347825773424466062227946,
+      0.0976186521041138882698806644642471544279,
+      0.0976186521041138882698806644642471544279,
+      0.0861901615319532759171852029837426671850,
+      0.0861901615319532759171852029837426671850,
+      0.0733464814110803057340336152531165181193,
+      0.0733464814110803057340336152531165181193,
+      0.0592985849154367807463677585001085845412,
+      0.0592985849154367807463677585001085845412,
+      0.0442774388174198061686027482113382288593,
+      0.0442774388174198061686027482113382288593,
+      0.0285313886289336631813078159518782864491,
+      0.0285313886289336631813078159518782864491,
+      0.0123412297999871995468056670700372915759,
+      0.0123412297999871995468056670700372915759
+    ],
+    arcfn: function(t, derivativeFn) {
+      var d = derivativeFn(t);
+      var l = d.x*d.x + d.y*d.y;
+      if(typeof d.z !== "undefined") {
+        l += d.z*d.z;
+      }
+      return sqrt(l);
+    },
+    length: function(derivativeFn) {
+      var z=0.5,sum=0,len=this.Tvalues.length,i,t;
+      for(i=0; i<len; i++) {
+        t = z * this.Tvalues[i] + z;
+        sum += this.Cvalues[i] * this.arcfn(t,derivativeFn);
+      }
+      return z * sum;
+    },
+    map: function(v, ds,de, ts,te) {
+      var d1 = de-ds, d2 = te-ts, v2 =  v-ds, r = v2/d1;
+      return ts + d2*r;
+    },
+    lerp: function(r, v1, v2) {
+      var ret = {
+        x: v1.x + r*(v2.x-v1.x),
+        y: v1.y + r*(v2.y-v1.y)
+      };
+      if(!!v1.z && !!v2.z) {
+        ret.z =  v1.z + r*(v2.z-v1.z);
+      }
+      return ret;
+    },
+    pointToString: function(p) {
+      var s = p.x+"/"+p.y;
+      if(typeof p.z !== "undefined") {
+        s += "/"+p.z;
+      }
+      return s;
+    },
+    pointsToString: function(points) {
+      return "[" + points.map(this.pointToString).join(", ") + "]";
+    },
+    copy: function(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    },
+    angle: function(o,v1,v2) {
+      var dx1 = v1.x - o.x,
+          dy1 = v1.y - o.y,
+          dx2 = v2.x - o.x,
+          dy2 = v2.y - o.y,
+          cross = dx1*dy2 - dy1*dx2,
+          m1 = sqrt(dx1*dx1+dy1*dy1),
+          m2 = sqrt(dx2*dx2+dy2*dy2),
+          dot;
+      dx1/=m1; dy1/=m1; dx2/=m2; dy2/=m2;
+      dot = dx1*dx2 + dy1*dy2;
+      return atan2(cross, dot);
+    },
+    dist: function(p1, p2) {
+      var dx = p1.x - p2.x,
+          dy = p1.y - p2.y;
+      return sqrt(dx*dx+dy*dy);
+    },
+    lli8: function(x1,y1,x2,y2,x3,y3,x4,y4) {
+      var nx=(x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4),
+          ny=(x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4),
+          d=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
+      if(d==0) { return false; }
+      return { x: nx/d, y: ny/d };
+    },
+    lli4: function(p1,p2,p3,p4) {
+      var x1 = p1.x, y1 = p1.y,
+          x2 = p2.x, y2 = p2.y,
+          x3 = p3.x, y3 = p3.y,
+          x4 = p4.x, y4 = p4.y;
+      return this.lli8(x1,y1,x2,y2,x3,y3,x4,y4);
+    },
+    lli: function(v1, v2) {
+      return this.lli4(v1,v1.c,v2,v2.c);
+    },
+    makeline: function(p1,p2) {
+      var x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y, dx = (x2-x1)/3, dy = (y2-y1)/3;
+      return new Bezier(x1, y1, x1+dx, y1+dy, x1+2*dx, y1+2*dy, x2, y2);
+    },
+    findbbox: function(sections) {
+      var mx=99999999,my=mx,MX=-mx,MY=MX;
+      sections.forEach(function(s) {
+        var bbox = s.bbox();
+        if(mx > bbox.x.min) mx = bbox.x.min;
+        if(my > bbox.y.min) my = bbox.y.min;
+        if(MX < bbox.x.max) MX = bbox.x.max;
+        if(MY < bbox.y.max) MY = bbox.y.max;
+      });
+      return {
+        x: { min: mx, mid:(mx+MX)/2, max: MX, size:MX-mx },
+        y: { min: my, mid:(my+MY)/2, max: MY, size:MY-my }
+      }
+    },
+    shapeintersections: function(s1, bbox1, s2, bbox2) {
+      if(!this.bboxoverlap(bbox1, bbox2)) return [];
+      var intersections = [];
+      var a1 = [s1.startcap, s1.forward, s1.back, s1.endcap];
+      var a2 = [s2.startcap, s2.forward, s2.back, s2.endcap];
+      a1.forEach(function(l1) {
+        if(l1.virtual) return;
+        a2.forEach(function(l2) {
+          if(l2.virtual) return;
+          var iss = l1.intersects(l2);
+          if(iss.length>0) {
+            iss.c1 = l1;
+            iss.c2 = l2;
+            iss.s1 = s1;
+            iss.s2 = s2;
+            intersections.push(iss);
+          }
+        });
+      });
+      return intersections;
+    },
+    makeshape: function(forward, back) {
+      var bpl = back.points.length;
+      var fpl = forward.points.length;
+      var start  = this.makeline(back.points[bpl-1], forward.points[0]);
+      var end    = this.makeline(forward.points[fpl-1], back.points[0]);
+      var shape  = {
+        startcap: start,
+        forward: forward,
+        back: back,
+        endcap: end,
+        bbox: this.findbbox([start, forward, back, end])
+      };
+      var self = this;
+      shape.intersections = function(s2) {
+        return self.shapeintersections(shape,shape.bbox,s2,s2.bbox);
+      };
+      return shape;
+    },
+    getminmax: function(curve, d, list) {
+      if(!list) return { min:0, max:0 };
+      var min=0xFFFFFFFFFFFFFFFF, max=-min,t,c;
+      if(list.indexOf(0)===-1) { list = [0].concat(list); }
+      if(list.indexOf(1)===-1) { list.push(1); }
+      for(var i=0,len=list.length; i<len; i++) {
+        t = list[i];
+        c = curve.get(t);
+        if(c[d] < min) { min = c[d]; }
+        if(c[d] > max) { max = c[d]; }
+      }
+      return { min:min, mid:(min+max)/2, max:max, size:max-min };
+    },
+    align: function(points, line) {
+      var tx = line.p1.x,
+          ty = line.p1.y,
+          a = -atan2(line.p2.y-ty, line.p2.x-tx),
+          d = function(v) {
+            return {
+              x: (v.x-tx)*cos(a) - (v.y-ty)*sin(a),
+              y: (v.x-tx)*sin(a) + (v.y-ty)*cos(a)
+            };
+          };
+      return points.map(d);
+    },
+    roots: function(points, line) {
+      line = line || {p1:{x:0,y:0},p2:{x:1,y:0}};
+      var order = points.length - 1;
+      var p = this.align(points, line);
+      var reduce = function(t) { return 0<=t && t <=1; };
+
+      if (order === 2) {
+        var a = p[0].y,
+            b = p[1].y,
+            c = p[2].y,
+            d = a - 2*b + c;
+        if(d!==0) {
+          var m1 = -sqrt(b*b-a*c),
+              m2 = -a+b,
+              v1 = -( m1+m2)/d,
+              v2 = -(-m1+m2)/d;
+          return [v1, v2].filter(reduce);
+        }
+        else if(b!==c && d===0) {
+          return [ (2*b-c)/2*(b-c) ].filter(reduce);
+        }
+        return [];
+      }
+
+      // see http://www.trans4mind.com/personal_development/mathematics/polynomials/cubicAlgebra.htm
+      var pa = p[0].y,
+          pb = p[1].y,
+          pc = p[2].y,
+          pd = p[3].y,
+          d = (-pa + 3*pb - 3*pc + pd),
+          a = (3*pa - 6*pb + 3*pc) / d,
+          b = (-3*pa + 3*pb) / d,
+          c = pa / d,
+          p = (3*b - a*a)/3,
+          p3 = p/3,
+          q = (2*a*a*a - 9*a*b + 27*c)/27,
+          q2 = q/2,
+          discriminant = q2*q2 + p3*p3*p3,
+          u1,v1,x1,x2,x3;
+       if (discriminant < 0) {
+        var mp3 = -p/3,
+            mp33 = mp3*mp3*mp3,
+            r = sqrt( mp33 ),
+            t = -q/(2*r),
+            cosphi = t<-1 ? -1 : t>1 ? 1 : t,
+            phi = acos(cosphi),
+            crtr = crt(r),
+            t1 = 2*crtr;
+        x1 = t1 * cos(phi/3) - a/3;
+        x2 = t1 * cos((phi+tau)/3) - a/3;
+        x3 = t1 * cos((phi+2*tau)/3) - a/3;
+        return [x1, x2, x3].filter(reduce);
+      } else if(discriminant === 0) {
+        u1 = q2 < 0 ? crt(-q2) : -crt(q2);
+        x1 = 2*u1-a/3;
+        x2 = -u1 - a/3;
+        return [x1,x2].filter(reduce);
+      } else {
+        var sd = sqrt(discriminant);
+        u1 = crt(-q2+sd);
+        v1 = crt(q2+sd);
+        return [u1-v1-a/3].filter(reduce);;
+      }
+    },
+    droots: function(p) {
+      // quadratic roots are easy
+      if(p.length === 3) {
+        var a = p[0],
+            b = p[1],
+            c = p[2],
+            d = a - 2*b + c;
+        if(d!==0) {
+          var m1 = -sqrt(b*b-a*c),
+              m2 = -a+b,
+              v1 = -( m1+m2)/d,
+              v2 = -(-m1+m2)/d;
+          return [v1, v2];
+        }
+        else if(b!==c && d===0) {
+          return [ (2*b-c)/(2*(b-c)) ];
+        }
+        return [];
+      }
+
+      // linear roots are even easier
+      if(p.length === 2) {
+        var a = p[0], b = p[1];
+        if(a!==b) { return [a/(a-b)]; }
+        return [];
+      }
+    },
+    bboxoverlap: function(b1,b2) {
+      var dims=['x','y'],len=dims.length,i,dim,l,t,d
+      for(i=0; i<len; i++) {
+        dim = dims[i];
+        l = b1[dim].mid;
+        t = b2[dim].mid;
+        d = (b1[dim].size + b2[dim].size)/2;
+        if(abs(l-t) >= d) return false;
+      }
+      return true;
+    },
+    expandbox: function(bbox, _bbox) {
+      if(_bbox.x.min < bbox.x.min) { bbox.x.min = _bbox.x.min; }
+      if(_bbox.y.min < bbox.y.min) { bbox.y.min = _bbox.y.min; }
+      if(_bbox.z && _bbox.z.min < bbox.z.min) { bbox.z.min = _bbox.z.min; }
+      if(_bbox.x.max > bbox.x.max) { bbox.x.max = _bbox.x.max; }
+      if(_bbox.y.max > bbox.y.max) { bbox.y.max = _bbox.y.max; }
+      if(_bbox.z && _bbox.z.max > bbox.z.max) { bbox.z.max = _bbox.z.max; }
+      bbox.x.mid = (bbox.x.min + bbox.x.max)/2;
+      bbox.y.mid = (bbox.y.min + bbox.y.max)/2;
+      if(bbox.z) { bbox.z.mid = (bbox.z.min + bbox.z.max)/2; }
+      bbox.x.size = bbox.x.max - bbox.x.min;
+      bbox.y.size = bbox.y.max - bbox.y.min;
+      if(bbox.z) { bbox.z.size = bbox.z.max - bbox.z.min; }
+    },
+    pairiteration: function(c1,c2) {
+      var c1b = c1.bbox(),
+          c2b = c2.bbox(),
+          r = 100000,
+          threshold = 0.5;
+      if(c1b.x.size + c1b.y.size < threshold && c2b.x.size + c2b.y.size < threshold) {
+        return [ ((r * (c1._t1+c1._t2)/2)|0)/r + "/" + ((r * (c2._t1+c2._t2)/2)|0)/r ];
+      }
+      var cc1 = c1.split(0.5),
+          cc2 = c2.split(0.5),
+          pairs = [
+            {left: cc1.left, right: cc2.left },
+            {left: cc1.left, right: cc2.right },
+            {left: cc1.right, right: cc2.right },
+            {left: cc1.right, right: cc2.left }];
+      pairs = pairs.filter(function(pair) {
+        return utils.bboxoverlap(pair.left.bbox(),pair.right.bbox());
+      });
+      var results = [];
+      if(pairs.length === 0) return results;
+      pairs.forEach(function(pair) {
+        results = results.concat(
+          utils.pairiteration(pair.left, pair.right)
+        );
+      })
+      results = results.filter(function(v,i) {
+        return results.indexOf(v) === i;
+      });
+      return results;
+    },
+    getccenter: function(p1,p2,p3) {
+      var dx1 = (p2.x - p1.x),
+          dy1 = (p2.y - p1.y),
+          dx2 = (p3.x - p2.x),
+          dy2 = (p3.y - p2.y);
+      var dx1p = dx1 * cos(quart) - dy1 * sin(quart),
+          dy1p = dx1 * sin(quart) + dy1 * cos(quart),
+          dx2p = dx2 * cos(quart) - dy2 * sin(quart),
+          dy2p = dx2 * sin(quart) + dy2 * cos(quart);
+      // chord midpoints
+      var mx1 = (p1.x + p2.x)/2,
+          my1 = (p1.y + p2.y)/2,
+          mx2 = (p2.x + p3.x)/2,
+          my2 = (p2.y + p3.y)/2;
+      // midpoint offsets
+      var mx1n = mx1 + dx1p,
+          my1n = my1 + dy1p,
+          mx2n = mx2 + dx2p,
+          my2n = my2 + dy2p;
+      // intersection of these lines:
+      var arc = utils.lli8(mx1,my1,mx1n,my1n, mx2,my2,mx2n,my2n),
+          r = utils.dist(arc,p1),
+          // arc start/end values, over mid point:
+          s = atan2(p1.y - arc.y, p1.x - arc.x),
+          m = atan2(p2.y - arc.y, p2.x - arc.x),
+          e = atan2(p3.y - arc.y, p3.x - arc.x),
+          _;
+      // determine arc direction (cw/ccw correction)
+      if (s<e) {
+        // if s<m<e, arc(s, e)
+        // if m<s<e, arc(e, s + tau)
+        // if s<e<m, arc(e, s + tau)
+        if (s>m || m>e) { s += tau; }
+        if (s>e) { _=e; e=s; s=_; }
+      } else {
+        // if e<m<s, arc(e, s)
+        // if m<e<s, arc(s, e + tau)
+        // if e<s<m, arc(s, e + tau)
+        if (e<m && m<s) { _=e; e=s; s=_; } else { e += tau; }
+      }
+      // assign and done.
+      arc.s = s;
+      arc.e = e;
+      arc.r = r;
+      return arc;
+    }
+  };
+
+  /**
+   * Poly Bezier
+   * @param {[type]} curves [description]
+   */
+  var PolyBezier = function(curves) {
+    this.curves = [];
+    this._3d = false;
+    if(!!curves) {
+      this.curves = curves;
+      this._3d = this.curves[0]._3d;
+    }
+  }
+
+  PolyBezier.prototype = {
+    valueOf: function() {
+      return this.toString();
+    },
+    toString: function() {
+      return utils.pointsToString(this.points);
+    },
+    addCurve: function(curve) {
+      this.curves.push(curve);
+      this._3d = this._3d || curve._3d;
+    },
+    length: function() {
+      return this.curves.map(function(v) { return v.length(); }).reduce(function(a,b) { return a+b; });
+    },
+    curve: function(idx) {
+      return this.curves[idx];
+    },
+    bbox: function() {
+      var c = this.curves;
+      var bbox = c[0].bbox();
+      for(var i=1; i<c.length; i++) {
+        utils.expandbox(bbox, c[i].bbox());
+      }
+      return bbox;
+    },
+    offset: function(d) {
+      var offset = [];
+      this.curves.forEach(function(v) {
+        offset = offset.concat(v.offset(d));
+      });
+      return new PolyBezier(offset);
+    }
+  };
+
+
+  /**
+   * Bezier curve constructor. The constructor argument can be one of three things:
+   *
+   * 1. array/4 of {x:..., y:..., z:...}, z optional
+   * 2. numerical array/8 ordered x1,y1,x2,y2,x3,y3,x4,y4
+   * 3. numerical array/12 ordered x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4
+   *
+   */
+  var Bezier = function(coords) {
+    var args = (coords && coords.forEach ? coords : arguments);
+    if(typeof args[0] === "object") {
+      args = [];
+      for(var i=0; i<coords.length; i++) {
+        ['x','y','z'].forEach(function(d) {
+          if(typeof coords[i][d] !== "undefined") {
+            args.push(coords[i][d]);
+          }
+        });
+      }
+    }
+    var len = args.length;
+    if(len!==6 && len!==8 && len!==9 && len!==12) {
+      console.log(coords);
+      throw new Error("This Bezier curve library only supports quadratic and cubic curves (in 2d and 3d)");
+    }
+    var _3d = (len === 9 || len === 12);
+    this._3d = _3d;
+    var points = [];
+    for(var idx=0, step=(_3d ? 3 : 2); idx<len; idx+=step) {
+      var point = {
+        x: args[idx],
+        y: args[idx+1]
+      };
+      if(_3d) { point.z = args[idx+2] };
+      points.push(point);
+    }
+    this.order = points.length - 1;
+    this.points = points;
+    var dims = ['x','y'];
+    if(_3d) dims.push('z');
+    this.dims = dims;
+    this.dimlen = dims.length;
+    (function(curve) {
+      var a = utils.align(points, {p1:points[0], p2:points[curve.order]});
+      for(var i=0; i<a.length; i++) {
+        if(abs(a[i].y) > 0.0001) {
+          curve._linear = false;
+          return;
+        }
+      }
+      curve._linear = true;
+    }(this));
+    this._t1 = 0;
+    this._t2 = 1;
+    this.update();
+  };
+
+  Bezier.fromSVG = function(svgString) {
+    var list = svgString.match(/[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?/g).map(parseFloat);
+    var relative = /[cq]/.test(svgString);
+    if(!relative) return new Bezier(list);
+    list = list.map(function(v,i) {
+      return i < 2 ? v : v + list[i % 2];
+    });
+    return new Bezier(list);
+  };
+
+  Bezier.utils = utils;
+
+  Bezier.prototype = {
+    valueOf: function() {
+      return this.toString();
+    },
+    toString: function() {
+      return utils.pointsToString(this.points);
+    },
+    toSVG: function(relative) {
+      if(this._3d) return false;
+      var p = this.points,
+          x = p[0].x,
+          y = p[0].y,
+          s = ["M", x, y, (this.order===2 ? "Q":"C")];
+      for(var i=1, last=p.length; i<last; i++) {
+        s.push(p[i].x);
+        s.push(p[i].y);
+      }
+      return s.join(" ");
+    },
+    update: function() {
+      // one-time compute derivative coordinates
+      this.dpoints = [];
+      for(var p=this.points, d=p.length, c=d-1; d>1; d--, c--) {
+        var list = [];
+        for(var j=0, dpt; j<c; j++) {
+          dpt = {
+            x: c * (p[j+1].x - p[j].x),
+            y: c * (p[j+1].y - p[j].y)
+          };
+          if(this._3d) {
+            dpt.z = c * (p[j+1].z - p[j].z);
+          }
+          list.push(dpt);
+        }
+        this.dpoints.push(list);
+        p = list;
+      };
+      this.computedirection();
+    },
+    computedirection: function() {
+      var points = this.points;
+      var angle = utils.angle(points[0], points[this.order], points[1]);
+      this.clockwise = angle > 0;
+    },
+    length: function() {
+      return utils.length(this.derivative.bind(this));
+    },
+    getLUT: function(steps) {
+      steps = steps || 100;
+      var points = [];
+      for(var t=0; t<=steps; t++) {
+        points.push(this.compute(t/steps));
+      }
+      return points;
+    },
+    get: function(t) {
+      return this.compute(t);
+    },
+    point: function(idx) {
+      return this.points[idx];
+    },
+    compute: function(t) {
+      // shortcuts
+      if(t===0) { return this.points[0]; }
+      if(t===1) { return this.points[this.order]; }
+      // plain computation
+      var mt = 1-t,
+          mt2 = mt*mt,
+          t2 = t*t,
+          a,b,c,d = 0,
+          p = this.points;
+      if(this.order===2) {
+        p = [p[0], p[1], p[2], ZERO];
+        a = mt2;
+        b = mt*t*2;
+        c = t2;
+      }
+      if(this.order===3) {
+        a = mt2*mt;
+        b = mt2*t*3;
+        c = mt*t2*3;
+        d = t*t2;
+      }
+      var ret = {
+        x: a*p[0].x + b*p[1].x + c*p[2].x + d*p[3].x,
+        y: a*p[0].y + b*p[1].y + c*p[2].y + d*p[3].y
+      };
+      if(this._3d) {
+        ret.z = a*p[0].z + b*p[1].z + c*p[2].z + d*p[3].z;
+      }
+      return ret;
+    },
+    raise: function() {
+      var p = this.points, np = [p[0]], i, k=p.length, pi, pim;
+      for (var i=1; i<k; i++) {
+        pi = p[i];
+        pim = p[i-1];
+        np[i] = {
+          x: (k-i)/k * pi.x + i/k * pim.x,
+          y: (k-i)/k * pi.y + i/k * pim.y
+        };
+      }
+      np[k] = p[k-1];
+      return new Bezier(np);
+    },
+    derivative: function(t) {
+      var mt = 1-t,
+          a,b,c=0,
+          p = this.dpoints[0];
+      if(this.order===2) { p = [p[0], p[1], ZERO]; a = mt; b = t; }
+      if(this.order===3) { a = mt*mt; b = mt*t*2; c = t*t; }
+      var ret = {
+        x: a*p[0].x + b*p[1].x + c*p[2].x,
+        y: a*p[0].y + b*p[1].y + c*p[2].y
+      };
+      if(this._3d) {
+        ret.z = a*p[0].z + b*p[1].z + c*p[2].z;
+      }
+      return ret;
+    },
+    normal: function(t) {
+      return this._3d ? this.__normal3(t) : this.__normal2(t);
+    },
+    __normal2: function(t) {
+      var d = this.derivative(t);
+      var q = sqrt(d.x*d.x + d.y*d.y)
+      return { x: -d.y/q, y: d.x/q };
+    },
+    __normal3: function() {
+      // see http://stackoverflow.com/questions/25453159
+      var r1 = this.derivative(t),
+          r2 = this.derivative(t+0.01),
+          q1 = sqrt(r1.x*r1.x + r1.y*r1.y + r1.z*r1.z),
+          q2 = sqrt(r2.x*r2.x + r2.y*r2.y + r2.z*r2.z);
+      r1.x /= q1; r1.y /= q1; r1.z /= q1;
+      r2.x /= q2; r2.y /= q2; r2.z /= q2;
+      // cross product
+      var c = {
+        x: r2.y*r1.z - r2.z*r1.y,
+        y: r2.z*r1.x - r2.x*r1.z,
+        z: r2.x*r1.y - r2.y*r1.x
+      };
+      var m = sqrt(c.x*c.x + c.y*c.y + c.z*c.z);
+      c.x /= m; c.y /= m; c.z /= m;
+      // rotation matrix
+      var R = [   c.x*c.x,   c.x*c.y-c.z, c.x*c.z+c.y,
+                c.x*c.y+c.z,   c.y*c.y,   c.y*c.z-c.x,
+                c.x*c.z-c.y, c.y*c.z+c.x,   c.z*c.z    ];
+      // normal vector:
+      var n = {
+        x: R[0] * r1.x + R[1] * r1.y + R[2] * r1.z,
+        y: R[3] * r1.x + R[4] * r1.y + R[5] * r1.z,
+        z: R[6] * r1.x + R[7] * r1.y + R[8] * r1.z
+      };
+      return n;
+    },
+    split: function(t1, t2) {
+      // shortcuts
+      if(t1===0 && !!t2) { return this.split(t2).left; }
+      if(t2===1) { return this.split(t1).right; }
+      // no shortcut: use "de Casteljau" iteration.
+      var p = this.points,
+          _p = [],
+          pt,
+          q = [],
+          idx = 0,
+          i=0,
+          l=0;
+      q[idx++] = p[0];
+      q[idx++] = p[1];
+      q[idx++] = p[2];
+      if(this.order === 3) { q[idx++] = p[3]; }
+      // we lerp between all points at each iteration, until we have 1 point left.
+      while(p.length>1) {
+        _p = [];
+        for(i=0, l=p.length-1; i<l; i++) {
+          pt = utils.lerp(t1,p[i],p[i+1]);
+          q[idx++] = pt;
+          _p.push(pt);
+        }
+        p = _p;
+      }
+      var result = {
+        left: this.order === 2 ? new Bezier([q[0],q[3],q[5]]) : new Bezier([q[0],q[4],q[7],q[9]]),
+        right: this.order === 2 ? new Bezier([q[5],q[4],q[2]]) : new Bezier([q[9],q[8],q[6],q[3]]),
+        span: q
+      };
+
+      // make sure we bind _t1/_t2 information!
+      result.left._t1  = utils.map(0,  0,1, this._t1,this._t2);
+      result.left._t2  = utils.map(t1, 0,1, this._t1,this._t2);
+      result.right._t1 = utils.map(t1, 0,1, this._t1,this._t2);
+      result.right._t2 = utils.map(1,  0,1, this._t1,this._t2);
+
+      // if we have no t2, we're done
+      if(!t2) { return result; }
+
+      // if we have a t2, split again:
+      t2 = utils.map(t2,t1,1,0,1);
+      var subsplit = result.right.split(t2);
+      return subsplit.left;
+    },
+    inflections: function() {
+      var dims = this.dims,
+          len = this.dimlen,
+          result={},
+          roots=[],
+          p, mfn;
+      dims.forEach(function(dim) {
+        mfn = function(v) { return v[dim]; };
+        p = this.dpoints[0].map(mfn);
+        result[dim] = utils.droots(p);
+        if(this.order === 3) {
+          p = this.dpoints[1].map(mfn);
+          result[dim] = result[dim].concat(utils.droots(p));
+        }
+        result[dim] = result[dim].filter(function(t) { return (t>=0 && t<=1); });
+        roots = roots.concat(result[dim].sort());
+      }.bind(this));
+      roots.sort();
+      result.values = roots;
+      return result;
+    },
+    bbox: function() {
+      var inflections = this.inflections(), result = {};
+      this.dims.forEach(function(d) {
+        result[d] = utils.getminmax(this, d, inflections[d]);
+      }.bind(this));
+      return result;
+    },
+    overlaps: function(curve) {
+      var lbbox = this.bbox(),
+          tbbox = curve.bbox();
+      return utils.bboxoverlap(lbbox,tbbox);
+    },
+    offset: function(t, d) {
+      if(typeof d !== "undefined") {
+        var c = this.get(t);
+        var n = this.normal(t);
+        var ret = {
+          c: c,
+          n: n,
+          x: c.x + n.x * d,
+          y: c.y + n.y * d
+        };
+        if(this._3d) {
+          ret.z = c.z + n.z * d;
+        };
+        return ret;
+      }
+      if(this._linear) {
+        var nv = this.normal(0);
+        var coords = this.points.map(function(p) {
+          var ret = {
+            x: p.x + t * nv.x,
+            y: p.y + t * nv.y
+          };
+          if(p.z && n.z) { ret.z = p.z + t * nv.z; }
+          return ret;
+        });
+        return [new Bezier(coords)];
+      }
+      var reduced = this.reduce();
+      return reduced.map(function(s) {
+        return s.scale(t);
+      });
+    },
+    simple: function() {
+      if(this.order===3) {
+        var a1 = utils.angle(this.points[0], this.points[3], this.points[1]);
+        var a2 = utils.angle(this.points[0], this.points[3], this.points[2]);
+        if(a1>0 && a2<0 || a1<0 && a2>0) return false;
+      }
+      var n1 = this.normal(0);
+      var n2 = this.normal(1);
+      var s = n1.x*n2.x + n1.y*n2.y;
+      if(this._3d) { s += n1.z*n2.z; }
+      var angle = abs(acos(s));
+      return angle < pi/3;
+    },
+    reduce: function() {
+      var i, t1=0, t2=0, step=0.01, segment, pass1=[], pass2=[];
+      // first pass: split on inflections
+      var inflections = this.inflections().values;
+      if(inflections.indexOf(0)===-1) { inflections = [0].concat(inflections); }
+      if(inflections.indexOf(1)===-1) { inflections.push(1); }
+      for(t1=inflections[0], i=1; i<inflections.length; i++) {
+        t2 = inflections[i];
+        segment = this.split(t1,t2);
+        segment._t1 = t1;
+        segment._t2 = t2;
+        pass1.push(segment);
+        t1 = t2;
+      }
+      // second pass: further reduce these segments to simple segments
+      pass1.forEach(function(p1) {
+        t1=0;
+        t2=0;
+        while(t2 <= 1) {
+          for(t2=t1+step; t2<=1+step; t2+=step) {
+            segment = p1.split(t1,t2);
+            if(!segment.simple()) {
+              t2 -= step;
+              if(abs(t1-t2)<step) {
+                // we can never form a reduction
+                return [];
+              }
+              segment = p1.split(t1,t2);
+              segment._t1 = utils.map(t1,0,1,p1._t1,p1._t2);
+              segment._t2 = utils.map(t2,0,1,p1._t1,p1._t2);
+              pass2.push(segment);
+              t1 = t2;
+              break;
+            }
+          }
+        }
+        if(t1<1) {
+          segment = p1.split(t1,1);
+          segment._t1 = utils.map(t1,0,1,p1._t1,p1._t2);
+          segment._t2 = p1._t2;
+          pass2.push(segment);
+        }
+      });
+      return pass2;
+    },
+    scale: function(d) {
+      var order = this.order;
+      var distanceFn = false
+      if(typeof d === "function") { distanceFn = d; }
+      if(distanceFn && order === 2) { return this.raise().scale(distanceFn); }
+
+      // TODO: add special handling for degenerate (=linear) curves.
+      var clockwise = this.clockwise;
+      var r1 = distanceFn ? distanceFn(0) : d;
+      var r2 = distanceFn ? distanceFn(1) : d;
+      var v = [ this.offset(0,10), this.offset(1,10) ];
+      var o = utils.lli4(v[0], v[0].c, v[1], v[1].c);
+      if(!o) { throw "cannot scale this curve. Try reducing it first."; }
+      // move all points by distance 'd' wrt the origin 'o'
+      var points=this.points, np=[];
+
+      // move end points by fixed distance along normal.
+      [0,1].forEach(function(t) {
+        var p = np[t*order] = utils.copy(points[t*order]);
+        p.x += (t?r2:r1) * v[t].n.x;
+        p.y += (t?r2:r1) * v[t].n.y;
+      }.bind(this));
+
+      if (!distanceFn) {
+        // move control points to lie on the intersection of the offset
+        // derivative vector, and the origin-through-control vector
+        [0,1].forEach(function(t) {
+          if(this.order===2 && !!t) return;
+          var p = np[t*order];
+          var d = this.derivative(t);
+          var p2 = { x: p.x + d.x, y: p.y + d.y };
+          np[t+1] = utils.lli4(p, p2, o, points[t+1]);
+        }.bind(this));
+        return new Bezier(np);
+      }
+
+      // move control points by "however much necessary to
+      // ensure the correct tangent to endpoint".
+      [0,1].forEach(function(t) {
+        if(this.order===2 && !!t) return;
+        var p = points[t+1];
+        var ov = {
+          x: p.x - o.x,
+          y: p.y - o.y
+        };
+        var rc = distanceFn ? distanceFn((t+1)/order) : d;
+        if(distanceFn && !clockwise) rc = -rc;
+        var m = sqrt(ov.x*ov.x + ov.y*ov.y);
+        ov.x /= m;
+        ov.y /= m;
+        np[t+1] = {
+          x: p.x + rc*ov.x,
+          y: p.y + rc*ov.y
+        }
+      }.bind(this));
+      return new Bezier(np);
+    },
+    outline: function(d1, d2, d3, d4) {
+      d2 = (typeof d2 === "undefined") ? d1 : d2;
+      var reduced = this.reduce(),
+          len = reduced.length,
+          order = this.order,
+          fcurves = [],
+          bcurves = [],
+          i, p, last,
+          alen = 0,
+          tlen = this.length();
+
+      var graduated = (typeof d3 !== "undefined" && typeof d4 !== "undefined");
+
+      function linearDistanceFunction(s,e, tlen,alen,slen) {
+        return function (v) {
+          var f1 = alen/tlen, f2 = (alen+slen)/tlen, d = e-s;
+          return utils.map(v, 0,1, s+f1*d, s+f2*d);
+        };
+      };
+
+      // form curve oulines
+      reduced.forEach(function(segment) {
+        slen = segment.length();
+        if (graduated) {
+          fcurves.push(segment.scale(  linearDistanceFunction( d1, d3, tlen,alen,slen)  ));
+          bcurves.push(segment.scale(  linearDistanceFunction(-d2,-d4, tlen,alen,slen)  ));
+        } else {
+          fcurves.push(segment.scale( d1));
+          bcurves.push(segment.scale(-d2));
+        }
+        alen += slen;
+      });
+
+      // reverse the "return" outline
+      bcurves = bcurves.map(function(s) {
+        p = s.points;
+        if(p[3]) { s.points = [p[3],p[2],p[1],p[0]]; }
+        else { s.points = [p[2],p[1],p[0]]; }
+        return s;
+      }).reverse();
+
+      // form the endcaps as lines
+      var fs = fcurves[0].points[0],
+          fe = fcurves[len-1].points[fcurves[len-1].points.length-1],
+          bs = bcurves[len-1].points[bcurves[len-1].points.length-1],
+          be = bcurves[0].points[0],
+          ls = utils.makeline(bs,fs),
+          le = utils.makeline(fe,be),
+          segments = [ls].concat(fcurves).concat([le]).concat(bcurves),
+          slen = segments.length;
+
+      return new PolyBezier(segments);
+    },
+    outlineshapes: function(d1,d2) {
+      d2 = d2 || d1;
+      var outline = this.outline(d1,d2).curves;
+      var shapes = [];
+      for(var i=1, len=outline.length; i < len/2; i++) {
+        var shape = utils.makeshape(outline[i], outline[len-i]);
+        shape.startcap.virtual = (i > 1);
+        shape.endcap.virtual = (i < len/2-1);
+        shapes.push(shape);
+      }
+      return shapes;
+    },
+    intersects: function(curve) {
+      if(!curve) return this.selfintersects();
+      if(curve.p1 && curve.p2) {
+        return this.lineIntersects(curve);
+      }
+      if(curve instanceof Bezier) { curve = curve.reduce(); }
+      return this.curveintersects(this.reduce(), curve);
+    },
+    lineIntersects: function(line) {
+      var mx = min(line.p1.x, line.p2.x),
+          my = min(line.p1.y, line.p2.y),
+          MX = max(line.p1.x, line.p2.x),
+          MY = max(line.p1.y, line.p2.y),
+          self=this;
+      return utils.roots(this.points, line).filter(function(t) {
+        var p = self.get(t);
+        return (mx <= p.x && p.x <= MX && my <= p.y && p.y <= MY);
+      });
+    },
+    selfintersects: function() {
+      var reduced = this.reduce();
+      // "simple" curves cannot intersect with their direct
+      // neighbour, so for each segment X we check whether
+      // it intersects [0:x-2][x+2:last].
+      var i,len=reduced.length-2,results=[],result,left,right;
+      for(i=0; i<len; i++) {
+        left = reduced.slice(i,i+1);
+        right = reduced.slice(i+2);
+        result = this.curveintersects(left, right);
+        results = results.concat( result );
+      }
+      return results;
+    },
+    curveintersects: function(c1,c2) {
+      var pairs = [];
+      // step 1: pair off any overlapping segments
+      c1.forEach(function(l) {
+        c2.forEach(function(r) {
+          if(l.overlaps(r)) {
+            pairs.push({ left: l, right: r });
+          }
+        });
+      });
+      // step 2: for each pairing, run through the convergence algorithm.
+      var intersections = [];
+      pairs.forEach(function(pair) {
+        var result = utils.pairiteration(pair.left, pair.right);
+        if(result.length > 0) {
+          intersections = intersections.concat(result);
+        }
+      });
+      return intersections;
+    },
+    arcs: function(errorThreshold) {
+      errorThreshold = errorThreshold || 0.5;
+      var circles = [];
+      return this._iterate(errorThreshold, circles);
+    },
+    _error: function(pc, np1, s, e) {
+      var q = (e - s) / 4,
+          c1 = this.get(s + q),
+          c2 = this.get(e - q),
+          ref = utils.dist(pc, np1),
+          d1  = utils.dist(pc, c1),
+          d2  = utils.dist(pc, c2);
+      return abs(d1-ref) + abs(d2-ref);
+    },
+    _iterate: function(errorThreshold, circles) {
+      var s = 0, e = 1, safety;
+      // we do a binary search to find the "good `t` closest to no-longer-good"
+      do {
+        safety=0;
+
+        // step 1: start with the maximum possible arc
+        e = 1;
+
+        // points:
+        var np1 = this.get(s), np2, o_np2, np3, o_np3, arc, prev_arc;
+
+        // booleans:
+        var curr_good = false, prev_good = false, done;
+
+        // numbers:
+        var m = e, prev_e = 1, step = 0;
+
+        // step 2: find the best possible arc
+        do {
+          prev_good = curr_good;
+          prev_arc = arc;
+          m = (s + e)/2;
+          step++;
+
+          np2 = this.get(m);
+          np3 = this.get(e);
+
+          arc = utils.getccenter(np1, np2, np3);
+          var error = this._error(arc, np1, s, e);
+          curr_good = (error <= errorThreshold);
+
+          done = prev_good && !curr_good;
+          if(!done) prev_e = e;
+
+          // this arc is fine: we can move 'e' up to see if we can find a wider arc
+          if(curr_good) {
+            // if e is already at max, then we're done for this arc.
+            if (e >= 1) {
+              prev_e = 1;
+              prev_arc = arc;
+              break;
+            }
+            // if not, move it up by half the iteration distance
+            e = e + (e-s)/2;
+          }
+
+          // this is a bad arc: we need to move 'e' down to find a good arc
+          else {
+            e = m;
+          }
+        }
+        while(!done && safety++<100);
+
+        if(safety>=100) {
+          console.error("arc abstraction somehow failed...");
+          break;
+        }
+
+        // console.log("[F] arc found", s, prev_e, prev_arc.x, prev_arc.y, prev_arc.s, prev_arc.e);
+
+        prev_arc = (prev_arc ? prev_arc : arc);
+        circles.push(prev_arc);
+        s = prev_e;
+      }
+      while(e < 1);
+      return circles;
+    }
+  };
+
+  return Bezier;
+});
+
+/*
+  if(typeof module !== "undefined" && module.exports) {
+    module.exports = Bezier;
+  }
+
+  else if(typeof define !== "undefined") {
+    define(function() { return Bezier; });
+  }
+
+  else if(typeof window !== "undefined") {
+    window.Bezier = Bezier;
+  }
+
+}());
+
+},{}],2:[function(require,module,exports){
+module.exports = require("./bezier");
+},{"./bezier":1}]},{},[2])(2)
+});
+*/;
+
+define ('lib/earcut/src/earcut.js',[],function ()
+{
+
+
+function earcut(data, holeIndices, dim) {
+
+    dim = dim || 2;
+
+    var hasHoles = holeIndices && holeIndices.length,
+        outerLen = hasHoles ? holeIndices[0] * dim : data.length,
+        outerNode = filterPoints(data, linkedList(data, 0, outerLen, dim, true)),
+        triangles = [];
+
+    if (!outerNode) return triangles;
+
+    var minX, minY, maxX, maxY, x, y, size;
+
+    if (hasHoles) outerNode = eliminateHoles(data, holeIndices, outerNode, dim);
+
+    // if the shape is not too simple, we'll use z-order curve hash later; calculate polygon bbox
+    if (data.length > 80 * dim) {
+        minX = maxX = data[0];
+        minY = maxY = data[1];
+
+        for (var i = dim; i < outerLen; i += dim) {
+            x = data[i];
+            y = data[i + 1];
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+        }
+
+        // minX, minY and size are later used to transform coords into integers for z-order calculation
+        size = Math.max(maxX - minX, maxY - minY);
+    }
+
+    earcutLinked(data, outerNode, triangles, dim, minX, minY, size);
+
+    return triangles;
+}
+
+// create a circular doubly linked list from polygon points in the specified winding order
+function linkedList(data, start, end, dim, clockwise) {
+    var sum = 0,
+        i, j, last;
+
+    // calculate original winding order of a polygon ring
+    for (i = start, j = end - dim; i < end; i += dim) {
+        sum += (data[j] - data[i]) * (data[i + 1] + data[j + 1]);
+        j = i;
+    }
+
+    // link points into circular doubly-linked list in the specified winding order
+    if (clockwise === (sum > 0)) {
+        for (i = start; i < end; i += dim) last = insertNode(i, last);
+    } else {
+        for (i = end - dim; i >= start; i -= dim) last = insertNode(i, last);
+    }
+
+    return last;
+}
+
+// eliminate colinear or duplicate points
+function filterPoints(data, start, end) {
+    if (!end) end = start;
+
+    var node = start,
+        again;
+    do {
+        again = false;
+
+        if (!node.steiner && (equals(data, node.i, node.next.i) || orient(data, node.prev.i, node.i, node.next.i) === 0)) {
+
+            // remove node
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+
+            if (node.prevZ) node.prevZ.nextZ = node.nextZ;
+            if (node.nextZ) node.nextZ.prevZ = node.prevZ;
+
+            node = end = node.prev;
+
+            if (node === node.next) return null;
+            again = true;
+
+        } else {
+            node = node.next;
+        }
+    } while (again || node !== end);
+
+    return end;
+}
+
+// main ear slicing loop which triangulates a polygon (given as a linked list)
+function earcutLinked(data, ear, triangles, dim, minX, minY, size, pass) {
+    if (!ear) return;
+
+    // interlink polygon nodes in z-order
+    if (!pass && minX !== undefined) indexCurve(data, ear, minX, minY, size);
+
+    var stop = ear,
+        prev, next;
+
+    // iterate through ears, slicing them one by one
+    while (ear.prev !== ear.next) {
+        prev = ear.prev;
+        next = ear.next;
+
+        if (isEar(data, ear, minX, minY, size)) {
+            // cut off the triangle
+            triangles.push(prev.i / dim);
+            triangles.push(ear.i / dim);
+            triangles.push(next.i / dim);
+
+            // remove ear node
+            next.prev = prev;
+            prev.next = next;
+
+            if (ear.prevZ) ear.prevZ.nextZ = ear.nextZ;
+            if (ear.nextZ) ear.nextZ.prevZ = ear.prevZ;
+
+            // skipping the next vertice leads to less sliver triangles
+            ear = next.next;
+            stop = next.next;
+
+            continue;
+        }
+
+        ear = next;
+
+        // if we looped through the whole remaining polygon and can't find any more ears
+        if (ear === stop) {
+            // try filtering points and slicing again
+            if (!pass) {
+                earcutLinked(data, filterPoints(data, ear), triangles, dim, minX, minY, size, 1);
+
+            // if this didn't work, try curing all small self-intersections locally
+            } else if (pass === 1) {
+                ear = cureLocalIntersections(data, ear, triangles, dim);
+                earcutLinked(data, ear, triangles, dim, minX, minY, size, 2);
+
+            // as a last resort, try splitting the remaining polygon into two
+            } else if (pass === 2) {
+                splitEarcut(data, ear, triangles, dim, minX, minY, size);
+            }
+
+            break;
+        }
+    }
+}
+
+// check whether a polygon node forms a valid ear with adjacent nodes
+function isEar(data, ear, minX, minY, size) {
+
+    var a = ear.prev.i,
+        b = ear.i,
+        c = ear.next.i,
+
+        ax = data[a], ay = data[a + 1],
+        bx = data[b], by = data[b + 1],
+        cx = data[c], cy = data[c + 1],
+
+        abd = ax * by - ay * bx,
+        acd = ax * cy - ay * cx,
+        cbd = cx * by - cy * bx,
+        A = abd - acd - cbd;
+
+    if (A <= 0) return false; // reflex, can't be an ear
+
+    // now make sure we don't have other points inside the potential ear;
+    // the code below is a bit verbose and repetitive but this is done for performance
+
+    var cay = cy - ay,
+        acx = ax - cx,
+        aby = ay - by,
+        bax = bx - ax,
+        i, px, py, s, t, k, node;
+
+    // if we use z-order curve hashing, iterate through the curve
+    if (minX !== undefined) {
+
+        // triangle bbox; min & max are calculated like this for speed
+        var minTX = ax < bx ? (ax < cx ? ax : cx) : (bx < cx ? bx : cx),
+            minTY = ay < by ? (ay < cy ? ay : cy) : (by < cy ? by : cy),
+            maxTX = ax > bx ? (ax > cx ? ax : cx) : (bx > cx ? bx : cx),
+            maxTY = ay > by ? (ay > cy ? ay : cy) : (by > cy ? by : cy),
+
+            // z-order range for the current triangle bbox;
+            minZ = zOrder(minTX, minTY, minX, minY, size),
+            maxZ = zOrder(maxTX, maxTY, minX, minY, size);
+
+        // first look for points inside the triangle in increasing z-order
+        node = ear.nextZ;
+
+        while (node && node.z <= maxZ) {
+            i = node.i;
+            node = node.nextZ;
+            if (i === a || i === c) continue;
+
+            px = data[i];
+            py = data[i + 1];
+
+            s = cay * px + acx * py - acd;
+            if (s >= 0) {
+                t = aby * px + bax * py + abd;
+                if (t >= 0) {
+                    k = A - s - t;
+                    if ((k >= 0) && ((s && t) || (s && k) || (t && k))) return false;
+                }
+            }
+        }
+
+        // then look for points in decreasing z-order
+        node = ear.prevZ;
+
+        while (node && node.z >= minZ) {
+            i = node.i;
+            node = node.prevZ;
+            if (i === a || i === c) continue;
+
+            px = data[i];
+            py = data[i + 1];
+
+            s = cay * px + acx * py - acd;
+            if (s >= 0) {
+                t = aby * px + bax * py + abd;
+                if (t >= 0) {
+                    k = A - s - t;
+                    if ((k >= 0) && ((s && t) || (s && k) || (t && k))) return false;
+                }
+            }
+        }
+
+    // if we don't use z-order curve hash, simply iterate through all other points
+    } else {
+        node = ear.next.next;
+
+        while (node !== ear.prev) {
+            i = node.i;
+            node = node.next;
+
+            px = data[i];
+            py = data[i + 1];
+
+            s = cay * px + acx * py - acd;
+            if (s >= 0) {
+                t = aby * px + bax * py + abd;
+                if (t >= 0) {
+                    k = A - s - t;
+                    if ((k >= 0) && ((s && t) || (s && k) || (t && k))) return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+// go through all polygon nodes and cure small local self-intersections
+function cureLocalIntersections(data, start, triangles, dim) {
+    var node = start;
+    do {
+        var a = node.prev,
+            b = node.next.next;
+
+        // a self-intersection where edge (v[i-1],v[i]) intersects (v[i+1],v[i+2])
+        if (a.i !== b.i && intersects(data, a.i, node.i, node.next.i, b.i) &&
+                locallyInside(data, a, b) && locallyInside(data, b, a)) {
+
+            triangles.push(a.i / dim);
+            triangles.push(node.i / dim);
+            triangles.push(b.i / dim);
+
+            // remove two nodes involved
+            a.next = b;
+            b.prev = a;
+
+            var az = node.prevZ,
+                bz = node.nextZ && node.nextZ.nextZ;
+
+            if (az) az.nextZ = bz;
+            if (bz) bz.prevZ = az;
+
+            node = start = b;
+        }
+        node = node.next;
+    } while (node !== start);
+
+    return node;
+}
+
+// try splitting polygon into two and triangulate them independently
+function splitEarcut(data, start, triangles, dim, minX, minY, size) {
+    // look for a valid diagonal that divides the polygon into two
+    var a = start;
+    do {
+        var b = a.next.next;
+        while (b !== a.prev) {
+            if (a.i !== b.i && isValidDiagonal(data, a, b)) {
+                // split the polygon in two by the diagonal
+                var c = splitPolygon(a, b);
+
+                // filter colinear points around the cuts
+                a = filterPoints(data, a, a.next);
+                c = filterPoints(data, c, c.next);
+
+                // run earcut on each half
+                earcutLinked(data, a, triangles, dim, minX, minY, size);
+                earcutLinked(data, c, triangles, dim, minX, minY, size);
+                return;
+            }
+            b = b.next;
+        }
+        a = a.next;
+    } while (a !== start);
+}
+
+// link every hole into the outer loop, producing a single-ring polygon without holes
+function eliminateHoles(data, holeIndices, outerNode, dim) {
+    var queue = [],
+        i, len, start, end, list;
+
+    for (i = 0, len = holeIndices.length; i < len; i++) {
+        start = holeIndices[i] * dim;
+        end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
+        list = linkedList(data, start, end, dim, false);
+        if (list === list.next) list.steiner = true;
+        list = filterPoints(data, list);
+        if (list) queue.push(getLeftmost(data, list));
+    }
+
+    queue.sort(function (a, b) {
+        return data[a.i] - data[b.i];
+    });
+
+    // process holes from left to right
+    for (i = 0; i < queue.length; i++) {
+        eliminateHole(data, queue[i], outerNode);
+        outerNode = filterPoints(data, outerNode, outerNode.next);
+    }
+
+    return outerNode;
+}
+
+// find a bridge between vertices that connects hole with an outer ring and and link it
+function eliminateHole(data, holeNode, outerNode) {
+    outerNode = findHoleBridge(data, holeNode, outerNode);
+    if (outerNode) {
+        var b = splitPolygon(outerNode, holeNode);
+        filterPoints(data, b, b.next);
+    }
+}
+
+// David Eberly's algorithm for finding a bridge between hole and outer polygon
+function findHoleBridge(data, holeNode, outerNode) {
+    var node = outerNode,
+        i = holeNode.i,
+        px = data[i],
+        py = data[i + 1],
+        qMax = -Infinity,
+        mNode, a, b;
+
+    // find a segment intersected by a ray from the hole's leftmost point to the left;
+    // segment's endpoint with lesser x will be potential connection point
+    do {
+        a = node.i;
+        b = node.next.i;
+
+        if (py <= data[a + 1] && py >= data[b + 1]) {
+            var qx = data[a] + (py - data[a + 1]) * (data[b] - data[a]) / (data[b + 1] - data[a + 1]);
+            if (qx <= px && qx > qMax) {
+                qMax = qx;
+                mNode = data[a] < data[b] ? node : node.next;
+            }
+        }
+        node = node.next;
+    } while (node !== outerNode);
+
+    if (!mNode) return null;
+
+    // look for points strictly inside the triangle of hole point, segment intersection and endpoint;
+    // if there are no points found, we have a valid connection;
+    // otherwise choose the point of the minimum angle with the ray as connection point
+
+    var bx = data[mNode.i],
+        by = data[mNode.i + 1],
+        pbd = px * by - py * bx,
+        pcd = px * py - py * qMax,
+        cpy = py - py,
+        pcx = px - qMax,
+        pby = py - by,
+        bpx = bx - px,
+        A = pbd - pcd - (qMax * by - py * bx),
+        sign = A <= 0 ? -1 : 1,
+        stop = mNode,
+        tanMin = Infinity,
+        mx, my, amx, s, t, tan;
+
+    node = mNode.next;
+
+    while (node !== stop) {
+
+        mx = data[node.i];
+        my = data[node.i + 1];
+        amx = px - mx;
+
+        if (amx >= 0 && mx >= bx) {
+            s = (cpy * mx + pcx * my - pcd) * sign;
+            if (s >= 0) {
+                t = (pby * mx + bpx * my + pbd) * sign;
+
+                if (t >= 0 && A * sign - s - t >= 0) {
+                    tan = Math.abs(py - my) / amx; // tangential
+                    if (tan < tanMin && locallyInside(data, node, holeNode)) {
+                        mNode = node;
+                        tanMin = tan;
+                    }
+                }
+            }
+        }
+
+        node = node.next;
+    }
+
+    return mNode;
+}
+
+// interlink polygon nodes in z-order
+function indexCurve(data, start, minX, minY, size) {
+    var node = start;
+
+    do {
+        if (node.z === null) node.z = zOrder(data[node.i], data[node.i + 1], minX, minY, size);
+        node.prevZ = node.prev;
+        node.nextZ = node.next;
+        node = node.next;
+    } while (node !== start);
+
+    node.prevZ.nextZ = null;
+    node.prevZ = null;
+
+    sortLinked(node);
+}
+
+// Simon Tatham's linked list merge sort algorithm
+// http://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
+function sortLinked(list) {
+    var i, p, q, e, tail, numMerges, pSize, qSize,
+        inSize = 1;
+
+    do {
+        p = list;
+        list = null;
+        tail = null;
+        numMerges = 0;
+
+        while (p) {
+            numMerges++;
+            q = p;
+            pSize = 0;
+            for (i = 0; i < inSize; i++) {
+                pSize++;
+                q = q.nextZ;
+                if (!q) break;
+            }
+
+            qSize = inSize;
+
+            while (pSize > 0 || (qSize > 0 && q)) {
+
+                if (pSize === 0) {
+                    e = q;
+                    q = q.nextZ;
+                    qSize--;
+                } else if (qSize === 0 || !q) {
+                    e = p;
+                    p = p.nextZ;
+                    pSize--;
+                } else if (p.z <= q.z) {
+                    e = p;
+                    p = p.nextZ;
+                    pSize--;
+                } else {
+                    e = q;
+                    q = q.nextZ;
+                    qSize--;
+                }
+
+                if (tail) tail.nextZ = e;
+                else list = e;
+
+                e.prevZ = tail;
+                tail = e;
+            }
+
+            p = q;
+        }
+
+        tail.nextZ = null;
+        inSize *= 2;
+
+    } while (numMerges > 1);
+
+    return list;
+}
+
+// z-order of a point given coords and size of the data bounding box
+function zOrder(x, y, minX, minY, size) {
+    // coords are transformed into (0..1000) integer range
+    x = 1000 * (x - minX) / size;
+    x = (x | (x << 8)) & 0x00FF00FF;
+    x = (x | (x << 4)) & 0x0F0F0F0F;
+    x = (x | (x << 2)) & 0x33333333;
+    x = (x | (x << 1)) & 0x55555555;
+
+    y = 1000 * (y - minY) / size;
+    y = (y | (y << 8)) & 0x00FF00FF;
+    y = (y | (y << 4)) & 0x0F0F0F0F;
+    y = (y | (y << 2)) & 0x33333333;
+    y = (y | (y << 1)) & 0x55555555;
+
+    return x | (y << 1);
+}
+
+// find the leftmost node of a polygon ring
+function getLeftmost(data, start) {
+    var node = start,
+        leftmost = start;
+    do {
+        if (data[node.i] < data[leftmost.i]) leftmost = node;
+        node = node.next;
+    } while (node !== start);
+
+    return leftmost;
+}
+
+// check if a diagonal between two polygon nodes is valid (lies in polygon interior)
+function isValidDiagonal(data, a, b) {
+    return a.next.i !== b.i && a.prev.i !== b.i &&
+           !intersectsPolygon(data, a, a.i, b.i) &&
+           locallyInside(data, a, b) && locallyInside(data, b, a) &&
+           middleInside(data, a, a.i, b.i);
+}
+
+// winding order of triangle formed by 3 given points
+function orient(data, p, q, r) {
+    var o = (data[q + 1] - data[p + 1]) * (data[r] - data[q]) - (data[q] - data[p]) * (data[r + 1] - data[q + 1]);
+    return o > 0 ? 1 :
+           o < 0 ? -1 : 0;
+}
+
+// check if two points are equal
+function equals(data, p1, p2) {
+    return data[p1] === data[p2] && data[p1 + 1] === data[p2 + 1];
+}
+
+// check if two segments intersect
+function intersects(data, p1, q1, p2, q2) {
+    return orient(data, p1, q1, p2) !== orient(data, p1, q1, q2) &&
+           orient(data, p2, q2, p1) !== orient(data, p2, q2, q1);
+}
+
+// check if a polygon diagonal intersects any polygon segments
+function intersectsPolygon(data, start, a, b) {
+    var node = start;
+    do {
+        var p1 = node.i,
+            p2 = node.next.i;
+
+        if (p1 !== a && p2 !== a && p1 !== b && p2 !== b && intersects(data, p1, p2, a, b)) return true;
+
+        node = node.next;
+    } while (node !== start);
+
+    return false;
+}
+
+// check if a polygon diagonal is locally inside the polygon
+function locallyInside(data, a, b) {
+    return orient(data, a.prev.i, a.i, a.next.i) === -1 ?
+        orient(data, a.i, b.i, a.next.i) !== -1 && orient(data, a.i, a.prev.i, b.i) !== -1 :
+        orient(data, a.i, b.i, a.prev.i) === -1 || orient(data, a.i, a.next.i, b.i) === -1;
+}
+
+// check if the middle point of a polygon diagonal is inside the polygon
+function middleInside(data, start, a, b) {
+    var node = start,
+        inside = false,
+        px = (data[a] + data[b]) / 2,
+        py = (data[a + 1] + data[b + 1]) / 2;
+    do {
+        var p1 = node.i,
+            p2 = node.next.i;
+
+        if (((data[p1 + 1] > py) !== (data[p2 + 1] > py)) &&
+            (px < (data[p2] - data[p1]) * (py - data[p1 + 1]) / (data[p2 + 1] - data[p1 + 1]) + data[p1]))
+                inside = !inside;
+
+        node = node.next;
+    } while (node !== start);
+
+    return inside;
+}
+
+// link two polygon vertices with a bridge; if the vertices belong to the same ring, it splits polygon into two;
+// if one belongs to the outer ring and another to a hole, it merges it into a single ring
+function splitPolygon(a, b) {
+    var a2 = new Node(a.i),
+        b2 = new Node(b.i),
+        an = a.next,
+        bp = b.prev;
+
+    a.next = b;
+    b.prev = a;
+
+    a2.next = an;
+    an.prev = a2;
+
+    b2.next = a2;
+    a2.prev = b2;
+
+    bp.next = b2;
+    b2.prev = bp;
+
+    return b2;
+}
+
+// create a node and optionally link it with previous one (in a circular doubly linked list)
+function insertNode(i, last) {
+    var node = new Node(i);
+
+    if (!last) {
+        node.prev = node;
+        node.next = node;
+
+    } else {
+        node.next = last.next;
+        node.prev = last;
+        last.next.prev = node;
+        last.next = node;
+    }
+    return node;
+}
+
+function Node(i) {
+    // vertex coordinates
+    this.i = i;
+
+    // previous and next vertice nodes in a polygon ring
+    this.prev = null;
+    this.next = null;
+
+    // z-order curve value
+    this.z = null;
+
+    // previous and next nodes in z-order
+    this.prevZ = null;
+    this.nextZ = null;
+
+    // indicates whether this is a steiner point
+    this.steiner = false;
+}
+
+   return earcut;
+});
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Text/PolygonText',[
+	"jquery",
+	"cobweb/Browser/Core/PrimitiveQuality",
+	"cobweb/Browser/Text/X3DTextGeometry",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Triangle2",
+	"lib/bezierjs/bezier.js",
+	"lib/poly2tri.js/dist/poly2tri.js",
+	"lib/earcut/src/earcut.js",
+],
+function ($,
+          PrimitiveQuality,
+          X3DTextGeometry,
+          Vector3,
+          Matrix4,
+          Triangle2,
+          Bezier,
+          poly2tri,
+          earcut)
+{
+
+
+	var
+		min    = new Vector3 (0, 0, 0),
+		max    = new Vector3 (0, 0, 0),
+		paths  = [ ],
+		points = [ ],
+		curves = [ ];
+
+	function PolygonText (text, fontStyle)
+	{
+		X3DTextGeometry .call (this, text, fontStyle);
+
+		text .transparent_ = false;
+
+		this .texCoords = [ ];
+	}
+
+	PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
+	{
+		constructor: PolygonText,
+		build: function ()
+		{
+			var
+				fontStyle = this .getFontStyle (),
+				font      = fontStyle .getFont ();
+
+			if (! font)
+				return;
+
+			var
+				text             = this .getText (),
+				glyphs           = this .getGlyphs (),
+				minorAlignment   = this .getMinorAlignment (),
+				translations     = this .getTranslations (),
+				charSpacings     = this .getCharSpacings (),
+				size             = fontStyle .getScale (),
+				spacing          = fontStyle .spacing_ .getValue (),
+				origin           = text .origin_ .getValue (),
+				sizeUnitsPerEm   = size / font .unitsPerEm,
+				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
+				texCoords        = this .texCoords,
+				normals          = text .getNormals (),
+				vertices         = text .getVertices ();
+
+			texCoords .length = 0;
+			text .getTexCoords () .push (texCoords);
+
+			this .getBBox () .getExtents (min, max);
+			text .getMin () .assign (min);
+			text .getMax () .assign (max);
+
+			if (fontStyle .horizontal_ .getValue ())
+			{
+				for (var l = 0, length = glyphs .length; l < length; ++ l)
+				{
+					var
+						line         = glyphs [l],
+						charSpacing  = charSpacings [l],
+						translation  = translations [l],
+						advanceWidth = 0;
+
+					for (var g = 0, gl = line .length; g < gl; ++ g)
+					{
+						var
+							glyph         = line [g],
+							glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
+						
+						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+						{
+							var
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
+		
+							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
+							normals   .push (0, 0, 1);
+							vertices  .push (x, y, 0, 1);
+						}
+		
+						// Calculate advanceWidth.
+		
+						var kerning = 0;
+		
+						if (g + 1 < line .length)
+							kerning = font .getKerningValue (glyph, line [g + 1]);
+		
+						advanceWidth += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
+					}
+				}
+			}
+			else
+			{
+				var
+					leftToRight = fontStyle .leftToRight_ .getValue (),
+					topToBottom = fontStyle .topToBottom_ .getValue (),
+					first       = leftToRight ? 0 : text .string_ .length - 1,
+					last        = leftToRight ? text .string_ .length  : -1,
+					step        = leftToRight ? 1 : -1;
+
+				for (var l = first, t = 0; l !== last; l += step)
+				{
+					var line = glyphs [l];
+
+					var
+					   numChars = line .length,
+						firstG   = topToBottom ? 0 : numChars - 1,
+						lastG    = topToBottom ? numChars : -1,
+						stepG    = topToBottom ? 1 : -1;
+
+					for (var g = firstG; g !== lastG; g += stepG, ++ t)
+					{
+						var
+							translation   = translations [t],
+							glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
+
+						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
+						{
+							var
+								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x,
+								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
+			
+							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
+							normals   .push (0, 0, 1);
+							vertices  .push (x, y, 0, 1);
+						}
+					}
+				}
+			}
+		},
+		getGlyphExtents: function (glyph, primitiveQuality, min, max)
+		{
+			var extents = glyph .extents [primitiveQuality];
+
+			if (extents)
+			{
+				min .assign (extents .min);
+				max .assign (extents .max);
+				return;
+			}
+
+			var vertices = this .getGlyphGeometry (glyph, primitiveQuality);
+
+			if (vertices .length)
+			{
+				var vertex = vertices [0];
+
+				min .assign (vertex);
+				max .assign (vertex);
+
+				for (var i = 1, length = vertices .length; i < length; ++ i)
+				{
+					var vertex = vertices [i];
+
+					min .min (vertex);
+					max .max (vertex);
+				}
+			}
+			else
+			{
+				min .set (0, 0, 0);
+				max .set (0, 0, 0);			   
+			}
+
+			var extents = glyph .extents [primitiveQuality] = { };
+
+			extents .min = min .copy ();
+			extents .max = max .copy ();
+		},
+		getGlyphGeometry: function (glyph, primitiveQuality)
+		{
+			var
+				fontStyle     = this .getFontStyle (),
+				font          = fontStyle .getFont (),
+				geometryCache = this .getBrowser () .getFontGeometryCache ();
+
+			var cachedFont = geometryCache [font .fontName];
+
+			if (! cachedFont)
+				geometryCache [font .fontName] = cachedFont = [[], [], []];
+
+			var cachedGeometry = cachedFont [primitiveQuality] [glyph .index];
+
+			if (cachedGeometry)
+				return cachedGeometry;
+
+			cachedGeometry = cachedFont [primitiveQuality] [glyph .index] = [ ];
+
+			this .createGlyphGeometry (glyph, cachedGeometry, primitiveQuality);
+
+		   return cachedGeometry;
+		},
+		createGlyphGeometry: function (glyph, vertices, primitiveQuality)
+		{
+			var
+				fontStyle  = this .getFontStyle (),
+				font       = fontStyle .getFont (),
+				components = glyph .components,
+				dimension  = this .getBezierDimension (primitiveQuality),
+				reverse    = font .outlinesFormat === "cff";
+
+			paths  .length = 0;
+			points .length = 0;
+			curves .length = 0;
+		
+			if (glyph .isComposite)
+			{
+				for (var c = 0, cl = components .length; c < cl; ++ c)
+				{
+					var component = components [c];
+
+					paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, 1));
+				}
+			}
+			else
+				paths .push (glyph .getPath (0, 0, 1));
+
+			// Get curves for the current glyph.
+
+			var
+				x = 0,
+				y = 0;
+
+			for (var p = 0, pl = paths .length; p < pl; ++ p)
+			{
+				var commands = paths [p] .commands;
+
+				for (var i = 0, cl = commands .length; i < cl; ++ i)
+				{
+					var command = commands [i];
+										      
+					switch (command .type)
+					{
+						case "M": // Start
+						case "Z": // End
+						{
+							if (points .length > 2)
+							{
+								if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
+									points .pop ();
+
+								curves .push (reverse ? points .reverse () : points);
+							}
+								
+							points = [ ];
+
+							if (command .type === "M")
+								points .push ({ x: command .x, y: -command .y });
+							
+							break;
+						}
+						case "L": // Linear
+						{
+							points .push ({ x: command .x, y: -command .y });
+							break;
+						}
+						case "C": // Bezier
+						{
+							var
+								curve = new Bezier (x, -y, command .x1, -command .y1, command .x2, -command .y2, command .x, -command .y),
+								lut   = curve .getLUT (dimension);
+
+							for (var l = 1, ll = lut .length; l < ll; ++ l)
+								points .push (lut [l]);
+
+							break;
+						}
+						case "Q": // Cubíc
+						{
+							var
+								curve = new Bezier (x, -y, command .x1, -command .y1, command .x, -command .y),
+								lut   = curve .getLUT (dimension);
+
+							for (var l = 1, ll = lut .length; l < ll; ++ l)
+								points .push (lut [l]);
+							
+							break;
+						}
+						default:
+						   continue;
+					}
+
+					x = command .x;
+					y = command .y;
+				}
+			}
+
+			// Determine contours and holes.
+
+			var
+				contours = [ ],
+				holes    = [ ];
+
+			switch (curves .length)
+			{
+			   case 0:
+					break;
+			   case 1:
+					contours = curves;
+					break;
+				default:
+				{
+					for (var i = 0, cl = curves .length; i < cl; ++ i)
+					{
+						var
+							curve       = curves [i],
+							orientation = this .getCurveOrientation (curve);
+
+						if (orientation < 0)
+							contours .push (curve);
+					   else
+							holes .push (curve);
+					}
+
+					break;
+				}
+			}
+
+			/*
+			if (glyph .name [0] == "O")
+				console .log (glyph .name, "\n",
+				              "font: ", font, "\n",
+				              "glyph: ", glyph, "\n",
+				              "paths: ", paths, "\n",
+				              "contours: ", contours, "\n",
+				              "holes: ", holes);
+			*/
+			   
+			// Determine the holes for every contour.
+
+			contours .map (this .removeCollinearPoints);
+			holes .map (this .removeCollinearPoints);
+
+			switch (contours .length)
+			{
+				case 0:
+					break;
+				case 1:
+					contours [0] .holes = holes;
+					break;
+				default:
+				{
+					for (var c = 0, cl = contours .length; c < cl; ++ c)
+						contours [c] .holes = [ ];
+
+					for (var h = 0, hl = holes .length; h < hl; ++ h)
+					{
+						var hole = holes [h];
+
+						for (var c = 0, cl = contours .length; c < cl; ++ c)
+						{
+							var contour = contours [c];
+
+							// Copy contour, as isPointInPolygon will shuffle the points.
+							if (this .isPointInPolygon (contour .slice (), hole [0]))
+							{
+								contour .holes .push (hole);
+								break;
+							}
+						}
+					}
+
+				   break;
+				}
+			}
+
+			// Triangulate contours.
+
+			for (var i = 0, length = contours .length; i < length; ++ i)
+				this .triangulate (contours [i], contours [i] .holes, vertices);
+		},
+		getBezierDimension: function (primitiveQuality)
+		{
+			switch (primitiveQuality)
+			{
+				case PrimitiveQuality .LOW:
+					return 3;
+				case PrimitiveQuality .HIGH:
+					return 7;
+				default:
+					return 5;
+			}
+		},
+		getCurveOrientation: function (curve)
+		{
+			// From Wikipedia:
+
+			var
+				minX     = Number .POSITIVE_INFINITY,
+				minIndex = 0;
+
+			for (var i = 0, length = curve .length; i < length; ++ i)
+			{
+				if (curve [i] .x < minX)
+				{
+					minX     = curve [i] .x;
+					minIndex = i;
+				}
+			}
+
+			var
+				a = curve [(minIndex + length - 1) % length],
+				b = curve [minIndex],
+				c = curve [(minIndex + 2) % length];
+
+		   return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+		},
+		/*isPointInPolygon: function (polygon, point)
+		{
+			// earcut version
+			// not always working!!!
+
+			try
+			{
+				// Triangulate polygon.
+
+				var coords = [ ];
+
+				for (var p = 0; p < contour .length; ++ p)
+					coords .push (contour [p] .x, contour [p] .y);
+
+				var t = earcut (coords, holesIndices);
+
+				for (var i = 0; i < t .length; i += 3)
+				{
+				   var  
+						a = polygon [t [i]],
+						b = polygon [t [i + 1]],
+						c = polygon [t [i + 2]];
+					
+					if (Triangle2 .isPointInTriangle (a, b, c, point))
+						return true;
+				}
+
+				return false;
+			}
+			catch (error)
+			{
+				//console .warn (error);
+			}
+		},*/
+		isPointInPolygon: function (polygon, point)
+		{
+			// poly2tri version
+
+			try
+			{
+				// Triangulate polygon.
+
+				var
+					context = new poly2tri .SweepContext (polygon),
+					ts      = context .triangulate () .getTriangles ();
+
+				for (var i = 0, length = ts .length; i < length; ++ i)
+				{
+					var  
+						a = ts [i] .getPoint (0),
+						b = ts [i] .getPoint (1),
+						c = ts [i] .getPoint (2);
+					
+					if (Triangle2 .isPointInTriangle (a, b, c, point))
+						return true;
+				}
+
+				return false;
+			}
+			catch (error)
+			{
+				//console .warn (error);
+			}
+		},
+		removeCollinearPoints: function (polygon)
+		{
+			function isCollinear (a, b, c)
+			{
+				return Math .abs ((a.y - b.y) * (a.x - c.x) - (a.y - c.y) * (a.x - b.x)) < 1e-8;
+			}
+
+			for (var i = 0, k = 0, length = polygon .length; i < length; ++ i)
+			{
+				var
+					i0 = (i - 1 + length) % length,
+					i1 = (i + 1) % length;
+
+				if (isCollinear (polygon [i0], polygon [i], polygon [i1]))
+					continue;
+
+				polygon [k ++] = polygon [i];
+			}
+
+		   polygon .length = k;
+		},
+		triangulate: function (polygon, holes, triangles)
+		{
+		   try
+			{
+				// Triangulate polygon.
+				var
+					context = new poly2tri .SweepContext (polygon) .addHoles (holes),
+					ts      = context .triangulate () .getTriangles ();
+
+				for (var i = 0, length = ts .length; i < length; ++ i)
+				{
+					triangles .push (ts [i] .getPoint (0), ts [i] .getPoint (1), ts [i] .getPoint (2));
+				}
+			}
+			catch (error)
+			{
+				//console .warn (error);
+				this .earcutTriangulate (polygon, holes, triangles);
+			}
+		},
+		earcutTriangulate: function (polygon, holes, triangles)
+		{
+		   try
+			{
+				// Triangulate polygon.
+
+				var
+					coords       = [ ],
+					holesIndices = [ ];
+
+				for (var p = 0, pl = polygon .length; p < pl; ++ p)
+					coords .push (polygon [p] .x, polygon [p] .y);
+
+				for (var h = 0, hsl = holes .length; h < hsl; ++ h)
+				{
+					var hole = holes [h];
+
+					for (var p = 0, hl = hole .length; p < hl; ++ p)
+					{
+						holesIndices .push (coords .length / 2);
+						coords .push (hole [p] .x, hole [p] .y);
+						polygon .push (hole [p]);
+					}
+				}
+
+				var t = earcut (coords, holesIndices);
+
+				for (var i = 0, tl = t .length; i < tl; ++ i)
+					triangles .push (polygon [t [i]]);
+			}
+			catch (error)
+			{
+				//console .warn (error);
+			}
+		},
+		traverse: function (type)
+		{
+		},
+		display: function (context)
+		{
+		},
+		transform: function ()
+		{
+		},
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
+		transformLine: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
+		},
+	});
+
+	return PolygonText;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Text/FontStyle',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Text/X3DFontStyleNode",
+	"cobweb/Browser/Text/PolygonText",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DFontStyleNode,
+          PolygonText,
+          X3DConstants)
+{
+
+
+	function FontStyle (executionContext)
+	{
+		X3DFontStyleNode .call (this, executionContext);
+
+		this .addType (X3DConstants .FontStyle);
+	}
+
+	FontStyle .prototype = $.extend (Object .create (X3DFontStyleNode .prototype),
+	{
+		constructor: FontStyle,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",    new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "family",      new Fields .MFString ("SERIF")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "style",       new Fields .SFString ("PLAIN")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "size",        new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "spacing",     new Fields .SFFloat (1)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "horizontal",  new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "leftToRight", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "topToBottom", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "justify",     new Fields .MFString ("BEGIN")),
+		]),
+		getTypeName: function ()
+		{
+			return "FontStyle";
+		},
+		getComponentName: function ()
+		{
+			return "Text";
+		},
+		getContainerField: function ()
+		{
+			return "fontStyle";
+		},
+		getTextGeometry: function (text)
+		{
+			return new PolygonText (text, this);
+		},
+		getScale: function ()
+		{
+			return this .size_ .getValue ();
+		},
+	});
+
+	return FontStyle;
+});
+
+
+
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define('lib/opentype.js/dist/opentype.js',[],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.opentype = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Run-time checking of preconditions.
 
@@ -60718,3946 +64621,12 @@ exports.sizeOf = sizeOf;
  ******************************************************************************/
 
 
-define ('cobweb/Components/Text/X3DFontStyleNode',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Components/Networking/X3DUrlObject",
-	"cobweb/Browser/Text/TextAlignment",
-	"cobweb/InputOutput/Loader",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/Browser/Networking/urls",
-	"standard/Networking/URI",
-	"lib/opentype.js/dist/opentype.js",
-],
-function ($,
-          Fields,
-          X3DNode,
-          X3DUrlObject,
-          TextAlignment,
-          Loader,
-          X3DConstants,
-          urls,
-          URI,
-          opentype)
-{
-
-
-   /*
-    * Font paths for default SERIF, SANS and TYPWRITER families.
-    */
-
-	var FontDirectories = [
-		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
-		"https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
-		"http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
-		"https://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
-		"http://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
-	];
-
-	var Fonts =
-	{
-	   SERIF: {
-	      PLAIN:      "DroidSerif-Regular.ttf",
-	      ITALIC:     "DroidSerif-Italic.ttf",
-	      BOLD:       "DroidSerif-Bold.ttf",
-	      BOLDITALIC: "DroidSerif-BoldItalic.ttf",
-	   },
-	   SANS: {
-	      PLAIN:      "Ubuntu-R.ttf",
-	      ITALIC:     "Ubuntu-RI.ttf",
-	      BOLD:       "Ubuntu-B.ttf",
-	      BOLDITALIC: "Ubuntu-BI.ttf",
-	   },
-	   TYPEWRITER: {
-	      PLAIN:      "UbuntuMono-R.ttf",
-	      ITALIC:     "UbuntuMono-RI.ttf",
-	      BOLD:       "UbuntuMono-B.ttf",
-	      BOLDITALIC: "UbuntuMono-BI.ttf",
-	   },
-	};
-
-	function X3DFontStyleNode (executionContext)
-	{
-		X3DNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DFontStyleNode);
-		
-		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
-
-		this .familyStack = [ ];
-		this .alignments  = [ ];
-		this .loader      = new Loader (this);
-	}
-
-	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
-	{
-		constructor: X3DFontStyleNode,
-		initialize: function ()
-		{
-			X3DNode .prototype .initialize .call (this);
-
-			this .style_   .addInterest (this, "set_style__");
-			this .justify_ .addInterest (this, "set_justify__");
-
-			this .font        = null;
-			this .familyIndex = 0;
-
-			this .set_justify__ ();
-			this .set_style__ ();
-
-			this .requestAsyncLoad ();
-		},
-		setLoadState: X3DUrlObject .prototype .setLoadState,
-		checkLoadState: X3DUrlObject .prototype .checkLoadState,
-		getMajorAlignment: function ()
-		{
-			return this .alignments [0];
-		},
-		getMinorAlignment: function ()
-		{
-			return this .alignments [1];
-		},
-		set_style__: function ()
-		{
-			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
-
-			this .requestAsyncLoad ();
-		},
-		set_justify__: function ()
-		{
-			var majorNormal = this .horizontal_ .getValue () ? this .leftToRight_ .getValue () : this .topToBottom_ .getValue ();
-
-			this .alignments [0] = this .justify_ .length > 0
-			                       ? this .getAlignment (0, majorNormal)
-								        : majorNormal ? TextAlignment .BEGIN : TextAlignment .END;
-
-			var minorNormal = this .horizontal_ .getValue () ? this .topToBottom_ .getValue () : this .leftToRight_ .getValue ();
-
-			this .alignments [1] = this .justify_ .length > 1
-			                       ? this .getAlignment (1, minorNormal)
-								        : minorNormal ? TextAlignment .FIRST : TextAlignment .END;
-		},
-		getAlignment: function (index, normal)
-		{
-			if (normal)
-			{
-				// Return for west-european normal alignment.
-
-				switch (this .justify_ [index])
-				{
-					case "FIRST":  return TextAlignment .FIRST;
-					case "BEGIN":  return TextAlignment .BEGIN;
-					case "MIDDLE": return TextAlignment .MIDDLE;
-					case "END":    return TextAlignment .END;
-				}
-			}
-			else
-			{
-				// Return appropriate alignment if topToBottom or leftToRight are FALSE.
-
-				switch (this .justify_ [index])
-				{
-					case "FIRST":  return TextAlignment .END;
-					case "BEGIN":  return TextAlignment .END;
-					case "MIDDLE": return TextAlignment .MIDDLE;
-					case "END":    return TextAlignment .BEGIN;
-				}
-			}
-
-			return index ? TextAlignment .FIRST : TextAlignment .BEGIN;
-		},
-		requestAsyncLoad: function ()
-		{
-			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
-				return;
-
-			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-
-			// Add default font to family array.
-
-			var family = this .family_ .copy ();
-
-			family .push ("SERIF");
-
-			// Build family stack.
-
-			this .familyStack .length = 0;
-
-			for (var i = 0, length = family .length; i < length; ++ i)
-			{
-			   var
-			      familyName  = family [i],
-			      defaultFont = this .getDefaultFont (familyName);
-			   
-				if (defaultFont)
-				{
-				   for (var d = 0; d < FontDirectories .length; ++ d)
-				      this .familyStack .push (FontDirectories [d] + defaultFont);
-				}
-				else
-					this .familyStack .push (familyName);
-			}
-
-			this .loadNext ();
-		},
-		getDefaultFont: function (familyName)
-		{
-		   var family = Fonts [familyName];
-
-		   if (family)
-		   {
-		      var style = family [this .style_ .getValue ()];
-
-		      if (style)
-		         return style;
-
-		      return family .PLAIN;
-		   }
-
-		   return;
-		},
-		loadNext: function ()
-		{
-			try
-			{
-				if (this .familyStack .length === 0)
-				{
-					this .setLoadState (X3DConstants .FAILED_STATE);
-					this .font = null;
-					return;
-				}
-
-				this .family = this .familyStack .shift ();
-				this .URL    = this .loader .transform (this .family);
-	
-				var font = this .getBrowser () .getFont (this .URL);
-
-				if (font)
-					return this .setFont (font);
-	
-				if (font === false)
-					return this .setError ("Couldn't load font.");
-	
-				this .getBrowser () .addFont (this .URL, true);
-	
-				opentype .load (this .URL, this .addFont .bind (this));
-			}
-			catch (error)
-			{
-				this .setError (error .message);
-			}
-		},
-		setError: function (error)
-		{
-			this .getBrowser () .addFont (this .URL, false);
-	
-			var URL = this .URL .toString ();
-
-			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
-			{
-				if (! URL .match (urls .fallbackExpression))
-					this .familyStack .unshift (urls .fallbackUrl + URL);
-			}
-
-			if (this .URL .scheme !== "data")
-				console .warn ("Error loading font '" + this .URL .toString () + "':", error);
-
-			this .loadNext ();
-		},
-		addFont: function (error, font)
-		{
-			if (error)
-			{
-			   this .setError (error);
-			}
-			else
-			{
-				this .getBrowser () .addFont (this .URL, font);
-				this .setFont (font);
-			}
-		},
-		setFont: function (font)
-		{
-			if (font === true)
-			{
-				this .familyStack .unshift (this .family);
-				setTimeout (this .loadNext .bind (this), 10);
-				return;
-			}
-
-			this .font = font;
-
-			this .setLoadState (X3DConstants .COMPLETE_STATE);
-			this .addNodeEvent ();
-		},
-		getFont: function ()
-		{
-		   return this .font;
-		},
-	});
-
-	return X3DFontStyleNode;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('standard/Math/Geometry/Box2',[
-	"standard/Math/Numbers/Matrix3",
-	"standard/Math/Numbers/Vector2",
-],
-function (Matrix3, Vector2)
-{
-;
-
-	var
-		x   = new Vector2 (0, 0),
-		y   = new Vector2 (0, 0),
-		min = new Vector2 (0, 0),
-		max = new Vector2 (0, 0),
-		p1  = new Vector2 (0, 0);
-
-	var
-		lhs_min = new Vector2 (0, 0),
-		lhs_max = new Vector2 (0, 0),
-		rhs_min = new Vector2 (0, 0),
-		rhs_max = new Vector2 (0, 0);
-
-	function Box2 (size, center)
-	{
-		switch (arguments .length)
-		{
-			case 0:
-			{
-				this .matrix = new Matrix3 (0.5, 0,   0,
-				                            0,   0.5, 0,
-				                            0,   0,   0);
-				return;
-			}
-			case 2:
-			{
-				this .matrix = new Matrix3 (size .x / 2, 0, 0,
-				                            0, size .y / 2, 0,
-				                            center .x, center .y, 1);
-				return;
-			}
-			case 3:
-			{
-				var
-					min = arguments [0],
-					max = arguments [1],
-					sx  = (max .x - min .x) / 2,
-					sy  = (max .y - min .y) / 2,
-					cx  = (max .x + min .x) / 2,
-					cy  = (max .y + min .y) / 2;
-
-				this .matrix = new Matrix3 (sx, 0,  0,
-				                            0,  sy, 0,
-				                            cx, cy, 1);
-				return;
-			}
-		}
-	}
-
-	Box2 .prototype =
-	{
-		constructor: Box2,
-		copy: function ()
-		{
-			var copy = Object .create (Box2 .prototype);
-			copy .matrix = this .matrix .copy ();
-			return copy;
-		},
-		assign: function (box)
-		{
-			this .matrix .assign (box .matrix);
-			return this;
-		},
-		equals: function (box)
-		{
-			return this .matrix .equals (box .matrix);
-		},
-		set: function (size, center)
-		{
-			var m = this .matrix;
-			m [0] = size .x / 2; m [1] = 0;           m [2] = 0;
-			m [3] = 0;           m [4] = size .y / 2; m [5] = 0;
-			m [6] = center .x;   m [7] = center .y;   m [8] = 1;
-			return this;
-		},
-		set: function (size, center)
-		{
-			var m = this .matrix;
-		
-			switch (arguments .length)
-			{
-				case 0:
-				{
-					m [0] = 0.5; m [1] = 0;   m [2] = 0;
-					m [3] = 0;   m [4] = 0.5; m [5] = 0;
-					m [6] = 0;   m [7] = 0;   m [8] = 0;
-					return this;
-				}
-				case 2:
-				{
-					m [0] = size .x / 2; m [1] = 0;           m [2] = 0;
-					m [3] = 0;           m [4] = size .y / 2; m [5] = 0;
-					m [6] = center .x;   m [7] = center .y;   m [8] = 1;
-					return this;
-				}
-				case 3:
-				{
-					var
-						min = arguments [0],
-						max = arguments [1],
-						sx  = (max .x - min .x) / 2,
-						sy  = (max .y - min .y) / 2,
-						cx  = (max .x + min .x) / 2,
-						cy  = (max .y + min .y) / 2;
-
-					m [0] = sx; m [1] = 0;  m [2] = 0;
-					m [3] = 0;  m [4] = sy; m [5] = 0;
-					m [6] = cx; m [7] = cy; m [8] = 1;
-					return this;
-				}
-			}
-		},
-		setExtents: function (min, max)
-		{
-			var
-				m  = this .matrix,
-				sx = (max .x - min .x) / 2,
-				sy = (max .y - min .y) / 2,
-				cx = (max .x + min .x) / 2,
-				cy = (max .y + min .y) / 2;
-
-			m [0] = sx; m [1] = 0;  m [2] = 0;
-			m [3] = 0;  m [4] = sy; m [5] = 0;
-			m [6] = cx; m [7] = cy; m [8] = 1;
-			return this;
-		},
-		isEmpty: function ()
-		{
-			return this .matrix [8] === 0;
-		},
-		add: function (box)
-		{
-			if (this .isEmpty ())
-				return this .assign (box);
-
-			if (box .isEmpty ())
-				return this;
-
-			this .getExtents (lhs_min, lhs_max);
-			box  .getExtents (rhs_min, rhs_max);
-
-			return this .assign (new Box2 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
-		},
-		multLeft: function (matrix)
-		{
-			this .matrix .multLeft (matrix);
-			return this;
-		},
-		multRight: function (matrix)
-		{
-			this .matrix .multRight (matrix);
-			return this;
-		},
-		getExtents: function (min, max)
-		{
-			this .getAbsoluteExtents (min, max);
-
-			min .add (this .center);
-			max .add (this .center);
-		},
-		getAbsoluteExtents: function (min, max)
-		{
-		   var m = this .matrix;
-
-			x .set (m [0], m [1]);
-			y .set (m [3], m [4]);
-
-			p1 .assign (x) .add (y);
-
-			var p2 = y .subtract (x);
-
-			min .assign (p1) .min (p2);
-			max .assign (p1) .max (p2);
-
-			p1 .negate ();
-			p2 .negate ();
-
-			min .min (p1, p2);
-			max .max (p1, p2);
-		},
-		intersectsPoint: function (point)
-		{
-			this .getExtents (min, max);
-
-			return min .x <= point .x &&
-			       max .x >= point .x &&
-			       min .y <= point .y &&
-			       max .y >= point .y;
-		},
-		toString: function ()
-		{
-			return this .size + ", " + this .center;
-		},
-	};
-
-	Object .defineProperty (Box2 .prototype, "size",
-	{
-		get: function ()
-		{
-			var max = new Vector2 (0, 0);
-			
-			this .getAbsoluteExtents (min, max);
-
-			return max .subtract (min);
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (Box2 .prototype, "center",
-	{
-		get: function ()
-		{
-			return this .matrix .origin;
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	return Box2;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Browser/Text/X3DTextGeometry',[
-	"cobweb/Browser/Text/TextAlignment",
-	"standard/Math/Geometry/Box2",
-	"standard/Math/Geometry/Box3",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
-],
-function (TextAlignment,
-          Box2,
-          Box3,
-          Vector2,
-          Vector3)
-{
-
-
-	var
-		glyphCache  = { },
-		bbox        = new Box2 (),
-		lineBBox    = new Box2 (),
-		min         = new Vector2 (0, 0),
-		max         = new Vector2 (0, 0),
-		glyphMin    = new Vector2 (0, 0),
-		glyphMax    = new Vector2 (0, 0),
-		min3        = new Vector3 (0, 0, 0),
-		max3        = new Vector3 (0, 0, 0),
-		size        = new Vector2 (0, 0),
-		center      = new Vector2 (0, 0),
-		size1_2     = new Vector2 (0, 0),
-		translation = new Vector2 (0, 0),
-		lineBound   = new Vector2 (0, 0),
-		origin      = new Vector3 (0, 0, 0),
-		vector      = new Vector2 (0, 0),
-		box2        = new Box2 (),
-		zero2       = new Vector2 (0, 0),
-		zero3       = new Vector3 (0, 0, 0);
-
-	function X3DTextGeometry (text, fontStyle)
-	{
-		this .text           = text;
-		this .fontStyle      = fontStyle;
-		this .glyphs         = [ ];
-		this .minorAlignment = new Vector2 (0, 0);
-		this .translations   = [ ];
-		this .charSpacings   = [ ];
-		this .bearing        = new Vector2 (0, 0);
-		this .yPad           = [ ];
-		this .bbox           = new Box3 ();
-	}
-
-	X3DTextGeometry .prototype =
-	{
-		constructor: X3DTextGeometry,
-		getBrowser: function ()
-		{
-			return this .text .getBrowser ();
-		},
-		getText: function ()
-		{
-			return this .text;
-		},
-		getFontStyle: function ()
-		{
-			return this .fontStyle;
-		},
-		getGlyphs: function ()
-		{
-			return this .glyphs;
-		},
-		getMinorAlignment: function ()
-		{
-			return this .minorAlignment;
-		},
-		getTranslations: function ()
-		{
-			return this .translations;
-		},
-		getCharSpacings: function ()
-		{
-			return this .charSpacings;
-		},
-		getBearing: function ()
-		{
-			return this .bearing;
-		},
-		getBBox: function ()
-		{
-			return this .bbox;
-		},
-		update: function ()
-		{
-			var
-				text      = this .text,
-				fontStyle = this .fontStyle,
-				numLines  = text .string_ .length;
-			
-			text .lineBounds_ .length = numLines;
-			this .glyphs      .length = 0;
-
-			if (numLines === 0 || ! fontStyle .getFont ())
-			{
-				text .origin_     .setValue (zero3);
-				text .textBounds_ .setValue (zero2);
-
-				this .bbox .set ();
-				return;
-			}
-
-			if (fontStyle .horizontal_ .getValue ())
-			{
-				this .resizeArray (this .translations, numLines);
-				this .resizeArray (this .charSpacings, numLines);
-
-				this .horizontal (text, fontStyle);
-			}
-			else
-			{
-				var
-					string   = text .string_ .getValue (),
-					numChars = 0;
-			
-				for (var i = 0, length = string .length; i < length; ++ i)
-					numChars += string [i] .length;
-
-				this .resizeArray (this .translations, numChars);
-				this .resizeArray (this .charSpacings, numChars);
-
-				this .vertical (text, fontStyle);
-			}
-		},
-		resizeArray: function (array, size)
-		{
-			// Resize array in grow only fashion.
-
-			for (var i = array .length; i < size; ++ i)
-				array .push (new Vector2 (0, 0));
-
-			array .length = size;
-		},
-		horizontal: function (text, fontStyle)
-		{
-			var
-				font        = fontStyle .getFont (),
-				string      = text .string_ .getValue (),
-				numLines    = string .length,
-				maxExtent   = Math .max (0, text .maxExtent_ .getValue ()),
-				topToBottom = fontStyle .topToBottom_ .getValue (),
-				scale       = fontStyle .getScale (),
-				spacing     = fontStyle .spacing_ .getValue ();
-			
-			bbox .set ();
-
-			// Calculate bboxes.
-
-			var
-				first = topToBottom ? 0 : numLines - 1,
-				last  = topToBottom ? numLines : -1,
-				step  = topToBottom ? 1 : -1;
-
-			for (var l = first, ll = 0; l !== last; l += step, ++ ll)
-			{
-				var line = string [l];
-
-				// Get line extents.
-
-				var glyphs = this .getHorizontalLineExtents (fontStyle, line, min, max, ll);
-
-				size .assign (max) .subtract (min);
-
-				// Calculate charSpacing and lineBounds.
-
-				var lineNumber = topToBottom ? l : numLines - l - 1;
-
-				var
-					charSpacing = 0,
-					length      = text .getLength (l);
-	
-				lineBound .set (size .x, lineNumber == 0 ? max .y - font .descender / font .unitsPerEm : spacing) .multiply (scale);
-
-				if (maxExtent)
-				{
-					if (length)
-						length = Math .min (maxExtent, length);
-
-					else
-						length = Math .min (maxExtent, size .x * scale);
-				}
-
-				if (length)
-				{
-					charSpacing  = (length - lineBound .x) / (glyphs .length - 1);
-					lineBound .x = length;
-					size .x      = length / scale;
-				}
-
-				this .charSpacings [ll] = charSpacing 
-				text .lineBounds_ [l]   = lineBound;
-
-				// Calculate line translation.
-
-				switch (fontStyle .getMajorAlignment ())
-				{
-					case TextAlignment .BEGIN:
-					case TextAlignment .FIRST:
-						this .translations [ll] .set (0, -ll * spacing);
-						break;
-					case TextAlignment .MIDDLE:
-						this .translations [ll] .set (-min .x - size .x / 2, -ll * spacing);
-						break;
-					case TextAlignment .END:
-						this .translations [ll] .set (-min .x - size .x, -ll * spacing);
-						break;
-				}
-
-				this .translations [ll] .multiply (scale);
-
-				// Calculate center.
-
-				center .assign (min) .add (size1_2 .assign (size) .divide (2));
-
-				// Add bbox.
-
-				bbox .add (box2 .set (size .multiply (scale), center .multiply (scale) .add (this .translations [ll])));
-			}
-
-			//console .log ("size", bbox .size, "center", bbox .center);
-
-			// Get text extents.
-
-			bbox .getExtents (min, max);
-
-			size .assign (max) .subtract (min);
-
-			// Calculate text position
-
-			text .textBounds_ = size;
-			this .bearing .set (0, -max .y);
-
-			switch (fontStyle .getMinorAlignment ())
-			{
-				case TextAlignment .BEGIN:
-					this .minorAlignment .assign (this .bearing);
-					break;
-				case TextAlignment .FIRST:
-					this .minorAlignment .set (0, 0);
-					break;
-				case TextAlignment .MIDDLE:
-					this .minorAlignment .set (0, size .y / 2 - max .y);
-					break;
-				case TextAlignment .END:
-					this .minorAlignment .set (0, (numLines - 1) * spacing * scale);
-					break;
-			}
-
-			// Translate bbox by minorAlignment.
-
-			min .add (this .minorAlignment);
-			max .add (this .minorAlignment);
-
-			// The value of the origin field represents the upper left corner of the textBounds.
-
-			text .origin_ .setValue (origin .set (min .x, max .y, 0));
-
-			this .bbox .setExtents (min3 .set (min .x, min .y, 0),
-			                        max3 .set (max .x, max .y, 0));
-		},
-		vertical: function (text, fontStyle)
-		{		
-			var
-				font             = fontStyle .getFont (),
-				string           = text .string_ .getValue (),
-				numLines         = string .length,
-				maxExtent        = Math .max (0, text .maxExtent_ .getValue ()),
-				leftToRight      = fontStyle .leftToRight_ .getValue (),
-				topToBottom      = fontStyle .topToBottom_ .getValue (),
-				scale            = fontStyle .getScale (),
-				spacing          = fontStyle .spacing_ .getValue (),
-				yPad             = this .yPad,
-				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality ();
-	
-			bbox .set ();
-		
-			// Calculate bboxes.
-
-			var
-				firstL = leftToRight ? 0 : numLines - 1,
-				lastL  = leftToRight ? numLines : -1,
-				stepL  = leftToRight ? 1 : -1,
-				t      = 0; // Translation index
-
-			for (var l = firstL; l !== lastL; l += stepL)
-			{
-				var glyphs = this .stringToGlyphs (font, string [l], true, l);
-
-				var
-					t0       = t,
-					numChars = glyphs .length;
-
-				// Calculate line bbox
-		
-				lineBBox .set ();
-		
-				var
-					firstG = topToBottom ? 0 : numChars - 1,
-					lastG  = topToBottom ? numChars : -1,
-					stepG  = topToBottom ? 1 : -1;
-
-				for (var g = firstG; g !== lastG; g += stepG, ++ t)
-				{
-					var glyph = glyphs [g];
-
-					// Get glyph extents.
-
-					this .getGlyphExtents (glyph, primitiveQuality, min, max);
-		
-					size .assign (max) .subtract (min);
-					
-					// Calculate glyph translation
-					
-					var glyphNumber = topToBottom ? g : numChars - g - 1;
-
-					this .translations [t] .set ((spacing - size .x - min .x) / 2, -glyphNumber);
-
-					// Calculate center.
-
-					center .assign (min) .add (size1_2 .assign (size) .divide (2)) .add (this .translations [t]);
-		
-					// Add bbox.
-		
-					lineBBox .add (box2 .set (size, center));
-				}
-							
-				// Get line extents.
-		
-				lineBBox .getExtents (min, max);
-		
-				size .assign (max) .subtract (min);
-	
-				// Calculate charSpacing and lineBounds.
-
-				var
-					lineNumber  = leftToRight ? l : numLines - l - 1,
-					padding     = (spacing - size .x) / 2,
-					charSpacing = 0,
-					length      = text .getLength (l);
-
-				lineBound .set (l === 0 ? spacing - padding: spacing, size .y) .multiply (scale);
-
-				if (maxExtent)
-				{
-					if (length)
-						length = Math .min (maxExtent, length);
-		
-					else
-						length = Math .min (maxExtent, size .y * scale);
-				}
-		
-				if (length)
-				{
-					charSpacing  = (length - lineBound .y) / (glyphs .length - 1) / scale;
-					lineBound .y = length;
-					size .y      = length / scale;
-					min .y       = max .y  - size .y;
-				}
-		
-				text .lineBounds_ [l] = lineBound;
-	
-				// Calculate line translation.
-				
-				switch (fontStyle .getMajorAlignment ())
-				{
-					case TextAlignment .BEGIN:
-					case TextAlignment .FIRST:
-						translation .set (lineNumber * spacing, -1);
-						break;
-					case TextAlignment .MIDDLE:
-						translation .set (lineNumber * spacing, (size .y / 2 - max .y));
-						break;
-					case TextAlignment .END:
-					{
-						// This is needed to make maxExtend and charSpacing work.
-						this .getGlyphExtents (glyphs [topToBottom ? numChars - 1 : 0] , primitiveQuality, glyphMin, vector);
-
-						translation .set (lineNumber * spacing, (size .y - max .y + glyphMin .y));
-						break;
-					}
-				}
-		
-				// Calculate glyph translation		
-		
-				var space = 0;
-		
-				for (var tt = t0; tt < t; ++ tt)
-				{
-					this .translations [tt] .add (translation);
-
-					this .translations [tt] .y -= space;
-
-					this .translations [tt] .multiply (scale);
-
-					space += charSpacing;
-				}
-		
-				// Calculate ypad to extend line bounds.
-
-				switch (fontStyle .getMajorAlignment ())
-				{
-					case TextAlignment .BEGIN:
-					case TextAlignment .FIRST:
-						yPad [l] = max .y + translation .y;
-						break;
-					case TextAlignment .MIDDLE:
-						yPad [l] = 0;
-						break;
-					case TextAlignment .END:
-						yPad [l] = min .y + translation .y;
-						break;
-				}
-
-				// Calculate center.
-
-				center .assign (min) .add (size1_2 .assign (size) .divide (2));
-		
-				// Add bbox.
-					
-				bbox .add (box2 .set (size .multiply (scale), center .add (translation) .multiply (scale)));
-			}
-
-			// Get text extents.
-		
-			bbox .getExtents (min, max);
-		
-			size .assign (max) .subtract (min);
-			
-			// Extend lineBounds.
-		
-			switch (fontStyle .getMajorAlignment ())
-			{
-				case TextAlignment .BEGIN:
-				case TextAlignment .FIRST:
-				{
-					var lineBounds = text .lineBounds_ .getValue ();
-
-					for (var i = 0, length = lineBounds .length; i < length; ++ i)
-						lineBounds [i] .y += max .y - yPad [i] * scale;
-		
-					break;
-				}
-				case TextAlignment .MIDDLE:
-					break;
-				case TextAlignment .END:
-				{
-					var lineBounds = text .lineBounds_ .getValue ();
-
-					for (var i = 0, length = lineBounds .length; i < length; ++ i)
-						lineBounds [i].y += yPad [i] * scale - min .y;
-		
-					break;
-				}
-			}
-	
-			// Calculate text position
-		
-			text .textBounds_ = size;
-		
-			switch (fontStyle .getMajorAlignment ())
-			{
-				case TextAlignment .BEGIN:
-				case TextAlignment .FIRST:
-					this .bearing .set (-min .x, max .y);
-					break;
-				case TextAlignment .MIDDLE:
-					this .bearing .set (-min .x, 0);
-					break;
-				case TextAlignment .END:
-					this .bearing .set (-min .x, min .y);
-					break;
-			}
-		
-			switch (fontStyle .getMinorAlignment ())
-			{
-				case TextAlignment .BEGIN:
-				case TextAlignment .FIRST:
-					this .minorAlignment .set (-min .x, 0);
-					break;
-				case TextAlignment .MIDDLE:
-					this .minorAlignment .set (-min .x - size .x / 2, 0);
-					break;
-				case TextAlignment .END:
-					this .minorAlignment .set (-min .x - size .x, 0);
-					break;
-			}
-		
-			// Translate bbox by minorAlignment.
-		
-			min .add (this .minorAlignment);
-			max .add (this .minorAlignment);
-
-			// The value of the origin field represents the upper left corner of the textBounds.
-
-			text .origin_ .setValue (origin .set (min .x, max .y, 0));
-
-			this .bbox .set (min3 .set (min .x, min .y, 0),
-			                 max3 .set (max .x, max .y, 0),
-			                 true);
-		},
-		stringToGlyphs: function (font, line, normal, lineNumber)
-		{
-			line = line .getValue ();
-
-			var
-				fontGlyphCache = glyphCache [font .fontName],
-				glypes         = this .glyphs [lineNumber];
-
-			if (! fontGlyphCache)
-				fontGlyphCache = glyphCache [font .fontName] = [ ];
-
-			if (! glypes)
-				glypes = this .glyphs [lineNumber] = [ ];
-
-			glypes .length = line .length;
-
-			var
-				first = normal ? 0 : line .length - 1,
-				last  = normal ? line .length : -1,
-				step  = normal ? 1 : -1;
-
-			for (var c = first, g = 0; c !== last; c += step, ++ g)
-			{
-				var
-					charCode = line .charCodeAt (c),
-					glyph     = null;
-				
-				if (glyph = fontGlyphCache [charCode])
-					;
-				else
-				{
-					glyph = font .stringToGlyphs (line [c]) [0];
-
-					fontGlyphCache [charCode] = glyph;
-
-					glyph .extents = { };
-				}
-
-				glypes [g] = glyph;
-			}
-
-			return glypes;
-		},
-		getHorizontalLineExtents: function (fontStyle, line, min, max, lineNumber)
-		{
-			var
-				font             = fontStyle .getFont (),
-				normal           = fontStyle .horizontal_ .getValue () ? fontStyle .leftToRight_ .getValue () : fontStyle .topToBottom_ .getValue (),
-				glyphs           = this .stringToGlyphs (font, line, normal, lineNumber),
-				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-				xMin             = 0,
-				xMax             = 0,
-				yMin             = Number .POSITIVE_INFINITY,
-				yMax             = Number .NEGATIVE_INFINITY;
-
-			for (var g = 0, length = glyphs .length; g < length; ++ g)
-			{
-				var
-					glyph   = glyphs [g],
-					kerning = g + 1 < length ? font .getKerningValue (glyph, glyphs [g + 1]) : 0;
-
-				this .getGlyphExtents (glyph, primitiveQuality, glyphMin, glyphMax);
-
-				var advanceWidth = g + 1 < length ? glyph .advanceWidth : glyphMax .x * font .unitsPerEm;
-
-				xMax += advanceWidth + kerning;
-				yMin  = Math .min (yMin, glyphMin .y);
-				yMax  = Math .max (yMax, glyphMax .y);
-			}
-
-			if (glyphs .length)
-			{
-				this .getGlyphExtents (glyphs [0], primitiveQuality, glyphMin, glyphMax);
-
-				xMin  = glyphMin .x;
-			}
-			else
-			{
-				yMin = 0;
-				yMax = 0;
-			}
-
-			min .set (xMin, yMin);
-			max .set (xMax / font .unitsPerEm, yMax);
-
-			switch (fontStyle .getMajorAlignment ())
-			{
-				case TextAlignment .BEGIN:
-				case TextAlignment .FIRST:
-					min .x = 0;
-					break;
-			}
-
-			return glyphs;
-		},
-	};
-
-	return X3DTextGeometry;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-﻿
-define ('standard/Math/Geometry/Triangle2',[],function ()
-{
-
-
-	return {
-		isPointInTriangle: function (a, b, c, point)
-		{
-		   // https://en.wikipedia.org/wiki/Barycentric_coordinate_system
-
-		   var det = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
-
-		   var u = ((b.y - c.y) * (point .x - c.x) + (c.x - b.x) * (point .y - c.y)) / det;
-
-		   if (u < 0 || u > 1)
-		      return false;
-
-		   var v = ((c.y - a.y) * (point .x - c.x) + (a.x - c.x) * (point .y - c.y)) / det;
-
-		   if (v < 0 || v > 1)
-		      return false;
-
-		   var t = 1 - u - v;
-
-		   if (t < 0 || t > 1)
-		      return false;
-		   
-			return true;
-		},
-	};
-});
-
-//(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Bezier = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/**
-  A javascript Bezier curve library by Pomax.
-
-  Based on http://pomax.github.io/bezierinfo
-
-  This code is MIT licensed.
-**/
-//(function() {
-
-define ('lib/bezierjs/bezier.js',[],function ()
-{
-  
-
-  // Math functions. I hate the Math namespace with a passion.
-  var abs = Math.abs,
-      min = Math.min,
-      max = Math.max,
-      cos = Math.cos,
-      sin = Math.sin,
-      acos = Math.acos,
-      asin = Math.asin,
-      atan2 = Math.atan2,
-      sqrt = Math.sqrt,
-      // cube root function yielding real roots
-      crt = function(v) { if(v<0) return -Math.pow(-v,1/3); return Math.pow(v,1/3); },
-      pi = Math.PI,
-      tau = 2*pi,
-      quart = pi/2;
-
-  // a zero coordinate, which is surprisingly useful
-  var ZERO = {x:0,y:0,z:0};
-
-  // Bezier utility functions
-  var utils = {
-    // Legendre-Gauss abscissae with n=24 (x_i values, defined at i=n as the roots of the nth order Legendre polynomial Pn(x))
-    Tvalues: [
-      -0.0640568928626056260850430826247450385909,
-       0.0640568928626056260850430826247450385909,
-      -0.1911188674736163091586398207570696318404,
-       0.1911188674736163091586398207570696318404,
-      -0.3150426796961633743867932913198102407864,
-       0.3150426796961633743867932913198102407864,
-      -0.4337935076260451384870842319133497124524,
-       0.4337935076260451384870842319133497124524,
-      -0.5454214713888395356583756172183723700107,
-       0.5454214713888395356583756172183723700107,
-      -0.6480936519369755692524957869107476266696,
-       0.6480936519369755692524957869107476266696,
-      -0.7401241915785543642438281030999784255232,
-       0.7401241915785543642438281030999784255232,
-      -0.8200019859739029219539498726697452080761,
-       0.8200019859739029219539498726697452080761,
-      -0.8864155270044010342131543419821967550873,
-       0.8864155270044010342131543419821967550873,
-      -0.9382745520027327585236490017087214496548,
-       0.9382745520027327585236490017087214496548,
-      -0.9747285559713094981983919930081690617411,
-       0.9747285559713094981983919930081690617411,
-      -0.9951872199970213601799974097007368118745,
-       0.9951872199970213601799974097007368118745
-    ],
-
-    // Legendre-Gauss weights with n=24 (w_i values, defined by a function linked to in the Bezier primer article)
-    Cvalues: [
-      0.1279381953467521569740561652246953718517,
-      0.1279381953467521569740561652246953718517,
-      0.1258374563468282961213753825111836887264,
-      0.1258374563468282961213753825111836887264,
-      0.1216704729278033912044631534762624256070,
-      0.1216704729278033912044631534762624256070,
-      0.1155056680537256013533444839067835598622,
-      0.1155056680537256013533444839067835598622,
-      0.1074442701159656347825773424466062227946,
-      0.1074442701159656347825773424466062227946,
-      0.0976186521041138882698806644642471544279,
-      0.0976186521041138882698806644642471544279,
-      0.0861901615319532759171852029837426671850,
-      0.0861901615319532759171852029837426671850,
-      0.0733464814110803057340336152531165181193,
-      0.0733464814110803057340336152531165181193,
-      0.0592985849154367807463677585001085845412,
-      0.0592985849154367807463677585001085845412,
-      0.0442774388174198061686027482113382288593,
-      0.0442774388174198061686027482113382288593,
-      0.0285313886289336631813078159518782864491,
-      0.0285313886289336631813078159518782864491,
-      0.0123412297999871995468056670700372915759,
-      0.0123412297999871995468056670700372915759
-    ],
-    arcfn: function(t, derivativeFn) {
-      var d = derivativeFn(t);
-      var l = d.x*d.x + d.y*d.y;
-      if(typeof d.z !== "undefined") {
-        l += d.z*d.z;
-      }
-      return sqrt(l);
-    },
-    length: function(derivativeFn) {
-      var z=0.5,sum=0,len=this.Tvalues.length,i,t;
-      for(i=0; i<len; i++) {
-        t = z * this.Tvalues[i] + z;
-        sum += this.Cvalues[i] * this.arcfn(t,derivativeFn);
-      }
-      return z * sum;
-    },
-    map: function(v, ds,de, ts,te) {
-      var d1 = de-ds, d2 = te-ts, v2 =  v-ds, r = v2/d1;
-      return ts + d2*r;
-    },
-    lerp: function(r, v1, v2) {
-      var ret = {
-        x: v1.x + r*(v2.x-v1.x),
-        y: v1.y + r*(v2.y-v1.y)
-      };
-      if(!!v1.z && !!v2.z) {
-        ret.z =  v1.z + r*(v2.z-v1.z);
-      }
-      return ret;
-    },
-    pointToString: function(p) {
-      var s = p.x+"/"+p.y;
-      if(typeof p.z !== "undefined") {
-        s += "/"+p.z;
-      }
-      return s;
-    },
-    pointsToString: function(points) {
-      return "[" + points.map(this.pointToString).join(", ") + "]";
-    },
-    copy: function(obj) {
-      return JSON.parse(JSON.stringify(obj));
-    },
-    angle: function(o,v1,v2) {
-      var dx1 = v1.x - o.x,
-          dy1 = v1.y - o.y,
-          dx2 = v2.x - o.x,
-          dy2 = v2.y - o.y,
-          cross = dx1*dy2 - dy1*dx2,
-          m1 = sqrt(dx1*dx1+dy1*dy1),
-          m2 = sqrt(dx2*dx2+dy2*dy2),
-          dot;
-      dx1/=m1; dy1/=m1; dx2/=m2; dy2/=m2;
-      dot = dx1*dx2 + dy1*dy2;
-      return atan2(cross, dot);
-    },
-    dist: function(p1, p2) {
-      var dx = p1.x - p2.x,
-          dy = p1.y - p2.y;
-      return sqrt(dx*dx+dy*dy);
-    },
-    lli8: function(x1,y1,x2,y2,x3,y3,x4,y4) {
-      var nx=(x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4),
-          ny=(x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4),
-          d=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
-      if(d==0) { return false; }
-      return { x: nx/d, y: ny/d };
-    },
-    lli4: function(p1,p2,p3,p4) {
-      var x1 = p1.x, y1 = p1.y,
-          x2 = p2.x, y2 = p2.y,
-          x3 = p3.x, y3 = p3.y,
-          x4 = p4.x, y4 = p4.y;
-      return this.lli8(x1,y1,x2,y2,x3,y3,x4,y4);
-    },
-    lli: function(v1, v2) {
-      return this.lli4(v1,v1.c,v2,v2.c);
-    },
-    makeline: function(p1,p2) {
-      var x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y, dx = (x2-x1)/3, dy = (y2-y1)/3;
-      return new Bezier(x1, y1, x1+dx, y1+dy, x1+2*dx, y1+2*dy, x2, y2);
-    },
-    findbbox: function(sections) {
-      var mx=99999999,my=mx,MX=-mx,MY=MX;
-      sections.forEach(function(s) {
-        var bbox = s.bbox();
-        if(mx > bbox.x.min) mx = bbox.x.min;
-        if(my > bbox.y.min) my = bbox.y.min;
-        if(MX < bbox.x.max) MX = bbox.x.max;
-        if(MY < bbox.y.max) MY = bbox.y.max;
-      });
-      return {
-        x: { min: mx, mid:(mx+MX)/2, max: MX, size:MX-mx },
-        y: { min: my, mid:(my+MY)/2, max: MY, size:MY-my }
-      }
-    },
-    shapeintersections: function(s1, bbox1, s2, bbox2) {
-      if(!this.bboxoverlap(bbox1, bbox2)) return [];
-      var intersections = [];
-      var a1 = [s1.startcap, s1.forward, s1.back, s1.endcap];
-      var a2 = [s2.startcap, s2.forward, s2.back, s2.endcap];
-      a1.forEach(function(l1) {
-        if(l1.virtual) return;
-        a2.forEach(function(l2) {
-          if(l2.virtual) return;
-          var iss = l1.intersects(l2);
-          if(iss.length>0) {
-            iss.c1 = l1;
-            iss.c2 = l2;
-            iss.s1 = s1;
-            iss.s2 = s2;
-            intersections.push(iss);
-          }
-        });
-      });
-      return intersections;
-    },
-    makeshape: function(forward, back) {
-      var bpl = back.points.length;
-      var fpl = forward.points.length;
-      var start  = this.makeline(back.points[bpl-1], forward.points[0]);
-      var end    = this.makeline(forward.points[fpl-1], back.points[0]);
-      var shape  = {
-        startcap: start,
-        forward: forward,
-        back: back,
-        endcap: end,
-        bbox: this.findbbox([start, forward, back, end])
-      };
-      var self = this;
-      shape.intersections = function(s2) {
-        return self.shapeintersections(shape,shape.bbox,s2,s2.bbox);
-      };
-      return shape;
-    },
-    getminmax: function(curve, d, list) {
-      if(!list) return { min:0, max:0 };
-      var min=0xFFFFFFFFFFFFFFFF, max=-min,t,c;
-      if(list.indexOf(0)===-1) { list = [0].concat(list); }
-      if(list.indexOf(1)===-1) { list.push(1); }
-      for(var i=0,len=list.length; i<len; i++) {
-        t = list[i];
-        c = curve.get(t);
-        if(c[d] < min) { min = c[d]; }
-        if(c[d] > max) { max = c[d]; }
-      }
-      return { min:min, mid:(min+max)/2, max:max, size:max-min };
-    },
-    align: function(points, line) {
-      var tx = line.p1.x,
-          ty = line.p1.y,
-          a = -atan2(line.p2.y-ty, line.p2.x-tx),
-          d = function(v) {
-            return {
-              x: (v.x-tx)*cos(a) - (v.y-ty)*sin(a),
-              y: (v.x-tx)*sin(a) + (v.y-ty)*cos(a)
-            };
-          };
-      return points.map(d);
-    },
-    roots: function(points, line) {
-      line = line || {p1:{x:0,y:0},p2:{x:1,y:0}};
-      var order = points.length - 1;
-      var p = this.align(points, line);
-      var reduce = function(t) { return 0<=t && t <=1; };
-
-      if (order === 2) {
-        var a = p[0].y,
-            b = p[1].y,
-            c = p[2].y,
-            d = a - 2*b + c;
-        if(d!==0) {
-          var m1 = -sqrt(b*b-a*c),
-              m2 = -a+b,
-              v1 = -( m1+m2)/d,
-              v2 = -(-m1+m2)/d;
-          return [v1, v2].filter(reduce);
-        }
-        else if(b!==c && d===0) {
-          return [ (2*b-c)/2*(b-c) ].filter(reduce);
-        }
-        return [];
-      }
-
-      // see http://www.trans4mind.com/personal_development/mathematics/polynomials/cubicAlgebra.htm
-      var pa = p[0].y,
-          pb = p[1].y,
-          pc = p[2].y,
-          pd = p[3].y,
-          d = (-pa + 3*pb - 3*pc + pd),
-          a = (3*pa - 6*pb + 3*pc) / d,
-          b = (-3*pa + 3*pb) / d,
-          c = pa / d,
-          p = (3*b - a*a)/3,
-          p3 = p/3,
-          q = (2*a*a*a - 9*a*b + 27*c)/27,
-          q2 = q/2,
-          discriminant = q2*q2 + p3*p3*p3,
-          u1,v1,x1,x2,x3;
-       if (discriminant < 0) {
-        var mp3 = -p/3,
-            mp33 = mp3*mp3*mp3,
-            r = sqrt( mp33 ),
-            t = -q/(2*r),
-            cosphi = t<-1 ? -1 : t>1 ? 1 : t,
-            phi = acos(cosphi),
-            crtr = crt(r),
-            t1 = 2*crtr;
-        x1 = t1 * cos(phi/3) - a/3;
-        x2 = t1 * cos((phi+tau)/3) - a/3;
-        x3 = t1 * cos((phi+2*tau)/3) - a/3;
-        return [x1, x2, x3].filter(reduce);
-      } else if(discriminant === 0) {
-        u1 = q2 < 0 ? crt(-q2) : -crt(q2);
-        x1 = 2*u1-a/3;
-        x2 = -u1 - a/3;
-        return [x1,x2].filter(reduce);
-      } else {
-        var sd = sqrt(discriminant);
-        u1 = crt(-q2+sd);
-        v1 = crt(q2+sd);
-        return [u1-v1-a/3].filter(reduce);;
-      }
-    },
-    droots: function(p) {
-      // quadratic roots are easy
-      if(p.length === 3) {
-        var a = p[0],
-            b = p[1],
-            c = p[2],
-            d = a - 2*b + c;
-        if(d!==0) {
-          var m1 = -sqrt(b*b-a*c),
-              m2 = -a+b,
-              v1 = -( m1+m2)/d,
-              v2 = -(-m1+m2)/d;
-          return [v1, v2];
-        }
-        else if(b!==c && d===0) {
-          return [ (2*b-c)/(2*(b-c)) ];
-        }
-        return [];
-      }
-
-      // linear roots are even easier
-      if(p.length === 2) {
-        var a = p[0], b = p[1];
-        if(a!==b) { return [a/(a-b)]; }
-        return [];
-      }
-    },
-    bboxoverlap: function(b1,b2) {
-      var dims=['x','y'],len=dims.length,i,dim,l,t,d
-      for(i=0; i<len; i++) {
-        dim = dims[i];
-        l = b1[dim].mid;
-        t = b2[dim].mid;
-        d = (b1[dim].size + b2[dim].size)/2;
-        if(abs(l-t) >= d) return false;
-      }
-      return true;
-    },
-    expandbox: function(bbox, _bbox) {
-      if(_bbox.x.min < bbox.x.min) { bbox.x.min = _bbox.x.min; }
-      if(_bbox.y.min < bbox.y.min) { bbox.y.min = _bbox.y.min; }
-      if(_bbox.z && _bbox.z.min < bbox.z.min) { bbox.z.min = _bbox.z.min; }
-      if(_bbox.x.max > bbox.x.max) { bbox.x.max = _bbox.x.max; }
-      if(_bbox.y.max > bbox.y.max) { bbox.y.max = _bbox.y.max; }
-      if(_bbox.z && _bbox.z.max > bbox.z.max) { bbox.z.max = _bbox.z.max; }
-      bbox.x.mid = (bbox.x.min + bbox.x.max)/2;
-      bbox.y.mid = (bbox.y.min + bbox.y.max)/2;
-      if(bbox.z) { bbox.z.mid = (bbox.z.min + bbox.z.max)/2; }
-      bbox.x.size = bbox.x.max - bbox.x.min;
-      bbox.y.size = bbox.y.max - bbox.y.min;
-      if(bbox.z) { bbox.z.size = bbox.z.max - bbox.z.min; }
-    },
-    pairiteration: function(c1,c2) {
-      var c1b = c1.bbox(),
-          c2b = c2.bbox(),
-          r = 100000,
-          threshold = 0.5;
-      if(c1b.x.size + c1b.y.size < threshold && c2b.x.size + c2b.y.size < threshold) {
-        return [ ((r * (c1._t1+c1._t2)/2)|0)/r + "/" + ((r * (c2._t1+c2._t2)/2)|0)/r ];
-      }
-      var cc1 = c1.split(0.5),
-          cc2 = c2.split(0.5),
-          pairs = [
-            {left: cc1.left, right: cc2.left },
-            {left: cc1.left, right: cc2.right },
-            {left: cc1.right, right: cc2.right },
-            {left: cc1.right, right: cc2.left }];
-      pairs = pairs.filter(function(pair) {
-        return utils.bboxoverlap(pair.left.bbox(),pair.right.bbox());
-      });
-      var results = [];
-      if(pairs.length === 0) return results;
-      pairs.forEach(function(pair) {
-        results = results.concat(
-          utils.pairiteration(pair.left, pair.right)
-        );
-      })
-      results = results.filter(function(v,i) {
-        return results.indexOf(v) === i;
-      });
-      return results;
-    },
-    getccenter: function(p1,p2,p3) {
-      var dx1 = (p2.x - p1.x),
-          dy1 = (p2.y - p1.y),
-          dx2 = (p3.x - p2.x),
-          dy2 = (p3.y - p2.y);
-      var dx1p = dx1 * cos(quart) - dy1 * sin(quart),
-          dy1p = dx1 * sin(quart) + dy1 * cos(quart),
-          dx2p = dx2 * cos(quart) - dy2 * sin(quart),
-          dy2p = dx2 * sin(quart) + dy2 * cos(quart);
-      // chord midpoints
-      var mx1 = (p1.x + p2.x)/2,
-          my1 = (p1.y + p2.y)/2,
-          mx2 = (p2.x + p3.x)/2,
-          my2 = (p2.y + p3.y)/2;
-      // midpoint offsets
-      var mx1n = mx1 + dx1p,
-          my1n = my1 + dy1p,
-          mx2n = mx2 + dx2p,
-          my2n = my2 + dy2p;
-      // intersection of these lines:
-      var arc = utils.lli8(mx1,my1,mx1n,my1n, mx2,my2,mx2n,my2n),
-          r = utils.dist(arc,p1),
-          // arc start/end values, over mid point:
-          s = atan2(p1.y - arc.y, p1.x - arc.x),
-          m = atan2(p2.y - arc.y, p2.x - arc.x),
-          e = atan2(p3.y - arc.y, p3.x - arc.x),
-          _;
-      // determine arc direction (cw/ccw correction)
-      if (s<e) {
-        // if s<m<e, arc(s, e)
-        // if m<s<e, arc(e, s + tau)
-        // if s<e<m, arc(e, s + tau)
-        if (s>m || m>e) { s += tau; }
-        if (s>e) { _=e; e=s; s=_; }
-      } else {
-        // if e<m<s, arc(e, s)
-        // if m<e<s, arc(s, e + tau)
-        // if e<s<m, arc(s, e + tau)
-        if (e<m && m<s) { _=e; e=s; s=_; } else { e += tau; }
-      }
-      // assign and done.
-      arc.s = s;
-      arc.e = e;
-      arc.r = r;
-      return arc;
-    }
-  };
-
-  /**
-   * Poly Bezier
-   * @param {[type]} curves [description]
-   */
-  var PolyBezier = function(curves) {
-    this.curves = [];
-    this._3d = false;
-    if(!!curves) {
-      this.curves = curves;
-      this._3d = this.curves[0]._3d;
-    }
-  }
-
-  PolyBezier.prototype = {
-    valueOf: function() {
-      return this.toString();
-    },
-    toString: function() {
-      return utils.pointsToString(this.points);
-    },
-    addCurve: function(curve) {
-      this.curves.push(curve);
-      this._3d = this._3d || curve._3d;
-    },
-    length: function() {
-      return this.curves.map(function(v) { return v.length(); }).reduce(function(a,b) { return a+b; });
-    },
-    curve: function(idx) {
-      return this.curves[idx];
-    },
-    bbox: function() {
-      var c = this.curves;
-      var bbox = c[0].bbox();
-      for(var i=1; i<c.length; i++) {
-        utils.expandbox(bbox, c[i].bbox());
-      }
-      return bbox;
-    },
-    offset: function(d) {
-      var offset = [];
-      this.curves.forEach(function(v) {
-        offset = offset.concat(v.offset(d));
-      });
-      return new PolyBezier(offset);
-    }
-  };
-
-
-  /**
-   * Bezier curve constructor. The constructor argument can be one of three things:
-   *
-   * 1. array/4 of {x:..., y:..., z:...}, z optional
-   * 2. numerical array/8 ordered x1,y1,x2,y2,x3,y3,x4,y4
-   * 3. numerical array/12 ordered x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4
-   *
-   */
-  var Bezier = function(coords) {
-    var args = (coords && coords.forEach ? coords : arguments);
-    if(typeof args[0] === "object") {
-      args = [];
-      for(var i=0; i<coords.length; i++) {
-        ['x','y','z'].forEach(function(d) {
-          if(typeof coords[i][d] !== "undefined") {
-            args.push(coords[i][d]);
-          }
-        });
-      }
-    }
-    var len = args.length;
-    if(len!==6 && len!==8 && len!==9 && len!==12) {
-      console.log(coords);
-      throw new Error("This Bezier curve library only supports quadratic and cubic curves (in 2d and 3d)");
-    }
-    var _3d = (len === 9 || len === 12);
-    this._3d = _3d;
-    var points = [];
-    for(var idx=0, step=(_3d ? 3 : 2); idx<len; idx+=step) {
-      var point = {
-        x: args[idx],
-        y: args[idx+1]
-      };
-      if(_3d) { point.z = args[idx+2] };
-      points.push(point);
-    }
-    this.order = points.length - 1;
-    this.points = points;
-    var dims = ['x','y'];
-    if(_3d) dims.push('z');
-    this.dims = dims;
-    this.dimlen = dims.length;
-    (function(curve) {
-      var a = utils.align(points, {p1:points[0], p2:points[curve.order]});
-      for(var i=0; i<a.length; i++) {
-        if(abs(a[i].y) > 0.0001) {
-          curve._linear = false;
-          return;
-        }
-      }
-      curve._linear = true;
-    }(this));
-    this._t1 = 0;
-    this._t2 = 1;
-    this.update();
-  };
-
-  Bezier.fromSVG = function(svgString) {
-    var list = svgString.match(/[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?/g).map(parseFloat);
-    var relative = /[cq]/.test(svgString);
-    if(!relative) return new Bezier(list);
-    list = list.map(function(v,i) {
-      return i < 2 ? v : v + list[i % 2];
-    });
-    return new Bezier(list);
-  };
-
-  Bezier.utils = utils;
-
-  Bezier.prototype = {
-    valueOf: function() {
-      return this.toString();
-    },
-    toString: function() {
-      return utils.pointsToString(this.points);
-    },
-    toSVG: function(relative) {
-      if(this._3d) return false;
-      var p = this.points,
-          x = p[0].x,
-          y = p[0].y,
-          s = ["M", x, y, (this.order===2 ? "Q":"C")];
-      for(var i=1, last=p.length; i<last; i++) {
-        s.push(p[i].x);
-        s.push(p[i].y);
-      }
-      return s.join(" ");
-    },
-    update: function() {
-      // one-time compute derivative coordinates
-      this.dpoints = [];
-      for(var p=this.points, d=p.length, c=d-1; d>1; d--, c--) {
-        var list = [];
-        for(var j=0, dpt; j<c; j++) {
-          dpt = {
-            x: c * (p[j+1].x - p[j].x),
-            y: c * (p[j+1].y - p[j].y)
-          };
-          if(this._3d) {
-            dpt.z = c * (p[j+1].z - p[j].z);
-          }
-          list.push(dpt);
-        }
-        this.dpoints.push(list);
-        p = list;
-      };
-      this.computedirection();
-    },
-    computedirection: function() {
-      var points = this.points;
-      var angle = utils.angle(points[0], points[this.order], points[1]);
-      this.clockwise = angle > 0;
-    },
-    length: function() {
-      return utils.length(this.derivative.bind(this));
-    },
-    getLUT: function(steps) {
-      steps = steps || 100;
-      var points = [];
-      for(var t=0; t<=steps; t++) {
-        points.push(this.compute(t/steps));
-      }
-      return points;
-    },
-    get: function(t) {
-      return this.compute(t);
-    },
-    point: function(idx) {
-      return this.points[idx];
-    },
-    compute: function(t) {
-      // shortcuts
-      if(t===0) { return this.points[0]; }
-      if(t===1) { return this.points[this.order]; }
-      // plain computation
-      var mt = 1-t,
-          mt2 = mt*mt,
-          t2 = t*t,
-          a,b,c,d = 0,
-          p = this.points;
-      if(this.order===2) {
-        p = [p[0], p[1], p[2], ZERO];
-        a = mt2;
-        b = mt*t*2;
-        c = t2;
-      }
-      if(this.order===3) {
-        a = mt2*mt;
-        b = mt2*t*3;
-        c = mt*t2*3;
-        d = t*t2;
-      }
-      var ret = {
-        x: a*p[0].x + b*p[1].x + c*p[2].x + d*p[3].x,
-        y: a*p[0].y + b*p[1].y + c*p[2].y + d*p[3].y
-      };
-      if(this._3d) {
-        ret.z = a*p[0].z + b*p[1].z + c*p[2].z + d*p[3].z;
-      }
-      return ret;
-    },
-    raise: function() {
-      var p = this.points, np = [p[0]], i, k=p.length, pi, pim;
-      for (var i=1; i<k; i++) {
-        pi = p[i];
-        pim = p[i-1];
-        np[i] = {
-          x: (k-i)/k * pi.x + i/k * pim.x,
-          y: (k-i)/k * pi.y + i/k * pim.y
-        };
-      }
-      np[k] = p[k-1];
-      return new Bezier(np);
-    },
-    derivative: function(t) {
-      var mt = 1-t,
-          a,b,c=0,
-          p = this.dpoints[0];
-      if(this.order===2) { p = [p[0], p[1], ZERO]; a = mt; b = t; }
-      if(this.order===3) { a = mt*mt; b = mt*t*2; c = t*t; }
-      var ret = {
-        x: a*p[0].x + b*p[1].x + c*p[2].x,
-        y: a*p[0].y + b*p[1].y + c*p[2].y
-      };
-      if(this._3d) {
-        ret.z = a*p[0].z + b*p[1].z + c*p[2].z;
-      }
-      return ret;
-    },
-    normal: function(t) {
-      return this._3d ? this.__normal3(t) : this.__normal2(t);
-    },
-    __normal2: function(t) {
-      var d = this.derivative(t);
-      var q = sqrt(d.x*d.x + d.y*d.y)
-      return { x: -d.y/q, y: d.x/q };
-    },
-    __normal3: function() {
-      // see http://stackoverflow.com/questions/25453159
-      var r1 = this.derivative(t),
-          r2 = this.derivative(t+0.01),
-          q1 = sqrt(r1.x*r1.x + r1.y*r1.y + r1.z*r1.z),
-          q2 = sqrt(r2.x*r2.x + r2.y*r2.y + r2.z*r2.z);
-      r1.x /= q1; r1.y /= q1; r1.z /= q1;
-      r2.x /= q2; r2.y /= q2; r2.z /= q2;
-      // cross product
-      var c = {
-        x: r2.y*r1.z - r2.z*r1.y,
-        y: r2.z*r1.x - r2.x*r1.z,
-        z: r2.x*r1.y - r2.y*r1.x
-      };
-      var m = sqrt(c.x*c.x + c.y*c.y + c.z*c.z);
-      c.x /= m; c.y /= m; c.z /= m;
-      // rotation matrix
-      var R = [   c.x*c.x,   c.x*c.y-c.z, c.x*c.z+c.y,
-                c.x*c.y+c.z,   c.y*c.y,   c.y*c.z-c.x,
-                c.x*c.z-c.y, c.y*c.z+c.x,   c.z*c.z    ];
-      // normal vector:
-      var n = {
-        x: R[0] * r1.x + R[1] * r1.y + R[2] * r1.z,
-        y: R[3] * r1.x + R[4] * r1.y + R[5] * r1.z,
-        z: R[6] * r1.x + R[7] * r1.y + R[8] * r1.z
-      };
-      return n;
-    },
-    split: function(t1, t2) {
-      // shortcuts
-      if(t1===0 && !!t2) { return this.split(t2).left; }
-      if(t2===1) { return this.split(t1).right; }
-      // no shortcut: use "de Casteljau" iteration.
-      var p = this.points,
-          _p = [],
-          pt,
-          q = [],
-          idx = 0,
-          i=0,
-          l=0;
-      q[idx++] = p[0];
-      q[idx++] = p[1];
-      q[idx++] = p[2];
-      if(this.order === 3) { q[idx++] = p[3]; }
-      // we lerp between all points at each iteration, until we have 1 point left.
-      while(p.length>1) {
-        _p = [];
-        for(i=0, l=p.length-1; i<l; i++) {
-          pt = utils.lerp(t1,p[i],p[i+1]);
-          q[idx++] = pt;
-          _p.push(pt);
-        }
-        p = _p;
-      }
-      var result = {
-        left: this.order === 2 ? new Bezier([q[0],q[3],q[5]]) : new Bezier([q[0],q[4],q[7],q[9]]),
-        right: this.order === 2 ? new Bezier([q[5],q[4],q[2]]) : new Bezier([q[9],q[8],q[6],q[3]]),
-        span: q
-      };
-
-      // make sure we bind _t1/_t2 information!
-      result.left._t1  = utils.map(0,  0,1, this._t1,this._t2);
-      result.left._t2  = utils.map(t1, 0,1, this._t1,this._t2);
-      result.right._t1 = utils.map(t1, 0,1, this._t1,this._t2);
-      result.right._t2 = utils.map(1,  0,1, this._t1,this._t2);
-
-      // if we have no t2, we're done
-      if(!t2) { return result; }
-
-      // if we have a t2, split again:
-      t2 = utils.map(t2,t1,1,0,1);
-      var subsplit = result.right.split(t2);
-      return subsplit.left;
-    },
-    inflections: function() {
-      var dims = this.dims,
-          len = this.dimlen,
-          result={},
-          roots=[],
-          p, mfn;
-      dims.forEach(function(dim) {
-        mfn = function(v) { return v[dim]; };
-        p = this.dpoints[0].map(mfn);
-        result[dim] = utils.droots(p);
-        if(this.order === 3) {
-          p = this.dpoints[1].map(mfn);
-          result[dim] = result[dim].concat(utils.droots(p));
-        }
-        result[dim] = result[dim].filter(function(t) { return (t>=0 && t<=1); });
-        roots = roots.concat(result[dim].sort());
-      }.bind(this));
-      roots.sort();
-      result.values = roots;
-      return result;
-    },
-    bbox: function() {
-      var inflections = this.inflections(), result = {};
-      this.dims.forEach(function(d) {
-        result[d] = utils.getminmax(this, d, inflections[d]);
-      }.bind(this));
-      return result;
-    },
-    overlaps: function(curve) {
-      var lbbox = this.bbox(),
-          tbbox = curve.bbox();
-      return utils.bboxoverlap(lbbox,tbbox);
-    },
-    offset: function(t, d) {
-      if(typeof d !== "undefined") {
-        var c = this.get(t);
-        var n = this.normal(t);
-        var ret = {
-          c: c,
-          n: n,
-          x: c.x + n.x * d,
-          y: c.y + n.y * d
-        };
-        if(this._3d) {
-          ret.z = c.z + n.z * d;
-        };
-        return ret;
-      }
-      if(this._linear) {
-        var nv = this.normal(0);
-        var coords = this.points.map(function(p) {
-          var ret = {
-            x: p.x + t * nv.x,
-            y: p.y + t * nv.y
-          };
-          if(p.z && n.z) { ret.z = p.z + t * nv.z; }
-          return ret;
-        });
-        return [new Bezier(coords)];
-      }
-      var reduced = this.reduce();
-      return reduced.map(function(s) {
-        return s.scale(t);
-      });
-    },
-    simple: function() {
-      if(this.order===3) {
-        var a1 = utils.angle(this.points[0], this.points[3], this.points[1]);
-        var a2 = utils.angle(this.points[0], this.points[3], this.points[2]);
-        if(a1>0 && a2<0 || a1<0 && a2>0) return false;
-      }
-      var n1 = this.normal(0);
-      var n2 = this.normal(1);
-      var s = n1.x*n2.x + n1.y*n2.y;
-      if(this._3d) { s += n1.z*n2.z; }
-      var angle = abs(acos(s));
-      return angle < pi/3;
-    },
-    reduce: function() {
-      var i, t1=0, t2=0, step=0.01, segment, pass1=[], pass2=[];
-      // first pass: split on inflections
-      var inflections = this.inflections().values;
-      if(inflections.indexOf(0)===-1) { inflections = [0].concat(inflections); }
-      if(inflections.indexOf(1)===-1) { inflections.push(1); }
-      for(t1=inflections[0], i=1; i<inflections.length; i++) {
-        t2 = inflections[i];
-        segment = this.split(t1,t2);
-        segment._t1 = t1;
-        segment._t2 = t2;
-        pass1.push(segment);
-        t1 = t2;
-      }
-      // second pass: further reduce these segments to simple segments
-      pass1.forEach(function(p1) {
-        t1=0;
-        t2=0;
-        while(t2 <= 1) {
-          for(t2=t1+step; t2<=1+step; t2+=step) {
-            segment = p1.split(t1,t2);
-            if(!segment.simple()) {
-              t2 -= step;
-              if(abs(t1-t2)<step) {
-                // we can never form a reduction
-                return [];
-              }
-              segment = p1.split(t1,t2);
-              segment._t1 = utils.map(t1,0,1,p1._t1,p1._t2);
-              segment._t2 = utils.map(t2,0,1,p1._t1,p1._t2);
-              pass2.push(segment);
-              t1 = t2;
-              break;
-            }
-          }
-        }
-        if(t1<1) {
-          segment = p1.split(t1,1);
-          segment._t1 = utils.map(t1,0,1,p1._t1,p1._t2);
-          segment._t2 = p1._t2;
-          pass2.push(segment);
-        }
-      });
-      return pass2;
-    },
-    scale: function(d) {
-      var order = this.order;
-      var distanceFn = false
-      if(typeof d === "function") { distanceFn = d; }
-      if(distanceFn && order === 2) { return this.raise().scale(distanceFn); }
-
-      // TODO: add special handling for degenerate (=linear) curves.
-      var clockwise = this.clockwise;
-      var r1 = distanceFn ? distanceFn(0) : d;
-      var r2 = distanceFn ? distanceFn(1) : d;
-      var v = [ this.offset(0,10), this.offset(1,10) ];
-      var o = utils.lli4(v[0], v[0].c, v[1], v[1].c);
-      if(!o) { throw "cannot scale this curve. Try reducing it first."; }
-      // move all points by distance 'd' wrt the origin 'o'
-      var points=this.points, np=[];
-
-      // move end points by fixed distance along normal.
-      [0,1].forEach(function(t) {
-        var p = np[t*order] = utils.copy(points[t*order]);
-        p.x += (t?r2:r1) * v[t].n.x;
-        p.y += (t?r2:r1) * v[t].n.y;
-      }.bind(this));
-
-      if (!distanceFn) {
-        // move control points to lie on the intersection of the offset
-        // derivative vector, and the origin-through-control vector
-        [0,1].forEach(function(t) {
-          if(this.order===2 && !!t) return;
-          var p = np[t*order];
-          var d = this.derivative(t);
-          var p2 = { x: p.x + d.x, y: p.y + d.y };
-          np[t+1] = utils.lli4(p, p2, o, points[t+1]);
-        }.bind(this));
-        return new Bezier(np);
-      }
-
-      // move control points by "however much necessary to
-      // ensure the correct tangent to endpoint".
-      [0,1].forEach(function(t) {
-        if(this.order===2 && !!t) return;
-        var p = points[t+1];
-        var ov = {
-          x: p.x - o.x,
-          y: p.y - o.y
-        };
-        var rc = distanceFn ? distanceFn((t+1)/order) : d;
-        if(distanceFn && !clockwise) rc = -rc;
-        var m = sqrt(ov.x*ov.x + ov.y*ov.y);
-        ov.x /= m;
-        ov.y /= m;
-        np[t+1] = {
-          x: p.x + rc*ov.x,
-          y: p.y + rc*ov.y
-        }
-      }.bind(this));
-      return new Bezier(np);
-    },
-    outline: function(d1, d2, d3, d4) {
-      d2 = (typeof d2 === "undefined") ? d1 : d2;
-      var reduced = this.reduce(),
-          len = reduced.length,
-          order = this.order,
-          fcurves = [],
-          bcurves = [],
-          i, p, last,
-          alen = 0,
-          tlen = this.length();
-
-      var graduated = (typeof d3 !== "undefined" && typeof d4 !== "undefined");
-
-      function linearDistanceFunction(s,e, tlen,alen,slen) {
-        return function (v) {
-          var f1 = alen/tlen, f2 = (alen+slen)/tlen, d = e-s;
-          return utils.map(v, 0,1, s+f1*d, s+f2*d);
-        };
-      };
-
-      // form curve oulines
-      reduced.forEach(function(segment) {
-        slen = segment.length();
-        if (graduated) {
-          fcurves.push(segment.scale(  linearDistanceFunction( d1, d3, tlen,alen,slen)  ));
-          bcurves.push(segment.scale(  linearDistanceFunction(-d2,-d4, tlen,alen,slen)  ));
-        } else {
-          fcurves.push(segment.scale( d1));
-          bcurves.push(segment.scale(-d2));
-        }
-        alen += slen;
-      });
-
-      // reverse the "return" outline
-      bcurves = bcurves.map(function(s) {
-        p = s.points;
-        if(p[3]) { s.points = [p[3],p[2],p[1],p[0]]; }
-        else { s.points = [p[2],p[1],p[0]]; }
-        return s;
-      }).reverse();
-
-      // form the endcaps as lines
-      var fs = fcurves[0].points[0],
-          fe = fcurves[len-1].points[fcurves[len-1].points.length-1],
-          bs = bcurves[len-1].points[bcurves[len-1].points.length-1],
-          be = bcurves[0].points[0],
-          ls = utils.makeline(bs,fs),
-          le = utils.makeline(fe,be),
-          segments = [ls].concat(fcurves).concat([le]).concat(bcurves),
-          slen = segments.length;
-
-      return new PolyBezier(segments);
-    },
-    outlineshapes: function(d1,d2) {
-      d2 = d2 || d1;
-      var outline = this.outline(d1,d2).curves;
-      var shapes = [];
-      for(var i=1, len=outline.length; i < len/2; i++) {
-        var shape = utils.makeshape(outline[i], outline[len-i]);
-        shape.startcap.virtual = (i > 1);
-        shape.endcap.virtual = (i < len/2-1);
-        shapes.push(shape);
-      }
-      return shapes;
-    },
-    intersects: function(curve) {
-      if(!curve) return this.selfintersects();
-      if(curve.p1 && curve.p2) {
-        return this.lineIntersects(curve);
-      }
-      if(curve instanceof Bezier) { curve = curve.reduce(); }
-      return this.curveintersects(this.reduce(), curve);
-    },
-    lineIntersects: function(line) {
-      var mx = min(line.p1.x, line.p2.x),
-          my = min(line.p1.y, line.p2.y),
-          MX = max(line.p1.x, line.p2.x),
-          MY = max(line.p1.y, line.p2.y),
-          self=this;
-      return utils.roots(this.points, line).filter(function(t) {
-        var p = self.get(t);
-        return (mx <= p.x && p.x <= MX && my <= p.y && p.y <= MY);
-      });
-    },
-    selfintersects: function() {
-      var reduced = this.reduce();
-      // "simple" curves cannot intersect with their direct
-      // neighbour, so for each segment X we check whether
-      // it intersects [0:x-2][x+2:last].
-      var i,len=reduced.length-2,results=[],result,left,right;
-      for(i=0; i<len; i++) {
-        left = reduced.slice(i,i+1);
-        right = reduced.slice(i+2);
-        result = this.curveintersects(left, right);
-        results = results.concat( result );
-      }
-      return results;
-    },
-    curveintersects: function(c1,c2) {
-      var pairs = [];
-      // step 1: pair off any overlapping segments
-      c1.forEach(function(l) {
-        c2.forEach(function(r) {
-          if(l.overlaps(r)) {
-            pairs.push({ left: l, right: r });
-          }
-        });
-      });
-      // step 2: for each pairing, run through the convergence algorithm.
-      var intersections = [];
-      pairs.forEach(function(pair) {
-        var result = utils.pairiteration(pair.left, pair.right);
-        if(result.length > 0) {
-          intersections = intersections.concat(result);
-        }
-      });
-      return intersections;
-    },
-    arcs: function(errorThreshold) {
-      errorThreshold = errorThreshold || 0.5;
-      var circles = [];
-      return this._iterate(errorThreshold, circles);
-    },
-    _error: function(pc, np1, s, e) {
-      var q = (e - s) / 4,
-          c1 = this.get(s + q),
-          c2 = this.get(e - q),
-          ref = utils.dist(pc, np1),
-          d1  = utils.dist(pc, c1),
-          d2  = utils.dist(pc, c2);
-      return abs(d1-ref) + abs(d2-ref);
-    },
-    _iterate: function(errorThreshold, circles) {
-      var s = 0, e = 1, safety;
-      // we do a binary search to find the "good `t` closest to no-longer-good"
-      do {
-        safety=0;
-
-        // step 1: start with the maximum possible arc
-        e = 1;
-
-        // points:
-        var np1 = this.get(s), np2, o_np2, np3, o_np3, arc, prev_arc;
-
-        // booleans:
-        var curr_good = false, prev_good = false, done;
-
-        // numbers:
-        var m = e, prev_e = 1, step = 0;
-
-        // step 2: find the best possible arc
-        do {
-          prev_good = curr_good;
-          prev_arc = arc;
-          m = (s + e)/2;
-          step++;
-
-          np2 = this.get(m);
-          np3 = this.get(e);
-
-          arc = utils.getccenter(np1, np2, np3);
-          var error = this._error(arc, np1, s, e);
-          curr_good = (error <= errorThreshold);
-
-          done = prev_good && !curr_good;
-          if(!done) prev_e = e;
-
-          // this arc is fine: we can move 'e' up to see if we can find a wider arc
-          if(curr_good) {
-            // if e is already at max, then we're done for this arc.
-            if (e >= 1) {
-              prev_e = 1;
-              prev_arc = arc;
-              break;
-            }
-            // if not, move it up by half the iteration distance
-            e = e + (e-s)/2;
-          }
-
-          // this is a bad arc: we need to move 'e' down to find a good arc
-          else {
-            e = m;
-          }
-        }
-        while(!done && safety++<100);
-
-        if(safety>=100) {
-          console.error("arc abstraction somehow failed...");
-          break;
-        }
-
-        // console.log("[F] arc found", s, prev_e, prev_arc.x, prev_arc.y, prev_arc.s, prev_arc.e);
-
-        prev_arc = (prev_arc ? prev_arc : arc);
-        circles.push(prev_arc);
-        s = prev_e;
-      }
-      while(e < 1);
-      return circles;
-    }
-  };
-
-  return Bezier;
-});
-
-/*
-  if(typeof module !== "undefined" && module.exports) {
-    module.exports = Bezier;
-  }
-
-  else if(typeof define !== "undefined") {
-    define(function() { return Bezier; });
-  }
-
-  else if(typeof window !== "undefined") {
-    window.Bezier = Bezier;
-  }
-
-}());
-
-},{}],2:[function(require,module,exports){
-module.exports = require("./bezier");
-},{"./bezier":1}]},{},[2])(2)
-});
-*/;
-
-define ('lib/earcut/src/earcut.js',[],function ()
-{
-
-
-function earcut(data, holeIndices, dim) {
-
-    dim = dim || 2;
-
-    var hasHoles = holeIndices && holeIndices.length,
-        outerLen = hasHoles ? holeIndices[0] * dim : data.length,
-        outerNode = filterPoints(data, linkedList(data, 0, outerLen, dim, true)),
-        triangles = [];
-
-    if (!outerNode) return triangles;
-
-    var minX, minY, maxX, maxY, x, y, size;
-
-    if (hasHoles) outerNode = eliminateHoles(data, holeIndices, outerNode, dim);
-
-    // if the shape is not too simple, we'll use z-order curve hash later; calculate polygon bbox
-    if (data.length > 80 * dim) {
-        minX = maxX = data[0];
-        minY = maxY = data[1];
-
-        for (var i = dim; i < outerLen; i += dim) {
-            x = data[i];
-            y = data[i + 1];
-            if (x < minX) minX = x;
-            if (y < minY) minY = y;
-            if (x > maxX) maxX = x;
-            if (y > maxY) maxY = y;
-        }
-
-        // minX, minY and size are later used to transform coords into integers for z-order calculation
-        size = Math.max(maxX - minX, maxY - minY);
-    }
-
-    earcutLinked(data, outerNode, triangles, dim, minX, minY, size);
-
-    return triangles;
-}
-
-// create a circular doubly linked list from polygon points in the specified winding order
-function linkedList(data, start, end, dim, clockwise) {
-    var sum = 0,
-        i, j, last;
-
-    // calculate original winding order of a polygon ring
-    for (i = start, j = end - dim; i < end; i += dim) {
-        sum += (data[j] - data[i]) * (data[i + 1] + data[j + 1]);
-        j = i;
-    }
-
-    // link points into circular doubly-linked list in the specified winding order
-    if (clockwise === (sum > 0)) {
-        for (i = start; i < end; i += dim) last = insertNode(i, last);
-    } else {
-        for (i = end - dim; i >= start; i -= dim) last = insertNode(i, last);
-    }
-
-    return last;
-}
-
-// eliminate colinear or duplicate points
-function filterPoints(data, start, end) {
-    if (!end) end = start;
-
-    var node = start,
-        again;
-    do {
-        again = false;
-
-        if (!node.steiner && (equals(data, node.i, node.next.i) || orient(data, node.prev.i, node.i, node.next.i) === 0)) {
-
-            // remove node
-            node.prev.next = node.next;
-            node.next.prev = node.prev;
-
-            if (node.prevZ) node.prevZ.nextZ = node.nextZ;
-            if (node.nextZ) node.nextZ.prevZ = node.prevZ;
-
-            node = end = node.prev;
-
-            if (node === node.next) return null;
-            again = true;
-
-        } else {
-            node = node.next;
-        }
-    } while (again || node !== end);
-
-    return end;
-}
-
-// main ear slicing loop which triangulates a polygon (given as a linked list)
-function earcutLinked(data, ear, triangles, dim, minX, minY, size, pass) {
-    if (!ear) return;
-
-    // interlink polygon nodes in z-order
-    if (!pass && minX !== undefined) indexCurve(data, ear, minX, minY, size);
-
-    var stop = ear,
-        prev, next;
-
-    // iterate through ears, slicing them one by one
-    while (ear.prev !== ear.next) {
-        prev = ear.prev;
-        next = ear.next;
-
-        if (isEar(data, ear, minX, minY, size)) {
-            // cut off the triangle
-            triangles.push(prev.i / dim);
-            triangles.push(ear.i / dim);
-            triangles.push(next.i / dim);
-
-            // remove ear node
-            next.prev = prev;
-            prev.next = next;
-
-            if (ear.prevZ) ear.prevZ.nextZ = ear.nextZ;
-            if (ear.nextZ) ear.nextZ.prevZ = ear.prevZ;
-
-            // skipping the next vertice leads to less sliver triangles
-            ear = next.next;
-            stop = next.next;
-
-            continue;
-        }
-
-        ear = next;
-
-        // if we looped through the whole remaining polygon and can't find any more ears
-        if (ear === stop) {
-            // try filtering points and slicing again
-            if (!pass) {
-                earcutLinked(data, filterPoints(data, ear), triangles, dim, minX, minY, size, 1);
-
-            // if this didn't work, try curing all small self-intersections locally
-            } else if (pass === 1) {
-                ear = cureLocalIntersections(data, ear, triangles, dim);
-                earcutLinked(data, ear, triangles, dim, minX, minY, size, 2);
-
-            // as a last resort, try splitting the remaining polygon into two
-            } else if (pass === 2) {
-                splitEarcut(data, ear, triangles, dim, minX, minY, size);
-            }
-
-            break;
-        }
-    }
-}
-
-// check whether a polygon node forms a valid ear with adjacent nodes
-function isEar(data, ear, minX, minY, size) {
-
-    var a = ear.prev.i,
-        b = ear.i,
-        c = ear.next.i,
-
-        ax = data[a], ay = data[a + 1],
-        bx = data[b], by = data[b + 1],
-        cx = data[c], cy = data[c + 1],
-
-        abd = ax * by - ay * bx,
-        acd = ax * cy - ay * cx,
-        cbd = cx * by - cy * bx,
-        A = abd - acd - cbd;
-
-    if (A <= 0) return false; // reflex, can't be an ear
-
-    // now make sure we don't have other points inside the potential ear;
-    // the code below is a bit verbose and repetitive but this is done for performance
-
-    var cay = cy - ay,
-        acx = ax - cx,
-        aby = ay - by,
-        bax = bx - ax,
-        i, px, py, s, t, k, node;
-
-    // if we use z-order curve hashing, iterate through the curve
-    if (minX !== undefined) {
-
-        // triangle bbox; min & max are calculated like this for speed
-        var minTX = ax < bx ? (ax < cx ? ax : cx) : (bx < cx ? bx : cx),
-            minTY = ay < by ? (ay < cy ? ay : cy) : (by < cy ? by : cy),
-            maxTX = ax > bx ? (ax > cx ? ax : cx) : (bx > cx ? bx : cx),
-            maxTY = ay > by ? (ay > cy ? ay : cy) : (by > cy ? by : cy),
-
-            // z-order range for the current triangle bbox;
-            minZ = zOrder(minTX, minTY, minX, minY, size),
-            maxZ = zOrder(maxTX, maxTY, minX, minY, size);
-
-        // first look for points inside the triangle in increasing z-order
-        node = ear.nextZ;
-
-        while (node && node.z <= maxZ) {
-            i = node.i;
-            node = node.nextZ;
-            if (i === a || i === c) continue;
-
-            px = data[i];
-            py = data[i + 1];
-
-            s = cay * px + acx * py - acd;
-            if (s >= 0) {
-                t = aby * px + bax * py + abd;
-                if (t >= 0) {
-                    k = A - s - t;
-                    if ((k >= 0) && ((s && t) || (s && k) || (t && k))) return false;
-                }
-            }
-        }
-
-        // then look for points in decreasing z-order
-        node = ear.prevZ;
-
-        while (node && node.z >= minZ) {
-            i = node.i;
-            node = node.prevZ;
-            if (i === a || i === c) continue;
-
-            px = data[i];
-            py = data[i + 1];
-
-            s = cay * px + acx * py - acd;
-            if (s >= 0) {
-                t = aby * px + bax * py + abd;
-                if (t >= 0) {
-                    k = A - s - t;
-                    if ((k >= 0) && ((s && t) || (s && k) || (t && k))) return false;
-                }
-            }
-        }
-
-    // if we don't use z-order curve hash, simply iterate through all other points
-    } else {
-        node = ear.next.next;
-
-        while (node !== ear.prev) {
-            i = node.i;
-            node = node.next;
-
-            px = data[i];
-            py = data[i + 1];
-
-            s = cay * px + acx * py - acd;
-            if (s >= 0) {
-                t = aby * px + bax * py + abd;
-                if (t >= 0) {
-                    k = A - s - t;
-                    if ((k >= 0) && ((s && t) || (s && k) || (t && k))) return false;
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-// go through all polygon nodes and cure small local self-intersections
-function cureLocalIntersections(data, start, triangles, dim) {
-    var node = start;
-    do {
-        var a = node.prev,
-            b = node.next.next;
-
-        // a self-intersection where edge (v[i-1],v[i]) intersects (v[i+1],v[i+2])
-        if (a.i !== b.i && intersects(data, a.i, node.i, node.next.i, b.i) &&
-                locallyInside(data, a, b) && locallyInside(data, b, a)) {
-
-            triangles.push(a.i / dim);
-            triangles.push(node.i / dim);
-            triangles.push(b.i / dim);
-
-            // remove two nodes involved
-            a.next = b;
-            b.prev = a;
-
-            var az = node.prevZ,
-                bz = node.nextZ && node.nextZ.nextZ;
-
-            if (az) az.nextZ = bz;
-            if (bz) bz.prevZ = az;
-
-            node = start = b;
-        }
-        node = node.next;
-    } while (node !== start);
-
-    return node;
-}
-
-// try splitting polygon into two and triangulate them independently
-function splitEarcut(data, start, triangles, dim, minX, minY, size) {
-    // look for a valid diagonal that divides the polygon into two
-    var a = start;
-    do {
-        var b = a.next.next;
-        while (b !== a.prev) {
-            if (a.i !== b.i && isValidDiagonal(data, a, b)) {
-                // split the polygon in two by the diagonal
-                var c = splitPolygon(a, b);
-
-                // filter colinear points around the cuts
-                a = filterPoints(data, a, a.next);
-                c = filterPoints(data, c, c.next);
-
-                // run earcut on each half
-                earcutLinked(data, a, triangles, dim, minX, minY, size);
-                earcutLinked(data, c, triangles, dim, minX, minY, size);
-                return;
-            }
-            b = b.next;
-        }
-        a = a.next;
-    } while (a !== start);
-}
-
-// link every hole into the outer loop, producing a single-ring polygon without holes
-function eliminateHoles(data, holeIndices, outerNode, dim) {
-    var queue = [],
-        i, len, start, end, list;
-
-    for (i = 0, len = holeIndices.length; i < len; i++) {
-        start = holeIndices[i] * dim;
-        end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
-        list = linkedList(data, start, end, dim, false);
-        if (list === list.next) list.steiner = true;
-        list = filterPoints(data, list);
-        if (list) queue.push(getLeftmost(data, list));
-    }
-
-    queue.sort(function (a, b) {
-        return data[a.i] - data[b.i];
-    });
-
-    // process holes from left to right
-    for (i = 0; i < queue.length; i++) {
-        eliminateHole(data, queue[i], outerNode);
-        outerNode = filterPoints(data, outerNode, outerNode.next);
-    }
-
-    return outerNode;
-}
-
-// find a bridge between vertices that connects hole with an outer ring and and link it
-function eliminateHole(data, holeNode, outerNode) {
-    outerNode = findHoleBridge(data, holeNode, outerNode);
-    if (outerNode) {
-        var b = splitPolygon(outerNode, holeNode);
-        filterPoints(data, b, b.next);
-    }
-}
-
-// David Eberly's algorithm for finding a bridge between hole and outer polygon
-function findHoleBridge(data, holeNode, outerNode) {
-    var node = outerNode,
-        i = holeNode.i,
-        px = data[i],
-        py = data[i + 1],
-        qMax = -Infinity,
-        mNode, a, b;
-
-    // find a segment intersected by a ray from the hole's leftmost point to the left;
-    // segment's endpoint with lesser x will be potential connection point
-    do {
-        a = node.i;
-        b = node.next.i;
-
-        if (py <= data[a + 1] && py >= data[b + 1]) {
-            var qx = data[a] + (py - data[a + 1]) * (data[b] - data[a]) / (data[b + 1] - data[a + 1]);
-            if (qx <= px && qx > qMax) {
-                qMax = qx;
-                mNode = data[a] < data[b] ? node : node.next;
-            }
-        }
-        node = node.next;
-    } while (node !== outerNode);
-
-    if (!mNode) return null;
-
-    // look for points strictly inside the triangle of hole point, segment intersection and endpoint;
-    // if there are no points found, we have a valid connection;
-    // otherwise choose the point of the minimum angle with the ray as connection point
-
-    var bx = data[mNode.i],
-        by = data[mNode.i + 1],
-        pbd = px * by - py * bx,
-        pcd = px * py - py * qMax,
-        cpy = py - py,
-        pcx = px - qMax,
-        pby = py - by,
-        bpx = bx - px,
-        A = pbd - pcd - (qMax * by - py * bx),
-        sign = A <= 0 ? -1 : 1,
-        stop = mNode,
-        tanMin = Infinity,
-        mx, my, amx, s, t, tan;
-
-    node = mNode.next;
-
-    while (node !== stop) {
-
-        mx = data[node.i];
-        my = data[node.i + 1];
-        amx = px - mx;
-
-        if (amx >= 0 && mx >= bx) {
-            s = (cpy * mx + pcx * my - pcd) * sign;
-            if (s >= 0) {
-                t = (pby * mx + bpx * my + pbd) * sign;
-
-                if (t >= 0 && A * sign - s - t >= 0) {
-                    tan = Math.abs(py - my) / amx; // tangential
-                    if (tan < tanMin && locallyInside(data, node, holeNode)) {
-                        mNode = node;
-                        tanMin = tan;
-                    }
-                }
-            }
-        }
-
-        node = node.next;
-    }
-
-    return mNode;
-}
-
-// interlink polygon nodes in z-order
-function indexCurve(data, start, minX, minY, size) {
-    var node = start;
-
-    do {
-        if (node.z === null) node.z = zOrder(data[node.i], data[node.i + 1], minX, minY, size);
-        node.prevZ = node.prev;
-        node.nextZ = node.next;
-        node = node.next;
-    } while (node !== start);
-
-    node.prevZ.nextZ = null;
-    node.prevZ = null;
-
-    sortLinked(node);
-}
-
-// Simon Tatham's linked list merge sort algorithm
-// http://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
-function sortLinked(list) {
-    var i, p, q, e, tail, numMerges, pSize, qSize,
-        inSize = 1;
-
-    do {
-        p = list;
-        list = null;
-        tail = null;
-        numMerges = 0;
-
-        while (p) {
-            numMerges++;
-            q = p;
-            pSize = 0;
-            for (i = 0; i < inSize; i++) {
-                pSize++;
-                q = q.nextZ;
-                if (!q) break;
-            }
-
-            qSize = inSize;
-
-            while (pSize > 0 || (qSize > 0 && q)) {
-
-                if (pSize === 0) {
-                    e = q;
-                    q = q.nextZ;
-                    qSize--;
-                } else if (qSize === 0 || !q) {
-                    e = p;
-                    p = p.nextZ;
-                    pSize--;
-                } else if (p.z <= q.z) {
-                    e = p;
-                    p = p.nextZ;
-                    pSize--;
-                } else {
-                    e = q;
-                    q = q.nextZ;
-                    qSize--;
-                }
-
-                if (tail) tail.nextZ = e;
-                else list = e;
-
-                e.prevZ = tail;
-                tail = e;
-            }
-
-            p = q;
-        }
-
-        tail.nextZ = null;
-        inSize *= 2;
-
-    } while (numMerges > 1);
-
-    return list;
-}
-
-// z-order of a point given coords and size of the data bounding box
-function zOrder(x, y, minX, minY, size) {
-    // coords are transformed into (0..1000) integer range
-    x = 1000 * (x - minX) / size;
-    x = (x | (x << 8)) & 0x00FF00FF;
-    x = (x | (x << 4)) & 0x0F0F0F0F;
-    x = (x | (x << 2)) & 0x33333333;
-    x = (x | (x << 1)) & 0x55555555;
-
-    y = 1000 * (y - minY) / size;
-    y = (y | (y << 8)) & 0x00FF00FF;
-    y = (y | (y << 4)) & 0x0F0F0F0F;
-    y = (y | (y << 2)) & 0x33333333;
-    y = (y | (y << 1)) & 0x55555555;
-
-    return x | (y << 1);
-}
-
-// find the leftmost node of a polygon ring
-function getLeftmost(data, start) {
-    var node = start,
-        leftmost = start;
-    do {
-        if (data[node.i] < data[leftmost.i]) leftmost = node;
-        node = node.next;
-    } while (node !== start);
-
-    return leftmost;
-}
-
-// check if a diagonal between two polygon nodes is valid (lies in polygon interior)
-function isValidDiagonal(data, a, b) {
-    return a.next.i !== b.i && a.prev.i !== b.i &&
-           !intersectsPolygon(data, a, a.i, b.i) &&
-           locallyInside(data, a, b) && locallyInside(data, b, a) &&
-           middleInside(data, a, a.i, b.i);
-}
-
-// winding order of triangle formed by 3 given points
-function orient(data, p, q, r) {
-    var o = (data[q + 1] - data[p + 1]) * (data[r] - data[q]) - (data[q] - data[p]) * (data[r + 1] - data[q + 1]);
-    return o > 0 ? 1 :
-           o < 0 ? -1 : 0;
-}
-
-// check if two points are equal
-function equals(data, p1, p2) {
-    return data[p1] === data[p2] && data[p1 + 1] === data[p2 + 1];
-}
-
-// check if two segments intersect
-function intersects(data, p1, q1, p2, q2) {
-    return orient(data, p1, q1, p2) !== orient(data, p1, q1, q2) &&
-           orient(data, p2, q2, p1) !== orient(data, p2, q2, q1);
-}
-
-// check if a polygon diagonal intersects any polygon segments
-function intersectsPolygon(data, start, a, b) {
-    var node = start;
-    do {
-        var p1 = node.i,
-            p2 = node.next.i;
-
-        if (p1 !== a && p2 !== a && p1 !== b && p2 !== b && intersects(data, p1, p2, a, b)) return true;
-
-        node = node.next;
-    } while (node !== start);
-
-    return false;
-}
-
-// check if a polygon diagonal is locally inside the polygon
-function locallyInside(data, a, b) {
-    return orient(data, a.prev.i, a.i, a.next.i) === -1 ?
-        orient(data, a.i, b.i, a.next.i) !== -1 && orient(data, a.i, a.prev.i, b.i) !== -1 :
-        orient(data, a.i, b.i, a.prev.i) === -1 || orient(data, a.i, a.next.i, b.i) === -1;
-}
-
-// check if the middle point of a polygon diagonal is inside the polygon
-function middleInside(data, start, a, b) {
-    var node = start,
-        inside = false,
-        px = (data[a] + data[b]) / 2,
-        py = (data[a + 1] + data[b + 1]) / 2;
-    do {
-        var p1 = node.i,
-            p2 = node.next.i;
-
-        if (((data[p1 + 1] > py) !== (data[p2 + 1] > py)) &&
-            (px < (data[p2] - data[p1]) * (py - data[p1 + 1]) / (data[p2 + 1] - data[p1 + 1]) + data[p1]))
-                inside = !inside;
-
-        node = node.next;
-    } while (node !== start);
-
-    return inside;
-}
-
-// link two polygon vertices with a bridge; if the vertices belong to the same ring, it splits polygon into two;
-// if one belongs to the outer ring and another to a hole, it merges it into a single ring
-function splitPolygon(a, b) {
-    var a2 = new Node(a.i),
-        b2 = new Node(b.i),
-        an = a.next,
-        bp = b.prev;
-
-    a.next = b;
-    b.prev = a;
-
-    a2.next = an;
-    an.prev = a2;
-
-    b2.next = a2;
-    a2.prev = b2;
-
-    bp.next = b2;
-    b2.prev = bp;
-
-    return b2;
-}
-
-// create a node and optionally link it with previous one (in a circular doubly linked list)
-function insertNode(i, last) {
-    var node = new Node(i);
-
-    if (!last) {
-        node.prev = node;
-        node.next = node;
-
-    } else {
-        node.next = last.next;
-        node.prev = last;
-        last.next.prev = node;
-        last.next = node;
-    }
-    return node;
-}
-
-function Node(i) {
-    // vertex coordinates
-    this.i = i;
-
-    // previous and next vertice nodes in a polygon ring
-    this.prev = null;
-    this.next = null;
-
-    // z-order curve value
-    this.z = null;
-
-    // previous and next nodes in z-order
-    this.prevZ = null;
-    this.nextZ = null;
-
-    // indicates whether this is a steiner point
-    this.steiner = false;
-}
-
-   return earcut;
-});
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Browser/Text/PolygonText',[
-	"jquery",
-	"cobweb/Browser/Core/PrimitiveQuality",
-	"cobweb/Browser/Text/X3DTextGeometry",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Triangle2",
-	"lib/bezierjs/bezier.js",
-	"lib/poly2tri.js/dist/poly2tri.js",
-	"lib/earcut/src/earcut.js",
-],
-function ($,
-          PrimitiveQuality,
-          X3DTextGeometry,
-          Vector3,
-          Matrix4,
-          Triangle2,
-          Bezier,
-          poly2tri,
-          earcut)
-{
-
-
-	var
-		min    = new Vector3 (0, 0, 0),
-		max    = new Vector3 (0, 0, 0),
-		paths  = [ ],
-		points = [ ],
-		curves = [ ];
-
-	function PolygonText (text, fontStyle)
-	{
-		X3DTextGeometry .call (this, text, fontStyle);
-
-		text .transparent_ = false;
-
-		this .texCoords = [ ];
-	}
-
-	PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
-	{
-		constructor: PolygonText,
-		build: function ()
-		{
-			var
-				fontStyle = this .getFontStyle (),
-				font      = fontStyle .getFont ();
-
-			if (! font)
-				return;
-
-			var
-				text             = this .getText (),
-				glyphs           = this .getGlyphs (),
-				minorAlignment   = this .getMinorAlignment (),
-				translations     = this .getTranslations (),
-				charSpacings     = this .getCharSpacings (),
-				size             = fontStyle .getScale (),
-				spacing          = fontStyle .spacing_ .getValue (),
-				origin           = text .origin_ .getValue (),
-				sizeUnitsPerEm   = size / font .unitsPerEm,
-				primitiveQuality = this .getBrowser () .getBrowserOptions () .getPrimitiveQuality (),
-				texCoords        = this .texCoords,
-				normals          = text .getNormals (),
-				vertices         = text .getVertices ();
-
-			texCoords .length = 0;
-			text .getTexCoords () .push (texCoords);
-
-			this .getBBox () .getExtents (min, max);
-			text .getMin () .assign (min);
-			text .getMax () .assign (max);
-
-			if (fontStyle .horizontal_ .getValue ())
-			{
-				for (var l = 0, length = glyphs .length; l < length; ++ l)
-				{
-					var
-						line         = glyphs [l],
-						charSpacing  = charSpacings [l],
-						translation  = translations [l],
-						advanceWidth = 0;
-
-					for (var g = 0, gl = line .length; g < gl; ++ g)
-					{
-						var
-							glyph         = line [g],
-							glyphVertices = this .getGlyphGeometry (glyph, primitiveQuality);
-						
-						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
-						{
-							var
-								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x + advanceWidth + g * charSpacing,
-								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
-		
-							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
-							normals   .push (0, 0, 1);
-							vertices  .push (x, y, 0, 1);
-						}
-		
-						// Calculate advanceWidth.
-		
-						var kerning = 0;
-		
-						if (g + 1 < line .length)
-							kerning = font .getKerningValue (glyph, line [g + 1]);
-		
-						advanceWidth += (glyph .advanceWidth + kerning) * sizeUnitsPerEm;
-					}
-				}
-			}
-			else
-			{
-				var
-					leftToRight = fontStyle .leftToRight_ .getValue (),
-					topToBottom = fontStyle .topToBottom_ .getValue (),
-					first       = leftToRight ? 0 : text .string_ .length - 1,
-					last        = leftToRight ? text .string_ .length  : -1,
-					step        = leftToRight ? 1 : -1;
-
-				for (var l = first, t = 0; l !== last; l += step)
-				{
-					var line = glyphs [l];
-
-					var
-					   numChars = line .length,
-						firstG   = topToBottom ? 0 : numChars - 1,
-						lastG    = topToBottom ? numChars : -1,
-						stepG    = topToBottom ? 1 : -1;
-
-					for (var g = firstG; g !== lastG; g += stepG, ++ t)
-					{
-						var
-							translation   = translations [t],
-							glyphVertices = this .getGlyphGeometry (line [g], primitiveQuality);
-
-						for (var v = 0, vl = glyphVertices .length; v < vl; ++ v)
-						{
-							var
-								x = glyphVertices [v] .x * size + minorAlignment .x + translation .x,
-								y = glyphVertices [v] .y * size + minorAlignment .y + translation .y;
-			
-							texCoords .push ((x - origin .x) / spacing, (y - origin .y) / spacing, 0, 1);
-							normals   .push (0, 0, 1);
-							vertices  .push (x, y, 0, 1);
-						}
-					}
-				}
-			}
-		},
-		getGlyphExtents: function (glyph, primitiveQuality, min, max)
-		{
-			var extents = glyph .extents [primitiveQuality];
-
-			if (extents)
-			{
-				min .assign (extents .min);
-				max .assign (extents .max);
-				return;
-			}
-
-			var vertices = this .getGlyphGeometry (glyph, primitiveQuality);
-
-			if (vertices .length)
-			{
-				var vertex = vertices [0];
-
-				min .assign (vertex);
-				max .assign (vertex);
-
-				for (var i = 1, length = vertices .length; i < length; ++ i)
-				{
-					var vertex = vertices [i];
-
-					min .min (vertex);
-					max .max (vertex);
-				}
-			}
-			else
-			{
-				min .set (0, 0, 0);
-				max .set (0, 0, 0);			   
-			}
-
-			var extents = glyph .extents [primitiveQuality] = { };
-
-			extents .min = min .copy ();
-			extents .max = max .copy ();
-		},
-		getGlyphGeometry: function (glyph, primitiveQuality)
-		{
-			var
-				fontStyle     = this .getFontStyle (),
-				font          = fontStyle .getFont (),
-				geometryCache = this .getBrowser () .getFontGeometryCache ();
-
-			var cachedFont = geometryCache [font .fontName];
-
-			if (! cachedFont)
-				geometryCache [font .fontName] = cachedFont = [[], [], []];
-
-			var cachedGeometry = cachedFont [primitiveQuality] [glyph .index];
-
-			if (cachedGeometry)
-				return cachedGeometry;
-
-			cachedGeometry = cachedFont [primitiveQuality] [glyph .index] = [ ];
-
-			this .createGlyphGeometry (glyph, cachedGeometry, primitiveQuality);
-
-		   return cachedGeometry;
-		},
-		createGlyphGeometry: function (glyph, vertices, primitiveQuality)
-		{
-			var
-				fontStyle  = this .getFontStyle (),
-				font       = fontStyle .getFont (),
-				components = glyph .components,
-				dimension  = this .getBezierDimension (primitiveQuality),
-				reverse    = font .outlinesFormat === "cff";
-
-			paths  .length = 0;
-			points .length = 0;
-			curves .length = 0;
-		
-			if (glyph .isComposite)
-			{
-				for (var c = 0, cl = components .length; c < cl; ++ c)
-				{
-					var component = components [c];
-
-					paths .push (font .glyphs .get (component .glyphIndex) .getPath (component .dx / font .unitsPerEm, component .dy / -font .unitsPerEm, 1));
-				}
-			}
-			else
-				paths .push (glyph .getPath (0, 0, 1));
-
-			// Get curves for the current glyph.
-
-			var
-				x = 0,
-				y = 0;
-
-			for (var p = 0, pl = paths .length; p < pl; ++ p)
-			{
-				var commands = paths [p] .commands;
-
-				for (var i = 0, cl = commands .length; i < cl; ++ i)
-				{
-					var command = commands [i];
-										      
-					switch (command .type)
-					{
-						case "M": // Start
-						case "Z": // End
-						{
-							if (points .length > 2)
-							{
-								if (points [0] .x === points [points .length - 1] .x && points [0] .y === points [points .length - 1] .y)
-									points .pop ();
-
-								curves .push (reverse ? points .reverse () : points);
-							}
-								
-							points = [ ];
-
-							if (command .type === "M")
-								points .push ({ x: command .x, y: -command .y });
-							
-							break;
-						}
-						case "L": // Linear
-						{
-							points .push ({ x: command .x, y: -command .y });
-							break;
-						}
-						case "C": // Bezier
-						{
-							var
-								curve = new Bezier (x, -y, command .x1, -command .y1, command .x2, -command .y2, command .x, -command .y),
-								lut   = curve .getLUT (dimension);
-
-							for (var l = 1, ll = lut .length; l < ll; ++ l)
-								points .push (lut [l]);
-
-							break;
-						}
-						case "Q": // Cubíc
-						{
-							var
-								curve = new Bezier (x, -y, command .x1, -command .y1, command .x, -command .y),
-								lut   = curve .getLUT (dimension);
-
-							for (var l = 1, ll = lut .length; l < ll; ++ l)
-								points .push (lut [l]);
-							
-							break;
-						}
-						default:
-						   continue;
-					}
-
-					x = command .x;
-					y = command .y;
-				}
-			}
-
-			// Determine contours and holes.
-
-			var
-				contours = [ ],
-				holes    = [ ];
-
-			switch (curves .length)
-			{
-			   case 0:
-					break;
-			   case 1:
-					contours = curves;
-					break;
-				default:
-				{
-					for (var i = 0, cl = curves .length; i < cl; ++ i)
-					{
-						var
-							curve       = curves [i],
-							orientation = this .getCurveOrientation (curve);
-
-						if (orientation < 0)
-							contours .push (curve);
-					   else
-							holes .push (curve);
-					}
-
-					break;
-				}
-			}
-
-			/*
-			if (glyph .name [0] == "O")
-				console .log (glyph .name, "\n",
-				              "font: ", font, "\n",
-				              "glyph: ", glyph, "\n",
-				              "paths: ", paths, "\n",
-				              "contours: ", contours, "\n",
-				              "holes: ", holes);
-			*/
-			   
-			// Determine the holes for every contour.
-
-			contours .map (this .removeCollinearPoints);
-			holes .map (this .removeCollinearPoints);
-
-			switch (contours .length)
-			{
-				case 0:
-					break;
-				case 1:
-					contours [0] .holes = holes;
-					break;
-				default:
-				{
-					for (var c = 0, cl = contours .length; c < cl; ++ c)
-						contours [c] .holes = [ ];
-
-					for (var h = 0, hl = holes .length; h < hl; ++ h)
-					{
-						var hole = holes [h];
-
-						for (var c = 0, cl = contours .length; c < cl; ++ c)
-						{
-							var contour = contours [c];
-
-							// Copy contour, as isPointInPolygon will shuffle the points.
-							if (this .isPointInPolygon (contour .slice (), hole [0]))
-							{
-								contour .holes .push (hole);
-								break;
-							}
-						}
-					}
-
-				   break;
-				}
-			}
-
-			// Triangulate contours.
-
-			for (var i = 0, length = contours .length; i < length; ++ i)
-				this .triangulate (contours [i], contours [i] .holes, vertices);
-		},
-		getBezierDimension: function (primitiveQuality)
-		{
-			switch (primitiveQuality)
-			{
-				case PrimitiveQuality .LOW:
-					return 3;
-				case PrimitiveQuality .HIGH:
-					return 7;
-				default:
-					return 5;
-			}
-		},
-		getCurveOrientation: function (curve)
-		{
-			// From Wikipedia:
-
-			var
-				minX     = Number .POSITIVE_INFINITY,
-				minIndex = 0;
-
-			for (var i = 0, length = curve .length; i < length; ++ i)
-			{
-				if (curve [i] .x < minX)
-				{
-					minX     = curve [i] .x;
-					minIndex = i;
-				}
-			}
-
-			var
-				a = curve [(minIndex + length - 1) % length],
-				b = curve [minIndex],
-				c = curve [(minIndex + 2) % length];
-
-		   return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
-		},
-		/*isPointInPolygon: function (polygon, point)
-		{
-			// earcut version
-			// not always working!!!
-
-			try
-			{
-				// Triangulate polygon.
-
-				var coords = [ ];
-
-				for (var p = 0; p < contour .length; ++ p)
-					coords .push (contour [p] .x, contour [p] .y);
-
-				var t = earcut (coords, holesIndices);
-
-				for (var i = 0; i < t .length; i += 3)
-				{
-				   var  
-						a = polygon [t [i]],
-						b = polygon [t [i + 1]],
-						c = polygon [t [i + 2]];
-					
-					if (Triangle2 .isPointInTriangle (a, b, c, point))
-						return true;
-				}
-
-				return false;
-			}
-			catch (error)
-			{
-				//console .warn (error);
-			}
-		},*/
-		isPointInPolygon: function (polygon, point)
-		{
-			// poly2tri version
-
-			try
-			{
-				// Triangulate polygon.
-
-				var
-					context = new poly2tri .SweepContext (polygon),
-					ts      = context .triangulate () .getTriangles ();
-
-				for (var i = 0, length = ts .length; i < length; ++ i)
-				{
-					var  
-						a = ts [i] .getPoint (0),
-						b = ts [i] .getPoint (1),
-						c = ts [i] .getPoint (2);
-					
-					if (Triangle2 .isPointInTriangle (a, b, c, point))
-						return true;
-				}
-
-				return false;
-			}
-			catch (error)
-			{
-				//console .warn (error);
-			}
-		},
-		removeCollinearPoints: function (polygon)
-		{
-			function isCollinear (a, b, c)
-			{
-				return Math .abs ((a.y - b.y) * (a.x - c.x) - (a.y - c.y) * (a.x - b.x)) < 1e-8;
-			}
-
-			for (var i = 0, k = 0, length = polygon .length; i < length; ++ i)
-			{
-				var
-					i0 = (i - 1 + length) % length,
-					i1 = (i + 1) % length;
-
-				if (isCollinear (polygon [i0], polygon [i], polygon [i1]))
-					continue;
-
-				polygon [k ++] = polygon [i];
-			}
-
-		   polygon .length = k;
-		},
-		triangulate: function (polygon, holes, triangles)
-		{
-		   try
-			{
-				// Triangulate polygon.
-				var
-					context = new poly2tri .SweepContext (polygon) .addHoles (holes),
-					ts      = context .triangulate () .getTriangles ();
-
-				for (var i = 0, length = ts .length; i < length; ++ i)
-				{
-					triangles .push (ts [i] .getPoint (0), ts [i] .getPoint (1), ts [i] .getPoint (2));
-				}
-			}
-			catch (error)
-			{
-				//console .warn (error);
-				this .earcutTriangulate (polygon, holes, triangles);
-			}
-		},
-		earcutTriangulate: function (polygon, holes, triangles)
-		{
-		   try
-			{
-				// Triangulate polygon.
-
-				var
-					coords       = [ ],
-					holesIndices = [ ];
-
-				for (var p = 0, pl = polygon .length; p < pl; ++ p)
-					coords .push (polygon [p] .x, polygon [p] .y);
-
-				for (var h = 0, hsl = holes .length; h < hsl; ++ h)
-				{
-					var hole = holes [h];
-
-					for (var p = 0, hl = hole .length; p < hl; ++ p)
-					{
-						holesIndices .push (coords .length / 2);
-						coords .push (hole [p] .x, hole [p] .y);
-						polygon .push (hole [p]);
-					}
-				}
-
-				var t = earcut (coords, holesIndices);
-
-				for (var i = 0, tl = t .length; i < tl; ++ i)
-					triangles .push (polygon [t [i]]);
-			}
-			catch (error)
-			{
-				//console .warn (error);
-			}
-		},
-		traverse: function (type)
-		{
-		},
-		display: function (context)
-		{
-		},
-		transform: function ()
-		{
-		},
-		getMatrix: function ()
-		{
-			return Matrix4 .Identity;
-		},
-		transformLine: function (line)
-		{
-			// Apply sceen nodes transformation in place here.
-		},
-	});
-
-	return PolygonText;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Text/FontStyle',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Text/X3DFontStyleNode",
-	"cobweb/Browser/Text/PolygonText",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DFontStyleNode,
-          PolygonText,
-          X3DConstants)
-{
-
-
-	function FontStyle (executionContext)
-	{
-		X3DFontStyleNode .call (this, executionContext);
-
-		this .addType (X3DConstants .FontStyle);
-	}
-
-	FontStyle .prototype = $.extend (Object .create (X3DFontStyleNode .prototype),
-	{
-		constructor: FontStyle,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",    new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "family",      new Fields .MFString ("SERIF")),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "style",       new Fields .SFString ("PLAIN")),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "size",        new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "spacing",     new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "horizontal",  new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "leftToRight", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "topToBottom", new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "justify",     new Fields .MFString ("BEGIN")),
-		]),
-		getTypeName: function ()
-		{
-			return "FontStyle";
-		},
-		getComponentName: function ()
-		{
-			return "Text";
-		},
-		getContainerField: function ()
-		{
-			return "fontStyle";
-		},
-		getTextGeometry: function (text)
-		{
-			return new PolygonText (text, this);
-		},
-		getScale: function ()
-		{
-			return this .size_ .getValue ();
-		},
-	});
-
-	return FontStyle;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Browser/Text/X3DTextContext',[
 	"cobweb/Components/Text/FontStyle",
+	"lib/opentype.js/dist/opentype.js",
 ],
-function (FontStyle)
+function (FontStyle,
+          opentype)
 {
 
 
@@ -64684,41 +64653,31 @@ function (FontStyle)
 
 			return this .defaultFontStyle;
 		},
-		addFont: function (URL, font)
+		getFont: function (URL, success, error)
 		{
-			if (URL .query .length === 0)
+			if (URL .query .length !== 0)
+				error ("Font url with query not supported");
+
+			var deferred = this .fontCache [URL .filename];
+
+			if (! deferred)
 			{
-				this .fontCache [URL] = font;
+				deferred = this .fontCache [URL .filename] = $.Deferred ();
 
-				if (typeof font !== "object")
-					return;
-
-				var length = Object .keys (this .fontCache) .length;
-
-				for (var key in this .fontCache)
-				{
-					if (length < FONT_CACHE_SIZE)
-						break;
-
-					-- length;
-					delete this .fontCache [key];
-				}
-
-				// Setup font.
-
-				font .fontName = font .familyName + font .styleName;
-
-				// Workaround to initialize composite glyphs.
-				for (var i = 0, length = font .numGlyphs; i < length; ++ i)
-					font .glyphs .get (i) .getPath (0, 0, 1);
+				opentype .load (URL .toString (), this .setFont .bind (this, URL));
 			}
-		},
-		getFont: function (URL)
-		{
-			if (URL .query .length === 0)
-				return this .fontCache [URL .filename];
 
-			return null;
+			deferred .done (success);
+			deferred .fail (error);
+		},
+		setFont: function (URL, error, font)
+		{
+			var deferred = this .fontCache [URL .filename];
+
+			if (error)
+				deferred .reject (error);
+			else
+				deferred .resolve (font);
 		},
 		getFontGeometryCache: function ()
 		{

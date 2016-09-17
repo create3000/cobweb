@@ -49,8 +49,10 @@
 
 define ([
 	"cobweb/Components/Text/FontStyle",
+	"lib/opentype.js/dist/opentype.js",
 ],
-function (FontStyle)
+function (FontStyle,
+          opentype)
 {
 "use strict";
 
@@ -77,41 +79,31 @@ function (FontStyle)
 
 			return this .defaultFontStyle;
 		},
-		addFont: function (URL, font)
+		getFont: function (URL, success, error)
 		{
-			if (URL .query .length === 0)
+			if (URL .query .length !== 0)
+				error ("Font url with query not supported");
+
+			var deferred = this .fontCache [URL .filename];
+
+			if (! deferred)
 			{
-				this .fontCache [URL] = font;
+				deferred = this .fontCache [URL .filename] = $.Deferred ();
 
-				if (typeof font !== "object")
-					return;
-
-				var length = Object .keys (this .fontCache) .length;
-
-				for (var key in this .fontCache)
-				{
-					if (length < FONT_CACHE_SIZE)
-						break;
-
-					-- length;
-					delete this .fontCache [key];
-				}
-
-				// Setup font.
-
-				font .fontName = font .familyName + font .styleName;
-
-				// Workaround to initialize composite glyphs.
-				for (var i = 0, length = font .numGlyphs; i < length; ++ i)
-					font .glyphs .get (i) .getPath (0, 0, 1);
+				opentype .load (URL .toString (), this .setFont .bind (this, URL));
 			}
-		},
-		getFont: function (URL)
-		{
-			if (URL .query .length === 0)
-				return this .fontCache [URL .filename];
 
-			return null;
+			deferred .done (success);
+			deferred .fail (error);
+		},
+		setFont: function (URL, error, font)
+		{
+			var deferred = this .fontCache [URL .filename];
+
+			if (error)
+				deferred .reject (error);
+			else
+				deferred .resolve (font);
 		},
 		getFontGeometryCache: function ()
 		{
