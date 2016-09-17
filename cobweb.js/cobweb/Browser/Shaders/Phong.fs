@@ -171,7 +171,7 @@ unpack (in vec4 color)
 }
 
 float
-getShadowIntensity (in int i, in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in Plane3 plane, in float angle)
+getShadowIntensity (in int index, in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in Plane3 plane, in float angle)
 {
 	#define SHADOW_TEXTURE_EPS 0.01
 	#define SHADOW_BIAS_OFFSET 0.002
@@ -227,7 +227,7 @@ getShadowIntensity (in int i, in int lightType, in float shadowIntensity, in flo
 				if (shadowCoord .z >= 1.0)
 					continue;
 
-				if (unpack (texture2D (x3d_ShadowMap [i], shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)
+				if (unpack (texture2D (x3d_ShadowMap [index], shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)
 				{
 					++ value;
 				}
@@ -253,7 +253,7 @@ getShadowIntensity (in int i, in int lightType, in float shadowIntensity, in flo
 		if (shadowCoord .z >= 1.0)
 			continue;
 
-		if (unpack (texture2D (x3d_ShadowMap [i], shadowCoord .xy)) < shadowCoord .z - bias)
+		if (unpack (texture2D (x3d_ShadowMap [index], shadowCoord .xy)) < shadowCoord .z - bias)
 		{
 			++ value;
 		}
