@@ -26517,6 +26517,11 @@ function ($,
 
 	var NULL = Fields .SFNode ();
 
+	var
+		MAX_CLIP_PLANES = 6,
+		MAX_LIGHTS      = 8,
+		MAX_TEXTURES    = 1;
+
 	function X3DProgrammableShaderObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DProgrammableShaderObject);
@@ -26543,6 +26548,13 @@ function ($,
 	X3DProgrammableShaderObject .prototype =
 	{
 		constructor: X3DProgrammableShaderObject,
+		normalMatrixArray: new Float32Array (9),
+		maxClipPlanes: MAX_CLIP_PLANES,
+		noClipPlane: new Float32Array (4),
+		fogNode: null,
+		maxLights: MAX_LIGHTS,
+		numGlobalLights: 0,
+		textureTypeArray: new Int32Array (MAX_TEXTURES),
 		initialize: function ()
 		{ },
 		hasUserDefinedFields: function ()
@@ -26638,7 +26650,7 @@ function ($,
 		},
 		addShaderFields: function ()
 		{
-			if (this .isValid_ .getValue ())
+			if (this .getValid ())
 			{
 				var
 					gl                = this .getBrowser () .getContext (),
@@ -26752,7 +26764,7 @@ function ($,
 		},
 		removeShaderFields: function ()
 		{
-			if (this .isValid_ .getValue ())
+			if (this .isValid_ .getValue ()) // TODO:: getValid
 			{
 				var
 					gl                = this .getBrowser () .getContext (),
@@ -27490,11 +27502,6 @@ function ($,
 {
 
 
-	var
-		MAX_CLIP_PLANES = 6,
-		MAX_LIGHTS      = 8,
-		MAX_TEXTURES    = 1;
-
 	var shader = null;
 
 	function ComposedShader (executionContext)
@@ -27520,13 +27527,6 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
 		]),
 		wireframe: false,
-		normalMatrixArray: new Float32Array (9),
-		maxClipPlanes: MAX_CLIP_PLANES,
-		noClipPlane: new Float32Array (4),
-		fogNode: null,
-		maxLights: MAX_LIGHTS,
-		numGlobalLights: 0,
-		textureTypeArray: new Int32Array (MAX_TEXTURES),
 		getTypeName: function ()
 		{
 			return "ComposedShader";
@@ -27560,6 +27560,10 @@ function ($,
 
 			//Must not call set_live__.
 		},
+		getValid: function ()
+		{
+			return this .isValid_ .getValue ();
+		},
 		getProgram: function ()
 		{
 			return this .program;
@@ -27568,13 +27572,19 @@ function ($,
 		{
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
 			{
-				this .use ();
-				this .addShaderFields ();
+				if (this .getValid ())
+				{
+					this .use ();
+					this .addShaderFields ();
+				}
 			}
 			else
 			{
-				this .use ();
-				this .removeShaderFields ();
+				if (this .getValid ())
+				{
+					this .use ();
+					this .removeShaderFields ();
+				}
 			}
 		},
 		set_activate__: function ()
@@ -27639,7 +27649,7 @@ function ($,
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
-			if (this !== shader)
+			if (shader !== this)
 			{
 				shader = this;
 
@@ -27650,7 +27660,7 @@ function ($,
 		},
 		setLocalUniforms: function (gl, context)
 		{
-			if (this !== shader)
+			if (shader !== this)
 			{
 				shader = this;
 
@@ -27661,7 +27671,7 @@ function ($,
 		},
 		use: function ()
 		{
-			if (this !== shader)
+			if (shader !== this)
 			{
 				shader = this;
 
