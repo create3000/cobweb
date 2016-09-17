@@ -961,7 +961,84 @@ function ($,
 			}
 			else
 				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
-		}
+		},
+		getProgramInfo: function ()
+		{
+			var
+				gl      = this .getBrowser () .getContext (),
+				program = this .getProgram ();
+
+			var
+				result = {
+					attributes: [ ],
+					uniforms: [ ],
+					attributeCount: 0,
+					uniformCount: 0,
+				},
+				activeUniforms   = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS),
+				activeAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+
+			// Taken from the WebGl spec:
+			// http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14
+			var enums = {
+				0x8B50: 'vec2',
+				0x8B51: 'vec3',
+				0x8B52: 'vec4',
+				0x8B53: 'ivec2',
+				0x8B54: 'ivec3',
+				0x8B55: 'ivec4',
+				0x8B56: 'bool',
+				0x8B57: 'bvec2',
+				0x8B58: 'bvec3',
+				0x8B59: 'bvec4',
+				0x8B5A: 'mat2',
+				0x8B5B: 'mat3',
+				0x8B5C: 'mat4',
+				0x8B5E: 'sampler2D',
+				0x8B60: 'samplerCube',
+				0x1400: 'byte',
+				0x1401: 'ubyte',
+				0x1402: 'short',
+				0x1403: 'ushort',
+				0x1404: 'int',
+				0x1405: 'uint',
+				0x1406: 'float',
+			};
+
+			// Loop through active uniforms
+			for (var i = 0; i < activeUniforms; ++ i)
+			{
+				var uniform = gl .getActiveUniform (program, i);
+				uniform .typeName = enums [uniform.type];
+				result .uniforms .push ($.extend ({ }, uniform));
+				result .uniformCount += uniform .size;
+			}
+
+			// Loop through active attributes
+			for (var i = 0; i < activeAttributes; ++ i)
+			{
+				var attribute = gl .getActiveAttrib (program, i);
+				attribute .typeName = enums [attribute .type];
+				result .attributes .push ($.extend ({ }, attribute));
+				result .attributeCount += attribute .size;
+			}
+
+			result .uniforms   .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
+			result .attributes .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
+
+			return result;
+		},
+		printProgramInfo: function ()
+		{
+			var programInfo = this .getProgramInfo ();
+
+			console .log (this .getName ());
+			console .table (programInfo .attributes);
+			console .log (this .getName (), "attributeCount", programInfo .attributeCount);
+			console .log (this .getName ());
+			console .table (programInfo .uniforms);
+			console .log (this .getName (), "uniformCount", programInfo .uniformCount);
+		},
 	};
 
 	return X3DProgrammableShaderObject;

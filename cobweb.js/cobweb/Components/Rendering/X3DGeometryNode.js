@@ -166,6 +166,10 @@ function ($,
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
 
+			this .depth            = emptyFunction;
+			this .display          = emptyFunction;
+			this .displayParticles = emptyFunction;
+
 			this .set_live__ ();
 		},
 		getExtendedEventHandling: function ()

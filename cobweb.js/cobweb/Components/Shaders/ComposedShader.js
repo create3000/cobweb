@@ -205,6 +205,9 @@ function ($,
 
 					this .getDefaultUniforms ();
 					this .addShaderFields ();
+
+					// Debug
+					// this .printProgramInfo ();
 				}
 				else
 					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
