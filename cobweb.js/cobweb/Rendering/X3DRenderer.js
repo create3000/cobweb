@@ -795,6 +795,10 @@ function ($,
 			// Clear lights.
 
 			this .lights .length = 0;
+
+			// Reset.
+
+			gl .activeTexture (gl .TEXTURE0);
 		},
 	};
 

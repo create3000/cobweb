@@ -26644,9 +26644,9 @@ function ($,
 
 			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
 			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
-			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
-			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
+			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([2])); // depreciated
+			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([2])); // Set texture to active texture unit 2.
+			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
 		},
 		addShaderFields: function ()
 		{
@@ -26764,48 +26764,45 @@ function ($,
 		},
 		removeShaderFields: function ()
 		{
-			if (this .isValid_ .getValue ()) // TODO:: getValid
+			var
+				gl                = this .getBrowser () .getContext (),
+				program           = this .getProgram (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
-				var
-					gl                = this .getBrowser () .getContext (),
-					program           = this .getProgram (),
-					userDefinedFields = this .getUserDefinedFields ();
+				var field = userDefinedFields [name];
 
-				for (var name in userDefinedFields)
+				field .removeInterest (this, "set_field__");
+
+				switch (field .getType ())
 				{
-					var field = userDefinedFields [name];
-
-					field .removeInterest (this, "set_field__");
-	
-					switch (field .getType ())
+					case X3DConstants .SFNode:
 					{
-						case X3DConstants .SFNode:
-						{
-							this .removeNode (gl, program, field ._uniformLocation);
-							break;
-						}
-						case X3DConstants .MFNode:
-						{
-							var name = field .getName ();
-
-							for (var i = 0; ; ++ i)
-							{
-								var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-								if (location)
-									this .removeNode (gl, program, location);
-								else
-									break;
-							}
-
-							break;
-						}
-						default:
-							continue;
+						this .removeNode (gl, program, field ._uniformLocation);
+						break;
 					}
-	
-					break;
+					case X3DConstants .MFNode:
+					{
+						var name = field .getName ();
+
+						for (var i = 0; ; ++ i)
+						{
+							var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+							if (location)
+								this .removeNode (gl, program, location);
+							else
+								break;
+						}
+
+						break;
+					}
+					default:
+						continue;
 				}
+
+				break;
 			}
 		},
 		set_field__: function (field)
@@ -27217,8 +27214,6 @@ function ($,
 
 				if (texture)
 					gl .bindTexture (texture .getTarget (), texture .getTexture ());
-				else
-					gl .bindTexture (gl .TEXTURE_2D, null);
 
 				gl .activeTexture (gl .TEXTURE0);
 			}
@@ -27233,9 +27228,6 @@ function ($,
 					this .getBrowser () .getCombinedTextureUnits () .push (textureUnit);
 
 				gl .uniform1i (location, 0);
-				gl .activeTexture (gl .TEXTURE0 + textureUnit);
-				gl .bindTexture (gl .TEXTURE_2D, null);
-				gl .activeTexture (gl .TEXTURE0);
 			}
 		},
 		getImagesLength: function (field)
@@ -27602,7 +27594,7 @@ function ($,
 					parts   = this .parts_ .getValue (),
 					valid   = 0;
 				
-				if (this .isValid_ .getValue ())
+				if (this .getValid ())
 					this .removeShaderFields ();
 	
 				this .program = program;
@@ -37955,6 +37947,8 @@ function (Fields,
 			setInterval (this .reshape .bind (this), 401); // Detect canvas resize.
 
 			this .reshape ();
+
+			// Create shaders.
 
 			this .depthShader = this .createShader (this, "DepthShader",     depthVS,     depthFS);
 			this .pointShader = this .createShader (this, "PointShader",     wireframeVS, pointSetFS);
@@ -55308,7 +55302,6 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 		gl .texImage2D (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, null);
 
 		gl .framebufferTexture2D (gl .FRAMEBUFFER, gl .COLOR_ATTACHMENT0, gl .TEXTURE_2D, this .depthTexture, 0);
-		gl .bindTexture (gl .TEXTURE_2D, null);
 
 		// The depth buffer
 
@@ -64988,6 +64981,28 @@ function (TextureProperties,
 			this .defaultTextureProperties .setup ();
 			this .defaultTextureTransform  .setup ();
 			this .defaultTextureCoordinate .setup ();
+
+			// There must always be a texture bound to the used texture units.
+
+         var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
+			this .defaultTexture2D              = gl .createTexture ();
+ 			this .defaultComposedCubeMapTexture = gl .createTexture ();
+
+			gl .activeTexture (gl .TEXTURE2);
+			gl .bindTexture (gl .TEXTURE_2D, this .defaultTexture2D);
+			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			gl .activeTexture (gl .TEXTURE4);
+			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .defaultComposedCubeMapTexture);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			gl .activeTexture (gl .TEXTURE0);
 		},
 		getMinTextureSize: function ()
 		{
@@ -66861,6 +66876,10 @@ function ($,
 			// Clear lights.
 
 			this .lights .length = 0;
+
+			// Reset.
+
+			gl .activeTexture (gl .TEXTURE0);
 		},
 	};
 
@@ -67990,7 +68009,7 @@ function ($,
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shaderNode     = browser .getBackgroundSphereShader ();
+				shaderNode = browser .getBackgroundSphereShader ();
 
 			shaderNode .use ();
 
@@ -68047,7 +68066,7 @@ function ($,
 			gl .uniform1i (shaderNode .x3d_FogType,       0);
 			gl .uniform1i (shaderNode .x3d_ColorMaterial, false);
 			gl .uniform1i (shaderNode .x3d_Lighting,      false);
-			gl .uniform1i (shaderNode .texturing,     true);
+			gl .uniform1i (shaderNode .texturing,         true);
 			gl .uniform1i (shaderNode .x3d_TextureType,   2);
 
 			gl .uniformMatrix4fv (shaderNode .x3d_TextureMatrix,    false, this .textureMatrixArray);
@@ -68080,7 +68099,7 @@ function ($,
 		{
 			if (texture && texture .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				texture .traverse (gl, shaderNode, 0);
+				texture .setShaderUniforms (gl, shaderNode, 0);
 
 				if (texture .transparent_ .getValue ())
 					gl .enable (gl .BLEND);
@@ -68243,8 +68262,6 @@ function ($,
 					break;
 				}
 			}
-
-			gl .bindTexture (target, null);
 		},
 	});
 
@@ -68348,7 +68365,6 @@ function ($,
 
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
-			gl .bindTexture (gl .TEXTURE_2D, null);
 		
 			this .set_textureProperties__ ();
 		},
@@ -68400,7 +68416,6 @@ function ($,
 			gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
-			gl .bindTexture (gl .TEXTURE_2D, null);
 
 			this .updateTextureProperties ();
 		},
@@ -68416,8 +68431,6 @@ function ($,
 
 			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
 				gl .generateMipmap (gl .TEXTURE_2D);
-
-			gl .bindTexture (gl .TEXTURE_2D, null);
 		},
 		updateTextureProperties: function ()
 		{
@@ -68470,7 +68483,7 @@ function ($,
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			shaderObject .textureTypeArray [i] = 2;
-			gl .activeTexture (gl .TEXTURE0);
+			gl .activeTexture (gl .TEXTURE2);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
 		},
@@ -76541,7 +76554,8 @@ function ($,
 
 		this .addType (X3DConstants .ComposedCubeMapTexture);
 
-		this .textures = [null, null, null, null, null, null];
+		this .textures   = [null, null, null, null, null, null];
+		this .loadStates = 0;
 	}
 
 	ComposedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
@@ -76584,6 +76598,13 @@ function ($,
 				gl .TEXTURE_CUBE_MAP_POSITIVE_Y, // Top
 				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
 			];
+
+			gl .bindTexture (this .target, this .getTexture ());
+
+			for (var i = 0, length = this .targets .length; i < length; ++ i)
+				gl .texImage2D  (this .targets [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			//
 
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
@@ -76628,45 +76649,88 @@ function ($,
 		set_texture__: function (node, index)
 		{
 			if (this .textures [index])
-				this .textures [index] .loadState_ .removeInterest (this, "setTexture");
+				this .textures [index] .loadState_ .removeInterest (this, "set_loadState__");
 
 			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
 
 			if (texture)
-				texture .loadState_ .addInterest (this, "setTexture", index, texture);
+				texture .loadState_ .addInterest (this, "set_loadState__", index, texture);
 
-			this .setTexture (null, index, texture);
+			this .set_loadState__ (null, index, texture);
 		},
-		setTexture: function (output, index, texture)
+		set_loadState__: function (output, index, texture)
 		{
+			if (texture)
+				this .setLoadStateBit (texture .checkLoadState (), index);
+			else
+				this .setLoadStateBit (X3DConstants .NOT_STARTED, index);
+
+			this .setTextures ();
+		},
+		setLoadStateBit: function (loadState, bit)
+		{
+			if (loadState === X3DConstants .COMPLETE_STATE)
+				this .loadStates |= 1 << bit;
+			else
+				this .loadStates &= ~(1 << bit);
+		},
+		isComplete: function ()
+		{
+			if (this .loadStates !== 0x3f) // 0b111111
+				return false;
+
 			var
-				gl     = this .getBrowser () .getContext (),
-				target = this .targets [index];
+				textures = this .textures,
+				size     = textures [0] .getWidth ();
 
-			this .set_transparent__ ();
-
-			if (texture && texture .checkLoadState () == X3DConstants .COMPLETE_STATE)
+			for (var i = 0; i < 6; ++ i)
 			{
-				var
-					gl     = this .getBrowser () .getContext (),
-					width  = texture .getWidth (),
-					height = texture .getHeight (),
-					data   = texture .getData ();
+				var texture = textures [i];
 
-				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
-				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-				gl .bindTexture (this .target, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .bindTexture (this .target, null);
+				if (texture .getWidth () !== size)
+					return false;
+
+				if (texture .getHeight () !== size)
+					return false;
+			}
+
+			return true;
+		},
+		setTextures: function ()
+		{
+			var gl = this .getBrowser () .getContext ();
+
+			gl .bindTexture (this .target, this .getTexture ());
+
+			if (this .isComplete ())
+			{
+				var textures = this .textures;
+
+				for (var i = 0; i < 6; ++ i)
+				{
+					var
+						gl      = this .getBrowser () .getContext (),
+						texture = textures [i],
+						width   = texture .getWidth (),
+						height  = texture .getHeight (),
+						data    = texture .getData ();
+	
+					gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
+					gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
+					gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+				}
 
 				this .set_textureQuality__ ();
 			}
 			else
 			{
-				gl .bindTexture (this .target, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
-				gl .bindTexture (this .target, null);
+				for (var i = 0; i < 6; ++ i)
+				{
+					gl .texImage2D (this .targets [i], 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+				}
 			}
+
+			this .set_transparent__ ();
 		},
 		set_transparent__: function ()
 		{
@@ -76674,26 +76738,29 @@ function ($,
 				textures    = this .textures,
 				transparent = false;
 
-			for (var i = 0; i < 6; ++ i)
+			if (this .isComplete ())
 			{
-				var texture = textures [i];
-
-				if (texture && texture .transparent_ .getValue ())
+				for (var i = 0; i < 6; ++ i)
 				{
-					transparent = true;
-					break;
+					var texture = textures [i];
+	
+					if (texture && texture .transparent_ .getValue ())
+					{
+						transparent = true;
+						break;
+					}
 				}
 			}
 
 			if (transparent !== this .transparent_ .getValue ())
 				this .transparent_ = transparent;
 		},
-		traverse: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			shader .textureTypeArray [i] = 4;
-			gl .activeTexture (gl .TEXTURE1);
+			shaderObject .textureTypeArray [i] = 4;
+			gl .activeTexture (gl .TEXTURE4);
 			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-			gl .uniform1iv (shader .x3d_TextureType, shader .textureTypeArray);
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
 		},
 	});
 

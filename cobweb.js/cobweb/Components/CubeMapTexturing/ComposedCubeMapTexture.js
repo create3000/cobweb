@@ -282,7 +282,6 @@ function ($,
 			gl .activeTexture (gl .TEXTURE4);
 			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
 			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
-			gl .activeTexture (gl .TEXTURE0);
 		},
 	});
 
