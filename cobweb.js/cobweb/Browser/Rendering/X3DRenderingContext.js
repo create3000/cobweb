@@ -116,6 +116,8 @@ function (Fields,
 
 			this .reshape ();
 
+			// Create shaders.
+
 			this .depthShader = this .createShader (this, "DepthShader",     depthVS,     depthFS);
 			this .pointShader = this .createShader (this, "PointShader",     wireframeVS, pointSetFS);
 			this .lineShader  = this .createShader (this, "WireframeShader", wireframeVS, wireframeFS);

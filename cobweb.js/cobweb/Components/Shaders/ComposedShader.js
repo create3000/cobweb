@@ -170,7 +170,7 @@ function ($,
 					parts   = this .parts_ .getValue (),
 					valid   = 0;
 				
-				if (this .isValid_ .getValue ())
+				if (this .getValid ())
 					this .removeShaderFields ();
 	
 				this .program = program;

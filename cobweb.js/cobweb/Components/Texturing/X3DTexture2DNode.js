@@ -93,7 +93,6 @@ function ($,
 
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
-			gl .bindTexture (gl .TEXTURE_2D, null);
 		
 			this .set_textureProperties__ ();
 		},
@@ -145,7 +144,6 @@ function ($,
 			gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
-			gl .bindTexture (gl .TEXTURE_2D, null);
 
 			this .updateTextureProperties ();
 		},
@@ -161,8 +159,6 @@ function ($,
 
 			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
 				gl .generateMipmap (gl .TEXTURE_2D);
-
-			gl .bindTexture (gl .TEXTURE_2D, null);
 		},
 		updateTextureProperties: function ()
 		{
@@ -215,9 +211,10 @@ function ($,
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			shaderObject .textureTypeArray [i] = 2;
-			gl .activeTexture (gl .TEXTURE0);
+			gl .activeTexture (gl .TEXTURE2);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
+			gl .activeTexture (gl .TEXTURE0);
 		},
 	});
 

@@ -75,7 +75,8 @@ function ($,
 
 		this .addType (X3DConstants .ComposedCubeMapTexture);
 
-		this .textures = [null, null, null, null, null, null];
+		this .textures   = [null, null, null, null, null, null];
+		this .loadStates = 0;
 	}
 
 	ComposedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
@@ -118,6 +119,13 @@ function ($,
 				gl .TEXTURE_CUBE_MAP_POSITIVE_Y, // Top
 				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
 			];
+
+			gl .bindTexture (this .target, this .getTexture ());
+
+			for (var i = 0, length = this .targets .length; i < length; ++ i)
+				gl .texImage2D  (this .targets [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			//
 
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
@@ -162,45 +170,88 @@ function ($,
 		set_texture__: function (node, index)
 		{
 			if (this .textures [index])
-				this .textures [index] .loadState_ .removeInterest (this, "setTexture");
+				this .textures [index] .loadState_ .removeInterest (this, "set_loadState__");
 
 			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
 
 			if (texture)
-				texture .loadState_ .addInterest (this, "setTexture", index, texture);
+				texture .loadState_ .addInterest (this, "set_loadState__", index, texture);
 
-			this .setTexture (null, index, texture);
+			this .set_loadState__ (null, index, texture);
 		},
-		setTexture: function (output, index, texture)
+		set_loadState__: function (output, index, texture)
 		{
+			if (texture)
+				this .setLoadStateBit (texture .checkLoadState (), index);
+			else
+				this .setLoadStateBit (X3DConstants .NOT_STARTED, index);
+
+			this .setTextures ();
+		},
+		setLoadStateBit: function (loadState, bit)
+		{
+			if (loadState === X3DConstants .COMPLETE_STATE)
+				this .loadStates |= 1 << bit;
+			else
+				this .loadStates &= ~(1 << bit);
+		},
+		isComplete: function ()
+		{
+			if (this .loadStates !== 0x3f) // 0b111111
+				return false;
+
 			var
-				gl     = this .getBrowser () .getContext (),
-				target = this .targets [index];
+				textures = this .textures,
+				size     = textures [0] .getWidth ();
 
-			this .set_transparent__ ();
-
-			if (texture && texture .checkLoadState () == X3DConstants .COMPLETE_STATE)
+			for (var i = 0; i < 6; ++ i)
 			{
-				var
-					gl     = this .getBrowser () .getContext (),
-					width  = texture .getWidth (),
-					height = texture .getHeight (),
-					data   = texture .getData ();
+				var texture = textures [i];
 
-				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
-				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-				gl .bindTexture (this .target, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
-				gl .bindTexture (this .target, null);
+				if (texture .getWidth () !== size)
+					return false;
+
+				if (texture .getHeight () !== size)
+					return false;
+			}
+
+			return true;
+		},
+		setTextures: function ()
+		{
+			var gl = this .getBrowser () .getContext ();
+
+			gl .bindTexture (this .target, this .getTexture ());
+
+			if (this .isComplete ())
+			{
+				var textures = this .textures;
+
+				for (var i = 0; i < 6; ++ i)
+				{
+					var
+						gl      = this .getBrowser () .getContext (),
+						texture = textures [i],
+						width   = texture .getWidth (),
+						height  = texture .getHeight (),
+						data    = texture .getData ();
+	
+					gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
+					gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
+					gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+				}
 
 				this .set_textureQuality__ ();
 			}
 			else
 			{
-				gl .bindTexture (this .target, this .getTexture ());
-				gl .texImage2D (target, 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
-				gl .bindTexture (this .target, null);
+				for (var i = 0; i < 6; ++ i)
+				{
+					gl .texImage2D (this .targets [i], 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+				}
 			}
+
+			this .set_transparent__ ();
 		},
 		set_transparent__: function ()
 		{
@@ -208,26 +259,30 @@ function ($,
 				textures    = this .textures,
 				transparent = false;
 
-			for (var i = 0; i < 6; ++ i)
+			if (this .isComplete ())
 			{
-				var texture = textures [i];
-
-				if (texture && texture .transparent_ .getValue ())
+				for (var i = 0; i < 6; ++ i)
 				{
-					transparent = true;
-					break;
+					var texture = textures [i];
+	
+					if (texture && texture .transparent_ .getValue ())
+					{
+						transparent = true;
+						break;
+					}
 				}
 			}
 
 			if (transparent !== this .transparent_ .getValue ())
 				this .transparent_ = transparent;
 		},
-		traverse: function (gl, shader, i)
+		setShaderUniforms: function (gl, shaderObject, i)
 		{
-			shader .textureTypeArray [i] = 4;
-			gl .activeTexture (gl .TEXTURE1);
+			shaderObject .textureTypeArray [i] = 4;
+			gl .activeTexture (gl .TEXTURE4);
 			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-			gl .uniform1iv (shader .x3d_TextureType, shader .textureTypeArray);
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
+			gl .activeTexture (gl .TEXTURE0);
 		},
 	});
 

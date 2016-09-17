@@ -139,8 +139,6 @@ function ($,
 					break;
 				}
 			}
-
-			gl .bindTexture (target, null);
 		},
 	});
 

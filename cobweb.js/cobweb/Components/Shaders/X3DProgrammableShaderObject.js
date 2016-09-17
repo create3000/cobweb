@@ -191,9 +191,9 @@ function ($,
 
 			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
 			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
-			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
-			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
+			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([2])); // depreciated
+			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([2])); // Set texture to active texture unit 2.
+			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
 		},
 		addShaderFields: function ()
 		{
@@ -311,48 +311,45 @@ function ($,
 		},
 		removeShaderFields: function ()
 		{
-			if (this .isValid_ .getValue ()) // TODO:: getValid
+			var
+				gl                = this .getBrowser () .getContext (),
+				program           = this .getProgram (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
-				var
-					gl                = this .getBrowser () .getContext (),
-					program           = this .getProgram (),
-					userDefinedFields = this .getUserDefinedFields ();
+				var field = userDefinedFields [name];
 
-				for (var name in userDefinedFields)
+				field .removeInterest (this, "set_field__");
+
+				switch (field .getType ())
 				{
-					var field = userDefinedFields [name];
-
-					field .removeInterest (this, "set_field__");
-	
-					switch (field .getType ())
+					case X3DConstants .SFNode:
 					{
-						case X3DConstants .SFNode:
-						{
-							this .removeNode (gl, program, field ._uniformLocation);
-							break;
-						}
-						case X3DConstants .MFNode:
-						{
-							var name = field .getName ();
-
-							for (var i = 0; ; ++ i)
-							{
-								var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-								if (location)
-									this .removeNode (gl, program, location);
-								else
-									break;
-							}
-
-							break;
-						}
-						default:
-							continue;
+						this .removeNode (gl, program, field ._uniformLocation);
+						break;
 					}
-	
-					break;
+					case X3DConstants .MFNode:
+					{
+						var name = field .getName ();
+
+						for (var i = 0; ; ++ i)
+						{
+							var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+							if (location)
+								this .removeNode (gl, program, location);
+							else
+								break;
+						}
+
+						break;
+					}
+					default:
+						continue;
 				}
+
+				break;
 			}
 		},
 		set_field__: function (field)
@@ -764,8 +761,6 @@ function ($,
 
 				if (texture)
 					gl .bindTexture (texture .getTarget (), texture .getTexture ());
-				else
-					gl .bindTexture (gl .TEXTURE_2D, null);
 
 				gl .activeTexture (gl .TEXTURE0);
 			}
@@ -780,9 +775,6 @@ function ($,
 					this .getBrowser () .getCombinedTextureUnits () .push (textureUnit);
 
 				gl .uniform1i (location, 0);
-				gl .activeTexture (gl .TEXTURE0 + textureUnit);
-				gl .bindTexture (gl .TEXTURE_2D, null);
-				gl .activeTexture (gl .TEXTURE0);
 			}
 		},
 		getImagesLength: function (field)
