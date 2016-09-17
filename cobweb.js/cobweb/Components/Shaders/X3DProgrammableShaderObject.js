@@ -62,12 +62,14 @@ function ($,
 {
 "use strict";
 
-	var NULL = Fields .SFNode ();
-
 	var
 		MAX_CLIP_PLANES = 6,
 		MAX_LIGHTS      = 8,
 		MAX_TEXTURES    = 1;
+
+	var
+		NULL          = Fields .SFNode (),
+		emptyFunction = function () { };
 
 	function X3DProgrammableShaderObject (executionContext)
 	{
@@ -196,6 +198,39 @@ function ($,
 			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
 
 			// Return true if valid, otherwise false.
+
+			if (this .x3d_Color < 0)
+			{
+				this .enableColorAttribute  = emptyFunction;
+				this .disableColorAttribute = emptyFunction;
+			}
+			else
+			{
+				delete this .enableColorAttribute;
+				delete this .disableColorAttribute;
+			}
+
+			if (this .x3d_TexCoord < 0)
+			{
+				this .enableTexCoordAttribute  = emptyFunction;
+				this .disableTexCoordAttribute = emptyFunction;
+			}
+			else
+			{
+				delete this .enableTexCoordAttribute;
+				delete this .disableTexCoordAttribute;
+			}
+
+			if (this .x3d_Normal < 0)
+			{
+				this .enableNormalAttribute  = emptyFunction;
+				this .disableNormalAttribute = emptyFunction;
+			}
+			else
+			{
+				delete this .enableNormalAttribute;
+				delete this .disableNormalAttribute;
+			}
 
 			if (this .x3d_Vertex < 0)
 				return false;
@@ -809,6 +844,19 @@ function ($,
 
 			return i;
 		},
+		setClipPlanes: function (gl, clipPlanes)
+		{
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .setShaderUniforms (gl, this, i);
+	
+				if (i < this .maxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
+			}
+			else
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
 			var globalLights = this .getCurrentLayer () .getGlobalLights ();
@@ -956,18 +1004,45 @@ function ($,
 
 			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
-		setClipPlanes: function (gl, clipPlanes)
+		enableColorAttribute: function (gl, colorBuffer)
 		{
-			if (clipPlanes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .setShaderUniforms (gl, this, i);
-	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
-			}
-			else
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+			gl .enableVertexAttribArray (this .x3d_Color);
+			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
+			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableColorAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Color);
+		},
+		enableTexCoordAttribute: function (gl, texCoordBuffers)
+		{
+			gl .enableVertexAttribArray (this .x3d_TexCoord);
+			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
+			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableTexCoordAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_TexCoord);
+		},
+		enableNormalAttribute: function (gl, normalBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Normal);
+			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
+			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+		},
+		disableNormalAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Normal);
+		},
+		enableVertexAttribute: function (gl, vertexBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
+			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableVertexAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Vertex);
 		},
 		getProgramInfo: function ()
 		{

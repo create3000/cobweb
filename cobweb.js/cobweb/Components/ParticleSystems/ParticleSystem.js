@@ -1200,31 +1200,17 @@ function ($,
 	
 				// Setup vertex attributes.
 	
-				if (this .colorMaterial && shaderNode .x3d_Color >= 0)
-				{
-					gl .enableVertexAttribArray (shaderNode .x3d_Color);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-					gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-				}
-	
-				if (this .texCoordArray .length && shaderNode .x3d_TexCoord >= 0)
-				{
-					gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-					gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-				}
-	
-				if (this .normalArray .length && shaderNode .x3d_Normal >= 0)
-				{
-					gl .enableVertexAttribArray (shaderNode .x3d_Normal);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-					gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-				}
-	
-				gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-	
+				if (this .colorMaterial .length)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+
+				if (this .texCoordArray .length)
+					shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffer);
+
+				if (this .normalArray .length)
+					shaderNode .enableNormalAttribute (gl, this .normalBuffer);
+
+				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+
 				var testWireframe = false;
 
 				switch (this .geometryType)
@@ -1259,7 +1245,9 @@ function ($,
 					gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
 				}
 	
-				if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
+				shaderNode .disableColorAttribute    (gl);
+				shaderNode .disableTexCoordAttribute (gl);
+				shaderNode .disableNormalAttribute   (gl);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)

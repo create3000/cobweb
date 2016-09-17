@@ -466,9 +466,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			gl .uniform3fv (shader .x3d_EmissiveColor, black);
 			gl .uniform1f  (shader .x3d_Transparency,  0);
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .lineBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
+
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 
 			gl .lineWidth (1);

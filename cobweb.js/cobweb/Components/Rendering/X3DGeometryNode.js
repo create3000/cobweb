@@ -569,9 +569,7 @@ function ($,
 
 			// Setup vertex attributes.
 
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 		},
@@ -590,30 +588,12 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shaderNode .x3d_Color >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Color);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-			}
+			if (this .colors .length)
+				shaderNode .enableColorAttribute (gl, this .colorBuffer);
 
-			if (shaderNode .x3d_TexCoord >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-			}
-
-			if (shaderNode .x3d_Normal >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-			}
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+			shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
+			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -650,9 +630,9 @@ function ($,
 				}
 			}
 
-			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
-			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
+			shaderNode .disableColorAttribute    (gl);
+			shaderNode .disableTexCoordAttribute (gl);
+			shaderNode .disableNormalAttribute   (gl);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -669,30 +649,12 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shaderNode .x3d_Color >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Color);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-			}
+			if (this .colors .length)
+				shaderNode .enableColorAttribute (gl, this .colorBuffer);
 
-			if (shaderNode .x3d_TexCoord >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-			}
-
-			if (shaderNode .x3d_Normal >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-			}
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+			shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
+			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -801,9 +763,9 @@ function ($,
 				}
 			}
 
-			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
-			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
+			shaderNode .disableColorAttribute    (gl);
+			shaderNode .disableTexCoordAttribute (gl);
+			shaderNode .disableNormalAttribute   (gl);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{

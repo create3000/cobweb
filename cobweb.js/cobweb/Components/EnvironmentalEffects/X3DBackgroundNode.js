@@ -570,13 +570,8 @@ function ($,
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shaderNode .x3d_Color);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableColorAttribute  (gl, this .colorBuffer);
+			shaderNode .enableVertexAttribute (gl, this .sphereBuffer);
 
 			// Draw.
 
@@ -584,14 +579,14 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shaderNode .x3d_Color);
+			shaderNode .disableColorAttribute (gl);
 		},
 		drawCube: function ()
 		{
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shaderNode     = browser .getGouraudShader ();
+				shaderNode = browser .getGouraudShader ();
 
 			shaderNode .use ();
 
@@ -613,11 +608,7 @@ function ($,
 
 			// Enable vertex attribute arrays.
 
-			gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordsBuffer);
 
 			// Draw.
 
@@ -630,7 +621,7 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
+			shaderNode .disableTexCoordAttribute (gl);
 		},
 		drawRectangle: function (gl, shaderNode, texture, buffer)
 		{
@@ -643,8 +634,7 @@ function ($,
 				else
 					gl .disable (gl .BLEND);
 
-				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+				shaderNode .enableVertexAttribute (gl, buffer);
 
 				// Draw.
 
