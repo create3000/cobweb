@@ -548,7 +548,7 @@ function ($,
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shaderNode     = browser .getBackgroundSphereShader ();
+				shaderNode = browser .getBackgroundSphereShader ();
 
 			shaderNode .use ();
 
@@ -605,7 +605,7 @@ function ($,
 			gl .uniform1i (shaderNode .x3d_FogType,       0);
 			gl .uniform1i (shaderNode .x3d_ColorMaterial, false);
 			gl .uniform1i (shaderNode .x3d_Lighting,      false);
-			gl .uniform1i (shaderNode .texturing,     true);
+			gl .uniform1i (shaderNode .texturing,         true);
 			gl .uniform1i (shaderNode .x3d_TextureType,   2);
 
 			gl .uniformMatrix4fv (shaderNode .x3d_TextureMatrix,    false, this .textureMatrixArray);
@@ -638,7 +638,7 @@ function ($,
 		{
 			if (texture && texture .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				texture .traverse (gl, shaderNode, 0);
+				texture .setShaderUniforms (gl, shaderNode, 0);
 
 				if (texture .transparent_ .getValue ())
 					gl .enable (gl .BLEND);

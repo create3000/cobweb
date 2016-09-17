@@ -6,9 +6,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V1.4.10, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/water/water.x3d'/>
-    <meta name='modified' content='Sat, 10 Sep 2016 10:12:58 GMT'/>
+    <meta name='modified' content='Sat, 17 Sep 2016 03:51:51 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
@@ -84,9 +84,6 @@
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
             reference='http://titania.create3000.de'>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'/>
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
@@ -287,16 +284,13 @@
                   diffuseColor='0 0 0'
                   shininess='0'
                   transparency='0.204778'/>
-              <ComposedShader DEF='TitaniaWaterShader'
+              <ComposedShader DEF='CobwebWaterShader'
                   language='GLSL'>
                 <field accessType='inputOnly' type='SFFloat' name='set_time'/>
                 <field accessType='inputOutput' type='SFVec3f' name='position' value='68.8916 46.8921 120.146'/>
-                <field accessType='inputOutput' type='SFInt32' name='numWaves' value='5'/>
                 <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.222428, 0.164404, 0.096708, 0.096708, 0.096708'/>
                 <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.6395, 1.45984, 0.64099, 0.551695, 0.432567'/>
-                <field accessType='inputOutput' type='MFFloat' name='speed' value='2.18808, 2.18808, 2.18808, 2.18808, 2.18808'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.882667 0.11112, 0.678751 0.182917, 0.450011 0.643528, 0.496523 0.398465, 0.357832 0.00919326'/>
-                <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.204778'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.347999 0.595264, 0.817798 0.966761, 0.825102 0.00854167, 0.850426 0.217271, 0.106487 4.03955e-06'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture DEF='_4'>
                     <ImageTexture DEF='_5' containerField='front'
@@ -312,17 +306,6 @@
                     <ImageTexture containerField='bottom'
                         url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg"'/>
                   </ComposedCubeMapTexture>
-                </field>
-              </ComposedShader>
-              <ComposedShader DEF='CobwebWaterShader'
-                  language='GLSL'>
-                <field accessType='inputOnly' type='SFFloat' name='set_time'/>
-                <field accessType='inputOutput' type='SFVec3f' name='position' value='68.8916 46.8921 120.146'/>
-                <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.222428, 0.164404, 0.096708, 0.096708, 0.096708'/>
-                <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.6395, 1.45984, 0.64099, 0.551695, 0.432567'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.882667 0.11112, 0.678751 0.182917, 0.450011 0.643528, 0.496523 0.398465, 0.357832 0.00919326'/>
-                <field accessType='inputOutput' type='SFNode' name='texture'>
-                  <ComposedCubeMapTexture USE='_4'/>
                 </field>
                 <field accessType='inputOutput' type='MFFloat' name='speed' value='2.18808, 2.18808, 2.18808, 2.18808, 2.18808'/>
                 <ShaderPart DEF='CobwebWaterVertex'>
@@ -1596,14 +1579,10 @@ function set_touchTime (value, time)
     <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='ElapsedTime' toField='set_fraction'/>
     <ROUTE fromNode='ElapsedTime' fromField='value_changed' toNode='CobwebWaterShader' toField='set_time'/>
     <ROUTE fromNode='_2' fromField='position_changed' toNode='CobwebWaterShader' toField='set_position'/>
-    <ROUTE fromNode='_2' fromField='position_changed' toNode='TitaniaWaterShader' toField='set_position'/>
-    <ROUTE fromNode='ElapsedTime' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_time'/>
     <ROUTE fromNode='_13' fromField='touchTime' toNode='_14' toField='set_triggerTime'/>
     <ROUTE fromNode='_10' fromField='touchTime' toNode='_11' toField='set_triggerTime'/>
-    <ROUTE fromNode='_11' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_11' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_14' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_14' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_32' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='AmplitudeScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_32' toField='set_offset'/>
@@ -1613,7 +1592,6 @@ function set_touchTime (value, time)
     <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_35' toField='set_string'/>
     <ROUTE fromNode='_34' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
     <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_amplitude'/>
-    <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_amplitude'/>
     <ROUTE fromNode='_36' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
     <ROUTE fromNode='_36' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
     <ROUTE fromNode='_37' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
@@ -1623,7 +1601,6 @@ function set_touchTime (value, time)
     <ROUTE fromNode='_38' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
     <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_39' toField='set_string'/>
     <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_frequency'/>
-    <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_frequency'/>
     <ROUTE fromNode='_41' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
     <ROUTE fromNode='_41' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
     <ROUTE fromNode='_42' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
@@ -1632,22 +1609,16 @@ function set_touchTime (value, time)
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='Rectangle2D_9' toField='set_translation'/>
     <ROUTE fromNode='_43' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
     <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_40' toField='set_string'/>
-    <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_speed'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_speed'/>
     <ROUTE fromNode='_17' fromField='touchTime' toNode='_18' toField='set_triggerTime'/>
     <ROUTE fromNode='_18' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_18' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_7' fromField='touchTime' toNode='_8' toField='set_triggerTime'/>
     <ROUTE fromNode='_29' fromField='touchTime' toNode='_30' toField='set_triggerTime'/>
     <ROUTE fromNode='_25' fromField='touchTime' toNode='_26' toField='set_triggerTime'/>
     <ROUTE fromNode='_21' fromField='touchTime' toNode='_22' toField='set_triggerTime'/>
     <ROUTE fromNode='_8' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_8' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_30' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_30' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_26' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_26' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_22' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_22' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_47' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='Rectangle2D_12' toField='set_translation'/>
@@ -1657,9 +1628,7 @@ function set_touchTime (value, time)
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_46' toField='set_offset'/>
     <ROUTE fromNode='_48' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
     <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_45' toField='set_string'/>
-    <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='TitaniaWaterShader' toField='set_transparency'/>
     <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='_3' toField='set_transparency'/>
-    <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='TitaniaWaterShader' toField='set_direction'/>
     <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='CobwebWaterShader' toField='set_direction'/>
     <ROUTE fromNode='_44' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
   </Scene>

@@ -101,6 +101,28 @@ function (TextureProperties,
 			this .defaultTextureProperties .setup ();
 			this .defaultTextureTransform  .setup ();
 			this .defaultTextureCoordinate .setup ();
+
+			// There must always be a texture bound to the used texture units.
+
+         var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
+			this .defaultTexture2D              = gl .createTexture ();
+ 			this .defaultComposedCubeMapTexture = gl .createTexture ();
+
+			gl .activeTexture (gl .TEXTURE2);
+			gl .bindTexture (gl .TEXTURE_2D, this .defaultTexture2D);
+			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			gl .activeTexture (gl .TEXTURE4);
+			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .defaultComposedCubeMapTexture);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			gl .activeTexture (gl .TEXTURE0);
 		},
 		getMinTextureSize: function ()
 		{

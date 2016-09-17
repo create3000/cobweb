@@ -171,7 +171,21 @@ unpack (in vec4 color)
 }
 
 float
-getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in sampler2D shadowMap, in Plane3 plane, in float angle)
+getShadowDepth (in int index, in vec2 shadowCoord)
+{
+	for (int i = 0; i < x3d_MaxLights; ++ i)
+	{
+		if (i == index)
+		{
+			return unpack (texture2D (x3d_ShadowMap [i], shadowCoord));
+		}
+	}
+
+	return 0.0;
+}
+
+float
+getShadowIntensity (in int index, in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in Plane3 plane, in float angle)
 {
 	#define SHADOW_TEXTURE_EPS 0.01
 	#define SHADOW_BIAS_OFFSET 0.002
@@ -227,7 +241,7 @@ getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowD
 				if (shadowCoord .z >= 1.0)
 					continue;
 
-				if (unpack (texture2D (shadowMap, shadowCoord .xy + offsets [m])) < shadowCoord .z - bias)
+				if (getShadowDepth (index, shadowCoord .xy + offsets [m]) < shadowCoord .z - bias)
 				{
 					++ value;
 				}
@@ -253,7 +267,7 @@ getShadowIntensity (in int lightType, in float shadowIntensity, in float shadowD
 		if (shadowCoord .z >= 1.0)
 			continue;
 
-		if (unpack (texture2D (shadowMap, shadowCoord .xy)) < shadowCoord .z - bias)
+		if (getShadowDepth (index, shadowCoord .xy) < shadowCoord .z - bias)
 		{
 			++ value;
 		}
@@ -354,7 +368,7 @@ getMaterialColor ()
 
 				if (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)
 				{
-					float shadowIntensity = getShadowIntensity (lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], x3d_ShadowMap [i], plane, a);
+					float shadowIntensity = getShadowIntensity (i, lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], plane, a);
 	
 					finalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);
 				}

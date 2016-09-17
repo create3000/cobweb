@@ -57,7 +57,6 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
-	"lib/opentype.js/dist/opentype.js",
 ],
 function ($,
           Fields,
@@ -67,8 +66,7 @@ function ($,
           Loader,
           X3DConstants,
           urls,
-          URI,
-          opentype)
+          URI)
 {
 "use strict";
 
@@ -259,18 +257,8 @@ function ($,
 
 				this .family = this .familyStack .shift ();
 				this .URL    = this .loader .transform (this .family);
-	
-				var font = this .getBrowser () .getFont (this .URL);
 
-				if (font)
-					return this .setFont (font);
-	
-				if (font === false)
-					return this .setError ("Couldn't load font.");
-	
-				this .getBrowser () .addFont (this .URL, true);
-	
-				opentype .load (this .URL, this .addFont .bind (this));
+				this .getBrowser () .getFont (this .URL, this .setFont .bind (this), this .setError .bind (this));
 			}
 			catch (error)
 			{
@@ -279,8 +267,6 @@ function ($,
 		},
 		setError: function (error)
 		{
-			this .getBrowser () .addFont (this .URL, false);
-	
 			var URL = this .URL .toString ();
 
 			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
@@ -294,27 +280,8 @@ function ($,
 
 			this .loadNext ();
 		},
-		addFont: function (error, font)
-		{
-			if (error)
-			{
-			   this .setError (error);
-			}
-			else
-			{
-				this .getBrowser () .addFont (this .URL, font);
-				this .setFont (font);
-			}
-		},
 		setFont: function (font)
 		{
-			if (font === true)
-			{
-				this .familyStack .unshift (this .family);
-				setTimeout (this .loadNext .bind (this), 10);
-				return;
-			}
-
 			this .font = font;
 
 			this .setLoadState (X3DConstants .COMPLETE_STATE);

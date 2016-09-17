@@ -91,6 +91,8 @@ function ($,
 		// left: We do not have to test for left.
 	];
 
+	var emptyFunction = function () { };
+
 	function X3DGeometryNode (executionContext)
 	{
 		X3DNode .call (this, executionContext);
@@ -163,6 +165,10 @@ function ($,
 				for (var i = 0; i < 5; ++ i)
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
+
+			this .depth            = emptyFunction;
+			this .display          = emptyFunction;
+			this .displayParticles = emptyFunction;
 
 			this .set_live__ ();
 		},
@@ -536,6 +542,22 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 			this .vertexCount = count;
+
+			// Setup render functions.
+
+			if (this .vertexCount)
+			{
+				// Use default render functions.
+				delete this .depth;
+				delete this .display;
+				delete this .displayParticles;
+			}
+			else
+			{
+				this .depth            = emptyFunction;
+				this .display          = emptyFunction;
+				this .displayParticles = emptyFunction;
+			}
 	  	},
 		traverse: function (type)
 		{ },
@@ -562,7 +584,7 @@ function ($,
 				gl         = browser .getContext (),
 				shaderNode = context .shaderNode;
 
-			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0)
 				return;
 
 			// Setup shader.
@@ -645,7 +667,7 @@ function ($,
 				gl         = browser .getContext (),
 				shaderNode = context .shaderNode;
 
-			if (shaderNode .x3d_Vertex < 0 || this .vertexCount === 0)
+			if (shaderNode .x3d_Vertex < 0)
 				return;
 
 			// Setup shader.

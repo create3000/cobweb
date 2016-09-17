@@ -64,6 +64,11 @@ function ($,
 
 	var NULL = Fields .SFNode ();
 
+	var
+		MAX_CLIP_PLANES = 6,
+		MAX_LIGHTS      = 8,
+		MAX_TEXTURES    = 1;
+
 	function X3DProgrammableShaderObject (executionContext)
 	{
 		this .addType (X3DConstants .X3DProgrammableShaderObject);
@@ -90,6 +95,13 @@ function ($,
 	X3DProgrammableShaderObject .prototype =
 	{
 		constructor: X3DProgrammableShaderObject,
+		normalMatrixArray: new Float32Array (9),
+		maxClipPlanes: MAX_CLIP_PLANES,
+		noClipPlane: new Float32Array (4),
+		fogNode: null,
+		maxLights: MAX_LIGHTS,
+		numGlobalLights: 0,
+		textureTypeArray: new Int32Array (MAX_TEXTURES),
 		initialize: function ()
 		{ },
 		hasUserDefinedFields: function ()
@@ -179,13 +191,13 @@ function ($,
 
 			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
 			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([0])); // depreciated
-			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([0])); // Set texture to active texture unit 0.
-			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([1])); // Set cube map texture to active texture unit 1.
+			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([2])); // depreciated
+			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([2])); // Set texture to active texture unit 2.
+			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
 		},
 		addShaderFields: function ()
 		{
-			if (this .isValid_ .getValue ())
+			if (this .getValid ())
 			{
 				var
 					gl                = this .getBrowser () .getContext (),
@@ -299,48 +311,45 @@ function ($,
 		},
 		removeShaderFields: function ()
 		{
-			if (this .isValid_ .getValue ())
+			var
+				gl                = this .getBrowser () .getContext (),
+				program           = this .getProgram (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
-				var
-					gl                = this .getBrowser () .getContext (),
-					program           = this .getProgram (),
-					userDefinedFields = this .getUserDefinedFields ();
+				var field = userDefinedFields [name];
 
-				for (var name in userDefinedFields)
+				field .removeInterest (this, "set_field__");
+
+				switch (field .getType ())
 				{
-					var field = userDefinedFields [name];
-
-					field .removeInterest (this, "set_field__");
-	
-					switch (field .getType ())
+					case X3DConstants .SFNode:
 					{
-						case X3DConstants .SFNode:
-						{
-							this .removeNode (gl, program, field ._uniformLocation);
-							break;
-						}
-						case X3DConstants .MFNode:
-						{
-							var name = field .getName ();
-
-							for (var i = 0; ; ++ i)
-							{
-								var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-								if (location)
-									this .removeNode (gl, program, location);
-								else
-									break;
-							}
-
-							break;
-						}
-						default:
-							continue;
+						this .removeNode (gl, program, field ._uniformLocation);
+						break;
 					}
-	
-					break;
+					case X3DConstants .MFNode:
+					{
+						var name = field .getName ();
+
+						for (var i = 0; ; ++ i)
+						{
+							var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+							if (location)
+								this .removeNode (gl, program, location);
+							else
+								break;
+						}
+
+						break;
+					}
+					default:
+						continue;
 				}
+
+				break;
 			}
 		},
 		set_field__: function (field)
@@ -752,8 +761,6 @@ function ($,
 
 				if (texture)
 					gl .bindTexture (texture .getTarget (), texture .getTexture ());
-				else
-					gl .bindTexture (gl .TEXTURE_2D, null);
 
 				gl .activeTexture (gl .TEXTURE0);
 			}
@@ -768,9 +775,6 @@ function ($,
 					this .getBrowser () .getCombinedTextureUnits () .push (textureUnit);
 
 				gl .uniform1i (location, 0);
-				gl .activeTexture (gl .TEXTURE0 + textureUnit);
-				gl .bindTexture (gl .TEXTURE_2D, null);
-				gl .activeTexture (gl .TEXTURE0);
 			}
 		},
 		getImagesLength: function (field)
@@ -957,7 +961,84 @@ function ($,
 			}
 			else
 				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
-		}
+		},
+		getProgramInfo: function ()
+		{
+			var
+				gl      = this .getBrowser () .getContext (),
+				program = this .getProgram ();
+
+			var
+				result = {
+					attributes: [ ],
+					uniforms: [ ],
+					attributeCount: 0,
+					uniformCount: 0,
+				},
+				activeUniforms   = gl .getProgramParameter (program, gl.ACTIVE_UNIFORMS),
+				activeAttributes = gl .getProgramParameter (program, gl.ACTIVE_ATTRIBUTES);
+
+			// Taken from the WebGl spec:
+			// http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14
+			var enums = {
+				0x8B50: 'vec2',
+				0x8B51: 'vec3',
+				0x8B52: 'vec4',
+				0x8B53: 'ivec2',
+				0x8B54: 'ivec3',
+				0x8B55: 'ivec4',
+				0x8B56: 'bool',
+				0x8B57: 'bvec2',
+				0x8B58: 'bvec3',
+				0x8B59: 'bvec4',
+				0x8B5A: 'mat2',
+				0x8B5B: 'mat3',
+				0x8B5C: 'mat4',
+				0x8B5E: 'sampler2D',
+				0x8B60: 'samplerCube',
+				0x1400: 'byte',
+				0x1401: 'ubyte',
+				0x1402: 'short',
+				0x1403: 'ushort',
+				0x1404: 'int',
+				0x1405: 'uint',
+				0x1406: 'float',
+			};
+
+			// Loop through active uniforms
+			for (var i = 0; i < activeUniforms; ++ i)
+			{
+				var uniform = gl .getActiveUniform (program, i);
+				uniform .typeName = enums [uniform.type];
+				result .uniforms .push ($.extend ({ }, uniform));
+				result .uniformCount += uniform .size;
+			}
+
+			// Loop through active attributes
+			for (var i = 0; i < activeAttributes; ++ i)
+			{
+				var attribute = gl .getActiveAttrib (program, i);
+				attribute .typeName = enums [attribute .type];
+				result .attributes .push ($.extend ({ }, attribute));
+				result .attributeCount += attribute .size;
+			}
+
+			result .uniforms   .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
+			result .attributes .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
+
+			return result;
+		},
+		printProgramInfo: function ()
+		{
+			var programInfo = this .getProgramInfo ();
+
+			console .log (this .getName ());
+			console .table (programInfo .attributes);
+			console .log (this .getName (), "attributeCount", programInfo .attributeCount);
+			console .log (this .getName ());
+			console .table (programInfo .uniforms);
+			console .log (this .getName (), "uniformCount", programInfo .uniformCount);
+		},
 	};
 
 	return X3DProgrammableShaderObject;
