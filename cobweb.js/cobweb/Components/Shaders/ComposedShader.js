@@ -128,10 +128,6 @@ function ($,
 
 			//Must not call set_live__.
 		},
-		getValid: function ()
-		{
-			return this .isValid_ .getValue ();
-		},
 		getProgram: function ()
 		{
 			return this .program;
@@ -140,7 +136,7 @@ function ($,
 		{
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
 			{
-				if (this .getValid ())
+				if (this .isValid_ .getValue ())
 				{
 					this .use ();
 					this .addShaderFields ();
@@ -148,7 +144,7 @@ function ($,
 			}
 			else
 			{
-				if (this .getValid ())
+				if (this .isValid_ .getValue ())
 				{
 					this .use ();
 					this .removeShaderFields ();
@@ -170,7 +166,7 @@ function ($,
 					parts   = this .parts_ .getValue (),
 					valid   = 0;
 
-				if (this .getValid ())
+				if (this .isValid_ .getValue ())
 					this .removeShaderFields ();
 	
 				this .program = program;
@@ -213,7 +209,7 @@ function ($,
 				}
 				else
 					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
-	
+
 				if (valid != this .isValid_ .getValue ())
 					this .isValid_ = valid;
 			}

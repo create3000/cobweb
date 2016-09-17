@@ -239,115 +239,112 @@ function ($,
 		},
 		addShaderFields: function ()
 		{
-			if (this .getValid ())
+			var
+				gl                = this .getBrowser () .getContext (),
+				program           = this .getProgram (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
 				var
-					gl                = this .getBrowser () .getContext (),
-					program           = this .getProgram (),
-					userDefinedFields = this .getUserDefinedFields ();
-	
-				for (var name in userDefinedFields)
+					field    = userDefinedFields [name],
+					location = gl .getUniformLocation (program, name);
+
+				if (location)
 				{
-					var
-						field    = userDefinedFields [name],
-						location = gl .getUniformLocation (program, name);
-	
-					if (location)
+					field ._uniformLocation = location;
+
+					field .addInterest (this, "set_field__");
+
+					switch (field .getType ())
 					{
-						field ._uniformLocation = location;
-
-						field .addInterest (this, "set_field__");
-
-						switch (field .getType ())
+						case X3DConstants .SFImage:
 						{
-							case X3DConstants .SFImage:
-							{
-								location .array = new Int32Array (3 + field .array .length);
-								break;
-							}
-							case X3DConstants .SFMatrix3d:
-							case X3DConstants .SFMatrix3f:
-							{
-								location .array = new Float32Array (9);
-								break;
-							}
-							case X3DConstants .SFMatrix4d:
-							case X3DConstants .SFMatrix4f:
-							{
-								location .array = new Float32Array (16);
-								break;
-							}
-							case X3DConstants .MFBool:
-							case X3DConstants .MFInt32:
-							{
-								location .array = new Int32Array (this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFFloat:
-							case X3DConstants .MFDouble:
-							case X3DConstants .MFTime:
-							{
-								location .array = new Float32Array (this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFImage:
-							{
-								location .array = new Int32Array (this .getImagesLength (field));
-								break;
-							}
-							case X3DConstants .MFMatrix3d:
-							case X3DConstants .MFMatrix3f:
-							{
-								location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFMatrix4d:
-							case X3DConstants .MFMatrix4f:
-							{
-								location .array = new Float32Array (16 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFNode:
-							{
-								var array = field ._uniformLocation = [ ];
-
-								for (var i = 0; ; ++ i)
-								{
-									var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-									if (location)
-										array [i] = location;
-									else
-										break;
-								}
-
-								break;
-							}
-							case X3DConstants .MFVec2d:
-							case X3DConstants .MFVec2f:
-							{
-								location .array = new Float32Array (2 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFVec3d:
-							case X3DConstants .MFVec3f:
-							case X3DConstants .MFColor:
-							{
-								location .array = new Float32Array (3 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFVec4d:
-							case X3DConstants .MFVec4f:
-							case X3DConstants .MFColorRGBA:
-							case X3DConstants .MFRotation:
-							{
-								location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
-								break;
-							}
+							location .array = new Int32Array (3 + field .array .length);
+							break;
 						}
-	
-						this .set_field__ (field);
+						case X3DConstants .SFMatrix3d:
+						case X3DConstants .SFMatrix3f:
+						{
+							location .array = new Float32Array (9);
+							break;
+						}
+						case X3DConstants .SFMatrix4d:
+						case X3DConstants .SFMatrix4f:
+						{
+							location .array = new Float32Array (16);
+							break;
+						}
+						case X3DConstants .MFBool:
+						case X3DConstants .MFInt32:
+						{
+							location .array = new Int32Array (this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFFloat:
+						case X3DConstants .MFDouble:
+						case X3DConstants .MFTime:
+						{
+							location .array = new Float32Array (this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFImage:
+						{
+							location .array = new Int32Array (this .getImagesLength (field));
+							break;
+						}
+						case X3DConstants .MFMatrix3d:
+						case X3DConstants .MFMatrix3f:
+						{
+							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFMatrix4d:
+						case X3DConstants .MFMatrix4f:
+						{
+							location .array = new Float32Array (16 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFNode:
+						{
+							var array = field ._uniformLocation = [ ];
+
+							for (var i = 0; ; ++ i)
+							{
+								var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+								if (location)
+									array [i] = location;
+								else
+									break;
+							}
+
+							break;
+						}
+						case X3DConstants .MFVec2d:
+						case X3DConstants .MFVec2f:
+						{
+							location .array = new Float32Array (2 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFVec3d:
+						case X3DConstants .MFVec3f:
+						case X3DConstants .MFColor:
+						{
+							location .array = new Float32Array (3 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFVec4d:
+						case X3DConstants .MFVec4f:
+						case X3DConstants .MFColorRGBA:
+						case X3DConstants .MFRotation:
+						{
+							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
+							break;
+						}
 					}
+
+					this .set_field__ (field);
 				}
 			}
 		},
