@@ -118,7 +118,7 @@ function ($,
 		{
 			if (this .getGeometry ())
 			{
-			   this .getGeometry () .traverse (type);
+				this .getGeometry () .traverse (type);
 
 				switch (type)
 				{

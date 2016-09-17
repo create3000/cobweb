@@ -115,7 +115,6 @@ function ($,
 			gl .drawArrays (shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
 
 			if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -172,7 +171,6 @@ function ($,
 			}
 
 			if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 	});
 

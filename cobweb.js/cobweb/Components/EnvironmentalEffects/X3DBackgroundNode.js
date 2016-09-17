@@ -585,7 +585,6 @@ function ($,
 			// Disable vertex attribute arrays.
 
 			gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		drawCube: function ()
 		{
@@ -632,7 +631,6 @@ function ($,
 			// Disable vertex attribute arrays.
 
 			gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		drawRectangle: function (gl, shaderNode, texture, buffer)
 		{

@@ -1260,7 +1260,6 @@ function ($,
 				}
 	
 				if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-				gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)

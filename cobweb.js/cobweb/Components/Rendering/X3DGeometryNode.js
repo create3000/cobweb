@@ -574,8 +574,6 @@ function ($,
 			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
-
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		display: function (context)
 		{
@@ -658,7 +656,6 @@ function ($,
 			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
 			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
 			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -813,7 +810,6 @@ function ($,
 			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
 			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
 			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{
@@ -823,7 +819,7 @@ function ($,
 
 				if (this .intersectsBBox (line))
 				{
-				   this .transformLine (line); // Apply screen transformations.
+				   this .transformLine (line); // Apply screen transformations from screen nodes.
 
 					var
 						texCoords = this .texCoords [0],

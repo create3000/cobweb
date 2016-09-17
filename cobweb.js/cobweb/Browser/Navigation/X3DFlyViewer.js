@@ -475,7 +475,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			gl .uniform3fv (shader .x3d_EmissiveColor, white);
 
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
 			gl .enable (gl .DEPTH_TEST);
 
 			gl .lineWidth (lineWidth);
