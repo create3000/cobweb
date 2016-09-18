@@ -91,8 +91,6 @@ function ($,
 		// left: We do not have to test for left.
 	];
 
-	var emptyFunction = function () { };
-
 	function X3DGeometryNode (executionContext)
 	{
 		X3DNode .call (this, executionContext);
@@ -166,9 +164,9 @@ function ($,
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
 
-			this .depth            = emptyFunction;
-			this .display          = emptyFunction;
-			this .displayParticles = emptyFunction;
+			this .depth            = Algorithm .nop;
+			this .display          = Algorithm .nop;
+			this .displayParticles = Algorithm .nop;
 
 			this .set_live__ ();
 		},
@@ -554,9 +552,9 @@ function ($,
 			}
 			else
 			{
-				this .depth            = emptyFunction;
-				this .display          = emptyFunction;
-				this .displayParticles = emptyFunction;
+				this .depth            = Algorithm .nop;
+				this .display          = Algorithm .nop;
+				this .displayParticles = Algorithm .nop;
 			}
 	  	},
 		traverse: function (type)

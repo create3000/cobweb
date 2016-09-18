@@ -244,7 +244,11 @@ function ($,
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
 			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
 		},
-		traverse: function (context)
+		traverse: function (type)
+		{
+			
+		},
+		display: function (context)
 		{
 			context .linePropertiesNode   = this .linePropertiesNode;
 			context .materialNode         = this .materialNode;

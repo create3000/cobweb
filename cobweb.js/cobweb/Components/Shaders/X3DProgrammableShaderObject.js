@@ -52,12 +52,14 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
           X3DCast,
           X3DConstants,
+          Algorithm,
           Matrix3)
 {
 "use strict";
@@ -67,9 +69,7 @@ function ($,
 		MAX_LIGHTS      = 8,
 		MAX_TEXTURES    = 1;
 
-	var
-		NULL          = Fields .SFNode (),
-		emptyFunction = function () { };
+	var NULL = Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
 	{
@@ -201,8 +201,8 @@ function ($,
 
 			if (this .x3d_Color < 0)
 			{
-				this .enableColorAttribute  = emptyFunction;
-				this .disableColorAttribute = emptyFunction;
+				this .enableColorAttribute  = Algorithm .nop;
+				this .disableColorAttribute = Algorithm .nop;
 			}
 			else
 			{
@@ -212,8 +212,8 @@ function ($,
 
 			if (this .x3d_TexCoord < 0)
 			{
-				this .enableTexCoordAttribute  = emptyFunction;
-				this .disableTexCoordAttribute = emptyFunction;
+				this .enableTexCoordAttribute  = Algorithm .nop;
+				this .disableTexCoordAttribute = Algorithm .nop;
 			}
 			else
 			{
@@ -223,8 +223,8 @@ function ($,
 
 			if (this .x3d_Normal < 0)
 			{
-				this .enableNormalAttribute  = emptyFunction;
-				this .disableNormalAttribute = emptyFunction;
+				this .enableNormalAttribute  = Algorithm .nop;
+				this .disableNormalAttribute = Algorithm .nop;
 			}
 			else
 			{

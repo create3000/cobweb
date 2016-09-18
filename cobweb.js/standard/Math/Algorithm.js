@@ -54,6 +54,8 @@ define (function ()
 
 	var Algorithm =
 	{
+		noop: function ()
+		{ },
 		signum: function (value)
 		{
 			return (0 < value) - (value < 0);

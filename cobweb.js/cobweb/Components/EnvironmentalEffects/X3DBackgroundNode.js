@@ -556,6 +556,11 @@ function ($,
 
 			shaderNode .setClipPlanes (gl, this .clipPlanes);
 
+			// Enable vertex attribute arrays.
+
+			shaderNode .enableColorAttribute  (gl, this .colorBuffer);
+			shaderNode .enableVertexAttribute (gl, this .sphereBuffer);
+
 			// Uniforms
 
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
@@ -567,11 +572,6 @@ function ($,
 				gl .enable (gl .BLEND);
 			else
 				gl .disable (gl .BLEND);
-
-			// Enable vertex attribute arrays.
-
-			shaderNode .enableColorAttribute  (gl, this .colorBuffer);
-			shaderNode .enableVertexAttribute (gl, this .sphereBuffer);
 
 			// Draw.
 
@@ -594,6 +594,10 @@ function ($,
 
 			shaderNode .setClipPlanes (gl, this .clipPlanes);
 
+			// Enable vertex attribute arrays.
+
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+
 			// Uniforms
 
 			gl .uniform1i (shaderNode .x3d_FogType,       0);
@@ -605,10 +609,6 @@ function ($,
 			gl .uniformMatrix4fv (shaderNode .x3d_TextureMatrix,    false, this .textureMatrixArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
-
-			// Enable vertex attribute arrays.
-
-			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
 
 			// Draw.
 

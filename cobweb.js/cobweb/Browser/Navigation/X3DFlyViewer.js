@@ -449,6 +449,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				lineWidth  = gl .getParameter (gl .LINE_WIDTH);
 
 			shaderNode .useProgram ();
+			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
 
 			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .noClipPlane);
 
@@ -465,8 +466,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			gl .lineWidth (2);
 			gl .uniform3fv (shaderNode .x3d_EmissiveColor, black);
 			gl .uniform1f  (shaderNode .x3d_Transparency,  0);
-
-			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
 
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 
