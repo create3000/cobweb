@@ -55,6 +55,7 @@ define ([
 	"cobweb/Components/Shape/X3DAppearanceNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -62,7 +63,8 @@ function ($,
           FieldDefinitionArray,
           X3DAppearanceNode,
           X3DCast,
-          X3DConstants)
+          X3DConstants,
+          Algorithm)
 {
 "use strict";
 
@@ -177,7 +179,16 @@ function ($,
 
 			if (this .textureNode)
 				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
-			
+
+			if (X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_))
+			{
+				delete this .traverse;
+			}
+			else
+			{
+				this .traverse = Algorithm .nop;
+			}
+
 			this .set_transparent__ ();
 		},
 		set_textureTransform__: function ()
@@ -246,7 +257,7 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			
+			this .textureNode .traverse ();
 		},
 		display: function (context)
 		{

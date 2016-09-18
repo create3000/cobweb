@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Thu, 01 Sep 2016 12:19:16 GMT'/>
+    <meta name='creator' content='holger'/>
+    <meta name='generator' content='Titania V1.4.10, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/ShadowBillboard.x3d'/>
+    <meta name='modified' content='Sun, 18 Sep 2016 07:31:35 GMT'/>
+  </head>
+  <Scene>
+    <WorldInfo>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='AngleGrid' containerField='value'
+            name='AngleGrid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet DEF='Grid' containerField='value'
+            name='Grid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled_1' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='1.60212469100952, 10.6241626739502, -11.4910726547241'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.0247282867787563, 0.933991816873399, 0.35643764931123, 3.01217997852283'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='0, 0.259127259254456, 0'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <Viewpoint DEF='_1' containerField='value'
+                description='Home'
+                position='1.60212 10.6242 -11.4911'
+                orientation='-0.0247282867787563 0.933991816873399 0.35643764931123 3.01217997852283'
+                centerOfRotation='0 0.259127 0'/>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Transform DEF='Box'
+        translation='0 -1 0'
+        scale='5 1 5'>
+      <Shape>
+        <Appearance>
+          <Material
+              ambientIntensity='0'
+              diffuseColor='1 1 1'/>
+        </Appearance>
+        <Box/>
+      </Shape>
+    </Transform>
+    <SpotLight
+        intensity='0.323864'
+        location='0 3.66 0'
+        direction='0 -1 0'
+        beamWidth='0.765398'
+        cutOffAngle='1.2108'
+        shadowIntensity='1'
+        shadowDiffusion='0.8'
+        shadowMapSize='1526'/>
+    <Billboard>
+      <Transform DEF='Sphere'
+          translation='0 1.57578 0'
+          rotation='-4.24027756465069e-22 -3.67320512848233e-06 0.999999999993254 1.5707963267949'
+          scale='0.942471 0.942471 0.942471'>
+        <Shape>
+          <Appearance>
+            <Material
+                ambientIntensity='1'/>
+          </Appearance>
+          <Cone/>
+        </Shape>
+      </Transform>
+    </Billboard>
+    <Script DEF='PhongShadingScript'>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	Browser .setBrowserOption ("Shading", "PHONG");
+}
+]]> 
+    </Script>
+    <NavigationInfo
+        headlight='false'/>
+    <DirectionalLight
+        direction='-0.47029 -0.709678 -0.52458'
+        shadowIntensity='1'
+        shadowDiffusion='0.235'/>
+    <Viewpoint USE='_1'/>
+  </Scene>
+</X3D>

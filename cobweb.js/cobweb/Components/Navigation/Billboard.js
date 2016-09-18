@@ -54,6 +54,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
@@ -64,6 +65,7 @@ function ($,
           FieldDefinitionArray,
           X3DGroupingNode, 
           X3DConstants,
+          TraverseType,
           Vector3,
           Rotation4,
           Matrix4)
@@ -122,11 +124,11 @@ function ($,
 		{
 			return this .matrix;
 		},
-		rotate: function (type)
+		rotate: function (modelViewMatrix)
 		{
 			// throws domain error
 
-			this .getModelViewMatrix (type, inverseModelViewMatrix) .inverse ();
+			inverseModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 			var billboardToViewer = inverseModelViewMatrix .origin .normalize (); // Normalized to get work with Geo
 
@@ -156,22 +158,29 @@ function ($,
 				this .matrix .setRotation (rotation .setFromToVec (N2, N1));                // Rotate zAxis in plane
 			}
 
-			this .getBrowser () .getModelViewMatrix () .multLeft (this .matrix);
+			return this .matrix;
 		},
 		traverse: function (type)
 		{
-			this .getBrowser () .getModelViewMatrix () .push ();
+			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+
+			modelViewMatrix .push ();
 
 			try
 			{
-				this .rotate (type);
-	
+				if (type == TraverseType .DISPLAY)
+					modelViewMatrix .multLeft (this .rotate (modelViewMatrix .get ()));
+				else
+					modelViewMatrix .multLeft (this .matrix);
+					
 				X3DGroupingNode .prototype .traverse .call (this, type);
 			}
 			catch (error)
-			{ }
+			{
+				console .log (error);
+			}
 
-			this .getBrowser () .getModelViewMatrix () .pop ();
+			modelViewMatrix .pop ();
 		},
 	});
 
