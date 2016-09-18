@@ -180,7 +180,7 @@ function ($,
 			this .sphereBuffer    = gl .createBuffer ();
 			this .texCoordBuffer  = gl .createBuffer ();
 			this .cubeBuffer      = gl .createBuffer ();
-			this .texCoordsBuffer = gl .createBuffer ();
+			this .texCoordBuffers = [ gl .createBuffer () ];
 			this .frontBuffer     = gl .createBuffer ();
 			this .backBuffer      = gl .createBuffer ();
 			this .leftBuffer      = gl .createBuffer ();
@@ -443,7 +443,7 @@ function ($,
 
 			// Transfer texCoords.
 
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (texCoords), gl .STATIC_DRAW);
 
 			// Transfer rectangle.
@@ -550,7 +550,7 @@ function ($,
 				gl         = browser .getContext (),
 				shaderNode = browser .getBackgroundSphereShader ();
 
-			shaderNode .use ();
+			shaderNode .useProgram ();
 
 			// Clip planes
 
@@ -588,7 +588,7 @@ function ($,
 				gl         = browser .getContext (),
 				shaderNode = browser .getGouraudShader ();
 
-			shaderNode .use ();
+			shaderNode .useProgram ();
 
 			// Clip planes
 
@@ -608,7 +608,7 @@ function ($,
 
 			// Enable vertex attribute arrays.
 
-			shaderNode .enableTexCoordAttribute (gl, this .texCoordsBuffer);
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
 
 			// Draw.
 

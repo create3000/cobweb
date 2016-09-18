@@ -219,10 +219,10 @@ function ($,
 			this .texCoordKey_       .addInterest (this, "set_texCoord__");
 			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
 
-			this .colorBuffer    = gl .createBuffer ();
-			this .texCoordBuffer = gl .createBuffer ();
-			this .normalBuffer   = gl .createBuffer ();
-			this .vertexBuffer   = gl .createBuffer ();
+			this .colorBuffer     = gl .createBuffer ();
+			this .texCoordBuffers = [ gl .createBuffer () ];
+			this .normalBuffer    = gl .createBuffer ();
+			this .vertexBuffer    = gl .createBuffer ();
 
 			this .colorArray    = new Float32Array ();
 			this .texCoordArray = new Float32Array ();
@@ -439,7 +439,7 @@ function ($,
 						texCoordArray [i24 + 23] = 1;
 					}
 
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 					gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
 
 					this .texCoordCount = 4;
@@ -1015,7 +1015,7 @@ function ($,
 					texCoordArray [i24 + 23] = texCoord4 .w;
 				}
 	
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
 			}
 
@@ -1200,11 +1200,11 @@ function ($,
 	
 				// Setup vertex attributes.
 	
-				if (this .colorMaterial .length)
+				if (this .colorMaterial)
 					shaderNode .enableColorAttribute (gl, this .colorBuffer);
 
 				if (this .texCoordArray .length)
-					shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffer);
+					shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
 
 				if (this .normalArray .length)
 					shaderNode .enableNormalAttribute (gl, this .normalBuffer);

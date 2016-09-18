@@ -70,7 +70,7 @@ function ($,
 {
 "use strict";
 
-	var shader = null;
+	var currentShaderNode = null;
 
 	function ComposedShader (executionContext)
 	{
@@ -138,7 +138,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .use ();
+					this .useProgram ();
 					this .addShaderFields ();
 				}
 			}
@@ -146,7 +146,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .use ();
+					this .useProgram ();
 					this .removeShaderFields ();
 				}
 			}
@@ -193,7 +193,7 @@ function ($,
 
 				if (valid)
 				{
-					this .use ();
+					this .useProgram ();
 
 					// Initialize uniform variables and attributes
 					if (this .getDefaultUniforms ())
@@ -221,9 +221,9 @@ function ($,
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
-			if (shader !== this)
+			if (currentShaderNode !== this)
 			{
-				shader = this;
+				currentShaderNode = this;
 
 				gl .useProgram (this .program);
 			}
@@ -232,20 +232,20 @@ function ($,
 		},
 		setLocalUniforms: function (gl, context)
 		{
-			if (shader !== this)
+			if (currentShaderNode !== this)
 			{
-				shader = this;
+				currentShaderNode = this;
 
 				gl .useProgram (this .program);
 			}
 
 			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
 		},
-		use: function ()
+		useProgram: function ()
 		{
-			if (shader !== this)
+			if (currentShaderNode !== this)
 			{
-				shader = this;
+				currentShaderNode = this;
 
 				this .getBrowser () .getContext () .useProgram (this .program);
 			}
