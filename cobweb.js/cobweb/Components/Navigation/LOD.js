@@ -53,6 +53,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
@@ -63,6 +64,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGroupingNode,
+          X3DCast,
           TraverseType,
           X3DConstants,
           Matrix4,
@@ -184,24 +186,25 @@ function ($,
 					level        = this .getLevel (type),
 					currentLevel = this .level_changed_ .getValue ();
 
-				if (level !== currentLevel)
+				if (this .forceTransitions_ .getValue ())
 				{
-					if (this .forceTransitions_ .getValue ())
+					if (level > currentLevel)
+						level = currentLevel + 1;
+
+					else if (level < currentLevel)
+						level = currentLevel - 1;
+				}
+
+				if (type === TraverseType .DISPLAY)
+				{
+					if (level !== currentLevel)
 					{
-						if (type === TraverseType .DISPLAY)
-						{
-							if (level > currentLevel)
-								this .level_changed_ = currentLevel + 1;
-							else
-								this .level_changed_ = currentLevel - 1;
-						}
-					}
-					else
 						this .level_changed_ = level;
-					
-					this .child = this .getChild (Math .min (level, this .children_ .length - 1));
-					
-					this .set_cameraObjects__ ();
+				
+						this .child = this .getChild (Math .min (level, this .children_ .length - 1));
+
+						this .set_cameraObjects__ ();
+					}
 				}
 			}
 
