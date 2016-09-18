@@ -1228,6 +1228,7 @@
     <None Include="tests\Components\Scripting\BaseNodeDispose.x3d" />
     <None Include="tests\Components\Lighting\LODShadow.x3d" />
     <None Include="tests\Components\Lighting\BillboardShadow.x3d" />
+    <None Include="tests\Components\Lighting\GeoLODShadow.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
