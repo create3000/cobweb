@@ -125,9 +125,8 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			this .getAppearance () .traverse (type);
-
-			//this .getGeometry () .traverse (type); // Not yet needed.
+			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
+			this .getGeometry   () .traverse (type); // Currently used for ScreenText.
 
 			switch (type)
 			{
@@ -176,7 +175,7 @@ function ($,
 					this .intersectionSorter .sort (0, intersections .length);
 
 					// Find first point that is not greater than near plane;
-					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
+					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearValue (),
 					                                   function (lhs, rhs)
 					                                   {
 					                                      return lhs .point .z > rhs;

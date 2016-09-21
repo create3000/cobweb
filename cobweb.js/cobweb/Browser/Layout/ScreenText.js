@@ -52,6 +52,7 @@ define ([
 	"cobweb/Browser/Text/X3DTextGeometry",
 	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/Components/Texturing/PixelTexture",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
@@ -64,6 +65,7 @@ function ($,
           X3DTextGeometry,
           TextAlignment,
           PixelTexture,
+          TraverseType,
           Vector2,
           Vector3,
           Rotation4,
@@ -419,50 +421,53 @@ function ($,
 		{
 			try
 			{
-				var
-					fontStyle        = this .getFontStyle (),
-					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-					modelViewMatrix  = fontStyle .getModelViewMatrix (type, this .modelViewMatrix),
-					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
-
-				// Same as in ScreenGroup
-
-				this .screenMatrix .assign (modelViewMatrix);
-				this .screenMatrix .get (translation, rotation, scale);
-
-				var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
-
-				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
-			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
-			                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
-
-				// Snap to whole pixel
-
-				ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-
-				screenPoint .x = Math .round (screenPoint .x);
-				screenPoint .y = Math .round (screenPoint .y);
-	
-				ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-
-				screenPoint .z = 0;
-				this .screenMatrix .translate (screenPoint);
-
-				// Assign modelViewMatrix and calculate relative matrix
-
-				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
-					
-				// Update Text bbox
-
-				bbox .assign (this .getBBox ()) .multRight (this .matrix);
-
-				if (! bbox .equals (this .getText () .getBBox ()))
+				if (type === TraverseType .DISPLAY)
 				{
-				   bbox .getExtents (min, max);
-					this .getText () .getMin ()  .assign (min);
-					this .getText () .getMax ()  .assign (max);
-					this .getText () .getBBox () .assign (bbox);
-					this .getText () .bbox_changed_ .addEvent ();
+					var
+						fontStyle        = this .getFontStyle (),
+						projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
+						modelViewMatrix  = this .getBrowser () .getModelViewMatrix ()  .get (),
+						viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
+	
+					// Same as in ScreenGroup
+	
+					this .screenMatrix .assign (modelViewMatrix);
+					this .screenMatrix .get (translation, rotation, scale);
+	
+					var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+	
+					this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+				                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+				                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+	
+					// Snap to whole pixel
+	
+					ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+	
+					screenPoint .x = Math .round (screenPoint .x);
+					screenPoint .y = Math .round (screenPoint .y);
+		
+					ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+	
+					screenPoint .z = 0;
+					this .screenMatrix .translate (screenPoint);
+	
+					// Assign modelViewMatrix and calculate relative matrix
+	
+					this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+						
+					// Update Text bbox
+	
+					bbox .assign (this .getBBox ()) .multRight (this .matrix);
+	
+					if (! bbox .equals (this .getText () .getBBox ()))
+					{
+					   bbox .getExtents (min, max);
+						this .getText () .getMin ()  .assign (min);
+						this .getText () .getMax ()  .assign (max);
+						this .getText () .getBBox () .assign (bbox);
+						this .getText () .bbox_changed_ .addEvent ();
+					}
 				}
 			}
 			catch (error)

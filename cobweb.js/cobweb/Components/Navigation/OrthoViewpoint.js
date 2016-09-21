@@ -198,7 +198,7 @@ function ($,
 		{
 			return bbox .size .abs () / 2 + 10;
 		},
-		getProjectionMatrix: function (zNear, zFar, viewport)
+		getProjectionMatrixWithLimits: function (nearValue, farValue, viewport)
 		{
 			var
 				width  = viewport [2],
@@ -213,14 +213,14 @@ function ($,
 					center  = (this .minimumX + this .maximumX) / 2,
 					size1_2 = (sizeY * aspect) / 2;
 
-				return Camera .ortho (center - size1_2, center + size1_2, this .minimumY, this .maximumY, zNear, zFar, this .projectionMatrix);
+				return Camera .ortho (center - size1_2, center + size1_2, this .minimumY, this .maximumY, nearValue, farValue, this .projectionMatrix);
 			}
 
 			var
 				center  = (this .minimumY + this .maximumY) / 2,
 				size1_2 = (sizeX / aspect) / 2;
 
-			return Camera .ortho (this .minimumX, this .maximumX, center - size1_2, center + size1_2, zNear, zFar, this .projectionMatrix);
+			return Camera .ortho (this .minimumX, this .maximumX, center - size1_2, center + size1_2, nearValue, farValue, this .projectionMatrix);
 		},
 	});
 

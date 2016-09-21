@@ -55,6 +55,7 @@ define ("cobweb/Components/Layout/ScreenGroup",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
@@ -66,6 +67,7 @@ function ($,
           FieldDefinitionArray,
           X3DGroupingNode, 
           X3DConstants,
+          TraverseType,
           Vector3,
           Rotation4,
           Matrix4,
@@ -129,16 +131,14 @@ function ($,
 
 			return this .matrix;
 		},
-		scale: function (type)
+		scale: function ()
 		{
 			// throws domain error
 
-			this .getModelViewMatrix (type, this .modelViewMatrix);
-			this .modelViewMatrix .get (translation, rotation, scale);
-		
+			this .getBrowser () .getModelViewMatrix () .get () .get (translation, rotation, scale);
+
 			var
-				browser          = this .getBrowser (),
-				projectionMatrix = browser .getProjectionMatrix () .get (),
+				projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
 				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
 				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
 		
@@ -158,26 +158,27 @@ function ($,
 			screenPoint .z = 0;
 			this .screenMatrix .translate (screenPoint);
 
-			// Assign modelViewMatrix
+			// Return modelViewMatrix
 
-			browser .getModelViewMatrix () .set (this .screenMatrix);
+			return this .screenMatrix;
 		},
 		traverse: function (type)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-	
-			modelViewMatrix .push ();
-			
 			try
 			{
-				this .scale (type);
-			
+				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+
+				if (type === TraverseType .DISPLAY)
+					modelViewMatrix .pushMatrix (this .scale ());
+				else
+					modelViewMatrix .pushMatrix (this .screenMatrix);
+
 				X3DGroupingNode .prototype .traverse .call (this, type);
+	
+				modelViewMatrix .pop ();
 			}
 			catch (error)
 			{ }
-			
-			modelViewMatrix .pop ();
 		},
 	});
 

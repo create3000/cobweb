@@ -1229,6 +1229,7 @@
     <None Include="tests\Components\Lighting\LODShadow.x3d" />
     <None Include="tests\Components\Lighting\BillboardShadow.x3d" />
     <None Include="tests\Components\Lighting\GeoLODShadow.x3d" />
+    <None Include="tests\Components\ComposedCubeMapTexture\GeneratedCubeMapTexture.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

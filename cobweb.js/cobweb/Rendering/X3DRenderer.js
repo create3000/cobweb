@@ -78,7 +78,7 @@ function ($,
 
 	var
 		DEPTH_BUFFER_WIDTH    = 16,
-		DEPTH_BUFFER_HEIGHT   = 16,
+		DEPTH_BUFFER_HEIGHT   = DEPTH_BUFFER_WIDTH,
 		projectionMatrix      = new Matrix4 (),
 		projectionMatrixArray = new Float32Array (16),
 		modelViewMatrix       = new Matrix4 (),
@@ -326,12 +326,12 @@ function ($,
 			var
 				navigationInfo  = this .getNavigationInfo (),
 				distance        = this .getDistance (translation),
-				zFar            = navigationInfo .getFarPlane (this .getViewpoint ());
+				farValue        = navigationInfo .getFarValue (this .getViewpoint ());
 
-			if (zFar - distance > 0) // Are there polygons before the viewer
+			if (farValue - distance > 0) // Are there polygons before the viewer
 			{
 				var collisionRadius = navigationInfo .getCollisionRadius ();
-			
+
 				distance -= collisionRadius;
 
 				if (distance > 0)
@@ -367,15 +367,14 @@ function ($,
 					navigationInfo  = this .getNavigationInfo (),
 					collisionRadius = navigationInfo .getCollisionRadius (),
 					bottom          = navigationInfo .getStepHeight () - navigationInfo .getAvatarHeight (),
-					zNear           = navigationInfo .getNearPlane (),
-					zFar            = navigationInfo .getFarPlane (viewpoint);
+					nearValue       = navigationInfo .getNearValue (),
+					farValue        = navigationInfo .getFarValue (viewpoint);
 
 				// Determine width and height of camera
-					
-			
+
 				// Reshape camera
 
-				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, zNear, zFar, projectionMatrix);
+				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, farValue, projectionMatrix);
 
 				// Translate camera to user position and to look in the direction of the direction.
 
@@ -390,37 +389,30 @@ function ($,
 
 				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
-				var depth = this .getDepth ();
+				var depth = this .getDepth (projectionMatrix);
 
 				this .getBrowser () .getProjectionMatrix () .pop ();
 
-				return depth;
+				return -depth;
 			}
 			catch (error)
 			{
 				console .log (error);
 			}
 		},
-		getDepth: function ()
+		getDepth: function (projectionMatrix)
 		{
-			var
-				navigationInfo = this .getNavigationInfo (),
-				viewpoint      = this .getViewpoint (),
-				zNear          = navigationInfo .getNearPlane (),
-				zFar           = navigationInfo .getFarPlane (viewpoint),
-				radius         = navigationInfo .getCollisionRadius ();
-
 			this .depthBuffer .bind ();
 
 			this .viewVolumes .push (depthBufferViewVolume);
 			this .depth (this .collisionShapes, this .numCollisionShapes);
 			this .viewVolumes .pop ();	
 
-			var distance = this .depthBuffer .getDistance (radius, zNear, zFar);
+			var depth = this .depthBuffer .getDepth (projectionMatrix, depthBufferViewport);
 
 			this .depthBuffer .unbind ();
 
-			return distance;
+			return depth;
 		},
 		render: function (group, type)
 		{
@@ -523,14 +515,14 @@ function ($,
 					navigationInfo  = this .getNavigationInfo (),
 					viewpoint       = this .getViewpoint (),
 					collisionRadius = navigationInfo .getCollisionRadius (),
-					zNear           = navigationInfo .getNearPlane (),
-					zFar            = navigationInfo .getFarPlane (viewpoint),
-					height          = navigationInfo .getAvatarHeight (),
+					nearValue       = navigationInfo .getNearValue (),
+					farValue        = navigationInfo .getFarValue (viewpoint),
+					avatarHeight    = navigationInfo .getAvatarHeight (),
 					stepHeight      = navigationInfo .getStepHeight ();
 
 				// Reshape viewpoint for gravite.
 
-				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, zNear, zFar, projectionMatrix)
+				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, farValue, projectionMatrix)
 
 				// Transform viewpoint to look down the up vector
 
@@ -545,15 +537,15 @@ function ($,
 
 				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
-				var distance = this .getDepth ();
+				var distance = -this .getDepth (projectionMatrix);
 
 				this .getBrowser () .getProjectionMatrix () .pop ();
 
 				// Gravite or step up
 
-				if (zFar - distance > 0) // Are there polygons under the viewer
+				if (farValue - distance > 0) // Are there polygons under the viewer
 				{
-					distance -= height;
+					distance -= avatarHeight;
 
 					var up = rotation .setFromToVec (yAxis, upVector);
 
@@ -798,7 +790,7 @@ function ($,
 
 			// Reset.
 
-			gl .activeTexture (gl .TEXTURE0); //TODO: deleteable???
+			gl .activeTexture (gl .TEXTURE0);
 		},
 	};
 

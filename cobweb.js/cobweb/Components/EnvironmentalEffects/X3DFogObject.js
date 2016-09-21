@@ -109,7 +109,7 @@ function ($,
 					visibilityRange = Math .max (0, this .visibilityRange_ .getValue ());
 
 				if (visibilityRange === 0)
-					visibilityRange = this .getCurrentNavigationInfo () .getFarPlane (this .getCurrentViewpoint ());
+					visibilityRange = this .getCurrentNavigationInfo () .getFarValue (this .getCurrentViewpoint ());
 
 				gl .uniform1i (shaderObject .x3d_FogType,            this .fogType);
 				gl .uniform3f (shaderObject .x3d_FogColor,           color .r, color .g, color .b);

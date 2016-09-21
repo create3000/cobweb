@@ -289,17 +289,17 @@ function ($,
 
 			return 0.75;
 		},
-		getNearPlane: function ()
+		getNearValue: function ()
 		{
-			var zNear = this .getCollisionRadius ();
+			var nearValue = this .getCollisionRadius ();
 
-			if (zNear === 0)
+			if (nearValue === 0)
 				return 1e-5;
 
 			else
-				return zNear / 2;
+				return nearValue / 2;
 		},
-		getFarPlane: function (viewpoint)
+		getFarValue: function (viewpoint)
 		{
 			return this .visibilityLimit_ .getValue ()
 				    ? this .visibilityLimit_ .getValue ()

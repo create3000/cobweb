@@ -168,9 +168,9 @@ function ($,
 		{
 			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
 		},
-		getProjectionMatrix: function (zNear, zFar, viewport)
+		getProjectionMatrixWithLimits: function (nearValue, farValue, viewport)
 		{
-			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), nearValue, farValue, viewport [2], viewport [3], this .projectionMatrix);
 		},
 	});
 

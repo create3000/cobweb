@@ -257,7 +257,7 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			this .textureNode .traverse ();
+			this .textureNode .traverse (type);
 		},
 		display: function (context)
 		{

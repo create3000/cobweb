@@ -47,7 +47,14 @@
  ******************************************************************************/
 
 
-define (function ()
+define ([
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+],
+function (ViewVolume,
+          Vector3,
+          Matrix4)
 {
 "use strict";
 
@@ -55,10 +62,12 @@ define (function ()
 	{
 		var gl = browser .getContext ();
 
-		this .browser = browser;
-		this .width   = width;
-		this .height  = height;
-		this .array   = new Uint8Array (width * height * 4);
+		this .browser             = browser;
+		this .width               = width;
+		this .height              = height;
+		this .array               = new Uint8Array (width * height * 4);
+		this .invProjectionMatrix = new Matrix4 ();
+		this .point               = new Vector3 (0, 0, 0);
 
 		// The frame buffer.
 
@@ -111,33 +120,39 @@ define (function ()
 		{
 			return this .depthTexture;
 		},
-		getDistance: function (radius, zNear, zFar)
+		getDepth: function (projectionMatrix, viewport)
 		{
-			var
-				gl       = this .browser .getContext (),
-				array    = this .array,
-				distance = Number .POSITIVE_INFINITY,
-				w1       = 2 / (this .width  - 1),
-				h1       = 2 / (this .height - 1),
-				zWidth   = zFar - zNear;
-
-			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, array);
-
-			for (var py = 0, i = 0; py < this .height; ++ py)
+			try
 			{
-				var y2 = Math .pow ((py * h1 - 1) * radius, 2);
+				var
+					gl                  = this .browser .getContext (),
+					array               = this .array,
+					width               = this .width,
+					height              = this .height,
+					invProjectionMatrix = this .invProjectionMatrix .assign (projectionMatrix) .inverse (),
+					point               = this .point,
+					depth               = Number .NEGATIVE_INFINITY;
 
-			   for (var px = 0; px < this .width; ++ px, i += 4)
-			   {
-				   var
-				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625);
+				gl .readPixels (0, 0, width, height, gl .RGBA, gl .UNSIGNED_BYTE, array);
 
-					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
-			   }
+				for (var wy = 0, i = 0; wy < height; ++ wy)
+				{
+					for (var wx = 0; wx < width; ++ wx, i += 4)
+					{
+						var wz = array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625;
+
+						ViewVolume .unProjectPoint (wx, wy, wz, Matrix4 .Identity, projectionMatrix, viewport, point);
+
+						depth = Math .max (depth, point .z);
+					}
+				}
+
+				return depth;
 			}
-
-			return distance;
+			catch (error)
+			{
+				return 0;
+			}
 		},
 		bind: function ()
 		{

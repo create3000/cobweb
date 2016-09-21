@@ -248,8 +248,7 @@ function ($,
 		   var browser = this .getBrowser ();
 
 			browser .getLayers () .push (this);
-			browser .getProjectionMatrix () .pushMatrix (Matrix4 .Identity);
-			browser .getModelViewMatrix  () .pushMatrix (Matrix4 .Identity);
+			browser .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix ());
 
 			switch (type)
 			{
@@ -270,7 +269,6 @@ function ($,
 					break;
 			}
 
-			browser .getModelViewMatrix  () .pop ()
 			browser .getProjectionMatrix () .pop ()
 			browser .getLayers () .pop ();
 		},
@@ -278,33 +276,37 @@ function ($,
 		{
 			if (this .isPickable_ .getValue ())
 			{
-				var viewport = this .currentViewport .getRectangle ();
+				var
+					browser  = this .getBrowser (),
+					viewport = this .currentViewport .getRectangle ();
 
-				if (this .getBrowser () .getSelectedLayer ())
+				if (browser .getSelectedLayer ())
 				{
-					if (this .getBrowser () .getSelectedLayer () !== this)
+					if (browser .getSelectedLayer () !== this)
 						return;
 				}
 				else
 				{
-					if (! this .getBrowser () .isPointerInRectangle (viewport))
+					if (! browser .isPointerInRectangle (viewport))
 						return;
 				}
 
-				this .getViewpoint () .reshape ();
-				this .getViewpoint () .transform ();
-
-				this .getBrowser () .setHitRay (viewport);
+				browser .setHitRay (viewport);
+				browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
 				this .currentViewport .push ();
 				this .groupNode .traverse (type);
 				this .currentViewport .pop ();
+
+				browser .getModelViewMatrix () .pop ()
 			}
 		},
 		camera: function (type)
 		{
-			this .getViewpoint () .reshape ();
+			var browser = this .getBrowser ();
 
+			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+	
 			this .currentViewport .push ();
 			this .groupNode .traverse (type);
 			this .currentViewport .pop ();
@@ -315,27 +317,37 @@ function ($,
 			this .viewpoints      .update ();
 
 			this .getViewpoint () .update ();
+
+			browser .getModelViewMatrix () .pop ()
 		},
 		collision: function (type)
 		{
+			var browser = this .getBrowser ();
+
 			this .collisionTime = 0;
 
-			this .getViewpoint () .reshape ();
-
+			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+	
 			// Render
 			this .currentViewport .push ();
 			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
+
+			browser .getModelViewMatrix () .pop ()
 		},
 		display: function (type)
 		{
+			var browser = this .getBrowser ();
+
 			this .getNavigationInfo () .enable ();
-			this .getViewpoint ()      .reshape ();
-			this .getViewpoint ()      .transform ();
+
+			browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
 			this .currentViewport .push ();
 			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
+
+			browser .getModelViewMatrix () .pop ()
 		},
 	});
 

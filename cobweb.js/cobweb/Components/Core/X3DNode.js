@@ -86,15 +86,6 @@ function ($,
 		{
 			return this .getBrowser () .getLayers () [0] .getViewpoint ();
 		},
-		getModelViewMatrix: function (type, modelViewMatrix)
-		{
-			modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-			
-			if (type === TraverseType .CAMERA)
-				modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
-			
-			return modelViewMatrix;
-		},
 	});
 
 	return X3DNode;

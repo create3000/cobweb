@@ -96,7 +96,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 					viewport       = this .getViewport () .getRectangle (),
 					navigationInfo = this .getNavigationInfo (),
 					viewpoint      = this .getActiveViewpoint (),
-					projection     = viewpoint .getProjectionMatrix (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (viewpoint), viewport),
+					projection     = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport),
 					modelview      = new Matrix4 (); // Use identity
 
 				// Far plane point
