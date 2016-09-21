@@ -53,6 +53,7 @@ define ([
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Matrix4",
@@ -63,6 +64,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DGroupingNode,
+          X3DCast,
           TraverseType,
           X3DConstants,
           Matrix4,
@@ -143,7 +145,7 @@ function ($,
 
 			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
-		getLevel: function (type)
+		getLevel: function ()
 		{
 			if (this .range_ .length === 0)
 			{
@@ -164,13 +166,13 @@ function ($,
 				return Math .min (Math .ceil (fraction * (n - 1)), n);
 			}
 
-			var distance = this .getDistance (type);
+			var distance = this .getDistance ();
 
 			return Algorithm .upperBound (this .range_, 0, this .range_ .length, distance, Algorithm .less);
 		},
-		getDistance: function (type)
+		getDistance: function ()
 		{
-			var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 
 			modelViewMatrix .translate (this .center_ .getValue ());
 
@@ -180,28 +182,29 @@ function ($,
 		{
 			if (! this .keepCurrentLevel)
 			{
-				var
-					level        = this .getLevel (type),
-					currentLevel = this .level_changed_ .getValue ();
-
-				if (level !== currentLevel)
+				if (type === TraverseType .DISPLAY)
 				{
+					var
+						level        = this .getLevel (),
+						currentLevel = this .level_changed_ .getValue ();
+	
 					if (this .forceTransitions_ .getValue ())
 					{
-						if (type === TraverseType .DISPLAY)
-						{
-							if (level > currentLevel)
-								this .level_changed_ = currentLevel + 1;
-							else
-								this .level_changed_ = currentLevel - 1;
-						}
+						if (level > currentLevel)
+							level = currentLevel + 1;
+	
+						else if (level < currentLevel)
+							level = currentLevel - 1;
 					}
-					else
+	
+					if (level !== currentLevel)
+					{
 						this .level_changed_ = level;
-					
-					this .child = this .getChild (Math .min (level, this .children_ .length - 1));
-					
-					this .set_cameraObjects__ ();
+				
+						this .child = this .getChild (Math .min (level, this .children_ .length - 1));
+
+						this .set_cameraObjects__ ();
+					}
 				}
 			}
 

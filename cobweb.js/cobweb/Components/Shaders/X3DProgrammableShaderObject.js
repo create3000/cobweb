@@ -52,22 +52,24 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
           X3DCast,
           X3DConstants,
+          Algorithm,
           Matrix3)
 {
 "use strict";
-
-	var NULL = Fields .SFNode ();
 
 	var
 		MAX_CLIP_PLANES = 6,
 		MAX_LIGHTS      = 8,
 		MAX_TEXTURES    = 1;
+
+	var NULL = Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
 	{
@@ -194,118 +196,155 @@ function ($,
 			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([2])); // depreciated
 			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([2])); // Set texture to active texture unit 2.
 			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
+
+			// Return true if valid, otherwise false.
+
+			if (this .x3d_Color < 0)
+			{
+				this .enableColorAttribute  = Algorithm .nop;
+				this .disableColorAttribute = Algorithm .nop;
+			}
+			else
+			{
+				delete this .enableColorAttribute;
+				delete this .disableColorAttribute;
+			}
+
+			if (this .x3d_TexCoord < 0)
+			{
+				this .enableTexCoordAttribute  = Algorithm .nop;
+				this .disableTexCoordAttribute = Algorithm .nop;
+			}
+			else
+			{
+				delete this .enableTexCoordAttribute;
+				delete this .disableTexCoordAttribute;
+			}
+
+			if (this .x3d_Normal < 0)
+			{
+				this .enableNormalAttribute  = Algorithm .nop;
+				this .disableNormalAttribute = Algorithm .nop;
+			}
+			else
+			{
+				delete this .enableNormalAttribute;
+				delete this .disableNormalAttribute;
+			}
+
+			if (this .x3d_Vertex < 0)
+				return false;
+
+			return true;
 		},
 		addShaderFields: function ()
 		{
-			if (this .getValid ())
+			var
+				gl                = this .getBrowser () .getContext (),
+				program           = this .getProgram (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
 			{
 				var
-					gl                = this .getBrowser () .getContext (),
-					program           = this .getProgram (),
-					userDefinedFields = this .getUserDefinedFields ();
-	
-				for (var name in userDefinedFields)
+					field    = userDefinedFields [name],
+					location = gl .getUniformLocation (program, name);
+
+				if (location)
 				{
-					var
-						field    = userDefinedFields [name],
-						location = gl .getUniformLocation (program, name);
-	
-					if (location)
+					field ._uniformLocation = location;
+
+					field .addInterest (this, "set_field__");
+
+					switch (field .getType ())
 					{
-						field ._uniformLocation = location;
-
-						field .addInterest (this, "set_field__");
-
-						switch (field .getType ())
+						case X3DConstants .SFImage:
 						{
-							case X3DConstants .SFImage:
-							{
-								location .array = new Int32Array (3 + field .array .length);
-								break;
-							}
-							case X3DConstants .SFMatrix3d:
-							case X3DConstants .SFMatrix3f:
-							{
-								location .array = new Float32Array (9);
-								break;
-							}
-							case X3DConstants .SFMatrix4d:
-							case X3DConstants .SFMatrix4f:
-							{
-								location .array = new Float32Array (16);
-								break;
-							}
-							case X3DConstants .MFBool:
-							case X3DConstants .MFInt32:
-							{
-								location .array = new Int32Array (this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFFloat:
-							case X3DConstants .MFDouble:
-							case X3DConstants .MFTime:
-							{
-								location .array = new Float32Array (this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFImage:
-							{
-								location .array = new Int32Array (this .getImagesLength (field));
-								break;
-							}
-							case X3DConstants .MFMatrix3d:
-							case X3DConstants .MFMatrix3f:
-							{
-								location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFMatrix4d:
-							case X3DConstants .MFMatrix4f:
-							{
-								location .array = new Float32Array (16 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFNode:
-							{
-								var array = field ._uniformLocation = [ ];
-
-								for (var i = 0; ; ++ i)
-								{
-									var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-									if (location)
-										array [i] = location;
-									else
-										break;
-								}
-
-								break;
-							}
-							case X3DConstants .MFVec2d:
-							case X3DConstants .MFVec2f:
-							{
-								location .array = new Float32Array (2 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFVec3d:
-							case X3DConstants .MFVec3f:
-							case X3DConstants .MFColor:
-							{
-								location .array = new Float32Array (3 * this .getLocationLength (gl, program, field));
-								break;
-							}
-							case X3DConstants .MFVec4d:
-							case X3DConstants .MFVec4f:
-							case X3DConstants .MFColorRGBA:
-							case X3DConstants .MFRotation:
-							{
-								location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
-								break;
-							}
+							location .array = new Int32Array (3 + field .array .length);
+							break;
 						}
-	
-						this .set_field__ (field);
+						case X3DConstants .SFMatrix3d:
+						case X3DConstants .SFMatrix3f:
+						{
+							location .array = new Float32Array (9);
+							break;
+						}
+						case X3DConstants .SFMatrix4d:
+						case X3DConstants .SFMatrix4f:
+						{
+							location .array = new Float32Array (16);
+							break;
+						}
+						case X3DConstants .MFBool:
+						case X3DConstants .MFInt32:
+						{
+							location .array = new Int32Array (this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFFloat:
+						case X3DConstants .MFDouble:
+						case X3DConstants .MFTime:
+						{
+							location .array = new Float32Array (this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFImage:
+						{
+							location .array = new Int32Array (this .getImagesLength (field));
+							break;
+						}
+						case X3DConstants .MFMatrix3d:
+						case X3DConstants .MFMatrix3f:
+						{
+							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFMatrix4d:
+						case X3DConstants .MFMatrix4f:
+						{
+							location .array = new Float32Array (16 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFNode:
+						{
+							var array = field ._uniformLocation = [ ];
+
+							for (var i = 0; ; ++ i)
+							{
+								var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+								if (location)
+									array [i] = location;
+								else
+									break;
+							}
+
+							break;
+						}
+						case X3DConstants .MFVec2d:
+						case X3DConstants .MFVec2f:
+						{
+							location .array = new Float32Array (2 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFVec3d:
+						case X3DConstants .MFVec3f:
+						case X3DConstants .MFColor:
+						{
+							location .array = new Float32Array (3 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFVec4d:
+						case X3DConstants .MFVec4f:
+						case X3DConstants .MFColorRGBA:
+						case X3DConstants .MFRotation:
+						{
+							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
+							break;
+						}
 					}
+
+					this .set_field__ (field);
 				}
 			}
 		},
@@ -361,7 +400,7 @@ function ($,
 
 			if (location)
 			{
-				this .use (); // TODO: only in ComposedShader possible.
+				this .useProgram (); // TODO: only in ComposedShader possible.
 
 				switch (field .getType ())
 				{
@@ -802,6 +841,19 @@ function ($,
 
 			return i;
 		},
+		setClipPlanes: function (gl, clipPlanes)
+		{
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .setShaderUniforms (gl, this, i);
+	
+				if (i < this .maxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
+			}
+			else
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
 			var globalLights = this .getCurrentLayer () .getGlobalLights ();
@@ -949,18 +1001,45 @@ function ($,
 
 			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
-		setClipPlanes: function (gl, clipPlanes)
+		enableColorAttribute: function (gl, colorBuffer)
 		{
-			if (clipPlanes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .setShaderUniforms (gl, this, i);
-	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
-			}
-			else
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+			gl .enableVertexAttribArray (this .x3d_Color);
+			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
+			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableColorAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Color);
+		},
+		enableTexCoordAttribute: function (gl, texCoordBuffers)
+		{
+			gl .enableVertexAttribArray (this .x3d_TexCoord);
+			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
+			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableTexCoordAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_TexCoord);
+		},
+		enableNormalAttribute: function (gl, normalBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Normal);
+			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
+			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+		},
+		disableNormalAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Normal);
+		},
+		enableVertexAttribute: function (gl, vertexBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
+			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableVertexAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Vertex);
 		},
 		getProgramInfo: function ()
 		{

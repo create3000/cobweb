@@ -114,30 +114,38 @@ function ($,
 		{
 			return "children";
 		},
+		set_geometry__: function ()
+		{
+			X3DShapeNode .prototype .set_geometry__ .call (this);
+
+			if (this .getGeometry ())
+				delete this .traverse;
+			else
+				this .traverse = Algorithm .nop;
+		},
 		traverse: function (type)
 		{
-			if (this .getGeometry ())
+			this .getAppearance () .traverse (type);
+
+			//this .getGeometry () .traverse (type); // Not yet needed.
+
+			switch (type)
 			{
-			   this .getGeometry () .traverse (type);
+				case TraverseType .POINTER:
+					this .pointer ();
+					break;
 
-				switch (type)
-				{
-					case TraverseType .POINTER:
-						this .pointer ();
-						break;
+				case TraverseType .COLLISION:
+					this .getCurrentLayer () .addCollisionShape (this);
+					break;
 
-					case TraverseType .COLLISION:
-						this .getCurrentLayer () .addCollisionShape (this);
-						break;
+				case TraverseType .DEPTH:
+					this .getCurrentLayer () .addDepthShape (this);
+					break;
 
-					case TraverseType .DEPTH:
-						this .getCurrentLayer () .addDepthShape (this);
-						break;
-
-					case TraverseType .DISPLAY:
-						this .getCurrentLayer () .addShape (this);
-						break;
-				}
+				case TraverseType .DISPLAY:
+					this .getCurrentLayer () .addShape (this);
+					break;
 			}
 		},
 		pointer: function ()
@@ -193,7 +201,7 @@ function ($,
 		},
 		display: function (context)
 		{
-			this .getAppearance () .traverse (context);
+			this .getAppearance () .display (context);
 			this .getGeometry ()   .display (context);
 		},
 		depth: function (shaderNode)

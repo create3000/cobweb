@@ -70,7 +70,7 @@ function ($,
 {
 "use strict";
 
-	var shader = null;
+	var currentShaderNode = null;
 
 	function ComposedShader (executionContext)
 	{
@@ -128,10 +128,6 @@ function ($,
 
 			//Must not call set_live__.
 		},
-		getValid: function ()
-		{
-			return this .isValid_ .getValue ();
-		},
 		getProgram: function ()
 		{
 			return this .program;
@@ -140,17 +136,17 @@ function ($,
 		{
 			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
 			{
-				if (this .getValid ())
+				if (this .isValid_ .getValue ())
 				{
-					this .use ();
+					this .useProgram ();
 					this .addShaderFields ();
 				}
 			}
 			else
 			{
-				if (this .getValid ())
+				if (this .isValid_ .getValue ())
 				{
-					this .use ();
+					this .useProgram ();
 					this .removeShaderFields ();
 				}
 			}
@@ -169,8 +165,8 @@ function ($,
 					program = gl .createProgram (),
 					parts   = this .parts_ .getValue (),
 					valid   = 0;
-				
-				if (this .getValid ())
+
+				if (this .isValid_ .getValue ())
 					this .removeShaderFields ();
 	
 				this .program = program;
@@ -194,23 +190,28 @@ function ($,
 
 					valid = valid && gl .getProgramParameter (program, gl .LINK_STATUS);
 				}
-	
-				if (valid != this .isValid_ .getValue ())
-					this .isValid_ = valid;
 
 				if (valid)
 				{
-					// Initialize uniform variables
-					this .use ();
+					this .useProgram ();
 
-					this .getDefaultUniforms ();
-					this .addShaderFields ();
+					// Initialize uniform variables and attributes
+					if (this .getDefaultUniforms ())
+					{
+						// Setup user-defined fields. 
+						this .addShaderFields ();
+					}
+					else
+						valid = false;
 
 					// Debug
 					// this .printProgramInfo ();
 				}
 				else
 					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
+
+				if (valid != this .isValid_ .getValue ())
+					this .isValid_ = valid;
 			}
 			else
 			{
@@ -220,9 +221,9 @@ function ($,
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
-			if (shader !== this)
+			if (currentShaderNode !== this)
 			{
-				shader = this;
+				currentShaderNode = this;
 
 				gl .useProgram (this .program);
 			}
@@ -231,20 +232,20 @@ function ($,
 		},
 		setLocalUniforms: function (gl, context)
 		{
-			if (shader !== this)
+			if (currentShaderNode !== this)
 			{
-				shader = this;
+				currentShaderNode = this;
 
 				gl .useProgram (this .program);
 			}
 
 			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
 		},
-		use: function ()
+		useProgram: function ()
 		{
-			if (shader !== this)
+			if (currentShaderNode !== this)
 			{
-				shader = this;
+				currentShaderNode = this;
 
 				this .getBrowser () .getContext () .useProgram (this .program);
 			}

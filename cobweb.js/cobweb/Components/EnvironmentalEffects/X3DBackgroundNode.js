@@ -180,7 +180,7 @@ function ($,
 			this .sphereBuffer    = gl .createBuffer ();
 			this .texCoordBuffer  = gl .createBuffer ();
 			this .cubeBuffer      = gl .createBuffer ();
-			this .texCoordsBuffer = gl .createBuffer ();
+			this .texCoordBuffers = [ gl .createBuffer () ];
 			this .frontBuffer     = gl .createBuffer ();
 			this .backBuffer      = gl .createBuffer ();
 			this .leftBuffer      = gl .createBuffer ();
@@ -443,7 +443,7 @@ function ($,
 
 			// Transfer texCoords.
 
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
+			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (texCoords), gl .STATIC_DRAW);
 
 			// Transfer rectangle.
@@ -550,11 +550,16 @@ function ($,
 				gl         = browser .getContext (),
 				shaderNode = browser .getBackgroundSphereShader ();
 
-			shaderNode .use ();
+			shaderNode .useProgram ();
 
 			// Clip planes
 
 			shaderNode .setClipPlanes (gl, this .clipPlanes);
+
+			// Enable vertex attribute arrays.
+
+			shaderNode .enableColorAttribute  (gl, this .colorBuffer);
+			shaderNode .enableVertexAttribute (gl, this .sphereBuffer);
 
 			// Uniforms
 
@@ -568,37 +573,30 @@ function ($,
 			else
 				gl .disable (gl .BLEND);
 
-			// Enable vertex attribute arrays.
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Color);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .sphereBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-
 			// Draw.
 
 			gl .drawArrays (gl .TRIANGLES, 0, this .sphereCount);
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
+			shaderNode .disableColorAttribute (gl);
 		},
 		drawCube: function ()
 		{
 			var
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
-				shaderNode     = browser .getGouraudShader ();
+				shaderNode = browser .getGouraudShader ();
 
-			shaderNode .use ();
+			shaderNode .useProgram ();
 
 			// Clip planes
 
 			shaderNode .setClipPlanes (gl, this .clipPlanes);
+
+			// Enable vertex attribute arrays.
+
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
 
 			// Uniforms
 
@@ -612,14 +610,6 @@ function ($,
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 
-			// Enable vertex attribute arrays.
-
-			gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordsBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-
 			// Draw.
 
 			this .drawRectangle (gl, shaderNode, this .frontTexture,  this .frontBuffer);
@@ -631,8 +621,7 @@ function ($,
 
 			// Disable vertex attribute arrays.
 
-			gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
+			shaderNode .disableTexCoordAttribute (gl);
 		},
 		drawRectangle: function (gl, shaderNode, texture, buffer)
 		{
@@ -645,8 +634,7 @@ function ($,
 				else
 					gl .disable (gl .BLEND);
 
-				gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+				shaderNode .enableVertexAttribute (gl, buffer);
 
 				// Draw.
 

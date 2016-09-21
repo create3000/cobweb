@@ -56,6 +56,7 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Geospatial/X3DGeospatialObject",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Components/Networking/Inline",
 	"standard/Math/Numbers/Vector3",
@@ -70,6 +71,7 @@ function ($,
           X3DBoundedObject, 
           X3DGeospatialObject, 
           X3DConstants,
+          TraverseType,
           Group,
           Inline,
           Vector3,
@@ -116,7 +118,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "child4Url",     new Fields .MFString ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "center",        new Fields .SFVec3d ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "range",         new Fields .SFFloat (10)),
-			new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed", new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "level_changed", new Fields .SFInt32 (-1)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "rootNode",      new Fields .MFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxSize",      new Fields .SFVec3f (-1, -1, -1)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "bboxCenter",    new Fields .SFVec3f ()),
@@ -180,8 +182,8 @@ function ($,
 			if (this .bboxSize_ .getValue () .equals (this .defaultBBoxSize))
 			{
 				var level = this .level_changed_ .getValue ();
-				
-				switch (level)
+
+				switch (this .childrenLoaded ? level : 0)
 				{
 					case 0:
 					{
@@ -217,14 +219,15 @@ function ($,
 				return;
 		
 			if (this .rootInline .checkLoadState () === X3DConstants .COMPLETE_STATE)
-				this .children_ = this .rootInline .getInternalScene () .getRootNodes ();
+			{
+				this .children_      = this .rootInline .getInternalScene () .getRootNodes ();
+				this .childrenLoaded = false;
+			}
 		},
 		set_childLoadState__: function ()
 		{
 			if (this .level_changed_ .getValue () !== 1)
 				return;
-		
-			this .children_ .length = 0;
 	
 			var loaded = 0;
 
@@ -237,6 +240,8 @@ function ($,
 
 				++ loaded;
 			}
+			else if (this .child1Inline .url_ .length === 0)
+				++ loaded;
 	
 			if (this .child2Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
@@ -247,6 +252,8 @@ function ($,
 
 				++ loaded;
 			}
+			else if (this .child2Inline .url_ .length === 0)
+				++ loaded;
 	
 			if (this .child3Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
@@ -257,6 +264,8 @@ function ($,
 
 				++ loaded;
 			}
+			else if (this .child3Inline .url_ .length === 0)
+				++ loaded;
 	
 			if (this .child4Inline .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
@@ -267,12 +276,15 @@ function ($,
 
 				++ loaded;
 			}
+			else if (this .child4Inline .url_ .length === 0)
+				++ loaded;
 
-			this .childrenLoaded = loaded === 4;
+			if (loaded === 4)
+				this .childrenLoaded = true;
 		},
-		getLevel: function (type)
+		getLevel: function ()
 		{
-			var distance = this .getDistance (type);
+			var distance = this .getDistance ();
 		
 			if (distance < this .range_ .getValue ())
 				return 1;
@@ -281,7 +293,7 @@ function ($,
 		},
 		getDistance: function (type)
 		{
-			var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 
 			modelViewMatrix .translate (this .getCoord (this .center_ .getValue (), center));
 
@@ -289,44 +301,51 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			var level = this. getLevel (type);
-		
-			if (level !== this .level_changed_ .getValue ())
+			if (type == TraverseType .DISPLAY)
 			{
-				this .level_changed_ = level;
-		
-				switch (level)
+				var level = this .getLevel ();
+			
+				if (level !== this .level_changed_ .getValue ())
 				{
-					case 0:
+					this .level_changed_ = level;
+			
+					switch (level)
 					{
-						if (this .rootNode_ .length)
-							this .children_ = this .rootNode_;
-						else
+						case 0:
 						{
-							if (this .rootInline .checkLoadState () == X3DConstants .COMPLETE_STATE)
-								this .children_ = this .rootInline .getInternalScene () .getRootNodes ();
+							if (this .rootNode_ .length)
+							{
+								this .children_      = this .rootNode_;
+								this .childrenLoaded = false;
+							}
+							else
+							{
+								if (this .rootInline .checkLoadState () == X3DConstants .COMPLETE_STATE)
+								{
+									this .children_      = this .rootInline .getInternalScene () .getRootNodes ();
+									this .childrenLoaded = false;
+								}
+							}
+			
+							this .child1Inline .load_ = false;
+							this .child2Inline .load_ = false;
+							this .child3Inline .load_ = false;
+							this .child4Inline .load_ = false;
+							break;
 						}
-		
-						this .child1Inline .load_ = false;
-						this .child2Inline .load_ = false;
-						this .child3Inline .load_ = false;
-						this .child4Inline .load_ = false;
-
-						this .childrenLoaded = false;
-						break;
-					}
-					case 1:
-					{
-						this .child1Inline .load_ = true;
-						this .child2Inline .load_ = true;
-						this .child3Inline .load_ = true;
-						this .child4Inline .load_ = true;
-						break;
+						case 1:
+						{
+							this .child1Inline .load_ = true;
+							this .child2Inline .load_ = true;
+							this .child3Inline .load_ = true;
+							this .child4Inline .load_ = true;
+							break;
+						}
 					}
 				}
 			}
 
-			switch (this .childrenLoaded ? level : 0)
+			switch (this .childrenLoaded ? this .level_changed_ .getValue () : 0)
 			{
 				case 0:
 				{

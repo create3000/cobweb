@@ -444,38 +444,35 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			this .transfer (fromPoint, toPoint);
 
 			var
-				gl        = browser .getContext (),
-				shader    = browser .getLineShader (),
-				lineWidth = gl .getParameter (gl .LINE_WIDTH);
+				gl         = browser .getContext (),
+				shaderNode = browser .getLineShader (),
+				lineWidth  = gl .getParameter (gl .LINE_WIDTH);
 
-			shader .use ();
+			shaderNode .useProgram ();
+			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
 
-			gl .uniform4fv (shader .x3d_ClipPlane [0], shader .noClipPlane);
+			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .noClipPlane);
 
-			gl .uniform1i (shader .x3d_FogType,       0);
-			gl .uniform1i (shader .x3d_ColorMaterial, false);
-			gl .uniform1i (shader .x3d_Lighting,      true);
+			gl .uniform1i (shaderNode .x3d_FogType,       0);
+			gl .uniform1i (shaderNode .x3d_ColorMaterial, false);
+			gl .uniform1i (shaderNode .x3d_Lighting,      true);
 
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
-			gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, this .projectionMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix,  false, this .modelViewMatrixArray);
 			
 			gl .disable (gl .DEPTH_TEST);
 
 			// Draw a black and a white line.
 			gl .lineWidth (2);
-			gl .uniform3fv (shader .x3d_EmissiveColor, black);
-			gl .uniform1f  (shader .x3d_Transparency,  0);
+			gl .uniform3fv (shaderNode .x3d_EmissiveColor, black);
+			gl .uniform1f  (shaderNode .x3d_Transparency,  0);
 
-			gl .enableVertexAttribArray (shader .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .lineBuffer);
-			gl .vertexAttribPointer (shader .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
 
 			gl .lineWidth (1);
-			gl .uniform3fv (shader .x3d_EmissiveColor, white);
+			gl .uniform3fv (shaderNode .x3d_EmissiveColor, white);
 
 			gl .drawArrays (gl .LINES, 0, this .lineCount);
-			gl .disableVertexAttribArray (shader .x3d_Vertex);
 			gl .enable (gl .DEPTH_TEST);
 
 			gl .lineWidth (lineWidth);

@@ -219,10 +219,10 @@ function ($,
 			this .texCoordKey_       .addInterest (this, "set_texCoord__");
 			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
 
-			this .colorBuffer    = gl .createBuffer ();
-			this .texCoordBuffer = gl .createBuffer ();
-			this .normalBuffer   = gl .createBuffer ();
-			this .vertexBuffer   = gl .createBuffer ();
+			this .colorBuffer     = gl .createBuffer ();
+			this .texCoordBuffers = [ gl .createBuffer () ];
+			this .normalBuffer    = gl .createBuffer ();
+			this .vertexBuffer    = gl .createBuffer ();
 
 			this .colorArray    = new Float32Array ();
 			this .texCoordArray = new Float32Array ();
@@ -439,7 +439,7 @@ function ($,
 						texCoordArray [i24 + 23] = 1;
 					}
 
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 					gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
 
 					this .texCoordCount = 4;
@@ -1015,7 +1015,7 @@ function ($,
 					texCoordArray [i24 + 23] = texCoord4 .w;
 				}
 	
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
 				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
 			}
 
@@ -1189,7 +1189,7 @@ function ($,
 				if (shaderNode === browser .getDefaultShader ())
 					shaderNode = this .shaderNode;
 	
-				if (shaderNode .x3d_Vertex < 0 || this .numParticles === 0)
+				if (this .numParticles === 0)
 					return;
 	
 				// Setup shader.
@@ -1200,31 +1200,17 @@ function ($,
 	
 				// Setup vertex attributes.
 	
-				if (this .colorMaterial && shaderNode .x3d_Color >= 0)
-				{
-					gl .enableVertexAttribArray (shaderNode .x3d_Color);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-					gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-				}
-	
-				if (this .texCoordArray .length && shaderNode .x3d_TexCoord >= 0)
-				{
-					gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffer);
-					gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-				}
-	
-				if (this .normalArray .length && shaderNode .x3d_Normal >= 0)
-				{
-					gl .enableVertexAttribArray (shaderNode .x3d_Normal);
-					gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-					gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-				}
-	
-				gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-	
+				if (this .colorMaterial)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+
+				if (this .texCoordArray .length)
+					shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+
+				if (this .normalArray .length)
+					shaderNode .enableNormalAttribute (gl, this .normalBuffer);
+
+				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+
 				var testWireframe = false;
 
 				switch (this .geometryType)
@@ -1259,8 +1245,9 @@ function ($,
 					gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
 				}
 	
-				if (shaderNode .x3d_Color >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-				gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
+				shaderNode .disableColorAttribute    (gl);
+				shaderNode .disableTexCoordAttribute (gl);
+				shaderNode .disableNormalAttribute   (gl);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)

@@ -91,8 +91,6 @@ function ($,
 		// left: We do not have to test for left.
 	];
 
-	var emptyFunction = function () { };
-
 	function X3DGeometryNode (executionContext)
 	{
 		X3DNode .call (this, executionContext);
@@ -166,9 +164,9 @@ function ($,
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
 
-			this .depth            = emptyFunction;
-			this .display          = emptyFunction;
-			this .displayParticles = emptyFunction;
+			this .depth            = Algorithm .nop;
+			this .display          = Algorithm .nop;
+			this .displayParticles = Algorithm .nop;
 
 			this .set_live__ ();
 		},
@@ -554,9 +552,9 @@ function ($,
 			}
 			else
 			{
-				this .depth            = emptyFunction;
-				this .display          = emptyFunction;
-				this .displayParticles = emptyFunction;
+				this .depth            = Algorithm .nop;
+				this .display          = Algorithm .nop;
+				this .displayParticles = Algorithm .nop;
 			}
 	  	},
 		traverse: function (type)
@@ -569,13 +567,9 @@ function ($,
 
 			// Setup vertex attributes.
 
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
-
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
 		},
 		display: function (context)
 		{
@@ -583,9 +577,6 @@ function ($,
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = context .shaderNode;
-
-			if (shaderNode .x3d_Vertex < 0)
-				return;
 
 			// Setup shader.
 
@@ -595,30 +586,12 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shaderNode .x3d_Color >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Color);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-			}
+			if (this .colors .length)
+				shaderNode .enableColorAttribute (gl, this .colorBuffer);
 
-			if (shaderNode .x3d_TexCoord >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-			}
-
-			if (shaderNode .x3d_Normal >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-			}
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+			shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
+			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -655,10 +628,9 @@ function ($,
 				}
 			}
 
-			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
-			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
+			shaderNode .disableColorAttribute    (gl);
+			shaderNode .disableTexCoordAttribute (gl);
+			shaderNode .disableNormalAttribute   (gl);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
@@ -666,9 +638,6 @@ function ($,
 				browser    = this .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = context .shaderNode;
-
-			if (shaderNode .x3d_Vertex < 0)
-				return;
 
 			// Setup shader.
 
@@ -678,30 +647,12 @@ function ($,
 
 			// Setup vertex attributes.
 
-			if (this .colors .length && shaderNode .x3d_Color >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Color);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-			}
+			if (this .colors .length)
+				shaderNode .enableColorAttribute (gl, this .colorBuffer);
 
-			if (shaderNode .x3d_TexCoord >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_TexCoord);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .vertexAttribPointer (shaderNode .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-			}
-
-			if (shaderNode .x3d_Normal >= 0)
-			{
-				gl .enableVertexAttribArray (shaderNode .x3d_Normal);
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .vertexAttribPointer (shaderNode .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-			}
-
-			gl .enableVertexAttribArray (shaderNode .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .vertexAttribPointer (shaderNode .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+			shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
+			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
 			// Draw depending on wireframe, solid and transparent.
 
@@ -810,10 +761,9 @@ function ($,
 				}
 			}
 
-			if (shaderNode .x3d_Color    >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Color);
-			if (shaderNode .x3d_TexCoord >= 0) gl .disableVertexAttribArray (shaderNode .x3d_TexCoord);
-			if (shaderNode .x3d_Normal   >= 0) gl .disableVertexAttribArray (shaderNode .x3d_Normal);
-			gl .disableVertexAttribArray (shaderNode .x3d_Vertex);
+			shaderNode .disableColorAttribute    (gl);
+			shaderNode .disableTexCoordAttribute (gl);
+			shaderNode .disableNormalAttribute   (gl);
 		},
 		intersectsLine: function (line, intersections, invModelViewMatrix)
 		{
@@ -823,7 +773,7 @@ function ($,
 
 				if (this .intersectsBBox (line))
 				{
-				   this .transformLine (line); // Apply screen transformations.
+				   this .transformLine (line); // Apply screen transformations from screen nodes.
 
 					var
 						texCoords = this .texCoords [0],

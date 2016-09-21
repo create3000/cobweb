@@ -617,18 +617,18 @@ function ($,
 		depth: function (shapes, numShapes)
 		{
 			var
-				browser  = this .getBrowser (),
-				gl       = browser .getContext (),
-				viewport = this .getViewVolume () .getViewport (),
-				shader   = browser .getDepthShader ();
+				browser    = this .getBrowser (),
+				gl         = browser .getContext (),
+				viewport   = this .getViewVolume () .getViewport (),
+				shaderNode = browser .getDepthShader ();
 
 			// Configure shader
 
-			shader .use ();
+			shaderNode .useProgram ();
 			
 			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
 
-			gl .uniformMatrix4fv (shader .x3d_ProjectionMatrix, false, projectionMatrixArray);
+			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Configure viewport and background
 
@@ -666,15 +666,15 @@ function ($,
 
 				// Clip planes
 
-				shader .setClipPlanes (gl, context .clipPlanes);
+				shaderNode .setClipPlanes (gl, context .clipPlanes);
 
 				// modelViewMatrix
 	
-				gl .uniformMatrix4fv (shader .x3d_ModelViewMatrix, false, context .modelViewMatrix);
+				gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, context .modelViewMatrix);
 
 				// Draw
 	
-				context .shapeNode .depth (shader);
+				context .shapeNode .depth (shaderNode);
 			}
 		},
 		draw: function ()
@@ -798,7 +798,7 @@ function ($,
 
 			// Reset.
 
-			gl .activeTexture (gl .TEXTURE0);
+			gl .activeTexture (gl .TEXTURE0); //TODO: deleteable???
 		},
 	};
 
