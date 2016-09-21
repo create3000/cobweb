@@ -106,6 +106,10 @@ var Bookmarks = (function ()
 
 			this .next (0);
 		},
+		restore: function ()
+		{
+			this .loadURL (X3D .require ("lib/dataStorage") ["Bookmarks.url"]);
+		},
 		setSplit (value)
 		{
 			this .split = value;
@@ -203,10 +207,6 @@ var Bookmarks = (function ()
 
 			this .loadURL (this .randomBookmarks .pop () .url);
 			return false;
-		},
-		restore: function ()
-		{
-			this .loadURL (X3D .require ("lib/dataStorage") ["Bookmarks.url"]);
 		},
 	};
 

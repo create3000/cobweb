@@ -125,8 +125,7 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			if (this .getAppearance ())
-				this .getAppearance () .traverse (type);
+			this .getAppearance () .traverse (type);
 
 			//this .getGeometry () .traverse (type); // Not yet needed.
 

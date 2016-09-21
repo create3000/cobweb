@@ -282,9 +282,9 @@ function ($,
 			if (loaded === 4)
 				this .childrenLoaded = true;
 		},
-		getLevel: function (type)
+		getLevel: function ()
 		{
-			var distance = this .getDistance (type);
+			var distance = this .getDistance ();
 		
 			if (distance < this .range_ .getValue ())
 				return 1;
@@ -293,7 +293,7 @@ function ($,
 		},
 		getDistance: function (type)
 		{
-			var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 
 			modelViewMatrix .translate (this .getCoord (this .center_ .getValue (), center));
 
@@ -303,7 +303,7 @@ function ($,
 		{
 			if (type == TraverseType .DISPLAY)
 			{
-				var level = this. getLevel (type);
+				var level = this .getLevel ();
 			
 				if (level !== this .level_changed_ .getValue ())
 				{

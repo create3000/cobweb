@@ -798,7 +798,7 @@ function ($,
 
 			// Reset.
 
-			gl .activeTexture (gl .TEXTURE0);
+			gl .activeTexture (gl .TEXTURE0); //TODO: deleteable???
 		},
 	};
 

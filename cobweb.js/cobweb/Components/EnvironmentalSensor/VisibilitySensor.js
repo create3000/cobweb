@@ -57,7 +57,6 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -66,8 +65,7 @@ function ($,
           X3DEnvironmentalSensorNode,
           TraverseType,
           X3DConstants,
-          Vector3,
-          Matrix4)
+          Vector3)
 {
 "use strict";
 
@@ -96,7 +94,6 @@ function ($,
 		]),
 		size: new Vector3 (0, 0, 0),
 		center: new Vector3 (0, 0, 0),
-		modelViewMatrix: new Matrix4 (),
 		getTypeName: function ()
 		{
 			return "VisibilitySensor";
@@ -167,8 +164,8 @@ function ($,
 		{
 			var
 				viewVolume      = this .getCurrentLayer () .getViewVolume (),
-				modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix),
-				size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
 				center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
 
 			this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
