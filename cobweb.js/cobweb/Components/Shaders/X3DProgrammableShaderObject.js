@@ -64,11 +64,6 @@ function ($,
 {
 "use strict";
 
-	var
-		MAX_CLIP_PLANES = 6,
-		MAX_LIGHTS      = 8,
-		MAX_TEXTURES    = 1;
-
 	var NULL = Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
@@ -97,15 +92,20 @@ function ($,
 	X3DProgrammableShaderObject .prototype =
 	{
 		constructor: X3DProgrammableShaderObject,
-		normalMatrixArray: new Float32Array (9),
-		maxClipPlanes: MAX_CLIP_PLANES,
-		noneClipPlane: new Float32Array ([ 88, 51, 68, 0 ]),
+		x3d_NoneClipPlane: new Float32Array ([ 88, 51, 68, 33 ]), // X3D!
 		fogNode: null,
-		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
-		textureTypeArray: new Int32Array (MAX_TEXTURES),
+		normalMatrixArray: new Float32Array (9),
 		initialize: function ()
-		{ },
+		{
+			var browser = this .getBrowser ();
+
+			this .x3d_MaxClipPlanes = browser .getMaxClipPlanes ();
+			this .x3d_MaxLights     = browser .getMaxLights ();
+			this .x3d_MaxTextures   = browser .getMaxTextures ();
+
+			this .textureTypeArray = new Int32Array (this .x3d_MaxTextures);
+		},
 		hasUserDefinedFields: function ()
 		{
 			return true;
@@ -127,7 +127,7 @@ function ($,
 
 			this .x3d_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
-			for (var i = 0; i < this .maxClipPlanes; ++ i)
+			for (var i = 0; i < this .x3d_MaxClipPlanes; ++ i)
 				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
 
 			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
@@ -139,7 +139,7 @@ function ($,
 			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
 			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
 
-			for (var i = 0; i < this .maxLights; ++ i)
+			for (var i = 0; i < this .x3d_MaxLights; ++ i)
 			{
 				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
 				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
@@ -845,14 +845,14 @@ function ($,
 		{
 			if (clipPlanes .length)
 			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
 					clipPlanes [i] .setShaderUniforms (gl, this, i);
 	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noneClipPlane);
+				if (i < this .x3d_MaxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
 			}
 			else
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noneClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
@@ -862,7 +862,7 @@ function ($,
 
 			// Set global lights
 
-			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
+			this .numGlobalLights = Math .min (this .x3d_MaxLights, globalLights .length);
 
 			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
 				globalLights [i] .setShaderUniforms (gl, this, i);
@@ -885,15 +885,15 @@ function ($,
 
 			if (clipPlaneNodes .length)
 			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
+				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
 					clipPlaneNodes [i] .setShaderUniforms (gl, this, i);
 	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noneClipPlane);
+				if (i < this .x3d_MaxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
 			}
 			else
 			{
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noneClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 			}
 
 			// Fog, there is always one
@@ -931,12 +931,12 @@ function ($,
 
 				var
 					localLights = context .localLights,
-					numLights   = Math .min (this .maxLights, this .numGlobalLights + localLights .length);
+					numLights   = Math .min (this .x3d_MaxLights, this .numGlobalLights + localLights .length);
 
 				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .setShaderUniforms (gl, this, i);
 
-				if (numLights < this .maxLights)
+				if (numLights < this .x3d_MaxLights)
 					gl .uniform1i (this .x3d_LightType [numLights], 0);
 
 				// Material

@@ -139,6 +139,10 @@ function (Fields,
 		{
 			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 0;
 		},
+		getMaxClipPlanes: function ()
+		{
+			return 6;
+		},
 		getDepthSize: function ()
 		{
 			var gl = this .context;

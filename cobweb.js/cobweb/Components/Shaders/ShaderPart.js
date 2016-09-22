@@ -164,7 +164,7 @@ function ($,
 				{
 					var gl = this .getBrowser () .getContext ();
 
-					gl .shaderSource (this .shader, Shader .getShaderSource (data));
+					gl .shaderSource (this .shader, Shader .getShaderSource (this .getBrowser (), data));
 					gl .compileShader (this .shader);
 	
 					this .valid = gl .getShaderParameter (this .shader, gl .COMPILE_STATUS);

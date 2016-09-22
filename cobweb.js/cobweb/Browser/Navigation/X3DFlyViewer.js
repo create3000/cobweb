@@ -451,7 +451,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			shaderNode .useProgram ();
 			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
 
-			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .noneClipPlane);
+			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .x3d_NoneClipPlane);
 
 			gl .uniform1i (shaderNode .x3d_FogType,       0);
 			gl .uniform1i (shaderNode .x3d_ColorMaterial, false);
