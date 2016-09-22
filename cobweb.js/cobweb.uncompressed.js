@@ -19147,7 +19147,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.28";
+	return "1.29a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -23889,15 +23889,6 @@ function ($,
 		{
 			return this .getBrowser () .getLayers () [0] .getViewpoint ();
 		},
-		getModelViewMatrix: function (type, modelViewMatrix)
-		{
-			modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-			
-			if (type === TraverseType .CAMERA)
-				modelViewMatrix .multRight (this .getCurrentViewpoint () .getInverseCameraSpaceMatrix ());
-			
-			return modelViewMatrix;
-		},
 	});
 
 	return X3DNode;
@@ -26106,7 +26097,7 @@ function ($,
 		},
 		traverse: function (type)
 		{
-			this .textureNode .traverse ();
+			this .textureNode .traverse (type);
 		},
 		display: function (context)
 		{
@@ -38949,781 +38940,6 @@ function ($,
 	return Disk2DOptions;
 });
 
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('standard/Math/Algorithms/SAT',[],function ()
-{
-
-
-	var
-		extents1 = { min: 0, max: 0 },
-		extents2 = { min: 0, max: 0 };
-
-	/**
-	 *  Class to represent the Separating Axis Theorem.
-	 */
-	function SAT () { }
-
-	SAT .isSeparated = function (axes, points1, points2)
-	{
-		// http://gamedev.stackexchange.com/questions/25397/obb-vs-obb-collision-detection
-
-		for (var i = 0, length = axes .length; i < length; ++ i)
-		{
-			var axis = axes [i];
-
-			project (points1, axis, extents1);
-			project (points2, axis, extents2);
-
-			if (overlaps (extents1 .min, extents1 .max, extents2 .min, extents2 .max))
-				continue;
-
-			return true;
-		}
-
-		return false;
-	};
-
-	///  Projects @a points to @a axis and returns the minimum and maximum bounds.
-	function project (points, axis, extents)
-	{
-		extents .min = Number .POSITIVE_INFINITY;
-		extents .max = Number .NEGATIVE_INFINITY;
-
-		for (var i = 0, length = points .length; i < length; ++ i)
-		{
-			var point = points [i];
-
-			// Just dot it to get the min and max along this axis.
-			// NOTE: the axis must be normalized to get accurate projections to calculate the MTV, but if it is only needed to
-			// know whether it overlaps, every axis can be used.
-
-			var dotVal = point .dot (axis);
-
-			if (dotVal < extents .min)
-				extents .min = dotVal;
-
-			if (dotVal > extents .max)
-				extents .max = dotVal;
-		}
-	}
-
-	///  Returns true if both ranges overlap, otherwise false.
-	function overlaps (min1, max1, min2, max2)
-	{
-		return is_between (min2, min1, max1) || is_between (min1, min2, max2);
-	}
-
-	///  Returns true if @a value is between @a lowerBound and @a upperBound, otherwise false.
-	function is_between (value, lowerBound, upperBound)
-	{
-		return lowerBound <= value && value <= upperBound;
-	}
-
-	return SAT;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('standard/Math/Geometry/Box3',[
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithms/SAT",
-],
-function (Matrix4, Vector3, SAT)
-{
-
-
-	var
-	   min = new Vector3 (0, 0, 0),
-	   max = new Vector3 (0, 0, 0),
-	   x   = new Vector3 (0, 0, 0),
-	   y   = new Vector3 (0, 0, 0),
-	   z   = new Vector3 (0, 0, 0),
-	   r1  = new Vector3 (0, 0, 0),
-	   p1  = new Vector3 (0, 0, 0),
-	   p4  = new Vector3 (0, 0, 0);
-
-	var
-		lhs_min = new Vector3 (0, 0, 0),
-		lhs_max = new Vector3 (0, 0, 0),
-		rhs_min = new Vector3 (0, 0, 0),
-		rhs_max = new Vector3 (0, 0, 0);
-
-
-	var points1 = [
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-	];
-
-	var points2 = [
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-	];
-
-	var axes1 = [
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-	];
-
-	var axes2 = [
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-	];
-
-	var axes9 = [
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-	];
-
-	var planes = [
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-		new Vector3 (0, 0, 0),
-	];
-
-
-	function Box3 (size, center)
-	{
-		switch (arguments .length)
-		{
-			case 0:
-			{
-				this .matrix = new Matrix4 (0.5, 0,   0,   0,
-				                            0,   0.5, 0,   0,
-				                            0,   0,   0.5, 0,
-				                            0,   0,   0,   0);
-				return;
-			}
-			case 2:
-			{
-				this .matrix = new Matrix4 (size .x / 2, 0, 0, 0,
-				                            0, size .y / 2, 0, 0,
-				                            0, 0, size .z / 2, 0,
-				                            center .x, center .y, center .z, 1);
-				return;
-			}
-			case 3:
-			{
-				var
-					min = arguments [0],
-					max = arguments [1],
-					sx  = (max .x - min .x) / 2,
-					sy  = (max .y - min .y) / 2,
-					sz  = (max .z - min .z) / 2,
-					cx  = (max .x + min .x) / 2,
-					cy  = (max .y + min .y) / 2,
-					cz  = (max .z + min .z) / 2;
-
-				this .matrix = new Matrix4 (sx, 0,  0,  0,
-				                            0,  sy, 0,  0,
-				                            0,  0,  sz, 0,
-				                            cx, cy, cz, 1);
-				return;
-			}
-		}
-	}
-
-	Box3 .prototype =
-	{
-		constructor: Box3,
-		copy: function ()
-		{
-			var copy = Object .create (Box3 .prototype);
-			copy .matrix = this .matrix .copy ();
-			return copy;
-		},
-		assign: function (box)
-		{
-			this .matrix .assign (box .matrix);
-			return this;
-		},
-		equals: function (box)
-		{
-			return this .matrix .equals (box .matrix);
-		},
-		getMatrix: function ()
-		{
-			return this .matrix;
-		},
-		set: function (size, center)
-		{
-			var m = this .matrix;
-		
-			switch (arguments .length)
-			{
-				case 0:
-				{
-					m [ 0] = 0.5; m [ 1] = 0;   m [ 2] = 0;   m [ 3] = 0;
-					m [ 4] = 0;   m [ 5] = 0.5; m [ 6] = 0;   m [ 7] = 0;
-					m [ 8] = 0;   m [ 9] = 0;   m [10] = 0.5; m [11] = 0;
-					m [12] = 0;   m [13] = 0;   m [14] = 0;   m [15] = 0;
-					return this;
-				}
-				case 2:
-				{
-					m [ 0] = size .x / 2; m [ 1] = 0;           m [ 2] = 0;           m [ 3] = 0;
-					m [ 4] = 0;           m [ 5] = size .y / 2; m [ 6] = 0;           m [ 7] = 0;
-					m [ 8] = 0;           m [ 9] = 0;           m [10] = size .z / 2; m [11] = 0;
-					m [12] = center .x;   m [13] = center .y;   m [14] = center .z;   m [15] = 1;
-					return this;
-				}
-				case 3:
-				{
-					var
-						min = arguments [0],
-						max = arguments [1],
-						sx  = (max .x - min .x) / 2,
-						sy  = (max .y - min .y) / 2,
-						sz  = (max .z - min .z) / 2,
-						cx  = (max .x + min .x) / 2,
-						cy  = (max .y + min .y) / 2,
-						cz  = (max .z + min .z) / 2;
-
-					m [ 0] = sx; m [ 1] = 0;  m [ 2] = 0;  m [ 3] = 0;
-					m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
-					m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
-					m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
-					return this;
-				}
-			}
-		},
-		setExtents: function (min, max)
-		{
-			var
-				m  = this .matrix,
-				sx = (max .x - min .x) / 2,
-				sy = (max .y - min .y) / 2,
-				sz = (max .z - min .z) / 2,
-				cx = (max .x + min .x) / 2,
-				cy = (max .y + min .y) / 2,
-				cz = (max .z + min .z) / 2;
-
-			m [ 0] = sx; m [ 1] = 0;  m [ 2] = 0;  m [ 3] = 0;
-			m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
-			m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
-			m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
-			return this;
-		},
-		getExtents: function (min, max)
-		{
-			this .getAbsoluteExtents (min, max);
-
-			min .add (this .center);
-			max .add (this .center);
-		},
-		getAbsoluteExtents: function (min, max)
-		{
-			var m = this .matrix;
-
-			x .set (m [0], m [1], m [2]);
-			y .set (m [4], m [5], m [6]);
-			z .set (m [8], m [9], m [10]);
-
-			r1 .assign (y) .add (z);
-
-			var r2 = z .subtract (y);
-
-			p1 .assign (x) .add (r1),
-			p4 .assign (x) .add (r2);
-			
-			var
-				p2 = r1 .subtract (x),
-				p3 = r2 .subtract (x);
-
-			min .assign (p1);
-			max .assign (p1);
-
-			min .min (p2, p3, p4);
-			max .max (p2, p3, p4);
-
-			p1 .negate ();
-			p2 .negate ();
-			p3 .negate ();
-			p4 .negate ();
-
-			min .min (p1, p2, p3, p4);
-			max .max (p1, p2, p3, p4);
-		},
-		getPoints: function (points)
-		{
-			/*
-			 * p6 ---------- p5
-			 * | \           | \
-			 * | p2------------ p1
-			 * |  |          |  |
-			 * |  |          |  |
-			 * p7 |_________ p8 |
-			 *  \ |           \ |
-			 *   \|            \|
-			 *    p3 ---------- p4
-			 */
-		
-			var m = this .matrix;
-
-			x .set (m [0], m [1], m [2]);
-			y .set (m [4], m [5], m [6]);
-			z .set (m [8], m [9], m [10]);
-		
-			r1 .assign (y) .add (z);
-
-			var r2 = z .subtract (y);
-		
-			points [0] .assign (x)  .add (r1);
-			points [1] .assign (r1) .subtract (x);
-			points [2] .assign (r2) .subtract (x);
-			points [3] .assign (x)  .add (r2);
-		
-			points [4] .assign (points [2]) .negate ();
-			points [5] .assign (points [3]) .negate ();
-			points [6] .assign (points [0]) .negate ();
-			points [7] .assign (points [1]) .negate ();
-		
-			var center = this .center;
-
-			points [0] .add (center);
-			points [1] .add (center);
-			points [2] .add (center);
-			points [3] .add (center);
-		
-			points [4] .add (center);
-			points [5] .add (center);
-			points [6] .add (center);
-			points [7] .add (center);
-		
-			return points;
-		},
-		getAxes: function (axes)
-		{
-			var m = this .matrix;
-
-			axes [0] .set (m [0], m [1], m [2]);
-			axes [1] .set (m [4], m [5], m [6]);
-			axes [2] .set (m [8], m [9], m [10]);
-
-			return axes;
-		},
-		getPlanes: function (planes)
-		{
-			var m = this .matrix;
-
-			planes [0] .set (m [0], m [1], m [2])  .cross (z);
-			planes [1] .set (m [4], m [5], m [6])  .cross (x);
-			planes [2] .set (m [8], m [9], m [10]) .cross (y);
-		
-			return planes;
-		},
-		isEmpty: function ()
-		{
-			return this .matrix [15] === 0;
-		},
-		add: function (box)
-		{
-			if (this .isEmpty ())
-				return this .assign (box);
-
-			if (box .isEmpty ())
-				return this;
-
-			this .getExtents (lhs_min, lhs_max);
-			box  .getExtents (rhs_min, rhs_max);
-
-			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
-		},
-		multLeft: function (matrix)
-		{
-			this .matrix .multLeft (matrix);
-			return this;
-		},
-		multRight: function (matrix)
-		{
-			this .matrix .multRight (matrix);
-			return this;
-		},
-		intersectsPoint: function (point)
-		{
-			this .getExtents (min, max);
-
-			return min .x <= point .x &&
-			       max .x >= point .x &&
-			       min .y <= point .y &&
-			       max .y >= point .y &&
-			       min .z <= point .z &&
-			       max .z >= point .z;
-		},
-		intersectsBox: function (other)
-		{
-			// Test special cases.
-		
-			if (this .isEmpty ())
-				return false;
-		
-			if (other .isEmpty ())
-				return false;
-		
-			// Get points.
-		
-			this  .getPoints (points1);
-			other .getPoints (points2);
-		
-			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
-		
-			if (SAT .isSeparated (this .getPlanes (planes), points1, points2))
-				return false;
-		
-			// Test the three planes spanned by the normal vectors of the faces of the second parallelepiped.
-		
-			if (SAT .isSeparated (other .getPlanes (planes), points1, points2))
-				return false;
-
-			// Test the nine other planes spanned by the edges of each parallelepiped.
-		
-			this  .getAxes (axes1);
-			other .getAxes (axes2);
-
-			for (var i1 = 0; i1 < 3; ++ i1)
-			{
-				for (var i2 = 0; i2 < 3; ++ i2)
-					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (axes2 [i2]);
-			}
-		
-			if (SAT .isSeparated (axes9, points1, points2))
-				return false;
-		
-			// Both boxes intersect.
-		
-			return true;
-		},
-		toString: function ()
-		{
-			return this .size + ", " + this .center;
-		},
-	};
-
-	Object .defineProperty (Box3 .prototype, "size",
-	{
-		get: function ()
-		{
-			var max = new Vector3 (0, 0, 0);
-			
-			this .getAbsoluteExtents (min, max);
-
-			return max .subtract (min);
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	Object .defineProperty (Box3 .prototype, "center",
-	{
-		get: function ()
-		{
-			return this .matrix .origin;
-		},
-		enumerable: true,
-		configurable: false
-	});
-
-	return Box3;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('standard/Math/Geometry/Plane3',[
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix4",
-],
-function (Vector3,
-          Matrix4)
-{
-
-
-	var
-		normal    = new Vector3 (0, 0, 0),
-		point     = new Vector3 (0, 0, 0),
-		invMatrix = new Matrix4 ();
-
-	function Plane3 (point, normal)
-	{
-		this .normal             = normal .copy ();
-		this .distanceFromOrigin = normal .dot (point);
-	}
-
-	Plane3 .prototype =
-	{
-		constructor: Plane3,
-		copy: function ()
-		{
-			var copy = Object .create (Plane3 .prototype);
-			copy .normal             = this .normal .copy ();
-			copy .distanceFromOrigin = this .distanceFromOrigin;
-			return copy;
-		},
-		assign: function (plane)
-		{
-			this .normal .assign (plane .normal);
-			this .distanceFromOrigin = plane .distanceFromOrigin;
-			return this;
-		},
-		set: function (point, normal)
-		{
-			this .normal .assign (normal);
-			this .distanceFromOrigin = normal .dot (point);	   
-			return this;
-		},
-		multRight: function (matrix)
-		//throw
-		{
-			// Taken from Inventor:
-		
-			// Find the point on the plane along the normal from the origin
-			point .assign (this .normal) .multiply (this .distanceFromOrigin);
-		
-			// Transform the plane normal by the matrix
-			// to get the new normal. Use the inverse transpose
-			// of the matrix so that normals are not scaled incorrectly.
-			// n' = n * !~m = ~m * n
-			invMatrix .assign (matrix) .inverse ();
-			invMatrix .multMatrixDir (normal .assign (this .normal)) .normalize ();
-		
-			// Transform the point by the matrix
-			matrix .multVecMatrix (point);
-		
-			// The new distance is the projected distance of the vector to the
-			// transformed point onto the (unit) transformed normal. This is
-			// just a dot product.
-			this .normal .assign (normal);
-			this .distanceFromOrigin = normal .dot (point);
-
-			return this;
-		},
-		multLeft: function (matrix)
-		//throw
-		{
-			// Taken from Inventor:
-		
-			// Find the point on the plane along the normal from the origin
-			point .assign (this .normal) .multiply (this .distanceFromOrigin);
-		
-			// Transform the plane normal by the matrix
-			// to get the new normal. Use the inverse transpose
-			// of the matrix so that normals are not scaled incorrectly.
-			// n' = !~m * n = n * ~m
-			invMatrix .assign (matrix) .inverse ();
-			invMatrix .multDirMatrix (normal .assign (this .normal)) .normalize ();
-		
-			// Transform the point by the matrix
-			matrix .multḾatrixVec (point);
-		
-			// The new distance is the projected distance of the vector to the
-			// transformed point onto the (unit) transformed normal. This is
-			// just a dot product.
-			this .normal .assign (normal);
-			this .distanceFromOrigin = normal .dot (point);
-
-			return this;
-		},
-		getDistanceToPoint: function (point)
-		{
-			return Vector3 .dot (point, this .normal) - this .distanceFromOrigin;
-		},
-		intersectsLine: function (line, intersection)
-		{
-			var
-				point     = line .point,
-				direction = line .direction;
-		
-			// Check if the line is parallel to the plane.
-			var theta = direction .dot (this .normal);
-
-			// Plane and line are parallel.
-			if (theta === 0)
-				return false;
-
-			// Plane and line are not parallel. The intersection point can be calculated now.
-			var t = (this .distanceFromOrigin - this .normal .dot (point)) / theta;
-
-			intersection .x = point .x + direction .x * t;
-			intersection .y = point .y + direction .y * t;
-			intersection .z = point .z + direction .z * t;
-
-			return true;
-		},
-		toString: function ()
-		{
-			return this .normal .toString () + " " + this .distanceFromOrigin;
-		},
-	};
-
-	return Plane3;
-});
-
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define('lib/poly2tri.js/dist/poly2tri.js',e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.poly2tri=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 module.exports={"version": "1.3.5"}
 },{}],2:[function(_dereq_,module,exports){
@@ -42821,6 +42037,842 @@ function (Vector3,
  ******************************************************************************/
 
 
+define ('standard/Math/Algorithms/SAT',[],function ()
+{
+
+
+	var
+		extents1 = { min: 0, max: 0 },
+		extents2 = { min: 0, max: 0 };
+
+	/**
+	 *  Class to represent the Separating Axis Theorem.
+	 */
+	function SAT () { }
+
+	SAT .isSeparated = function (axes, points1, points2)
+	{
+		// http://gamedev.stackexchange.com/questions/25397/obb-vs-obb-collision-detection
+
+		for (var i = 0, length = axes .length; i < length; ++ i)
+		{
+			var axis = axes [i];
+
+			project (points1, axis, extents1);
+			project (points2, axis, extents2);
+
+			if (overlaps (extents1 .min, extents1 .max, extents2 .min, extents2 .max))
+				continue;
+
+			return true;
+		}
+
+		return false;
+	};
+
+	///  Projects @a points to @a axis and returns the minimum and maximum bounds.
+	function project (points, axis, extents)
+	{
+		extents .min = Number .POSITIVE_INFINITY;
+		extents .max = Number .NEGATIVE_INFINITY;
+
+		for (var i = 0, length = points .length; i < length; ++ i)
+		{
+			var point = points [i];
+
+			// Just dot it to get the min and max along this axis.
+			// NOTE: the axis must be normalized to get accurate projections to calculate the MTV, but if it is only needed to
+			// know whether it overlaps, every axis can be used.
+
+			var dotVal = point .dot (axis);
+
+			if (dotVal < extents .min)
+				extents .min = dotVal;
+
+			if (dotVal > extents .max)
+				extents .max = dotVal;
+		}
+	}
+
+	///  Returns true if both ranges overlap, otherwise false.
+	function overlaps (min1, max1, min2, max2)
+	{
+		return is_between (min2, min1, max1) || is_between (min1, min2, max2);
+	}
+
+	///  Returns true if @a value is between @a lowerBound and @a upperBound, otherwise false.
+	function is_between (value, lowerBound, upperBound)
+	{
+		return lowerBound <= value && value <= upperBound;
+	}
+
+	return SAT;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('standard/Math/Geometry/Box3',[
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithms/SAT",
+],
+function (Triangle3,
+          Matrix4,
+          Vector3,
+          SAT)
+{
+
+
+	var
+	   min = new Vector3 (0, 0, 0),
+	   max = new Vector3 (0, 0, 0),
+	   x   = new Vector3 (0, 0, 0),
+	   y   = new Vector3 (0, 0, 0),
+	   z   = new Vector3 (0, 0, 0),
+	   r1  = new Vector3 (0, 0, 0),
+	   p1  = new Vector3 (0, 0, 0),
+	   p4  = new Vector3 (0, 0, 0);
+
+	var
+		lhs_min = new Vector3 (0, 0, 0),
+		lhs_max = new Vector3 (0, 0, 0),
+		rhs_min = new Vector3 (0, 0, 0),
+		rhs_max = new Vector3 (0, 0, 0);
+
+
+	var points1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var points2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes1 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes2 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var axes9 = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var planes = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+	];
+
+	var triangle = [ ];
+
+	var triangleNormal = [ new Vector3 (0, 0, 0) ];
+
+	var triangleEdges = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0)
+	];
+
+	function Box3 (size, center)
+	{
+		switch (arguments .length)
+		{
+			case 0:
+			{
+				this .matrix = new Matrix4 (0.5, 0,   0,   0,
+				                            0,   0.5, 0,   0,
+				                            0,   0,   0.5, 0,
+				                            0,   0,   0,   0);
+				return;
+			}
+			case 2:
+			{
+				this .matrix = new Matrix4 (size .x / 2, 0, 0, 0,
+				                            0, size .y / 2, 0, 0,
+				                            0, 0, size .z / 2, 0,
+				                            center .x, center .y, center .z, 1);
+				return;
+			}
+			case 3:
+			{
+				var
+					min = arguments [0],
+					max = arguments [1],
+					sx  = (max .x - min .x) / 2,
+					sy  = (max .y - min .y) / 2,
+					sz  = (max .z - min .z) / 2,
+					cx  = (max .x + min .x) / 2,
+					cy  = (max .y + min .y) / 2,
+					cz  = (max .z + min .z) / 2;
+
+				this .matrix = new Matrix4 (sx, 0,  0,  0,
+				                            0,  sy, 0,  0,
+				                            0,  0,  sz, 0,
+				                            cx, cy, cz, 1);
+				return;
+			}
+		}
+	}
+
+	Box3 .prototype =
+	{
+		constructor: Box3,
+		copy: function ()
+		{
+			var copy = Object .create (Box3 .prototype);
+			copy .matrix = this .matrix .copy ();
+			return copy;
+		},
+		assign: function (box)
+		{
+			this .matrix .assign (box .matrix);
+			return this;
+		},
+		equals: function (box)
+		{
+			return this .matrix .equals (box .matrix);
+		},
+		getMatrix: function ()
+		{
+			return this .matrix;
+		},
+		set: function (size, center)
+		{
+			var m = this .matrix;
+		
+			switch (arguments .length)
+			{
+				case 0:
+				{
+					m [ 0] = 0.5; m [ 1] = 0;   m [ 2] = 0;   m [ 3] = 0;
+					m [ 4] = 0;   m [ 5] = 0.5; m [ 6] = 0;   m [ 7] = 0;
+					m [ 8] = 0;   m [ 9] = 0;   m [10] = 0.5; m [11] = 0;
+					m [12] = 0;   m [13] = 0;   m [14] = 0;   m [15] = 0;
+					return this;
+				}
+				case 2:
+				{
+					m [ 0] = size .x / 2; m [ 1] = 0;           m [ 2] = 0;           m [ 3] = 0;
+					m [ 4] = 0;           m [ 5] = size .y / 2; m [ 6] = 0;           m [ 7] = 0;
+					m [ 8] = 0;           m [ 9] = 0;           m [10] = size .z / 2; m [11] = 0;
+					m [12] = center .x;   m [13] = center .y;   m [14] = center .z;   m [15] = 1;
+					return this;
+				}
+				case 3:
+				{
+					var
+						min = arguments [0],
+						max = arguments [1],
+						sx  = (max .x - min .x) / 2,
+						sy  = (max .y - min .y) / 2,
+						sz  = (max .z - min .z) / 2,
+						cx  = (max .x + min .x) / 2,
+						cy  = (max .y + min .y) / 2,
+						cz  = (max .z + min .z) / 2;
+
+					m [ 0] = sx; m [ 1] = 0;  m [ 2] = 0;  m [ 3] = 0;
+					m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
+					m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
+					m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
+					return this;
+				}
+			}
+		},
+		setExtents: function (min, max)
+		{
+			var
+				m  = this .matrix,
+				sx = (max .x - min .x) / 2,
+				sy = (max .y - min .y) / 2,
+				sz = (max .z - min .z) / 2,
+				cx = (max .x + min .x) / 2,
+				cy = (max .y + min .y) / 2,
+				cz = (max .z + min .z) / 2;
+
+			m [ 0] = sx; m [ 1] = 0;  m [ 2] = 0;  m [ 3] = 0;
+			m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
+			m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
+			m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
+			return this;
+		},
+		getExtents: function (min, max)
+		{
+			this .getAbsoluteExtents (min, max);
+
+			min .add (this .center);
+			max .add (this .center);
+		},
+		getAbsoluteExtents: function (min, max)
+		{
+			var m = this .matrix;
+
+			x .set (m [0], m [1], m [2]);
+			y .set (m [4], m [5], m [6]);
+			z .set (m [8], m [9], m [10]);
+
+			r1 .assign (y) .add (z);
+
+			var r2 = z .subtract (y);
+
+			p1 .assign (x) .add (r1),
+			p4 .assign (x) .add (r2);
+			
+			var
+				p2 = r1 .subtract (x),
+				p3 = r2 .subtract (x);
+
+			min .assign (p1);
+			max .assign (p1);
+
+			min .min (p2, p3, p4);
+			max .max (p2, p3, p4);
+
+			p1 .negate ();
+			p2 .negate ();
+			p3 .negate ();
+			p4 .negate ();
+
+			min .min (p1, p2, p3, p4);
+			max .max (p1, p2, p3, p4);
+		},
+		getPoints: function (points)
+		{
+			/*
+			 * p6 ---------- p5
+			 * | \           | \
+			 * | p2------------ p1
+			 * |  |          |  |
+			 * |  |          |  |
+			 * p7 |_________ p8 |
+			 *  \ |           \ |
+			 *   \|            \|
+			 *    p3 ---------- p4
+			 */
+		
+			var m = this .matrix;
+
+			x .set (m [0], m [1], m [2]);
+			y .set (m [4], m [5], m [6]);
+			z .set (m [8], m [9], m [10]);
+		
+			r1 .assign (y) .add (z);
+
+			var r2 = z .subtract (y);
+		
+			points [0] .assign (x)  .add (r1);
+			points [1] .assign (r1) .subtract (x);
+			points [2] .assign (r2) .subtract (x);
+			points [3] .assign (x)  .add (r2);
+		
+			points [4] .assign (points [2]) .negate ();
+			points [5] .assign (points [3]) .negate ();
+			points [6] .assign (points [0]) .negate ();
+			points [7] .assign (points [1]) .negate ();
+		
+			var center = this .center;
+
+			points [0] .add (center);
+			points [1] .add (center);
+			points [2] .add (center);
+			points [3] .add (center);
+		
+			points [4] .add (center);
+			points [5] .add (center);
+			points [6] .add (center);
+			points [7] .add (center);
+		
+			return points;
+		},
+		getAxes: function (axes)
+		{
+			var m = this .matrix;
+
+			axes [0] .set (m [0], m [1], m [2]);
+			axes [1] .set (m [4], m [5], m [6]);
+			axes [2] .set (m [8], m [9], m [10]);
+
+			return axes;
+		},
+		getPlanes: function (planes)
+		{
+			var m = this .matrix;
+
+			planes [0] .set (m [0], m [1], m [2])  .cross (z);
+			planes [1] .set (m [4], m [5], m [6])  .cross (x);
+			planes [2] .set (m [8], m [9], m [10]) .cross (y);
+		
+			return planes;
+		},
+		isEmpty: function ()
+		{
+			return this .matrix [15] === 0;
+		},
+		add: function (box)
+		{
+			if (this .isEmpty ())
+				return this .assign (box);
+
+			if (box .isEmpty ())
+				return this;
+
+			this .getExtents (lhs_min, lhs_max);
+			box  .getExtents (rhs_min, rhs_max);
+
+			return this .assign (new Box3 (lhs_min .min (rhs_min), lhs_max .max (rhs_max), true));
+		},
+		multLeft: function (matrix)
+		{
+			this .matrix .multLeft (matrix);
+			return this;
+		},
+		multRight: function (matrix)
+		{
+			this .matrix .multRight (matrix);
+			return this;
+		},
+		intersectsPoint: function (point)
+		{
+			this .getExtents (min, max);
+
+			return min .x <= point .x &&
+			       max .x >= point .x &&
+			       min .y <= point .y &&
+			       max .y >= point .y &&
+			       min .z <= point .z &&
+			       max .z >= point .z;
+		},
+		intersectsBox: function (other)
+		{
+			// Test special cases.
+		
+			if (this .isEmpty ())
+				return false;
+		
+			if (other .isEmpty ())
+				return false;
+		
+			// Get points.
+		
+			this  .getPoints (points1);
+			other .getPoints (points2);
+		
+			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
+		
+			if (SAT .isSeparated (this .getPlanes (planes), points1, points2))
+				return false;
+		
+			// Test the three planes spanned by the normal vectors of the faces of the second parallelepiped.
+		
+			if (SAT .isSeparated (other .getPlanes (planes), points1, points2))
+				return false;
+
+			// Test the nine other planes spanned by the edges of each parallelepiped.
+		
+			this  .getAxes (axes1);
+			other .getAxes (axes2);
+
+			for (var i1 = 0; i1 < 3; ++ i1)
+			{
+				for (var i2 = 0; i2 < 3; ++ i2)
+					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (axes2 [i2]);
+			}
+		
+			if (SAT .isSeparated (axes9, points1, points2))
+				return false;
+		
+			// Both boxes intersect.
+		
+			return true;
+		},
+		intersectsTriangle: function (a, b, c)
+		{
+			// Test special cases.
+
+			if (this .isEmpty ())
+				return false;
+
+			// Get points.
+
+			this  .getPoints (points1);
+
+			triangle [0] = a;
+			triangle [1] = b;
+			triangle [2] = c;
+
+			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
+
+			if (SAT .isSeparated (this .getPlanes (planes), points1, triangle))
+				return false;
+
+			// Test the normal of the triangle.
+
+			Triangle3 .normal (a, b, c, triangleNormal [0]);
+
+			if (SAT .isSeparated (triangleNormal, points1, triangle))
+				return false;
+
+			// Test the nine other planes spanned by the edges of each parallelepiped.
+
+			this  .getAxes (axes1);
+
+			triangleEdges [0] .assign (a) .subtract (b);
+			triangleEdges [1] .assign (b) .subtract (c);
+			triangleEdges [2] .assign (c) .subtract (a);
+
+			for (var i1 = 0; i1 < 3; ++ i1)
+			{
+				for (var i2 = 0; i2 < 3; ++ i2)
+					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (triangleEdges [i2]);
+			}
+
+			if (SAT .isSeparated (axes9, points1, points2))
+				return false;
+
+			// Box and triangle intersect.
+
+			return true;
+		},
+		toString: function ()
+		{
+			return this .size + ", " + this .center;
+		},
+	};
+
+	Object .defineProperty (Box3 .prototype, "size",
+	{
+		get: function ()
+		{
+			var max = new Vector3 (0, 0, 0);
+			
+			this .getAbsoluteExtents (min, max);
+
+			return max .subtract (min);
+		},
+		enumerable: true,
+		configurable: false
+	});
+
+	Object .defineProperty (Box3 .prototype, "center",
+	{
+		get: function ()
+		{
+			return this .matrix .origin;
+		},
+		enumerable: true,
+		configurable: false
+	});
+
+	return Box3;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('standard/Math/Geometry/Plane3',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+],
+function (Vector3,
+          Matrix4)
+{
+
+
+	var
+		normal    = new Vector3 (0, 0, 0),
+		point     = new Vector3 (0, 0, 0),
+		invMatrix = new Matrix4 ();
+
+	function Plane3 (point, normal)
+	{
+		this .normal             = normal .copy ();
+		this .distanceFromOrigin = normal .dot (point);
+	}
+
+	Plane3 .prototype =
+	{
+		constructor: Plane3,
+		copy: function ()
+		{
+			var copy = Object .create (Plane3 .prototype);
+			copy .normal             = this .normal .copy ();
+			copy .distanceFromOrigin = this .distanceFromOrigin;
+			return copy;
+		},
+		assign: function (plane)
+		{
+			this .normal .assign (plane .normal);
+			this .distanceFromOrigin = plane .distanceFromOrigin;
+			return this;
+		},
+		set: function (point, normal)
+		{
+			this .normal .assign (normal);
+			this .distanceFromOrigin = normal .dot (point);	   
+			return this;
+		},
+		multRight: function (matrix)
+		//throw
+		{
+			// Taken from Inventor:
+		
+			// Find the point on the plane along the normal from the origin
+			point .assign (this .normal) .multiply (this .distanceFromOrigin);
+		
+			// Transform the plane normal by the matrix
+			// to get the new normal. Use the inverse transpose
+			// of the matrix so that normals are not scaled incorrectly.
+			// n' = n * !~m = ~m * n
+			invMatrix .assign (matrix) .inverse ();
+			invMatrix .multMatrixDir (normal .assign (this .normal)) .normalize ();
+		
+			// Transform the point by the matrix
+			matrix .multVecMatrix (point);
+		
+			// The new distance is the projected distance of the vector to the
+			// transformed point onto the (unit) transformed normal. This is
+			// just a dot product.
+			this .normal .assign (normal);
+			this .distanceFromOrigin = normal .dot (point);
+
+			return this;
+		},
+		multLeft: function (matrix)
+		//throw
+		{
+			// Taken from Inventor:
+		
+			// Find the point on the plane along the normal from the origin
+			point .assign (this .normal) .multiply (this .distanceFromOrigin);
+		
+			// Transform the plane normal by the matrix
+			// to get the new normal. Use the inverse transpose
+			// of the matrix so that normals are not scaled incorrectly.
+			// n' = !~m * n = n * ~m
+			invMatrix .assign (matrix) .inverse ();
+			invMatrix .multDirMatrix (normal .assign (this .normal)) .normalize ();
+		
+			// Transform the point by the matrix
+			matrix .multḾatrixVec (point);
+		
+			// The new distance is the projected distance of the vector to the
+			// transformed point onto the (unit) transformed normal. This is
+			// just a dot product.
+			this .normal .assign (normal);
+			this .distanceFromOrigin = normal .dot (point);
+
+			return this;
+		},
+		getDistanceToPoint: function (point)
+		{
+			return Vector3 .dot (point, this .normal) - this .distanceFromOrigin;
+		},
+		intersectsLine: function (line, intersection)
+		{
+			var
+				point     = line .point,
+				direction = line .direction;
+		
+			// Check if the line is parallel to the plane.
+			var theta = direction .dot (this .normal);
+
+			// Plane and line are parallel.
+			if (theta === 0)
+				return false;
+
+			// Plane and line are not parallel. The intersection point can be calculated now.
+			var t = (this .distanceFromOrigin - this .normal .dot (point)) / theta;
+
+			intersection .x = point .x + direction .x * t;
+			intersection .y = point .y + direction .y * t;
+			intersection .z = point .z + direction .z * t;
+
+			return true;
+		},
+		toString: function ()
+		{
+			return this .normal .toString () + " " + this .distanceFromOrigin;
+		},
+	};
+
+	return Plane3;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ("cobweb/Components/Rendering/X3DGeometryNode",
 [
 	"jquery",
@@ -42853,7 +42905,10 @@ function ($,
 {
 
 
-	var modelViewMatrix = new Matrix4 ();
+	var
+		clipPoint       = new Vector3 (0, 0, 0),
+		modelViewMatrix = new Matrix4 (),
+		invMatrix       = new Matrix4 ();
 
 	// Box normals for bbox / line intersection.
 	var boxNormals = [
@@ -43164,6 +43219,199 @@ function ($,
 			}
 
 			return normals_;
+		},
+		isClipped: function (point, clipPlanes)
+		{
+			return clipPlanes .some (function (clipPlane)
+			{
+				return clipPlane .isClipped (point);
+			});
+		},
+		transformLine: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
+		},
+		transformMatrix: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
+		},
+		intersectsLine: function (line, modelViewMatrix, intersections)
+		{
+			try
+			{
+				var intersected = false;
+
+				if (this .intersectsBBox (line))
+				{
+					this .transformLine   (line);            // Apply screen transformations from screen nodes.
+					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
+
+					var
+						clipPlanes = this .getCurrentLayer () .getClipPlanes (),
+						texCoords  = this .texCoords [0],
+						normals    = this .normals,
+						vertices   = this .vertices,
+						uvt        = this .uvt,
+						v0         = this .v0,
+						v1         = this .v1,
+						v2         = this .v2;
+
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+					{
+						var i4 = i * 4;
+
+						v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+						v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+						v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+
+						if (line .intersectsTriangle (v0, v1, v2, uvt))
+						{
+							// Get barycentric coordinates.
+
+							var
+								u = uvt .u,
+								v = uvt .v,
+								t = 1 - u - v;
+
+							// Determine vectors for X3DPointingDeviceSensors.
+
+							var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
+							                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+							                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+
+							if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (point)), clipPlanes))
+								continue;
+
+							var texCoord = new Vector2 (t * texCoords [i4 + 0] + u * texCoords [i4 + 4] + v * texCoords [i4 + 8],
+							                            t * texCoords [i4 + 1] + u * texCoords [i4 + 5] + v * texCoords [i4 + 9]);
+
+							var i3 = i * 3;
+
+							var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
+							                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
+							                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
+
+							intersections .push ({ texCoord: texCoord, normal: normal, point: this .getMatrix () .multVecMatrix (point) });
+							intersected = true;
+						}
+					}
+				}
+
+				return intersected;
+			}
+			catch (error)
+			{
+				//console .log (error);
+				return false;
+			}
+		},
+		intersectsBBox: function (line)
+		{
+			var
+				planes       = this .planes,
+				min          = this .min,
+				max          = this .max,
+				minX         = min .x,
+				maxX         = max .x,
+				maxZ         = max .x,
+				minY         = min .y,
+				maxY         = max .y,
+				minZ         = min .z,
+				maxZ         = max .z,
+				intersection = this .intersection;
+
+		   // front
+			if (planes [0] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// back
+			if (planes [1] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// top
+			if (planes [2] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// bottom
+			if (planes [3] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// right
+			if (planes [4] .intersectsLine (line, intersection))
+			{
+				if (intersection .y >= minY && intersection .y <= maxY &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			return false;
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			try
+			{
+				if (box .intersectsBox (this .bbox))
+				{
+					box .multRight (invMatrix .assign (this .getMatrix ()) .inverse ());
+
+					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
+
+					var
+						vertices = this .vertices,
+						v0       = this .v0,
+						v1       = this .v1,
+						v2       = this .v2;
+		
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+					{
+						var i4 = i * 4;
+		
+						v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+						v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+						v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+		
+						if (box .intersectsTriangle (v0, v1, v2))
+						{
+							if (clipPlanes .length)
+							{
+								if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (v0)), clipPlanes))
+									continue;
+				
+								if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (v1)), clipPlanes))
+									continue;
+				
+								if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (v2)), clipPlanes))
+									continue;
+							}
+		
+						   return true;
+						}
+				   }
+				}
+
+			   return false;
+			}
+			catch (error)
+			{
+				console .log (error);
+				return false;
+			}
 		},
 		set_live__: function ()
 		{
@@ -43538,168 +43786,6 @@ function ($,
 			shaderNode .disableColorAttribute    (gl);
 			shaderNode .disableTexCoordAttribute (gl);
 			shaderNode .disableNormalAttribute   (gl);
-		},
-		intersectsLine: function (line, intersections, invModelViewMatrix)
-		{
-			try
-			{
-				var intersected = false;
-
-				if (this .intersectsBBox (line))
-				{
-				   this .transformLine (line); // Apply screen transformations from screen nodes.
-
-					var
-						texCoords = this .texCoords [0],
-						normals   = this .normals,
-						vertices  = this .vertices,
-						uvt       = this .uvt,
-						v0        = this .v0,
-						v1        = this .v1,
-						v2        = this .v2;
-
-					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-					{
-						var i4 = i * 4;
-
-						v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
-						v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
-						v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
-
-						if (line .intersectsTriangle (v0, v1, v2, uvt))
-						{
-							// Get barycentric coordinates.
-
-							var
-								u = uvt .u,
-								v = uvt .v,
-								t = 1 - u - v;
-
-							// Determine vectors for X3DPointingDeviceSensors.
-
-							var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
-							                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
-							                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
-
-							if (this .isClipped (point, invModelViewMatrix))
-								continue;
-
-							var texCoord = new Vector2 (t * texCoords [i4 + 0] + u * texCoords [i4 + 4] + v * texCoords [i4 + 8],
-							                            t * texCoords [i4 + 1] + u * texCoords [i4 + 5] + v * texCoords [i4 + 9]);
-
-							var i3 = i * 3;
-
-							var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
-							                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
-							                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
-
-							intersections .push ({ texCoord: texCoord, normal: normal, point: this .getMatrix () .multVecMatrix (point) });
-							intersected = true;
-						}
-					}
-				}
-
-				return intersected;
-			}
-			catch (error)
-			{
-				console .log (error);
-				return false;
-			}
-		},
-		intersectsBBox: function (line)
-		{
-			var
-				planes       = this .planes,
-				min          = this .min,
-				max          = this .max,
-				minX         = min .x,
-				maxX         = max .x,
-				maxZ         = max .x,
-				minY         = min .y,
-				maxY         = max .y,
-				minZ         = min .z,
-				maxZ         = max .z,
-				intersection = this .intersection;
-
-		   // front
-			if (planes [0] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .y >= minY && intersection .y <= maxY)
-					return true;
-			}
-
-			// back
-			if (planes [1] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .y >= minY && intersection .y <= maxY)
-					return true;
-			}
-
-			// top
-			if (planes [2] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .z >= minZ && intersection .z <= maxZ)
-					return true;
-			}
-
-			// bottom
-			if (planes [3] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .z >= minZ && intersection .z <= maxZ)
-					return true;
-			}
-
-			// right
-			if (planes [4] .intersectsLine (line, intersection))
-			{
-				if (intersection .y >= minY && intersection .y <= maxY &&
-				    intersection .z >= minZ && intersection .z <= maxZ)
-					return true;
-			}
-
-			return false;
-		},
-		getMatrix: function ()
-		{
-			return Matrix4 .Identity;
-		},
-		transformLine: function (line)
-		{
-			// Apply sceen nodes transformation in place here.
-		},
-		isClipped: function (point, invModelViewMatrix)
-		{
-			return ! this .getCurrentLayer () .getClipPlanes () .every (function (clipPlane)
-			{
-				return ! clipPlane .isClipped (point, invModelViewMatrix);
-			});
-		},
-		intersectsSphere: function (sphere)
-		{
-			var
-				vertices = this .vertices,
-				v0       = this .v0,
-				v1       = this .v1,
-				v2       = this .v2;
-
-			for (var i = 0, length = this .vertexCount; i < length; i += 3)
-			{
-				var i4 = i * 4;
-
-				v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
-				v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
-				v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
-
-				if (sphere .intersectsTriangle (v0, v1, v2))
-				   return true;
-		   }
-
-		   return false;
 		},
 	});
 
@@ -46581,13 +46667,13 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 	$.extend (ViewVolume,
 	{
-		unProjectPoint: function (winx, winy, winz, modelview, projection, viewport, point)
+		unProjectPoint: function (winx, winy, winz, modelView, projection, viewport, point)
 		{
-			var matrix = Matrix4 .multRight (modelview, projection) .inverse ();
+			matrix .assign (modelView) .multRight (projection) .inverse ();
 
 			return this .unProjectPointMatrix (winx, winy, winz, matrix, viewport, point);
 		},
-		unProjectPointMatrix: function (winx, winy, winz, matrix, viewport, point)
+		unProjectPointMatrix: function (winx, winy, winz, invModelViewProjection, viewport, point)
 		{
 			// Transformation of normalized coordinates between -1 and 1
 			vin .set ((winx - viewport [0]) / viewport [2] * 2 - 1,
@@ -46596,7 +46682,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			          1);
 
 			//Objects coordinates
-			matrix .multVecMatrix (vin);
+			invModelViewProjection .multVecMatrix (vin);
 
 			if (vin .w === 0)
 				throw new Error ("Couldn't unproject point: divisor is 0.");
@@ -46605,20 +46691,20 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			return point .set (vin .x * d, vin .y * d, vin .z * d);
 		},
-		unProjectRay: function (winx, winy, modelview, projection, viewport, result)
+		unProjectRay: function (winx, winy, modelView, projection, viewport, result)
 		{
-			matrix .assign (modelview) .multRight (projection) .inverse ();
+			matrix .assign (modelView) .multRight (projection) .inverse ();
 
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport, near);
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport, far);
 
 			return result .setPoints (near, far);
 		},
-		projectPoint: function (point, modelview, projection, viewport, vout)
+		projectPoint: function (point, modelView, projection, viewport, vout)
 		{
 			vin .set (point .x, point .y, point .z, 1);
 
-			projection .multVecMatrix (modelview .multVecMatrix (vin));
+			projection .multVecMatrix (modelView .multVecMatrix (vin));
 
 			if (vin .w === 0)
 				throw new Error ("Couldn't project point: divisor is 0.");
@@ -46629,10 +46715,10 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			                  (vin .y * d + 0.5) * viewport [3] + viewport [1],
 			                  (vin .z * d + 0.5));
 		},
-		projectLine: function (line, modelview, projection, viewport, result)
+		projectLine: function (line, modelView, projection, viewport, result)
 		{
-			ViewVolume .projectPoint (line .point, modelview, projection, viewport, near);
-			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelview, projection, viewport, far);
+			ViewVolume .projectPoint (line .point, modelView, projection, viewport, near);
+			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelView, projection, viewport, far);
 
 			near .z = 0;
 			far  .z = 0;
@@ -48739,9 +48825,13 @@ function ($,
 		{
 			return this .userCenterOfRotation .assign (this .getCenterOfRotation ()) .add (this .centerOfRotationOffset_ .getValue ());
 		},
-		getTransformationMatrix: function ()
+		getProjectionMatrix: function ()
 		{
-			return this .transformationMatrix;
+			var navigationInfo = this .getCurrentNavigationInfo ();
+	
+			return this .getProjectionMatrixWithLimits (navigationInfo .getNearValue (),
+                                                     navigationInfo .getFarValue (this),
+                                                     this .getCurrentViewport () .getRectangle ());
 		},
 		getCameraSpaceMatrix: function ()
 		{
@@ -48750,6 +48840,10 @@ function ($,
 		getInverseCameraSpaceMatrix: function ()
 		{
 			return this .inverseCameraSpaceMatrix;
+		},
+		getTransformationMatrix: function ()
+		{
+			return this .transformationMatrix;
 		},
 		getUpVector: function ()
 		{
@@ -48909,7 +49003,7 @@ function ($,
 
 				Matrix4 .inverse (this .getTransformationMatrix ()) .multVecMatrix (point);
 
-				var minDistance = this .getBrowser () .getActiveLayer () .getNavigationInfo () .getNearPlane () * 2;
+				var minDistance = this .getBrowser () .getActiveLayer () .getNavigationInfo () .getNearValue () * 2;
 		
 				this .lookAt (point, minDistance, factor, straighten);
 			}
@@ -48968,20 +49062,6 @@ function ($,
 				this .getBrowser () .getNotification () .string_ = this .description_;
 			else
 				this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
-		},
-		reshape: function ()
-		{
-			var navigationInfo = this .getCurrentNavigationInfo ();
-	
-			var projectionMatrix = this .getProjectionMatrix (navigationInfo .getNearPlane (),
-                                                           navigationInfo .getFarPlane (this),
-                                                           this .getCurrentViewport () .getRectangle ());
-
-			this .getBrowser () .getProjectionMatrix () .set (projectionMatrix);
-		},
-		transform: function ()
-		{
-			this .getBrowser () .getModelViewMatrix () .set (this .inverseCameraSpaceMatrix);
 		},
 		traverse: function (type)
 		{
@@ -49338,7 +49418,7 @@ function ($,
 		{
 			return bbox .size .abs () / 2 + 10;
 		},
-		getProjectionMatrix: function (zNear, zFar, viewport)
+		getProjectionMatrixWithLimits: function (nearValue, farValue, viewport)
 		{
 			var
 				width  = viewport [2],
@@ -49353,14 +49433,14 @@ function ($,
 					center  = (this .minimumX + this .maximumX) / 2,
 					size1_2 = (sizeY * aspect) / 2;
 
-				return Camera .ortho (center - size1_2, center + size1_2, this .minimumY, this .maximumY, zNear, zFar, this .projectionMatrix);
+				return Camera .ortho (center - size1_2, center + size1_2, this .minimumY, this .maximumY, nearValue, farValue, this .projectionMatrix);
 			}
 
 			var
 				center  = (this .minimumY + this .maximumY) / 2,
 				size1_2 = (sizeX / aspect) / 2;
 
-			return Camera .ortho (this .minimumX, this .maximumX, center - size1_2, center + size1_2, zNear, zFar, this .projectionMatrix);
+			return Camera .ortho (this .minimumX, this .maximumX, center - size1_2, center + size1_2, nearValue, farValue, this .projectionMatrix);
 		},
 	});
 
@@ -49467,7 +49547,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 					viewport       = this .getViewport () .getRectangle (),
 					navigationInfo = this .getNavigationInfo (),
 					viewpoint      = this .getActiveViewpoint (),
-					projection     = viewpoint .getProjectionMatrix (navigationInfo .getNearPlane (), navigationInfo .getFarPlane (viewpoint), viewport),
+					projection     = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport),
 					modelview      = new Matrix4 (); // Use identity
 
 				// Far plane point
@@ -50953,9 +51033,9 @@ function ($,
 		{
 			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
 		},
-		getProjectionMatrix: function (zNear, zFar, viewport)
+		getProjectionMatrixWithLimits: function (nearValue, farValue, viewport)
 		{
-			return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
+			return Camera .perspective (this .getFieldOfView (), nearValue, farValue, viewport [2], viewport [3], this .projectionMatrix);
 		},
 	});
 
@@ -52530,17 +52610,17 @@ function ($,
 
 			return 0.75;
 		},
-		getNearPlane: function ()
+		getNearValue: function ()
 		{
-			var zNear = this .getCollisionRadius ();
+			var nearValue = this .getCollisionRadius ();
 
-			if (zNear === 0)
+			if (nearValue === 0)
 				return 1e-5;
 
 			else
-				return zNear / 2;
+				return nearValue / 2;
 		},
-		getFarPlane: function (viewpoint)
+		getFarValue: function (viewpoint)
 		{
 			return this .visibilityLimit_ .getValue ()
 				    ? this .visibilityLimit_ .getValue ()
@@ -52854,16 +52934,16 @@ function ($,
 		{
 			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
 		},
-		getProjectionMatrix: function (zNear, zFar, viewport, limit)
+		getProjectionMatrixWithLimits: function (nearValue, farValue, viewport, limit)
 		{
 			if (limit)
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
+				return Camera .perspective (this .getFieldOfView (), nearValue, farValue, viewport [2], viewport [3], this .projectionMatrix);
 				
-			// Linear interpolate zNear and zFar
+			// Linear interpolate nearValue and farValue
 
 			var
-				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
-				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
+				geoZNear = Math .max (Algorithm .lerp (Math .min (nearValue, 1e4), 1e4, this .elevation / 1e7), 1),
+				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (farValue, 1e6),  this .elevation / 1e7), 1e6);
 
 			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport [2], viewport [3], this .projectionMatrix);
 		},
@@ -55416,7 +55496,14 @@ function (ComposedShader,
  ******************************************************************************/
 
 
-define ('cobweb/Rendering/DepthBuffer',[],function ()
+define ('cobweb/Rendering/DepthBuffer',[
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+],
+function (ViewVolume,
+          Vector3,
+          Matrix4)
 {
 
 
@@ -55424,10 +55511,12 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 	{
 		var gl = browser .getContext ();
 
-		this .browser = browser;
-		this .width   = width;
-		this .height  = height;
-		this .array   = new Uint8Array (width * height * 4);
+		this .browser             = browser;
+		this .width               = width;
+		this .height              = height;
+		this .array               = new Uint8Array (width * height * 4);
+		this .invProjectionMatrix = new Matrix4 ();
+		this .point               = new Vector3 (0, 0, 0);
 
 		// The frame buffer.
 
@@ -55480,33 +55569,39 @@ define ('cobweb/Rendering/DepthBuffer',[],function ()
 		{
 			return this .depthTexture;
 		},
-		getDistance: function (radius, zNear, zFar)
+		getDepth: function (projectionMatrix, viewport)
 		{
-			var
-				gl       = this .browser .getContext (),
-				array    = this .array,
-				distance = Number .POSITIVE_INFINITY,
-				w1       = 2 / (this .width  - 1),
-				h1       = 2 / (this .height - 1),
-				zWidth   = zFar - zNear;
-
-			gl .readPixels (0, 0, this .width, this .height, gl .RGBA, gl .UNSIGNED_BYTE, array);
-
-			for (var py = 0, i = 0; py < this .height; ++ py)
+			try
 			{
-				var y2 = Math .pow ((py * h1 - 1) * radius, 2);
+				var
+					gl                  = this .browser .getContext (),
+					array               = this .array,
+					width               = this .width,
+					height              = this .height,
+					invProjectionMatrix = this .invProjectionMatrix .assign (projectionMatrix) .inverse (),
+					point               = this .point,
+					depth               = Number .NEGATIVE_INFINITY;
 
-			   for (var px = 0; px < this .width; ++ px, i += 4)
-			   {
-				   var
-				      x = (px * w1 - 1) * radius,
-				      z = zNear + zWidth * (array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625);
+				gl .readPixels (0, 0, width, height, gl .RGBA, gl .UNSIGNED_BYTE, array);
 
-					distance = Math .min (distance, Math .sqrt (x * x + y2 + z * z));
-			   }
+				for (var wy = 0, i = 0; wy < height; ++ wy)
+				{
+					for (var wx = 0; wx < width; ++ wx, i += 4)
+					{
+						var wz = array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625;
+
+						ViewVolume .unProjectPoint (wx, wy, wz, Matrix4 .Identity, projectionMatrix, viewport, point);
+
+						depth = Math .max (depth, point .z);
+					}
+				}
+
+				return depth;
 			}
-
-			return distance;
+			catch (error)
+			{
+				return 0;
+			}
 		},
 		bind: function ()
 		{
@@ -59029,6 +59124,10 @@ function ($,
 	PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
 	{
 		constructor: PolygonText,
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
 		build: function ()
 		{
 			var
@@ -59555,22 +59654,13 @@ function ($,
 			}
 		},
 		traverse: function (type)
-		{
-		},
+		{ },
 		display: function (context)
-		{
-		},
-		transform: function ()
-		{
-		},
-		getMatrix: function ()
-		{
-			return Matrix4 .Identity;
-		},
+		{ },
 		transformLine: function (line)
-		{
-			// Apply sceen nodes transformation in place here.
-		},
+		{ },
+		transformMatrix: function (matrix)
+		{ },
 	});
 
 	return PolygonText;
@@ -66055,201 +66145,13 @@ function (PointEmitter)
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Sphere3',[
-	"standard/Math/Numbers/Vector3",
-],
-function (Vector3)
-{
-
-
-	var
-		L  = new Vector3 (0, 0, 0),
-		AB = new Vector3 (0, 0, 0),
-		AC = new Vector3 (0, 0, 0),
-		BC = new Vector3 (0, 0, 0),
-		CA = new Vector3 (0, 0, 0),
-		Q1 = new Vector3 (0, 0, 0),
-		Q2 = new Vector3 (0, 0, 0),
-		Q3 = new Vector3 (0, 0, 0);
-
-	function Sphere3 (radius, center)
-	{
-		this .radius = radius;
-		this .center = center .copy ();
-	}
-
-	Sphere3 .prototype =
-	{
-		constructor: Sphere3,
-		set: function (radius, center)
-		{
-			this .radius = radius;
-			this .center .assign (center);
-		},
-		intersectsLine: function (line, intersection1, intersection2)
-		{
-			L .assign (this .center) .subtract (line .point);
-
-			var tca = Vector3 .dot (L, line .direction);
-
-			if (tca < 0)
-				// there is no intersection
-				return false;
-
-			var
-				d2 = Vector3 .dot (L, L) - Math .pow (tca, 2),
-				r2 = Math .pow (this .radius, 2);
-
-			if (d2 > r2)
-				return false;
-
-			var thc = Math .sqrt (r2 - d2);
-
-			var
-				t1 = tca - thc,
-				t2 = tca + thc;
-
-			intersection1 .assign (line .direction) .multiply (t1) .add (line .point);
-			intersection2 .assign (line .direction) .multiply (t2) .add (line .point);
-
-			return true;
-		},
-		intersectsTriangle: function (A, B, C)
-		{
-			var
-				P = this .center,
-				r = this .radius;
-
-			A .subtract (P);
-			B .subtract (P);
-			C .subtract (P);
-
-			// Testing if sphere lies outside the triangle plane.
-
-			AB .assign (B) .subtract (A);
-			AC .assign (C) .subtract (A);
-
-			var
-				rr   = r * r,
-				V    = AB .cross (AC),
-				d    = Vector3 .dot (A, V),
-				e    = Vector3 .dot (V, V),
-				sep1 = d * d > rr * e;
-
-			if (sep1)
-				return false;
-
-			// Testing if sphere lies outside a triangle vertex.
-			var
-				aa   = Vector3 .dot (A, A),
-				ab   = Vector3 .dot (A, B),
-				ac   = Vector3 .dot (A, C),
-				bb   = Vector3 .dot (B, B),
-				bc   = Vector3 .dot (B, C),
-				cc   = Vector3 .dot (C, C),
-				sep2 = (aa > rr) && (ab > aa) && (ac > aa),
-				sep3 = (bb > rr) && (ab > bb) && (bc > bb),
-				sep4 = (cc > rr) && (ac > cc) && (bc > cc);
-
-			if (sep2 || sep3 || sep4)
-				return false;
-
-			// Testing if sphere lies outside a triangle edge.
-
-			AB .assign (B) .subtract (A);
-			BC .assign (C) .subtract (B);
-			CA .assign (A) .subtract (C);
-
-			var
-				d1   = ab - aa,
-				d2   = bc - bb,
-				d3   = ac - cc,
-				e1   = Vector3 .dot (AB, AB),
-				e2   = Vector3 .dot (BC, BC),
-				e3   = Vector3 .dot (CA, CA);
-			
-			Q1 .assign (A) .multiply (e1) .subtract (AB .multiply (d1));
-			Q2 .assign (B) .multiply (e2) .subtract (BC .multiply (d2));
-			Q3 .assign (C) .multiply (e3) .subtract (CA .multiply (d3));
-
-			var
-				QC   = C .multiply (e1) .subtract (Q1),
-				QA   = A .multiply (e2) .subtract (Q2),
-				QB   = B .multiply (e3) .subtract (Q3),
-				sep5 = (Vector3 .dot (Q1, Q1) > rr * e1 * e1) && (Vector3 .dot (Q1, QC) > 0),
-				sep6 = (Vector3 .dot (Q2, Q2) > rr * e2 * e2) && (Vector3 .dot (Q2, QA) > 0),
-				sep7 = (Vector3 .dot (Q3, Q3) > rr * e3 * e3) && (Vector3 .dot (Q3, QB) > 0);
-
-			if (sep5 || sep6 || sep7)
-				return false;
-
-			return true;
-		},
-		toString: function ()
-		{
-			return this .radius + " " + this .center .toString ();
-		},
-	};
-
-	return Sphere3;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Rendering/X3DRenderer',[
 	"jquery",
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Geometry/Camera",
-	"standard/Math/Geometry/Sphere3",
+	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
@@ -66262,7 +66164,7 @@ function ($,
 	       TraverseType,
           QuickSort,
           Camera,
-          Sphere3,
+          Box3,
           ViewVolume,
           Vector3,
           Vector4,
@@ -66274,7 +66176,7 @@ function ($,
 
 	var
 		DEPTH_BUFFER_WIDTH    = 16,
-		DEPTH_BUFFER_HEIGHT   = 16,
+		DEPTH_BUFFER_HEIGHT   = DEPTH_BUFFER_WIDTH,
 		projectionMatrix      = new Matrix4 (),
 		projectionMatrixArray = new Float32Array (16),
 		modelViewMatrix       = new Matrix4 (),
@@ -66284,7 +66186,9 @@ function ($,
 		vector                = new Vector3 (0, 0, 0),
 		rotation              = new Rotation4 (0, 0, 1, 0),
 		depthBufferViewport   = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
-		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport);
+		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport),
+		collisionBox          = new Box3 (Vector3 .Zero, Vector3 .Zero),
+		size                  = new Vector3 (0, 0, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -66305,7 +66209,6 @@ function ($,
 		this .transparencySorter   = new QuickSort (this .transparentShapes, compareDistance);
 		this .collisionShapes      = [ ];
 		this .activeCollisions     = { };
-		this .collisionSphere      = new Sphere3 (0, Vector3 .Zero);
 		this .depthShapes          = [ ];
 		this .invModelViewMatrix   = new Matrix4 ();
 		this .speed                = 0;
@@ -66522,12 +66425,12 @@ function ($,
 			var
 				navigationInfo  = this .getNavigationInfo (),
 				distance        = this .getDistance (translation),
-				zFar            = navigationInfo .getFarPlane (this .getViewpoint ());
+				farValue        = navigationInfo .getFarValue (this .getViewpoint ());
 
-			if (zFar - distance > 0) // Are there polygons before the viewer
+			if (farValue - distance > 0) // Are there polygons before the viewer
 			{
 				var collisionRadius = navigationInfo .getCollisionRadius ();
-			
+
 				distance -= collisionRadius;
 
 				if (distance > 0)
@@ -66563,15 +66466,14 @@ function ($,
 					navigationInfo  = this .getNavigationInfo (),
 					collisionRadius = navigationInfo .getCollisionRadius (),
 					bottom          = navigationInfo .getStepHeight () - navigationInfo .getAvatarHeight (),
-					zNear           = navigationInfo .getNearPlane (),
-					zFar            = navigationInfo .getFarPlane (viewpoint);
+					nearValue       = navigationInfo .getNearValue (),
+					farValue        = navigationInfo .getFarValue (viewpoint);
 
 				// Determine width and height of camera
-					
-			
+
 				// Reshape camera
 
-				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, zNear, zFar, projectionMatrix);
+				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, farValue, projectionMatrix);
 
 				// Translate camera to user position and to look in the direction of the direction.
 
@@ -66586,37 +66488,30 @@ function ($,
 
 				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
-				var depth = this .getDepth ();
+				var depth = this .getDepth (projectionMatrix);
 
 				this .getBrowser () .getProjectionMatrix () .pop ();
 
-				return depth;
+				return -depth;
 			}
 			catch (error)
 			{
 				console .log (error);
 			}
 		},
-		getDepth: function ()
+		getDepth: function (projectionMatrix)
 		{
-			var
-				navigationInfo = this .getNavigationInfo (),
-				viewpoint      = this .getViewpoint (),
-				zNear          = navigationInfo .getNearPlane (),
-				zFar           = navigationInfo .getFarPlane (viewpoint),
-				radius         = navigationInfo .getCollisionRadius ();
-
 			this .depthBuffer .bind ();
 
 			this .viewVolumes .push (depthBufferViewVolume);
 			this .depth (this .collisionShapes, this .numCollisionShapes);
 			this .viewVolumes .pop ();	
 
-			var distance = this .depthBuffer .getDistance (radius, zNear, zFar);
+			var depth = this .depthBuffer .getDepth (projectionMatrix, depthBufferViewport);
 
 			this .depthBuffer .unbind ();
 
-			return distance;
+			return depth;
 		},
 		render: function (group, type)
 		{
@@ -66656,9 +66551,11 @@ function ($,
 		{
 			// Collision nodes are handled here.
 
-			var activeCollisions = { }; // current active Collision nodes
+			var
+				activeCollisions = { }, // current active Collision nodes
+				collisionRadius2 = 2.2 * this .getNavigationInfo () .getCollisionRadius (); // Make the radius a little bit larger.
 
-			this .collisionSphere .radius = this .getNavigationInfo () .getCollisionRadius () * 1.2; // Make the radius a little bit larger.
+			size .set (collisionRadius2, collisionRadius2, collisionRadius2);
 
 			for (var i = 0; i < this .numCollisionShapes; ++ i)
 			{
@@ -66670,11 +66567,11 @@ function ($,
 
 					if (collisions .length)
 					{
-					   this .invModelViewMatrix .assign (context .modelViewMatrix) .multRight (this .getViewpoint () .getInverseCameraSpaceMatrix ()) .inverse ();
+					   collisionBox .set (size, Vector3 .Zero);
+						collisionBox .multRight (this .getViewpoint () .getCameraSpaceMatrix ());
+						collisionBox .multRight (this .invModelViewMatrix .assign (context .modelViewMatrix) .inverse ());
 
-					   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
-
-						if (context .shapeNode .intersectsSphere (this .collisionSphere))
+						if (context .shapeNode .intersectsBox (collisionBox, context .clipPlanes, this .invModelViewMatrix .assign (context .modelViewMatrix)))
 						{
 						   for (var c = 0; c < collisions .length; ++ c)
 								activeCollisions [collisions [c] .getId ()] = collisions [c];
@@ -66682,7 +66579,9 @@ function ($,
 					}
 				}
 				catch (error)
-				{ }
+				{
+					console .log (error);
+				}
 			}
 
 			// Set isActive to FALSE for affected nodes.
@@ -66719,14 +66618,14 @@ function ($,
 					navigationInfo  = this .getNavigationInfo (),
 					viewpoint       = this .getViewpoint (),
 					collisionRadius = navigationInfo .getCollisionRadius (),
-					zNear           = navigationInfo .getNearPlane (),
-					zFar            = navigationInfo .getFarPlane (viewpoint),
-					height          = navigationInfo .getAvatarHeight (),
+					nearValue       = navigationInfo .getNearValue (),
+					farValue        = navigationInfo .getFarValue (viewpoint),
+					avatarHeight    = navigationInfo .getAvatarHeight (),
 					stepHeight      = navigationInfo .getStepHeight ();
 
 				// Reshape viewpoint for gravite.
 
-				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, zNear, zFar, projectionMatrix)
+				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, farValue, projectionMatrix)
 
 				// Transform viewpoint to look down the up vector
 
@@ -66741,15 +66640,15 @@ function ($,
 
 				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
-				var distance = this .getDepth ();
+				var distance = -this .getDepth (projectionMatrix);
 
 				this .getBrowser () .getProjectionMatrix () .pop ();
 
 				// Gravite or step up
 
-				if (zFar - distance > 0) // Are there polygons under the viewer
+				if (farValue - distance > 0) // Are there polygons under the viewer
 				{
-					distance -= height;
+					distance -= avatarHeight;
 
 					var up = rotation .setFromToVec (yAxis, upVector);
 
@@ -67000,6 +66899,7 @@ function ($,
 
 	return X3DRenderer;
 });
+
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
  *
@@ -67425,7 +67325,7 @@ function ($,
 					visibilityRange = Math .max (0, this .visibilityRange_ .getValue ());
 
 				if (visibilityRange === 0)
-					visibilityRange = this .getCurrentNavigationInfo () .getFarPlane (this .getCurrentViewpoint ());
+					visibilityRange = this .getCurrentNavigationInfo () .getFarValue (this .getCurrentViewpoint ());
 
 				gl .uniform1i (shaderObject .x3d_FogType,            this .fogType);
 				gl .uniform3f (shaderObject .x3d_FogColor,           color .r, color .g, color .b);
@@ -68095,7 +67995,7 @@ function ($,
 
 			// Get projection matrix.
 
-			this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
+			this .projectionMatrixArray .set (viewpoint .getProjectionMatrixWithLimits (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
 
 			// Rotate and scale background.
 
@@ -69259,8 +69159,7 @@ function ($,
 		   var browser = this .getBrowser ();
 
 			browser .getLayers () .push (this);
-			browser .getProjectionMatrix () .pushMatrix (Matrix4 .Identity);
-			browser .getModelViewMatrix  () .pushMatrix (Matrix4 .Identity);
+			browser .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix ());
 
 			switch (type)
 			{
@@ -69281,7 +69180,6 @@ function ($,
 					break;
 			}
 
-			browser .getModelViewMatrix  () .pop ()
 			browser .getProjectionMatrix () .pop ()
 			browser .getLayers () .pop ();
 		},
@@ -69289,33 +69187,37 @@ function ($,
 		{
 			if (this .isPickable_ .getValue ())
 			{
-				var viewport = this .currentViewport .getRectangle ();
+				var
+					browser  = this .getBrowser (),
+					viewport = this .currentViewport .getRectangle ();
 
-				if (this .getBrowser () .getSelectedLayer ())
+				if (browser .getSelectedLayer ())
 				{
-					if (this .getBrowser () .getSelectedLayer () !== this)
+					if (browser .getSelectedLayer () !== this)
 						return;
 				}
 				else
 				{
-					if (! this .getBrowser () .isPointerInRectangle (viewport))
+					if (! browser .isPointerInRectangle (viewport))
 						return;
 				}
 
-				this .getViewpoint () .reshape ();
-				this .getViewpoint () .transform ();
-
-				this .getBrowser () .setHitRay (viewport);
+				browser .setHitRay (viewport);
+				browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
 				this .currentViewport .push ();
 				this .groupNode .traverse (type);
 				this .currentViewport .pop ();
+
+				browser .getModelViewMatrix () .pop ()
 			}
 		},
 		camera: function (type)
 		{
-			this .getViewpoint () .reshape ();
+			var browser = this .getBrowser ();
 
+			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+	
 			this .currentViewport .push ();
 			this .groupNode .traverse (type);
 			this .currentViewport .pop ();
@@ -69326,27 +69228,37 @@ function ($,
 			this .viewpoints      .update ();
 
 			this .getViewpoint () .update ();
+
+			browser .getModelViewMatrix () .pop ()
 		},
 		collision: function (type)
 		{
+			var browser = this .getBrowser ();
+
 			this .collisionTime = 0;
 
-			this .getViewpoint () .reshape ();
-
+			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+	
 			// Render
 			this .currentViewport .push ();
 			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
+
+			browser .getModelViewMatrix () .pop ()
 		},
 		display: function (type)
 		{
+			var browser = this .getBrowser ();
+
 			this .getNavigationInfo () .enable ();
-			this .getViewpoint ()      .reshape ();
-			this .getViewpoint ()      .transform ();
+
+			browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
 			this .currentViewport .push ();
 			this .render (this .groupNode, type);
 			this .currentViewport .pop ();
+
+			browser .getModelViewMatrix () .pop ()
 		},
 	});
 
@@ -71629,6 +71541,14 @@ function ($,
 		setShader: function (value)
 		{
 			this .shaderNode = value;
+		},
+		intersectsLine: function (line, modelViewMatrix, intersections)
+		{
+			return false;
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			return false;
 		},
 		depth: function (shaderNode)
 		{ },
@@ -74834,13 +74754,12 @@ function ($,
 
 
 	var
-		vector     = new Vector3 (0, 0, 0),
-		plane      = new Plane3 (vector, vector),
+		plane      = new Plane3 (Vector3 .Zero, Vector3 .Zero),
 		ClipPlanes = ObjectCache (ClipPlaneContainer);
 
 	function ClipPlaneContainer (clipPlane)
 	{
-		this .plane = new Plane3 (vector, vector);
+		this .plane = new Plane3 (Vector3 .Zero, Vector3 .Zero);
 
 		this .set (clipPlane);
 	}
@@ -74848,35 +74767,26 @@ function ($,
 	ClipPlaneContainer .prototype =
 	{
 		constructor: ClipPlaneContainer,
-		isClipped: function (point, invModelViewMatrix)
+		isClipped: function (point)
 		{
-			try
-			{
-				var distance = plane .assign (this .plane) .multRight (invModelViewMatrix) .getDistanceToPoint (point);
-
-				return distance < 0;
-			}
-			catch (error)
-			{
-				return false;
-			}
+			return this .plane .getDistanceToPoint (point) < 0;
 		},
 		set: function (clipPlane)
 		{
+			var
+				plane       = this .plane,
+				localPlane = clipPlane .plane;
+	
 			try
 			{
-				var
-					plane  = this .plane,
-					plane_ = clipPlane .plane;
-
-				plane .normal .assign (plane_);
-				plane .distanceFromOrigin = -plane_ .w;
+				plane .normal .assign (localPlane);
+				plane .distanceFromOrigin = -localPlane .w;
 
 				plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
 			}
 			catch (error)
 			{
-				plane .normal .set (0, 1, 0);
+				plane .normal .set (0, 0, 0);
 				plane .distanceFromOrigin = 0;
 			}
 		},
@@ -81633,9 +81543,9 @@ function ($,
 			if (loaded === 4)
 				this .childrenLoaded = true;
 		},
-		getLevel: function (type)
+		getLevel: function ()
 		{
-			var distance = this .getDistance (type);
+			var distance = this .getDistance ();
 		
 			if (distance < this .range_ .getValue ())
 				return 1;
@@ -81644,7 +81554,7 @@ function ($,
 		},
 		getDistance: function (type)
 		{
-			var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 
 			modelViewMatrix .translate (this .getCoord (this .center_ .getValue (), center));
 
@@ -81654,7 +81564,7 @@ function ($,
 		{
 			if (type == TraverseType .DISPLAY)
 			{
-				var level = this. getLevel (type);
+				var level = this .getLevel ();
 			
 				if (level !== this .level_changed_ .getValue ())
 				{
@@ -84951,7 +84861,7 @@ function ($,
 
 			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
-		getLevel: function (type)
+		getLevel: function ()
 		{
 			if (this .range_ .length === 0)
 			{
@@ -84972,13 +84882,13 @@ function ($,
 				return Math .min (Math .ceil (fraction * (n - 1)), n);
 			}
 
-			var distance = this .getDistance (type);
+			var distance = this .getDistance ();
 
 			return Algorithm .upperBound (this .range_, 0, this .range_ .length, distance, Algorithm .less);
 		},
-		getDistance: function (type)
+		getDistance: function ()
 		{
-			var modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix);
+			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
 
 			modelViewMatrix .translate (this .center_ .getValue ());
 
@@ -84988,21 +84898,21 @@ function ($,
 		{
 			if (! this .keepCurrentLevel)
 			{
-				var
-					level        = this .getLevel (type),
-					currentLevel = this .level_changed_ .getValue ();
-
-				if (this .forceTransitions_ .getValue ())
-				{
-					if (level > currentLevel)
-						level = currentLevel + 1;
-
-					else if (level < currentLevel)
-						level = currentLevel - 1;
-				}
-
 				if (type === TraverseType .DISPLAY)
 				{
+					var
+						level        = this .getLevel (),
+						currentLevel = this .level_changed_ .getValue ();
+	
+					if (this .forceTransitions_ .getValue ())
+					{
+						if (level > currentLevel)
+							level = currentLevel + 1;
+	
+						else if (level < currentLevel)
+							level = currentLevel - 1;
+					}
+	
 					if (level !== currentLevel)
 					{
 						this .level_changed_ = level;
@@ -89549,6 +89459,10 @@ function ($,
 
 			this .texCoordAnim = Boolean (texCoordKeys .length && this .texCoordRampNode);
 		},
+		intersectsBox: function (box, clipPlanes)
+		{
+			// TODO: implement me.
+		},
 		animate: function ()
 		{
 			var emitterNode = this .emitterNode;
@@ -92958,6 +92872,7 @@ define ('cobweb/Browser/Layout/ScreenText',[
 	"cobweb/Browser/Text/X3DTextGeometry",
 	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/Components/Texturing/PixelTexture",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
@@ -92970,6 +92885,7 @@ function ($,
           X3DTextGeometry,
           TextAlignment,
           PixelTexture,
+          TraverseType,
           Vector2,
           Vector3,
           Rotation4,
@@ -93325,50 +93241,53 @@ function ($,
 		{
 			try
 			{
-				var
-					fontStyle        = this .getFontStyle (),
-					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-					modelViewMatrix  = fontStyle .getModelViewMatrix (type, this .modelViewMatrix),
-					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
-
-				// Same as in ScreenGroup
-
-				this .screenMatrix .assign (modelViewMatrix);
-				this .screenMatrix .get (translation, rotation, scale);
-
-				var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
-
-				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
-			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
-			                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
-
-				// Snap to whole pixel
-
-				ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-
-				screenPoint .x = Math .round (screenPoint .x);
-				screenPoint .y = Math .round (screenPoint .y);
-	
-				ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-
-				screenPoint .z = 0;
-				this .screenMatrix .translate (screenPoint);
-
-				// Assign modelViewMatrix and calculate relative matrix
-
-				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
-					
-				// Update Text bbox
-
-				bbox .assign (this .getBBox ()) .multRight (this .matrix);
-
-				if (! bbox .equals (this .getText () .getBBox ()))
+				if (type === TraverseType .DISPLAY)
 				{
-				   bbox .getExtents (min, max);
-					this .getText () .getMin ()  .assign (min);
-					this .getText () .getMax ()  .assign (max);
-					this .getText () .getBBox () .assign (bbox);
-					this .getText () .bbox_changed_ .addEvent ();
+					var
+						fontStyle        = this .getFontStyle (),
+						projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
+						modelViewMatrix  = this .getBrowser () .getModelViewMatrix ()  .get (),
+						viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
+	
+					// Same as in ScreenGroup
+	
+					this .screenMatrix .assign (modelViewMatrix);
+					this .screenMatrix .get (translation, rotation, scale);
+	
+					var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+	
+					this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+				                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+				                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+	
+					// Snap to whole pixel
+	
+					ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+	
+					screenPoint .x = Math .round (screenPoint .x);
+					screenPoint .y = Math .round (screenPoint .y);
+		
+					ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+	
+					screenPoint .z = 0;
+					this .screenMatrix .translate (screenPoint);
+	
+					// Assign modelViewMatrix and calculate relative matrix
+	
+					this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
+						
+					// Update Text bbox
+	
+					bbox .assign (this .getBBox ()) .multRight (this .matrix);
+	
+					if (! bbox .equals (this .getText () .getBBox ()))
+					{
+					   bbox .getExtents (min, max);
+						this .getText () .getMin ()  .assign (min);
+						this .getText () .getMax ()  .assign (max);
+						this .getText () .getBBox () .assign (bbox);
+						this .getText () .bbox_changed_ .addEvent ();
+					}
 				}
 			}
 			catch (error)
@@ -93383,13 +93302,13 @@ function ($,
 		},
 		transformLine: function (line)
 		{
-		   try
-		   {
-				// Apply sceen nodes transformation in place here.
-				return line .multLineMatrix (Matrix4 .inverse (this .matrix));
-			}
-			catch (error)
-			{ }
+			// Apply sceen nodes transformation in place here.
+			return line .multLineMatrix (Matrix4 .inverse (this .matrix));
+		},
+		transformMatrix: function (matrix)
+		{
+			// Apply sceen nodes transformation in place here.
+			return matrix .multLeft (this .matrix);
 		},
 	});
 
@@ -93571,6 +93490,7 @@ define ("cobweb/Components/Layout/ScreenGroup",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
@@ -93582,6 +93502,7 @@ function ($,
           FieldDefinitionArray,
           X3DGroupingNode, 
           X3DConstants,
+          TraverseType,
           Vector3,
           Rotation4,
           Matrix4,
@@ -93645,16 +93566,14 @@ function ($,
 
 			return this .matrix;
 		},
-		scale: function (type)
+		scale: function ()
 		{
 			// throws domain error
 
-			this .getModelViewMatrix (type, this .modelViewMatrix);
-			this .modelViewMatrix .get (translation, rotation, scale);
-		
+			this .getBrowser () .getModelViewMatrix () .get () .get (translation, rotation, scale);
+
 			var
-				browser          = this .getBrowser (),
-				projectionMatrix = browser .getProjectionMatrix () .get (),
+				projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
 				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
 				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
 		
@@ -93674,26 +93593,27 @@ function ($,
 			screenPoint .z = 0;
 			this .screenMatrix .translate (screenPoint);
 
-			// Assign modelViewMatrix
+			// Return modelViewMatrix
 
-			browser .getModelViewMatrix () .set (this .screenMatrix);
+			return this .screenMatrix;
 		},
 		traverse: function (type)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-	
-			modelViewMatrix .push ();
-			
 			try
 			{
-				this .scale (type);
-			
+				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+
+				if (type === TraverseType .DISPLAY)
+					modelViewMatrix .pushMatrix (this .scale ());
+				else
+					modelViewMatrix .pushMatrix (this .screenMatrix);
+
 				X3DGroupingNode .prototype .traverse .call (this, type);
+	
+				modelViewMatrix .pop ();
 			}
 			catch (error)
 			{ }
-			
-			modelViewMatrix .pop ();
 		},
 	});
 
@@ -94868,6 +94788,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",   new Fields .SFNode ()),
 		]),
+		modelViewMatrix: new Matrix4 (),
 		invModelViewMatrix: new Matrix4 (),
 		hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 		intersections: intersections,
@@ -94896,12 +94817,14 @@ function ($,
 			else
 				this .traverse = Algorithm .nop;
 		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			return this .getGeometry () .intersectsBox (box, clipPlanes, modelViewMatrix);
+		},
 		traverse: function (type)
 		{
-			if (this .getAppearance ())
-				this .getAppearance () .traverse (type);
-
-			//this .getGeometry () .traverse (type); // Not yet needed.
+			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
+			this .getGeometry   () .traverse (type); // Currently used for ScreenText.
 
 			switch (type)
 			{
@@ -94933,13 +94856,13 @@ function ($,
 
 				var
 					browser            = this .getBrowser (),
-					modelViewMatrix    = browser .getModelViewMatrix () .get (),
+					modelViewMatrix    = this .modelViewMatrix    .assign (browser .getModelViewMatrix () .get ()),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
 				this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
 
-				if (geometry .intersectsLine (this .hitRay, intersections, invModelViewMatrix))
+				if (geometry .intersectsLine (this .hitRay, modelViewMatrix, intersections))
 				{
 					// Finally we have intersections and must now find the closest hit in front of the camera.
 
@@ -94950,7 +94873,7 @@ function ($,
 					this .intersectionSorter .sort (0, intersections .length);
 
 					// Find first point that is not greater than near plane;
-					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
+					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearValue (),
 					                                   function (lhs, rhs)
 					                                   {
 					                                      return lhs .point .z > rhs;
@@ -94973,18 +94896,14 @@ function ($,
 				console .log (error);
 			}
 		},
-		display: function (context)
-		{
-			this .getAppearance () .display (context);
-			this .getGeometry ()   .display (context);
-		},
 		depth: function (shaderNode)
 		{
 			this .getGeometry () .depth (shaderNode);
 		},
-		intersectsSphere: function (sphere)
+		display: function (context)
 		{
-			return this .getGeometry () .intersectsSphere (sphere);
+			this .getAppearance () .display (context);
+			this .getGeometry ()   .display (context);
 		},
 	});
 
@@ -95434,6 +95353,194 @@ function ($,
 });
 
 
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('standard/Math/Geometry/Sphere3',[
+	"standard/Math/Numbers/Vector3",
+],
+function (Vector3)
+{
+
+
+	var
+		L  = new Vector3 (0, 0, 0),
+		AB = new Vector3 (0, 0, 0),
+		AC = new Vector3 (0, 0, 0),
+		BC = new Vector3 (0, 0, 0),
+		CA = new Vector3 (0, 0, 0),
+		Q1 = new Vector3 (0, 0, 0),
+		Q2 = new Vector3 (0, 0, 0),
+		Q3 = new Vector3 (0, 0, 0);
+
+	function Sphere3 (radius, center)
+	{
+		this .radius = radius;
+		this .center = center .copy ();
+	}
+
+	Sphere3 .prototype =
+	{
+		constructor: Sphere3,
+		set: function (radius, center)
+		{
+			this .radius = radius;
+			this .center .assign (center);
+		},
+		intersectsLine: function (line, intersection1, intersection2)
+		{
+			L .assign (this .center) .subtract (line .point);
+
+			var tca = Vector3 .dot (L, line .direction);
+
+			if (tca < 0)
+				// there is no intersection
+				return false;
+
+			var
+				d2 = Vector3 .dot (L, L) - Math .pow (tca, 2),
+				r2 = Math .pow (this .radius, 2);
+
+			if (d2 > r2)
+				return false;
+
+			var thc = Math .sqrt (r2 - d2);
+
+			var
+				t1 = tca - thc,
+				t2 = tca + thc;
+
+			intersection1 .assign (line .direction) .multiply (t1) .add (line .point);
+			intersection2 .assign (line .direction) .multiply (t2) .add (line .point);
+
+			return true;
+		},
+		intersectsTriangle: function (A, B, C)
+		{
+			var
+				P = this .center,
+				r = this .radius;
+
+			A .subtract (P);
+			B .subtract (P);
+			C .subtract (P);
+
+			// Testing if sphere lies outside the triangle plane.
+
+			AB .assign (B) .subtract (A);
+			AC .assign (C) .subtract (A);
+
+			var
+				rr   = r * r,
+				V    = AB .cross (AC),
+				d    = Vector3 .dot (A, V),
+				e    = Vector3 .dot (V, V),
+				sep1 = d * d > rr * e;
+
+			if (sep1)
+				return false;
+
+			// Testing if sphere lies outside a triangle vertex.
+			var
+				aa   = Vector3 .dot (A, A),
+				ab   = Vector3 .dot (A, B),
+				ac   = Vector3 .dot (A, C),
+				bb   = Vector3 .dot (B, B),
+				bc   = Vector3 .dot (B, C),
+				cc   = Vector3 .dot (C, C),
+				sep2 = (aa > rr) && (ab > aa) && (ac > aa),
+				sep3 = (bb > rr) && (ab > bb) && (bc > bb),
+				sep4 = (cc > rr) && (ac > cc) && (bc > cc);
+
+			if (sep2 || sep3 || sep4)
+				return false;
+
+			// Testing if sphere lies outside a triangle edge.
+
+			AB .assign (B) .subtract (A);
+			BC .assign (C) .subtract (B);
+			CA .assign (A) .subtract (C);
+
+			var
+				d1   = ab - aa,
+				d2   = bc - bb,
+				d3   = ac - cc,
+				e1   = Vector3 .dot (AB, AB),
+				e2   = Vector3 .dot (BC, BC),
+				e3   = Vector3 .dot (CA, CA);
+			
+			Q1 .assign (A) .multiply (e1) .subtract (AB .multiply (d1));
+			Q2 .assign (B) .multiply (e2) .subtract (BC .multiply (d2));
+			Q3 .assign (C) .multiply (e3) .subtract (CA .multiply (d3));
+
+			var
+				QC   = C .multiply (e1) .subtract (Q1),
+				QA   = A .multiply (e2) .subtract (Q2),
+				QB   = B .multiply (e3) .subtract (Q3),
+				sep5 = (Vector3 .dot (Q1, Q1) > rr * e1 * e1) && (Vector3 .dot (Q1, QC) > 0),
+				sep6 = (Vector3 .dot (Q2, Q2) > rr * e2 * e2) && (Vector3 .dot (Q2, QA) > 0),
+				sep7 = (Vector3 .dot (Q3, Q3) > rr * e3 * e3) && (Vector3 .dot (Q3, QB) > 0);
+
+			if (sep5 || sep6 || sep7)
+				return false;
+
+			return true;
+		},
+		toString: function ()
+		{
+			return this .radius + " " + this .center .toString ();
+		},
+	};
+
+	return Sphere3;
+});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -98158,6 +98265,10 @@ function ($,
 			this .set_fontStyle__ ();
 			this .eventsProcessed ();
 		},
+		getMatrix: function ()
+		{
+			return this .textGeometry .getMatrix ();
+		},
 		getLength: function (index)
 		{
 			if (index < this .length_ .length)
@@ -98205,19 +98316,15 @@ function ($,
 
 			X3DGeometryNode .prototype .display .call (this, context);
 		},
-		transform: function (object)
-		{
-			// Apply sceen nodes transformation in place here.
-			this .textGeometry .transform (object);
-		},
-		getMatrix: function ()
-		{
-			return this .textGeometry .getMatrix ();
-		},
 		transformLine: function (line)
 		{
 			// Apply sceen nodes transformation in place here.
 			return this .textGeometry .transformLine (line);
+		},
+		transformMatrix: function (matrix)
+		{
+			// Apply sceen nodes transformation in place here.
+			return this .textGeometry .transformMatrix (matrix);
 		},
 	});
 
@@ -100431,7 +100538,6 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -100440,8 +100546,7 @@ function ($,
           X3DEnvironmentalSensorNode,
           TraverseType,
           X3DConstants,
-          Vector3,
-          Matrix4)
+          Vector3)
 {
 
 
@@ -100470,7 +100575,6 @@ function ($,
 		]),
 		size: new Vector3 (0, 0, 0),
 		center: new Vector3 (0, 0, 0),
-		modelViewMatrix: new Matrix4 (),
 		getTypeName: function ()
 		{
 			return "VisibilitySensor";
@@ -100541,8 +100645,8 @@ function ($,
 		{
 			var
 				viewVolume      = this .getCurrentLayer () .getViewVolume (),
-				modelViewMatrix = this .getModelViewMatrix (type, this .modelViewMatrix),
-				size            = modelViewMatrix .multDirMatrix (this .size .assign (this .size_ .getValue ())),
+				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
 				center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
 
 			this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
