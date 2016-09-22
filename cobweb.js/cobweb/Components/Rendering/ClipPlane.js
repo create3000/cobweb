@@ -73,13 +73,12 @@ function ($,
 "use strict";
 
 	var
-		vector     = new Vector3 (0, 0, 0),
-		plane      = new Plane3 (vector, vector),
+		plane      = new Plane3 (Vector3 .Zero, Vector3 .Zero),
 		ClipPlanes = ObjectCache (ClipPlaneContainer);
 
 	function ClipPlaneContainer (clipPlane)
 	{
-		this .plane = new Plane3 (vector, vector);
+		this .plane = new Plane3 (Vector3 .Zero, Vector3 .Zero);
 
 		this .set (clipPlane);
 	}
@@ -87,35 +86,26 @@ function ($,
 	ClipPlaneContainer .prototype =
 	{
 		constructor: ClipPlaneContainer,
-		isClipped: function (point, invModelViewMatrix)
+		isClipped: function (point)
 		{
-			try
-			{
-				var distance = plane .assign (this .plane) .multRight (invModelViewMatrix) .getDistanceToPoint (point);
-
-				return distance < 0;
-			}
-			catch (error)
-			{
-				return false;
-			}
+			return this .plane .getDistanceToPoint (point) < 0;
 		},
 		set: function (clipPlane)
 		{
+			var
+				plane       = this .plane,
+				localPlane = clipPlane .plane;
+	
 			try
 			{
-				var
-					plane  = this .plane,
-					plane_ = clipPlane .plane;
-
-				plane .normal .assign (plane_);
-				plane .distanceFromOrigin = -plane_ .w;
+				plane .normal .assign (localPlane);
+				plane .distanceFromOrigin = -localPlane .w;
 
 				plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
 			}
 			catch (error)
 			{
-				plane .normal .set (0, 1, 0);
+				plane .normal .set (0, 0, 0);
 				plane .distanceFromOrigin = 0;
 			}
 		},

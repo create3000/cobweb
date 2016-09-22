@@ -668,6 +668,10 @@ function ($,
 
 			this .texCoordAnim = Boolean (texCoordKeys .length && this .texCoordRampNode);
 		},
+		intersectsBox: function (box, clipPlanes)
+		{
+			// TODO: implement me.
+		},
 		animate: function ()
 		{
 			var emitterNode = this .emitterNode;

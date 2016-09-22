@@ -95,6 +95,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",   new Fields .SFNode ()),
 		]),
+		modelViewMatrix: new Matrix4 (),
 		invModelViewMatrix: new Matrix4 (),
 		hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 		intersections: intersections,
@@ -122,6 +123,10 @@ function ($,
 				delete this .traverse;
 			else
 				this .traverse = Algorithm .nop;
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			return this .getGeometry () .intersectsBox (box, clipPlanes, modelViewMatrix);
 		},
 		traverse: function (type)
 		{
@@ -158,13 +163,13 @@ function ($,
 
 				var
 					browser            = this .getBrowser (),
-					modelViewMatrix    = browser .getModelViewMatrix () .get (),
+					modelViewMatrix    = this .modelViewMatrix    .assign (browser .getModelViewMatrix () .get ()),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
 				this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
 
-				if (geometry .intersectsLine (this .hitRay, intersections, invModelViewMatrix))
+				if (geometry .intersectsLine (this .hitRay, modelViewMatrix, intersections))
 				{
 					// Finally we have intersections and must now find the closest hit in front of the camera.
 
@@ -198,18 +203,14 @@ function ($,
 				console .log (error);
 			}
 		},
-		display: function (context)
-		{
-			this .getAppearance () .display (context);
-			this .getGeometry ()   .display (context);
-		},
 		depth: function (shaderNode)
 		{
 			this .getGeometry () .depth (shaderNode);
 		},
-		intersectsSphere: function (sphere)
+		display: function (context)
 		{
-			return this .getGeometry () .intersectsSphere (sphere);
+			this .getAppearance () .display (context);
+			this .getGeometry ()   .display (context);
 		},
 	});
 

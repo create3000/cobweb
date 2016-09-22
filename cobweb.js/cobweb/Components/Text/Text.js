@@ -108,6 +108,10 @@ function ($,
 			this .set_fontStyle__ ();
 			this .eventsProcessed ();
 		},
+		getMatrix: function ()
+		{
+			return this .textGeometry .getMatrix ();
+		},
 		getLength: function (index)
 		{
 			if (index < this .length_ .length)
@@ -155,19 +159,15 @@ function ($,
 
 			X3DGeometryNode .prototype .display .call (this, context);
 		},
-		transform: function (object)
-		{
-			// Apply sceen nodes transformation in place here.
-			this .textGeometry .transform (object);
-		},
-		getMatrix: function ()
-		{
-			return this .textGeometry .getMatrix ();
-		},
 		transformLine: function (line)
 		{
 			// Apply sceen nodes transformation in place here.
 			return this .textGeometry .transformLine (line);
+		},
+		transformMatrix: function (matrix)
+		{
+			// Apply sceen nodes transformation in place here.
+			return this .textGeometry .transformMatrix (matrix);
 		},
 	});
 

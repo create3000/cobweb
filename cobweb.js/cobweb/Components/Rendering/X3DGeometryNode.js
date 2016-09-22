@@ -79,7 +79,10 @@ function ($,
 {
 "use strict";
 
-	var modelViewMatrix = new Matrix4 ();
+	var
+		clipPoint       = new Vector3 (0, 0, 0),
+		modelViewMatrix = new Matrix4 (),
+		invMatrix       = new Matrix4 ();
 
 	// Box normals for bbox / line intersection.
 	var boxNormals = [
@@ -390,6 +393,199 @@ function ($,
 			}
 
 			return normals_;
+		},
+		isClipped: function (point, clipPlanes)
+		{
+			return ! clipPlanes .every (function (clipPlane)
+			{
+				return ! clipPlane .isClipped (point);
+			});
+		},
+		transformLine: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
+		},
+		transformMatrix: function (line)
+		{
+			// Apply sceen nodes transformation in place here.
+		},
+		intersectsLine: function (line, modelViewMatrix, intersections)
+		{
+			try
+			{
+				var intersected = false;
+
+				if (this .intersectsBBox (line))
+				{
+					this .transformLine   (line);            // Apply screen transformations from screen nodes.
+					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
+
+					var
+						clipPlanes = this .getCurrentLayer () .getClipPlanes (),
+						texCoords  = this .texCoords [0],
+						normals    = this .normals,
+						vertices   = this .vertices,
+						uvt        = this .uvt,
+						v0         = this .v0,
+						v1         = this .v1,
+						v2         = this .v2;
+
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+					{
+						var i4 = i * 4;
+
+						v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+						v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+						v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+
+						if (line .intersectsTriangle (v0, v1, v2, uvt))
+						{
+							// Get barycentric coordinates.
+
+							var
+								u = uvt .u,
+								v = uvt .v,
+								t = 1 - u - v;
+
+							// Determine vectors for X3DPointingDeviceSensors.
+
+							var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
+							                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
+							                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
+
+							if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (point)), clipPlanes))
+								continue;
+
+							var texCoord = new Vector2 (t * texCoords [i4 + 0] + u * texCoords [i4 + 4] + v * texCoords [i4 + 8],
+							                            t * texCoords [i4 + 1] + u * texCoords [i4 + 5] + v * texCoords [i4 + 9]);
+
+							var i3 = i * 3;
+
+							var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
+							                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
+							                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
+
+							intersections .push ({ texCoord: texCoord, normal: normal, point: this .getMatrix () .multVecMatrix (point) });
+							intersected = true;
+						}
+					}
+				}
+
+				return intersected;
+			}
+			catch (error)
+			{
+				//console .log (error);
+				return false;
+			}
+		},
+		intersectsBBox: function (line)
+		{
+			var
+				planes       = this .planes,
+				min          = this .min,
+				max          = this .max,
+				minX         = min .x,
+				maxX         = max .x,
+				maxZ         = max .x,
+				minY         = min .y,
+				maxY         = max .y,
+				minZ         = min .z,
+				maxZ         = max .z,
+				intersection = this .intersection;
+
+		   // front
+			if (planes [0] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// back
+			if (planes [1] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .y >= minY && intersection .y <= maxY)
+					return true;
+			}
+
+			// top
+			if (planes [2] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// bottom
+			if (planes [3] .intersectsLine (line, intersection))
+			{
+				if (intersection .x >= minX && intersection .x <= maxX &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			// right
+			if (planes [4] .intersectsLine (line, intersection))
+			{
+				if (intersection .y >= minY && intersection .y <= maxY &&
+				    intersection .z >= minZ && intersection .z <= maxZ)
+					return true;
+			}
+
+			return false;
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			try
+			{
+				if (box .intersectsBox (this .bbox))
+				{
+					box .multRight (invMatrix .assign (this .getMatrix ()) .inverse ());
+
+					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
+
+					var
+						vertices = this .vertices,
+						v0       = this .v0,
+						v1       = this .v1,
+						v2       = this .v2;
+		
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+					{
+						var i4 = i * 4;
+		
+						v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
+						v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
+						v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
+		
+						if (box .intersectsTriangle (v0, v1, v2))
+						{
+							if (clipPlanes .length)
+							{
+								if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (v0)), clipPlanes))
+									continue;
+				
+								if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (v1)), clipPlanes))
+									continue;
+				
+								if (this .isClipped (modelViewMatrix .multVecMatrix (clipPoint .assign (v2)), clipPlanes))
+									continue;
+							}
+		
+						   return true;
+						}
+				   }
+				}
+
+			   return false;
+			}
+			catch (error)
+			{
+				console .log (error);
+				return false;
+			}
 		},
 		set_live__: function ()
 		{
@@ -764,168 +960,6 @@ function ($,
 			shaderNode .disableColorAttribute    (gl);
 			shaderNode .disableTexCoordAttribute (gl);
 			shaderNode .disableNormalAttribute   (gl);
-		},
-		intersectsLine: function (line, intersections, invModelViewMatrix)
-		{
-			try
-			{
-				var intersected = false;
-
-				if (this .intersectsBBox (line))
-				{
-				   this .transformLine (line); // Apply screen transformations from screen nodes.
-
-					var
-						texCoords = this .texCoords [0],
-						normals   = this .normals,
-						vertices  = this .vertices,
-						uvt       = this .uvt,
-						v0        = this .v0,
-						v1        = this .v1,
-						v2        = this .v2;
-
-					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-					{
-						var i4 = i * 4;
-
-						v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
-						v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
-						v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
-
-						if (line .intersectsTriangle (v0, v1, v2, uvt))
-						{
-							// Get barycentric coordinates.
-
-							var
-								u = uvt .u,
-								v = uvt .v,
-								t = 1 - u - v;
-
-							// Determine vectors for X3DPointingDeviceSensors.
-
-							var point = new Vector3 (t * vertices [i4 + 0] + u * vertices [i4 + 4] + v * vertices [i4 +  8],
-							                         t * vertices [i4 + 1] + u * vertices [i4 + 5] + v * vertices [i4 +  9],
-							                         t * vertices [i4 + 2] + u * vertices [i4 + 6] + v * vertices [i4 + 10]);
-
-							if (this .isClipped (point, invModelViewMatrix))
-								continue;
-
-							var texCoord = new Vector2 (t * texCoords [i4 + 0] + u * texCoords [i4 + 4] + v * texCoords [i4 + 8],
-							                            t * texCoords [i4 + 1] + u * texCoords [i4 + 5] + v * texCoords [i4 + 9]);
-
-							var i3 = i * 3;
-
-							var normal = new Vector3 (t * normals [i3 + 0] + u * normals [i3 + 3] + v * normals [i3 + 6],
-							                          t * normals [i3 + 1] + u * normals [i3 + 4] + v * normals [i3 + 7],
-							                          t * normals [i3 + 2] + u * normals [i3 + 5] + v * normals [i3 + 8]);
-
-							intersections .push ({ texCoord: texCoord, normal: normal, point: this .getMatrix () .multVecMatrix (point) });
-							intersected = true;
-						}
-					}
-				}
-
-				return intersected;
-			}
-			catch (error)
-			{
-				console .log (error);
-				return false;
-			}
-		},
-		intersectsBBox: function (line)
-		{
-			var
-				planes       = this .planes,
-				min          = this .min,
-				max          = this .max,
-				minX         = min .x,
-				maxX         = max .x,
-				maxZ         = max .x,
-				minY         = min .y,
-				maxY         = max .y,
-				minZ         = min .z,
-				maxZ         = max .z,
-				intersection = this .intersection;
-
-		   // front
-			if (planes [0] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .y >= minY && intersection .y <= maxY)
-					return true;
-			}
-
-			// back
-			if (planes [1] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .y >= minY && intersection .y <= maxY)
-					return true;
-			}
-
-			// top
-			if (planes [2] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .z >= minZ && intersection .z <= maxZ)
-					return true;
-			}
-
-			// bottom
-			if (planes [3] .intersectsLine (line, intersection))
-			{
-				if (intersection .x >= minX && intersection .x <= maxX &&
-				    intersection .z >= minZ && intersection .z <= maxZ)
-					return true;
-			}
-
-			// right
-			if (planes [4] .intersectsLine (line, intersection))
-			{
-				if (intersection .y >= minY && intersection .y <= maxY &&
-				    intersection .z >= minZ && intersection .z <= maxZ)
-					return true;
-			}
-
-			return false;
-		},
-		getMatrix: function ()
-		{
-			return Matrix4 .Identity;
-		},
-		transformLine: function (line)
-		{
-			// Apply sceen nodes transformation in place here.
-		},
-		isClipped: function (point, invModelViewMatrix)
-		{
-			return ! this .getCurrentLayer () .getClipPlanes () .every (function (clipPlane)
-			{
-				return ! clipPlane .isClipped (point, invModelViewMatrix);
-			});
-		},
-		intersectsSphere: function (sphere)
-		{
-			var
-				vertices = this .vertices,
-				v0       = this .v0,
-				v1       = this .v1,
-				v2       = this .v2;
-
-			for (var i = 0, length = this .vertexCount; i < length; i += 3)
-			{
-				var i4 = i * 4;
-
-				v0 .x = vertices [i4 + 0]; v0 .y = vertices [i4 + 1]; v0 .z = vertices [i4 +  2];
-				v1 .x = vertices [i4 + 4]; v1 .y = vertices [i4 + 5]; v1 .z = vertices [i4 +  6];
-				v2 .x = vertices [i4 + 8]; v2 .y = vertices [i4 + 9]; v2 .z = vertices [i4 + 10];
-
-				if (sphere .intersectsTriangle (v0, v1, v2))
-				   return true;
-		   }
-
-		   return false;
 		},
 	});
 

@@ -53,7 +53,7 @@ define ([
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Geometry/Camera",
-	"standard/Math/Geometry/Sphere3",
+	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Vector4",
@@ -66,7 +66,7 @@ function ($,
 	       TraverseType,
           QuickSort,
           Camera,
-          Sphere3,
+          Box3,
           ViewVolume,
           Vector3,
           Vector4,
@@ -88,7 +88,9 @@ function ($,
 		vector                = new Vector3 (0, 0, 0),
 		rotation              = new Rotation4 (0, 0, 1, 0),
 		depthBufferViewport   = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
-		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport);
+		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport),
+		collisionBox          = new Box3 (Vector3 .Zero, Vector3 .Zero),
+		size                  = new Vector3 (0, 0, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -109,7 +111,6 @@ function ($,
 		this .transparencySorter   = new QuickSort (this .transparentShapes, compareDistance);
 		this .collisionShapes      = [ ];
 		this .activeCollisions     = { };
-		this .collisionSphere      = new Sphere3 (0, Vector3 .Zero);
 		this .depthShapes          = [ ];
 		this .invModelViewMatrix   = new Matrix4 ();
 		this .speed                = 0;
@@ -452,9 +453,11 @@ function ($,
 		{
 			// Collision nodes are handled here.
 
-			var activeCollisions = { }; // current active Collision nodes
+			var
+				activeCollisions = { }, // current active Collision nodes
+				collisionRadius2 = 2.2 * this .getNavigationInfo () .getCollisionRadius (); // Make the radius a little bit larger.
 
-			this .collisionSphere .radius = this .getNavigationInfo () .getCollisionRadius () * 1.2; // Make the radius a little bit larger.
+			size .set (collisionRadius2, collisionRadius2, collisionRadius2);
 
 			for (var i = 0; i < this .numCollisionShapes; ++ i)
 			{
@@ -466,11 +469,11 @@ function ($,
 
 					if (collisions .length)
 					{
-					   this .invModelViewMatrix .assign (context .modelViewMatrix) .multRight (this .getViewpoint () .getInverseCameraSpaceMatrix ()) .inverse ();
+					   collisionBox .set (size, Vector3 .Zero);
+						collisionBox .multRight (this .getViewpoint () .getCameraSpaceMatrix ());
+						collisionBox .multRight (this .invModelViewMatrix .assign (context .modelViewMatrix) .inverse ());
 
-					   this .collisionSphere .center .set (this .invModelViewMatrix [12], this .invModelViewMatrix [13], this .invModelViewMatrix [14]);
-
-						if (context .shapeNode .intersectsSphere (this .collisionSphere))
+						if (context .shapeNode .intersectsBox (collisionBox, context .clipPlanes, this .invModelViewMatrix .assign (context .modelViewMatrix)))
 						{
 						   for (var c = 0; c < collisions .length; ++ c)
 								activeCollisions [collisions [c] .getId ()] = collisions [c];
@@ -478,7 +481,9 @@ function ($,
 					}
 				}
 				catch (error)
-				{ }
+				{
+					console .log (error);
+				}
 			}
 
 			// Set isActive to FALSE for affected nodes.

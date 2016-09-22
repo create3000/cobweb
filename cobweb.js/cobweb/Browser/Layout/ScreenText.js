@@ -482,13 +482,13 @@ function ($,
 		},
 		transformLine: function (line)
 		{
-		   try
-		   {
-				// Apply sceen nodes transformation in place here.
-				return line .multLineMatrix (Matrix4 .inverse (this .matrix));
-			}
-			catch (error)
-			{ }
+			// Apply sceen nodes transformation in place here.
+			return line .multLineMatrix (Matrix4 .inverse (this .matrix));
+		},
+		transformMatrix: function (matrix)
+		{
+			// Apply sceen nodes transformation in place here.
+			return matrix .multLeft (this .matrix);
 		},
 	});
 

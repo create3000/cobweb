@@ -89,6 +89,10 @@ function ($,
 	PolygonText .prototype = $.extend (Object .create (X3DTextGeometry .prototype),
 	{
 		constructor: PolygonText,
+		getMatrix: function ()
+		{
+			return Matrix4 .Identity;
+		},
 		build: function ()
 		{
 			var
@@ -615,22 +619,13 @@ function ($,
 			}
 		},
 		traverse: function (type)
-		{
-		},
+		{ },
 		display: function (context)
-		{
-		},
-		transform: function ()
-		{
-		},
-		getMatrix: function ()
-		{
-			return Matrix4 .Identity;
-		},
+		{ },
 		transformLine: function (line)
-		{
-			// Apply sceen nodes transformation in place here.
-		},
+		{ },
+		transformMatrix: function (matrix)
+		{ },
 	});
 
 	return PolygonText;

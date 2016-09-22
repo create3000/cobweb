@@ -48,11 +48,15 @@
 
 
 define ([
+	"standard/Math/Geometry/Triangle3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Algorithms/SAT",
 ],
-function (Matrix4, Vector3, SAT)
+function (Triangle3,
+          Matrix4,
+          Vector3,
+          SAT)
 {
 "use strict";
 
@@ -129,6 +133,15 @@ function (Matrix4, Vector3, SAT)
 		new Vector3 (0, 0, 0),
 	];
 
+	var triangle = [ ];
+
+	var triangleNormal = [ new Vector3 (0, 0, 0) ];
+
+	var triangleEdges = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0)
+	];
 
 	function Box3 (size, center)
 	{
@@ -439,6 +452,54 @@ function (Matrix4, Vector3, SAT)
 		
 			// Both boxes intersect.
 		
+			return true;
+		},
+		intersectsTriangle: function (a, b, c)
+		{
+			// Test special cases.
+
+			if (this .isEmpty ())
+				return false;
+
+			// Get points.
+
+			this  .getPoints (points1);
+
+			triangle [0] = a;
+			triangle [1] = b;
+			triangle [2] = c;
+
+			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
+
+			if (SAT .isSeparated (this .getPlanes (planes), points1, triangle))
+				return false;
+
+			// Test the normal of the triangle.
+
+			Triangle3 .normal (a, b, c, triangleNormal [0]);
+
+			if (SAT .isSeparated (triangleNormal, points1, triangle))
+				return false;
+
+			// Test the nine other planes spanned by the edges of each parallelepiped.
+
+			this  .getAxes (axes1);
+
+			triangleEdges [0] .assign (a) .subtract (b);
+			triangleEdges [1] .assign (b) .subtract (c);
+			triangleEdges [2] .assign (c) .subtract (a);
+
+			for (var i1 = 0; i1 < 3; ++ i1)
+			{
+				for (var i2 = 0; i2 < 3; ++ i2)
+					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (triangleEdges [i2]);
+			}
+
+			if (SAT .isSeparated (axes9, points1, points2))
+				return false;
+
+			// Box and triangle intersect.
+
 			return true;
 		},
 		toString: function ()

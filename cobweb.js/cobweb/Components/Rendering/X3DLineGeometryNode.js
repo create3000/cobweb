@@ -76,6 +76,14 @@ function ($,
 		{
 			this .shaderNode = value;
 		},
+		intersectsLine: function (line, modelViewMatrix, intersections)
+		{
+			return false;
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			return false;
+		},
 		depth: function (shaderNode)
 		{ },
 		display: function (context)
