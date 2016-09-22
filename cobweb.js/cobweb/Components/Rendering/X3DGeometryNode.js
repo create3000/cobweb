@@ -396,9 +396,9 @@ function ($,
 		},
 		isClipped: function (point, clipPlanes)
 		{
-			return ! clipPlanes .every (function (clipPlane)
+			return clipPlanes .some (function (clipPlane)
 			{
-				return ! clipPlane .isClipped (point);
+				return clipPlane .isClipped (point);
 			});
 		},
 		transformLine: function (line)
