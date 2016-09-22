@@ -90,7 +90,7 @@ function ($,
 		depthBufferViewport   = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
 		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport),
 		collisionBox          = new Box3 (Vector3 .Zero, Vector3 .Zero),
-		size                  = new Vector3 (0, 0, 0);
+		collisionSize         = new Vector3 (0, 0, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -457,7 +457,7 @@ function ($,
 				activeCollisions = { }, // current active Collision nodes
 				collisionRadius2 = 2.2 * this .getNavigationInfo () .getCollisionRadius (); // Make the radius a little bit larger.
 
-			size .set (collisionRadius2, collisionRadius2, collisionRadius2);
+			collisionSize .set (collisionRadius2, collisionRadius2, collisionRadius2);
 
 			for (var i = 0; i < this .numCollisionShapes; ++ i)
 			{
@@ -469,11 +469,11 @@ function ($,
 
 					if (collisions .length)
 					{
-					   collisionBox .set (size, Vector3 .Zero);
+					   collisionBox .set (collisionSize, Vector3 .Zero);
 						collisionBox .multRight (this .getViewpoint () .getCameraSpaceMatrix ());
 						collisionBox .multRight (this .invModelViewMatrix .assign (context .modelViewMatrix) .inverse ());
 
-						if (context .shapeNode .intersectsBox (collisionBox, context .clipPlanes, this .invModelViewMatrix .assign (context .modelViewMatrix)))
+						if (context .shapeNode .intersectsBox (collisionBox, context .clipPlanes, modelViewMatrix .assign (context .modelViewMatrix)))
 						{
 						   for (var c = 0; c < collisions .length; ++ c)
 								activeCollisions [collisions [c] .getId ()] = collisions [c];

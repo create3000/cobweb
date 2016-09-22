@@ -208,8 +208,11 @@ function (Triangle3,
 		},
 		set: function (size, center)
 		{
+			if (points1 .box === this) points1 .box = null;
+			if (axes1   .box === this) axes1   .box = null;
+
 			var m = this .matrix;
-		
+
 			switch (arguments .length)
 			{
 				case 0:
@@ -250,6 +253,9 @@ function (Triangle3,
 		},
 		setExtents: function (min, max)
 		{
+			if (points1 .box === this) points1 .box = null;
+			if (axes1   .box === this) axes1   .box = null;
+
 			var
 				m  = this .matrix,
 				sx = (max .x - min .x) / 2,
@@ -463,7 +469,11 @@ function (Triangle3,
 
 			// Get points.
 
-			this  .getPoints (points1);
+			if (points1 .box !== this)
+			{
+				points1 .box = this;
+				this .getPoints (points1);
+			}
 
 			triangle [0] = a;
 			triangle [1] = b;
@@ -483,7 +493,11 @@ function (Triangle3,
 
 			// Test the nine other planes spanned by the edges of each parallelepiped.
 
-			this  .getAxes (axes1);
+			if (axes1 .box !== this)
+			{
+				axes1 .box = this;
+				this  .getAxes (axes1);
+			}
 
 			triangleEdges [0] .assign (a) .subtract (b);
 			triangleEdges [1] .assign (b) .subtract (c);
