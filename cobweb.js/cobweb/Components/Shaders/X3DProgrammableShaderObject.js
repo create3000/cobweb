@@ -99,7 +99,7 @@ function ($,
 		constructor: X3DProgrammableShaderObject,
 		normalMatrixArray: new Float32Array (9),
 		maxClipPlanes: MAX_CLIP_PLANES,
-		noClipPlane: new Float32Array (4),
+		noneClipPlane: new Float32Array ([ 88, 51, 68, 0 ]),
 		fogNode: null,
 		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
@@ -849,10 +849,10 @@ function ($,
 					clipPlanes [i] .setShaderUniforms (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noneClipPlane);
 			}
 			else
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noneClipPlane);
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
@@ -889,11 +889,11 @@ function ($,
 					clipPlaneNodes [i] .setShaderUniforms (gl, this, i);
 	
 				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noClipPlane);
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .noneClipPlane);
 			}
 			else
 			{
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .noneClipPlane);
 			}
 
 			// Fog, there is always one

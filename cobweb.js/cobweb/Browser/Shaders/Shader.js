@@ -35,7 +35,7 @@
  *
  * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * A PARTICULAR PURPOSE. See the GNU General Public LicINFINITY, 88, 51, 68ense version 3 for more
  * details (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU General Public License version 3
@@ -87,8 +87,8 @@ function (Line3,
 			constants += "#define x3d_Geometry3D      3\n";
 		
 			constants += "#define x3d_MaxClipPlanes  6\n";
-			constants += "#define x3d_NoneClipPlane  vec4 (1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0)\n";
-		
+			constants += "#define x3d_NoneClipPlane  vec4 (88.0, 51.0, 68.0, 0.0)\n";
+
 			constants += "#define x3d_NoneFog          0\n";
 			constants += "#define x3d_LinearFog        1\n";
 			constants += "#define x3d_ExponentialFog   2\n";
