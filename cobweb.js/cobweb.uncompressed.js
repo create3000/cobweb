@@ -22221,7 +22221,7 @@ function ($,
                                 break;
 
                             case 'text':
-                                $input = $('<input type="text" value="1" name="" value="">')
+                                $input = $('<input type="text" value="1" name="" />')
                                     .attr('name', 'context-menu-input-' + key)
                                     .val(item.value || '')
                                     .appendTo($label);
@@ -22239,7 +22239,7 @@ function ($,
                                 break;
 
                             case 'checkbox':
-                                $input = $('<input type="checkbox" value="1" name="" value="">')
+                                $input = $('<input type="checkbox" value="1" name="" />')
                                     .attr('name', 'context-menu-input-' + key)
                                     .val(item.value || '')
                                     .prop('checked', !!item.selected)
@@ -22247,7 +22247,7 @@ function ($,
                                 break;
 
                             case 'radio':
-                                $input = $('<input type="radio" value="1" name="" value="">')
+                                $input = $('<input type="radio" value="1" name="" />')
                                     .attr('name', 'context-menu-input-' + item.radio)
                                     .val(item.value || '')
                                     .prop('checked', !!item.selected)
@@ -22255,7 +22255,7 @@ function ($,
                                 break;
 
                             case 'select':
-                                $input = $('<select name="">')
+                                $input = $('<select name=""></select>')
                                     .attr('name', 'context-menu-input-' + key)
                                     .appendTo($label);
                                 if (item.options) {
