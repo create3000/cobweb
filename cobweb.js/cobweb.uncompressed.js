@@ -19147,7 +19147,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "1.29a";
+	return "2.0a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -26525,11 +26525,6 @@ function ($,
 {
 
 
-	var
-		MAX_CLIP_PLANES = 6,
-		MAX_LIGHTS      = 8,
-		MAX_TEXTURES    = 1;
-
 	var NULL = Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
@@ -26558,15 +26553,20 @@ function ($,
 	X3DProgrammableShaderObject .prototype =
 	{
 		constructor: X3DProgrammableShaderObject,
-		normalMatrixArray: new Float32Array (9),
-		maxClipPlanes: MAX_CLIP_PLANES,
-		noneClipPlane: new Float32Array ([ 88, 51, 68, 0 ]),
+		x3d_NoneClipPlane: new Float32Array ([ 88, 51, 68, 33 ]), // X3D!
 		fogNode: null,
-		maxLights: MAX_LIGHTS,
 		numGlobalLights: 0,
-		textureTypeArray: new Int32Array (MAX_TEXTURES),
+		normalMatrixArray: new Float32Array (9),
 		initialize: function ()
-		{ },
+		{
+			var browser = this .getBrowser ();
+
+			this .x3d_MaxClipPlanes = browser .getMaxClipPlanes ();
+			this .x3d_MaxLights     = browser .getMaxLights ();
+			this .x3d_MaxTextures   = browser .getMaxTextures ();
+
+			this .textureTypeArray = new Int32Array (this .x3d_MaxTextures);
+		},
 		hasUserDefinedFields: function ()
 		{
 			return true;
@@ -26588,7 +26588,7 @@ function ($,
 
 			this .x3d_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
 
-			for (var i = 0; i < this .maxClipPlanes; ++ i)
+			for (var i = 0; i < this .x3d_MaxClipPlanes; ++ i)
 				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
 
 			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
@@ -26600,7 +26600,7 @@ function ($,
 			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
 			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
 
-			for (var i = 0; i < this .maxLights; ++ i)
+			for (var i = 0; i < this .x3d_MaxLights; ++ i)
 			{
 				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
 				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
@@ -27306,14 +27306,14 @@ function ($,
 		{
 			if (clipPlanes .length)
 			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
 					clipPlanes [i] .setShaderUniforms (gl, this, i);
 	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noneClipPlane);
+				if (i < this .x3d_MaxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
 			}
 			else
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noneClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 		},
 		setGlobalUniforms: function (gl, projectionMatrixArray)
 		{
@@ -27323,7 +27323,7 @@ function ($,
 
 			// Set global lights
 
-			this .numGlobalLights = Math .min (this .maxLights, globalLights .length);
+			this .numGlobalLights = Math .min (this .x3d_MaxLights, globalLights .length);
 
 			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
 				globalLights [i] .setShaderUniforms (gl, this, i);
@@ -27346,15 +27346,15 @@ function ($,
 
 			if (clipPlaneNodes .length)
 			{
-				for (var i = 0, numClipPlanes = Math .min (this .maxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
+				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
 					clipPlaneNodes [i] .setShaderUniforms (gl, this, i);
 	
-				if (i < this .maxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .noneClipPlane);
+				if (i < this .x3d_MaxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
 			}
 			else
 			{
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .noneClipPlane);
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 			}
 
 			// Fog, there is always one
@@ -27392,12 +27392,12 @@ function ($,
 
 				var
 					localLights = context .localLights,
-					numLights   = Math .min (this .maxLights, this .numGlobalLights + localLights .length);
+					numLights   = Math .min (this .x3d_MaxLights, this .numGlobalLights + localLights .length);
 
 				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
 					localLights [l] .setShaderUniforms (gl, this, i);
 
-				if (numLights < this .maxLights)
+				if (numLights < this .x3d_MaxLights)
 					gl .uniform1i (this .x3d_LightType [numLights], 0);
 
 				// Material
@@ -27921,7 +27921,7 @@ function (Line3,
 
 	var Shader =
 	{
-		getShaderSource: function (source)
+		getShaderSource: function (browser, source)
 		{
 			var includeMatch = null;
 
@@ -27936,29 +27936,29 @@ function (Line3,
 			constants += "#define x3d_GeometryLines   1\n";
 			constants += "#define x3d_Geometry2D      2\n";
 			constants += "#define x3d_Geometry3D      3\n";
-		
-			constants += "#define x3d_MaxClipPlanes  6\n";
-			constants += "#define x3d_NoneClipPlane  vec4 (88.0, 51.0, 68.0, 0.0)\n";
+
+			constants += "#define x3d_MaxClipPlanes  " + browser .getMaxClipPlanes () + "\n";
+			constants += "#define x3d_NoneClipPlane  vec4 (88.0, 51.0, 68.0, 33.0)\n"; // X3D!
 
 			constants += "#define x3d_NoneFog          0\n";
 			constants += "#define x3d_LinearFog        1\n";
 			constants += "#define x3d_ExponentialFog   2\n";
 			constants += "#define x3d_Exponential2Fog  3\n";
-	
-			constants += "#define x3d_MaxLights         8\n";
+
+			constants += "#define x3d_MaxLights         " + browser .getMaxLights () + "\n";
 			constants += "#define x3d_NoneLight         0\n";
 			constants += "#define x3d_DirectionalLight  1\n";
 			constants += "#define x3d_PointLight        2\n";
 			constants += "#define x3d_SpotLight         3\n";
-		
-			constants += "#define x3d_MaxTextures                1\n";
+
+			constants += "#define x3d_MaxTextures                " + browser .getMaxTextures () + "\n";
 			constants += "#define x3d_NoneTexture                0\n";
 			constants += "#define x3d_TextureType2D              2\n";
 			constants += "#define x3d_TextureType3D              3\n";
 			constants += "#define x3d_TextureTypeCubeMapTexture  4\n";
 		
 			constants += "#define X3D_SHADOW\n";
-			constants += "#define x3d_ShadowSamples  8\n"; // Range (0, 256)
+			constants += "#define x3d_ShadowSamples  8\n"; // Range (0, 255)
 
 			constants += "#line 1\n";
 
@@ -37852,7 +37852,7 @@ function ($,
 				{
 					var gl = this .getBrowser () .getContext ();
 
-					gl .shaderSource (this .shader, Shader .getShaderSource (data));
+					gl .shaderSource (this .shader, Shader .getShaderSource (this .getBrowser (), data));
 					gl .compileShader (this .shader);
 	
 					this .valid = gl .getShaderParameter (this .shader, gl .COMPILE_STATUS);
@@ -38139,6 +38139,10 @@ function (Fields,
 		getAntialiased: function ()
 		{
 			return this .getContext () .getParameter (this .getContext () .SAMPLES) > 0;
+		},
+		getMaxClipPlanes: function ()
+		{
+			return 6;
 		},
 		getDepthSize: function ()
 		{
@@ -50502,7 +50506,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			shaderNode .useProgram ();
 			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
 
-			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .noneClipPlane);
+			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .x3d_NoneClipPlane);
 
 			gl .uniform1i (shaderNode .x3d_FogType,       0);
 			gl .uniform1i (shaderNode .x3d_ColorMaterial, false);
@@ -55701,6 +55705,10 @@ function (DepthBuffer)
 	X3DLightingContext .prototype =
 	{
 		initialize: function () { },
+		getMaxLights: function ()
+		{
+			return 8;
+		},
 		getLocalLights: function ()
 		{
 			return this .localLights;
@@ -65223,6 +65231,10 @@ function (TextureProperties,
 			gl .texImage2D  (gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 
 			gl .activeTexture (gl .TEXTURE0);
+		},
+		getMaxTextures: function ()
+		{
+			return 1;
 		},
 		getMinTextureSize: function ()
 		{
@@ -89065,7 +89077,8 @@ function ($,
 				default:
 				{
 					this .setTransparent ((this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
-					                      (this .colorRampNode && this .colorRampNode .isTransparent ()));
+					                      (this .colorRampNode && this .colorRampNode .isTransparent ()) ||
+					                      (this .geometryType === GEOMETRY && this .geometryNode && this .geometryNode .transparent_ .getValue ()));
 					break;
 				}
 			}
@@ -89261,6 +89274,7 @@ function ($,
 			}
 
 			this .set_shader__ ();
+			this .set_transparent__ ();
 		},
 		set_shader__: function ()
 		{
@@ -89949,6 +89963,11 @@ function ($,
 			if (! this .isActive_ .getValue ())
 				return;
 
+			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
+
+			if (this .getGeometry ())
+				this .getGeometry () .traverse (type); // Currently used for ScreenText.
+
 			switch (type)
 			{
 				case TraverseType .POINTER:
@@ -89978,7 +89997,7 @@ function ($,
 		{
 			// Traverse appearance before everything.
 
-			this .getAppearance () .traverse (context);
+			this .getAppearance () .display (context);
 
 			// Display geometry.
 
@@ -89995,7 +90014,7 @@ function ($,
 					browser    = this .getBrowser (),
 					gl         = browser .getContext (),
 					shaderNode = context .shaderNode;
-	
+
 				if (shaderNode === browser .getDefaultShader ())
 					shaderNode = this .shaderNode;
 	
@@ -94838,6 +94857,8 @@ function ($,
 		},
 		traverse: function (type)
 		{
+			// Always look at ParticleSystem if you do modify something here and there.
+
 			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
 			this .getGeometry   () .traverse (type); // Currently used for ScreenText.
 
