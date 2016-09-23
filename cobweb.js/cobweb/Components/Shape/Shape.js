@@ -130,6 +130,8 @@ function ($,
 		},
 		traverse: function (type)
 		{
+			// Always look at ParticleSystem if you do modify something here and there.
+
 			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
 			this .getGeometry   () .traverse (type); // Currently used for ScreenText.
 

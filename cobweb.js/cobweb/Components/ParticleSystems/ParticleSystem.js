@@ -259,7 +259,8 @@ function ($,
 				default:
 				{
 					this .setTransparent ((this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
-					                      (this .colorRampNode && this .colorRampNode .isTransparent ()));
+					                      (this .colorRampNode && this .colorRampNode .isTransparent ()) ||
+					                      (this .geometryType === GEOMETRY && this .geometryNode && this .geometryNode .transparent_ .getValue ()));
 					break;
 				}
 			}
@@ -455,6 +456,7 @@ function ($,
 			}
 
 			this .set_shader__ ();
+			this .set_transparent__ ();
 		},
 		set_shader__: function ()
 		{
@@ -1143,6 +1145,11 @@ function ($,
 			if (! this .isActive_ .getValue ())
 				return;
 
+			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
+
+			if (this .getGeometry ())
+				this .getGeometry () .traverse (type); // Currently used for ScreenText.
+
 			switch (type)
 			{
 				case TraverseType .POINTER:
@@ -1172,7 +1179,7 @@ function ($,
 		{
 			// Traverse appearance before everything.
 
-			this .getAppearance () .traverse (context);
+			this .getAppearance () .display (context);
 
 			// Display geometry.
 
@@ -1189,7 +1196,7 @@ function ($,
 					browser    = this .getBrowser (),
 					gl         = browser .getContext (),
 					shaderNode = context .shaderNode;
-	
+
 				if (shaderNode === browser .getDefaultShader ())
 					shaderNode = this .shaderNode;
 	
