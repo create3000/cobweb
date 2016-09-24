@@ -94,7 +94,7 @@ function ($,
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
-	function X3DRenderer (executionContext)
+	function X3DRenderObject (executionContext)
 	{
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
@@ -127,9 +127,9 @@ function ($,
 		}
 	}
 
-	X3DRenderer .prototype =
+	X3DRenderObject .prototype =
 	{
-		constructor: X3DRenderer,
+		constructor: X3DRenderObject,
 		bboxSize: new Vector3 (0, 0, 0),
 		bboxCenter: new Vector3 (0, 0, 0),
 		translation: new Vector3 (0, 0, 0),
@@ -799,5 +799,5 @@ function ($,
 		},
 	};
 
-	return X3DRenderer;
+	return X3DRenderObject;
 });

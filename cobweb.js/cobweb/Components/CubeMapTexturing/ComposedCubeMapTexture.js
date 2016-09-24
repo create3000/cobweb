@@ -175,11 +175,11 @@ function ($,
 			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
 
 			if (texture)
-				texture .loadState_ .addInterest (this, "set_loadState__", index, texture);
+				texture .loadState_ .addInterest (this, "set_loadState__", texture, index);
 
 			this .set_loadState__ (null, index, texture);
 		},
-		set_loadState__: function (output, index, texture)
+		set_loadState__: function (output, texture, index)
 		{
 			if (texture)
 				this .setLoadStateBit (texture .checkLoadState (), index);
@@ -263,9 +263,7 @@ function ($,
 			{
 				for (var i = 0; i < 6; ++ i)
 				{
-					var texture = textures [i];
-	
-					if (texture && texture .transparent_ .getValue ())
+					if (textures [i] .transparent_ .getValue ())
 					{
 						transparent = true;
 						break;

@@ -57,6 +57,7 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -65,7 +66,8 @@ function ($,
           X3DEnvironmentalSensorNode,
           TraverseType,
           X3DConstants,
-          Vector3)
+          Vector3,
+          Algorithm)
 {
 "use strict";
 
@@ -117,9 +119,9 @@ function ($,
 		set_enabled__: function ()
 		{
 			if (this .enabled_ .getValue ())
-				this .traverse = traverse;
-			else
 				delete this .traverse;
+			else
+				this .traverse = Algorithm .nop;
 		},
 		update: function ()
 		{
@@ -144,34 +146,32 @@ function ($,
 				
 			this .setTraversed (false);
 		},
-		traverse: function () { },
+		traverse: function (type)
+		{
+			if (type !== TraverseType .DISPLAY)
+				return;
+
+			this .setTraversed (true);
+
+			if (this .visible)
+				return;
+
+			if (this .size_ .getValue () .equals (infinity))
+				this .visible = true;
+
+			else
+			{
+				var
+					viewVolume      = this .getCurrentLayer () .getViewVolume (),
+					modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+					size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
+					center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
+
+				this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
+			}
+		},
 	});
 		
-	function traverse (type)
-	{
-	   if (type !== TraverseType .DISPLAY)
-			return;
-
-		this .setTraversed (true);
-
-		if (this .visible)
-			return;
-
-		if (this .size_ .getValue () .equals (infinity))
-			this .visible = true;
-
-		else
-		{
-			var
-				viewVolume      = this .getCurrentLayer () .getViewVolume (),
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
-				center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
-
-			this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
-		}
-	}
-
 	return VisibilitySensor;
 });
 

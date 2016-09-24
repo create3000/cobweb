@@ -87,9 +87,8 @@ function ($,
 
 		this .addType (X3DConstants .ScreenGroup);
 
-		this .screenMatrix       = new Matrix4 ();
-		this .modelViewMatrix    = new Matrix4 ();
-		this .invModelViewMatrix = new Matrix4 ();
+		this .screenMatrix    = new Matrix4 ();
+		this .modelViewMatrix = new Matrix4 ();
 	}
 
 	ScreenGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
@@ -123,8 +122,7 @@ function ($,
 		{
 			try
 			{
-				this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
-				this .matrix .assign (this .screenMatrix) .multRight (this .invModelViewMatrix);
+				this .matrix .assign (this .modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
 			}
 			catch (error)
 			{ }
@@ -134,8 +132,9 @@ function ($,
 		scale: function ()
 		{
 			// throws domain error
-
-			this .getBrowser () .getModelViewMatrix () .get () .get (translation, rotation, scale);
+			
+			this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			this .modelViewMatrix .get (translation, rotation, scale);
 
 			var
 				projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),

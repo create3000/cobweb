@@ -50,7 +50,7 @@
 define ([
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
-	"cobweb/Rendering/X3DRenderer",
+	"cobweb/Rendering/X3DRenderObject",
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Execution/BindableStack",
 	"cobweb/Execution/BindableList",
@@ -65,7 +65,7 @@ define ([
 ],
 function ($,
           X3DNode,
-          X3DRenderer,
+          X3DRenderObject,
           X3DViewportNode,
           BindableStack,
           BindableList,
@@ -82,8 +82,8 @@ function ($,
 
 	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
-		X3DNode     .call (this, executionContext);
-		X3DRenderer .call (this, executionContext);
+		X3DNode         .call (this, executionContext);
+		X3DRenderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
@@ -112,14 +112,14 @@ function ($,
 	}
 
 	X3DLayerNode .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DRenderer .prototype,
+		X3DRenderObject .prototype,
 	{
 		constructor: X3DLayerNode,
 		layer0: false,
 		initialize: function ()
 		{
-			X3DNode     .prototype .initialize .call (this);
-			X3DRenderer .prototype .initialize .call (this);
+			X3DNode         .prototype .initialize .call (this);
+			X3DRenderObject .prototype .initialize .call (this);
 
 			this .groupNode .children_ = this .children_;
 			this .groupNode .setup ();
