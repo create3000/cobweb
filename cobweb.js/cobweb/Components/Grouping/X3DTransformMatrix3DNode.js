@@ -64,18 +64,6 @@ function ($,
 {
 "use strict";
 
-	function traverse (type, renderObject)
-	{
-		var modelViewMatrix = renderObject .getModelViewMatrix ();
-
-		modelViewMatrix .push ();
-		modelViewMatrix .multLeft (this .matrix);
-		
-		X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
-
-		modelViewMatrix .pop ();
-	}
-
 	function X3DTransformMatrix3DNode (executionContext)
 	{
 		X3DGroupingNode .call (this, executionContext);
@@ -92,7 +80,7 @@ function ($,
 		{
 			var bbox = X3DGroupingNode .prototype .getBBox .call (this, bbox);
 
-			if (this .traverse === traverse)
+			if (this .traverse === X3DTransformMatrix3DNode .prototype .traverse)
 				return bbox .multRight (this .matrix);
 
 			return bbox;
@@ -107,7 +95,7 @@ function ($,
 			else
 			{
 			   this .matrix .assign (matrix);
-				this .traverse = traverse;
+				delete this .traverse;
 			}
 		},
 		getMatrix: function ()
@@ -116,6 +104,7 @@ function ($,
 		},
 		setTransform: function (t, r, s, so, c)
 		{
+
 			if (t .equals (Vector3 .Zero) && r .equals (Rotation4 .Identity) && s .equals (Vector3 .One))
 			{
 				this .matrix .identity ();
@@ -124,8 +113,19 @@ function ($,
 			else
 			{
 			   this .matrix .set (t, r, s, so, c);
-				this .traverse = traverse;
+				delete this .traverse ;
 			}
+		},
+		traverse: function (type, renderObject)
+		{
+			var modelViewMatrix = renderObject .getModelViewMatrix ();
+
+			modelViewMatrix .push ();
+			modelViewMatrix .multLeft (this .matrix);
+			
+			X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
+
+			modelViewMatrix .pop ();
 		},
 	});
 
