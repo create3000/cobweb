@@ -1232,6 +1232,7 @@
     <None Include="cobweb\Rendering\X3DRenderObject.js" />
     <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapMovieTexture.wrl" />
     <None Include="tests\Components\images\campfire.512.mp4" />
+    <None Include="tests\Components\Lighting\MadFlat2.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -755,11 +755,9 @@ function ($,
 	  	},
 		traverse: function (type)
 		{ },
-		depth: function (shaderNode)
+		depth: function (context, shaderNode)
 		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext ();
+			var gl = this .getBrowser () .getContext ();
 
 			// Setup vertex attributes.
 
@@ -827,6 +825,33 @@ function ($,
 			shaderNode .disableColorAttribute    (gl);
 			shaderNode .disableTexCoordAttribute (gl);
 			shaderNode .disableNormalAttribute   (gl);
+		},
+		displayParticlesDepth: function (context, shaderNode, particles, numParticles)
+		{
+			var gl = this .getBrowser () .getContext ();
+
+			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
+
+			// Draw depending on wireframe, solid and transparent.
+
+			var
+				modelViewMatrix = context .modelViewMatrix,
+				x               = modelViewMatrix [12],
+				y               = modelViewMatrix [13],
+				z               = modelViewMatrix [14];
+
+			for (var p = 0; p < numParticles; ++ p)
+			{
+				modelViewMatrix [12] = x;
+				modelViewMatrix [13] = y;
+				modelViewMatrix [14] = z;
+
+				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+				gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+
+				gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
+			}
 		},
 		displayParticles: function (context, particles, numParticles)
 		{

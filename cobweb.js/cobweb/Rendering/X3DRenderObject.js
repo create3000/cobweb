@@ -671,7 +671,7 @@ function ($,
 
 				// Draw
 	
-				context .shapeNode .depth (shaderNode);
+				context .shapeNode .depth (context, shaderNode);
 			}
 		},
 		draw: function ()

@@ -205,9 +205,9 @@ function ($,
 				console .log (error);
 			}
 		},
-		depth: function (shaderNode)
+		depth: function (context, shaderNode)
 		{
-			this .getGeometry () .depth (shaderNode);
+			this .getGeometry () .depth (context, shaderNode);
 		},
 		display: function (context)
 		{

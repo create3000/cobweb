@@ -84,8 +84,6 @@ function ($,
 		{
 			return false;
 		},
-		depth: function (shaderNode)
-		{ },
 		display: function (context)
 		{
 			var
