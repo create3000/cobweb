@@ -1,15 +1,16 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Rendering/X3DRenderObject.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="64" Column="14" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="658" Column="30" />
-      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="682" Column="23" />
-      <File FileName="cobweb.js/cobweb/Components/Layering/Viewport.js" Line="167" Column="66" />
-      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="237" Column="26" />
-      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DGroupingNode.js" Line="408" Column="34" />
-      <File FileName="cobweb.js/cobweb/Components/Networking/Anchor.js" Line="185" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Lighting/SpotLight.js" Line="165" Column="49" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="218" Column="17" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/Viewport.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DTransformMatrix3DNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Rendering/DepthBuffer.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DFlyViewer.js" Line="373" Column="1" />
+      <File FileName="../Titania/libtitania-x3d/Titania/X3D/Rendering/FrameBuffer.cpp" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

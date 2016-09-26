@@ -201,8 +201,10 @@ function ($,
 		{
 			return this .collisions;
 		},
-		constrainTranslation: function (translation)
+		constrainTranslation: function (translation, stepBack, moveFree)
 		{
+			/// Contrains translation to a possible value the avatar should go. Modifies translation in place.
+
 		   var t0 = performance .now ();
 
 			var
@@ -212,9 +214,15 @@ function ($,
 
 			if (farValue - distance > 0) // Are there polygons before the viewer
 			{
-				var collisionRadius = navigationInfo .getCollisionRadius ();
+				var
+					cosTetha        = vector .assign (translation) .normalize () .dot (Vector3 .yAxis),
+					avatarHeight    = navigationInfo .getAvatarHeight (),
+					collisionRadius = navigationInfo .getCollisionRadius ();
 
-				distance -= collisionRadius;
+				if (moveFree === true)
+					distance -= cosTetha > 0 ? collisionRadius : Algorithm .lerp (cosTetha, avatarHeight, Math .pow (-cosTetha, 1/5));
+				else
+					distance -= collisionRadius;
 
 				if (distance > 0)
 				{
@@ -232,7 +240,10 @@ function ($,
 				}
 
 				// Collision
-				return translation .normalize () .multiply (distance);
+				if (stepBack)
+					return this .constrainTranslation (translation .normalize () .multiply (distance), false);
+
+				return translation .assign (Vector3 .Zero);
 			}
 
 			this .collisionTime += performance .now () - t0;
@@ -633,7 +644,7 @@ function ($,
 						if (distance > 0.01 && distance < stepHeight)
 						{
 							// Step up
-							var translation = this .constrainTranslation (up .multVecRot (this .translation .set (0, distance, 0)));
+							var translation = this .constrainTranslation (up .multVecRot (this .translation .set (0, distance, 0)), false);
 
 							//if (getBrowser () -> getBrowserOptions () -> animateStairWalks ())
 							//{

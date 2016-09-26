@@ -328,7 +328,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var translation = this .getTranslationOffset (Vector3 .multiply (this .direction, speedFactor));
 
-			viewpoint .positionOffset_ = this .getActiveLayer () .constrainTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
+			this .getActiveLayer () .constrainTranslation (translation, true);
+
+			viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
 
 			// Rotation
 
@@ -367,7 +369,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector)),
 				translation = orientation .multVecRot (this .direction .copy () .multiply (speedFactor));
 
-			viewpoint .positionOffset_ = this .getActiveLayer () .constrainTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
+			this .getActiveLayer () .constrainTranslation (translation, true, true);
+
+			viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
 
 			this .startTime = now;
 		},

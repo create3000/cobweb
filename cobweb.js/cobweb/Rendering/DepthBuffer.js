@@ -130,8 +130,9 @@ function (ViewVolume,
 					width               = this .width,
 					height              = this .height,
 					invProjectionMatrix = this .invProjectionMatrix .assign (projectionMatrix) .inverse (),
-					point               = this .point,
-					depth               = Number .NEGATIVE_INFINITY;
+					winx                = 0,
+					winy                = 0,
+					winz                = Number .POSITIVE_INFINITY;
 
 				gl .readPixels (0, 0, width, height, gl .RGBA, gl .UNSIGNED_BYTE, array);
 
@@ -141,13 +142,18 @@ function (ViewVolume,
 					{
 						var wz = array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625;
 
-						ViewVolume .unProjectPoint (wx, wy, wz, Matrix4 .Identity, projectionMatrix, viewport, point);
-
-						depth = Math .max (depth, point .z);
+						if (wz < winz)
+						{
+							winx = wx;
+							winy = wy;
+							winz = wz;
+						}
 					}
 				}
 
-				return depth;
+				ViewVolume .unProjectPointMatrix (winx, winy, winz, invProjectionMatrix, viewport, this .point);
+
+				return this .point .z;
 			}
 			catch (error)
 			{
