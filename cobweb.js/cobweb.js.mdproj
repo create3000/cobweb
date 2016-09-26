@@ -1230,6 +1230,8 @@
     <None Include="tests\Components\Lighting\GeoLODShadow.x3d" />
     <None Include="tests\Components\ComposedCubeMapTexture\GeneratedCubeMapTexture.x3d" />
     <None Include="cobweb\Rendering\X3DRenderObject.js" />
+    <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapMovieTexture.wrl" />
+    <None Include="tests\Components\images\campfire.512.mp4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

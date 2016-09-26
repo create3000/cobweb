@@ -177,7 +177,7 @@ function ($,
 			if (texture)
 				texture .loadState_ .addInterest (this, "set_loadState__", texture, index);
 
-			this .set_loadState__ (null, index, texture);
+			this .set_loadState__ (null, texture, index);
 		},
 		set_loadState__: function (output, texture, index)
 		{

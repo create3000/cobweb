@@ -205,6 +205,7 @@ function ($,
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
+			//this .getBrowser () .getDefaultShader () .addInterest (this, "set_shader__");
 
 			this .enabled_           .addInterest (this, "set_enabled__");
 			this .createParticles_   .addInterest (this, "set_createParticles__");
