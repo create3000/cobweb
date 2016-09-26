@@ -66172,7 +66172,7 @@ function (PointEmitter)
  ******************************************************************************/
 
 
-define ('cobweb/Rendering/X3DRenderer',[
+define ('cobweb/Rendering/X3DRenderObject',[
 	"jquery",
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
@@ -66219,7 +66219,7 @@ function ($,
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
-	function X3DRenderer (executionContext)
+	function X3DRenderObject (executionContext)
 	{
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
@@ -66252,9 +66252,9 @@ function ($,
 		}
 	}
 
-	X3DRenderer .prototype =
+	X3DRenderObject .prototype =
 	{
-		constructor: X3DRenderer,
+		constructor: X3DRenderObject,
 		bboxSize: new Vector3 (0, 0, 0),
 		bboxCenter: new Vector3 (0, 0, 0),
 		translation: new Vector3 (0, 0, 0),
@@ -66924,7 +66924,7 @@ function ($,
 		},
 	};
 
-	return X3DRenderer;
+	return X3DRenderObject;
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -68988,7 +68988,7 @@ function ($,
 define ('cobweb/Components/Layering/X3DLayerNode',[
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
-	"cobweb/Rendering/X3DRenderer",
+	"cobweb/Rendering/X3DRenderObject",
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Execution/BindableStack",
 	"cobweb/Execution/BindableList",
@@ -69003,7 +69003,7 @@ define ('cobweb/Components/Layering/X3DLayerNode',[
 ],
 function ($,
           X3DNode,
-          X3DRenderer,
+          X3DRenderObject,
           X3DViewportNode,
           BindableStack,
           BindableList,
@@ -69020,8 +69020,8 @@ function ($,
 
 	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
-		X3DNode     .call (this, executionContext);
-		X3DRenderer .call (this, executionContext);
+		X3DNode         .call (this, executionContext);
+		X3DRenderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
@@ -69050,14 +69050,14 @@ function ($,
 	}
 
 	X3DLayerNode .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DRenderer .prototype,
+		X3DRenderObject .prototype,
 	{
 		constructor: X3DLayerNode,
 		layer0: false,
 		initialize: function ()
 		{
-			X3DNode     .prototype .initialize .call (this);
-			X3DRenderer .prototype .initialize .call (this);
+			X3DNode         .prototype .initialize .call (this);
+			X3DRenderObject .prototype .initialize .call (this);
 
 			this .groupNode .children_ = this .children_;
 			this .groupNode .setup ();
@@ -76683,11 +76683,11 @@ function ($,
 			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
 
 			if (texture)
-				texture .loadState_ .addInterest (this, "set_loadState__", index, texture);
+				texture .loadState_ .addInterest (this, "set_loadState__", texture, index);
 
-			this .set_loadState__ (null, index, texture);
+			this .set_loadState__ (null, texture, index);
 		},
-		set_loadState__: function (output, index, texture)
+		set_loadState__: function (output, texture, index)
 		{
 			if (texture)
 				this .setLoadStateBit (texture .checkLoadState (), index);
@@ -76771,9 +76771,7 @@ function ($,
 			{
 				for (var i = 0; i < 6; ++ i)
 				{
-					var texture = textures [i];
-	
-					if (texture && texture .transparent_ .getValue ())
+					if (textures [i] .transparent_ .getValue ())
 					{
 						transparent = true;
 						break;
@@ -89023,6 +89021,7 @@ function ($,
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
+			//this .getBrowser () .getDefaultShader () .addInterest (this, "set_shader__");
 
 			this .enabled_           .addInterest (this, "set_enabled__");
 			this .createParticles_   .addInterest (this, "set_createParticles__");
@@ -93556,9 +93555,8 @@ function ($,
 
 		this .addType (X3DConstants .ScreenGroup);
 
-		this .screenMatrix       = new Matrix4 ();
-		this .modelViewMatrix    = new Matrix4 ();
-		this .invModelViewMatrix = new Matrix4 ();
+		this .screenMatrix    = new Matrix4 ();
+		this .modelViewMatrix = new Matrix4 ();
 	}
 
 	ScreenGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
@@ -93592,8 +93590,7 @@ function ($,
 		{
 			try
 			{
-				this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
-				this .matrix .assign (this .screenMatrix) .multRight (this .invModelViewMatrix);
+				this .matrix .assign (this .modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
 			}
 			catch (error)
 			{ }
@@ -93603,8 +93600,9 @@ function ($,
 		scale: function ()
 		{
 			// throws domain error
-
-			this .getBrowser () .getModelViewMatrix () .get () .get (translation, rotation, scale);
+			
+			this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			this .modelViewMatrix .get (translation, rotation, scale);
 
 			var
 				projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
@@ -100574,6 +100572,7 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -100582,7 +100581,8 @@ function ($,
           X3DEnvironmentalSensorNode,
           TraverseType,
           X3DConstants,
-          Vector3)
+          Vector3,
+          Algorithm)
 {
 
 
@@ -100634,9 +100634,9 @@ function ($,
 		set_enabled__: function ()
 		{
 			if (this .enabled_ .getValue ())
-				this .traverse = traverse;
-			else
 				delete this .traverse;
+			else
+				this .traverse = Algorithm .nop;
 		},
 		update: function ()
 		{
@@ -100661,34 +100661,32 @@ function ($,
 				
 			this .setTraversed (false);
 		},
-		traverse: function () { },
+		traverse: function (type)
+		{
+			if (type !== TraverseType .DISPLAY)
+				return;
+
+			this .setTraversed (true);
+
+			if (this .visible)
+				return;
+
+			if (this .size_ .getValue () .equals (infinity))
+				this .visible = true;
+
+			else
+			{
+				var
+					viewVolume      = this .getCurrentLayer () .getViewVolume (),
+					modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+					size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
+					center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
+
+				this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
+			}
+		},
 	});
 		
-	function traverse (type)
-	{
-	   if (type !== TraverseType .DISPLAY)
-			return;
-
-		this .setTraversed (true);
-
-		if (this .visible)
-			return;
-
-		if (this .size_ .getValue () .equals (infinity))
-			this .visible = true;
-
-		else
-		{
-			var
-				viewVolume      = this .getCurrentLayer () .getViewVolume (),
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
-				size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
-				center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
-
-			this .visible = viewVolume .intersectsSphere (size .abs () / 2, center);
-		}
-	}
-
 	return VisibilitySensor;
 });
 
