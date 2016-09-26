@@ -145,7 +145,7 @@ function ($,
 
 			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
-		getLevel: function (modelViewMatrix)
+		getLevel: function (browser, modelViewMatrix)
 		{
 			if (this .range_ .length === 0)
 			{
@@ -154,7 +154,7 @@ function ($,
 				if (size < 2)
 					return 0;
 
-				this .frameRate = ((FRAMES - 1) * this .frameRate + this .getBrowser () .currentFrameRate) / FRAMES;
+				this .frameRate = ((FRAMES - 1) * this .frameRate + browser .currentFrameRate) / FRAMES;
 
 				if (size === 2)
 					return Number (this .frameRate > FRAME_RATE_MAX);
@@ -183,7 +183,7 @@ function ($,
 				if (type === TraverseType .DISPLAY)
 				{
 					var
-						level        = this .getLevel (this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ())),
+						level        = this .getLevel (renderObject .getBrowser (), this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ())),
 						currentLevel = this .level_changed_ .getValue ();
 	
 					if (this .forceTransitions_ .getValue ())

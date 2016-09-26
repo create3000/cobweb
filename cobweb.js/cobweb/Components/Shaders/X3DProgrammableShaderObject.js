@@ -400,7 +400,7 @@ function ($,
 
 			if (location)
 			{
-				this .useProgram (); // TODO: only in ComposedShader possible.
+				this .useProgram (gl); // TODO: only in ComposedShader possible.
 
 				switch (field .getType ())
 				{

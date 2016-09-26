@@ -330,7 +330,7 @@ function ($,
 
 	function enable (type, renderObject)
 	{
-		renderObject .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+		renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 	}
 
 	return NavigationInfo;

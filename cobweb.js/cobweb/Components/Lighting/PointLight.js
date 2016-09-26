@@ -103,7 +103,7 @@ function ($,
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
-	function PointLightContainer (lightNode, groupNode, modelViewMatrix)
+	function PointLightContainer (browser, lightNode, groupNode, modelViewMatrix)
 	{
 		var
 			nearValue        = 0.125,
@@ -125,19 +125,19 @@ function ($,
 		this .rotationMatrix       = new Matrix4 ();
 		this .textureUnit          = 0;
 	
-		this .set (lightNode, groupNode, modelViewMatrix);
+		this .set (browser, lightNode, groupNode, modelViewMatrix);
 	}
 
 	PointLightContainer .prototype =
 	{
 		constructor: PointLightContainer,
-	   set: function (lightNode, groupNode, modelViewMatrix)
+	   set: function (browser, lightNode, groupNode, modelViewMatrix)
 	   {
 			var
-				browser       = lightNode .getBrowser (),
 				gl            = browser .getContext (),
 				shadowMapSize = lightNode .getShadowMapSize ();
 
+			this .browser   = browser;
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
@@ -268,9 +268,9 @@ function ($,
 			// Return shadowBuffer and textureUnit.
 
 			if (this .textureUnit)
-				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
-			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			this .browser .pushShadowBuffer (this .shadowBuffer);
 
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;

@@ -340,7 +340,7 @@ function ($,
 					{
 						var sensors = { };
 						
-						this .getBrowser () .getSensors () .push (sensors);
+						renderObject .getBrowser () .getSensors () .push (sensors);
 					
 						for (var i = 0, length = pointingDeviceSensors .length; i < length; ++ i)
 							pointingDeviceSensors [i] .push (renderObject, sensors);
@@ -356,7 +356,7 @@ function ($,
 						clipPlanes [i] .pop (renderObject);
 
 					if (pointingDeviceSensors .length)
-						this .getBrowser () .getSensors () .pop ();
+						renderObject .getBrowser () .getSensors () .pop ();
 
 					return;
 				}

@@ -57,7 +57,6 @@ function (Viewport)
 	function X3DLayeringContext ()
 	{
 		this .defaultViewport = new Viewport (this);
-		this .layers          = [ ];
 	}
 
 	X3DLayeringContext .prototype =
@@ -69,10 +68,6 @@ function (Viewport)
 		getDefaultViewport: function ()
 		{
 			return this .defaultViewport;
-		},
-		getLayers: function ()
-		{
-			return this .layers;
 		},
 	};
 

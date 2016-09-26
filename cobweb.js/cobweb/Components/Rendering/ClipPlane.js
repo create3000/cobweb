@@ -176,7 +176,7 @@ function ($,
 		pop: function (renderObject)
 		{
 			if (this .enabled)
-				this .getBrowser () .getClipPlanes () .push (renderObject .getClipPlanes () .pop ());
+				renderObject .getBrowser () .getClipPlanes () .push (renderObject .getClipPlanes () .pop ());
 		},
 	});
 

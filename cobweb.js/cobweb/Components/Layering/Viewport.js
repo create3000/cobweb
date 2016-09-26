@@ -107,32 +107,9 @@ function ($,
 		{
 			return "viewport";
 		},
-		initialize: function ()
+		getRectangle: function (browser)
 		{
-			X3DViewportNode .prototype .initialize .call (this);
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive ()                         .addInterest (this, "set_live__");
-			
-			this .getBrowser () .getViewport () .addInterest (this, "set_rectangle__");
-			this .clipBoundary_                 .addInterest (this, "set_rectangle__");
-
-			this .set_live__ ();
-		},
-		set_live__: function ()
-		{
-		  if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-		  {
-		      this .getBrowser () .getViewport () .addInterest (this, "set_rectangle__");
-
-				this .set_rectangle__ ();
-		  }
-		  else
-				this .getBrowser () .getViewport () .removeInterest (this, "set_rectangle__");
-		},
-		set_rectangle__: function ()
-		{
-			var viewport = this .getBrowser () .getViewport ();
+			var viewport = browser .getViewport ();
 
 			var
 				left   = Math .floor (viewport [2] * this .getLeft ()),
@@ -144,9 +121,7 @@ function ($,
 			                      bottom,
 			                      Math .max (0, right - left),
 			                      Math .max (0, top - bottom));
-		},
-		getRectangle: function (browser)
-		{
+
 			return this .rectangle;
 		},
 		getLeft: function ()
@@ -167,13 +142,13 @@ function ($,
 		},
 		traverse: function (type, renderObject)
 		{
-			this .push ();
+			this .push (renderObject);
 
 			switch (type)
 			{
 				case TraverseType .POINTER:
 				{
-					if (this .getBrowser () .isPointerInRectangle (this .rectangle))
+					if (renderObject .getBrowser () .isPointerInRectangle (this .rectangle))
 						X3DViewportNode .prototype .traverse .call (this, type, renderObject);
 
 					break;
@@ -183,17 +158,18 @@ function ($,
 					break;
 			}
 
-			this .pop ();
+			this .pop (renderObject);
 		},
 		push: function (renderObject)
 		{
 			var
 				viewVolumes = renderObject .getViewVolumes (),
-				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : this .rectangle;
+				rectangle   = this .getRectangle (renderObject .getBrowser ()),
+				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : rectangle;
 
-			renderObject .getViewVolumes () .push (ViewVolumes .pop (renderObject .getProjectionMatrix () .get (),
-			                                                         viewport,
-			                                                         this .rectangle));
+			viewVolumes .push (ViewVolumes .pop (renderObject .getProjectionMatrix () .get (),
+			                                     viewport,
+			                                     rectangle));
 		},
 		pop: function (renderObject)
 		{

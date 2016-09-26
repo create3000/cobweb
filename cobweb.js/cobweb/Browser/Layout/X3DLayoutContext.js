@@ -57,8 +57,6 @@ function ($, TextureProperties)
 
 	function X3DLayoutContext ()
 	{
-		this .layouts = [ ];
-
 		this .screenTextureProperties = new TextureProperties (this);
 	}
 
@@ -78,14 +76,6 @@ function ($, TextureProperties)
 			var div = $("<div></div>");
 			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .css ("display", "none") .height () / 72;
 			div .remove ();
-		},
-		getLayouts: function ()
-		{
-			return this .layouts;
-		},
-		getParentLayout: function ()
-		{
-			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
 		},
 		getScreenTextureProperties: function ()
 		{

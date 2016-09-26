@@ -88,7 +88,7 @@ function ($,
 
 	var SpotLights = ObjectCache (SpotLightContainer);
 	
-	function SpotLightContainer (lightNode, groupNode, modelViewMatrix)
+	function SpotLightContainer (browser, lightNode, groupNode, modelViewMatrix)
 	{
 		this .location             = new Vector3 (0, 0, 0);
 		this .direction            = new Vector3 (0, 0, 0);
@@ -108,19 +108,19 @@ function ($,
 		this .lightBBoxMax         = new Vector3 (0, 0, 0);
 		this .textureUnit          = 0;
 
-	   this .set (lightNode, groupNode, modelViewMatrix);
+	   this .set (browser, lightNode, groupNode, modelViewMatrix);
 	}
 
 	SpotLightContainer .prototype =
 	{
 		constructor: SpotLightContainer,
-	   set: function (lightNode, groupNode, modelViewMatrix)
+	   set: function (browser, lightNode, groupNode, modelViewMatrix)
 	   {
 			var
-				browser       = lightNode .getBrowser (),
 				gl            = browser .getContext (),
 				shadowMapSize = lightNode .getShadowMapSize ();
 
+			this .browser   = browser;
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
@@ -246,9 +246,9 @@ function ($,
 			// Return shadowBuffer and textureUnit.
 
 			if (this .textureUnit)
-				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
-			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			this .browser .pushShadowBuffer (this .shadowBuffer);
 
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;

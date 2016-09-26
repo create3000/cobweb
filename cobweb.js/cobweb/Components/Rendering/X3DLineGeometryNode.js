@@ -89,7 +89,7 @@ function ($,
 			try
 			{
 				var
-					browser    = this .getBrowser (),
+					browser    = context .renderer .getBrowser (),
 					gl         = browser .getContext (),
 					shaderNode = context .shaderNode;
 	
@@ -126,7 +126,7 @@ function ($,
 			try
 			{
 				var
-					browser    = this .getBrowser (),
+					browser    = context .renderer .getBrowser (),
 					gl         = browser .getContext (),
 					shaderNode = context .shaderNode;
 	

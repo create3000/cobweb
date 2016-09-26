@@ -158,19 +158,17 @@ function ($,
 
 					if (this .layoutNode)
 					{
-						var
-							browser         = this .getBrowser (),
-							modelViewMatrix = renderObject .getModelViewMatrix ();
+						var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 						this .modelViewMatrix .assign (modelViewMatrix .get ());
 
 						modelViewMatrix .push ();
 						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type, renderObject)));
-						browser .getLayouts () .push (this .layoutNode);
+						renderObject .getLayouts () .push (this .layoutNode);
 
 						X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
-						browser .getLayouts () .pop ();
+						renderObject .getLayouts () .pop ();
 						modelViewMatrix .pop ();
 					}
 					else

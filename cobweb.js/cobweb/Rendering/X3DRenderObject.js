@@ -106,6 +106,8 @@ function ($,
 		this .localLights          = [ ];
 		this .lights               = [ ];
 		this .localFogs            = [ ];
+		this .layouts              = [ ];
+		this .collisions           = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -187,6 +189,18 @@ function ($,
 
 			this .localFog = this .localFogs [this .localFogs .length - 1];
 		},
+		getLayouts: function ()
+		{
+			return this .layouts;
+		},
+		getParentLayout: function ()
+		{
+			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
+		},
+		getCollisions: function ()
+		{
+			return this .collisions;
+		},
 		addCollisionShape: function (shapeNode)
 		{
 			var
@@ -194,7 +208,7 @@ function ($,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
 			if (this .numCollisionShapes === this .collisionShapes .length)
-				this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+				this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
 
 			var context = this .collisionShapes [this .numCollisionShapes];
 
@@ -207,7 +221,7 @@ function ($,
 			// Collisions
 
 			var
-				sourceCollisions = this .getBrowser () .getCollisions (),
+				sourceCollisions = this .getCollisions (),
 				destCollisions   = context .collisions;
 
 			for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
@@ -235,7 +249,7 @@ function ($,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
 			if (this .numDepthShapes === this .depthShapes .length)
-				this .depthShapes .push ({ modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
+				this .depthShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
 
 			var context = this .depthShapes [this .numDepthShapes];
 
@@ -641,7 +655,7 @@ function ($,
 
 			// Configure shader
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 			
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 

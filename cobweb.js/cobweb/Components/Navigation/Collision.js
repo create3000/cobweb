@@ -152,7 +152,7 @@ function ($,
 				{
 					if (this .enabled_ .getValue ())
 					{
-					   var collisions = this .getBrowser () .getCollisions ();
+					   var collisions = renderObject .getCollisions ();
 
 						collisions .push (this);
 

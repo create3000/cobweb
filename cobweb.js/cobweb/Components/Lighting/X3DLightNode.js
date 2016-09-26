@@ -125,14 +125,20 @@ function ($,
 			{
 				if (this .global_ .getValue ())
 				{
-					var lightContainer = this .getLights () .pop (this, renderObject .getLayer () .getGroup (), renderObject .getModelViewMatrix () .get ());
+					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
+					                                              this,
+					                                              renderObject .getLayer () .getGroup (),
+					                                              renderObject .getModelViewMatrix () .get ());
 
 					renderObject .getGlobalLights () .push (lightContainer);
 					renderObject .getLights ()       .push (lightContainer);
 				}
 				else
 				{
-					var lightContainer = this .getLights () .pop (this, group, renderObject .getModelViewMatrix () .get ());
+					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
+					                                              this,
+					                                              group,
+					                                              renderObject .getModelViewMatrix () .get ());
 
 					renderObject .getLocalLights () .push (lightContainer);
 					renderObject .getLights ()      .push (lightContainer);
@@ -146,7 +152,7 @@ function ($,
 				if (this .global_ .getValue ())
 				   return;
 
-				this .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
+				renderObject .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
 			}
 		},
 	});

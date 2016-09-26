@@ -485,7 +485,7 @@ function ($,
 
 			if (viewpoint)
 			{
-				var parent = this .parent = this .getBrowser () .getParentLayout ();
+				var parent = this .parent = renderObject .getParentLayout ();
 
 				// Calculate rectangleSize
 

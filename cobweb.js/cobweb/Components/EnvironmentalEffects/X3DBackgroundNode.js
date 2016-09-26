@@ -497,7 +497,7 @@ function ($,
 				return;
 
 			var
-				browser = this .getBrowser (),
+				browser = renderObject .getBrowser (),
 				gl      = browser .getContext ();
 
 			// Setup context.
@@ -533,12 +533,12 @@ function ($,
 		
 			// Draw.
 
-			this .drawSphere ();
+			this .drawSphere (renderObject);
 
 			if (this .textures)
-				this .drawCube ();
+				this .drawCube (renderObject);
 		},
-		drawSphere: function ()
+		drawSphere: function (renderObject)
 		{
 			var transparency = this .transparency_ .getValue ();
 		
@@ -546,11 +546,11 @@ function ($,
 				return;
 	
 			var
-				browser    = this .getBrowser (),
+				browser    = renderObject .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = browser .getBackgroundSphereShader ();
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 
 			// Clip planes
 
@@ -581,14 +581,14 @@ function ($,
 
 			shaderNode .disableColorAttribute (gl);
 		},
-		drawCube: function ()
+		drawCube: function (renderObject)
 		{
 			var
-				browser    = this .getBrowser (),
+				browser    = renderObject .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = browser .getGouraudShader ();
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 
 			// Clip planes
 

@@ -1223,7 +1223,7 @@ function ($,
 				if (this .numParticles === 0)
 					return;
 
-				var gl = this .getBrowser () .getContext ();
+				var gl = context .renderer .getBrowser () .getContext ();
 
 				// Setup vertex attributes.
 
@@ -1256,7 +1256,7 @@ function ($,
 				else
 				{
 					var
-						browser    = this .getBrowser (),
+						browser    = context .renderer .getBrowser (),
 						gl         = browser .getContext (),
 						shaderNode = context .shaderNode;
 	

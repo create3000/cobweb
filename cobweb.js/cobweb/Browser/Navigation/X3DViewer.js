@@ -93,7 +93,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 			try
 			{
 				var
-					viewport       = this .getViewport () .getRectangle (),
+					viewport       = this .getViewport () .getRectangle (this .getBrowser ()),
 					navigationInfo = this .getNavigationInfo (),
 					viewpoint      = this .getActiveViewpoint (),
 					projection     = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport),

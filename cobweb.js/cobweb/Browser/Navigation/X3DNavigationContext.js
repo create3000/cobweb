@@ -74,7 +74,7 @@ function (Fields,
 	{
 		var light = new DirectionalLight (executionContext);
 		light .setup ();
-		var headlight = light .getLights () .pop (light, null, Matrix4 .Identity);
+		var headlight = light .getLights () .pop (executionContext .getBrowser (), light, null, Matrix4 .Identity);
 		headlight .recycle = function () { };
 		return headlight;
 	};
@@ -84,7 +84,6 @@ function (Fields,
 		this .addChildren ("availableViewers", new Fields .MFString (),
 		                   "viewer",           new Fields .SFString ("EXAMINE"));
 		
-		this .collisions         = [ ];
 		this .activeCollisions   = { };
 		this .collisionCount     = 0;
 		this .activeLayerNode    = null;
@@ -114,10 +113,6 @@ function (Fields,
 		getCurrentViewer: function ()
 		{
 			return this .viewer_ .getValue ();
-		},
-		getCollisions: function ()
-		{
-			return this .collisions;
 		},
 		addCollision: function (object)
 		{

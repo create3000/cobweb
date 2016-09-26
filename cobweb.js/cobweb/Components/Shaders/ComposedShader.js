@@ -138,7 +138,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .useProgram ();
+					this .useProgram (this .getBrowser () .getContext ());
 					this .addShaderFields ();
 				}
 			}
@@ -146,7 +146,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .useProgram ();
+					this .useProgram (this .getBrowser () .getContext ());
 					this .removeShaderFields ();
 				}
 			}
@@ -193,7 +193,7 @@ function ($,
 
 				if (valid)
 				{
-					this .useProgram ();
+					this .useProgram (gl);
 
 					// Initialize uniform variables and attributes
 					if (this .getDefaultUniforms ())
@@ -241,13 +241,13 @@ function ($,
 
 			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
 		},
-		useProgram: function ()
+		useProgram: function (gl)
 		{
 			if (currentShaderNode !== this)
 			{
 				currentShaderNode = this;
 
-				this .getBrowser () .getContext () .useProgram (this .program);
+				gl .useProgram (this .program);
 			}
 		},
 	});

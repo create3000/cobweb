@@ -756,7 +756,7 @@ function ($,
 		{ },
 		depth: function (context, shaderNode)
 		{
-			var gl = this .getBrowser () .getContext ();
+			var gl = context .renderer .getBrowser () .getContext ();
 
 			// Setup vertex attributes.
 
@@ -769,7 +769,7 @@ function ($,
 			try
 			{
 				var
-					browser    = this .getBrowser (),
+					browser    = context .renderer .getBrowser (),
 					gl         = browser .getContext (),
 					shaderNode = context .shaderNode;
 	
@@ -835,7 +835,7 @@ function ($,
 		},
 		displayParticlesDepth: function (context, shaderNode, particles, numParticles)
 		{
-			var gl = this .getBrowser () .getContext ();
+			var gl = context .renderer .getBrowser () .getContext ();
 
 			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
@@ -865,7 +865,7 @@ function ($,
 			try
 			{
 				var
-					browser    = this .getBrowser (),
+					browser    = context .renderer .getBrowser (),
 					gl         = browser .getContext (),
 					shaderNode = context .shaderNode;
 	

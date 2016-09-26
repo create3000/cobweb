@@ -167,7 +167,7 @@ function ($,
 					return;
 
 				var
-					browser            = this .getBrowser (),
+					browser            = renderObject .getBrowser (),
 					modelViewMatrix    = this .modelViewMatrix    .assign (renderObject .getModelViewMatrix () .get ()),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;

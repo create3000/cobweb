@@ -265,7 +265,7 @@ function ($,
 			context .materialNode         = this .materialNode;
 			context .textureNode          = this .textureNode;
 			context .textureTransformNode = this .textureTransformNode;
-			context .shaderNode           = this .shaderNode || this .getBrowser () .getDefaultShader ();
+			context .shaderNode           = this .shaderNode || context .renderer .getBrowser () .getDefaultShader ();
 		},
 	});
 

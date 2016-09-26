@@ -448,7 +448,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				shaderNode = browser .getLineShader (),
 				lineWidth  = gl .getParameter (gl .LINE_WIDTH);
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
 
 			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .x3d_NoneClipPlane);

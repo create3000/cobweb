@@ -249,10 +249,6 @@ function ($,
 		},
 		traverse: function (type, renderObject)
 		{
-		   var browser = this .getBrowser ();
-
-			browser .getLayers () .push (this);
-
 			this .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix (this));
 
 			switch (type)
@@ -275,8 +271,6 @@ function ($,
 			}
 
 			this .getProjectionMatrix () .pop ();
-
-			browser .getLayers () .pop ();
 		},
 		pointer: function (type)
 		{
