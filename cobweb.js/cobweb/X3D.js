@@ -149,7 +149,7 @@ function ($,
 
 		$(function ()
 		{
-			var elements = $("X3DCanvas, X3D");
+			var elements = $("X3DCanvas");
 
 			try
 			{
