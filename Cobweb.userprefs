@@ -2,12 +2,14 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="16" Column="14" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="802" Column="24" />
-      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.fs" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Lighting/DirectionalLight.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Lighting/PointLight.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Lighting/SpotLight.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="64" Column="14" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="658" Column="30" />
+      <File FileName="cobweb.js/cobweb/Components/ParticleSystems/ParticleSystem.js" Line="682" Column="23" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/Viewport.js" Line="167" Column="66" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="237" Column="26" />
+      <File FileName="cobweb.js/cobweb/Components/Grouping/X3DGroupingNode.js" Line="408" Column="34" />
+      <File FileName="cobweb.js/cobweb/Components/Networking/Anchor.js" Line="185" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Lighting/SpotLight.js" Line="165" Column="49" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
