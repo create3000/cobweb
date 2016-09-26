@@ -409,7 +409,7 @@ function ($,
 		{
 			// Apply sceen nodes transformation in place here.
 		},
-		intersectsLine: function (line, modelViewMatrix, intersections)
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
 		{
 			try
 			{
@@ -421,7 +421,6 @@ function ($,
 					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
 
 					var
-						clipPlanes = this .getCurrentLayer () .getClipPlanes (),
 						texCoords  = this .texCoords [0],
 						normals    = this .normals,
 						vertices   = this .vertices,
@@ -475,7 +474,7 @@ function ($,
 			}
 			catch (error)
 			{
-				//console .log (error);
+				console .log (error);
 				return false;
 			}
 		},
@@ -753,7 +752,7 @@ function ($,
 				this .displayParticles = Algorithm .nop;
 			}
 	  	},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{ },
 		depth: function (context, shaderNode)
 		{

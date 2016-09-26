@@ -64,14 +64,14 @@ function ($,
 {
 "use strict";
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
-		var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+		var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 		modelViewMatrix .push ();
 		modelViewMatrix .multLeft (this .matrix);
 		
-		X3DGroupingNode .prototype .traverse .call (this, type);
+		X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
 		modelViewMatrix .pop ();
 	}

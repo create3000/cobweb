@@ -417,7 +417,7 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			try
 			{
@@ -425,16 +425,16 @@ function ($,
 				{
 					var
 						fontStyle        = this .getFontStyle (),
-						projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-						modelViewMatrix  = this .getBrowser () .getModelViewMatrix ()  .get (),
-						viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
+						projectionMatrix = renderObject .getProjectionMatrix () .get (),
+						modelViewMatrix  = renderObject .getModelViewMatrix ()  .get (),
+						viewport         = renderObject .getViewVolume () .getViewport ();
 	
 					// Same as in ScreenGroup
 	
 					this .screenMatrix .assign (modelViewMatrix);
 					this .screenMatrix .get (translation, rotation, scale);
 	
-					var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+					var screenScale = renderObject .getViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
 	
 					this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 				                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),

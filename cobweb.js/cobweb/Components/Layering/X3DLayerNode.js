@@ -151,6 +151,10 @@ function ($,
 			this .layer0 = value;
 			this .defaultBackground .setHidden (! value);
 		},
+		getLayer: function ()
+		{
+			return this;
+		},
 		getGroup: function ()
 		{
 			return this .groupNode;
@@ -234,7 +238,7 @@ function ($,
 		},
 		bind: function ()
 		{
-			this .traverse (TraverseType .CAMERA);
+			this .traverse (TraverseType .CAMERA, this);
 
 			// Bind first viewpoint in viewpoint list.
 
@@ -243,12 +247,13 @@ function ($,
 			this .fogStack            .forcePush (this .fogs            .getBound ());
 			this .viewpointStack      .forcePush (this .viewpoints      .getBound ());
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 		   var browser = this .getBrowser ();
 
 			browser .getLayers () .push (this);
-			browser .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix ());
+
+			this .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix (this));
 
 			switch (type)
 			{
@@ -269,7 +274,8 @@ function ($,
 					break;
 			}
 
-			browser .getProjectionMatrix () .pop ()
+			this .getProjectionMatrix () .pop ();
+
 			browser .getLayers () .pop ();
 		},
 		pointer: function (type)
@@ -278,7 +284,7 @@ function ($,
 			{
 				var
 					browser  = this .getBrowser (),
-					viewport = this .currentViewport .getRectangle ();
+					viewport = this .currentViewport .getRectangle (browser);
 
 				if (browser .getSelectedLayer ())
 				{
@@ -291,25 +297,23 @@ function ($,
 						return;
 				}
 
-				browser .setHitRay (viewport);
-				browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
+				this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
-				this .currentViewport .push ();
-				this .groupNode .traverse (type);
-				this .currentViewport .pop ();
+				this .currentViewport .push (this);
+				this .groupNode .traverse (type, this);
+				this .currentViewport .pop (this);
 
-				browser .getModelViewMatrix () .pop ()
+				this .getModelViewMatrix () .pop ()
 			}
 		},
 		camera: function (type)
 		{
-			var browser = this .getBrowser ();
-
-			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
-			this .currentViewport .push ();
-			this .groupNode .traverse (type);
-			this .currentViewport .pop ();
+			this .currentViewport .push (this);
+			this .groupNode .traverse (type, this);
+			this .currentViewport .pop (this);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -318,36 +322,32 @@ function ($,
 
 			this .getViewpoint () .update ();
 
-			browser .getModelViewMatrix () .pop ()
+			this .getModelViewMatrix () .pop ()
 		},
 		collision: function (type)
 		{
-			var browser = this .getBrowser ();
-
 			this .collisionTime = 0;
 
-			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
 			// Render
-			this .currentViewport .push ();
-			this .render (this .groupNode, type);
-			this .currentViewport .pop ();
+			this .currentViewport .push (this);
+			this .render (type, this .groupNode);
+			this .currentViewport .pop (this);
 
-			browser .getModelViewMatrix () .pop ()
+			this .getModelViewMatrix () .pop ()
 		},
 		display: function (type)
 		{
-			var browser = this .getBrowser ();
+			this .getNavigationInfo () .enable (type, this);
 
-			this .getNavigationInfo () .enable ();
+			this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
-			browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .currentViewport .push (this);
+			this .render (type, this .groupNode);
+			this .currentViewport .pop (this);
 
-			this .currentViewport .push ();
-			this .render (this .groupNode, type);
-			this .currentViewport .pop ();
-
-			browser .getModelViewMatrix () .pop ()
+			this .getModelViewMatrix () .pop ()
 		},
 	});
 

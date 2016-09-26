@@ -193,30 +193,30 @@ function ($,
 		traverse: function () { },
 	});
 
-	function traverseWithProximitySensor (type)
+	function traverseWithProximitySensor (type, renderObject)
 	{
 		switch (type)
 		{
 			case TraverseType .CAMERA:
 			{
-				this .proximitySensor .traverse (type);
+				this .proximitySensor .traverse (type, renderObject);
 		
 				if (this .proximitySensor .isActive_ .getValue ())
 				{
 					for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
-						this .cameraObjects [i] .traverse (type);
+						this .cameraObjects [i] .traverse (type, renderObject);
 				}
 
 				return;
 			}
 			case TraverseType .DISPLAY:
 			{
-				this .proximitySensor .traverse (type);
+				this .proximitySensor .traverse (type, renderObject);
 		
 				if (this .proximitySensor .isActive_ .getValue ())
 				{
 					for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
-						this .viewpointGroups [i] .traverse (type);
+						this .viewpointGroups [i] .traverse (type, renderObject);
 				}
 
 				return;
@@ -224,21 +224,21 @@ function ($,
 		}
 	}
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
 		switch (type)
 		{
 			case TraverseType .CAMERA:
 			{
 				for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
-					this .cameraObjects [i] .traverse (type);
+					this .cameraObjects [i] .traverse (type, renderObject);
 
 				return;
 			}
 			case TraverseType .DISPLAY:
 			{
 				for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
-					this .viewpointGroups [i] .traverse (type);
+					this .viewpointGroups [i] .traverse (type, renderObject);
 
 				return;
 			}

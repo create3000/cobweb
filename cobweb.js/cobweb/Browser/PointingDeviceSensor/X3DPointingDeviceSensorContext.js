@@ -151,11 +151,11 @@ function ($,
 		{
 			return this .selectedLayer;
 		},
-		setHitRay: function (viewport)
+		setHitRay: function (projectionMatrix, viewport)
 		{
 			try
 			{
-				ViewVolume .unProjectRay (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport, this .hitRay);
+				ViewVolume .unProjectRay (this .pointer .x, this .pointer .y, Matrix4 .Identity, projectionMatrix, viewport, this .hitRay);
 			}
 			catch (error)
 			{
@@ -242,7 +242,7 @@ function ($,
 
 			// Pick.
 			
-			this .getWorld () .traverse (TraverseType .POINTER);
+			this .getWorld () .traverse (TraverseType .POINTER, null);
 
 			// Picking end.
 

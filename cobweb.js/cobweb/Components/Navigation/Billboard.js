@@ -160,9 +160,9 @@ function ($,
 
 			return this .matrix;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+			var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 			modelViewMatrix .push ();
 
@@ -173,7 +173,7 @@ function ($,
 				else
 					modelViewMatrix .multLeft (this .matrix);
 					
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 			}
 			catch (error)
 			{

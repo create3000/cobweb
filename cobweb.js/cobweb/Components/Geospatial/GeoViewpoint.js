@@ -93,11 +93,11 @@ function ($,
 		geoOrientation      = new Rotation4 (0, 0, 1, 0),
 		geoCenterOfRotation = new Vector3 (0, 0, 0);
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
-		X3DViewpointNode .prototype .traverse .call (this, type);
+		X3DViewpointNode .prototype .traverse .call (this, type, renderObject);
 
-		this .navigationInfoNode .traverse (type);
+		this .navigationInfoNode .traverse (type, renderObject);
 	}
 
 	function GeoViewpoint (executionContext)

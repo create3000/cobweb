@@ -618,7 +618,7 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{ },
 		display: function (context)
 		{ },

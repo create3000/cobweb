@@ -219,7 +219,7 @@ function ($,
 					this .isValid_ = false;
 			}
 		},
-		setGlobalUniforms: function (gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
 		{
 			if (currentShaderNode !== this)
 			{
@@ -228,7 +228,7 @@ function ($,
 				gl .useProgram (this .program);
 			}
 			
-			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, gl, projectionMatrixArray);
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray);
 		},
 		setLocalUniforms: function (gl, context)
 		{

@@ -145,7 +145,7 @@ function ($,
 			                      Math .max (0, right - left),
 			                      Math .max (0, top - bottom));
 		},
-		getRectangle: function ()
+		getRectangle: function (browser)
 		{
 			return this .rectangle;
 		},
@@ -165,7 +165,7 @@ function ($,
 		{
 			return this .clipBoundary_ .length > 3 ? this .clipBoundary_ [3] : 1;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			this .push ();
 
@@ -174,31 +174,30 @@ function ($,
 				case TraverseType .POINTER:
 				{
 					if (this .getBrowser () .isPointerInRectangle (this .rectangle))
-						X3DViewportNode .prototype .traverse .call (this, type);
+						X3DViewportNode .prototype .traverse .call (this, type, renderObject);
 
 					break;
 				}
 				default:
-					X3DViewportNode .prototype .traverse .call (this, type);
+					X3DViewportNode .prototype .traverse .call (this, type, renderObject);
 					break;
 			}
 
 			this .pop ();
 		},
-		push: function ()
+		push: function (renderObject)
 		{
 			var
-			   currentLayer = this .getCurrentLayer (),
-				viewVolumes  = currentLayer .getViewVolumes (),
-				viewport     = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : this .rectangle;
+				viewVolumes = renderObject .getViewVolumes (),
+				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : this .rectangle;
 
-			currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix () .get (),
+			renderObject .getViewVolumes () .push (ViewVolumes .pop (renderObject .getProjectionMatrix () .get (),
 			                                                         viewport,
 			                                                         this .rectangle));
 		},
-		pop: function ()
+		pop: function (renderObject)
 		{
-			ViewVolumes .push (this .getCurrentLayer () .getViewVolumes () .pop ());
+			ViewVolumes .push (renderObject .getViewVolumes () .pop ());
 		},
 	});
 

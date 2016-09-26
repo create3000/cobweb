@@ -86,7 +86,7 @@ function ($,
 
 	var DirectionalLights = ObjectCache (DirectionalLightContainer);
 	
-	function DirectionalLightContainer (lightNode, groupNode)
+	function DirectionalLightContainer (lightNode, groupNode, modelViewMatrix)
 	{
 		this .direction            = new Vector3 (0, 0, 0);
 		this .shadowBuffer         = null;
@@ -102,13 +102,13 @@ function ($,
 		this .rotation             = new Rotation4 ();
 		this .textureUnit          = 0;
 	
-		this .set (lightNode, groupNode);
+		this .set (lightNode, groupNode, modelViewMatrix);
 	}
 
 	DirectionalLightContainer .prototype =
 	{
 		constructor: DirectionalLightContainer,
-		set: function (lightNode, groupNode)
+		set: function (lightNode, groupNode, modelViewMatrix)
 		{
 			var
 				browser       = lightNode .getBrowser (),
@@ -118,7 +118,7 @@ function ($,
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -147,7 +147,7 @@ function ($,
 				}
 			}
 		},
-		renderShadowMap: function ()
+		renderShadowMap: function (renderObject)
 		{
 			try
 			{
@@ -156,9 +156,7 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					browser              = lightNode .getBrowser (),
-					layerNode            = lightNode .getCurrentLayer (),
-					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
 					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
@@ -174,16 +172,16 @@ function ($,
 
 				this .shadowBuffer .bind ();
 
-				layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
-				browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
-				browser .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
-				browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+				renderObject .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+				renderObject .getProjectionMatrix () .pushMatrix (projectionMatrix);
+				renderObject .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
+				renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
 
-				layerNode .render (this .groupNode, TraverseType .DEPTH);
+				renderObject .render (TraverseType .DEPTH, this .groupNode);
 
-				browser .getModelViewMatrix  () .pop ();
-				browser .getProjectionMatrix () .pop ();
-				layerNode .getViewVolumes () .pop ();
+				renderObject .getModelViewMatrix  () .pop ();
+				renderObject .getProjectionMatrix () .pop ();
+				renderObject .getViewVolumes      () .pop ();
 
 				this .shadowBuffer .unbind ();
 	

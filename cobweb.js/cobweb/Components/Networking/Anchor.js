@@ -172,21 +172,21 @@ function ($,
 			}
 			.bind (this));
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type === TraverseType .POINTER)
 			{
 			   var sensors = { };
 
 				this .getBrowser () .getSensors () .push (sensors);
-				this .touchSensorNode .traverse (sensors);
+				this .touchSensorNode .push (renderObject, sensors);
 
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
 				this .getBrowser () .getSensors () .pop ();
 			}
 			else
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 		},
 	});
 

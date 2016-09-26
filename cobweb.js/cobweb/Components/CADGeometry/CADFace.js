@@ -70,9 +70,9 @@ function ($,
 {
 "use strict";
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
-		this .shapeNode .traverse (type);
+		this .shapeNode .traverse (type, renderObject);
 	}
 
 	function CADFace (executionContext)

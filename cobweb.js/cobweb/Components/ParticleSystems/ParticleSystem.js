@@ -1165,7 +1165,7 @@ function ($,
 				console .log (error);
 			}
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (! this .isActive_ .getValue ())
 				return;
@@ -1173,7 +1173,7 @@ function ($,
 			if (this .geometryType === GEOMETRY)
 			{
 				if (this .getGeometry ())
-					this .getGeometry () .traverse (type); // Currently used for ScreenText.
+					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 				else
 					return;
 			}
@@ -1191,13 +1191,13 @@ function ($,
 				}
 				case TraverseType .DEPTH:
 				{
-					this .getCurrentLayer () .addDepthShape (this);
+					renderObject .addDepthShape (this);
 					break;
 				}
 				case TraverseType .DISPLAY:
 				{
-					if (this .getCurrentLayer () .addShape (this))
-						this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
+					if (renderObject .addDisplayShape (this))
+						this .getAppearance () .traverse (type, renderObject); // Currently used for GeneratedCubeMapTexture.
 
 					break;
 				}

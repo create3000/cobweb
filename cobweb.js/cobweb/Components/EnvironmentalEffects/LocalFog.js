@@ -102,15 +102,15 @@ function ($,
 			X3DChildNode .prototype .initialize .call (this);
 			X3DFogObject .prototype .initialize .call (this);
 		},
-		push: function ()
+		push: function (renderObject)
 		{
 			if (this .enabled_ .getValue ())
-				this .getCurrentLayer () .pushLocalFog (this);
+				renderObject .pushLocalFog (this);
 		},
-		pop: function ()
+		pop: function (renderObject)
 		{
 			if (this .enabled_ .getValue ())
-				this .getCurrentLayer () .popLocalFog ();
+				renderObject .popLocalFog ();
 		},
 	});
 

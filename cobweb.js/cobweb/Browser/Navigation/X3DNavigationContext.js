@@ -56,6 +56,7 @@ define ([
 	"cobweb/Browser/Navigation/NoneViewer",
 	"cobweb/Browser/Navigation/LookAtViewer",
 	"cobweb/Components/Lighting/DirectionalLight",
+	"standard/Math/Numbers/Matrix4",
 ],
 function (Fields,
           ExamineViewer,
@@ -64,7 +65,8 @@ function (Fields,
           PlaneViewer,
           NoneViewer,
           LookAtViewer,
-          DirectionalLight)
+          DirectionalLight,
+          Matrix4)
 {
 "use strict";
 	
@@ -72,7 +74,7 @@ function (Fields,
 	{
 		var light = new DirectionalLight (executionContext);
 		light .setup ();
-		var headlight = light .getLights () .pop (light);
+		var headlight = light .getLights () .pop (light, null, Matrix4 .Identity);
 		headlight .recycle = function () { };
 		return headlight;
 	};

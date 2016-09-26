@@ -97,7 +97,7 @@ function ($,
 		{
 			return this .hidden;
 		},
-		setShaderUniforms: function (gl, shaderObject)
+		setShaderUniforms: function (gl, shaderObject, renderObject)
 		{
 			if (this .hidden)
 				gl .uniform1i (shaderObject .x3d_FogType, 0); // NO_FOG
@@ -109,7 +109,7 @@ function ($,
 					visibilityRange = Math .max (0, this .visibilityRange_ .getValue ());
 
 				if (visibilityRange === 0)
-					visibilityRange = this .getCurrentNavigationInfo () .getFarValue (this .getCurrentViewpoint ());
+					visibilityRange = renderObject .getNavigationInfo () .getFarValue (renderObject .getViewpoint ());
 
 				gl .uniform1i (shaderObject .x3d_FogType,            this .fogType);
 				gl .uniform3f (shaderObject .x3d_FogColor,           color .r, color .g, color .b);

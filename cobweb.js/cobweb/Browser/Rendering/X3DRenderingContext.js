@@ -63,8 +63,6 @@ define ([
 	"text!cobweb/Browser/Shaders/Depth.vs",
 	"text!cobweb/Browser/Shaders/Depth.fs",
 	"standard/Math/Numbers/Vector4",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Utility/MatrixStack",
 ],
 function (Fields,
           ComposedShader,
@@ -78,9 +76,7 @@ function (Fields,
           phongFS,
           depthVS,
           depthFS,
-          Vector4,
-          Matrix4,
-          MatrixStack)
+          Vector4)
 {
 "use strict";
 
@@ -88,9 +84,7 @@ function (Fields,
 	{
 		this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
 
-		this .projectionMatrix = new MatrixStack (Matrix4);
-		this .modelViewMatrix  = new MatrixStack (Matrix4);
-		this .clipPlanes       = [ ]; // Clip planes dumpster
+		this .clipPlanes = [ ]; // Clip planes dumpster
 	}
 
 	X3DRenderingContext .prototype =
@@ -164,14 +158,6 @@ function (Fields,
 		getViewport: function ()
 		{
 			return this .viewport_;
-		},
-		getProjectionMatrix: function ()
-		{
-			return this .projectionMatrix;
-		},
-		getModelViewMatrix: function ()
-		{
-			return this .modelViewMatrix;
 		},
 		createShader: function (executionContext, name, vs, fs)
 		{

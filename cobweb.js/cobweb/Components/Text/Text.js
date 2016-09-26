@@ -149,9 +149,9 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .textGeometry .traverse (type);
+			this .textGeometry .traverse (type, renderObject);
 		},
 		display: function (context)
 		{

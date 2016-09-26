@@ -146,7 +146,7 @@ function ($,
 				
 			this .setTraversed (false);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type !== TraverseType .DISPLAY)
 				return;
@@ -162,8 +162,8 @@ function ($,
 			else
 			{
 				var
-					viewVolume      = this .getCurrentLayer () .getViewVolume (),
-					modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+					viewVolume      = renderObject .getViewVolume (),
+					modelViewMatrix = renderObject .getModelViewMatrix () .get (),
 					size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
 					center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
 

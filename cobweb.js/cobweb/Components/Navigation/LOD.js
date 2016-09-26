@@ -145,7 +145,7 @@ function ($,
 
 			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
-		getLevel: function ()
+		getLevel: function (modelViewMatrix)
 		{
 			if (this .range_ .length === 0)
 			{
@@ -166,26 +166,24 @@ function ($,
 				return Math .min (Math .ceil (fraction * (n - 1)), n);
 			}
 
-			var distance = this .getDistance ();
+			var distance = this .getDistance (modelViewMatrix);
 
 			return Algorithm .upperBound (this .range_, 0, this .range_ .length, distance, Algorithm .less);
 		},
-		getDistance: function ()
+		getDistance: function (modelViewMatrix)
 		{
-			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-
 			modelViewMatrix .translate (this .center_ .getValue ());
 
 			return modelViewMatrix .origin .abs ();
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (! this .keepCurrentLevel)
 			{
 				if (type === TraverseType .DISPLAY)
 				{
 					var
-						level        = this .getLevel (),
+						level        = this .getLevel (this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ())),
 						currentLevel = this .level_changed_ .getValue ();
 	
 					if (this .forceTransitions_ .getValue ())
@@ -209,7 +207,7 @@ function ($,
 			}
 
 			if (this .child)
-				this .child .traverse (type);
+				this .child .traverse (type, renderObject);
 		},
 	});
 

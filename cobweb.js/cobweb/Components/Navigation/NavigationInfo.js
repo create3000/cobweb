@@ -319,18 +319,18 @@ function ($,
 
 			return "LINEAR";
 		},
-		enable: function ()
+		enable: function (type, renderObject)
 		{
 		},
-		traverse: function ()
+		traverse: function (type, renderObject)
 		{
-			this .getCurrentLayer () .getNavigationInfos () .push (this);
+			renderObject .getLayer () .getNavigationInfos () .push (this);
 		}
 	});
 
-	function enable ()
+	function enable (type, renderObject)
 	{
-		this .getCurrentLayer () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+		renderObject .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
 	}
 
 	return NavigationInfo;

@@ -466,21 +466,21 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .bottomBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (bottomVertices), gl .STATIC_DRAW);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
 				case TraverseType .CAMERA:
 				{
-					this .getCurrentLayer () .getBackgrounds () .push (this);
+					renderObject .getLayer () .getBackgrounds () .push (this);
 		
-					this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 					break;
 				}
 				case TraverseType .DISPLAY:
 				{
 					var
-						sourcePlanes = this .getCurrentLayer () .getClipPlanes (),
+						sourcePlanes = renderObject .getClipPlanes (),
 						destPlanes   = this .clipPlanes;
 	
 					for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
@@ -491,7 +491,7 @@ function ($,
 				}
 			}
 		},
-		display: function (viewport)
+		display: function (renderObject, viewport)
 		{
 			if (this .hidden)
 				return;
@@ -510,7 +510,7 @@ function ($,
 			// Get background scale.
 
 			var
-				viewpoint       = this .getCurrentViewpoint (),
+				viewpoint       = renderObject .getViewpoint (),
 				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
 				modelViewMatrix = this .transformationMatrix;

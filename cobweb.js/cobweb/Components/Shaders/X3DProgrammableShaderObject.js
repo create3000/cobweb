@@ -854,9 +854,9 @@ function ($,
 			else
 				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 		},
-		setGlobalUniforms: function (gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
 		{
-			var globalLights = this .getCurrentLayer () .getGlobalLights ();
+			var globalLights = renderObject .getGlobalLights ();
 
 			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
@@ -901,7 +901,7 @@ function ($,
 			if (context .fogNode !== this .fogNode)
 			{
 				this .fogNode = context .fogNode;
-				context .fogNode .setShaderUniforms (gl, this);
+				context .fogNode .setShaderUniforms (gl, this, context .renderer);
 			}
 
 			// LineProperties

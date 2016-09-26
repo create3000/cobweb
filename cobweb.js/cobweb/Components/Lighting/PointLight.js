@@ -103,7 +103,7 @@ function ($,
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
-	function PointLightContainer (lightNode, groupNode)
+	function PointLightContainer (lightNode, groupNode, modelViewMatrix)
 	{
 		var
 			nearValue        = 0.125,
@@ -125,25 +125,23 @@ function ($,
 		this .rotationMatrix       = new Matrix4 ();
 		this .textureUnit          = 0;
 	
-		this .set (lightNode, groupNode);
+		this .set (lightNode, groupNode, modelViewMatrix);
 	}
 
 	PointLightContainer .prototype =
 	{
 		constructor: PointLightContainer,
-	   set: function (lightNode, groupNode)
+	   set: function (lightNode, groupNode, modelViewMatrix)
 	   {
 			var
 				browser       = lightNode .getBrowser (),
 				gl            = browser .getContext (),
 				shadowMapSize = lightNode .getShadowMapSize ();
 
-			var modelViewMatrix = browser .getModelViewMatrix () .get ();
-	
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -172,7 +170,7 @@ function ($,
 				}
 			}
 	   },
-		renderShadowMap: function ()
+		renderShadowMap: function (renderObject)
 		{
 			try
 			{
@@ -181,9 +179,7 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					browser              = lightNode .getBrowser (),
-					layerNode            = lightNode .getCurrentLayer (),
-					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
 					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
@@ -196,7 +192,7 @@ function ($,
 					projectionMatrix = this .projectionMatrix;
 
 				this .shadowBuffer .bind ();
-				browser .getProjectionMatrix () .pushMatrix (this .projectionMatrix);
+				renderObject .getProjectionMatrix () .pushMatrix (this .projectionMatrix);
 
 				for (var y = 0; y < 2; ++ y)
 				{
@@ -206,20 +202,20 @@ function ($,
 							rotation = this .rotation .setFromToVec (this .direction .assign (directions [y * 3 + x]), Vector3 .zAxis), // inversed rotation
 							viewport = this .viewport .set (x * shadowMapSize1_3, y * shadowMapSize1_2, shadowMapSize1_3, shadowMapSize1_2);
 		
-						layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+						renderObject .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
 
-						browser .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
-						browser .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
-						browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+						renderObject .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
+						renderObject .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
+						renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
 		
-						layerNode .render (this .groupNode, TraverseType .DEPTH);
+						renderObject .render (TraverseType .DEPTH, this .groupNode);
 		
-						browser .getModelViewMatrix  () .pop ();
-						layerNode .getViewVolumes () .pop ();
+						renderObject .getModelViewMatrix  () .pop ();
+						renderObject .getViewVolumes () .pop ();
 					}
 				}
 
-				browser .getProjectionMatrix () .pop ();
+				renderObject .getProjectionMatrix () .pop ();
 				this .shadowBuffer .unbind ();
 	
 				if (! lightNode .getGlobal ())

@@ -255,9 +255,9 @@ function ($,
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
 			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .textureNode .traverse (type);
+			this .textureNode .traverse (type, renderObject);
 		},
 		display: function (context)
 		{

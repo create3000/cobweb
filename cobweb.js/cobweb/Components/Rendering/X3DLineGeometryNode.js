@@ -76,7 +76,7 @@ function ($,
 		{
 			this .shaderNode = value;
 		},
-		intersectsLine: function (line, modelViewMatrix, intersections)
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
 		{
 			return false;
 		},

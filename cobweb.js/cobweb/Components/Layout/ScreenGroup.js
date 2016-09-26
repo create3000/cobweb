@@ -129,17 +129,17 @@ function ($,
 
 			return this .matrix;
 		},
-		scale: function ()
+		scale: function (renderObject)
 		{
 			// throws domain error
 			
-			this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ());
 			this .modelViewMatrix .get (translation, rotation, scale);
 
 			var
-				projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
-				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
+				projectionMatrix = renderObject .getProjectionMatrix () .get (),
+				viewport         = renderObject .getViewVolume () .getViewport (),
+				screenScale      = renderObject .getViewpoint () .getScreenScale (translation, viewport);
 		
 			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
 		                                                               screenScale .y * (scale .y < 0 ? -1 : 1),
@@ -161,18 +161,18 @@ function ($,
 
 			return this .screenMatrix;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			try
 			{
-				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+				var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 				if (type === TraverseType .DISPLAY)
-					modelViewMatrix .pushMatrix (this .scale ());
+					modelViewMatrix .pushMatrix (this .scale (renderObject));
 				else
 					modelViewMatrix .pushMatrix (this .screenMatrix);
 
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 	
 				modelViewMatrix .pop ();
 			}

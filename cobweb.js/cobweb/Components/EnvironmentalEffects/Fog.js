@@ -122,9 +122,9 @@ function ($,
 		{
 			layer .getFogStack () .remove (this);
 		},
-		traverse: function ()
+		traverse: function (type, renderObject)
 		{
-			this .getCurrentLayer () .getFogs () .push (this);
+			renderObject .getLayer () .getFogs () .push (this);
 		},
 	});
 

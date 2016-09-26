@@ -144,7 +144,7 @@ function ($,
 		{
 		   this .proxyNode = X3DCast (X3DConstants .X3DChildNode, this .proxy_);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
@@ -157,10 +157,10 @@ function ($,
 						collisions .push (this);
 
 						if (this .proxyNode)
-							this .proxyNode .traverse (type);
+							this .proxyNode .traverse (type, renderObject);
 
 						else
-							X3DGroupingNode .prototype .traverse .call (this, type);
+							X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
 						collisions .pop ();
 					}
@@ -168,7 +168,7 @@ function ($,
 					break;
 				}
 				default:
-					X3DGroupingNode .prototype .traverse .call (this, type);
+					X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 					break;
 			}
 		},

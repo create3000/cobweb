@@ -325,7 +325,7 @@ function ($,
 
 			this .setCameraObject (this .cameraObjects .length);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
@@ -343,17 +343,17 @@ function ($,
 						this .getBrowser () .getSensors () .push (sensors);
 					
 						for (var i = 0, length = pointingDeviceSensors .length; i < length; ++ i)
-							pointingDeviceSensors [i] .traverse (sensors);
+							pointingDeviceSensors [i] .push (renderObject, sensors);
 					}
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
+						clipPlanes [i] .push (renderObject);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
+						childNodes [i] .traverse (type, renderObject);
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
+						clipPlanes [i] .pop (renderObject);
 
 					if (pointingDeviceSensors .length)
 						this .getBrowser () .getSensors () .pop ();
@@ -365,7 +365,7 @@ function ($,
 					var cameraObjects = this .cameraObjects;
 
 					for (var i = 0, length = cameraObjects .length; i < length; ++ i)
-						cameraObjects [i] .traverse (type);
+						cameraObjects [i] .traverse (type, renderObject);
 
 					return;
 				}
@@ -377,13 +377,13 @@ function ($,
 						childNodes = this .childNodes;
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
+						clipPlanes [i] .push (renderObject);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
+						childNodes [i] .traverse (type, renderObject);
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
+						clipPlanes [i] .pop (renderObject);
 					
 					return;
 				}
@@ -396,25 +396,25 @@ function ($,
 						childNodes = this .childNodes;
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
+						clipPlanes [i] .push (renderObject);
 
 					for (var i = 0, length = localFogs .length; i < length; ++ i)
-						localFogs [i] .push ();
+						localFogs [i] .push (renderObject);
 
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .push (this);
+						lights [i] .push (type, renderObject, this);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
+						childNodes [i] .traverse (type, renderObject);
 					
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .pop ();
+						lights [i] .pop (type, renderObject);
 
 					for (var i = 0, length = localFogs .length; i < length; ++ i)
-						localFogs [i] .pop ();
+						localFogs [i] .pop (renderObject);
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
+						clipPlanes [i] .pop (renderObject);
 
 					return;
 				}

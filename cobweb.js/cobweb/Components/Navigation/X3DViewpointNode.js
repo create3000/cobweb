@@ -208,13 +208,13 @@ function ($,
 		{
 			return this .userCenterOfRotation .assign (this .getCenterOfRotation ()) .add (this .centerOfRotationOffset_ .getValue ());
 		},
-		getProjectionMatrix: function ()
+		getProjectionMatrix: function (renderObject)
 		{
-			var navigationInfo = this .getCurrentNavigationInfo ();
+			var navigationInfo = renderObject .getNavigationInfo ();
 	
 			return this .getProjectionMatrixWithLimits (navigationInfo .getNearValue (),
                                                      navigationInfo .getFarValue (this),
-                                                     this .getCurrentViewport () .getRectangle ());
+                                                     renderObject .getLayer () .getViewport () .getRectangle (renderObject .getBrowser ()));
 		},
 		getCameraSpaceMatrix: function ()
 		{
@@ -446,11 +446,11 @@ function ($,
 			else
 				this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .getCurrentLayer () .getViewpoints () .push (this);
+			renderObject .getLayer () .getViewpoints () .push (this);
 
-			this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 		},
 		update: function ()
 		{

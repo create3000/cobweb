@@ -51,6 +51,7 @@ define ([
 	"jquery",
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
+	"standard/Math/Algorithm",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Box3",
@@ -59,11 +60,12 @@ define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Algorithm",
+	"standard/Math/Utility/MatrixStack",
 ],
 function ($,
           DepthBuffer,
 	       TraverseType,
+          Algorithm,
           QuickSort,
           Camera,
           Box3,
@@ -72,7 +74,7 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
-          Algorithm)
+          MatrixStack)
 {
 "use strict";
 
@@ -96,6 +98,8 @@ function ($,
 
 	function X3DRenderObject (executionContext)
 	{
+		this .projectionMatrix     = new MatrixStack (Matrix4);
+		this .modelViewMatrix      = new MatrixStack (Matrix4);
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
 		this .globalLights         = [ ];
@@ -134,7 +138,14 @@ function ($,
 		bboxCenter: new Vector3 (0, 0, 0),
 		translation: new Vector3 (0, 0, 0),
 		initialize: function ()
+		{ },
+		getProjectionMatrix: function ()
 		{
+			return this .projectionMatrix;
+		},
+		getModelViewMatrix: function ()
+		{
+			return this .modelViewMatrix;
 		},
 		getViewVolumes: function ()
 		{
@@ -179,91 +190,78 @@ function ($,
 		addCollisionShape: function (shapeNode)
 		{
 			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				modelViewMatrix = this .getModelViewMatrix () .get (),
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-				if (this .numCollisionShapes === this .collisionShapes .length)
-					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+			if (this .numCollisionShapes === this .collisionShapes .length)
+				this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
 
-				var context = this .collisionShapes [this .numCollisionShapes];
+			var context = this .collisionShapes [this .numCollisionShapes];
 
-				++ this .numCollisionShapes;
+			++ this .numCollisionShapes;
 
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
+			context .modelViewMatrix .set (modelViewMatrix);
+			context .shapeNode = shapeNode;
+			context .scissor   = viewVolume .getScissor ();
 
-				// Collisions
+			// Collisions
 
-				var
-					sourceCollisions = this .getBrowser () .getCollisions (),
-					destCollisions   = context .collisions;
+			var
+				sourceCollisions = this .getBrowser () .getCollisions (),
+				destCollisions   = context .collisions;
 
-				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
-				   destCollisions [i] = sourceCollisions [i];
-				
-				destCollisions .length = sourceCollisions .length;
+			for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+			   destCollisions [i] = sourceCollisions [i];
+			
+			destCollisions .length = sourceCollisions .length;
 
-				// Clip planes
+			// Clip planes
 
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
+			var
+				sourcePlanes = this .getClipPlanes (),
+				destPlanes   = context .clipPlanes;
 
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
+			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				destPlanes [i] = sourcePlanes [i];
+			
+			destPlanes .length = sourcePlanes .length;
+
+			return true;
 		},
 		addDepthShape: function (shapeNode)
 		{
 			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				modelViewMatrix = this .getModelViewMatrix () .get (),
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-				if (this .numDepthShapes === this .depthShapes .length)
-					this .depthShapes .push ({ modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
+			if (this .numDepthShapes === this .depthShapes .length)
+				this .depthShapes .push ({ modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
 
-				var context = this .depthShapes [this .numDepthShapes];
+			var context = this .depthShapes [this .numDepthShapes];
 
-				++ this .numDepthShapes;
+			++ this .numDepthShapes;
 
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
+			context .modelViewMatrix .set (modelViewMatrix);
+			context .shapeNode = shapeNode;
+			context .scissor   = viewVolume .getScissor ();
 
-				// Clip planes
+			// Clip planes
 
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
+			var
+				sourcePlanes = this .getClipPlanes (),
+				destPlanes   = context .clipPlanes;
 
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
+			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				destPlanes [i] = sourcePlanes [i];
+			
+			destPlanes .length = sourcePlanes .length;
+
+			return true;
 		},
-		createShapeContext: function (transparent)
-		{
-			return {
-				transparent: true,
-				modelViewMatrix: new Float32Array (16),
-				scissor: new Vector4 (0, 0, 0, 0),
-				clipPlanes: [ ],
-				localLights: [ ],
-				geometryType: 3,
-				colorMaterial: false,
-				linePropertiesNode: null,
-				materialNode: null,
-				textureNode: null,
-				textureTransformNode: null,
-				shaderNode: null,
-			};
-		},
-		addShape: function (shapeNode)
+		addDisplayShape: function (shapeNode)
 		{
 			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				modelViewMatrix = this .getModelViewMatrix () .get (),
 				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
 				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
 				radius          = bboxSize .abs () / 2,
@@ -292,8 +290,8 @@ function ($,
 				}
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
+				context .shapeNode = shapeNode;
 				context .distance  = distance - radius;
 				context .fogNode   = this .localFog;
 
@@ -318,7 +316,29 @@ function ($,
 					destLights [i] = sourceLights [i];
 				
 				destLights .length = sourceLights .length;
+
+				return true;
 			}
+
+			return false;
+		},
+		createShapeContext: function (transparent)
+		{
+			return {
+				renderer: this,
+				transparent: true,
+				geometryType: 3,
+				colorMaterial: false,
+				modelViewMatrix: new Float32Array (16),
+				scissor: new Vector4 (0, 0, 0, 0),
+				clipPlanes: [ ],
+				localLights: [ ],
+				linePropertiesNode: null,
+				materialNode: null,
+				textureNode: null,
+				textureTransformNode: null,
+				shaderNode: null,
+			};
 		},
 		constrainTranslation: function (translation)
 		{
@@ -388,11 +408,11 @@ function ($,
 				modelViewMatrix .rotate (rotation);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
 				var depth = this .getDepth (projectionMatrix);
 
-				this .getBrowser () .getProjectionMatrix () .pop ();
+				this .getProjectionMatrix () .pop ();
 
 				return -depth;
 			}
@@ -415,7 +435,7 @@ function ($,
 
 			return depth;
 		},
-		render: function (group, type)
+		render: function (type, group)
 		{
 			switch (type)
 			{
@@ -424,7 +444,7 @@ function ($,
 					// Collect for collide and gravite
 					this .numCollisionShapes = 0;
 
-					group .traverse (type);
+					group .traverse (type, this);
 					this .collide ();
 					this .gravite ();
 					break;
@@ -433,7 +453,7 @@ function ($,
 				{
 					this .numDepthShapes = 0;
 
-					group .traverse (type);
+					group .traverse (type, this);
 					this .depth (this .depthShapes, this .numDepthShapes);
 					break;
 				}
@@ -443,7 +463,7 @@ function ($,
 					this .numTransparentShapes = 0;
 	
 					this .setGlobalFog (this .getFog ());
-					group .traverse (type);
+					group .traverse (type, this);
 					this .draw ();
 					break;
 				}
@@ -540,11 +560,11 @@ function ($,
 				modelViewMatrix .rotate (down);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
 				var distance = -this .getDepth (projectionMatrix);
 
-				this .getBrowser () .getProjectionMatrix () .pop ();
+				this .getProjectionMatrix () .pop ();
 
 				// Gravite or step up
 
@@ -594,7 +614,7 @@ function ($,
 							//	if (math::abs (offset) > math::abs (translation) or getBrowser () -> getCurrentSpeed () == 0)
 							//		offset = translation;
 							//
-							//	getCurrentViewpoint () -> positionOffset () += offset;
+							//	getViewpoint () -> positionOffset () += offset;
 							//}
 							//else
 								viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
@@ -623,7 +643,7 @@ function ($,
 
 			shaderNode .useProgram ();
 			
-			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
@@ -689,7 +709,7 @@ function ($,
 			var lights = this .lights;
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
-				lights [i] .renderShadowMap ();
+				lights [i] .renderShadowMap (this);
 
 			// Configure viewport and background
 
@@ -705,18 +725,18 @@ function ($,
 
 			gl .clear (gl .DEPTH_BUFFER_BIT);
 
-			this .getBackground () .display (viewport);
+			this .getBackground () .display (this, viewport);
 
 			// Sorted blend
 
-			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader ()   .setGlobalUniforms (gl, projectionMatrixArray);
-			browser .getLineShader ()    .setGlobalUniforms (gl, projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (gl, projectionMatrixArray);
+			browser .getPointShader ()   .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getLineShader ()    .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (gl, projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray);
 
 			// Render opaque objects first
 

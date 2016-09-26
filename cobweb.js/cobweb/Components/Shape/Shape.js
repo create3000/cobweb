@@ -128,33 +128,36 @@ function ($,
 		{
 			return this .getGeometry () .intersectsBox (box, clipPlanes, modelViewMatrix);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			// Always look at ParticleSystem if you do modify something here and there.
-
-			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
-			this .getGeometry   () .traverse (type); // Currently used for ScreenText.
+	
+			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 
 			switch (type)
 			{
 				case TraverseType .POINTER:
-					this .pointer ();
+					this .pointer (renderObject);
 					break;
 
 				case TraverseType .COLLISION:
-					this .getCurrentLayer () .addCollisionShape (this);
+					renderObject .addCollisionShape (this);
 					break;
 
 				case TraverseType .DEPTH:
-					this .getCurrentLayer () .addDepthShape (this);
+					renderObject .addDepthShape (this);
 					break;
 
 				case TraverseType .DISPLAY:
-					this .getCurrentLayer () .addShape (this);
+				{
+					if (renderObject .addDisplayShape (this))
+						this .getAppearance () .traverse (type, renderObject); // Currently used for GeneratedCubeMapTexture.
+
 					break;
+				}
 			}
 		},
-		pointer: function ()
+		pointer: function (renderObject)
 		{
 			try
 			{
@@ -165,13 +168,13 @@ function ($,
 
 				var
 					browser            = this .getBrowser (),
-					modelViewMatrix    = this .modelViewMatrix    .assign (browser .getModelViewMatrix () .get ()),
+					modelViewMatrix    = this .modelViewMatrix    .assign (renderObject .getModelViewMatrix () .get ()),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
 				this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
 
-				if (geometry .intersectsLine (this .hitRay, modelViewMatrix, intersections))
+				if (geometry .intersectsLine (this .hitRay, renderObject .getClipPlanes (), modelViewMatrix, intersections))
 				{
 					// Finally we have intersections and must now find the closest hit in front of the camera.
 
@@ -182,7 +185,7 @@ function ($,
 					this .intersectionSorter .sort (0, intersections .length);
 
 					// Find first point that is not greater than near plane;
-					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearValue (),
+					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -renderObject .getNavigationInfo () .getNearValue (),
 					                                   function (lhs, rhs)
 					                                   {
 					                                      return lhs .point .z > rhs;
@@ -194,7 +197,7 @@ function ($,
 						// Transform hitNormal to absolute space.
 						invModelViewMatrix .multMatrixDir (intersections [index] .normal) .normalize ();
 
-						browser .addHit (intersections [index], this .getCurrentLayer ());
+						browser .addHit (intersections [index], renderObject .getLayer ());
 					}
 
 					intersections .length = 0;

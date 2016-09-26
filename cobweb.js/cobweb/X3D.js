@@ -149,8 +149,8 @@ function ($,
 
 		$(function ()
 		{
-			var elements = $("X3D");
-		
+			var elements = $("X3DCanvas, X3D");
+
 			try
 			{
 				var browsers = $.map (elements, createBrowser);
