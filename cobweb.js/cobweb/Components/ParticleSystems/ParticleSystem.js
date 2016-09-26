@@ -1234,92 +1234,100 @@ function ($,
 		},
 		display: function (context)
 		{
-			// Traverse appearance before everything.
-
-			this .getAppearance () .display (context);
-
-			// Update geometry if SPRITE.
-
-			this .updateGeometry (context .modelViewMatrix);
-
-			// Display geometry.
-
-			if (this .geometryType === GEOMETRY)
+			try
 			{
-				var geometryNode = this .getGeometry ();
-
-				if (geometryNode)
-					geometryNode .displayParticles (context, this .particles, this .numParticles);
-			}
-			else
-			{
-				var
-					browser    = this .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
-
-				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
+				// Traverse appearance before everything.
 	
-				if (this .numParticles === 0)
-					return;
-
-				// Setup shader.
-
-				context .geometryType  = this .shaderGeometryType;
-				context .colorMaterial = this .colorMaterial;
-				shaderNode .setLocalUniforms (gl, context);
+				this .getAppearance () .display (context);
 	
-				// Setup vertex attributes.
+				// Update geometry if SPRITE.
 	
-				if (this .colorMaterial)
-					shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-				if (this .texCoordArray .length)
-					shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
-
-				if (this .normalArray .length)
-					shaderNode .enableNormalAttribute (gl, this .normalBuffer);
-
-				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
-
-				var testWireframe = false;
-
-				switch (this .geometryType)
+				this .updateGeometry (context .modelViewMatrix);
+	
+				// Display geometry.
+	
+				if (this .geometryType === GEOMETRY)
 				{
-					case POINT:
-					case LINE:
-						break;
-					case TRIANGLE:
-					case QUAD:
-					case SPRITE:
-						testWireframe = true;
-						break;
-					case GEOMETRY:
-						break;
-				}
-
-				if (shaderNode .wireframe && testWireframe)
-				{
-					// Wireframes are always solid so only one drawing call is needed.
+					var geometryNode = this .getGeometry ();
 	
-					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shaderNode .primitiveMode, i, 3);
+					if (geometryNode)
+						geometryNode .displayParticles (context, this .particles, this .numParticles);
 				}
 				else
 				{
-					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
-		
-					gl .frontFace (positiveScale ? gl .CCW : gl .CW);
-					gl .enable (gl .CULL_FACE);
-					gl .cullFace (gl .BACK);
-		
-					gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
-				}
+					var
+						browser    = this .getBrowser (),
+						gl         = browser .getContext (),
+						shaderNode = context .shaderNode;
 	
-				shaderNode .disableColorAttribute    (gl);
-				shaderNode .disableTexCoordAttribute (gl);
-				shaderNode .disableNormalAttribute   (gl);
+					if (shaderNode === browser .getDefaultShader ())
+						shaderNode = this .shaderNode;
+		
+					if (this .numParticles === 0)
+						return;
+	
+					// Setup shader.
+	
+					context .geometryType  = this .shaderGeometryType;
+					context .colorMaterial = this .colorMaterial;
+					shaderNode .setLocalUniforms (gl, context);
+		
+					// Setup vertex attributes.
+		
+					if (this .colorMaterial)
+						shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+					if (this .texCoordArray .length)
+						shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+	
+					if (this .normalArray .length)
+						shaderNode .enableNormalAttribute (gl, this .normalBuffer);
+	
+					shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+	
+					var testWireframe = false;
+	
+					switch (this .geometryType)
+					{
+						case POINT:
+						case LINE:
+							break;
+						case TRIANGLE:
+						case QUAD:
+						case SPRITE:
+							testWireframe = true;
+							break;
+						case GEOMETRY:
+							break;
+					}
+	
+					if (shaderNode .wireframe && testWireframe)
+					{
+						// Wireframes are always solid so only one drawing call is needed.
+		
+						for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
+							gl .drawArrays (shaderNode .primitiveMode, i, 3);
+					}
+					else
+					{
+						var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+			
+						gl .frontFace (positiveScale ? gl .CCW : gl .CW);
+						gl .enable (gl .CULL_FACE);
+						gl .cullFace (gl .BACK);
+			
+						gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
+					}
+		
+					shaderNode .disableColorAttribute    (gl);
+					shaderNode .disableTexCoordAttribute (gl);
+					shaderNode .disableNormalAttribute   (gl);
+				}
+			}
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)
