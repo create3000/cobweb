@@ -162,7 +162,7 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					cameraSpaceMatrix    = renderObject .gettViewpoint () .getCameraSpaceMatrix (),
+					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
 					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 

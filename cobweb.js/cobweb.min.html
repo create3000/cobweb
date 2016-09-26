@@ -46,7 +46,7 @@ body {
 	font-size: 50px;
 }
 
-X3D {
+X3DCanvas {
 	height: 100%;
 }
 
@@ -165,6 +165,7 @@ X3D (function (dom)
 		{ name: 'SpotLight',               url: [ "tests/Components/Lighting/SpotLight.x3d" ] },
 		{ name: 'LocalLight',              url: [ "tests/Components/Lighting/LocalLight.x3d" ] },
 		{ name: 'Mad Flat',                url: [ "tests/Components/Lighting/MadFlat.x3d" ] },
+		{ name: 'Mad Flat 2',              url: [ "tests/Components/Lighting/MadFlat2.x3d" ] },
 		{ name: 'Billboard Shadow',        url: [ "tests/Components/Lighting/BillboardShadow.x3d" ] },
 		{ name: 'LOD Shadow',              url: [ "tests/Components/Lighting/LODShadow.x3d" ] },
 		{ name: 'GeoLOD Shadow',           url: [ "tests/Components/Lighting/GeoLODShadow.x3d" ] },
@@ -324,7 +325,7 @@ function loadURL ()
 <body>
 	<div class="tests">
 		<div class="examples"></div>
-		<X3D cache="false" xurl='
+		<X3DCanvas cache="false" xurl='
 			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl"
 		'>
 			<p class="fallback">Sorry,<br/>
@@ -334,7 +335,7 @@ function loadURL ()
 				because this is currently the choice of the choice. We will continuously keep you informed <br/>
 				on technical developments and as soon as Cobweb is running in other browser too.
 			</p>
-		</X3D>
+		</X3DCanvas>
 		<table class="load-url" cellpadding="4" style="margin:0; width:100%">
 			<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
 		</table>

@@ -23873,22 +23873,6 @@ function ($,
 	X3DNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: X3DNode,
-		getCurrentLayer: function ()
-		{
-			return this .getBrowser () .getLayers () [0];
-		},
-		getCurrentViewport: function ()
-		{
-			return this .getBrowser () .getLayers () [0] .getViewport ();
-		},
-		getCurrentNavigationInfo: function ()
-		{
-			return this .getBrowser () .getLayers () [0] .getNavigationInfo ();
-		},
-		getCurrentViewpoint: function ()
-		{
-			return this .getBrowser () .getLayers () [0] .getViewpoint ();
-		},
 	});
 
 	return X3DNode;
@@ -26095,9 +26079,9 @@ function ($,
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
 			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .textureNode .traverse (type);
+			this .textureNode .traverse (type, renderObject);
 		},
 		display: function (context)
 		{
@@ -26105,7 +26089,7 @@ function ($,
 			context .materialNode         = this .materialNode;
 			context .textureNode          = this .textureNode;
 			context .textureTransformNode = this .textureTransformNode;
-			context .shaderNode           = this .shaderNode || this .getBrowser () .getDefaultShader ();
+			context .shaderNode           = this .shaderNode || context .renderer .getBrowser () .getDefaultShader ();
 		},
 	});
 
@@ -26861,7 +26845,7 @@ function ($,
 
 			if (location)
 			{
-				this .useProgram (); // TODO: only in ComposedShader possible.
+				this .useProgram (gl); // TODO: only in ComposedShader possible.
 
 				switch (field .getType ())
 				{
@@ -27315,9 +27299,9 @@ function ($,
 			else
 				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 		},
-		setGlobalUniforms: function (gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
 		{
-			var globalLights = this .getCurrentLayer () .getGlobalLights ();
+			var globalLights = renderObject .getGlobalLights ();
 
 			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
@@ -27362,7 +27346,7 @@ function ($,
 			if (context .fogNode !== this .fogNode)
 			{
 				this .fogNode = context .fogNode;
-				context .fogNode .setShaderUniforms (gl, this);
+				context .fogNode .setShaderUniforms (gl, this, context .renderer);
 			}
 
 			// LineProperties
@@ -27726,7 +27710,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .useProgram ();
+					this .useProgram (this .getBrowser () .getContext ());
 					this .addShaderFields ();
 				}
 			}
@@ -27734,7 +27718,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .useProgram ();
+					this .useProgram (this .getBrowser () .getContext ());
 					this .removeShaderFields ();
 				}
 			}
@@ -27781,7 +27765,7 @@ function ($,
 
 				if (valid)
 				{
-					this .useProgram ();
+					this .useProgram (gl);
 
 					// Initialize uniform variables and attributes
 					if (this .getDefaultUniforms ())
@@ -27807,7 +27791,7 @@ function ($,
 					this .isValid_ = false;
 			}
 		},
-		setGlobalUniforms: function (gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
 		{
 			if (currentShaderNode !== this)
 			{
@@ -27816,7 +27800,7 @@ function ($,
 				gl .useProgram (this .program);
 			}
 			
-			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, gl, projectionMatrixArray);
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray);
 		},
 		setLocalUniforms: function (gl, context)
 		{
@@ -27829,13 +27813,13 @@ function ($,
 
 			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
 		},
-		useProgram: function ()
+		useProgram: function (gl)
 		{
 			if (currentShaderNode !== this)
 			{
 				currentShaderNode = this;
 
-				this .getBrowser () .getContext () .useProgram (this .program);
+				gl .useProgram (this .program);
 			}
 		},
 	});
@@ -37939,115 +37923,6 @@ define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text
  ******************************************************************************/
 
 
-define ('standard/Math/Utility/MatrixStack',[
-	"jquery",
-],
-function ($)
-{
-
-
-	function MatrixStack (Type)
-	{
-		return $.extend ([ new Type () ],
-		{
-			top: 0,
-			set: function (matrix)
-			{
-				this [this .top] .assign (matrix);
-			},
-			get: function (matrix)
-			{
-				return this [this .top];
-			},
-			push: function ()
-			{
-				var top = ++ this .top;
-			
-				if (top < this .length)
-					this [top] .assign (this [top - 1]);
-				else
-					this [top] = this [top - 1] .copy ();
-			},
-			pushMatrix: function (matrix)
-			{
-				var top = ++ this .top;
-
-				if (top < this .length)
-					this [top] .assign (matrix);
-				else
-					this [top] = matrix .copy ();
-			},
-			pop: function ()
-			{
-				-- this .top;
-			},
-			identity: function ()
-			{
-				this [this .top] .identity ();
-			},
-			multLeft: function (matrix)
-			{
-				this [this .top] .multLeft (matrix);
-			},
-			scale: function (vector)
-			{
-				this [this .top] .scale (vector);
-			},
-		});
-	}
-
-	return MatrixStack;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 //https://github.com/sdecima/javascript-detect-element-resize
 
 define ('cobweb/Browser/Rendering/X3DRenderingContext',[
@@ -38064,8 +37939,6 @@ define ('cobweb/Browser/Rendering/X3DRenderingContext',[
 	"text!cobweb/Browser/Shaders/Depth.vs",
 	"text!cobweb/Browser/Shaders/Depth.fs",
 	"standard/Math/Numbers/Vector4",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Utility/MatrixStack",
 ],
 function (Fields,
           ComposedShader,
@@ -38079,9 +37952,7 @@ function (Fields,
           phongFS,
           depthVS,
           depthFS,
-          Vector4,
-          Matrix4,
-          MatrixStack)
+          Vector4)
 {
 
 
@@ -38089,9 +37960,7 @@ function (Fields,
 	{
 		this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
 
-		this .projectionMatrix = new MatrixStack (Matrix4);
-		this .modelViewMatrix  = new MatrixStack (Matrix4);
-		this .clipPlanes       = [ ]; // Clip planes dumpster
+		this .clipPlanes = [ ]; // Clip planes dumpster
 	}
 
 	X3DRenderingContext .prototype =
@@ -38165,14 +38034,6 @@ function (Fields,
 		getViewport: function ()
 		{
 			return this .viewport_;
-		},
-		getProjectionMatrix: function ()
-		{
-			return this .projectionMatrix;
-		},
-		getModelViewMatrix: function ()
-		{
-			return this .modelViewMatrix;
 		},
 		createShader: function (executionContext, name, vs, fs)
 		{
@@ -43254,7 +43115,7 @@ function ($,
 		{
 			// Apply sceen nodes transformation in place here.
 		},
-		intersectsLine: function (line, modelViewMatrix, intersections)
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
 		{
 			try
 			{
@@ -43266,7 +43127,6 @@ function ($,
 					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
 
 					var
-						clipPlanes = this .getCurrentLayer () .getClipPlanes (),
 						texCoords  = this .texCoords [0],
 						normals    = this .normals,
 						vertices   = this .vertices,
@@ -43320,7 +43180,7 @@ function ($,
 			}
 			catch (error)
 			{
-				//console .log (error);
+				console .log (error);
 				return false;
 			}
 		},
@@ -43598,13 +43458,11 @@ function ($,
 				this .displayParticles = Algorithm .nop;
 			}
 	  	},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{ },
-		depth: function (shaderNode)
+		depth: function (context, shaderNode)
 		{
-			var
-				browser = this .getBrowser (),
-				gl      = browser .getContext ();
+			var gl = context .renderer .getBrowser () .getContext ();
 
 			// Setup vertex attributes.
 
@@ -43614,142 +43472,147 @@ function ($,
 		},
 		display: function (context)
 		{
-			var
-				browser    = this .getBrowser (),
-				gl         = browser .getContext (),
-				shaderNode = context .shaderNode;
-
-			// Setup shader.
-
-			context .geometryType  = this .geometryType;
-			context .colorMaterial = this .colors .length;
-			shaderNode .setLocalUniforms (gl, context);
-
-			// Setup vertex attributes.
-
-			if (this .colors .length)
-				shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
-			shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
-			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
-
-			// Draw depending on wireframe, solid and transparent.
-
-			if (shaderNode .wireframe)
+			try
 			{
-				// Wireframes are always solid so only one drawing call is needed.
-
-				for (var i = 0, length = this .vertexCount; i < length; i += 3)
-					gl .drawArrays (shaderNode .primitiveMode, i, 3);
-			}
-			else
-			{
-				var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
-
-				gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
-
-				if (context .transparent && ! this .solid)
+				var
+					browser    = context .renderer .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
+	
+				// Setup shader.
+	
+				context .geometryType  = this .geometryType;
+				context .colorMaterial = this .colors .length;
+				shaderNode .setLocalUniforms (gl, context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colors .length)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+				shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+				shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
+				shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
+	
+				// Draw depending on wireframe, solid and transparent.
+	
+				if (shaderNode .wireframe)
 				{
-					gl .enable (gl .CULL_FACE);
-					gl .cullFace (gl .FRONT);
-					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
-
-					gl .cullFace (gl .BACK);
-					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
+					// Wireframes are always solid so only one drawing call is needed.
+	
+					for (var i = 0, length = this .vertexCount; i < length; i += 3)
+						gl .drawArrays (shaderNode .primitiveMode, i, 3);
 				}
 				else
 				{
-					if (this .solid)
+					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+	
+					gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
+	
+					if (context .transparent && ! this .solid)
+					{
 						gl .enable (gl .CULL_FACE);
+						gl .cullFace (gl .FRONT);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
+	
+						gl .cullFace (gl .BACK);
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);		
+					}
 					else
-						gl .disable (gl .CULL_FACE);
-
-					gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
+					{
+						if (this .solid)
+							gl .enable (gl .CULL_FACE);
+						else
+							gl .disable (gl .CULL_FACE);
+	
+						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
+					}
 				}
+	
+				shaderNode .disableColorAttribute    (gl);
+				shaderNode .disableTexCoordAttribute (gl);
+				shaderNode .disableNormalAttribute   (gl);
 			}
-
-			shaderNode .disableColorAttribute    (gl);
-			shaderNode .disableTexCoordAttribute (gl);
-			shaderNode .disableNormalAttribute   (gl);
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
+			}
 		},
-		displayParticles: function (context, particles, numParticles)
+		displayParticlesDepth: function (context, shaderNode, particles, numParticles)
 		{
-			var
-				browser    = this .getBrowser (),
-				gl         = browser .getContext (),
-				shaderNode = context .shaderNode;
+			var gl = context .renderer .getBrowser () .getContext ();
 
-			// Setup shader.
-
-			context .geometryType  = this .geometryType;
-			context .colorMaterial = this .colors .length;
-			shaderNode .setLocalUniforms (gl, context);
-
-			// Setup vertex attributes.
-
-			if (this .colors .length)
-				shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-			shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
-			shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
 			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
 			// Draw depending on wireframe, solid and transparent.
 
 			var
-				materialNode    = context .materialNode,
-				lighting        = materialNode || shaderNode .getCustom (),
-				normalMatrix    = shaderNode .normalMatrixArray,
 				modelViewMatrix = context .modelViewMatrix,
 				x               = modelViewMatrix [12],
 				y               = modelViewMatrix [13],
 				z               = modelViewMatrix [14];
 
-			if (shaderNode .wireframe)
+			for (var p = 0; p < numParticles; ++ p)
 			{
-				// Wireframes are always solid so only one drawing call is needed.
+				modelViewMatrix [12] = x;
+				modelViewMatrix [13] = y;
+				modelViewMatrix [14] = z;
 
-				for (var p = 0; p < numParticles; ++ p)
-				{
-					modelViewMatrix [12] = x;
-					modelViewMatrix [13] = y;
-					modelViewMatrix [14] = z;
-	
-					Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
-	
-					if (lighting)
-					{
-						// Set normal matrix.
-						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
-					}
-	
-					gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
-	
-					for (var i = 0, length = this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shaderNode .primitiveMode, i, 3);
-				}
+				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+
+				gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+
+				gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 			}
-			else
+		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			try
 			{
-				var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
-
-				gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
-
-				if (context .transparent && ! this .solid)
+				var
+					browser    = context .renderer .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
+	
+				// Setup shader.
+	
+				context .geometryType  = this .geometryType;
+				context .colorMaterial = this .colors .length;
+				shaderNode .setLocalUniforms (gl, context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colors .length)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+				shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+				shaderNode .enableNormalAttribute   (gl, this .normalBuffer);
+				shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
+	
+				// Draw depending on wireframe, solid and transparent.
+	
+				var
+					materialNode    = context .materialNode,
+					lighting        = materialNode || shaderNode .getCustom (),
+					normalMatrix    = shaderNode .normalMatrixArray,
+					modelViewMatrix = context .modelViewMatrix,
+					x               = modelViewMatrix [12],
+					y               = modelViewMatrix [13],
+					z               = modelViewMatrix [14];
+	
+				if (shaderNode .wireframe)
 				{
+					// Wireframes are always solid so only one drawing call is needed.
+	
 					for (var p = 0; p < numParticles; ++ p)
 					{
 						modelViewMatrix [12] = x;
 						modelViewMatrix [13] = y;
 						modelViewMatrix [14] = z;
-
+		
 						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
-
+		
 						if (lighting)
 						{
 							// Set normal matrix.
@@ -43759,52 +43622,90 @@ function ($,
 							Matrix3 .prototype .inverse .call (normalMatrix);
 							gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
 						}
-
+		
 						gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
-
-						gl .enable (gl .CULL_FACE);
-						gl .cullFace (gl .FRONT);
-						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
-	
-						gl .cullFace (gl .BACK);
-						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
-					}	
+		
+						for (var i = 0, length = this .vertexCount; i < length; i += 3)
+							gl .drawArrays (shaderNode .primitiveMode, i, 3);
+					}
 				}
 				else
 				{
-					if (this .solid)
-						gl .enable (gl .CULL_FACE);
-					else
-						gl .disable (gl .CULL_FACE);
-
-					for (var p = 0; p < numParticles; ++ p)
+					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+	
+					gl .frontFace (positiveScale ? this .frontFace : (this .frontFace === gl .CCW ? gl .CW : gl .CCW));
+	
+					if (context .transparent && ! this .solid)
 					{
-						modelViewMatrix [12] = x;
-						modelViewMatrix [13] = y;
-						modelViewMatrix [14] = z;
-
-						Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
-
-						if (materialNode || shaderNode .getCustom ())
+						for (var p = 0; p < numParticles; ++ p)
 						{
-							// Set normal matrix.
-							normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-							normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-							normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-							Matrix3 .prototype .inverse .call (normalMatrix);
-							gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
+							modelViewMatrix [12] = x;
+							modelViewMatrix [13] = y;
+							modelViewMatrix [14] = z;
+	
+							Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+	
+							if (lighting)
+							{
+								// Set normal matrix.
+								normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+								normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+								normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+								Matrix3 .prototype .inverse .call (normalMatrix);
+								gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
+							}
+	
+							gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+	
+							gl .enable (gl .CULL_FACE);
+							gl .cullFace (gl .FRONT);
+							gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
+		
+							gl .cullFace (gl .BACK);
+							gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
+						}	
+					}
+					else
+					{
+						if (this .solid)
+							gl .enable (gl .CULL_FACE);
+						else
+							gl .disable (gl .CULL_FACE);
+	
+						for (var p = 0; p < numParticles; ++ p)
+						{
+							modelViewMatrix [12] = x;
+							modelViewMatrix [13] = y;
+							modelViewMatrix [14] = z;
+	
+							Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+	
+							if (materialNode || shaderNode .getCustom ())
+							{
+								// Set normal matrix.
+								normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+								normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+								normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+								Matrix3 .prototype .inverse .call (normalMatrix);
+								gl .uniformMatrix3fv (shaderNode .x3d_NormalMatrix, false, normalMatrix);
+							}
+	
+							gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+	
+							gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 						}
-
-						gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
-
-						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 					}
 				}
+	
+				shaderNode .disableColorAttribute    (gl);
+				shaderNode .disableTexCoordAttribute (gl);
+				shaderNode .disableNormalAttribute   (gl);
 			}
-
-			shaderNode .disableColorAttribute    (gl);
-			shaderNode .disableTexCoordAttribute (gl);
-			shaderNode .disableNormalAttribute   (gl);
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
+			}
 		},
 	});
 
@@ -47012,11 +46913,11 @@ function ($,
 		{
 			return this .selectedLayer;
 		},
-		setHitRay: function (viewport)
+		setHitRay: function (projectionMatrix, viewport)
 		{
 			try
 			{
-				ViewVolume .unProjectRay (this .pointer .x, this .pointer .y, Matrix4 .Identity, this .getProjectionMatrix () .get (), viewport, this .hitRay);
+				ViewVolume .unProjectRay (this .pointer .x, this .pointer .y, Matrix4 .Identity, projectionMatrix, viewport, this .hitRay);
 			}
 			catch (error)
 			{
@@ -47103,7 +47004,7 @@ function ($,
 
 			// Pick.
 			
-			this .getWorld () .traverse (TraverseType .POINTER);
+			this .getWorld () .traverse (TraverseType .POINTER, null);
 
 			// Picking end.
 
@@ -48844,13 +48745,13 @@ function ($,
 		{
 			return this .userCenterOfRotation .assign (this .getCenterOfRotation ()) .add (this .centerOfRotationOffset_ .getValue ());
 		},
-		getProjectionMatrix: function ()
+		getProjectionMatrix: function (renderObject)
 		{
-			var navigationInfo = this .getCurrentNavigationInfo ();
+			var navigationInfo = renderObject .getNavigationInfo ();
 	
 			return this .getProjectionMatrixWithLimits (navigationInfo .getNearValue (),
                                                      navigationInfo .getFarValue (this),
-                                                     this .getCurrentViewport () .getRectangle ());
+                                                     renderObject .getLayer () .getViewport () .getRectangle (renderObject .getBrowser ()));
 		},
 		getCameraSpaceMatrix: function ()
 		{
@@ -49082,11 +48983,11 @@ function ($,
 			else
 				this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .getCurrentLayer () .getViewpoints () .push (this);
+			renderObject .getLayer () .getViewpoints () .push (this);
 
-			this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 		},
 		update: function ()
 		{
@@ -49563,7 +49464,7 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 			try
 			{
 				var
-					viewport       = this .getViewport () .getRectangle (),
+					viewport       = this .getViewport () .getRectangle (this .getBrowser ()),
 					navigationInfo = this .getNavigationInfo (),
 					viewpoint      = this .getActiveViewpoint (),
 					projection     = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport),
@@ -50503,7 +50404,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				shaderNode = browser .getLineShader (),
 				lineWidth  = gl .getParameter (gl .LINE_WIDTH);
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 			shaderNode .enableVertexAttribute (gl, this .lineBuffer);
 
 			gl .uniform4fv (shaderNode .x3d_ClipPlane [0], shaderNode .x3d_NoneClipPlane);
@@ -52659,18 +52560,18 @@ function ($,
 
 			return "LINEAR";
 		},
-		enable: function ()
+		enable: function (type, renderObject)
 		{
 		},
-		traverse: function ()
+		traverse: function (type, renderObject)
 		{
-			this .getCurrentLayer () .getNavigationInfos () .push (this);
+			renderObject .getLayer () .getNavigationInfos () .push (this);
 		}
 	});
 
-	function enable ()
+	function enable (type, renderObject)
 	{
-		this .getCurrentLayer () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+		renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 	}
 
 	return NavigationInfo;
@@ -52773,11 +52674,11 @@ function ($,
 		geoOrientation      = new Rotation4 (0, 0, 1, 0),
 		geoCenterOfRotation = new Vector3 (0, 0, 0);
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
-		X3DViewpointNode .prototype .traverse .call (this, type);
+		X3DViewpointNode .prototype .traverse .call (this, type, renderObject);
 
-		this .navigationInfoNode .traverse (type);
+		this .navigationInfoNode .traverse (type, renderObject);
 	}
 
 	function GeoViewpoint (executionContext)
@@ -53530,34 +53431,40 @@ function ($,
 		{
 			return biasMatrix;
 		},
-		push: function (group)
+		push: function (type, renderObject, group)
 		{
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
 				{
-					var lightContainer = this .getLights () .pop (this, this .getCurrentLayer () .getGroup ());
+					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
+					                                              this,
+					                                              renderObject .getLayer () .getGroup (),
+					                                              renderObject .getModelViewMatrix () .get ());
 
-					this .getCurrentLayer () .getGlobalLights () .push (lightContainer);
-					this .getCurrentLayer () .getLights ()       .push (lightContainer);
+					renderObject .getGlobalLights () .push (lightContainer);
+					renderObject .getLights ()       .push (lightContainer);
 				}
 				else
 				{
-					var lightContainer = this .getLights () .pop (this, group);
+					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
+					                                              this,
+					                                              group,
+					                                              renderObject .getModelViewMatrix () .get ());
 
-					this .getCurrentLayer () .getLocalLights () .push (lightContainer);
-					this .getCurrentLayer () .getLights ()      .push (lightContainer);
+					renderObject .getLocalLights () .push (lightContainer);
+					renderObject .getLights ()      .push (lightContainer);
 				}
 			}
 		},
-		pop: function ()
+		pop: function (type, renderObject)
 		{
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
 				   return;
 
-				this .getBrowser () .getLocalLights () .push (this .getCurrentLayer () .getLocalLights () .pop ());
+				renderObject .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
 			}
 		},
 	});
@@ -53994,7 +53901,7 @@ function ($,
 
 			this .setCameraObject (this .cameraObjects .length);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
@@ -54009,23 +53916,23 @@ function ($,
 					{
 						var sensors = { };
 						
-						this .getBrowser () .getSensors () .push (sensors);
+						renderObject .getBrowser () .getSensors () .push (sensors);
 					
 						for (var i = 0, length = pointingDeviceSensors .length; i < length; ++ i)
-							pointingDeviceSensors [i] .traverse (sensors);
+							pointingDeviceSensors [i] .push (renderObject, sensors);
 					}
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
+						clipPlanes [i] .push (renderObject);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
+						childNodes [i] .traverse (type, renderObject);
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
+						clipPlanes [i] .pop (renderObject);
 
 					if (pointingDeviceSensors .length)
-						this .getBrowser () .getSensors () .pop ();
+						renderObject .getBrowser () .getSensors () .pop ();
 
 					return;
 				}
@@ -54034,7 +53941,7 @@ function ($,
 					var cameraObjects = this .cameraObjects;
 
 					for (var i = 0, length = cameraObjects .length; i < length; ++ i)
-						cameraObjects [i] .traverse (type);
+						cameraObjects [i] .traverse (type, renderObject);
 
 					return;
 				}
@@ -54046,13 +53953,13 @@ function ($,
 						childNodes = this .childNodes;
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
+						clipPlanes [i] .push (renderObject);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
+						childNodes [i] .traverse (type, renderObject);
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
+						clipPlanes [i] .pop (renderObject);
 					
 					return;
 				}
@@ -54065,25 +53972,25 @@ function ($,
 						childNodes = this .childNodes;
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .push ();
+						clipPlanes [i] .push (renderObject);
 
 					for (var i = 0, length = localFogs .length; i < length; ++ i)
-						localFogs [i] .push ();
+						localFogs [i] .push (renderObject);
 
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .push (this);
+						lights [i] .push (type, renderObject, this);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
-						childNodes [i] .traverse (type);
+						childNodes [i] .traverse (type, renderObject);
 					
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .pop ();
+						lights [i] .pop (type, renderObject);
 
 					for (var i = 0, length = localFogs .length; i < length; ++ i)
-						localFogs [i] .pop ();
+						localFogs [i] .pop (renderObject);
 
 					for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-						clipPlanes [i] .pop ();
+						clipPlanes [i] .pop (renderObject);
 
 					return;
 				}
@@ -54276,7 +54183,7 @@ function ($,
 
 	var DirectionalLights = ObjectCache (DirectionalLightContainer);
 	
-	function DirectionalLightContainer (lightNode, groupNode)
+	function DirectionalLightContainer (browser, lightNode, groupNode, modelViewMatrix)
 	{
 		this .direction            = new Vector3 (0, 0, 0);
 		this .shadowBuffer         = null;
@@ -54292,23 +54199,23 @@ function ($,
 		this .rotation             = new Rotation4 ();
 		this .textureUnit          = 0;
 	
-		this .set (lightNode, groupNode);
+		this .set (browser, lightNode, groupNode, modelViewMatrix);
 	}
 
 	DirectionalLightContainer .prototype =
 	{
 		constructor: DirectionalLightContainer,
-		set: function (lightNode, groupNode)
+		set: function (browser, lightNode, groupNode, modelViewMatrix)
 		{
 			var
-				browser       = lightNode .getBrowser (),
 				gl            = browser .getContext (),
 				shadowMapSize = lightNode .getShadowMapSize ();
 
+			this .browser   = browser;
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -54337,7 +54244,7 @@ function ($,
 				}
 			}
 		},
-		renderShadowMap: function ()
+		renderShadowMap: function (renderObject)
 		{
 			try
 			{
@@ -54346,9 +54253,7 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					browser              = lightNode .getBrowser (),
-					layerNode            = lightNode .getCurrentLayer (),
-					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
 					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
@@ -54364,16 +54269,16 @@ function ($,
 
 				this .shadowBuffer .bind ();
 
-				layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
-				browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
-				browser .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
-				browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+				renderObject .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+				renderObject .getProjectionMatrix () .pushMatrix (projectionMatrix);
+				renderObject .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
+				renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
 
-				layerNode .render (this .groupNode, TraverseType .DEPTH);
+				renderObject .render (TraverseType .DEPTH, this .groupNode);
 
-				browser .getModelViewMatrix  () .pop ();
-				browser .getProjectionMatrix () .pop ();
-				layerNode .getViewVolumes () .pop ();
+				renderObject .getModelViewMatrix  () .pop ();
+				renderObject .getProjectionMatrix () .pop ();
+				renderObject .getViewVolumes      () .pop ();
 
 				this .shadowBuffer .unbind ();
 	
@@ -54420,9 +54325,9 @@ function ($,
 			// Return shadowBuffer and textureUnit.
 
 			if (this .textureUnit)
-				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
-			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			this .browser .pushShadowBuffer (this .shadowBuffer);
 
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
@@ -54538,6 +54443,7 @@ define ('cobweb/Browser/Navigation/X3DNavigationContext',[
 	"cobweb/Browser/Navigation/NoneViewer",
 	"cobweb/Browser/Navigation/LookAtViewer",
 	"cobweb/Components/Lighting/DirectionalLight",
+	"standard/Math/Numbers/Matrix4",
 ],
 function (Fields,
           ExamineViewer,
@@ -54546,7 +54452,8 @@ function (Fields,
           PlaneViewer,
           NoneViewer,
           LookAtViewer,
-          DirectionalLight)
+          DirectionalLight,
+          Matrix4)
 {
 
 	
@@ -54554,7 +54461,7 @@ function (Fields,
 	{
 		var light = new DirectionalLight (executionContext);
 		light .setup ();
-		var headlight = light .getLights () .pop (light);
+		var headlight = light .getLights () .pop (executionContext .getBrowser (), light, null, Matrix4 .Identity);
 		headlight .recycle = function () { };
 		return headlight;
 	};
@@ -54564,7 +54471,6 @@ function (Fields,
 		this .addChildren ("availableViewers", new Fields .MFString (),
 		                   "viewer",           new Fields .SFString ("EXAMINE"));
 		
-		this .collisions         = [ ];
 		this .activeCollisions   = { };
 		this .collisionCount     = 0;
 		this .activeLayerNode    = null;
@@ -54594,10 +54500,6 @@ function (Fields,
 		getCurrentViewer: function ()
 		{
 			return this .viewer_ .getValue ();
-		},
-		getCollisions: function ()
-		{
-			return this .collisions;
 		},
 		addCollision: function (object)
 		{
@@ -54893,32 +54795,9 @@ function ($,
 		{
 			return "viewport";
 		},
-		initialize: function ()
+		getRectangle: function (browser)
 		{
-			X3DViewportNode .prototype .initialize .call (this);
-
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive ()                         .addInterest (this, "set_live__");
-			
-			this .getBrowser () .getViewport () .addInterest (this, "set_rectangle__");
-			this .clipBoundary_                 .addInterest (this, "set_rectangle__");
-
-			this .set_live__ ();
-		},
-		set_live__: function ()
-		{
-		  if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-		  {
-		      this .getBrowser () .getViewport () .addInterest (this, "set_rectangle__");
-
-				this .set_rectangle__ ();
-		  }
-		  else
-				this .getBrowser () .getViewport () .removeInterest (this, "set_rectangle__");
-		},
-		set_rectangle__: function ()
-		{
-			var viewport = this .getBrowser () .getViewport ();
+			var viewport = browser .getViewport ();
 
 			var
 				left   = Math .floor (viewport [2] * this .getLeft ()),
@@ -54930,9 +54809,7 @@ function ($,
 			                      bottom,
 			                      Math .max (0, right - left),
 			                      Math .max (0, top - bottom));
-		},
-		getRectangle: function ()
-		{
+
 			return this .rectangle;
 		},
 		getLeft: function ()
@@ -54951,40 +54828,40 @@ function ($,
 		{
 			return this .clipBoundary_ .length > 3 ? this .clipBoundary_ [3] : 1;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .push ();
+			this .push (renderObject);
 
 			switch (type)
 			{
 				case TraverseType .POINTER:
 				{
-					if (this .getBrowser () .isPointerInRectangle (this .rectangle))
-						X3DViewportNode .prototype .traverse .call (this, type);
+					if (renderObject .getBrowser () .isPointerInRectangle (this .rectangle))
+						X3DViewportNode .prototype .traverse .call (this, type, renderObject);
 
 					break;
 				}
 				default:
-					X3DViewportNode .prototype .traverse .call (this, type);
+					X3DViewportNode .prototype .traverse .call (this, type, renderObject);
 					break;
 			}
 
-			this .pop ();
+			this .pop (renderObject);
 		},
-		push: function ()
+		push: function (renderObject)
 		{
 			var
-			   currentLayer = this .getCurrentLayer (),
-				viewVolumes  = currentLayer .getViewVolumes (),
-				viewport     = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : this .rectangle;
+				viewVolumes = renderObject .getViewVolumes (),
+				rectangle   = this .getRectangle (renderObject .getBrowser ()),
+				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : rectangle;
 
-			currentLayer .getViewVolumes () .push (ViewVolumes .pop (this .getBrowser () .getProjectionMatrix () .get (),
-			                                                         viewport,
-			                                                         this .rectangle));
+			viewVolumes .push (ViewVolumes .pop (renderObject .getProjectionMatrix () .get (),
+			                                     viewport,
+			                                     rectangle));
 		},
-		pop: function ()
+		pop: function (renderObject)
 		{
-			ViewVolumes .push (this .getCurrentLayer () .getViewVolumes () .pop ());
+			ViewVolumes .push (renderObject .getViewVolumes () .pop ());
 		},
 	});
 
@@ -55052,7 +54929,6 @@ function (Viewport)
 	function X3DLayeringContext ()
 	{
 		this .defaultViewport = new Viewport (this);
-		this .layers          = [ ];
 	}
 
 	X3DLayeringContext .prototype =
@@ -55064,10 +54940,6 @@ function (Viewport)
 		getDefaultViewport: function ()
 		{
 			return this .defaultViewport;
-		},
-		getLayers: function ()
-		{
-			return this .layers;
 		},
 	};
 
@@ -55324,8 +55196,6 @@ function ($, TextureProperties)
 
 	function X3DLayoutContext ()
 	{
-		this .layouts = [ ];
-
 		this .screenTextureProperties = new TextureProperties (this);
 	}
 
@@ -55345,14 +55215,6 @@ function ($, TextureProperties)
 			var div = $("<div></div>");
 			this .pointSize = div .appendTo ($("body")) .css ("height", "1in") .css ("display", "none") .height () / 72;
 			div .remove ();
-		},
-		getLayouts: function ()
-		{
-			return this .layouts;
-		},
-		getParentLayout: function ()
-		{
-			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
 		},
 		getScreenTextureProperties: function ()
 		{
@@ -59676,7 +59538,7 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{ },
 		display: function (context)
 		{ },
@@ -66172,10 +66034,120 @@ function (PointEmitter)
  ******************************************************************************/
 
 
+define ('standard/Math/Utility/MatrixStack',[
+	"jquery",
+],
+function ($)
+{
+
+
+	function MatrixStack (Type)
+	{
+		return $.extend ([ new Type () ],
+		{
+			top: 0,
+			set: function (matrix)
+			{
+				this [this .top] .assign (matrix);
+			},
+			get: function (matrix)
+			{
+				return this [this .top];
+			},
+			push: function ()
+			{
+				var top = ++ this .top;
+			
+				if (top < this .length)
+					this [top] .assign (this [top - 1]);
+				else
+					this [top] = this [top - 1] .copy ();
+			},
+			pushMatrix: function (matrix)
+			{
+				var top = ++ this .top;
+
+				if (top < this .length)
+					this [top] .assign (matrix);
+				else
+					this [top] = matrix .copy ();
+			},
+			pop: function ()
+			{
+				-- this .top;
+			},
+			identity: function ()
+			{
+				this [this .top] .identity ();
+			},
+			multLeft: function (matrix)
+			{
+				this [this .top] .multLeft (matrix);
+			},
+			scale: function (vector)
+			{
+				this [this .top] .scale (vector);
+			},
+		});
+	}
+
+	return MatrixStack;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('cobweb/Rendering/X3DRenderObject',[
 	"jquery",
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
+	"standard/Math/Algorithm",
 	"standard/Math/Algorithms/QuickSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Box3",
@@ -66184,11 +66156,12 @@ define ('cobweb/Rendering/X3DRenderObject',[
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Algorithm",
+	"standard/Math/Utility/MatrixStack",
 ],
 function ($,
           DepthBuffer,
 	       TraverseType,
+          Algorithm,
           QuickSort,
           Camera,
           Box3,
@@ -66197,7 +66170,7 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
-          Algorithm)
+          MatrixStack)
 {
 
 
@@ -66221,12 +66194,16 @@ function ($,
 
 	function X3DRenderObject (executionContext)
 	{
+		this .projectionMatrix     = new MatrixStack (Matrix4);
+		this .modelViewMatrix      = new MatrixStack (Matrix4);
 		this .viewVolumes          = [ ];
 		this .clipPlanes           = [ ];
 		this .globalLights         = [ ];
 		this .localLights          = [ ];
 		this .lights               = [ ];
 		this .localFogs            = [ ];
+		this .layouts              = [ ];
+		this .collisions           = [ ];
 		this .numOpaqueShapes      = 0;
 		this .numTransparentShapes = 0;
 		this .numCollisionShapes   = 0;
@@ -66259,7 +66236,14 @@ function ($,
 		bboxCenter: new Vector3 (0, 0, 0),
 		translation: new Vector3 (0, 0, 0),
 		initialize: function ()
+		{ },
+		getProjectionMatrix: function ()
 		{
+			return this .projectionMatrix;
+		},
+		getModelViewMatrix: function ()
+		{
+			return this .modelViewMatrix;
 		},
 		getViewVolumes: function ()
 		{
@@ -66301,94 +66285,93 @@ function ($,
 
 			this .localFog = this .localFogs [this .localFogs .length - 1];
 		},
+		getLayouts: function ()
+		{
+			return this .layouts;
+		},
+		getParentLayout: function ()
+		{
+			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
+		},
+		getCollisions: function ()
+		{
+			return this .collisions;
+		},
 		addCollisionShape: function (shapeNode)
 		{
 			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				modelViewMatrix = this .getModelViewMatrix () .get (),
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-				if (this .numCollisionShapes === this .collisionShapes .length)
-					this .collisionShapes .push ({ modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+			if (this .numCollisionShapes === this .collisionShapes .length)
+				this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
 
-				var context = this .collisionShapes [this .numCollisionShapes];
+			var context = this .collisionShapes [this .numCollisionShapes];
 
-				++ this .numCollisionShapes;
+			++ this .numCollisionShapes;
 
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
+			context .modelViewMatrix .set (modelViewMatrix);
+			context .shapeNode = shapeNode;
+			context .scissor   = viewVolume .getScissor ();
 
-				// Collisions
+			// Collisions
 
-				var
-					sourceCollisions = this .getBrowser () .getCollisions (),
-					destCollisions   = context .collisions;
+			var
+				sourceCollisions = this .getCollisions (),
+				destCollisions   = context .collisions;
 
-				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
-				   destCollisions [i] = sourceCollisions [i];
-				
-				destCollisions .length = sourceCollisions .length;
+			for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+			   destCollisions [i] = sourceCollisions [i];
+			
+			destCollisions .length = sourceCollisions .length;
 
-				// Clip planes
+			// Clip planes
 
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
+			var
+				sourcePlanes = this .getClipPlanes (),
+				destPlanes   = context .clipPlanes;
 
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
+			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				destPlanes [i] = sourcePlanes [i];
+			
+			destPlanes .length = sourcePlanes .length;
+
+			return true;
 		},
 		addDepthShape: function (shapeNode)
 		{
 			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				modelViewMatrix = this .getModelViewMatrix () .get (),
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-				if (this .numDepthShapes === this .depthShapes .length)
-					this .depthShapes .push ({ modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
+			if (this .numDepthShapes === this .depthShapes .length)
+				this .depthShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
 
-				var context = this .depthShapes [this .numDepthShapes];
+			var context = this .depthShapes [this .numDepthShapes];
 
-				++ this .numDepthShapes;
+			++ this .numDepthShapes;
 
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
+			context .modelViewMatrix .set (modelViewMatrix);
+			context .shapeNode = shapeNode;
+			context .scissor   = viewVolume .getScissor ();
 
-				// Clip planes
+			// Clip planes
 
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
+			var
+				sourcePlanes = this .getClipPlanes (),
+				destPlanes   = context .clipPlanes;
 
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
+			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				destPlanes [i] = sourcePlanes [i];
+			
+			destPlanes .length = sourcePlanes .length;
+
+			return true;
 		},
-		createShapeContext: function (transparent)
-		{
-			return {
-				transparent: true,
-				modelViewMatrix: new Float32Array (16),
-				scissor: new Vector4 (0, 0, 0, 0),
-				clipPlanes: [ ],
-				localLights: [ ],
-				geometryType: 3,
-				colorMaterial: false,
-				linePropertiesNode: null,
-				materialNode: null,
-				textureNode: null,
-				textureTransformNode: null,
-				shaderNode: null,
-			};
-		},
-		addShape: function (shapeNode)
+		addDisplayShape: function (shapeNode)
 		{
 			var
-				modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+				modelViewMatrix = this .getModelViewMatrix () .get (),
 				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
 				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
 				radius          = bboxSize .abs () / 2,
@@ -66417,8 +66400,8 @@ function ($,
 				}
 
 				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
 				context .scissor .assign (viewVolume .getScissor ());
+				context .shapeNode = shapeNode;
 				context .distance  = distance - radius;
 				context .fogNode   = this .localFog;
 
@@ -66443,7 +66426,29 @@ function ($,
 					destLights [i] = sourceLights [i];
 				
 				destLights .length = sourceLights .length;
+
+				return true;
 			}
+
+			return false;
+		},
+		createShapeContext: function (transparent)
+		{
+			return {
+				renderer: this,
+				transparent: true,
+				geometryType: 3,
+				colorMaterial: false,
+				modelViewMatrix: new Float32Array (16),
+				scissor: new Vector4 (0, 0, 0, 0),
+				clipPlanes: [ ],
+				localLights: [ ],
+				linePropertiesNode: null,
+				materialNode: null,
+				textureNode: null,
+				textureTransformNode: null,
+				shaderNode: null,
+			};
 		},
 		constrainTranslation: function (translation)
 		{
@@ -66513,11 +66518,11 @@ function ($,
 				modelViewMatrix .rotate (rotation);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
 				var depth = this .getDepth (projectionMatrix);
 
-				this .getBrowser () .getProjectionMatrix () .pop ();
+				this .getProjectionMatrix () .pop ();
 
 				return -depth;
 			}
@@ -66540,7 +66545,7 @@ function ($,
 
 			return depth;
 		},
-		render: function (group, type)
+		render: function (type, group)
 		{
 			switch (type)
 			{
@@ -66549,7 +66554,7 @@ function ($,
 					// Collect for collide and gravite
 					this .numCollisionShapes = 0;
 
-					group .traverse (type);
+					group .traverse (type, this);
 					this .collide ();
 					this .gravite ();
 					break;
@@ -66558,7 +66563,7 @@ function ($,
 				{
 					this .numDepthShapes = 0;
 
-					group .traverse (type);
+					group .traverse (type, this);
 					this .depth (this .depthShapes, this .numDepthShapes);
 					break;
 				}
@@ -66568,7 +66573,7 @@ function ($,
 					this .numTransparentShapes = 0;
 	
 					this .setGlobalFog (this .getFog ());
-					group .traverse (type);
+					group .traverse (type, this);
 					this .draw ();
 					break;
 				}
@@ -66665,11 +66670,11 @@ function ($,
 				modelViewMatrix .rotate (down);
 				modelViewMatrix .inverse ();
 
-				this .getBrowser () .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
+				this .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
 
 				var distance = -this .getDepth (projectionMatrix);
 
-				this .getBrowser () .getProjectionMatrix () .pop ();
+				this .getProjectionMatrix () .pop ();
 
 				// Gravite or step up
 
@@ -66719,7 +66724,7 @@ function ($,
 							//	if (math::abs (offset) > math::abs (translation) or getBrowser () -> getCurrentSpeed () == 0)
 							//		offset = translation;
 							//
-							//	getCurrentViewpoint () -> positionOffset () += offset;
+							//	getViewpoint () -> positionOffset () += offset;
 							//}
 							//else
 								viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
@@ -66746,9 +66751,9 @@ function ($,
 
 			// Configure shader
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 			
-			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
@@ -66796,7 +66801,7 @@ function ($,
 
 				// Draw
 	
-				context .shapeNode .depth (shaderNode);
+				context .shapeNode .depth (context, shaderNode);
 			}
 		},
 		draw: function ()
@@ -66814,7 +66819,7 @@ function ($,
 			var lights = this .lights;
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
-				lights [i] .renderShadowMap ();
+				lights [i] .renderShadowMap (this);
 
 			// Configure viewport and background
 
@@ -66830,18 +66835,18 @@ function ($,
 
 			gl .clear (gl .DEPTH_BUFFER_BIT);
 
-			this .getBackground () .display (viewport);
+			this .getBackground () .display (this, viewport);
 
 			// Sorted blend
 
-			projectionMatrixArray .set (browser .getProjectionMatrix () .get ());
+			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader ()   .setGlobalUniforms (gl, projectionMatrixArray);
-			browser .getLineShader ()    .setGlobalUniforms (gl, projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (gl, projectionMatrixArray);
+			browser .getPointShader ()   .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getLineShader ()    .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (gl, projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray);
 
 			// Render opaque objects first
 
@@ -67340,7 +67345,7 @@ function ($,
 		{
 			return this .hidden;
 		},
-		setShaderUniforms: function (gl, shaderObject)
+		setShaderUniforms: function (gl, shaderObject, renderObject)
 		{
 			if (this .hidden)
 				gl .uniform1i (shaderObject .x3d_FogType, 0); // NO_FOG
@@ -67352,7 +67357,7 @@ function ($,
 					visibilityRange = Math .max (0, this .visibilityRange_ .getValue ());
 
 				if (visibilityRange === 0)
-					visibilityRange = this .getCurrentNavigationInfo () .getFarValue (this .getCurrentViewpoint ());
+					visibilityRange = renderObject .getNavigationInfo () .getFarValue (renderObject .getViewpoint ());
 
 				gl .uniform1i (shaderObject .x3d_FogType,            this .fogType);
 				gl .uniform3f (shaderObject .x3d_FogColor,           color .r, color .g, color .b);
@@ -67490,9 +67495,9 @@ function ($,
 		{
 			layer .getFogStack () .remove (this);
 		},
-		traverse: function ()
+		traverse: function (type, renderObject)
 		{
-			this .getCurrentLayer () .getFogs () .push (this);
+			renderObject .getLayer () .getFogs () .push (this);
 		},
 	});
 
@@ -67969,21 +67974,21 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .bottomBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (bottomVertices), gl .STATIC_DRAW);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
 				case TraverseType .CAMERA:
 				{
-					this .getCurrentLayer () .getBackgrounds () .push (this);
+					renderObject .getLayer () .getBackgrounds () .push (this);
 		
-					this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 					break;
 				}
 				case TraverseType .DISPLAY:
 				{
 					var
-						sourcePlanes = this .getCurrentLayer () .getClipPlanes (),
+						sourcePlanes = renderObject .getClipPlanes (),
 						destPlanes   = this .clipPlanes;
 	
 					for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
@@ -67994,13 +67999,13 @@ function ($,
 				}
 			}
 		},
-		display: function (viewport)
+		display: function (renderObject, viewport)
 		{
 			if (this .hidden)
 				return;
 
 			var
-				browser = this .getBrowser (),
+				browser = renderObject .getBrowser (),
 				gl      = browser .getContext ();
 
 			// Setup context.
@@ -68013,7 +68018,7 @@ function ($,
 			// Get background scale.
 
 			var
-				viewpoint       = this .getCurrentViewpoint (),
+				viewpoint       = renderObject .getViewpoint (),
 				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
 				modelViewMatrix = this .transformationMatrix;
@@ -68036,12 +68041,12 @@ function ($,
 		
 			// Draw.
 
-			this .drawSphere ();
+			this .drawSphere (renderObject);
 
 			if (this .textures)
-				this .drawCube ();
+				this .drawCube (renderObject);
 		},
-		drawSphere: function ()
+		drawSphere: function (renderObject)
 		{
 			var transparency = this .transparency_ .getValue ();
 		
@@ -68049,11 +68054,11 @@ function ($,
 				return;
 	
 			var
-				browser    = this .getBrowser (),
+				browser    = renderObject .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = browser .getBackgroundSphereShader ();
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 
 			// Clip planes
 
@@ -68084,14 +68089,14 @@ function ($,
 
 			shaderNode .disableColorAttribute (gl);
 		},
-		drawCube: function ()
+		drawCube: function (renderObject)
 		{
 			var
-				browser    = this .getBrowser (),
+				browser    = renderObject .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = browser .getGouraudShader ();
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 
 			// Clip planes
 
@@ -69089,6 +69094,10 @@ function ($,
 			this .layer0 = value;
 			this .defaultBackground .setHidden (! value);
 		},
+		getLayer: function ()
+		{
+			return this;
+		},
 		getGroup: function ()
 		{
 			return this .groupNode;
@@ -69172,7 +69181,7 @@ function ($,
 		},
 		bind: function ()
 		{
-			this .traverse (TraverseType .CAMERA);
+			this .traverse (TraverseType .CAMERA, this);
 
 			// Bind first viewpoint in viewpoint list.
 
@@ -69181,12 +69190,9 @@ function ($,
 			this .fogStack            .forcePush (this .fogs            .getBound ());
 			this .viewpointStack      .forcePush (this .viewpoints      .getBound ());
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-		   var browser = this .getBrowser ();
-
-			browser .getLayers () .push (this);
-			browser .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix ());
+			this .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix (this));
 
 			switch (type)
 			{
@@ -69207,8 +69213,7 @@ function ($,
 					break;
 			}
 
-			browser .getProjectionMatrix () .pop ()
-			browser .getLayers () .pop ();
+			this .getProjectionMatrix () .pop ();
 		},
 		pointer: function (type)
 		{
@@ -69216,7 +69221,7 @@ function ($,
 			{
 				var
 					browser  = this .getBrowser (),
-					viewport = this .currentViewport .getRectangle ();
+					viewport = this .currentViewport .getRectangle (browser);
 
 				if (browser .getSelectedLayer ())
 				{
@@ -69229,25 +69234,23 @@ function ($,
 						return;
 				}
 
-				browser .setHitRay (viewport);
-				browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
+				this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
-				this .currentViewport .push ();
-				this .groupNode .traverse (type);
-				this .currentViewport .pop ();
+				this .currentViewport .push (this);
+				this .groupNode .traverse (type, this);
+				this .currentViewport .pop (this);
 
-				browser .getModelViewMatrix () .pop ()
+				this .getModelViewMatrix () .pop ()
 			}
 		},
 		camera: function (type)
 		{
-			var browser = this .getBrowser ();
-
-			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
-			this .currentViewport .push ();
-			this .groupNode .traverse (type);
-			this .currentViewport .pop ();
+			this .currentViewport .push (this);
+			this .groupNode .traverse (type, this);
+			this .currentViewport .pop (this);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -69256,36 +69259,32 @@ function ($,
 
 			this .getViewpoint () .update ();
 
-			browser .getModelViewMatrix () .pop ()
+			this .getModelViewMatrix () .pop ()
 		},
 		collision: function (type)
 		{
-			var browser = this .getBrowser ();
-
 			this .collisionTime = 0;
 
-			browser .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
 			// Render
-			this .currentViewport .push ();
-			this .render (this .groupNode, type);
-			this .currentViewport .pop ();
+			this .currentViewport .push (this);
+			this .render (type, this .groupNode);
+			this .currentViewport .pop (this);
 
-			browser .getModelViewMatrix () .pop ()
+			this .getModelViewMatrix () .pop ()
 		},
 		display: function (type)
 		{
-			var browser = this .getBrowser ();
+			this .getNavigationInfo () .enable (type, this);
 
-			this .getNavigationInfo () .enable ();
+			this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
-			browser .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .currentViewport .push (this);
+			this .render (type, this .groupNode);
+			this .currentViewport .pop (this);
 
-			this .currentViewport .push ();
-			this .render (this .groupNode, type);
-			this .currentViewport .pop ();
-
-			browser .getModelViewMatrix () .pop ()
+			this .getModelViewMatrix () .pop ()
 		},
 	});
 
@@ -69708,7 +69707,7 @@ function ($,
 					layerNode .bind ();
 			}
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			var layerNodes = this .layerNodes;
 
@@ -69717,14 +69716,14 @@ function ($,
 				for (var i = 0, length = layerNodes .length; i < length; ++ i)
 				{
 					this .getBrowser () .setLayerNumber (i);
-					layerNodes [i] .traverse (type);
+					layerNodes [i] .traverse (type, renderObject);
 				}
 			}
 			else
 			{
 				for (var i = 0, length = layerNodes .length; i < length; ++ i)
 				{
-					layerNodes [i] .traverse (type);
+					layerNodes [i] .traverse (type, renderObject);
 				}
 			}
 		},
@@ -70163,12 +70162,12 @@ function ($,
 			this .processEvents ();
 
 			var t1 = performance .now ();
-			this .world .traverse (TraverseType .CAMERA);
+			this .world .traverse (TraverseType .CAMERA ,null);
 			this .cameraTime = performance .now () - t1;
 
 			var t2 = performance .now ();
 			if (this .getCollisionCount ())
-				this .world .traverse (TraverseType .COLLISION);
+				this .world .traverse (TraverseType .COLLISION, null);
 			this .collisionTime = performance .now () - t2;
 
 			this .sensors_ .processInterests ();
@@ -70180,7 +70179,7 @@ function ($,
 			var t3 = performance .now ();
 			gl .clearColor (0, 0, 0, 0);
 			gl .clear (gl .COLOR_BUFFER_BIT);
-			this .world .traverse (TraverseType .DISPLAY);
+			this .world .traverse (TraverseType .DISPLAY, null);
 			this .displayTime = performance .now () - t3;
 
 			this .browserTime     = performance .now () - t0;
@@ -71041,17 +71040,17 @@ function ($,
 			if (value !== this .isActive_ .getValue ())
 				this .isActive_ = value;
 		},
-		traverse: function (sensors)
+		push: function (renderObject, sensors)
 		{
 			if (this .enabled_ .getValue ())
 			{
-				var currentLayer = this .getCurrentLayer ();
+				var currentLayer = renderObject .getLayer ();
 
 				sensors [this .getId ()] = this;
 
 				// Create a matrix set for each layer if needed in the case the sensor is cloned over multiple layers.
 
-				if (! (currentLayer .getId () in this .matrices))
+				if (! this .matrices .hasOwnProperty (currentLayer .getId ()))
 				{
 					this .matrices [currentLayer .getId ()] = {
 						modelViewMatrix:  new Matrix4 (),
@@ -71062,9 +71061,9 @@ function ($,
 
 				var matrices = this .matrices [currentLayer .getId ()];
 
-				matrices .modelViewMatrix  .assign (this .getBrowser () .getModelViewMatrix  () .get ());
-				matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix () .get ());
-				matrices .viewport         .assign (currentLayer .getViewport () .getRectangle ());
+				matrices .modelViewMatrix  .assign (renderObject .getModelViewMatrix  () .get ());
+				matrices .projectionMatrix .assign (renderObject .getProjectionMatrix () .get ());
+				matrices .viewport         .assign (renderObject .getViewVolume () .getViewport ());
 			}
 		},
 	});
@@ -71468,21 +71467,21 @@ function ($,
 			}
 			.bind (this));
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type === TraverseType .POINTER)
 			{
 			   var sensors = { };
 
-				this .getBrowser () .getSensors () .push (sensors);
-				this .touchSensorNode .traverse (sensors);
+				renderObject .getBrowser () .getSensors () .push (sensors);
+				this .touchSensorNode .push (renderObject, sensors);
 
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
-				this .getBrowser () .getSensors () .pop ();
+				renderObject .getBrowser () .getSensors () .pop ();
 			}
 			else
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 		},
 	});
 
@@ -71569,7 +71568,7 @@ function ($,
 		{
 			this .shaderNode = value;
 		},
-		intersectsLine: function (line, modelViewMatrix, intersections)
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
 		{
 			return false;
 		},
@@ -71577,83 +71576,97 @@ function ($,
 		{
 			return false;
 		},
-		depth: function (shaderNode)
-		{ },
 		display: function (context)
 		{
-			var
-				browser    = this .getBrowser (),
-				gl         = browser .getContext (),
-				shaderNode = context .shaderNode;
-
-			if (shaderNode === browser .getDefaultShader ())
-				shaderNode = this .shaderNode;
-
-			// Setup shader.
-
-			context .geometryType  = this .getGeometryType ();
-			context .colorMaterial = this .getColors () .length;
-			shaderNode .setLocalUniforms (gl, context);
-
-			// Setup vertex attributes.
-
-			if (this .colors .length)
-				shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-			shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
-
-			// Wireframes are always solid so only one drawing call is needed.
-
-			gl .drawArrays (shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
-
-			shaderNode .disableColorAttribute (gl);
+			try
+			{
+				var
+					browser    = context .renderer .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
+	
+				if (shaderNode === browser .getDefaultShader ())
+					shaderNode = this .shaderNode;
+	
+				// Setup shader.
+	
+				context .geometryType  = this .getGeometryType ();
+				context .colorMaterial = this .getColors () .length;
+				shaderNode .setLocalUniforms (gl, context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colors .length)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+	
+				// Wireframes are always solid so only one drawing call is needed.
+	
+				gl .drawArrays (shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
+	
+				shaderNode .disableColorAttribute (gl);
+			}
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
+			}
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
-			var
-				browser    = this .getBrowser (),
-				gl         = browser .getContext (),
-				shaderNode = context .shaderNode;
-
-			if (shaderNode === browser .getDefaultShader ())
-				shaderNode = this .shaderNode;
-
-			// Setup shader.
-
-			context .geometryType  = this .getGeometryType ();
-			context .colorMaterial = this .colors .length;
-			shaderNode .setLocalUniforms (gl, context);
-
-			// Setup vertex attributes.
-
-			if (this .colors .length)
-				shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-			shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
-
-			// Wireframes are always solid so only one drawing call is needed.
-
-			var
-				modelViewMatrix = context .modelViewMatrix,
-				x               = modelViewMatrix [12],
-				y               = modelViewMatrix [13],
-				z               = modelViewMatrix [14],
-				primitiveMode   = shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
-
-			for (var p = 0; p < numParticles; ++ p)
+			try
 			{
-				modelViewMatrix [12] = x;
-				modelViewMatrix [13] = y;
-				modelViewMatrix [14] = z;
-
-				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
-
-				gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+				var
+					browser    = context .renderer .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
 	
-				gl .drawArrays (primitiveMode, 0, this .vertexCount);
+				if (shaderNode === browser .getDefaultShader ())
+					shaderNode = this .shaderNode;
+	
+				// Setup shader.
+	
+				context .geometryType  = this .getGeometryType ();
+				context .colorMaterial = this .colors .length;
+				shaderNode .setLocalUniforms (gl, context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colors .length)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+	
+				// Wireframes are always solid so only one drawing call is needed.
+	
+				var
+					modelViewMatrix = context .modelViewMatrix,
+					x               = modelViewMatrix [12],
+					y               = modelViewMatrix [13],
+					z               = modelViewMatrix [14],
+					primitiveMode   = shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
+	
+				for (var p = 0; p < numParticles; ++ p)
+				{
+					modelViewMatrix [12] = x;
+					modelViewMatrix [13] = y;
+					modelViewMatrix [14] = z;
+	
+					Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+	
+					gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+		
+					gl .drawArrays (primitiveMode, 0, this .vertexCount);
+				}
+	
+				shaderNode .disableColorAttribute (gl);
 			}
-
-			shaderNode .disableColorAttribute (gl);
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
+			}
 		},
 	});
 
@@ -72651,9 +72664,9 @@ function ($,
 
 			return this .matrix;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+			var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 			modelViewMatrix .push ();
 
@@ -72664,7 +72677,7 @@ function ($,
 				else
 					modelViewMatrix .multLeft (this .matrix);
 					
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 			}
 			catch (error)
 			{
@@ -73995,9 +74008,9 @@ function ($,
 {
 
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
-		this .shapeNode .traverse (type);
+		this .shapeNode .traverse (type, renderObject);
 	}
 
 	function CADFace (executionContext)
@@ -74283,14 +74296,14 @@ function ($,
 {
 
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
-		var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+		var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 		modelViewMatrix .push ();
 		modelViewMatrix .multLeft (this .matrix);
 		
-		X3DGroupingNode .prototype .traverse .call (this, type);
+		X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
 		modelViewMatrix .pop ();
 	}
@@ -74784,11 +74797,11 @@ function ($,
 		plane      = new Plane3 (Vector3 .Zero, Vector3 .Zero),
 		ClipPlanes = ObjectCache (ClipPlaneContainer);
 
-	function ClipPlaneContainer (clipPlane)
+	function ClipPlaneContainer (clipPlane, modelViewMatrix)
 	{
 		this .plane = new Plane3 (Vector3 .Zero, Vector3 .Zero);
 
-		this .set (clipPlane);
+		this .set (clipPlane, modelViewMatrix);
 	}
 
 	ClipPlaneContainer .prototype =
@@ -74798,7 +74811,7 @@ function ($,
 		{
 			return this .plane .getDistanceToPoint (point) < 0;
 		},
-		set: function (clipPlane)
+		set: function (clipPlane, modelViewMatrix)
 		{
 			var
 				plane       = this .plane,
@@ -74809,7 +74822,7 @@ function ($,
 				plane .normal .assign (localPlane);
 				plane .distanceFromOrigin = -localPlane .w;
 
-				plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
+				plane .multRight (modelViewMatrix);
 			}
 			catch (error)
 			{
@@ -74876,15 +74889,15 @@ function ($,
 
 			this .enabled = this .enabled_ .getValue () && ! this .plane .equals (Vector4 .Zero);
 		},
-		push: function ()
+		push: function (renderObject)
 		{
 			if (this .enabled)
-				this .getCurrentLayer () .getClipPlanes () .push (ClipPlanes .pop (this));
+				renderObject .getClipPlanes () .push (ClipPlanes .pop (this, renderObject .getModelViewMatrix () .get ()));
 		},
-		pop: function ()
+		pop: function (renderObject)
 		{
 			if (this .enabled)
-				this .getBrowser () .getClipPlanes () .push (this .getCurrentLayer () .getClipPlanes () .pop ());
+				renderObject .getBrowser () .getClipPlanes () .push (renderObject .getClipPlanes () .pop ());
 		},
 	});
 
@@ -75039,7 +75052,7 @@ function ($,
 		{
 		   this .proxyNode = X3DCast (X3DConstants .X3DChildNode, this .proxy_);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
@@ -75047,15 +75060,15 @@ function ($,
 				{
 					if (this .enabled_ .getValue ())
 					{
-					   var collisions = this .getBrowser () .getCollisions ();
+					   var collisions = renderObject .getCollisions ();
 
 						collisions .push (this);
 
 						if (this .proxyNode)
-							this .proxyNode .traverse (type);
+							this .proxyNode .traverse (type, renderObject);
 
 						else
-							X3DGroupingNode .prototype .traverse .call (this, type);
+							X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
 						collisions .pop ();
 					}
@@ -75063,7 +75076,7 @@ function ($,
 					break;
 				}
 				default:
-					X3DGroupingNode .prototype .traverse .call (this, type);
+					X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 					break;
 			}
 		},
@@ -81568,28 +81581,26 @@ function ($,
 			if (loaded === 4)
 				this .childrenLoaded = true;
 		},
-		getLevel: function ()
+		getLevel: function (modelViewMatrix)
 		{
-			var distance = this .getDistance ();
+			var distance = this .getDistance (modelViewMatrix);
 		
 			if (distance < this .range_ .getValue ())
 				return 1;
 		
 			return 0;
 		},
-		getDistance: function (type)
+		getDistance: function (modelViewMatrix)
 		{
-			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-
 			modelViewMatrix .translate (this .getCoord (this .center_ .getValue (), center));
 
 			return modelViewMatrix .origin .abs ();
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type == TraverseType .DISPLAY)
 			{
-				var level = this .getLevel ();
+				var level = this .getLevel (this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ()));
 			
 				if (level !== this .level_changed_ .getValue ())
 				{
@@ -81636,18 +81647,18 @@ function ($,
 				case 0:
 				{
 					if (this .rootNode_ .length)
-						this .rootGroup .traverse (type);
+						this .rootGroup .traverse (type, renderObject);
 					else
-						this .rootInline .traverse (type);
+						this .rootInline .traverse (type, renderObject);
 		
 					break;
 				}
 				case 1:
 				{
-					this .child1Inline .traverse (type);
-					this .child2Inline .traverse (type);
-					this .child3Inline .traverse (type);
-					this .child4Inline .traverse (type);
+					this .child1Inline .traverse (type, renderObject);
+					this .child2Inline .traverse (type, renderObject);
+					this .child3Inline .traverse (type, renderObject);
+					this .child4Inline .traverse (type, renderObject);
 					break;
 				}
 			}
@@ -82623,7 +82634,7 @@ function ($,
 		},
 	});
 		
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
 		try
 		{
@@ -82631,8 +82642,8 @@ function ($,
 			{
 				case TraverseType .CAMERA:
 				{
-					this .viewpoint = this .getCurrentViewpoint ();
-					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					this .viewpoint = renderObject .getViewpoint ();
+					this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ());
 					return;
 				}
 				case TraverseType .DISPLAY:
@@ -82647,7 +82658,7 @@ function ($,
 
 					else
 					{
-					   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
+					   var invModelViewMatrix = this .invModelViewMatrix .assign (renderObject .getModelViewMatrix () .get ()) .inverse ();
 
 						this .viewer .set (invModelViewMatrix [12],
 				                         invModelViewMatrix [13],
@@ -82818,9 +82829,9 @@ function ($,
 		{
 			this .geoCoord_changed_ = this .getGeoCoord (this .proximitySensor .position_changed_ .getValue (), geoCoord);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .proximitySensor .traverse (type);
+			this .proximitySensor .traverse (type, renderObject);
 		},
 	});
 
@@ -84886,7 +84897,7 @@ function ($,
 
 			return bbox .set (this .bboxSize_ .getValue (), this .bboxCenter_ .getValue ());
 		},
-		getLevel: function ()
+		getLevel: function (browser, modelViewMatrix)
 		{
 			if (this .range_ .length === 0)
 			{
@@ -84895,7 +84906,7 @@ function ($,
 				if (size < 2)
 					return 0;
 
-				this .frameRate = ((FRAMES - 1) * this .frameRate + this .getBrowser () .currentFrameRate) / FRAMES;
+				this .frameRate = ((FRAMES - 1) * this .frameRate + browser .currentFrameRate) / FRAMES;
 
 				if (size === 2)
 					return Number (this .frameRate > FRAME_RATE_MAX);
@@ -84907,26 +84918,24 @@ function ($,
 				return Math .min (Math .ceil (fraction * (n - 1)), n);
 			}
 
-			var distance = this .getDistance ();
+			var distance = this .getDistance (modelViewMatrix);
 
 			return Algorithm .upperBound (this .range_, 0, this .range_ .length, distance, Algorithm .less);
 		},
-		getDistance: function ()
+		getDistance: function (modelViewMatrix)
 		{
-			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-
 			modelViewMatrix .translate (this .center_ .getValue ());
 
 			return modelViewMatrix .origin .abs ();
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (! this .keepCurrentLevel)
 			{
 				if (type === TraverseType .DISPLAY)
 				{
 					var
-						level        = this .getLevel (),
+						level        = this .getLevel (renderObject .getBrowser (), this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ())),
 						currentLevel = this .level_changed_ .getValue ();
 	
 					if (this .forceTransitions_ .getValue ())
@@ -84950,7 +84959,7 @@ function ($,
 			}
 
 			if (this .child)
-				this .child .traverse (type);
+				this .child .traverse (type, renderObject);
 		},
 	});
 
@@ -85514,22 +85523,22 @@ function ($,
 		
 			return this .scaleModeY;
 		},
-		transform: function (type)
+		transform: function (type, renderObject)
 		{
 			var
 				matrix    = this .matrix,
-				viewpoint = X3DCast (X3DConstants .OrthoViewpoint, this .getCurrentViewpoint ());
+				viewpoint = X3DCast (X3DConstants .OrthoViewpoint, renderObject .getViewpoint ());
 
 			// OrthoViewpoint
 
 			if (viewpoint)
 			{
-				var parent = this .parent = this .getBrowser () .getParentLayout ();
+				var parent = this .parent = renderObject .getParentLayout ();
 
 				// Calculate rectangleSize
 
 				var
-					viewport            = this .getCurrentLayer () .getViewVolume () .getScissor (), // in pixel
+					viewport            = renderObject .getViewVolume () .getScissor (),             // in pixel
 					viewportMeter       = viewpoint .getViewportSize (viewport),                     // in meter
 					viewportPixel       = this .viewportPixel,                                       // in pixel
 					pixelSize           = this .pixelSize,                                           // size of one pixel in meter
@@ -85632,7 +85641,7 @@ function ($,
 					currentRotation    = this .currentRotation,
 					currentScale       = this .currentScale;
 
-				var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
+				var modelViewMatrix = renderObject .getModelViewMatrix () .get ();
 				modelViewMatrix .get (currentTranslation, currentRotation, currentScale);
 		
 				switch (this .getScaleModeX ())
@@ -85854,7 +85863,7 @@ function ($,
 		
 			return this .matrix;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
@@ -85868,23 +85877,21 @@ function ($,
 
 					if (this .layoutNode)
 					{
-						var
-							browser         = this .getBrowser (),
-							modelViewMatrix = browser .getModelViewMatrix ();
+						var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 						this .modelViewMatrix .assign (modelViewMatrix .get ());
 
 						modelViewMatrix .push ();
-						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type)));
-						browser .getLayouts () .push (this .layoutNode);
+						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type, renderObject)));
+						renderObject .getLayouts () .push (this .layoutNode);
 
-						X3DGroupingNode .prototype .traverse .call (this, type);
+						X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
-						browser .getLayouts () .pop ();
+						renderObject .getLayouts () .pop ();
 						modelViewMatrix .pop ();
 					}
 					else
-						X3DGroupingNode .prototype .traverse .call (this, type);
+						X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 		
 					if (this .viewportNode)
 						this .viewportNode .pop ();
@@ -86463,15 +86470,15 @@ function ($,
 			X3DChildNode .prototype .initialize .call (this);
 			X3DFogObject .prototype .initialize .call (this);
 		},
-		push: function ()
+		push: function (renderObject)
 		{
 			if (this .enabled_ .getValue ())
-				this .getCurrentLayer () .pushLocalFog (this);
+				renderObject .pushLocalFog (this);
 		},
-		pop: function ()
+		pop: function (renderObject)
 		{
 			if (this .enabled_ .getValue ())
-				this .getCurrentLayer () .popLocalFog ();
+				renderObject .popLocalFog ();
 		},
 	});
 
@@ -88922,6 +88929,7 @@ function ($,
 		invModelViewMatrix = new Matrix4 (),
 		billboardToScreen  = new Vector3 (0, 0, 0),
 		viewerYAxis        = new Vector3 (0, 0, 0),
+		vector             = new Vector3 (0, 0, 0),
 		normal             = new Vector3 (0, 0, 0),
 		s1                 = new Vector3 (0, 0, 0),
 		s2                 = new Vector3 (0, 0, 0),
@@ -88969,7 +88977,6 @@ function ($,
 		this .texCoordAnim             = false;
 		this .vertexCount              = 0;
 		this .shaderNode               = this .getBrowser () .getPointShader ();
-		this .modelViewMatrix          = new Matrix4 ();
 		this .rotation                 = new Matrix3 ();
 		this .particleSorter           = new QuickSort (this .particles, compareDistance);
 		this .sortParticles            = false;
@@ -89088,8 +89095,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .addInterest (this, "animate");
-					this .getBrowser () .sensors () .addInterest (this, "update");
+					this .getBrowser () .sensors () .addInterest (this, "animateParticles");
 		
 					if (this .pauseTime)
 					{
@@ -89102,8 +89108,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .removeInterest (this, "animate");
-					this .getBrowser () .sensors () .removeInterest (this, "update");
+					this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
 		
 					if (this .pauseTime === 0)
 						this .pauseTime = performance .now () / 1000;
@@ -89118,8 +89123,7 @@ function ($,
 				{
 					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .addInterest (this, "animate");
-						this .getBrowser () .sensors () .addInterest (this, "update");
+						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
 			
 						this .pauseTime = 0;
 					}
@@ -89135,8 +89139,7 @@ function ($,
 				{
 					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .removeInterest (this, "animate");
-						this .getBrowser () .sensors () .removeInterest (this, "update");
+						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
 					}
 	
 					this .isActive_ = false;
@@ -89491,7 +89494,7 @@ function ($,
 		{
 			// TODO: implement me.
 		},
-		animate: function ()
+		animateParticles: function ()
 		{
 			var emitterNode = this .emitterNode;
 
@@ -89576,22 +89579,26 @@ function ($,
 
 			emitterNode .animate (this, deltaTime);
 
+			this .updateGeometry (null);
+
 			this .getBrowser () .addBrowserEvent (this);
 		},
-		update: function ()
+		updateGeometry: function (modelViewMatrix)
 		{
 			switch (this .geometryType)
 			{
 				case POINT:
-					this .updatePoint ();
+					if (! modelViewMatrix)
+						this .updatePoint ();
 					break;
 				case LINE:
-					this .updateLine ();
+					if (! modelViewMatrix)
+						this .updateLine ();
 					break;
 				case TRIANGLE:
 				case QUAD:
 				case SPRITE:
-					this .updateQuad ();
+					this .updateQuad (modelViewMatrix);
 					break;
 				case GEOMETRY:
 					break;
@@ -89701,271 +89708,298 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 		},
-		updateQuad: function ()
+		updateQuad: function (modelViewMatrix)
 		{
-			var
-				gl              = this .getBrowser () .getContext (),
-				particles       = this .particles,
-				maxParticles    = this .maxParticles,
-			   numParticles    = this .numParticles,
-				colorArray      = this .colorArray,
-				texCoordArray   = this .texCoordArray,
-				normalArray     = this .normalArray,
-				vertexArray     = this .vertexArray,
-				sx1_2           = this .particleSize_ .x / 2,
-				sy1_2           = this .particleSize_ .y / 2,
-				modelViewMatrix = this .modelViewMatrix;
-
-			// Sort particles
-
-			if (this .sortParticles)
-			{
-				for (var i = 0; i < numParticles; ++ i)
-				{
-					var particle = particles [i];
-					particle .distance = modelViewMatrix .getDepth (particle .position);
-				}
-				
-				// Expensisive function!!!
-				this .particleSorter .sort (0, numParticles);
-			}
-
-			// Colors
-
-			if (this .colorMaterial)
-			{
-				for (var i = 0; i < maxParticles; ++ i)
-				{
-					var
-						color = particles [i] .color,
-						i24   = i * 24;
-
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-
-					// p1, p2, p3; p1, p3, p4
-					colorArray [i24]     = colorArray [i24 + 4] = colorArray [i24 + 8]  = colorArray [i24 + 12] = colorArray [i24 + 16] = colorArray [i24 + 20] = color .x;
-					colorArray [i24 + 1] = colorArray [i24 + 5] = colorArray [i24 + 9]  = colorArray [i24 + 13] = colorArray [i24 + 17] = colorArray [i24 + 21] = color .y;
-					colorArray [i24 + 2] = colorArray [i24 + 6] = colorArray [i24 + 10] = colorArray [i24 + 14] = colorArray [i24 + 18] = colorArray [i24 + 22] = color .z;
-					colorArray [i24 + 3] = colorArray [i24 + 7] = colorArray [i24 + 11] = colorArray [i24 + 15] = colorArray [i24 + 19] = colorArray [i24 + 23] = color .w;
-				}
-	
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
-			}
-
-			if (this .texCoordAnim && this .texCoordArray .length)
+			try
 			{
 				var
-					texCoordKeys = this .texCoordKeys,
-					texCoordRamp = this .texCoordRamp;
-
-				var
-					length = texCoordKeys .length,
-					index0 = 0;
-		
-				for (var i = 0; i < maxParticles; ++ i)
-				{
-					// Determine index0.
-		
-					var
-						particle = particles [i],
-						fraction = particle .elapsedTime / particle .lifetime,
-						color    = particle .color;
+					gl              = this .getBrowser () .getContext (),
+					particles       = this .particles,
+					maxParticles    = this .maxParticles,
+				   numParticles    = this .numParticles,
+					colorArray      = this .colorArray,
+					texCoordArray   = this .texCoordArray,
+					normalArray     = this .normalArray,
+					vertexArray     = this .vertexArray,
+					sx1_2           = this .particleSize_ .x / 2,
+					sy1_2           = this .particleSize_ .y / 2;
 	
-					if (length == 1 || fraction <= texCoordKeys [0])
+				// Sort particles
+	
+//				if (this .sortParticles) // always false
+//				{
+//					for (var i = 0; i < numParticles; ++ i)
+//					{
+//						var particle = particles [i];
+//						particle .distance = modelViewMatrix .getDepth (particle .position);
+//					}
+//					
+//					// Expensisive function!!!
+//					this .particleSorter .sort (0, numParticles);
+//				}
+	
+				// Colors
+	
+				if (! modelViewMatrix) // if called from animateParticles
+				{
+					if (this .colorMaterial)
 					{
-						index0 = 0;
+						for (var i = 0; i < maxParticles; ++ i)
+						{
+							var
+								color = particles [i] .color,
+								i24   = i * 24;
+		
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+		
+							// p1, p2, p3; p1, p3, p4
+							colorArray [i24]     = colorArray [i24 + 4] = colorArray [i24 + 8]  = colorArray [i24 + 12] = colorArray [i24 + 16] = colorArray [i24 + 20] = color .x;
+							colorArray [i24 + 1] = colorArray [i24 + 5] = colorArray [i24 + 9]  = colorArray [i24 + 13] = colorArray [i24 + 17] = colorArray [i24 + 21] = color .y;
+							colorArray [i24 + 2] = colorArray [i24 + 6] = colorArray [i24 + 10] = colorArray [i24 + 14] = colorArray [i24 + 18] = colorArray [i24 + 22] = color .z;
+							colorArray [i24 + 3] = colorArray [i24 + 7] = colorArray [i24 + 11] = colorArray [i24 + 15] = colorArray [i24 + 19] = colorArray [i24 + 23] = color .w;
+						}
+			
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
 					}
-					else if (fraction >= texCoordKeys [length - 1])
+		
+					if (this .texCoordAnim && this .texCoordArray .length)
 					{
-						index0 = length - 2;
-					}
-					else
-					{
-						var index = Algorithm .upperBound (texCoordKeys, 0, length, fraction, Algorithm .less);
-
-						if (index < length)
-							index0 = index - 1;
-						else
+						var
+							texCoordKeys = this .texCoordKeys,
+							texCoordRamp = this .texCoordRamp;
+		
+						var
+							length = texCoordKeys .length,
 							index0 = 0;
-					}
-
-					// Set texCoord.
+				
+						for (var i = 0; i < maxParticles; ++ i)
+						{
+							// Determine index0.
+				
+							var
+								particle = particles [i],
+								fraction = particle .elapsedTime / particle .lifetime,
+								color    = particle .color;
+			
+							if (length == 1 || fraction <= texCoordKeys [0])
+							{
+								index0 = 0;
+							}
+							else if (fraction >= texCoordKeys [length - 1])
+							{
+								index0 = length - 2;
+							}
+							else
+							{
+								var index = Algorithm .upperBound (texCoordKeys, 0, length, fraction, Algorithm .less);
 		
-					index0 *= this .texCoordCount;
-
-					var
-						texCoord1 = texCoordRamp [index0],
-						texCoord2 = texCoordRamp [index0 + 1],
-						texCoord3 = texCoordRamp [index0 + 2],
-						texCoord4 = texCoordRamp [index0 + 3],
-						i24 = i * 24;
-
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-
-					// p1
-					texCoordArray [i24]     = texCoordArray [i24 + 12] = texCoord1 .x;
-					texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = texCoord1 .y;
-					texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = texCoord1 .z;
-					texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = texCoord1 .w;
-
-					// p2
-					texCoordArray [i24 + 4] = texCoord2 .x;
-					texCoordArray [i24 + 5] = texCoord2 .y;
-					texCoordArray [i24 + 6] = texCoord2 .z;
-					texCoordArray [i24 + 7] = texCoord2 .w;
-
-					// p3
-					texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = texCoord3 .x;
-					texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = texCoord3 .y;
-					texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = texCoord3 .z;
-					texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = texCoord3 .w;
-
-					// p4
-					texCoordArray [i24 + 20] = texCoord4 .x;
-					texCoordArray [i24 + 21] = texCoord4 .y;
-					texCoordArray [i24 + 22] = texCoord4 .z;
-					texCoordArray [i24 + 23] = texCoord4 .w;
+								if (index < length)
+									index0 = index - 1;
+								else
+									index0 = 0;
+							}
+		
+							// Set texCoord.
+				
+							index0 *= this .texCoordCount;
+		
+							var
+								texCoord1 = texCoordRamp [index0],
+								texCoord2 = texCoordRamp [index0 + 1],
+								texCoord3 = texCoordRamp [index0 + 2],
+								texCoord4 = texCoordRamp [index0 + 3],
+								i24 = i * 24;
+		
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+		
+							// p1
+							texCoordArray [i24]     = texCoordArray [i24 + 12] = texCoord1 .x;
+							texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = texCoord1 .y;
+							texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = texCoord1 .z;
+							texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = texCoord1 .w;
+		
+							// p2
+							texCoordArray [i24 + 4] = texCoord2 .x;
+							texCoordArray [i24 + 5] = texCoord2 .y;
+							texCoordArray [i24 + 6] = texCoord2 .z;
+							texCoordArray [i24 + 7] = texCoord2 .w;
+		
+							// p3
+							texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = texCoord3 .x;
+							texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = texCoord3 .y;
+							texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = texCoord3 .z;
+							texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = texCoord3 .w;
+		
+							// p4
+							texCoordArray [i24 + 20] = texCoord4 .x;
+							texCoordArray [i24 + 21] = texCoord4 .y;
+							texCoordArray [i24 + 22] = texCoord4 .z;
+							texCoordArray [i24 + 23] = texCoord4 .w;
+						}
+			
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
+						gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
+					}
 				}
-	
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
-			}
-
-			// Vertices
-
-			if (this .geometryType === SPRITE)
-			{
-				// Normals
-
-				var
-					rotation = this .getScreenAlignedRotation (this .modelViewMatrix),
-					nx       = rotation [6],
-					ny       = rotation [7],
-					nz       = rotation [8];
-
-				for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
-				{
-					normalArray [i]     = nx;
-					normalArray [i + 1] = ny;
-					normalArray [i + 2] = nz;
-				}
-
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
 
 				// Vertices
-
-				s1 .set (-sx1_2, -sy1_2, 0);
-				s2 .set ( sx1_2, -sy1_2, 0);
-				s3 .set ( sx1_2,  sy1_2, 0);
-				s4 .set (-sx1_2,  sy1_2, 0);
-
-				rotation .multVecMatrix (s1);
-				rotation .multVecMatrix (s2);
-				rotation .multVecMatrix (s3);
-				rotation .multVecMatrix (s4);
-
-				for (var i = 0; i < numParticles; ++ i)
+	
+				if (this .geometryType === SPRITE)
 				{
-					var
-						position = particles [i] .position,
-						x        = position .x,
-						y        = position .y,
-						z        = position .z,
-						i24      = i * 24;
+					if (modelViewMatrix) // if called from depth or draw
+					{
+						// Normals
+		
+						var rotation = this .getScreenAlignedRotation (modelViewMatrix);
+		
+						normal
+							.set (rotation [0], rotation [1], rotation [2])
+							.cross (vector .set (rotation [4], rotation [5], rotation [6]))
+							.normalize ();
+		
+						var
+							nx = normal .x,
+							ny = normal .y,
+							nz = normal .z;
+		
+						for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
+						{
+							normalArray [i]     = nx;
+							normalArray [i + 1] = ny;
+							normalArray [i + 2] = nz;
+						}
+		
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
+		
+						// Vertices
+		
+						s1 .set (-sx1_2, -sy1_2, 0);
+						s2 .set ( sx1_2, -sy1_2, 0);
+						s3 .set ( sx1_2,  sy1_2, 0);
+						s4 .set (-sx1_2,  sy1_2, 0);
+		
+						rotation .multVecMatrix (s1);
+						rotation .multVecMatrix (s2);
+						rotation .multVecMatrix (s3);
+						rotation .multVecMatrix (s4);
+		
+						for (var i = 0; i < numParticles; ++ i)
+						{
+							var
+								position = particles [i] .position,
+								x        = position .x,
+								y        = position .y,
+								z        = position .z,
+								i24      = i * 24;
+			
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+			
+		
+							// p1
+							vertexArray [i24]     = vertexArray [i24 + 12] = x + s1 .x;
+							vertexArray [i24 + 1] = vertexArray [i24 + 13] = y + s1 .y;
+							vertexArray [i24 + 2] = vertexArray [i24 + 14] = z + s1 .z;
+			
+							// p2
+							vertexArray [i24 + 4] = x + s2 .x;
+							vertexArray [i24 + 5] = y + s2 .y;
+							vertexArray [i24 + 6] = z + s2 .z;
+			
+							// p3
+							vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + s3 .x;
+							vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + s3 .y;
+							vertexArray [i24 + 10] = vertexArray [i24 + 18] = z + s3 .z;
+			
+							// p4
+							vertexArray [i24 + 20] = x + s4 .x;
+							vertexArray [i24 + 21] = y + s4 .y;
+							vertexArray [i24 + 22] = z + s4 .z;
+						}
 	
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-	
-
-					// p1
-					vertexArray [i24]     = vertexArray [i24 + 12] = x + s1 .x;
-					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y + s1 .y;
-					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z + s1 .z;
-	
-					// p2
-					vertexArray [i24 + 4] = x + s2 .x;
-					vertexArray [i24 + 5] = y + s2 .y;
-					vertexArray [i24 + 6] = z + s2 .z;
-	
-					// p3
-					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + s3 .x;
-					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + s3 .y;
-					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z + s3 .z;
-	
-					// p4
-					vertexArray [i24 + 20] = x + s4 .x;
-					vertexArray [i24 + 21] = y + s4 .y;
-					vertexArray [i24 + 22] = z + s4 .z;
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+					}
+				}
+				else
+				{
+					if (! modelViewMatrix) // if called from animateParticles
+					{
+						for (var i = 0; i < numParticles; ++ i)
+						{
+							var
+								position = particles [i] .position,
+								x        = position .x,
+								y        = position .y,
+								z        = position .z,
+								i24      = i * 24;
+			
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+			
+							// p1
+							vertexArray [i24]     = vertexArray [i24 + 12] = x - sx1_2;
+							vertexArray [i24 + 1] = vertexArray [i24 + 13] = y - sy1_2;
+							vertexArray [i24 + 2] = vertexArray [i24 + 14] = z;
+			
+							// p2
+							vertexArray [i24 + 4] = x + sx1_2;
+							vertexArray [i24 + 5] = y - sy1_2;
+							vertexArray [i24 + 6] = z;
+			
+							// p3
+							vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + sx1_2;
+							vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + sy1_2;
+							vertexArray [i24 + 10] = vertexArray [i24 + 18] = z;
+			
+							// p4
+							vertexArray [i24 + 20] = x - sx1_2;
+							vertexArray [i24 + 21] = y + sy1_2;
+							vertexArray [i24 + 22] = z;
+						}
+			
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+					}
 				}
 			}
-			else
+			catch (error)
 			{
-				for (var i = 0; i < numParticles; ++ i)
-				{
-					var
-						position = particles [i] .position,
-						x        = position .x,
-						y        = position .y,
-						z        = position .z,
-						i24      = i * 24;
-	
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-	
-					// p1
-					vertexArray [i24]     = vertexArray [i24 + 12] = x - sx1_2;
-					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y - sy1_2;
-					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z;
-	
-					// p2
-					vertexArray [i24 + 4] = x + sx1_2;
-					vertexArray [i24 + 5] = y - sy1_2;
-					vertexArray [i24 + 6] = z;
-	
-					// p3
-					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + sx1_2;
-					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + sy1_2;
-					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z;
-	
-					// p4
-					vertexArray [i24 + 20] = x - sx1_2;
-					vertexArray [i24 + 21] = y + sy1_2;
-					vertexArray [i24 + 22] = z;
-				}
+				console .log (error);
 			}
-
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (! this .isActive_ .getValue ())
 				return;
 
-			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
-
-			if (this .getGeometry ())
-				this .getGeometry () .traverse (type); // Currently used for ScreenText.
+			if (this .geometryType === GEOMETRY)
+			{
+				if (this .getGeometry ())
+					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
+				else
+					return;
+			}
 
 			switch (type)
 			{
@@ -89980,23 +90014,23 @@ function ($,
 				}
 				case TraverseType .DEPTH:
 				{
-					// TODO: to be implemented.
+					renderObject .addDepthShape (this);
 					break;
 				}
 				case TraverseType .DISPLAY:
 				{
-					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-		
-					this .getCurrentLayer () .addShape (this);
+					if (renderObject .addDisplayShape (this))
+						this .getAppearance () .traverse (type, renderObject); // Currently used for GeneratedCubeMapTexture.
+
 					break;
 				}
 			}
 		},
-		display: function (context)
+		depth: function (context, shaderNode)
 		{
-			// Traverse appearance before everything.
+			// Update geometry if SPRITE.
 
-			this .getAppearance () .display (context);
+			this .updateGeometry (context .modelViewMatrix);
 
 			// Display geometry.
 
@@ -90005,77 +90039,118 @@ function ($,
 				var geometryNode = this .getGeometry ();
 
 				if (geometryNode)
-					geometryNode .displayParticles (context, this .particles, this .numParticles);
+					geometryNode .displayParticlesDepth (context, shaderNode, this .particles, this .numParticles);
 			}
 			else
 			{
-				var
-					browser    = this .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
-
-				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
-	
 				if (this .numParticles === 0)
 					return;
-	
-				// Setup shader.
 
-				context .geometryType  = this .shaderGeometryType;
-				context .colorMaterial = this .colorMaterial;
-				shaderNode .setLocalUniforms (gl, context);
-	
+				var gl = context .renderer .getBrowser () .getContext ();
+
 				// Setup vertex attributes.
-	
-				if (this .colorMaterial)
-					shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-				if (this .texCoordArray .length)
-					shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
-
-				if (this .normalArray .length)
-					shaderNode .enableNormalAttribute (gl, this .normalBuffer);
 
 				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
 
-				var testWireframe = false;
-
-				switch (this .geometryType)
-				{
-					case POINT:
-					case LINE:
-						break;
-					case TRIANGLE:
-					case QUAD:
-					case SPRITE:
-						testWireframe = true;
-						break;
-					case GEOMETRY:
-						break;
-				}
-
-				if (shaderNode .wireframe && testWireframe)
-				{
-					// Wireframes are always solid so only one drawing call is needed.
+				gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
+			}
+		},
+		display: function (context)
+		{
+			try
+			{
+				// Traverse appearance before everything.
 	
-					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shaderNode .primitiveMode, i, 3);
+				this .getAppearance () .display (context);
+	
+				// Update geometry if SPRITE.
+	
+				this .updateGeometry (context .modelViewMatrix);
+	
+				// Display geometry.
+	
+				if (this .geometryType === GEOMETRY)
+				{
+					var geometryNode = this .getGeometry ();
+	
+					if (geometryNode)
+						geometryNode .displayParticles (context, this .particles, this .numParticles);
 				}
 				else
 				{
-					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
-		
-					gl .frontFace (positiveScale ? gl .CCW : gl .CW);
-					gl .enable (gl .CULL_FACE);
-					gl .cullFace (gl .BACK);
-		
-					gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
-				}
+					var
+						browser    = context .renderer .getBrowser (),
+						gl         = browser .getContext (),
+						shaderNode = context .shaderNode;
 	
-				shaderNode .disableColorAttribute    (gl);
-				shaderNode .disableTexCoordAttribute (gl);
-				shaderNode .disableNormalAttribute   (gl);
+					if (shaderNode === browser .getDefaultShader ())
+						shaderNode = this .shaderNode;
+		
+					if (this .numParticles === 0)
+						return;
+	
+					// Setup shader.
+	
+					context .geometryType  = this .shaderGeometryType;
+					context .colorMaterial = this .colorMaterial;
+					shaderNode .setLocalUniforms (gl, context);
+		
+					// Setup vertex attributes.
+		
+					if (this .colorMaterial)
+						shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+					if (this .texCoordArray .length)
+						shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+	
+					if (this .normalArray .length)
+						shaderNode .enableNormalAttribute (gl, this .normalBuffer);
+	
+					shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+	
+					var testWireframe = false;
+	
+					switch (this .geometryType)
+					{
+						case POINT:
+						case LINE:
+							break;
+						case TRIANGLE:
+						case QUAD:
+						case SPRITE:
+							testWireframe = true;
+							break;
+						case GEOMETRY:
+							break;
+					}
+	
+					if (shaderNode .wireframe && testWireframe)
+					{
+						// Wireframes are always solid so only one drawing call is needed.
+		
+						for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
+							gl .drawArrays (shaderNode .primitiveMode, i, 3);
+					}
+					else
+					{
+						var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+			
+						gl .frontFace (positiveScale ? gl .CCW : gl .CW);
+						gl .enable (gl .CULL_FACE);
+						gl .cullFace (gl .BACK);
+			
+						gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
+					}
+		
+					shaderNode .disableColorAttribute    (gl);
+					shaderNode .disableTexCoordAttribute (gl);
+					shaderNode .disableNormalAttribute   (gl);
+				}
+			}
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)
@@ -90778,7 +90853,7 @@ function ($,
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
-	function PointLightContainer (lightNode, groupNode)
+	function PointLightContainer (browser, lightNode, groupNode, modelViewMatrix)
 	{
 		var
 			nearValue        = 0.125,
@@ -90800,25 +90875,23 @@ function ($,
 		this .rotationMatrix       = new Matrix4 ();
 		this .textureUnit          = 0;
 	
-		this .set (lightNode, groupNode);
+		this .set (browser, lightNode, groupNode, modelViewMatrix);
 	}
 
 	PointLightContainer .prototype =
 	{
 		constructor: PointLightContainer,
-	   set: function (lightNode, groupNode)
+	   set: function (browser, lightNode, groupNode, modelViewMatrix)
 	   {
 			var
-				browser       = lightNode .getBrowser (),
 				gl            = browser .getContext (),
 				shadowMapSize = lightNode .getShadowMapSize ();
 
-			var modelViewMatrix = browser .getModelViewMatrix () .get ();
-	
+			this .browser   = browser;
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -90847,7 +90920,7 @@ function ($,
 				}
 			}
 	   },
-		renderShadowMap: function ()
+		renderShadowMap: function (renderObject)
 		{
 			try
 			{
@@ -90856,9 +90929,7 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					browser              = lightNode .getBrowser (),
-					layerNode            = lightNode .getCurrentLayer (),
-					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
 					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
@@ -90871,7 +90942,7 @@ function ($,
 					projectionMatrix = this .projectionMatrix;
 
 				this .shadowBuffer .bind ();
-				browser .getProjectionMatrix () .pushMatrix (this .projectionMatrix);
+				renderObject .getProjectionMatrix () .pushMatrix (this .projectionMatrix);
 
 				for (var y = 0; y < 2; ++ y)
 				{
@@ -90881,20 +90952,20 @@ function ($,
 							rotation = this .rotation .setFromToVec (this .direction .assign (directions [y * 3 + x]), Vector3 .zAxis), // inversed rotation
 							viewport = this .viewport .set (x * shadowMapSize1_3, y * shadowMapSize1_2, shadowMapSize1_3, shadowMapSize1_2);
 		
-						layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+						renderObject .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
 
-						browser .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
-						browser .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
-						browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+						renderObject .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
+						renderObject .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
+						renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
 		
-						layerNode .render (this .groupNode, TraverseType .DEPTH);
+						renderObject .render (TraverseType .DEPTH, this .groupNode);
 		
-						browser .getModelViewMatrix  () .pop ();
-						layerNode .getViewVolumes () .pop ();
+						renderObject .getModelViewMatrix  () .pop ();
+						renderObject .getViewVolumes () .pop ();
 					}
 				}
 
-				browser .getProjectionMatrix () .pop ();
+				renderObject .getProjectionMatrix () .pop ();
 				this .shadowBuffer .unbind ();
 	
 				if (! lightNode .getGlobal ())
@@ -90947,9 +91018,9 @@ function ($,
 			// Return shadowBuffer and textureUnit.
 
 			if (this .textureUnit)
-				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
-			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			this .browser .pushShadowBuffer (this .shadowBuffer);
 
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
@@ -93270,7 +93341,7 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			try
 			{
@@ -93278,16 +93349,16 @@ function ($,
 				{
 					var
 						fontStyle        = this .getFontStyle (),
-						projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-						modelViewMatrix  = this .getBrowser () .getModelViewMatrix ()  .get (),
-						viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
+						projectionMatrix = renderObject .getProjectionMatrix () .get (),
+						modelViewMatrix  = renderObject .getModelViewMatrix ()  .get (),
+						viewport         = renderObject .getViewVolume () .getViewport ();
 	
 					// Same as in ScreenGroup
 	
 					this .screenMatrix .assign (modelViewMatrix);
 					this .screenMatrix .get (translation, rotation, scale);
 	
-					var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+					var screenScale = renderObject .getViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
 	
 					this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
 				                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
@@ -93597,17 +93668,17 @@ function ($,
 
 			return this .matrix;
 		},
-		scale: function ()
+		scale: function (renderObject)
 		{
 			// throws domain error
 			
-			this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ());
 			this .modelViewMatrix .get (translation, rotation, scale);
 
 			var
-				projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
-				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
+				projectionMatrix = renderObject .getProjectionMatrix () .get (),
+				viewport         = renderObject .getViewVolume () .getViewport (),
+				screenScale      = renderObject .getViewpoint () .getScreenScale (translation, viewport);
 		
 			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
 		                                                               screenScale .y * (scale .y < 0 ? -1 : 1),
@@ -93629,18 +93700,18 @@ function ($,
 
 			return this .screenMatrix;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			try
 			{
-				var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
+				var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 				if (type === TraverseType .DISPLAY)
-					modelViewMatrix .pushMatrix (this .scale ());
+					modelViewMatrix .pushMatrix (this .scale (renderObject));
 				else
 					modelViewMatrix .pushMatrix (this .screenMatrix);
 
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 	
 				modelViewMatrix .pop ();
 			}
@@ -94853,33 +94924,36 @@ function ($,
 		{
 			return this .getGeometry () .intersectsBox (box, clipPlanes, modelViewMatrix);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			// Always look at ParticleSystem if you do modify something here and there.
-
-			this .getAppearance () .traverse (type); // Currently used for GeneratedCubeMapTexture.
-			this .getGeometry   () .traverse (type); // Currently used for ScreenText.
+	
+			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 
 			switch (type)
 			{
 				case TraverseType .POINTER:
-					this .pointer ();
+					this .pointer (renderObject);
 					break;
 
 				case TraverseType .COLLISION:
-					this .getCurrentLayer () .addCollisionShape (this);
+					renderObject .addCollisionShape (this);
 					break;
 
 				case TraverseType .DEPTH:
-					this .getCurrentLayer () .addDepthShape (this);
+					renderObject .addDepthShape (this);
 					break;
 
 				case TraverseType .DISPLAY:
-					this .getCurrentLayer () .addShape (this);
+				{
+					if (renderObject .addDisplayShape (this))
+						this .getAppearance () .traverse (type, renderObject); // Currently used for GeneratedCubeMapTexture.
+
 					break;
+				}
 			}
 		},
-		pointer: function ()
+		pointer: function (renderObject)
 		{
 			try
 			{
@@ -94889,14 +94963,14 @@ function ($,
 					return;
 
 				var
-					browser            = this .getBrowser (),
-					modelViewMatrix    = this .modelViewMatrix    .assign (browser .getModelViewMatrix () .get ()),
+					browser            = renderObject .getBrowser (),
+					modelViewMatrix    = this .modelViewMatrix    .assign (renderObject .getModelViewMatrix () .get ()),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
 				this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
 
-				if (geometry .intersectsLine (this .hitRay, modelViewMatrix, intersections))
+				if (geometry .intersectsLine (this .hitRay, renderObject .getClipPlanes (), modelViewMatrix, intersections))
 				{
 					// Finally we have intersections and must now find the closest hit in front of the camera.
 
@@ -94907,7 +94981,7 @@ function ($,
 					this .intersectionSorter .sort (0, intersections .length);
 
 					// Find first point that is not greater than near plane;
-					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearValue (),
+					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -renderObject .getNavigationInfo () .getNearValue (),
 					                                   function (lhs, rhs)
 					                                   {
 					                                      return lhs .point .z > rhs;
@@ -94919,7 +94993,7 @@ function ($,
 						// Transform hitNormal to absolute space.
 						invModelViewMatrix .multMatrixDir (intersections [index] .normal) .normalize ();
 
-						browser .addHit (intersections [index], this .getCurrentLayer ());
+						browser .addHit (intersections [index], renderObject .getLayer ());
 					}
 
 					intersections .length = 0;
@@ -94930,9 +95004,9 @@ function ($,
 				console .log (error);
 			}
 		},
-		depth: function (shaderNode)
+		depth: function (context, shaderNode)
 		{
-			this .getGeometry () .depth (shaderNode);
+			this .getGeometry () .depth (context, shaderNode);
 		},
 		display: function (context)
 		{
@@ -95160,7 +95234,7 @@ function ($,
 
 			this .sourceNode = X3DCast (X3DConstants .X3DSoundSourceNode, this .source_);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type !== TraverseType .DISPLAY)
 				return;
@@ -95173,8 +95247,10 @@ function ($,
 
 			try
 			{
-				this .getEllipsoidParameter (this .maxBack_ .getValue (), this .maxFront_ .getValue (), this .max);
-				this .getEllipsoidParameter (this .minBack_ .getValue (), this .minFront_ .getValue (), this .min);
+				var modelViewMatrix = renderObject .getModelViewMatrix () .get ();
+
+				this .getEllipsoidParameter (modelViewMatrix, this .maxBack_ .getValue (), this .maxFront_ .getValue (), this .max);
+				this .getEllipsoidParameter (modelViewMatrix, this .minBack_ .getValue (), this .minFront_ .getValue (), this .min);
 
 				if (this .max .distance < this .max .radius)
 				{
@@ -95198,7 +95274,7 @@ function ($,
 			   console .log (error);
 			}
 		},
-		getEllipsoidParameter: function (back, front, value)
+		getEllipsoidParameter: function (modelViewMatrix, back, front, value)
 		{
 			/*
 			 * http://de.wikipedia.org/wiki/Ellipse
@@ -95218,7 +95294,7 @@ function ($,
 
 			var transformationMatrix = this .transformationMatrix;
 
-			transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			transformationMatrix .assign (modelViewMatrix);
 			transformationMatrix .translate (this .location_ .getValue ());
 			transformationMatrix .rotate (this .rotation);
 
@@ -96876,7 +96952,7 @@ function ($,
 
 	var SpotLights = ObjectCache (SpotLightContainer);
 	
-	function SpotLightContainer (lightNode, groupNode)
+	function SpotLightContainer (browser, lightNode, groupNode, modelViewMatrix)
 	{
 		this .location             = new Vector3 (0, 0, 0);
 		this .direction            = new Vector3 (0, 0, 0);
@@ -96896,25 +96972,23 @@ function ($,
 		this .lightBBoxMax         = new Vector3 (0, 0, 0);
 		this .textureUnit          = 0;
 
-	   this .set (lightNode, groupNode);
+	   this .set (browser, lightNode, groupNode, modelViewMatrix);
 	}
 
 	SpotLightContainer .prototype =
 	{
 		constructor: SpotLightContainer,
-	   set: function (lightNode, groupNode)
+	   set: function (browser, lightNode, groupNode, modelViewMatrix)
 	   {
 			var
-				browser       = lightNode .getBrowser (),
 				gl            = browser .getContext (),
 				shadowMapSize = lightNode .getShadowMapSize ();
 
-			var modelViewMatrix = browser .getModelViewMatrix () .get ();
-	
+			this .browser   = browser;
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (browser .getModelViewMatrix () .get ());
+			this .modelViewMatrix .assign (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -96943,7 +97017,7 @@ function ($,
 				}
 			}
 	   },
-		renderShadowMap: function ()
+		renderShadowMap: function (renderObject)
 		{
 			try
 			{
@@ -96952,9 +97026,7 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					browser              = lightNode .getBrowser (),
-					layerNode            = lightNode .getCurrentLayer (),
-					cameraSpaceMatrix    = lightNode .getCurrentViewpoint () .getCameraSpaceMatrix (),
+					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
 					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
@@ -96975,16 +97047,16 @@ function ($,
 
 				this .shadowBuffer .bind ();
 
-				layerNode .getViewVolumes () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
-				browser .getProjectionMatrix () .pushMatrix (projectionMatrix);
-				browser .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
-				browser .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+				renderObject .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
+				renderObject .getProjectionMatrix () .pushMatrix (projectionMatrix);
+				renderObject .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
+				renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
 
-				layerNode .render (this .groupNode, TraverseType .DEPTH);
+				renderObject .render (TraverseType .DEPTH, this .groupNode);
 
-				browser .getModelViewMatrix  () .pop ();
-				browser .getProjectionMatrix () .pop ();
-				layerNode .getViewVolumes () .pop ();
+				renderObject .getModelViewMatrix  () .pop ();
+				renderObject .getProjectionMatrix () .pop ();
+				renderObject .getViewVolumes      () .pop ();
 
 				this .shadowBuffer .unbind ();
 	
@@ -97038,9 +97110,9 @@ function ($,
 			// Return shadowBuffer and textureUnit.
 
 			if (this .textureUnit)
-				this .lightNode .getBrowser () .getCombinedTextureUnits () .push (this .textureUnit);
+				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
-			this .lightNode .getBrowser () .pushShadowBuffer (this .shadowBuffer);
+			this .browser .pushShadowBuffer (this .shadowBuffer);
 
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
@@ -97931,10 +98003,10 @@ function ($,
 			else
 				this .setCameraObject (false);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (this .child)
-				this .child .traverse (type);
+				this .child .traverse (type, renderObject);
 		},
 	});
 
@@ -98340,9 +98412,9 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .textGeometry .traverse (type);
+			this .textGeometry .traverse (type, renderObject);
 		},
 		display: function (context)
 		{
@@ -100456,30 +100528,30 @@ function ($,
 		traverse: function () { },
 	});
 
-	function traverseWithProximitySensor (type)
+	function traverseWithProximitySensor (type, renderObject)
 	{
 		switch (type)
 		{
 			case TraverseType .CAMERA:
 			{
-				this .proximitySensor .traverse (type);
+				this .proximitySensor .traverse (type, renderObject);
 		
 				if (this .proximitySensor .isActive_ .getValue ())
 				{
 					for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
-						this .cameraObjects [i] .traverse (type);
+						this .cameraObjects [i] .traverse (type, renderObject);
 				}
 
 				return;
 			}
 			case TraverseType .DISPLAY:
 			{
-				this .proximitySensor .traverse (type);
+				this .proximitySensor .traverse (type, renderObject);
 		
 				if (this .proximitySensor .isActive_ .getValue ())
 				{
 					for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
-						this .viewpointGroups [i] .traverse (type);
+						this .viewpointGroups [i] .traverse (type, renderObject);
 				}
 
 				return;
@@ -100487,21 +100559,21 @@ function ($,
 		}
 	}
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
 		switch (type)
 		{
 			case TraverseType .CAMERA:
 			{
 				for (var i = 0, length = this .cameraObjects .length; i < length; ++ i)
-					this .cameraObjects [i] .traverse (type);
+					this .cameraObjects [i] .traverse (type, renderObject);
 
 				return;
 			}
 			case TraverseType .DISPLAY:
 			{
 				for (var i = 0, length = this .viewpointGroups .length; i < length; ++ i)
-					this .viewpointGroups [i] .traverse (type);
+					this .viewpointGroups [i] .traverse (type, renderObject);
 
 				return;
 			}
@@ -100661,7 +100733,7 @@ function ($,
 				
 			this .setTraversed (false);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type !== TraverseType .DISPLAY)
 				return;
@@ -100677,8 +100749,8 @@ function ($,
 			else
 			{
 				var
-					viewVolume      = this .getCurrentLayer () .getViewVolume (),
-					modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get (),
+					viewVolume      = renderObject .getViewVolume (),
+					modelViewMatrix = renderObject .getModelViewMatrix () .get (),
 					size            = modelViewMatrix .multDirMatrix (this .size   .assign (this .size_   .getValue ())),
 					center          = modelViewMatrix .multVecMatrix (this .center .assign (this .center_ .getValue ()));
 
@@ -102843,8 +102915,8 @@ function ($,
 
 		$(function ()
 		{
-			var elements = $("X3D");
-		
+			var elements = $("X3DCanvas");
+
 			try
 			{
 				var browsers = $.map (elements, createBrowser);

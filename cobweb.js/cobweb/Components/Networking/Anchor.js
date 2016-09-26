@@ -178,12 +178,12 @@ function ($,
 			{
 			   var sensors = { };
 
-				renderObject .getSensors () .push (sensors);
+				renderObject .getBrowser () .getSensors () .push (sensors);
 				this .touchSensorNode .push (renderObject, sensors);
 
 				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
-				renderObject .getSensors () .pop ();
+				renderObject .getBrowser () .getSensors () .pop ();
 			}
 			else
 				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
