@@ -120,7 +120,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 				this .planes [2] .set (p5, Triangle3 .normal (p6, p5, p4, normal));  // right
 				this .planes [3] .set (p6, Triangle3 .normal (p5, p6, p1, normal));  // top
 				this .planes [4] .set (p3, Triangle3 .normal (p4, p3, p2, normal));  // bottom
-				this .planes [5] .set (p1, Triangle3 .normal (p2, p1, p6, normal));  // back
+				this .planes [5] .set (p1, Triangle3 .normal (p2, p1, p6, normal));  // back  
 
 				this .valid = true;
 			}

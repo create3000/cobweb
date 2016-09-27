@@ -240,7 +240,8 @@ function ($,
 					return translation;
 				}
 
-				// Collision
+				// Collision, the avatar is within the wall.
+
 				if (stepBack)
 					return this .constrainTranslation (translation .normalize () .multiply (distance), false);
 
@@ -334,7 +335,7 @@ function ($,
 				{
 					this .numOpaqueShapes      = 0;
 					this .numTransparentShapes = 0;
-	
+
 					this .setGlobalFog (this .getFog ());
 					group .traverse (type, this);
 					this .draw ();
@@ -346,42 +347,50 @@ function ($,
 		{
 			var
 				modelViewMatrix = this .getModelViewMatrix () .get (),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
+				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
+				radius          = bboxSize .abs () / 2,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-			if (this .numCollisionShapes === this .collisionShapes .length)
-				this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+			if (viewVolume .intersectsSphere (radius, bboxCenter))
+			{
+				if (this .numCollisionShapes === this .collisionShapes .length)
+					this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+	
+				var context = this .collisionShapes [this .numCollisionShapes];
+	
+				++ this .numCollisionShapes;
+	
+				context .modelViewMatrix .set (modelViewMatrix);
+				context .shapeNode = shapeNode;
+				context .scissor   = viewVolume .getScissor ();
+	
+				// Collisions
+	
+				var
+					sourceCollisions = this .getCollisions (),
+					destCollisions   = context .collisions;
+	
+				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+				   destCollisions [i] = sourceCollisions [i];
+				
+				destCollisions .length = sourceCollisions .length;
+	
+				// Clip planes
+	
+				var
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
+	
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+					destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
+	
+				return true;
+			}
 
-			var context = this .collisionShapes [this .numCollisionShapes];
-
-			++ this .numCollisionShapes;
-
-			context .modelViewMatrix .set (modelViewMatrix);
-			context .shapeNode = shapeNode;
-			context .scissor   = viewVolume .getScissor ();
-
-			// Collisions
-
-			var
-				sourceCollisions = this .getCollisions (),
-				destCollisions   = context .collisions;
-
-			for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
-			   destCollisions [i] = sourceCollisions [i];
-			
-			destCollisions .length = sourceCollisions .length;
-
-			// Clip planes
-
-			var
-				sourcePlanes = this .getClipPlanes (),
-				destPlanes   = context .clipPlanes;
-
-			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-				destPlanes [i] = sourcePlanes [i];
-			
-			destPlanes .length = sourcePlanes .length;
-
-			return true;
+			return false;
 		},
 		addDepthShape: function (shapeNode)
 		{
@@ -565,7 +574,7 @@ function ($,
 		   {
 				// Terrain following and gravitation
 
-				if (this .getBrowser () .getCurrentViewer () !== "WALK")
+				if (this .getNavigationInfo () .getViewer () !== "WALK")
 					return;
 
 				// Get NavigationInfo values
@@ -602,7 +611,7 @@ function ($,
 
 				// Gravite or step up
 
-				if (farValue - distance > 0) // Are there polygons under the viewer
+				if (farValue - distance > 0 || true) // Are there polygons under the viewer
 				{
 					distance -= avatarHeight;
 

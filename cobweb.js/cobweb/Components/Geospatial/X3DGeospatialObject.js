@@ -181,10 +181,10 @@ function ($,
 			}
 			else
 			{
-				this .getCoord          = getCoord;
-				this .getGeoCoord       = getGeoCoord;
-				this .getGeoUpVector    = getGeoUpVector;
-				this .getLocationMatrix = getLocationMatrix;
+				delete this .getCoord;
+				delete this .getGeoCoord;
+				delete this .getGeoUpVector;
+				delete this .getLocationMatrix;
 			}
 		},
 		getReferenceFrame: function ()
@@ -195,29 +195,40 @@ function ($,
 		{
 			return this .standardOrder;
 		},
-		getCoord: getCoord,
-		getGeoCoord: getGeoCoord,
+		getCoord: function (geoPoint, result)
+		{
+			return this .referenceFrame .convert (geoPoint, result) .subtract (this .origin);
+		},
+		getGeoCoord: function (point, result)
+		{
+			return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);
+		},
 		getGeoElevation: function (point)
 		{
 			return this .getGeoCoord (point, result) .z;
 		},
-		getGeoUpVector: getGeoUpVector,
-		getLocationMatrix: getLocationMatrix,
+		getGeoUpVector: function (point, result)
+		{
+			return this .elevationFrame .normal (vector .assign (point) .add (this .origin), result);
+		},
+		getLocationMatrix: function (geoPoint, result)
+		{
+			var
+				origin         = this .origin,
+				locationMatrix = getStandardLocationMatrix .call (this, geoPoint, result);
+	
+			// translateRight (-origin)
+			locationMatrix [12] -= origin .x;
+			locationMatrix [13] -= origin .y;
+			locationMatrix [14] -= origin .z;
+	
+			return locationMatrix;
+		},
 	};
-
-	function getCoord (geoPoint, result)
-	{
-		return this .referenceFrame .convert (geoPoint, result) .subtract (this .origin);
-	}
 
 	function getCoordRotateYUp (geoPoint, result)
 	{
 		return this .invOriginMatrix .multVecMatrix (this .referenceFrame .convert (geoPoint, result));
-	}
-
-	function getGeoCoord (point, result)
-	{
-		return this .referenceFrame .apply (vector .assign (point) .add (this .origin), result);
 	}
 
 	function getGeoCoordRotateYUp (point, result)
@@ -225,14 +236,14 @@ function ($,
 		return this .referenceFrame .apply (this .originMatrix .multVecMatrix (vector .assign (point)), result);
 	}
 
-	function getGeoUpVector (point, result)
-	{
-		return this .elevationFrame .normal (vector .assign (point) .add (this .origin), result);
-	}
-
 	function getGeoUpVectorRotateYUp (point, result)
 	{
 		return this .invOriginMatrix .multDirMatrix (this .elevationFrame .normal (this .originMatrix .multVecMatrix (vector .assign (point)), result));
+	}
+
+	function getLocationMatrixRotateYUp (geoPoint, result)
+	{
+		return getStandardLocationMatrix .call (this, geoPoint, result) .multRight (this .invOriginMatrix);
 	}
 
 	function getStandardLocationMatrix (geoPoint, result)
@@ -262,25 +273,6 @@ function ($,
 		                    y .x, y .y, y .z, 0,
 		                    z .x, z .y, z .z, 0,
 		                    t .x, t .y, t .z, 1);
-	}
-
-	function getLocationMatrix (geoPoint, result)
-	{
-		var
-			origin         = this .origin,
-			locationMatrix = getStandardLocationMatrix .call (this, geoPoint, result);
-
-		// translateRight (-origin)
-		locationMatrix [12] -= origin .x;
-		locationMatrix [13] -= origin .y;
-		locationMatrix [14] -= origin .z;
-
-		return locationMatrix;
-	}
-
-	function getLocationMatrixRotateYUp (geoPoint, result)
-	{
-		return getStandardLocationMatrix .call (this, geoPoint, result) .multRight (this .invOriginMatrix);
 	}
 
 	return X3DGeospatialObject;

@@ -326,14 +326,25 @@ function ($,
 		{
 			this .collisionTime = 0;
 
-			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+			var
+				navigationInfo   = this .getNavigationInfo (),
+				collisionRadius2 = navigationInfo .getCollisionRadius () * 2,
+				avatarHeight2    = navigationInfo .getAvatarHeight () * 2;
+
+			Camera .ortho (-collisionRadius2, collisionRadius2, -avatarHeight2, collisionRadius2, -collisionRadius2, collisionRadius2, projectionMatrix);
+
+			projectionMatrix .multLeft (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+
+			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
+			this .getModelViewMatrix ()  .pushMatrix (Matrix4 .Identity);
 	
 			// Render
 			this .currentViewport .push (this);
 			this .render (type, this .groupNode);
 			this .currentViewport .pop (this);
 
-			this .getModelViewMatrix () .pop ()
+			this .getModelViewMatrix  () .pop ()
+			this .getProjectionMatrix () .pop ()
 		},
 		display: function (type)
 		{
