@@ -115,12 +115,12 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 				ViewVolume .unProjectPointMatrix (x2, y2, 0, matrix, viewport, p5),
 				ViewVolume .unProjectPointMatrix (x2, y2, 1, matrix, viewport, p6);
 
-				this .planes [0] .set (p4, Triangle3 .normal (p5, p4, p3, normal));  // front
-				this .planes [1] .set (p2, Triangle3 .normal (p3, p2, p1, normal));  // left
-				this .planes [2] .set (p5, Triangle3 .normal (p4, p5, p6, normal));  // right
-				this .planes [3] .set (p6, Triangle3 .normal (p1, p6, p5, normal));  // top
-				this .planes [4] .set (p3, Triangle3 .normal (p2, p3, p4, normal));  // bottom
-				this .planes [5] .set (p1, Triangle3 .normal (p6, p1, p2, normal));  // back
+				this .planes [0] .set (p4, Triangle3 .normal (p3, p4, p5, normal));  // front
+				this .planes [1] .set (p2, Triangle3 .normal (p1, p2, p3, normal));  // left
+				this .planes [2] .set (p5, Triangle3 .normal (p6, p5, p4, normal));  // right
+				this .planes [3] .set (p6, Triangle3 .normal (p5, p6, p1, normal));  // top
+				this .planes [4] .set (p3, Triangle3 .normal (p4, p3, p2, normal));  // bottom
+				this .planes [5] .set (p1, Triangle3 .normal (p2, p1, p6, normal));  // back
 
 				this .valid = true;
 			}
@@ -144,22 +144,22 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		{
 			var planes = this .planes;
 		
-			if (planes [0] .getDistanceToPoint (center) + radius < 0)
+			if (planes [0] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [1] .getDistanceToPoint (center) + radius < 0)
+			if (planes [1] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [2] .getDistanceToPoint (center) + radius < 0)
+			if (planes [2] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [3] .getDistanceToPoint (center) + radius < 0)
+			if (planes [3] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [4] .getDistanceToPoint (center) + radius < 0)
+			if (planes [4] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [5] .getDistanceToPoint (center) + radius < 0)
+			if (planes [5] .getDistanceToPoint (center) > radius)
 				return false;
 
 			return true;

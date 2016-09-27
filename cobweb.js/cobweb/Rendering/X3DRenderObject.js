@@ -215,7 +215,8 @@ function ($,
 			if (farValue - distance > 0) // Are there polygons before the viewer
 			{
 				var
-					cosTetha        = vector .assign (translation) .normalize () .dot (Vector3 .yAxis),
+					upVector        = this .getViewpoint () .getUpVector (),
+					cosTetha        = vector .assign (translation) .normalize () .dot (upVector),
 					avatarHeight    = navigationInfo .getAvatarHeight (),
 					collisionRadius = navigationInfo .getCollisionRadius ();
 
@@ -345,51 +346,42 @@ function ($,
 		{
 			var
 				modelViewMatrix = this .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
-				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
-				radius          = bboxSize .abs () / 2,
 				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
-			if (viewVolume .intersectsSphere (radius, bboxCenter))
-			{
+			if (this .numCollisionShapes === this .collisionShapes .length)
+				this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
 
-				if (this .numCollisionShapes === this .collisionShapes .length)
-					this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
-	
-				var context = this .collisionShapes [this .numCollisionShapes];
-	
-				++ this .numCollisionShapes;
-	
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
-	
-				// Collisions
-	
-				var
-					sourceCollisions = this .getCollisions (),
-					destCollisions   = context .collisions;
-	
-				for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
-				   destCollisions [i] = sourceCollisions [i];
-				
-				destCollisions .length = sourceCollisions .length;
-	
-				// Clip planes
-	
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
-	
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
-	
-				return true;
-			}
+			var context = this .collisionShapes [this .numCollisionShapes];
 
-			return false;
+			++ this .numCollisionShapes;
+
+			context .modelViewMatrix .set (modelViewMatrix);
+			context .shapeNode = shapeNode;
+			context .scissor   = viewVolume .getScissor ();
+
+			// Collisions
+
+			var
+				sourceCollisions = this .getCollisions (),
+				destCollisions   = context .collisions;
+
+			for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+			   destCollisions [i] = sourceCollisions [i];
+			
+			destCollisions .length = sourceCollisions .length;
+
+			// Clip planes
+
+			var
+				sourcePlanes = this .getClipPlanes (),
+				destPlanes   = context .clipPlanes;
+
+			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				destPlanes [i] = sourcePlanes [i];
+			
+			destPlanes .length = sourcePlanes .length;
+
+			return true;
 		},
 		addDepthShape: function (shapeNode)
 		{
