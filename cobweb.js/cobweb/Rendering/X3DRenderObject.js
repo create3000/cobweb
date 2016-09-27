@@ -79,20 +79,21 @@ function ($,
 "use strict";
 
 	var
-		DEPTH_BUFFER_WIDTH    = 16,
-		DEPTH_BUFFER_HEIGHT   = DEPTH_BUFFER_WIDTH,
-		projectionMatrix      = new Matrix4 (),
-		projectionMatrixArray = new Float32Array (16),
-		modelViewMatrix       = new Matrix4 (),
-		localOrientation      = new Rotation4 (0, 0, 1, 0),
-		yAxis                 = new Vector3 (0, 1, 0),
-		zAxis                 = new Vector3 (0, 0, 1),
-		vector                = new Vector3 (0, 0, 0),
-		rotation              = new Rotation4 (0, 0, 1, 0),
-		depthBufferViewport   = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
-		depthBufferViewVolume = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport),
-		collisionBox          = new Box3 (Vector3 .Zero, Vector3 .Zero),
-		collisionSize         = new Vector3 (0, 0, 0);
+		DEPTH_BUFFER_WIDTH          = 16,
+		DEPTH_BUFFER_HEIGHT         = DEPTH_BUFFER_WIDTH,
+		projectionMatrix            = new Matrix4 (),
+		projectionMatrixArray       = new Float32Array (16),
+		modelViewMatrix             = new Matrix4 (),
+		cameraSpaceProjectionMatrix = new Matrix4 (),
+		localOrientation            = new Rotation4 (0, 0, 1, 0),
+		yAxis                       = new Vector3 (0, 1, 0),
+		zAxis                       = new Vector3 (0, 0, 1),
+		vector                      = new Vector3 (0, 0, 0),
+		rotation                    = new Rotation4 (0, 0, 1, 0),
+		depthBufferViewport         = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
+		depthBufferViewVolume       = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport),
+		collisionBox                = new Box3 (Vector3 .Zero, Vector3 .Zero),
+		collisionSize               = new Vector3 (0, 0, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -201,7 +202,7 @@ function ($,
 		{
 			return this .collisions;
 		},
-		constrainTranslation: function (translation, stepBack, moveFree)
+		constrainTranslation: function (translation, stepBack)
 		{
 			/// Contrains translation to a possible value the avatar should go. Modifies translation in place.
 
@@ -214,16 +215,7 @@ function ($,
 
 			if (farValue - distance > 0) // Are there polygons before the viewer
 			{
-				var
-					upVector        = this .getViewpoint () .getUpVector (),
-					cosTetha        = vector .assign (translation) .normalize () .dot (upVector),
-					avatarHeight    = navigationInfo .getAvatarHeight (),
-					collisionRadius = navigationInfo .getCollisionRadius ();
-
-				if (moveFree === true)
-					distance -= cosTetha > 0 ? collisionRadius : Algorithm .lerp (cosTetha, avatarHeight, Math .pow (-cosTetha, 1/5));
-				else
-					distance -= collisionRadius;
+				distance -= navigationInfo .getCollisionRadius ();
 
 				if (distance > 0)
 				{
@@ -277,12 +269,15 @@ function ($,
 				rotation .setFromToVec (zAxis, vector .assign (direction) .negate ()) .multRight (localOrientation);
 				//viewpoint .straightenHorizon (rotation);
 
-				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
-				modelViewMatrix .translate (viewpoint .getUserPosition ());
-				modelViewMatrix .rotate (rotation);
-				modelViewMatrix .inverse ();
+				cameraSpaceProjectionMatrix .assign (viewpoint .getTransformationMatrix ());
+				cameraSpaceProjectionMatrix .translate (viewpoint .getUserPosition ());
+				cameraSpaceProjectionMatrix .rotate (rotation);
+				cameraSpaceProjectionMatrix .inverse ();
 
-				this .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
+				cameraSpaceProjectionMatrix .multRight (projectionMatrix);
+				cameraSpaceProjectionMatrix .multLeft (viewpoint .getCameraSpaceMatrix ());
+
+				this .getProjectionMatrix () .pushMatrix (cameraSpaceProjectionMatrix);
 
 				var depth = this .getDepth (projectionMatrix);
 
@@ -533,7 +528,6 @@ function ($,
 					if (collisions .length)
 					{
 					   collisionBox .set (collisionSize, Vector3 .Zero);
-						collisionBox .multRight (this .getViewpoint () .getCameraSpaceMatrix ());
 						collisionBox .multRight (this .invModelViewMatrix .assign (context .modelViewMatrix) .inverse ());
 
 						if (context .shapeNode .intersectsBox (collisionBox, context .clipPlanes, modelViewMatrix .assign (context .modelViewMatrix)))
@@ -598,12 +592,15 @@ function ($,
 					upVector = viewpoint .getUpVector (),
 					down     = rotation .setFromToVec (zAxis, upVector);
 
-				modelViewMatrix .assign (viewpoint .getTransformationMatrix ());
-				modelViewMatrix .translate (viewpoint .getUserPosition ());
-				modelViewMatrix .rotate (down);
-				modelViewMatrix .inverse ();
+				cameraSpaceProjectionMatrix .assign (viewpoint .getTransformationMatrix ());
+				cameraSpaceProjectionMatrix .translate (viewpoint .getUserPosition ());
+				cameraSpaceProjectionMatrix .rotate (down);
+				cameraSpaceProjectionMatrix .inverse ();
 
-				this .getProjectionMatrix () .pushMatrix (modelViewMatrix .multRight (projectionMatrix));
+				cameraSpaceProjectionMatrix .multRight (projectionMatrix);
+				cameraSpaceProjectionMatrix .multLeft (viewpoint .getCameraSpaceMatrix ());
+
+				this .getProjectionMatrix () .pushMatrix (cameraSpaceProjectionMatrix);
 
 				var distance = -this .getDepth (projectionMatrix);
 
@@ -619,7 +616,7 @@ function ($,
 
 					if (distance > 0)
 					{
-						// Gravite and fall down the floor
+						// Gravite and fall down the to the floor
 
 						var currentFrameRate = this .speed ? this .getBrowser () .getCurrentFrameRate () : 1000000;
 

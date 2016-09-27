@@ -356,7 +356,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var
 				navigationInfo = this .getNavigationInfo (),
 				viewpoint      = this .getActiveViewpoint (),
-				upVector       = viewpoint .getUpVector ();
+				upVector       = viewpoint .getUpVector (),
+				direction      = this .constrainPanDirection (this .direction .copy ());
 
 			var speedFactor = 1;
 
@@ -367,9 +368,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var
 				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector)),
-				translation = orientation .multVecRot (this .direction .copy () .multiply (speedFactor));
+				translation = orientation .multVecRot (direction .multiply (speedFactor));
 
-			this .getActiveLayer () .constrainTranslation (translation, true, true);
+			this .getActiveLayer () .constrainTranslation (translation, true);
 
 			viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
 

@@ -246,10 +246,14 @@ function ($,
 
 			// Bind first viewpoint in viewpoint list.
 
+			var viewpoint = this .viewpoints .getBound ()
+
 			this .navigationInfoStack .forcePush (this .navigationInfos .getBound ());
 			this .backgroundStack     .forcePush (this .backgrounds     .getBound ());
 			this .fogStack            .forcePush (this .fogs            .getBound ());
-			this .viewpointStack      .forcePush (this .viewpoints      .getBound ());
+			this .viewpointStack      .forcePush (viewpoint);
+
+			viewpoint .resetUserOffsets ();
 		},
 		traverse: function (type, renderObject)
 		{
@@ -333,10 +337,8 @@ function ($,
 
 			Camera .ortho (-collisionRadius2, collisionRadius2, -avatarHeight2, collisionRadius2, -collisionRadius2, collisionRadius2, projectionMatrix);
 
-			projectionMatrix .multLeft (this .getViewpoint () .getInverseCameraSpaceMatrix ());
-
 			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
-			this .getModelViewMatrix ()  .pushMatrix (Matrix4 .Identity);
+			this .getModelViewMatrix  () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 	
 			// Render
 			this .currentViewport .push (this);

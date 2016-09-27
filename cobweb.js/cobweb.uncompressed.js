@@ -46534,12 +46534,12 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 				ViewVolume .unProjectPointMatrix (x2, y2, 0, matrix, viewport, p5),
 				ViewVolume .unProjectPointMatrix (x2, y2, 1, matrix, viewport, p6);
 
-				this .planes [0] .set (p4, Triangle3 .normal (p3, p4, p5, normal));  // front
-				this .planes [1] .set (p2, Triangle3 .normal (p1, p2, p3, normal));  // left
-				this .planes [2] .set (p5, Triangle3 .normal (p6, p5, p4, normal));  // right
-				this .planes [3] .set (p6, Triangle3 .normal (p5, p6, p1, normal));  // top
-				this .planes [4] .set (p3, Triangle3 .normal (p4, p3, p2, normal));  // bottom
-				this .planes [5] .set (p1, Triangle3 .normal (p2, p1, p6, normal));  // back
+				this .planes [0] .set (p4, Triangle3 .normal (p5, p4, p3, normal));  // front
+				this .planes [1] .set (p2, Triangle3 .normal (p3, p2, p1, normal));  // left
+				this .planes [2] .set (p5, Triangle3 .normal (p4, p5, p6, normal));  // right
+				this .planes [3] .set (p6, Triangle3 .normal (p1, p6, p5, normal));  // top
+				this .planes [4] .set (p3, Triangle3 .normal (p2, p3, p4, normal));  // bottom
+				this .planes [5] .set (p1, Triangle3 .normal (p6, p1, p2, normal));  // back
 
 				this .valid = true;
 			}
@@ -46563,22 +46563,22 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		{
 			var planes = this .planes;
 		
-			if (planes [0] .getDistanceToPoint (center) > radius)
+			if (planes [0] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [1] .getDistanceToPoint (center) > radius)
+			if (planes [1] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [2] .getDistanceToPoint (center) > radius)
+			if (planes [2] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [3] .getDistanceToPoint (center) > radius)
+			if (planes [3] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [4] .getDistanceToPoint (center) > radius)
+			if (planes [4] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
-			if (planes [5] .getDistanceToPoint (center) > radius)
+			if (planes [5] .getDistanceToPoint (center) + radius < 0)
 				return false;
 
 			return true;
@@ -50284,9 +50284,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var translation = this .getTranslationOffset (Vector3 .multiply (this .direction, speedFactor));
 
-			this .getActiveLayer () .constrainTranslation (translation, true);
-
-			viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
+			viewpoint .positionOffset_ = this .getActiveLayer () .constrainTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
 
 			// Rotation
 
@@ -50325,9 +50323,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector)),
 				translation = orientation .multVecRot (this .direction .copy () .multiply (speedFactor));
 
-			this .getActiveLayer () .constrainTranslation (translation, true, true);
-
-			viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
+			viewpoint .positionOffset_ = this .getActiveLayer () .constrainTranslation (translation) .add (viewpoint .positionOffset_ .getValue ());
 
 			this .startTime = now;
 		},
@@ -55464,9 +55460,8 @@ function (ViewVolume,
 					width               = this .width,
 					height              = this .height,
 					invProjectionMatrix = this .invProjectionMatrix .assign (projectionMatrix) .inverse (),
-					winx                = 0,
-					winy                = 0,
-					winz                = Number .POSITIVE_INFINITY;
+					point               = this .point,
+					depth               = Number .NEGATIVE_INFINITY;
 
 				gl .readPixels (0, 0, width, height, gl .RGBA, gl .UNSIGNED_BYTE, array);
 
@@ -55476,18 +55471,13 @@ function (ViewVolume,
 					{
 						var wz = array [i] / 255 + array [i + 1] / 65025 + array [i + 2] / 16581375 + array [i + 3] / 4228250625;
 
-						if (wz < winz)
-						{
-							winx = wx;
-							winy = wy;
-							winz = wz;
-						}
+						ViewVolume .unProjectPoint (wx, wy, wz, Matrix4 .Identity, projectionMatrix, viewport, point);
+
+						depth = Math .max (depth, point .z);
 					}
 				}
 
-				ViewVolume .unProjectPointMatrix (winx, winy, winz, invProjectionMatrix, viewport, this .point);
-
-				return this .point .z;
+				return depth;
 			}
 			catch (error)
 			{
@@ -66307,10 +66297,161 @@ function ($,
 		{
 			return this .collisions;
 		},
-		constrainTranslation: function (translation, stepBack, moveFree)
+		addCollisionShape: function (shapeNode)
 		{
-			/// Contrains translation to a possible value the avatar should go. Modifies translation in place.
+			var
+				modelViewMatrix = this .getModelViewMatrix () .get (),
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
 
+			if (this .numCollisionShapes === this .collisionShapes .length)
+				this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
+
+			var context = this .collisionShapes [this .numCollisionShapes];
+
+			++ this .numCollisionShapes;
+
+			context .modelViewMatrix .set (modelViewMatrix);
+			context .shapeNode = shapeNode;
+			context .scissor   = viewVolume .getScissor ();
+
+			// Collisions
+
+			var
+				sourceCollisions = this .getCollisions (),
+				destCollisions   = context .collisions;
+
+			for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
+			   destCollisions [i] = sourceCollisions [i];
+			
+			destCollisions .length = sourceCollisions .length;
+
+			// Clip planes
+
+			var
+				sourcePlanes = this .getClipPlanes (),
+				destPlanes   = context .clipPlanes;
+
+			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				destPlanes [i] = sourcePlanes [i];
+			
+			destPlanes .length = sourcePlanes .length;
+
+			return true;
+		},
+		addDepthShape: function (shapeNode)
+		{
+			var
+				modelViewMatrix = this .getModelViewMatrix () .get (),
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
+
+			if (this .numDepthShapes === this .depthShapes .length)
+				this .depthShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
+
+			var context = this .depthShapes [this .numDepthShapes];
+
+			++ this .numDepthShapes;
+
+			context .modelViewMatrix .set (modelViewMatrix);
+			context .shapeNode = shapeNode;
+			context .scissor   = viewVolume .getScissor ();
+
+			// Clip planes
+
+			var
+				sourcePlanes = this .getClipPlanes (),
+				destPlanes   = context .clipPlanes;
+
+			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+				destPlanes [i] = sourcePlanes [i];
+			
+			destPlanes .length = sourcePlanes .length;
+
+			return true;
+		},
+		addDisplayShape: function (shapeNode)
+		{
+			var
+				modelViewMatrix = this .getModelViewMatrix () .get (),
+				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
+				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
+				radius          = bboxSize .abs () / 2,
+				distance        = bboxCenter .z,
+				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
+
+			if (viewVolume .intersectsSphere (radius, bboxCenter))
+			{
+				if (shapeNode .isTransparent ())
+				{
+					if (this .numTransparentShapes === this .transparentShapes .length)
+						this .transparentShapes .push (this .createShapeContext (true));
+
+					var context = this .transparentShapes [this .numTransparentShapes];
+
+					++ this .numTransparentShapes;
+				}
+				else
+				{
+					if (this .numOpaqueShapes === this .opaqueShapes .length)
+						this .opaqueShapes .push (this .createShapeContext (false));
+
+					var context = this .opaqueShapes [this .numOpaqueShapes];
+
+					++ this .numOpaqueShapes;
+				}
+
+				context .modelViewMatrix .set (modelViewMatrix);
+				context .scissor .assign (viewVolume .getScissor ());
+				context .shapeNode = shapeNode;
+				context .distance  = distance - radius;
+				context .fogNode   = this .localFog;
+
+				// Clip planes
+
+				var
+					sourcePlanes = this .getClipPlanes (),
+					destPlanes   = context .clipPlanes;
+
+				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
+					destPlanes [i] = sourcePlanes [i];
+				
+				destPlanes .length = sourcePlanes .length;
+
+				// Local lights
+
+				var
+					sourceLights = this .getLocalLights (),
+					destLights   = context .localLights;
+
+				for (var i = 0, length = sourceLights .length; i < length; ++ i)
+					destLights [i] = sourceLights [i];
+				
+				destLights .length = sourceLights .length;
+
+				return true;
+			}
+
+			return false;
+		},
+		createShapeContext: function (transparent)
+		{
+			return {
+				renderer: this,
+				transparent: true,
+				geometryType: 3,
+				colorMaterial: false,
+				modelViewMatrix: new Float32Array (16),
+				scissor: new Vector4 (0, 0, 0, 0),
+				clipPlanes: [ ],
+				localLights: [ ],
+				linePropertiesNode: null,
+				materialNode: null,
+				textureNode: null,
+				textureTransformNode: null,
+				shaderNode: null,
+			};
+		},
+		constrainTranslation: function (translation)
+		{
 		   var t0 = performance .now ();
 
 			var
@@ -66320,16 +66461,9 @@ function ($,
 
 			if (farValue - distance > 0) // Are there polygons before the viewer
 			{
-				var
-					upVector        = this .getViewpoint () .getUpVector (),
-					cosTetha        = vector .assign (translation) .normalize () .dot (upVector),
-					avatarHeight    = navigationInfo .getAvatarHeight (),
-					collisionRadius = navigationInfo .getCollisionRadius ();
+				var collisionRadius = navigationInfo .getCollisionRadius ();
 
-				if (moveFree === true)
-					distance -= cosTetha > 0 ? collisionRadius : Algorithm .lerp (cosTetha, avatarHeight, Math .pow (-cosTetha, 1/5));
-				else
-					distance -= collisionRadius;
+				distance -= collisionRadius;
 
 				if (distance > 0)
 				{
@@ -66347,10 +66481,7 @@ function ($,
 				}
 
 				// Collision
-				if (stepBack)
-					return this .constrainTranslation (translation .normalize () .multiply (distance), false);
-
-				return translation .assign (Vector3 .Zero);
+				return translation .normalize () .multiply (distance);
 			}
 
 			this .collisionTime += performance .now () - t0;
@@ -66447,167 +66578,6 @@ function ($,
 					break;
 				}
 			}
-		},
-		addCollisionShape: function (shapeNode)
-		{
-			var
-				modelViewMatrix = this .getModelViewMatrix () .get (),
-				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
-
-			if (this .numCollisionShapes === this .collisionShapes .length)
-				this .collisionShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), collisions: [ ], clipPlanes: [ ] });
-
-			var context = this .collisionShapes [this .numCollisionShapes];
-
-			++ this .numCollisionShapes;
-
-			context .modelViewMatrix .set (modelViewMatrix);
-			context .shapeNode = shapeNode;
-			context .scissor   = viewVolume .getScissor ();
-
-			// Collisions
-
-			var
-				sourceCollisions = this .getCollisions (),
-				destCollisions   = context .collisions;
-
-			for (var i = 0, length = sourceCollisions .length; i < length; ++ i)
-			   destCollisions [i] = sourceCollisions [i];
-			
-			destCollisions .length = sourceCollisions .length;
-
-			// Clip planes
-
-			var
-				sourcePlanes = this .getClipPlanes (),
-				destPlanes   = context .clipPlanes;
-
-			for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-				destPlanes [i] = sourcePlanes [i];
-			
-			destPlanes .length = sourcePlanes .length;
-
-			return true;
-		},
-		addDepthShape: function (shapeNode)
-		{
-			var
-				modelViewMatrix = this .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
-				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
-				radius          = bboxSize .abs () / 2,
-				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
-
-			if (viewVolume .intersectsSphere (radius, bboxCenter))
-			{
-				if (this .numDepthShapes === this .depthShapes .length)
-					this .depthShapes .push ({ renderer: this, modelViewMatrix: new Float32Array (16), clipPlanes: [ ] });
-	
-				var context = this .depthShapes [this .numDepthShapes];
-	
-				++ this .numDepthShapes;
-	
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .shapeNode = shapeNode;
-				context .scissor   = viewVolume .getScissor ();
-	
-				// Clip planes
-	
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
-	
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
-	
-				return true;
-			}
-
-			return false;
-		},
-		addDisplayShape: function (shapeNode)
-		{
-			var
-				modelViewMatrix = this .getModelViewMatrix () .get (),
-				bboxSize        = modelViewMatrix .multDirMatrix (this .bboxSize   .assign (shapeNode .getBBoxSize ())),
-				bboxCenter      = modelViewMatrix .multVecMatrix (this .bboxCenter .assign (shapeNode .getBBoxCenter ())),
-				radius          = bboxSize .abs () / 2,
-				distance        = bboxCenter .z,
-				viewVolume      = this .viewVolumes [this .viewVolumes .length - 1];
-
-			if (viewVolume .intersectsSphere (radius, bboxCenter))
-			{
-				if (shapeNode .isTransparent ())
-				{
-					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push (this .createShapeContext (true));
-
-					var context = this .transparentShapes [this .numTransparentShapes];
-
-					++ this .numTransparentShapes;
-				}
-				else
-				{
-					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push (this .createShapeContext (false));
-
-					var context = this .opaqueShapes [this .numOpaqueShapes];
-
-					++ this .numOpaqueShapes;
-				}
-
-				context .modelViewMatrix .set (modelViewMatrix);
-				context .scissor .assign (viewVolume .getScissor ());
-				context .shapeNode = shapeNode;
-				context .distance  = distance - radius;
-				context .fogNode   = this .localFog;
-
-				// Clip planes
-
-				var
-					sourcePlanes = this .getClipPlanes (),
-					destPlanes   = context .clipPlanes;
-
-				for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
-					destPlanes [i] = sourcePlanes [i];
-				
-				destPlanes .length = sourcePlanes .length;
-
-				// Local lights
-
-				var
-					sourceLights = this .getLocalLights (),
-					destLights   = context .localLights;
-
-				for (var i = 0, length = sourceLights .length; i < length; ++ i)
-					destLights [i] = sourceLights [i];
-				
-				destLights .length = sourceLights .length;
-
-				return true;
-			}
-
-			return false;
-		},
-		createShapeContext: function (transparent)
-		{
-			return {
-				renderer: this,
-				transparent: true,
-				geometryType: 3,
-				colorMaterial: false,
-				modelViewMatrix: new Float32Array (16),
-				scissor: new Vector4 (0, 0, 0, 0),
-				clipPlanes: [ ],
-				localLights: [ ],
-				linePropertiesNode: null,
-				materialNode: null,
-				textureNode: null,
-				textureTransformNode: null,
-				shaderNode: null,
-			};
 		},
 		collide: function ()
 		{
@@ -66742,7 +66712,7 @@ function ($,
 						if (distance > 0.01 && distance < stepHeight)
 						{
 							// Step up
-							var translation = this .constrainTranslation (up .multVecRot (this .translation .set (0, distance, 0)), false);
+							var translation = this .constrainTranslation (up .multVecRot (this .translation .set (0, distance, 0)));
 
 							//if (getBrowser () -> getBrowserOptions () -> animateStairWalks ())
 							//{
@@ -69033,7 +69003,6 @@ define ('cobweb/Components/Layering/X3DLayerNode',[
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Camera",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 ],
@@ -69049,13 +69018,10 @@ function ($,
           X3DCast,
           TraverseType,
           X3DConstants,
-          Camera,
           Vector3,
           Matrix4)
 {
 
-
-	var projectionMatrix = new Matrix4 ();
 
 	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
@@ -74330,6 +74296,18 @@ function ($,
 {
 
 
+	function traverse (type, renderObject)
+	{
+		var modelViewMatrix = renderObject .getModelViewMatrix ();
+
+		modelViewMatrix .push ();
+		modelViewMatrix .multLeft (this .matrix);
+		
+		X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
+
+		modelViewMatrix .pop ();
+	}
+
 	function X3DTransformMatrix3DNode (executionContext)
 	{
 		X3DGroupingNode .call (this, executionContext);
@@ -74346,7 +74324,7 @@ function ($,
 		{
 			var bbox = X3DGroupingNode .prototype .getBBox .call (this, bbox);
 
-			if (this .traverse === X3DTransformMatrix3DNode .prototype .traverse)
+			if (this .traverse === traverse)
 				return bbox .multRight (this .matrix);
 
 			return bbox;
@@ -74361,7 +74339,7 @@ function ($,
 			else
 			{
 			   this .matrix .assign (matrix);
-				delete this .traverse;
+				this .traverse = traverse;
 			}
 		},
 		getMatrix: function ()
@@ -74370,7 +74348,6 @@ function ($,
 		},
 		setTransform: function (t, r, s, so, c)
 		{
-
 			if (t .equals (Vector3 .Zero) && r .equals (Rotation4 .Identity) && s .equals (Vector3 .One))
 			{
 				this .matrix .identity ();
@@ -74379,19 +74356,8 @@ function ($,
 			else
 			{
 			   this .matrix .set (t, r, s, so, c);
-				delete this .traverse ;
+				this .traverse = traverse;
 			}
-		},
-		traverse: function (type, renderObject)
-		{
-			var modelViewMatrix = renderObject .getModelViewMatrix ();
-
-			modelViewMatrix .push ();
-			modelViewMatrix .multLeft (this .matrix);
-			
-			X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
-
-			modelViewMatrix .pop ();
 		},
 	});
 

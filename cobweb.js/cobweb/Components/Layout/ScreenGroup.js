@@ -167,10 +167,18 @@ function ($,
 			{
 				var modelViewMatrix = renderObject .getModelViewMatrix ();
 
-				if (type === TraverseType .DISPLAY)
-					modelViewMatrix .pushMatrix (this .scale (renderObject));
-				else
-					modelViewMatrix .pushMatrix (this .screenMatrix);
+				switch (type)
+				{
+					case TraverseType .CAMERA:
+					case TraverseType .DEPTH: // ???
+					case TraverseType .DRAW:
+						// No clone support for shadow, generated cube map texture and bbox
+						modelViewMatrix .pushMatrix (this .screenMatrix);
+						break;
+					default:
+						modelViewMatrix .pushMatrix (this .scale (renderObject));
+						break;
+				}
 
 				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 	
