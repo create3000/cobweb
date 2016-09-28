@@ -234,23 +234,23 @@ function ($,
 			this .loadId      = performance .now ();
 			this .description = "";
 			this .setBrowserLoading (true);
-			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this, scene));
-
-			this .setExecutionContext (scene);
-
-			this .initialized () .setValue (this .getCurrentTime ());
-		},
-		bindWorld: function (scene, value)
-		{
-			if (value)
-				return;
-
-			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
+			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
 
 			if (this .isLive () .getValue ())
 				scene .beginUpdate ();
 			else
 				scene .endUpdate ();
+
+			this .setExecutionContext (scene);
+
+			this .initialized () .setValue (this .getCurrentTime ());
+		},
+		bindWorld: function (value)
+		{
+			if (value)
+				return;
+
+			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
 
 			this .getWorld () .bind ();
 			this .setBrowserLoading (false);

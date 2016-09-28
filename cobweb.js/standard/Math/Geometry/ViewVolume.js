@@ -218,7 +218,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		},
 		projectLine: function (line, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			ViewVolume .projectPoint (line .point, modelViewMatrix, projection, viewport, near);
+			ViewVolume .projectPoint (line .point, modelViewMatrix, projectionMatrix, viewport, near);
 			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelViewMatrix, projectionMatrix, viewport, far);
 
 			near .z = 0;

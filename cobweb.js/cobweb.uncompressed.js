@@ -46640,7 +46640,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		},
 		projectLine: function (line, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			ViewVolume .projectPoint (line .point, modelViewMatrix, projection, viewport, near);
+			ViewVolume .projectPoint (line .point, modelViewMatrix, projectionMatrix, viewport, near);
 			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelViewMatrix, projectionMatrix, viewport, far);
 
 			near .z = 0;
@@ -102481,23 +102481,23 @@ function ($,
 			this .loadId      = performance .now ();
 			this .description = "";
 			this .setBrowserLoading (true);
-			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this, scene));
-
-			this .setExecutionContext (scene);
-
-			this .initialized () .setValue (this .getCurrentTime ());
-		},
-		bindWorld: function (scene, value)
-		{
-			if (value)
-				return;
-
-			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
+			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
 
 			if (this .isLive () .getValue ())
 				scene .beginUpdate ();
 			else
 				scene .endUpdate ();
+
+			this .setExecutionContext (scene);
+
+			this .initialized () .setValue (this .getCurrentTime ());
+		},
+		bindWorld: function (value)
+		{
+			if (value)
+				return;
+
+			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
 
 			this .getWorld () .bind ();
 			this .setBrowserLoading (false);
