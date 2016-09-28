@@ -60,7 +60,7 @@ function ($)
 	{
 		$(function ()
 		{
-		   var elements = $("X3D");
+		   var elements = $("X3DCanvas");
 
 			elements .each (function ()
 			{

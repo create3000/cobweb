@@ -126,7 +126,12 @@ function ($,
 		{
 			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
 
-			var urlCharacters = this .getElement () [0] .getAttribute ("url");
+			var urlCharacters = this .getElement () [0] .getAttribute ("src");
+
+			if (urlCharacters)
+				urlCharacters = '"' + urlCharacters + '"';
+			else
+				urlCharacters = this .getElement () [0] .getAttribute ("url");
 
 			if (urlCharacters)
 			{

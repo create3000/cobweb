@@ -9275,7 +9275,7 @@ function ($)
 	{
 		$(function ()
 		{
-		   var elements = $("X3D");
+		   var elements = $("X3DCanvas");
 
 			elements .each (function ()
 			{
@@ -46101,7 +46101,7 @@ function (jquery,
 
 			browser .getCanvas () .focus ();
 
-			if (browser .hasShiftKey () && browser .hasCtrlKey ())
+			if (browser .getShiftKey () && browser .getControlKey ())
 				return;
 
 			if (event .button === 0)
@@ -47139,10 +47139,10 @@ function ($,
 	{
 		this .keyDeviceSensorNode = null;
 
-		this .addChildren ("shiftKey", new Fields .SFBool (),
-		                   "ctrlKey",  new Fields .SFBool (),
-		                   "altKey",   new Fields .SFBool (),
-		                   "altGrKey", new Fields .SFBool ());
+		this .addChildren ("controlKey",  new Fields .SFBool (),
+		                   "shiftKey",    new Fields .SFBool (),
+		                   "altKey",      new Fields .SFBool (),
+		                   "altGrKey",    new Fields .SFBool ());
 	}
 
 	X3DKeyDeviceSensorContext .prototype =
@@ -47160,19 +47160,19 @@ function ($,
 		{
 			return this .keyDeviceSensorNode;
 		},
-		hasShiftKey: function ()
+		getShiftKey: function ()
 		{
 			return this .shiftKey_ .getValue ();
 		},
-		hasCtrlKey: function ()
+		getControlKey: function ()
 		{
-			return this .ctrlKey_ .getValue ();
+			return this .controlKey_ .getValue ();
 		},
-		hasAltKey: function ()
+		getAltKey: function ()
 		{
 			return this .altKey_ .getValue ();
 		},
-		hasAltGrKey: function ()
+		getAltGrKey: function ()
 		{
 			return this .altGrKey_ .getValue ();
 		},
@@ -47195,7 +47195,7 @@ function ($,
 				}
 				case 17: // Ctrl
 				{
-					this .ctrlKey_ = true;
+					this .controlKey_ = true;
 					break;
 				}
 				case 18: // Alt
@@ -47205,7 +47205,7 @@ function ($,
 				}
 				case 49: // 1
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "POINTSET");
 						this .getNotification () .string_ = "Shading: Pointset";
@@ -47215,7 +47215,7 @@ function ($,
 				}
 				case 50: // 2
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "WIREFRAME");
 						this .getNotification () .string_ = "Shading: Wireframe";
@@ -47225,7 +47225,7 @@ function ($,
 				}
 				case 51: // 3
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "FLAT");
 						this .getNotification () .string_ = "Shading: Flat";
@@ -47235,7 +47235,7 @@ function ($,
 				}
 				case 52: // 4
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "GOURAUD");
 						this .getNotification () .string_ = "Shading: Gouraud";
@@ -47245,7 +47245,7 @@ function ($,
 				}
 				case 53: // 5
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "PHONG");
 						this .getNotification () .string_ = "Shading: Phong";
@@ -47255,7 +47255,7 @@ function ($,
 				}
 				case 83: // s
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						if (this .isLive () .getValue ())
 							this .endUpdate ();
@@ -47275,7 +47275,7 @@ function ($,
 				case 171: // Plus // Firefox
 				case 187: // Plus // Opera
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 						this .getBrowserTimings () .enabled_ = ! this .getBrowserTimings () .enabled_ .getValue ();
 					break;
 				}
@@ -47320,7 +47320,7 @@ function ($,
 				}
 				case 17: // Ctrl
 				{
-					this .ctrlKey_ = false;
+					this .controlKey_ = false;
 					break;
 				}
 				case 18: // Alt
@@ -50090,6 +50090,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		this .lineCount           = 2;
 		this .lineVertices        = new Array (this .lineCount * 4);
 		this .lineArray           = new Float32Array (this .lineVertices);
+		this .event               = null;
 
 		this .projectionMatrix      = new Matrix4 ();
 		this .projectionMatrixArray = new Float32Array (this .projectionMatrix);
@@ -50108,14 +50109,26 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			canvas .bind ("mousedown.X3DFlyViewer",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
+
+			this .getBrowser () .controlKey_ .addInterest (this, "set_controlKey_");
 		},
 		addCollision: function () { },
 		removeCollision: function () { },
+		set_controlKey_: function ()
+		{
+			if (this .event && this .mouseMoveEvent .button === 0)
+			{
+				this .button = -1;
+				this .mousedown (this .event);
+			}
+		},
 		mousedown: function (event)
 		{
 			if (this .button >= 0)
 				return;
-		
+
+			this .event = event;
+
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
 				x      = event .pageX - offset .left,
@@ -50136,7 +50149,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					this .getBrowser () .setCursor ("MOVE");
 					this .addCollision ();
 
-					if (this .getBrowser () .hasCtrlKey ())
+					if (this .getBrowser () .getControlKey ())
 					{
 						// Look around.
 
@@ -50184,6 +50197,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (event .button !== this .button)
 				return;
 
+			this .event  = null;
 			this .button = -1;
 		
 			$(document) .unbind ("mousemove.X3DFlyViewer" + this .getId ());
@@ -50197,6 +50211,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		{
 			this .getBrowser () .addBrowserEvent ();
 
+			this .event = event;
+
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
 				x      = event .pageX - offset .left,
@@ -50206,7 +50222,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			{
 				case 0:
 				{
-					if (this .getBrowser () .hasCtrlKey ())
+					if (this .getBrowser () .getControlKey ())
 					{
 						// Look around
 
@@ -50306,7 +50322,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			speedFactor *= navigationInfo .speed_ .getValue ();
 			speedFactor *= viewpoint .getSpeedFactor ();
-			speedFactor *= this .getBrowser () .hasShiftKey () ? SHIFT_SPEED_FACTOR : SPEED_FACTOR;
+			speedFactor *= this .getBrowser () .getShiftKey () ? SHIFT_SPEED_FACTOR : SPEED_FACTOR;
 			speedFactor *= dt;
 
 			var translation = this .getTranslationOffset (direction .assign (this .direction) .multiply (speedFactor));
@@ -50347,7 +50363,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			speedFactor *= navigationInfo .speed_ .getValue ();
 			speedFactor *= viewpoint .getSpeedFactor ();
-			speedFactor *= this .getBrowser () .hasShiftKey () ? PAN_SHIFT_SPEED_FACTOR : PAN_SPEED_FACTOR;
+			speedFactor *= this .getBrowser () .getShiftKey () ? PAN_SHIFT_SPEED_FACTOR : PAN_SPEED_FACTOR;
 			speedFactor *= dt;
 
 			var
@@ -50505,6 +50521,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		dispose: function ()
 		{
 			this .disconnect ();
+			this .getBrowser () .controlKey_ .removeInterest (this, "set_controlKey_");
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
 			$(document) .unbind (".X3DFlyViewer" + this .getId ());
 		},
@@ -102356,7 +102373,12 @@ function ($,
 		{
 			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
 
-			var urlCharacters = this .getElement () [0] .getAttribute ("url");
+			var urlCharacters = this .getElement () [0] .getAttribute ("src");
+
+			if (urlCharacters)
+				urlCharacters = '"' + urlCharacters + '"';
+			else
+				urlCharacters = this .getElement () [0] .getAttribute ("url");
 
 			if (urlCharacters)
 			{
