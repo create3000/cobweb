@@ -16320,7 +16320,7 @@ function ($,
 		},
 		setAxisAngle: function (axis, angle)
 		{
-			this .set (axis .x, axis .y, axis .z, angle);
+			return this .set (axis .x, axis .y, axis .z, angle);
 		},
 		setFromToVec: function (fromVec, toVec)
 		{
@@ -46590,9 +46590,9 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 	$.extend (ViewVolume,
 	{
-		unProjectPoint: function (winx, winy, winz, modelView, projection, viewport, point)
+		unProjectPoint: function (winx, winy, winz, modelViewMatrix, projectionMatrix, viewport, point)
 		{
-			matrix .assign (modelView) .multRight (projection) .inverse ();
+			matrix .assign (modelViewMatrix) .multRight (projectionMatrix) .inverse ();
 
 			return this .unProjectPointMatrix (winx, winy, winz, matrix, viewport, point);
 		},
@@ -46614,20 +46614,20 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			return point .set (vin .x * d, vin .y * d, vin .z * d);
 		},
-		unProjectRay: function (winx, winy, modelView, projection, viewport, result)
+		unProjectRay: function (winx, winy, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			matrix .assign (modelView) .multRight (projection) .inverse ();
+			matrix .assign (modelViewMatrix) .multRight (projectionMatrix) .inverse ();
 
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport, near);
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport, far);
 
 			return result .setPoints (near, far);
 		},
-		projectPoint: function (point, modelView, projection, viewport, vout)
+		projectPoint: function (point, modelViewMatrix, projectionMatrix, viewport, vout)
 		{
 			vin .set (point .x, point .y, point .z, 1);
 
-			projection .multVecMatrix (modelView .multVecMatrix (vin));
+			projectionMatrix .multVecMatrix (modelViewMatrix .multVecMatrix (vin));
 
 			if (vin .w === 0)
 				throw new Error ("Couldn't project point: divisor is 0.");
@@ -46638,10 +46638,10 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			                  (vin .y * d + 0.5) * viewport [3] + viewport [1],
 			                  (vin .z * d + 0.5));
 		},
-		projectLine: function (line, modelView, projection, viewport, result)
+		projectLine: function (line, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			ViewVolume .projectPoint (line .point, modelView, projection, viewport, near);
-			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelView, projection, viewport, far);
+			ViewVolume .projectPoint (line .point, modelViewMatrix, projection, viewport, near);
+			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelViewMatrix, projectionMatrix, viewport, far);
 
 			near .z = 0;
 			far  .z = 0;
@@ -49435,7 +49435,10 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 {
 
 	
-	var far = new Vector3 (0, 0, 0);
+	var
+		axis     = new Vector3 (0, 0, 0),
+		distance = new Vector3 (0, 0, 0),
+		far      = new Vector3 (0, 0, 0);
 
 	function X3DViewer (executionContext)
 	{
@@ -49464,45 +49467,58 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		{
 			return this .getBrowser () .getActiveLayer () .getViewpoint ();
 		},
-		getPointOnCenterPlane: function (x, y)
+		getScrollDirection: function (event)
+		{
+			var direction = 0;
+
+			// IE & Opera
+			if (event .originalEvent .wheelDelta)
+				return -event .originalEvent .wheelDelta / 120;
+
+			// Mozilla
+			else if (event .originalEvent .detail)
+				return event .originalEvent .detail / 3;
+
+			return direction;
+		},
+		getPointOnCenterPlane: function (x, y, result)
 		{
 			try
 			{
 				var
-					viewport       = this .getViewport () .getRectangle (this .getBrowser ()),
-					navigationInfo = this .getNavigationInfo (),
-					viewpoint      = this .getActiveViewpoint (),
-					projection     = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport),
-					modelview      = new Matrix4 (); // Use identity
+					navigationInfo   = this .getNavigationInfo (),
+					viewpoint        = this .getActiveViewpoint (),
+					viewport         = this .getViewport () .getRectangle (this .getBrowser ()),
+					projectionMatrix = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport);
 
 				// Far plane point
-				ViewVolume .unProjectPoint (x, this .getBrowser () .getViewport () [3] - y, 0.9, modelview, projection, viewport, far);
+				ViewVolume .unProjectPoint (x, this .getBrowser () .getViewport () [3] - y, 0.9, Matrix4 .Identity, projectionMatrix, viewport, far);
 
 				if (viewpoint instanceof OrthoViewpoint)
-					return new Vector3 (far .x, far .y, -this .getDistanceToCenter () .abs ());
+					return result .set (far .x, far .y, -this .getDistanceToCenter (distance) .abs ());
 
 				var direction = far .normalize ();
 
-				return Vector3 .multiply (direction, this .getDistanceToCenter () .abs () / direction .dot (new Vector3 (0, 0, -1)));
+				return result .assign (direction) .multiply (this .getDistanceToCenter (distance) .abs () / direction .dot (axis .set (0, 0, -1)));
 			}
 			catch (error)
 			{
 				console .log (error);
-				return new Vector3 (0, 0, 0);
+				return result .set (0, 0, 0);
 			}
 		},
-		getDistanceToCenter: function ()
+		getDistanceToCenter: function (distance)
 		{
 			var viewpoint = this .getActiveViewpoint ();
 
-			return Vector3 .subtract (viewpoint .getUserPosition (), viewpoint .getUserCenterOfRotation ());
+			return distance .assign (viewpoint .getUserPosition ()) .subtract (viewpoint .getUserCenterOfRotation ());
 		},
-		trackballProjectToSphere: function (x, y)
+		trackballProjectToSphere: function (x, y, vector)
 		{
 			x =  x / this .getBrowser () .getViewport () [2] - 0.5;
 			y = -y / this .getBrowser () .getViewport () [3] + 0.5;
 
-			return new Vector3 (x, y, tbProjectToSphere (0.5, x, y));
+			return vector .set (x, y, tbProjectToSphere (0.5, x, y));
 		},
 		lookAt: function (x, y, straightenHorizon)
 		{
@@ -49698,6 +49714,15 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		SCROLL_FACTOR     = 1.0 / 50.0,
 		FRAME_RATE        = 60;
 
+	var
+		positionOffset         = new Vector3 (0, 0, 0),
+		centerOfRotationOffset = new Vector3 (0, 0, 0),
+		distance               = new Vector3 (0, 0, 0),
+		vector                 = new Vector3 (0, 0, 0),
+		rotation               = new Rotation4 (0, 0, 1, 0),
+		orientationOffset      = new Rotation4 (0, 0, 1, 0),
+		result                 = new Rotation4 (0, 0, 1, 0);
+
 	function ExamineViewer (executionContext)
 	{
 		X3DViewer .call (this, executionContext);
@@ -49706,7 +49731,9 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		this .orientationOffset = new Rotation4 (0, 0, 1, 0);
 		this .rotation          = new Rotation4 (0, 0, 1, 0);
 		this .fromVector        = new Vector3 (0, 0, 0);
+		this .toVector          = new Vector3 (0, 0, 0);
 		this .fromPoint         = new Vector3 (0, 0, 0);
+		this .toPoint           = new Vector3 (0, 0, 0);
 		this .pressTime         = 0;
 		this .motionTime        = 0;
 		this .spinId            = undefined;
@@ -49754,8 +49781,8 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
-					this .fromVector = this .trackballProjectToSphere (x, y);
-					this .rotation   = new Rotation4 ();
+					this .trackballProjectToSphere (x, y, this .fromVector);
+					this .rotation .assign (Rotation4 .Identity);
 
 					this .motionTime = 0;			
 					break;
@@ -49774,7 +49801,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
-					this .fromPoint = this .getPointOnCenterPlane (x, y);
+					this .getPointOnCenterPlane (x, y, this .fromPoint);
 					break;
 				}
 			}
@@ -49800,11 +49827,13 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					{
 						try
 						{
-							this .rotation = new Rotation4 (0, 0, 1, 0) .slerp (this .rotation, SPIN_FACTOR);
+							this .rotation .assign (rotation .assign (Rotation4 .Identity) .slerp (this .rotation, SPIN_FACTOR));
 							this .addSpinning ();
 						}
 						catch (error)
-						{ }
+						{
+							console .log (error);
+						}
 					}
 
 					break;
@@ -49841,9 +49870,9 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				{
 					var
 						viewpoint = this .getActiveViewpoint (),
-						toVector  = this .trackballProjectToSphere (x, y);
+						toVector  = this .trackballProjectToSphere (x, y, this .toVector);
 
-					this .rotation = new Rotation4 (toVector, this .fromVector);
+					this .rotation .setFromToVec (toVector, this .fromVector);
 
 					if (Math .abs (this .rotation .angle) < SPIN_ANGLE && performance .now () - this .pressTime < MOTION_TIME)
 						return false;
@@ -49851,7 +49880,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					viewpoint .orientationOffset_ = this .getOrientationOffset ();
 					viewpoint .positionOffset_    = this .getPositionOffset ();
 
-					this .fromVector = toVector;
+					this .fromVector .assign (toVector);
 					this .motionTime = performance .now ();
 					break;
 				}
@@ -49865,13 +49894,13 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 					var
 						viewpoint   = this .getActiveViewpoint (),
-						toPoint     = this .getPointOnCenterPlane (x, y),
-						translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (this .fromPoint, toPoint));
+						toPoint     = this .getPointOnCenterPlane (x, y, this .toPoint),
+						translation = viewpoint .getUserOrientation () .multVecRot (vector .assign (this .fromPoint) .subtract (toPoint));
 
-					viewpoint .positionOffset_         = Vector3 .add (viewpoint .positionOffset_         .getValue (), translation);
-					viewpoint .centerOfRotationOffset_ = Vector3 .add (viewpoint .centerOfRotationOffset_ .getValue (), translation);
+					viewpoint .positionOffset_         = positionOffset .assign (viewpoint .positionOffset_ .getValue ()) .add (translation);
+					viewpoint .centerOfRotationOffset_ = centerOfRotationOffset .assign (viewpoint .centerOfRotationOffset_ .getValue ()) .add (translation);
 
-					this .fromPoint = toPoint;
+					this .fromPoint .assign (toPoint);
 					break;
 				}
 			}
@@ -49884,15 +49913,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			// Determine scroll direction.
 
-			var direction = 0;
-
-			// IE & Opera
-			if (event .originalEvent .wheelDelta)
-				direction = -event .originalEvent .wheelDelta / 120;
-
-			// Mozilla
-			else if (event .originalEvent .detail)
-				direction = event .originalEvent .detail / 3;
+			var direction = this .getScrollDirection (event);
 
 			// Change viewpoint position.
 
@@ -49900,9 +49921,9 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			//viewpoint .transitionStop ();
 
-			var
-				step           = this .getDistanceToCenter () .multiply (SCROLL_FACTOR),
-				positionOffset = viewpoint .getUserOrientation () .multVecRot (new Vector3 (0, 0, step .abs ()));
+			var step = this .getDistanceToCenter (distance) .multiply (SCROLL_FACTOR);
+
+			viewpoint .getUserOrientation () .multVecRot (positionOffset .set (0, 0, step .abs ()));
 
 			if (direction < 0)
 				viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .subtract (positionOffset);		
@@ -49912,13 +49933,13 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		},
 		getPositionOffset: function ()
 		{
-			var
-				viewpoint = this .getActiveViewpoint (),
-				distance  = this .getDistanceToCenter ();
+			var viewpoint = this .getActiveViewpoint ();
 
-			return (this .orientationOffset .copy () .inverse ()
+			this .getDistanceToCenter (distance);
+
+			return (orientationOffset .assign (this .orientationOffset) .inverse ()
 			        .multRight (viewpoint .orientationOffset_ .getValue ())
-			        .multVecRot (distance .copy ())
+			        .multVecRot (vector .assign (distance))
 			        .subtract (distance)
 			        .add (viewpoint .positionOffset_ .getValue ()));
 		},
@@ -49928,7 +49949,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			this .orientationOffset .assign (viewpoint .orientationOffset_ .getValue ());
 
-			return viewpoint .getOrientation () .copy () .inverse () .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
+			return result .assign (viewpoint .getOrientation ()) .inverse () .multRight (this .rotation) .multRight (viewpoint .getUserOrientation ());
 		},
 		spin: function ()
 		{
@@ -50032,13 +50053,21 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		ROLL_TIME              = 0.2;
 
 	var
-		yAxis     = new Vector3 (0, 1, 0),
-		zAxis     = new Vector3 (0, 0, 1),
-		black     = new Float32Array ([0, 0, 0]),
-		white     = new Float32Array ([1, 1, 1]),
-		fromPoint = new Vector3 (0, 0, 0),
-		toPoint   = new Vector3 (0, 0, 0),
-		upVector  = new Vector3 (0, 0, 0);
+		yAxis              = new Vector3 (0, 1, 0),
+		zAxis              = new Vector3 (0, 0, 1),
+		black              = new Float32Array ([0, 0, 0]),
+		white              = new Float32Array ([1, 1, 1]),
+		fromPoint          = new Vector3 (0, 0, 0),
+		toPoint            = new Vector3 (0, 0, 0),
+		upVector           = new Vector3 (0, 0, 0),
+		direction          = new Vector3 (0, 0, 0),
+		axis               = new Vector3 (0, 0, 0),
+		rotation           = new Rotation4 (0, 0, 1, 0),
+		orientation        = new Rotation4 (0, 0, 1, 0),
+		orientationOffset  = new Rotation4 (0, 0, 1, 0),
+		rubberBandRotation = new Rotation4 (0, 0, 1, 0),
+		up                 = new Rotation4 (0, 0, 1, 0),
+		geoRotation        = new Rotation4 (0, 0, 1, 0);
 	
 	var
 		MOVE = 0,
@@ -50111,7 +50140,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					{
 						// Look around.
 
-						this .fromVector = this .trackballProjectToSphere (x, y);
+						this .trackballProjectToSphere (x, y, this .fromVector);
 					}
 					else
 					{
@@ -50182,14 +50211,14 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 						// Look around
 
 						var
-							viewpoint   = this .getActiveViewpoint (),
-							orientation = viewpoint .getUserOrientation (),
-							toVector    = this .trackballProjectToSphere (x, y);
+							viewpoint       = this .getActiveViewpoint (),
+							userOrientation = viewpoint .getUserOrientation (),
+							toVector         = this .trackballProjectToSphere (x, y, this .toVector);
 
-						orientation = new Rotation4 (toVector, this .fromVector) .multRight (orientation);
+						orientation .setFromToVec (toVector, this .fromVector) .multRight (userOrientation);
 						viewpoint .straightenHorizon (orientation);
 
-						viewpoint .orientationOffset_ = viewpoint .getOrientation () .copy () .inverse () .multRight (orientation);
+						viewpoint .orientationOffset_ = orientationOffset .assign (viewpoint .getOrientation ()) .inverse () .multRight (orientation);
 
 						this .fromVector .assign (toVector);
 					}
@@ -50226,15 +50255,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			// Determine scroll direction.
 
-			var direction = 0;
-
-			// IE & Opera
-			if (event .originalEvent .wheelDelta)
-				direction = -event .originalEvent .wheelDelta / 120;
-
-			// Mozilla
-			else if (event .originalEvent .detail)
-				direction = event .originalEvent .detail / 3;
+			var direction = this .getScrollDirection (event);
 
 			// Change viewpoint position.
 
@@ -50245,14 +50266,14 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (direction < 0)
 			{
 				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
-				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (-1, 0, 0)), ROLL_ANGLE));
+				this .destinationRotation = this .sourceRotation .multRight (rotation .setAxisAngle (viewpoint .getUserOrientation () .multVecRot (axis .set (-1, 0, 0)), ROLL_ANGLE));
 				this .addRoll ();
 			}
 
 			else if (direction > 0)
 			{
 				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
-				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (1, 0, 0)), ROLL_ANGLE));
+				this .destinationRotation = this .sourceRotation .multRight (rotation .setAxisAngle (viewpoint .getUserOrientation () .multVecRot (axis .set (1, 0, 0)), ROLL_ANGLE));
 				this .addRoll ();
 			}
 		},
@@ -50270,11 +50291,12 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			// Rubberband values
 
-			var up = new Rotation4 (yAxis, upVector);
+			up .setFromToVec (yAxis, upVector);
 
-			var rubberBandRotation = this .direction .z > 0
-			                         ? new Rotation4 (up .multVecRot (this .direction .copy ()), up .multVecRot (zAxis .copy ()))
-			                         : new Rotation4 (up .multVecRot (Vector3 .negate (zAxis)), up .multVecRot (this .direction .copy ()));
+			if (this .direction .z > 0)
+				rubberBandRotation .setFromToVec (up .multVecRot (direction .assign (this .direction)), up .multVecRot (axis .set (0, 0, 1)));
+			else
+				rubberBandRotation .setFromToVec (up .multVecRot (axis .set (0, 0, -1)), up .multVecRot (direction .assign (this .direction)));
 
 			var rubberBandLength = this .direction .abs ();
 
@@ -50287,7 +50309,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			speedFactor *= this .getBrowser () .hasShiftKey () ? SHIFT_SPEED_FACTOR : SPEED_FACTOR;
 			speedFactor *= dt;
 
-			var translation = this .getTranslationOffset (Vector3 .multiply (this .direction, speedFactor));
+			var translation = this .getTranslationOffset (direction .assign (this .direction) .multiply (speedFactor));
 
 			this .getActiveLayer () .constrainTranslation (translation, true);
 
@@ -50298,11 +50320,11 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var weight = ROTATION_SPEED_FACTOR * dt;
 			weight *= Math .pow (rubberBandLength / (rubberBandLength + ROTATION_LIMIT), 2);
 
-			viewpoint .orientationOffset_ = new Rotation4 () .slerp (rubberBandRotation, weight) .multLeft (viewpoint .orientationOffset_ .getValue ());
+			viewpoint .orientationOffset_ = orientationOffset .assign (Rotation4 .Identity) .slerp (rubberBandRotation, weight) .multLeft (viewpoint .orientationOffset_ .getValue ());
 
 			// GeoRotation
 
-			var geoRotation = new Rotation4 (upVector, viewpoint .getUpVector ());
+			geoRotation .setFromToVec (upVector, viewpoint .getUpVector ());
 
 			viewpoint .orientationOffset_ = geoRotation .multLeft (viewpoint .orientationOffset_ .getValue ());
 
@@ -50317,8 +50339,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var
 				navigationInfo = this .getNavigationInfo (),
 				viewpoint      = this .getActiveViewpoint (),
-				upVector       = viewpoint .getUpVector (),
-				direction      = this .constrainPanDirection (this .direction .copy ());
+				upVector       = viewpoint .getUpVector ();
+
+			this .constrainPanDirection (direction .assign (this .direction));
 
 			var speedFactor = 1;
 
@@ -50328,7 +50351,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			speedFactor *= dt;
 
 			var
-				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector)),
+				orientation = viewpoint .getUserOrientation () .multRight (rotation .setFromToVec (viewpoint .getUserOrientation () .multVecRot (axis .assign (yAxis)), upVector)),
 				translation = orientation .multVecRot (direction .multiply (speedFactor));
 
 			this .getActiveLayer () .constrainTranslation (translation, true);
@@ -50348,7 +50371,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var viewpoint = this .getActiveViewpoint ();
 
-			viewpoint .orientationOffset_ = Rotation4 .slerp (this .sourceRotation, this .destinationRotation, elapsedTime / ROLL_TIME);
+			viewpoint .orientationOffset_ = orientationOffset .assign (this .sourceRotation) .slerp (this .destinationRotation, elapsedTime / ROLL_TIME);
 		},
 		addFly: function ()
 		{
@@ -50948,7 +50971,7 @@ function ($,
 		},
 		getFieldOfView: function ()
 		{
-			var fov = this .fieldOfView_ * this .fieldOfViewScale_;
+			var fov = this .fieldOfView_ .getValue () * this .fieldOfViewScale_ .getValue ();
 
 			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
 		},
@@ -52951,12 +52974,18 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 	
 	var SCROLL_FACTOR = 0.05;
 
+	var
+		vector                 = new Vector3 (0 ,0, 0),
+		positionOffset         = new Vector3 (0 ,0, 0),
+		centerOfRotationOffset = new Vector3 (0, 0, 0);
+
 	function PlaneViewer (executionContext)
 	{
 		X3DViewer .call (this, executionContext);
 
-		this .button = -1;
+		this .button    = -1;
 		this .fromPoint = new Vector3 (0, 0, 0);
+		this .toPoint   = new Vector3 (0, 0, 0);
 	}
 
 	PlaneViewer .prototype = $.extend (Object .create (X3DViewer .prototype),
@@ -53001,7 +53030,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
-					this .fromPoint = this .getPointOnCenterPlane (x, y);
+					this .getPointOnCenterPlane (x, y, this .fromPoint);
 					break;
 				}
 			}
@@ -53037,13 +53066,13 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 
 					var
 						viewpoint   = this .getActiveViewpoint (),
-						toPoint     = this .getPointOnCenterPlane (x, y),
-						translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (this .fromPoint, toPoint));
+						toPoint     = this .getPointOnCenterPlane (x, y, this .toPoint),
+						translation = viewpoint .getUserOrientation () .multVecRot (this .fromPoint .subtract (toPoint));
 
-					viewpoint .positionOffset_         = Vector3 .add (viewpoint .positionOffset_         .getValue (), translation);
-					viewpoint .centerOfRotationOffset_ = Vector3 .add (viewpoint .centerOfRotationOffset_ .getValue (), translation);
+					viewpoint .positionOffset_         = positionOffset         .assign (viewpoint .positionOffset_         .getValue ()) .add (translation);
+					viewpoint .centerOfRotationOffset_ = centerOfRotationOffset .assign (viewpoint .centerOfRotationOffset_ .getValue ()) .add (translation);
 
-					this .fromPoint = toPoint;
+					this .fromPoint .assign (toPoint);
 					break;
 				}
 			}
@@ -53060,21 +53089,13 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 
 			// Determine scroll direction.
 
-			var direction = 0;
-
-			// IE & Opera
-			if (event .originalEvent .wheelDelta)
-				direction = -event .originalEvent .wheelDelta / 120;
-
-			// Mozilla
-			else if (event .originalEvent .detail)
-				direction = event .originalEvent .detail / 3;
+			var direction = this .getScrollDirection (event);
 
 			// Change viewpoint position.
 
 			var
 				viewpoint = this .getActiveViewpoint (),
-				fromPoint = this .getPointOnCenterPlane (x, y);
+				fromPoint = this .getPointOnCenterPlane (x, y, this .fromPoint);
 
 			viewpoint .transitionStop ();
 
@@ -53087,13 +53108,16 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 
 				this .constrainFieldOfViewScale ();
 			}
+
+			if (viewpoint .set_fieldOfView___)
+				viewpoint .set_fieldOfView___ (); // XXX: Immediately apply fieldOfViewScale;
 					
 			var
-				toPoint     = this .getPointOnCenterPlane (x, y),
-				translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (fromPoint, toPoint));
+				toPoint     = this .getPointOnCenterPlane (x, y, this .toPoint),
+				translation = viewpoint .getUserOrientation () .multVecRot (vector .assign (fromPoint) .subtract (toPoint));
 
-			viewpoint .positionOffset_         = Vector3 .add (viewpoint .positionOffset_         .getValue (), translation);
-			viewpoint .centerOfRotationOffset_ = Vector3 .add (viewpoint .centerOfRotationOffset_ .getValue (), translation);
+			viewpoint .positionOffset_         = positionOffset         .assign (viewpoint .positionOffset_         .getValue ()) .add (translation);
+			viewpoint .centerOfRotationOffset_ = centerOfRotationOffset .assign (viewpoint .centerOfRotationOffset_ .getValue ()) .add (translation);
 		},
 		constrainFieldOfViewScale: function ()
 		{
@@ -59557,8 +59581,6 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		traverse: function (type, renderObject)
-		{ },
 		display: function (context)
 		{ },
 		transformLine: function (line)
@@ -93184,11 +93206,9 @@ function ($,
 			texCoords .length = 0;
 			text .getTexCoords () .push (texCoords);
 
-			this .getBBox () .getExtents (min, max);
-			text .getMin () .assign (min);
-			text .getMax () .assign (max);
+			// Triangle one and two.
 
-	      // Triangle one and two.
+			this .getBBox () .getExtents (min, max);
 
 			normals  .push (0, 0, 1,
 			                0, 0, 1,
@@ -93315,10 +93335,6 @@ function ($,
 				this .texture .setTexture (canvas .width, canvas .height, true, new Uint8Array (imageData .data), true);
 			else
 			   this .texture .clear ();
-
-			// Update Text extends.
-
-			//$("body") .append ("<br>") .append (this .canvas);
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
@@ -93408,65 +93424,64 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		traverse: function (type, renderObject)
+		transform: function (context)
 		{
-			try
+			// throws an exception
+
+			var
+				renderObject     = context .renderer,
+				text             = this .getText (),
+				fontStyle        = this .getFontStyle (),
+				projectionMatrix = renderObject .getProjectionMatrix () .get (),
+				modelViewMatrix  = context .modelViewMatrix,
+				viewport         = renderObject .getViewVolume () .getViewport (),
+				screenMatrix     = this .screenMatrix;
+
+			// Same as in ScreenGroup.
+
+			screenMatrix .assign (modelViewMatrix);
+			screenMatrix .get (translation, rotation, scale);
+
+			var screenScale = renderObject .getViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+
+			screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+		                                                         screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+		                                                         screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+
+			// Snap to whole pixel.
+
+			ViewVolume .projectPoint (Vector3 .Zero, screenMatrix, projectionMatrix, viewport, screenPoint);
+
+			screenPoint .x = Math .round (screenPoint .x);
+			screenPoint .y = Math .round (screenPoint .y);
+
+			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, screenMatrix, projectionMatrix, viewport, screenPoint);
+
+			screenPoint .z = 0;
+			screenMatrix .translate (screenPoint);
+
+			// Assign modelViewMatrix and calculate relative matrix.
+
+			this .matrix .assign (modelViewMatrix) .inverse () .multLeft (screenMatrix);
+				
+			// Update Text bbox.
+
+			bbox .assign (this .getBBox ()) .multRight (this .matrix);
+
+			if (! bbox .equals (text .getBBox ()))
 			{
-				if (type === TraverseType .DISPLAY)
-				{
-					var
-						fontStyle        = this .getFontStyle (),
-						projectionMatrix = renderObject .getProjectionMatrix () .get (),
-						modelViewMatrix  = renderObject .getModelViewMatrix ()  .get (),
-						viewport         = renderObject .getViewVolume () .getViewport ();
-	
-					// Same as in ScreenGroup
-	
-					this .screenMatrix .assign (modelViewMatrix);
-					this .screenMatrix .get (translation, rotation, scale);
-	
-					var screenScale = renderObject .getViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
-	
-					this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
-				                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
-				                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
-	
-					// Snap to whole pixel
-	
-					ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-	
-					screenPoint .x = Math .round (screenPoint .x);
-					screenPoint .y = Math .round (screenPoint .y);
-		
-					ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-	
-					screenPoint .z = 0;
-					this .screenMatrix .translate (screenPoint);
-	
-					// Assign modelViewMatrix and calculate relative matrix
-	
-					this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
-						
-					// Update Text bbox
-	
-					bbox .assign (this .getBBox ()) .multRight (this .matrix);
-	
-					if (! bbox .equals (this .getText () .getBBox ()))
-					{
-					   bbox .getExtents (min, max);
-						this .getText () .getMin ()  .assign (min);
-						this .getText () .getMax ()  .assign (max);
-						this .getText () .getBBox () .assign (bbox);
-						this .getText () .bbox_changed_ .addEvent ();
-					}
-				}
+			   bbox .getExtents (min, max);
+				text .getMin ()  .assign (min);
+				text .getMax ()  .assign (max);
+				text .getBBox () .assign (bbox);
+				text .bbox_changed_ .addEvent ();
 			}
-			catch (error)
-			{ }
+
+			return this .matrix;
 		},
 		display: function (context)
 		{
-			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
+			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .transform (context));
 
 		   context .textureNode          = this .texture;
 		   context .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
@@ -93745,27 +93760,28 @@ function ($,
 			var
 				projectionMatrix = renderObject .getProjectionMatrix () .get (),
 				viewport         = renderObject .getViewVolume () .getViewport (),
-				screenScale      = renderObject .getViewpoint () .getScreenScale (translation, viewport);
+				screenScale      = renderObject .getViewpoint () .getScreenScale (translation, viewport),
+				screenMatrix     = this .screenMatrix;
 		
-			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
-		                                                               screenScale .y * (scale .y < 0 ? -1 : 1),
-		                                                               screenScale .z * (scale .z < 0 ? -1 : 1)));
+			screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
+		                                                         screenScale .y * (scale .y < 0 ? -1 : 1),
+		                                                         screenScale .z * (scale .z < 0 ? -1 : 1)));
 
 			// Snap to whole pixel
 
-			ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+			ViewVolume .projectPoint (Vector3 .Zero, screenMatrix, projectionMatrix, viewport, screenPoint);
 
 			screenPoint .x = Math .round (screenPoint .x);
 			screenPoint .y = Math .round (screenPoint .y);
 
-			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, screenMatrix, projectionMatrix, viewport, screenPoint);
 
 			screenPoint .z = 0;
-			this .screenMatrix .translate (screenPoint);
+			screenMatrix .translate (screenPoint);
 
 			// Return modelViewMatrix
 
-			return this .screenMatrix;
+			return screenMatrix;
 		},
 		traverse: function (type, renderObject)
 		{
@@ -98487,15 +98503,18 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 		},
-		traverse: function (type, renderObject)
-		{
-			this .textGeometry .traverse (type, renderObject);
-		},
 		display: function (context)
 		{
-			this .textGeometry .display (context);
+			try
+			{
+				this .textGeometry .display (context);
 
-			X3DGeometryNode .prototype .display .call (this, context);
+				X3DGeometryNode .prototype .display .call (this, context);
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 		transformLine: function (line)
 		{
