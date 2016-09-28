@@ -59,7 +59,10 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 {
 "use strict";
 	
-	var far = new Vector3 (0, 0, 0);
+	var
+		axis     = new Vector3 (0, 0, 0),
+		distance = new Vector3 (0, 0, 0),
+		far      = new Vector3 (0, 0, 0);
 
 	function X3DViewer (executionContext)
 	{
@@ -88,45 +91,58 @@ function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 		{
 			return this .getBrowser () .getActiveLayer () .getViewpoint ();
 		},
-		getPointOnCenterPlane: function (x, y)
+		getScrollDirection: function (event)
+		{
+			var direction = 0;
+
+			// IE & Opera
+			if (event .originalEvent .wheelDelta)
+				return -event .originalEvent .wheelDelta / 120;
+
+			// Mozilla
+			else if (event .originalEvent .detail)
+				return event .originalEvent .detail / 3;
+
+			return direction;
+		},
+		getPointOnCenterPlane: function (x, y, result)
 		{
 			try
 			{
 				var
-					viewport       = this .getViewport () .getRectangle (this .getBrowser ()),
-					navigationInfo = this .getNavigationInfo (),
-					viewpoint      = this .getActiveViewpoint (),
-					projection     = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport),
-					modelview      = new Matrix4 (); // Use identity
+					navigationInfo   = this .getNavigationInfo (),
+					viewpoint        = this .getActiveViewpoint (),
+					viewport         = this .getViewport () .getRectangle (this .getBrowser ()),
+					projectionMatrix = viewpoint .getProjectionMatrixWithLimits (navigationInfo .getNearValue (), navigationInfo .getFarValue (viewpoint), viewport);
 
 				// Far plane point
-				ViewVolume .unProjectPoint (x, this .getBrowser () .getViewport () [3] - y, 0.9, modelview, projection, viewport, far);
+				ViewVolume .unProjectPoint (x, this .getBrowser () .getViewport () [3] - y, 0.9, Matrix4 .Identity, projectionMatrix, viewport, far);
 
 				if (viewpoint instanceof OrthoViewpoint)
-					return new Vector3 (far .x, far .y, -this .getDistanceToCenter () .abs ());
+					return result .set (far .x, far .y, -this .getDistanceToCenter (distance) .abs ());
 
 				var direction = far .normalize ();
 
-				return Vector3 .multiply (direction, this .getDistanceToCenter () .abs () / direction .dot (new Vector3 (0, 0, -1)));
+				return result .assign (direction) .multiply (this .getDistanceToCenter (distance) .abs () / direction .dot (axis .set (0, 0, -1)));
 			}
 			catch (error)
 			{
 				console .log (error);
-				return new Vector3 (0, 0, 0);
+				return result .set (0, 0, 0);
 			}
 		},
-		getDistanceToCenter: function ()
+		getDistanceToCenter: function (distance)
 		{
 			var viewpoint = this .getActiveViewpoint ();
 
-			return Vector3 .subtract (viewpoint .getUserPosition (), viewpoint .getUserCenterOfRotation ());
+			return distance .assign (viewpoint .getUserPosition ()) .subtract (viewpoint .getUserCenterOfRotation ());
 		},
-		trackballProjectToSphere: function (x, y)
+		trackballProjectToSphere: function (x, y, vector)
 		{
 			x =  x / this .getBrowser () .getViewport () [2] - 0.5;
 			y = -y / this .getBrowser () .getViewport () [3] + 0.5;
 
-			return new Vector3 (x, y, tbProjectToSphere (0.5, x, y));
+			return vector .set (x, y, tbProjectToSphere (0.5, x, y));
 		},
 		lookAt: function (x, y, straightenHorizon)
 		{

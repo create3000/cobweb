@@ -71,13 +71,21 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		ROLL_TIME              = 0.2;
 
 	var
-		yAxis     = new Vector3 (0, 1, 0),
-		zAxis     = new Vector3 (0, 0, 1),
-		black     = new Float32Array ([0, 0, 0]),
-		white     = new Float32Array ([1, 1, 1]),
-		fromPoint = new Vector3 (0, 0, 0),
-		toPoint   = new Vector3 (0, 0, 0),
-		upVector  = new Vector3 (0, 0, 0);
+		yAxis              = new Vector3 (0, 1, 0),
+		zAxis              = new Vector3 (0, 0, 1),
+		black              = new Float32Array ([0, 0, 0]),
+		white              = new Float32Array ([1, 1, 1]),
+		fromPoint          = new Vector3 (0, 0, 0),
+		toPoint            = new Vector3 (0, 0, 0),
+		upVector           = new Vector3 (0, 0, 0),
+		direction          = new Vector3 (0, 0, 0),
+		axis               = new Vector3 (0, 0, 0),
+		rotation           = new Rotation4 (0, 0, 1, 0),
+		orientation        = new Rotation4 (0, 0, 1, 0),
+		orientationOffset  = new Rotation4 (0, 0, 1, 0),
+		rubberBandRotation = new Rotation4 (0, 0, 1, 0),
+		up                 = new Rotation4 (0, 0, 1, 0),
+		geoRotation        = new Rotation4 (0, 0, 1, 0);
 	
 	var
 		MOVE = 0,
@@ -150,7 +158,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					{
 						// Look around.
 
-						this .fromVector = this .trackballProjectToSphere (x, y);
+						this .trackballProjectToSphere (x, y, this .fromVector);
 					}
 					else
 					{
@@ -221,14 +229,14 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 						// Look around
 
 						var
-							viewpoint   = this .getActiveViewpoint (),
-							orientation = viewpoint .getUserOrientation (),
-							toVector    = this .trackballProjectToSphere (x, y);
+							viewpoint       = this .getActiveViewpoint (),
+							userOrientation = viewpoint .getUserOrientation (),
+							toVector         = this .trackballProjectToSphere (x, y, this .toVector);
 
-						orientation = new Rotation4 (toVector, this .fromVector) .multRight (orientation);
+						orientation .setFromToVec (toVector, this .fromVector) .multRight (userOrientation);
 						viewpoint .straightenHorizon (orientation);
 
-						viewpoint .orientationOffset_ = viewpoint .getOrientation () .copy () .inverse () .multRight (orientation);
+						viewpoint .orientationOffset_ = orientationOffset .assign (viewpoint .getOrientation ()) .inverse () .multRight (orientation);
 
 						this .fromVector .assign (toVector);
 					}
@@ -265,15 +273,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			// Determine scroll direction.
 
-			var direction = 0;
-
-			// IE & Opera
-			if (event .originalEvent .wheelDelta)
-				direction = -event .originalEvent .wheelDelta / 120;
-
-			// Mozilla
-			else if (event .originalEvent .detail)
-				direction = event .originalEvent .detail / 3;
+			var direction = this .getScrollDirection (event);
 
 			// Change viewpoint position.
 
@@ -284,14 +284,14 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (direction < 0)
 			{
 				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
-				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (-1, 0, 0)), ROLL_ANGLE));
+				this .destinationRotation = this .sourceRotation .multRight (rotation .setAxisAngle (viewpoint .getUserOrientation () .multVecRot (axis .set (-1, 0, 0)), ROLL_ANGLE));
 				this .addRoll ();
 			}
 
 			else if (direction > 0)
 			{
 				this .sourceRotation .assign (viewpoint .orientationOffset_ .getValue ());
-				this .destinationRotation = this .sourceRotation .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (new Vector3 (1, 0, 0)), ROLL_ANGLE));
+				this .destinationRotation = this .sourceRotation .multRight (rotation .setAxisAngle (viewpoint .getUserOrientation () .multVecRot (axis .set (1, 0, 0)), ROLL_ANGLE));
 				this .addRoll ();
 			}
 		},
@@ -309,11 +309,12 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			// Rubberband values
 
-			var up = new Rotation4 (yAxis, upVector);
+			up .setFromToVec (yAxis, upVector);
 
-			var rubberBandRotation = this .direction .z > 0
-			                         ? new Rotation4 (up .multVecRot (this .direction .copy ()), up .multVecRot (zAxis .copy ()))
-			                         : new Rotation4 (up .multVecRot (Vector3 .negate (zAxis)), up .multVecRot (this .direction .copy ()));
+			if (this .direction .z > 0)
+				rubberBandRotation .setFromToVec (up .multVecRot (direction .assign (this .direction)), up .multVecRot (axis .set (0, 0, 1)));
+			else
+				rubberBandRotation .setFromToVec (up .multVecRot (axis .set (0, 0, -1)), up .multVecRot (direction .assign (this .direction)));
 
 			var rubberBandLength = this .direction .abs ();
 
@@ -326,7 +327,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			speedFactor *= this .getBrowser () .hasShiftKey () ? SHIFT_SPEED_FACTOR : SPEED_FACTOR;
 			speedFactor *= dt;
 
-			var translation = this .getTranslationOffset (Vector3 .multiply (this .direction, speedFactor));
+			var translation = this .getTranslationOffset (direction .assign (this .direction) .multiply (speedFactor));
 
 			this .getActiveLayer () .constrainTranslation (translation, true);
 
@@ -337,11 +338,11 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var weight = ROTATION_SPEED_FACTOR * dt;
 			weight *= Math .pow (rubberBandLength / (rubberBandLength + ROTATION_LIMIT), 2);
 
-			viewpoint .orientationOffset_ = new Rotation4 () .slerp (rubberBandRotation, weight) .multLeft (viewpoint .orientationOffset_ .getValue ());
+			viewpoint .orientationOffset_ = orientationOffset .assign (Rotation4 .Identity) .slerp (rubberBandRotation, weight) .multLeft (viewpoint .orientationOffset_ .getValue ());
 
 			// GeoRotation
 
-			var geoRotation = new Rotation4 (upVector, viewpoint .getUpVector ());
+			geoRotation .setFromToVec (upVector, viewpoint .getUpVector ());
 
 			viewpoint .orientationOffset_ = geoRotation .multLeft (viewpoint .orientationOffset_ .getValue ());
 
@@ -356,8 +357,9 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			var
 				navigationInfo = this .getNavigationInfo (),
 				viewpoint      = this .getActiveViewpoint (),
-				upVector       = viewpoint .getUpVector (),
-				direction      = this .constrainPanDirection (this .direction .copy ());
+				upVector       = viewpoint .getUpVector ();
+
+			this .constrainPanDirection (direction .assign (this .direction));
 
 			var speedFactor = 1;
 
@@ -367,7 +369,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			speedFactor *= dt;
 
 			var
-				orientation = viewpoint .getUserOrientation () .multRight (new Rotation4 (viewpoint .getUserOrientation () .multVecRot (yAxis .copy ()), upVector)),
+				orientation = viewpoint .getUserOrientation () .multRight (rotation .setFromToVec (viewpoint .getUserOrientation () .multVecRot (axis .assign (yAxis)), upVector)),
 				translation = orientation .multVecRot (direction .multiply (speedFactor));
 
 			this .getActiveLayer () .constrainTranslation (translation, true);
@@ -387,7 +389,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			var viewpoint = this .getActiveViewpoint ();
 
-			viewpoint .orientationOffset_ = Rotation4 .slerp (this .sourceRotation, this .destinationRotation, elapsedTime / ROLL_TIME);
+			viewpoint .orientationOffset_ = orientationOffset .assign (this .sourceRotation) .slerp (this .destinationRotation, elapsedTime / ROLL_TIME);
 		},
 		addFly: function ()
 		{

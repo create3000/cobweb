@@ -139,27 +139,28 @@ function ($,
 			var
 				projectionMatrix = renderObject .getProjectionMatrix () .get (),
 				viewport         = renderObject .getViewVolume () .getViewport (),
-				screenScale      = renderObject .getViewpoint () .getScreenScale (translation, viewport);
+				screenScale      = renderObject .getViewpoint () .getScreenScale (translation, viewport),
+				screenMatrix     = this .screenMatrix;
 		
-			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
-		                                                               screenScale .y * (scale .y < 0 ? -1 : 1),
-		                                                               screenScale .z * (scale .z < 0 ? -1 : 1)));
+			screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
+		                                                         screenScale .y * (scale .y < 0 ? -1 : 1),
+		                                                         screenScale .z * (scale .z < 0 ? -1 : 1)));
 
 			// Snap to whole pixel
 
-			ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+			ViewVolume .projectPoint (Vector3 .Zero, screenMatrix, projectionMatrix, viewport, screenPoint);
 
 			screenPoint .x = Math .round (screenPoint .x);
 			screenPoint .y = Math .round (screenPoint .y);
 
-			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, screenMatrix, projectionMatrix, viewport, screenPoint);
 
 			screenPoint .z = 0;
-			this .screenMatrix .translate (screenPoint);
+			screenMatrix .translate (screenPoint);
 
 			// Return modelViewMatrix
 
-			return this .screenMatrix;
+			return screenMatrix;
 		},
 		traverse: function (type, renderObject)
 		{

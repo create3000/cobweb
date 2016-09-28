@@ -149,15 +149,18 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 		},
-		traverse: function (type, renderObject)
-		{
-			this .textGeometry .traverse (type, renderObject);
-		},
 		display: function (context)
 		{
-			this .textGeometry .display (context);
+			try
+			{
+				this .textGeometry .display (context);
 
-			X3DGeometryNode .prototype .display .call (this, context);
+				X3DGeometryNode .prototype .display .call (this, context);
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 		transformLine: function (line)
 		{

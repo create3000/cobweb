@@ -142,7 +142,7 @@ function ($,
 		},
 		getFieldOfView: function ()
 		{
-			var fov = this .fieldOfView_ * this .fieldOfViewScale_;
+			var fov = this .fieldOfView_ .getValue () * this .fieldOfViewScale_ .getValue ();
 
 			return fov > 0 && fov < Math .PI ? fov : Math .PI / 4;
 		},

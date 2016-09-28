@@ -618,8 +618,6 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		traverse: function (type, renderObject)
-		{ },
 		display: function (context)
 		{ },
 		transformLine: function (line)

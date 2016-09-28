@@ -168,9 +168,9 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 	$.extend (ViewVolume,
 	{
-		unProjectPoint: function (winx, winy, winz, modelView, projection, viewport, point)
+		unProjectPoint: function (winx, winy, winz, modelViewMatrix, projectionMatrix, viewport, point)
 		{
-			matrix .assign (modelView) .multRight (projection) .inverse ();
+			matrix .assign (modelViewMatrix) .multRight (projectionMatrix) .inverse ();
 
 			return this .unProjectPointMatrix (winx, winy, winz, matrix, viewport, point);
 		},
@@ -192,20 +192,20 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			return point .set (vin .x * d, vin .y * d, vin .z * d);
 		},
-		unProjectRay: function (winx, winy, modelView, projection, viewport, result)
+		unProjectRay: function (winx, winy, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			matrix .assign (modelView) .multRight (projection) .inverse ();
+			matrix .assign (modelViewMatrix) .multRight (projectionMatrix) .inverse ();
 
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport, near);
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport, far);
 
 			return result .setPoints (near, far);
 		},
-		projectPoint: function (point, modelView, projection, viewport, vout)
+		projectPoint: function (point, modelViewMatrix, projectionMatrix, viewport, vout)
 		{
 			vin .set (point .x, point .y, point .z, 1);
 
-			projection .multVecMatrix (modelView .multVecMatrix (vin));
+			projectionMatrix .multVecMatrix (modelViewMatrix .multVecMatrix (vin));
 
 			if (vin .w === 0)
 				throw new Error ("Couldn't project point: divisor is 0.");
@@ -216,10 +216,10 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			                  (vin .y * d + 0.5) * viewport [3] + viewport [1],
 			                  (vin .z * d + 0.5));
 		},
-		projectLine: function (line, modelView, projection, viewport, result)
+		projectLine: function (line, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			ViewVolume .projectPoint (line .point, modelView, projection, viewport, near);
-			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelView, projection, viewport, far);
+			ViewVolume .projectPoint (line .point, modelViewMatrix, projection, viewport, near);
+			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelViewMatrix, projectionMatrix, viewport, far);
 
 			near .z = 0;
 			far  .z = 0;
