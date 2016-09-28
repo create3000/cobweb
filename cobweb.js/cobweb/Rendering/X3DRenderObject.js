@@ -208,13 +208,11 @@ function ($,
 			///  and obstacle and @a stepBack is true a translation in the opposite directiion is returned.  Future implementation will
 			///  will then return a value where the avatar slides along the wall.  Modifies translation in place.
 
-			var
-				navigationInfo = this .getNavigationInfo (),
-				distance       = this .getDistance (translation);
+			var distance = this .getDistance (translation);
 
 			// Constrain translation when the viewer collides with an obstacle.
 
-			distance -= navigationInfo .getCollisionRadius ();
+			distance -= this .getNavigationInfo () .getCollisionRadius ();
 
 			if (distance > 0)
 			{
@@ -249,8 +247,6 @@ function ($,
 			{
 			   var t0 = performance .now ();
 
-				// Apply collision to translation.
-
 				var
 					viewpoint       = this .getViewpoint (),
 					navigationInfo  = this .getNavigationInfo (),
@@ -263,7 +259,7 @@ function ($,
 
 				// Reshape camera
 
-				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, avatarHeight * 2, projectionMatrix);
+				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, Math .max (collisionRadius * 2, avatarHeight * 2), projectionMatrix);
 
 				// Translate camera to user position and to look in the direction of the direction.
 
@@ -588,7 +584,7 @@ function ($,
 
 				// Reshape viewpoint for gravite.
 
-				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, avatarHeight * 2, projectionMatrix)
+				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, Math .max (collisionRadius * 2, avatarHeight * 2), projectionMatrix)
 
 				// Transform viewpoint to look down the up vector
 

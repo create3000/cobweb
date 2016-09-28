@@ -99,8 +99,6 @@ function ($,
 
 			this .layer0 .isLayer0 (true);
 			this .layer0 .setup ();
-
-			this .bind ();
 		},
 		getLayerSet: function ()
 		{

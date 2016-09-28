@@ -331,11 +331,12 @@ function ($,
 			this .collisionTime = 0;
 
 			var
-				navigationInfo   = this .getNavigationInfo (),
-				collisionRadius2 = navigationInfo .getCollisionRadius () * 2,
-				avatarHeight2    = navigationInfo .getAvatarHeight () * 2;
+				navigationInfo  = this .getNavigationInfo (),
+				collisionRadius = navigationInfo .getCollisionRadius (),
+				avatarHeight    = navigationInfo .getAvatarHeight (),
+				size            = Math .max (collisionRadius * 2, avatarHeight * 2);
 
-			Camera .ortho (-collisionRadius2, collisionRadius2, -avatarHeight2, collisionRadius2, -collisionRadius2, collisionRadius2, projectionMatrix);
+			Camera .ortho (-size, size, -size, size, -size, size, projectionMatrix);
 
 			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
 			this .getModelViewMatrix  () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
