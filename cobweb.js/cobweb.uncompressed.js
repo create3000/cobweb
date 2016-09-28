@@ -66362,13 +66362,11 @@ function ($,
 			///  and obstacle and @a stepBack is true a translation in the opposite directiion is returned.  Future implementation will
 			///  will then return a value where the avatar slides along the wall.  Modifies translation in place.
 
-			var
-				navigationInfo = this .getNavigationInfo (),
-				distance       = this .getDistance (translation);
+			var distance = this .getDistance (translation);
 
 			// Constrain translation when the viewer collides with an obstacle.
 
-			distance -= navigationInfo .getCollisionRadius ();
+			distance -= this .getNavigationInfo () .getCollisionRadius ();
 
 			if (distance > 0)
 			{
@@ -66403,8 +66401,6 @@ function ($,
 			{
 			   var t0 = performance .now ();
 
-				// Apply collision to translation.
-
 				var
 					viewpoint       = this .getViewpoint (),
 					navigationInfo  = this .getNavigationInfo (),
@@ -66417,7 +66413,7 @@ function ($,
 
 				// Reshape camera
 
-				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, avatarHeight * 2, projectionMatrix);
+				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, Math .max (collisionRadius * 2, avatarHeight * 2), projectionMatrix);
 
 				// Translate camera to user position and to look in the direction of the direction.
 
@@ -66742,7 +66738,7 @@ function ($,
 
 				// Reshape viewpoint for gravite.
 
-				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, avatarHeight * 2, projectionMatrix)
+				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, Math .max (collisionRadius * 2, avatarHeight * 2), projectionMatrix)
 
 				// Transform viewpoint to look down the up vector
 
@@ -69355,11 +69351,12 @@ function ($,
 			this .collisionTime = 0;
 
 			var
-				navigationInfo   = this .getNavigationInfo (),
-				collisionRadius2 = navigationInfo .getCollisionRadius () * 2,
-				avatarHeight2    = navigationInfo .getAvatarHeight () * 2;
+				navigationInfo  = this .getNavigationInfo (),
+				collisionRadius = navigationInfo .getCollisionRadius (),
+				avatarHeight    = navigationInfo .getAvatarHeight (),
+				size            = Math .max (collisionRadius * 2, avatarHeight * 2);
 
-			Camera .ortho (-collisionRadius2, collisionRadius2, -avatarHeight2, collisionRadius2, -collisionRadius2, collisionRadius2, projectionMatrix);
+			Camera .ortho (-size, size, -size, size, -size, size, projectionMatrix);
 
 			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
 			this .getModelViewMatrix  () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
@@ -69933,8 +69930,6 @@ function ($,
 
 			this .layer0 .isLayer0 (true);
 			this .layer0 .setup ();
-
-			this .bind ();
 		},
 		getLayerSet: function ()
 		{
