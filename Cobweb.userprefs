@@ -1,18 +1,11 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Navigation/Billboard.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Rendering/X3DRenderObject.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="208" Column="42" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="537" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="342" Column="2" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DFlyViewer.js" Line="374" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/WalkViewer.js" Line="93" Column="20" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/FlyViewer.js" Line="80" Column="20" />
-      <File FileName="cobweb.js/cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext.js" Line="64" Column="33" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DChildNode.js" Line="53" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Layout/LayoutGroup.js" Line="167" Column="21" />
-      <File FileName="cobweb.js/cobweb/Components/Layout/ScreenGroup.js" Line="169" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Navigation/Billboard.js" Line="168" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="209" Column="92" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DFlyViewer.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

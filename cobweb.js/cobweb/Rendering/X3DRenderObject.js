@@ -204,49 +204,51 @@ function ($,
 		},
 		constrainTranslation: function (translation, stepBack)
 		{
-			/// Contrains translation to a possible value the avatar should go. Modifies translation in place.
-
-		   var t0 = performance .now ();
+			///  Contrains @a translation to a possible value the avatar can move.  If the avatar reaches and intersects with an
+			///  and obstacle and @a stepBack is true a translation in the opposite directiion is returned.  Future implementation will
+			///  will then return a value where the avatar slides along the wall.  Modifies translation in place.
 
 			var
-				navigationInfo  = this .getNavigationInfo (),
-				distance        = this .getDistance (translation),
-				farValue        = navigationInfo .getFarValue (this .getViewpoint ());
+				navigationInfo = this .getNavigationInfo (),
+				distance       = this .getDistance (translation);
 
-			if (farValue - distance > 0) // Are there polygons before the viewer
+			// Constrain translation when the viewer collides with an obstacle.
+
+			distance -= navigationInfo .getCollisionRadius ();
+
+			if (distance > 0)
 			{
-				distance -= navigationInfo .getCollisionRadius ();
+				// Move.
+				
+				var length = translation .abs ();
 
-				if (distance > 0)
+				if (length > distance)
 				{
-					// Move
+					// Collision, the avatar would intersect with the obstacle.
 					
-					var length = translation .abs ();
-
-					if (length > distance)
-					{
-						// Collision: The wall is reached.
-						return translation .normalize () .multiply (distance);
-					}
-
-					return translation;
+					return translation .normalize () .multiply (distance);
 				}
 
-				// Collision, the avatar is within the wall.
+				// Everything is fine.
 
-				if (stepBack)
-					return this .constrainTranslation (translation .normalize () .multiply (distance), false);
-
-				return translation .assign (Vector3 .Zero);
+				return translation;
 			}
 
-			this .collisionTime += performance .now () - t0;
-			return translation;
+			// Collision, the avatar is already within an obstacle.
+
+			if (stepBack)
+				return this .constrainTranslation (translation .normalize () .multiply (distance), false);
+
+			return translation .assign (Vector3 .Zero);
 		},
 		getDistance: function (direction)
 		{
+			///  Returns the distance to the closest object in @a direction.  The maximum determinable value is avatarHeight * 2.
+
 			try
 			{
+			   var t0 = performance .now ();
+
 				// Apply collision to translation.
 
 				var
@@ -255,13 +257,13 @@ function ($,
 					collisionRadius = navigationInfo .getCollisionRadius (),
 					bottom          = navigationInfo .getStepHeight () - navigationInfo .getAvatarHeight (),
 					nearValue       = navigationInfo .getNearValue (),
-					farValue        = navigationInfo .getFarValue (viewpoint);
+					avatarHeight    = navigationInfo .getAvatarHeight ();
 
 				// Determine width and height of camera
 
 				// Reshape camera
 
-				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, farValue, projectionMatrix);
+				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, avatarHeight * 2, projectionMatrix);
 
 				// Translate camera to user position and to look in the direction of the direction.
 
@@ -283,6 +285,7 @@ function ($,
 
 				this .getProjectionMatrix () .pop ();
 
+				this .collisionTime += performance .now () - t0;
 				return -depth;
 			}
 			catch (error)
@@ -292,6 +295,8 @@ function ($,
 		},
 		getDepth: function (projectionMatrix)
 		{
+			///  Returns the depth value to the closest object.  The maximum determinable value is avatarHeight * 2.
+
 			this .depthBuffer .bind ();
 
 			this .viewVolumes .push (depthBufferViewVolume);
@@ -517,7 +522,7 @@ function ($,
 
 			collisionSize .set (collisionRadius2, collisionRadius2, collisionRadius2);
 
-			for (var i = 0; i < this .numCollisionShapes; ++ i)
+			for (var i = 0, length = this .numCollisionShapes; i < length; ++ i)
 			{
 				try
 				{
@@ -578,13 +583,12 @@ function ($,
 					viewpoint       = this .getViewpoint (),
 					collisionRadius = navigationInfo .getCollisionRadius (),
 					nearValue       = navigationInfo .getNearValue (),
-					farValue        = navigationInfo .getFarValue (viewpoint),
 					avatarHeight    = navigationInfo .getAvatarHeight (),
 					stepHeight      = navigationInfo .getStepHeight ();
 
 				// Reshape viewpoint for gravite.
 
-				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, farValue, projectionMatrix)
+				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, avatarHeight * 2, projectionMatrix)
 
 				// Transform viewpoint to look down the up vector
 
@@ -608,62 +612,55 @@ function ($,
 
 				// Gravite or step up
 
-				if (farValue - distance > 0 || true) // Are there polygons under the viewer
+				distance -= avatarHeight;
+
+				var up = rotation .setFromToVec (yAxis, upVector);
+
+				if (distance > 0)
 				{
-					distance -= avatarHeight;
+					// Gravite and fall down the to the floor
 
-					var up = rotation .setFromToVec (yAxis, upVector);
+					var currentFrameRate = this .speed ? this .getBrowser () .getCurrentFrameRate () : 1000000;
 
-					if (distance > 0)
+					this .speed -= this .getBrowser () .getBrowserOptions () .Gravity_ .getValue () / currentFrameRate;
+
+					var translation = this .speed / currentFrameRate;
+
+					if (translation < -distance)
 					{
-						// Gravite and fall down the to the floor
-
-						var currentFrameRate = this .speed ? this .getBrowser () .getCurrentFrameRate () : 1000000;
-
-						this .speed -= this .getBrowser () .getBrowserOptions () .Gravity_ .getValue () / currentFrameRate;
-
-						var translation = this .speed / currentFrameRate;
-
-						if (translation < -distance)
-						{
-							// The ground is reached.
-							translation = -distance;
-							this .speed = 0;
-						}
-
-						viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .add (up .multVecRot (vector .set (0, translation, 0)));
-					}
-					else
-					{
+						// The ground is reached.
+						translation = -distance;
 						this .speed = 0;
-
-						distance = -distance;
-
-						if (distance > 0.01 && distance < stepHeight)
-						{
-							// Step up
-							var translation = this .constrainTranslation (up .multVecRot (this .translation .set (0, distance, 0)), false);
-
-							//if (getBrowser () -> getBrowserOptions () -> animateStairWalks ())
-							//{
-							//	float step = getBrowser () -> getCurrentSpeed () / getBrowser () -> getCurrentFrameRate ();
-							//	step = abs (getInverseCameraSpaceMatrix () .mult_matrix_dir (Vector3f (0, step, 0) * up));
-							//
-							//	Vector3f offset = Vector3f (0, step, 0) * up;
-							//
-							//	if (math::abs (offset) > math::abs (translation) or getBrowser () -> getCurrentSpeed () == 0)
-							//		offset = translation;
-							//
-							//	getViewpoint () -> positionOffset () += offset;
-							//}
-							//else
-								viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
-						}
 					}
+
+					viewpoint .positionOffset_ = viewpoint .positionOffset_ .getValue () .add (up .multVecRot (vector .set (0, translation, 0)));
 				}
 				else
 				{
 					this .speed = 0;
+
+					distance = -distance;
+
+					if (distance > 0.01 && distance < stepHeight)
+					{
+						// Step up
+						var translation = this .constrainTranslation (up .multVecRot (this .translation .set (0, distance, 0)), false);
+
+						//if (getBrowser () -> getBrowserOptions () -> animateStairWalks ())
+						//{
+						//	float step = getBrowser () -> getCurrentSpeed () / getBrowser () -> getCurrentFrameRate ();
+						//	step = abs (getInverseCameraSpaceMatrix () .mult_matrix_dir (Vector3f (0, step, 0) * up));
+						//
+						//	Vector3f offset = Vector3f (0, step, 0) * up;
+						//
+						//	if (math::abs (offset) > math::abs (translation) or getBrowser () -> getCurrentSpeed () == 0)
+						//		offset = translation;
+						//
+						//	getViewpoint () -> positionOffset () += offset;
+						//}
+						//else
+							viewpoint .positionOffset_ = translation .add (viewpoint .positionOffset_ .getValue ());
+					}
 				}
 			}
 			catch (error)
