@@ -60,10 +60,10 @@ function ($,
 	{
 		this .keyDeviceSensorNode = null;
 
-		this .addChildren ("shiftKey", new Fields .SFBool (),
-		                   "ctrlKey",  new Fields .SFBool (),
-		                   "altKey",   new Fields .SFBool (),
-		                   "altGrKey", new Fields .SFBool ());
+		this .addChildren ("controlKey",  new Fields .SFBool (),
+		                   "shiftKey",    new Fields .SFBool (),
+		                   "altKey",      new Fields .SFBool (),
+		                   "altGrKey",    new Fields .SFBool ());
 	}
 
 	X3DKeyDeviceSensorContext .prototype =
@@ -81,19 +81,19 @@ function ($,
 		{
 			return this .keyDeviceSensorNode;
 		},
-		hasShiftKey: function ()
+		getShiftKey: function ()
 		{
 			return this .shiftKey_ .getValue ();
 		},
-		hasCtrlKey: function ()
+		getControlKey: function ()
 		{
-			return this .ctrlKey_ .getValue ();
+			return this .controlKey_ .getValue ();
 		},
-		hasAltKey: function ()
+		getAltKey: function ()
 		{
 			return this .altKey_ .getValue ();
 		},
-		hasAltGrKey: function ()
+		getAltGrKey: function ()
 		{
 			return this .altGrKey_ .getValue ();
 		},
@@ -116,7 +116,7 @@ function ($,
 				}
 				case 17: // Ctrl
 				{
-					this .ctrlKey_ = true;
+					this .controlKey_ = true;
 					break;
 				}
 				case 18: // Alt
@@ -126,7 +126,7 @@ function ($,
 				}
 				case 49: // 1
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "POINTSET");
 						this .getNotification () .string_ = "Shading: Pointset";
@@ -136,7 +136,7 @@ function ($,
 				}
 				case 50: // 2
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "WIREFRAME");
 						this .getNotification () .string_ = "Shading: Wireframe";
@@ -146,7 +146,7 @@ function ($,
 				}
 				case 51: // 3
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "FLAT");
 						this .getNotification () .string_ = "Shading: Flat";
@@ -156,7 +156,7 @@ function ($,
 				}
 				case 52: // 4
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "GOURAUD");
 						this .getNotification () .string_ = "Shading: Gouraud";
@@ -166,7 +166,7 @@ function ($,
 				}
 				case 53: // 5
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "PHONG");
 						this .getNotification () .string_ = "Shading: Phong";
@@ -176,7 +176,7 @@ function ($,
 				}
 				case 83: // s
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 					{
 						if (this .isLive () .getValue ())
 							this .endUpdate ();
@@ -196,7 +196,7 @@ function ($,
 				case 171: // Plus // Firefox
 				case 187: // Plus // Opera
 				{
-					if (this .hasCtrlKey ())
+					if (this .getControlKey ())
 						this .getBrowserTimings () .enabled_ = ! this .getBrowserTimings () .enabled_ .getValue ();
 					break;
 				}
@@ -241,7 +241,7 @@ function ($,
 				}
 				case 17: // Ctrl
 				{
-					this .ctrlKey_ = false;
+					this .controlKey_ = false;
 					break;
 				}
 				case 18: // Alt

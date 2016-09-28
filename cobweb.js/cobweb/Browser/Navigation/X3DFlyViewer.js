@@ -108,6 +108,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		this .lineCount           = 2;
 		this .lineVertices        = new Array (this .lineCount * 4);
 		this .lineArray           = new Float32Array (this .lineVertices);
+		this .event               = null;
 
 		this .projectionMatrix      = new Matrix4 ();
 		this .projectionMatrixArray = new Float32Array (this .projectionMatrix);
@@ -126,14 +127,26 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			canvas .bind ("mousedown.X3DFlyViewer",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
+
+			this .getBrowser () .controlKey_ .addInterest (this, "set_controlKey_");
 		},
 		addCollision: function () { },
 		removeCollision: function () { },
+		set_controlKey_: function ()
+		{
+			if (this .event && this .mouseMoveEvent .button === 0)
+			{
+				this .button = -1;
+				this .mousedown (this .event);
+			}
+		},
 		mousedown: function (event)
 		{
 			if (this .button >= 0)
 				return;
-		
+
+			this .event = event;
+
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
 				x      = event .pageX - offset .left,
@@ -154,7 +167,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					this .getBrowser () .setCursor ("MOVE");
 					this .addCollision ();
 
-					if (this .getBrowser () .hasCtrlKey ())
+					if (this .getBrowser () .getControlKey ())
 					{
 						// Look around.
 
@@ -202,6 +215,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (event .button !== this .button)
 				return;
 
+			this .event  = null;
 			this .button = -1;
 		
 			$(document) .unbind ("mousemove.X3DFlyViewer" + this .getId ());
@@ -215,6 +229,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		{
 			this .getBrowser () .addBrowserEvent ();
 
+			this .event = event;
+
 			var
 				offset = this .getBrowser () .getCanvas () .offset (),
 				x      = event .pageX - offset .left,
@@ -224,7 +240,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			{
 				case 0:
 				{
-					if (this .getBrowser () .hasCtrlKey ())
+					if (this .getBrowser () .getControlKey ())
 					{
 						// Look around
 
@@ -324,7 +340,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			speedFactor *= navigationInfo .speed_ .getValue ();
 			speedFactor *= viewpoint .getSpeedFactor ();
-			speedFactor *= this .getBrowser () .hasShiftKey () ? SHIFT_SPEED_FACTOR : SPEED_FACTOR;
+			speedFactor *= this .getBrowser () .getShiftKey () ? SHIFT_SPEED_FACTOR : SPEED_FACTOR;
 			speedFactor *= dt;
 
 			var translation = this .getTranslationOffset (direction .assign (this .direction) .multiply (speedFactor));
@@ -365,7 +381,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			speedFactor *= navigationInfo .speed_ .getValue ();
 			speedFactor *= viewpoint .getSpeedFactor ();
-			speedFactor *= this .getBrowser () .hasShiftKey () ? PAN_SHIFT_SPEED_FACTOR : PAN_SPEED_FACTOR;
+			speedFactor *= this .getBrowser () .getShiftKey () ? PAN_SHIFT_SPEED_FACTOR : PAN_SPEED_FACTOR;
 			speedFactor *= dt;
 
 			var
@@ -523,6 +539,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		dispose: function ()
 		{
 			this .disconnect ();
+			this .getBrowser () .controlKey_ .removeInterest (this, "set_controlKey_");
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
 			$(document) .unbind (".X3DFlyViewer" + this .getId ());
 		},

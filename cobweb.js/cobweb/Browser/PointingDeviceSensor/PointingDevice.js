@@ -86,7 +86,7 @@ function (jquery,
 
 			browser .getCanvas () .focus ();
 
-			if (browser .hasShiftKey () && browser .hasCtrlKey ())
+			if (browser .getShiftKey () && browser .getControlKey ())
 				return;
 
 			if (event .button === 0)
