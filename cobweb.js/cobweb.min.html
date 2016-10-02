@@ -317,7 +317,7 @@ function (elements, error)
 
 function loadURL ()
 {
-	var Browser = X3D .getBrowser ($("X3D"));
+	var Browser = X3D .getBrowser ($("X3DCanvas"));
 
 	Browser .loadURL (new X3D .MFString ($(".load-url input") .val ()), new X3D .MFString ());
 }

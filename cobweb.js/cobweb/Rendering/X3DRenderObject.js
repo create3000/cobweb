@@ -259,13 +259,19 @@ function ($,
 
 				// Reshape camera
 
-				Camera .ortho (-collisionRadius, collisionRadius, Math .min (bottom, -collisionRadius), collisionRadius, nearValue, Math .max (collisionRadius * 2, avatarHeight * 2), projectionMatrix);
+				Camera .ortho (-collisionRadius,
+				               collisionRadius,
+				               Math .min (bottom, -collisionRadius), /// TODO: bottom could be a positive value if stepHeight > avatarHeight.
+				               collisionRadius,
+				               nearValue,
+				               Math .max (collisionRadius * 2, avatarHeight * 2),
+				               projectionMatrix);
 
 				// Translate camera to user position and to look in the direction of the direction.
 
 				localOrientation .assign (viewpoint .orientation_ .getValue ()) .inverse () .multRight (viewpoint .getOrientation ());
 				rotation .setFromToVec (zAxis, vector .assign (direction) .negate ()) .multRight (localOrientation);
-				//viewpoint .straightenHorizon (rotation);
+				viewpoint .straightenHorizon (rotation);
 
 				cameraSpaceProjectionMatrix .assign (viewpoint .getTransformationMatrix ());
 				cameraSpaceProjectionMatrix .translate (viewpoint .getUserPosition ());
@@ -584,7 +590,13 @@ function ($,
 
 				// Reshape viewpoint for gravite.
 
-				Camera .ortho (-collisionRadius, collisionRadius, -collisionRadius, collisionRadius, nearValue, Math .max (collisionRadius * 2, avatarHeight * 2), projectionMatrix)
+				Camera .ortho (-collisionRadius,
+				               collisionRadius,
+				               -collisionRadius,
+				               collisionRadius,
+				               nearValue,
+				               Math .max (collisionRadius * 2, avatarHeight * 2),
+				               projectionMatrix)
 
 				// Transform viewpoint to look down the up vector
 

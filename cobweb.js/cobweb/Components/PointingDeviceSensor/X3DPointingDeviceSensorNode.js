@@ -68,6 +68,8 @@ function ($,
 		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPointingDeviceSensorNode);
+
+		this .matrices = { };
 	}
 
 	X3DPointingDeviceSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
@@ -78,8 +80,6 @@ function ($,
 			X3DSensorNode .prototype .initialize .call (this);
 
 			this .enabled_ .addInterest (this, "set_enabled__");
-
-			this .matrices = { };
 		},
 		getMatrices: function ()
 		{
