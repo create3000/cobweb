@@ -127,15 +127,42 @@ function ($,
 		},
 		set_diffuseColor__: function ()
 		{
-			this .diffuseColor .set (this .diffuseColor_ .getValue ());
+			//We cannot use this in Windows Edge:
+			//this .diffuseColor .set (this .diffuseColor_ .getValue ());
+			
+			var
+				diffuseColor  = this .diffuseColor,
+				diffuseColor_ = this .diffuseColor_ .getValue ();
+			
+			diffuseColor [0] = diffuseColor_ .r;
+			diffuseColor [1] = diffuseColor_ .g;
+			diffuseColor [2] = diffuseColor_ .b;
 		},
 		set_specularColor__: function ()
 		{
-			this .specularColor .set (this .specularColor_ .getValue ());
+			//We cannot use this in Windows Edge:
+			//this .specularColor .set (this .specularColor_ .getValue ());
+			
+			var
+				specularColor  = this .specularColor,
+				specularColor_ = this .specularColor_ .getValue ();
+			
+			specularColor [0] = specularColor_ .r;
+			specularColor [1] = specularColor_ .g;
+			specularColor [2] = specularColor_ .b;
 		},
 		set_emissiveColor__: function ()
 		{
-			this .emissiveColor .set (this .emissiveColor_ .getValue ());
+			//We cannot use this in Windows Edge:
+			//this .emissiveColor .set (this .emissiveColor_ .getValue ());
+			
+			var
+				emissiveColor  = this .emissiveColor,
+				emissiveColor_ = this .emissiveColor_ .getValue ();
+			
+			emissiveColor [0] = emissiveColor_ .r;
+			emissiveColor [1] = emissiveColor_ .g;
+			emissiveColor [2] = emissiveColor_ .b;
 		},
 		set_shininess__: function ()
 		{

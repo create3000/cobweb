@@ -168,7 +168,7 @@ function ($,
 					gl .compileShader (this .shader);
 	
 					this .valid = gl .getShaderParameter (this .shader, gl .COMPILE_STATUS);
-	
+
 					if (! this .valid)
 						throw new Error (this .getTypeName () + " '" + this .getName () + "': " + gl .getShaderInfoLog (this .shader));
 
@@ -176,7 +176,6 @@ function ($,
 				}
 			}
 			.bind (this));
-
 		},
 	});
 

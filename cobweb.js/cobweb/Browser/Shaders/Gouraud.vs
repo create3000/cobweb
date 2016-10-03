@@ -113,7 +113,7 @@ getMaterialColor (in vec3 N,
                   in vec3  x3d_EmissiveColor,
                   in float x3d_Shininess,
                   in float x3d_Transparency)
-{  
+{
 	vec3 V = normalize (-v); // normalized vector from point on geometry to viewer's position
 
 	// Calculate diffuseFactor & alpha

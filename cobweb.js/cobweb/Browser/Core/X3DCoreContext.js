@@ -64,13 +64,27 @@ function (BrowserOptions,
 	
 	function getContext (canvas)
 	{
-		var context = canvas .getContext ("webgl") ||
-                    canvas .getContext ("experimental-webgl");
+		var gl = canvas .getContext ("webgl") ||
+		         canvas .getContext ("experimental-webgl");
 
-		if (context)
-			return context;
+		if (! gl)
+			throw new Error ("Couldn't create WebGL context.");
 
-		throw new Error ("Couldn't create WebGL context.");
+		// Feature detection:
+		
+		// If the aliased linewidth ranges are both 1, gl.lineWidth is probably not possible,
+		// thus we disable it completely to prevent webgl errors.
+		
+		var aliasedLineWidthRange = gl .getParameter (gl .ALIASED_LINE_WIDTH_RANGE);
+		
+		if (aliasedLineWidthRange [0] === 1 && aliasedLineWidthRange [1] === 1)
+		{
+			gl .lineWidth = Function .prototype;
+		}
+		
+		// Return context.
+		
+		return gl;
 	}
 
 	function X3DCoreContext (element)

@@ -134,7 +134,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		removeCollision: function () { },
 		set_controlKey_: function ()
 		{
-			if (this .event && this .mouseMoveEvent .button === 0)
+			if (this .event && this .event .button === 0)
 			{
 				this .button = -1;
 				this .mousedown (this .event);

@@ -1234,6 +1234,7 @@
     <None Include="tests\Components\images\campfire.512.mp4" />
     <None Include="tests\Components\Lighting\MadFlat2.x3d" />
     <None Include="tests\Components\Navigation\WalkViewer.x3d" />
+    <None Include="tests\Components\Shaders\Pipeline.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

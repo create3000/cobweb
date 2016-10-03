@@ -208,7 +208,7 @@ function ($,
 					// this .printProgramInfo ();
 				}
 				else
-					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
+					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "': " + gl .getProgramInfoLog (program));
 
 				if (valid != this .isValid_ .getValue ())
 					this .isValid_ = valid;
