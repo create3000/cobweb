@@ -70,13 +70,18 @@ function (jquery,
 		constructor: PointingDevice,
 		initialize: function ()
 		{
-			var browser = this .getBrowser ();
+			var canvas = this .getBrowser () .getCanvas ();
 
-			browser .getCanvas () .bind ("mousedown.PointingDevice", this .mousedown  .bind (this));
-			browser .getCanvas () .bind ("mouseup.PointingDevice",   this .mouseup    .bind (this));
-			browser .getCanvas () .bind ("dblclick.PointingDevice",  this .dblclick   .bind (this));
-			browser .getCanvas () .bind ("mousemove.PointingDevice", this .mousemove  .bind (this));
-			browser .getCanvas () .bind ("mouseout.PointingDevice",  this .onmouseout .bind (this));
+			canvas .bind ("mousewheel.PointingDevice", this .mousewheel .bind (this));
+			canvas .bind ("mousedown.PointingDevice",  this .mousedown  .bind (this));
+			canvas .bind ("mouseup.PointingDevice",    this .mouseup    .bind (this));
+			canvas .bind ("dblclick.PointingDevice",   this .dblclick   .bind (this));
+			canvas .bind ("mousemove.PointingDevice",  this .mousemove  .bind (this));
+			canvas .bind ("mouseout.PointingDevice",   this .onmouseout .bind (this));
+		},
+		mousewheel: function (event)
+		{
+			event .preventDefault ();
 		},
 		mousedown: function (event)
 		{

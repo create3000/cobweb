@@ -64,28 +64,27 @@ function ($,
 {
 "use strict";
 	
-	function RenderingProperties (executionContext)
+	function BrowserProperties (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext);
-
-		this .addAlias ("AntiAliased", this .Antialiased_);
 	}
 
-	RenderingProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	BrowserProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
-		constructor: RenderingProperties,
+		constructor: BrowserProperties,
 		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "Shading",        new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxTextureSize", new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureUnits",   new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxLights",      new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "Antialiased",    new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "ColorDepth",     new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureMemory",  new Fields .SFDouble ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "ABSTRACT_NODES",        new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "CONCRETE_NODES",        new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "EXTERNAL_INTERACTIONS", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "PROTOTYPE_CREATE",      new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "DOM_IMPORT",            new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "XML_ENCODING",          new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "CLASSIC_VRML_ENCODING", new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "BINARY_ENCODING",       new Fields .SFBool ()),
 		]),
 		getTypeName: function ()
 		{
-			return "RenderingProperties";
+			return "BrowserProperties";
 		},
 		getComponentName: function ()
 		{
@@ -93,9 +92,9 @@ function ($,
 		},
 		getContainerField: function ()
 		{
-			return "renderingProperties";
+			return "browserProperties";
 		},
 	});
 
-	return RenderingProperties;
+	return BrowserProperties;
 });

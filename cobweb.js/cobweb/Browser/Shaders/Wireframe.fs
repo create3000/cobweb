@@ -48,19 +48,15 @@ data:text/plain;charset=utf-8,
 precision mediump float;
 
 uniform float x3d_LinewidthScaleFactor;
-// 2
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
-// 5
 
 varying vec4 C; // color
 varying vec3 v; // point on geometry
-// 5
 
 void
 clip ()

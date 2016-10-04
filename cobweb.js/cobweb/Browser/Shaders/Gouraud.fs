@@ -48,31 +48,25 @@ data:text/plain;charset=utf-8,
 precision mediump float;
 
 uniform int x3d_GeometryType;
-// 1
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
-// 5
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
-// 3
 
 uniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoneTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture
 uniform sampler2D   x3d_Texture2D [x3d_MaxTextures];
 uniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];
-// 3
 
 varying vec4 frontColor; // color
 varying vec4 backColor;  // color
 varying vec4 t;          // texCoord
 varying vec3 v;          // point on geometry
-// 15, max 16
 
 void
 clip ()

@@ -1235,6 +1235,7 @@
     <None Include="tests\Components\Lighting\MadFlat2.x3d" />
     <None Include="tests\Components\Navigation\WalkViewer.x3d" />
     <None Include="tests\Components\Shaders\Pipeline.x3d" />
+    <None Include="cobweb\Browser\Core\BrowserProperties.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

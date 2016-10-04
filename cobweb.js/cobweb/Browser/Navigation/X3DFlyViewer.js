@@ -284,7 +284,6 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault (); // XXX: put into PointingDevice
 			event .stopImmediatePropagation ();
 
 			// Determine scroll direction.

@@ -49,12 +49,14 @@
 
 define ([
 	"cobweb/Browser/Core/BrowserOptions",
+	"cobweb/Browser/Core/BrowserProperties",
 	"cobweb/Browser/Core/RenderingProperties",
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
 	"cobweb/Browser/Core/ContextMenu",
 ],
 function (BrowserOptions,
+          BrowserProperties,
           RenderingProperties,
           Notification,
           BrowserTimings,
@@ -110,10 +112,12 @@ function (BrowserOptions,
 		this .context = getContext (this .canvas [0]);
 
 		this .browserOptions      = new BrowserOptions (this);
+		this .browserProperties   = new BrowserProperties (this);
 		this .renderingProperties = new RenderingProperties (this);
 		this .notification        = new Notification (this);
 		this .browserTimings      = new BrowserTimings (this);
 		this .contextMenu         = new ContextMenu (this);
+		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
 	}
 
 	X3DCoreContext .prototype =
@@ -121,6 +125,7 @@ function (BrowserOptions,
 		initialize: function ()
 		{
 			this .browserOptions      .setup ()
+			this .browserProperties   .setup ()
 			this .renderingProperties .setup ();
 			this .notification        .setup ();
 			this .browserTimings      .setup ();
@@ -150,6 +155,10 @@ function (BrowserOptions,
 		{
 			return this .browserOptions;
 		},
+		getBrowserProperties: function ()
+		{
+			return this .browserProperties;
+		},
 		getRenderingProperties: function ()
 		{
 			return this .renderingProperties;
@@ -161,6 +170,10 @@ function (BrowserOptions,
 		getBrowserTimings: function ()
 		{
 			return this .browserTimings;
+		},
+		getMobile: function ()
+		{
+			return this .mobile;
 		},
 	};
 

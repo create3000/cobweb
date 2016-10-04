@@ -48,7 +48,6 @@ data:text/plain;charset=utf-8,
 precision mediump float;
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 varying vec4 C; // color
 varying vec3 v; // point on geometry

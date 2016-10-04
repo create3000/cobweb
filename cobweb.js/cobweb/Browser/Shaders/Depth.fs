@@ -45,10 +45,9 @@ data:text/plain;charset=utf-8,
 //  For Silvio, Joy and Adi.
 
 
-precision highp float;
+precision mediump float;
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 varying vec3 v; // point on geometry
 

@@ -48,20 +48,16 @@ data:text/plain;charset=utf-8,
 precision mediump float;
 
 uniform int x3d_GeometryType;
-// 1
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
-// 5
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
-// 3
 
 uniform int   x3d_LightType [x3d_MaxLights];
 uniform bool  x3d_LightOn [x3d_MaxLights];
@@ -74,7 +70,6 @@ uniform vec3  x3d_LightDirection [x3d_MaxLights];
 uniform float x3d_LightRadius [x3d_MaxLights];
 uniform float x3d_LightBeamWidth [x3d_MaxLights];
 uniform float x3d_LightCutOffAngle [x3d_MaxLights];
-// 19 * x3d_MaxLights
 
 #ifdef X3D_SHADOW
 uniform vec3      x3d_ShadowColor [x3d_MaxLights];
@@ -82,7 +77,6 @@ uniform float     x3d_ShadowIntensity [x3d_MaxLights];
 uniform float     x3d_ShadowDiffusion [x3d_MaxLights];
 uniform mat4      x3d_ShadowMatrix [x3d_MaxLights];
 uniform sampler2D x3d_ShadowMap [x3d_MaxLights];
-// 22 * x3d_MaxLights = 176
 #endif
 
 uniform bool x3d_SeparateBackColor;
