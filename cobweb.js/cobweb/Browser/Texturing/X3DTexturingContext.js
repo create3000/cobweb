@@ -124,6 +124,10 @@ function (TextureProperties,
 
 			gl .activeTexture (gl .TEXTURE0);
 		},
+		getMaxTextures: function ()
+		{
+			return 1;
+		},
 		getMinTextureSize: function ()
 		{
 			return 16;

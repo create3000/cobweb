@@ -48,11 +48,15 @@
 
 
 define ([
+	"standard/Math/Geometry/Triangle3",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Algorithms/SAT",
 ],
-function (Matrix4, Vector3, SAT)
+function (Triangle3,
+          Matrix4,
+          Vector3,
+          SAT)
 {
 "use strict";
 
@@ -129,6 +133,15 @@ function (Matrix4, Vector3, SAT)
 		new Vector3 (0, 0, 0),
 	];
 
+	var triangle = [ ];
+
+	var triangleNormal = [ new Vector3 (0, 0, 0) ];
+
+	var triangleEdges = [
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0),
+		new Vector3 (0, 0, 0)
+	];
 
 	function Box3 (size, center)
 	{
@@ -195,8 +208,11 @@ function (Matrix4, Vector3, SAT)
 		},
 		set: function (size, center)
 		{
+			if (points1 .box === this) points1 .box = null;
+			if (axes1   .box === this) axes1   .box = null;
+
 			var m = this .matrix;
-		
+
 			switch (arguments .length)
 			{
 				case 0:
@@ -237,6 +253,9 @@ function (Matrix4, Vector3, SAT)
 		},
 		setExtents: function (min, max)
 		{
+			if (points1 .box === this) points1 .box = null;
+			if (axes1   .box === this) axes1   .box = null;
+
 			var
 				m  = this .matrix,
 				sx = (max .x - min .x) / 2,
@@ -439,6 +458,62 @@ function (Matrix4, Vector3, SAT)
 		
 			// Both boxes intersect.
 		
+			return true;
+		},
+		intersectsTriangle: function (a, b, c)
+		{
+			// Test special cases.
+
+			if (this .isEmpty ())
+				return false;
+
+			// Get points.
+
+			if (points1 .box !== this)
+			{
+				points1 .box = this;
+				this .getPoints (points1);
+			}
+
+			triangle [0] = a;
+			triangle [1] = b;
+			triangle [2] = c;
+
+			// Test the three planes spanned by the normal vectors of the faces of the first parallelepiped.
+
+			if (SAT .isSeparated (this .getPlanes (planes), points1, triangle))
+				return false;
+
+			// Test the normal of the triangle.
+
+			Triangle3 .normal (a, b, c, triangleNormal [0]);
+
+			if (SAT .isSeparated (triangleNormal, points1, triangle))
+				return false;
+
+			// Test the nine other planes spanned by the edges of each parallelepiped.
+
+			if (axes1 .box !== this)
+			{
+				axes1 .box = this;
+				this  .getAxes (axes1);
+			}
+
+			triangleEdges [0] .assign (a) .subtract (b);
+			triangleEdges [1] .assign (b) .subtract (c);
+			triangleEdges [2] .assign (c) .subtract (a);
+
+			for (var i1 = 0; i1 < 3; ++ i1)
+			{
+				for (var i2 = 0; i2 < 3; ++ i2)
+					axes9 [i1 * 3 + i2] .assign (axes1 [i1]) .cross (triangleEdges [i2]);
+			}
+
+			if (SAT .isSeparated (axes9, points1, points2))
+				return false;
+
+			// Box and triangle intersect.
+
 			return true;
 		},
 		toString: function ()

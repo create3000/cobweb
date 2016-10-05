@@ -49,5 +49,5 @@
 ﻿
 define (function ()
 {
-	return "1.28";
+	return "2.2a";
 });

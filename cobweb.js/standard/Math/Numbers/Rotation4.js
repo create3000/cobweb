@@ -168,7 +168,7 @@ function ($,
 		},
 		setAxisAngle: function (axis, angle)
 		{
-			this .set (axis .x, axis .y, axis .z, angle);
+			return this .set (axis .x, axis .y, axis .z, angle);
 		},
 		setFromToVec: function (fromVec, toVec)
 		{

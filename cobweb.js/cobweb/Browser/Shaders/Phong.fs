@@ -48,20 +48,16 @@ data:text/plain;charset=utf-8,
 precision mediump float;
 
 uniform int x3d_GeometryType;
-// 1
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
-// 5
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
-// 3
 
 uniform int   x3d_LightType [x3d_MaxLights];
 uniform bool  x3d_LightOn [x3d_MaxLights];
@@ -74,7 +70,6 @@ uniform vec3  x3d_LightDirection [x3d_MaxLights];
 uniform float x3d_LightRadius [x3d_MaxLights];
 uniform float x3d_LightBeamWidth [x3d_MaxLights];
 uniform float x3d_LightCutOffAngle [x3d_MaxLights];
-// 19 * x3d_MaxLights
 
 #ifdef X3D_SHADOW
 uniform vec3      x3d_ShadowColor [x3d_MaxLights];
@@ -82,7 +77,6 @@ uniform float     x3d_ShadowIntensity [x3d_MaxLights];
 uniform float     x3d_ShadowDiffusion [x3d_MaxLights];
 uniform mat4      x3d_ShadowMatrix [x3d_MaxLights];
 uniform sampler2D x3d_ShadowMap [x3d_MaxLights];
-// 22 * x3d_MaxLights = 176
 #endif
 
 uniform bool x3d_SeparateBackColor;
@@ -118,7 +112,7 @@ clip ()
 {
 	for (int i = 0; i < x3d_MaxClipPlanes; ++ i)
 	{
-		if (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))
+		if (x3d_ClipPlane [i] == x3d_NoneClipPlane)
 			break;
 
 		if (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)
@@ -173,13 +167,45 @@ unpack (in vec4 color)
 float
 getShadowDepth (in int index, in vec2 shadowCoord)
 {
-	for (int i = 0; i < x3d_MaxLights; ++ i)
-	{
-		if (i == index)
-		{
-			return unpack (texture2D (x3d_ShadowMap [i], shadowCoord));
-		}
-	}
+	#if x3d_MaxShadows > 0
+	if (index == 0)
+		return unpack (texture2D (x3d_ShadowMap [0], shadowCoord));
+	#endif
+
+	#if x3d_MaxShadows > 1
+	if (index == 1)
+		return unpack (texture2D (x3d_ShadowMap [1], shadowCoord));
+	#endif
+
+	#if x3d_MaxShadows > 2
+	if (index == 2)
+		return unpack (texture2D (x3d_ShadowMap [2], shadowCoord));
+	#endif
+
+	#if x3d_MaxShadows > 3
+	if (index == 3)
+		return unpack (texture2D (x3d_ShadowMap [3], shadowCoord));
+	#endif
+
+	#if x3d_MaxShadows > 4
+	if (index == 4)
+		return unpack (texture2D (x3d_ShadowMap [4], shadowCoord));
+	#endif
+
+	#if x3d_MaxShadows > 5
+	if (index == 5)
+		return unpack (texture2D (x3d_ShadowMap [5], shadowCoord));
+	#endif
+
+	#if x3d_MaxShadows > 6
+	if (index == 6)
+		return unpack (texture2D (x3d_ShadowMap [6], shadowCoord));
+	#endif
+
+	#if x3d_MaxShadows > 7
+	if (index == 7)
+		return unpack (texture2D (x3d_ShadowMap [7], shadowCoord));
+	#endif
 
 	return 0.0;
 }
@@ -304,7 +330,7 @@ getMaterialColor ()
 
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_TextureType [0] != x3d_NoTexture)
+			if (x3d_TextureType [0] != x3d_NoneTexture)
 			{
 				vec4 T = getTextureColor ();
 
@@ -318,7 +344,7 @@ getMaterialColor ()
 		}
 		else
 		{
-			if (x3d_TextureType [0] != x3d_NoTexture)
+			if (x3d_TextureType [0] != x3d_NoneTexture)
 			{
 				vec4 T = getTextureColor ();
 
@@ -339,7 +365,7 @@ getMaterialColor ()
 		{
 			int lightType = x3d_LightType [i];
 
-			if (lightType == x3d_NoLight)
+			if (lightType == x3d_NoneLight)
 				break;
 
 			vec3  vL = x3d_LightLocation [i] - v;
@@ -393,7 +419,7 @@ getMaterialColor ()
 	
 		if (x3d_ColorMaterial)
 		{
-			if (x3d_TextureType [0] != x3d_NoTexture)
+			if (x3d_TextureType [0] != x3d_NoneTexture)
 			{
 				vec4 T = getTextureColor ();
 
@@ -404,7 +430,7 @@ getMaterialColor ()
 		}
 		else
 		{
-			if (x3d_TextureType [0] != x3d_NoTexture)
+			if (x3d_TextureType [0] != x3d_NoneTexture)
 				finalColor = getTextureColor ();
 		}
 
@@ -415,7 +441,7 @@ getMaterialColor ()
 vec3
 getFogColor (in vec3 color)
 {
-	if (x3d_FogType == x3d_NoFog)
+	if (x3d_FogType == x3d_NoneFog)
 		return color;
 
 	float dV = length (v);

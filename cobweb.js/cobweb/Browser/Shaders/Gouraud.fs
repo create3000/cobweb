@@ -48,38 +48,32 @@ data:text/plain;charset=utf-8,
 precision mediump float;
 
 uniform int x3d_GeometryType;
-// 1
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 uniform int   x3d_FogType;
 uniform vec3  x3d_FogColor;
 uniform float x3d_FogVisibilityRange;
-// 5
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
-// 3
 
-uniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture
+uniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoneTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture
 uniform sampler2D   x3d_Texture2D [x3d_MaxTextures];
 uniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];
-// 3
 
 varying vec4 frontColor; // color
 varying vec4 backColor;  // color
 varying vec4 t;          // texCoord
 varying vec3 v;          // point on geometry
-// 15, max 16
 
 void
 clip ()
 {
 	for (int i = 0; i < x3d_MaxClipPlanes; ++ i)
 	{
-		if (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))
+		if (x3d_ClipPlane [i] == x3d_NoneClipPlane)
 			break;
 
 		if (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)
@@ -90,7 +84,7 @@ clip ()
 float
 getFogInterpolant ()
 {
-	if (x3d_FogType == x3d_NoFog)
+	if (x3d_FogType == x3d_NoneFog)
 		return 1.0;
 
 	float dV = length (v);
@@ -140,7 +134,7 @@ main ()
 
 	vec4 finalColor = gl_FrontFacing ? frontColor : backColor;
 
-	if (x3d_TextureType [0] != x3d_NoTexture)
+	if (x3d_TextureType [0] != x3d_NoneTexture)
 	{
 		if (x3d_Lighting)
 			finalColor *= getTextureColor ();

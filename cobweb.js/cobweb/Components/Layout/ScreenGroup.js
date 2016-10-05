@@ -55,6 +55,7 @@ define ("cobweb/Components/Layout/ScreenGroup",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Grouping/X3DGroupingNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
@@ -66,6 +67,7 @@ function ($,
           FieldDefinitionArray,
           X3DGroupingNode, 
           X3DConstants,
+          TraverseType,
           Vector3,
           Rotation4,
           Matrix4,
@@ -85,9 +87,8 @@ function ($,
 
 		this .addType (X3DConstants .ScreenGroup);
 
-		this .screenMatrix       = new Matrix4 ();
-		this .modelViewMatrix    = new Matrix4 ();
-		this .invModelViewMatrix = new Matrix4 ();
+		this .screenMatrix    = new Matrix4 ();
+		this .modelViewMatrix = new Matrix4 ();
 	}
 
 	ScreenGroup .prototype = $.extend (Object .create (X3DGroupingNode .prototype),
@@ -121,63 +122,71 @@ function ($,
 		{
 			try
 			{
-				this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
-				this .matrix .assign (this .screenMatrix) .multRight (this .invModelViewMatrix);
+				this .matrix .assign (this .modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
 			}
 			catch (error)
 			{ }
 
 			return this .matrix;
 		},
-		scale: function (type)
+		scale: function (renderObject)
 		{
 			// throws domain error
-
-			this .getModelViewMatrix (type, this .modelViewMatrix);
+			
+			this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ());
 			this .modelViewMatrix .get (translation, rotation, scale);
-		
+
 			var
-				browser          = this .getBrowser (),
-				projectionMatrix = browser .getProjectionMatrix () .get (),
-				viewport         = this .getCurrentLayer () .getViewVolume () .getViewport (),
-				screenScale      = this .getCurrentViewpoint () .getScreenScale (translation, viewport);
+				projectionMatrix = renderObject .getProjectionMatrix () .get (),
+				viewport         = renderObject .getViewVolume () .getViewport (),
+				screenScale      = renderObject .getViewpoint () .getScreenScale (translation, viewport),
+				screenMatrix     = this .screenMatrix;
 		
-			this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
-		                                                               screenScale .y * (scale .y < 0 ? -1 : 1),
-		                                                               screenScale .z * (scale .z < 0 ? -1 : 1)));
+			screenMatrix .set (translation, rotation, scale .set (screenScale .x * (scale .x < 0 ? -1 : 1),
+		                                                         screenScale .y * (scale .y < 0 ? -1 : 1),
+		                                                         screenScale .z * (scale .z < 0 ? -1 : 1)));
 
 			// Snap to whole pixel
 
-			ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+			ViewVolume .projectPoint (Vector3 .Zero, screenMatrix, projectionMatrix, viewport, screenPoint);
 
 			screenPoint .x = Math .round (screenPoint .x);
 			screenPoint .y = Math .round (screenPoint .y);
 
-			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
+			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, screenMatrix, projectionMatrix, viewport, screenPoint);
 
 			screenPoint .z = 0;
-			this .screenMatrix .translate (screenPoint);
+			screenMatrix .translate (screenPoint);
 
-			// Assign modelViewMatrix
+			// Return modelViewMatrix
 
-			browser .getModelViewMatrix () .set (this .screenMatrix);
+			return screenMatrix;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			var modelViewMatrix = this .getBrowser () .getModelViewMatrix ();
-	
-			modelViewMatrix .push ();
-			
 			try
 			{
-				this .scale (type);
-			
-				X3DGroupingNode .prototype .traverse .call (this, type);
+				var modelViewMatrix = renderObject .getModelViewMatrix ();
+
+				switch (type)
+				{
+					case TraverseType .CAMERA:
+					case TraverseType .DEPTH: // ???
+					case TraverseType .DRAW:
+						// No clone support for shadow, generated cube map texture and bbox
+						modelViewMatrix .pushMatrix (this .screenMatrix);
+						break;
+					default:
+						modelViewMatrix .pushMatrix (this .scale (renderObject));
+						break;
+				}
+
+				X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
+	
+				modelViewMatrix .pop ();
 			}
 			catch (error)
 			{ }
-			
-			modelViewMatrix .pop ();
 		},
 	});
 

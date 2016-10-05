@@ -95,6 +95,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "appearance", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "geometry",   new Fields .SFNode ()),
 		]),
+		modelViewMatrix: new Matrix4 (),
 		invModelViewMatrix: new Matrix4 (),
 		hitRay: new Line3 (new Vector3 (0, 0, 0), new Vector3 (0, 0, 0)),
 		intersections: intersections,
@@ -123,32 +124,40 @@ function ($,
 			else
 				this .traverse = Algorithm .nop;
 		},
-		traverse: function (type)
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
 		{
-			this .getAppearance () .traverse (type);
-
-			//this .getGeometry () .traverse (type); // Not yet needed.
+			return this .getGeometry () .intersectsBox (box, clipPlanes, modelViewMatrix);
+		},
+		traverse: function (type, renderObject)
+		{
+			// Always look at ParticleSystem if you do modify something here and there.
+	
+			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 
 			switch (type)
 			{
 				case TraverseType .POINTER:
-					this .pointer ();
+					this .pointer (renderObject);
 					break;
 
 				case TraverseType .COLLISION:
-					this .getCurrentLayer () .addCollisionShape (this);
+					renderObject .addCollisionShape (this);
 					break;
 
 				case TraverseType .DEPTH:
-					this .getCurrentLayer () .addDepthShape (this);
+					renderObject .addDepthShape (this);
 					break;
 
 				case TraverseType .DISPLAY:
-					this .getCurrentLayer () .addShape (this);
+				{
+					if (renderObject .addDisplayShape (this))
+						this .getAppearance () .traverse (type, renderObject); // Currently used for GeneratedCubeMapTexture.
+
 					break;
+				}
 			}
 		},
-		pointer: function ()
+		pointer: function (renderObject)
 		{
 			try
 			{
@@ -158,14 +167,14 @@ function ($,
 					return;
 
 				var
-					browser            = this .getBrowser (),
-					modelViewMatrix    = browser .getModelViewMatrix () .get (),
+					browser            = renderObject .getBrowser (),
+					modelViewMatrix    = this .modelViewMatrix    .assign (renderObject .getModelViewMatrix () .get ()),
 					invModelViewMatrix = this .invModelViewMatrix .assign (modelViewMatrix) .inverse (),
 					intersections      = this .intersections;
 
 				this .hitRay .assign (browser .getHitRay ()) .multLineMatrix (invModelViewMatrix);
 
-				if (geometry .intersectsLine (this .hitRay, intersections, invModelViewMatrix))
+				if (geometry .intersectsLine (this .hitRay, renderObject .getClipPlanes (), modelViewMatrix, intersections))
 				{
 					// Finally we have intersections and must now find the closest hit in front of the camera.
 
@@ -176,7 +185,7 @@ function ($,
 					this .intersectionSorter .sort (0, intersections .length);
 
 					// Find first point that is not greater than near plane;
-					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -this .getCurrentNavigationInfo () .getNearPlane (),
+					var index = Algorithm .lowerBound (intersections, 0, intersections .length, -renderObject .getNavigationInfo () .getNearValue (),
 					                                   function (lhs, rhs)
 					                                   {
 					                                      return lhs .point .z > rhs;
@@ -188,7 +197,7 @@ function ($,
 						// Transform hitNormal to absolute space.
 						invModelViewMatrix .multMatrixDir (intersections [index] .normal) .normalize ();
 
-						browser .addHit (intersections [index], this .getCurrentLayer ());
+						browser .addHit (intersections [index], renderObject .getLayer ());
 					}
 
 					intersections .length = 0;
@@ -199,18 +208,14 @@ function ($,
 				console .log (error);
 			}
 		},
+		depth: function (context, shaderNode)
+		{
+			this .getGeometry () .depth (context, shaderNode);
+		},
 		display: function (context)
 		{
 			this .getAppearance () .display (context);
 			this .getGeometry ()   .display (context);
-		},
-		depth: function (shaderNode)
-		{
-			this .getGeometry () .depth (shaderNode);
-		},
-		intersectsSphere: function (sphere)
-		{
-			return this .getGeometry () .intersectsSphere (sphere);
 		},
 	});
 

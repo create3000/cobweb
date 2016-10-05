@@ -50,7 +50,7 @@
 define ([
 	"jquery",
 	"cobweb/Components/Core/X3DNode",
-	"cobweb/Rendering/X3DRenderer",
+	"cobweb/Rendering/X3DRenderObject",
 	"cobweb/Components/Layering/X3DViewportNode",
 	"cobweb/Execution/BindableStack",
 	"cobweb/Execution/BindableList",
@@ -60,12 +60,13 @@ define ([
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DNode,
-          X3DRenderer,
+          X3DRenderObject,
           X3DViewportNode,
           BindableStack,
           BindableList,
@@ -75,15 +76,18 @@ function ($,
           X3DCast,
           TraverseType,
           X3DConstants,
+          Camera,
           Vector3,
           Matrix4)
 {
 "use strict";
 
+	var projectionMatrix = new Matrix4 ();
+
 	function X3DLayerNode (executionContext, defaultViewpoint, groupNode)
 	{
-		X3DNode     .call (this, executionContext);
-		X3DRenderer .call (this, executionContext);
+		X3DNode         .call (this, executionContext);
+		X3DRenderObject .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DLayerNode);
 
@@ -112,14 +116,14 @@ function ($,
 	}
 
 	X3DLayerNode .prototype = $.extend (Object .create (X3DNode .prototype),
-		X3DRenderer .prototype,
+		X3DRenderObject .prototype,
 	{
 		constructor: X3DLayerNode,
 		layer0: false,
 		initialize: function ()
 		{
-			X3DNode     .prototype .initialize .call (this);
-			X3DRenderer .prototype .initialize .call (this);
+			X3DNode         .prototype .initialize .call (this);
+			X3DRenderObject .prototype .initialize .call (this);
 
 			this .groupNode .children_ = this .children_;
 			this .groupNode .setup ();
@@ -150,6 +154,10 @@ function ($,
 		{
 			this .layer0 = value;
 			this .defaultBackground .setHidden (! value);
+		},
+		getLayer: function ()
+		{
+			return this;
 		},
 		getGroup: function ()
 		{
@@ -234,22 +242,22 @@ function ($,
 		},
 		bind: function ()
 		{
-			this .traverse (TraverseType .CAMERA);
+			this .traverse (TraverseType .CAMERA, this);
 
 			// Bind first viewpoint in viewpoint list.
+
+			var viewpoint = this .viewpoints .getBound ()
 
 			this .navigationInfoStack .forcePush (this .navigationInfos .getBound ());
 			this .backgroundStack     .forcePush (this .backgrounds     .getBound ());
 			this .fogStack            .forcePush (this .fogs            .getBound ());
-			this .viewpointStack      .forcePush (this .viewpoints      .getBound ());
-		},
-		traverse: function (type)
-		{
-		   var browser = this .getBrowser ();
+			this .viewpointStack      .forcePush (viewpoint);
 
-			browser .getLayers () .push (this);
-			browser .getProjectionMatrix () .pushMatrix (Matrix4 .Identity);
-			browser .getModelViewMatrix  () .pushMatrix (Matrix4 .Identity);
+			viewpoint .resetUserOffsets ();
+		},
+		traverse: function (type, renderObject)
+		{
+			this .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix (this));
 
 			switch (type)
 			{
@@ -270,44 +278,44 @@ function ($,
 					break;
 			}
 
-			browser .getModelViewMatrix  () .pop ()
-			browser .getProjectionMatrix () .pop ()
-			browser .getLayers () .pop ();
+			this .getProjectionMatrix () .pop ();
 		},
 		pointer: function (type)
 		{
 			if (this .isPickable_ .getValue ())
 			{
-				var viewport = this .currentViewport .getRectangle ();
+				var
+					browser  = this .getBrowser (),
+					viewport = this .currentViewport .getRectangle (browser);
 
-				if (this .getBrowser () .getSelectedLayer ())
+				if (browser .getSelectedLayer ())
 				{
-					if (this .getBrowser () .getSelectedLayer () !== this)
+					if (browser .getSelectedLayer () !== this)
 						return;
 				}
 				else
 				{
-					if (! this .getBrowser () .isPointerInRectangle (viewport))
+					if (! browser .isPointerInRectangle (viewport))
 						return;
 				}
 
-				this .getViewpoint () .reshape ();
-				this .getViewpoint () .transform ();
+				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
+				this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
 
-				this .getBrowser () .setHitRay (viewport);
+				this .currentViewport .push (this);
+				this .groupNode .traverse (type, this);
+				this .currentViewport .pop (this);
 
-				this .currentViewport .push ();
-				this .groupNode .traverse (type);
-				this .currentViewport .pop ();
+				this .getModelViewMatrix () .pop ()
 			}
 		},
 		camera: function (type)
 		{
-			this .getViewpoint () .reshape ();
-
-			this .currentViewport .push ();
-			this .groupNode .traverse (type);
-			this .currentViewport .pop ();
+			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
+	
+			this .currentViewport .push (this);
+			this .groupNode .traverse (type, this);
+			this .currentViewport .pop (this);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -315,27 +323,43 @@ function ($,
 			this .viewpoints      .update ();
 
 			this .getViewpoint () .update ();
+
+			this .getModelViewMatrix () .pop ()
 		},
 		collision: function (type)
 		{
 			this .collisionTime = 0;
 
-			this .getViewpoint () .reshape ();
+			var
+				navigationInfo  = this .getNavigationInfo (),
+				collisionRadius = navigationInfo .getCollisionRadius (),
+				avatarHeight    = navigationInfo .getAvatarHeight (),
+				size            = Math .max (collisionRadius * 2, avatarHeight * 2);
 
+			Camera .ortho (-size, size, -size, size, -size, size, projectionMatrix);
+
+			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
+			this .getModelViewMatrix  () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+	
 			// Render
-			this .currentViewport .push ();
-			this .render (this .groupNode, type);
-			this .currentViewport .pop ();
+			this .currentViewport .push (this);
+			this .render (type, this .groupNode);
+			this .currentViewport .pop (this);
+
+			this .getModelViewMatrix  () .pop ()
+			this .getProjectionMatrix () .pop ()
 		},
 		display: function (type)
 		{
-			this .getNavigationInfo () .enable ();
-			this .getViewpoint ()      .reshape ();
-			this .getViewpoint ()      .transform ();
+			this .getNavigationInfo () .enable (type, this);
 
-			this .currentViewport .push ();
-			this .render (this .groupNode, type);
-			this .currentViewport .pop ();
+			this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+
+			this .currentViewport .push (this);
+			this .render (type, this .groupNode);
+			this .currentViewport .pop (this);
+
+			this .getModelViewMatrix () .pop ()
 		},
 	});
 

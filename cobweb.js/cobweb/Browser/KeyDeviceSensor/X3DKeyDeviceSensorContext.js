@@ -49,8 +49,10 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
 ],
-function ($)
+function ($,
+          Fields)
 {
 "use strict";
 	
@@ -58,10 +60,10 @@ function ($)
 	{
 		this .keyDeviceSensorNode = null;
 
-		this .shiftKey = false;
-		this .ctrlKey  = false;
-		this .altKey   = false;
-		this .altGrKey = false;
+		this .addChildren ("controlKey",  new Fields .SFBool (),
+		                   "shiftKey",    new Fields .SFBool (),
+		                   "altKey",      new Fields .SFBool (),
+		                   "altGrKey",    new Fields .SFBool ());
 	}
 
 	X3DKeyDeviceSensorContext .prototype =
@@ -79,21 +81,21 @@ function ($)
 		{
 			return this .keyDeviceSensorNode;
 		},
-		hasShiftKey: function ()
+		getShiftKey: function ()
 		{
-			return this .shiftKey;
+			return this .shiftKey_ .getValue ();
 		},
-		hasCtrlKey: function ()
+		getControlKey: function ()
 		{
-			return this .ctrlKey;
+			return this .controlKey_ .getValue ();
 		},
-		hasAltKey: function ()
+		getAltKey: function ()
 		{
-			return this .altKey;
+			return this .altKey_ .getValue ();
 		},
-		hasAltGrKey: function ()
+		getAltGrKey: function ()
 		{
-			return this .altGrKey;
+			return this .altGrKey_ .getValue ();
 		},
 		keydown: function (event)
 		{
@@ -109,22 +111,22 @@ function ($)
 			{
 				case 16: // Shift
 				{
-					this .shiftKey = true;
+					this .shiftKey_ = true;
 					break;
 				}
 				case 17: // Ctrl
 				{
-					this .ctrlKey = true;
+					this .controlKey_ = true;
 					break;
 				}
 				case 18: // Alt
 				{
-					this .altKey = true;
+					this .altKey_ = true;
 					break;
 				}
 				case 49: // 1
 				{
-					if (this .ctrlKey)
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "POINTSET");
 						this .getNotification () .string_ = "Shading: Pointset";
@@ -134,7 +136,7 @@ function ($)
 				}
 				case 50: // 2
 				{
-					if (this .ctrlKey)
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "WIREFRAME");
 						this .getNotification () .string_ = "Shading: Wireframe";
@@ -144,7 +146,7 @@ function ($)
 				}
 				case 51: // 3
 				{
-					if (this .ctrlKey)
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "FLAT");
 						this .getNotification () .string_ = "Shading: Flat";
@@ -154,7 +156,7 @@ function ($)
 				}
 				case 52: // 4
 				{
-					if (this .ctrlKey)
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "GOURAUD");
 						this .getNotification () .string_ = "Shading: Gouraud";
@@ -164,7 +166,7 @@ function ($)
 				}
 				case 53: // 5
 				{
-					if (this .ctrlKey)
+					if (this .getControlKey ())
 					{
 						this .setBrowserOption ("Shading", "PHONG");
 						this .getNotification () .string_ = "Shading: Phong";
@@ -174,7 +176,7 @@ function ($)
 				}
 				case 83: // s
 				{
-					if (this .ctrlKey)
+					if (this .getControlKey ())
 					{
 						if (this .isLive () .getValue ())
 							this .endUpdate ();
@@ -188,13 +190,13 @@ function ($)
 				}
 				case 225: // Alt Gr
 				{
-					this .altGrKey = true;
+					this .altGrKey_ = true;
 					break;
 				}
 				case 171: // Plus // Firefox
 				case 187: // Plus // Opera
 				{
-					if (this .ctrlKey)
+					if (this .getControlKey ())
 						this .getBrowserTimings () .enabled_ = ! this .getBrowserTimings () .enabled_ .getValue ();
 					break;
 				}
@@ -234,22 +236,22 @@ function ($)
 			{
 				case 16: // Shift
 				{
-					this .shiftKey = false;
+					this .shiftKey_ = false;
 					break;
 				}
 				case 17: // Ctrl
 				{
-					this .ctrlKey = false;
+					this .controlKey_ = false;
 					break;
 				}
 				case 18: // Alt
 				{
-					this .altKey = false;
+					this .altKey_ = false;
 					break;
 				}
 				case 225: // Alt Gr
 				{
-					this .altGrKey = false;
+					this .altGrKey_ = false;
 					break;
 				}
 			}

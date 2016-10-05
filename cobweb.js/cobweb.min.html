@@ -46,7 +46,7 @@ body {
 	font-size: 50px;
 }
 
-X3D {
+X3DCanvas {
 	height: 100%;
 }
 
@@ -165,6 +165,7 @@ X3D (function (dom)
 		{ name: 'SpotLight',               url: [ "tests/Components/Lighting/SpotLight.x3d" ] },
 		{ name: 'LocalLight',              url: [ "tests/Components/Lighting/LocalLight.x3d" ] },
 		{ name: 'Mad Flat',                url: [ "tests/Components/Lighting/MadFlat.x3d" ] },
+		{ name: 'Mad Flat 2',              url: [ "tests/Components/Lighting/MadFlat2.x3d" ] },
 		{ name: 'Billboard Shadow',        url: [ "tests/Components/Lighting/BillboardShadow.x3d" ] },
 		{ name: 'LOD Shadow',              url: [ "tests/Components/Lighting/LODShadow.x3d" ] },
 		{ name: 'GeoLOD Shadow',           url: [ "tests/Components/Lighting/GeoLODShadow.x3d" ] },
@@ -204,6 +205,7 @@ X3D (function (dom)
 		{ name: 'Gravitation',          url: [ "tests/Components/Navigation/Gravitation.x3d" ] },
 		{ name: 'Billboard',            url: [ "tests/Components/Navigation/Billboard.x3d" ] },
 		{ name: 'Depth',                url: [ "tests/Components/Navigation/Depth.x3d" ] },
+		{ name: 'WalkViewer',           url: [ "tests/Components/Navigation/WalkViewer.x3d" ] },
 		{ name: 'ClipPlane',            url: [ "tests/Components/Rendering/ClipPlane.x3d", "http://www.web3d.org/x3d/content/examples/Basic/CAD/ClipPlaneExample.x3d" ] },
 		{ name: 'Galaxies3d',           url: [ "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d_uc.wrl", "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d.wrl" ] },
 		{ name: 'Rosalila',             url: [ "http://chichcalan.com/rosalila/rosalila.wrl" ] },
@@ -292,6 +294,8 @@ X3D (function (dom)
 		{ name: 'Geometry',             url: [ "tests/Components/ParticleSystems/Geometry.x3d" ] },
 		{ name: 'GeometryLine',         url: [ "tests/Components/ParticleSystems/GeometryLine.x3d" ] },
 		{ name: 'Bubbles',              url: [ "tests/Components/ParticleSystems/Bubbles.x3d" ] },
+		{ name: 'Edge 1',               url: [ "tests/Components/Shaders/Edge1.x3dv" ] },
+		{ name: 'Edge 2',               url: [ "tests/Components/Shaders/Edge2.x3dv" ] },
 	]; 
 
 	for (var i = 0, length = pages .length; i < length; ++ i)
@@ -315,7 +319,7 @@ function (elements, error)
 
 function loadURL ()
 {
-	var Browser = X3D .getBrowser ($("X3D"));
+	var Browser = X3D .getBrowser ($("X3DCanvas"));
 
 	Browser .loadURL (new X3D .MFString ($(".load-url input") .val ()), new X3D .MFString ());
 }
@@ -324,17 +328,15 @@ function loadURL ()
 <body>
 	<div class="tests">
 		<div class="examples"></div>
-		<X3D cache="false" xurl='
-			"https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl"
-		'>
+		<X3DCanvas cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
 			<p class="fallback">Sorry,<br/>
 				it wasn't me!<br/>
-				<br/>
-				Your browser may not support all features required by Cobweb! You can use Firefox, <br/>
-				because this is currently the choice of the choice. We will continuously keep you informed <br/>
-				on technical developments and as soon as Cobweb is running in other browser too.
+				<br>
+				Your browser may not support all features required by Cobweb! You can use Firefox, Chrome,
+				or Microsoft Edge, because this is currently the choice of the choice. We will continuously
+				keep you informed on technical developments and as soon as Cobweb is running in other browser too.
 			</p>
-		</X3D>
+		</X3DCanvas>
 		<table class="load-url" cellpadding="4" style="margin:0; width:100%">
 			<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
 		</table>

@@ -68,6 +68,8 @@ function ($,
 		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPointingDeviceSensorNode);
+
+		this .matrices = { };
 	}
 
 	X3DPointingDeviceSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
@@ -78,8 +80,6 @@ function ($,
 			X3DSensorNode .prototype .initialize .call (this);
 
 			this .enabled_ .addInterest (this, "set_enabled__");
-
-			this .matrices = { };
 		},
 		getMatrices: function ()
 		{
@@ -111,17 +111,17 @@ function ($,
 			if (value !== this .isActive_ .getValue ())
 				this .isActive_ = value;
 		},
-		traverse: function (sensors)
+		push: function (renderObject, sensors)
 		{
 			if (this .enabled_ .getValue ())
 			{
-				var currentLayer = this .getCurrentLayer ();
+				var currentLayer = renderObject .getLayer ();
 
 				sensors [this .getId ()] = this;
 
 				// Create a matrix set for each layer if needed in the case the sensor is cloned over multiple layers.
 
-				if (! (currentLayer .getId () in this .matrices))
+				if (! this .matrices .hasOwnProperty (currentLayer .getId ()))
 				{
 					this .matrices [currentLayer .getId ()] = {
 						modelViewMatrix:  new Matrix4 (),
@@ -132,9 +132,9 @@ function ($,
 
 				var matrices = this .matrices [currentLayer .getId ()];
 
-				matrices .modelViewMatrix  .assign (this .getBrowser () .getModelViewMatrix  () .get ());
-				matrices .projectionMatrix .assign (this .getBrowser () .getProjectionMatrix () .get ());
-				matrices .viewport         .assign (currentLayer .getViewport () .getRectangle ());
+				matrices .modelViewMatrix  .assign (renderObject .getModelViewMatrix  () .get ());
+				matrices .projectionMatrix .assign (renderObject .getProjectionMatrix () .get ());
+				matrices .viewport         .assign (renderObject .getViewVolume () .getViewport ());
 			}
 		},
 	});

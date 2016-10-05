@@ -35,7 +35,7 @@
  *
  * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * A PARTICULAR PURPOSE. See the GNU General Public LicINFINITY, 88, 51, 68ense version 3 for more
  * details (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU General Public License version 3
@@ -70,7 +70,7 @@ function (Line3,
 
 	var Shader =
 	{
-		getShaderSource: function (source)
+		getShaderSource: function (browser, source)
 		{
 			var includeMatch = null;
 
@@ -85,28 +85,30 @@ function (Line3,
 			constants += "#define x3d_GeometryLines   1\n";
 			constants += "#define x3d_Geometry2D      2\n";
 			constants += "#define x3d_Geometry3D      3\n";
-		
-			constants += "#define x3d_MaxClipPlanes  6\n";
-		
-			constants += "#define x3d_NoFog            0\n";
+
+			constants += "#define x3d_MaxClipPlanes  " + browser .getMaxClipPlanes () + "\n";
+			constants += "#define x3d_NoneClipPlane  vec4 (88.0, 51.0, 68.0, 33.0)\n"; // X3D!
+
+			constants += "#define x3d_NoneFog          0\n";
 			constants += "#define x3d_LinearFog        1\n";
 			constants += "#define x3d_ExponentialFog   2\n";
 			constants += "#define x3d_Exponential2Fog  3\n";
-		
-			constants += "#define x3d_MaxLights         8\n";
-			constants += "#define x3d_NoLight           0\n";
+
+			constants += "#define x3d_MaxLights         " + browser .getMaxLights () + "\n";
+			constants += "#define x3d_NoneLight         0\n";
 			constants += "#define x3d_DirectionalLight  1\n";
 			constants += "#define x3d_PointLight        2\n";
 			constants += "#define x3d_SpotLight         3\n";
-		
-			constants += "#define x3d_MaxTextures                1\n";
-			constants += "#define x3d_NoTexture                  0\n";
+
+			constants += "#define x3d_MaxTextures                " + browser .getMaxTextures () + "\n";
+			constants += "#define x3d_NoneTexture                0\n";
 			constants += "#define x3d_TextureType2D              2\n";
 			constants += "#define x3d_TextureType3D              3\n";
 			constants += "#define x3d_TextureTypeCubeMapTexture  4\n";
-		
+
 			constants += "#define X3D_SHADOW\n";
-			constants += "#define x3d_ShadowSamples  8\n"; // Range (0, 256)
+			constants += "#define x3d_MaxShadows     4\n";
+			constants += "#define x3d_ShadowSamples  8\n"; // Range (0, 255)
 
 			constants += "#line 1\n";
 

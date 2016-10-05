@@ -1,17 +1,12 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Shaders/ComposedShader.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Browser/Core/RenderingProperties.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="157" Column="102" />
-      <File FileName="cobweb.js/cobweb/Components/Text/X3DFontStyleNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Text/X3DTextContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Shape/X3DShapeNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Shape/Shape.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Shape/Appearance.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Navigation/LOD.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Geospatial/GeoLOD.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="193" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="50" Column="12" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="237" Column="5" />
+      <File FileName="cobweb.js/cobweb/Browser/Core/RenderingProperties.js" Line="99" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

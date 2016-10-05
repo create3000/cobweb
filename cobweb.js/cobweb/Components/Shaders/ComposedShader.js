@@ -138,7 +138,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .useProgram ();
+					this .useProgram (this .getBrowser () .getContext ());
 					this .addShaderFields ();
 				}
 			}
@@ -146,7 +146,7 @@ function ($,
 			{
 				if (this .isValid_ .getValue ())
 				{
-					this .useProgram ();
+					this .useProgram (this .getBrowser () .getContext ());
 					this .removeShaderFields ();
 				}
 			}
@@ -193,7 +193,7 @@ function ($,
 
 				if (valid)
 				{
-					this .useProgram ();
+					this .useProgram (gl);
 
 					// Initialize uniform variables and attributes
 					if (this .getDefaultUniforms ())
@@ -208,7 +208,7 @@ function ($,
 					// this .printProgramInfo ();
 				}
 				else
-					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "'.");
+					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "': " + gl .getProgramInfoLog (program));
 
 				if (valid != this .isValid_ .getValue ())
 					this .isValid_ = valid;
@@ -219,7 +219,7 @@ function ($,
 					this .isValid_ = false;
 			}
 		},
-		setGlobalUniforms: function (gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
 		{
 			if (currentShaderNode !== this)
 			{
@@ -228,7 +228,7 @@ function ($,
 				gl .useProgram (this .program);
 			}
 			
-			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, gl, projectionMatrixArray);
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray);
 		},
 		setLocalUniforms: function (gl, context)
 		{
@@ -241,13 +241,13 @@ function ($,
 
 			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
 		},
-		useProgram: function ()
+		useProgram: function (gl)
 		{
 			if (currentShaderNode !== this)
 			{
 				currentShaderNode = this;
 
-				this .getBrowser () .getContext () .useProgram (this .program);
+				gl .useProgram (this .program);
 			}
 		},
 	});

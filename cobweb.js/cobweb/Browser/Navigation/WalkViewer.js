@@ -85,6 +85,13 @@ function (X3DFlyViewer, Vector3, Rotation4, _)
 
 			return orientation .multVecRot (velocity);
 		},
+		constrainPanDirection: function (direction)
+		{
+			if (direction .y < 0)
+				direction .y = 0;
+
+			return direction;
+		},
 		dispose: function ()
 		{
 			this .getBrowser () .removeCollision (this);

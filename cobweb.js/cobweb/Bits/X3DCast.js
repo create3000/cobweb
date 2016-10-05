@@ -47,7 +47,10 @@
  ******************************************************************************/
 
 
-define (function ()
+define ([
+	"cobweb/Fields",
+],
+function (Fields)
 {
 "use strict";
 
@@ -57,7 +60,7 @@ define (function ()
 		{
 			if (node)
 			{
-				if (node .getValue)
+				if (node instanceof Fields .SFNode)
 					node = node .getValue ();
 
 				if (node)
@@ -73,5 +76,5 @@ define (function ()
 		{ }
 
 		return null;
-	}
+	};
 });

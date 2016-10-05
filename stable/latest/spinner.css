@@ -1,5 +1,5 @@
 
-X3D .cobweb-loading {
+X3DCanvas .cobweb-loading {
 	display: none;
 	z-index: -100;
 	position: absolute;
@@ -13,7 +13,7 @@ X3D .cobweb-loading {
 	background: radial-gradient(ellipse at center, rgb(130,130,130) 0%,rgb(65,65,65) 100%);
 }
 
-X3D .cobweb-spinner {
+X3DCanvas .cobweb-spinner {
 	position: absolute;
 	top: calc(50% - 70px);
 	left: calc(50% - 64px);
@@ -27,7 +27,7 @@ X3D .cobweb-spinner {
 	perspective: 780px;
 }
 
-X3D .cobweb-spinner > * {
+X3DCanvas .cobweb-spinner > * {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -43,7 +43,7 @@ X3D .cobweb-spinner > * {
 		-moz-border-radius: 50%;	
 }
 
-X3D .cobweb-spinner-one {
+X3DCanvas .cobweb-spinner-one {
 	left: 0%;
 	top: 0%;
 	animation: cobweb-spinner-rotate-one 1.15s linear infinite;
@@ -54,7 +54,7 @@ X3D .cobweb-spinner-one {
 	border-bottom: 10px solid #ffe32d;
 }
 
-X3D .cobweb-spinner-two {
+X3DCanvas .cobweb-spinner-two {
 	right: 0%;
 	top: 0%;
 	animation: cobweb-spinner-rotate-two 1.15s linear infinite;
@@ -65,7 +65,7 @@ X3D .cobweb-spinner-two {
 	border-right: 10px solid #ff9f2e;
 }
 
-X3D .cobweb-spinner-three {
+X3DCanvas .cobweb-spinner-three {
 	right: 0%;
 	bottom: 0%;
 	animation: cobweb-spinner-rotate-three 1.15s linear infinite;
@@ -76,14 +76,14 @@ X3D .cobweb-spinner-three {
 	border-top: 10px solid #d71f1f;
 }
 
-X3D .cobweb-progress {
+X3DCanvas .cobweb-progress {
 	position: absolute;
 	top: calc(50% - 11pt);
 	left: calc(50% - 100px);
 	width: 200px;
 }
 
-X3D .cobweb-spinner-text {
+X3DCanvas .cobweb-spinner-text {
 	color: white;
 	font-size: 11pt;
 	text-align: center;
@@ -91,14 +91,14 @@ X3D .cobweb-spinner-text {
 	font-family: PT Sans, sans-serif;
 }
 
-X3D .cobweb-progressbar {
+X3DCanvas .cobweb-progressbar {
 	margin: 8px;
 	border-left:  2px solid rgba(255, 255, 255, 0.5);
 	border-right: 2px solid rgba(255, 255, 255, 0.5);
 	padding: 0 2px;
 }
 
-X3D .cobweb-progressbar div {
+X3DCanvas .cobweb-progressbar div {
 	width: 0%;
 	height: 6px;
 	background: rgba(255, 255, 255, 0.5);

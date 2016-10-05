@@ -45,10 +45,9 @@ data:text/plain;charset=utf-8,
 //  For Silvio, Joy and Adi.
 
 
-precision highp float;
+precision mediump float;
 
 uniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];
-// 24
 
 varying vec3 v; // point on geometry
 
@@ -57,7 +56,7 @@ clip ()
 {
 	for (int i = 0; i < x3d_MaxClipPlanes; ++ i)
 	{
-		if (x3d_ClipPlane [i] == vec4 (0.0, 0.0, 0.0, 0.0))
+		if (x3d_ClipPlane [i] == x3d_NoneClipPlane)
 			break;
 
 		if (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)

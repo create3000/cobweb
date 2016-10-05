@@ -48,7 +48,6 @@ data:text/plain;charset=utf-8,
 precision mediump float;
 
 uniform int x3d_GeometryType;
-// 1
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false

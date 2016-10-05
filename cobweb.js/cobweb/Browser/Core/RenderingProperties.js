@@ -49,21 +49,40 @@
 
 define ([
 	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
-          X3DBaseNode)
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DBaseNode, 
+          X3DConstants)
 {
 "use strict";
 	
 	function RenderingProperties (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext);
+
+		this .addAlias ("AntiAliased", this .Antialiased_);
 	}
 
 	RenderingProperties .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: RenderingProperties,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "Shading",        new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxTextureSize", new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureUnits",   new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxLights",      new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "Antialiased",    new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "ColorDepth",     new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureMemory",  new Fields .SFDouble ()),
+		]),
 		getTypeName: function ()
 		{
 			return "RenderingProperties";

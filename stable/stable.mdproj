@@ -454,6 +454,52 @@
     <None Include="1\1.28\images\icon.png" />
     <None Include="1\1.28\images\logo.bw.png" />
     <None Include="1\1.28\images\logo.png" />
+    <None Include="2\2.0\browser.html" />
+    <None Include="2\2.0\cobweb.css" />
+    <None Include="2\2.0\cobweb.js" />
+    <None Include="2\2.0\cobweb.min.js" />
+    <None Include="2\2.0\spinner.css" />
+    <None Include="2\2.0\images\ExamineViewer.png" />
+    <None Include="2\2.0\images\FlyViewer.png" />
+    <None Include="2\2.0\images\NoneViewer.png" />
+    <None Include="2\2.0\images\PlaneViewer.png" />
+    <None Include="2\2.0\images\PrimitiveQuality.png" />
+    <None Include="2\2.0\images\TextureQuality.png" />
+    <None Include="2\2.0\images\Time.png" />
+    <None Include="2\2.0\images\Viewpoint.png" />
+    <None Include="2\2.0\images\WalkViewer.png" />
+    <None Include="2\2.0\images\gtk-fullscreen.png" />
+    <None Include="2\2.0\images\gtk-leave-fullscreen.png" />
+    <None Include="2\2.0\images\gtk-zoom-fit.png" />
+    <None Include="2\2.0\images\gtk-zoom-in.png" />
+    <None Include="2\2.0\images\help-about.png" />
+    <None Include="2\2.0\images\icon.bw.png" />
+    <None Include="2\2.0\images\icon.png" />
+    <None Include="2\2.0\images\logo.bw.png" />
+    <None Include="2\2.0\images\logo.png" />
+    <None Include="2\2.1\browser.html" />
+    <None Include="2\2.1\cobweb.css" />
+    <None Include="2\2.1\cobweb.js" />
+    <None Include="2\2.1\cobweb.min.js" />
+    <None Include="2\2.1\spinner.css" />
+    <None Include="2\2.1\images\ExamineViewer.png" />
+    <None Include="2\2.1\images\FlyViewer.png" />
+    <None Include="2\2.1\images\NoneViewer.png" />
+    <None Include="2\2.1\images\PlaneViewer.png" />
+    <None Include="2\2.1\images\PrimitiveQuality.png" />
+    <None Include="2\2.1\images\TextureQuality.png" />
+    <None Include="2\2.1\images\Time.png" />
+    <None Include="2\2.1\images\Viewpoint.png" />
+    <None Include="2\2.1\images\WalkViewer.png" />
+    <None Include="2\2.1\images\gtk-fullscreen.png" />
+    <None Include="2\2.1\images\gtk-leave-fullscreen.png" />
+    <None Include="2\2.1\images\gtk-zoom-fit.png" />
+    <None Include="2\2.1\images\gtk-zoom-in.png" />
+    <None Include="2\2.1\images\help-about.png" />
+    <None Include="2\2.1\images\icon.bw.png" />
+    <None Include="2\2.1\images\icon.png" />
+    <None Include="2\2.1\images\logo.bw.png" />
+    <None Include="2\2.1\images\logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
@@ -480,5 +526,8 @@
     <Folder Include="1\1.26\" />
     <Folder Include="1\1.27\" />
     <Folder Include="1\1.28\" />
+    <Folder Include="2\" />
+    <Folder Include="2\2.0\" />
+    <Folder Include="2\2.1\" />
   </ItemGroup>
 </Project>

@@ -119,34 +119,40 @@ function ($,
 		{
 			return biasMatrix;
 		},
-		push: function (group)
+		push: function (type, renderObject, group)
 		{
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
 				{
-					var lightContainer = this .getLights () .pop (this, this .getCurrentLayer () .getGroup ());
+					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
+					                                              this,
+					                                              renderObject .getLayer () .getGroup (),
+					                                              renderObject .getModelViewMatrix () .get ());
 
-					this .getCurrentLayer () .getGlobalLights () .push (lightContainer);
-					this .getCurrentLayer () .getLights ()       .push (lightContainer);
+					renderObject .getGlobalLights () .push (lightContainer);
+					renderObject .getLights ()       .push (lightContainer);
 				}
 				else
 				{
-					var lightContainer = this .getLights () .pop (this, group);
+					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
+					                                              this,
+					                                              group,
+					                                              renderObject .getModelViewMatrix () .get ());
 
-					this .getCurrentLayer () .getLocalLights () .push (lightContainer);
-					this .getCurrentLayer () .getLights ()      .push (lightContainer);
+					renderObject .getLocalLights () .push (lightContainer);
+					renderObject .getLights ()      .push (lightContainer);
 				}
 			}
 		},
-		pop: function ()
+		pop: function (type, renderObject)
 		{
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
 				   return;
 
-				this .getBrowser () .getLocalLights () .push (this .getCurrentLayer () .getLocalLights () .pop ());
+				renderObject .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
 			}
 		},
 	});

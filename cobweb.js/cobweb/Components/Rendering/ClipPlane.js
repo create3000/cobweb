@@ -73,49 +73,39 @@ function ($,
 "use strict";
 
 	var
-		vector     = new Vector3 (0, 0, 0),
-		plane      = new Plane3 (vector, vector),
+		plane      = new Plane3 (Vector3 .Zero, Vector3 .Zero),
 		ClipPlanes = ObjectCache (ClipPlaneContainer);
 
-	function ClipPlaneContainer (clipPlane)
+	function ClipPlaneContainer (clipPlane, modelViewMatrix)
 	{
-		this .plane = new Plane3 (vector, vector);
+		this .plane = new Plane3 (Vector3 .Zero, Vector3 .Zero);
 
-		this .set (clipPlane);
+		this .set (clipPlane, modelViewMatrix);
 	}
 
 	ClipPlaneContainer .prototype =
 	{
 		constructor: ClipPlaneContainer,
-		isClipped: function (point, invModelViewMatrix)
+		isClipped: function (point)
 		{
-			try
-			{
-				var distance = plane .assign (this .plane) .multRight (invModelViewMatrix) .getDistanceToPoint (point);
-
-				return distance < 0;
-			}
-			catch (error)
-			{
-				return false;
-			}
+			return this .plane .getDistanceToPoint (point) < 0;
 		},
-		set: function (clipPlane)
+		set: function (clipPlane, modelViewMatrix)
 		{
+			var
+				plane       = this .plane,
+				localPlane = clipPlane .plane;
+	
 			try
 			{
-				var
-					plane  = this .plane,
-					plane_ = clipPlane .plane;
+				plane .normal .assign (localPlane);
+				plane .distanceFromOrigin = -localPlane .w;
 
-				plane .normal .assign (plane_);
-				plane .distanceFromOrigin = -plane_ .w;
-
-				plane .multRight (clipPlane .getBrowser () .getModelViewMatrix () .get ());
+				plane .multRight (modelViewMatrix);
 			}
 			catch (error)
 			{
-				plane .normal .set (0, 1, 0);
+				plane .normal .set (0, 0, 0);
 				plane .distanceFromOrigin = 0;
 			}
 		},
@@ -178,15 +168,15 @@ function ($,
 
 			this .enabled = this .enabled_ .getValue () && ! this .plane .equals (Vector4 .Zero);
 		},
-		push: function ()
+		push: function (renderObject)
 		{
 			if (this .enabled)
-				this .getCurrentLayer () .getClipPlanes () .push (ClipPlanes .pop (this));
+				renderObject .getClipPlanes () .push (ClipPlanes .pop (this, renderObject .getModelViewMatrix () .get ()));
 		},
-		pop: function ()
+		pop: function (renderObject)
 		{
 			if (this .enabled)
-				this .getBrowser () .getClipPlanes () .push (this .getCurrentLayer () .getClipPlanes () .pop ());
+				renderObject .getBrowser () .getClipPlanes () .push (renderObject .getClipPlanes () .pop ());
 		},
 	});
 

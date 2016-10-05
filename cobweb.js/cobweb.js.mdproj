@@ -346,7 +346,6 @@
     <None Include="cobweb\Fields.js" />
     <None Include="cobweb\Parser\Parser.js" />
     <None Include="cobweb\Parser\XMLParser.js" />
-    <None Include="cobweb\Rendering\X3DRenderer.js" />
     <None Include="cobweb\Routing\X3DRoutingContext.js" />
     <None Include="cobweb\X3D.js" />
     <None Include="jam\jquery\dist\jquery.js" />
@@ -1229,6 +1228,14 @@
     <None Include="tests\Components\Lighting\LODShadow.x3d" />
     <None Include="tests\Components\Lighting\BillboardShadow.x3d" />
     <None Include="tests\Components\Lighting\GeoLODShadow.x3d" />
+    <None Include="tests\Components\ComposedCubeMapTexture\GeneratedCubeMapTexture.x3d" />
+    <None Include="cobweb\Rendering\X3DRenderObject.js" />
+    <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapMovieTexture.wrl" />
+    <None Include="tests\Components\images\campfire.512.mp4" />
+    <None Include="tests\Components\Lighting\MadFlat2.x3d" />
+    <None Include="tests\Components\Navigation\WalkViewer.x3d" />
+    <None Include="tests\Components\Shaders\Pipeline.x3d" />
+    <None Include="cobweb\Browser\Core\BrowserProperties.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

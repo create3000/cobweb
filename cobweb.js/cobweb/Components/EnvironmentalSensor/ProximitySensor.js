@@ -245,7 +245,7 @@ function ($,
 		},
 	});
 		
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
 		try
 		{
@@ -253,8 +253,8 @@ function ($,
 			{
 				case TraverseType .CAMERA:
 				{
-					this .viewpoint = this .getCurrentViewpoint ();
-					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					this .viewpoint = renderObject .getViewpoint ();
+					this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ());
 					return;
 				}
 				case TraverseType .DISPLAY:
@@ -269,7 +269,7 @@ function ($,
 
 					else
 					{
-					   var invModelViewMatrix = this .invModelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ()) .inverse ();
+					   var invModelViewMatrix = this .invModelViewMatrix .assign (renderObject .getModelViewMatrix () .get ()) .inverse ();
 
 						this .viewer .set (invModelViewMatrix [12],
 				                         invModelViewMatrix [13],

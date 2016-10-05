@@ -475,22 +475,22 @@ function ($,
 		
 			return this .scaleModeY;
 		},
-		transform: function (type)
+		transform: function (type, renderObject)
 		{
 			var
 				matrix    = this .matrix,
-				viewpoint = X3DCast (X3DConstants .OrthoViewpoint, this .getCurrentViewpoint ());
+				viewpoint = X3DCast (X3DConstants .OrthoViewpoint, renderObject .getViewpoint ());
 
 			// OrthoViewpoint
 
 			if (viewpoint)
 			{
-				var parent = this .parent = this .getBrowser () .getParentLayout ();
+				var parent = this .parent = renderObject .getParentLayout ();
 
 				// Calculate rectangleSize
 
 				var
-					viewport            = this .getCurrentLayer () .getViewVolume () .getScissor (), // in pixel
+					viewport            = renderObject .getViewVolume () .getScissor (),             // in pixel
 					viewportMeter       = viewpoint .getViewportSize (viewport),                     // in meter
 					viewportPixel       = this .viewportPixel,                                       // in pixel
 					pixelSize           = this .pixelSize,                                           // size of one pixel in meter
@@ -593,7 +593,7 @@ function ($,
 					currentRotation    = this .currentRotation,
 					currentScale       = this .currentScale;
 
-				var modelViewMatrix = this .getBrowser () .getModelViewMatrix () .get ();
+				var modelViewMatrix = renderObject .getModelViewMatrix () .get ();
 				modelViewMatrix .get (currentTranslation, currentRotation, currentScale);
 		
 				switch (this .getScaleModeX ())

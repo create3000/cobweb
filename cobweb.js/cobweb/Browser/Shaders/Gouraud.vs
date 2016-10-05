@@ -47,18 +47,14 @@ data:text/plain;charset=utf-8,
 
 precision mediump float;
 
-// 225 uniforms
-
 uniform mat4 x3d_TextureMatrix [1];
 uniform mat3 x3d_NormalMatrix;
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;
-// 3 * 16 + 9
 
 uniform float x3d_LinewidthScaleFactor;
 uniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false
 uniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false
-// 3
 
 uniform int   x3d_LightType [x3d_MaxLights];
 uniform bool  x3d_LightOn [x3d_MaxLights];
@@ -71,10 +67,8 @@ uniform vec3  x3d_LightDirection [x3d_MaxLights];
 uniform float x3d_LightRadius [x3d_MaxLights];
 uniform float x3d_LightBeamWidth [x3d_MaxLights];
 uniform float x3d_LightCutOffAngle [x3d_MaxLights];
-// 19 * x3d_MaxLights
 
 uniform bool x3d_SeparateBackColor;
-// 1
 
 uniform float x3d_AmbientIntensity;
 uniform vec3  x3d_DiffuseColor;
@@ -82,7 +76,6 @@ uniform vec3  x3d_SpecularColor;
 uniform vec3  x3d_EmissiveColor;
 uniform float x3d_Shininess;
 uniform float x3d_Transparency;
-// 12
 
 uniform float x3d_BackAmbientIntensity;
 uniform vec3  x3d_BackDiffuseColor;
@@ -90,19 +83,16 @@ uniform vec3  x3d_BackSpecularColor;
 uniform vec3  x3d_BackEmissiveColor;
 uniform float x3d_BackShininess;
 uniform float x3d_BackTransparency;
-// 12
 
 attribute vec4 x3d_Color;
 attribute vec4 x3d_TexCoord;
 attribute vec3 x3d_Normal;
 attribute vec4 x3d_Vertex;
-// 15, max 16
 
 varying vec4  frontColor; // color
 varying vec4  backColor;  // color
 varying vec4  t;          // texCoord
 varying vec3  v;          // point on geometry
-// 15, max 16
 
 vec4
 getMaterialColor (in vec3 N,
@@ -113,7 +103,7 @@ getMaterialColor (in vec3 N,
                   in vec3  x3d_EmissiveColor,
                   in float x3d_Shininess,
                   in float x3d_Transparency)
-{  
+{
 	vec3 V = normalize (-v); // normalized vector from point on geometry to viewer's position
 
 	// Calculate diffuseFactor & alpha
@@ -139,7 +129,7 @@ getMaterialColor (in vec3 N,
 	{
 		int lightType = x3d_LightType [i];
 
-		if (lightType != x3d_NoLight)
+		if (lightType != x3d_NoneLight)
 		{
 			vec3  vL = x3d_LightLocation [i] - v;
 			float dL = length (vL);

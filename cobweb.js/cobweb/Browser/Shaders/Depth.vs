@@ -45,7 +45,7 @@ data:text/plain;charset=utf-8,
 //  For Silvio, Joy and Adi.
 
 
-precision highp float;
+precision mediump float;
 
 uniform mat4 x3d_ProjectionMatrix;
 uniform mat4 x3d_ModelViewMatrix;

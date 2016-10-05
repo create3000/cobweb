@@ -62,12 +62,18 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 	
 	var SCROLL_FACTOR = 0.05;
 
+	var
+		vector                 = new Vector3 (0 ,0, 0),
+		positionOffset         = new Vector3 (0 ,0, 0),
+		centerOfRotationOffset = new Vector3 (0, 0, 0);
+
 	function PlaneViewer (executionContext)
 	{
 		X3DViewer .call (this, executionContext);
 
-		this .button = -1;
+		this .button    = -1;
 		this .fromPoint = new Vector3 (0, 0, 0);
+		this .toPoint   = new Vector3 (0, 0, 0);
 	}
 
 	PlaneViewer .prototype = $.extend (Object .create (X3DViewer .prototype),
@@ -112,7 +118,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
-					this .fromPoint = this .getPointOnCenterPlane (x, y);
+					this .getPointOnCenterPlane (x, y, this .fromPoint);
 					break;
 				}
 			}
@@ -148,13 +154,13 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 
 					var
 						viewpoint   = this .getActiveViewpoint (),
-						toPoint     = this .getPointOnCenterPlane (x, y),
-						translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (this .fromPoint, toPoint));
+						toPoint     = this .getPointOnCenterPlane (x, y, this .toPoint),
+						translation = viewpoint .getUserOrientation () .multVecRot (this .fromPoint .subtract (toPoint));
 
-					viewpoint .positionOffset_         = Vector3 .add (viewpoint .positionOffset_         .getValue (), translation);
-					viewpoint .centerOfRotationOffset_ = Vector3 .add (viewpoint .centerOfRotationOffset_ .getValue (), translation);
+					viewpoint .positionOffset_         = positionOffset         .assign (viewpoint .positionOffset_         .getValue ()) .add (translation);
+					viewpoint .centerOfRotationOffset_ = centerOfRotationOffset .assign (viewpoint .centerOfRotationOffset_ .getValue ()) .add (translation);
 
-					this .fromPoint = toPoint;
+					this .fromPoint .assign (toPoint);
 					break;
 				}
 			}
@@ -171,21 +177,13 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 
 			// Determine scroll direction.
 
-			var direction = 0;
-
-			// IE & Opera
-			if (event .originalEvent .wheelDelta)
-				direction = -event .originalEvent .wheelDelta / 120;
-
-			// Mozilla
-			else if (event .originalEvent .detail)
-				direction = event .originalEvent .detail / 3;
+			var direction = this .getScrollDirection (event);
 
 			// Change viewpoint position.
 
 			var
 				viewpoint = this .getActiveViewpoint (),
-				fromPoint = this .getPointOnCenterPlane (x, y);
+				fromPoint = this .getPointOnCenterPlane (x, y, this .fromPoint);
 
 			viewpoint .transitionStop ();
 
@@ -198,13 +196,16 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 
 				this .constrainFieldOfViewScale ();
 			}
+
+			if (viewpoint .set_fieldOfView___)
+				viewpoint .set_fieldOfView___ (); // XXX: Immediately apply fieldOfViewScale;
 					
 			var
-				toPoint     = this .getPointOnCenterPlane (x, y),
-				translation = viewpoint .getUserOrientation () .multVecRot (Vector3 .subtract (fromPoint, toPoint));
+				toPoint     = this .getPointOnCenterPlane (x, y, this .toPoint),
+				translation = viewpoint .getUserOrientation () .multVecRot (vector .assign (fromPoint) .subtract (toPoint));
 
-			viewpoint .positionOffset_         = Vector3 .add (viewpoint .positionOffset_         .getValue (), translation);
-			viewpoint .centerOfRotationOffset_ = Vector3 .add (viewpoint .centerOfRotationOffset_ .getValue (), translation);
+			viewpoint .positionOffset_         = positionOffset         .assign (viewpoint .positionOffset_         .getValue ()) .add (translation);
+			viewpoint .centerOfRotationOffset_ = centerOfRotationOffset .assign (viewpoint .centerOfRotationOffset_ .getValue ()) .add (translation);
 		},
 		constrainFieldOfViewScale: function ()
 		{

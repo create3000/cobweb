@@ -75,6 +75,10 @@ function (X3DFlyViewer, _)
 		{
 			return this .getActiveViewpoint () .getUserOrientation () .multVecRot (velocity);
 		},
+		constrainPanDirection: function (direction)
+		{
+			return direction;
+		},
 	});
 
 	return FlyViewer;

@@ -289,17 +289,17 @@ function ($,
 
 			return 0.75;
 		},
-		getNearPlane: function ()
+		getNearValue: function ()
 		{
-			var zNear = this .getCollisionRadius ();
+			var nearValue = this .getCollisionRadius ();
 
-			if (zNear === 0)
+			if (nearValue === 0)
 				return 1e-5;
 
 			else
-				return zNear / 2;
+				return nearValue / 2;
 		},
-		getFarPlane: function (viewpoint)
+		getFarValue: function (viewpoint)
 		{
 			return this .visibilityLimit_ .getValue ()
 				    ? this .visibilityLimit_ .getValue ()
@@ -319,18 +319,18 @@ function ($,
 
 			return "LINEAR";
 		},
-		enable: function ()
+		enable: function (type, renderObject)
 		{
 		},
-		traverse: function ()
+		traverse: function (type, renderObject)
 		{
-			this .getCurrentLayer () .getNavigationInfos () .push (this);
+			renderObject .getLayer () .getNavigationInfos () .push (this);
 		}
 	});
 
-	function enable ()
+	function enable (type, renderObject)
 	{
-		this .getCurrentLayer () .getGlobalLights () .push (this .getBrowser () .getHeadlight ());
+		renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 	}
 
 	return NavigationInfo;

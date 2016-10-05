@@ -144,7 +144,7 @@ function ($,
 		
 			return this .matrix;
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
@@ -158,23 +158,21 @@ function ($,
 
 					if (this .layoutNode)
 					{
-						var
-							browser         = this .getBrowser (),
-							modelViewMatrix = browser .getModelViewMatrix ();
+						var modelViewMatrix = renderObject .getModelViewMatrix ();
 
 						this .modelViewMatrix .assign (modelViewMatrix .get ());
 
 						modelViewMatrix .push ();
-						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type)));
-						browser .getLayouts () .push (this .layoutNode);
+						modelViewMatrix .set (this .screenMatrix .assign (this .layoutNode .transform (type, renderObject)));
+						renderObject .getLayouts () .push (this .layoutNode);
 
-						X3DGroupingNode .prototype .traverse .call (this, type);
+						X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 
-						browser .getLayouts () .pop ();
+						renderObject .getLayouts () .pop ();
 						modelViewMatrix .pop ();
 					}
 					else
-						X3DGroupingNode .prototype .traverse .call (this, type);
+						X3DGroupingNode .prototype .traverse .call (this, type, renderObject);
 		
 					if (this .viewportNode)
 						this .viewportNode .pop ();

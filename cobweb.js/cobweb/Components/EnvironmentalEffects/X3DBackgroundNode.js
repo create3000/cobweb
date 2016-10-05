@@ -466,21 +466,21 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .bottomBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, new Float32Array (bottomVertices), gl .STATIC_DRAW);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			switch (type)
 			{
 				case TraverseType .CAMERA:
 				{
-					this .getCurrentLayer () .getBackgrounds () .push (this);
+					renderObject .getLayer () .getBackgrounds () .push (this);
 		
-					this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+					this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 					break;
 				}
 				case TraverseType .DISPLAY:
 				{
 					var
-						sourcePlanes = this .getCurrentLayer () .getClipPlanes (),
+						sourcePlanes = renderObject .getClipPlanes (),
 						destPlanes   = this .clipPlanes;
 	
 					for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
@@ -491,13 +491,13 @@ function ($,
 				}
 			}
 		},
-		display: function (viewport)
+		display: function (renderObject, viewport)
 		{
 			if (this .hidden)
 				return;
 
 			var
-				browser = this .getBrowser (),
+				browser = renderObject .getBrowser (),
 				gl      = browser .getContext ();
 
 			// Setup context.
@@ -510,7 +510,7 @@ function ($,
 			// Get background scale.
 
 			var
-				viewpoint       = this .getCurrentViewpoint (),
+				viewpoint       = renderObject .getViewpoint (),
 				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
 				modelViewMatrix = this .transformationMatrix;
@@ -519,7 +519,7 @@ function ($,
 
 			// Get projection matrix.
 
-			this .projectionMatrixArray .set (viewpoint .getProjectionMatrix (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
+			this .projectionMatrixArray .set (viewpoint .getProjectionMatrixWithLimits (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
 
 			// Rotate and scale background.
 
@@ -533,12 +533,12 @@ function ($,
 		
 			// Draw.
 
-			this .drawSphere ();
+			this .drawSphere (renderObject);
 
 			if (this .textures)
-				this .drawCube ();
+				this .drawCube (renderObject);
 		},
-		drawSphere: function ()
+		drawSphere: function (renderObject)
 		{
 			var transparency = this .transparency_ .getValue ();
 		
@@ -546,11 +546,11 @@ function ($,
 				return;
 	
 			var
-				browser    = this .getBrowser (),
+				browser    = renderObject .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = browser .getBackgroundSphereShader ();
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 
 			// Clip planes
 
@@ -581,14 +581,14 @@ function ($,
 
 			shaderNode .disableColorAttribute (gl);
 		},
-		drawCube: function ()
+		drawCube: function (renderObject)
 		{
 			var
-				browser    = this .getBrowser (),
+				browser    = renderObject .getBrowser (),
 				gl         = browser .getContext (),
 				shaderNode = browser .getGouraudShader ();
 
-			shaderNode .useProgram ();
+			shaderNode .useProgram (gl);
 
 			// Clip planes
 

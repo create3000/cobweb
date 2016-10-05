@@ -115,12 +115,12 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 				ViewVolume .unProjectPointMatrix (x2, y2, 0, matrix, viewport, p5),
 				ViewVolume .unProjectPointMatrix (x2, y2, 1, matrix, viewport, p6);
 
-				this .planes [0] .set (p4, Triangle3 .normal (p5, p4, p3, normal));  // front
-				this .planes [1] .set (p2, Triangle3 .normal (p3, p2, p1, normal));  // left
-				this .planes [2] .set (p5, Triangle3 .normal (p4, p5, p6, normal));  // right
-				this .planes [3] .set (p6, Triangle3 .normal (p1, p6, p5, normal));  // top
-				this .planes [4] .set (p3, Triangle3 .normal (p2, p3, p4, normal));  // bottom
-				this .planes [5] .set (p1, Triangle3 .normal (p6, p1, p2, normal));  // back
+				this .planes [0] .set (p4, Triangle3 .normal (p3, p4, p5, normal));  // front
+				this .planes [1] .set (p2, Triangle3 .normal (p1, p2, p3, normal));  // left
+				this .planes [2] .set (p5, Triangle3 .normal (p6, p5, p4, normal));  // right
+				this .planes [3] .set (p6, Triangle3 .normal (p5, p6, p1, normal));  // top
+				this .planes [4] .set (p3, Triangle3 .normal (p4, p3, p2, normal));  // bottom
+				this .planes [5] .set (p1, Triangle3 .normal (p2, p1, p6, normal));  // back  
 
 				this .valid = true;
 			}
@@ -144,22 +144,22 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		{
 			var planes = this .planes;
 		
-			if (planes [0] .getDistanceToPoint (center) + radius < 0)
+			if (planes [0] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [1] .getDistanceToPoint (center) + radius < 0)
+			if (planes [1] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [2] .getDistanceToPoint (center) + radius < 0)
+			if (planes [2] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [3] .getDistanceToPoint (center) + radius < 0)
+			if (planes [3] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [4] .getDistanceToPoint (center) + radius < 0)
+			if (planes [4] .getDistanceToPoint (center) > radius)
 				return false;
 
-			if (planes [5] .getDistanceToPoint (center) + radius < 0)
+			if (planes [5] .getDistanceToPoint (center) > radius)
 				return false;
 
 			return true;
@@ -168,13 +168,13 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 	$.extend (ViewVolume,
 	{
-		unProjectPoint: function (winx, winy, winz, modelview, projection, viewport, point)
+		unProjectPoint: function (winx, winy, winz, modelViewMatrix, projectionMatrix, viewport, point)
 		{
-			var matrix = Matrix4 .multRight (modelview, projection) .inverse ();
+			matrix .assign (modelViewMatrix) .multRight (projectionMatrix) .inverse ();
 
 			return this .unProjectPointMatrix (winx, winy, winz, matrix, viewport, point);
 		},
-		unProjectPointMatrix: function (winx, winy, winz, matrix, viewport, point)
+		unProjectPointMatrix: function (winx, winy, winz, invModelViewProjection, viewport, point)
 		{
 			// Transformation of normalized coordinates between -1 and 1
 			vin .set ((winx - viewport [0]) / viewport [2] * 2 - 1,
@@ -183,7 +183,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			          1);
 
 			//Objects coordinates
-			matrix .multVecMatrix (vin);
+			invModelViewProjection .multVecMatrix (vin);
 
 			if (vin .w === 0)
 				throw new Error ("Couldn't unproject point: divisor is 0.");
@@ -192,20 +192,20 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 
 			return point .set (vin .x * d, vin .y * d, vin .z * d);
 		},
-		unProjectRay: function (winx, winy, modelview, projection, viewport, result)
+		unProjectRay: function (winx, winy, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			matrix .assign (modelview) .multRight (projection) .inverse ();
+			matrix .assign (modelViewMatrix) .multRight (projectionMatrix) .inverse ();
 
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.0, matrix, viewport, near);
 			ViewVolume .unProjectPointMatrix (winx, winy, 0.9, matrix, viewport, far);
 
 			return result .setPoints (near, far);
 		},
-		projectPoint: function (point, modelview, projection, viewport, vout)
+		projectPoint: function (point, modelViewMatrix, projectionMatrix, viewport, vout)
 		{
 			vin .set (point .x, point .y, point .z, 1);
 
-			projection .multVecMatrix (modelview .multVecMatrix (vin));
+			projectionMatrix .multVecMatrix (modelViewMatrix .multVecMatrix (vin));
 
 			if (vin .w === 0)
 				throw new Error ("Couldn't project point: divisor is 0.");
@@ -216,10 +216,10 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			                  (vin .y * d + 0.5) * viewport [3] + viewport [1],
 			                  (vin .z * d + 0.5));
 		},
-		projectLine: function (line, modelview, projection, viewport, result)
+		projectLine: function (line, modelViewMatrix, projectionMatrix, viewport, result)
 		{
-			ViewVolume .projectPoint (line .point, modelview, projection, viewport, near);
-			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelview, projection, viewport, far);
+			ViewVolume .projectPoint (line .point, modelViewMatrix, projectionMatrix, viewport, near);
+			ViewVolume .projectPoint (Vector3 .multiply (line .direction, 1e9) .add (line .point), modelViewMatrix, projectionMatrix, viewport, far);
 
 			near .z = 0;
 			far  .z = 0;

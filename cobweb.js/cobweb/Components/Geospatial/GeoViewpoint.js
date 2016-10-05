@@ -93,11 +93,11 @@ function ($,
 		geoOrientation      = new Rotation4 (0, 0, 1, 0),
 		geoCenterOfRotation = new Vector3 (0, 0, 0);
 
-	function traverse (type)
+	function traverse (type, renderObject)
 	{
-		X3DViewpointNode .prototype .traverse .call (this, type);
+		X3DViewpointNode .prototype .traverse .call (this, type, renderObject);
 
-		this .navigationInfoNode .traverse (type);
+		this .navigationInfoNode .traverse (type, renderObject);
 	}
 
 	function GeoViewpoint (executionContext)
@@ -273,16 +273,16 @@ function ($,
 		{
 			return (bbox .size .abs () / 2) / Math .tan (this .getFieldOfView () / 2);
 		},
-		getProjectionMatrix: function (zNear, zFar, viewport, limit)
+		getProjectionMatrixWithLimits: function (nearValue, farValue, viewport, limit)
 		{
 			if (limit)
-				return Camera .perspective (this .getFieldOfView (), zNear, zFar, viewport [2], viewport [3], this .projectionMatrix);
+				return Camera .perspective (this .getFieldOfView (), nearValue, farValue, viewport [2], viewport [3], this .projectionMatrix);
 				
-			// Linear interpolate zNear and zFar
+			// Linear interpolate nearValue and farValue
 
 			var
-				geoZNear = Math .max (Algorithm .lerp (Math .min (zNear, 1e4), 1e4, this .elevation / 1e7), 1),
-				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (zFar, 1e6),  this .elevation / 1e7), 1e6);
+				geoZNear = Math .max (Algorithm .lerp (Math .min (nearValue, 1e4), 1e4, this .elevation / 1e7), 1),
+				geoZFar  = Math .max (Algorithm .lerp (1e6, Math .max (farValue, 1e6),  this .elevation / 1e7), 1e6);
 
 			return Camera .perspective (this .getFieldOfView (), geoZNear, geoZFar, viewport [2], viewport [3], this .projectionMatrix);
 		},

@@ -208,9 +208,13 @@ function ($,
 		{
 			return this .userCenterOfRotation .assign (this .getCenterOfRotation ()) .add (this .centerOfRotationOffset_ .getValue ());
 		},
-		getTransformationMatrix: function ()
+		getProjectionMatrix: function (renderObject)
 		{
-			return this .transformationMatrix;
+			var navigationInfo = renderObject .getNavigationInfo ();
+	
+			return this .getProjectionMatrixWithLimits (navigationInfo .getNearValue (),
+                                                     navigationInfo .getFarValue (this),
+                                                     renderObject .getLayer () .getViewport () .getRectangle (renderObject .getBrowser ()));
 		},
 		getCameraSpaceMatrix: function ()
 		{
@@ -219,6 +223,10 @@ function ($,
 		getInverseCameraSpaceMatrix: function ()
 		{
 			return this .inverseCameraSpaceMatrix;
+		},
+		getTransformationMatrix: function ()
+		{
+			return this .transformationMatrix;
 		},
 		getUpVector: function ()
 		{
@@ -378,7 +386,7 @@ function ($,
 
 				Matrix4 .inverse (this .getTransformationMatrix ()) .multVecMatrix (point);
 
-				var minDistance = this .getBrowser () .getActiveLayer () .getNavigationInfo () .getNearPlane () * 2;
+				var minDistance = this .getBrowser () .getActiveLayer () .getNavigationInfo () .getNearValue () * 2;
 		
 				this .lookAt (point, minDistance, factor, straighten);
 			}
@@ -438,25 +446,11 @@ function ($,
 			else
 				this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
 		},
-		reshape: function ()
+		traverse: function (type, renderObject)
 		{
-			var navigationInfo = this .getCurrentNavigationInfo ();
-	
-			var projectionMatrix = this .getProjectionMatrix (navigationInfo .getNearPlane (),
-                                                           navigationInfo .getFarPlane (this),
-                                                           this .getCurrentViewport () .getRectangle ());
+			renderObject .getLayer () .getViewpoints () .push (this);
 
-			this .getBrowser () .getProjectionMatrix () .set (projectionMatrix);
-		},
-		transform: function ()
-		{
-			this .getBrowser () .getModelViewMatrix () .set (this .inverseCameraSpaceMatrix);
-		},
-		traverse: function (type)
-		{
-			this .getCurrentLayer () .getViewpoints () .push (this);
-
-			this .transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 		},
 		update: function ()
 		{

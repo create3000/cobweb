@@ -52,6 +52,7 @@ define ([
 	"cobweb/Browser/Text/X3DTextGeometry",
 	"cobweb/Browser/Text/TextAlignment",
 	"cobweb/Components/Texturing/PixelTexture",
+	"cobweb/Bits/TraverseType",
 	"standard/Math/Numbers/Vector2",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
@@ -64,6 +65,7 @@ function ($,
           X3DTextGeometry,
           TextAlignment,
           PixelTexture,
+          TraverseType,
           Vector2,
           Vector3,
           Rotation4,
@@ -191,11 +193,9 @@ function ($,
 			texCoords .length = 0;
 			text .getTexCoords () .push (texCoords);
 
-			this .getBBox () .getExtents (min, max);
-			text .getMin () .assign (min);
-			text .getMax () .assign (max);
+			// Triangle one and two.
 
-	      // Triangle one and two.
+			this .getBBox () .getExtents (min, max);
 
 			normals  .push (0, 0, 1,
 			                0, 0, 1,
@@ -322,10 +322,6 @@ function ($,
 				this .texture .setTexture (canvas .width, canvas .height, true, new Uint8Array (imageData .data), true);
 			else
 			   this .texture .clear ();
-
-			// Update Text extends.
-
-			//$("body") .append ("<br>") .append (this .canvas);
 		},
 		drawGlyph: function (cx, font, glyph, x, y, size)
 		{
@@ -415,75 +411,77 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		traverse: function (type)
+		transform: function (context)
 		{
-			try
+			// throws an exception
+
+			var
+				renderObject     = context .renderer,
+				text             = this .getText (),
+				fontStyle        = this .getFontStyle (),
+				projectionMatrix = renderObject .getProjectionMatrix () .get (),
+				modelViewMatrix  = context .modelViewMatrix,
+				viewport         = renderObject .getViewVolume () .getViewport (),
+				screenMatrix     = this .screenMatrix;
+
+			// Same as in ScreenGroup.
+
+			screenMatrix .assign (modelViewMatrix);
+			screenMatrix .get (translation, rotation, scale);
+
+			var screenScale = renderObject .getViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
+
+			screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
+		                                                         screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
+		                                                         screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
+
+			// Snap to whole pixel.
+
+			ViewVolume .projectPoint (Vector3 .Zero, screenMatrix, projectionMatrix, viewport, screenPoint);
+
+			screenPoint .x = Math .round (screenPoint .x);
+			screenPoint .y = Math .round (screenPoint .y);
+
+			ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, screenMatrix, projectionMatrix, viewport, screenPoint);
+
+			screenPoint .z = 0;
+			screenMatrix .translate (screenPoint);
+
+			// Assign modelViewMatrix and calculate relative matrix.
+
+			this .matrix .assign (modelViewMatrix) .inverse () .multLeft (screenMatrix);
+				
+			// Update Text bbox.
+
+			bbox .assign (this .getBBox ()) .multRight (this .matrix);
+
+			if (! bbox .equals (text .getBBox ()))
 			{
-				var
-					fontStyle        = this .getFontStyle (),
-					projectionMatrix = this .getBrowser () .getProjectionMatrix () .get (),
-					modelViewMatrix  = fontStyle .getModelViewMatrix (type, this .modelViewMatrix),
-					viewport         = fontStyle .getCurrentLayer () .getViewVolume () .getViewport ();
-
-				// Same as in ScreenGroup
-
-				this .screenMatrix .assign (modelViewMatrix);
-				this .screenMatrix .get (translation, rotation, scale);
-
-				var screenScale = fontStyle .getCurrentViewpoint () .getScreenScale (translation, viewport); // in meter/pixel
-
-				this .screenMatrix .set (translation, rotation, scale .set (screenScale .x * (Algorithm .signum (scale .x) < 0 ? -1 : 1),
-			                                                               screenScale .y * (Algorithm .signum (scale .y) < 0 ? -1 : 1),
-			                                                               screenScale .z * (Algorithm .signum (scale .z) < 0 ? -1 : 1)));
-
-				// Snap to whole pixel
-
-				ViewVolume .projectPoint (Vector3 .Zero, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-
-				screenPoint .x = Math .round (screenPoint .x);
-				screenPoint .y = Math .round (screenPoint .y);
-	
-				ViewVolume .unProjectPoint (screenPoint .x, screenPoint .y, screenPoint .z, this .screenMatrix, projectionMatrix, viewport, screenPoint);
-
-				screenPoint .z = 0;
-				this .screenMatrix .translate (screenPoint);
-
-				// Assign modelViewMatrix and calculate relative matrix
-
-				this .matrix .assign (modelViewMatrix) .inverse () .multLeft (this .screenMatrix);
-					
-				// Update Text bbox
-
-				bbox .assign (this .getBBox ()) .multRight (this .matrix);
-
-				if (! bbox .equals (this .getText () .getBBox ()))
-				{
-				   bbox .getExtents (min, max);
-					this .getText () .getMin ()  .assign (min);
-					this .getText () .getMax ()  .assign (max);
-					this .getText () .getBBox () .assign (bbox);
-					this .getText () .bbox_changed_ .addEvent ();
-				}
+			   bbox .getExtents (min, max);
+				text .getMin ()  .assign (min);
+				text .getMax ()  .assign (max);
+				text .getBBox () .assign (bbox);
+				text .bbox_changed_ .addEvent ();
 			}
-			catch (error)
-			{ }
+
+			return this .matrix;
 		},
 		display: function (context)
 		{
-			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
+			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .transform (context));
 
 		   context .textureNode          = this .texture;
 		   context .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
 		},
 		transformLine: function (line)
 		{
-		   try
-		   {
-				// Apply sceen nodes transformation in place here.
-				return line .multLineMatrix (Matrix4 .inverse (this .matrix));
-			}
-			catch (error)
-			{ }
+			// Apply sceen nodes transformation in place here.
+			return line .multLineMatrix (Matrix4 .inverse (this .matrix));
+		},
+		transformMatrix: function (matrix)
+		{
+			// Apply sceen nodes transformation in place here.
+			return matrix .multLeft (this .matrix);
 		},
 	});
 

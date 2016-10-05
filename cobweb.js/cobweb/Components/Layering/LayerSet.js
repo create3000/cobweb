@@ -199,7 +199,7 @@ function ($,
 					layerNode .bind ();
 			}
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			var layerNodes = this .layerNodes;
 
@@ -208,14 +208,14 @@ function ($,
 				for (var i = 0, length = layerNodes .length; i < length; ++ i)
 				{
 					this .getBrowser () .setLayerNumber (i);
-					layerNodes [i] .traverse (type);
+					layerNodes [i] .traverse (type, renderObject);
 				}
 			}
 			else
 			{
 				for (var i = 0, length = layerNodes .length; i < length; ++ i)
 				{
-					layerNodes [i] .traverse (type);
+					layerNodes [i] .traverse (type, renderObject);
 				}
 			}
 		},

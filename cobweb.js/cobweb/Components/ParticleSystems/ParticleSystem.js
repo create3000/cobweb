@@ -106,6 +106,7 @@ function ($,
 		invModelViewMatrix = new Matrix4 (),
 		billboardToScreen  = new Vector3 (0, 0, 0),
 		viewerYAxis        = new Vector3 (0, 0, 0),
+		vector             = new Vector3 (0, 0, 0),
 		normal             = new Vector3 (0, 0, 0),
 		s1                 = new Vector3 (0, 0, 0),
 		s2                 = new Vector3 (0, 0, 0),
@@ -153,7 +154,6 @@ function ($,
 		this .texCoordAnim             = false;
 		this .vertexCount              = 0;
 		this .shaderNode               = this .getBrowser () .getPointShader ();
-		this .modelViewMatrix          = new Matrix4 ();
 		this .rotation                 = new Matrix3 ();
 		this .particleSorter           = new QuickSort (this .particles, compareDistance);
 		this .sortParticles            = false;
@@ -205,6 +205,7 @@ function ($,
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
+			//this .getBrowser () .getDefaultShader () .addInterest (this, "set_shader__");
 
 			this .enabled_           .addInterest (this, "set_enabled__");
 			this .createParticles_   .addInterest (this, "set_createParticles__");
@@ -259,7 +260,8 @@ function ($,
 				default:
 				{
 					this .setTransparent ((this .getAppearance () && this .getAppearance () .transparent_ .getValue ()) ||
-					                      (this .colorRampNode && this .colorRampNode .isTransparent ()));
+					                      (this .colorRampNode && this .colorRampNode .isTransparent ()) ||
+					                      (this .geometryType === GEOMETRY && this .geometryNode && this .geometryNode .transparent_ .getValue ()));
 					break;
 				}
 			}
@@ -270,8 +272,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .addInterest (this, "animate");
-					this .getBrowser () .sensors () .addInterest (this, "update");
+					this .getBrowser () .sensors () .addInterest (this, "animateParticles");
 		
 					if (this .pauseTime)
 					{
@@ -284,8 +285,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .removeInterest (this, "animate");
-					this .getBrowser () .sensors () .removeInterest (this, "update");
+					this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
 		
 					if (this .pauseTime === 0)
 						this .pauseTime = performance .now () / 1000;
@@ -300,8 +300,7 @@ function ($,
 				{
 					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .addInterest (this, "animate");
-						this .getBrowser () .sensors () .addInterest (this, "update");
+						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
 			
 						this .pauseTime = 0;
 					}
@@ -317,8 +316,7 @@ function ($,
 				{
 					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .removeInterest (this, "animate");
-						this .getBrowser () .sensors () .removeInterest (this, "update");
+						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
 					}
 	
 					this .isActive_ = false;
@@ -455,6 +453,7 @@ function ($,
 			}
 
 			this .set_shader__ ();
+			this .set_transparent__ ();
 		},
 		set_shader__: function ()
 		{
@@ -668,7 +667,11 @@ function ($,
 
 			this .texCoordAnim = Boolean (texCoordKeys .length && this .texCoordRampNode);
 		},
-		animate: function ()
+		intersectsBox: function (box, clipPlanes)
+		{
+			// TODO: implement me.
+		},
+		animateParticles: function ()
 		{
 			var emitterNode = this .emitterNode;
 
@@ -753,22 +756,26 @@ function ($,
 
 			emitterNode .animate (this, deltaTime);
 
+			this .updateGeometry (null);
+
 			this .getBrowser () .addBrowserEvent (this);
 		},
-		update: function ()
+		updateGeometry: function (modelViewMatrix)
 		{
 			switch (this .geometryType)
 			{
 				case POINT:
-					this .updatePoint ();
+					if (! modelViewMatrix)
+						this .updatePoint ();
 					break;
 				case LINE:
-					this .updateLine ();
+					if (! modelViewMatrix)
+						this .updateLine ();
 					break;
 				case TRIANGLE:
 				case QUAD:
 				case SPRITE:
-					this .updateQuad ();
+					this .updateQuad (modelViewMatrix);
 					break;
 				case GEOMETRY:
 					break;
@@ -878,266 +885,298 @@ function ($,
 			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
 			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 		},
-		updateQuad: function ()
+		updateQuad: function (modelViewMatrix)
 		{
-			var
-				gl              = this .getBrowser () .getContext (),
-				particles       = this .particles,
-				maxParticles    = this .maxParticles,
-			   numParticles    = this .numParticles,
-				colorArray      = this .colorArray,
-				texCoordArray   = this .texCoordArray,
-				normalArray     = this .normalArray,
-				vertexArray     = this .vertexArray,
-				sx1_2           = this .particleSize_ .x / 2,
-				sy1_2           = this .particleSize_ .y / 2,
-				modelViewMatrix = this .modelViewMatrix;
-
-			// Sort particles
-
-			if (this .sortParticles)
-			{
-				for (var i = 0; i < numParticles; ++ i)
-				{
-					var particle = particles [i];
-					particle .distance = modelViewMatrix .getDepth (particle .position);
-				}
-				
-				// Expensisive function!!!
-				this .particleSorter .sort (0, numParticles);
-			}
-
-			// Colors
-
-			if (this .colorMaterial)
-			{
-				for (var i = 0; i < maxParticles; ++ i)
-				{
-					var
-						color = particles [i] .color,
-						i24   = i * 24;
-
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-
-					// p1, p2, p3; p1, p3, p4
-					colorArray [i24]     = colorArray [i24 + 4] = colorArray [i24 + 8]  = colorArray [i24 + 12] = colorArray [i24 + 16] = colorArray [i24 + 20] = color .x;
-					colorArray [i24 + 1] = colorArray [i24 + 5] = colorArray [i24 + 9]  = colorArray [i24 + 13] = colorArray [i24 + 17] = colorArray [i24 + 21] = color .y;
-					colorArray [i24 + 2] = colorArray [i24 + 6] = colorArray [i24 + 10] = colorArray [i24 + 14] = colorArray [i24 + 18] = colorArray [i24 + 22] = color .z;
-					colorArray [i24 + 3] = colorArray [i24 + 7] = colorArray [i24 + 11] = colorArray [i24 + 15] = colorArray [i24 + 19] = colorArray [i24 + 23] = color .w;
-				}
-	
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
-				gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
-			}
-
-			if (this .texCoordAnim && this .texCoordArray .length)
+			try
 			{
 				var
-					texCoordKeys = this .texCoordKeys,
-					texCoordRamp = this .texCoordRamp;
-
-				var
-					length = texCoordKeys .length,
-					index0 = 0;
-		
-				for (var i = 0; i < maxParticles; ++ i)
-				{
-					// Determine index0.
-		
-					var
-						particle = particles [i],
-						fraction = particle .elapsedTime / particle .lifetime,
-						color    = particle .color;
+					gl              = this .getBrowser () .getContext (),
+					particles       = this .particles,
+					maxParticles    = this .maxParticles,
+				   numParticles    = this .numParticles,
+					colorArray      = this .colorArray,
+					texCoordArray   = this .texCoordArray,
+					normalArray     = this .normalArray,
+					vertexArray     = this .vertexArray,
+					sx1_2           = this .particleSize_ .x / 2,
+					sy1_2           = this .particleSize_ .y / 2;
 	
-					if (length == 1 || fraction <= texCoordKeys [0])
+				// Sort particles
+	
+//				if (this .sortParticles) // always false
+//				{
+//					for (var i = 0; i < numParticles; ++ i)
+//					{
+//						var particle = particles [i];
+//						particle .distance = modelViewMatrix .getDepth (particle .position);
+//					}
+//					
+//					// Expensisive function!!!
+//					this .particleSorter .sort (0, numParticles);
+//				}
+	
+				// Colors
+	
+				if (! modelViewMatrix) // if called from animateParticles
+				{
+					if (this .colorMaterial)
 					{
-						index0 = 0;
+						for (var i = 0; i < maxParticles; ++ i)
+						{
+							var
+								color = particles [i] .color,
+								i24   = i * 24;
+		
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+		
+							// p1, p2, p3; p1, p3, p4
+							colorArray [i24]     = colorArray [i24 + 4] = colorArray [i24 + 8]  = colorArray [i24 + 12] = colorArray [i24 + 16] = colorArray [i24 + 20] = color .x;
+							colorArray [i24 + 1] = colorArray [i24 + 5] = colorArray [i24 + 9]  = colorArray [i24 + 13] = colorArray [i24 + 17] = colorArray [i24 + 21] = color .y;
+							colorArray [i24 + 2] = colorArray [i24 + 6] = colorArray [i24 + 10] = colorArray [i24 + 14] = colorArray [i24 + 18] = colorArray [i24 + 22] = color .z;
+							colorArray [i24 + 3] = colorArray [i24 + 7] = colorArray [i24 + 11] = colorArray [i24 + 15] = colorArray [i24 + 19] = colorArray [i24 + 23] = color .w;
+						}
+			
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .colorBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .colorArray, gl .STATIC_DRAW);
 					}
-					else if (fraction >= texCoordKeys [length - 1])
+		
+					if (this .texCoordAnim && this .texCoordArray .length)
 					{
-						index0 = length - 2;
-					}
-					else
-					{
-						var index = Algorithm .upperBound (texCoordKeys, 0, length, fraction, Algorithm .less);
-
-						if (index < length)
-							index0 = index - 1;
-						else
+						var
+							texCoordKeys = this .texCoordKeys,
+							texCoordRamp = this .texCoordRamp;
+		
+						var
+							length = texCoordKeys .length,
 							index0 = 0;
-					}
-
-					// Set texCoord.
+				
+						for (var i = 0; i < maxParticles; ++ i)
+						{
+							// Determine index0.
+				
+							var
+								particle = particles [i],
+								fraction = particle .elapsedTime / particle .lifetime,
+								color    = particle .color;
+			
+							if (length == 1 || fraction <= texCoordKeys [0])
+							{
+								index0 = 0;
+							}
+							else if (fraction >= texCoordKeys [length - 1])
+							{
+								index0 = length - 2;
+							}
+							else
+							{
+								var index = Algorithm .upperBound (texCoordKeys, 0, length, fraction, Algorithm .less);
 		
-					index0 *= this .texCoordCount;
-
-					var
-						texCoord1 = texCoordRamp [index0],
-						texCoord2 = texCoordRamp [index0 + 1],
-						texCoord3 = texCoordRamp [index0 + 2],
-						texCoord4 = texCoordRamp [index0 + 3],
-						i24 = i * 24;
-
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-
-					// p1
-					texCoordArray [i24]     = texCoordArray [i24 + 12] = texCoord1 .x;
-					texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = texCoord1 .y;
-					texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = texCoord1 .z;
-					texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = texCoord1 .w;
-
-					// p2
-					texCoordArray [i24 + 4] = texCoord2 .x;
-					texCoordArray [i24 + 5] = texCoord2 .y;
-					texCoordArray [i24 + 6] = texCoord2 .z;
-					texCoordArray [i24 + 7] = texCoord2 .w;
-
-					// p3
-					texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = texCoord3 .x;
-					texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = texCoord3 .y;
-					texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = texCoord3 .z;
-					texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = texCoord3 .w;
-
-					// p4
-					texCoordArray [i24 + 20] = texCoord4 .x;
-					texCoordArray [i24 + 21] = texCoord4 .y;
-					texCoordArray [i24 + 22] = texCoord4 .z;
-					texCoordArray [i24 + 23] = texCoord4 .w;
+								if (index < length)
+									index0 = index - 1;
+								else
+									index0 = 0;
+							}
+		
+							// Set texCoord.
+				
+							index0 *= this .texCoordCount;
+		
+							var
+								texCoord1 = texCoordRamp [index0],
+								texCoord2 = texCoordRamp [index0 + 1],
+								texCoord3 = texCoordRamp [index0 + 2],
+								texCoord4 = texCoordRamp [index0 + 3],
+								i24 = i * 24;
+		
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+		
+							// p1
+							texCoordArray [i24]     = texCoordArray [i24 + 12] = texCoord1 .x;
+							texCoordArray [i24 + 1] = texCoordArray [i24 + 13] = texCoord1 .y;
+							texCoordArray [i24 + 2] = texCoordArray [i24 + 14] = texCoord1 .z;
+							texCoordArray [i24 + 3] = texCoordArray [i24 + 15] = texCoord1 .w;
+		
+							// p2
+							texCoordArray [i24 + 4] = texCoord2 .x;
+							texCoordArray [i24 + 5] = texCoord2 .y;
+							texCoordArray [i24 + 6] = texCoord2 .z;
+							texCoordArray [i24 + 7] = texCoord2 .w;
+		
+							// p3
+							texCoordArray [i24 + 8]  = texCoordArray [i24 + 16] = texCoord3 .x;
+							texCoordArray [i24 + 9]  = texCoordArray [i24 + 17] = texCoord3 .y;
+							texCoordArray [i24 + 10] = texCoordArray [i24 + 18] = texCoord3 .z;
+							texCoordArray [i24 + 11] = texCoordArray [i24 + 19] = texCoord3 .w;
+		
+							// p4
+							texCoordArray [i24 + 20] = texCoord4 .x;
+							texCoordArray [i24 + 21] = texCoord4 .y;
+							texCoordArray [i24 + 22] = texCoord4 .z;
+							texCoordArray [i24 + 23] = texCoord4 .w;
+						}
+			
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
+						gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
+					}
 				}
-	
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .texCoordBuffers [0]);
-				gl .bufferData (gl .ARRAY_BUFFER, this .texCoordArray, gl .STATIC_DRAW);
-			}
-
-			// Vertices
-
-			if (this .geometryType === SPRITE)
-			{
-				// Normals
-
-				var
-					rotation = this .getScreenAlignedRotation (this .modelViewMatrix),
-					nx       = rotation [6],
-					ny       = rotation [7],
-					nz       = rotation [8];
-
-				for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
-				{
-					normalArray [i]     = nx;
-					normalArray [i + 1] = ny;
-					normalArray [i + 2] = nz;
-				}
-
-				gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
-				gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
 
 				// Vertices
-
-				s1 .set (-sx1_2, -sy1_2, 0);
-				s2 .set ( sx1_2, -sy1_2, 0);
-				s3 .set ( sx1_2,  sy1_2, 0);
-				s4 .set (-sx1_2,  sy1_2, 0);
-
-				rotation .multVecMatrix (s1);
-				rotation .multVecMatrix (s2);
-				rotation .multVecMatrix (s3);
-				rotation .multVecMatrix (s4);
-
-				for (var i = 0; i < numParticles; ++ i)
+	
+				if (this .geometryType === SPRITE)
 				{
-					var
-						position = particles [i] .position,
-						x        = position .x,
-						y        = position .y,
-						z        = position .z,
-						i24      = i * 24;
+					if (modelViewMatrix) // if called from depth or draw
+					{
+						// Normals
+		
+						var rotation = this .getScreenAlignedRotation (modelViewMatrix);
+		
+						normal
+							.set (rotation [0], rotation [1], rotation [2])
+							.cross (vector .set (rotation [4], rotation [5], rotation [6]))
+							.normalize ();
+		
+						var
+							nx = normal .x,
+							ny = normal .y,
+							nz = normal .z;
+		
+						for (var i = 0, length = 6 * 3 * maxParticles; i < length; i += 3)
+						{
+							normalArray [i]     = nx;
+							normalArray [i + 1] = ny;
+							normalArray [i + 2] = nz;
+						}
+		
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .normalBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .normalArray, gl .STATIC_DRAW);
+		
+						// Vertices
+		
+						s1 .set (-sx1_2, -sy1_2, 0);
+						s2 .set ( sx1_2, -sy1_2, 0);
+						s3 .set ( sx1_2,  sy1_2, 0);
+						s4 .set (-sx1_2,  sy1_2, 0);
+		
+						rotation .multVecMatrix (s1);
+						rotation .multVecMatrix (s2);
+						rotation .multVecMatrix (s3);
+						rotation .multVecMatrix (s4);
+		
+						for (var i = 0; i < numParticles; ++ i)
+						{
+							var
+								position = particles [i] .position,
+								x        = position .x,
+								y        = position .y,
+								z        = position .z,
+								i24      = i * 24;
+			
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+			
+		
+							// p1
+							vertexArray [i24]     = vertexArray [i24 + 12] = x + s1 .x;
+							vertexArray [i24 + 1] = vertexArray [i24 + 13] = y + s1 .y;
+							vertexArray [i24 + 2] = vertexArray [i24 + 14] = z + s1 .z;
+			
+							// p2
+							vertexArray [i24 + 4] = x + s2 .x;
+							vertexArray [i24 + 5] = y + s2 .y;
+							vertexArray [i24 + 6] = z + s2 .z;
+			
+							// p3
+							vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + s3 .x;
+							vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + s3 .y;
+							vertexArray [i24 + 10] = vertexArray [i24 + 18] = z + s3 .z;
+			
+							// p4
+							vertexArray [i24 + 20] = x + s4 .x;
+							vertexArray [i24 + 21] = y + s4 .y;
+							vertexArray [i24 + 22] = z + s4 .z;
+						}
 	
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-	
-
-					// p1
-					vertexArray [i24]     = vertexArray [i24 + 12] = x + s1 .x;
-					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y + s1 .y;
-					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z + s1 .z;
-	
-					// p2
-					vertexArray [i24 + 4] = x + s2 .x;
-					vertexArray [i24 + 5] = y + s2 .y;
-					vertexArray [i24 + 6] = z + s2 .z;
-	
-					// p3
-					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + s3 .x;
-					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + s3 .y;
-					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z + s3 .z;
-	
-					// p4
-					vertexArray [i24 + 20] = x + s4 .x;
-					vertexArray [i24 + 21] = y + s4 .y;
-					vertexArray [i24 + 22] = z + s4 .z;
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+					}
+				}
+				else
+				{
+					if (! modelViewMatrix) // if called from animateParticles
+					{
+						for (var i = 0; i < numParticles; ++ i)
+						{
+							var
+								position = particles [i] .position,
+								x        = position .x,
+								y        = position .y,
+								z        = position .z,
+								i24      = i * 24;
+			
+							// p4 ------ p3
+							// |       / |
+							// |     /   |
+							// |   /     |
+							// | /       |
+							// p1 ------ p2
+			
+							// p1
+							vertexArray [i24]     = vertexArray [i24 + 12] = x - sx1_2;
+							vertexArray [i24 + 1] = vertexArray [i24 + 13] = y - sy1_2;
+							vertexArray [i24 + 2] = vertexArray [i24 + 14] = z;
+			
+							// p2
+							vertexArray [i24 + 4] = x + sx1_2;
+							vertexArray [i24 + 5] = y - sy1_2;
+							vertexArray [i24 + 6] = z;
+			
+							// p3
+							vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + sx1_2;
+							vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + sy1_2;
+							vertexArray [i24 + 10] = vertexArray [i24 + 18] = z;
+			
+							// p4
+							vertexArray [i24 + 20] = x - sx1_2;
+							vertexArray [i24 + 21] = y + sy1_2;
+							vertexArray [i24 + 22] = z;
+						}
+			
+						gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
+						gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
+					}
 				}
 			}
-			else
+			catch (error)
 			{
-				for (var i = 0; i < numParticles; ++ i)
-				{
-					var
-						position = particles [i] .position,
-						x        = position .x,
-						y        = position .y,
-						z        = position .z,
-						i24      = i * 24;
-	
-					// p4 ------ p3
-					// |       / |
-					// |     /   |
-					// |   /     |
-					// | /       |
-					// p1 ------ p2
-	
-					// p1
-					vertexArray [i24]     = vertexArray [i24 + 12] = x - sx1_2;
-					vertexArray [i24 + 1] = vertexArray [i24 + 13] = y - sy1_2;
-					vertexArray [i24 + 2] = vertexArray [i24 + 14] = z;
-	
-					// p2
-					vertexArray [i24 + 4] = x + sx1_2;
-					vertexArray [i24 + 5] = y - sy1_2;
-					vertexArray [i24 + 6] = z;
-	
-					// p3
-					vertexArray [i24 + 8]  = vertexArray [i24 + 16] = x + sx1_2;
-					vertexArray [i24 + 9]  = vertexArray [i24 + 17] = y + sy1_2;
-					vertexArray [i24 + 10] = vertexArray [i24 + 18] = z;
-	
-					// p4
-					vertexArray [i24 + 20] = x - sx1_2;
-					vertexArray [i24 + 21] = y + sy1_2;
-					vertexArray [i24 + 22] = z;
-				}
+				console .log (error);
 			}
-
-			gl .bindBuffer (gl .ARRAY_BUFFER, this .vertexBuffer);
-			gl .bufferData (gl .ARRAY_BUFFER, this .vertexArray, gl .STATIC_DRAW);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (! this .isActive_ .getValue ())
 				return;
+
+			if (this .geometryType === GEOMETRY)
+			{
+				if (this .getGeometry ())
+					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
+				else
+					return;
+			}
 
 			switch (type)
 			{
@@ -1152,23 +1191,23 @@ function ($,
 				}
 				case TraverseType .DEPTH:
 				{
-					// TODO: to be implemented.
+					renderObject .addDepthShape (this);
 					break;
 				}
 				case TraverseType .DISPLAY:
 				{
-					this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-		
-					this .getCurrentLayer () .addShape (this);
+					if (renderObject .addDisplayShape (this))
+						this .getAppearance () .traverse (type, renderObject); // Currently used for GeneratedCubeMapTexture.
+
 					break;
 				}
 			}
 		},
-		display: function (context)
+		depth: function (context, shaderNode)
 		{
-			// Traverse appearance before everything.
+			// Update geometry if SPRITE.
 
-			this .getAppearance () .traverse (context);
+			this .updateGeometry (context .modelViewMatrix);
 
 			// Display geometry.
 
@@ -1177,77 +1216,118 @@ function ($,
 				var geometryNode = this .getGeometry ();
 
 				if (geometryNode)
-					geometryNode .displayParticles (context, this .particles, this .numParticles);
+					geometryNode .displayParticlesDepth (context, shaderNode, this .particles, this .numParticles);
 			}
 			else
 			{
-				var
-					browser    = this .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
-	
-				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
-	
 				if (this .numParticles === 0)
 					return;
-	
-				// Setup shader.
 
-				context .geometryType  = this .shaderGeometryType;
-				context .colorMaterial = this .colorMaterial;
-				shaderNode .setLocalUniforms (gl, context);
-	
+				var gl = context .renderer .getBrowser () .getContext ();
+
 				// Setup vertex attributes.
-	
-				if (this .colorMaterial)
-					shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-				if (this .texCoordArray .length)
-					shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
-
-				if (this .normalArray .length)
-					shaderNode .enableNormalAttribute (gl, this .normalBuffer);
 
 				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
 
-				var testWireframe = false;
-
-				switch (this .geometryType)
-				{
-					case POINT:
-					case LINE:
-						break;
-					case TRIANGLE:
-					case QUAD:
-					case SPRITE:
-						testWireframe = true;
-						break;
-					case GEOMETRY:
-						break;
-				}
-
-				if (shaderNode .wireframe && testWireframe)
-				{
-					// Wireframes are always solid so only one drawing call is needed.
+				gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
+			}
+		},
+		display: function (context)
+		{
+			try
+			{
+				// Traverse appearance before everything.
 	
-					for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
-						gl .drawArrays (shaderNode .primitiveMode, i, 3);
+				this .getAppearance () .display (context);
+	
+				// Update geometry if SPRITE.
+	
+				this .updateGeometry (context .modelViewMatrix);
+	
+				// Display geometry.
+	
+				if (this .geometryType === GEOMETRY)
+				{
+					var geometryNode = this .getGeometry ();
+	
+					if (geometryNode)
+						geometryNode .displayParticles (context, this .particles, this .numParticles);
 				}
 				else
 				{
-					var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
-		
-					gl .frontFace (positiveScale ? gl .CCW : gl .CW);
-					gl .enable (gl .CULL_FACE);
-					gl .cullFace (gl .BACK);
-		
-					gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
-				}
+					var
+						browser    = context .renderer .getBrowser (),
+						gl         = browser .getContext (),
+						shaderNode = context .shaderNode;
 	
-				shaderNode .disableColorAttribute    (gl);
-				shaderNode .disableTexCoordAttribute (gl);
-				shaderNode .disableNormalAttribute   (gl);
+					if (shaderNode === browser .getDefaultShader ())
+						shaderNode = this .shaderNode;
+		
+					if (this .numParticles === 0)
+						return;
+	
+					// Setup shader.
+	
+					context .geometryType  = this .shaderGeometryType;
+					context .colorMaterial = this .colorMaterial;
+					shaderNode .setLocalUniforms (gl, context);
+		
+					// Setup vertex attributes.
+		
+					if (this .colorMaterial)
+						shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+					if (this .texCoordArray .length)
+						shaderNode .enableTexCoordAttribute (gl, this .texCoordBuffers);
+	
+					if (this .normalArray .length)
+						shaderNode .enableNormalAttribute (gl, this .normalBuffer);
+	
+					shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+	
+					var testWireframe = false;
+	
+					switch (this .geometryType)
+					{
+						case POINT:
+						case LINE:
+							break;
+						case TRIANGLE:
+						case QUAD:
+						case SPRITE:
+							testWireframe = true;
+							break;
+						case GEOMETRY:
+							break;
+					}
+	
+					if (shaderNode .wireframe && testWireframe)
+					{
+						// Wireframes are always solid so only one drawing call is needed.
+		
+						for (var i = 0, length = this .numParticles * this .vertexCount; i < length; i += 3)
+							gl .drawArrays (shaderNode .primitiveMode, i, 3);
+					}
+					else
+					{
+						var positiveScale = Matrix4 .prototype .determinant3 .call (context .modelViewMatrix) > 0;
+			
+						gl .frontFace (positiveScale ? gl .CCW : gl .CW);
+						gl .enable (gl .CULL_FACE);
+						gl .cullFace (gl .BACK);
+			
+						gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
+					}
+		
+					shaderNode .disableColorAttribute    (gl);
+					shaderNode .disableTexCoordAttribute (gl);
+					shaderNode .disableNormalAttribute   (gl);
+				}
+			}
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
 			}
 		},
 		getScreenAlignedRotation: function (modelViewMatrix)

@@ -134,10 +134,10 @@ function ($,
 			else
 				this .setCameraObject (false);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (this .child)
-				this .child .traverse (type);
+				this .child .traverse (type, renderObject);
 		},
 	});
 

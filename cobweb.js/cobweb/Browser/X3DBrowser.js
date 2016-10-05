@@ -126,7 +126,12 @@ function ($,
 		{
 			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
 
-			var urlCharacters = this .getElement () [0] .getAttribute ("url");
+			var urlCharacters = this .getElement () [0] .getAttribute ("src");
+
+			if (urlCharacters)
+				urlCharacters = '"' + urlCharacters + '"';
+			else
+				urlCharacters = this .getElement () [0] .getAttribute ("url");
 
 			if (urlCharacters)
 			{
@@ -391,10 +396,6 @@ function ($,
 			}
 			.bind (this));
 		},
-		getRenderingProperty: function (name)
-		{
-			this .getRenderingProperties () .getField (name) .getValue ();
-		},
 		addBrowserListener: function (callback, object)
 		{
 			// The string describes the name of the callback function to be called within the current ECMAScript context. 
@@ -426,6 +427,14 @@ function ($,
 		getBrowserOption: function (name)
 		{
 			return this .getBrowserOptions () .getField (name) .getValue ();
+		},
+		getBrowserProperty: function (name)
+		{
+			return this .getBrowserProperties () .getField (name) .getValue ();
+		},
+		getRenderingProperty: function (name)
+		{
+			this .getRenderingProperties () .getField (name) .getValue ();
 		},
 		firstViewpoint: function ()
 		{

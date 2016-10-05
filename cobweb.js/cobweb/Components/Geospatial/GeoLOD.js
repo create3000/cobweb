@@ -282,28 +282,26 @@ function ($,
 			if (loaded === 4)
 				this .childrenLoaded = true;
 		},
-		getLevel: function ()
+		getLevel: function (modelViewMatrix)
 		{
-			var distance = this .getDistance ();
+			var distance = this .getDistance (modelViewMatrix);
 		
 			if (distance < this .range_ .getValue ())
 				return 1;
 		
 			return 0;
 		},
-		getDistance: function (type)
+		getDistance: function (modelViewMatrix)
 		{
-			var modelViewMatrix = this .modelViewMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
-
 			modelViewMatrix .translate (this .getCoord (this .center_ .getValue (), center));
 
 			return modelViewMatrix .origin .abs ();
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type == TraverseType .DISPLAY)
 			{
-				var level = this .getLevel ();
+				var level = this .getLevel (this .modelViewMatrix .assign (renderObject .getModelViewMatrix () .get ()));
 			
 				if (level !== this .level_changed_ .getValue ())
 				{
@@ -350,18 +348,18 @@ function ($,
 				case 0:
 				{
 					if (this .rootNode_ .length)
-						this .rootGroup .traverse (type);
+						this .rootGroup .traverse (type, renderObject);
 					else
-						this .rootInline .traverse (type);
+						this .rootInline .traverse (type, renderObject);
 		
 					break;
 				}
 				case 1:
 				{
-					this .child1Inline .traverse (type);
-					this .child2Inline .traverse (type);
-					this .child3Inline .traverse (type);
-					this .child4Inline .traverse (type);
+					this .child1Inline .traverse (type, renderObject);
+					this .child2Inline .traverse (type, renderObject);
+					this .child3Inline .traverse (type, renderObject);
+					this .child4Inline .traverse (type, renderObject);
 					break;
 				}
 			}

@@ -76,83 +76,105 @@ function ($,
 		{
 			this .shaderNode = value;
 		},
-		depth: function (shaderNode)
-		{ },
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
+		{
+			return false;
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			return false;
+		},
 		display: function (context)
 		{
-			var
-				browser    = this .getBrowser (),
-				gl         = browser .getContext (),
-				shaderNode = context .shaderNode;
-
-			if (shaderNode === browser .getDefaultShader ())
-				shaderNode = this .shaderNode;
-
-			// Setup shader.
-
-			context .geometryType  = this .getGeometryType ();
-			context .colorMaterial = this .getColors () .length;
-			shaderNode .setLocalUniforms (gl, context);
-
-			// Setup vertex attributes.
-
-			if (this .colors .length)
-				shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-			shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
-
-			// Wireframes are always solid so only one drawing call is needed.
-
-			gl .drawArrays (shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
-
-			shaderNode .disableColorAttribute (gl);
+			try
+			{
+				var
+					browser    = context .renderer .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
+	
+				if (shaderNode === browser .getDefaultShader ())
+					shaderNode = this .shaderNode;
+	
+				// Setup shader.
+	
+				context .geometryType  = this .getGeometryType ();
+				context .colorMaterial = this .getColors () .length;
+				shaderNode .setLocalUniforms (gl, context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colors .length)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+	
+				// Wireframes are always solid so only one drawing call is needed.
+	
+				gl .drawArrays (shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode, 0, this .vertexCount);
+	
+				shaderNode .disableColorAttribute (gl);
+			}
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
+			}
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
-			var
-				browser    = this .getBrowser (),
-				gl         = browser .getContext (),
-				shaderNode = context .shaderNode;
-
-			if (shaderNode === browser .getDefaultShader ())
-				shaderNode = this .shaderNode;
-
-			// Setup shader.
-
-			context .geometryType  = this .getGeometryType ();
-			context .colorMaterial = this .colors .length;
-			shaderNode .setLocalUniforms (gl, context);
-
-			// Setup vertex attributes.
-
-			if (this .colors .length)
-				shaderNode .enableColorAttribute (gl, this .colorBuffer);
-
-			shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
-
-			// Wireframes are always solid so only one drawing call is needed.
-
-			var
-				modelViewMatrix = context .modelViewMatrix,
-				x               = modelViewMatrix [12],
-				y               = modelViewMatrix [13],
-				z               = modelViewMatrix [14],
-				primitiveMode   = shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
-
-			for (var p = 0; p < numParticles; ++ p)
+			try
 			{
-				modelViewMatrix [12] = x;
-				modelViewMatrix [13] = y;
-				modelViewMatrix [14] = z;
-
-				Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
-
-				gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+				var
+					browser    = context .renderer .getBrowser (),
+					gl         = browser .getContext (),
+					shaderNode = context .shaderNode;
 	
-				gl .drawArrays (primitiveMode, 0, this .vertexCount);
+				if (shaderNode === browser .getDefaultShader ())
+					shaderNode = this .shaderNode;
+	
+				// Setup shader.
+	
+				context .geometryType  = this .getGeometryType ();
+				context .colorMaterial = this .colors .length;
+				shaderNode .setLocalUniforms (gl, context);
+	
+				// Setup vertex attributes.
+	
+				if (this .colors .length)
+					shaderNode .enableColorAttribute (gl, this .colorBuffer);
+	
+				shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+	
+				// Wireframes are always solid so only one drawing call is needed.
+	
+				var
+					modelViewMatrix = context .modelViewMatrix,
+					x               = modelViewMatrix [12],
+					y               = modelViewMatrix [13],
+					z               = modelViewMatrix [14],
+					primitiveMode   = shaderNode .primitiveMode === gl .POINTS ? gl .POINTS : this .primitiveMode;
+	
+				for (var p = 0; p < numParticles; ++ p)
+				{
+					modelViewMatrix [12] = x;
+					modelViewMatrix [13] = y;
+					modelViewMatrix [14] = z;
+	
+					Matrix4 .prototype .translate .call (modelViewMatrix, particles [p] .position);
+	
+					gl .uniformMatrix4fv (shaderNode .x3d_ModelViewMatrix, false, modelViewMatrix);
+		
+					gl .drawArrays (primitiveMode, 0, this .vertexCount);
+				}
+	
+				shaderNode .disableColorAttribute (gl);
 			}
-
-			shaderNode .disableColorAttribute (gl);
+			catch (error)
+			{
+				// Catch error from setLocalUniforms.
+				console .log (error);
+			}
 		},
 	});
 

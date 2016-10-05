@@ -255,9 +255,9 @@ function ($,
 			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
 			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .textureNode .traverse ();
+			this .textureNode .traverse (type, renderObject);
 		},
 		display: function (context)
 		{
@@ -265,7 +265,7 @@ function ($,
 			context .materialNode         = this .materialNode;
 			context .textureNode          = this .textureNode;
 			context .textureTransformNode = this .textureTransformNode;
-			context .shaderNode           = this .shaderNode || this .getBrowser () .getDefaultShader ();
+			context .shaderNode           = this .shaderNode || context .renderer .getBrowser () .getDefaultShader ();
 		},
 	});
 

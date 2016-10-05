@@ -145,9 +145,9 @@ function ($,
 		{
 			this .geoCoord_changed_ = this .getGeoCoord (this .proximitySensor .position_changed_ .getValue (), geoCoord);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
-			this .proximitySensor .traverse (type);
+			this .proximitySensor .traverse (type, renderObject);
 		},
 	});
 

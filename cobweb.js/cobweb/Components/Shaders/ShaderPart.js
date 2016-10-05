@@ -164,11 +164,11 @@ function ($,
 				{
 					var gl = this .getBrowser () .getContext ();
 
-					gl .shaderSource (this .shader, Shader .getShaderSource (data));
+					gl .shaderSource (this .shader, Shader .getShaderSource (this .getBrowser (), data));
 					gl .compileShader (this .shader);
 	
 					this .valid = gl .getShaderParameter (this .shader, gl .COMPILE_STATUS);
-	
+
 					if (! this .valid)
 						throw new Error (this .getTypeName () + " '" + this .getName () + "': " + gl .getShaderInfoLog (this .shader));
 
@@ -176,7 +176,6 @@ function ($,
 				}
 			}
 			.bind (this));
-
 		},
 	});
 

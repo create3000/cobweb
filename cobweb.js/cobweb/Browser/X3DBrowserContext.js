@@ -257,12 +257,12 @@ function ($,
 			this .processEvents ();
 
 			var t1 = performance .now ();
-			this .world .traverse (TraverseType .CAMERA);
+			this .world .traverse (TraverseType .CAMERA ,null);
 			this .cameraTime = performance .now () - t1;
 
 			var t2 = performance .now ();
 			if (this .getCollisionCount ())
-				this .world .traverse (TraverseType .COLLISION);
+				this .world .traverse (TraverseType .COLLISION, null);
 			this .collisionTime = performance .now () - t2;
 
 			this .sensors_ .processInterests ();
@@ -274,7 +274,7 @@ function ($,
 			var t3 = performance .now ();
 			gl .clearColor (0, 0, 0, 0);
 			gl .clear (gl .COLOR_BUFFER_BIT);
-			this .world .traverse (TraverseType .DISPLAY);
+			this .world .traverse (TraverseType .DISPLAY, null);
 			this .displayTime = performance .now () - t3;
 
 			this .browserTime     = performance .now () - t0;

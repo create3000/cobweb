@@ -135,7 +135,7 @@ function ($,
 
 			this .sourceNode = X3DCast (X3DConstants .X3DSoundSourceNode, this .source_);
 		},
-		traverse: function (type)
+		traverse: function (type, renderObject)
 		{
 			if (type !== TraverseType .DISPLAY)
 				return;
@@ -148,8 +148,10 @@ function ($,
 
 			try
 			{
-				this .getEllipsoidParameter (this .maxBack_ .getValue (), this .maxFront_ .getValue (), this .max);
-				this .getEllipsoidParameter (this .minBack_ .getValue (), this .minFront_ .getValue (), this .min);
+				var modelViewMatrix = renderObject .getModelViewMatrix () .get ();
+
+				this .getEllipsoidParameter (modelViewMatrix, this .maxBack_ .getValue (), this .maxFront_ .getValue (), this .max);
+				this .getEllipsoidParameter (modelViewMatrix, this .minBack_ .getValue (), this .minFront_ .getValue (), this .min);
 
 				if (this .max .distance < this .max .radius)
 				{
@@ -173,7 +175,7 @@ function ($,
 			   console .log (error);
 			}
 		},
-		getEllipsoidParameter: function (back, front, value)
+		getEllipsoidParameter: function (modelViewMatrix, back, front, value)
 		{
 			/*
 			 * http://de.wikipedia.org/wiki/Ellipse
@@ -193,7 +195,7 @@ function ($,
 
 			var transformationMatrix = this .transformationMatrix;
 
-			transformationMatrix .assign (this .getBrowser () .getModelViewMatrix () .get ());
+			transformationMatrix .assign (modelViewMatrix);
 			transformationMatrix .translate (this .location_ .getValue ());
 			transformationMatrix .rotate (this .rotation);
 

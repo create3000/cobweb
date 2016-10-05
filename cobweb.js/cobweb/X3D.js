@@ -106,6 +106,22 @@ function ($,
 	if (! console .warn)  console .warn  = console .log;
 	if (! console .error) console .error = console .log;
 
+	// DEBUG
+	//	function print ()
+	//	{
+	//		var string = "";
+	//
+	//		for (var i = 0; i < arguments .length; ++ i)
+	//			string += arguments [i];
+	//
+	//		$(".cobweb-console") .append (string);
+	//	}
+	//
+	//	console .log   = print;
+	//	console .info  = print;
+	//	console .warn  = print;
+	//	console .error = print;
+
 	// X3D
 
 	function getBrowser (dom)
@@ -149,8 +165,8 @@ function ($,
 
 		$(function ()
 		{
-			var elements = $("X3D");
-		
+			var elements = $("X3DCanvas");
+
 			try
 			{
 				var browsers = $.map (elements, createBrowser);
