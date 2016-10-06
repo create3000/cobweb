@@ -69,8 +69,6 @@ function ($,
 	X3DDragSensorNode .prototype = $.extend (Object .create (X3DPointingDeviceSensorNode .prototype),
 	{
 		constructor: X3DDragSensorNode,
-		set_motion__: function (hit)
-		{ }
 	});
 
 	return X3DDragSensorNode;

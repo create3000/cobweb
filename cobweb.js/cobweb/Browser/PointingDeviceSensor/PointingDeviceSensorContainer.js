@@ -47,38 +47,17 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
-[
+define ([
 	"jquery",
-	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
-	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
-          X3DPointingDeviceSensorNode, 
-          X3DConstants)
+          Vector4,
+          Matrix4)
 {
 "use strict";
+	
 
-	function X3DTouchSensorNode (executionContext)
-	{
-		X3DPointingDeviceSensorNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DTouchSensorNode);
-	}
-
-	X3DTouchSensorNode .prototype = $.extend (Object .create (X3DPointingDeviceSensorNode .prototype),
-	{
-		constructor: X3DTouchSensorNode,
-		set_active__: function (active, hit)
-		{
-			X3DPointingDeviceSensorNode .prototype .set_active__ .call (this, active, hit);
-
-			if (this .enabled_ .getValue () && this .isOver_ .getValue () && ! active)
-				this .touchTime_ = this .getBrowser () .getCurrentTime ();
-		},
-	});
-
-	return X3DTouchSensorNode;
+	return PointingDeviceSensorContainer;
 });
-
-

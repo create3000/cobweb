@@ -1236,6 +1236,8 @@
     <None Include="tests\Components\Navigation\WalkViewer.x3d" />
     <None Include="tests\Components\Shaders\Pipeline.x3d" />
     <None Include="cobweb\Browser\Core\BrowserProperties.js" />
+    <None Include="cobweb\Browser\PointingDeviceSensor\PointingDeviceSensorContainer.js" />
+    <None Include="tests\Components\PointingDeviceSensor\ClonedSensors.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

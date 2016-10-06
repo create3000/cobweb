@@ -832,7 +832,7 @@ function ($,
 			var clipPlanes = this .getBrowser () .getClipPlanes ();
 
 			for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-			   clipPlanes [i] .recycle ();
+			   clipPlanes [i] .dispose ();
 
 			clipPlanes .length = 0;
 
@@ -841,7 +841,7 @@ function ($,
 			var lights = this .getGlobalLights ();
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .recycle ();
+			   lights [i] .dispose ();
 
 			lights .length = 0;
 
@@ -850,7 +850,7 @@ function ($,
 			var lights = this .getBrowser () .getLocalLights ();
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .recycle ();
+			   lights [i] .dispose ();
 
 			lights .length = 0;
 

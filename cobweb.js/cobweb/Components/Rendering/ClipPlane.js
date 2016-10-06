@@ -117,7 +117,7 @@ function ($,
 
 			gl .uniform4f (shaderObject .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
-		recycle: function ()
+		dispose: function ()
 		{
 		   ClipPlanes .push (this);
 		},

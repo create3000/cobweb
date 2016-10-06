@@ -75,7 +75,7 @@ function (Fields,
 		var light = new DirectionalLight (executionContext);
 		light .setup ();
 		var headlight = light .getLights () .pop (executionContext .getBrowser (), light, null, Matrix4 .Identity);
-		headlight .recycle = function () { };
+		headlight .dispose = function () { };
 		return headlight;
 	};
 

@@ -202,7 +202,7 @@ function ($,
 			this .activeSensors = nearestHit .sensors;
 
 			for (var key in this .activeSensors)
-				this .activeSensors [key] .set_active__ (nearestHit, true);
+				this .activeSensors [key] .set_active__ (true, nearestHit);
 
 			return ! $.isEmptyObject (nearestHit .sensors);
 		},
@@ -211,7 +211,10 @@ function ($,
 			this .selectedLayer = null;
 
 			for (var key in this .activeSensors)
-				this .activeSensors [key] .set_active__ (null, false);
+			{
+				this .activeSensors [key] .set_active__ (false, null);
+				this .activeSensors [key] .dispose ();
+			}
 
 			this .activeSensors = { };
 
@@ -281,7 +284,10 @@ function ($,
 				var difference = $.extend ({ }, this .overSensors);
 
 			for (var key in difference)
-				difference [key] .set_over__ (nearestHit, false);
+			{
+				difference [key] .set_over__ (false, nearestHit);
+				difference [key] .dispose ();
+			}
 
 			// Set isOver to TRUE for appropriate nodes
 
@@ -290,7 +296,7 @@ function ($,
 				this .overSensors = nearestHit .sensors;
 
 				for (var key in this .overSensors)
-					this .overSensors [key] .set_over__ (nearestHit, true);
+					this .overSensors [key] .set_over__ (true, nearestHit);
 			}
 			else
 				this .overSensors = { };
@@ -299,12 +305,7 @@ function ($,
 
 			for (var key in this .activeSensors)
 			{
-				var dragSensorNode = this .activeSensors [key];
-
-				if (dragSensorNode .getType () .indexOf (X3DConstants .X3DDragSensorNode) === -1)
-					continue;
-
-				dragSensorNode .set_motion__ (nearestHit);
+				this .activeSensors [key] .set_motion__ (nearestHit);
 			}
 		},
 	};
