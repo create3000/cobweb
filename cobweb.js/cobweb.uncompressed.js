@@ -47119,7 +47119,7 @@ function ($,
 			this .activeSensors = nearestHit .sensors;
 
 			for (var key in this .activeSensors)
-				this .activeSensors [key] .set_active__ (nearestHit, true);
+				this .activeSensors [key] .set_active__ (true, nearestHit);
 
 			return ! $.isEmptyObject (nearestHit .sensors);
 		},
@@ -47128,7 +47128,10 @@ function ($,
 			this .selectedLayer = null;
 
 			for (var key in this .activeSensors)
-				this .activeSensors [key] .set_active__ (null, false);
+			{
+				this .activeSensors [key] .set_active__ (false, null);
+				this .activeSensors [key] .dispose ();
+			}
 
 			this .activeSensors = { };
 
@@ -47198,7 +47201,10 @@ function ($,
 				var difference = $.extend ({ }, this .overSensors);
 
 			for (var key in difference)
-				difference [key] .set_over__ (nearestHit, false);
+			{
+				difference [key] .set_over__ (false, nearestHit);
+				difference [key] .dispose ();
+			}
 
 			// Set isOver to TRUE for appropriate nodes
 
@@ -47207,7 +47213,7 @@ function ($,
 				this .overSensors = nearestHit .sensors;
 
 				for (var key in this .overSensors)
-					this .overSensors [key] .set_over__ (nearestHit, true);
+					this .overSensors [key] .set_over__ (true, nearestHit);
 			}
 			else
 				this .overSensors = { };
@@ -47216,12 +47222,7 @@ function ($,
 
 			for (var key in this .activeSensors)
 			{
-				var dragSensorNode = this .activeSensors [key];
-
-				if (dragSensorNode .getType () .indexOf (X3DConstants .X3DDragSensorNode) === -1)
-					continue;
-
-				dragSensorNode .set_motion__ (nearestHit);
+				this .activeSensors [key] .set_motion__ (nearestHit);
 			}
 		},
 	};
@@ -54524,7 +54525,7 @@ function ($,
 			else
 				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
-		recycle: function ()
+		dispose: function ()
 		{
 			// Return shadowBuffer and textureUnit.
 
@@ -54666,7 +54667,7 @@ function (Fields,
 		var light = new DirectionalLight (executionContext);
 		light .setup ();
 		var headlight = light .getLights () .pop (executionContext .getBrowser (), light, null, Matrix4 .Identity);
-		headlight .recycle = function () { };
+		headlight .dispose = function () { };
 		return headlight;
 	};
 
@@ -67136,7 +67137,7 @@ function ($,
 			var clipPlanes = this .getBrowser () .getClipPlanes ();
 
 			for (var i = 0, length = clipPlanes .length; i < length; ++ i)
-			   clipPlanes [i] .recycle ();
+			   clipPlanes [i] .dispose ();
 
 			clipPlanes .length = 0;
 
@@ -67145,7 +67146,7 @@ function ($,
 			var lights = this .getGlobalLights ();
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .recycle ();
+			   lights [i] .dispose ();
 
 			lights .length = 0;
 
@@ -67154,7 +67155,7 @@ function ($,
 			var lights = this .getBrowser () .getLocalLights ();
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .recycle ();
+			   lights [i] .dispose ();
 
 			lights .length = 0;
 
@@ -71240,22 +71241,62 @@ define ("cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           X3DSensorNode, 
           X3DConstants,
           Vector4,
-          Matrix4)
+          Matrix4,
+          ObjectCache)
 {
 
+
+	var PointingDeviceSensors = ObjectCache (PointingDeviceSensorContainer);
+
+	function PointingDeviceSensorContainer (node, modelViewMatrix, projectionMatrix, viewport)
+	{
+		this .node             = null;
+		this .modelViewMatrix  = new Matrix4 ();
+		this .projectionMatrix = new Matrix4 ();
+		this .viewport         = new Vector4 (0, 0, 0, 0);
+
+		this .set (node, modelViewMatrix, projectionMatrix, viewport);
+	}
+
+	PointingDeviceSensorContainer .prototype =
+	{
+		set: function (node, modelViewMatrix, projectionMatrix, viewport)
+		{
+			this .node = node;
+
+			this .modelViewMatrix  .assign (modelViewMatrix);
+			this .projectionMatrix .assign (projectionMatrix);
+			this .viewport         .assign (viewport);
+		},
+		set_over__: function (over, hit)
+		{
+			this .node .set_over__ (over, hit, this .modelViewMatrix, this .projectionMatrix, this .viewport);
+		},
+		set_active__: function (active, hit)
+		{
+			this .node .set_active__ (active, hit, this .modelViewMatrix, this .projectionMatrix, this .viewport);
+		},
+		set_motion__: function (hit)
+		{
+			this .node .set_motion__ (hit, this .modelViewMatrix, this .projectionMatrix, this .viewport);
+		},
+		dispose: function ()
+		{
+		   PointingDeviceSensors .push (this);
+		},
+	};
 
 	function X3DPointingDeviceSensorNode (executionContext)
 	{
 		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPointingDeviceSensorNode);
-
-		this .matrices = { };
 	}
 
 	X3DPointingDeviceSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
@@ -71282,45 +71323,31 @@ function ($,
 			if (this .isOver_ .getValue ())
 				this .isOver_ = false;
 		},
-		set_over__: function (hit, value)
+		set_over__: function (over, hit)
 		{
-			if (value !== this .isOver_ .getValue ())
+			if (over !== this .isOver_ .getValue ())
 			{
-				this .isOver_ = value;
+				this .isOver_ = over;
 
 				if (this .isOver_ .getValue ())
 					this .getBrowser () .getNotification () .string_ = this .description_;
 			}
 		},
-		set_active__: function (hit, value)
+		set_active__: function (active, hit)
 		{
-			if (value !== this .isActive_ .getValue ())
-				this .isActive_ = value;
+			if (active !== this .isActive_ .getValue ())
+				this .isActive_ = active
 		},
+		set_motion__: function (hit)
+		{ },
 		push: function (renderObject, sensors)
 		{
 			if (this .enabled_ .getValue ())
 			{
-				var currentLayer = renderObject .getLayer ();
-
-				sensors [this .getId ()] = this;
-
-				// Create a matrix set for each layer if needed in the case the sensor is cloned over multiple layers.
-
-				if (! this .matrices .hasOwnProperty (currentLayer .getId ()))
-				{
-					this .matrices [currentLayer .getId ()] = {
-						modelViewMatrix:  new Matrix4 (),
-						projectionMatrix: new Matrix4 (),
-						viewport:         new Vector4 (),
-					};
-				}
-
-				var matrices = this .matrices [currentLayer .getId ()];
-
-				matrices .modelViewMatrix  .assign (renderObject .getModelViewMatrix  () .get ());
-				matrices .projectionMatrix .assign (renderObject .getProjectionMatrix () .get ());
-				matrices .viewport         .assign (renderObject .getViewVolume () .getViewport ());
+				sensors [this .getId ()] = PointingDeviceSensors .pop (this,
+				                                                       renderObject .getModelViewMatrix  () .get (),
+				                                                       renderObject .getProjectionMatrix () .get (),
+				                                                       renderObject .getViewVolume () .getViewport ());
 			}
 		},
 	});
@@ -71401,11 +71428,11 @@ function ($,
 	X3DTouchSensorNode .prototype = $.extend (Object .create (X3DPointingDeviceSensorNode .prototype),
 	{
 		constructor: X3DTouchSensorNode,
-		set_active__: function (hit, value)
+		set_active__: function (active, hit)
 		{
-			X3DPointingDeviceSensorNode .prototype .set_active__ .call (this, hit, value);
+			X3DPointingDeviceSensorNode .prototype .set_active__ .call (this, active, hit);
 
-			if (this .enabled_ .getValue () && this .isOver_ .getValue () && ! value)
+			if (this .enabled_ .getValue () && this .isOver_ .getValue () && ! active)
 				this .touchTime_ = this .getBrowser () .getCurrentTime ();
 		},
 	});
@@ -71519,17 +71546,15 @@ function ($,
 		{
 			return "children";
 		},
-		set_over__: function (hit, value)
+		set_over__: function (over, hit, modelViewMatrix, projectionMatrix, viewport)
 		{
 			try
 			{
-				X3DTouchSensorNode .prototype .set_over__ .call (this, hit, value);
+				X3DTouchSensorNode .prototype .set_over__ .call (this, hit, over);
 
 				if (this .isOver_ .getValue ())
 				{
-					var
-						intersection    = hit .intersection,
-						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+					var intersection = hit .intersection;
 
 					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
@@ -75103,7 +75128,7 @@ function ($,
 
 			gl .uniform4f (shaderObject .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
-		recycle: function ()
+		dispose: function ()
 		{
 		   ClipPlanes .push (this);
 		},
@@ -78683,8 +78708,6 @@ function ($,
 	X3DDragSensorNode .prototype = $.extend (Object .create (X3DPointingDeviceSensorNode .prototype),
 	{
 		constructor: X3DDragSensorNode,
-		set_motion__: function (hit)
-		{ }
 	});
 
 	return X3DDragSensorNode;
@@ -79039,18 +79062,16 @@ function ($,
 			else
 				return -rotation .angle;
 		},
-		set_active__: function (hit, active)
+		set_active__: function (active, hit, modelViewMatrix, projectionMatrix, viewport)
 		{
-			X3DDragSensorNode .prototype .set_active__ .call (this, hit, active);
+			X3DDragSensorNode .prototype .set_active__ .call (this, active, hit, modelViewMatrix, projectionMatrix, viewport);
 
 			try
 			{
 				if (this .isActive_ .getValue ())
 				{
-					var matrices = this .getMatrices () [hit .layer .getId ()];
-
-					this .modelViewMatrix .assign (matrices .modelViewMatrix);
-					this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
+					this .modelViewMatrix .assign (modelViewMatrix);
+					this .invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 					var
 						hitRay   = hit .hitRay .copy () .multLineMatrix (this .invModelViewMatrix),
@@ -83224,17 +83245,15 @@ function ($,
 			X3DTouchSensorNode  .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 		},
-		set_over__: function (hit, value)
+		set_over__: function (over, hit, modelViewMatrix, projectionMatrix, viewport)
 		{
 			try
 			{
-				X3DTouchSensorNode .prototype .set_over__ .call (this, hit, value);
+				X3DTouchSensorNode .prototype .set_over__ .call (this, over, hit);
 
 				if (this .isOver_ .getValue ())
 				{
-					var
-						intersection    = hit .intersection,
-						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+					var intersection = hit .intersection;
 
 					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
@@ -85694,8 +85713,7 @@ function ($,
 				if (this .parent)
 					return this .parent .getOffsetUnitX ();
 		
-				else
-					return FRACTION;
+				return FRACTION;
 			}
 
 			return this .offsetUnitX;
@@ -85706,9 +85724,8 @@ function ($,
 			{
 				if (this .parent)
 					return this .parent .getOffsetUnitY ();
-		
-				else
-					return FRACTION;
+	
+				return FRACTION;
 			}
 		
 			return this .offsetUnitY;
@@ -85720,8 +85737,7 @@ function ($,
 				if (this .parent)
 					return this .parent .getSizeUnitX ();
 		
-				else
-					return FRACTION;
+				return FRACTION;
 			}
 		
 			return this .sizeUnitX;
@@ -85734,15 +85750,14 @@ function ($,
 		{
 			return this .offsetY;
 		},
-		getSizeUnitY: function ()
+		getSizeUnitX: function ()
 		{
 			if (this .sizeUnitX === WORLD)
 			{
 				if (this .parent)
 					return this .parent .getSizeUnitX ();
 		
-				else
-					return FRACTION;
+				return FRACTION;
 			}
 		
 			return this .sizeUnitX;
@@ -85754,8 +85769,7 @@ function ($,
 				if (this .parent)
 					return this .parent .getSizeUnitY ();
 		
-				else
-					return FRACTION;
+				return FRACTION;
 			}
 		
 			return this .sizeUnitY;
@@ -90870,20 +90884,18 @@ function ($,
 
 			return line .getClosestPointToLine (trackPointLine, trackPoint);
 		},
-		set_active__: function (hit, active)
+		set_active__: function (active, hit, modelViewMatrix, projectionMatrix, viewport)
 		{
-			X3DDragSensorNode .prototype .set_active__ .call (this, hit, active);
+			X3DDragSensorNode .prototype .set_active__ .call (this, active, hit, modelViewMatrix, projectionMatrix, viewport);
 
 			try
 			{
 				if (this .isActive_ .getValue ())
 				{
-					var matrices = this .getMatrices () [hit .layer .getId ()];
-
-					this .modelViewMatrix    .assign (matrices .modelViewMatrix);
-					this .projectionMatrix   .assign (matrices .projectionMatrix);
-					this .viewport           .assign (matrices .viewport);
-					this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
+					this .modelViewMatrix    .assign (modelViewMatrix);
+					this .projectionMatrix   .assign (projectionMatrix);
+					this .viewport           .assign (viewport);
+					this .invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 					var
 						hitRay   = hit .hitRay .copy () .multLineMatrix (this .invModelViewMatrix),
@@ -91305,7 +91317,7 @@ function ($,
 			else
 				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
-		recycle: function ()
+		dispose: function ()
 		{
 			// Return shadowBuffer and textureUnit.
 
@@ -96088,18 +96100,16 @@ function ($,
 
 			return false;
 		},
-		set_active__: function (hit, active)
+		set_active__: function (active, hit, modelViewMatrix, projectionMatrix, viewport)
 		{
-			X3DDragSensorNode .prototype .set_active__ .call (this, hit, active);
+			X3DDragSensorNode .prototype .set_active__ .call (this, active, hit, modelViewMatrix, projectionMatrix, viewport);
 
 			try
 			{
 				if (this .isActive_ .getValue ())
 				{
-					var matrices = this .getMatrices () [hit .layer .getId ()];
-
-					this .modelViewMatrix    .assign (matrices .modelViewMatrix);
-					this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
+					this .modelViewMatrix    .assign (modelViewMatrix);
+					this .invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 					var
 						hitPoint = this .invModelViewMatrix .multVecMatrix (hit .intersection .point .copy ()),
@@ -97399,7 +97409,7 @@ function ($,
 			else
 				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
-		recycle: function ()
+		dispose: function ()
 		{
 			// Return shadowBuffer and textureUnit.
 
