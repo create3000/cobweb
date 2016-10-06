@@ -121,7 +121,7 @@ function ($,
 		{
 			try
 			{
-				X3DTouchSensorNode .prototype .set_over__ .call (this, over, hit);
+				X3DTouchSensorNode .prototype .set_over__ .call (this, over, hit, modelViewMatrix, projectionMatrix, viewport);
 
 				if (this .isOver_ .getValue ())
 				{
