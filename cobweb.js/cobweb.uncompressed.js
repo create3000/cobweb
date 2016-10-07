@@ -23924,86 +23924,13 @@ function ()
  ******************************************************************************/
 
 
-define ('cobweb/Bits/TraverseType',[],function ()
-{
-
-
-	var i = 0;
-
-	var TraverseType =
-	{
-		POINTER:   i ++,
-		CAMERA:    i ++,
-		COLLISION: i ++,
-		DEPTH:     i ++,
-		DISPLAY:   i ++,
-	};
-
-	Object .preventExtensions (TraverseType);
-	Object .freeze (TraverseType);
-	Object .seal (TraverseType);
-
-	return TraverseType;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Components/Core/X3DNode',[
 	"jquery",
 	"cobweb/Basic/X3DBaseNode",
-	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DBaseNode,
-          TraverseType,
           X3DConstants)
 {
 
@@ -24018,6 +23945,71 @@ function ($,
 	X3DNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: X3DNode,
+		getLayers: function ()
+		{
+			return this .findParents (X3DConstants .X3DLayerNode, this, true);
+		},
+		findParents: function (type, object, visibles)
+		{
+			var
+				parents = object .getParents (),
+				array   = [ ],
+				seen    = { };
+	
+			for (var id in parents)
+				this .findParentsImpl (type, parents [id], array, visibles, seen);
+	
+			return array;
+		},
+		findParentsImpl: function (type, object, array, visibles, seen)
+		{
+			if (seen .hasOwnProperty (object .getId ()))
+				return;
+
+			seen [object .getId ()] = true;
+
+			if (object instanceof X3DBaseNode)
+			{
+				var types = object .getType ();
+
+				for (var t = types .length - 1; t >= 0; -- t)
+				{
+					switch (types [t])
+					{
+						case X3DConstants .X3DMetadataObject:
+						case X3DConstants .X3DProgrammableShaderObject:
+						case X3DConstants .X3DProtoDeclarationNode:
+						case X3DConstants .X3DScriptNode:
+						{
+							if (visibles)
+								return;
+		
+							break;
+						}
+						case X3DConstants .X3DNode:
+							break;
+						case X3DConstants .LayerSet:
+						case X3DConstants .X3DBaseNode:
+							return;
+						default:
+							continue;
+					}
+		
+					break;
+				}
+
+				if (object .getType () .indexOf (type) !== -1)
+				{
+					array .push (object);
+					return;
+				}
+			}
+
+			var parents = object .getParents ();
+
+			for (var id in parents)
+				this .findParentsImpl (type, parents [id], array, visibles, seen);
+		},
 	});
 
 	return X3DNode;
@@ -27590,46 +27582,6 @@ function ($,
 
 			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
-		enableColorAttribute: function (gl, colorBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Color);
-			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
-			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableColorAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Color);
-		},
-		enableTexCoordAttribute: function (gl, texCoordBuffers)
-		{
-			gl .enableVertexAttribArray (this .x3d_TexCoord);
-			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
-			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableTexCoordAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_TexCoord);
-		},
-		enableNormalAttribute: function (gl, normalBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Normal);
-			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
-			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-		},
-		disableNormalAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Normal);
-		},
-		enableVertexAttribute: function (gl, vertexBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
-			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableVertexAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Vertex);
-		},
 		enableFloatAttrib: function (gl, name, buffer, components)
 		{
 			var location = gl. getAttribLocation (this .getProgram (), name);
@@ -27709,6 +27661,46 @@ function ($,
 			gl .disableVertexAttribArray (location + 1);
 			gl .disableVertexAttribArray (location + 2);
 			gl .disableVertexAttribArray (location + 3);
+		},
+		enableColorAttribute: function (gl, colorBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Color);
+			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
+			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableColorAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Color);
+		},
+		enableTexCoordAttribute: function (gl, texCoordBuffers)
+		{
+			gl .enableVertexAttribArray (this .x3d_TexCoord);
+			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
+			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableTexCoordAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_TexCoord);
+		},
+		enableNormalAttribute: function (gl, normalBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Normal);
+			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
+			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+		},
+		disableNormalAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Normal);
+		},
+		enableVertexAttribute: function (gl, vertexBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
+			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableVertexAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Vertex);
 		},
 		getProgramInfo: function ()
 		{
@@ -37590,6 +37582,9 @@ function ($,
 			try
 			{
 				new XMLParser (scene, dom) .parseIntoScene ();
+				
+				//AP: add reference to dom for later access
+				this .node .dom = dom;
 
 				if (success)
 					this .setScene (scene, success);
@@ -37895,6 +37890,7 @@ function ($,
 
 	return Loader;
 });
+
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
  *
@@ -46585,6 +46581,77 @@ function (jquery,
  ******************************************************************************/
 
 
+define ('cobweb/Bits/TraverseType',[],function ()
+{
+
+
+	var i = 0;
+
+	var TraverseType =
+	{
+		POINTER:   i ++,
+		CAMERA:    i ++,
+		COLLISION: i ++,
+		DEPTH:     i ++,
+		DISPLAY:   i ++,
+	};
+
+	Object .preventExtensions (TraverseType);
+	Object .freeze (TraverseType);
+	Object .seal (TraverseType);
+
+	return TraverseType;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('standard/Math/Geometry/Line3',[
 	"standard/Math/Numbers/Vector3",
 ],
@@ -47720,7 +47787,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DBindableNode);
 
-		this .layers = { };
+		this .layers = [ ];
 	}
 
 	X3DBindableNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -47733,23 +47800,17 @@ function ($,
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
+			this .set_bind_ .addInterest (this, "set_bind__");
+
 			this .set_live__ ();
 		},
 		getCameraObject: function ()
 		{
 		   return true;
 		},
-		getLayers: function ()
+		addLayer: function (layer)
 		{
-			return this .layers;
-		},
-		bindToLayer: function (layer)
-		{
-			this .layers [layer .getId ()] = layer;
-		},
-		unbindFromLayer: function (layer)
-		{
-			delete this .layers [layer .getId ()];
+			this .layers .push (layer);
 		},
 		transitionStart: function ()
 		{ },
@@ -47760,6 +47821,25 @@ function ($,
 
 			//for (var id in this .layers)
 			//	this .removeFromLayer (this .layers [id]);
+		},
+		set_bind__: function ()
+		{
+			if (this .set_bind_ .getValue ())
+			{
+				this .layers = this .getLayers ();
+
+				// Bind
+		
+				for (var i = 0; i < this .layers .length; ++ i)
+					this .bindToLayer (this .layers [i]);
+			}
+			else
+			{
+				// Unbind
+
+				for (var i = 0; i < this .layers .length; ++ i)
+					this .unbindFromLayer (this .layers [i]);
+			}
 		},
 	});
 
@@ -49017,7 +49097,7 @@ function ($,
 			this .scaleInterpolator            .value_changed_ .addFieldInterest (this .scaleOffset_);
 			this .scaleOrientationInterpolator .value_changed_ .addFieldInterest (this .scaleOrientationOffset_);
 
-			this .isBound_ .addInterest (this, "set_bind__");
+			this .isBound_ .addInterest (this, "set_bound__");
 		},
 		getEaseInEaseOut: function ()
 		{
@@ -49026,14 +49106,10 @@ function ($,
 		setInterpolators: function () { },
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
 			layer .getViewpointStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getViewpointStack () .pop (this);
 		},
 		removeFromLayer: function (layer)
@@ -49067,7 +49143,7 @@ function ($,
 		getProjectionMatrix: function (renderObject)
 		{
 			var navigationInfo = renderObject .getNavigationInfo ();
-	
+
 			return this .getProjectionMatrixWithLimits (navigationInfo .getNearValue (),
                                                      navigationInfo .getFarValue (this),
                                                      renderObject .getLayer () .getViewport () .getRectangle (renderObject .getBrowser ()));
@@ -49102,45 +49178,30 @@ function ($,
 		{
 			try
 			{
-				if (! layer)
-				{
-					for (var id in this .getLayers ())
-					{
-						layer = this .getLayers () [id];
-						break;
-					}
-				}
-		
-
 				if (this .jump_ .getValue ())
 				{
+					var layers = this .getLayers ();
+
 					if (! this .retainUserOffsets_ .getValue ())
 						this .resetUserOffsets ();
 	
-					for (var id in this .getLayers ())
-						this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
-
-					if (layer)
+					for (var i = 0; i < layers .length; ++ i)
 					{
-						var navigationInfo = layer .getNavigationInfo ();
+						var navigationInfo = layers [i] .getNavigationInfo ();
+
+						navigationInfo .transitionStart_ = true;
 
 						var
 							transitionType = navigationInfo .getTransitionType (),
 							transitionTime = navigationInfo .transitionTime_ .getValue ();
-					}
-					else
-					{
-						var
-							transitionType = "LINEAR",
-							transitionTime = 1;
 					}
 
 					switch (transitionType)
 					{
 						case "TELEPORT":
 						{
-							if (layer)
-								layer .getNavigationInfo () .transitionComplete_ = true;
+							for (var i = 0; i < layers .length; ++ i)
+								layers [i] .getNavigationInfo () .transitionComplete_ = true;
 
 							return;
 						}
@@ -49253,10 +49314,12 @@ function ($,
 		},
 		lookAt: function (point, distance, factor, straighten)
 		{
-			var offset = point .copy () .add (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, distance))) .subtract (this .getPosition ());
+			var
+				layers = this .getLayers (),
+				offset = point .copy () .add (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, distance))) .subtract (this .getPosition ());
 
-			for (var id in this .getLayers ())
-				this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
+			for (var i = 0; i < layers .length; ++ i)
+				layers [i] .getNavigationInfo () .transitionStart_ = true;;
 		
 			this .timeSensor .cycleInterval_ = 0.2;
 			this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
@@ -49285,17 +49348,17 @@ function ($,
 		{
 			if (! active .getValue () && this .timeSensor .fraction_changed_ .getValue () === 1)
 			{
-				for (var id in this .getLayers ())
-				{
-					var navigationInfo = this .getLayers () [id] .getNavigationInfo ();
+				var layers = this .getLayers ();
 
-					navigationInfo .transitionComplete_ = true;
+				for (var i = 0;  i < layers .length; ++ i)
+				{
+					layers [i] .getNavigationInfo () .transitionComplete_ = true;
 				}
 
 				this .easeInEaseOut .set_fraction_ = 1;
 			}
 		},
-		set_bind__: function ()
+		set_bound__: function ()
 		{
 			if (this .isBound_ .getValue ())
 				this .getBrowser () .getNotification () .string_ = this .description_;
@@ -52853,14 +52916,10 @@ function ($,
 		},
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
 			layer .getNavigationInfoStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getNavigationInfoStack () .pop (this);
 		},
 		removeFromLayer: function (layer)
@@ -67414,21 +67473,25 @@ function ($, X3DBaseNode)
 			node .isBound_  = true;
 			node .bindTime_ = this .getBrowser () .getCurrentTime ();
 
-			node .bindToLayer (this .layer);
+			this .push (node);
 		},
 		push: function (node)
 		{
+			if (this .array .length === 0)
+				return;
+
 			if (node === this .array [0])
 				return;
-			
+
 			var top = this .top ();
-			
+
 			if (node !== top)
 			{
 				if (top .isBound_ .getValue ())
+				{
+					top .set_bind_ = false;
 					top .isBound_  = false;
-
-				this .pushOnTop (node);
+				}
 
 				if (! node .isBound_ .getValue ())
 				{
@@ -67436,6 +67499,8 @@ function ($, X3DBaseNode)
 					node .bindTime_ = this .getBrowser () .getCurrentTime ();
 					node .transitionStart (this .layer, top);
 				}
+
+				this .pushOnTop (node);
 
 				this .addNodeEvent ();
 			}
@@ -67479,6 +67544,9 @@ function ($, X3DBaseNode)
 			{
 				if (node .isBound_ .getValue ())
 					node .isBound_ = false;
+
+				if (this .array .length === 0)
+					return;
 
 				this .array .pop ();
 
@@ -67582,12 +67650,6 @@ function ($, X3DBaseNode)
 	BindableList .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: BindableList,
-		initialize: function ()
-		{
-			X3DBaseNode .prototype .initialize .call (this);
-			
-			this .array [0] .set_bind_ .addInterest (this, "set_bind__", this .array [0]);
-		},
 		get: function ()
 		{
 			return this .array;
@@ -67615,33 +67677,15 @@ function ($, X3DBaseNode)
 		{
 			if (! equals (this .collected, this .array))
 			{
-				// removeInterest
-
-				for (var i = 1; i < this .array .length; ++ i)
-					this .array [i] .set_bind_ .removeInterest (this, "set_bind__", this .array [i]);
-				
 				// Swap arrays.
 
 				var tmp = this .array;
 
 				this .array     = this .collected;
 				this .collected = tmp;
-
-				// addInterest
-
-				for (var i = 1; i < this .array .length; ++ i)
-					this .array [i] .set_bind_ .addInterest (this, "set_bind__", this .array [i]);
 			}
 
 			this .collected .length = 1;
-		},
-		set_bind__: function (bind, node)
-		{
-			if (bind .getValue ())
-				node .bindToLayer (this .layer);
-
-			else
-				node .unbindFromLayer (this .layer);
 		},
 	});
 
@@ -67882,14 +67926,10 @@ function ($,
 		},
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-
 			layer .getFogStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getFogStack () .pop (this);
 		},
 		removeFromLayer: function (layer)
@@ -68154,14 +68194,10 @@ function ($,
 		},
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-
 			layer .getBackgroundStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getBackgroundStack () .pop (this);
 		},
 		removeFromLayer: function (layer)
@@ -69590,12 +69626,21 @@ function ($,
 
 			// Bind first viewpoint in viewpoint list.
 
-			var viewpoint = this .viewpoints .getBound ()
+			var
+				navigationInfo = this .navigationInfos .getBound (),
+				background     = this .backgrounds     .getBound (),
+				fog            = this .fogs            .getBound (),
+				viewpoint      = this .viewpoints      .getBound ();
 
-			this .navigationInfoStack .forcePush (this .navigationInfos .getBound ());
-			this .backgroundStack     .forcePush (this .backgrounds     .getBound ());
-			this .fogStack            .forcePush (this .fogs            .getBound ());
+			this .navigationInfoStack .forcePush (navigationInfo);
+			this .backgroundStack     .forcePush (background);
+			this .fogStack            .forcePush (fog);
 			this .viewpointStack      .forcePush (viewpoint);
+
+			navigationInfo .addLayer (this);
+			background     .addLayer (this);
+			fog            .addLayer (this);
+			viewpoint      .addLayer (this);
 
 			viewpoint .resetUserOffsets ();
 		},
@@ -81861,6 +81906,8 @@ function ($,
 		this .group    = new Group (executionContext);
 		this .getBBox  = this .group .getBBox  .bind (this .group);
 		this .traverse = this .group .traverse .bind (this .group);
+
+		this .group .addParent (this);
 	}
 
 	Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),

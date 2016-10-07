@@ -242,45 +242,30 @@ function ($,
 		{
 			try
 			{
-				if (! layer)
-				{
-					for (var id in this .getLayers ())
-					{
-						layer = this .getLayers () [id];
-						break;
-					}
-				}
-		
-
 				if (this .jump_ .getValue ())
 				{
+					var layers = this .getLayers ();
+
 					if (! this .retainUserOffsets_ .getValue ())
 						this .resetUserOffsets ();
 	
-					for (var id in this .getLayers ())
-						this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
-
-					if (layer)
+					for (var i = 0; i < layers .length; ++ i)
 					{
-						var navigationInfo = layer .getNavigationInfo ();
+						var navigationInfo = layers [i] .getNavigationInfo ();
+
+						navigationInfo .transitionStart_ = true;
 
 						var
 							transitionType = navigationInfo .getTransitionType (),
 							transitionTime = navigationInfo .transitionTime_ .getValue ();
-					}
-					else
-					{
-						var
-							transitionType = "LINEAR",
-							transitionTime = 1;
 					}
 
 					switch (transitionType)
 					{
 						case "TELEPORT":
 						{
-							if (layer)
-								layer .getNavigationInfo () .transitionComplete_ = true;
+							for (var i = 0; i < layers .length; ++ i)
+								layers [i] .getNavigationInfo () .transitionComplete_ = true;
 
 							return;
 						}
@@ -393,10 +378,12 @@ function ($,
 		},
 		lookAt: function (point, distance, factor, straighten)
 		{
-			var offset = point .copy () .add (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, distance))) .subtract (this .getPosition ());
+			var
+				layers = this .getLayers (),
+				offset = point .copy () .add (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, distance))) .subtract (this .getPosition ());
 
-			for (var id in this .getLayers ())
-				this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
+			for (var i = 0; i < layers .length; ++ i)
+				layers [i] .getNavigationInfo () .transitionStart_ = true;;
 		
 			this .timeSensor .cycleInterval_ = 0.2;
 			this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
@@ -425,11 +412,11 @@ function ($,
 		{
 			if (! active .getValue () && this .timeSensor .fraction_changed_ .getValue () === 1)
 			{
-				for (var id in this .getLayers ())
-				{
-					var navigationInfo = this .getLayers () [id] .getNavigationInfo ();
+				var layers = this .getLayers ();
 
-					navigationInfo .transitionComplete_ = true;
+				for (var i = 0;  i < layers .length; ++ i)
+				{
+					layers [i] .getNavigationInfo () .transitionComplete_ = true;
 				}
 
 				this .easeInEaseOut .set_fraction_ = 1;

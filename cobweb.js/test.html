@@ -58,14 +58,7 @@ X3D (function (element)
 function initialized (Browser)
 {
 	Browser .importDocument ($.parseXML ("<Viewpoint position='1 0 10'/>"));
-
-	Browser .print (Browser .currentScene .rootNodes);
-	Browser .print (Browser .currentScene .rootNodes [2] .position);
-	Browser .print (Browser .currentScene .rootNodes [2] .getValue () .getField ("set_bind"));
-
 	Browser .currentScene .rootNodes [2] .set_bind = true;
-
-	Browser .print (Browser .currentScene .rootNodes [2] .getValue () .getField ("set_bind"));
 }
 		</script>
 	</head>
