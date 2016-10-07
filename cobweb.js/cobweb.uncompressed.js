@@ -11202,8 +11202,6 @@ define ('standard/Math/Algorithm',[],function ()
 
 	var Algorithm =
 	{
-		nop: function ()
-		{ },
 		signum: function (value)
 		{
 			return (0 < value) - (value < 0);
@@ -26029,7 +26027,6 @@ define ('cobweb/Components/Shape/Appearance',[
 	"cobweb/Components/Shape/X3DAppearanceNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -26037,8 +26034,7 @@ function ($,
           FieldDefinitionArray,
           X3DAppearanceNode,
           X3DCast,
-          X3DConstants,
-          Algorithm)
+          X3DConstants)
 {
 
 
@@ -26160,7 +26156,7 @@ function ($,
 			}
 			else
 			{
-				this .traverse = Algorithm .nop;
+				this .traverse = Function .prototype;
 			}
 
 			this .set_transparent__ ();
@@ -26647,14 +26643,12 @@ define ('cobweb/Components/Shaders/X3DProgrammableShaderObject',[
 	"cobweb/Fields",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
 	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
           X3DCast,
           X3DConstants,
-          Algorithm,
           Matrix3)
 {
 
@@ -26796,8 +26790,8 @@ function ($,
 
 			if (this .x3d_Color < 0)
 			{
-				this .enableColorAttribute  = Algorithm .nop;
-				this .disableColorAttribute = Algorithm .nop;
+				this .enableColorAttribute  = Function .prototype;
+				this .disableColorAttribute = Function .prototype;
 			}
 			else
 			{
@@ -26807,8 +26801,8 @@ function ($,
 
 			if (this .x3d_TexCoord < 0)
 			{
-				this .enableTexCoordAttribute  = Algorithm .nop;
-				this .disableTexCoordAttribute = Algorithm .nop;
+				this .enableTexCoordAttribute  = Function .prototype;
+				this .disableTexCoordAttribute = Function .prototype;
 			}
 			else
 			{
@@ -26818,8 +26812,8 @@ function ($,
 
 			if (this .x3d_Normal < 0)
 			{
-				this .enableNormalAttribute  = Algorithm .nop;
-				this .disableNormalAttribute = Algorithm .nop;
+				this .enableNormalAttribute  = Function .prototype;
+				this .disableNormalAttribute = Function .prototype;
 			}
 			else
 			{
@@ -27635,6 +27629,86 @@ function ($,
 		disableVertexAttribute: function (gl)
 		{
 			gl .disableVertexAttribArray (this .x3d_Vertex);
+		},
+		enableFloatAttrib: function (gl, name, buffer, components)
+		{
+			var location = gl. getAttribLocation (this .getProgram (), name);
+		
+			if (location === -1)
+				return;
+		
+			gl .enableVertexAttribArray (location);
+		
+			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
+			gl .vertexAttribPointer (location, components, gl .FLOAT, false, 0, 0);
+		},
+		disableFloatAttrib: function (gl, name)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .disableVertexAttribArray (location);
+		},
+		enableMatrix3Attrib: function (gl, name, buffer)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .enableVertexAttribArray (location + 0);
+			gl .enableVertexAttribArray (location + 1);
+			gl .enableVertexAttribArray (location + 2);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
+
+			gl .vertexAttribPointer (location + 0, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 0);
+			gl .vertexAttribPointer (location + 1, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 1);
+			gl .vertexAttribPointer (location + 2, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 2);
+		},
+		disableMatrix3Attrib: function (gl, name)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .disableVertexAttribArray (location + 0);
+			gl .disableVertexAttribArray (location + 1);
+			gl .disableVertexAttribArray (location + 2);
+		},
+		enableMatrix4Attrib: function (gl, name, buffer)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .enableVertexAttribArray (location + 0);
+			gl .enableVertexAttribArray (location + 1);
+			gl .enableVertexAttribArray (location + 2);
+			gl .enableVertexAttribArray (location + 3);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
+
+			gl .vertexAttribPointer (location + 0, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 0);
+			gl .vertexAttribPointer (location + 1, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 1);
+			gl .vertexAttribPointer (location + 2, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 2);
+			gl .vertexAttribPointer (location + 3, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 3);
+		},
+		disableMatrix4Attrib: function (gl, name)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .disableVertexAttribArray (location + 0);
+			gl .disableVertexAttribArray (location + 1);
+			gl .disableVertexAttribArray (location + 2);
+			gl .disableVertexAttribArray (location + 3);
 		},
 		getProgramInfo: function ()
 		{
@@ -42997,6 +43071,8 @@ function ($,
 			this .bbox             = new Box3 (this .min, this .max, true);
 			this .solid            = true;
 			this .flatShading      = undefined;
+			this .attribNodes      = [ ];
+			this .attribs          = [ ];
 			this .colors           = [ ];
 			this .texCoords        = [ ];
 			this .defaultTexCoords = [ ];
@@ -43008,10 +43084,12 @@ function ($,
 
 			this .primitiveMode   = gl .TRIANGLES;
 			this .frontFace       = gl .CCW;
+			this .attribBuffers   = [ ];
 			this .colorBuffer     = gl .createBuffer ();
 			this .texCoordBuffers = [ ];
 			this .normalBuffer    = gl .createBuffer ();
 			this .vertexBuffer    = gl .createBuffer ();
+			this .attribArray     = [ ];
 			this .colorArray      = new Float32Array ();
 			this .texCoordArray   = [ ];
 			this .vertexArray     = new Float32Array ();
@@ -43023,9 +43101,9 @@ function ($,
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
 
-			this .depth            = Algorithm .nop;
-			this .display          = Algorithm .nop;
-			this .displayParticles = Algorithm .nop;
+			this .depth            = Function .prototype;
+			this .display          = Function .prototype;
+			this .displayParticles = Function .prototype;
 
 			this .set_live__ ();
 		},
@@ -43075,6 +43153,14 @@ function ($,
 		setCCW: function (value)
 		{
 			this .frontFace = value ? this .getBrowser () .getContext () .CCW : this .getBrowser () .getContext () .CW;
+		},
+		getAttrib: function ()
+		{
+			return this .attribNodes;
+		},
+		getAttribs: function ()
+		{
+			return this .attribs;
 		},
 		addColor: function (color)
 		{
@@ -43534,8 +43620,27 @@ function ($,
 		},
 		clear: function ()
 		{
+			// BBox
+
 			this .min .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
 			this .max .set (Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY);
+
+			// Attrib
+
+			var
+				attrib    = this .getAttrib (),
+				numAttrib = attrib .length,
+				attribs   = this .getAttribs ();
+			
+			for (var a = 0, length = attribs .length; a < length; ++ a)
+				attribs [a] .length = 0;;
+			
+			for (var a = attribs .length; a < numAttrib; ++ a)
+				attribs [a] = [ ];
+			
+			attribs .length = numAttrib;
+
+			// Buffer
 
 			this .flatShading = undefined;
 			this .colors      .length = 0;
@@ -43549,6 +43654,27 @@ function ($,
 			var
 				gl    = this .getBrowser () .getContext (),
 				count = this .vertices .length / 4;
+
+			// Transfer attribs.
+
+			for (var i = this .attribBuffers .length, length = this .attribs .length; i < length; ++ i)
+			{
+				this .attribBuffers .push (gl .createBuffer ());
+				this .attribArray   .push (new Float32Array ());
+			}
+
+			this .attribBuffers .length = this .attribs .length;
+			
+			for (var i = 0, length = this .attribs .length; i < length; ++ i)
+			{
+				if (this .attribArray [i] .length !== this .attribs [i] .length)
+					this .attribArray [i] = new Float32Array (this .attribs [i]);
+				else
+					this .attribArray [i] .set (this .attribs [i]);
+
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .attribBuffers [i]);
+				gl .bufferData (gl .ARRAY_BUFFER, this .attribArray [i], gl .STATIC_DRAW);
+			}
 
 			// Transfer colors.
 	
@@ -43603,9 +43729,10 @@ function ($,
 			}
 			else
 			{
-				this .depth            = Algorithm .nop;
-				this .display          = Algorithm .nop;
-				this .displayParticles = Algorithm .nop;
+				// Use no render function.
+				this .depth            = Function .prototype;
+				this .display          = Function .prototype;
+				this .displayParticles = Function .prototype;
 			}
 	  	},
 		traverse: function (type, renderObject)
@@ -43625,9 +43752,11 @@ function ($,
 			try
 			{
 				var
-					browser    = context .renderer .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
+					browser       = context .renderer .getBrowser (),
+					gl            = browser .getContext (),
+					shaderNode    = context .shaderNode,
+					attribNodes   = this .attribNodes,
+					attribBuffers = this .attribBuffers;
 	
 				// Setup shader.
 	
@@ -43636,6 +43765,9 @@ function ($,
 				shaderNode .setLocalUniforms (gl, context);
 	
 				// Setup vertex attributes.
+	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
 	
 				if (this .colors .length)
 					shaderNode .enableColorAttribute (gl, this .colorBuffer);
@@ -43678,6 +43810,9 @@ function ($,
 						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 					}
 				}
+	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .disable (gl, shaderNode);
 	
 				shaderNode .disableColorAttribute    (gl);
 				shaderNode .disableTexCoordAttribute (gl);
@@ -43933,7 +44068,6 @@ function ($,
 
 		this .addType (X3DConstants .X3DComposedGeometryNode);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .texCoordNode = null;
 		this .normalNode   = null;
@@ -43959,10 +44093,6 @@ function ($,
 			this .set_normal__ ();
 			this .set_coord__ ();
 		},
-		getAttrib: function ()
-		{
-			return this .attribNodes;
-		},
 		getColor: function ()
 		{
 			return this .colorNode;
@@ -43981,21 +44111,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -44362,6 +44494,7 @@ function ($,
 		build: function ()
 		{
 			// Triangulate
+
 			var polygons = this .triangulate ();
 
 			// Build arrays
@@ -44375,6 +44508,9 @@ function ($,
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
 				coordIndex      = this .coordIndex_ .getValue (),
+				attrib          = this .getAttrib (),
+				numAttrib       = attrib .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
@@ -44385,18 +44521,21 @@ function ($,
 			if (texCoordNode)
 				texCoordNode .init (textCoords);
 
-			for (var p = 0, pl = polygons .length; p < pl; ++ p)
+			for (var p = 0, numPolygons = polygons .length; p < numPolygons; ++ p)
 			{
 				var
 					polygon   = polygons [p],
 					vertices  = polygon .vertices,
 					triangles = polygon .triangles;
 
-				for (var v = 0, tl = triangles .length; v < tl; ++ v)
+				for (var v = 0, numVertices = triangles .length; v < numVertices; ++ v)
 				{
 					var
 						i     = vertices [triangles [v]],
 						index = coordIndex [i] .getValue ();
+
+					for (var a = 0; a < numAttrib; ++ a)
+						attrib [a] .addValue (attribs [a], index);
 
 					if (colorNode)
 					{
@@ -79571,7 +79710,6 @@ function ($,
 
 		this .addType (X3DConstants .ElevationGrid);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .texCoordNode = null;
 		this .normalNode   = null;
@@ -79627,21 +79765,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -79688,10 +79828,6 @@ function ($,
 
 			if (this .normalNode)
 				this .normalNode .addInterest (this, "addNodeEvent");
-		},
-		getAttrib: function ()
-		{
-			return this .attribNodes;
 		},
 		getColor: function ()
 		{
@@ -80713,6 +80849,212 @@ function ($,
  ******************************************************************************/
 
 
+define ('cobweb/Components/Shaders/X3DVertexAttributeNode',[
+	"jquery",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DGeometricPropertyNode, 
+          X3DConstants)
+{
+
+
+	function X3DVertexAttributeNode (executionContext)
+	{
+		X3DGeometricPropertyNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DVertexAttributeNode);
+	}
+
+	X3DVertexAttributeNode .prototype = $.extend (Object .create (X3DGeometricPropertyNode .prototype),
+	{
+		constructor: X3DVertexAttributeNode,
+	});
+
+	return X3DVertexAttributeNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shaders/FloatVertexAttribute',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DVertexAttributeNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DVertexAttributeNode, 
+          X3DConstants,
+          Algorithm)
+{
+
+
+	function FloatVertexAttribute (executionContext)
+	{
+		X3DVertexAttributeNode .call (this, executionContext);
+
+		this .addType (X3DConstants .FloatVertexAttribute);
+	}
+
+	FloatVertexAttribute .prototype = $.extend (Object .create (X3DVertexAttributeNode .prototype),
+	{
+		constructor: FloatVertexAttribute,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",      new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "name",          new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "numComponents", new Fields .SFInt32 (4)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "value",         new Fields .MFFloat ()),
+		]),
+		getTypeName: function ()
+		{
+			return "FloatVertexAttribute";
+		},
+		getComponentName: function ()
+		{
+			return "Shaders";
+		},
+		getContainerField: function ()
+		{
+			return "attrib";
+		},
+		addValue: function (array, index)
+		{
+			var
+				size  = Algorithm .clamp (this .numComponents_ .getValue (), 1, 4),
+				first = index * size,
+				last  = first + size;
+		
+			if (last <= this .value_ .length)
+			{
+				for (; first < last; ++ first)
+					array .push (this .value_ [first]);
+			}
+			else
+			{
+				for (; first < last; ++ first)
+					array .push (0);
+			}
+		},
+		enable: function (gl, shaderNode, buffer)
+		{
+			shaderNode .enableFloatAttrib (gl, this .name_ .getValue (), buffer, Algorithm .clamp (this .numComponents_ .getValue (), 1, 4));
+		},
+		disable: function (gl, shaderNode)
+		{
+			shaderNode .disableFloatAttrib (gl, this .name_ .getValue ());
+		},
+	});
+
+	return FloatVertexAttribute;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('cobweb/Components/ParticleSystems/ForcePhysicsModel',[
 	"jquery",
 	"cobweb/Fields",
@@ -81144,10 +81486,6 @@ function ($,
 
 			if (this .normalNode)
 				this .normalNode .addInterest (this, "addNodeEvent");
-		},
-		getAttrib: function ()
-		{
-			return this .attribNodes;
 		},
 		getColor: function ()
 		{
@@ -83550,7 +83888,6 @@ function ($,
 
 		this .setGeometryType (1);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
 	}
@@ -83597,21 +83934,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -86546,9 +86885,8 @@ function ($,
 
 		this .setGeometryType (1);
 
-		this .attribNodes  = [ ];
-		this .colorNode    = null;
-		this .coordNode    = null;
+		this .colorNode = null;
+		this .coordNode = null;
 	}
 
 	LineSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -86591,21 +86929,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -87082,6 +87422,258 @@ function ($,
 	});
 
 	return Material;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shaders/Matrix3VertexAttribute',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DVertexAttributeNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DVertexAttributeNode, 
+          X3DConstants,
+          Matrix3)
+{
+
+
+	function Matrix3VertexAttribute (executionContext)
+	{
+		X3DVertexAttributeNode .call (this, executionContext);
+
+		this .addType (X3DConstants .Matrix3VertexAttribute);
+	}
+
+	Matrix3VertexAttribute .prototype = $.extend (Object .create (X3DVertexAttributeNode .prototype),
+	{
+		constructor: Matrix3VertexAttribute,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "name",     new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "value",    new Fields .MFMatrix3f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Matrix3VertexAttribute";
+		},
+		getComponentName: function ()
+		{
+			return "Shaders";
+		},
+		getContainerField: function ()
+		{
+			return "attrib";
+		},
+		addValue: function (array, index)
+		{
+			if (index < this .value_ .length)
+			{
+				var mat3 = this .value_ [index] .getValue ();
+
+				for (var i = 0; i < 9; ++ i)
+					array .push (mat3 [i]);
+			}
+			else
+			{
+				var mat3 = Matrix3 .Identity;
+
+				for (var i = 0; i < 9; ++ i)
+					array .push (mat3 [i]);
+			}
+		},
+		enable: function (gl, shaderNode, buffer)
+		{
+			shaderNode .enableMatrix3Attrib (gl, this .name_ .getValue (), buffer);
+		},
+		disable: function (gl, shaderNode)
+		{
+			shaderNode .disableMatrix3Attrib (gl, this .name_ .getValue ());
+		},
+	});
+
+	return Matrix3VertexAttribute;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shaders/Matrix4VertexAttribute',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DVertexAttributeNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DVertexAttributeNode, 
+          X3DConstants)
+{
+
+
+	function Matrix4VertexAttribute (executionContext)
+	{
+		X3DVertexAttributeNode .call (this, executionContext);
+
+		this .addType (X3DConstants .Matrix4VertexAttribute);
+	}
+
+	Matrix4VertexAttribute .prototype = $.extend (Object .create (X3DVertexAttributeNode .prototype),
+	{
+		constructor: Matrix4VertexAttribute,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "name",     new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "value",    new Fields .MFMatrix4f ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Matrix4VertexAttribute";
+		},
+		getComponentName: function ()
+		{
+			return "Shaders";
+		},
+		getContainerField: function ()
+		{
+			return "attrib";
+		},
+		addValue: function (array, index)
+		{
+			if (index < this .value_ .length)
+			{
+				var mat4 = this .value_ [index] .getValue ();
+
+				for (var i = 0; i < 16; ++ i)
+					array .push (mat4 [i]);
+			}
+			else
+			{
+				var mat4 = Matrix4 .Identity;
+
+				for (var i = 0; i < 16; ++ i)
+					array .push (mat4 [i]);
+			}
+		},
+		enable: function (gl, shaderNode, buffer)
+		{
+			shaderNode .enableMatrix4Attrib (gl, this .name_ .getValue (), buffer);
+		},
+		disable: function (gl, shaderNode)
+		{
+			shaderNode .disableMatrix4Attrib (gl, this .name_ .getValue ());
+		},
+	});
+
+	return Matrix4VertexAttribute;
 });
 
 
@@ -91523,7 +92115,6 @@ function ($,
 
 		this .setGeometryType (0);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
 		this .transparent_ = true;
@@ -91571,21 +92162,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -95271,7 +95864,7 @@ function ($,
 			if (this .getGeometry ())
 				delete this .traverse;
 			else
-				this .traverse = Algorithm .nop;
+				this .traverse = Function .prototype;
 		},
 		intersectsBox: function (box, clipPlanes, modelViewMatrix)
 		{
@@ -101052,7 +101645,6 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -101061,8 +101653,7 @@ function ($,
           X3DEnvironmentalSensorNode,
           TraverseType,
           X3DConstants,
-          Vector3,
-          Algorithm)
+          Vector3)
 {
 
 
@@ -101116,7 +101707,7 @@ function ($,
 			if (this .enabled_ .getValue ())
 				delete this .traverse;
 			else
-				this .traverse = Algorithm .nop;
+				this .traverse = Function .prototype;
 		},
 		update: function ()
 		{
@@ -101844,7 +102435,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/ParticleSystems/ExplosionEmitter",
 	"cobweb/Components/Geometry3D/Extrusion", // VRML
 	//"cobweb/Components/Shape/FillProperties",
-	//"cobweb/Components/Shaders/FloatVertexAttribute",
+	"cobweb/Components/Shaders/FloatVertexAttribute",
 	"cobweb/Components/EnvironmentalEffects/Fog", // VRML
 	//"cobweb/Components/EnvironmentalEffects/FogCoordinate",
 	"cobweb/Components/Text/FontStyle", // VRML
@@ -101892,8 +102483,8 @@ define ('cobweb/Configuration/SupportedNodes',[
 	"cobweb/Components/Networking/LoadSensor",
 	"cobweb/Components/EnvironmentalEffects/LocalFog",
 	"cobweb/Components/Shape/Material", // VRML
-	//"cobweb/Components/Shaders/Matrix3VertexAttribute",
-	//"cobweb/Components/Shaders/Matrix4VertexAttribute",
+	"cobweb/Components/Shaders/Matrix3VertexAttribute",
+	"cobweb/Components/Shaders/Matrix4VertexAttribute",
 	"cobweb/Components/Core/MetadataBoolean",
 	"cobweb/Components/Core/MetadataDouble",
 	"cobweb/Components/Core/MetadataFloat",
@@ -102066,7 +102657,7 @@ function (Anchor,
           ExplosionEmitter,
           Extrusion,
           //FillProperties,
-          //FloatVertexAttribute,
+          FloatVertexAttribute,
           Fog,
           //FogCoordinate,
           FontStyle,
@@ -102114,8 +102705,8 @@ function (Anchor,
           LoadSensor,
           LocalFog,
           Material,
-          //Matrix3VertexAttribute,
-          //Matrix4VertexAttribute,
+          Matrix3VertexAttribute,
+          Matrix4VertexAttribute,
           MetadataBoolean,
           MetadataDouble,
           MetadataFloat,
@@ -102295,7 +102886,7 @@ function (Anchor,
 		ExplosionEmitter:             ExplosionEmitter,
 		Extrusion:                    Extrusion,
 		//FillProperties:               FillProperties,
-		//FloatVertexAttribute:         FloatVertexAttribute,
+		FloatVertexAttribute:         FloatVertexAttribute,
 		Fog:                          Fog,
 		//FogCoordinate:                FogCoordinate,
 		FontStyle:                    FontStyle,
@@ -102343,8 +102934,8 @@ function (Anchor,
 		LoadSensor:                   LoadSensor,
 		LocalFog:                     LocalFog,
 		Material:                     Material,
-		//Matrix3VertexAttribute:       Matrix3VertexAttribute,
-		//Matrix4VertexAttribute:       Matrix4VertexAttribute,
+		Matrix3VertexAttribute:       Matrix3VertexAttribute,
+		Matrix4VertexAttribute:       Matrix4VertexAttribute,
 		MetadataBoolean:              MetadataBoolean,
 		MetadataDouble:               MetadataDouble,
 		MetadataFloat:                MetadataFloat,
