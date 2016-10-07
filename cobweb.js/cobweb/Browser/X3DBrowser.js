@@ -416,9 +416,24 @@ function ($,
 		{
 			if (! dom) return;
 			
-			new XMLParser (this .currentScene, dom) .parseIntoScene ();
+			var
+				currentScene = this .currentScene,
+				external     = this .isExternal (),
+				scene        = this .createScene ();
 
-			this .currentScene .setup ();
+			new XMLParser (scene, dom) .parseIntoScene ();
+
+			if (! external)
+			{
+				currentScene .isLive () .addFieldInterest (scene .isLive ());
+						
+				if (currentScene .isLive () .getValue ())
+					scene .beginUpdate ();
+			}
+
+			scene .setup ();
+
+			return scene;
 		},
 		setBrowserOption: function (name, value)
 		{

@@ -52,18 +52,14 @@ X3D (function (element)
 {
 	Browser = X3D .getBrowser (element);
 
-	Browser .initialized () .addFieldCallback ("initialized", initialized .bind (null, Browser));
-});
+	var scene = Browser .importDocument ($.parseXML ("<Shape><Box/></Shape>"));
 
-function initialized (Browser)
-{
-	Browser .importDocument ($.parseXML ("<Viewpoint position='1 0 10'/>"));
-	Browser .currentScene .rootNodes [2] .set_bind = true;
-}
+	Browser .replaceWorld (scene);
+});
 		</script>
 	</head>
 	<body>
-		<X3DCanvas class="browser" src="scene.x3d">
+		<X3DCanvas class="browser" xsrc="scene.x3d">
 			<p class="fallback">Sorry,<br>
 				it wasn't me!<br>
 				<br>
