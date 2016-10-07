@@ -1241,6 +1241,9 @@
     <None Include="tests\Components\Shaders\FloatVertexAttribute.x3d" />
     <None Include="tests\Components\Shaders\Matrix3VertexAttribute.x3d" />
     <None Include="tests\Components\Shaders\Matrix4VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\LineFloatVertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\LineMatrix3VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\LineMatrix4VertexAttribute.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
