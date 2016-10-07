@@ -141,6 +141,8 @@ function ($,
 			this .bbox             = new Box3 (this .min, this .max, true);
 			this .solid            = true;
 			this .flatShading      = undefined;
+			this .attribNodes      = [ ];
+			this .attribs          = [ ];
 			this .colors           = [ ];
 			this .texCoords        = [ ];
 			this .defaultTexCoords = [ ];
@@ -152,10 +154,12 @@ function ($,
 
 			this .primitiveMode   = gl .TRIANGLES;
 			this .frontFace       = gl .CCW;
+			this .attribBuffers   = [ ];
 			this .colorBuffer     = gl .createBuffer ();
 			this .texCoordBuffers = [ ];
 			this .normalBuffer    = gl .createBuffer ();
 			this .vertexBuffer    = gl .createBuffer ();
+			this .attribArray     = [ ];
 			this .colorArray      = new Float32Array ();
 			this .texCoordArray   = [ ];
 			this .vertexArray     = new Float32Array ();
@@ -219,6 +223,14 @@ function ($,
 		setCCW: function (value)
 		{
 			this .frontFace = value ? this .getBrowser () .getContext () .CCW : this .getBrowser () .getContext () .CW;
+		},
+		getAttrib: function ()
+		{
+			return this .attribNodes;
+		},
+		getAttribs: function ()
+		{
+			return this .attribs;
 		},
 		addColor: function (color)
 		{
@@ -678,8 +690,27 @@ function ($,
 		},
 		clear: function ()
 		{
+			// BBox
+
 			this .min .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
 			this .max .set (Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY);
+
+			// Attrib
+
+			var
+				attrib    = this .getAttrib (),
+				numAttrib = attrib .length,
+				attribs   = this .getAttribs ();
+			
+			for (var a = 0, length = attribs .length; a < length; ++ a)
+				attribs [a] .length = 0;;
+			
+			for (var a = attribs .length; a < numAttrib; ++ a)
+				attribs [a] = [ ];
+			
+			attribs .length = numAttrib;
+
+			// Buffer
 
 			this .flatShading = undefined;
 			this .colors      .length = 0;
@@ -693,6 +724,27 @@ function ($,
 			var
 				gl    = this .getBrowser () .getContext (),
 				count = this .vertices .length / 4;
+
+			// Transfer attribs.
+
+			for (var i = this .attribBuffers .length, length = this .attribs .length; i < length; ++ i)
+			{
+				this .attribBuffers .push (gl .createBuffer ());
+				this .attribArray   .push (new Float32Array ());
+			}
+
+			this .attribBuffers .length = this .attribs .length;
+			
+			for (var i = 0, length = this .attribs .length; i < length; ++ i)
+			{
+				if (this .attribArray [i] .length !== this .attribs [i] .length)
+					this .attribArray [i] = new Float32Array (this .attribs [i]);
+				else
+					this .attribArray [i] .set (this .attribs [i]);
+
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .attribBuffers [i]);
+				gl .bufferData (gl .ARRAY_BUFFER, this .attribArray [i], gl .STATIC_DRAW);
+			}
 
 			// Transfer colors.
 	
@@ -747,6 +799,7 @@ function ($,
 			}
 			else
 			{
+				// Use no render function.
 				this .depth            = Function .prototype;
 				this .display          = Function .prototype;
 				this .displayParticles = Function .prototype;
@@ -769,9 +822,11 @@ function ($,
 			try
 			{
 				var
-					browser    = context .renderer .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
+					browser       = context .renderer .getBrowser (),
+					gl            = browser .getContext (),
+					shaderNode    = context .shaderNode,
+					attribNodes   = this .attribNodes,
+					attribBuffers = this .attribBuffers;
 	
 				// Setup shader.
 	
@@ -780,6 +835,9 @@ function ($,
 				shaderNode .setLocalUniforms (gl, context);
 	
 				// Setup vertex attributes.
+	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
 	
 				if (this .colors .length)
 					shaderNode .enableColorAttribute (gl, this .colorBuffer);
@@ -822,6 +880,9 @@ function ($,
 						gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 					}
 				}
+	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .disable (gl, shaderNode);
 	
 				shaderNode .disableColorAttribute    (gl);
 				shaderNode .disableTexCoordAttribute (gl);

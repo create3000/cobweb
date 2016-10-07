@@ -1238,6 +1238,9 @@
     <None Include="cobweb\Browser\Core\BrowserProperties.js" />
     <None Include="tests\Components\PointingDeviceSensor\ClonedSensors.x3d" />
     <None Include="cobweb\Browser\PointingDeviceSensor\PointingDeviceSensorContainer.js" />
+    <None Include="tests\Components\Shaders\FloatVertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\Matrix3VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\Matrix4VertexAttribute.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

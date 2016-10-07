@@ -181,10 +181,6 @@ function ($,
 			if (this .normalNode)
 				this .normalNode .addInterest (this, "addNodeEvent");
 		},
-		getAttrib: function ()
-		{
-			return this .attribNodes;
-		},
 		getColor: function ()
 		{
 			return this .colorNode;

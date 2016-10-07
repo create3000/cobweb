@@ -158,6 +158,7 @@ function ($,
 		build: function ()
 		{
 			// Triangulate
+
 			var polygons = this .triangulate ();
 
 			// Build arrays
@@ -171,6 +172,9 @@ function ($,
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
 				coordIndex      = this .coordIndex_ .getValue (),
+				attrib          = this .getAttrib (),
+				numAttrib       = attrib .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
@@ -181,18 +185,21 @@ function ($,
 			if (texCoordNode)
 				texCoordNode .init (textCoords);
 
-			for (var p = 0, pl = polygons .length; p < pl; ++ p)
+			for (var p = 0, numPolygons = polygons .length; p < numPolygons; ++ p)
 			{
 				var
 					polygon   = polygons [p],
 					vertices  = polygon .vertices,
 					triangles = polygon .triangles;
 
-				for (var v = 0, tl = triangles .length; v < tl; ++ v)
+				for (var v = 0, numVertices = triangles .length; v < numVertices; ++ v)
 				{
 					var
 						i     = vertices [triangles [v]],
 						index = coordIndex [i] .getValue ();
+
+					for (var a = 0; a < numAttrib; ++ a)
+						attrib [a] .addValue (attribs [a], index);
 
 					if (colorNode)
 					{

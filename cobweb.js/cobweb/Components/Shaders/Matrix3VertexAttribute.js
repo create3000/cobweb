@@ -54,13 +54,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Shaders/X3DVertexAttributeNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DVertexAttributeNode, 
-          X3DConstants)
+          X3DConstants,
+          Matrix3)
 {
 "use strict";
 
@@ -90,6 +92,31 @@ function ($,
 		getContainerField: function ()
 		{
 			return "attrib";
+		},
+		addValue: function (array, index)
+		{
+			if (index < this .value_ .length)
+			{
+				var mat3 = this .value_ [index] .getValue ();
+
+				for (var i = 0; i < 9; ++ i)
+					array .push (mat3 [i]);
+			}
+			else
+			{
+				var mat3 = Matrix3 .Identity;
+
+				for (var i = 0; i < 9; ++ i)
+					array .push (mat3 [i]);
+			}
+		},
+		enable: function (gl, shaderNode, buffer)
+		{
+			shaderNode .enableMatrix3Attrib (gl, this .name_ .getValue (), buffer);
+		},
+		disable: function (gl, shaderNode)
+		{
+			shaderNode .disableMatrix3Attrib (gl, this .name_ .getValue ());
 		},
 	});
 
