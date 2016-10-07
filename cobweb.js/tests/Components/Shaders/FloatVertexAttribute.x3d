@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/FloatVertexAttribute.x3d'/>
-    <meta name='modified' content='Fri, 07 Oct 2016 03:25:52 GMT'/>
+    <meta name='modified' content='Fri, 07 Oct 2016 05:58:01 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Grid'>
@@ -333,9 +333,9 @@ main ()
                 <IndexedFaceSet
                     texCoordIndex='0, 1, 2, 3, -1'
                     coordIndex='0, 1, 2, -1, 0, 2, 3, -1'>
-                  <FloatVertexAttribute
+                  <FloatVertexAttribute DEF='_1'
                       name='offset'
-                      value='-1, -1, 0, 0, 1, -1, 0, 0, 1, 1, 0, 0, -1, 1, 0, 0'/>
+                      value='-0.933453, -0.933453, 0, 0, 0.933453, -0.933453, 0, 0, 0.933453, 0.933453, 0, 0, -0.933453, 0.933453, 0, 0'/>
                   <TextureCoordinate
                       point='0 0, 1 0, 1 1, 0 1'/>
                   <Coordinate
@@ -347,16 +347,33 @@ main ()
           <MetadataSet DEF='children' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <Viewpoint DEF='_1' containerField='value'/>
+            <TimeSensor DEF='_2' containerField='value'
+                cycleInterval='10'
+                loop='true'/>
           </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <Viewpoint USE='_1'/>
+    <Viewpoint DEF='_3'/>
     <ProtoInstance name='Grid'>
       <fieldValue name='rotation' value='1 0 0 1.5707963267949'/>
       <fieldValue name='transparency' value='0.8'/>
     </ProtoInstance>
+    <TimeSensor USE='_2'/>
+    <Script DEF='FloatVertexAttributeInterpolatorScript'>
+      <field accessType='inputOnly' type='SFFloat' name='set_fraction'/>
+      <field accessType='initializeOnly' type='MFFloat' name='value' value='-1, -1, 0, 0, 1, -1, 0, 0, 1, 1, 0, 0, -1, 1, 0, 0'/>
+      <field accessType='outputOnly' type='MFFloat' name='value_changed'/>
+<![CDATA[ecmascript:
+
+function set_fraction (fraction)
+{
+	for (var  i = 0; i < value .length; ++ i)
+		value_changed [i] = fraction * value [i];
+}]]> 
+    </Script>
     <Transform USE='Rectangle2D'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='FloatVertexAttributeInterpolatorScript' toField='set_fraction'/>
+    <ROUTE fromNode='FloatVertexAttributeInterpolatorScript' fromField='value_changed' toNode='_1' toField='set_value'/>
   </Scene>
 </X3D>

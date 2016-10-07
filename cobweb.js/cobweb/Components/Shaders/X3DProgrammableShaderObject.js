@@ -999,46 +999,6 @@ function ($,
 
 			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
 		},
-		enableColorAttribute: function (gl, colorBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Color);
-			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
-			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableColorAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Color);
-		},
-		enableTexCoordAttribute: function (gl, texCoordBuffers)
-		{
-			gl .enableVertexAttribArray (this .x3d_TexCoord);
-			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
-			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableTexCoordAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_TexCoord);
-		},
-		enableNormalAttribute: function (gl, normalBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Normal);
-			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
-			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-		},
-		disableNormalAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Normal);
-		},
-		enableVertexAttribute: function (gl, vertexBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
-			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableVertexAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Vertex);
-		},
 		enableFloatAttrib: function (gl, name, buffer, components)
 		{
 			var location = gl. getAttribLocation (this .getProgram (), name);
@@ -1118,6 +1078,46 @@ function ($,
 			gl .disableVertexAttribArray (location + 1);
 			gl .disableVertexAttribArray (location + 2);
 			gl .disableVertexAttribArray (location + 3);
+		},
+		enableColorAttribute: function (gl, colorBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Color);
+			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
+			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableColorAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Color);
+		},
+		enableTexCoordAttribute: function (gl, texCoordBuffers)
+		{
+			gl .enableVertexAttribArray (this .x3d_TexCoord);
+			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
+			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableTexCoordAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_TexCoord);
+		},
+		enableNormalAttribute: function (gl, normalBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Normal);
+			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
+			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+		},
+		disableNormalAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Normal);
+		},
+		enableVertexAttribute: function (gl, vertexBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
+			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableVertexAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Vertex);
 		},
 		getProgramInfo: function ()
 		{
