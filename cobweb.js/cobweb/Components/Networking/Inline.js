@@ -86,6 +86,8 @@ function ($,
 		this .group    = new Group (executionContext);
 		this .getBBox  = this .group .getBBox  .bind (this .group);
 		this .traverse = this .group .traverse .bind (this .group);
+
+		this .group .addParent (this);
 	}
 
 	Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),

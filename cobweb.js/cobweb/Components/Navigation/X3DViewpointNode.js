@@ -161,7 +161,7 @@ function ($,
 			this .scaleInterpolator            .value_changed_ .addFieldInterest (this .scaleOffset_);
 			this .scaleOrientationInterpolator .value_changed_ .addFieldInterest (this .scaleOrientationOffset_);
 
-			this .isBound_ .addInterest (this, "set_bind__");
+			this .isBound_ .addInterest (this, "set_bound__");
 		},
 		getEaseInEaseOut: function ()
 		{
@@ -170,14 +170,10 @@ function ($,
 		setInterpolators: function () { },
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
 			layer .getViewpointStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getViewpointStack () .pop (this);
 		},
 		removeFromLayer: function (layer)
@@ -211,7 +207,7 @@ function ($,
 		getProjectionMatrix: function (renderObject)
 		{
 			var navigationInfo = renderObject .getNavigationInfo ();
-	
+
 			return this .getProjectionMatrixWithLimits (navigationInfo .getNearValue (),
                                                      navigationInfo .getFarValue (this),
                                                      renderObject .getLayer () .getViewport () .getRectangle (renderObject .getBrowser ()));
@@ -439,7 +435,7 @@ function ($,
 				this .easeInEaseOut .set_fraction_ = 1;
 			}
 		},
-		set_bind__: function ()
+		set_bound__: function ()
 		{
 			if (this .isBound_ .getValue ())
 				this .getBrowser () .getNotification () .string_ = this .description_;

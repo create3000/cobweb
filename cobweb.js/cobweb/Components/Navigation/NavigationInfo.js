@@ -247,14 +247,10 @@ function ($,
 		},
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
 			layer .getNavigationInfoStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getNavigationInfoStack () .pop (this);
 		},
 		removeFromLayer: function (layer)

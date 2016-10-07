@@ -79,21 +79,25 @@ function ($, X3DBaseNode)
 			node .isBound_  = true;
 			node .bindTime_ = this .getBrowser () .getCurrentTime ();
 
-			node .bindToLayer (this .layer);
+			this .push (node);
 		},
 		push: function (node)
 		{
+			if (this .array .length === 0)
+				return;
+
 			if (node === this .array [0])
 				return;
-			
+
 			var top = this .top ();
-			
+
 			if (node !== top)
 			{
 				if (top .isBound_ .getValue ())
+				{
+					top .set_bind_ = false;
 					top .isBound_  = false;
-
-				this .pushOnTop (node);
+				}
 
 				if (! node .isBound_ .getValue ())
 				{
@@ -101,6 +105,8 @@ function ($, X3DBaseNode)
 					node .bindTime_ = this .getBrowser () .getCurrentTime ();
 					node .transitionStart (this .layer, top);
 				}
+
+				this .pushOnTop (node);
 
 				this .addNodeEvent ();
 			}
@@ -144,6 +150,9 @@ function ($, X3DBaseNode)
 			{
 				if (node .isBound_ .getValue ())
 					node .isBound_ = false;
+
+				if (this .array .length === 0)
+					return;
 
 				this .array .pop ();
 

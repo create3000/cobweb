@@ -64,7 +64,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DBindableNode);
 
-		this .layers = { };
+		this .layers = [ ];
 	}
 
 	X3DBindableNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -77,23 +77,17 @@ function ($,
 			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
+			this .set_bind_ .addInterest (this, "set_bind__");
+
 			this .set_live__ ();
 		},
 		getCameraObject: function ()
 		{
 		   return true;
 		},
-		getLayers: function ()
+		addLayer: function (layer)
 		{
-			return this .layers;
-		},
-		bindToLayer: function (layer)
-		{
-			this .layers [layer .getId ()] = layer;
-		},
-		unbindFromLayer: function (layer)
-		{
-			delete this .layers [layer .getId ()];
+			this .layers .push (layer);
 		},
 		transitionStart: function ()
 		{ },
@@ -104,6 +98,25 @@ function ($,
 
 			//for (var id in this .layers)
 			//	this .removeFromLayer (this .layers [id]);
+		},
+		set_bind__: function ()
+		{
+			if (this .set_bind_ .getValue ())
+			{
+				this .layers = this .getLayers ();
+
+				// Bind
+		
+				for (var i = 0; i < this .layers .length; ++ i)
+					this .bindToLayer (this .layers [i]);
+			}
+			else
+			{
+				// Unbind
+
+				for (var i = 0; i < this .layers .length; ++ i)
+					this .unbindFromLayer (this .layers [i]);
+			}
 		},
 	});
 

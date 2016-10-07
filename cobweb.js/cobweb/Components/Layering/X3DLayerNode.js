@@ -246,12 +246,21 @@ function ($,
 
 			// Bind first viewpoint in viewpoint list.
 
-			var viewpoint = this .viewpoints .getBound ()
+			var
+				navigationInfo = this .navigationInfos .getBound (),
+				background     = this .backgrounds     .getBound (),
+				fog            = this .fogs            .getBound (),
+				viewpoint      = this .viewpoints      .getBound ();
 
-			this .navigationInfoStack .forcePush (this .navigationInfos .getBound ());
-			this .backgroundStack     .forcePush (this .backgrounds     .getBound ());
-			this .fogStack            .forcePush (this .fogs            .getBound ());
+			this .navigationInfoStack .forcePush (navigationInfo);
+			this .backgroundStack     .forcePush (background);
+			this .fogStack            .forcePush (fog);
 			this .viewpointStack      .forcePush (viewpoint);
+
+			navigationInfo .addLayer (this);
+			background     .addLayer (this);
+			fog            .addLayer (this);
+			viewpoint      .addLayer (this);
 
 			viewpoint .resetUserOffsets ();
 		},
