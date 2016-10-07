@@ -414,7 +414,7 @@ function ($,
 			{
 				var layers = this .getLayers ();
 
-				for (var i = 0;  i < layers .length; ++ i)
+				for (var i = 0; i < layers .length; ++ i)
 				{
 					layers [i] .getNavigationInfo () .transitionComplete_ = true;
 				}

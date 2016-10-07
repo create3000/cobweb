@@ -70,9 +70,9 @@ function ($,
 		constructor: X3DNode,
 		getLayers: function ()
 		{
-			return this .findParents (X3DConstants .X3DLayerNode, this, true);
+			return this .findParents (X3DConstants .X3DLayerNode, this);
 		},
-		findParents: function (type, object, visibles)
+		findParents: function (type, object)
 		{
 			var
 				parents = object .getParents (),
@@ -80,11 +80,11 @@ function ($,
 				seen    = { };
 	
 			for (var id in parents)
-				this .findParentsImpl (type, parents [id], array, visibles, seen);
+				this .findParentsImpl (type, parents [id], array, seen);
 	
 			return array;
 		},
-		findParentsImpl: function (type, object, array, visibles, seen)
+		findParentsImpl: function (type, object, array, seen)
 		{
 			if (seen .hasOwnProperty (object .getId ()))
 				return;
@@ -99,16 +99,7 @@ function ($,
 				{
 					switch (types [t])
 					{
-						case X3DConstants .X3DMetadataObject:
-						case X3DConstants .X3DProgrammableShaderObject:
 						case X3DConstants .X3DProtoDeclarationNode:
-						case X3DConstants .X3DScriptNode:
-						{
-							if (visibles)
-								return;
-		
-							break;
-						}
 						case X3DConstants .X3DNode:
 							break;
 						case X3DConstants .LayerSet:
@@ -131,7 +122,7 @@ function ($,
 			var parents = object .getParents ();
 
 			for (var id in parents)
-				this .findParentsImpl (type, parents [id], array, visibles, seen);
+				this .findParentsImpl (type, parents [id], array, seen);
 		},
 	});
 
