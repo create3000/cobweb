@@ -52,14 +52,12 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
 	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
           X3DCast,
           X3DConstants,
-          Algorithm,
           Matrix3)
 {
 "use strict";
@@ -201,8 +199,8 @@ function ($,
 
 			if (this .x3d_Color < 0)
 			{
-				this .enableColorAttribute  = Algorithm .nop;
-				this .disableColorAttribute = Algorithm .nop;
+				this .enableColorAttribute  = Function .prototype;
+				this .disableColorAttribute = Function .prototype;
 			}
 			else
 			{
@@ -212,8 +210,8 @@ function ($,
 
 			if (this .x3d_TexCoord < 0)
 			{
-				this .enableTexCoordAttribute  = Algorithm .nop;
-				this .disableTexCoordAttribute = Algorithm .nop;
+				this .enableTexCoordAttribute  = Function .prototype;
+				this .disableTexCoordAttribute = Function .prototype;
 			}
 			else
 			{
@@ -223,8 +221,8 @@ function ($,
 
 			if (this .x3d_Normal < 0)
 			{
-				this .enableNormalAttribute  = Algorithm .nop;
-				this .disableNormalAttribute = Algorithm .nop;
+				this .enableNormalAttribute  = Function .prototype;
+				this .disableNormalAttribute = Function .prototype;
 			}
 			else
 			{

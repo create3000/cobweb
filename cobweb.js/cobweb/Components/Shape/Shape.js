@@ -122,7 +122,7 @@ function ($,
 			if (this .getGeometry ())
 				delete this .traverse;
 			else
-				this .traverse = Algorithm .nop;
+				this .traverse = Function .prototype;
 		},
 		intersectsBox: function (box, clipPlanes, modelViewMatrix)
 		{

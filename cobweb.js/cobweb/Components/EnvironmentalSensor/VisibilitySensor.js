@@ -57,7 +57,6 @@ define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -66,8 +65,7 @@ function ($,
           X3DEnvironmentalSensorNode,
           TraverseType,
           X3DConstants,
-          Vector3,
-          Algorithm)
+          Vector3)
 {
 "use strict";
 
@@ -121,7 +119,7 @@ function ($,
 			if (this .enabled_ .getValue ())
 				delete this .traverse;
 			else
-				this .traverse = Algorithm .nop;
+				this .traverse = Function .prototype;
 		},
 		update: function ()
 		{

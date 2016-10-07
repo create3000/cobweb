@@ -167,9 +167,9 @@ function ($,
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
 
-			this .depth            = Algorithm .nop;
-			this .display          = Algorithm .nop;
-			this .displayParticles = Algorithm .nop;
+			this .depth            = Function .prototype;
+			this .display          = Function .prototype;
+			this .displayParticles = Function .prototype;
 
 			this .set_live__ ();
 		},
@@ -747,9 +747,9 @@ function ($,
 			}
 			else
 			{
-				this .depth            = Algorithm .nop;
-				this .display          = Algorithm .nop;
-				this .displayParticles = Algorithm .nop;
+				this .depth            = Function .prototype;
+				this .display          = Function .prototype;
+				this .displayParticles = Function .prototype;
 			}
 	  	},
 		traverse: function (type, renderObject)

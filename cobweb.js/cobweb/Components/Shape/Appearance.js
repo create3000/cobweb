@@ -55,7 +55,6 @@ define ([
 	"cobweb/Components/Shape/X3DAppearanceNode",
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -63,8 +62,7 @@ function ($,
           FieldDefinitionArray,
           X3DAppearanceNode,
           X3DCast,
-          X3DConstants,
-          Algorithm)
+          X3DConstants)
 {
 "use strict";
 
@@ -186,7 +184,7 @@ function ($,
 			}
 			else
 			{
-				this .traverse = Algorithm .nop;
+				this .traverse = Function .prototype;
 			}
 
 			this .set_transparent__ ();
