@@ -149,7 +149,7 @@ function ($,
 				new XMLParser (scene, dom) .parseIntoScene ();
 				
 				//AP: add reference to dom for later access
-				this. node. dom = dom;
+				this .node .dom = dom;
 
 				if (success)
 					this .setScene (scene, success);
