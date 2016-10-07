@@ -165,16 +165,17 @@ function ($,
 				return;
 
 			var
-				colorNode = this .colorNode,
-				coordNode = this .coordNode;
+				attribNodes = this .getAttrib (),
+				numAttrib   = attribNodes .length,
+				attribs     = this .getAttribs (),
+				colorNode   = this .colorNode,
+				coordNode   = this .coordNode;
 
-			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-			//{
-			//	attribArrays [a] .reserve (coordNode -> getSize ());
-
-			//	for (size_t i = 0, size = coordNode -> getSize (); i < size; ++ i)
-			//		attribNodes [a] -> addValue (attribArrays [a], i);
-			//}
+			for (var a = 0; a < numAttrib; ++ a)
+			{
+				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
+					attribNodes [a] .addValue (attribs [a], i);
+			}
 			
 			if (this .colorNode)
 			{
@@ -184,8 +185,6 @@ function ($,
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
 				this .addVertex (coordNode .get1Point (i));
-
-			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});
 

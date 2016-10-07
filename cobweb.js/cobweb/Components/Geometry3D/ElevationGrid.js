@@ -332,18 +332,14 @@ function ($,
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
 				coordIndex      = this .createCoordIndex (),
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
 				points          = this .createPoints (),
 				face            = 0;
-
-			// Vertex attribute
-
-			//std::vector <std::vector <float>> attribArrays (attribNodes .size ());
-
-			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-			//	attribArrays [a] .reserve (coordIndex .size ());
 
 			if (texCoordNode)
 				texCoordNode .init (this .getTexCoords ());
@@ -355,14 +351,14 @@ function ($,
 
 			// Build geometry
 
-			for (var c = 0; c < coordIndex .length; ++ face)
+			for (var c = 0, numCoordIndices = coordIndex .length; c < numCoordIndices; ++ face)
 			{
 				for (var p = 0; p < 6; ++ p, ++ c)
 				{
 					var index = coordIndex [c];
 
-					//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-					//	attribNodes [a] -> addValue (attribArrays [a], i);
+					for (var a = 0; a < numAttrib; ++ a)
+						attribNodes [a] .addValue (attribs [a], index);
 
 					if (colorNode)
 					{

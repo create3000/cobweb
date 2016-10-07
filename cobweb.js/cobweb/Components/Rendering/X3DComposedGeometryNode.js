@@ -206,6 +206,9 @@ function ($,
 			var
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
@@ -223,6 +226,9 @@ function ($,
 				face = Math .floor (i / verticesPerFace);
 
 				var index = this .getPolygonIndex (this .getTriangleIndex (i));
+
+				for (var a = 0; a < numAttrib; ++ a)
+					attrib [a] .addValue (attribs [a], index);
 
 				if (colorNode)
 				{

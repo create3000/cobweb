@@ -172,8 +172,8 @@ function ($,
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
 				coordIndex      = this .coordIndex_ .getValue (),
-				attrib          = this .getAttrib (),
-				numAttrib       = attrib .length,
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
 				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
@@ -199,7 +199,7 @@ function ($,
 						index = coordIndex [i] .getValue ();
 
 					for (var a = 0; a < numAttrib; ++ a)
-						attrib [a] .addValue (attribs [a], index);
+						attribNodes [a] .addValue (attribs [a], index);
 
 					if (colorNode)
 					{

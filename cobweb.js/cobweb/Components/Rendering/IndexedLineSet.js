@@ -267,6 +267,9 @@ function ($,
 				coordIndex     = this .coordIndex_. getValue (),
 				polylines      = this .getPolylineIndices (),
 				colorPerVertex = this .colorPerVertex_ .getValue (),
+				attribNodes    = this .getAttrib (),
+				numAttrib      = attribNodes .length,
+				attribs        = this .getAttribs (),
 				colorNode      = this .colorNode,
 				coordNode      = this .coordNode;
 
@@ -284,10 +287,12 @@ function ($,
 				{
 					for (var index = line, i_end = line + 2; index < i_end; ++ index)
 					{
-						var i = polyline [index];
+						var
+							i  = polyline [index],
+							ci = coordIndex [i] .getValue ();
 
-						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-						//	attribNodes [a] -> addValue (attribArrays [a], coordIndex () [i]);
+						for (var a = 0; a < numAttrib; ++ a)
+							attribNodes [a] .addValue (attribs [a], ci);
 
 						if (colorNode)
 						{
@@ -297,7 +302,7 @@ function ($,
 								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 						}
 
-						this .addVertex (coordNode .get1Point (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .get1Point (ci));
 					}
 				}
 

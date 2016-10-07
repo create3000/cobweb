@@ -179,6 +179,9 @@ function ($,
 
 			var
 				vertexCount = this .vertexCount_ .getValue (),
+				attribNodes = this .getAttrib (),
+				numAttrib   = attribNodes .length,
+				attribs     = this .getAttribs (),
 				colorNode   = this .colorNode,
 				coordNode   = this .coordNode,
 				size        = coordNode .getSize (),
@@ -197,8 +200,8 @@ function ($,
 
 					for (var i = 0; i < count; ++ i, index += i & 1)
 					{
-						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-						//	attribNodes [a] -> addValue (attribArrays [a], index);
+						for (var a = 0; a < numAttrib; ++ a)
+							attrib [a] .addValue (attribs [a], index);
 
 						if (colorNode)
 							this .addColor (colorNode .get1Color (index));
@@ -211,8 +214,6 @@ function ($,
 				else
 					index += count;
 			}
-
-			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});
 

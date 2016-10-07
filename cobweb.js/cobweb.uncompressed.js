@@ -44206,6 +44206,9 @@ function ($,
 			var
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
@@ -44223,6 +44226,9 @@ function ($,
 				face = Math .floor (i / verticesPerFace);
 
 				var index = this .getPolygonIndex (this .getTriangleIndex (i));
+
+				for (var a = 0; a < numAttrib; ++ a)
+					attrib [a] .addValue (attribs [a], index);
 
 				if (colorNode)
 				{
@@ -44508,8 +44514,8 @@ function ($,
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
 				coordIndex      = this .coordIndex_ .getValue (),
-				attrib          = this .getAttrib (),
-				numAttrib       = attrib .length,
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
 				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
@@ -44535,7 +44541,7 @@ function ($,
 						index = coordIndex [i] .getValue ();
 
 					for (var a = 0; a < numAttrib; ++ a)
-						attrib [a] .addValue (attribs [a], index);
+						attribNodes [a] .addValue (attribs [a], index);
 
 					if (colorNode)
 					{
@@ -79963,18 +79969,14 @@ function ($,
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
 				coordIndex      = this .createCoordIndex (),
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
 				points          = this .createPoints (),
 				face            = 0;
-
-			// Vertex attribute
-
-			//std::vector <std::vector <float>> attribArrays (attribNodes .size ());
-
-			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-			//	attribArrays [a] .reserve (coordIndex .size ());
 
 			if (texCoordNode)
 				texCoordNode .init (this .getTexCoords ());
@@ -79986,14 +79988,14 @@ function ($,
 
 			// Build geometry
 
-			for (var c = 0; c < coordIndex .length; ++ face)
+			for (var c = 0, numCoordIndices = coordIndex .length; c < numCoordIndices; ++ face)
 			{
 				for (var p = 0; p < 6; ++ p, ++ c)
 				{
 					var index = coordIndex [c];
 
-					//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-					//	attribNodes [a] -> addValue (attribArrays [a], i);
+					for (var a = 0; a < numAttrib; ++ a)
+						attribNodes [a] .addValue (attribs [a], index);
 
 					if (colorNode)
 					{
@@ -84081,6 +84083,9 @@ function ($,
 				coordIndex     = this .coordIndex_. getValue (),
 				polylines      = this .getPolylineIndices (),
 				colorPerVertex = this .colorPerVertex_ .getValue (),
+				attribNodes    = this .getAttrib (),
+				numAttrib      = attribNodes .length,
+				attribs        = this .getAttribs (),
 				colorNode      = this .colorNode,
 				coordNode      = this .coordNode;
 
@@ -84098,10 +84103,12 @@ function ($,
 				{
 					for (var index = line, i_end = line + 2; index < i_end; ++ index)
 					{
-						var i = polyline [index];
+						var
+							i  = polyline [index],
+							ci = coordIndex [i] .getValue ();
 
-						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-						//	attribNodes [a] -> addValue (attribArrays [a], coordIndex () [i]);
+						for (var a = 0; a < numAttrib; ++ a)
+							attribNodes [a] .addValue (attribs [a], ci);
 
 						if (colorNode)
 						{
@@ -84111,7 +84118,7 @@ function ($,
 								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 						}
 
-						this .addVertex (coordNode .get1Point (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .get1Point (ci));
 					}
 				}
 
@@ -86990,6 +86997,9 @@ function ($,
 
 			var
 				vertexCount = this .vertexCount_ .getValue (),
+				attribNodes = this .getAttrib (),
+				numAttrib   = attribNodes .length,
+				attribs     = this .getAttribs (),
 				colorNode   = this .colorNode,
 				coordNode   = this .coordNode,
 				size        = coordNode .getSize (),
@@ -87008,8 +87018,8 @@ function ($,
 
 					for (var i = 0; i < count; ++ i, index += i & 1)
 					{
-						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-						//	attribNodes [a] -> addValue (attribArrays [a], index);
+						for (var a = 0; a < numAttrib; ++ a)
+							attrib [a] .addValue (attribs [a], index);
 
 						if (colorNode)
 							this .addColor (colorNode .get1Color (index));
@@ -87022,8 +87032,6 @@ function ($,
 				else
 					index += count;
 			}
-
-			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});
 
@@ -92206,16 +92214,17 @@ function ($,
 				return;
 
 			var
-				colorNode = this .colorNode,
-				coordNode = this .coordNode;
+				attribNodes = this .getAttrib (),
+				numAttrib   = attribNodes .length,
+				attribs     = this .getAttribs (),
+				colorNode   = this .colorNode,
+				coordNode   = this .coordNode;
 
-			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-			//{
-			//	attribArrays [a] .reserve (coordNode -> getSize ());
-
-			//	for (size_t i = 0, size = coordNode -> getSize (); i < size; ++ i)
-			//		attribNodes [a] -> addValue (attribArrays [a], i);
-			//}
+			for (var a = 0; a < numAttrib; ++ a)
+			{
+				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
+					attribNodes [a] .addValue (attribs [a], i);
+			}
 			
 			if (this .colorNode)
 			{
@@ -92225,8 +92234,6 @@ function ($,
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
 				this .addVertex (coordNode .get1Point (i));
-
-			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});
 
