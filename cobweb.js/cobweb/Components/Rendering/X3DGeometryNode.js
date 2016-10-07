@@ -896,7 +896,13 @@ function ($,
 		},
 		displayParticlesDepth: function (context, shaderNode, particles, numParticles)
 		{
-			var gl = context .renderer .getBrowser () .getContext ();
+			var
+				gl            = context .renderer .getBrowser () .getContext ();
+				attribNodes   = this .attribNodes,
+				attribBuffers = this .attribBuffers;
+
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
 
 			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
@@ -920,15 +926,20 @@ function ($,
 
 				gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 			}
+	
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .disable (gl, shaderNode);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
 			try
 			{
 				var
-					browser    = context .renderer .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
+					browser       = context .renderer .getBrowser (),
+					gl            = browser .getContext (),
+					shaderNode    = context .shaderNode,
+					attribNodes   = this .attribNodes,
+					attribBuffers = this .attribBuffers;
 	
 				// Setup shader.
 	
@@ -938,6 +949,9 @@ function ($,
 	
 				// Setup vertex attributes.
 	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
+
 				if (this .colors .length)
 					shaderNode .enableColorAttribute (gl, this .colorBuffer);
 	
@@ -1051,6 +1065,9 @@ function ($,
 						}
 					}
 				}
+	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .disable (gl, shaderNode);
 	
 				shaderNode .disableColorAttribute    (gl);
 				shaderNode .disableTexCoordAttribute (gl);
