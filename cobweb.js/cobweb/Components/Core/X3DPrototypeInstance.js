@@ -71,8 +71,6 @@ function ($,
 		this .protoNode        = protoNode;
 		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice ());
 
-		this .addChildren ("X3DPrototypeInstanceIsLive", new Fields .SFBool (true));
-
 		X3DNode             .call (this, executionContext);
 		X3DExecutionContext .call (this, executionContext);
 
