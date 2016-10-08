@@ -66,6 +66,11 @@ function ($,
 {
 "use strict";
 
+	function isLive ()
+	{
+	   return this .isLive_;
+	}
+
 	function X3DBaseNode (executionContext)
 	{
 		if (this .hasOwnProperty ("_executionContext"))
@@ -127,11 +132,6 @@ function ($,
 
 			// Change function.
 
-			function isLive ()
-			{
-			   return this .isLive_;
-			}
-
 			this .isLive = isLive;
 
 			// Add children.
@@ -148,7 +148,8 @@ function ($,
 		},
 		setLive: function (value)
 		{
-			///  Sets the own live state of this node.
+			///  Sets the own live state of this node.  Setting the live state to false
+			///  temporarily disables this node completely.
 
 			this ._privateIsLive = value .valueOf ();
 

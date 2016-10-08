@@ -89,7 +89,7 @@ function ($,
 			                   "isEvenLive",  new Fields .SFBool ());
 
 			this .isLive ()   .addInterest (this, "set_live__");
-			this .isEvenLive_ .addInterest (this, "set_live__");
+			this .isEvenLive_ .addInterest (this, "_set_live__"); // to X3DBaseNode
 
 			this .initialized_ .addInterest (this, "set_loop__");
 			this .enabled_     .addInterest (this, "set_enabled__");
@@ -114,22 +114,15 @@ function ($,
 		{
 			return this .getBrowser () .getCurrentTime () - this .start - this .pauseInterval;
 		},
-		getPrivateLive: function ()
+		getLiveState: function ()
 		{
-			return this .isLive () .getValue () || this .isEvenLive_ .getValue ();
+			///  Determines the live state of this node.
+
+			return this .getLive () && (this .getExecutionContext () .isLive () .getValue () || this .isEvenLive_ .getValue ());
 		},
 		set_live__: function ()
 		{
-			if (this .getPrivateLive ())
-				this .getBrowser () .isLive () .addInterest (this, "set_browser_live__");
-			else
-				this .getBrowser () .isLive () .removeInterest (this, "set_browser_live__");
-
-			this .set_browser_live__ ();
-		},
-		set_browser_live__: function ()
-		{
-			if (this .getPrivateLive () && this .getBrowser () .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .disabled)
 				{
@@ -253,7 +246,7 @@ function ($,
 
 				this .set_start ();
 
-				if (this .getPrivateLive ())
+				if (this .isLive () .getValue ())
 				{
 					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
 				}
@@ -276,7 +269,7 @@ function ($,
 				if (this .pauseTimeValue !== this .getBrowser () .getCurrentTime ())
 					this .pauseTimeValue = this .getBrowser () .getCurrentTime ();
 
-				if (this .getPrivateLive ())
+				if (this .isLive () .getValue ())
 					this .real_pause ();
 			}
 		},
@@ -297,7 +290,7 @@ function ($,
 				if (this .resumeTimeValue !== this .getBrowser () .getCurrentTime ())
 					this .resumeTimeValue = this .getBrowser () .getCurrentTime ();
 
-				if (this .getPrivateLive ())
+				if (this .isLive () .getValue ())
 					this .real_resume ();
 			}
 		},
@@ -331,7 +324,7 @@ function ($,
 
 				this .isActive_ = false;
 
-				if (this .getPrivateLive ())
+				if (this .isLive () .getValue ())
 					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
 			}
 		},
