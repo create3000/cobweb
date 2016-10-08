@@ -99,7 +99,7 @@ function ($,
 	{
 		constructor: X3DBaseNode,
 		fieldDefinitions: new FieldDefinitionArray ([ ]),
-		_privateIsLive: true,
+		_live: true,
 		_initialized: false,
 		getScene: function ()
 		{
@@ -134,7 +134,7 @@ function ($,
 
 			this .isLive = isLive;
 
-			// Add children.
+			// Add isLive event.
 
 			this .addChildren ("isLive", new Fields .SFBool (this .getLiveState ()));
 
@@ -144,14 +144,14 @@ function ($,
 			if (this ._executionContext !== this)
 				this ._executionContext .isLive () .addInterest (this, "_set_live__");
 
-		   return this .isLive ();
+			return this .isLive ();
 		},
 		setLive: function (value)
 		{
 			///  Sets the own live state of this node.  Setting the live state to false
 			///  temporarily disables this node completely.
 
-			this ._privateIsLive = value .valueOf ();
+			this ._live = value .valueOf ();
 
 			this ._set_live__ ();
 		},
@@ -159,7 +159,7 @@ function ($,
 		{
 			///  Returns the own live state of this node.
 
-			return this ._privateIsLive;
+			return this ._live;
 		},
 		getLiveState: function ()
 		{
