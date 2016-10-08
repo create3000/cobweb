@@ -92,6 +92,9 @@ function ($,
 		// Add children.
 
 		this .addChildren ("isLive", new Fields .SFBool (true));
+
+		// Event processing is done manually and immediately, so:
+		this .isLive_ .removeParent (this);
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
@@ -127,6 +130,25 @@ function ($,
 		isInitialized: function ()
 		{
 			return this ._initialized;
+		},
+		setLive: function (value)
+		{
+			if (value)
+			{
+				if (this .isLive () .getValue ())
+					return;
+
+				this .isLive () .setValue (true);
+				this .isLive () .processEvent (Events .create (this .isLive ()));
+			}
+			else
+			{
+				if (this .isLive () .getValue ())
+				{
+					this .isLive () .setValue (false);
+					this .isLive () .processEvent (Events .create (this .isLive ()));
+				}
+			}
 		},
 		isLive: function ()
 		{
@@ -409,22 +431,6 @@ function ($,
 			return null;
 		},
 		traverse: function () { },
-		beginUpdate: function ()
-		{
-		   if (this .isLive () .getValue ())
-		      return;
-
-		   this .isLive () .setValue (true);
-			this .isLive () .processEvent (Events .create (this .isLive ()));
-		},
-		endUpdate: function ()
-		{
-		   if (this .isLive () .getValue ())
-		   {
-		      this .isLive () .setValue (false);
-				this .isLive () .processEvent (Events .create (this .isLive ()));
-			}
-		},
 		toString: function ()
 		{
 			return this .getTypeName () + " { }";

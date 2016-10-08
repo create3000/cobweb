@@ -88,10 +88,10 @@ function (Fields,
 			this .loadSensor .setup ();
 
 			this .defaultScene .setup ();
-			this .defaultScene .beginUpdate ();
+			this .defaultScene .setLive (true);
 
 			this .privateScene .setup ();
-			this .privateScene .beginUpdate ();
+			this .privateScene .setLive (true);
 		},
 		getProviderUrl: function ()
 		{

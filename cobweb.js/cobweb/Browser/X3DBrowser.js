@@ -209,7 +209,7 @@ function ($,
 			if (this .isExternal ())
 			   return scene;
 
-			scene .beginUpdate ();
+			scene .setLive (true);
 
 			return scene;
 		},
@@ -219,12 +219,11 @@ function ($,
 
 			if (this .getWorld ())
 			{
-				this .getExecutionContext () .endUpdate ();
+				this .getExecutionContext () .setLive (false);
 				this .shutdown () .processInterests ();
 			}
-				
-			// Replace world.
 
+			// Replace world.
 
 			if (! scene)
 				scene = this .createScene ();
@@ -236,10 +235,7 @@ function ($,
 			this .setBrowserLoading (true);
 			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
 
-			if (this .isLive () .getValue ())
-				scene .beginUpdate ();
-			else
-				scene .endUpdate ();
+			scene .setLive (this .isLive () .getValue ())
 
 			this .setExecutionContext (scene);
 
@@ -272,10 +268,10 @@ function ($,
 
 			if (! external)
 			{
-				currentScene .isLive () .addFieldInterest (scene .isLive ());
+				currentScene .isLive () .addInterest (scene, "setLive");
 
 				if (currentScene .isLive () .getValue ())
-					scene .beginUpdate ();
+					scene .setLive (true);
 			}
 
 			scene .setup ();
@@ -311,10 +307,10 @@ function ($,
 
 				   if (! external)
 				   {
-				      currentScene .isLive () .addFieldInterest (scene .isLive ());
+				      currentScene .isLive () .addInterest (scene, "setLive");
 
 						if (currentScene .isLive () .getValue ())
-						   scene .beginUpdate ();
+						   scene .setLive (true);
 					}
 
 					scene .setup ();
@@ -336,10 +332,10 @@ function ($,
 
 			if (! external)
 			{
-				currentScene .isLive () .addFieldInterest (scene .isLive ());
+				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())
-					scene .beginUpdate ();
+					scene .setLive (true);
 			}
 
 			scene .setup ();
@@ -425,10 +421,10 @@ function ($,
 
 			if (! external)
 			{
-				currentScene .isLive () .addFieldInterest (scene .isLive ());
+				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())
-					scene .beginUpdate ();
+					scene .setLive (true);
 			}
 
 			scene .setup ();
@@ -552,10 +548,10 @@ function ($,
 				console .log (error .message);
 			}
 		},
-		bindViewpoint: function (viewpoint)
+		bindViewpoint: function (viewpoint)isLive
 		{
 			if (viewpoint .isBound_ .getValue ())
-				viewpoint .transitionStart (null, viewpoint);
+				viewpoint .transitionStart (viewpoint);
 
 			else
 				viewpoint .set_bind_ = true;
@@ -577,15 +573,12 @@ function ($,
 		},
 		beginUpdate: function ()
 		{
-			X3DBrowserContext .prototype .beginUpdate .call (this);
-			this .getExecutionContext () .beginUpdate ();
+			this .getExecutionContext () .setLive (true);
 			this .advanceTime (performance .now ());
 		},
 		endUpdate: function ()
 		{
-			X3DBrowserContext .prototype .endUpdate .call (this);
-
-			this .getExecutionContext () .endUpdate ();
+			this .getExecutionContext () .setLive (false);
 		},
 		print: function ()
 		{

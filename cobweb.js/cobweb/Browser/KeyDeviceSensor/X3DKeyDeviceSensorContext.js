@@ -178,11 +178,7 @@ function ($,
 				{
 					if (this .getControlKey ())
 					{
-						if (this .isLive () .getValue ())
-							this .endUpdate ();
-						else
-							this .beginUpdate ();
-						
+						this .setLive (this .isLive () .getValue ());						
 						this .getNotification () .string_ = this .isLive () .getValue () ? "Begin Update" : "End Update";
 					}
 

@@ -100,7 +100,7 @@ function ($,
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
 
-		this .endUpdate ();
+		this .setLive (false);
 	}
 
 	X3DExecutionContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -421,7 +421,7 @@ function ($,
 					throw 1;
 
 				if (viewpoint .isBound_ .getValue ())
-					viewpoint .transitionStart (null, viewpoint);
+					viewpoint .transitionStart (viewpoint);
 
 				else
 					viewpoint .set_bind_ = true;

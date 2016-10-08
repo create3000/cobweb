@@ -238,7 +238,7 @@ function ($,
 		{
 			return 1e5;
 		},
-		transitionStart: function (layer, fromViewpoint)
+		transitionStart: function (fromViewpoint)
 		{
 			try
 			{

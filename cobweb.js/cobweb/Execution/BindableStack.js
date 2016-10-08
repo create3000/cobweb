@@ -103,7 +103,7 @@ function ($, X3DBaseNode)
 				{
 					node .isBound_  = true;
 					node .bindTime_ = this .getBrowser () .getCurrentTime ();
-					node .transitionStart (this .layer, top);
+					node .transitionStart (top);
 				}
 
 				this .pushOnTop (node);
@@ -163,7 +163,7 @@ function ($, X3DBaseNode)
 					top .set_bind_ = true;
 					top .isBound_  = true;
 					top .bindTime_ = this .getBrowser () .getCurrentTime ();
-					top .transitionStart (this .layer, node);
+					top .transitionStart (node);
 				}
 
 				this .addNodeEvent ();

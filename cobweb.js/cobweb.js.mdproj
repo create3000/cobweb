@@ -1248,6 +1248,7 @@
     <None Include="tests\Components\Shaders\PointMatrix3VertexAttribute.x3d" />
     <None Include="tests\Components\Shaders\PointMatrix4VertexAttribute.x3d" />
     <None Include="test.html" />
+    <None Include="tests\Components\Scripting\createX3DFromString.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

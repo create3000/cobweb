@@ -109,12 +109,7 @@ function ($,
 		{
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				var value = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
-				
-				if (value)
-					this .scene .beginUpdate ();
-				else
-					this .scene .endUpdate ();
+				this .scene .setLive (this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ());
 			}
 		},
 		setProtoDeclaration: function (value)

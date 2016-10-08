@@ -136,12 +136,7 @@ function ($,
 		{
 			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
 			{
-				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
-
-				if (live)
-					this .scene .beginUpdate ();
-				else
-					this .scene .endUpdate ();
+				this .scene .setLive (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ());
 			}
 		},
 		set_load__: function ()
@@ -209,7 +204,7 @@ function ($,
 		},
 		setInternalScene: function (scene)
 		{
-			this .scene .endUpdate ();
+			this .scene .setLive (false);
 			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 			// Set new scene.
