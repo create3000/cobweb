@@ -50,16 +50,37 @@ body {
 		<script type="text/javascript">
 X3D (function (element)
 {
+	var vrmlSyntax = "<?xml version='1.0' encoding='UTF-8'?>" +
+	                 "<X3D><Scene>" +
+	                 " <TimeSensor DEF='T'" +
+	                 "     cycleInterval='10'" +
+	                 "     loop='true'/>" +
+	                 " <PositionInterpolator DEF='I'" +
+	                 "     key='0, 1'" +
+	                 "     keyValue='-1 0 0, 1 0 0'/>" +
+	                 " <Transform DEF='B'>" +
+	                 "   <Shape>" +
+	                 "     <Appearance>" +
+	                 "       <Material/>" +
+	                 "     </Appearance>" +
+	                 "     <Box/>" +
+	                 "   </Shape>" +
+	                 " </Transform>" +
+	                 "<ROUTE fromNode='T' fromField='fraction_changed' toNode='I' toField='set_fraction' />" +
+	                 "<ROUTE fromNode='I' fromField='value_changed' toNode='B' toField='set_translation' />" +
+	                 "</Scene></X3D>";
+
+
 	Browser = X3D .getBrowser (element);
 
-	var scene = Browser .importDocument ($.parseXML ("<Shape><Box/></Shape>"));
+	var scene = Browser .importDocument ($.parseXML (vrmlSyntax));
 
 	Browser .replaceWorld (scene);
 });
 		</script>
 	</head>
 	<body>
-		<X3DCanvas class="browser" xsrc="scene.x3d">
+		<X3DCanvas class="browser" xsrc="test.x3d">
 			<p class="fallback">Sorry,<br>
 				it wasn't me!<br>
 				<br>

@@ -548,7 +548,7 @@ function ($,
 				console .log (error .message);
 			}
 		},
-		bindViewpoint: function (viewpoint)isLive
+		bindViewpoint: function (viewpoint)
 		{
 			if (viewpoint .isBound_ .getValue ())
 				viewpoint .transitionStart (viewpoint);
