@@ -74,12 +74,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
 			this .set_bind_ .addInterest (this, "set_bind__");
-
-			this .set_live__ ();
 		},
 		getCameraObject: function ()
 		{
@@ -91,14 +86,6 @@ function ($,
 		},
 		transitionStart: function ()
 		{ },
-		set_live__: function ()
-		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				return;
-
-			//for (var id in this .layers)
-			//	this .removeFromLayer (this .layers [id]);
-		},
 		set_bind__: function ()
 		{
 			if (this .set_bind_ .getValue ())

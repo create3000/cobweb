@@ -96,6 +96,18 @@ function ($,
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
 	{
 		constructor: X3DBrowser,
+		getTypeName: function ()
+		{
+			return "X3DBrowser";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "browser";
+		},
 		initialize: function ()
 		{
 			this .replaceWorld (this .createScene ());
@@ -573,11 +585,13 @@ function ($,
 		},
 		beginUpdate: function ()
 		{
+			this .setLive (true);
 			this .getExecutionContext () .setLive (true);
 			this .advanceTime (performance .now ());
 		},
 		endUpdate: function ()
 		{
+			this .setLive (false);
 			this .getExecutionContext () .setLive (false);
 		},
 		print: function ()

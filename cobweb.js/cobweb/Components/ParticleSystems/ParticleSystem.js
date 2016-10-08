@@ -201,7 +201,6 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
@@ -268,7 +267,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
@@ -298,7 +297,7 @@ function ($,
 			{
 				if (! this .isActive_ .getValue ())
 				{
-					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					if (this .isLive () .getValue ())
 					{
 						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
 			
@@ -314,7 +313,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue ())
 				{
-					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					if (this .isLive () .getValue ())
 					{
 						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
 					}

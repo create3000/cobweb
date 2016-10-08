@@ -19212,7 +19212,7 @@ function ($,
 	{
 		X3DChildObject .call (this);
 
-		this .browser = browser;
+		this ._browser = browser;
 	}
 
 	X3DEventObject .prototype = $.extend (Object .create (X3DChildObject .prototype),
@@ -19220,7 +19220,7 @@ function ($,
 		constructor: X3DEventObject,
 		getBrowser: function ()
 		{
-			return this .browser;
+			return this ._browser;
 		},
 		getExtendedEventHandling: function ()
 		{
@@ -19363,16 +19363,13 @@ function ($,
 
 		for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			this .addField (fieldDefinitions [i]);
-
-		// Add children.
-
-		this .addChildren ("isLive", new Fields .SFBool (true));
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
 	{
 		constructor: X3DBaseNode,
 		fieldDefinitions: new FieldDefinitionArray ([ ]),
+		_privateIsLive: true,
 		_initialized: false,
 		getScene: function ()
 		{
@@ -19399,13 +19396,80 @@ function ($,
 		{
 			return this;
 		},
+		isLive: function ()
+		{
+			///  Returns the live event of this node.
+
+			// Change function.
+
+			function isLive ()
+			{
+			   return this .isLive_;
+			}
+
+			this .isLive = isLive;
+
+			// Add children.
+
+			this .addChildren ("isLive", new Fields .SFBool (this .getLiveState ()));
+
+			// Event processing is done manually and immediately, so:
+			this .isLive_ .removeParent (this);
+
+			if (this ._executionContext !== this)
+				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+
+		   return this .isLive ();
+		},
+		setLive: function (value)
+		{
+			///  Sets the own live state of this node.
+
+			this ._privateIsLive = value .valueOf ();
+
+			this ._set_live__ ();
+		},
+		getLive: function ()
+		{
+			///  Returns the own live state of this node.
+
+			return this ._privateIsLive;
+		},
+		getLiveState: function ()
+		{
+			///  Determines the live state of this node.
+
+			if (this !== this ._executionContext)
+				return this .getLive () && this ._executionContext .isLive () .getValue ();
+
+			return this .getLive ();
+		},
+		_set_live__: function ()
+		{
+			var
+				live   = this .getLiveState (),
+				isLive = this .isLive ();
+
+			if (live)
+			{
+				if (isLive .getValue ())
+					return;
+
+				isLive .setValue (true);
+				isLive .processEvent (Events .create (isLive));
+			}
+			else
+			{
+				if (isLive .getValue ())
+				{
+					isLive .setValue (false);
+					isLive .processEvent (Events .create (isLive));
+				}
+			}
+		},
 		isInitialized: function ()
 		{
 			return this ._initialized;
-		},
-		isLive: function ()
-		{
-		   return this .isLive_;
 		},
 		setup: function ()
 		{
@@ -19684,22 +19748,6 @@ function ($,
 			return null;
 		},
 		traverse: function () { },
-		beginUpdate: function ()
-		{
-		   if (this .isLive () .getValue ())
-		      return;
-
-		   this .isLive () .setValue (true);
-			this .isLive () .processEvent (Events .create (this .isLive ()));
-		},
-		endUpdate: function ()
-		{
-		   if (this .isLive () .getValue ())
-		   {
-		      this .isLive () .setValue (false);
-				this .isLive () .processEvent (Events .create (this .isLive ()));
-			}
-		},
 		toString: function ()
 		{
 			return this .getTypeName () + " { }";
@@ -25678,10 +25726,10 @@ function (Fields,
 			this .loadSensor .setup ();
 
 			this .defaultScene .setup ();
-			this .defaultScene .beginUpdate ();
+			this .defaultScene .setLive (true);
 
 			this .privateScene .setup ();
-			this .privateScene .beginUpdate ();
+			this .privateScene .setLive (true);
 		},
 		getProviderUrl: function ()
 		{
@@ -26063,7 +26111,6 @@ function ($,
 		{
 			X3DAppearanceNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .lineProperties_   .addInterest (this, "set_lineProperties__");
@@ -26100,7 +26147,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .shaderNode)
 					this .getBrowser () .addShader (this .shaderNode);
@@ -26195,7 +26242,7 @@ function ($,
 				}
 			}
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .shaderNode)
 					this .getBrowser () .addShader (this .shaderNode);
@@ -27895,7 +27942,6 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .activate_ .addInterest (this, "set_activate__");
@@ -27913,7 +27959,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .isValid_ .getValue ())
 				{
@@ -29203,8 +29249,6 @@ function ($,
 		this .externprotos         = new ExternProtoDeclarationArray ();
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
-
-		this .endUpdate ();
 	}
 
 	X3DExecutionContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -29525,7 +29569,7 @@ function ($,
 					throw 1;
 
 				if (viewpoint .isBound_ .getValue ())
-					viewpoint .transitionStart (null, viewpoint);
+					viewpoint .transitionStart (viewpoint);
 
 				else
 					viewpoint .set_bind_ = true;
@@ -29639,7 +29683,7 @@ function ($,
 		this .protoNode        = protoNode;
 		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice ());
 
-		this .addChildren ("isLiveX3DPrototypeInstance", new Fields .SFBool (true));
+		this .addChildren ("X3DPrototypeInstanceIsLive", new Fields .SFBool (true));
 
 		X3DNode             .call (this, executionContext);
 		X3DExecutionContext .call (this, executionContext);
@@ -29762,12 +29806,7 @@ function ($,
 					//this .copyImportedNodes (proto);
 					this .copyRoutes (proto .routes);
 				}
-				
-				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-				this .isLive () .addInterest (this, "set_live__");
-	
-				this .set_live__ ();
-	
+
 				// Now initialize bases.
 	
 				X3DNode             .prototype .initialize .call (this);
@@ -29782,10 +29821,6 @@ function ($,
 		{
 			return false;
 		},
-		isLive: function ()
-		{
-		   return this .isLiveX3DPrototypeInstance_;
-		},
 		getInnerNode: function ()
 		{
 			var rootNodes = this .getRootNodes () .getValue ();
@@ -29799,15 +29834,6 @@ function ($,
 			}
 
 			throw new Error ("Root node not available.");
-		},
-		set_live__: function ()
-		{
-			var live = this .getExecutionContext () .isLive () .getValue () && X3DNode .prototype .isLive .call (this) .getValue ();
-
-			if (live)
-				this .beginUpdate ();
-			else
-				this .endUpdate ();
 		},
 		importExternProtos: function (externprotos)
 		{
@@ -30061,19 +30087,13 @@ function ($,
 			X3DProtoDeclarationNode .prototype .initialize .call (this);
 			X3DUrlObject            .prototype .initialize .call (this);
 				
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 		},
 		set_live__: function ()
 		{
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				var value = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
-				
-				if (value)
-					this .scene .beginUpdate ();
-				else
-					this .scene .endUpdate ();
+				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
 		setProtoDeclaration: function (value)
@@ -30129,7 +30149,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .COMPLETE_STATE);
 
-			this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+			this .scene .setLive (this .isLive () .getValue ());
 			//this .scene .setExecutionContext (this .getExecutionContext ());
 
 			this .scene .setup ();
@@ -30260,6 +30280,8 @@ function ($,
 		this .addType (X3DConstants .X3DProtoDeclaration);
 
 		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+
+		this .setLive (false);
 	}
 
 	X3DProtoDeclaration .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -43048,7 +43070,6 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			var gl = this .getBrowser () .getContext ();
@@ -43517,9 +43538,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
-
-			if (live)
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
 			else
 				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest (this, "set_shading__");
@@ -47788,12 +47807,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive () .addInterest (this, "set_live__");
-
 			this .set_bind_ .addInterest (this, "set_bind__");
-
-			this .set_live__ ();
 		},
 		getCameraObject: function ()
 		{
@@ -47805,14 +47819,6 @@ function ($,
 		},
 		transitionStart: function ()
 		{ },
-		set_live__: function ()
-		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
-				return;
-
-			//for (var id in this .layers)
-			//	this .removeFromLayer (this .layers [id]);
-		},
 		set_bind__: function ()
 		{
 			if (this .set_bind_ .getValue ())
@@ -47929,9 +47935,8 @@ function ($,
 			this .addChildren ("initialized", new Fields .SFTime (),
 			                   "isEvenLive",  new Fields .SFBool ());
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive ()                         .addInterest (this, "set_live__");
-			this .isEvenLive_                       .addInterest (this, "set_live__");
+			this .isLive ()   .addInterest (this, "set_live__");
+			this .isEvenLive_ .addInterest (this, "set_live__");
 
 			this .initialized_ .addInterest (this, "set_loop__");
 			this .enabled_     .addInterest (this, "set_enabled__");
@@ -47956,13 +47961,13 @@ function ($,
 		{
 			return this .getBrowser () .getCurrentTime () - this .start - this .pauseInterval;
 		},
-		getLive: function ()
+		getPrivateLive: function ()
 		{
-			return (this .getExecutionContext () .isLive () .getValue () || this .isEvenLive_ .getValue ()) && this .isLive () .getValue ();
+			return this .isLive () .getValue () || this .isEvenLive_ .getValue ();
 		},
 		set_live__: function ()
 		{
-			if (this .getLive ())
+			if (this .getPrivateLive ())
 				this .getBrowser () .isLive () .addInterest (this, "set_browser_live__");
 			else
 				this .getBrowser () .isLive () .removeInterest (this, "set_browser_live__");
@@ -47971,7 +47976,7 @@ function ($,
 		},
 		set_browser_live__: function ()
 		{
-			if (this .getLive () && this .getBrowser () .isLive ().getValue ())
+			if (this .getPrivateLive () && this .getBrowser () .isLive () .getValue ())
 			{
 				if (this .disabled)
 				{
@@ -48095,7 +48100,7 @@ function ($,
 
 				this .set_start ();
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 				{
 					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
 				}
@@ -48118,7 +48123,7 @@ function ($,
 				if (this .pauseTimeValue !== this .getBrowser () .getCurrentTime ())
 					this .pauseTimeValue = this .getBrowser () .getCurrentTime ();
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 					this .real_pause ();
 			}
 		},
@@ -48139,7 +48144,7 @@ function ($,
 				if (this .resumeTimeValue !== this .getBrowser () .getCurrentTime ())
 					this .resumeTimeValue = this .getBrowser () .getCurrentTime ();
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 					this .real_resume ();
 			}
 		},
@@ -48173,7 +48178,7 @@ function ($,
 
 				this .isActive_ = false;
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
 			}
 		},
@@ -49165,7 +49170,7 @@ function ($,
 		{
 			return 1e5;
 		},
-		transitionStart: function (layer, fromViewpoint)
+		transitionStart: function (fromViewpoint)
 		{
 			try
 			{
@@ -67488,7 +67493,7 @@ function ($, X3DBaseNode)
 				{
 					node .isBound_  = true;
 					node .bindTime_ = this .getBrowser () .getCurrentTime ();
-					node .transitionStart (this .layer, top);
+					node .transitionStart (top);
 				}
 
 				this .pushOnTop (node);
@@ -67548,7 +67553,7 @@ function ($, X3DBaseNode)
 					top .set_bind_ = true;
 					top .isBound_  = true;
 					top .bindTime_ = this .getBrowser () .getCurrentTime ();
-					top .transitionStart (this .layer, node);
+					top .transitionStart (node);
 				}
 
 				this .addNodeEvent ();
@@ -72330,7 +72335,7 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getArc2DOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getArc2DOptions () .removeInterest (this, "eventsProcessed");
@@ -72508,7 +72513,7 @@ function ($,
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getArcClose2DOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getArcClose2DOptions () .removeInterest (this, "eventsProcessed");
@@ -75244,7 +75249,7 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getCircle2DOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getCircle2DOptions () .removeInterest (this, "eventsProcessed");
@@ -75575,20 +75580,18 @@ function ($,
 		initialize: function ()
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
-			//X3DSensorNode   .prototype .initialize .call (this); // We can only call the base of a *Object.
+			//X3DSensorNode   .prototype .initialize .call (this); // We can only call the base of a *Objects.
 	
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
-
-			this .enabled_ .addInterest (this, "set_live__");
-			this .proxy_ .addInterest (this, "set_proxy__");
+			this .enabled_  .addInterest (this, "set_live__");
+			this .proxy_    .addInterest (this, "set_proxy__");
 
 			this .set_live__ ();
 			this .set_proxy__ ();
 		},
 		set_live__: function ()
 		{
-		   if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue () && this .enabled_ .getValue ())
+		   if (this .isLive () .getValue () && this .enabled_ .getValue ())
 		      this .getBrowser () .addCollision (this);
 		   
 		   else
@@ -75937,6 +75940,12 @@ function ($,
 	X3DFollowerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DFollowerNode,
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .isLive () .addInterest (this, "set_live__");
+		},
 		duplicate: function (value)
 		{
 			return value .copy ();
@@ -75977,19 +75986,23 @@ function ($,
 		{
 			return this .vector .assign (source) .lerp (destination, weight);
 		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue () && this .isActive_ .getValue ())
+			{
+				this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+				this .getBrowser () .addBrowserEvent ();
+			}
+			else
+				this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+		},
 		set_active: function (value)
 		{
 			if (value !== this .isActive_ .getValue ())
 			{
 				this .isActive_ = value;
-		
-				if (this .isActive_ .getValue ())
-				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
-					this .getBrowser () .addBrowserEvent ();
-				}
-				else
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+
+				this .set_live__ ();
 			}
 		},
 	});
@@ -77204,7 +77217,6 @@ function ($,
 
 			//
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .front_  .addInterest (this, "set_texture__", 0);
@@ -77229,7 +77241,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
 	
@@ -77472,7 +77484,7 @@ function ($,
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getConeOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getConeOptions () .removeInterest (this, "eventsProcessed");
@@ -78698,7 +78710,7 @@ function ($,
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getCylinderOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getCylinderOptions () .removeInterest (this, "eventsProcessed");
@@ -79573,7 +79585,7 @@ function ($,
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getDisk2DOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getDisk2DOptions () .removeInterest (this, "eventsProcessed");
@@ -81931,7 +81943,6 @@ function ($,
 			X3DUrlObject     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .group .setup ();
@@ -81947,12 +81958,7 @@ function ($,
 		{
 			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
 			{
-				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
-
-				if (live)
-					this .scene .beginUpdate ();
-				else
-					this .scene .endUpdate ();
+				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
 		set_load__: function ()
@@ -82020,7 +82026,7 @@ function ($,
 		},
 		setInternalScene: function (scene)
 		{
-			this .scene .endUpdate ();
+			this .scene .setLive (false);
 			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 			// Set new scene.
@@ -83083,7 +83089,6 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .enabled_   .addInterest (this, "set_live__");
@@ -83091,6 +83096,23 @@ function ($,
 			this .traversed_ .addInterest (this, "set_live__");
 
 			this .set_live__ ();
+		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue () && this .traversed_ .getValue () && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			{
+				this .getBrowser () .sensors () .addInterest (this, "update");
+			}
+			else
+			{
+				this .getBrowser () .sensors () .removeInterest (this, "update");
+				
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
 		},
 		setTraversed: function (value)
 		{
@@ -83110,23 +83132,6 @@ function ($,
 		getTraversed: function ()
 		{
 		   return this .currentTraversed;
-		},
-		set_live__: function ()
-		{
-			if (this .traversed_ .getValue () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
-			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
-			}
-			else
-			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
-				
-				if (this .isActive_ .getValue ())
-				{
-					this .isActive_ = false;
-					this .exitTime_ = this .getBrowser () .getCurrentTime ();
-				}
-			}
 		},
 		update: function () { },
 	});
@@ -85120,14 +85125,13 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive ()                         .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
 
 			this .set_live__ ();
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				this .enabled_ .addInterest (this, "set_enabled__");
 
@@ -90053,7 +90057,6 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
@@ -90120,7 +90123,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
@@ -90150,7 +90153,7 @@ function ($,
 			{
 				if (! this .isActive_ .getValue ())
 				{
-					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					if (this .isLive () .getValue ())
 					{
 						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
 			
@@ -90166,7 +90169,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue ())
 				{
-					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					if (this .isLive () .getValue ())
 					{
 						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
 					}
@@ -95068,6 +95071,8 @@ function ($,
 
 		this .metaData      = { };
 		this .exportedNodes = { };
+
+		this .setLive (false);
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -95657,7 +95662,7 @@ function ($,
 		{
 			var userDefinedFields = this .getUserDefinedFields ();
 
-			if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if ($.isFunction (this .context .prepareEvents))
 					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
@@ -95718,7 +95723,6 @@ function ($,
 		{
 			this .context = this .getContext (text);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .set_live__ ();
@@ -96444,7 +96448,7 @@ function ($,
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 		   
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getSphereOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getSphereOptions () .removeInterest (this, "eventsProcessed");
@@ -99413,7 +99417,7 @@ function ($,
 		{
 		    X3DGeometryNode .prototype .set_live__ .call (this);
 
-		   if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+		   if (this .isLive () .getValue ())
 				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest (this, "eventsProcessed");
 		   else
 				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest (this, "eventsProcessed");
@@ -100477,7 +100481,6 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 		
-			this .getExecutionContext () .isLive () .addInterest (this, "set_enabled__");
 			this .isLive () .addInterest (this, "set_enabled__");
 
 			this .enabled_      .addInterest (this, "set_enabled__");
@@ -100493,7 +100496,7 @@ function ($,
 		{ },
 		set_enabled__: function ()
 		{
-			if (this .targetObjectNode && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			if (this .isLive () .getValue () && this .targetObjectNode && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
 				this .getBrowser () .sensors () .addInterest (this, "update");
 			}
@@ -103201,7 +103204,9 @@ function (X3DScene)
 
 	function Scene (browser)
 	{
-		X3DScene .call (this, browser, this);
+		this ._browser = browser;
+
+		X3DScene .call (this, this);
 	}
 
 	Scene .prototype = $.extend (Object .create (X3DScene .prototype),
@@ -103314,6 +103319,18 @@ function ($,
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
 	{
 		constructor: X3DBrowser,
+		getTypeName: function ()
+		{
+			return "X3DBrowser";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "browser";
+		},
 		initialize: function ()
 		{
 			this .replaceWorld (this .createScene ());
@@ -103427,7 +103444,7 @@ function ($,
 			if (this .isExternal ())
 			   return scene;
 
-			scene .beginUpdate ();
+			scene .setLive (true);
 
 			return scene;
 		},
@@ -103437,12 +103454,11 @@ function ($,
 
 			if (this .getWorld ())
 			{
-				this .getExecutionContext () .endUpdate ();
+				this .getExecutionContext () .setLive (false);
 				this .shutdown () .processInterests ();
 			}
-				
-			// Replace world.
 
+			// Replace world.
 
 			if (! scene)
 				scene = this .createScene ();
@@ -103454,10 +103470,7 @@ function ($,
 			this .setBrowserLoading (true);
 			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
 
-			if (this .isLive () .getValue ())
-				scene .beginUpdate ();
-			else
-				scene .endUpdate ();
+			scene .setLive (this .isLive () .getValue ())
 
 			this .setExecutionContext (scene);
 
@@ -103490,10 +103503,10 @@ function ($,
 
 			if (! external)
 			{
-				currentScene .isLive () .addFieldInterest (scene .isLive ());
+				currentScene .isLive () .addInterest (scene, "setLive");
 
 				if (currentScene .isLive () .getValue ())
-					scene .beginUpdate ();
+					scene .setLive (true);
 			}
 
 			scene .setup ();
@@ -103529,10 +103542,10 @@ function ($,
 
 				   if (! external)
 				   {
-				      currentScene .isLive () .addFieldInterest (scene .isLive ());
+				      currentScene .isLive () .addInterest (scene, "setLive");
 
 						if (currentScene .isLive () .getValue ())
-						   scene .beginUpdate ();
+						   scene .setLive (true);
 					}
 
 					scene .setup ();
@@ -103554,10 +103567,10 @@ function ($,
 
 			if (! external)
 			{
-				currentScene .isLive () .addFieldInterest (scene .isLive ());
+				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())
-					scene .beginUpdate ();
+					scene .setLive (true);
 			}
 
 			scene .setup ();
@@ -103635,10 +103648,19 @@ function ($,
 			if (! dom) return;
 			
 			var
-				external = this .isExternal (),
-				scene    = this .createScene ();
+				currentScene = this .currentScene,
+				external     = this .isExternal (),
+				scene        = this .createScene ();
 
 			new XMLParser (scene, dom) .parseIntoScene ();
+
+			if (! external)
+			{
+				currentScene .isLive () .addInterest (scene, "setLive");
+						
+				if (currentScene .isLive () .getValue ())
+					scene .setLive (true);
+			}
 
 			scene .setup ();
 
@@ -103764,7 +103786,7 @@ function ($,
 		bindViewpoint: function (viewpoint)
 		{
 			if (viewpoint .isBound_ .getValue ())
-				viewpoint .transitionStart (null, viewpoint);
+				viewpoint .transitionStart (viewpoint);
 
 			else
 				viewpoint .set_bind_ = true;
@@ -103786,15 +103808,14 @@ function ($,
 		},
 		beginUpdate: function ()
 		{
-			X3DBrowserContext .prototype .beginUpdate .call (this);
-			this .getExecutionContext () .beginUpdate ();
+			this .setLive (true);
+			this .getExecutionContext () .setLive (true);
 			this .advanceTime (performance .now ());
 		},
 		endUpdate: function ()
 		{
-			X3DBrowserContext .prototype .endUpdate .call (this);
-
-			this .getExecutionContext () .endUpdate ();
+			this .setLive (false);
+			this .getExecutionContext () .setLive (false);
 		},
 		print: function ()
 		{

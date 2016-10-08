@@ -88,19 +88,13 @@ function ($,
 
 		for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			this .addField (fieldDefinitions [i]);
-
-		// Add children.
-
-		this .addChildren ("isLive", new Fields .SFBool (true));
-
-		// Event processing is done manually and immediately, so:
-		this .isLive_ .removeParent (this);
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
 	{
 		constructor: X3DBaseNode,
 		fieldDefinitions: new FieldDefinitionArray ([ ]),
+		_privateIsLive: true,
 		_initialized: false,
 		getScene: function ()
 		{
@@ -127,32 +121,80 @@ function ($,
 		{
 			return this;
 		},
-		isInitialized: function ()
+		isLive: function ()
 		{
-			return this ._initialized;
+			///  Returns the live event of this node.
+
+			// Change function.
+
+			function isLive ()
+			{
+			   return this .isLive_;
+			}
+
+			this .isLive = isLive;
+
+			// Add children.
+
+			this .addChildren ("isLive", new Fields .SFBool (this .getLiveState ()));
+
+			// Event processing is done manually and immediately, so:
+			this .isLive_ .removeParent (this);
+
+			if (this ._executionContext !== this)
+				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+
+		   return this .isLive ();
 		},
 		setLive: function (value)
 		{
-			if (value)
+			///  Sets the own live state of this node.
+
+			this ._privateIsLive = value .valueOf ();
+
+			this ._set_live__ ();
+		},
+		getLive: function ()
+		{
+			///  Returns the own live state of this node.
+
+			return this ._privateIsLive;
+		},
+		getLiveState: function ()
+		{
+			///  Determines the live state of this node.
+
+			if (this !== this ._executionContext)
+				return this .getLive () && this ._executionContext .isLive () .getValue ();
+
+			return this .getLive ();
+		},
+		_set_live__: function ()
+		{
+			var
+				live   = this .getLiveState (),
+				isLive = this .isLive ();
+
+			if (live)
 			{
-				if (this .isLive () .getValue ())
+				if (isLive .getValue ())
 					return;
 
-				this .isLive () .setValue (true);
-				this .isLive () .processEvent (Events .create (this .isLive ()));
+				isLive .setValue (true);
+				isLive .processEvent (Events .create (isLive));
 			}
 			else
 			{
-				if (this .isLive () .getValue ())
+				if (isLive .getValue ())
 				{
-					this .isLive () .setValue (false);
-					this .isLive () .processEvent (Events .create (this .isLive ()));
+					isLive .setValue (false);
+					isLive .processEvent (Events .create (isLive));
 				}
 			}
 		},
-		isLive: function ()
+		isInitialized: function ()
 		{
-		   return this .isLive_;
+			return this ._initialized;
 		},
 		setup: function ()
 		{

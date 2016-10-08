@@ -88,9 +88,8 @@ function ($,
 			this .addChildren ("initialized", new Fields .SFTime (),
 			                   "isEvenLive",  new Fields .SFBool ());
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive ()                         .addInterest (this, "set_live__");
-			this .isEvenLive_                       .addInterest (this, "set_live__");
+			this .isLive ()   .addInterest (this, "set_live__");
+			this .isEvenLive_ .addInterest (this, "set_live__");
 
 			this .initialized_ .addInterest (this, "set_loop__");
 			this .enabled_     .addInterest (this, "set_enabled__");
@@ -115,13 +114,13 @@ function ($,
 		{
 			return this .getBrowser () .getCurrentTime () - this .start - this .pauseInterval;
 		},
-		getLive: function ()
+		getPrivateLive: function ()
 		{
-			return (this .getExecutionContext () .isLive () .getValue () || this .isEvenLive_ .getValue ()) && this .isLive () .getValue ();
+			return this .isLive () .getValue () || this .isEvenLive_ .getValue ();
 		},
 		set_live__: function ()
 		{
-			if (this .getLive ())
+			if (this .getPrivateLive ())
 				this .getBrowser () .isLive () .addInterest (this, "set_browser_live__");
 			else
 				this .getBrowser () .isLive () .removeInterest (this, "set_browser_live__");
@@ -130,7 +129,7 @@ function ($,
 		},
 		set_browser_live__: function ()
 		{
-			if (this .getLive () && this .getBrowser () .isLive ().getValue ())
+			if (this .getPrivateLive () && this .getBrowser () .isLive () .getValue ())
 			{
 				if (this .disabled)
 				{
@@ -254,7 +253,7 @@ function ($,
 
 				this .set_start ();
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 				{
 					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
 				}
@@ -277,7 +276,7 @@ function ($,
 				if (this .pauseTimeValue !== this .getBrowser () .getCurrentTime ())
 					this .pauseTimeValue = this .getBrowser () .getCurrentTime ();
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 					this .real_pause ();
 			}
 		},
@@ -298,7 +297,7 @@ function ($,
 				if (this .resumeTimeValue !== this .getBrowser () .getCurrentTime ())
 					this .resumeTimeValue = this .getBrowser () .getCurrentTime ();
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 					this .real_resume ();
 			}
 		},
@@ -332,7 +331,7 @@ function ($,
 
 				this .isActive_ = false;
 
-				if (this .getLive ())
+				if (this .getPrivateLive ())
 					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
 			}
 		},

@@ -346,7 +346,7 @@ function ($,
 		{
 			var userDefinedFields = this .getUserDefinedFields ();
 
-			if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if ($.isFunction (this .context .prepareEvents))
 					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
@@ -407,7 +407,6 @@ function ($,
 		{
 			this .context = this .getContext (text);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .set_live__ ();

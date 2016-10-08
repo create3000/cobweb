@@ -120,7 +120,6 @@ function ($,
 			X3DUrlObject     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .group .setup ();
@@ -136,7 +135,7 @@ function ($,
 		{
 			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
 			{
-				this .scene .setLive (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ());
+				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
 		set_load__: function ()

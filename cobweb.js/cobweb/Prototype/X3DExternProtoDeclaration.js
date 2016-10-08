@@ -102,14 +102,13 @@ function ($,
 			X3DProtoDeclarationNode .prototype .initialize .call (this);
 			X3DUrlObject            .prototype .initialize .call (this);
 				
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 		},
 		set_live__: function ()
 		{
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
 			{
-				this .scene .setLive (this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ());
+				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
 		setProtoDeclaration: function (value)
@@ -165,7 +164,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .COMPLETE_STATE);
 
-			this .scene .isLive_ = this .getExecutionContext () .isLive_ .getValue () && this .isLive_ .getValue ();
+			this .scene .setLive (this .isLive () .getValue ());
 			//this .scene .setExecutionContext (this .getExecutionContext ());
 
 			this .scene .setup ();

@@ -116,7 +116,6 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .activate_ .addInterest (this, "set_activate__");
@@ -134,7 +133,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .isValid_ .getValue ())
 				{

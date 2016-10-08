@@ -32,10 +32,10 @@ body {
 
 .browser {
 	position: absolute;
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
-	left: 0px;
+	top: 50px;
+	right: 50px;
+	bottom: 50px;
+	left: 50px;
 }
 
 .fallback {
@@ -75,7 +75,7 @@ X3D (function (element)
 
 	var scene = Browser .importDocument ($.parseXML (vrmlSyntax));
 
-	Browser .replaceWorld (scene);
+	Browser .currentScene .rootNodes = scene .rootNodes;
 });
 		</script>
 	</head>

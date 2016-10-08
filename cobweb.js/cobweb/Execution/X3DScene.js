@@ -81,6 +81,8 @@ function ($,
 
 		this .metaData      = { };
 		this .exportedNodes = { };
+
+		this .setLive (false);
 	}
 
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),

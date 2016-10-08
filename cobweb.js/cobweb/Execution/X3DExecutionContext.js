@@ -99,8 +99,6 @@ function ($,
 		this .externprotos         = new ExternProtoDeclarationArray ();
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
-
-		this .setLive (false);
 	}
 
 	X3DExecutionContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),

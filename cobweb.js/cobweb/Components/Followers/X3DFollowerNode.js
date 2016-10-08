@@ -75,6 +75,12 @@ function ($,
 	X3DFollowerNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
 	{
 		constructor: X3DFollowerNode,
+		initialize: function ()
+		{
+			X3DChildNode .prototype .initialize .call (this);
+
+			this .isLive () .addInterest (this, "set_live__");
+		},
 		duplicate: function (value)
 		{
 			return value .copy ();
@@ -115,19 +121,23 @@ function ($,
 		{
 			return this .vector .assign (source) .lerp (destination, weight);
 		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue () && this .isActive_ .getValue ())
+			{
+				this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+				this .getBrowser () .addBrowserEvent ();
+			}
+			else
+				this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+		},
 		set_active: function (value)
 		{
 			if (value !== this .isActive_ .getValue ())
 			{
 				this .isActive_ = value;
-		
-				if (this .isActive_ .getValue ())
-				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
-					this .getBrowser () .addBrowserEvent ();
-				}
-				else
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+
+				this .set_live__ ();
 			}
 		},
 	});

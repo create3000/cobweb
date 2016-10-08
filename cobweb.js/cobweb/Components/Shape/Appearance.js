@@ -108,7 +108,6 @@ function ($,
 		{
 			X3DAppearanceNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .lineProperties_   .addInterest (this, "set_lineProperties__");
@@ -145,7 +144,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .shaderNode)
 					this .getBrowser () .addShader (this .shaderNode);
@@ -240,7 +239,7 @@ function ($,
 				}
 			}
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .shaderNode)
 					this .getBrowser () .addShader (this .shaderNode);
