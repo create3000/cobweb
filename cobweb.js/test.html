@@ -76,6 +76,8 @@ X3D (function (element)
 	var scene = Browser .importDocument ($.parseXML (vrmlSyntax));
 
 	Browser .currentScene .rootNodes = scene .rootNodes;
+
+	//Browser .replaceWorld (scene);
 });
 		</script>
 	</head>

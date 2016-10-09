@@ -123,6 +123,7 @@ function ($, X3DField, X3DConstants)
 	SFNode .prototype = $.extend (Object .create (X3DField .prototype),
 	{
 		constructor: SFNode,
+		_cloneCount: 0,
 		clone: function ()
 		{
 			return new SFNode (this .getValue ());
@@ -153,11 +154,15 @@ function ($, X3DField, X3DConstants)
 			var current = this .getValue ();
 
 			if (current)
+			{
+				current .removeClones (this ._cloneCount);
 				current .removeParent (this);
+			}
 
 			if (value)
 			{
 				value .addParent (this);
+				value .addClones (this ._cloneCount);
 
 				X3DField .prototype .set .call (this, value);
 			}
@@ -175,6 +180,24 @@ function ($, X3DField, X3DConstants)
 		getFieldDefinitions: function ()
 		{
 			return this .getValue () .getFieldDefinitions ();
+		},
+		addClones: function (count)
+		{
+			var value = this .getValue ();
+
+			this ._cloneCount += count;
+
+			if (value)
+				value .addClones (count);
+		},
+		removeClones: function (count)
+		{
+			var value = this .getValue ();
+
+			this ._cloneCount -= count;
+
+			if (value)
+				value .removeClones (count);
 		},
 		valueOf: function ()
 		{

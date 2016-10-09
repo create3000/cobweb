@@ -69,15 +69,15 @@ function ($, X3DObject)
 		{
 			var parents = this ._parents;
 
-			for (var key in parents)
-				parents [key] .addEvent (this);
+			for (var id in parents)
+				parents [id] .addEvent (this);
 		},
 		addEventObject: function (field, event)
 		{
 			var parents = this ._parents;
 
-			for (var key in parents)
-				parents [key] .addEventObject (this, event);
+			for (var id in parents)
+				parents [id] .addEventObject (this, event);
 		},
 		addParent: function (parent)
 		{
@@ -91,6 +91,8 @@ function ($, X3DObject)
 		{
 			return this ._parents;
 		},
+		addClones: Function .prototype,
+		removeClones: Function .prototype,
 		dispose: function ()
 		{
 //			var parents = this ._parents;

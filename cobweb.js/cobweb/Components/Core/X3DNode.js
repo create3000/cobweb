@@ -104,6 +104,9 @@ function ($,
 							break;
 						case X3DConstants .LayerSet:
 						case X3DConstants .X3DBaseNode:
+						case X3DConstants .X3DMetadataObject:
+						case X3DConstants .X3DProgrammableShaderObject:
+						case X3DConstants .X3DScriptNode:
 							return;
 						default:
 							continue;

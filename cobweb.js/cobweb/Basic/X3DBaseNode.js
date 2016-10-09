@@ -83,6 +83,7 @@ function ($,
 		this ._fields            = { };
 		this ._predefinedFields  = { };
 		this ._userDefinedFields = { };
+		this ._cloneCount        = 0;
 
 		// Setup fields.
 
@@ -99,6 +100,7 @@ function ($,
 	{
 		constructor: X3DBaseNode,
 		fieldDefinitions: new FieldDefinitionArray ([ ]),
+		_private: false,
 		_live: true,
 		_initialized: false,
 		getScene: function ()
@@ -401,29 +403,38 @@ function ($,
 				enumerable: true,
 				configurable: true, // false : non deleteable
 			});
+
+			if (! this .getPrivate ())
+				field .addClones (1);
 		},
-		removeField: function (name /*, completely */)
+		removeField: function (name)
 		{
 			var field = this ._fields [name];
 
-			//if (completely && field .getAccessType () === X3DConstants .inputOutput)
-			//{
-			//	delete this ._fields ["set_" + field .getName ()];
-			//	delete this ._fields [field .getName () + "_changed"];
-			//}
-
-			delete this ._fields [name];
-			delete this ._userDefinedFields [name];
-
-			var fieldDefinitions = this .fieldDefinitions .getValue ();
-
-			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+			if (field)
 			{
-				if (fieldDefinitions [i] .name === name)
+				if (field .getAccessType () === X3DConstants .inputOutput)
 				{
-					fieldDefinitions .splice (i, 1);
-					break;
+					delete this ._fields ["set_" + field .getName ()];
+					delete this ._fields [field .getName () + "_changed"];
 				}
+	
+				delete this ._fields [name];
+				delete this ._userDefinedFields [name];
+	
+				var fieldDefinitions = this .fieldDefinitions .getValue ();
+	
+				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+				{
+					if (fieldDefinitions [i] .name === name)
+					{
+						fieldDefinitions .splice (i, 1);
+						break;
+					}
+				}
+
+				if (! this .getPrivate ())
+					field .removeClones (1);
 			}
 		},
 		getField: function (name)
@@ -472,6 +483,47 @@ function ($,
 		getCDATA: function ()
 		{
 			return null;
+		},
+		getPrivate: function ()
+		{
+			return this ._private;
+		},
+		setPrivate: function (value)
+		{
+			this ._private = value;
+
+			if (value)
+			{
+				var fieldDefinitions = this .getFieldDefinitions ();
+
+				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+					this .getField (fieldDefinitions [i] .name) .removeClones (1);
+			}
+			else
+			{
+				var fieldDefinitions = this .getFieldDefinitions ();
+
+				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+					this .getField (fieldDefinitions [i] .name) .addClones (1);
+			}
+		},
+		getCloneCount: function ()
+		{
+			return this ._cloneCount;
+		},
+		addClones: function (count)
+		{
+			if (count === 0)
+				return;
+		
+			this ._cloneCount += count;
+		},
+		removeClones: function (count)
+		{
+			if (count === 0)
+				return;
+		
+			this ._cloneCount -= count;
 		},
 		traverse: function () { },
 		toString: function ()

@@ -188,11 +188,11 @@ function ($, X3DField, X3DConstants, Generator)
 		{
 			var
 				array = this .getValue (),
-				field = new (this .ValueType) ();
+				field = new (this ._valueType) ();
 
 			field .setValue (value);
-			field .addParent (this);
 
+			this .addChild (field);
 			this .addEvent ();
 
 			return array .unshift (field);
@@ -204,7 +204,7 @@ function ($, X3DField, X3DConstants, Generator)
 			if (array .length)
 			{
 				var field = array .shift ();
-				field .removeParent (this);
+				this .removeChild (field);
 				this .addEvent ();
 				return field .valueOf ();
 			}
@@ -213,11 +213,11 @@ function ($, X3DField, X3DConstants, Generator)
 		{
 			var
 				array = this .getValue (),
-				field = new (this .ValueType) ();
+				field = new (this ._valueType) ();
 
 			field .setValue (value);
-			field .addParent (this);
 
+			this .addChild (field);
 			this .addEvent ();
 
 			return array .push (field);
@@ -229,7 +229,7 @@ function ($, X3DField, X3DConstants, Generator)
 			if (array .length)
 			{
 				var field = array .pop ();
-				field .removeParent (this);
+				this .removeChild (field);
 				this .addEvent ();
 				return field .valueOf ();
 			}
@@ -240,11 +240,11 @@ function ($, X3DField, X3DConstants, Generator)
 
 			for (var i = first; i < last; ++ i)
 			{
-				var field = new (this .ValueType) ();
+				var field = new (this ._valueType) ();
 
 				field .setValue (array [i]);
-				field .addParent (this);
 
+				this .addChild (field);
 				args .push (field);
 			}
 
@@ -331,7 +331,7 @@ function ($, X3DField, X3DConstants, Generator)
 			var values = this .getValue () .splice (first, last - first);
 				
 			for (var i = 0, length = values .length; i < length; ++ i)
-				values [i] .removeParent (this);
+				this .removeChild (values [i]);
 			
 			this .addEvent ();
 		},
@@ -342,7 +342,7 @@ function ($, X3DField, X3DConstants, Generator)
 			if (size < array .length)
 			{
 				for (var i = size, length = array .length; i < length; ++ i)
-					array [i] .removeParent (this);
+					this .removeChild (array [i]);
 
 				array .length = size;
 
@@ -353,18 +353,26 @@ function ($, X3DField, X3DConstants, Generator)
 			{
 				for (var i = array .length; i < size; ++ i)
 				{
-					var field = new (this .ValueType) ();
+					var field = new (this ._valueType) ();
 
 					if (value !== undefined)
 						field .setValue (value);
 
-					field .addParent (this);
+					this .addChild (field);
 					array .push (field);
 				}
 
 				if (! silent)
 					this .addEvent ();
 			}
+		},
+		addChild: function (value)
+		{
+			value .addParent (this);
+		},
+		removeChild: function (value)
+		{
+			value .removeParent (this);
 		},
 		toString: function ()
 		{
