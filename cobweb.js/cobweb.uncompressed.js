@@ -10252,6 +10252,10 @@ function ($)
 
 		   this .stack .push (event);
 		},
+		clear: function ()
+		{
+			this .stack .length = 0;
+		}
 	};
 
 	return Events;
@@ -10817,7 +10821,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 			field .setValue (value);
 
-			this .addChild (field);
+			this .addChildObject (field);
 			this .addEvent ();
 
 			return array .unshift (field);
@@ -10842,7 +10846,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 			field .setValue (value);
 
-			this .addChild (field);
+			this .addChildObject (field);
 			this .addEvent ();
 
 			return array .push (field);
@@ -10869,7 +10873,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 				field .setValue (array [i]);
 
-				this .addChild (field);
+				this .addChildObject (field);
 				args .push (field);
 			}
 
@@ -10983,7 +10987,7 @@ function ($, X3DField, X3DConstants, Generator)
 					if (value !== undefined)
 						field .setValue (value);
 
-					this .addChild (field);
+					this .addChildObject (field);
 					array .push (field);
 				}
 
@@ -10991,7 +10995,7 @@ function ($, X3DField, X3DConstants, Generator)
 					this .addEvent ();
 			}
 		},
-		addChild: function (value)
+		addChildObject: function (value)
 		{
 			value .addParent (this);
 		},
@@ -18694,9 +18698,9 @@ function ($,
 			for (var i = 0, length = array .length; i < length; ++ i)
 				array [i] .removeClones (count);
 		},
-		addChild: function (value)
+		addChildObject: function (value)
 		{
-			X3DArrayField .prototype .addChild .call (this, value);
+			X3DArrayField .prototype .addChildObject .call (this, value);
 
 			value .addClones (this ._cloneCount);
 		},
@@ -18710,17 +18714,17 @@ function ($,
 	
 	function MFFieldTemplate (TypeName, Type, SFField)
 	{
-		function MFVec (value)
+		function MFField (value)
 		{
-			if (this instanceof MFVec)
+			if (this instanceof MFField)
 				return X3DArrayField .call (this, arguments);
 			
-			return X3DArrayField .call (Object .create (MFVec .prototype), arguments);
+			return X3DArrayField .call (Object .create (MFField .prototype), arguments);
 		}
 	
-		MFVec .prototype = $.extend (Object .create (X3DArrayField .prototype),
+		MFField .prototype = $.extend (Object .create (X3DArrayField .prototype),
 		{
-			constructor: MFVec,
+			constructor: MFField,
 			_valueType: SFField,
 			getTypeName: function ()
 			{
@@ -18732,7 +18736,7 @@ function ($,
 			},
 		});
 
-		return MFVec;
+		return MFField;
 	}
 
 	var ArrayFields =
@@ -19479,13 +19483,17 @@ function ($,
 
 			// Add isLive event.
 
-			this .addChildren ("isLive", new Fields .SFBool (this .getLiveState ()));
+			this .addChildObjects ("isLive", new Fields .SFBool (this .getLiveState ()));
 
 			// Event processing is done manually and immediately, so:
 			this .isLive_ .removeParent (this);
 
+			// Connect to execution context.
+
 			if (this ._executionContext !== this)
 				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+
+			// Return field
 
 			return this .isLive ();
 		},
@@ -19687,20 +19695,20 @@ function ($,
 			executionContext .addUninitializedNode (copy);
 			return copy;
 		},
-		addChildren: function (name, field)
+		addChildObjects: function (name, field)
 		{
 			for (var i = 0, length = arguments .length; i < length; i += 2)
-				this .addChild (arguments [i + 0], arguments [i + 1]);
+				this .addChildObject (arguments [i], arguments [i + 1]);
 		},
-		addChild: function (name, field)
+		addChildObject: function (name, field)
 		{
 			field .addParent (this);
 			field .setName (name);
 
 			Object .defineProperty (this, name + "_",
 			{
-				get: function () { return this; } .bind (field),
-				set: field .setValue .bind (field),
+				get: function () { return field; },
+				set: function (value) { return field .setValue (value); },
 				enumerable: true,
 				configurable: false,
 			});
@@ -19739,8 +19747,8 @@ function ($,
 
 			Object .defineProperty (this, name + "_",
 			{
-				get: function () { return this; } .bind (field),
-				set: field .setValue .bind (field),
+				get: function () { return field; },
+				set: function (value) { return field .setValue (value); },
 				enumerable: true,
 				configurable: true, // false : non deleteable
 			});
@@ -20744,7 +20752,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .addChildren ("string", new SFString ());
+			this .addChildObjects ("string", new SFString ());
 
 			this .element = $("<div></div>")
 				.addClass ("cobweb-notification")
@@ -21295,7 +21303,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("enabled", new SFBool ());
+		this .addChildObjects ("enabled", new SFBool ());
 	}
 
 	BrowserTimings .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -24266,7 +24274,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DChildNode);
 
-		this .addChildren ("isCameraObject", new Fields .SFBool ());
+		this .addChildObjects ("isCameraObject", new Fields .SFBool ());
 	}
 
 	X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -25848,7 +25856,7 @@ function (Fields,
 	{
 		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
 
-		this .addChildren ("loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this);
 		this .loadingTotal   = 0;
@@ -26133,7 +26141,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 			
-			this .addChildren ("transparent", new Fields .SFBool ());
+			this .addChildObjects ("transparent", new Fields .SFBool ());
 		},
 	});
 
@@ -28413,7 +28421,7 @@ function ($,
 	{
 		this .addType (X3DConstants .X3DUrlObject);
 		
-		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
 	X3DUrlObject .prototype =
@@ -29221,8 +29229,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("sourceNode",      new Fields .SFNode (sourceNode),
-		                   "destinationNode", new Fields .SFNode (destinationNode));
+		this .addChildObjects ("sourceNode",      new Fields .SFNode (sourceNode),
+		                       "destinationNode", new Fields .SFNode (destinationNode));
 
 		this ._sourceField      = sourceField;
 		this ._destinationField = destinationField;
@@ -29415,8 +29423,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("rootNodes", new Fields .MFNode (),
-                         "loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("rootNodes", new Fields .MFNode (),
+                             "loadCount", new Fields .SFInt32 ());
 
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
@@ -30242,7 +30250,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DExternProtoDeclaration);
 
-		this .addChildren ("url", new Fields .MFString ());
+		this .addChildObjects ("url", new Fields .MFString ());
 
 		this .deferred = $.Deferred ();
 	}
@@ -30461,7 +30469,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DProtoDeclaration);
 
-		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
 	X3DProtoDeclaration .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
@@ -38371,7 +38379,7 @@ function (Fields,
 
 	function X3DRenderingContext ()
 	{
-		this .addChildren ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
+		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
 
 		this .clipPlanes = [ ]; // Clip planes dumpster
 	}
@@ -38622,7 +38630,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
+		this .addChildObjects ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}
 
 	ArcClose2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -38709,7 +38717,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("minAngle", new Fields .SFFloat (Math .PI / 20))
+		this .addChildObjects ("minAngle", new Fields .SFFloat (Math .PI / 20))
 	}
 
 	Arc2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -39011,7 +39019,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("segments", new Fields .SFInt32 (40))
 
 		this .vertices = [ ];
 	}
@@ -39131,7 +39139,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("segments", new Fields .SFInt32 (40))
 
 		this .circleVertices = [ ];
 		this .diskTexCoords  = [ ];
@@ -43219,11 +43227,11 @@ function ($,
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			
-		this .addChildren ("transparent",  new Fields .SFBool ());
-		this .addChildren ("bbox_changed", new Fields .SFTime ());
+		this .addChildObjects ("transparent",  new Fields .SFBool (),
+		                       "bbox_changed", new Fields .SFTime ());
 
 		this .geometryType        = 3;
-		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate ();
+		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate (); // For TextureCoordinateGenerator needed.
 	}
 
 	X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -45994,8 +46002,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("uDimension", new Fields .SFInt32 (1),
-		                   "vDimension", new Fields .SFInt32 (20))
+		this .addChildObjects ("uDimension", new Fields .SFInt32 (1),
+		                       "vDimension", new Fields .SFInt32 (20))
 	}
 
 	ConeOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -46082,8 +46090,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 			
-		this .addChildren ("uDimension", new Fields .SFInt32 (1),
-		                   "vDimension", new Fields .SFInt32 (20))
+		this .addChildObjects ("uDimension", new Fields .SFInt32 (1),
+		                       "vDimension", new Fields .SFInt32 (20))
 	}
 
 	CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -46182,8 +46190,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("uDimension", new Fields .SFInt32 (32),
-		                   "vDimension", new Fields .SFInt32 (16))
+		this .addChildObjects ("uDimension", new Fields .SFInt32 (32),
+		                       "vDimension", new Fields .SFInt32 (16))
 	}
 
 	QuadSphereOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -47710,10 +47718,10 @@ function ($,
 	{
 		this .keyDeviceSensorNode = null;
 
-		this .addChildren ("controlKey",  new Fields .SFBool (),
-		                   "shiftKey",    new Fields .SFBool (),
-		                   "altKey",      new Fields .SFBool (),
-		                   "altGrKey",    new Fields .SFBool ());
+		this .addChildObjects ("controlKey",  new Fields .SFBool (),
+		                       "shiftKey",    new Fields .SFBool (),
+		                       "altKey",      new Fields .SFBool (),
+		                       "altGrKey",    new Fields .SFBool ());
 	}
 
 	X3DKeyDeviceSensorContext .prototype =
@@ -48112,8 +48120,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .addChildren ("initialized", new Fields .SFTime (),
-			                   "isEvenLive",  new Fields .SFBool ());
+			this .addChildObjects ("initialized", new Fields .SFTime (),
+			                       "isEvenLive",  new Fields .SFBool ());
 
 			this .isLive ()   .addInterest (this, "set_live__");
 			this .isEvenLive_ .addInterest (this, "_set_live__"); // to X3DBaseNode
@@ -48461,7 +48469,7 @@ function ($,
 
 		this .addType (X3DConstants .TimeSensor);
 
-		this .addChildren ("range", new Fields .MFFloat (0, 0, 1));
+		this .addChildObjects ("range", new Fields .MFFloat (0, 0, 1));
 		
 		this .cycle    = 0;
 		this .interval = 0;
@@ -49230,12 +49238,12 @@ function ($,
 		{
 			X3DBindableNode .prototype .initialize .call (this);
 
-			this .addChildren ("positionOffset",         new Fields .SFVec3f (),
-			                   "orientationOffset",      new Fields .SFRotation (),
-			                   "scaleOffset",            new Fields .SFVec3f (1, 1, 1),
-			                   "scaleOrientationOffset", new Fields .SFRotation (),
-			                   "centerOfRotationOffset", new Fields .SFVec3f (),
-			                   "fieldOfViewScale",       new Fields .SFFloat (1));
+			this .addChildObjects ("positionOffset",         new Fields .SFVec3f (),
+			                       "orientationOffset",      new Fields .SFRotation (),
+			                       "scaleOffset",            new Fields .SFVec3f (1, 1, 1),
+			                       "scaleOrientationOffset", new Fields .SFRotation (),
+			                       "centerOfRotationOffset", new Fields .SFVec3f (),
+			                       "fieldOfViewScale",       new Fields .SFFloat (1));
 		
 			this .timeSensor .stopTime_ = 1;
 			this .timeSensor .setup ();
@@ -52917,8 +52925,8 @@ function ($,
 
 		this .addType (X3DConstants .NavigationInfo);
 				
-		this .addChildren ("availableViewers", new Fields .MFString (),
-		                   "viewer",           new Fields .SFString ("EXAMINE"));
+		this .addChildObjects ("availableViewers", new Fields .MFString (),
+		                       "viewer",           new Fields .SFString ("EXAMINE"));
 	}
 
 	NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
@@ -54923,6 +54931,9 @@ function ($,
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
 
+			this .browser      = null;
+			this .lightNode    = null;
+			this .groupNode    = null;
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
 
@@ -55062,8 +55073,8 @@ function (Fields,
 
 	function X3DNavigationContext ()
 	{
-		this .addChildren ("availableViewers", new Fields .MFString (),
-		                   "viewer",           new Fields .SFString ("EXAMINE"));
+		this .addChildObjects ("availableViewers", new Fields .MFString (),
+		                       "viewer",           new Fields .SFString ("EXAMINE"));
 		
 		this .activeCollisions   = { };
 		this .collisionCount     = 0;
@@ -56269,8 +56280,8 @@ function (Fields,
 
 	function X3DSoundContext ()
 	{
-		this .addChildren ("volume", new Fields .SFFloat (1));
-		this .addChildren ("mute",   new Fields .SFBool ());
+		this .addChildObjects ("volume", new Fields .SFFloat (1),
+		                       "mute",   new Fields .SFBool ());
 	}
 
 	X3DSoundContext .prototype =
@@ -56482,7 +56493,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DFontStyleNode);
 		
-		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 
 		this .familyStack = [ ];
 		this .alignments  = [ ];
@@ -68862,7 +68873,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DTextureNode);
 
-		this .addChildren ("transparent", new Fields .SFBool ());
+		this .addChildObjects ("transparent", new Fields .SFBool ());
 	}
 
 	X3DTextureNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
@@ -70469,7 +70480,7 @@ function ($,
 		this .defaultLayerSet = this .layerSet;
 		this .layer0          = new Layer (executionContext);
 		
-		this .addChildren ("activeLayer", new SFNode (this .layer0));
+		this .addChildObjects ("activeLayer", new SFNode (this .layer0));
 	}
 
 	World .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -70534,8 +70545,6 @@ function ($,
 
 				this .set_activeLayer ();
 			}
-
-			this .traverse = this .layerSet .traverse .bind (this .layerSet);
 		},
 		set_activeLayer: function ()
 		{
@@ -70558,6 +70567,10 @@ function ($,
 			}
 			catch (error)
 			{ }
+		},
+		traverse: function (type, renderObject)
+		{
+			this .layerSet .traverse (type, renderObject);
 		},
 	});
 
@@ -70695,11 +70708,11 @@ function ($,
 		X3DTimeContext                 .call (this);
 		X3DParticleSystemsContext      .call (this);
 
-		this .addChildren ("initialized",   new SFTime (),
-		                   "shutdown",      new SFTime (),
-		                   "prepareEvents", new SFTime (),
-		                   "sensors",       new SFTime (),
-		                   "finished",      new SFTime ());
+		this .addChildObjects ("initialized",   new SFTime (),
+		                       "shutdown",      new SFTime (),
+		                       "prepareEvents", new SFTime (),
+		                       "sensors",       new SFTime (),
+		                       "finished",      new SFTime ());
 
 		this .changedTime     = 0;
 		this .renderCallback  = this .traverse .bind (this);
@@ -74770,11 +74783,6 @@ function ($,
 {
 
 
-	function traverse (type, renderObject)
-	{
-		this .shapeNode .traverse (type, renderObject);
-	}
-
 	function CADFace (executionContext)
 	{
 		X3DProductStructureChildNode .call (this, executionContext);
@@ -74865,9 +74873,13 @@ function ($,
 			{ }
 
 			if (this .shapeNode)
-				this .traverse = traverse;
-			else
 				delete this .traverse;
+			else
+				this .traverse = Function .prototype;
+		},
+		traverse: function (type, renderObject)
+		{
+			this .shapeNode .traverse (type, renderObject);
 		},
 	});
 
@@ -75576,7 +75588,7 @@ function ($,
 		set: function (clipPlane, modelViewMatrix)
 		{
 			var
-				plane       = this .plane,
+				plane      = this .plane,
 				localPlane = clipPlane .plane;
 	
 			try
@@ -82104,12 +82116,11 @@ function ($,
 
 		this .addType (X3DConstants .Inline);
 		
-		this .addChildren ("buffer", new Fields .SFTime ());
+		this .addChildObjects ("buffer", new Fields .SFTime ());
 
 		this .scene    = this .getBrowser () .getDefaultScene ();
 		this .group    = new Group (executionContext);
 		this .getBBox  = this .group .getBBox  .bind (this .group);
-		this .traverse = this .group .traverse .bind (this .group);
 
 		this .group .addParent (this);
 	}
@@ -82253,6 +82264,10 @@ function ($,
 		getInternalScene: function ()
 		{
 			return this .scene;
+		},
+		traverse: function (type, renderObject)
+		{
+			this .group .traverse (type, renderObject);
 		},
 	});
 
@@ -83286,7 +83301,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 
-		this .addChildren ("traversed", new Fields .SFBool (true));
+		this .addChildObjects ("traversed", new Fields .SFBool (true));
 
 		this .currentTraversed = true;
 	}
@@ -87634,7 +87649,7 @@ function ($,
 		{
 			X3DMaterialNode .prototype .initialize .call (this);
 
-			this .addChildren ("transparent", new Fields .SFBool ());
+			this .addChildObjects ("transparent", new Fields .SFBool ());
 
 			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
 			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
@@ -91498,7 +91513,7 @@ function ($,
 
 		this .addType (X3DConstants .PixelTexture);
 
-		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
 	PixelTexture .prototype = $.extend (Object .create (X3DTexture2DNode .prototype),
@@ -92261,6 +92276,9 @@ function ($,
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
 
+			this .browser      = null;
+			this .lightNode    = null;
+			this .groupNode    = null;
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
 
@@ -98355,6 +98373,9 @@ function ($,
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
 
+			this .browser      = null;
+			this .lightNode    = null;
+			this .groupNode    = null;
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
 
@@ -98821,8 +98842,6 @@ function ($,
 			this .group .setPrivate (true);
 			this .group .setup ();
 
-			this .traverse = this .group .traverse .bind (this .group);
-
 			// Connect after Group setup.
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 			this .group .children_       .addInterest (this, "set_children__");
@@ -98836,6 +98855,10 @@ function ($,
 		set_children__: function ()
 		{
 			this .group .getBBox (this .bbox);
+		},
+		traverse: function (type, renderObject)
+		{
+			this .group .traverse (type, renderObject);
 		},
 	});
 
@@ -101454,7 +101477,7 @@ function ($,
 		{
 			X3DMaterialNode . prototype .initialize .call (this);
 			
-			this .addChildren ("transparent", new Fields .SFBool ());
+			this .addChildObjects ("transparent", new Fields .SFBool ());
 
 			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
 			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
@@ -103485,6 +103508,7 @@ function (X3DScene)
 define ('cobweb/Browser/X3DBrowser',[
 	"jquery",
 	"cobweb/Browser/VERSION",
+	"cobweb/Base/Events",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
 	"cobweb/Configuration/ComponentInfo",
@@ -103500,6 +103524,7 @@ define ('cobweb/Browser/X3DBrowser',[
 ],
 function ($,
           VERSION,
+          Events,
           Fields,
           X3DBrowserContext,
           ComponentInfo,
@@ -103669,6 +103694,9 @@ function ($,
 				this .getExecutionContext () .setLive (false);
 				this .shutdown () .processInterests ();
 			}
+
+			// Clear event cache.
+			Events .clear ();
 
 			// Replace world.
 
