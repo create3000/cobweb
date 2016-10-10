@@ -68,7 +68,7 @@ function ($,
 
 	function isLive ()
 	{
-	   return this ._isLive_;
+	   return this .isLive_;
 	}
 
 	function X3DBaseNode (executionContext)
@@ -138,10 +138,10 @@ function ($,
 
 			// Add isLive event.
 
-			this .addChildObjects ("_isLive", new Fields .SFBool (this .getLiveState ()));
+			this .addChildObjects ("isLive", new Fields .SFBool (this .getLiveState ()));
 
 			// Event processing is done manually and immediately, so:
-			this ._isLive_ .removeParent (this);
+			this .isLive_ .removeParent (this);
 
 			// Connect to execution context.
 
