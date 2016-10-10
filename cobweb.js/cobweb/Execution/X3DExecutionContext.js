@@ -84,8 +84,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("rootNodes", new Fields .MFNode (),
-                         "loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("rootNodes", new Fields .MFNode (),
+                             "loadCount", new Fields .SFInt32 ());
 
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";

@@ -138,7 +138,7 @@ function ($,
 
 			// Add isLive event.
 
-			this .addChildren ("isLive", new Fields .SFBool (this .getLiveState ()));
+			this .addChildObjects ("isLive", new Fields .SFBool (this .getLiveState ()));
 
 			// Event processing is done manually and immediately, so:
 			this .isLive_ .removeParent (this);
@@ -350,12 +350,12 @@ function ($,
 			executionContext .addUninitializedNode (copy);
 			return copy;
 		},
-		addChildren: function (name, field)
+		addChildObjects: function (name, field)
 		{
 			for (var i = 0, length = arguments .length; i < length; i += 2)
-				this .addChild (arguments [i], arguments [i + 1]);
+				this .addChildObject (arguments [i], arguments [i + 1]);
 		},
-		addChild: function (name, field)
+		addChildObject: function (name, field)
 		{
 			field .addParent (this);
 			field .setName (name);

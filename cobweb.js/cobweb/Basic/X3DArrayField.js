@@ -192,7 +192,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 			field .setValue (value);
 
-			this .addChild (field);
+			this .addChildObject (field);
 			this .addEvent ();
 
 			return array .unshift (field);
@@ -217,7 +217,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 			field .setValue (value);
 
-			this .addChild (field);
+			this .addChildObject (field);
 			this .addEvent ();
 
 			return array .push (field);
@@ -244,7 +244,7 @@ function ($, X3DField, X3DConstants, Generator)
 
 				field .setValue (array [i]);
 
-				this .addChild (field);
+				this .addChildObject (field);
 				args .push (field);
 			}
 
@@ -358,7 +358,7 @@ function ($, X3DField, X3DConstants, Generator)
 					if (value !== undefined)
 						field .setValue (value);
 
-					this .addChild (field);
+					this .addChildObject (field);
 					array .push (field);
 				}
 
@@ -366,7 +366,7 @@ function ($, X3DField, X3DConstants, Generator)
 					this .addEvent ();
 			}
 		},
-		addChild: function (value)
+		addChildObject: function (value)
 		{
 			value .addParent (this);
 		},

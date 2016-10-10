@@ -74,7 +74,7 @@ function ($,
 		this .defaultLayerSet = this .layerSet;
 		this .layer0          = new Layer (executionContext);
 		
-		this .addChildren ("activeLayer", new SFNode (this .layer0));
+		this .addChildObjects ("activeLayer", new SFNode (this .layer0));
 	}
 
 	World .prototype = $.extend (Object .create (X3DBaseNode .prototype),

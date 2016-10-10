@@ -62,8 +62,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("sourceNode",      new Fields .SFNode (sourceNode),
-		                   "destinationNode", new Fields .SFNode (destinationNode));
+		this .addChildObjects ("sourceNode",      new Fields .SFNode (sourceNode),
+		                       "destinationNode", new Fields .SFNode (destinationNode));
 
 		this ._sourceField      = sourceField;
 		this ._destinationField = destinationField;

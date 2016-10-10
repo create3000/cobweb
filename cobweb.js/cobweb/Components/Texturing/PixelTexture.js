@@ -74,7 +74,7 @@ function ($,
 
 		this .addType (X3DConstants .PixelTexture);
 
-		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
 	PixelTexture .prototype = $.extend (Object .create (X3DTexture2DNode .prototype),

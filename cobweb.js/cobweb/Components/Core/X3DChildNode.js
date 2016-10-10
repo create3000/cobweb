@@ -69,7 +69,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DChildNode);
 
-		this .addChildren ("isCameraObject", new Fields .SFBool ());
+		this .addChildObjects ("isCameraObject", new Fields .SFBool ());
 	}
 
 	X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),

@@ -68,8 +68,8 @@ function (Fields,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("type",  new Fields .SFString ("ICOSAHEDRON"),
-		                   "order", new Fields .SFInt32 (2))
+		this .addChildObjects ("type",  new Fields .SFString ("ICOSAHEDRON"),
+		                       "order", new Fields .SFInt32 (2))
 	}
 
 	IcoSphereOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),

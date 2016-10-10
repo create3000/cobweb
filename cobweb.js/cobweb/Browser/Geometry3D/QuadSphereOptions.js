@@ -74,8 +74,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("uDimension", new Fields .SFInt32 (32),
-		                   "vDimension", new Fields .SFInt32 (16))
+		this .addChildObjects ("uDimension", new Fields .SFInt32 (32),
+		                       "vDimension", new Fields .SFInt32 (16))
 	}
 
 	QuadSphereOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),

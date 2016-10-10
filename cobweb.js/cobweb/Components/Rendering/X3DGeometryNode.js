@@ -100,8 +100,8 @@ function ($,
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			
-		this .addChildren ("transparent",  new Fields .SFBool ());
-		this .addChildren ("bbox_changed", new Fields .SFTime ());
+		this .addChildObjects ("transparent",  new Fields .SFBool (),
+		                       "bbox_changed", new Fields .SFTime ());
 
 		this .geometryType        = 3;
 		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate (); // For TextureCoordinateGenerator needed.

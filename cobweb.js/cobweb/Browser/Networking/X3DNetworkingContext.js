@@ -70,7 +70,7 @@ function (Fields,
 	{
 		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
 
-		this .addChildren ("loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this);
 		this .loadingTotal   = 0;

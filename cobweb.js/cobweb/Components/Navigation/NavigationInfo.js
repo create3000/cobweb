@@ -79,8 +79,8 @@ function ($,
 
 		this .addType (X3DConstants .NavigationInfo);
 				
-		this .addChildren ("availableViewers", new Fields .MFString (),
-		                   "viewer",           new Fields .SFString ("EXAMINE"));
+		this .addChildObjects ("availableViewers", new Fields .MFString (),
+		                       "viewer",           new Fields .SFString ("EXAMINE"));
 	}
 
 	NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),

@@ -73,7 +73,7 @@ function ($,
 
 		this .addType (X3DConstants .TimeSensor);
 
-		this .addChildren ("range", new Fields .MFFloat (0, 0, 1));
+		this .addChildObjects ("range", new Fields .MFFloat (0, 0, 1));
 		
 		this .cycle    = 0;
 		this .interval = 0;

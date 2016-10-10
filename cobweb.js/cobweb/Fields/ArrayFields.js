@@ -167,9 +167,9 @@ function ($,
 			for (var i = 0, length = array .length; i < length; ++ i)
 				array [i] .removeClones (count);
 		},
-		addChild: function (value)
+		addChildObject: function (value)
 		{
-			X3DArrayField .prototype .addChild .call (this, value);
+			X3DArrayField .prototype .addChildObject .call (this, value);
 
 			value .addClones (this ._cloneCount);
 		},

@@ -80,7 +80,7 @@ function ($,
 
 		this .addType (X3DConstants .Inline);
 		
-		this .addChildren ("buffer", new Fields .SFTime ());
+		this .addChildObjects ("buffer", new Fields .SFTime ());
 
 		this .scene    = this .getBrowser () .getDefaultScene ();
 		this .group    = new Group (executionContext);

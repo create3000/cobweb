@@ -81,8 +81,8 @@ function (Fields,
 
 	function X3DNavigationContext ()
 	{
-		this .addChildren ("availableViewers", new Fields .MFString (),
-		                   "viewer",           new Fields .SFString ("EXAMINE"));
+		this .addChildObjects ("availableViewers", new Fields .MFString (),
+		                       "viewer",           new Fields .SFString ("EXAMINE"));
 		
 		this .activeCollisions   = { };
 		this .collisionCount     = 0;

@@ -69,7 +69,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 
-		this .addChildren ("traversed", new Fields .SFBool (true));
+		this .addChildObjects ("traversed", new Fields .SFBool (true));
 
 		this .currentTraversed = true;
 	}

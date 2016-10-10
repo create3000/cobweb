@@ -73,7 +73,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DExternProtoDeclaration);
 
-		this .addChildren ("url", new Fields .MFString ());
+		this .addChildObjects ("url", new Fields .MFString ());
 
 		this .deferred = $.Deferred ();
 	}

@@ -125,12 +125,12 @@ function ($,
 		{
 			X3DBindableNode .prototype .initialize .call (this);
 
-			this .addChildren ("positionOffset",         new Fields .SFVec3f (),
-			                   "orientationOffset",      new Fields .SFRotation (),
-			                   "scaleOffset",            new Fields .SFVec3f (1, 1, 1),
-			                   "scaleOrientationOffset", new Fields .SFRotation (),
-			                   "centerOfRotationOffset", new Fields .SFVec3f (),
-			                   "fieldOfViewScale",       new Fields .SFFloat (1));
+			this .addChildObjects ("positionOffset",         new Fields .SFVec3f (),
+			                       "orientationOffset",      new Fields .SFRotation (),
+			                       "scaleOffset",            new Fields .SFVec3f (1, 1, 1),
+			                       "scaleOrientationOffset", new Fields .SFRotation (),
+			                       "centerOfRotationOffset", new Fields .SFVec3f (),
+			                       "fieldOfViewScale",       new Fields .SFFloat (1));
 		
 			this .timeSensor .stopTime_ = 1;
 			this .timeSensor .setup ();

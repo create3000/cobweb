@@ -62,7 +62,7 @@ function ($,
 	{
 		this .addType (X3DConstants .X3DUrlObject);
 		
-		this .addChildren ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
 	X3DUrlObject .prototype =

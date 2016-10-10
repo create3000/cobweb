@@ -85,8 +85,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .addChildren ("initialized", new Fields .SFTime (),
-			                   "isEvenLive",  new Fields .SFBool ());
+			this .addChildObjects ("initialized", new Fields .SFTime (),
+			                       "isEvenLive",  new Fields .SFBool ());
 
 			this .isLive ()   .addInterest (this, "set_live__");
 			this .isEvenLive_ .addInterest (this, "_set_live__"); // to X3DBaseNode
