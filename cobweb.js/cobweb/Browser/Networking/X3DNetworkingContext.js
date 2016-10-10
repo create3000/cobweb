@@ -90,6 +90,7 @@ function (Fields,
 			this .defaultScene .setup ();
 			this .defaultScene .setLive (true);
 
+			this .privateScene .setPrivate (true);
 			this .privateScene .setup ();
 			this .privateScene .setLive (true);
 		},

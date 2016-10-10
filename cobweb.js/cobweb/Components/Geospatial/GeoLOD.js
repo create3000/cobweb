@@ -145,6 +145,7 @@ function ($,
 			this .rootNode_ .addFieldInterest (this .rootGroup .children_);
 		
 			this .rootGroup .children_ = this .rootNode_;
+			this .rootGroup .setPrivate (true);
 			this .rootGroup .setup ();
 		
 			this .rootInline   .loadState_ .addInterest (this, "set_rootLoadState__");

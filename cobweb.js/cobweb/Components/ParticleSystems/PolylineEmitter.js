@@ -122,6 +122,7 @@ function ($,
 			this .polylineNode .coord_      = this .coord_;
 
 			this .polylineNode .addInterest (this, "set_polyline");
+			this .polylineNode .setPrivate (true);
 			this .polylineNode .setup ();
 
 			this .set_direction__ ();

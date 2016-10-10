@@ -123,6 +123,7 @@ function ($,
 
 			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
 			this .loadSensor .watchList_ = this .parts_;
+			this .loadSensor .setPrivate (true);
 			this .loadSensor .setup ();
 
 			//Must not call set_live__.

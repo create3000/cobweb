@@ -152,6 +152,7 @@ function ($,
 			this .volumeNode .coord_       = this .coord_;
 
 			this .volumeNode .addInterest (this, "set_geometry__");
+			this .volumeNode .setPrivate (true);
 			this .volumeNode .setup ();
 
 			this .set_geometry__ ();

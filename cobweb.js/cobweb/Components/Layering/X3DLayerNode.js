@@ -126,6 +126,7 @@ function ($,
 			X3DRenderObject .prototype .initialize .call (this);
 
 			this .groupNode .children_ = this .children_;
+			this .groupNode .setPrivate (true);
 			this .groupNode .setup ();
 
 			this .defaultNavigationInfo .setup ();

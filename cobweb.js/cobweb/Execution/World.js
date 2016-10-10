@@ -88,6 +88,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
+			this .layerSet .setPrivate (true);
 			this .layerSet .setup ();
 			this .layerSet .setLayer0 (this .layer0);
 			this .layerSet .activeLayer_ .addInterest (this, "set_activeLayer");
@@ -97,6 +98,7 @@ function ($,
 
 			this .set_rootNodes ();
 
+			this .layer0 .setPrivate (true);
 			this .layer0 .isLayer0 (true);
 			this .layer0 .setup ();
 

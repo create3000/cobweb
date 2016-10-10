@@ -122,6 +122,7 @@ function ($,
 
 			this .isLive () .addInterest (this, "set_live__");
 
+			this .group .setPrivate (true);
 			this .group .setup ();
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
@@ -209,6 +210,7 @@ function ($,
 			// Set new scene.
 
 			this .scene = scene;
+			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
 			//this .scene .setExecutionContext (this .getExecutionContext ());

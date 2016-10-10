@@ -106,6 +106,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
+			this .layerNode0 .setPrivate (true);
 			this .layerNode0 .setup ();
 			this .layerNode0 .isLayer0 (true);
 

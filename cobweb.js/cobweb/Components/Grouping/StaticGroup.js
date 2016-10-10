@@ -115,6 +115,7 @@ function ($,
 			this .group .bboxSize_   = this .bboxSize_;
 			this .group .bboxCenter_ = this .bboxCenter_;
 			this .group .children_   = this .children_;
+			this .group .setPrivate (true);
 			this .group .setup ();
 
 			this .traverse = this .group .traverse .bind (this .group);
