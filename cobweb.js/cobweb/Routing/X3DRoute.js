@@ -62,8 +62,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("sourceNode",      new Fields .SFNode (sourceNode),
-		                       "destinationNode", new Fields .SFNode (destinationNode));
+		this .addChildObjects ("_sourceNode",      new Fields .SFNode (sourceNode),
+		                       "_destinationNode", new Fields .SFNode (destinationNode));
 
 		this ._sourceField      = sourceField;
 		this ._destinationField = destinationField;
@@ -90,8 +90,8 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .sourceNode_      .addInterest (this, "set_node");
-			this .destinationNode_ .addInterest (this, "set_node");
+			this ._sourceNode_      .addInterest (this, "set_node");
+			this ._destinationNode_ .addInterest (this, "set_node");
 
 //			Object .preventExtensions (this);
 //			Object .freeze (this);
@@ -99,18 +99,18 @@ function ($,
 		},
 		set_node: function ()
 		{
-			if (! this .sourceNode_ .getValue () || ! this .destinationNode_ .getValue ())
+			if (! this ._sourceNode_ .getValue () || ! this ._destinationNode_ .getValue ())
 				this .dispose ();
 		},
 		disconnect: function ()
 		{
 			this ._sourceField .removeFieldInterest (this ._destinationField);
 
-			if (this .sourceNode_ .getValue ())
-				this .sourceNode_ .removeInterest (this, "set_node");
+			if (this ._sourceNode_ .getValue ())
+				this ._sourceNode_ .removeInterest (this, "set_node");
 
-			if (this .destinationNode_ .getValue ())
-				this .destinationNode_ .removeInterest (this, "set_node");
+			if (this ._destinationNode_ .getValue ())
+				this ._destinationNode_ .removeInterest (this, "set_node");
 		},
 		toString: function ()
 		{
@@ -130,7 +130,7 @@ function ($,
 	{
 		get: function ()
 		{
-			return this .sourceNode_ .clone ();
+			return this ._sourceNode_ .clone ();
 		},
 		enumerable: true,
 		configurable: false
@@ -150,7 +150,7 @@ function ($,
 	{
 		get: function ()
 		{
-			return this .destinationNode_ .clone ();
+			return this ._destinationNode_ .clone ();
 		},
 		enumerable: true,
 		configurable: false
