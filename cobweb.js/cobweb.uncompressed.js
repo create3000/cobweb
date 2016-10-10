@@ -30047,8 +30047,6 @@ function ($,
 				{
 					var route = routes [i];
 
-console .log (route);
-
 					// new Route ... addUninitializedNode ...
 					this .addRoute (this .getNamedNode (route .sourceNode .getNodeName ()),
 					                route .sourceField,
