@@ -358,7 +358,9 @@ function ($,
 
 				var
 					id    = sourceField .getId () + "." + destinationField .getId (),
-					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
+					route = new X3DRoute (this, sourceNode, sourceField, destinationNode, destinationField);
+
+				route .setup ();
 
 				this .routes .getValue () .push (route);
 				this .routeIndex [id] = route;

@@ -81,6 +81,18 @@ function ($, X3DBaseNode)
 	BindableList .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: BindableList,
+		getTypeName: function ()
+		{
+			return "BindableList";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "bindableList";
+		},
 		get: function ()
 		{
 			return this .array;

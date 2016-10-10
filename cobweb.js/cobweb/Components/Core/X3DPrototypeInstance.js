@@ -252,6 +252,8 @@ function ($,
 				{
 					var route = routes [i];
 
+console .log (route);
+
 					// new Route ... addUninitializedNode ...
 					this .addRoute (this .getNamedNode (route .sourceNode .getNodeName ()),
 					                route .sourceField,
@@ -260,7 +262,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error .message);
+					console .log (error);
 				}
 			}
 		},

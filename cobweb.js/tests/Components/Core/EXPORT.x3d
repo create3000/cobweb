@@ -109,7 +109,7 @@ function initialize ()
 	}
 	catch (error)
 	{
-		print ("Test message: ", error .message);
+		print ("Test error that must occur: ", error .message);
 	}
 }]]> 
     </Script>

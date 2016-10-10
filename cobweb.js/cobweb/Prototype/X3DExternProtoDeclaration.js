@@ -176,9 +176,6 @@ function ($,
 
 			this .deferred .resolve ();
 		},
-		loadNow: function ()
-		{
-		},
 	});
 
 	Object .defineProperty (X3DExternProtoDeclaration .prototype, "name",

@@ -164,6 +164,11 @@ function ($,
 		{
 			try
 			{
+				if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+					return;
+
+				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
 				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
 			}
 			catch (error)

@@ -484,6 +484,24 @@ function ($,
 		{
 			return null;
 		},
+		hasRoutes: function ()
+		{
+			///  Returns true if there are any routes from or to fields of this node otherwise false.
+
+			var fieldDefinitions = this .getFieldDefinitions ();
+
+			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+			{
+				var field = this .getField (fieldDefinitions [i] .name);
+
+				//if (field .getInputRoutes () .empty () and field .getOutputRoutes () .empty ())
+				//	continue;
+
+				return true;
+			}
+		
+			return false;
+		},
 		getPrivate: function ()
 		{
 			return this ._private;

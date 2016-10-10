@@ -66,6 +66,18 @@ function ($, X3DBaseNode)
 	BindableStack .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: BindableStack,
+		getTypeName: function ()
+		{
+			return "BindableStack";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "bindableStack";
+		},
 		get: function ()
 		{
 			return this .array;
