@@ -104,7 +104,7 @@ function ($,
 		this .addChildren ("bbox_changed", new Fields .SFTime ());
 
 		this .geometryType        = 3;
-		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate ();
+		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate (); // For TextureCoordinateGenerator needed.
 	}
 
 	X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),

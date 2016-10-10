@@ -183,17 +183,17 @@ function ($,
 	
 	function MFFieldTemplate (TypeName, Type, SFField)
 	{
-		function MFVec (value)
+		function MFField (value)
 		{
-			if (this instanceof MFVec)
+			if (this instanceof MFField)
 				return X3DArrayField .call (this, arguments);
 			
-			return X3DArrayField .call (Object .create (MFVec .prototype), arguments);
+			return X3DArrayField .call (Object .create (MFField .prototype), arguments);
 		}
 	
-		MFVec .prototype = $.extend (Object .create (X3DArrayField .prototype),
+		MFField .prototype = $.extend (Object .create (X3DArrayField .prototype),
 		{
-			constructor: MFVec,
+			constructor: MFField,
 			_valueType: SFField,
 			getTypeName: function ()
 			{
@@ -205,7 +205,7 @@ function ($,
 			},
 		});
 
-		return MFVec;
+		return MFField;
 	}
 
 	var ArrayFields =

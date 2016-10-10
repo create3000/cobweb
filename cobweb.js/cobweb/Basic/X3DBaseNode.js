@@ -143,8 +143,12 @@ function ($,
 			// Event processing is done manually and immediately, so:
 			this .isLive_ .removeParent (this);
 
+			// Connect to execution context.
+
 			if (this ._executionContext !== this)
 				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+
+			// Return field
 
 			return this .isLive ();
 		},
@@ -349,7 +353,7 @@ function ($,
 		addChildren: function (name, field)
 		{
 			for (var i = 0, length = arguments .length; i < length; i += 2)
-				this .addChild (arguments [i + 0], arguments [i + 1]);
+				this .addChild (arguments [i], arguments [i + 1]);
 		},
 		addChild: function (name, field)
 		{
@@ -358,8 +362,8 @@ function ($,
 
 			Object .defineProperty (this, name + "_",
 			{
-				get: function () { return this; } .bind (field),
-				set: field .setValue .bind (field),
+				get: function () { return field; },
+				set: function (value) { return field .setValue (value); },
 				enumerable: true,
 				configurable: false,
 			});
@@ -398,8 +402,8 @@ function ($,
 
 			Object .defineProperty (this, name + "_",
 			{
-				get: function () { return this; } .bind (field),
-				set: field .setValue .bind (field),
+				get: function () { return field; },
+				set: function (value) { return field .setValue (value); },
 				enumerable: true,
 				configurable: true, // false : non deleteable
 			});

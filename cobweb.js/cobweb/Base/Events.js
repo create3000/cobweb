@@ -107,6 +107,10 @@ function ($)
 
 		   this .stack .push (event);
 		},
+		clear: function ()
+		{
+			this .stack .length = 0;
+		}
 	};
 
 	return Events;

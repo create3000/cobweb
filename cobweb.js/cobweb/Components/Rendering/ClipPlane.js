@@ -93,7 +93,7 @@ function ($,
 		set: function (clipPlane, modelViewMatrix)
 		{
 			var
-				plane       = this .plane,
+				plane      = this .plane,
 				localPlane = clipPlane .plane;
 	
 			try

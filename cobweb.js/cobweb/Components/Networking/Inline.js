@@ -85,7 +85,6 @@ function ($,
 		this .scene    = this .getBrowser () .getDefaultScene ();
 		this .group    = new Group (executionContext);
 		this .getBBox  = this .group .getBBox  .bind (this .group);
-		this .traverse = this .group .traverse .bind (this .group);
 
 		this .group .addParent (this);
 	}
@@ -229,6 +228,10 @@ function ($,
 		getInternalScene: function ()
 		{
 			return this .scene;
+		},
+		traverse: function (type, renderObject)
+		{
+			this .group .traverse (type, renderObject);
 		},
 	});
 

@@ -232,6 +232,9 @@ function ($,
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
 
+			this .browser      = null;
+			this .lightNode    = null;
+			this .groupNode    = null;
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
 

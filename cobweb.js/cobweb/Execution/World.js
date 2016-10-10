@@ -139,8 +139,6 @@ function ($,
 
 				this .set_activeLayer ();
 			}
-
-			this .traverse = this .layerSet .traverse .bind (this .layerSet);
 		},
 		set_activeLayer: function ()
 		{
@@ -163,6 +161,10 @@ function ($,
 			}
 			catch (error)
 			{ }
+		},
+		traverse: function (type, renderObject)
+		{
+			this .layerSet .traverse (type, renderObject);
 		},
 	});
 

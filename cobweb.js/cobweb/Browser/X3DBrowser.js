@@ -50,6 +50,7 @@
 define ([
 	"jquery",
 	"cobweb/Browser/VERSION",
+	"cobweb/Base/Events",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
 	"cobweb/Configuration/ComponentInfo",
@@ -65,6 +66,7 @@ define ([
 ],
 function ($,
           VERSION,
+          Events,
           Fields,
           X3DBrowserContext,
           ComponentInfo,
@@ -234,6 +236,9 @@ function ($,
 				this .getExecutionContext () .setLive (false);
 				this .shutdown () .processInterests ();
 			}
+
+			// Clear event cache.
+			Events .clear ();
 
 			// Replace world.
 
