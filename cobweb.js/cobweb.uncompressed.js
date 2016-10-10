@@ -29687,9 +29687,12 @@ function ($,
 				if (sourceField .getType () !== destinationField .getType ())
 					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
 
-				var
-					id    = sourceField .getId () + "." + destinationField .getId (),
-					route = new X3DRoute (this, sourceNode, sourceField, destinationNode, destinationField);
+				var id = sourceField .getId () + "." + destinationField .getId ();
+
+				if (this .routeIndex [id])
+					return this .routeIndex [id];
+
+				var route = new X3DRoute (this, sourceNode, sourceField, destinationNode, destinationField);
 
 				route .setup ();
 
@@ -104008,7 +104011,10 @@ function ($,
 		{
 			try
 			{
-				this .currentScene .deleteRoute (this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn));
+				var route = this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn);
+
+				if (route)
+					this .currentScene .deleteRoute (route);
 			}
 			catch (error)
 			{

@@ -1250,6 +1250,7 @@
     <None Include="test.html" />
     <None Include="tests\Components\Scripting\createX3DFromString.x3d" />
     <None Include="test.x3d" />
+    <None Include="tests\Components\Scripting\AddRemoveRoute.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

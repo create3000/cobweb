@@ -576,7 +576,10 @@ function ($,
 		{
 			try
 			{
-				this .currentScene .deleteRoute (this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn));
+				var route = this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn);
+
+				if (route)
+					this .currentScene .deleteRoute (route);
 			}
 			catch (error)
 			{
