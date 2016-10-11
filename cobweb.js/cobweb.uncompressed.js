@@ -16639,7 +16639,6 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		so                    = new Matrix3 (),
 		si                    = new Matrix3 (),
 		sosi                  = new Matrix3 (),
-		rotationMatrix        = new Matrix3 (),
 		c                     = new Vector3 (0, 0, 0),
 		b                     = new Matrix3 ();
 
@@ -65258,8 +65257,6 @@ function (FontStyle,
 {
 
 
-	var FONT_CACHE_SIZE = 32;
-
 	function X3DTextContext ()
 	{
 		this .fontCache         = { };
@@ -66036,7 +66033,6 @@ function ($,
 	var
 		normal       = new Vector3 (0, 0, 0),
 		fromPosition = new Vector3 (0, 0, 0),
-		translation  = new Vector3 (0, 0, 0),
 		line         = new Line3 (Vector3 .Zero, Vector3 .zAxis),
 		plane        = new Plane3 (Vector3 .Zero, Vector3 .zAxis);
 
@@ -75567,9 +75563,7 @@ function ($,
 {
 
 
-	var
-		plane      = new Plane3 (Vector3 .Zero, Vector3 .Zero),
-		ClipPlanes = ObjectCache (ClipPlaneContainer);
+	var ClipPlanes = ObjectCache (ClipPlaneContainer);
 
 	function ClipPlaneContainer (clipPlane, modelViewMatrix)
 	{
@@ -86427,18 +86421,6 @@ function ($,
 		
 			return this .offsetUnitY;
 		},
-		getSizeUnitX: function ()
-		{
-			if (this .sizeUnitX === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getSizeUnitX ();
-		
-				return FRACTION;
-			}
-		
-			return this .sizeUnitX;
-		},
 		getOffsetX: function ()
 		{
 			return this .offsetX;
@@ -89780,11 +89762,10 @@ function (Vector3,
 
 
 	var
-		vertex = new Vector3 (0, 0, 0),
-		v0     = new Vector3 (0, 0, 0),
-		v1     = new Vector3 (0, 0, 0),
-		v2     = new Vector3 (0, 0, 0),
-		uvt    = { u: 0, v: 0, t: 0 };
+		v0  = new Vector3 (0, 0, 0),
+		v1  = new Vector3 (0, 0, 0),
+		v2  = new Vector3 (0, 0, 0),
+		uvt = { u: 0, v: 0, t: 0 };
 
 	// Box normals for bbox / line intersection.
 	var boxNormals = [
@@ -90193,8 +90174,7 @@ function ($,
 		s3                 = new Vector3 (0, 0, 0),
 		s4                 = new Vector3 (0, 0, 0),
 		x                  = new Vector3 (0, 0, 0),
-		y                  = new Vector3 (0, 0, 0),
-		z                  = new Vector3 (0, 0, 0);
+		y                  = new Vector3 (0, 0, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -90913,7 +90893,6 @@ function ($,
 				numParticles = this .numParticles,
 				colorArray   = this .colorArray,
 				vertexArray  = this .vertexArray,
-				sx1_2        = this .particleSize_ .x / 2,
 				sy1_2        = this .particleSize_ .y / 2;
 
 			// Colors
@@ -94509,9 +94488,7 @@ function ($,
 		{
 		   //console .log (glyph .name, x, y);
 
-			var
-				components = glyph .components,
-				reverse    = font .outlinesFormat === "cff";
+			var components = glyph .components;
 
 			paths  .length = 0;
 		
@@ -94600,7 +94577,6 @@ function ($,
 			var
 				renderObject     = context .renderer,
 				text             = this .getText (),
-				fontStyle        = this .getFontStyle (),
 				projectionMatrix = renderObject .getProjectionMatrix () .get (),
 				modelViewMatrix  = context .modelViewMatrix,
 				viewport         = renderObject .getViewVolume () .getViewport (),

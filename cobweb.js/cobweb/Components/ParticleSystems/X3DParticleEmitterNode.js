@@ -73,7 +73,6 @@ function ($,
 	var
 		normal       = new Vector3 (0, 0, 0),
 		fromPosition = new Vector3 (0, 0, 0),
-		translation  = new Vector3 (0, 0, 0),
 		line         = new Line3 (Vector3 .Zero, Vector3 .zAxis),
 		plane        = new Plane3 (Vector3 .Zero, Vector3 .zAxis);
 

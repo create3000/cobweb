@@ -72,9 +72,7 @@ function ($,
 {
 "use strict";
 
-	var
-		plane      = new Plane3 (Vector3 .Zero, Vector3 .Zero),
-		ClipPlanes = ObjectCache (ClipPlaneContainer);
+	var ClipPlanes = ObjectCache (ClipPlaneContainer);
 
 	function ClipPlaneContainer (clipPlane, modelViewMatrix)
 	{

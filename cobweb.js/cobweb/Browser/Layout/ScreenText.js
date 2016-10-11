@@ -327,9 +327,7 @@ function ($,
 		{
 		   //console .log (glyph .name, x, y);
 
-			var
-				components = glyph .components,
-				reverse    = font .outlinesFormat === "cff";
+			var components = glyph .components;
 
 			paths  .length = 0;
 		
@@ -418,7 +416,6 @@ function ($,
 			var
 				renderObject     = context .renderer,
 				text             = this .getText (),
-				fontStyle        = this .getFontStyle (),
 				projectionMatrix = renderObject .getProjectionMatrix () .get (),
 				modelViewMatrix  = context .modelViewMatrix,
 				viewport         = renderObject .getViewVolume () .getViewport (),

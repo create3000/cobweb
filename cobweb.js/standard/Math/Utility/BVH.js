@@ -59,11 +59,10 @@ function (Vector3,
 "use strict";
 
 	var
-		vertex = new Vector3 (0, 0, 0),
-		v0     = new Vector3 (0, 0, 0),
-		v1     = new Vector3 (0, 0, 0),
-		v2     = new Vector3 (0, 0, 0),
-		uvt    = { u: 0, v: 0, t: 0 };
+		v0  = new Vector3 (0, 0, 0),
+		v1  = new Vector3 (0, 0, 0),
+		v2  = new Vector3 (0, 0, 0),
+		uvt = { u: 0, v: 0, t: 0 };
 
 	// Box normals for bbox / line intersection.
 	var boxNormals = [

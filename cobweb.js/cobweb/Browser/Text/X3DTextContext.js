@@ -56,8 +56,6 @@ function (FontStyle,
 {
 "use strict";
 
-	var FONT_CACHE_SIZE = 32;
-
 	function X3DTextContext ()
 	{
 		this .fontCache         = { };

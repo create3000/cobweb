@@ -113,8 +113,7 @@ function ($,
 		s3                 = new Vector3 (0, 0, 0),
 		s4                 = new Vector3 (0, 0, 0),
 		x                  = new Vector3 (0, 0, 0),
-		y                  = new Vector3 (0, 0, 0),
-		z                  = new Vector3 (0, 0, 0);
+		y                  = new Vector3 (0, 0, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -833,7 +832,6 @@ function ($,
 				numParticles = this .numParticles,
 				colorArray   = this .colorArray,
 				vertexArray  = this .vertexArray,
-				sx1_2        = this .particleSize_ .x / 2,
 				sy1_2        = this .particleSize_ .y / 2;
 
 			// Colors

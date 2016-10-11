@@ -398,18 +398,6 @@ function ($,
 		
 			return this .offsetUnitY;
 		},
-		getSizeUnitX: function ()
-		{
-			if (this .sizeUnitX === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getSizeUnitX ();
-		
-				return FRACTION;
-			}
-		
-			return this .sizeUnitX;
-		},
 		getOffsetX: function ()
 		{
 			return this .offsetX;
