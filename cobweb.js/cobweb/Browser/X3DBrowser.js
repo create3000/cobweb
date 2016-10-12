@@ -150,7 +150,7 @@ function ($,
 			if (urlCharacters)
 			{
 			   var
-			      parser    = new Parser (this .getExecutionContext (), "", true),
+			      parser    = new Parser (this .getExecutionContext (), true),
 			      url       = new Fields .MFString (),
 					parameter = new Fields .MFString ();
 
@@ -434,7 +434,7 @@ function ($,
 				external     = this .isExternal (),
 				scene        = this .createScene ();
 
-			new XMLParser (scene, dom) .parseIntoScene ();
+			new XMLParser (scene) .parseIntoScene (dom);
 
 			if (! external)
 			{

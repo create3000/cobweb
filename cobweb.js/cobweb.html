@@ -98,6 +98,20 @@ X3D (function (dom)
 	var pages =
 	[
 		{ name: 'Worlds' },
+		{ name: 'Smarty Bubbles',              url: [ "tests/Components/Rendering/bubbles.x3d" ] },
+		{ name: 'Flashing Lights',             url: [ "tests/Components/Lighting/lights/lights.x3d" ] },
+		{ name: 'Moving Circles',              url: [ "tests/Components/Texturing/circles/circles.x3d" ] },
+		{ name: 'Boyz Noise',                  url: [ "examples/noise/noise.x3d" ] },
+		{ name: 'Boyz Noise 2',                url: [ "examples/noise/noise2.x3d" ] },
+		{ name: 'Sliding Puzzle',              url: [ "examples/puzzle/puzzle.x3d" ] },
+		{ name: 'Fourmi Earth',                url: [ "examples/fourmilab/earth.x3d" ] },
+		{ name: 'Currencies',                  url: [ "examples/currencies/currencies.x3d" ] },
+		{ name: 'Universe',                    url: [ "examples/paul bourke/scene.x3d" ] },
+		{ name: 'Crazy Spiral',                url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
+		{ name: 'Marble',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Marble/marble.x3d" ] },
+		{ name: 'X3D Logo Pieces',       url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/LogoPieces/index.x3d" ] },
+
+		{ name: 'VRML' },
 		{ name: 'Appartment',            url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.x3d",         "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.wrl" ] },
 		{ name: 'Approach',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.wrl" ] },
 		{ name: 'Arcadia',               url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.x3d",      "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.wrl" ] },
@@ -124,9 +138,7 @@ X3D (function (dom)
 		{ name: 'Backyard Soccer',       url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/soccer.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/soccer.x3dv" ] },
 
 		{ name: 'ICTSpace',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTSpace/index.wrl" ] },
-		{ name: 'X3D Logo Pieces',       url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/LogoPieces/index.x3d" ] },
 		{ name: 'Lust For Life',         url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/LustForLife/stage/index.x3d",  "https://cdn.rawgit.com/create3000/Library/master/Examples/LustForLife/stage/index.wrl" ] },
-		{ name: 'Marble',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Marble/marble.x3d" ] },
 		{ name: 'MetalBeast',            url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/MetalBeast/index.wrl" ] },
 		{ name: 'Microbes',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Mikroben/index.wrl" ] },
 		{ name: 'Catchy Loopings',       url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Misc/shape5_a.x3d" ] },
@@ -154,17 +166,6 @@ X3D (function (dom)
 		{ name: 'Discovery One Centrifuge',    url: [ "http://alprojectsvr.bluemoonpics.com/2001/centrifuge/centrifuge.wrl" ] },
 		{ name: 'Sphere Walk Top',             url: [ "http://alprojectsvr.bluemoonpics.com/sphere%20walk%20top.wrl" ] },
 		{ name: 'Helicopter Simulation',       url: [ "http://blogofrog.com/files/vrml/ch47bsim402.wrz" ] },
-		{ name: 'Crazy Spiral',                url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
-
-		{ name: 'Smarty Bubbles',              url: [ "tests/Components/Rendering/bubbles.x3d" ] },
-		{ name: 'Flashing Lights',             url: [ "tests/Components/Lighting/lights/lights.x3d" ] },
-		{ name: 'Moving Circles',              url: [ "tests/Components/Texturing/circles/circles.x3d" ] },
-		{ name: 'Boyz Noise',                  url: [ "examples/noise/noise.x3d" ] },
-		{ name: 'Boyz Noise 2',                url: [ "examples/noise/noise2.x3d" ] },
-		{ name: 'Sliding Puzzle',              url: [ "examples/puzzle/puzzle.x3d" ] },
-		{ name: 'Fourmi Earth',                url: [ "examples/fourmilab/earth.x3d" ] },
-		{ name: 'Currencies',                  url: [ "examples/currencies/currencies.x3d" ] },
-		{ name: 'Universe',                    url: [ "examples/paul bourke/scene.x3d" ] },
 
 		{ name: 'Galaxies3d',           url: [ "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d_uc.wrl", "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d.wrl" ] },
 		{ name: 'Rosalila',             url: [ "http://chichcalan.com/rosalila/rosalila.wrl" ] },
@@ -335,14 +336,6 @@ X3D (function (dom)
 		{ name: 'IndexedLineSet',          url: [ "tests/Components/Rendering/IndexedLineSet.x3d" ] },
 		{ name: 'Glowing World',           url: [ "tests/Components/Rendering/world.x3d" ] },
 
-		{ name: 'Shape' },
-		{ name: 'LineProperties',          url: [ "tests/Components/Shape/LineProperties.x3d" ] },
-		{ name: 'Connectors',           url: [ "tests/Components/Shape/Connectors.x3d" ] },
-		{ name: 'CopperGold',           url: [ "tests/Components/Shape/CopperGold.x3d" ] },
-
-		{ name: 'Sound' },
-		{ name: 'Sound',                url: [ "tests/Components/Sound/AudioClip.x3d" ] },
-
 		{ name: 'Scripting' },
 		{ name: 'ColorSpheres',         url: [ "tests/Components/Scripting/ColorSpheres.x3d" ] },
 		{ name: 'AddRemoveRoute',       url: [ "tests/Components/Scripting/AddRemoveRoute.x3d" ] },
@@ -373,6 +366,14 @@ X3D (function (dom)
 		{ name: 'Point Float',   url: [ "tests/Components/Shaders/PointFloatVertexAttribute.x3d" ] },
 		{ name: 'Point Matrix3', url: [ "tests/Components/Shaders/PointMatrix3VertexAttribute.x3d" ] },
 		{ name: 'Point Matrix4', url: [ "tests/Components/Shaders/PointMatrix4VertexAttribute.x3d" ] },
+
+		{ name: 'Shape' },
+		{ name: 'LineProperties',          url: [ "tests/Components/Shape/LineProperties.x3d" ] },
+		{ name: 'Connectors',           url: [ "tests/Components/Shape/Connectors.x3d" ] },
+		{ name: 'CopperGold',           url: [ "tests/Components/Shape/CopperGold.x3d" ] },
+
+		{ name: 'Sound' },
+		{ name: 'Sound',                url: [ "tests/Components/Sound/AudioClip.x3d" ] },
 
 		{ name: 'Text' },
 		{ name: 'Text',                 url: [ "tests/Components/Text/test.x3d" ] },

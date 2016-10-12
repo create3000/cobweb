@@ -76,14 +76,13 @@ function ($,
 		inputOutput:    X3DConstants .inputOutput,
 	};
 
-	function XMLParser (scene, xml)
+	function XMLParser (scene)
 	{
 		this .scene             = scene;
-		this .xml               = xml;
 		this .executionContexts = [ scene ];
 		this .protoDeclarations = [ ];
 		this .parents           = [ ];
-		this .parser            = new Parser (this .scene, "", true);
+		this .parser            = new Parser (this .scene, true);
 		this .url               = new Fields .MFString ();
 	}
 
@@ -118,13 +117,13 @@ function ($,
 		{
 			this .parents .pop ();
 		},
-		parseIntoScene: function ()
+		parseIntoScene: function (xml)
 		{
-			switch (this .xml .nodeName)
+			switch (xml .nodeName)
 			{
 				case "#document":
 				{
-					var X3D = $(this .xml) .children ("X3D");
+					var X3D = $(xml) .children ("X3D");
 
 					if (X3D .length)
 					{
@@ -132,18 +131,18 @@ function ($,
 							this .X3D (X3D [i]);
 					}
 					else
-						this .Scene (this .xml);
+						this .Scene (xml);
 
 					break;
 				}
 				case "X3D":
-					this .X3D (this .xml);
+					this .X3D (xml);
 					break;
 				case "Scene":
-					this .Scene (this .xml);
+					this .Scene (xml);
 					break;
 				default:
-					this .statement (this .xml);
+					this .statement (xml);
 					break;
 			}
 		},
