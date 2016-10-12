@@ -25,7 +25,7 @@ The HTML5 page is quite easy to create, the HTML5 code below shows you the minim
 
 **Note:** it is important to use a HTML5 page and to save it as .html file. 
 
-``<!DOCTYPE html>
+```<!DOCTYPE html>
 <html>
    <head>
       <meta charset="utf-8"/>
@@ -43,17 +43,19 @@ X3DCanvas {
          <p>Your browser may not support all features required by Cobweb!</p>
       </X3DCanvas>
    </body>
-</html>``
+</html>```
 
 To get Cobweb working you must include the CSS file »cobweb.css« and the JavaScript file »cobweb.min.js «. After cobweb is successfully loaded a new HTML tag <X3DCanvas> is available on your page.
 
 You can style the <X3DCanvas> tag as every HTML tag with CSS as well as you can place it everywhere within the DOM tree. 
+
 
 ### Supported File Formats
 
 As of version 1.19, Cobweb can now parse either X3D XML Encoding or X3D Classic Encoding. This gives authors the capability to display their existing projects like .wrl worlds, too.
 
 Additionally files can be compressed using GZip compression.
+
 
 ### Fallback Content
 
@@ -63,13 +65,13 @@ Providing fallback content is very straightforward: just insert the alternate co
 
 For example, we could provide a text description of the X3D element or provide a static image of the dynamically rendered content. This can look something like this: 
 
-``<X3DCanvas src="world.x3d">
+```<X3DCanvas src="world.x3d">
    <p>Current stock price: $3.15 +0.15</p>
-</X3DCanvas>``
+</X3DCanvas>```
 
-``<X3DCanvas src="world.x3dv">
+```<X3DCanvas src="world.x3dv">
    <img src="images/clock.png"/>
-</X3DCanvas>``
+</X3DCanvas>```
 
 
 Attributes of the X3DCanvas Tag
@@ -77,16 +79,18 @@ Attributes of the X3DCanvas Tag
 
 The HTML **<X3DCanvas> tag** defines the main content of the X3D document. The <X3DCanvas> tag has two attributes that define different behaviours. All of these attributes are optional. 
 
+
 ### src
 
 A String value with the URL that should be loaded on page load. If no URL is specified or the src field is empty an empty scene is displayed.
+
 
 ### cache
 
 A Boolean value (true or false) to indicate whether files transferred over the internet should be cached on the local computer. The default value for the cache attribute is true. It works by appending "_={timestamp}" to the GET parameters of every request.
 Example
 
-``<X3DCanvas cache="true" src="path/to/your/X3D/world.x3d"></X3DCanvas>``
+`<X3DCanvas cache="true" src="path/to/your/X3D/world.x3d"></X3DCanvas>`
 
 
 Authors
