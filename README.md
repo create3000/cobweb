@@ -10,6 +10,11 @@ Cobweb is a work in progress. The goal is a full standard WebGL X3D browser for 
 For more information and live preview please visit [http://titania.create3000.de/cobweb/](http://titania.create3000.de/cobweb/).
 
 
+Examples
+--------------------------------------
+<iframe allowfullscreen="true" src="http://titania.create300.de/fileadmin/cobweb/cobweb.release.html" style="width: 920px; height: 490px"></iframe>
+
+
 Authors
 --------------------------------------
 All authors contributed to this project can be found in the [list of authors](AUTHORS.md).

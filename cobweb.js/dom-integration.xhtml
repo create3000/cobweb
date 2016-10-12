@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+      <title>XHTML DOM access for Cobweb</title>
+      <meta charset="utf-8"/>
+      <link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
+      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.css"/>
+      <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.min.js"></script>
+      <script type="text/javascript" src="https://rawgit.com/andreasplesch/cobweb_dom/inline/cobweb/cobweb_dom.js"></script>
+   <style>
+html, body {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	background: #414141;
+	color: white;
+	font-family: PT Sans;
+	font-size: 16px;
+}
+
+.browser {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 30px;
+	left: 0px;
+}
+
+.button {
+	position: absolute;
+	height: 30px;
+	width: 100%;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
+}
+
+.fallback {
+	position: absolute;
+	display: block;
+	top: 35%;
+	right: 0px;
+	left: 0px;
+	text-align: center;
+}
+   </style>
+   </head>
+   <body>
+      <X3DCanvas class="browser">
+        <X3D profile='Full' version='3.2'>
+          <Scene>
+            <Viewpoint position='-2 1 -15' orientation='0 1 0 3.14' description='start'></Viewpoint>
+            <Inline DEF="ExampleWorld" url='"https://cdn.rawgit.com/create3000/Library/master/Examples/Mushrooms/index.x3d"' />
+          </Scene>
+        </X3D>
+        <p class="fallback">Sorry,<br/>
+          it wasn't me!<br/>
+           <br/>
+           Your browser may not support all features required by Cobweb! You should use the latest version of Firefox, Chrome,
+           or Microsoft Edge, because this is currently the choice of the choice. We will continuously
+           keep you informed on technical developments and as soon as Cobweb is running in other browser too.
+        </p>
+      </X3DCanvas>
+
+      <button class="button input input-button" onclick='moveHouse ()'>XHTML Button to Move House</button>
+
+      <script type="text/javascript">
+function moveHouse ()
+{
+   var RANGE = 5;
+
+   var
+      houseTransform = document .querySelector ("[DEF='pilzhaus']"); // Unique DEF inside inlined inlines.
+      position       = houseTransform .getAttribute ("translation") .split (" "); // Poor man's parse.
+      x              = 1.0 * position [0] + RANGE * (Math .random () - 0.5);
+      y              = 1.0 * position [1];
+      z              = 1.0 * position [2] + RANGE * (Math .random () - 0.5);
+
+   houseTransform .setAttribute ("translation", x + " " + y + " " + z);
+}
+     </script>
+   </body>
+</html>
