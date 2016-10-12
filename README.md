@@ -25,25 +25,25 @@ The HTML5 page is quite easy to create, the HTML5 code below shows you the minim
 
 **Note:** it is important to use a HTML5 page and to save it as .html file. 
 
-```<!DOCTYPE html>
-<html>
-   <head>
-      <meta charset="utf-8"/>
-      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.css"/>
-      <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.min.js"></script>
-   <style>
-X3DCanvas {
-   width: 768px;
-   height: 432px;
-}
-   </style>
-   </head>
-   <body>
-      <X3DCanvas src="path/to/your/X3D/world.x3d">
-         <p>Your browser may not support all features required by Cobweb!</p>
-      </X3DCanvas>
-   </body>
-</html>```
+    <!DOCTYPE html>
+    <html>
+       <head>
+          <meta charset="utf-8"/>
+          <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.css"/>
+          <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.min.js"></script>
+       <style>
+    X3DCanvas {
+       width: 768px;
+       height: 432px;
+    }
+       </style>
+       </head>
+       <body>
+          <X3DCanvas src="path/to/your/X3D/world.x3d">
+             <p>Your browser may not support all features required by Cobweb!</p>
+          </X3DCanvas>
+       </body>
+    </html>
 
 To get Cobweb working you must include the CSS file »cobweb.css« and the JavaScript file »cobweb.min.js «. After cobweb is successfully loaded a new HTML tag <X3DCanvas> is available on your page.
 
@@ -65,13 +65,13 @@ Providing fallback content is very straightforward: just insert the alternate co
 
 For example, we could provide a text description of the X3D element or provide a static image of the dynamically rendered content. This can look something like this: 
 
-```<X3DCanvas src="world.x3d">
-   <p>Current stock price: $3.15 +0.15</p>
-</X3DCanvas>```
+    <X3DCanvas src="world.x3d">
+       <p>Current stock price: $3.15 +0.15</p>
+    </X3DCanvas>
 
-```<X3DCanvas src="world.x3dv">
-   <img src="images/clock.png"/>
-</X3DCanvas>```
+    <X3DCanvas src="world.x3dv">
+       <img src="images/clock.png"/>
+    </X3DCanvas>
 
 
 Attributes of the X3DCanvas Tag
