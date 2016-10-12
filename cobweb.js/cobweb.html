@@ -31,13 +31,39 @@ body {
 	box-shadow: 0px 2px 12px 1px rgba(0, 0, 0, 0.75);
 }
 
-.examples {
+.bookmarks {
 	overflow: hidden;
 	padding: 5px;
 	width: 110px;
 	float: left;
 	font-size: 12px;
 	text-align: right;
+}
+
+.bookmarks * {
+	margin: 0px;
+	padding: 0px;
+}
+
+.bookmarks p {
+	margin: 10px 0;
+}
+
+.bookmarks a {
+	background: none;
+}
+
+.bookmark-page {
+	list-style-type: none;
+}
+
+.bookmark-section {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+li + .bookmark-section {
+	margin-top: 8px;
 }
 
 .version {
@@ -47,7 +73,7 @@ body {
 	font-size: 50px;
 }
 
-X3DCanvas {
+.browser {
 	height: 100%;
 }
 
@@ -71,6 +97,7 @@ X3D (function (dom)
 {
 	var pages =
 	[
+		{ name: 'Worlds' },
 		{ name: 'Appartment',            url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.x3d",         "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.wrl" ] },
 		{ name: 'Approach',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.wrl" ] },
 		{ name: 'Arcadia',               url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.x3d",      "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.wrl" ] },
@@ -128,7 +155,7 @@ X3D (function (dom)
 		{ name: 'Sphere Walk Top',             url: [ "http://alprojectsvr.bluemoonpics.com/sphere%20walk%20top.wrl" ] },
 		{ name: 'Helicopter Simulation',       url: [ "http://blogofrog.com/files/vrml/ch47bsim402.wrz" ] },
 		{ name: 'Crazy Spiral',                url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
-		{ name: '1728',                        url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Geometry3D/1728.x3dv" ] },
+
 		{ name: 'CADGeometry',                 url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADGeometry.wrl" ] },
 		{ name: 'CADLayer',                    url: [ "https://rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
 		{ name: 'Setco',                       url: [ "tests/Components/CADGeometry/setco.x3d" ] },
@@ -151,18 +178,31 @@ X3D (function (dom)
 	   { name: 'ProximitySensor',         url: [ "tests/Components/EnvironmentalSensor/ProximitySensor.x3d" ] },
 	   { name: 'TransformSensor',         url: [ "tests/Components/EnvironmentalSensor/TransformSensor.x3d" ] },
 		{ name: 'ImageBackground',         url: [ "tests/Components/EnvironmentalEffects/ImageBackground.x3d" ] },
+
+		{ name: 'Geometry2D' },
 		{ name: 'Geometry2D',              url: [ "tests/Components/Geometry2D/Geometry2D.x3d" ] },
+
+		{ name: 'Geometry3D' },
 		{ name: 'Geometry3D',              url: [ "tests/Components/Geometry3D/Geometry3D.x3d" ] },
 		{ name: 'Smash',                   url: [ "tests/Components/Geometry3D/Smash.x3d" ] },
 		{ name: 'Box',                     url: [ "tests/Components/Geometry3D/box.x3d" ] },
+		{ name: '1728',                        url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Geometry3D/1728.x3dv" ] },
+
+		{ name: 'Extrusion' },
 		{ name: 'Extrude1',                url: [ "tests/Components/Geometry3D/Extrusion/extrude1.x3d" ] },
 		{ name: 'Gears42P Extrusion',      url: [ "tests/Components/Geometry3D/Extrusion/gears42P.x3d" ] },
 		{ name: 'Extrusion Rotations',     url: [ "tests/Components/Geometry3D/Extrusion/Rotations.x3d" ] },
 		{ name: 'HalfSpheres',             url: [ "tests/Components/Geometry3D/Extrusion/HalfSpheres.x3d" ] },
+
+
+		{ name: 'Interpolation' },
 		{ name: 'Interpolators',           url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Interpolation/Interpolators.wrl" ] },
 		{ name: 'NormalInterpolator',      url: [ "tests/Components/Interpolation/NormalInterpolator.x3d" ] },
 		{ name: 'PositionInterpolator',    url: [ "tests/Components/Interpolation/PositionInterpolator.x3d" ] },
 		{ name: 'OrientationInterpolator', url: [ "tests/Components/Interpolation/OrientationInterpolator.x3d" ] },
+
+
+		{ name: 'Lighting' },
 		{ name: 'PointLight',              url: [ "tests/Components/Lighting/PointLight.x3d", "tests/Components/Lighting/PointLight.x3dv" ] },
 		{ name: 'SpotLight',               url: [ "tests/Components/Lighting/SpotLight.x3d" ] },
 		{ name: 'LocalLight',              url: [ "tests/Components/Lighting/LocalLight.x3d" ] },
@@ -172,11 +212,17 @@ X3D (function (dom)
 		{ name: 'LOD Shadow',              url: [ "tests/Components/Lighting/LODShadow.x3d" ] },
 		{ name: 'GeoLOD Shadow',           url: [ "tests/Components/Lighting/GeoLODShadow.x3d" ] },
 		{ name: 'Lamp',                    url: [ "tests/Components/PointingDeviceSensor/lamp.x3d" ] },
+
+		{ name: 'PointingDeviceSensor' },
 		{ name: 'LineSensor',              url: [ "tests/Components/PointingDeviceSensor/LineSensor.x3d" ] },
 		{ name: 'PlaneSensor',             url: [ "tests/Components/PointingDeviceSensor/PlaneSensor.x3d" ] },
 		{ name: 'SphereSensor',            url: [ "tests/Components/PointingDeviceSensor/SphereSensor.x3d" ] },
 		{ name: 'ClonedSensors',           url: [ "tests/Components/PointingDeviceSensor/ClonedSensors.x3d" ] },
 		{ name: 'Touch',                   url: [ "tests/Components/PointingDeviceSensor/test.x3d" ] },
+
+		{ name: 'Rendering' },
+		{ name: 'ClipPlane',               url: [ "tests/Components/Rendering/ClipPlane.x3d", "http://www.web3d.org/x3d/content/examples/Basic/CAD/ClipPlaneExample.x3d" ] },
+		{ name: 'Cubes',                   url: [ "tests/Components/Rendering/cubes.x3d" ] },
 		{ name: 'IndexedLineSet',          url: [ "tests/Components/Rendering/IndexedLineSet.x3d" ] },
 		{ name: 'Glowing World',           url: [ "tests/Components/Rendering/world.x3d" ] },
 		{ name: 'LineProperties',          url: [ "tests/Components/Shape/LineProperties.x3d" ] },
@@ -211,8 +257,6 @@ X3D (function (dom)
 		{ name: 'Billboard',            url: [ "tests/Components/Navigation/Billboard.x3d" ] },
 		{ name: 'Depth',                url: [ "tests/Components/Navigation/Depth.x3d" ] },
 		{ name: 'WalkViewer',           url: [ "tests/Components/Navigation/WalkViewer.x3d" ] },
-		{ name: 'ClipPlane',            url: [ "tests/Components/Rendering/ClipPlane.x3d", "http://www.web3d.org/x3d/content/examples/Basic/CAD/ClipPlaneExample.x3d" ] },
-		{ name: 'Cubes',                url: [ "tests/Components/Rendering/cubes.x3d" ] },
 		{ name: 'Galaxies3d',           url: [ "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d_uc.wrl", "http://www.pbs.org/wgbh/nova/universe/media/galaxies3d.wrl" ] },
 		{ name: 'Rosalila',             url: [ "http://chichcalan.com/rosalila/rosalila.wrl" ] },
 
@@ -318,7 +362,7 @@ X3D (function (dom)
 
 	var
 		Browser   = X3D .getBrowser (dom),
-		bookmarks = new Bookmarks (Browser, $(".examples"), pages);
+		bookmarks = new Bookmarks (Browser, $(".bookmarks"), pages);
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();
@@ -342,8 +386,8 @@ function loadURL ()
 </head>
 <body>
 	<div class="tests">
-		<div class="examples"></div>
-		<X3DCanvas cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
+		<div class="bookmarks"></div>
+		<X3DCanvas class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
 			<p class="fallback">Sorry,<br/>
 				it wasn't me!<br/>
 				<br/>

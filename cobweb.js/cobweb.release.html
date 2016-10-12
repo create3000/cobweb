@@ -31,6 +31,11 @@ body {
 	left: 0px;
 }
 
+.bookmark-section {
+	font-size: 10px;
+	font-weight: bold;
+}
+
 .location-bar {
 	position: absolute;
 	right: 0px;
@@ -72,7 +77,42 @@ body {
 	height: 100%;
 }
 
-X3DCanvas {
+.bookmarks {
+	overflow: hidden;
+	padding: 5px;
+	width: 110px;
+	float: left;
+	font-size: 12px;
+	text-align: right;
+}
+
+.bookmarks * {
+	margin: 0px;
+	padding: 0px;
+}
+
+.bookmarks p {
+	margin: 10px 0;
+}
+
+.bookmarks a {
+	background: none;
+}
+
+.bookmark-page {
+	list-style-type: none;
+}
+
+.bookmark-section {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+li + .bookmark-section {
+	margin-top: 8px;
+}
+
+.browser {
 	background: #414141;
 	height: 100%;
 }
@@ -191,7 +231,7 @@ function loadURL ()
 	<body>
 		<div class="examples">
 			<div class="bookmarks"></div>
-			<X3DCanvas>
+			<X3DCanvas class="browser">
 				<p class="fallback">Sorry,<br/>
 					it wasn't me!<br/>
 					<br/>

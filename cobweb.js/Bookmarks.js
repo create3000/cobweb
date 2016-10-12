@@ -130,63 +130,73 @@ var Bookmarks = (function ()
 
 			X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"] = this .index;
 
+			var ul = $("<ul></ul>") .addClass ("bookmark-page") .appendTo (this .element);
+
 			this .pages [this .index] .forEach (function (item)
 			{
-				if (this .split)
+				var li = $("<li></li>") .appendTo (ul);
+
+				if (item .url)
 				{
-					for (var i = 0; i < item .url .length; ++ i)
+					if (this .split)
+					{
+						for (var i = 0; i < item .url .length; ++ i)
+						{
+							$("<a></a>")
+								.attr ("href", item .url [i])
+								.attr ("title", item .url [i])
+								.click (this .loadURL .bind (this, item .url [i]))
+								.text (i ? "*" : item .name)
+								.addClass (i ? "bookmark-link" : "bookmark-first-link")
+								.appendTo (li);
+						}
+					}
+					else
 					{
 						$("<a></a>")
-							.attr ("href", item .url [i])
-							.attr ("title", item .url [i])
-							.click (this .loadURL .bind (this, item .url [i]))
-							.text (i ? "*" : item .name)
-							.addClass (i ? "bookmark-link" : "bookmark-first-link")
-							.appendTo (this .element);
+							.attr ("href", item .url [0])
+							.attr ("title", item .url [0])
+							.click (this .loadURL .bind (this, item .url))
+							.text (item .name)
+							.addClass ("bookmark-link")
+							.appendTo (li);
 					}
 				}
 				else
 				{
-					$("<a></a>")
-						.attr ("href", item .url [0])
-						.attr ("title", item .url [0])
-						.click (this .loadURL .bind (this, item .url))
-						.text (item .name)
-						.addClass ("bookmark-link")
-						.appendTo (this .element);
-				}
+					li .addClass ("bookmark-section");
 
-				this .element .append ("<br/>");
+					$("<span></span>")
+						.text (item .name)
+						.appendTo (li);
+				}
 			},
 			this);
-				
-			this .element .append ("<br/>");
 
 			$("<a></a>")
 				.attr ("href", "random")
 				.attr ("title", "Random World")
 				.click (this .random .bind (this))
 				.text ("Random World")
-				.appendTo (this .element);
+				.appendTo ($("<p></p>") .appendTo (this .element));
 	
-			this .element .append ("<br/>");
-			this .element .append ("<br/>");
+			var p = $("<p></p>") .appendTo (this .element);
 	
 			$("<a></a>")
 				.attr ("href", "previous")
 				.attr ("title", "Previous Page")
 				.click (this .next .bind (this, -1))
 				.text ("◂ ◂")
-				.appendTo (this .element);
+				.appendTo (p);
 
-			this .element .append (document .createTextNode (" Page " + (this .index + 1) + " "));
+			p .append ($("<span></span>") .text (" Page " + (this .index + 1) + " "));
 	
 			$("<a></a>")
 				.attr ("href", "next")
 				.attr ("title", "Next Page")
 				.click (this .next .bind (this, 1))
 				.text ("▸ ▸")
-				.appendTo (this .element);
+				.appendTo (p);
 			
 			return false;
 		},
