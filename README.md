@@ -12,9 +12,9 @@ For more information and live preview please visit [http://titania.create3000.de
 
 Links
 --------------------------------------
-[Dynamic Shadows](http://titania.create3000.de/cobweb/dynamic-shadows/)
-[Custom Shaders](http://titania.create3000.de/cobweb/custom-shaders/)
-[XHTML DOM Integration](http://titania.create3000.de/index.php?id=120)
+* [Dynamic Shadows](http://titania.create3000.de/cobweb/dynamic-shadows/)
+* [Custom Shaders](http://titania.create3000.de/cobweb/custom-shaders/)
+* [XHTML DOM Integration](http://titania.create3000.de/index.php?id=120)
 
 
 Authors
